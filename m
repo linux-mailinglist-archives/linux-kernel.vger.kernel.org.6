@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-356930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B2B9968DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:33:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F489968E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D541C21FF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EDB285815
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A740F1922D5;
-	Wed,  9 Oct 2024 11:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C91A191F74;
+	Wed,  9 Oct 2024 11:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DCJIag5X"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/FVdKRW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DF318E35D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E753E18785C;
+	Wed,  9 Oct 2024 11:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728473575; cv=none; b=ojkxedd6p2822E6kUR7yEpQruz5XoaKRdrwUfRRKH7iyVRGBoY0u301L7PakuUQcpxO37nx8cESJj8LhycP688zxUSjTcxAqT4kgnjkudJ8yhwVTr8i5PJxgstfKgr97BzXtylmT7tBSU6Eum7nNND9zOd42Bp0nT9081mYJAEg=
+	t=1728473619; cv=none; b=IBhjjh/vgn3sq3KyytmQNwvZwbh+C9rfwAgBYaUwCmaKg8xinJOYNjLhwO4ESXxJ9RA0yVyoRhGo/rVIVwRiI4FAvSLgAzGmjvjaKJbBAUGdTy/l6+0E7WIl3ca0zsGouAWaktUlh3ZtsMs++oBc10zFan0jDlQjifrlzGLH20A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728473575; c=relaxed/simple;
-	bh=u2nkpeNDCCtr+RDR1GIBlfqM1CcT4OISAJQIvFmPPH8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MR28FoAmYHRgehZvUnc4/u6rMtWQ4c+VhOa+PsLjF+ngbXNtiDaduvboBdJgNrIz3t8LBmcwtDomwIJmAK1t/Gssw+QvMNAzQjog1JfMwNQr8TNiR0ttPty/ufPX/NnOBcS8Hwub3YihNqAbpr2OeMPYoY5a3f4W7cABBIiGvWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DCJIag5X; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ce9644daaso4270538f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728473572; x=1729078372; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHfdMVCdMqw7XiUFeDg6OwkwsDzXxFWVFFZsqEM0H+A=;
-        b=DCJIag5XxPbi9OC37ORGwovatj+Tu99IFvtSNDWS8+2jYlVlg20cTWWxpVbAHhh/os
-         MLDUXsmiaIi5aPSJsQQwFoAxj0eg5h7z46eWpVjn5JK+0uOaXwdMo7VhqL4KJJ1h1ibE
-         1EdfjOeQb+FKVVrMOPX7ws7n4SPc7FQVEgUbBdbnQm7S5I62ybmNvsw3xY6kfh4Znp78
-         la+MeVEfi170wcJAqxbTngwvRcv2XAAsrgTKjhTbj62qHMzIihppGExRYYfwJBfCKDvU
-         NdEBiv0zYpQfDPMz5MwNDrGqs+tjEecDPEo2NTS8P8zIF6UTXBoW/fD0TOG814DRCtid
-         UjjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728473572; x=1729078372;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHfdMVCdMqw7XiUFeDg6OwkwsDzXxFWVFFZsqEM0H+A=;
-        b=M0E9RwXyEE/ZWoXJ5UH20IWlciQf2pnhMWu1L+tKp8HMxRt1NElYBghdkStrI4CwMB
-         1H5rAyCrDl400X4FKN2aJMcpLdhdJ5RSJh7u+foI9vOXoxGti9kWD1DWKjw2Hyg7DRqv
-         7REgpKhvAqHSdq8zg84OG+Nv3kmj66Bikpf9x2Wb41IJe5f1z62M7eeQ/8rWH6QWTX+t
-         FzLuQ6NiLGSO6rV/ZDGxXZcIqtn5j/7Sw5wpNAj1gIWiJbV64DYJOykAa+ljXwUtvNQR
-         wkBX83jI3hvH8Nus/czVW0n05RcyNWdct3fOc38GKeTN21owvykgBGRXrYtuwJy2cXwP
-         P6kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvdQP/VuhdpBgDwxTbW3f65nEugl77GsmXQVca9E+le4eD/zYmWJelo7JMDMdvVw3uu1wnBNxMOFYN5CU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztP8n2F7uCqtjLMDwtKGcN/7QFEkFRvNeCD2qrrNXavuuJESL1
-	knBRM0gXL8J5Twhhxp3x8UbaYK+IUMOIVnYnrZpez4kijYlZYMbjLXfcfTtLNO8jfZvFRorF3GE
-	RdxT/l6m/aw0tATcLG6j8MjnjiWYdbY6/JBKD
-X-Google-Smtp-Source: AGHT+IF6zuOiLd59PhgXMw7DIzWOXXJgSyWEMApRca5NNJBgSiWPw2nrOVmoTfB+YfDfuvrwx/fLLRPvbmafo2m8vg4=
-X-Received: by 2002:adf:fc88:0:b0:37d:374f:b0a7 with SMTP id
- ffacd0b85a97d-37d3aa4613dmr1323925f8f.34.1728473571568; Wed, 09 Oct 2024
- 04:32:51 -0700 (PDT)
+	s=arc-20240116; t=1728473619; c=relaxed/simple;
+	bh=AqkNfnjES4sBMH18sozhyHW+UH06mk5jmH+B+yAPjRE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cfea25f80qpvgE9g89tJMFxN0ybmevT7wZX0TjcrAVUlfIiePnc+q+ehMWz8G9oATXuDNHGajGVJ6kmz5lZ4BTxP34+nxwDsjwQFt9i3/Hu4ya2SHjfdozivbj9YNcQ9bX05j31VeuY8Vt8pjmL+0KVxG7bzhm1OoHqg6WYpXaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/FVdKRW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73519C4CEC5;
+	Wed,  9 Oct 2024 11:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728473618;
+	bh=AqkNfnjES4sBMH18sozhyHW+UH06mk5jmH+B+yAPjRE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A/FVdKRW7XzbbrBmykQFxvHou/ZDX692uNCf5joHAuskJrBzIio6c7z/WFxrZmyVu
+	 XDY87VW91u9ROo6cj93jDyUCezKX6ZRBBpI9Lv+oYVykyycUWIUS0tmBGiJykzUBQh
+	 ELs//Ryzxc1KJPfTkqfu+hWio5N4uC4s2oo/f7oiTHcIwyXI6nOqBiKRebCibPMahT
+	 Qqce7VSLvpVfBnrrDaS8lKGcjHaPu2Jtfwpu4/zgw4WwKGahkks8ViIj5X3faZsftZ
+	 1wTebe8LsSvp+iHdZDByEjJ1reQhOG9Ga2qzcrqbkcnqruiZVmfUAmK5bIGRoJSpd3
+	 hAFLpEUEU4Fzw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1syUwh-001oIk-WA;
+	Wed, 09 Oct 2024 12:33:36 +0100
+Date: Wed, 09 Oct 2024 12:33:35 +0100
+Message-ID: <86r08p5x4g.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: <lpieralisi@kernel.org>,
+	<guohanjun@huawei.com>,
+	<sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>,
+	<rafael@kernel.org>,
+	<lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
+In-Reply-To: <57e9adb8-a34a-6d63-24b8-4ad0abb74bf9@huawei.com>
+References: <20241008082429.33646-1-zhengzengkai@huawei.com>
+	<86v7y355zr.wl-maz@kernel.org>
+	<57e9adb8-a34a-6d63-24b8-4ad0abb74bf9@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
- <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com>
- <CAH5fLgiZ5awKAm-CHc8qgsQUYtNMWdSEeKC2wuDFh2NUhVmsAA@mail.gmail.com> <CAK7LNAS_22jQzsWDswChAMaE3GhT-1eqE9ngj61NeFz40SNxGw@mail.gmail.com>
-In-Reply-To: <CAK7LNAS_22jQzsWDswChAMaE3GhT-1eqE9ngj61NeFz40SNxGw@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 9 Oct 2024 13:32:38 +0200
-Message-ID: <CAH5fLgh9t7=1sTwWWJHLtDxaaZYZAjLC8h_jVvC809hpqJz07g@mail.gmail.com>
-Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: zhengzengkai@huawei.com, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org, lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Oct 9, 2024 at 12:32=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Wed, Oct 9, 2024 at 4:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> >
-> > On Tue, Oct 8, 2024 at 9:00=E2=80=AFPM Masahiro Yamada <masahiroy@kerne=
-l.org> wrote:
-> > >
-> > > On Wed, Oct 9, 2024 at 2:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
-om> wrote:
-> > > > diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-> > > > index 057305eae85c..08d5b7177ea8 100644
-> > > > --- a/scripts/Makefile.compiler
-> > > > +++ b/scripts/Makefile.compiler
-> > > > @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KB=
-UILD_EXTMOD))/).tmp_$$$$
-> > > >  # automatically cleaned up.
-> > > >  try-run =3D $(shell set -e;              \
-> > > >         TMP=3D$(TMPOUT)/tmp;              \
-> > > > +       export RUSTC_BOOTSTRAP=3D1;       \
-> > >
-> > >
-> > > try-run is not Rust-specific.
-> > >
-> > > Is there any reason why you did not add it
-> > > to __rustc-option?
-> > >
-> > >
-> > > __rustc-option =3D $(call try-run,\
-> > >        RUSTC_BOOTSTRAP=3D1 $(1) $(2) $(3) --crate-type=3Drlib
-> > > $(srctree)/rust/probe.rs --out-dir=3D$$TMP,$(3),$(4))
-> >
-> > I had an explanation for this in the commit message, but it looks like
-> > it got lost when I rewrote it for v2. Anyway, the reason is that I'd
-> > have to modify both __rustc-option and rustc-option-yn to do that, and
-> > putting it here seemed more future-proof against making the same
-> > mistake in any rustc-* commands added in the future.
->
->
-> One solution is to delete rustc-option-yn since there are no users of it.
->
-> Another solution is to refactor the code.
->
-> Either way, there is no good reason for code duplication.
->
->
-> If you keep rustc-option-yn, you can rebased v3 on top of this patch:
-> https://lore.kernel.org/lkml/20241009102821.2675718-1-masahiroy@kernel.or=
-g/T/#u
+On Tue, 08 Oct 2024 15:04:52 +0100,
+Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+>=20
+>=20
+> =E5=9C=A8 2024/10/8 16:55, Marc Zyngier =E5=86=99=E9=81=93:
+> > On Tue, 08 Oct 2024 09:24:29 +0100,
+> > Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+> >> According to GTDT Table Structure of ACPI specification, the result of
+> >> expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
+> >> with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
+> > There is no such language in the spec. It simply says "Offset to the
+> > Platform Timer Structure[] array from the start of this table".
+> OK, I mean that in current code, the condition of this check is redundant.
 
-I'll rebase on top of that. If we choose to delete rustc-option-yn
-then I think we should first merge the refactor and then delete it in
-a follow-up. That way, when someone does need it, they will find the
-refactored implementation in the git history.
+That's not my reading if it. Where do you see another validity check
+that makes this one superfluous?
 
-Alice
+> >> in function acpi_gtdt_init(), so the condition of the "invalid timer
+> >> data" check will never be true, remove the EINVAL error check branch
+> >> and change to void return type for acpi_gtdt_init() to simplify the
+> >> function implementation and error handling by callers.
+> > And ACPI tables are well known to be always correct, right?
+> Not always, check is needed, but should be changed.
+
+You are not changing it, you are getting rid of it, and I don't see
+you replacing it with anything else.
+
+> >> Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
+> >> GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
+> >> not be called with parameter platform_timer_count set to NULL and we
+> >> can explicitly initialize the integer variable which is used for stori=
+ng
+> >> the number of platform timers by caller to zero, so there is no need to
+> >> do null pointer check for platform_timer_count in acpi_gtdt_init(),
+> >> remove it to make code a bit more concise.
+> >>=20
+> >> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> >> ---
+> >> Changes in v2:
+> >> - initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
+> >>=20
+> >> v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@h=
+uawei.com/
+> >> ---
+> >>   drivers/acpi/arm64/gtdt.c            | 31 +++++++-------------------=
+--
+> >>   drivers/clocksource/arm_arch_timer.c |  6 ++----
+> >>   include/linux/acpi.h                 |  2 +-
+> >>   3 files changed, 11 insertions(+), 28 deletions(-)
+> >>=20
+> >> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> >> index c0e77c1c8e09..7fe27c0edde7 100644
+> >> --- a/drivers/acpi/arm64/gtdt.c
+> >> +++ b/drivers/acpi/arm64/gtdt.c
+> >> @@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
+> >>    * @table:			The pointer to GTDT table.
+> >>    * @platform_timer_count:	It points to a integer variable which is u=
+sed
+> >>    *				for storing the number of platform timers.
+> >> - *				This pointer could be NULL, if the caller
+> >> - *				doesn't need this info.
+> >> - *
+> >> - * Return: 0 if success, -EINVAL if error.
+> >>    */
+> >> -int __init acpi_gtdt_init(struct acpi_table_header *table,
+> >> +void __init acpi_gtdt_init(struct acpi_table_header *table,
+> >>   			  int *platform_timer_count)
+> >>   {
+> >> -	void *platform_timer;
+> >>   	struct acpi_table_gtdt *gtdt;
+> >>     	gtdt =3D container_of(table, struct acpi_table_gtdt, header);
+> >>   	acpi_gtdt_desc.gtdt =3D gtdt;
+> >>   	acpi_gtdt_desc.gtdt_end =3D (void *)table + table->length;
+> >>   	acpi_gtdt_desc.platform_timer =3D NULL;
+> >> -	if (platform_timer_count)
+> >> -		*platform_timer_count =3D 0;
+> >>     	if (table->revision < 2) {
+> >>   		pr_warn("Revision:%d doesn't support Platform Timers.\n",
+> >>   			table->revision);
+> >> -		return 0;
+> >> +		return;
+> >>   	}
+> >>     	if (!gtdt->platform_timer_count) {
+> >>   		pr_debug("No Platform Timer.\n");
+> >> -		return 0;
+> >> +		return;
+> >>   	}
+> >>   -	platform_timer =3D (void *)gtdt + gtdt->platform_timer_offset;
+> >> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt))=
+ {
+> >> -		pr_err(FW_BUG "invalid timer data.\n");
+> >> -		return -EINVAL;
+> >> -	}
+> >> -	acpi_gtdt_desc.platform_timer =3D platform_timer;
+> >> -	if (platform_timer_count)
+> >> -		*platform_timer_count =3D gtdt->platform_timer_count;
+> >> -
+> >> -	return 0;
+> >> +	acpi_gtdt_desc.platform_timer =3D (void *)gtdt + gtdt->platform_time=
+r_offset;
+> > And now you are trusting something that potentially points to some
+> > unexpected location, blindly using it. It is bad enough that the
+> > current checks are pretty poor (no check against the end of the
+> > table for the first timer entry), but you are making it worse.
+> >=20
+> > 	M.
+>=20
+> Can I use the second and third bytes (the length) of platform timer
+> structure to check against the end of the table ?
+
+That's how it is supposed to be done indeed.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
