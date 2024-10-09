@@ -1,85 +1,52 @@
-Return-Path: <linux-kernel+bounces-356950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17FD996944
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:52:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27945996946
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DC211F25E41
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20AA1F244F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0860E1925BD;
-	Wed,  9 Oct 2024 11:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bconrrnh"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B482D1925BB;
+	Wed,  9 Oct 2024 11:52:35 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB961922FC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DD51922DA;
+	Wed,  9 Oct 2024 11:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474708; cv=none; b=G4jjkVjo9N90cztGE4u5JHoOxMiuEgjSF+aKY5tjPVsQh03RKAwEuRHx/Gv6yhddANorJxbXYcn9948KCgdYvvy5Ryrgt78HgAyhmD2h+zcfMX1XvWlJi7vadGEAMxSZBXMhd3IJwv4oF2m4dUDKyEnu04P0ug7rdTT6ZQkGdW0=
+	t=1728474755; cv=none; b=e0yix4rDd+B7zbsJnB4HR0N2bs4qjg/gCDiKT9UqQEHz6PI/wa7a5T6T0DZN+DKtB3xQF6tX/ttQCfLAVfETRni0T5xpmo0/qbMVF3LX+zBX19s/x8EKQL0Juxu6UmknRPzYp6WbC0tp93PiuTU9tH3K5AFFfbQXiYALRlUs0i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474708; c=relaxed/simple;
-	bh=7+eISHNu4uiQ47pDt/DSf8ldSBnlnXKbXyoRYwTIlV4=;
+	s=arc-20240116; t=1728474755; c=relaxed/simple;
+	bh=tOY/lPf/BdIO3Ajl6LWHJxWjxkAveQ94QJQbWdlBEe4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvIO3Qd961lcb5jKPadREJlzl+44SSNGpZ96ulEzHVGJ0Maxhw9XvIxJZrqEmOeJAOLDH2W/oChIC0QPRcccxBc9bG57cF4zD05N9odePTy/0l9NUyfT2x7sA+xOXTnXh6roM1Te1xi9cwbf/w3CDMo7Ps1I4AltpgNNa+386k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bconrrnh; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso8223436a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728474704; x=1729079504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6jKWjRvRRcJdMU7TrSrOqImZ9Mn58A79NvUZszvi6E=;
-        b=bconrrnh5UBET17mgUpmkSN1m5qgRjh8eCY5G/Naz8I2SL39LdYZ5Bf64LNbSaPkld
-         P/10x2VoSwFA4xiPciX/BNBSh5TuiHrTbeGU9DJqf1BhrmYtfRirvtbodKDu+svDloKu
-         O3vhd4hmbPZ4LTx0o7PUe2Y6ikDymaKnW5glnhfpDtOCv6o4OM1mDl6CDGPb1AFbCbYc
-         8/zYqR4SuYiNr+tNx1UPGhQzI1oxRVxt9lxpyOqYrfRh86AcfAqSFPnGEj3PFlge6byP
-         2OZu7GY6q0OsjFzYup4QZiFAGx7+zEBR+cUV5YdIk8McceVI6DxE+5c4VSmpTtqGHbcU
-         AH2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728474704; x=1729079504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6jKWjRvRRcJdMU7TrSrOqImZ9Mn58A79NvUZszvi6E=;
-        b=SaSC6E9luoKSfrUS2IR61K8dH2GK5pO7/V2PriRQPGCqwJguonPV/XGxAqkwo9QxwE
-         GWfUtBKnVJb7NSTblfrWV13/rIf1Mlb2SX9Dbk36P8IiGa1gww1xQuD7Dl0IVljEDvfI
-         /s/XJ52LYstY7HmbvnIX069Cxkg6yYPvyMHonaY8iytePukb0A5SxoiM/2HUaWNyUT9y
-         foWNz74PJlTiefZNbI7snT38kLmwuyediwVNJoJQppGSOJUl+E6Y8vznenxIrIVRUdSi
-         BRz4CrXeWpOq52LbQC2NdHudnkFh+MEt612I9QXAXCNYPo/S6tAJm8Lk7U4USAbpuyBI
-         ct3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVTYvnxqw6gxoKd5pFH5OSX4uOK9Yd3EU2DA2fU5yjLXKgXjefJDTwQwh5e+wl0LclU6B3ExMtLnTnTiIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr9VBJjXvvWrCFVe6bwGRi6VFDu1T7hvUH8TB7wneoqH86NUVV
-	0ZpodU1hx820i/2o784hXe9onX3La+jSLAh52d3+y0T2hl1icI7adJdotGAmtno=
-X-Google-Smtp-Source: AGHT+IGKpe5RJdRvKaNKGeWlJU8yuhUR86qwyFDbVPAhlwFfcx+fGtxwpK017I4wKqBnPOdRSWgB4w==
-X-Received: by 2002:a17:907:3da7:b0:a99:451b:38fe with SMTP id a640c23a62f3a-a998d174df2mr179992766b.26.1728474703666;
-        Wed, 09 Oct 2024 04:51:43 -0700 (PDT)
-Received: from linaro.org ([82.77.84.93])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a995668f4b6sm396323966b.48.2024.10.09.04.51.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 04:51:43 -0700 (PDT)
-Date: Wed, 9 Oct 2024 14:51:41 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Pengfei Li <pengfei.li_1@nxp.com>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
-	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
-	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
-Message-ID: <ZwZuTWspV54Pn0GN@linaro.org>
-References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
- <20240627082426.394937-2-pengfei.li_1@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0Wa4xOJJtNOqrtAKVHwvvHgb58hCk2Mcx0dgvH8ruLAHyBkrywMGv2BPwiEKBt/SD/QiwpjmOI08t8z4KGg6EOu8jPNRJD+njL03DWQnAyOgseGHxTl20j285sPVth+rxUwlqaZbpu2mG03w3jlm3ib8j3Z6ZCcag7uKGpOrAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syVEt-0000000067Z-05Lf;
+	Wed, 09 Oct 2024 11:52:23 +0000
+Date: Wed, 9 Oct 2024 12:52:13 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: populate host_interfaces when
+ attaching PHY
+Message-ID: <ZwZubYpZ4JAhyavl@makrotopia.org>
+References: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
+ <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,49 +55,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627082426.394937-2-pengfei.li_1@nxp.com>
+In-Reply-To: <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
 
-On 24-06-27 16:24:25, Pengfei Li wrote:
-> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
-> the number of clocks, but it is not part of the ABI, so it should
-> be moved to clk driver.
+Hi Russell,
+
+On Wed, Oct 09, 2024 at 10:01:09AM +0100, Russell King (Oracle) wrote:
+> On Wed, Oct 09, 2024 at 02:57:03AM +0100, Daniel Golle wrote:
+> > Use bitmask of interfaces supported by the MAC for the PHY to choose
+> > from if the declared interface mode is among those using a single pair
+> > of SerDes lanes.
+> > This will allow 2500Base-T PHYs to switch to SGMII on most hosts, which
+> > results in half-duplex being supported in case the MAC supports that.
+> > Without this change, 2500Base-T PHYs will always operate in 2500Base-X
+> > mode with rate-matching, which is not only wasteful in terms of energy
+> > consumption, but also limits the supported interface modes to
+> > full-duplex only.
 > 
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> ---
+> We've had a similar patch before, and it's been NAK'd. The problem is
+> that supplying the host_interfaces for built-in PHYs means that the
+> hardware strapping for the PHY interface mode becomes useless, as does
+> the DT property specifying it - and thus we may end up selecting a
+> mode that both the MAC and PHY support, but the hardware design
+> doesn't (e.g. signals aren't connected, signal speed to fast.)
 > 
-> Notes:
->     Change for v2:
->     - Use pre-processor define to simplify code.
+> For example, take a board designed to use RXAUI and the host supports
+> 10GBASE-R. The first problem is, RXAUI is not listed in the SFP
+> interface list because it's not usable over a SFP cage.
+
+I thought about that, also boards configured for RGMII but both MAC
+and PHY supporting SGMII or even 2500Base-X would be such a case.
+In order to make sure we don't switch to link modes not supported
+by the design I check if the interface mode configured in DT is
+among those suitable for use with an SFP (ie. using a single pair
+of SerDes lanes):
+if (test_bit(pl->link_interface, phylink_sfp_interfaces))
+	phy_interface_and(phy_dev->host_interfaces, phylink_sfp_interfaces,
+			  pl->config->supported_interfaces);
+
+Neither RXAUI nor RGMII modes are among phylink_sfp_interfaces, so
+cases in which those modes are configured in DT are already excluded.
+
+> So, the
+> host_interfaces excludes that, and thus the PHY thinks that's not
+> supported. It looks at the mask and sees only 10GBASE-R, and
+> decides to use that instead with rate matching. The MAC doesn't have
+> support for flow control, and thus can't use rate matching.
 > 
->  drivers/clk/imx/clk-imx93.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index c6a9bc8ecc1f..c8b65146e76e 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -15,6 +15,8 @@
->  
->  #include "clk.h"
->  
-> +#define IMX93_CLK_END 202
-> +
+> Not only have the electrical charateristics been violated by selecting
+> a faster interface than the hardware was designed for, but we now have
+> rate matching being used when it shouldn't be.
 
-TBH, I don't like this. And I still don't understand the reason.
+As we are also using using rate matching right now in cases when it
+should not (and thereby inhibiting support for half-duplex modes), I
+suppose the only good solution would be to allow a set of interface
+modes in DT instead of only a single one.
 
-Where are the clocks you want to add ?
+Or, as that is the only really relevant case, we can be more strict
+on the condition and additional modes to be added, ie. check if both
+PHY and MAC support both 2500Base-X and SGMII, and only add SGMII
+in case 2500Base-X is selected in DT.
 
-And why wouldn't it be OK to just keep this in the bindings header even
-if you need to add more clocks ?
+I have never seen designs on which SGMII and 2500Base-X would both
+be supported by the SoC but use a different set of pins. Also, as
+2500Base-X is 2.5x as fast as SGMII, it's safe to assume that a
+board which has been designed for 2500Base-X would also be fine
+using SGMII.
 
-For the moment, I don't see the value of this change.
-
-Sorry, but NACK.
-
->  enum clk_sel {
->  	LOW_SPEED_IO_SEL,
->  	NON_IO_SEL,
-> -- 
-> 2.34.1
-> 
+Let me know of either of the above would be acceptable.
 
