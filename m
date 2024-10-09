@@ -1,133 +1,173 @@
-Return-Path: <linux-kernel+bounces-356096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8C2995C6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:45:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE7C995C6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B85731C22405
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EA01C22016
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325CD530;
-	Wed,  9 Oct 2024 00:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C76F9E6;
+	Wed,  9 Oct 2024 00:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QnPfjmpA"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bx3FeZnd"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C179EA;
-	Wed,  9 Oct 2024 00:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014064C69
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 00:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728434700; cv=none; b=jtm7RMQ7t4MAV1NF5/oay75cdabuCW/OdzUkwLOOoK25SQ9RZwWytQk7xh4NMN22XVVVNNePTvgKzx18Sxe9ODZWo1yfJmSOH17SSE/ke6g/Jvi5R/qLgsykBNPBdgLfpL1XdNRtYGgX1I56MldF3vjr8xoTeK8vJKZEKL5EIbA=
+	t=1728434945; cv=none; b=OM1L1Qg0j7TvPA8lPqg8Xw69cFOPESDA1MzFKknb/DKc2OQvpmEQl0+ES8PRs/5XaZsBSKg0pfkVYpkkMm6MD4d35g0jdMS3gzBHVWMdJzLFB6Yc6Ule+WegNucZwnewln5EQF1OTKHpo4UbmOrctb1pbGwaD2R5W3HLTz/itYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728434700; c=relaxed/simple;
-	bh=LcYBSAt2WmfbTdrkbUFEBmpBqWEGTUpWfgCGzhGqpwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gM1Z9PC5dwkyGyQcbKlbTRRkT1fJyKKLvfpKLa49pov2VxVcLeUxRSKVusFTeeuHkxiTD+kPPMG5kfM88Hfws09snMs7hf4RsIxcGfnMwJ0hAOiIHMD57cPbZ3lwt2IiNGnjWStp9L8Ns33S9xgTJzP4pW1JSBRnH5u7JiS94uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QnPfjmpA; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728434695;
-	bh=RXN51MLDI2R2QyOtshsJQTkJZtwKN8Dmf1gBWRzdo1Y=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QnPfjmpAFLaCq0lLbEG6wTtcLo1k+oQm1amnP+1B0Vk9IGCJ+kZLlk9gRTAQQ0Koj
-	 chywpKedz2Kn2mNxgWto2bsY4YJdo1WQhSBZPQIUCVhMwT5lkYFA8fID9/KDRz7vMd
-	 O7j+VH3U6wTZXG4N9jaEiHrE1Y+vXUjoWmmkIS4tbv/AJ9QuIg0AwXRT+geiEsk8Po
-	 7WiUtZExF5WQa6vlqb83J2cZXypLV1i/6DY45apGbuZiOKY0WAdCjr7Cz41DvEBJcn
-	 iFsb6iH6hZsvmc4LUFnDtDpaqWn5UIYozVgs3mrPk2GvShXl1RLuJW/K0Au+m1GyT4
-	 18FAyiorjnlog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNZ0l2PZRz4wcy;
-	Wed,  9 Oct 2024 11:44:55 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 11:44:55 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>,
- Wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tree Davies <tdavies@darkphysics.net>
-Subject: linux-next: manual merge of the wireless-next tree with Linus' tree
-Message-ID: <20241009114455.52db31ad@canb.auug.org.au>
+	s=arc-20240116; t=1728434945; c=relaxed/simple;
+	bh=Cpx7rXkTSx8ps5kFdq5cHdGaqq6HdXgYYm9h5SAMX88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l/wBf05omBx7QHrLhm2SHQBclVdahdJmNZIKalffsmCH8RCIt6rIeNpbmPzE3HqByTa4Xej/GMOEO7uMxnptNoMZ7Rqe73HMJlN1mwq1uObasoBr0BlfHb/QTnFMyUqmE0ZTm7h0d+eGTbQutfOS+6h6msllEv/lXXfswJAuQig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bx3FeZnd; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c5b628b7cso79135ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 17:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728434943; x=1729039743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWn47q1YdrUk3zjrW3LLzHqPpTNHpFHGg0Pnci7sCN0=;
+        b=bx3FeZnd6FbVD84wfCluFoJXzxhh/c7r4Dy8QyLsdESc9/ZOXZGMgpxNRZ8Kn6SFPG
+         sz3x8nNxad6WLhv7BbLfIqopJf55/qRAa8AWpRuIzw8Ib/01FleJAr5A2v5QxlXkZ+/0
+         O4ElJ2tzrHjBO1dE3cvGd99JJYPsoh852UAva65cQtbb1xT4oExGWZ3IvtResCxHJWpS
+         PhG6zHdG3yc0ndUJeolpy6DZBBPgwE4UO0italYSBdK3WH4fg2wqH38mqYqEXjmVwIZ9
+         sbbDDmSTPaRL1Uzwo+WxX1o73xmkZjVtUfC2mBpRFSfo6fmBmKiSOXjOWP9a0YXYFNJN
+         L1aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728434943; x=1729039743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DWn47q1YdrUk3zjrW3LLzHqPpTNHpFHGg0Pnci7sCN0=;
+        b=Yl/0yrU+2NcqYg2snPMYEzwl/VcoNz/FKkUsVT0ARTKhlRoudB5kfoRvov3t+jL3NB
+         6DcodrB8qmbCtlCUODmxHq1m/a44RIncpkZDMjSQnxhkpuVsEY3Z89am/x12HumYU3as
+         1/QwwHkPKWfZvAiskSxchgk/u6Phf1FuqXHfAdI7xw1SiGaY4hUgCjjijjIkRXVjNbc+
+         DHvZAo8J9KT8iELQXHyul7BC7SOZiPVYz7xn8FkiZi2orlyO9YmKE36UzF7eybT8v6kR
+         kNtq2/VPAatGcRWBJrlWog0E6pY+yJJw4wNkBqAuitU0qjXlCOWBl1ubG+ZSGwRy52cY
+         OARQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdKBsscsEjPVK+UrGFuSKJuYtQV6kHhm0py/ngrh+qcqCuGa9yG5tBUmhRNTzHsn86/QbbbU1Xx4aNVlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+hAsPbcWLvzxIs56z8d/fPE9ax0sb+TJCxoj+zGx6ZO2xxGJZ
+	ix/YjhC/OBJeMfSyJzD45QNIetPRyy3sLcwDaM8JB6eHpksWZqOVWgo27zJrQoij5jK7rXdoFxi
+	vxiwe7PVxs2AxyVt7if5ZkCtltGF6vbmdLV/H
+X-Google-Smtp-Source: AGHT+IGfkP1c7PwtfYyG1Mr3DQyh9f2R69qD+cgCgsoIan/75MTWGHIzdiSEzFhxx0fR3MEzmxETjFf/tHN9LfiuL0g=
+X-Received: by 2002:a17:902:e552:b0:1f7:34e4:ebc1 with SMTP id
+ d9443c01a7336-20c64b74322mr713885ad.5.1728434942876; Tue, 08 Oct 2024
+ 17:49:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/cy25zv_kQV4WXhV.NuxvSfa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/cy25zv_kQV4WXhV.NuxvSfa
-Content-Type: text/plain; charset=US-ASCII
+References: <20241009003938.254936-1-linux@treblig.org>
+In-Reply-To: <20241009003938.254936-1-linux@treblig.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 8 Oct 2024 17:48:49 -0700
+Message-ID: <CAP-5=fVNcMq7xjPHFE-f=LddSDz4G2cWxUGDjSuFtafVAtY6bg@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Remove unused color_fwrite_lines
+To: linux@treblig.org
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Oct 8, 2024 at 5:39=E2=80=AFPM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> color_fwrite_lines() was added by 2009's commit
+> 8fc0321f1ad0 ("perf_counter tools: Add color terminal output support")
+>
+> but has never been used.
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Today's linux-next merge of the wireless-next tree got conflicts in:
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-  drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
-  drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.c
-  drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-  drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h
-  drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
-  drivers/staging/rtl8192e/rtl8192e/r8192E_phy.h
-  drivers/staging/rtl8192e/rtl8192e/rtl_core.c
-  drivers/staging/rtl8192e/rtl8192e/rtl_core.h
-  drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
-  drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
-  drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-  drivers/staging/rtl8192e/rtl819x_BAProc.c
-  drivers/staging/rtl8192e/rtl819x_HTProc.c
-  drivers/staging/rtl8192e/rtl819x_TSProc.c
-  drivers/staging/rtl8192e/rtllib.h
-  drivers/staging/rtl8192e/rtllib_rx.c
-  drivers/staging/rtl8192e/rtllib_softmac_wx.c
+Thanks,
+Ian
 
-between commits:
-
-  5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
-  5e6bf74d63c2 ("Staging: rtl8192e: Rename variable RxDrvInfoSize")
-and many others
-
-from Linus' tree (pre v6.12-rc2) and commit:
-
-  be9be9f54f22 ("staging: rtl8192e: delete the driver")
-
-from the wireless-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/cy25zv_kQV4WXhV.NuxvSfa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcF0gcACgkQAVBC80lX
-0GwZ+AgAmGKzGKsTtfw9LQ6bQvROvaiJBeB3qIJHyM2CsAfO/LYIiZovU7Fk14bF
-gOLZocY6URxj2pIjgVXn0dZ7yuEGCppFDXpyVyojEzkOhJHmuREkl/jJ4Kigi1mu
-/KNV6cJGGH2amyxTCzxGo+H/0rkR8ziA19g87gWXA0lFhct0nJaaSS2asw61VUTc
-YfXqOJpTkh3MRL+7k9Kt51dHfgCW61fIijVervmDdsjFviPCHe9/DnvyoJQ+cKVL
-z+i0u6r+1NDLCFrHBOPqaRfE5auFkOdn4OOF1qx+jp5FWT7Xbd8bW2JQeJfNDNH9
-te/TGQajZHf84B1NwL23AhxerfTgaA==
-=HIPM
------END PGP SIGNATURE-----
-
---Sig_/cy25zv_kQV4WXhV.NuxvSfa--
+> ---
+>  tools/perf/util/color.c | 28 ----------------------------
+>  tools/perf/util/color.h |  1 -
+>  2 files changed, 29 deletions(-)
+>
+> diff --git a/tools/perf/util/color.c b/tools/perf/util/color.c
+> index bffbdd216a6a..e51f0a676a22 100644
+> --- a/tools/perf/util/color.c
+> +++ b/tools/perf/util/color.c
+> @@ -93,34 +93,6 @@ int color_fprintf(FILE *fp, const char *color, const c=
+har *fmt, ...)
+>         return r;
+>  }
+>
+> -/*
+> - * This function splits the buffer by newlines and colors the lines indi=
+vidually.
+> - *
+> - * Returns 0 on success.
+> - */
+> -int color_fwrite_lines(FILE *fp, const char *color,
+> -               size_t count, const char *buf)
+> -{
+> -       if (!*color)
+> -               return fwrite(buf, count, 1, fp) !=3D 1;
+> -
+> -       while (count) {
+> -               char *p =3D memchr(buf, '\n', count);
+> -
+> -               if (p !=3D buf && (fputs(color, fp) < 0 ||
+> -                               fwrite(buf, p ? (size_t)(p - buf) : count=
+, 1, fp) !=3D 1 ||
+> -                               fputs(PERF_COLOR_RESET, fp) < 0))
+> -                       return -1;
+> -               if (!p)
+> -                       return 0;
+> -               if (fputc('\n', fp) < 0)
+> -                       return -1;
+> -               count -=3D p + 1 - buf;
+> -               buf =3D p + 1;
+> -       }
+> -       return 0;
+> -}
+> -
+>  const char *get_percent_color(double percent)
+>  {
+>         const char *color =3D PERF_COLOR_NORMAL;
+> diff --git a/tools/perf/util/color.h b/tools/perf/util/color.h
+> index 01f7bed21c9b..aecf56dae73f 100644
+> --- a/tools/perf/util/color.h
+> +++ b/tools/perf/util/color.h
+> @@ -39,7 +39,6 @@ int color_vsnprintf(char *bf, size_t size, const char *=
+color,
+>  int color_vfprintf(FILE *fp, const char *color, const char *fmt, va_list=
+ args);
+>  int color_fprintf(FILE *fp, const char *color, const char *fmt, ...);
+>  int color_snprintf(char *bf, size_t size, const char *color, const char =
+*fmt, ...);
+> -int color_fwrite_lines(FILE *fp, const char *color, size_t count, const =
+char *buf);
+>  int value_color_snprintf(char *bf, size_t size, const char *fmt, double =
+value);
+>  int percent_color_snprintf(char *bf, size_t size, const char *fmt, ...);
+>  int percent_color_len_snprintf(char *bf, size_t size, const char *fmt, .=
+..);
+> --
+> 2.46.2
+>
 
