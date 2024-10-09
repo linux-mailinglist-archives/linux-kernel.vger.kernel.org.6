@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-356154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40DE995D24
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:39:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1495995D12
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4B1F1C230A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:39:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A5BBB21828
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFCE208AD;
-	Wed,  9 Oct 2024 01:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD7D2BB1B;
+	Wed,  9 Oct 2024 01:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="TkLgMGw9"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF272C182
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RWVsC8JT"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766B9DF5C;
+	Wed,  9 Oct 2024 01:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728437941; cv=none; b=Lv7R2V4cnUszedGLtiRnPhojMFY916As+ee542+6Mw8qLIY6fiFRWr82wOe2D2NdeD2u5kly3iqDu2lTyYu22rZZYkf+u0tHC33YJqZXZKs1OcUdbrN3HBwRuN/I/3+PuaZEeEedFbXKpiBouMYnCiA4rs/wuHYHOW/dENwGSaE=
+	t=1728437865; cv=none; b=U74IQttCSBb6j2QtVGiR+301wjccfn2qNs5WSVQzThes/08tB+1PYhQnnDK1/sh2BUvS8vlQyWKBuaVyy6F0RNKRVJMh/gwB6BoCJ2BNhCP+1svrRVMEPlgirYmwGJvmAN04FzchL6JBbSFxWc+b2/IPByh8oG/zyn9L3id/BkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728437941; c=relaxed/simple;
-	bh=kaAeI9monXMWZI6YS6RzEjoFBRoBvU9DsyUA6h3LQUQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=EiqCQDG8m8w73j421b1I4LR471eMWdEPuP66Eu+sOFJKZLpjhibYPrMz6U0cCLAubYvxXe/FrEf7M1fWm2fsGCRiufAjNsxJM/H4fO5YIV7y1DTlug7XJWXf3e/cXTeHPmEdUZY4XYg+Dsl2D8A0KqDNfpaa1K0oKLxmCeo3X3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=TkLgMGw9 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=lF8Iy099lGRSzwTXHinD90uu+GLPeOTezMM8Ky3/UKI=; b=T
-	kLgMGw9cC19LfbwcND7zM4wBlEsjsaEZlIwhauQiIbaC1+JFORHRFZMwi1TRJp/V
-	RvSHtjmRKWMyP8VX3l8hShh5nFeIi0A31BVmAJsn4QUVDKhLdNI0lKfYrFIUSBKq
-	1gn3UM6lXfOu8Sw9UuwLEeqKLUySkLlBcerbq2ISjY=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-134 (Coremail) ; Wed, 9 Oct 2024 09:37:35 +0800 (CST)
-Date: Wed, 9 Oct 2024 09:37:35 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: shiyongbang <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re:[PATCH drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
- drivers
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240930100610.782363-2-shiyongbang@huawei.com>
-References: <20240930100610.782363-1-shiyongbang@huawei.com>
- <20240930100610.782363-2-shiyongbang@huawei.com>
-X-NTES-SC: AL_Qu2ZCviYuEAu4yKfY+lSwTJP35VmMKvwz6RzoMQNfeEqqTHuxyUMQ35aO0vI1+J7N8pmqsISi/Miw50tXeO/
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1728437865; c=relaxed/simple;
+	bh=AC8IwYKlZAhnwoZcAD6OoeZEyUqbSufuj24gP/xiK1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RKs6ub/TC6tBO59RByz8Z2eqI84fKJB7JFEButkk3D7+coxaIP387TpOVD7/hnZP3t0QOHPr2FakheBu6WlVerSj6NDwAWjBY7Nl5cuq1tbueAzLMDMRyvs+JH6JYzYYwlStA8aMjrD5SFBRj3hh0ujbOxGhVr0V/AfgSXXd73I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RWVsC8JT; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e25cc9e94eeso5473419276.3;
+        Tue, 08 Oct 2024 18:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728437863; x=1729042663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RS25rCHgbp954RpgJrtXdePW+X6k0WGqVouYZKkE5ds=;
+        b=RWVsC8JTIbohMqHdLult+vB1jMHsi0zMOkeuLSqgBOzzCVJtvwk+eVc1gzyCj4Cp5w
+         lTXVmT1P/Roih6qLPnF/MRexHFapJQ1lFrS1Vspxh4JNPDdryajbKlt1gCGXdkFpR/Cn
+         ghF7GScjZyKEjyMWDtqA+QuLqUaS4TpHSSB0rDR/pugxw7HC2oe4MkRenOOYop6F4ei1
+         1dQDAz1z5lY0DFS+tF9BywkyTTpqS++PP2X/Iw6VrhQT+LFosV6b24XOB7DmeCAt1M7G
+         Vjh0w9kWOlvrmToVaGAw1bwBWfZaWrpRGSMGJB88I/MR0L+MBY5YBq7OfQNyAoS/xcmY
+         B9Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728437863; x=1729042663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RS25rCHgbp954RpgJrtXdePW+X6k0WGqVouYZKkE5ds=;
+        b=wLmCcyiSKkmigVwty5hLWSihfjC1B5gtgXSV4rZWQq19b84tZ5ILPzV1UQHfw/w1N3
+         WYkYi1mnWBR1FEtqDqhyRszI5vmzboWUz2iByk6WDiVoacvPgY6VEfFxz/uOn779z4S2
+         Hmhi7V7ORcX8ARXAWN3jG9n7fRz9Zx1SRpB93Bw4Ch6RJLNzxmQazYPAvE6d3trXwU29
+         2iA/hU1v0z5YVBZ9r4v9/yRXEmPDzQIyfP0GHuuiWldCTDoMeH3dSxr1T5QRXY9yQnhW
+         ZLGgfnYvI+T0m1mKMN5eQb8tRd39+SMhc3HAx9NyJmTSbsYShTV3awSEwB9hDILfwMrM
+         C86A==
+X-Forwarded-Encrypted: i=1; AJvYcCWmwVjmUklAL25F0sE95NrqO665sxM4NI5Y97fjxsmEv/8AvlhrjhRO438bR5E1k97M6Z5DD26g@vger.kernel.org, AJvYcCXJQEjnsDE9frWVgdtuLfErzB0iuXfiJ9Ofk2tmvGYAwV98i5vKk89liy/AlvG3H4Eoz6VpJKMpyk/dF4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdnBRzcWVkX7G+J9PesXl18LvK34SGftGOFEk5CthudgbfeTuY
+	btLWA0CQThkPe6co0DgT/5ZEuuMuDOWTLXIP63OmAbBmvDz5uwtOlqfsslEibzFGaqjzgsCErPE
+	egHsYz58PSaLLsGPkyx7O7lMc5Y0=
+X-Google-Smtp-Source: AGHT+IGXqaXDkVzInEgcQTMSVlyW15Rolm0VIc13duHSVUbMuqDQh02Kb0C6MXj1H4s8yqIRAGRoflEkHZOm9lc/kfE=
+X-Received: by 2002:a05:6902:150d:b0:e26:3701:71fe with SMTP id
+ 3f1490d57ef6-e28fe409162mr816393276.42.1728437863317; Tue, 08 Oct 2024
+ 18:37:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <9c25d1f.1954.1926eeca432.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:higvCgDnA19f3gVn1ZkIAA--.50767W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hVzXmcF1lHnmgAEs2
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20241008142300.236781-1-dongml2@chinatelecom.cn>
+ <20241008142300.236781-9-dongml2@chinatelecom.cn> <ZwV0cjdg2x67URMx@debian>
+In-Reply-To: <ZwV0cjdg2x67URMx@debian>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 9 Oct 2024 09:38:24 +0800
+Message-ID: <CADxym3ZDkjuu9TJQ_vmbky75T+bn32XMrMhQRi=rVtxgRXC_Zw@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 08/12] net: vxlan: use kfree_skb_reason() in vxlan_xmit()
+To: Guillaume Nault <gnault@redhat.com>
+Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com, 
+	horms@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
+	bpoirier@nvidia.com, b.galvani@gmail.com, razor@blackwall.org, 
+	petrm@nvidia.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CkhpIEJhaWhhbu+8jAoKQXQgMjAyNC0xMC0wMSAxNToyNjoyMywgInNoaXlvbmdiYW5nIiA8c2hp
-eW9uZ2JhbmdAaHVhd2VpLmNvbT4gd3JvdGU6Cj5Gcm9tOiBiYWloYW4gbGkgPGxpYmFpaGFuQGh1
-YXdlaS5jb20+Cj4KPkFkZCBkcCBhdXggcmVhZC93cml0ZSBmdW5jdGlvbnMuIFRoZXkgYXJlIGJh
-c2ljIGZ1bmN0aW9ucwo+IGFuZCB3aWxsIGJlIHVzZWQgbGF0ZXIuCj4KPlNpZ25lZC1vZmYtYnk6
-IGJhaWhhbiBsaSA8bGliYWloYW5AaHVhd2VpLmNvbT4KPi0tLQo+IGRyaXZlcnMvZ3B1L2RybS9o
-aXNpbGljb24vaGlibWMvTWFrZWZpbGUgICAgIHwgICAzICstCj4gZHJpdmVycy9ncHUvZHJtL2hp
-c2lsaWNvbi9oaWJtYy9kcC9kcF9hdXguYyAgfCAyMjcgKysrKysrKysrKysrKysrKysrKwo+IGRy
-aXZlcnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvZHAvZHBfYXV4LmggIHwgIDgwICsrKysrKysK
-PiBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29uL2hpYm1jL2RwL2RwX2NvbW0uaCB8ICA4OCArKysr
-KysrCj4gZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9oaWJtYy9kcC9kcF9yZWcuaCAgfCAgNzYg
-KysrKysrKwo+IDUgZmlsZXMgY2hhbmdlZCwgNDczIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24o
-LSkKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9oaWJtYy9k
-cC9kcF9hdXguYwo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vaGlzaWxpY29u
-L2hpYm1jL2RwL2RwX2F1eC5oCj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS9o
-aXNpbGljb24vaGlibWMvZHAvZHBfY29tbS5oCj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
-Z3B1L2RybS9oaXNpbGljb24vaGlibWMvZHAvZHBfcmVnLmgKPgo+ZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvTWFrZWZpbGUgYi9kcml2ZXJzL2dwdS9kcm0vaGlz
-aWxpY29uL2hpYm1jL01ha2VmaWxlCj5pbmRleCBkMjVjNzVlNjBkM2QuLjg3NzBlYzZkZmZmZCAx
-MDA2NDQKPi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvTWFrZWZpbGUKPisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9oaXNpbGljb24vaGlibWMvTWFrZWZpbGUKPkBAIC0xLDQgKzEs
-NSBAQAo+ICMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAtb25seQo+LWhpYm1jLWRy
-bS15IDo9IGhpYm1jX2RybV9kcnYubyBoaWJtY19kcm1fZGUubyBoaWJtY19kcm1fdmRhYy5vIGhp
-Ym1jX2RybV9pMmMubwo+K2hpYm1jLWRybS15IDo9IGhpYm1jX2RybV9kcnYubyBoaWJtY19kcm1f
-ZGUubyBoaWJtY19kcm1fdmRhYy5vIGhpYm1jX2RybV9pMmMubyBcCj4rCSAgICAgICBkcC9kcF9h
-dXgubwoKPisKPisjZGVmaW5lIERQQ0RfTElOS19CV19TRVQJCTB4MDEwMAo+KyNkZWZpbmUgRFBD
-RF9MQU5FX0NPVU5UX1NFVAkJMHgwMTAxCj4rI2RlZmluZSBEUENEX1RSQUlOSU5HX1BBVFRFUk5f
-U0VUCTB4MDEwMgo+KyNkZWZpbmUgRFBDRF9UUkFJTklOR19MQU5FMF9TRVQJCTB4MDEwMwo+KyNk
-ZWZpbmUgRFBDRF9ET1dOU1BSRUFEX0NUUkwJCTB4MDEwNwo+KyNkZWZpbmUgRFBDRF9MQU5FMF8x
-X1NUQVRVUwkJMHgwMjAyCj4rI2RlZmluZSBEUENEX0FESlVTVF9SRVFVRVNUX0xBTkUwXzEJMHgw
-MjA2CgpJdCBzZWVtcyB0aGF0IGFsbCBvZiB0aGVzZSBoYXZlIGJlZW4gZGVmaW5lZCBpbiB0aGlz
-IGhlYWRlciBmaWxlLgogaW5jbHVkZS9kcm0vZGlzcGxheS9kcm1fZHAuaO+8mgpEUF9MSU5LX0JX
-X1NFVApEUF9MQU5FX0NPVU5UX1NFVAoKCgoKPisKPisjZGVmaW5lIERQQ0RfVk9MVEFHRV9TV0lO
-R19MQU5FXzAJKEJJVCgwKSB8IEJJVCgxKSkKPisjZGVmaW5lIERQQ0RfUFJFX0VNUEhBU0lTX0xB
-TkVfMAkoQklUKDIpIHwgQklUKDMpKQo+KyNkZWZpbmUgRFBDRF9WT0xUQUdFX1NXSU5HX1NFVF9T
-CTAKPisjZGVmaW5lIERQQ0RfUFJFX0VNUEhBU0lTX1NFVF9TCQkzCj4rI2RlZmluZSBEUENEX1ND
-UkFNQkxJTkdfRElTQUJMRQkJQklUKDUpCj4rI2RlZmluZSBEUENEX0NSX0RPTkVfQklUUwkJQklU
-KDApCj4rI2RlZmluZSBEUENEX0VRX0RPTkVfQklUUwkJKEJJVCgwKSB8IEJJVCgxKSB8IEJJVCgy
-KSkKPisjZGVmaW5lIERQQ0RfRU5IQU5DRURfRlJBTUVfRU4JCTB4ODAKPisKPisjZGVmaW5lIERQ
-Q0RfVFJBSU5JTkdfUEFUVEVSTl9ESVNBQkxFCTB4MAo+KyNkZWZpbmUgRFBDRF9UUkFJTklOR19Q
-QVRURVJOXzEJCTB4MQo+KyNkZWZpbmUgRFBDRF9UUkFJTklOR19QQVRURVJOXzIJCTB4Mgo+KyNk
-ZWZpbmUgRFBDRF9UUkFJTklOR19QQVRURVJOXzMJCTB4Mwo+KyNkZWZpbmUgRFBDRF9UUkFJTklO
-R19QQVRURVJOXzQJCTB4Nwo+KyNkZWZpbmUgRFBDRF9WT0xUQUdFX1NXSU5HX0xFVkVMXzAJRklF
-TERfUFJFUChHRU5NQVNLKDEsIDApLCAwKQo+KyNkZWZpbmUgRFBDRF9WT0xUQUdFX1NXSU5HX0xF
-VkVMXzEJRklFTERfUFJFUChHRU5NQVNLKDEsIDApLCAxKQo+KyNkZWZpbmUgRFBDRF9WT0xUQUdF
-X1NXSU5HX0xFVkVMXzIJRklFTERfUFJFUChHRU5NQVNLKDEsIDApLCAyKQo+KyNkZWZpbmUgRFBD
-RF9WT0xUQUdFX1NXSU5HX0xFVkVMXzMJRklFTERfUFJFUChHRU5NQVNLKDEsIDApLCAzKQo+KyNk
-ZWZpbmUgRFBDRF9QUkVfRU1QSEFTSVNfTEVWRUxfMAlGSUVMRF9QUkVQKEdFTk1BU0soNCwgMyks
-IDApCj4rI2RlZmluZSBEUENEX1BSRV9FTVBIQVNJU19MRVZFTF8xCUZJRUxEX1BSRVAoR0VOTUFT
-Syg0LCAzKSwgMSkKPisjZGVmaW5lIERQQ0RfUFJFX0VNUEhBU0lTX0xFVkVMXzIJRklFTERfUFJF
-UChHRU5NQVNLKDQsIDMpLCAyKQo+KyNkZWZpbmUgRFBDRF9QUkVfRU1QSEFTSVNfTEVWRUxfMwlG
-SUVMRF9QUkVQKEdFTk1BU0soNCwgMyksIDMpCj4rCj4rI2RlZmluZSBEUF9MSU5LX1JBVEVfTlVN
-CQk0Cj4rI2RlZmluZSBEUF9MSU5LX1JBVEVfMAkJCTB4Ngo+KyNkZWZpbmUgRFBfTElOS19SQVRF
-XzEJCQkweEEKPisjZGVmaW5lIERQX0xJTktfUkFURV8yCQkJMHgxNAo+KyNkZWZpbmUgRFBfTElO
-S19SQVRFXzMJCQkweDFFCj4rI2RlZmluZSBEUF9BVVhfTkFUSVZFX1JFUExZX01BU0sJKDB4MyA8
-PCA0KQo+KyNkZWZpbmUgRFBfQVVYX0FDSwkJCSgwIDw8IDQpCj4rI2RlZmluZSBEUF9BVVhfTkFD
-SwkJCSgweDEgPDwgNCkKPisjZGVmaW5lIERQX0FVWF9ERUZFUgkJCSgweDIgPDwgNCkKPisjZGVm
-aW5lIERQX0NGR19BVVhfUwkJCTE3Cj4rI2RlZmluZSBEUF9DRkdfQVVYX1NUQVRVU19TCQk0Cj4r
-Cj4rI2RlZmluZSBBVVhfNF9CWVRFCQkJNAo+KyNkZWZpbmUgQVVYXzRfQklUCQkJNAo+KyNkZWZp
-bmUgQVVYXzhfQklUCQkJOAo+KyNkZWZpbmUgQVVYX1JFU0VUX0lOVEVSVkFMCQkxNQo+KyNkZWZp
-bmUgQVVYX1JFVFJZX0lOVEVSVkFMCQk1MDAKPisjZGVmaW5lIEFVWF9SRUFEWV9EQVRBX0JZVEVf
-UwkJMTIKPisKPisvKiBhdXhfY21kX2FkZHIgcmVnaXN0ZXIgc2hpZnQgKi8KPisjZGVmaW5lIEFV
-WF9DTURfUkVRX1RZUEVfUwkJMAo+KyNkZWZpbmUgQVVYX0NNRF9SRVFfTEVOX1MJCTQKPisjZGVm
-aW5lIEFVWF9DTURfQUREUl9TCQkJOAo+KyNkZWZpbmUgQVVYX0NNRF9JMkNfQUREUl9PTkxZX1MJ
-CTI4Cj4=
+On Wed, Oct 9, 2024 at 2:05=E2=80=AFAM Guillaume Nault <gnault@redhat.com> =
+wrote:
+>
+> On Tue, Oct 08, 2024 at 10:22:56PM +0800, Menglong Dong wrote:
+> > Replace kfree_skb() with kfree_skb_reason() in vxlan_xmit(). Following
+> > new skb drop reasons are introduced for vxlan:
+> >
+> > /* no remote found for xmit */
+> > SKB_DROP_REASON_VXLAN_NO_REMOTE
+> > /* packet without necessary metadata reached a device which is in
+> >  * "eternal" mode
+>
+> That should be "external" mode (with an "x").
+>
+> > +     /**
+> > +      * @SKB_DROP_REASON_TUNNEL_TXINFO: packet without necessary metad=
+ata
+> > +      * reached a device which is in "eternal" mode.
+>
+> Here too.
+>
+
+Oh, my eyes!
+
+I checked this document one by one, and I'm sure there
+are no more typos besides this one.
+
+And I'm sending the V7 now.
+
+Thanks!
+Menglong Dong
+
+> > +      */
+> > +     SKB_DROP_REASON_TUNNEL_TXINFO,
+> >       /**
+> >        * @SKB_DROP_REASON_LOCAL_MAC: the source MAC address is equal to
+> >        * the MAC address of the local netdev.
+> > --
+> > 2.39.5
+> >
+>
 
