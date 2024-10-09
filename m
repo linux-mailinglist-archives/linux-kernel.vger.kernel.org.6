@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-357970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915E69978A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592F79978A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3502E2851F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B2B1F23C42
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8741E2857;
-	Wed,  9 Oct 2024 22:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9461E32A4;
+	Wed,  9 Oct 2024 22:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZIWjNpcG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKPGgvcN"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EE915D5D9;
-	Wed,  9 Oct 2024 22:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B94015D5D9;
+	Wed,  9 Oct 2024 22:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728513764; cv=none; b=Z2Fnmg8BdOVtgE+Egd8/Cctq3VZeAo+QKiZx8HGB3LustJQPgRafPoThaL3vtxY+yJIszLstZGKijevn6PBTISi9GVKG2Lfb0tD9F38+3QDCl6IHHW3fX09OTs1fRVYTXc0/mX7Pz0FUrckzxGoLuNQ5KcRQ4EYJfmqIsWVV+b0=
+	t=1728513871; cv=none; b=ctASOsFOXlvKO8mKlM45L7fD+DCAlqIphClWHFgKC1VZGAv3MIrSylD/Hu73pw1t2q4pxMB6LcH9SYVREFQ5Kw/FYo9om+rSTnD2ewdEmJY/t2jEayUhyL5rd9jXL44YCZR54x3Sl5A3myQk5MkYhHVn4beaCBC5hfXs5x/yFoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728513764; c=relaxed/simple;
-	bh=M/jYqexT1hPJpZFhtuqzJvWEFeg2v79s2Hd6JNUeEzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eexv4f3Vnls2bC5+gbM/rpNKtul6hpTq2bsoJzy1Pkh4LKaoWxKJfHBH8xOpmzEhN6fdBktNoVrpiUnDZV2q25pDiPi8zc3J5K+214MieyqymjFPGUu+gQO0nukzEv0eDfDT/5negr/yENrIcMiGd/MRjeQ+S3pzDzQniulBFD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZIWjNpcG; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728513762; x=1760049762;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=M/jYqexT1hPJpZFhtuqzJvWEFeg2v79s2Hd6JNUeEzI=;
-  b=ZIWjNpcGZLaEaAEDOrmyV01GHNN8Y+dpS7Z98nAJHJGqt9x+ctO+K1aC
-   SbNFHWQJ5eQksKKmkIS3fROMwjdyZmFAdJZhy+o5s0IAL0GYU5HunB0XI
-   R38WqSraI88r+aqqhkf3jc0r2MMKDpoKJ5IE1kVpmDS5waEns2dux81Ca
-   zQXqUbgiJ1IaqoJD+0TIbwXSvGrsNQMgBsWLJdvu2JsWXC82qXQY8Ce5F
-   +G/35e9RYh1GSJV1QOq/CCCg+lckK8x6/czZ4QIh7lwOwuMH2JlzvzIGc
-   uMmCo8VEnm2qAnQyZxgr2A+e+Br623S6boogGT79+p6l9zAktECVEz8iW
-   g==;
-X-CSE-ConnectionGUID: CNIFzll1RlO/Eo7NzzXoCw==
-X-CSE-MsgGUID: 0QQaw1JmRjis2Dh2nui8Ow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27931565"
-X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
-   d="scan'208";a="27931565"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 15:42:36 -0700
-X-CSE-ConnectionGUID: VYgdYngeSbqWRF33DTyLxA==
-X-CSE-MsgGUID: VFaRBY4FSYOoKihsqrBvIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
-   d="scan'208";a="81410626"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 15:42:35 -0700
-Date: Wed, 9 Oct 2024 15:42:33 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, fenghua.yu@intel.com, reinette.chatre@intel.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	paulmck@kernel.org, rdunlap@infradead.org, tj@kernel.org,
-	peterz@infradead.org, yanjiewtw@gmail.com, kim.phillips@amd.com,
-	lukas.bulwahn@gmail.com, seanjc@google.com, jmattson@google.com,
-	leitao@debian.org, jpoimboe@kernel.org, rick.p.edgecombe@intel.com,
-	kirill.shutemov@linux.intel.com, jithu.joseph@intel.com,
-	kai.huang@intel.com, kan.liang@linux.intel.com,
-	daniel.sneddon@linux.intel.com, pbonzini@redhat.com,
-	sandipan.das@amd.com, ilpo.jarvinen@linux.intel.com,
-	peternewman@google.com, maciej.wieczor-retman@intel.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	eranian@google.com, james.morse@arm.com
-Subject: Re: [PATCH v8 07/25] x86/resctrl: Introduce the interface to display
- monitor mode
-Message-ID: <ZwcG2e90vXHlIVan@agluck-desk3.sc.intel.com>
-References: <cover.1728495588.git.babu.moger@amd.com>
- <dc8ffd9074123320ceeecdc8e0b36d1ac0780e02.1728495588.git.babu.moger@amd.com>
+	s=arc-20240116; t=1728513871; c=relaxed/simple;
+	bh=csKy60WFknYDFdbcOrNDM229xILpnCaxCTHpQ08ujTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWmY9AmWI1VCjhKZGXlod8merQljotpbCWNdQ77T61moeONVqa/vDyDFwCk3ClTVjGI+Xo10OiKZOe+kAXGJiIBf6HKy23B8ioo/McxwXyjSeMpG8MP0kA9nlSfPHu8vQFUPGPUqCMw955mlPTFJpeL2spuNwPbvGXdJHghYGL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKPGgvcN; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7db1f13b14aso239349a12.1;
+        Wed, 09 Oct 2024 15:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728513869; x=1729118669; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SAqV1+XKBU0ibZzTqowSJdJy95bA/qKE5pksfpbym7M=;
+        b=aKPGgvcNf0KzLyuaa0NR4741jkpLL4N1J41WkpFWGMK7I+2gM2mNqhNiDqo7qJ3JlM
+         vYKyQZm3VjMt9hLk7p9AU4WP6Y1WNnGHB0RqaIOqFb9qw/fYMsbIf1bWBCmEdjXol2yU
+         BGjCQH4YTjty4p+UpyyRTLoGoiRnqh6TnV2wGmwtadga4vRUa9IeZ1iKFlUza5BVgQ/e
+         ztdgS08TkIRe1e17fK0SOL4uYhjRuZvTSJI8fvxCoQ3o44LiI/igaSzua7x1OdyndlOE
+         cNGOT5DIKW+FZndnLuIfcksJ/mWZIAId+4q704VYHW4DDvaHMxkaHzPgbz0DXzLb61NP
+         08yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728513869; x=1729118669;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SAqV1+XKBU0ibZzTqowSJdJy95bA/qKE5pksfpbym7M=;
+        b=PdLbiRvlQ6S063h5CFYj4vIJYG5HZURTUy9/zdSf6hBrUjMiYFBgNPHpsJpdPgbPAU
+         B01pJKSL7FCKbJx5Z/ua//Jd9pdIF3FA+Zu3+mqyHjKA5uMHR4yBWKyBo0waQUP1Td+Z
+         XGpds9vsagF10AsbqORF80G1HAfiMHdo93+Ff4VvZNfnMig0T/Zm8+OBO50tJBgK7KVJ
+         Bc9FHh77ck4cQsCjeYbsYlduUVL20eJs89vIV4uBRTubLxkfexWPR4KycxpW9Q33v9aO
+         vDlIVuPEORakgZ8DNZClzKNm33+zuoOWy6ybJTHbBuK0VLUbYGYmkAmNa6KrOvG8roNc
+         Uw4A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Q8HbRYfPg9PVkPsHsv/EO43SZG+KcRecLEws66yN+iLbD8lHbz97ZdUElWE3M7gU/Zkwpkk6itJG@vger.kernel.org, AJvYcCXtaGgnPRsJGj4FiMAs8Wq8rMpKRuALBUNOi0QofxmrcF3JK0IEOs4hpiFhYN0jmn+yuNYCugPeku1NE0Y+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR1BhQAzYdrGvZi/h02wnaDZHLxVKfkBlkJczNW7qp0w21ysbN
+	nN1FYrFUH7kc6v6bNhcPjeapDkUIlo8w/emm/QuIMlZAlh4nt5tn
+X-Google-Smtp-Source: AGHT+IFatcjWm8UlaGOqXGTu48oCcmbyCPQ+LLWHuq02vQyWPDOIHrcrLuyoAOJ4nSZV/zbICyHHwg==
+X-Received: by 2002:a05:6a21:3482:b0:1d8:a1dc:b43 with SMTP id adf61e73a8af0-1d8a3c1e436mr6326797637.24.1728513869388;
+        Wed, 09 Oct 2024 15:44:29 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d47edfsm8237666b3a.128.2024.10.09.15.44.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 15:44:29 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Guo Ren <guoren@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Jinyu Tang <tangjinyu@tinylab.org>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/3] riscv: interrupt-controller: Add T-HEAD C900 ACLINT SSWI
+Date: Thu, 10 Oct 2024 06:44:06 +0800
+Message-ID: <20241009224410.53188-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc8ffd9074123320ceeecdc8e0b36d1ac0780e02.1728495588.git.babu.moger@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 12:39:32PM -0500, Babu Moger wrote:
-> +"mbm_assign_mode":
-> +	Reports the list of monitoring modes supported. The enclosed brackets
-> +	indicate which mode is enabled.
-> +	::
-> +
-> +	  cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
-> +	  [mbm_cntr_assign]
-> +	  default
-> +
-> +	"mbm_cntr_assign":
-> +
-> +	In mbm_cntr_assign mode user-space is able to specify which control
-> +	or monitor groups in resctrl should have a counter assigned using the
-> +	'mbm_assign_control' file. The number of counters available is described
-> +	in the 'num_mbm_cntrs' file. Changing the mode may cause all counters on
-> +	a resource to reset.
-> +
-> +	The mode is useful on platforms which support more control and monitor
-> +	groups than hardware counters, meaning 'unassigned' control or monitor
-> +	groups will report 'Unavailable' or count the traffic in an unpredictable
-> +	way.
-> +
-> +	AMD Platforms with ABMC (Assignable Bandwidth Monitoring Counters) feature
-> +	enable this mode by default so that counters remain assigned even when the
-> +	corresponding RMID is not in use by any processor.
-> +
-> +	"default":
-> +
-> +	By default resctrl assumes each control and monitor group has a hardware
-> +	counter. Hardware that does not support 'mbm_cntr_assign' mode will still
-> +	allow more control or monitor groups than 'num_rmids' to be created. In
+New version of T-HEAD C920 implement a fully featured ACLINT[1] device
+(This core is used by Sophgo SG2044). This ACLINT device provides a
+SSWI field to support fast S-mode IPI. This SSWI device is like the
+MSWI device in CLINT/ACLINT, but for S-mode. The only thing is different
+from the draft is that the T-HEAD version SSWI needs to write 0 on the
+SSWI address to clear the IPI.
 
-Should that be s/num_rmids/num_mbm_cntrs/ ?
+Add full support for T-HEAD C900 SSWI device.
 
--Tony
+[1] https://github.com/riscv/riscv-aclint
+
+Change from v1:
+1. patch 2: use computed reg offset to avoid uncessary reg additions
+   when setting/clearing irq.
+2. patch 2: fix mulitple format issues and improve some comments.
+3. patch 2: disable cpu irq when CPU is stopped.
+
+Inochi Amaoto (3):
+  dt-bindings: interrupt-controller: Add Sophgo SG2044 ACLINT SSWI
+  irqchip: add T-HEAD C900 ACLINT SSWI driver
+  riscv: defconfig: Enable T-HEAD C900 ACLINT SSWI drivers
+
+ .../thead,c900-aclint-sswi.yaml               |  58 ++++++
+ arch/riscv/configs/defconfig                  |   1 +
+ drivers/irqchip/Kconfig                       |  10 ++
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-thead-c900-aclint-sswi.c  | 166 ++++++++++++++++++
+ include/linux/cpuhotplug.h                    |   1 +
+ 6 files changed, 237 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
+ create mode 100644 drivers/irqchip/irq-thead-c900-aclint-sswi.c
+
+--
+2.47.0
+
 
