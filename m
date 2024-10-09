@@ -1,162 +1,142 @@
-Return-Path: <linux-kernel+bounces-356455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACED899615B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77CA99615F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9F82817FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087B01F21BA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149A3184523;
-	Wed,  9 Oct 2024 07:47:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F9F17C9AC;
+	Wed,  9 Oct 2024 07:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PMsyV1mx"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3272217C7CA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DACF185B6F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460047; cv=none; b=G8nGzRZqvz2ymePonqIlVQebmdkUKW19JuyVqkMAp/gD0O+gcA+EFWSCiDj6EN6i83P421I7WpruQti+VL7+0etuOLQhI9sPJHIT+V3zH6qleuMhaLQnQTxYt1TU1VtNZCVGHuG4pODVFqbn96AtqFiE1IrrTfEj9TTOiOg5zVI=
+	t=1728460075; cv=none; b=oSleBqsAKlL8HZaEs3xaUWTDVMjVBD9HYT8tNGPZPlAfxBHcJiaOgMxwm8nSJaM5fj9oMk/p3gV54/9dhOdjEpwX/Mj687lPnKA0i9jswXfScr4L74RfEiuUKHuU+9StufUtAGzE7vwluOSAmGDYMigwc3+RsNRH2Qx4LnBz/jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460047; c=relaxed/simple;
-	bh=UXHinkOY94ThFAFVLGUNMyAmpLG+i0kcbARjnwRivDc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qOCTks/b2djHTogQfzDYJee9SVqqgijsPHif40Ffmtzv93uuT56VXkxqVIfy6SqkSy3daDQd5HN4LCO8B6ECl2qw1uWkV/Mx3RrdTqCpAoy5dwe7qC0NECg3Mc6qNogyzmfzcrWGcapVgC2jqA7Wke1xkg4kdPZ4fzR1JdH1smU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so107952965ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:47:26 -0700 (PDT)
+	s=arc-20240116; t=1728460075; c=relaxed/simple;
+	bh=xLJuETlXDaB5r76RL1J8fcgdskxq67CUY0B2qrnqXhU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cqmy9xCJzTCydHMPAXfa/zfSfmetQe7DvvI1dxW+7mz6u74Bt+5GnyY3vywJyM5B05Yk+tLXTFl6lrC49cVjyBqKRVJRc8dlgr53V94gUczUYa3qW6FDai/Rm5++lL/sYQxveaVAJIF/bzEM2RBa1++PTihbe38qN8+Nz5tsvgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PMsyV1mx; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d39d9f782so367657f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:47:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728460072; x=1729064872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6d/wEUJmoAyjx81Rr68K4zml6B0H5nLhQoMhNeac2Go=;
+        b=PMsyV1mxu1Chxs4sIO74QbEHRqkpWFiDTT1K/VdHx4KOVXdB1pGizLfSx7YHJIsGCX
+         +gpgLIEZcodvY77RzL1URK6KQNO9qLJCDwv0KWzuyE5KPXJM9gus1kivrpO9ChOdI2os
+         RKk1oNAJIX6kQt5QY7X0hqJiFBalagbnI/nBifxPI/zTbwEs5+d0H9bY1hnZl3szS5Mg
+         uWOlV3+/KgbU6QkFBGzJc1TAoD6DUb9k9fQ9VscEvE1AVit94JQv5iL3l7jvFody78ow
+         3Gn78w1w3ls6tqHw8FntqKfmXjb3wwEzvGqPpaTqij5per/hxMZ9D7ZOwYCd/p/oW5K3
+         ViyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728460045; x=1729064845;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z7MVKMrr7sE1cZHiHRDlGfSko2JGv+xv2UHq22/5JtA=;
-        b=stNrDOOksfr+KD5TH6NkYKt6TYBnQdAhqNNcdJmmq8oG8QKG4u7I/OwfpiOZFvN5d9
-         xOWv8uRWs68Tr4VR50Cukqmhx/sGfvBViGtXqRVYX7+nEo7UbmDoEtYbHzB/h8yg+ZZb
-         DLL9GPyki4XKfj+A9MgCxcUTDRDK9LWdm0gtKTrXgOYHgLV6ZKJ3CGSE0Ewc95ApVNgb
-         NaJmc00EhT2i8IcOBr0bHozcVBNN6RKOliK9A++Z55uev9B4YnnENXIydINNgOrITgNj
-         08NKr7mOZPgBtUX1L4d/csQ1/+W9a60l+VByduckEvv6WXHfLXSM03WC3Z694Yrne8GE
-         Gkxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcBUG6P6XAZ3Sbb0hJJjIqeH2wO5MdiJVJIFpOkdHyJTf9hD0Vp475MGp5RonhKRem8I9NYpO9Nyx9rEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP6jVK9IAQENNENJRTFm7ngv4zsH7XFgmbCzulD01Oo3f9Az93
-	e+r1zkmPPIw7uCdcyLBrbg50jNvKCzcTchLyCRJGzHi1y4H126MJBrQwK93t4cue3uT7RSi+3GH
-	mned3QAq6+3gD6w+LvTjf24esWlv4JhkUkwZ7nBeYt+gdATgNlB5yMrU=
-X-Google-Smtp-Source: AGHT+IE/H9HfGa47dTrP4jZRVzNp4L4IUSOVG/DCmz0hKK3xVz99KXfKO0bePVHnvz6HATumgWauwPb6+9A/j6nVzdoHd8HpOBjw
+        d=1e100.net; s=20230601; t=1728460072; x=1729064872;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6d/wEUJmoAyjx81Rr68K4zml6B0H5nLhQoMhNeac2Go=;
+        b=uqObj8twOJzeokcuwXeF0n2Uu6HYiy2i9CTLdkppBGb8S77h/h5i4X7Q/cF2REeZ6P
+         YUmJD+gP5Y0wJgXwTlGT/wOtzQKwpmiobakb0VC+JsSvjdCmBpUoAPeRPQfYHusqxqm+
+         SGGLQepI3tH7XPEuWeJqwPg12MSWcxcWiJo9VGSWtc1WR10/vKg2dgkNMiePKraleFrj
+         2jSi1sckIUm+CdiY2vhL56j4bpGLzPvPv2Yecwr09Yq7kckh9ffGQlu/NL4QutAGfVtI
+         kDi5JBFi/woM2N3HZ+wh/fx8qfd2EgJPu1XEV/hmvSZuuKGTCLBbZt69VPgpM9KmC68s
+         CBXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsd2u/Zwdnt618hZFpEcoymeOSUtUOWQALRbIpqIYrf+jCNfunBRIS6y2U8HizdqrMOKDjmM4/2bXZ1DY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGl1Zc60TLwYRe8iKTdOd0/oPKnf1K6w2NqiqXg42m+ZqgLe2O
+	9YqNbx9bwd3byaMDlgDxgUekDL2gOLyXLyg/axCap+0jwFfT9Fm7C31wxrp3KVs=
+X-Google-Smtp-Source: AGHT+IEvrnhIoAuMTon6xqmvCaAZoTWYymMHH2lK6WFOt4s+0AuzWuqn1dU2NJTUF+byVEcH1O0HGg==
+X-Received: by 2002:adf:fa46:0:b0:374:c269:df79 with SMTP id ffacd0b85a97d-37d3aa413e5mr783367f8f.22.1728460071858;
+        Wed, 09 Oct 2024 00:47:51 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:767b:a30:4bcb:fcaf? ([2a01:e0a:982:cbb0:767b:a30:4bcb:fcaf])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d39cb1358sm1208476f8f.25.2024.10.09.00.47.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 00:47:51 -0700 (PDT)
+Message-ID: <2d6aa5af-f4b9-4585-9ed5-8ae4abd9e4af@linaro.org>
+Date: Wed, 9 Oct 2024 09:47:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154a:b0:3a1:a20f:c09c with SMTP id
- e9e14a558f8ab-3a397d2c553mr15393175ab.22.1728460045344; Wed, 09 Oct 2024
- 00:47:25 -0700 (PDT)
-Date: Wed, 09 Oct 2024 00:47:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6706350d.050a0220.840ef.000e.GAE@google.com>
-Subject: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook (7)
-From: syzbot <syzbot+90c2972f9dd6cdcf7b07@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
-	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_0/2=5D_drm/panel=3A_ilitek-ili9881c=3A_Sup?=
+ =?UTF-8?Q?port_in-panel_180=C2=B0_rotation?=
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de
+References: <20240626-drm-panel-ili9881c-rotation-v1-0-e0ff54173e32@pengutronix.de>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240626-drm-panel-ili9881c-rotation-v1-0-e0ff54173e32@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 26/06/2024 16:40, Philipp Zabel wrote:
+> The Ilitek IL9881C controller can rotate the image by 180°. This
+> might be desirable on devices with their display mounted upside down,
+> that don't have rotation capability in the SoC display controller.
+> 
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+> Philipp Zabel (2):
+>        drm/panel: ilitek-ili9881c: Explicitly set address mode, allow 180° rotation
+>        drm/panel: ilitek-ili9881c: Report subpixel order according to rotation
+> 
+>   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 23 +++++++++++++++++++++--
+>   1 file changed, 21 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> change-id: 20240626-drm-panel-ili9881c-rotation-54d53a885d7c
+> 
+> Best regards,
 
-syzbot found the following issue on:
-
-HEAD commit:    9234a2549cb6 net: phy: bcm84881: Fix some error handling p..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=10833bd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f95955e3f7b5790c
-dashboard link: https://syzkaller.appspot.com/bug?extid=90c2972f9dd6cdcf7b07
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/05a4f5ae2b6e/disk-9234a254.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/157bcf16a614/vmlinux-9234a254.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1f5a2485a15e/bzImage-9234a254.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+90c2972f9dd6cdcf7b07@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-hook not found, pf 2 num 0
-WARNING: CPU: 0 PID: 11707 at net/netfilter/core.c:517 __nf_unregister_net_hook+0x482/0x800 net/netfilter/core.c:517
-Modules linked in:
-CPU: 0 UID: 0 PID: 11707 Comm: syz.4.1852 Not tainted 6.12.0-rc1-syzkaller-00147-g9234a2549cb6 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__nf_unregister_net_hook+0x482/0x800 net/netfilter/core.c:517
-Code: 01 90 48 8b 44 24 10 0f b6 04 28 84 c0 0f 85 6d 03 00 00 48 8b 04 24 8b 10 48 c7 c7 a0 3f 13 8d 8b 74 24 1c e8 5f ff 7b f7 90 <0f> 0b 90 90 e9 39 01 00 00 e8 f0 02 bb f7 e9 5e fc ff ff e8 e6 02
-RSP: 0018:ffffc9000486ef00 EFLAGS: 00010246
-RAX: 789495961ce19900 RBX: ffff888069756a00 RCX: 0000000000040000
-RDX: ffffc9000c6f5000 RSI: 00000000000026ab RDI: 00000000000026ac
-RBP: dffffc0000000000 R08: ffffffff8155daa2 R09: 1ffff110170c519a
-R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff88802715d940
-R13: ffff88802715ea50 R14: 0000000000000004 R15: ffff888067836800
-FS:  00007f3bff1fb6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3bff1faf98 CR3: 000000007f7ca000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nf_unregister_net_hook+0x98/0xe0 net/netfilter/core.c:535
- __nf_tables_unregister_hook net/netfilter/nf_tables_api.c:384 [inline]
- nf_tables_unregister_hook net/netfilter/nf_tables_api.c:391 [inline]
- nft_table_disable+0x305/0x3c0 net/netfilter/nf_tables_api.c:1221
- nf_tables_table_disable net/netfilter/nf_tables_api.c:1253 [inline]
- nf_tables_commit+0x4e7e/0x91e0 net/netfilter/nf_tables_api.c:10415
- nfnetlink_rcv_batch net/netfilter/nfnetlink.c:574 [inline]
- nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
- nfnetlink_rcv+0xc77/0x2ab0 net/netfilter/nfnetlink.c:665
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:744
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2602
- ___sys_sendmsg net/socket.c:2656 [inline]
- __sys_sendmsg+0x292/0x380 net/socket.c:2685
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3bfe37dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3bff1fb038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f3bfe535f80 RCX: 00007f3bfe37dff9
-RDX: 0000000000040010 RSI: 0000000020000240 RDI: 0000000000000003
-RBP: 00007f3bfe3f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f3bfe535f80 R15: 00007fff127040d8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
