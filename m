@@ -1,501 +1,177 @@
-Return-Path: <linux-kernel+bounces-356572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EF8996383
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:46:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF27099630B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB891F256AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3AB1F25A85
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA0A19FA8D;
-	Wed,  9 Oct 2024 08:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A1E189F41;
+	Wed,  9 Oct 2024 08:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IjMN/ibk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QIQOzOQ0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7FB3BB48
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFF3188CD8
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728463123; cv=none; b=kLM3sFigkBd1VTEXKt5B/8PPmlGvJsz/0R6EyZu1Ps3VRjc2WJU/ysOWeJ6d7mlcqmm4qAlnloCrGonJGw3hJto6U4zpHAH7cLzEhCCChQWs3MoJ6YwTnDMrbVXJTdg3z0g5eW9opBjtOqmcRaSpSk4GpKYo9MnI8OWfOWymgwQ=
+	t=1728462995; cv=none; b=FhNo6f9fyknYKcgYZeS+50gBQy/zulxWqnAWyG9kC2vULWqG699HomPv1x5ylbKuMQVdVTpUIhhM6/NIYKa5NslSv+d7+dZvwOFLE5yHcnAPpRy20BBtsDKwa4veT1rZ/mpcdxZgGnxL1IwAFFVt25S55dSPKXp8BG+DhsfEqAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728463123; c=relaxed/simple;
-	bh=OjD24FkK072YZHxBSReQUX+DBFDuDsYFBg0p+GU7QJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rbXg4pc7beRSVWxHfMl3qkVgKZTZmIEl8AgkAKAeFYFiJmShDiDwuopfBjM+ZczWZKKRlPfjE0nDhmY/eNs4/MhEzwz3SWVl3sZAK09IKlIQyc7zFibgzPp6LLdtzFgAsmkuATSXNgvKQXneuozTTVmIPyJR3V1C7ZNRw3LOQo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IjMN/ibk; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1728462995; c=relaxed/simple;
+	bh=fkyLFJKEtI+14XmToXjsY4VfDrjFVgjWejQFfNCvgLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lm7ZOQ0zsOrgG6DrjBNHK1bfrQiYnF+2tVuDgXv//Syt/IoEgzMImJTansP3tcz4tcRJ7A/rfkZCUH0xXO3KSTak6oQ9Ju1EEGf0Z8qHrpxetRV5OzgJO2FNATopcDJqkoM1EEB3PmVGoulugLRVwBW3tYqE0YRHh5vXDtw2icE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QIQOzOQ0; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728463120;
+	s=mimecast20190719; t=1728462993;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dn9hXfItCQvHywD+6VMIVaroqMco+7Lfduw/2q1HCGc=;
-	b=IjMN/ibkr00Iw9Nk4enPiaGSU47/l/mnd2Cjn4weNpI4fNIE1kM7WSI8Awptc6pYi66XNn
-	6JjyW+hqr8nI+0P0/WXWk2h2uLHac+ukwH0urXhBQqZ2BFbLMZ1PFAl76mfljLjPz35LZ6
-	kBo0jfwOyi+WwB+17KQLNpmStDiLGMU=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=3ovshM/hJzDxSzL6UkhkOlKKt98Q7bAUp8qN21jtpiQ=;
+	b=QIQOzOQ0nC3V8VnRvKBTw97RC3XsLFqykbUzT+qlOc4TGXQn7R6Szmxn4aErqGODtISGVM
+	qMc7+KrwQpV+WgNejeStxrQgXM6A9VyvMk947rme/z72okmwRzQg/ar8mD990DNMYiz4cJ
+	rdBXU4MBfCzxLQos39JmkqI9u+55igo=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-kFuN3-bnMwGYphw3-EdAVg-1; Wed, 09 Oct 2024 04:38:39 -0400
-X-MC-Unique: kFuN3-bnMwGYphw3-EdAVg-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a9bee09af9so1306065185a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:38:39 -0700 (PDT)
+ us-mta-7-JC0vaLZHN_eq_HpxU8Yipw-1; Wed, 09 Oct 2024 04:36:32 -0400
+X-MC-Unique: JC0vaLZHN_eq_HpxU8Yipw-1
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-50ca719a85fso893289e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:36:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728463119; x=1729067919;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dn9hXfItCQvHywD+6VMIVaroqMco+7Lfduw/2q1HCGc=;
-        b=UOkoflpvACFS5+CSlkRPBaIrF89ymXcZOoUPdpHHTCy2dWNMzKeqqTdVhskp3r9wyV
-         HSoul6aCp98Y0j50O9kZmS8YnVabwd9QLd/OjO5Qwif1aWadcq45Z2rQhft4LKpS0s7k
-         hxq9MBrF2isO8g5Zf+SY0VbF6PIrtruFkCwUHWa082aCn0t7IfPCDUyxvXAdtKPmO1bU
-         vHsxqxRK1BsFlUIzVjQnyVTkIn6Sv8k8CgDbZtQUoN7geFYJDVz5kBX0ncS3ZQQQBDQb
-         5zwGRR9A+P/9FadK0KtHzfOWmx62pOASI/m4xhmJiqsRw+FVxsyN+lGfunZl2mn4O6VS
-         a/bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwAbgsH9PJ3Wj26fpe1raB7km5mVk4cONc7VYKP06qrSPt/YiQCRWxwx0b0SbWhRmUfRqLv4iLc73xIqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzloCcZjKmBmPfh3iKNogUtfgoVVTlQtwrtzltWACdQk89Gsj5h
-	cx0G8MOCsZRzluG7avHwcOrhef5jSp4yhSwwAxcFo6p/vaJ3eGXRb9wsVcUhSyx4KYgXON38IJD
-	kZbQA1nhFrjTmVyzDy9NRw08q+nbQgLYNW3/LhntXUY7EicvMlfo3+z4A4+IQhA==
-X-Received: by 2002:a05:620a:2908:b0:7a9:aef5:e5aa with SMTP id af79cd13be357-7b0795471b6mr234981285a.41.1728463118957;
-        Wed, 09 Oct 2024 01:38:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtE6g17RV6mV9JUd+8nc+TtsdGWPoIOG4pYd+4ChNJCVpMXD+WAy7gOisjLQysbdOs4MSn6w==
-X-Received: by 2002:a05:620a:2908:b0:7a9:aef5:e5aa with SMTP id af79cd13be357-7b0795471b6mr234976385a.41.1728463118516;
-        Wed, 09 Oct 2024 01:38:38 -0700 (PDT)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75615aa2sm439643585a.14.2024.10.09.01.38.29
+        d=1e100.net; s=20230601; t=1728462991; x=1729067791;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ovshM/hJzDxSzL6UkhkOlKKt98Q7bAUp8qN21jtpiQ=;
+        b=tbRmyjjLTVd/FRiyfBvR5LAFf0bjQyLwN8NdR3rHphNtVReMMJkmk0JNT8re7rWhW/
+         JxSzH0dvmOHYY95U7XcDRu/GnjkgMK6sjudVvSz+Azy01SYT4fUTz0e3qDXVEiZKTvah
+         WBVJ9fthqt+GIO8ZShx994Itb3da1cf8Mt3u/EmfPwUAVqi5fVAR9hUwNpQ5Xitr8qg3
+         BeuNyoEn19DCP2E6FxLHCGNq/JwRb3NPaM25j056BXiqxfoSLb6GcK0ysnX+fsd17Kab
+         VuqgA7zjRMGYmJQhmaGCs36P/hM/HYJOSGK53SLuEkAHKXyBzxA+bYeIAclVq6qZF/gl
+         TjVg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9mjg/yxxEPnq/Dw4Ieq/6tBqleTUTE86KeHiBvgqqkW7O3H+91MTvwWTZTPE4Hv7gockDr6hgVBUVx/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxxMXUyz7yTxV5yFgLA9zq5YzpoL8GV5ZPFoagAeBrRDazNSvV
+	OqZ7CVZsjmE5VDYPyzlMzvYwym1NZpP0dnlkocOh9+NjeJcVoKXfsp8NAUjcO1SkvfP36zfR9Jk
+	Pmk1cVdPc43HjJEJ0LZTNM07GIFMzXH0SaKEJ1eNLZmnNKMqP1FC64oKpZYZU4LjocxKNoR0r
+X-Received: by 2002:a05:6122:1793:b0:4f5:c90:2556 with SMTP id 71dfb90a1353d-50cf09a3735mr1596456e0c.4.1728462991197;
+        Wed, 09 Oct 2024 01:36:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDnQZf02HtilonLUcCdsQxmwcIcoPCQcDwb/5gCqqDyQ7h7T1QFgDMmTnwQ3ZsgdTa7moN1Q==
+X-Received: by 2002:a05:6122:1793:b0:4f5:c90:2556 with SMTP id 71dfb90a1353d-50cf09a3735mr1596440e0c.4.1728462990825;
+        Wed, 09 Oct 2024 01:36:30 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-206.as13285.net. [80.47.4.206])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae756611c1sm435790285a.72.2024.10.09.01.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 01:38:38 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Basavaraj Natikar <basavaraj.natikar@amd.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Dubov <oakad@yahoo.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rasesh Mody <rmody@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,
-	Igor Mitsyanko <imitsyanko@quantenna.com>,
-	Sergey Matyukevich <geomatsi@gmail.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Sanjay R Mehta <sanju.mehta@amd.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Chen Ni <nichen@iscas.ac.cn>,
-	Ricky Wu <ricky_wu@realtek.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Kevin Tian <kevin.tian@intel.com>,
+        Wed, 09 Oct 2024 01:36:29 -0700 (PDT)
+Date: Wed, 9 Oct 2024 09:36:25 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	LKML <linux-kernel@vger.kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	John Garry <john.g.garry@oracle.com>,
-	Soumya Negi <soumya.negi97@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Yi Liu <yi.l.liu@intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	Ye Bin <yebin10@huawei.com>,
-	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>,
-	Marc Zyngier <maz@kernel.org>
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-sound@vger.kernel.org
-Subject: [RFC PATCH 13/13] Remove devres from pci_intx()
-Date: Wed,  9 Oct 2024 10:35:19 +0200
-Message-ID: <20241009083519.10088-14-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241009083519.10088-1-pstanner@redhat.com>
-References: <20241009083519.10088-1-pstanner@redhat.com>
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: Futex hash_bucket lock can break isolation and cause priority
+ inversion on RT
+Message-ID: <ZwZAicOokVUn2h8h@jlelli-thinkpadt14gen4.remote.csb>
+References: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
+ <98b3dcb0-8b64-45a5-9531-16aeb010c052@igalia.com>
+ <20241008155129.z7ZZVzW3@linutronix.de>
+ <46c259c2-5503-4a63-94ae-96660e5ce0eb@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <46c259c2-5503-4a63-94ae-96660e5ce0eb@igalia.com>
 
-pci_intx() is a hybrid function which can sometimes be managed through
-devres. This hybrid nature is undesirable.
+Hi André and Sebastian,
 
-Since all users of pci_intx() have by now been ported either to
-always-managed pcim_intx() or never-managed pci_intx_unmanaged(), the
-devres functionality can be removed from pci_intx().
+Thank you so much for your quick replies and for providing context that
+I was missing!
 
-Consequently, pci_intx_unmanaged() is now redundant, because pci_intx()
-itself is now unmanaged.
+On 08/10/24 12:59, André Almeida wrote:
+> Em 08/10/2024 12:51, Sebastian Andrzej Siewior escreveu:
+> > On 2024-10-08 12:38:11 [-0300], André Almeida wrote:
+> > > Em 08/10/2024 12:22, Juri Lelli escreveu:
+> > > 
+> > > [...]
+> > > 
+> > > > Now, of course by making the latency sensitive application tasks use a
+> > > > higher priority than anything on housekeeping CPUs we could avoid the
+> > > > issue, but the fact that an implicit in-kernel link between otherwise
+> > > > unrelated tasks might cause priority inversion is probably not ideal?
+> > > > Thus this email.
+> > > > 
+> > > > Does this report make any sense? If it does, has this issue ever been
+> > > > reported and possibly discussed? I guess it’s kind of a corner case, but
+> > > > I wonder if anybody has suggestions already on how to possibly try to
+> > > > tackle it from a kernel perspective.
+> > > > 
+> > > 
+> > > That's right, unrelated apps can share the same futex bucket, causing those
+> > > side effects. The bucket is determined by futex_hash() and then tasks get
+> > > the hash bucket lock at futex_q_lock(), and none of those functions have
+> > > awareness of priorities.
+> > 
+> > almost. Since Juri mentioned PREEMPT_RT the hb locks are aware of
+> > priorities. So in his case there was a PI boost, the task with the
+> > higher priority can grab the hb lock before others may however since the
+> > owner is blocked by the NIC thread, it can't make progress.
+> > Lifting the priority over the NIC-thread would bring the owner on the
+> > CPU in order to drop the hb lock.
+> > 
+> 
+> Oh that's right, thanks for pointing it out!
+> 
+> > > There's this work from Thomas that aims to solve corner cases like this, by
+> > > giving apps the option to instead of using the global hash table, to have
+> > > their own allocated wait queue:
+> > > https://lore.kernel.org/lkml/20160402095108.894519835@linutronix.de/
+> > > 
+> > > "Collisions on that hash can lead to performance degradation
+> > > and on real-time enabled kernels to unbound priority inversions."
+> > 
+> > This is correct. The problem is also that the hb lock is hashed on
+> > several things so if you restart/ reboot you may no longer share the hb
+> > lock with the "bad" application.
+> > 
+> > Now that I think about it, of all things we never tried a per-process
+> > (shared by threads) hb-lock which could also be hashed. This would avoid
+> > blocking on other applications, your would have to blame your own threads.
+> > 
 
-Remove the devres functionality from pci_intx(). Remove pci_intx_unmanaged().
-Have all users of pci_intx_unmanaged() call pci_intx().
+Would this be somewhat similar to what Linus (and Ingo IIUC) were
+inclined to suggesting from the thread above (edited)?
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 ---
- drivers/misc/cardreader/rtsx_pcr.c            |  2 +-
- drivers/misc/tifm_7xx1.c                      |  6 +--
- .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  |  2 +-
- drivers/net/ethernet/brocade/bna/bnad.c       |  2 +-
- drivers/ntb/hw/amd/ntb_hw_amd.c               |  4 +-
- drivers/ntb/hw/intel/ntb_hw_gen1.c            |  2 +-
- drivers/pci/devres.c                          |  4 +-
- drivers/pci/msi/api.c                         |  2 +-
- drivers/pci/msi/msi.c                         |  2 +-
- drivers/pci/pci.c                             | 40 +------------------
- drivers/vfio/pci/vfio_pci_core.c              |  2 +-
- drivers/vfio/pci/vfio_pci_intrs.c             | 10 ++---
- drivers/xen/xen-pciback/conf_space_header.c   |  2 +-
- include/linux/pci.h                           |  1 -
- 14 files changed, 21 insertions(+), 60 deletions(-)
+So automatically using a local hashtable according to some heuristic is
+definitely the way to go. And yes, the heuristic may be well be - at
+least to start - "this is a preempt-RT system" (for people who clearly
+care about having predictable latencies) or "this is actually a
+multi-node NUMA system, and I have heaps of memory"
+---
 
-diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
-index e25e6d560dd7..be3d4e0e50cc 100644
---- a/drivers/misc/cardreader/rtsx_pcr.c
-+++ b/drivers/misc/cardreader/rtsx_pcr.c
-@@ -1057,7 +1057,7 @@ static int rtsx_pci_acquire_irq(struct rtsx_pcr *pcr)
- 	}
- 
- 	pcr->irq = pcr->pci->irq;
--	pci_intx_unmanaged(pcr->pci, !pcr->msi_en);
-+	pci_intx(pcr->pci, !pcr->msi_en);
- 
- 	return 0;
- }
-diff --git a/drivers/misc/tifm_7xx1.c b/drivers/misc/tifm_7xx1.c
-index 5f9c7ccae8d2..1d54680d6ed2 100644
---- a/drivers/misc/tifm_7xx1.c
-+++ b/drivers/misc/tifm_7xx1.c
-@@ -327,7 +327,7 @@ static int tifm_7xx1_probe(struct pci_dev *dev,
- 		goto err_out;
- 	}
- 
--	pci_intx_unmanaged(dev, 1);
-+	pci_intx(dev, 1);
- 
- 	fm = tifm_alloc_adapter(dev->device == PCI_DEVICE_ID_TI_XX21_XX11_FM
- 				? 4 : 2, &dev->dev);
-@@ -368,7 +368,7 @@ static int tifm_7xx1_probe(struct pci_dev *dev,
- err_out_free:
- 	tifm_free_adapter(fm);
- err_out_int:
--	pci_intx_unmanaged(dev, 0);
-+	pci_intx(dev, 0);
- 	pci_release_regions(dev);
- err_out:
- 	if (!pci_dev_busy)
-@@ -392,7 +392,7 @@ static void tifm_7xx1_remove(struct pci_dev *dev)
- 		tifm_7xx1_sock_power_off(tifm_7xx1_sock_addr(fm->addr, cnt));
- 
- 	iounmap(fm->addr);
--	pci_intx_unmanaged(dev, 0);
-+	pci_intx(dev, 0);
- 	pci_release_regions(dev);
- 
- 	pci_disable_device(dev);
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 2ae63d6e6792..678829646cec 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -1669,7 +1669,7 @@ static void bnx2x_igu_int_enable(struct bnx2x *bp)
- 	REG_WR(bp, IGU_REG_PF_CONFIGURATION, val);
- 
- 	if (val & IGU_PF_CONF_INT_LINE_EN)
--		pci_intx_unmanaged(bp->pdev, true);
-+		pci_intx(bp->pdev, true);
- 
- 	barrier();
- 
-diff --git a/drivers/net/ethernet/brocade/bna/bnad.c b/drivers/net/ethernet/brocade/bna/bnad.c
-index 2b37462d406e..ece6f3b48327 100644
---- a/drivers/net/ethernet/brocade/bna/bnad.c
-+++ b/drivers/net/ethernet/brocade/bna/bnad.c
-@@ -2669,7 +2669,7 @@ bnad_enable_msix(struct bnad *bnad)
- 		}
- 	}
- 
--	pci_intx_unmanaged(bnad->pcidev, 0);
-+	pci_intx(bnad->pcidev, 0);
- 
- 	return;
- 
-diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
-index b146f170e839..d687e8c2cc78 100644
---- a/drivers/ntb/hw/amd/ntb_hw_amd.c
-+++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
-@@ -791,7 +791,7 @@ static int ndev_init_isr(struct amd_ntb_dev *ndev,
- err_msi_enable:
- 
- 	/* Try to set up intx irq */
--	pci_intx_unmanaged(pdev, 1);
-+	pci_intx(pdev, 1);
- 
- 	rc = request_irq(pdev->irq, ndev_irq_isr, IRQF_SHARED,
- 			 "ndev_irq_isr", ndev);
-@@ -831,7 +831,7 @@ static void ndev_deinit_isr(struct amd_ntb_dev *ndev)
- 		if (pci_dev_msi_enabled(pdev))
- 			pci_disable_msi(pdev);
- 		else
--			pci_intx_unmanaged(pdev, 0);
-+			pci_intx(pdev, 0);
- 	}
- }
- 
-diff --git a/drivers/ntb/hw/intel/ntb_hw_gen1.c b/drivers/ntb/hw/intel/ntb_hw_gen1.c
-index 9ad9d7fe227e..079b8cd79785 100644
---- a/drivers/ntb/hw/intel/ntb_hw_gen1.c
-+++ b/drivers/ntb/hw/intel/ntb_hw_gen1.c
-@@ -445,7 +445,7 @@ int ndev_init_isr(struct intel_ntb_dev *ndev,
- 
- 	/* Try to set up intx irq */
- 
--	pci_intx_unmanaged(pdev, 1);
-+	pci_intx(pdev, 1);
- 
- 	rc = request_irq(pdev->irq, ndev_irq_isr, IRQF_SHARED,
- 			 "ndev_irq_isr", ndev);
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 475a3ae5c33f..402558fd2436 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -416,7 +416,7 @@ static void pcim_intx_restore(struct device *dev, void *data)
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct pcim_intx_devres *res = data;
- 
--	pci_intx_unmanaged(pdev, res->orig_intx);
-+	pci_intx(pdev, res->orig_intx);
- }
- 
- static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
-@@ -453,7 +453,7 @@ int pcim_intx(struct pci_dev *pdev, int enable)
- 		return -ENOMEM;
- 
- 	res->orig_intx = !enable;
--	pci_intx_unmanaged(pdev, enable);
-+	pci_intx(pdev, enable);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/msi/api.c b/drivers/pci/msi/api.c
-index c95e2e7dc9ab..b956ce591f96 100644
---- a/drivers/pci/msi/api.c
-+++ b/drivers/pci/msi/api.c
-@@ -289,7 +289,7 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
- 			 */
- 			if (affd)
- 				irq_create_affinity_masks(1, affd);
--			pci_intx_unmanaged(dev, 1);
-+			pci_intx(dev, 1);
- 			return 1;
- 		}
- 	}
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index 53f13b09db50..3a45879d85db 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -268,7 +268,7 @@ EXPORT_SYMBOL_GPL(pci_write_msi_msg);
- static void pci_intx_for_msi(struct pci_dev *dev, int enable)
- {
- 	if (!(dev->dev_flags & PCI_DEV_FLAGS_MSI_INTX_DISABLE_BUG))
--		pci_intx_unmanaged(dev, enable);
-+		pci_intx(dev, enable);
- }
- 
- static void pci_msi_set_enable(struct pci_dev *dev, int enable)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 318cfb5b5e15..2d5992fbd413 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4476,43 +4476,12 @@ void pci_disable_parity(struct pci_dev *dev)
- 	}
- }
- 
--/**
-- * pci_intx - enables/disables PCI INTx for device dev, unmanaged version
-- * @pdev: the PCI device to operate on
-- * @enable: boolean: whether to enable or disable PCI INTx
-- *
-- * Enables/disables PCI INTx for device @pdev
-- *
-- * This function behavios identically to pci_intx(), but is never managed with
-- * devres.
-- */
--void pci_intx_unmanaged(struct pci_dev *pdev, int enable)
--{
--	u16 pci_command, new;
--
--	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
--
--	if (enable)
--		new = pci_command & ~PCI_COMMAND_INTX_DISABLE;
--	else
--		new = pci_command | PCI_COMMAND_INTX_DISABLE;
--
--	if (new != pci_command)
--		pci_write_config_word(pdev, PCI_COMMAND, new);
--}
--EXPORT_SYMBOL_GPL(pci_intx_unmanaged);
--
- /**
-  * pci_intx - enables/disables PCI INTx for device dev
-  * @pdev: the PCI device to operate on
-  * @enable: boolean: whether to enable or disable PCI INTx
-  *
-  * Enables/disables PCI INTx for device @pdev
-- *
-- * NOTE:
-- * This is a "hybrid" function: It's normally unmanaged, but becomes managed
-- * when pcim_enable_device() has been called in advance. This hybrid feature is
-- * DEPRECATED! If you want managed cleanup, use pcim_intx() instead.
-  */
- void pci_intx(struct pci_dev *pdev, int enable)
- {
-@@ -4525,15 +4494,8 @@ void pci_intx(struct pci_dev *pdev, int enable)
- 	else
- 		new = pci_command | PCI_COMMAND_INTX_DISABLE;
- 
--	if (new != pci_command) {
--		/* Preserve the "hybrid" behavior for backwards compatibility */
--		if (pci_is_managed(pdev)) {
--			WARN_ON_ONCE(pcim_intx(pdev, enable) != 0);
--			return;
--		}
--
-+	if (new != pci_command)
- 		pci_write_config_word(pdev, PCI_COMMAND, new);
--	}
- }
- EXPORT_SYMBOL_GPL(pci_intx);
- 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 90240c8d51aa..1ab58da9f38a 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -498,7 +498,7 @@ int vfio_pci_core_enable(struct vfio_pci_core_device *vdev)
- 		if (vfio_pci_nointx(pdev)) {
- 			pci_info(pdev, "Masking broken INTx support\n");
- 			vdev->nointx = true;
--			pci_intx_unmanaged(pdev, 0);
-+			pci_intx(pdev, 0);
- 		} else
- 			vdev->pci_2_3 = pci_intx_mask_supported(pdev);
- 	}
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 40abb0b937a2..8382c5834335 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -118,7 +118,7 @@ static bool __vfio_pci_intx_mask(struct vfio_pci_core_device *vdev)
- 	 */
- 	if (unlikely(!is_intx(vdev))) {
- 		if (vdev->pci_2_3)
--			pci_intx_unmanaged(pdev, 0);
-+			pci_intx(pdev, 0);
- 		goto out_unlock;
- 	}
- 
-@@ -132,7 +132,7 @@ static bool __vfio_pci_intx_mask(struct vfio_pci_core_device *vdev)
- 		 * mask, not just when something is pending.
- 		 */
- 		if (vdev->pci_2_3)
--			pci_intx_unmanaged(pdev, 0);
-+			pci_intx(pdev, 0);
- 		else
- 			disable_irq_nosync(pdev->irq);
- 
-@@ -178,7 +178,7 @@ static int vfio_pci_intx_unmask_handler(void *opaque, void *data)
- 	 */
- 	if (unlikely(!is_intx(vdev))) {
- 		if (vdev->pci_2_3)
--			pci_intx_unmanaged(pdev, 1);
-+			pci_intx(pdev, 1);
- 		goto out_unlock;
- 	}
- 
-@@ -296,7 +296,7 @@ static int vfio_intx_enable(struct vfio_pci_core_device *vdev,
- 	 */
- 	ctx->masked = vdev->virq_disabled;
- 	if (vdev->pci_2_3) {
--		pci_intx_unmanaged(pdev, !ctx->masked);
-+		pci_intx(pdev, !ctx->masked);
- 		irqflags = IRQF_SHARED;
- 	} else {
- 		irqflags = ctx->masked ? IRQF_NO_AUTOEN : 0;
-@@ -569,7 +569,7 @@ static void vfio_msi_disable(struct vfio_pci_core_device *vdev, bool msix)
- 	 * via their shutdown paths.  Restore for NoINTx devices.
- 	 */
- 	if (vdev->nointx)
--		pci_intx_unmanaged(pdev, 0);
-+		pci_intx(pdev, 0);
- 
- 	vdev->irq_type = VFIO_PCI_NUM_IRQS;
- }
-diff --git a/drivers/xen/xen-pciback/conf_space_header.c b/drivers/xen/xen-pciback/conf_space_header.c
-index 8d26d64232e8..fc0332645966 100644
---- a/drivers/xen/xen-pciback/conf_space_header.c
-+++ b/drivers/xen/xen-pciback/conf_space_header.c
-@@ -106,7 +106,7 @@ static int command_write(struct pci_dev *dev, int offset, u16 value, void *data)
- 
- 	if (dev_data && dev_data->allow_interrupt_control &&
- 	    ((cmd->val ^ value) & PCI_COMMAND_INTX_DISABLE))
--		pci_intx_unmanaged(dev, !(value & PCI_COMMAND_INTX_DISABLE));
-+		pci_intx(dev, !(value & PCI_COMMAND_INTX_DISABLE));
- 
- 	cmd->val = value;
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 6b8cde76d564..1b2a6dd1dfed 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1353,7 +1353,6 @@ int __must_check pcim_set_mwi(struct pci_dev *dev);
- int pci_try_set_mwi(struct pci_dev *dev);
- void pci_clear_mwi(struct pci_dev *dev);
- void pci_disable_parity(struct pci_dev *dev);
--void pci_intx_unmanaged(struct pci_dev *pdev, int enable);
- void pci_intx(struct pci_dev *dev, int enable);
- bool pci_check_and_mask_intx(struct pci_dev *dev);
- bool pci_check_and_unmask_intx(struct pci_dev *dev);
--- 
-2.46.1
+So, make it per-process local by default on PREEMPT_RT and NUMA?
+
+Thanks,
+Juri
 
 
