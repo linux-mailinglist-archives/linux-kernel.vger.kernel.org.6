@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-356390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDBB996059
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:10:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6B499605E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9661C23817
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44E32849D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB65D17BB0F;
-	Wed,  9 Oct 2024 07:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E244E17BB38;
+	Wed,  9 Oct 2024 07:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYUDis1c"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="L1bVGDwN"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C8F1362;
-	Wed,  9 Oct 2024 07:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12591362;
+	Wed,  9 Oct 2024 07:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728457836; cv=none; b=mZ+AJqXphhdawxWhDjBSkU+V54BR/ewvN1cJGCv2dRSO2Vzgj97z3jZFZFgwCvMYf+qqbZnRHXAd+f5YEoEPqCkU5bSe1Ba9Snq+4Dr4TvFJU+yHlaliH3jGLqroC8SZI8V2u+BtqFMvTeV4S/2WjpViuhCfZaCYAAliuUxL06Q=
+	t=1728457984; cv=none; b=pGYYL5KjxvnvSmbPq88ZwmfZ5s/nGHB4FTn9J79/ke0SnyH4exDlYxB3K5brVrp3KyqQ+JxbjxAWSylISPQz1MdpsR8HtFm3LwwOxkCEpm5f6mKg95NWXEJeBNnU+iMoo+2uc8FCaih2IuWxwA3rvsXcL7dI+gpvJlvXLkA2M2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728457836; c=relaxed/simple;
-	bh=378j02AjdJZcYvP0BCMcrpUqd1qmoGsNIP/1Xg4ZgO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OX25sMCROOuYG6GNQ+iQX/QFt9LXXDKoRShV293E198shXxYarSiGMiQn+D5EgGR0vRb7SzpkXLawmOC6RGQAvrEHVqiviH3d81fx5eTra35Otqk2X3N4U3RJ5emZhKVr0JvWsKqlryprp5v2Bn8FTfOgyktlknyPkHLKu7+jwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYUDis1c; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71debacf27bso381210b3a.2;
-        Wed, 09 Oct 2024 00:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728457834; x=1729062634; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sA8Y4eO9DcSC+vvwrFGajiYdfHlpHkYXHi8cuKJox4c=;
-        b=ZYUDis1c/y+hzKpoXPXfKs5/q8J/SDMoXwBOG54gVdeD/urqgWptKbyLP6aGNDGSrY
-         dmLlejWuvMii+xSmln0bsjdeOe2drYdJFzZO6/QqFq/4rQ3rG3Pb4OyOOmNyWbYbfaGw
-         F/rzFa5eeQ5eV/M54L7hkx2Rl1GebjaXuBdxtYcFvetgalsYtbMLbtI9g4yWzG7nIuYS
-         IhxbqGs4jNt+IAhBhcNjmCy7tQUAiRwfkPjJYHzGjZ4DtY6Az2uv5rWzsTyEum1OJLSw
-         ibmYMcLnJWyXCyrBJpU4mVJH2L8LooK+Z6e0B614HNUaQJ695/Ovy17+EvG2JzC+SorG
-         M/Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728457834; x=1729062634;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sA8Y4eO9DcSC+vvwrFGajiYdfHlpHkYXHi8cuKJox4c=;
-        b=pIStoi8CnnmlnlC+V2fwvJkX46BcqCX/1bCa3p2O2CoE428DARvjU3aHvpmqsayjAt
-         aClFcxjZ6wilsv854UsB963qZVqevtclZn+PHXYCOdd+qrzlVlTMqGk614HmzevhQ8yX
-         QmwPickZVO7UXY5FZuVNCeBqXU9MIvEKs9D0Ln0aH3X2aHCIukW/ezxehnsbTQ4eP+MR
-         j0xxjTZa9FyiskRLQU1IDHtjkWd9zPGXBCDRSYLtpc/9GE+1q1Oq1HQ6C8hxNCBNJviq
-         ci5g4Z3Ck+tIbn0T5S6fA1yNafkkrLkjR257nXZ/tudhJwNuFL9wLp7ydJpSUFk24W/x
-         EiRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFdx8FUgSH6HqjihO9WTXy1B/qHlDVblnyVhAH8HGBohYTSfNdifdW6UqlEdyZm9jy4aLyEhWK5obq@vger.kernel.org, AJvYcCWl5GeZCgxgesZNnR4exD4McHVcYijW7WKEmuYJ47HXZ4ms8alQRzmCyn3v+UHA1Nr21CH8ULB9D0IZPWHq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXPugPP41oipbtRWU1r9ObZObQe+ofdciU92y1sic9L2gy8iX+
-	Z6phAN8g5HfYb6+iF8+5b20fKI3H08gV4NlsWCc3CP71gVbjrzS+
-X-Google-Smtp-Source: AGHT+IGjE88HafuAoQFV3trG2JzG5OQbr90aV7B+X/5s9VONZ08F7MICUKjVTHucGreZK18x0dC4MA==
-X-Received: by 2002:a05:6a00:1310:b0:717:9443:9c70 with SMTP id d2e1a72fcca58-71e1db67245mr995726b3a.2.1728457834041;
-        Wed, 09 Oct 2024 00:10:34 -0700 (PDT)
-Received: from [192.168.60.56] ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d66319sm7160068b3a.156.2024.10.09.00.10.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 00:10:33 -0700 (PDT)
-Message-ID: <e1bbcaa7-bac6-4288-9c5c-ae5a292e1d1f@gmail.com>
-Date: Wed, 9 Oct 2024 15:10:28 +0800
+	s=arc-20240116; t=1728457984; c=relaxed/simple;
+	bh=2nyKGzQF4mYaia0WS7Km+i4Jd3onZa4pVNPu4rVadA0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ppg6SXVNFGWdZvjSYfYv/QeYE6lvLhIIanDbg4sWtJTZN0HehHU1nt4XUyHnvOyxg7ILc6etDl2pYIfF7Y2RmaoXEyFMFrAJEeirN8vta+86TrwVcBEXQ3ZPPMvb5/8bk/IhOKUdHePdIgSHZyNMPUHP8lWdJ53dBaA6JKQ1wgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=L1bVGDwN; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=Dg9+MLRLpJ49M70uTdE3TkTe0Jhz9wgrn0Mgmp3zuUo=;
+	t=1728457983; x=1729667583; b=L1bVGDwNlz/m8mQD3Xa5cK6zlVNV+xuM+Gflf4E+HgzOusE
+	3eM4EgTogYgzjjnMUSHQLJt9ee7OPVUuYkVdkSYFz6m3jXZZaJhl02uf5G7mHT5mYUmWI6GsxC4AT
+	ajJE4qMALTIUXtW3qJNzjW7KTrLs7GdQutQArp7JfG0HyGSgDnTXiYY6EHWHAQ131EVAsJekcx2qh
+	y3yeeNcG6lCThqVGMRxIukw33tPAaVqXN+GyLPy8Hj5TGutqdHcjt+u9z1uLc5iAEiFjDazYoZrx9
+	CGraeswOxIyBsBMCSynZsgVGk+8B7YmHo26kglAmKifGvyXY8vrHqOnDWyX70b7w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1syQsU-0000000513j-44uU;
+	Wed, 09 Oct 2024 09:12:59 +0200
+Message-ID: <f4884810ce29b945674fe90d708f44fdd9717d85.camel@sipsolutions.net>
+Subject: Re: linux-next: manual merge of the wireless-next tree with the
+ origin tree
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@kernel.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Wireless
+	 <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	 <linux-next@vger.kernel.org>
+Date: Wed, 09 Oct 2024 09:12:58 +0200
+In-Reply-To: <20241009113537.4676291f@canb.auug.org.au>
+References: <20241009113537.4676291f@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] phy: rockchip: inno-usb2: convert clock management
- to bulk
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- william.wu@rock-chips.com, tim.chen@rock-chips.com, frank.wang@rock-chips.com
-References: <20240929061025.3704-1-frawang.cn@gmail.com>
- <jx55slsincpzq6mugfsyc6qpbku2555azj7lithwggo733ggnb@rkqsxpsyoaw7>
- <13fe91e1-2471-4a59-9581-628ce7773fdc@gmail.com>
- <ac325385-cb3e-4002-b100-de73eb5a9ac7@kernel.org>
-Content-Language: en-US
-From: Frank Wang <frawang.cn@gmail.com>
-In-Reply-To: <ac325385-cb3e-4002-b100-de73eb5a9ac7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-Hi Krzysztof,
+On Wed, 2024-10-09 at 11:35 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the wireless-next tree got a conflict in:
+>=20
+>   drivers/net/wireless/intel/ipw2x00/libipw_crypto_tkip.c
 
-On 2024/10/8 22:35, Krzysztof Kozlowski wrote:
-> On 08/10/2024 05:07, Frank Wang wrote:
->>>> +	}
->>>> +
->>>> +	if (!IS_ERR(refclk)) {
->>>> +		clk_name = __clk_get_name(refclk);
->>>>    		init.parent_names = &clk_name;
->>>>    		init.num_parents = 1;
->>>>    	} else {
->>>> @@ -1406,18 +1424,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
->>>>    	if (IS_ERR(rphy->phy_reset))
->>>>    		return PTR_ERR(rphy->phy_reset);
->>>>    
->>>> -	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
->>>> -	if (IS_ERR(rphy->clk)) {
->>>> -		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
->>>> +	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
->>>> +	if (ret == -EPROBE_DEFER) {
->>> This does not make much sense. Why would you proceed on other critical
->>> errors?
->>>
->>> You want to use optional variant, I guess?
->> Yes, the clock properties are optional.
-> And? So are you going to use optional variant of clk get or not? Is it
-> appropriate? Are you going to improve it?
+This one's weird. These can't conflict:
 
-Using devm_clk_bulk_get_all() not only get clk_bulk_data, but also can 
-get num_clks.
-The clocks numbers (num_clks) are used for search the ref_clk in 
-rockchip_usb2phy_clk480m_register().
+> between commit:
+>=20
+>   1842442007cd ("wifi: lib80211: Constify struct lib80211_crypto_ops")
+>=20
+> from the origin tree and commit:
+>=20
+>   02f220b52670 ("wifi: ipw2x00/lib80211: move remaining lib80211 into lib=
+ipw")
 
-However, right now, the optional variant of clk_*_optional functions can 
-not get num_clks, or must know num_clks, then can get clk_bulk_data.
+because 1842442007cd is an ancestor of 02f220b52670:
+
+$ git merge-base 1842442007cd 02f220b52670
+1842442007cd...
 
 
-Best regards,
-Frank
+When I tried to redo the merge I did get a conflict in this area, but
+git was showed it between comments in a deleted staging file and the now
+moved lib80211/libipw code.
 
-> Best regards,
-> Krzysztof
->
+So I think that git just got confused because I moved a file around in
+the tree, and deleted another copy of the same file in staging.
+
+Anyway ... I need to sync with Kalle, but I think I'll pull net-next
+into wireless-next and that should resolve this and the other two
+conflicts.
+
+johannes
 
 
