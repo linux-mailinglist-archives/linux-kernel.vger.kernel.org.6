@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-356518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8309C99627C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E693996255
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE261F231BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B36F1F22C9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3702188A1B;
-	Wed,  9 Oct 2024 08:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="Sp6FeLyY";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="uQ/0JWKl"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2244B1885BF;
+	Wed,  9 Oct 2024 08:23:09 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36D5175D4C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A782183CA7;
+	Wed,  9 Oct 2024 08:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462408; cv=none; b=E4VxcrVoAENt59DL/+XB7fquuZAxzv4ymNNHS11hMJBXnOmqrfHdTUiTuIzpriPseGjg06foU/hywHk7bs5jRBhAgBPYDfD+TvAQdDJCLZdDg1EsRZReb0B6Y8R6asYRGGfop/ixDJzqkoeC0lGmSCIo4OZ7tBt33EItG5Z4eOg=
+	t=1728462188; cv=none; b=sXbycmm/ox4k2TPvxpVafctT7w0V3YKd7OCgWGvO71Ooc9Htqr8CLnxaarUqUwJXwbTsbOljRew7zv8EhSliVfNPx/RpiLXYulvYzuRQfMyQDI2o4eF4jR/xadALl8Bxd16NsqQzHcs+X7FzkiyZnyRgrsIY4dv/1JQWXRab0Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462408; c=relaxed/simple;
-	bh=WpU7IDNItE4PqhOYJLXofqM0PKJOyPxuV74gffsAiHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N/M7LHZ7tn79QuDGoav2YvbOzvkHwDcuYSG/qRVKVt27Vi06QdUKEjaTzDiX49Ml6uVEfBzhP07Bu5OzH4I+WPidVYBiV04RT7eHFGqhGNM+cqvCQwL8YfQkIi/TPLQjmdlqhcnilY4OEb1DtnVaxSAOfgiEFmbi9j9Y718XdaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=Sp6FeLyY; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=uQ/0JWKl; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1728462165; bh=vZBRkEYozxZuTs1P5xDq7FC
-	HWdy39DrdwAYvDZH+ywQ=; b=Sp6FeLyYsW4um7LgeLsLMNs9VCRV5VBnol8ZjvBRIzxavSSrHa
-	ikVEgqSthe+DeVE+VR6kM3fSrdX//R2r9GaTu9689uvORNJeR/oOWEJ9G7GHm4tO9T8+Dgj0KYx
-	LSIycteHvSCQIdmk+15FIlxvxVqc/VfPT9MPpdZKWO1HH4aMjSf45uxPFFjA74glgTxRcXu1AT8
-	hJ8yPqNYg5bD30Cuuvib1NbBFyj2UAoOqwZkTS8HHarqtqjVQr/uGTazHHvSMyTZmWVHknWldER
-	xRLh102rwDeZXAWfGi9jYBS6XTF+Bt1aFfle1+v582bdsnOxVkriUNzBFLVanIsWUxg==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1728462165; bh=vZBRkEYozxZuTs1P5xDq7FC
-	HWdy39DrdwAYvDZH+ywQ=; b=uQ/0JWKlTjJ9bNwn0FkgIJaa/iyKj8EMlIZIomDWTjjVvVLnKE
-	y3X0tTLEI7A5OBydCiZdwSDIH1eZ60XJD8Cg==;
-Message-ID: <d9a3fee4-bb14-4162-95b1-06177d0a9949@damsy.net>
-Date: Wed, 9 Oct 2024 10:22:44 +0200
+	s=arc-20240116; t=1728462188; c=relaxed/simple;
+	bh=OWWHz4CYp9wbQBeMK6ZGclMLjxPNjr3c9tu4Ka7VYL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBFNgnN0WwR+PFR3cbA0ltpChGfShr332W4viP3kyUxYv6olK7qKRYC/OLmCzOeUK+WOTREVxqUXM+OWUSLdRYv/VUe7kkz/q0CoKzabhwN0JFE2jE8A06hRJzbMzEMNQRikDQ+OxMHryNH8aZ5+VEIe1ID6M6oK92B4YEWLthQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9952ea05c5so463520866b.2;
+        Wed, 09 Oct 2024 01:23:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728462185; x=1729066985;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FQTACUhFeFr0g9FiP7m95mpmdKBO100vPkvIghW0C9A=;
+        b=YpAfNWkZ3NElCnrTFU48uwg92nXJeWDIp/D8997+cd+/9NLwWnO9/ZsqTFc6Drj7SX
+         WQ62VA/NyScXzwtx6p4HoS0qNYKxpqxUMhVsC4u/97N7HTxSVideV9lqYFgV0R9RERqV
+         kRsivbWWL5PKcGg3fJ3VKc6uMc06zQ1RTgHiT6ucW3LueLbVQOJfgn2AfCTa0as4XEnX
+         hVWFz4ku6xaA+KbQSfLlTxnZRVMmwSdqpnNSx+odSw8UWWdyCQFE1bqa3rNnZd04tDuD
+         2cI/1iMIRWKhebt4CciItL8seIKSDTIWMVPJhMrjSxDsDgVOl0CAtvB8+OVkdm5NMDnH
+         N1iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlRPwQEODmz9boH/ImomqjFqWPoxYuinN3LQgvA0rPJz7wZNsUxg+f5WfMh1e5Z1wu/2TYDarC25Vd+QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ8IXDeJTvqOnxqVAsKxwO9vjNH1geVfXsvNbBUx9y52R9XD4B
+	KmlqUXB1J+H1i5PbwE9QC/kxVd2IhxHeMnEM5O5uZyLJsG4oRzzY
+X-Google-Smtp-Source: AGHT+IHPiv3gAPsHrEJebDtaMKefHj3kMSI9yPHBKQpQBb980qL/DVK37VNaKHJcNKW1JAHj8HCSRg==
+X-Received: by 2002:a17:907:2da3:b0:a8c:78a5:8fb7 with SMTP id a640c23a62f3a-a998d314e4dmr134343166b.45.1728462185169;
+        Wed, 09 Oct 2024 01:23:05 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994a1464a1sm474369366b.106.2024.10.09.01.23.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 01:23:04 -0700 (PDT)
+Date: Wed, 9 Oct 2024 01:23:02 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	David Gibson <david@gibson.dropbear.id.au>,
+	Jeff Garzik <jeff@garzik.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv2 net] net: ibm: emac: mal: add dcr_unmap to _remove
+Message-ID: <20241009-precise-wasp-from-ganymede-defeeb@leitao>
+References: <20241008233050.9422-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: prevent BO_HANDLES error from being
- overwritten
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
- David Wu <David.Wu3@amd.com>, Felix Kuehling <felix.kuehling@amd.com>
-References: <20241004235904.8605-1-pvmohammedanees2003@gmail.com>
-Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <20241004235904.8605-1-pvmohammedanees2003@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008233050.9422-1-rosenp@gmail.com>
 
-Hi,
+Hello Rosen,
 
-Le 05/10/2024 à 01:59, Mohammed Anees a écrit :
-> Before this patch, if multiple BO_HANDLES chunks were submitted,
-> the error -EINVAL would be correctly set but could be overwritten
-> by the return value from amdgpu_cs_p1_bo_handles(). This patch
-> ensures that once an error condition is detected, the function
-> returns immediately, avoiding the overwriting of the error code.
+On Tue, Oct 08, 2024 at 04:30:50PM -0700, Rosen Penev wrote:
+> It's done in probe so it should be done here.
 > 
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> Fixes: 1d3bb996 ("Device tree aware EMAC driver")
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+>  v2: Rebase and add proper fixes line.
+>  drivers/net/ethernet/ibm/emac/mal.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> index 1e475eb01417..543db0df9a31 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> @@ -266,8 +266,9 @@ static int amdgpu_cs_pass1(struct amdgpu_cs_parser *p,
->   			/* Only a single BO list is allowed to simplify handling. */
->   			if (p->bo_list)
->   				ret = -EINVAL;
-> +			else
-> +				ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
->   
-> -			ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
+> diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
+> index a93423035325..c634534710d9 100644
+> --- a/drivers/net/ethernet/ibm/emac/mal.c
+> +++ b/drivers/net/ethernet/ibm/emac/mal.c
+> @@ -742,6 +742,8 @@ static void mal_remove(struct platform_device *ofdev)
+>  
+>  	free_netdev(mal->dummy_dev);
+>  
+> +	dcr_unmap(mal->dcr_host, 0x100);
+> +
+>  	dma_free_coherent(&ofdev->dev,
+>  			  sizeof(struct mal_descriptor) *
+>  			  (NUM_TX_BUFF * mal->num_tx_chans +
 
-My bad, I've merged the wrong version of the patch.
+The fix per see seems correct, but, there are a few things you might
+want to improve:
 
-That being said, I think it'd be nicer to follow the same pattern as the other checks and do:
+1) Fixes: format
+Your "Fixes:" line does not follow the expected format, as detected by
+checkpatch. you might want something as:
 
-    if (p->bo_list)
-       goto free_partial_kdata;
+	Fixes: 1d3bb996481e ("Device tree aware EMAC driver")
 
-Since "ret" is initialized to -EINVAL already.
 
-Also can you add a reference to the broken commit in the commit message?
-Something like:
+2) The description can be improved. For instance, you say it is done in
+probe but not in remove. Why should it be done in remove instead of
+removed from probe()? That would help me to review it better, instead of
+going into the code and figure it out.
 
-Fixes: fec5f8e8c6bcf83 ("drm/amdgpu: disallow multiple BO_HANDLES chunks in one submit")
+Once you have fixed it, feel free to add:
 
-Thanks,
-Pierre-Eric
-
->   			if (ret)
->   				goto free_partial_kdata;
->   			break;
-
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
