@@ -1,97 +1,150 @@
-Return-Path: <linux-kernel+bounces-356591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471AC9963E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:51:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AA49963FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DD22881CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E3F287DEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A6B17E019;
-	Wed,  9 Oct 2024 08:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C230818FDB1;
+	Wed,  9 Oct 2024 08:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0lbCzn4i";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/6HCSPr+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kH+TOkgH"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80883152196
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FF718FDA5
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728463825; cv=none; b=RGO1plPmJj7hSEUIiNWw961bI6mcRQ21BwF9WsO8pLYasQtZlG5nx3ywd3CXVXv31xPHV05EstwnURAaHRzK+13xlcqBEJdgKdM3CZrHkkLppfXgmu005tvKaoVv2VqW7Pze87nC1bJDNJj62k79ygHKH8eteaIQmD1lGEGDv3I=
+	t=1728463869; cv=none; b=NM6YyGHRWXP+Co35TpMYgRTIJBi/ujUSXhuwXrEsxFM83JFuKfghdw+m5WjpxmdzEvKr5RlhjzOOjDbE8fFivThLQU+tNRf03yzidfN7M6bTSG0o4sRzLOX/PxwT4ZcuzPrWYiJazE1tnNv43oC/0Msrqg0E81Q+wsAxmKBPbLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728463825; c=relaxed/simple;
-	bh=Gj8T7GAviqnd9TLTsnW46gb58EIl1ZqSSJUWSQBE8Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiDrWx6hG5kxK/JL+5WWB8vcz//tBNZ2UJ3QXEeVvb0TLiCdb/W0XDmpe2QxDbS4Ivxi57v/HwitvLG7PDAgqbbHSROJ/Y/SVtcLy+4Vqf15ZnlA08Dl8ZxLNAXwnYtGqw9YrAUo242MflUW/OkOuXsVtO9s9+tpC18p8E1amwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0lbCzn4i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/6HCSPr+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 9 Oct 2024 10:50:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728463822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BF3j4zKCuUyfQKPQeIihF2R7tVndLQx9MfNFtEf2i1s=;
-	b=0lbCzn4iwrEyidgiQ4o5HBZbxt+LNSBvnCdhOTG9pvkukbvrGB3VovfEuAkkKxDNovZOLu
-	tKddSNhi6uyYjY1JR6loLmoh3FlNPvQZHRdYSkethuWe+Owxu01/5nW+hgJgPxYmkoNHtH
-	O8bNV1V1eBq7OeBeR+YzDsXSsf/wNu7uWTC6fNKGzXDRkhPxMVcV4Z++5S9oCaHFk3UMsg
-	AKKKIEBKZYdEvWJh0pUsJ9eBT7fAQfWtkqMlUwa7WPAtDVTKcgIcfKQuwKpkStZTKAkfgF
-	aXjqUMJaGgUqwI4xK7XDTCv0EvClyG1wUb1O6UkgtEtdnUr4iCMUEj32WXXW+w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728463822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BF3j4zKCuUyfQKPQeIihF2R7tVndLQx9MfNFtEf2i1s=;
-	b=/6HCSPr+/f3Dv1XzrfpKQcP5BbBbFyRG4AAgd1zhg9buwQ8IX43rEM+yaGqmBC/vOrZo58
-	V7og2KTRrIBP8jBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, ankur.a.arora@oracle.com,
-	efault@gmx.de
-Subject: Re: [PATCH 2/5] sched: Add Lazy preemption model
-Message-ID: <20241009085021.cw9147B8@linutronix.de>
-References: <20241007074609.447006177@infradead.org>
- <20241007075055.331243614@infradead.org>
+	s=arc-20240116; t=1728463869; c=relaxed/simple;
+	bh=zBBzWdWsfyqBIiT9wbwcVNQEKc8lnnOJ9lwiSkj7ngI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=i1S3P4Pov+k+HkvslS0atpv9R6SUoHtB/uMli+5DUPpZqmkTTz8hSNTOVQpUnnrWU59JaWw+h04h59UoDPugyWSv66KQEVXqYTOPMM5sJb/45KmWrYpwWkpLxrYuIDjagj1iKiIn6g5wAHg4Cd++dO203CS+OmtKpTe5QgI3OaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kH+TOkgH; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e109539aedso5474565a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728463867; x=1729068667; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xeuc89940OyZEzmfZGsShlcWun218secJztkD+/huVg=;
+        b=kH+TOkgHtOBytMNN7smX3WjzUD7Yt7NiUvjkXLPuZDMqLVM9h4rxNo9U3uet9m1Ipv
+         /5Yi7d8CjqGdiMFaX8JeJ/j7NJB5nGp32YBsPAGru4Z4YAXAhGkyip4vMrEs/UaxAdRr
+         G02zWjK828/YEksgerytgm6sjb4pjY+ITEexNT4E6vbNRhUCP3JhalRuUeN9P58nNF1T
+         Vw3B7SYRVZyxU1z9pVaEFCoECEX3vn/4SxlMvx2BFTyKBlcaANo14OZeTdAEFpci4Ypq
+         Hz8IzjlO223DiDhQlbNcH7PIptPvp9AOqQrGHa8VTrH19zOuej7nzgSc9gU5rLL7srWs
+         m18A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728463867; x=1729068667;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xeuc89940OyZEzmfZGsShlcWun218secJztkD+/huVg=;
+        b=Mom6u+Fb2+6PWIudITG8kC1NlJ7a/sLuEkaVOrdcz9mi6tGRwHQPORHMgM8pQfIM0s
+         LN/dGN9n78br45GetDrlTGWVJ+KG5VKkO6U+GhdQQ+Ja40Pe7ZDpe8Dqo77OlHvId2DI
+         FaYEUiW2oHZjISohgprT1ZOAfP6sTG7Vhg8tKw5PfgOv1M2WA4Cvh74g8v940tdcbhpp
+         Ay0YLpenuhRKcRAWR+hLvENhsZRcVe6sdJ/+fAW3UU68x5ZyX1qLfSAG3e6uOL2Sf64n
+         rAexcmKcUD+OoBxqLAlRVL9edcsndg+S3YXaJtTnKctHnqoX7HYBWmJiQVnoXAjcheKo
+         n7JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH9AqfglzbCPNZ9hXETG6qib5V4dV+5ru/UrewVtOQSV58MfqP3Sp7Z1HMdtsDgy+jO7vf9J9FtovPxM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPNuTtKmItcYivXAhqZhTHwzx08iEPaliaJKcApRAryBTLjbKw
+	ytUY/b6GjOpfvvvBOrLty1je1pkLHzI7NSwG9uULecANC4C2wszNRmF+5m6Q9mWwAFbafggURJA
+	y21KY/w==
+X-Google-Smtp-Source: AGHT+IF0F7RtB5DS5euGqhy7U7rhzvEMjBeGrvubLOfvxfogUs8BIv6homsplq8ODB4C0o2n6DXgtQ==
+X-Received: by 2002:a17:90b:1104:b0:2e2:9522:279e with SMTP id 98e67ed59e1d1-2e2a25247e0mr2201199a91.31.1728463867148;
+        Wed, 09 Oct 2024 01:51:07 -0700 (PDT)
+Received: from [127.0.1.1] ([112.65.12.217])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2abad236esm898157a91.10.2024.10.09.01.51.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 01:51:06 -0700 (PDT)
+From: Jun Nie <jun.nie@linaro.org>
+Date: Wed, 09 Oct 2024 16:50:21 +0800
+Subject: [PATCH v2 08/14] drm/msm/dpu: update mixer number info earlier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241007075055.331243614@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-8-76d4f5d413bf@linaro.org>
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Jun Nie <jun.nie@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728463820; l=1729;
+ i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
+ bh=zBBzWdWsfyqBIiT9wbwcVNQEKc8lnnOJ9lwiSkj7ngI=;
+ b=olKDHeGrWWSragjDEGtR+qG7l03ad9g8wQu7Scz79ICx2dg8oxIEAOpVwrukiQ+/+oPfeExdI
+ 7EvMgTVIa78DCYbucqzqXSwayrVfw07ZG1dzLBNsZo+LiJkdMYaFHoI
+X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
+ pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-On 2024-10-07 09:46:11 [+0200], Peter Zijlstra wrote:
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1103,6 +1106,32 @@ void resched_curr(struct rq *rq)
-=E2=80=A6
-> +static __always_inline int tif_need_resched_lazy(void)
+Update mixer number info earlier so that the plane nopipe check
+can have the info to clip the plane. Otherwise, the first nonpipe
+check will have mixer number as 0 and plane is not checked.
 
-The naming is a bit confusing here because tif_need_resched() checks if
-the TIF_NEED_RESCHED is set while this returns the proper TIF bit
-instead.
+Signed-off-by: Jun Nie <jun.nie@linaro.org>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> +{
-> +	if (dynamic_preempt_lazy())
-> +		return TIF_NEED_RESCHED_LAZY;
-> +
-> +	return TIF_NEED_RESCHED;
-> +}
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index dfe282c607933..68655c8817bf8 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -638,6 +638,7 @@ static int dpu_encoder_virt_atomic_check(
+ 	struct dpu_global_state *global_state;
+ 	struct drm_framebuffer *fb;
+ 	struct drm_dsc_config *dsc;
++	struct dpu_crtc_state *cstate;
+ 	int ret = 0;
+ 
+ 	if (!drm_enc || !crtc_state || !conn_state) {
+@@ -662,6 +663,8 @@ static int dpu_encoder_virt_atomic_check(
+ 	dsc = dpu_encoder_get_dsc_config(drm_enc);
+ 
+ 	topology = dpu_encoder_get_topology(dpu_enc, dpu_kms, adj_mode, crtc_state, dsc);
++	cstate = to_dpu_crtc_state(crtc_state);
++	cstate->num_mixers = topology.num_lm;
+ 
+ 	/*
+ 	 * Use CDM only for writeback or DP at the moment as other interfaces cannot handle it.
+@@ -1170,7 +1173,13 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 	}
+ 
+ 	cstate->num_dscs = num_dsc;
+-	cstate->num_mixers = num_lm;
++	if (cstate->num_mixers != num_lm) {
++		if (!cstate->num_mixers)
++			DPU_ERROR_ENC(dpu_enc,
++				      "mixer number %d is not as expected %d\n",
++				      num_lm, cstate->num_mixers);
++		cstate->num_mixers = num_lm;
++	}
+ 	dpu_enc->connector = conn_state->connector;
+ 
+ 	/*
 
-Sebastian
+-- 
+2.34.1
+
 
