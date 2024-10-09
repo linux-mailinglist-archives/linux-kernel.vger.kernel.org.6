@@ -1,121 +1,99 @@
-Return-Path: <linux-kernel+bounces-357254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2BF996E8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5095996E8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A858281F39
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B552820A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E39F19DF64;
-	Wed,  9 Oct 2024 14:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1BB198A34;
+	Wed,  9 Oct 2024 14:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n/uGmT0Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAiHaSiy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6E5433B6;
-	Wed,  9 Oct 2024 14:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668407346D;
+	Wed,  9 Oct 2024 14:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728485190; cv=none; b=my9ibOiENj3Z+eIYpc/9A3nU2oWv/STbFshs0slPoabxdcgZUPqj0qxDZafd8ChytdxTPagp7Z5FcBPXnNAIZZYafVvVyYxHO9vfzfr8kif7cz9a5crKqTZ1XvK92HV1kF/fCXrytzZIJB4Lz/Nkagf/WLnqvTUbNNdoE4YNMN0=
+	t=1728485218; cv=none; b=qudEh9tP1MCpw04n46dtiraM170yas34uIPIqNsnnu/Qn62YQ2dsI3T0M5yvJ8Q/3mNhqhojbOcCCM3BfkjIfZR4jSg5xsYQxOsRqGidzXrOVMfZHuKIBw7adSQwozL/lvHeqa2YXY8kDj9B4CCeXJIXeunrNcd7Ckfg1B3wpKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728485190; c=relaxed/simple;
-	bh=xXD0CGxWWzLTAw/TXApXZkvVnSpZBuc19McI4xF2HPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plwXkkm+SiF1XSB6w7ApXy9xBt/3PZto+dhR5lpH5mKQOEdkBvMjNDerItiC26F84E30XlZHSJ4AE61sxuTrk5r69QhVwFDCb+d/9QKjJ26tYNhmuYRY65Vkwqco8hqyxuBrrL25c35SNUjVOj1p/Jau8rsubEcgK2sRwmKQU90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n/uGmT0Z; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728485189; x=1760021189;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xXD0CGxWWzLTAw/TXApXZkvVnSpZBuc19McI4xF2HPE=;
-  b=n/uGmT0Zz2vHm/9KBfuqprqmB90YGYP77EzztxEol4weJVGApEobYyXD
-   s4kzNm1+cl40ibp3kVuTAvuVsHLKibP5I2L+gaqU1+kZTbm7R0/6gb10k
-   8IexRY49x9L0bG7nZE7sZYbxPj29+dMgp3H2PWb59xpViL5pa5HUnS7bw
-   sMAE5G24JkJJ0IksH6xMiD6xvxLUu1K1pqr1yuoswkSIcm/nJwvKzAzxy
-   Vek4os0faE1Q0KLaiLdkpfpMqPWd4swbWdTbusROlk6p18nAUPv8s32Th
-   Ez/9s0vRNwLsQ2Zp4HfcMsxwX8nm8Oer2lNndjUj4LQnnCqhVCsgjpDhT
-   A==;
-X-CSE-ConnectionGUID: SNFjQBGiQxiVyVnpFAi6Yg==
-X-CSE-MsgGUID: PZ4ws1chSsaNVzKqTNZ3hg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45259095"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="45259095"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 07:46:28 -0700
-X-CSE-ConnectionGUID: AJQomrpJQ2WqZ2mRP+8BlA==
-X-CSE-MsgGUID: nNhaAVk2TEuOKbqR/zLgWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="99606822"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 09 Oct 2024 07:46:24 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id EFE8B807; Wed, 09 Oct 2024 17:46:22 +0300 (EEST)
-Date: Wed, 9 Oct 2024 17:46:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Sterba <dsterba@suse.cz>
-Cc: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v4 04/28] range: Add range_overlaps()
-Message-ID: <ZwaXPm5WrzLVoUuw@black.fi.intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-4-c261ee6eeded@intel.com>
- <20241008161032.GB1609@twin.jikos.cz>
- <ZwaW9gXuh_JzqRfh@black.fi.intel.com>
+	s=arc-20240116; t=1728485218; c=relaxed/simple;
+	bh=KZCqM5ViVz8c4Xl0XFB1buLYn1CJbT7DVnsOS5GRbl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ECAx3L63qP2dAn2I6PxrjGr8MRIsQRPmlianRqQtTOsva8zgU7bsezCZGXNNtaFdvx8yEZMnUrG+RU5gpBswzxxEQcVVYOCn0PuqFtJfALmvnrf+xk2zpM/MhzuNQmW+IZW/SAV9WKfEOUfUxrNZ+uOg05bu7ZHfpQjUl6Z2H1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAiHaSiy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145DDC4CEC3;
+	Wed,  9 Oct 2024 14:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728485218;
+	bh=KZCqM5ViVz8c4Xl0XFB1buLYn1CJbT7DVnsOS5GRbl0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JAiHaSiyCo+jmMzFVIZa0N6fQnLoZHvHOpZt0gZJM/LjhbaHEs2QiQW83MVCQ0kLf
+	 655O2ln7NVO2z4NMwc0kSYAfemH+Q+081g4JoRAz4TXkjXoW9sxyDEp1uqU23hjFpB
+	 eWMw0QIoO82FrtEwbl0gtL8T8PvzeiwdD6y+hJ9eoOdtnCgBK7qxMfyMHXNYPCq+m5
+	 MsUtjtZ1eUg15wXm5ZJ/bXkz/1mQ8JpqAUkanPUohR/YHOxx/UmchMliMlRTnKU1V7
+	 jP0QcqDi3nuzUUfTiWT6GgSzOBs18VYOINhz+Yrv/vNhdVMMBe8e1ZeaxTQRmrTu5G
+	 Y71zTXcSzR+fA==
+From: Christian Brauner <brauner@kernel.org>
+To: jack@suse.cz,
+	hch@infradead.org,
+	akpm@linux-foundation.org,
+	Tang Yizhou <yizhou.tang@shopee.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Cleanup some writeback codes
+Date: Wed,  9 Oct 2024 16:46:48 +0200
+Message-ID: <20241009-chancenreich-fenster-011642f7729e@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241009151728.300477-1-yizhou.tang@shopee.com>
+References: <20241009151728.300477-1-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwaW9gXuh_JzqRfh@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1150; i=brauner@kernel.org; h=from:subject:message-id; bh=KZCqM5ViVz8c4Xl0XFB1buLYn1CJbT7DVnsOS5GRbl0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSzTY9gm8nEtiTsd5/2YzuBZ/fbsraXbzr4XEfTc1e+6 6na7B31HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNpXc7IcPqASpveOo9VAleU Sh0lp507JX1oX/7ytu+eAZM8p8T9bmVk+FC37Jbldz5b4d7TVhInF+3J4Wq5sNBT98eX23bzeE5 NYwUA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 05:45:10PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 08, 2024 at 06:10:32PM +0200, David Sterba wrote:
-> > On Mon, Oct 07, 2024 at 06:16:10PM -0500, Ira Weiny wrote:
-
-...
-
-> > > +static inline bool range_overlaps(struct range *r1, struct range *r2)
-> > 
-> > I've noticed only now, you can constify the arguments, but this applise
-> > to other range_* functions so that can be done later in one go.
+On Wed, 09 Oct 2024 23:17:26 +0800, Tang Yizhou wrote:
+> From: Tang Yizhou <yizhou.tang@shopee.com>
 > 
-> Frankly you may add the same to each new API being added to the file and
-> the "one go" will never happen. So, I support your first part with
-> constifying, but I think it would be rather done now to start that "one
-> go" to happen.
+> v3:
+> PATCH #1: We haven't found an ideal name for BANDWIDTH_INTERVAL, so update
+> the comment only.
+> 
+> Remove PATCH #3 about XFS.
+> 
+> [...]
 
-Alternatively there is should be the patch _in this series_ to make it
-happen before extending an API. I leave the choice to Ira.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/2] mm/page-writeback.c: Update comment for BANDWIDTH_INTERVAL
+      https://git.kernel.org/vfs/vfs/c/d91c6efe8161
+[2/2] mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
+      https://git.kernel.org/vfs/vfs/c/3cb5827bfa43
 
