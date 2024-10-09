@@ -1,226 +1,365 @@
-Return-Path: <linux-kernel+bounces-357798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF254997637
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2519D99763A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F6E1C21595
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4192284EA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3401840849;
-	Wed,  9 Oct 2024 20:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11611E1C16;
+	Wed,  9 Oct 2024 20:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h3pvflf4";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="sQXTUSfj"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="w/1EA6ew"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B1D1E0E15
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 20:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728504656; cv=fail; b=CjpwMjQV0lkh4nc97bY0AkB7lwI5hzPWjnqK9BVMTdm0U1Pop2gIKhH9eRmbKp5Yxkt0KgOgph2CV1IP2yg5Fn7e+AtvYBSRMzkUlMYHq/ES8J9tHEymF6+WBBrr2WWbBKaVK5ykIq6poTCiIMMIlckw2BE51tXcnwesko9iE0o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728504656; c=relaxed/simple;
-	bh=b5isig4RT8Gg//gybn9CORDhE5X/cTUdo3/QDj1hurQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H1eCWtbW15J7D+K7bXA/atsbtTQiiZ+UWqR8RPvPgYTefrC0EbB6aswnwTZcWNve5ZhD6/rhTXn8hDLdxGN6M/bYogQNSUgsrhTklS3gQeLLuzNbtcmrtl82MKliC2gU6i6shKzTHw/+4JqLgnEdfqaE9z/nmnSMgnRoUGbciMg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=h3pvflf4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=sQXTUSfj; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499IIdCc015148;
-	Wed, 9 Oct 2024 20:10:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=nMCyywOP32NlC9mo
-	DsOHpQVRSYscamXYbIRYyWflkno=; b=h3pvflf4WTuhbrBbiWqoOf5BAlDXfbNE
-	+d/CNngSsiWtX55uORPT/01sgOkkRt814bbLxAbV0ka6GmgBUrL6BUyZ/dEGEgU+
-	nh4n+lYL0GU7Zk5uL01V+wVGsfVDXCdCdCp3jNYZ9RAkrGVHNgsBcbW6tq+YZV9R
-	YTlt7a1awznUEKmy/fnh4iF6EdW+9eIyZgCFAbEXFnBBa0i2ozDMltIcw0OJ25rl
-	aW+pm865qJMZ6WP6ltdRKQM0NxJ9bLAaIJ5tyHb1VFcX65raVFhmBrQ3TRwVhTXx
-	XkdmQJ+lxR9Zpuowxee1ppC+aQXcqiqV/5fMsiIM6qw2+7vvwIH5vg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42302ph55x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 20:10:40 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 499Ir1ga019066;
-	Wed, 9 Oct 2024 20:10:38 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwfeaht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 20:10:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r2Ky7BvIuW3mbliUG0Gb37U1oXOsW3DENGxMCSZgVK01W25dsqHBDFhSXnGGnrhmpND3WLXQFalmoyhA78KnBl3zioOoU5vje0qJcqDwhVZVSZ4o4E5DoC5zQtB6ST403H/u51iyStl4EblmS6mJ1lkBbygfW8PFTvhcGDhTBddpB15WSJZ4Vsq7h9pjjpy3UOH2W6H5/YhCxp9EZi88lLwxZp47V5RtevfA/G+tDh7+302FDI78gx/EmGYEaPBQfWY2/AJdJx673GrIKHR8K5h0t8DSS+N7sLoX40jdo0+FeX/6AC4abLSHiEg/iD/uj+k9xyehqzcue2G4poX35Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nMCyywOP32NlC9moDsOHpQVRSYscamXYbIRYyWflkno=;
- b=xA32VNFRtw4NSB8O7Fvl9JRKAEqTM95illivgsyaA5iRMDRSEdYDXt83MB69TzBVqjcpOtJw6a3tN+KAXs4UBV3U1IBgXVkXOZeTfZxAC8/+QwruUl9TIxsv1/MmLOoPVk6UW79Sv0QJ6vPX9Y4KljNJ2OX3AHN095EuEFH7KoBQEF127opl5F5MYinf1ZWz2IbN0Ktunb4FwVY8B24oqU+F+o0qlIlaqooXGZ8yhcKR/lVCNEfvwvxcVIT6e5bXWZxBilqjUbLBrrC6D4AGlKh6HgNTpnHIUBXfSUwpVyM7rV7vmmDfGzzxmS0gkRPt+VSJIR8/x9mpXzAhGMAUDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nMCyywOP32NlC9moDsOHpQVRSYscamXYbIRYyWflkno=;
- b=sQXTUSfjdU+sGtr/1nrRopRwBd/eSobyDRz57AItEGAMJe6xGEg/AfhyEr6taWXnKWxhwtiPW/Jj6Y2V/lY4/l/25Abr/ms2HwuymorxkHj9KW+7RbV8kSQl4K+k/pbCl34lX0G1jhbyzGPDaayfCnAsh3c/RXnCMkTxmBBSz9M=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by DS0PR10MB6896.namprd10.prod.outlook.com (2603:10b6:8:134::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Wed, 9 Oct
- 2024 20:10:36 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
- 20:10:36 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Add memory mapping/VMA co-maintainers
-Date: Wed,  9 Oct 2024 21:10:32 +0100
-Message-ID: <20241009201032.6130-1-lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.46.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P302CA0033.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:317::8) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353E040849;
+	Wed,  9 Oct 2024 20:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728504746; cv=none; b=sgtf/VV0ChJ4w/QFhIeg/89DbYy5m8CUIY3QOSn445qdXCUgj6KqtPvmU3q+9At8p2KsfgjOanlFq/WFCDmYX7MX8687gdKshacBNgZf11czWF42ECtNVjdLK11ow5iHiAvEqZsR5QgsaZpfO5Rq8MDgsjdXnW2tQ7W7FAue0/c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728504746; c=relaxed/simple;
+	bh=fyqJmBKyEQJ6yk/G06DDzwuZ8WD2YSFsYiYx3Q8uprw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ousGUqXd+Biq+0tR7IHbk9WXvqQFcl7A6sbcknW/fx8JdLfiSPLL4UfhKl0JRFQSWhSMuJsfCw2AnkN9V+X37qygrS9Jx8OdSvU3M7If+DquWYGTbSUcmRLtvsLWE51dWKXdMiHO3IB+8zoIHy8/eU268IEBRyl08Ezf9W6Ld00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=w/1EA6ew; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cyjV0m/FVHX5OoVTni98jL/NJf0T7IkXtRCLs6LCGxE=; b=w/1EA6ewh3iuoCRnR/b9EJHeIa
+	kfOeq7X2rNawGLqVGHkzawWXZ7Q3XbhhYirWxYM8lXzMtVRCYJgtyyNdsGv1u9NVNDuqkdMecjEIZ
+	VNICg1cOU2tJLjOOCsLC4iUGcaQnu0f6Nhx3pcmCyGk0xpcPM+atpPrAMGAYn3miq3kxn7vD7aJDN
+	p1J9CGRc2gk7GVZDY2jrrIKXhWCyAr6Xy6Mj7+/rHZtfJWX1n29wkheTbqtCLzJbum1kbtXmuwrQG
+	hjjNMrNX7EY6o+V7/GgYL8oTYKhuLhFACLzRvROl/foSZ5pEloZ4WzzFuhGiKLMGNPFKC1R0DMKly
+	tNdAEh4g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34352)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1syd2Z-0001Bq-2i;
+	Wed, 09 Oct 2024 21:12:11 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1syd2U-0006a3-2R;
+	Wed, 09 Oct 2024 21:12:06 +0100
+Date: Wed, 9 Oct 2024 21:12:06 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: populate host_interfaces when
+ attaching PHY
+Message-ID: <Zwbjlln3X5RXTt8x@shell.armlinux.org.uk>
+References: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
+ <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
+ <ZwZubYpZ4JAhyavl@makrotopia.org>
+ <Zwa-j1LKB3V2o2r9@shell.armlinux.org.uk>
+ <ZwbQ-thwDxPfqGnW@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|DS0PR10MB6896:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11109551-fb34-4547-4029-08dce89e7031
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zqf8ZfNqFVykPY6eYA/KT9lmn1np8wVg/F8qXQhFzSCBckeL4q+aSPD0bkdR?=
- =?us-ascii?Q?PixU44M3nCek3sOM2jPo85SWK3ZEm0EZQ8Ry3G5XFCVDgsHRFvXlFR7ktVKI?=
- =?us-ascii?Q?EVG2KRRIV2RnFs/OvOh85Df5BElwitUHvOz34cIYB7tHCrMtjmEUeEDdDK8G?=
- =?us-ascii?Q?G3K8ZhseJIhWNfZpI0rXK1EbuVGDAVwfpVme4K/i7tSVXbHlfrBr6ak8kVe1?=
- =?us-ascii?Q?1qkdvk/TfP3ITLohwqc2T458QQ51Lh+na9yu/W5pEniAzq7eRoh1Jxi4/x1r?=
- =?us-ascii?Q?yLSvm1yNioAbL5tPTrB2TxHjsPNMo2+7QBVYtz61ij5jlhIWeq7tUGt4R4Zv?=
- =?us-ascii?Q?WaurDr4Rx/9ed65Xa7tptzpvjniVFrQCkw0z9zGChXiPUxxQfANLcFqCIhxQ?=
- =?us-ascii?Q?gHLRRM1KdYpRG0FVpmgIbbxP44+iUB0KjpmKj29GNnO3D3+22E+x0XRO1n5K?=
- =?us-ascii?Q?IjJNvw+VTe65oVdcMQovobPF7WxNdnuosNYLydReriHNzvKJE7RcwKo8CAHZ?=
- =?us-ascii?Q?q1FaBg9KqonHfn6f1ZcNeFp7M57uish8pEmK4FtoWtHdngZruiSg5FrBbMPa?=
- =?us-ascii?Q?Gx0FwlrbUAzpePRsEjO5+5sJmUbOY935qJHT9R2ObTqeejQc8cpX4wBjXk57?=
- =?us-ascii?Q?O52W03/Ysqf7Q+Kfjdlwq4G0Fv5Djd8HV0WDuQyTlwhZJiepfQxs2f5lnSY5?=
- =?us-ascii?Q?yAqb20z6FuQ0Fjcx0vkikmW5Ny7xetEAuRCWRykD812n4+F33d7Dk1DYE4Py?=
- =?us-ascii?Q?GcVqemWGawgW4SJDj8A4W8XoqNl9W9tp23SSFc6BetfE2Nq7kfyG9Moy+zjf?=
- =?us-ascii?Q?ufMcpkD+ZTUtDeMhP3gv5A1Kdz55gxoSSMMtfynOp/I7+RqfeVYAy64Q/VKS?=
- =?us-ascii?Q?XSxQtQCvvg7RwCPenwsQTmPRgWDu5t/dUnzUVXTI+0eoSM/kA8MN/Y3maqPq?=
- =?us-ascii?Q?XeBGNumUFbLQCAk6PkimSfvi9fxxnVZH4h5gD+6kIPVzeICOevOOgBa+9QKv?=
- =?us-ascii?Q?1+MIhLyw8J+XbRRAefKKBj/pHXgLBIuOOGhGe8MItTe2mRWW6Max3HIYzZpL?=
- =?us-ascii?Q?7EWBo2M1l+xAqRAZbyrjp8p3nHfrZSEfEKXOBYtBttrCL4kEykrAlUtdtA5A?=
- =?us-ascii?Q?2fRlR2F5phosq9HIuNwElFxdo86nZ8vuXh+qluSHs8G7J0amA/Or2ZS36SVj?=
- =?us-ascii?Q?sWiyzzlWkpj3tz//k9ncGCSEepI+mEVe0o8pjjzCRdDekuEzF8RepN4Lzbs?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TNWD8qPwhBJTwOdqEmo8TNn7FlQZ7xqXaER/7MOsM7wz0bRrYzNft9KZJUHv?=
- =?us-ascii?Q?YTym5qsxaFplSPcOFUDiH+LhpqiaOnPm6nWNgzi7KjNfqwlY50Yozk5ytjZC?=
- =?us-ascii?Q?+/4tyJroqNfKTneLCw2IR1cHuEtm7FGAuL+s8VvNzAWnqbeoO+FYOopiZ7T6?=
- =?us-ascii?Q?kgT7j/ToR6lrHlPJRrl5eNyhX0+mhpEsS6boMp0c1thdJS/RnjviH2j44VRL?=
- =?us-ascii?Q?9mV2rlJVIpXF02a8hPscsjaMGdk0zyDXqHS4ZX99PFNGxwWvQnO1gtHnYmKQ?=
- =?us-ascii?Q?NqHshrO3y1BkQjlBdf9raVE+y1OGHhqbbWlZJ4KbAPf9LKRVdSFKAaRxfPzX?=
- =?us-ascii?Q?63ABEfc5JoXJ56XXW4Rrae6QVs7TUcRZOXrrdhmz9hgT4JtUajEM66+egQtL?=
- =?us-ascii?Q?rFm0Ipa2Yb7T1ArxbIYsEFpHHBcjSEDW7pewGfLpcaBMZO4MOmZ1IBavXMpM?=
- =?us-ascii?Q?qtIgsyyD0DCggPRHxQrKDBUEvPOLh/6V13H6rvm2Uga7dyHdz2B4kreM/oxU?=
- =?us-ascii?Q?M+pcEXuruf2r18tOIwBSljKKFwFV6JTUkka+O7JM8ONlNcG+/CudraLKOZlL?=
- =?us-ascii?Q?Dk0aa4sd/OrB7pzN6SirMOC9IPUuhaw7wrNpI52PUr0X7fgvleedX9gDH69w?=
- =?us-ascii?Q?XiQEpx45suQPFF8i0C41rAQVCCm2NuACYb0AmYHUaogfvi2CKH2c0Dsiumh8?=
- =?us-ascii?Q?PrK8u1/uyJs3B+qoceGd88ucDLFKjQzMEwxexx2D88wmP3NoZJsVA4LSmYpo?=
- =?us-ascii?Q?FC20sa2g+MA2ao1Y8Gvz6nKFx8eZ36j7RCGg1z1Mrdrp7VM/URkKD+oTMvaz?=
- =?us-ascii?Q?PuNZ5YrsHjeOu8nFzBs99UkcJz1I9mMrM43mnpej+IsZHk/8KPEthzSHgsay?=
- =?us-ascii?Q?dpDc4/PAvfHAiDW7mKB0+QLNN6dSuEIAbZNVysQv9yRBowqpfOs8cKeV60si?=
- =?us-ascii?Q?yiVcZpPNFGdSYm7NqwZ4a1kr01Tii4+224OKSGVXwqJFC85xA71z4McLSBWX?=
- =?us-ascii?Q?ax9+FLbEM07VAgZgCFI7azCKXnX8SB5K/FVwqTe+JL/NSGD6+4y4j/P4LAui?=
- =?us-ascii?Q?5axrElo8bt1ZzdSQFh/OpWRhfG2OS4uE3oi4i6gC1MHlLRvP49qm9AlcYYlc?=
- =?us-ascii?Q?9kPoqtxwaiUCfHCvTAnLpKxvCT1O/1rVDwt31QehVICMMJbJQ+fg88hPFlEO?=
- =?us-ascii?Q?q+7mn4RxKbbq/v4/LDFejJoOImh92yNHHX5xsFZFGi8EBLgZQLugqILu8SgB?=
- =?us-ascii?Q?jHW2/Mg8hA9wfFEAPXg6bhCYnZ+P1qJ7YuRZKq7all43sROLsP/rb0eBrTj0?=
- =?us-ascii?Q?iP3fAK18kkWOi8UorqpKT5V5Lx2/k9llGBy2PgYW4pJV54dViDlJpAifIMRh?=
- =?us-ascii?Q?40J3rSdPashUHw6A4evEenc0SKd3glKOXF3WMVrFjNlQsqzM4aRJ/uxdImKO?=
- =?us-ascii?Q?FOvREfBkNieLTOQV3rKMgIJB0FSHOoAKJ2OXVt1smuKIGWGBFV39Mzb2hRmS?=
- =?us-ascii?Q?5zPqR+qYRWLEKF8MEQysKxbxV07ftl/lfNNYzeMqcKzWjn+OPIiuJ63jWP3f?=
- =?us-ascii?Q?Hd6EV3ESF8aUW5SdTlK+xSyPqdRru0Bek04Ks/Ao0n2MT92x5ULVSmJRF/y/?=
- =?us-ascii?Q?IaMBEk+uvTqG3EYJcQ/uGN5+BO1zFsVf4W2csDyOjFTOw87e3rkUg9KqtoBW?=
- =?us-ascii?Q?t+5Qew=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	9E1kN1AjJmwzBUeHJr8NrRbYGZeCtEreX9gv2phYskaI8pJu1HAtuONhGQo7Q+0QGPeal+ULkxTZORrbbhkvuhTAStnx7FXQ0kxnd7jgmP4tC26ijRYKZPqexrvyyxt4nJrBX8hweiWjn12Yg8Rx7uegNAGwlfYdpbI3wKwJx744SgXHNoTk27RTqJNinXUJelRs5rcSPoJXveJ2XpaHYXRqafZVEYFhk7z9yW2DbMbSdUJ9iiZ9o0XFLN+R6lCLcaOWst15YOAMLepSMzjWl1fEN3ihvOUrDWhkby8IToAVrhQg+SOZ9J/cNTntNr3hC1jwu/I67/4ntmZs+k35hKaeuj2HM2kBoQs9d46peXLAXZQfotKG6jc6/tjkJV4INLJ2aYPsGd9ICuPH/bXzIyAI0JVj/S5AKRqXyimXmZ/gimfYFPfoLZHjeNXyKLvdZqy3hagbzUVql5qS/4KuvblppLsuwxR3rMXS3UUuYYmdD78J1Ets84httg0MMPJtzYnzfNbPciTxGwrbM2vyZGlMiAMhhk2xvAChcsfT2QQ0naIPRvzVKNS5wL6Eoq130bKsPxupLO3A+3x6c9LinLT+gDZSJq4Dvpns+xuWXW4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11109551-fb34-4547-4029-08dce89e7031
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 20:10:36.5294
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VTeLKBihogfhYoW5d9ESY7PWmBTzv7HkZ5PnP4HyZ8WMzwfjGXs/qGhueDpblIXghGyFjwFTHwI4HOG9fMrdR7NDBLCw3h3LSYdrneH/3d4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6896
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_18,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 mlxscore=0
- malwarescore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410090126
-X-Proofpoint-ORIG-GUID: NrtkSoA_5NIN0-TwTvLyj5DarklssnqC
-X-Proofpoint-GUID: NrtkSoA_5NIN0-TwTvLyj5DarklssnqC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwbQ-thwDxPfqGnW@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add myself and Liam as co-maintainers of the memory mapping and VMA code
-alongside Andrew as we are heavily involved in its implementation and
-maintenance.
+On Wed, Oct 09, 2024 at 07:52:42PM +0100, Daniel Golle wrote:
+> On Wed, Oct 09, 2024 at 06:34:07PM +0100, Russell King (Oracle) wrote:
+> > On Wed, Oct 09, 2024 at 12:52:13PM +0100, Daniel Golle wrote:
+> > > Hi Russell,
+> > > 
+> > > On Wed, Oct 09, 2024 at 10:01:09AM +0100, Russell King (Oracle) wrote:
+> > > > On Wed, Oct 09, 2024 at 02:57:03AM +0100, Daniel Golle wrote:
+> > > > > Use bitmask of interfaces supported by the MAC for the PHY to choose
+> > > > > from if the declared interface mode is among those using a single pair
+> > > > > of SerDes lanes.
+> > > > > This will allow 2500Base-T PHYs to switch to SGMII on most hosts, which
+> > > > > results in half-duplex being supported in case the MAC supports that.
+> > > > > Without this change, 2500Base-T PHYs will always operate in 2500Base-X
+> > > > > mode with rate-matching, which is not only wasteful in terms of energy
+> > > > > consumption, but also limits the supported interface modes to
+> > > > > full-duplex only.
+> > > > 
+> > > > We've had a similar patch before, and it's been NAK'd. The problem is
+> > > > that supplying the host_interfaces for built-in PHYs means that the
+> > > > hardware strapping for the PHY interface mode becomes useless, as does
+> > > > the DT property specifying it - and thus we may end up selecting a
+> > > > mode that both the MAC and PHY support, but the hardware design
+> > > > doesn't (e.g. signals aren't connected, signal speed to fast.)
+> > > > 
+> > > > For example, take a board designed to use RXAUI and the host supports
+> > > > 10GBASE-R. The first problem is, RXAUI is not listed in the SFP
+> > > > interface list because it's not usable over a SFP cage.
+> > > 
+> > > I thought about that, also boards configured for RGMII but both MAC
+> > > and PHY supporting SGMII or even 2500Base-X would be such a case.
+> > > In order to make sure we don't switch to link modes not supported
+> > > by the design I check if the interface mode configured in DT is
+> > > among those suitable for use with an SFP (ie. using a single pair
+> > > of SerDes lanes):
+> > > if (test_bit(pl->link_interface, phylink_sfp_interfaces))
+> > > 	phy_interface_and(phy_dev->host_interfaces, phylink_sfp_interfaces,
+> > > 			  pl->config->supported_interfaces);
+> > > 
+> > > Neither RXAUI nor RGMII modes are among phylink_sfp_interfaces, so
+> > > cases in which those modes are configured in DT are already excluded.
+> > 
+> > This still won't work. There are drivers (boo, hiss, stmmac crap which
+> > is resistant to cleanup and fixing but there's others too) that don't
+> > do the phylink interface switching.
+> 
+> Ok, what a mess. So multiple interfaces modes will have to be declared
+> in DT for those boards which actually support that. What you be open
+> to something like that:
+> 
+> phy-mode = "2500base-x", "sgmii";
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- MAINTAINERS | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I think we've tried going down that route before and it wasn't well
+received.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 220c1a01e361..8ebfc520e6e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14913,9 +14913,9 @@ N:	include/linux/page[-_]*
- 
- MEMORY MAPPING
- M:	Andrew Morton <akpm@linux-foundation.org>
--R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-+M:	Liam R. Howlett <Liam.Howlett@oracle.com>
-+M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
- R:	Vlastimil Babka <vbabka@suse.cz>
--R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
- L:	linux-mm@kvack.org
- S:	Maintained
- W:	http://www.linux-mm.org
-@@ -24728,9 +24728,9 @@ F:	tools/testing/vsock/
- 
- VMA
- M:	Andrew Morton <akpm@linux-foundation.org>
--R:	Liam R. Howlett <Liam.Howlett@oracle.com>
-+M:	Liam R. Howlett <Liam.Howlett@oracle.com>
-+M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
- R:	Vlastimil Babka <vbabka@suse.cz>
--R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
- L:	linux-mm@kvack.org
- S:	Maintained
- W:	https://www.linux-mm.org
+> > For example, stmmac sets the mode specified in DT and also if there
+> > is a Synopsys XPCS, then the supported interfaces also gets USXGMII,
+> > 10GKR, XLGMII, 10GBASER, SGMII, 1000BASEX and 2500BASEX. If DT says
+> > 10GBASER, then the PHY must not switch to USXGMII, but if an
+> > 88x3310 were to be thrown in, the PHY driver _would_ decide to use
+> > USXGMII against the DT configuration.
+> > 
+> > phydev->host_interfaces is there to allow PHYs on SFPs be properly
+> > configured according to the host interface, where there is no DT
+> > description for the module. It is not meant for built-in PHYs.
+> 
+> Imho allowing several available interface modes can still be
+> advantageous also for built-in PHYs. Measurable power savings (~100mW on
+> MT7986!) and not needing rate matching are both desireable things.
+> 
+> The question is just how would we get there...
+
+We already do. Let me take an example that I use. Macchiatobin, which
+you've probably heard lots about.
+
+The PHY there is the 88x3310, which is configured to run in MAC mode 0
+by hardware strapping. MAC mode 0 means the 88x3310 will switch between
+10GBASE-R, 5GBASE-R, 2500BASE-X and SGMII on its host interface.
+
+The MAC is Marvell's PP2, which supports all of those, and being one of
+the original MACs that phylink was developed against, is coded properly
+such that it fully works with phylink dynamically changing the interface
+mode.
+
+The interface mode given in DT is just a "guide" because the 88x3310
+does no more than verify that the interface mode that it is bound with
+is one it supports. However, every time the link comes up, providing
+it is not operating in rate matching mode (which the PP2 doesn't
+support) it will change its MAC facing interface appropriately.
+
+Another board uses the 88x3310 with XAUI, and if I remember correctly,
+the PHY is strapped for XAUI with rate matching mode. It's connected
+to an 88e6390x DSA switch port 9, which supports RXAUI, XAUI, SGMII,
+1000BASEX, 2500BASEX and maybe other stuff too.
+
+So, what we do is in DT, we specify the maximum mode, and rely on the
+hardware being correctly strapped on the PHY to configure how the
+MAC side interface will be used.
+
+Now, the thing with that second board is... if we use your original
+suggestion, then we end up filling the host_interfaces with just
+2500BASEX, 1000BASEX and SGMII. That will lead mv3310_select_mactype()
+to select MV_V2_33X0_PORT_CTRL_MACTYPE_10GBASER for which the PHY will
+attempt to use the modes I listed above for Macchiatobin on its MAC
+interface which is wrong.
+
+Let me repeat the point. phydev->host_interfaces is there to allow a
+PHY driver to go off and make its own decisions about the interface
+mode group that it should use _ignoring_ what's being asked of it
+when the MAC binds to it. It should be empty for built-in setups
+where this should not be used, and we have precedent on Macchiatobin
+that interface switching by the PHY is permitted even in that
+situation.
+
+
+> > > As we are also using using rate matching right now in cases when it
+> > > should not (and thereby inhibiting support for half-duplex modes), I
+> > > suppose the only good solution would be to allow a set of interface
+> > > modes in DT instead of only a single one.
+> > 
+> > Two issues... why was the PHY configured via firmware to use rate
+> > matching if that brings with it this restriction, and it's possible
+> > not to?
+> 
+> Looking at drivers/net/phy/realtek.c you see in rtl822xb_config_init()
+> ...
+>         has_2500 = test_bit(PHY_INTERFACE_MODE_2500BASEX,
+>                             phydev->host_interfaces) ||
+>                    phydev->interface == PHY_INTERFACE_MODE_2500BASEX;
+> 
+>         has_sgmii = test_bit(PHY_INTERFACE_MODE_SGMII,
+>                              phydev->host_interfaces) ||
+>                     phydev->interface == PHY_INTERFACE_MODE_SGMII;
+> 
+>         /* fill in possible interfaces */
+>         __assign_bit(PHY_INTERFACE_MODE_2500BASEX, phydev->possible_interfaces,
+>                      has_2500);
+>         __assign_bit(PHY_INTERFACE_MODE_SGMII, phydev->possible_interfaces,
+>                      has_sgmii);
+> 
+>         if (!has_2500 && !has_sgmii)
+>                 return 0;
+> 
+>         /* determine SerDes option mode */
+>         if (has_2500 && !has_sgmii) {
+>                 mode = RTL822X_VND1_SERDES_OPTION_MODE_2500BASEX;
+>                 phydev->rate_matching = RATE_MATCH_PAUSE;
+>         } else {
+>                 mode = RTL822X_VND1_SERDES_OPTION_MODE_2500BASEX_SGMII;
+>                 phydev->rate_matching = RATE_MATCH_NONE;
+>         }
+> ...
+> 
+> So rate-matching is NOT configured in firmware, but rather it is
+> selected in cases where we (seemingly) don't have any other option. It
+> may not be a good choice (imho it never is), but rather just a last
+> resort in case we otherwise can't support lower speeds at all.
+> 
+> > 
+> > Second, aqr107_get_rate_matching() is rather basic based on what people
+> > want. It doesn't actually ask the PHY what its going to do. I know
+> > there's a bunch of VEND1_GLOBAL_CFG registers that give the serdes
+> > mode and rate adaption for each speed, and these can be set not only
+> > by firmware configuration, but changed by the host.
+> > 
+> > So, aqr107_get_rate_matching() should work out whether rate matching
+> > will be used for the interface mode by scanning these registers.
+> > [...]
+> 
+> Afaik Aquantia 2.5G PHYs always work only with a fixed interface mode
+> and perform rate-matching for lower speeds.
+
+They don't _have_ to. To use a SFP with an AQR PHY on it in a clearfog
+platform (which only supports SGMII, 1000BASE-X and 2500BASE-X, I
+hacked the aquantia driver to do this:
+
+        phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1, MDIO_CTRL1_LPOWER);
+        mdelay(10);
+        phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x31a, 2);
+        phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_10M,
+                      VEND1_GLOBAL_CFG_SGMII_AN |
+                      VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+        phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_100M,
+                      VEND1_GLOBAL_CFG_SGMII_AN |
+                      VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+        phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_1G,
+                      VEND1_GLOBAL_CFG_SGMII_AN |
+                      VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+        phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_2_5G,
+                      VEND1_GLOBAL_CFG_SGMII_AN |
+                      VEND1_GLOBAL_CFG_SERDES_MODE_OCSGMII);
+        phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1,
+                           MDIO_CTRL1_LPOWER);
+
+which disables rate matching and causes it to switch interfaces.
+
+Moreover, aqr107_read_status() reads the interface status and sets
+the MAC interface accordingly, so the driver does support dynamically
+changing the MAC interface just like 88x3310. If all use cases of
+this PHY only ever did rate matching, then there would be no point
+to that code being there!
+
+> > Now, while phylink restricts RATE_MATCH_PAUSE to being full-duplex only,
+> > I'm not sure that is correct. I didn't contribute this support, and I
+> > don't have any platforms that support this, and I don't have any
+> > experience of it.
+> 
+> Afaik enforcing half-duplex via rate-maching with pause-frames is
+> supported by all the 2.5G PHYs I've seen up to now.
+
+I'm sorry, I don't understand your sentence, because it just flies
+wildly against everything that's been said.
+
+First, pause-frames require full duplex on the link on which pause
+frames are to be sent and received. That's fundamental.
+
+Second, I'm not sure what "enforcing half-duplex" has to do with
+rate-matching with pause-frames.
+
+Third, the 88x3310 without MACSEC in rate matching mode requires the
+MAC to pace itself. No support for pause frames at all - you only
+get pause frames with the 88x3310P which has MACSEC. This is a 10M
+to 10G PHY multi-rate PHY.
+
+So... your comment makes no sense to me, sorry.
+
+> > What I do have is the data sheet for 88x3310, and that doesn't mention
+> > any restriction such as "only full duplex is supported in rate matching
+> > mode".
+> 
+> Yep, and I suppose it should work just fine. The same applies for
+> RealTek and MaxLinear PHYs. I've tested it.
+> 
+> > It is true that to use pause frames, the MAC/PCS must be in full-duplex
+> > mode, but if the PHY supports half-duplex on the media to full-duplex
+> > on the MAC side link, then why should phylink restrict this to be
+> > full-duplex only?
+> 
+> There is no reason for that imho. phylink.c states
+> /* Although a duplex-matching phy might exist, we
+>  * conservatively remove these modes because the MAC
+>  * will not be aware of the half-duplex nature of the
+>  * link.
+>  */
+> 
+> Afaik, practially all rate-matching PHYs which do support half-duplex
+> modes on the TP interface can perform duplex-matching as well.
+
+So we should remove that restriction!
+
+> > I suspect phylink_get_capabilities() handling for RATE_MATCH_PAUSE is
+> > not correct - or maybe not versatile enough.
+> 
+> I agree. Never the less, why use rate matching at all if we don't have
+> to? It's obviously inefficient and wasteful, having the MAC follow the
+> PHY speed is preferrable in every case imho.
+
+As I say, I believe this is a matter of how the Aquantia firmware is
+commissioned - I believe the defaults for all of the VEND1_GLOBAL_CFG*
+registers come from the firmware that the PHY loads.
+
+So much like the pin strapping of 88x3310 determines its set of MAC
+modes, which are decided by the board designer, Aquantia firmware
+determines the PHY behaviour.
+
+The problem here is we need to be mindful of the existing
+implementations, not only those where the MAC/PHY combination would
+get stuff wrong, but also of those MACs where multiple different
+interfaces are supported through hardware strapping which is not
+software determinable, but are not software configurable (like DSA
+switches.) Then there's those who hacked phylink into their use
+without properly implementing it (e.g. where mac_config() is entirely
+empty, and thus support no reconfiguration of the interface yet
+support multiple different interfaces at driver initialisation time.)
+
+Yes, some of these situations can be said to be buggy. Feel free to
+spend a few years hacking on stmmac to try and fix that god almighty
+mess. I've given up with stmmac now after trying several attempts at
+cleaning the mess up, and ending up in a very non-productive place
+with it.
+
 -- 
-2.46.2
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
