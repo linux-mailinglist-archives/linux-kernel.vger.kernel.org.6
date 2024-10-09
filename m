@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-357584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAB59972F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD939972F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B478B25D44
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:21:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39743B2607D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0E11DF964;
-	Wed,  9 Oct 2024 17:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2706A1DFD84;
+	Wed,  9 Oct 2024 17:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOyPHDv1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tm955dqR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E80D1A2547;
-	Wed,  9 Oct 2024 17:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F46E1CACDC;
+	Wed,  9 Oct 2024 17:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728494454; cv=none; b=gFz3hIJ436FquVUu37MtsZ9jM9U7tOdMjf5PhYIrU5MTVhxhm+rKA/j1B67mi4E5L1+VVeL4VfdP/p3v45iOLbGo+0lVH8RyKP3bYhjtivvpouhxSCDjYfjbaPr4kMWbbAAv/5p75B/25xyXAjuXeTToHe30x3oRjd1MJE8jLJA=
+	t=1728494477; cv=none; b=JOQ4Htq0CrhTfMDCCcv3Nuci/q0/h2IdHCT/nBRwlPJI7IyVuVyuv8VRsrBhKINC1jGXJI+GqWwvEzTJIrWZDFHyS6+rAeWCkDLdiJcmj7jI3STUyI6OSoiBfjNpVAq9zE7D8aD5sSx00YM5Cb5WGevrPtbs6EnGz6q6QXVmTas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728494454; c=relaxed/simple;
-	bh=pTakB2z6V4uiToCgJJtCQlYbxtbwkcxm3E81tLbKCnI=;
+	s=arc-20240116; t=1728494477; c=relaxed/simple;
+	bh=rCf8yMbgXLtkOA9XPz6ccGxNhT7P4jQxTu74RTuyTVw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=alLpkMQ/2sm2AV2vwIMg68OGnRxzV9Ap8KFNb8E/FbSZnTsg3aDbIpUYrNYTAUjEy5JZ6NczKiFP+We80Vqn8g5BN2MeIHc/X8HizAiHrt1cESVNvF2RCgXYYI+M5GBCUnJbYHks5XTJ6Fh5/GVd+Ri8PwJOayvVvjohLeC8drI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOyPHDv1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3740C4CECF;
-	Wed,  9 Oct 2024 17:20:53 +0000 (UTC)
+	 To:Cc:Content-Type; b=oWAhI18px7h8JYXP6JDVQilSkMRmOZxgpZVo9NltQJLjYHr2paRWBLAymB/Q88HwSJHAarnEmLQEd80vJgJ0J46ecvB0FjuMkfCIa5VA0jPCPlUa4hKPlNoaKWqup0dvZPMtINEVfHMI4RDubCuGRTQruWO7G+fJPei12KdNPXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tm955dqR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D569C4AF0B;
+	Wed,  9 Oct 2024 17:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728494453;
-	bh=pTakB2z6V4uiToCgJJtCQlYbxtbwkcxm3E81tLbKCnI=;
+	s=k20201202; t=1728494477;
+	bh=rCf8yMbgXLtkOA9XPz6ccGxNhT7P4jQxTu74RTuyTVw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SOyPHDv1QmrqRwmz6qAgLxSxWIdLod9XcWAluWqm4XHsOTEsZ3vEHW8j6uzhktKsW
-	 4CH6+1XMmaiexqo502utA0OABJSNHM6vKc7/KLL2aHenOiOU8cxjtxFnaWV1ChA8j+
-	 KN4mrEkqeEXht0wSFkvraxoeNVyNuRKVnL2yR6c24ikUuRyMHyh7IY8ntU0Qo3BXkJ
-	 MydKU5Smi3iYx37lsWbHJZtT4tsSTxVliKPlRquVdXT92ypDtMfhWwbpVgnF0hdu18
-	 co5bhjGmDqdpNF3t0Q+Bz7s8DElcoPt3BEda2GZG4atm5FZxFGZu7s2dbcr4HqwV5b
-	 9K35T9aOA86vQ==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e3dfae8b87so33303b6e.2;
-        Wed, 09 Oct 2024 10:20:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3HXj/rto7m9TyL6WK1yYFtoC+E5uCgP02I8/p1QwVShLP6SUJ5YMF8iYB+BtSYygDPoWsMHJT@vger.kernel.org, AJvYcCX5pYZh10f6QDNH2Ea5yC2NllgDqtAz34egLkWDCHV2CouFkPVK/bz/fjFNaX4+45O4Cpi5mBWY8shqQKQ=@vger.kernel.org, AJvYcCXbs6TIL9znhDXV5RSJrn6pzY+s4yb1zKvL6VHBx7mm2rubUUmgmtxSfStVlZ/TVBGoZHH9/mkLd0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6i/sGtyY2JYHavIf+sAOpTKjp6lg9b7IcXbj03xvJKJcovRKa
-	Z0Rhu253Z1KSs8nJvGLGjI4qV9uK3HWKp/VpPQUHEPgrA1uu+JWA5Eug7WdqTN6OoyZ1LpyRpUm
-	0Cqn/usXlrbuoG5CexIRFEhz9qvM=
-X-Google-Smtp-Source: AGHT+IHC3PCSE9gREtvrXYE4GaDqSOZHeOSFGIw0ZwDYBHAUhhll2B10WHGikC79xTN91cGN+CHyfkEfNtesUXV6GWo=
-X-Received: by 2002:a05:6808:201a:b0:3e0:4263:46f1 with SMTP id
- 5614622812f47-3e3e66d6117mr2935298b6e.11.1728494453194; Wed, 09 Oct 2024
- 10:20:53 -0700 (PDT)
+	b=tm955dqRsIhOjCzwNtV6QO1WdjWvKR4cqoWH2mPJhOI4wz5W6IsbN6WG49c+HL3Rz
+	 hni6r16adLJjSfBFIFnbEYPBjJsIKT7XXAJtzJcE3Fr/bRJp3sGVMWhWeJNeUGyv1R
+	 XI13JUoeJqxrelrXfNxFUX0e6qLf17dl2x4U8TttjPmXP9hgKWgXszFlZHkcYJNNVt
+	 ZsDx3YdBrjDM9niFFUSl+W5Mv6bax2+b+ml+eb/SvvtbfOqp5EeRHkMXn842uc0/5P
+	 k3P9tGrDEAbhPcTzwI/ldOpNolmZz1kB1dsES3DaabbfuHF0eZYG8J0Vs2t5bBSeMm
+	 cFbWk8PvVkF8Q==
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a344f92143so390035ab.2;
+        Wed, 09 Oct 2024 10:21:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUEHJcU74DKuOq8dX9IY6cwzV5vhKJoV7wxXrBeDbLAmudTsX8nVdJv2iY9CFihDn3uTTWD9kHX4YT8lrrLIDrAA==@vger.kernel.org, AJvYcCVgFhVDdZ/pk+afHLM6DXaLtymE/GJxHVOtgqoymsQtJerdobSwtL59K3tGTzwSjN0m9v50qdCv2A1oUYZL@vger.kernel.org, AJvYcCVn5H/k0H/JYzclr2Bhuoo++gtI7gJxp8qW878k0YfxAkrwQbLq7q1g6xTdj0daZDu2qXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyBMHSUU6oxItzja8SDML227cwWp4SCC1xrVx2JKuO+3898rNx
+	POLzPHYO8qHEhDsY1H1kWqR2YCR5c8TyuUyhFS9l9ZlgpHnymDw6T1RcDP3PSxWeuGJYS/AE6hY
+	zyTVt3oeUXNnWNFOmz8Vfg8+soDo=
+X-Google-Smtp-Source: AGHT+IFwPtqzDEV5XywrmUHQUyahczwb9o6pAUKRBj80/PfHH5NmR10iqcscZqFtJDfbEjDenSz5mpual8GNQ4AnqXY=
+X-Received: by 2002:a05:6e02:18cc:b0:3a2:7651:9846 with SMTP id
+ e9e14a558f8ab-3a397cf1543mr29439885ab.13.1728494476517; Wed, 09 Oct 2024
+ 10:21:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009072001.509508-1-rui.zhang@intel.com> <20241009163344.GA25814@ranerica-svr.sc.intel.com>
-In-Reply-To: <20241009163344.GA25814@ranerica-svr.sc.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Oct 2024 19:20:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h0=cyvOw6a6nvgigS-71Q2W3pcZOsGyLRhvMucRubvxA@mail.gmail.com>
-Message-ID: <CAJZ5v0h0=cyvOw6a6nvgigS-71Q2W3pcZOsGyLRhvMucRubvxA@mail.gmail.com>
-Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
- timer shutdown
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com, x86@kernel.org, 
-	linux-pm@vger.kernel.org, hpa@zytor.com, peterz@infradead.org, 
-	thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com, 
-	len.brown@intel.com, srinivas.pandruvada@intel.com, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240916014318.267709-1-wutengda@huaweicloud.com>
+ <729eef63-6aed-44db-b18a-eb4bf96aeaab@huaweicloud.com> <ZvTYduigMBtlmNbK@google.com>
+ <ZwYS4FEP5yMOCXEv@google.com>
+In-Reply-To: <ZwYS4FEP5yMOCXEv@google.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 9 Oct 2024 10:21:05 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5nDNicW5Pbavt60Q9W0rcgzLPRnfP7794T-SL0PkugAA@mail.gmail.com>
+Message-ID: <CAPhsuW5nDNicW5Pbavt60Q9W0rcgzLPRnfP7794T-SL0PkugAA@mail.gmail.com>
+Subject: Re: [PATCH -next v3 0/2] perf stat: Support inherit events for bperf
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Tengda Wu <wutengda@huaweicloud.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 6:28=E2=80=AFPM Ricardo Neri
-<ricardo.neri-calderon@linux.intel.com> wrote:
->
-> On Wed, Oct 09, 2024 at 03:20:01PM +0800, Zhang Rui wrote:
-> > This 12-year-old bug prevents some modern processors from achieving
-> > maximum power savings during suspend. For example, Lunar Lake systems
->
-> Two nits:
->
-> > gets 0% package C-states during suspend to idle and this causes energy
-> > star compliance tests to fail.
->
-> s/gets/get/
-> s/energy start/Energy Star/
+Hi Namhyung,
 
-Thanks for pointing these out!
+On Tue, Oct 8, 2024 at 10:21=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Wed, Sep 25, 2024 at 08:43:50PM -0700, Namhyung Kim wrote:
+> > Hello,
+> >
+> > On Wed, Sep 25, 2024 at 10:16:16PM +0800, Tengda Wu wrote:
+> > > Hello,
+> > >
+> > > Sorry for pinging again. Is there any other suggestion with this patc=
+h set?
+> > > If there is, please let me know.
+> >
+> > Sorry I was traveling last week.  I think it's good now.
+> >
+> > Song, can I get your ack?
+>
+> He seems to be very busy.  I'll pick this up and run some tests.
+
+Sorry for the late reply. I somehow missed the earlier email.
+
+I have a question and a nitpick for 1/2. Otherwise, this looks good
+to me.
+
+Thanks,
+Song
 
