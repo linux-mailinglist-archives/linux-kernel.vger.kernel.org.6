@@ -1,114 +1,90 @@
-Return-Path: <linux-kernel+bounces-357884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28EC997755
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:16:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6205B997759
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ACA21F2330E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:16:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0381C20D6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CAF1DFE2B;
-	Wed,  9 Oct 2024 21:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6393A1E231E;
+	Wed,  9 Oct 2024 21:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKEP63dP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFEuVeCv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8B82119
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B342119;
+	Wed,  9 Oct 2024 21:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728508604; cv=none; b=SLe5fQ4JKU0ZRd4q+hHXWJKyxOHWlkgMiPGtSJrwPxKXAlfNRji26AY2AQjG/6pYGS5KeoDREU8PoRz9aNRyWu5ZDYSpAPkm67Z+30GzZfR4SsYnUxUsxtrX1EOCYoqsDFOSu4qLfeqOBYhpXb6biaVBe71Ad9Jze2KFYrp5p5A=
+	t=1728508623; cv=none; b=pOAfgwRhc9IaSFkykqHUFPKuU5YhNW+X7gnU1X7G1ofdy/zgfBQuhbny5z3wewjPMfTLg0zlibSP171MHDmgDpgVvg34YwDKvc2hzieP7743x+kzeJttPC2ZvXqA/+4w6utzEy+Q+NJ9t41Gmp7pnhIrHa+jYcBSw2LMKUm4MX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728508604; c=relaxed/simple;
-	bh=7G+T1tfPJ0HruFMvHxklqYC1ScQTpI3Nxa5ICttD+bU=;
+	s=arc-20240116; t=1728508623; c=relaxed/simple;
+	bh=6uPEEux9dVSbfdFsuNQDuMdavJdAA8IW6x6/6G4B9Mc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dw3k63R6ZyBHpong56qWvyz3D+dCCgavmf5JvnpqFEqEzJlf7EDTW/K/6mqBYs0cCtGktmhe4NZYL5K+UBRCLZz2UBXM6Ao032hpMW4NuOgERArK93/1OCRmg4RY1EGc7zXr2+yiOkCuLoj/sh1guCLJTAUUi16giReyR1Z7wCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKEP63dP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B75C4CEC3;
-	Wed,  9 Oct 2024 21:16:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=snpDtHpY4C4tc3zy0qCOxAXpJUHgFn09E+JSsjWceKVBLzoqEuhM6fr7sfLzQHSXNbAp1ADD1AU33lYlj37RNaOgm8si5zFc4pVcKGhW2mVE82ujolnlQd9jr5mQFzSUf/iopT7bkC/dHZMJTswvoSt41vJbD5S6gsu+zzVz3ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFEuVeCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BDCCC4CEC3;
+	Wed,  9 Oct 2024 21:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728508604;
-	bh=7G+T1tfPJ0HruFMvHxklqYC1ScQTpI3Nxa5ICttD+bU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=KKEP63dPyR5Ll7b9AeeQ2+55nGcF0j8pXxUWG+cjiPWgpeyJcggWTC6pCRAGirsf6
-	 AaONGBzFZVO+u8I/KDfxgZEbF1dkkFs+ZivIsGXGZiKcRqyOWZY/Dp9aQ7jZhVeNRL
-	 S7q5tlsYnpUeLiKK98+ewKrMVHZK/QquIxIumRF0xkHgLVXWVMvOI+wEIhETdPIfPa
-	 vN+kVcFYV2tagoaBBurKcfUN2PAe0SEr/UqJimNe7m5vZaYk765S/Lc9E9Nm8twlD8
-	 Av4lK5fbNrVSuqnNYuIxDPgDsMozjt7Qm4i/GuWWZJMf3sG3nEslkl/oVCLWPalV3X
-	 aH+jUmtqhlRXQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 004D2CE090D; Wed,  9 Oct 2024 14:16:43 -0700 (PDT)
-Date: Wed, 9 Oct 2024 14:16:43 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <28bcac6a-6aee-456a-8022-5eef9ec08eaa@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
- <20241009165411.3426937-3-ankur.a.arora@oracle.com>
- <20241009180117.GS17263@noisy.programming.kicks-ass.net>
- <37af80bd-a54f-4ee4-9175-6f0f27b685a0@paulmck-laptop>
- <20241009205218.GW17263@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1728508622;
+	bh=6uPEEux9dVSbfdFsuNQDuMdavJdAA8IW6x6/6G4B9Mc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eFEuVeCvmpscAH9jE0r84dyBT3N9IGMdelQ8e/jtsrSXeFsoqbbzIOz8p2GQZAfGM
+	 +i6di23xnM9jglRaD7KUQbQeXI7qR5OsthAzItogxLRv2b7e6710y0caE56xW1ZVH0
+	 7iG8+9x9VfPjIiWx59tK/roTgWpFGV3gSNm6HhEM01ix08NgP2vomqkIxIWB4STgqq
+	 hYDhNZerO24hn34UYLRJz9aGZr5oraifVFsWeyuik/U4RbKRP7baoepHG+ODfVLQvf
+	 xtnk3va854z+Ye43Wv2/iqGK1FyyNXwuNGucJMRXhL+SwtDTlLltTrHm3fVYmxbNTa
+	 b1n8sSYTG4hvQ==
+Date: Wed, 9 Oct 2024 16:17:01 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: =?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-i2c@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PATCH v3 1/6] dt-bindings: i2c: nomadik: add
+ mobileye,eyeq6h-i2c bindings
+Message-ID: <172850862096.731062.11255027381297807098.robh@kernel.org>
+References: <20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com>
+ <20241009-mbly-i2c-v3-1-e7fd13bcf1c4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241009205218.GW17263@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241009-mbly-i2c-v3-1-e7fd13bcf1c4@bootlin.com>
 
-On Wed, Oct 09, 2024 at 10:52:18PM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 09, 2024 at 11:24:09AM -0700, Paul E. McKenney wrote:
-> > On Wed, Oct 09, 2024 at 08:01:17PM +0200, Peter Zijlstra wrote:
-> > > On Wed, Oct 09, 2024 at 09:54:06AM -0700, Ankur Arora wrote:
-> > > > PREEMPT_LAZY can be enabled stand-alone or alongside PREEMPT_DYNAMIC
-> > > > which allows for dynamic switching of preemption models.
-> > > > 
-> > > > The choice of preemptible RCU or not, however, is fixed at compile
-> > > > time. Given the trade-offs made to have a preemptible RCU, some
-> > > > configurations which have limited preemption might prefer the
-> > > > stronger forward-progress guarantees of PREEMPT_RCU=n.
-> > > > 
-> > > > Accordingly, explicitly limit PREEMPT_RCU=y to PREEMPT_DYNAMIC,
-> > > > PREEMPT, PREEMPT_RT.
-> > > > 
-> > > > This means that (PREEMPT_LAZY=y, PREEMPT_DYNAMIC=n), which selects
-> > > > PREEMPTION will run with PREEMPT_RCU=n. The combination (PREEMPT_LAZY=y,
-> > > > PREEMPT_DYNAMIC=y), will run with PREEMPT_RCU=y.
-> > > 
-> > > I am completely confused by this. Why do we want this?
-> > 
-> > In order to support systems that currently run CONFIG_PREEMPT=n that
-> > are adequately but not overly endowed with memory.  If we allow all
-> > RCU readers to be preempted, we increase grace-period latency, and also
-> > increase OOM incidence.  Which we would like to avoid.
-> > 
-> > But we do want lazy preemption otherwise, for but one thing to reduce
-> > tail latencies and to reduce the need for preemption points.  Thus, we
-> > want a way to allow lazy preemption in general, but to continue with
-> > non-preemptible RCU read-side critical sections.
-> > 
-> > Or am I once again missing your point?
+
+On Wed, 09 Oct 2024 16:01:07 +0200, Théo Lebrun wrote:
+> After EyeQ5, it is time for Mobileye EyeQ6H to reuse the Nomadik I2C
+> controller. Add a specific compatible because its HW integration is
+> slightly different from EyeQ5.
 > 
-> Even without this patch this is allowed, right? It's just a default
-> that's changed. If people want to run PREEMPT_RCU=n, they can select it.
+> Do NOT add an example as it looks like EyeQ5 from a DT standpoint
+> (without the mobileye,olb property).
 > 
-> I just don't see a point in making this change.
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/st,nomadik-i2c.yaml | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
 
-Because we don't need a bunch of people surprised by this change in
-behavior.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-							Thanx, Paul
 
