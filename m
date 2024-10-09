@@ -1,345 +1,217 @@
-Return-Path: <linux-kernel+bounces-357734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0019974EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E3F9974ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23D31C23516
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CFD1C2357F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6F21E1037;
-	Wed,  9 Oct 2024 18:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4464A1E0E05;
+	Wed,  9 Oct 2024 18:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRIG4NEU"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="f1iZnrLR"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2049.outbound.protection.outlook.com [40.107.247.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2451DFE0E;
-	Wed,  9 Oct 2024 18:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728498621; cv=none; b=e24tL777A8GJujkQXHmI1erbVbWeRa81D4DwUJ/81gs6oJhah0dE0aZgwWK5ZlQILzWV2C5UyBbgG8hWZI2CEfn1mv8HdSXuusVChj4l0UBACg7SOGa8bIBltnKfE0Z1WVgQrfB7HlaUL1V0wLK5/swxpOKmFLQwJ1x1vfOA92M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728498621; c=relaxed/simple;
-	bh=fV7EU45lAXq4+i1jLPEcOk6CQrs1Vqg6gHcGMj/TRUM=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=GPGf4P7qnpuX0Yg/iYpGO+NygE2BhZgszP/bon8RoSX2RaXLGwkKXmiyS3iIJ51BgXTwkHWA/tTbyYK7UPo6yymw6frqgtgkFkP5htN9SrZof4zdd+6U7O8gGzt3qIzX7k/pPcmhqfMNcMUZMox3gBvbIgrxgt3Lan4r1uBDEnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lRIG4NEU; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431126967d6so721115e9.0;
-        Wed, 09 Oct 2024 11:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728498618; x=1729103418; darn=vger.kernel.org;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fV7EU45lAXq4+i1jLPEcOk6CQrs1Vqg6gHcGMj/TRUM=;
-        b=lRIG4NEUhgWSEXC9Hx93hnj5jmm8YEnsK41J9yURp2DRJ7ttxf6QL6m3A/wcNmstGT
-         ySlhNYZiB1nWR0y++zf3k2m89S+Uz2kWc0FcM69hGEkKQrll8ihw5ematefioSPJ6bc0
-         UAkW2ogPcPC+iNR7ySbYndlrFxQfJUFWHEiJsIGwtAjP1LmwIMdMp9Gy6LCg+zhkreGD
-         0mTpAh70/D82tY0LFmNeJA7+n0M3wKOHj36Mc/9V6eheR89DoBFK2zetjKLJNrG6/i0p
-         x/CZGoBcByrZkVS4wce/9sZffJqXIFKhMNuSR2UkSI2BxN4ZfvOLOaZTazixqUM/Cs1Y
-         5S8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728498618; x=1729103418;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fV7EU45lAXq4+i1jLPEcOk6CQrs1Vqg6gHcGMj/TRUM=;
-        b=Hbix9l7FA1thJ5SXXsNvaHgl/6iT19mLKfVpXE8Q11KLH5vX/N73abvBkTErPjmkGP
-         IA/QmL2xb0yBV0SWAAomHfFF8Tt9VEmp+R2A0ZW6yCtTJ1hg4a40SWkYx9BB9ZpSMzoH
-         iQuMdQkVyT1IjDL1waluoQV7GDBhXCgtD0N/AP6cfQPQVYkCAwhcopKwmjM1Kvhtkxrw
-         LL9FUsN+sVk1VEpUIu2hO0E6JxdHPgtz5kK7Bwex3ML5LNwmewUlf+WiCvc5GHn9mlR3
-         eyaWwJqk3SRyNq+KthI74wsNXhMc6yQCeWE+NBp6bmQNO4wuFXmoPp3P1tyYobp6jPyp
-         lCRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFYQQf62jHT0niDV14Sd0Y0SNNzLwvUZAxsX4roRfxb8sTgw2aPWCIuzhQK0qR8UwTHue4YaocC32k1A==@vger.kernel.org, AJvYcCWmQwaCfWmdaKzCXH8rRYKNIcLzm8+sIOYfEWiKtaQkE2pVSs1lX9qyzxR0T6YMPLWiKFc3OHzuJfA=@vger.kernel.org, AJvYcCXH2iHv6NgvAXlnJZWD5+/d3IzJlyzyp7xROgh6lbsN9iEEet2PB6P49N9owjrmml5KE8hDIYU9fHzThus=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7hyfn/GiKDwQU+UK+Lx80LNJFPZsBPvAZu1YfAI8JStqPs+BG
-	J9XyA//R+Rr5FeYtWuQeZKrulCQK3pUUHLi94/JwMJaLaYNxNf7NDMremuoi
-X-Google-Smtp-Source: AGHT+IHHrZJ/X15ulXJDlfENdo29+8z6YHlW+9JNJ34yEbqrrpXjV9u1f+5sbkO0vnE0zMwgMffb1A==
-X-Received: by 2002:a05:600c:3b9f:b0:42c:bd4d:e8ba with SMTP id 5b1f17b1804b1-430ccf0928fmr27996965e9.8.1728498617402;
-        Wed, 09 Oct 2024 11:30:17 -0700 (PDT)
-Received: from localhost (host-79-18-120-72.retail.telecomitalia.it. [79.18.120.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf516f7sm27004145e9.21.2024.10.09.11.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 11:30:16 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B34A52F9E;
+	Wed,  9 Oct 2024 18:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728498686; cv=fail; b=UdIKVnCSpRwoToazIHGY5s/ErW60gBO6AEeVRYQ+avuJrt91vsjiQR6I4Tksz3w/TgP5yth4iUUAGTLfQ+VdAbpffL0AXRJE+0kAa3c1T+RqXozqKRdrOPocwpirK58Vs8bd2rv1nmQKeJfI8JGtMpcoaQQk/M+obIdWAmy9xyM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728498686; c=relaxed/simple;
+	bh=JkxzG5DKrVT++Wj8EVJFfs0vuD9A85zGejCjFI6zwJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kmzWPjeVJZy/L9eGLqAlUvs0Rk1RxsVqX8JKtfAtWmoyvNDMLbiLOIUGkkbeOFJ3tB6yEDDgyEQ283x1LN4JkG7NeyhyJeSSkdOPDj8G+ejAQ0WhDCQEeofN65UWw+Uj7EKqa9m5Lno0YsgN5Sg4W3bdJ91v9WvDFilMqZ9dEhI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=f1iZnrLR; arc=fail smtp.client-ip=40.107.247.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VERS9tEWpDvswY0a0OHGvGeyp+o3gaCp1St8PUh2C8TenY0bwBKW3HFBhyvWF0E+lMq2BdNLppEk2HRIPXVZzgCfIs+i1y5yzxMPo2mEOkUscDOCjM5qi0L+pyPykPxJmTXEapqUHzjt9RYJt8bs/yXhXV+3/5bo0FcfNDFBYKGxSzmYkv7XCKilJuUZ/twhJirHytp6qDOea4mwf55iEotSRduavmmmbpKClC7zh8+Igmt73Zc5pdDVuBx8RRuuF78WZu9F1HeV6FucxcJj5b0hKHtTUro4VTmIjtEBscAA0mFTSbiYlGTAmB2+fn7qHVvucAVsE3SPyDwPKY+/Lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6fa1DOxbN0j+qUzbGKHQhuk+JMIvo/iX4rkICwsrc6k=;
+ b=Y5+7bp7JLLKG+n5vY8JL776E5A5QVrqpTwX1+ak2CwM6NLmW8Zg37fBmgk+LkARPdhcLDU1cH0dHRMnlzM0xgZRS0uhxEiQViOXTM97I4m/qz+JwmuOJHQJKHpuYlPxNVB9YaRdNsDaT3LiS6yPxSKyRfB77qZaQqszAS7311IBqS2wmDdNYVwzPJx/V0CUO3Ebejx42h5yrkuICBCiqdhKUMh4y3yojI1/WozR5Qv8MgZ/XYkajaXCnpoSLRAgqdNFG+iHejh5TGGwqwB/vav1sYYNhmAAqhGcUupqJ0hqSjofN8UObe4J67k4DmLm+ToF0gWu8fr7XBCYrWkQ4gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6fa1DOxbN0j+qUzbGKHQhuk+JMIvo/iX4rkICwsrc6k=;
+ b=f1iZnrLR8rcSqXZ1bSGES6z3yU0v3PGgsto8L5t7ejfhud/BkCB7iIlIfscJOsSjZTlBZfYJ8Wmg8KTWWnzOgSgfuzE3SsklRAXOEzk53jU0fStfs5Mr8OwEeAdjlp34VApsjnRp0OvL1RzpWBm09iE6gUASCIFN2p/fXug+4Z8Qt2+65WvmD7E9cUpaXMZ/IXzDEGLLI72Iu3yqfnnp2FaOZv4bguCKBabGwkcO1ViEVaBQPA4qezV/N/KSyUQrBFBwM8qBf0FHTDj7C/63B1nbrje3CAOfHEvN9WsnxiwzJBltxDakOADoOZFBQ+6DJph9nYrJlgMY9nijAzejfg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8117.eurprd04.prod.outlook.com (2603:10a6:20b:3fc::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
+ 2024 18:31:21 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8048.013; Wed, 9 Oct 2024
+ 18:31:21 +0000
+Date: Wed, 9 Oct 2024 14:31:10 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+	Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/6] EDAC: fsl-ddr, add imx9 support
+Message-ID: <ZwbL7iM2SV5cMb3d@lizhi-Precision-Tower-5810>
+References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
+ <ZvsNJrxF6TpUC6ws@lizhi-Precision-Tower-5810>
+ <20241002090834.GAZv0Nkp5YKcy86UmZ@fat_crate.local>
+ <ZwalsAJdaHjtD1/E@lizhi-Precision-Tower-5810>
+ <20241009162038.GNZwatVpTr9rOEyfQs@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009162038.GNZwatVpTr9rOEyfQs@fat_crate.local>
+X-ClientProxiedBy: BY5PR16CA0035.namprd16.prod.outlook.com
+ (2603:10b6:a03:1a0::48) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <27e0d7b2a70015300047d9388edc87a8ece0c0dc.camel@gmail.com>
-References: <20241007-iio-read-avail-release-v2-0-245002d5869e@gmail.com> <20241007-iio-read-avail-release-v2-5-245002d5869e@gmail.com> <8a5f6f12c2cb6989cef1d09957fc0f6f7a512b26.camel@gmail.com> <172837007815.3337.5869213289160447430@njaxe.localdomain> <8241b4caf9ebacb116f50bfe1503f325cc576066.camel@gmail.com> <172837459910.12274.5022869861872605261@njaxe.localdomain> <27e0d7b2a70015300047d9388edc87a8ece0c0dc.camel@gmail.com>
-Subject: Re: [PATCH v2 5/7] iio: inkern: copy/release available info from producer
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
-To: Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers <ceggers@arri.de>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?q?S=C3=A1?= <noname.nuno@gmail.com>, Paul Cercueil <paul@crapouillou.net>, Peter Rosin <peda@axentia.se>, Sebastian Reichel <sre@kernel.org>
-Date: Wed, 09 Oct 2024 20:30:15 +0200
-Message-ID: <172849861528.354008.17477801981314044908@njaxe.localdomain>
-User-Agent: alot/0.11
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8117:EE_
+X-MS-Office365-Filtering-Correlation-Id: f16848c2-2159-4b47-aa2b-08dce890927e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9wNyMjkp1xA0OqGV4IYLA1/0APZkRUSllMcPk2BDqTLvqNB5XvspQOxDUWXU?=
+ =?us-ascii?Q?4mYbpqNHmJOpMULoWfbbF2Uq0A69nuHd0jCxB8VSjYD/wtVL9C12ifrwPb/j?=
+ =?us-ascii?Q?RVrgDr5XxwMVYiHtaxfG8ukvpf7BCac4tmCth6bAkNUp2Bkk7Ig/eThGvwUj?=
+ =?us-ascii?Q?t5hPSuUV+7p5I4yOTELAQ0ts/Y388rnk6QYojBxqlC1weNjz7UQ3renF9N1y?=
+ =?us-ascii?Q?8qmhRI8ftBi1hCU4GIXrYJuXmmqsEiaBCgoGtvHffL4TsS5jVGIZ0Vm+eUQl?=
+ =?us-ascii?Q?UyWQufCI2FcJeoEGScceoddQKQc4jeezUmBJAHct0GoIiz6NHW9Jbk/C7hmt?=
+ =?us-ascii?Q?MLqz97QYRN/nFmSPDFkpuWBTj39YYsj9W2IlyQAFPrsqW2K7P3hQRsjkLHjm?=
+ =?us-ascii?Q?smIL8SbY8VV4spCiLofcXSltl831n9YGrJ9etTrKAXIPCfe9JrmTex80+jeu?=
+ =?us-ascii?Q?P6a/Z1VJpHnlD4t4Zy9G2YC03XYT0s1G2+RZwwMMBasrBuWPoqfgwXf+kLPi?=
+ =?us-ascii?Q?1Ca8XvPRZGI+CFtmgz+zTuAK4+55EqcwI8+n5rk5GX/ezRNTXmcUUKWgG4I4?=
+ =?us-ascii?Q?noS9+OLl5MyQDTU69olp2BirBhmYYs/zgSjNECOqML8da2k1rrzDHVIWEf2s?=
+ =?us-ascii?Q?EFUaYxE9pUey3myDpTQaAzvUifzVOiTr8+tFBBc1kjHx443GYhz66ceFgwhE?=
+ =?us-ascii?Q?OEEwZCy+Reve70eKJwNWXHu7Wr1jQBPVHpLjtsbgO2y1t5ckG33Pj6TfIJmy?=
+ =?us-ascii?Q?Ii9CpRbSyAQSdotzd+UkJASxWEarLN9NH5qWhtUtIQp8kEuiyzKVNVeNIOE8?=
+ =?us-ascii?Q?bQ6XnYZTWD5WAb0XCNZQVy9klc5CUY7z4wy4Bsz9w69B6PcAs9BUDSMoMUTW?=
+ =?us-ascii?Q?w68yU0gN9Ts+mbldZBaxhpGyeFEhk9ZrnJHmJMlhQkJYZ4L3/CNHDsx+onV3?=
+ =?us-ascii?Q?hlHui5l2HM+fI8+31jX4kriE5uhZ34RrbBhU2+hH3N+R4hzvI/b+kGxAvF+V?=
+ =?us-ascii?Q?PlYa8J8TDTRNwkEpqq26bi3kMD/cskkUdwejoUP6HHsf50qKccqXvxH0j3y7?=
+ =?us-ascii?Q?IRP1dJ03tDhyxxwAlqtEo9xnGRZjJB6EnTjM0XKRggwMNaEDH6Q+yF4F3NKK?=
+ =?us-ascii?Q?XMjSRcTyiCNvXS6Ac5ZeRzaanrpCog+peXA6Vu451HkTNpRn6wWgvTGLV/k0?=
+ =?us-ascii?Q?NjJAON263vfraW0PCj/wiVOTl9mlqKNHER/pQwtN/h69LDuqhLaHduh9nYIr?=
+ =?us-ascii?Q?cb8LFyWgxRAnV+9vAYr/rvCJIqgWRaAPG+NhbhVlE8lxcMUORMdxgY7VI53s?=
+ =?us-ascii?Q?rpSYDdp04YgKGq1DOb4N6WTOi9cT1mJe5PYMtC9mSy+mSA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nVKII3DoOBux2gXTH9AWapBjETo/Evu2VO9qvT/9MNNrt7sId25mztcRq2xE?=
+ =?us-ascii?Q?BRY9OyAr3jaEFh+w5nqcK627cXsPUkD9FzFx3krRbLGI2kKte0SToZXnhe42?=
+ =?us-ascii?Q?UyIImRp9WFxJf4kUzYUaXheB5k+Gg350CG8DPvUkl4KbHbsH+Ir1ZbHUlEXr?=
+ =?us-ascii?Q?uYUFUG277BXsw56MWLbr6AhF68zl+RuMBhpY/l+oLcaKsvwxYGvqPjOn/mTM?=
+ =?us-ascii?Q?h/vXU7S0i7z45DWgbTXubEZjcqXrTzFXFS/Xt3Z09d+ORHvXCmxYD/ZJlpQo?=
+ =?us-ascii?Q?2sOBptiPL5JpkSGPl9Kq+onJpvtvjl8SRL47K9md2+XrYE2Njtqx5R5dlMt3?=
+ =?us-ascii?Q?DFp5ABlTt9IohuoiyyrGpFaKwr4F5v3BDVGKj8bXiXm3ziYEGDPMQ/1Bb7hM?=
+ =?us-ascii?Q?lOUJVE1II9NU43hUiuW5n/WT5PonoIgdy4F2GFUY2hxpilu5bJu6qPND5kwv?=
+ =?us-ascii?Q?jjWo1fwnrH/biTRwkxu0OxgjWZwghfL9vZwRREKa3lLAUhxdG2EeL3lWAC99?=
+ =?us-ascii?Q?rzsz2fO0WWm15T9y+vO4rUNlcZ1KRQ5JKHCy/Z++R3khczoKUs/9AKP8gbnS?=
+ =?us-ascii?Q?1Zzp4N2XD2uBo1KSQygBrSym+CObvdxM4YqZGxTWdIKQKQ7qhlHQIc7ro2+X?=
+ =?us-ascii?Q?8qYqaBCdGrTgk9oydMPV7G5txnRmHvzCYD9m5/hCTAtNEmiksUd1wm0WGBEp?=
+ =?us-ascii?Q?diQdLM9nYLZyGyyBT1CDl4YJr47uvLJJnLDEbp8INYnP/WowUsMPn5dFt/77?=
+ =?us-ascii?Q?uFND+F4t/wwB/P4YUq94wPoiRBqjTby8inWye6iRxhM0O8E3ajTp4juxmWYm?=
+ =?us-ascii?Q?OwC4Wao4tZcMfwY1xmqubrp+ePlSoD8KtjiFWFqXFocGYFWZh51Ya42OdQaV?=
+ =?us-ascii?Q?qcVyRy1qSFWdO+jcoSgQNpEdSRNTD+3k2WgR1OHAGgpJQGVmzt6NZyitTs2T?=
+ =?us-ascii?Q?ebWo47B68z2LViFH+UqFUCPJRBZ10utCDvEyvHZj6XMmUv4iBOgjNiDcFZtd?=
+ =?us-ascii?Q?LVGFrVGBpKp3vn4JKLXyB4HEjo5d4tUM32h2+Av+R8hfuhvmoB5z+wNSzXqE?=
+ =?us-ascii?Q?vDJ6kI3Z8L9EfTZwgccmJaMC1pyZ323GPYWMUfv119kQJCw/Ukpq9Pqx6RCV?=
+ =?us-ascii?Q?BXgU5FVA0aItg19DrYyRSPDOaB16gmfKoRqdvUbURdI706QfIB5hkrZCVHDu?=
+ =?us-ascii?Q?pxo2lfCKKL75yeFdYQvf9xiIcWeXfMWy3KscMmyefV39jyLWq66jaL1/BG7i?=
+ =?us-ascii?Q?czVnHwY8Jk0y2AqEDkWvz5XtLIg7YOYKb2bg7AlB7KyrHuLz7J6bB6NgYXV4?=
+ =?us-ascii?Q?XnEmgeWHmB89frtzpffcEnl9YFQMi0lXn1uZEX3svwAkCnClFOYgLAzRPBXc?=
+ =?us-ascii?Q?gA8t7ygUSAsDG1VkZtNKPMHruhQTpgfOZTFte+x6jPY5xPya81PjR29ICCLK?=
+ =?us-ascii?Q?yqHv4XdbUUucL28GeB5bANNoVITrWt2V0VgyL/NKGFd7LgcpmewPiPZeLYlq?=
+ =?us-ascii?Q?lVY8hFJQ5qkBL+yHA6uJFGaJYTlwMcRSYTgxHrl1E1YWMhtCPczxSdO5HXB5?=
+ =?us-ascii?Q?q5w1jpwbcN3RoTmQYLE=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f16848c2-2159-4b47-aa2b-08dce890927e
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 18:31:21.1790
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XOeLtrEea3gdYpjH8cELyvgfQFpSqye+auZf9RgdWinOSgArAOVto1ei81sOwIttH/oD6AY3HBj/2o9jlbmhLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8117
 
-Quoting Nuno S=C3=A1 (2024-10-08 14:37:22)
-> On Tue, 2024-10-08 at 10:03 +0200, Matteo Martelli wrote:
-> > Quoting Nuno S=C3=A1 (2024-10-08 09:29:14)
-> > > On Tue, 2024-10-08 at 08:47 +0200, Matteo Martelli wrote:
-> > > > Quoting Nuno S=C3=A1 (2024-10-07 17:15:13)
-> > > > > On Mon, 2024-10-07 at 10:37 +0200, Matteo Martelli wrote:
-> > > > > > Consumers need to call the read_avail_release_resource after re=
-ading
-> > > > > > the
-> > > > > > available info. To call the release with info_exists locked, co=
-py the
-> > > > > > available info from the producer and immediately call its relea=
-se
-> > > > > > callback. With this change, users of iio_read_avail_channel_raw=
-() and
-> > > > > > iio_read_avail_channel_attribute() must free the copied avail i=
-nfo
-> > > > > > after
-> > > > > > calling them.
-> > > > > >=20
-> > > > > > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> > > > > > ---
-> > > > > > =C2=A0drivers/iio/inkern.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 64 +++++++++++++++++++++++++++++++++--
-> > > > > > ----
-> > > > > > -----
-> > > > > > =C2=A0include/linux/iio/consumer.h |=C2=A0 4 +--
-> > > > > > =C2=A02 files changed, 50 insertions(+), 18 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> > > > > > index
-> > > > > > 7f325b3ed08fae6674245312cf8f57bb151006c0..cc65ef79451e5aa2cea44=
-7e16800
-> > > > > > 7a44
-> > > > > > 7ffc0d91
-> > > > > > 100644
-> > > > > > --- a/drivers/iio/inkern.c
-> > > > > > +++ b/drivers/iio/inkern.c
-> > > > > > @@ -760,9 +760,25 @@ static int iio_channel_read_avail(struct
-> > > > > > iio_channel
-> > > > > > *chan,
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!iio_channel_has_available(c=
-han->channel, info))
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 return -EINVAL;
-> > > > > > =C2=A0
-> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (iio_info->read_avail)
-> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return iio_info->read_avail(chan->indio_dev, chan-
-> > > > > > >channel,
-> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 =C2=A0=C2=A0=C2=A0 vals, type, length, info);
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (iio_info->read_avail) {
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 const int *vals_tmp;
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 int ret;
-> > > > > > +
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 ret =3D iio_info->read_avail(chan->indio_dev, chan-
-> > > > > > >channel,
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 =C2=A0=C2=A0 &vals_tmp, type, length,
-> > > > > > info);
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret < 0)
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
-> > > > > > +
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 *vals =3D kmemdup_array(vals_tmp, *length, sizeof(int),
-> > > > > > GFP_KERNEL);
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (!*vals)
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOMEM;
-> > > > > > +
-> > > > >=20
-> > > > > Not a big deal but I would likely prefer to avoid yet another cop=
-y. If
-> > > > > I'm
-> > > > > understanding things correctly, I would rather create an inkern w=
-rapper
-> > > > > API
-> > > > > like=20
-> > > > > iio_channel_read_avail_release_resource() - maybe something with a
-> > > > > smaller
-> > > > > name :).
-> > > > > Hence, the lifetime of the data would be only controlled by the p=
-roducer
-> > > > > of
-> > > > > it. It
-> > > > > would also produce a smaller diff (I think). I just find it a bit
-> > > > > confusing
-> > > > > that we
-> > > > > duplicate the data in here and the producer also duplicates it on=
- the -
-> > > > > > read_avail()
-> > > > > call. Another advantage I see is that often the available data is=
- indeed
-> > > > > const in
-> > > > > which case no kmemdup_array() is needed at all.
-> > > >=20
-> > > >=20
-> > > > If I understand correctly your suggestion you would leave the inkern
-> > > > iio_channel_read_avail() untouched, then add a new inkern wrapper,
-> > > > something
-> > > > like iio_channel_read_avail_release_resource(), that would call the
-> > > > producer's
-> > > > read_avail_release_resource(). The consumer would invoke this new w=
-rapper
-> > > > in
-> > > > its
-> > > > own read_avail_release_resource() avoiding the additional copy. The=
- call
-> > > > stack
-> > > > would look something like the following:
-> > > >=20
-> > > > iio_read_channel_info_avail() {
-> > > > =C2=A0=C2=A0=C2=A0 consumer->read_avail() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio_read_avail_channel_r=
-aw() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-iio_channel_read_avail() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 producer->read_avail() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kmemdup_array();
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > =C2=A0=C2=A0=C2=A0 }
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0 iio_format_list();
-> > > >=20
-> > > > =C2=A0=C2=A0=C2=A0 consumer->read_avail_release_resource() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio_read_avail_channel_r=
-elease_resource() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-producer->read_avail_release_resource() {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 kfree();
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > > =C2=A0=C2=A0=C2=A0 }
-> > > > }
-> > >=20
-> > > Yeah, exactly what came to mind...
-> > >=20
-> > > >=20
-> > > >=20
-> > > > I was going with the simpler solution you described, but my concern=
- with
-> > > > it
-> > > > was
-> > > > that the info_exists_lock mutex would be unlocked between a
-> > > > iio_channel_read_avail()
-> > > > call and its corresponding iio_channel_read_avail_release_resource(=
-) call.
-> > > > To my understanding, this could potentially allow for the device to=
- be
-> > > > unregistered between the two calls and result in a memleak of the a=
-vail
-> > > > buffer
-> > > > allocated by the producer.
-> > > >=20
-> > > > However, I have been trying to reproduce a similar case by adding a=
- delay
-> > > > between the consumer->read_avail() and the
-> > > > consumer->read_avail_release_resources(), and by unbinding the driv=
-er
-> > > > during
-> > > > that delay, thus with the info_exists_lock mutex unlocked. In this =
-case
-> > > > the
-> > > > driver is not unregistered until the iio_read_channel_info_avail()
-> > > > function
-> > > > completes, likely because of some other lock on the sysfs file afte=
-r the
-> > > > call
-> > > > of
-> > > > cdev_device_del() in iio_device_unregister().
-> > > >=20
-> > >=20
-> > > Yes, you need to have some sync point at the kernfs level otherwise w=
-e could
-> > > always be handling a sysfs attr while the device is being removed und=
-er our
-> > > feet. But I'm not sure what you're trying to do... IIUC, the problem =
-might
-> > > come
-> > > if have:
-> > >=20
-> > > consumer->read_avail_channel_attribute()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 producer->info_lock()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 producer->read_avail()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 producer->kmalloc()
-> > >=20
-> > > ...
-> > > // producer unbound
-> > > ...
-> > > consumer->read_avail_release()
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENODEV;
-> > >=20
-> > > // producer->kmalloc() never get's freed...
-> > >=20
-> > > The above is your problem right? And I think it should be a valid one=
- since
-> > > between ->read_avail_channel_attribute() and read_avail_release() the=
-re's
-> > > nothing preventing the producer from being unregistered...
-> >=20
-> > Yes, that's the problem.
-> >=20
-> > >=20
-> > > If I'm not missing nothing one solution would be for the producer to =
-do
-> > > devm_kmalloc() and devm_kfree() on read_avail() and release_resources=
-() but
-> > > at
-> > > that point I'm not sure it's better than what you have since it's odd=
- enough
-> > > for
-> > > being missed in reviews...
-> >=20
-> > I honestly didn't think of this and it would in fact prevent the
-> > additional copy. But I agree that it could be missed in new drivers,
-> > maybe a comment in the iio_info read_avail_release_resource() callback
-> > declaration would help?
-> > >=20
-> At this point I would say whatever you or Jonathan prefer :)
->=20
+On Wed, Oct 09, 2024 at 06:20:38PM +0200, Borislav Petkov wrote:
+> Frank,
+>
+> On Wed, Oct 09, 2024 at 11:48:00AM -0400, Frank Li wrote:
+> > Krzy already sent patch remove him from MAINTANINERS.
+> >
+> > Do you have any more concerns about this patch series?
+>
+> What are you actually asking?
 
-I run some quick tests with this approach and haven't found any issue so
-far. I would personally switch to this approach as it would be much
-simpler and easier to understand, and since the avail lists are const
-for most of the current drivers I would not expect many new drivers
-needing a dynamic available list. However, I will wait Jonathan feedback
-first.
+I ask if there are any other things to prevent this moving foreward.
 
-About the release wrapper name: even though "release_resource" looks a
-common suffix for this kind of pattern,
-iio_read_avail_channel_release_resource() seems in fact extremely long
-and I would go for something like iio_read_avail_channel_release(). At
-that point I would also shorten the iio_info release function name for
-consistency, like read_avail_release_resource() =3D> read_avail_release().
-I hope such names would be clear enough though. Any feedback on this?
+>
+> Whether I should drop everything I'm doing and review your patches?
+>
+> Do you need to read about the kernel development process and when new stuff
+> gets queued for the next merge window?
 
-> - Nuno S=C3=A1
+I think I understood the process since
+git log --oneline --author='Frank Li' v6.10..v6.11 | wc
+87
 
-Thanks,
-Matteo Martelli
+It is first time to work with EDAC. The difference maintainer has differece
+method to collect new stuff.
+
+>
+> Let's cut to the chase and you explain to me what the reason is for you not
+> waiting patiently for your turn to come but keep pinging.
+>
+> So, which is it?
+
+Generally, 7-10 days is reasonable frequent to ask. Contributor also takes
+their time and efforts to make kernel better. Why they have to endure a
+questioning or accusatory tone!
+
+These patches was already takes more than 3 months. I ask just because
+avoid to hold for the another 3 months just because some none technical
+reason.
+
+Frank
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
