@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-356126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E52995CBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB0D995CA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92B8284804
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA86285F7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA9A143748;
-	Wed,  9 Oct 2024 01:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922AE1C68F;
+	Wed,  9 Oct 2024 01:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="t0lKLsnR"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FnCxK0nX"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B0383B1;
-	Wed,  9 Oct 2024 01:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DDB9476;
+	Wed,  9 Oct 2024 01:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728436171; cv=none; b=PiJRetNTpXzGf8BYTh/UvQckh2avzCBohGXIAfo3og3quZhsSaEEIv2aqheOuCbZg7w3eAe8BMg0+aZaxSSG4io1zMNNycW/2E10DHRvPTFdykuBkEQl2crQBkOfBGQwSLOUyI/IGi7f5Cdcbc8V32Pa2szZSLs/2jrv4Xu9E1U=
+	t=1728436073; cv=none; b=hSjrqME2VKq1u0mzLEcyQA/aPz5IVFrUb1OtLKRRPKG7U3LY6C14I+HFTTUZ95hhVlccP66c2ZR5sERo2RE7/S8+FU4YEHpO7zavrpizv6d+6QOSjYe7ncReAFkbG8LMH9gwplnFvW4dgsESiJmAGlWlJcYXQzJ8lTiSTGq/8D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728436171; c=relaxed/simple;
-	bh=ieiW2kYGqwsBuNVmGoUBbM2HLuyk7hfkKWRZ6NViJy8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dZuTyvp+doxsZIBOjuvqk/LZlTs5NuTWNDfJBYvtZLjFLgrN1ZvuBfG3miR6knF5o8r7UxTC0z+sCOX1/KARLRtukdjDAYGdncnjxUC/Avg5ylqaavSwu7e5A4qbYS7dWx82nur4NblVaZ/Hl3Dv1emORQgDXt8PJYUQl08X2Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=t0lKLsnR; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728436168;
-	bh=ieiW2kYGqwsBuNVmGoUBbM2HLuyk7hfkKWRZ6NViJy8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t0lKLsnR5PjRVE0rV8J95kTGmugjuFnX82nnUotyy/l8Tb9gLPItOh79byMsWF3BN
-	 4R2D7Z6Y9tGe7zzLq9f/dJBbUWUWdGa0ShEgWP1J7xeTkKWeqYFqUlsC+bu6mXvIVP
-	 V6DTRECU1wRSxcpLUIyEWJ5qtAtZTJ0imSuJUzCPA8uRIDt9WfIRYs5VDJx+WfEe31
-	 jq1ZLJRlWSIsCDmU32M2S7BRbSliiWTFMI54k/8qE/sam9hgWYOQ5kpJysOhmqDmwG
-	 ZBOte3dwY1cd5h1J7B7Yl5/g5jnKbA6eJx9X/z+g0shU8cPl1lOK6cKX7hEP9pbKS2
-	 VjsyGFK3DBEMA==
-Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNZY43Br3zS26;
-	Tue,  8 Oct 2024 21:09:28 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Michael Jeanson <mjeanson@efficios.com>
-Subject: [PATCH v4 8/8] tracing/bpf: Add might_fault check to syscall probes
-Date: Tue,  8 Oct 2024 21:07:18 -0400
-Message-Id: <20241009010718.2050182-9-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241009010718.2050182-1-mathieu.desnoyers@efficios.com>
-References: <20241009010718.2050182-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1728436073; c=relaxed/simple;
+	bh=lmSiH5GO4/xrxhmIoORrQIcuLgAwwiSvkvHN/NIFYUU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nDmvPSp907JsduVfsHBPXvzbH0pf5W1gzIh34OEwC7wkXZYXL0a7IATN9X4txcnOd0k1m7I79sxjckXO/yUuGSVXbO2is+Kuj91ADvAoAWuI8WRdEFMoKCFHye6qx11YiXXfGAIssenQZYerA1O1baRwQscZcd+QAUSahcpZ5VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FnCxK0nX; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728436064; bh=lx/LOvs5VZqqX/WqTY32oczWkgglNbzujdXqEPWPowc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=FnCxK0nXICbVHh7KThUz6drM1l6TC58shrZnjG1a4uLDmvosYjGeRqcJVkBlVA3f8
+	 dqV4UtHrR4a7qxxRpTEf+vaeB/X6cNXZSPwLkC/JGibaN+VhuVXgmRUYzUpi55rYwh
+	 aiJY61K4SMbfVlX/fz6jNU8OOzEDT0NRhxKJxIiA=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 1E9A1E78; Wed, 09 Oct 2024 09:07:41 +0800
+X-QQ-mid: xmsmtpt1728436061t7n1c3cin
+Message-ID: <tencent_68B1AEF2EEC20C9C27C246DAD2F2C6568906@qq.com>
+X-QQ-XMAILINFO: MqswyhUqVe0Ch1K6qSHmuL7OfSg4k3PSsyxtBR5+Qb35X0Y183fmg7wqJq610G
+	 VYqNR3HpecQicRK8Fx7gw9CkZncMl9+feABJAvnrL1AE7xyVGWT3iU2OHuZ4jGOZttHA30lW2AFJ
+	 lOtEXaXOE8Fsm0N+6+6uRXSV9ZR/kNPGPYFxMtgMRglhrUdMM+Pjcjac1T2e9Txa3WIh34XHEuO5
+	 m4WFPOVPX+KxB+uRKhnc+1tQNTpJnIzfgGU0FIV7D5NZ1uFNPbRwzkJt9dBxlEtiZsZY28GHoJ1t
+	 WXJ4OU48kQO0aNionOTWhQ9WrbCBxVC/8P5N0fJbQaeedbsthrzNriGOdJx5a9DIslPf94J7O0LH
+	 nOslpDp9wYLiNjfpesv+YCVHpL1VMPj2YUmQvSBfD8waZy2drrrQ3iwoXBJeiI95rKdRQ3vs2nkn
+	 26VhKokzHhClr6wR1/FzjbgsQMY9ec3dEyMnQ1wMqINnfZbV9isl0d0ja0oLs0twzYDAlKMXT5GY
+	 namBy99cbRYP7SkMsDyjkVRvMIlZw4XbkzttocssG2JKmQ7K4mlx5A48JSO40C/2OI8RMbNEuLU3
+	 L5hq5jLVOfCsGr8GLcZMJiuwXWghEI7s900lt3xZU/ob3pWbe7LWXIsKyLxVW0KSH5wNzh1B9wd/
+	 s/ufiVIi/t8SuM8y57k6L4RdFrqw4PM5bSNIugxgEKkK+lTGfh/0DvtMNzKjslvM80IQYpS3TfYS
+	 Vfao/onRy6yB0Z09FZOmgOgFeJsUtJ6rw879PUsarggrkMwWdIsh2o6dBlp6Z2veF833cPOXGh1U
+	 1XHMabGI8iqpp7/4dvo4EkHjUh1J301BrfNfdWZSeZWTGYbtld5yfjDaClm3kP5VBhzIe5fmbj3/
+	 V4IgH3PLZeZKrTZ2g0opyd3j+Q2eSlggZ9ZlrPSz14ouw6AjRb2ksqUumFbRf5l+nfgnt/J8wf9F
+	 EF823a9UW0czENFToUUUfC4vjM4Q3YhDit7jsPkK0=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: luiz.dentz@gmail.com
+Cc: eadavis@qq.com,
+	johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	marcel@holtmann.org,
+	syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] Bluetooth: hci_core: remove acl hdr handle error message
+Date: Wed,  9 Oct 2024 09:07:40 +0800
+X-OQ-MSGID: <20241009010741.780475-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <CABBYNZKiNBxqZbS7hcBrpiwHRRwAe9gXvHWNvi63qBfykR=SVg@mail.gmail.com>
+References: <CABBYNZKiNBxqZbS7hcBrpiwHRRwAe9gXvHWNvi63qBfykR=SVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a might_fault() check to validate that the bpf sys_enter/sys_exit
-probe callbacks are indeed called from a context where page faults can
-be handled.
+On Tue, 8 Oct 2024 10:12:34 -0400, Luiz Augusto von Dentz wrote:
+> On Tue, Oct 8, 2024 at 6:47 AM Edward Adam Davis <eadavis@qq.com> wrote:
+> >
+> > Syzbot reported a uninit-value in hci_rx_work.This is because l2cap didn't
+> > execute the corresponding connection request to call l2cap_send_cmd() or
+> > l2cap_do_send(), and ultimately called hci_add_acl_hdr() to set hdr->handle.
+> 
+> What are you talking about here, what these functions have to do with
+> a local handle variable?
+> 
+> > Therefore, when calling the thread callback function hci_rx_work() to call
+> > hci_acldata_packet, hdr->handle should not be used directly.
+> 
+> It is not being used directly, the handle is a local variable which
+> get assigned:
+> 
+>     handle = __le16_to_cpu(hdr->handle);
+> 
+> If what you are saying is that there is no guarantee that skb->len >=
+> HCI_ACL_HDR_SIZE then we probably want to replace skb_pull with
+> skb_pull_data.
+You are right, skb->len is too small.
+But, skb_pull is ok, maybe just need to add a check.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Tested-by: Andrii Nakryiko <andrii@kernel.org> # BPF parts
-Cc: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
----
- include/trace/bpf_probe.h | 1 +
- 1 file changed, 1 insertion(+)
+#syz test
 
-diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
-index fec97c93e1c9..183fa2aa2935 100644
---- a/include/trace/bpf_probe.h
-+++ b/include/trace/bpf_probe.h
-@@ -57,6 +57,7 @@ __bpf_trace_##call(void *__data, proto)					\
- static notrace void							\
- __bpf_trace_##call(void *__data, proto)					\
- {									\
-+	might_fault();							\
- 	preempt_disable_notrace();					\
- 	CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));	\
- 	preempt_enable_notrace();					\
--- 
-2.39.2
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index d6976db02c06..cfb828452a13 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -3769,7 +3769,11 @@ static void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
+ 	struct hci_conn *conn;
+ 	__u16 handle, flags;
+ 
+-	skb_pull(skb, HCI_ACL_HDR_SIZE);
++	if (!skb_pull(skb, HCI_ACL_HDR_SIZE)) {
++		BT_ERR("ACL data packet %d, smaller than ACL HEADER Size %d\n",
++			skb->len, HCI_ACL_HDR_SIZE);
++		goto out;
++	}
+ 
+ 	handle = __le16_to_cpu(hdr->handle);
+ 	flags  = hci_flags(handle);
+@@ -3795,6 +3799,7 @@ static void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
+ 			   handle);
+ 	}
+ 
++out:
+ 	kfree_skb(skb);
+ }
+ 
 
 
