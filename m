@@ -1,169 +1,147 @@
-Return-Path: <linux-kernel+bounces-357286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CCE996F0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:00:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D82996F17
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695A31C21740
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:00:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29EC1C213BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392F02AD1C;
-	Wed,  9 Oct 2024 14:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2CF1E480;
+	Wed,  9 Oct 2024 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hh5/x0LT"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qW6eSMY6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE81E1A0B06;
-	Wed,  9 Oct 2024 14:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAE3537FF;
+	Wed,  9 Oct 2024 15:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728485976; cv=none; b=j3pkHI9w9QPG3jxfvxsYGwVgpjZy4g6KqqkiX7qUbRC0ZwmEBDV79nHcI2ntsyagLH4gy9WosEjQwpeO/R62hWa2CWjZYn+LPJ66EhyhTqbtxehCsPu7PPhukFGiKQpgT/iJlgqdMnaZR1IBUeE6rEZadTrEUkhT6WMGQ4VgiIs=
+	t=1728486024; cv=none; b=SNmtSb47fhvRr3fWkFPBSKya/HfPLTtO0M0+1sacPR/pSbTXTaDR8Ux7eAGOy5QeSrqFy+YW5uqO5WJEHtakjPL84F2PUIBI/w0GBaBgGq/MQS2jXH4ABiHpHMwS4O82GrJfTif8/9hDm6BuDNzseSrtVb6RQqhOU50gziQDJCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728485976; c=relaxed/simple;
-	bh=bMAvKTxqdqHiwcL4OB2FVzz4YshB8ALhlNR8QDtvW/A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FiBO5o6JDmogXGIOFury+BH7Ek3eR8ebEbGRL1qWjOUiKSycF3d0t3yU94MCwii9cAsvFDyCRRb8gmt3gt3Eq9ZcZHpwws1TyD67s+xWqjxmAdk9/zTiZek//qmLQDGYIiAQ1EiQkiHdU4GJe/lLF2SD2z1i0R9QRAVohngBixA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hh5/x0LT; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9977360f9fso249048066b.0;
-        Wed, 09 Oct 2024 07:59:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728485972; x=1729090772; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=E3WtsCpgNIXHaF0APsCrNftN5SWrqWtnB+nbBJCHGk8=;
-        b=hh5/x0LT8DCbBth308ip/feOXF6YVINilmYR77o41XwrCzTbpatozF5eUMSNBcO2Le
-         zecY7fJeUgQ6Y5sX9stq5jHs52gbFOsnPmI0R6z6HB9DY7cCjpeWoR4JlBjHUWEfUmJc
-         DicdZbXPVQRV6VZjEWDtzWDgnCXajZKYiYeAkFdXdjVuefB9xTIbiqXPIqriK3BxtcSu
-         dbkFphNtLMOwfo2We28A/vYMwZOIesncbqyUotQBbHFNjJGmFinjohod2kfof5vWkA05
-         PK2caf+/ijRT+TTpUKSOGc5s+MWz874TB+ooRS7tCteDvvJHUsKNAm8aNL2BQTQ4JZ7k
-         fZHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728485972; x=1729090772;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E3WtsCpgNIXHaF0APsCrNftN5SWrqWtnB+nbBJCHGk8=;
-        b=EjI3GUdmpsE5LrzyzLXUDIGlUlyPY53oRK4EPrMCpJhe09iQe5d3pkgc5h3lJmZQQx
-         K2frWQBFfKqMurZpE2bMreLzr0Ht++hv3D174U/96MSWW49t6DqIqkUDdKXOQhDSWQLg
-         2xjEwkQNBOea4dWbZ33uOp+ClV0DN2/HjJ4Ssv4gRlFtPrrOLjPqna900hEAxoeVmUEV
-         z+OUUBsW/G+xyDNbaH6PgYQUhv9SookLcsMTF6Vv0HOC27yrNdZ5d7BlyLlbE2Z0t7cw
-         beedNn0a+GIckKxYzI+HtaZnVtvBQ/xKP66NhZ1Zoi+SmcqzPz8ez+vmiWyRitsAWjD9
-         tvcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+pyzzXQq8jj49Yre1R2cme706hcepKT2LaVq4AUO8jPoa2L5obw8vw+OQdGxaquB+CuXlW6Y55p9@vger.kernel.org, AJvYcCW+yQuVY0vkLuLrCJjXOVKgcTfo8/pBzPqRawnaLm7sH1T02QG6lj5PYTSLlUaxADbmtRMQ9/Cob71t@vger.kernel.org, AJvYcCWx39NxT9lPkUyqV0CUHB/Gyfu7VLzQCOYdyvmlJ8mZ4OizhLQgvlQEL4rjCvY53qP0YRnPHrJ90zvuvTs=@vger.kernel.org, AJvYcCXj3Ks1spsbtOKk5Gvzej1MCcey6yfhui9dGzZvoAmVsgpWoKALsZ2Ylth4mtaDdDIvGSyqS6vg2eTt@vger.kernel.org, AJvYcCXxPyOpidVu2VJipBIjrAWd7utDOMy8np+qs/GAOTQ04bCpHJ/1MPpIN+CiYT5U9qwQjOGENNY5CP+2HTnM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvmyy1lMgroXHt1SQxM5Fc46p0XHzER2dxEB9T41U4g6NlELpG
-	sln3AIrl29YxgkbNP6pfOlg7/L8vdPSV7m6Z8KYhd/JRbxxrFXcCNfGR9P1ENBY=
-X-Google-Smtp-Source: AGHT+IEJKBcrFnVSMldqrFkSB32VcoGZJx7VO9bzRb/opmzn+IGK9ULEl7e4QRixKBFGGfKcFRB8IA==
-X-Received: by 2002:a17:907:c7dd:b0:a99:446e:3b5f with SMTP id a640c23a62f3a-a998d3158c1mr250285466b.50.1728485971918;
-        Wed, 09 Oct 2024 07:59:31 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e787eecsm661220066b.125.2024.10.09.07.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 07:59:31 -0700 (PDT)
-Message-ID: <bb0874600cb0c74f1a3ff8d41a0c3f9e76829009.camel@gmail.com>
-Subject: Re: [PATCH v4 5/8] iio: adc: ad7606: Add compatibility to fw_nodes
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Guillaume Stols <gstols@baylibre.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com,  dlechner@baylibre.com, jstephan@baylibre.com,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Date: Wed, 09 Oct 2024 16:59:30 +0200
-In-Reply-To: <d1229162-b97b-4261-9c4a-e1f83ef14378@baylibre.com>
-References: 
-	<20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
-	 <20241009-ad7606_add_iio_backend_support-v4-5-6971a8c0f1d5@baylibre.com>
-	 <facfe06f51a815f4ff5604aeacd8bd6ed0629be4.camel@gmail.com>
-	 <d1229162-b97b-4261-9c4a-e1f83ef14378@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728486024; c=relaxed/simple;
+	bh=D0XqC48xeaaF/Gw7gpqXxx4RqDkm+MnppecvEnCEpig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9GxapzJwEZN2kdDZc6JBhmWmnLAegS4Q/ta7Ds+oEmGyQ1J5H5Y0PDSgpIYo9x4uYbjM2p02ImxPeBpVVTHNsZ5twGYj5enZoMfAB7UKyMsqYXDYM1vHMnsVWaSQ3Y8X3njtLGvG+g5Jrg3pDQ6Pf3wNSzv8+YtjoDArQLbeGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qW6eSMY6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBD4C4CEC3;
+	Wed,  9 Oct 2024 15:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728486024;
+	bh=D0XqC48xeaaF/Gw7gpqXxx4RqDkm+MnppecvEnCEpig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qW6eSMY6s7/qAll04dwOz/7yMIlizS8cRC64xwYK/Sza+B2Y00qXklitkmq0kG2+X
+	 9PR6K2OzUIIY+RbX1D081p3egbuR4lGlmviKUQ8r8Mew2t5FZx1vH+SNdq5kAvy1Wl
+	 hcv1Ehk49H2IdeF4kp3bzm3J/pHClJeN7qgv8Vxue900lhJ1ZvXolRgyAm+d/f1XWn
+	 IY0mXmkaj/4nL+SwkcyEDFo+QxF+h6U7tHpf6nJtV6hdUa2sI76OkGZImanWKzw+8F
+	 spwEkdsZFy0AQz8lj2/UYJ3SGOEWjheJm/6qH6BlxImUtp89uMh07CKC6XoX+HHMxX
+	 kyGHUlblJn6Vg==
+Date: Wed, 9 Oct 2024 17:00:18 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, l.stach@pengutronix.de,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, imx@lists.linux.dev
+Subject: Re: [PATCH v5 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
+ "atu" for i.MX8M PCIe Endpoint
+Message-ID: <ZwaagtTx1ar1CW4V@ryzen.lan>
+References: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
+ <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
 
-On Wed, 2024-10-09 at 16:53 +0200, Guillaume Stols wrote:
->=20
-> On 10/9/24 16:39, Nuno S=C3=A1 wrote:
-> > On Wed, 2024-10-09 at 09:19 +0000, Guillaume Stols wrote:
-> > > On the parallel version, the current implementation is only compatibl=
-e
-> > > with id tables and won't work with fw_nodes, this commit intends to f=
-ix
-> > > it.
-> > >=20
-> > > Doing so required to declare ad7606_chip_info structures in the .h fi=
-le
-> > > so to make them accessible to all the driver files that can set a
-> > > pointer to the corresponding chip as the driver data.
-> > >=20
-> > > Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> > > ---
-> > > =C2=A0=C2=A0drivers/iio/adc/ad7606.c=C2=A0=C2=A0=C2=A0=C2=A0 | 283 ++=
-++++++++++++++++++++++------------------
-> > > -
-> > > =C2=A0=C2=A0drivers/iio/adc/ad7606.h=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
-32 +++--
-> > > =C2=A0=C2=A0drivers/iio/adc/ad7606_par.c |=C2=A0 30 +++--
-> > > =C2=A0=C2=A0drivers/iio/adc/ad7606_spi.c |=C2=A0 96 +++++++++------
-> > > =C2=A0=C2=A04 files changed, 254 insertions(+), 187 deletions(-)
-> > >=20
-> > > diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> > > index 5b276d087ec3..dfbdea8c28ba 100644
-> > > --- a/drivers/iio/adc/ad7606.c
-> > > +++ b/drivers/iio/adc/ad7606.c
-> > > @@ -78,6 +78,155 @@ static const unsigned int ad7616_oversampling_ava=
-il[8] =3D {
-> > >=20
-> > ...
-> >=20
-> > > +const struct ad7606_chip_info ad7616_info =3D {
-> > > +	.channels =3D ad7616_channels,
-> > > +	.init_delay_ms =3D 15,
-> > > +	.name =3D "ad7616",
-> > > +	.num_channels =3D 17,
-> > > +	.oversampling_avail =3D ad7616_oversampling_avail,
-> > > +	.oversampling_num =3D ARRAY_SIZE(ad7616_oversampling_avail),
-> > > +	.os_req_reset =3D true,
-> > > +	.scale_setup_cb =3D ad7606_16bit_chan_scale_setup,
-> > > +};
-> > > +EXPORT_SYMBOL_NS_GPL(ad7616_info, IIO_AD7606);
-> > >=20
-> > Maybe my eyes are tricking me but I'm not seeing any MODULE_IMPORT_NS()=
- in the
-> > drivers?
->=20
-> Hi Nuno,
->=20
-> The ad7606_spi.c and ad7606_par.c use MODULE_IMPORT_NS(IIO_AD7606).
->=20
-> Chip infos are used in the "coupling" structures, e.g:
->=20
-> =C2=A0=C2=A0static const struct ad7606_bus_info ad7616_bus_info =3D {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .chip_info =3D &ad7616_info,=C2=AC
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .bops =3D &ad7616_spi_bops,=C2=AC
-> =C2=A0=C2=A0};=C2=AC
->=20
+On Tue, Aug 13, 2024 at 03:42:20PM +0800, Richard Zhu wrote:
+> Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
+> 
+> For i.MX8M PCIe EP, the dbi2 and atu addresses are pre-defined in the
+> driver. This method is not good.
+> 
+> In commit b7d67c6130ee ("PCI: imx6: Add iMX95 Endpoint (EP) support"),
+> Frank suggests to fetch the dbi2 and atu from DT directly. This commit is
+> preparation to do that for i.MX8M PCIe EP.
+> 
+> These changes wouldn't break driver function. When "dbi2" and "atu"
+> properties are present, i.MX PCIe driver would fetch the according base
+> addresses from DT directly. If only two reg properties are provided, i.MX
+> PCIe driver would fall back to the old method.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
+> index a06f75df8458..84ca12e8b25b 100644
+> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
+> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
+> @@ -65,12 +65,14 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> -          minItems: 2
+> -          maxItems: 2
+> +          minItems: 4
+> +          maxItems: 4
 
-You were faster than me. I just realized that code is only in the testing b=
-ranch of
-IIO and was going to reply to disregard my comment :).
+Now it seems like this patch has already been picked up,
+but how is this not breaking DT backwards compatibility?
 
-- Nuno S=C3=A1
+You are here increasing minItems, which means that an older DT
+should now fail to validate using the new schema?
+
+I thought that it was only acceptable to add new optional properties
+after the DT binding has been accepted.
+
+What am I missing?
+
+
+If the specific compatible isn't used by any DTS in a released kernel,
+then I think that the commit log should have clearly stated so,
+and explained that that is the reason why it is okay to break DT backwards
+compatibility.
+
+
+Kind regards,
+Niklas
+
+>          reg-names:
+>            items:
+>              - const: dbi
+>              - const: addr_space
+> +            - const: dbi2
+> +            - const: atu
+>  
+>    - if:
+>        properties:
+> @@ -129,8 +131,11 @@ examples:
+>  
+>      pcie_ep: pcie-ep@33800000 {
+>        compatible = "fsl,imx8mp-pcie-ep";
+> -      reg = <0x33800000 0x000400000>, <0x18000000 0x08000000>;
+> -      reg-names = "dbi", "addr_space";
+> +      reg = <0x33800000 0x100000>,
+> +            <0x18000000 0x8000000>,
+> +            <0x33900000 0x100000>,
+> +            <0x33b00000 0x100000>;
+> +      reg-names = "dbi", "addr_space", "dbi2", "atu";
+>        clocks = <&clk IMX8MP_CLK_HSIO_ROOT>,
+>                 <&clk IMX8MP_CLK_HSIO_AXI>,
+>                 <&clk IMX8MP_CLK_PCIE_ROOT>;
+> -- 
+> 2.37.1
+> 
 
