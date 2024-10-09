@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-357153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52814996C92
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:47:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1A2996C9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83EE01C2131C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:47:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA6BB22463
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F6E1991CB;
-	Wed,  9 Oct 2024 13:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HgqvtNTg"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0BD199243;
+	Wed,  9 Oct 2024 13:48:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCF738DE5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96656194AE2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481636; cv=none; b=Mfm/jrgl+taBiaW+O2zyVAHE9EEJ1GyPwBV/y+YS2K/HkzGj8sD606SsT+a/m4oX3xvcsTqHnBEtGnZh6eRQt0clhwVvCihdYrHdZ4VUlFv2yA/PAR8aKu2k60eQSMsYtTf9wyTNZ08JnRNeyqEpezxN9kUpLfArKJ9/N3ywLhI=
+	t=1728481707; cv=none; b=Witd/hH5erNdUVg2GMkOlO9K1OheY2tiHlshhxVkWBVTPsjg9MsNq7SWPKaqyUZ1si/vzC14Zj84NjoVGilv5cDnMZXNVFpLqECxOST0Ebo/3DNNgN3L5QUFLagSamHTcs0XZuwoNH6fzyTVdfMrNaFU22dLlu93xm8s3346iDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481636; c=relaxed/simple;
-	bh=fVS6oJHlmHK7fYXH2pl32/lczZRzto/jrZKdnYE7GRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m24am7AyXY8lbbqaXCW0k6KWCg8tj7/6Z3s+B8/DZY5r8kjr7FKNaeuRxuhiXZ16WzhnuaCcoyIFGhZCpLRmhhWSgxcQ+gngCofThvyXXqZUZmFjsa1647IcgGlLamee+LfCPvNB5rAHaySV++2LuMPUdR+/ZsItUQpBf2WyNXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HgqvtNTg; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a994ecf79e7so94819666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728481633; x=1729086433; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=txQkDRS98qxQSlLjIHl1ZL3viMPBW7fCCoQ6NND/4GI=;
-        b=HgqvtNTg+tHSfs9eAgQILA1uHx7SVbCd/AyTao3awzh7qcKMlJo7l8higrxljXoKJs
-         GCHhKoDHySmdHJQSDu3c3woI7nHLUFq0SPfpSbVKOtSgqOuRts3PLrskcyam3V5GibMZ
-         5anbJZgb3QbUoICffQUNbMaKtWn7WZSC2RSv7Tx93wdeALlQkuLCnRPV4E0efCI0mxK0
-         1Ih+hbLyTjz1WqVypk489yxO4AlCR+msK8eXBO4LL7fQIOyWdZoyIMjlffNNSvzXN/Ke
-         YHCZcvBf6h3GRK3rrKUE5dwfBcUlBXA+KPOd3CmyA4yrJvSeMZEtTrzBadi41R93I6bh
-         RZGQ==
+	s=arc-20240116; t=1728481707; c=relaxed/simple;
+	bh=gASEXiZR66bIA/k4cHkwbKLHltIkFeNNC/Gi3e2bsuU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HFtExir79zTE5V69p/AFoT0T+DYQvAiKzau+snddJsbbwC64PWaBLAFX5u02BIna6yVdqXjUWaZpjhegsGDOagg9h4d7+6MZyBlwgZm7nn4CUI1OeNeHk/YsXW7G5o07WGSgdvkcD3uer9sehZNvSPcDdLflYjNSL6vZg+juqkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1925177fdso79462345ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:48:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728481633; x=1729086433;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txQkDRS98qxQSlLjIHl1ZL3viMPBW7fCCoQ6NND/4GI=;
-        b=R3WAOtNMrFbcbZatEKt/sq4QyfZ9QSJqfe8vqswIjtBX5dAfbTTcoKfLb6Uk1xzXm0
-         i7iNQu7frJoBaiLtKQkNfFAifM/FkfdmzfQl0tHrj7GLczQo+TG9ukZnWA3Z//d/ceNc
-         DkUXg9oaeAe9ORAgOHu4FbIlz7xAQ2mGhB56iooI+trMnoZGCi63pIrsNtBvkL9sIf3e
-         Q9s8MtfyAfzENGqM2ZdXmkhnnvXgx0rM4Q8cMSa+hz/CufqQZAN+gr4FWmWRNkyGzfLT
-         dIIVV0M4aj99wDI62pwDnX4u2PzdUptACGx+4lu1O+v61Lidc6OzESvz/53m9vVQAAcF
-         5lZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZNfTbr3U2Fcyf1B2iOztutGD2DosrhnewxyH3xL8xQFmWP3/zUngrN3TvW9ClqCqdJcQXh84Ol6hnTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjVgXc1LRn4YpA/mxbVFO3EW4GYvx4QfPhBKiJK0ow4pbau9Ui
-	ibfAzYLC2wIt2UnLnvfaAQr6BXPaYCMsDjizj0CsPYaEB4DjhkeH1ufjwscdV60=
-X-Google-Smtp-Source: AGHT+IFkWiknZr5mm3FCX6LuZw6eRJb1JJkxWWCDxW/CnP8EG2UoaocNNAuDZ7WJQ9/IeyPs62+vKQ==
-X-Received: by 2002:a17:906:d7d1:b0:a90:41a5:bb58 with SMTP id a640c23a62f3a-a998d19eb5amr227845266b.16.1728481633056;
-        Wed, 09 Oct 2024 06:47:13 -0700 (PDT)
-Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994f4b91aesm462581466b.194.2024.10.09.06.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 06:47:12 -0700 (PDT)
-Date: Wed, 9 Oct 2024 14:47:10 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux@treblig.org, jingoohan1@gmail.com, hdegoede@redhat.com,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] backlight: Remove notifier
-Message-ID: <20241009134710.GA16179@aspen.lan>
-References: <20240919232758.639925-1-linux@treblig.org>
- <ZvKgo8RUImafDRPE@phenom.ffwll.local>
- <20241009102230.GC276481@google.com>
+        d=1e100.net; s=20230601; t=1728481705; x=1729086505;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KW6iitnhrdxBBikdTOFclZWe4/hWRw3Ieoda0j2XAM0=;
+        b=RG15KqiESyuujthfFNKAgfCkAAlMIKtwypd7Znf98d7Lag3DDFTn2ANRkIrJZKoysH
+         OoQ7rXdNSWRZtjh9pbWyCSZObtxofug++TlrcqNprKqY+U/kmTTYCGo5sTYb+rqw+DFb
+         ZL82qWx88yzRMax5havjnOui4TMoTi4nKI6yD4L6bgl7r/bwldatmpl1Nw9inFlUb9yd
+         4EfSHEKwE5ybENpxFuF9Ie2zt5CFyUNK+3J3v1u/l44HdSgTV2DjRLnLjjb1x+0haexm
+         jQGUl/iSPlmKU8DfnpyNihg8gh0prREu3TOc1kOqvvWJ3X2wDrdYWkm7ojQfkcdRzmcj
+         wYpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqMQBDfi2ItN13GpJYuizHeSdGEYtRY/3+Czcqw9efqXLk4Bpj6FHWrp5wPDmYKVzLTsJ5DhuG1V88Y2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEU0jHmdhnrT3XQFUji6N5aATMdqkMdLM2e0T3aQQOZoXkdsHc
+	s82oK4RLT5P9z+j+aILd8TXra1QjAMHPlPO8DLMzzN4zkuNROJOlcZv4ChmaBTK1OSqvurZhGJU
+	S/pjA6Te1PkgXO/+yzebXl7US/AOdweE0/LBXa4YyzSKUZveKyinEp84=
+X-Google-Smtp-Source: AGHT+IG5JEIuLJwUtyBsinNP2mTDyUISUgPaE2+buwDKV7XSwd97X7JfIR2ztJzlmSDl+maQ+yhTqdB9PWlW9fbHzJwUrBsO2M1J
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009102230.GC276481@google.com>
+X-Received: by 2002:a05:6e02:1c07:b0:3a0:926a:8d31 with SMTP id
+ e9e14a558f8ab-3a397d10f9bmr29600295ab.16.1728481704766; Wed, 09 Oct 2024
+ 06:48:24 -0700 (PDT)
+Date: Wed, 09 Oct 2024 06:48:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670689a8.050a0220.67064.0045.GAE@google.com>
+Subject: [syzbot] [btrfs?] BUG: sleeping function called from invalid context
+ in getname_kernel
+From: syzbot <syzbot+02a127be2df04bdc5df0@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 09, 2024 at 11:22:30AM +0100, Lee Jones wrote:
-> On Tue, 24 Sep 2024, Simona Vetter wrote:
->
-> > On Fri, Sep 20, 2024 at 12:27:58AM +0100, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > >
-> > > backlight_register_notifier and backlight_unregister_notifier have
-> > > been unused since
-> > >   commit 6cb634d0dc85 ("ACPI: video: Remove code to unregister acpi_video
-> > > backlight when a native backlight registers")
-> > >
-> > > With those not being called, it means that the backlight_notifier
-> > > list is always empty.
-> > >
-> > > Remove the functions, the list itself and the enum used in the
-> > > notifications.
-> > >
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> >
-> > Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
-> >
-> > I think Lee Jones or Daniel Thompson will pick this up.
->
-> I will pick this up with Daniel's review.
+Hello,
 
-Thanks for the patch... sorry for the delay. I just bumped this up my
-TODO list a little ;-)
+syzbot found the following issue on:
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+HEAD commit:    33ce24234fca Add linux-next specific files for 20241008
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14771780580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4750ca93740b938d
+dashboard link: https://syzkaller.appspot.com/bug?extid=02a127be2df04bdc5df0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112f97d0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=101d4f9f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ee8dc2df0c57/disk-33ce2423.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dc473c0fa06e/vmlinux-33ce2423.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4671f1ca2e61/bzImage-33ce2423.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/9876580e56ab/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+02a127be2df04bdc5df0@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at include/linux/sched/mm.h:330
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 5233, name: udevd
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+CPU: 1 UID: 0 PID: 5233 Comm: udevd Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8638
+ might_alloc include/linux/sched/mm.h:330 [inline]
+ slab_pre_alloc_hook mm/slub.c:4062 [inline]
+ slab_alloc_node mm/slub.c:4140 [inline]
+ kmem_cache_alloc_noprof+0x61/0x380 mm/slub.c:4167
+ getname_kernel+0x59/0x2f0 fs/namei.c:234
+ kern_path+0x1d/0x50 fs/namei.c:2716
+ is_same_device fs/btrfs/volumes.c:812 [inline]
+ device_list_add+0xc64/0x1ea0 fs/btrfs/volumes.c:947
+ btrfs_scan_one_device+0xab5/0xd90 fs/btrfs/volumes.c:1538
+ btrfs_control_ioctl+0x165/0x3e0 fs/btrfs/super.c:2264
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faa2bb1ad49
+Code: 5c c3 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 76 10 48 8b 15 ae 60 0d 00 f7 d8 41 83 c8
+RSP: 002b:00007ffd55ec91e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007faa2bb1ad49
+RDX: 00007ffd55ec91f8 RSI: 0000000090009427 RDI: 0000000000000009
+RBP: 0000000000000009 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd55eca238 R14: 000055773bb412a0 R15: 00007ffd55ecaf58
+ </TASK>
 
 
-Daniel.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
