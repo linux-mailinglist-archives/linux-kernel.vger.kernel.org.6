@@ -1,179 +1,174 @@
-Return-Path: <linux-kernel+bounces-356267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6619995ED3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:12:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC16995ED7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2971F23AD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9A81C2215B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5864154BF0;
-	Wed,  9 Oct 2024 05:12:26 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5F13F43A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 05:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B376E157A5C;
+	Wed,  9 Oct 2024 05:14:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C63F2F46;
+	Wed,  9 Oct 2024 05:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728450746; cv=none; b=Os07DXv2wVXixQPb+2W2dSuJ+OX2OLlKNxwC0w15wVhNZxgZSxuwcoe6goGklsfD1PwVZ5jvx+zcWzm4syoZi9nNczoGJdBI6E1Wmd9MA0kfZ+GJaow0/3R/AKkuT3pb9+Kq1kzVolZAYEyvDzVE9lKhoLrUVxjOfw1Ts/aqj5M=
+	t=1728450886; cv=none; b=jNXyyAKRU6cYHxoK2Xs81fm01uUnZNNy0juyxcHUFJWlN2g7advT/uE0zyK99CX2hGXY+o0FHYS/gNJXzRPuWikvM3r9PjcKrGJMOJ31EeknooKD5VGeSFNW7wQfx77h0wDwTXG7q6jsiBNMrqgrH59O1Ay06Vho7c5LulDRrIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728450746; c=relaxed/simple;
-	bh=7WTn9XEairr5J5mf2GodM9sUaNrqxM4Dlbe+8MGhhIw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IWsZVFthiV4mAq5dM07w1NjW3XjZq64nNtuv97ftRwuhFnzq3k+QhguRbgGSVwKxtIiiRvTWNzk82Eg3XK5XFjf0WO7cFxAdfifGYbhEJfjnb2Xxp2gLCPutBKzexnEtu1iAndftRVNf06VW6IW4vA/L7c7h99mDK4FFRQ+Rifg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a36a8fa836so43148695ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 22:12:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728450744; x=1729055544;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9B2xga9VYJ2YPNvVTsksZaRz3GiKA9SnvAWY0ThC3vE=;
-        b=xHcJevJNLPzdfzzkiKE7kLEBxKpAF/B1G28iqZMdioHIopl4o7dUyrR5SO4FEDH1gQ
-         n0Esc+z+YtVIHp8sIxZKonHC0aSCHgimZLR08iGWyoRYw1I9/cnkGH1jYUGjw0QZ+RUj
-         DxGoR15yCRRBg2xkWi80NdLmPK6csA9w2ixwd3Ey3D7VZT7qe/xEC0Y4DklbmOgHkhA9
-         /pEIqyNG7YS1DV2tLuCMHctnE2l4d2F03bwTVNtnQ32gmOHSI6Ynz2UtQXuEewiHTU0l
-         00fFhnnxn1FRe19dUSLbFx9DEmLBTsuWXpnoMnI8MTDYY6A8Yv34p33C62c8H/MVfKke
-         nuEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyu1rwfi0XKPvOs7awjW5nubS2f9923GrqZixB8VQRVu+OxTbUfkqVHeds0xvgaGsGCzPcadFDyxsbABY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbiSZT/Gse32IBFKCRxnojCvfPX+Oui7F4W/eVtua/OdF3p3Al
-	XJjGRFhp4N7zAgX75texT/Hx0BDe7Vu6OL6zWp5zFGSm1fmimIc7qyzAlN7MJQ+vuVkQJtsYObA
-	42rjVmUYi2SwgzhKyjP029QvoyAmRy96frm/zfcE4j0zapgXOwMG0GNQ=
-X-Google-Smtp-Source: AGHT+IFvmGbFFcmNTETDDtH9cpf5HoAmSWOED7xwdt13G21V3SOkcutg2DLIi+iSZVDZAlsvB9RwroX8Yb+PCIhqzRejiLX1UXoS
+	s=arc-20240116; t=1728450886; c=relaxed/simple;
+	bh=3Ki/9I5DuL/abGyhYfOoLWRfZH0OJCMKk1fVz5xIM9c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GBznIAPzDMPUPWhKgc2qmKXxWFLIb2ylWs6AIp70wdxPHUg9TqfettumpMc9Gys29MahbwHrg5Gz6TNJ7h1sbul7HPZ4XqceyavjAUx3P0HThAN1gF1D9Qr3OfIioHGXH0bEiU3NuLT/0ZomDdt84Fwg0H2oXHAoNX/WgrhlewI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C60DFEC;
+	Tue,  8 Oct 2024 22:15:06 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.42.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B33EF3F64C;
+	Tue,  8 Oct 2024 22:14:30 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	oleg@redhat.com
+Cc: mingo@kernel.org,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	broonie@kernel.org,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com,
+	aneesh.kumar@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sj@kernel.org,
+	skhan@linuxfoundation.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [RESEND] [PATCH v6 0/2] Add test to distinguish between thread's signal mask and ucontext_t
+Date: Wed,  9 Oct 2024 10:44:22 +0530
+Message-Id: <20241009051424.333380-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca1:b0:3a0:4a91:224f with SMTP id
- e9e14a558f8ab-3a397ce85b3mr10545185ab.1.1728450743994; Tue, 08 Oct 2024
- 22:12:23 -0700 (PDT)
-Date: Tue, 08 Oct 2024 22:12:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670610b7.050a0220.22840d.000e.GAE@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_buffered_write_iomap_end
-From: syzbot <syzbot+3d96bb110d05e208ae9e@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This patch series is motivated by the following observation:
 
-syzbot found the following issue on:
+Raise a signal, jump to signal handler. The ucontext_t structure dumped
+by kernel to userspace has a uc_sigmask field having the mask of blocked
+signals. If you run a fresh minimalistic program doing this, this field
+is empty, even if you block some signals while registering the handler
+with sigaction().
 
-HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=126f5307980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d96bb110d05e208ae9e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Here is what the man-pages have to say:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+sigaction(2): "sa_mask specifies a mask of signals which should be blocked
+(i.e., added to the signal mask of the thread in which the signal handler
+is invoked) during execution of the signal handler. In addition, the
+signal which triggered the handler will be blocked, unless the SA_NODEFER
+flag is used."
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
+signal(7): Under "Execution of signal handlers", (1.3) implies:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3d96bb110d05e208ae9e@syzkaller.appspotmail.com
+"The thread's current signal mask is accessible via the ucontext_t
+object that is pointed to by the third argument of the signal handler."
 
-loop0: detected capacity change from 32768 to 0
-syz.0.409: attempt to access beyond end of device
-loop0: rw=2048, sector=18728, nr_sectors = 4 limit=0
-============================================
-WARNING: possible recursive locking detected
-6.12.0-rc1-next-20241003-syzkaller #0 Not tainted
---------------------------------------------
-syz.0.409/9596 is trying to acquire lock:
-ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: filemap_invalidate_lock include/linux/fs.h:860 [inline]
-ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: xfs_buffered_write_iomap_end+0x20c/0x490 fs/xfs/xfs_iomap.c:1246
+But, (1.4) states:
 
-but task is already holding lock:
-ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: xfs_ilock+0x193/0x3d0 fs/xfs/xfs_inode.c:156
+"Any signals specified in act->sa_mask when registering the handler with
+sigprocmask(2) are added to the thread's signal mask.  The signal being
+delivered is also added to the signal mask, unless SA_NODEFER was
+specified when registering the handler.  These signals are thus blocked
+while the handler executes."
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+There clearly is no distinction being made in the man pages between
+"Thread's signal mask" and ucontext_t; this logically should imply
+that a signal blocked by populating struct sigaction should be visible
+in ucontext_t.
 
-       CPU0
-       ----
-  lock(mapping.invalidate_lock#6);
-  lock(mapping.invalidate_lock#6);
+Here is what the kernel code does (for Aarch64):
 
- *** DEADLOCK ***
+do_signal() -> handle_signal() -> sigmask_to_save(), which returns
+&current->blocked, is passed to setup_rt_frame() -> setup_sigframe() ->
+__copy_to_user(). Hence, &current->blocked is copied to ucontext_t
+exposed to userspace. Returning back to handle_signal(),
+signal_setup_done() -> signal_delivered() -> sigorsets() and
+set_current_blocked() are responsible for using information from
+struct ksignal ksig, which was populated through the sigaction()
+system call in kernel/signal.c:
+copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)),
+to update &current->blocked; hence, the set of blocked signals for the
+current thread is updated AFTER the kernel dumps ucontext_t to
+userspace.
 
- May be due to missing lock nesting notation
+Assuming that the above is indeed the intended behaviour, because it
+semantically makes sense, since the signals blocked using sigaction()
+remain blocked only till the execution of the handler, and not in the
+context present before jumping to the handler (but nothing can be
+confirmed from the man-pages), the series introduces a test for
+mangling with uc_sigmask. I will send a separate series to fix the
+man-pages.
 
-3 locks held by syz.0.409/9596:
- #0: ffff888077bc0420 (sb_writers#19){++++}-{0:0}, at: file_start_write include/linux/fs.h:2950 [inline]
- #0: ffff888077bc0420 (sb_writers#19){++++}-{0:0}, at: vfs_fallocate+0x4fe/0x6e0 fs/open.c:332
- #1: ffff88805e4b0af0 (&sb->s_type->i_mutex_key#27){++++}-{3:3}, at: xfs_ilock+0x102/0x3d0 fs/xfs/xfs_inode.c:148
- #2: ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: xfs_ilock+0x193/0x3d0 fs/xfs/xfs_inode.c:156
+The proposed selftest has been tested out on Aarch32, Aarch64 and x86_64.
 
-stack backtrace:
-CPU: 1 UID: 0 PID: 9596 Comm: syz.0.409 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
- check_deadlock kernel/locking/lockdep.c:3089 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- filemap_invalidate_lock include/linux/fs.h:860 [inline]
- xfs_buffered_write_iomap_end+0x20c/0x490 fs/xfs/xfs_iomap.c:1246
- iomap_iter+0x220/0xf60 fs/iomap/iter.c:79
- iomap_file_unshare+0x380/0x6d0 fs/iomap/buffered-io.c:1343
- xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
- xfs_falloc_unshare_range+0x164/0x390 fs/xfs/xfs_file.c:1033
- xfs_file_fallocate+0x289/0x3d0 fs/xfs/xfs_file.c:1125
- vfs_fallocate+0x569/0x6e0 fs/open.c:333
- ksys_fallocate fs/open.c:356 [inline]
- __do_sys_fallocate fs/open.c:364 [inline]
- __se_sys_fallocate fs/open.c:362 [inline]
- __x64_sys_fallocate+0xbd/0x110 fs/open.c:362
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3f1df7dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3f1ee0b038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
-RAX: ffffffffffffffda RBX: 00007f3f1e135f80 RCX: 00007f3f1df7dff9
-RDX: 000000000000000a RSI: 0000000000000040 RDI: 0000000000000004
-RBP: 00007f3f1dff0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000005 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f3f1e135f80 R15: 00007fffd33b9598
- </TASK>
+v5->v6:
+ - Drop renaming of sas.c
+ - Include the explanation from the cover letter in the changelog
+   for the second patch
+
+v4->v5:
+ - Remove a redundant print statement
+
+v3->v4:
+ - Allocate sigsets as automatic variables to avoid malloc()
+
+v2->v3:
+ - ucontext describes current state -> ucontext describes interrupted context
+ - Add a comment for blockage of USR2 even after return from handler
+ - Describe blockage of signals in a better way
+
+v1->v2:
+ - Replace all occurrences of SIGPIPE with SIGSEGV
+ - Fixed a mismatch between code comment and ksft log
+ - Add a testcase: Raise the same signal again; it must not be queued
+ - Remove unneeded <assert.h>, <unistd.h>
+ - Give a detailed test description in the comments; also describe the
+   exact meaning of delivered and blocked
+ - Handle errors for all libc functions/syscalls
+ - Mention tests in Makefile and .gitignore in alphabetical order
+
+v1:
+ - https://lore.kernel.org/all/20240607122319.768640-1-dev.jain@arm.com/
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Dev Jain (2):
+  selftests: Rename sigaltstack to generic signal
+  selftests: Add a test mangling with uc_sigmask
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ tools/testing/selftests/Makefile              |   2 +-
+ .../{sigaltstack => signal}/.gitignore        |   1 +
+ .../{sigaltstack => signal}/Makefile          |   3 +-
+ .../current_stack_pointer.h                   |   0
+ .../selftests/signal/mangle_uc_sigmask.c      | 184 ++++++++++++++++++
+ .../selftests/{sigaltstack => signal}/sas.c   |   0
+ 6 files changed, 188 insertions(+), 2 deletions(-)
+ rename tools/testing/selftests/{sigaltstack => signal}/.gitignore (70%)
+ rename tools/testing/selftests/{sigaltstack => signal}/Makefile (56%)
+ rename tools/testing/selftests/{sigaltstack => signal}/current_stack_pointer.h (100%)
+ create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
+ rename tools/testing/selftests/{sigaltstack => signal}/sas.c (100%)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.30.2
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
