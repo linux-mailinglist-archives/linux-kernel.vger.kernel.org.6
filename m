@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-357447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8BE99714E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:26:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9C0997156
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367A2286CEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:26:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AABA1C21CD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201991E490B;
-	Wed,  9 Oct 2024 16:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DE11F4FC2;
+	Wed,  9 Oct 2024 16:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bXhiwuYf"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DTEgIvsA"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2081A070D;
-	Wed,  9 Oct 2024 16:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4BC1F1301
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490658; cv=none; b=i9LWCf5vgQVrugddiJktvAnCV2/hTwo+ch8iFq1wbp13jzpVjO6qtpMnyaGIz9qXUpLyK1igjvAudfA7HcfvZdST1cnhu+DP1aoImEqzUjvyCLDLZwisaUC25wjVyOLZOFMUimm5qfW3gkwcmY8os3FNtfqGyUbuxZbpS/X98uw=
+	t=1728490670; cv=none; b=RtOh6O14am+HE+rUR4es7xEkXUI1RiYA0rFRhj3N+h3lB4Ap4GK2BxFeSx6ORfrnJleYyPOaWiDY+Drwz3yKILNyoqA28Ec8jkzFc/ithjfZ05s6riafL9moWH0BijxnMxuIYea6nHzKKP/AXKOZ/eGxUFDns5xaaY3w3LTZXI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490658; c=relaxed/simple;
-	bh=KARoP1r9P4E8BDNACruU0r9q8IrSkct1shMbzcayT1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CHMn/JxOLxSL51QsvEf/5ulGECsaUcGMAy+dFpi3+rtr06Qu1XKZDU2WzT+OTTJeishxZ0knqv59cxxDu9wcCf9avZ06mYH7uWhWhvH9ReXl6xpRAuS/DzJVSL6lfUS925qAROEd6uq4EeJalKrLQiHykd7KDnR0HZ2rHoOHp4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bXhiwuYf; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E0A9440003;
-	Wed,  9 Oct 2024 16:17:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728490648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvg1u7XmoQ2cLHKggXLRQHDXFMduqdF43sXHLjurawU=;
-	b=bXhiwuYfnC6VbQHd/shJX8Dl0FA4SkdmwMT6aVTsTf77jGa48C6Szcq+wp3pgIzL4Q1RL9
-	GLLqrki9UWaQgm5pnXMNr5icPBXADknvfVtyrsU/kSFPao1rQqdAcR8WhKO7mA/Sq0FNeP
-	Ftl+Bqk1Hs7/Sn6F5MP17Da5rC6tMij/K/0Q2bVCNxSBQ4nfuriGv5hanFdPWpvinkWX9b
-	UbqKourjPlK1chMhaiUE61XPzAPRfk3W5rAPVZkVse75vmu8njTOGw7itHZmIQHnf8C6gQ
-	fg+SY8k2hAMLBxiFjrnfgyxveJodVGlVyVB/OQH7f9SA5gP0+ia8UNCKN2zTYQ==
-Date: Wed, 9 Oct 2024 18:17:25 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next 04/12] net: pse-pd: tps23881: Add support for
- power limit and measurement features
-Message-ID: <20241009181725.47ff98b8@kmaincent-XPS-13-7390>
-In-Reply-To: <ZwaeRL9z310dBBlh@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<20241002-feature_poe_port_prio-v1-4-787054f74ed5@bootlin.com>
-	<ZwYOboTdMppaZVmX@pengutronix.de>
-	<20241009110501.5f776c9b@kmaincent-XPS-13-7390>
-	<ZwaeRL9z310dBBlh@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728490670; c=relaxed/simple;
+	bh=XsCqJPOQJaKQv6y7Js2/0JYlyxdvkv/RsvJw/wD4z80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UcOkTo2vW34l1d6LF2mThGTIFG4C3Eupv1byJA6qkRCVBxdEoiAjR//Bd0owgxEvemHYCOT8NSpWIbXGzIDEv1pzGYE0hBdmaBFTE+LSm82hNOM5/g0eF0/C105PnN/D4tSo6UcONdBZQTE34PHqAiP0ceY0GUVXgwriL68Zon8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DTEgIvsA; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e29026b0a85so701465276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728490668; x=1729095468; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XsCqJPOQJaKQv6y7Js2/0JYlyxdvkv/RsvJw/wD4z80=;
+        b=DTEgIvsAjvxBspGidQ/ySLJjkMt5QEpqWIj8/h4qQ1q++2Pkbymr3Y3Yu5eoEYW6b4
+         kPgJxdi26hYQ8xodCBFZ/pAtfdNBeGf7hFhxBnY9h+wCz4kqcGxghZ+663boh2gHlElW
+         mnMw8p2+xOxmv0H0vCE3p9SRp7st8flA7l1Ye9OeemtU2M9R6aaQT6oy++0iN0mMEjtt
+         MwiPWh3qabiSgaFvEraURBU7wwodg4vMQnPNAG8yvklMddml25rSB2gMYgsZY1y6lea9
+         Mr4FfLFpqHkuLzL5RfE+pN4CbmPgZQtcMyX+CggI4kuPOfG48NDd2XsBA/FLCne1mGjp
+         6Z4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728490668; x=1729095468;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XsCqJPOQJaKQv6y7Js2/0JYlyxdvkv/RsvJw/wD4z80=;
+        b=DZxYJ4wKCeDK2Uczf2wG89G8jggvC1O1hJraliiR/BKidpeXxHfnybe/gFvMzYtohx
+         YI6Hvh5g5wAHYPwAJQ1jUrWkFGa3EW9M44wDr8yyPlgtiQ+HqRWeRKAzVioZjcWplfW+
+         7jRmFUdWkCDDTc1ShIQTV0MKnfD4tK6CaODXd9mhaMBGrgX/fhmXAl7xytRsniDUf8lC
+         lKXWnRk5oyLxday9sMQ9pUgoMkTJt650bBdBnmbsBJ8MXG0CT7aXv6EkQzefGMJA6qc6
+         L3p8PoZexK06wk1A/MoZXAby7uhbdKkuqKBqRrRSC5w+ZbmJHEc0hZ9pYGeJbAgKi2H2
+         eVwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq9l5Y1aLGrIwmdhGyxOUTyRb+SlDfvEL7ceZpIFXGTWrFqKfWr3ebuqPJMjkTr3VcW4/yDSLBXLTfISo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDHHc60Lg8zWgf+NNneRHjLItn7K3CHAOIxP41M1aVfMDDZvc6
+	NUOyfdMWQDt3HtDKlYWSy+LiCKRoff2ljpAR2fqVoPCN+lgSfVY3V3R/U3BJmHWUSR4jG+qfDVn
+	IeO1XpL4gqF2UNO1KMV7rgAB1x+UwkpzjVKfzIA==
+X-Google-Smtp-Source: AGHT+IEhc4X5nJH7MxXrAXKISCQ0c1nXP+Dase0RooHZuKgw/ZrA+HPP70H1m4gm8R9ZIUWIimLj3y/pq23btFkwfJY=
+X-Received: by 2002:a05:6902:140d:b0:e28:f172:976b with SMTP id
+ 3f1490d57ef6-e28fe3d18bemr2644772276.8.1728490667542; Wed, 09 Oct 2024
+ 09:17:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241002135920.3647322-1-andrei.stefanescu@oss.nxp.com>
+ <20241002135920.3647322-2-andrei.stefanescu@oss.nxp.com> <b80873cb-432c-45f3-8f65-41af607af4c2@oss.nxp.com>
+In-Reply-To: <b80873cb-432c-45f3-8f65-41af607af4c2@oss.nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 9 Oct 2024 18:17:35 +0200
+Message-ID: <CACRpkdZf0jSExrs9=E7dcxm_WAUGHsZE6gNTVeyEaAbGmF8-sw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] pinctrl: s32: add missing pins definitions
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@oss.nxp.com>, Chester Lin <chester62515@gmail.com>, 
+	Matthias Brugger <mbrugger@suse.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 9 Oct 2024 17:16:20 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+On Tue, Oct 8, 2024 at 3:25=E2=80=AFPM Andrei Stefanescu
+<andrei.stefanescu@oss.nxp.com> wrote:
 
-> > > This is a common pattern in this driver, we read and write two regist=
-ers
-> > > in one run and then calculate bit offset for the channel, can you ple=
-ase
-> > > move it in to separate function. This can be done in a separate patch=
- if
-> > > you like. =20
-> >=20
-> > The pattern is common but the operations are always different so I didn=
-'t
-> > found a clean way of doing it.
-> > Here is a listing of it:
-> > 	if (chan < 4)
-> > 		class =3D ret >> 4;
-> > 	else
-> > 		class =3D ret >> 12;
-> >=20
-> > 	if (chan < 4)
-> > 		val =3D (ret & 0xff00) | pol;
-> > 	else
-> > 		val =3D (ret & 0xff) | (pol << 8); =20
-> >=20
-> >         if (chan < 4)
-> > val =3D (u16)(ret | BIT(chan));                                  =20
-> >         else
-> > val =3D (u16)(ret | BIT(chan + 4));
-> >=20
-> > 	if (chan < 4)
-> > 		mW =3D (ret & 0xff) * TPS23881_MW_STEP;
-> > 	else
-> > 		mW =3D (ret >> 8) * TPS23881_MW_STEP;
-> >=20
-> >=20
-> > Any idea?
-> >  =20
->=20
-> something like this:
+> I would like to drop patches 2 and 3 from this patch series
+> and keep only this first one. Should I send a v3 that only
+> has this patch?
 
-Oh thanks, you rock!!
-Indeed this should work, thanks for sorting this out.
+No need for that, I just applied it :)
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Yours,
+Linus Walleij
 
