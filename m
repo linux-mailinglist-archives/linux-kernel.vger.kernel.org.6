@@ -1,261 +1,272 @@
-Return-Path: <linux-kernel+bounces-357225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7547996E0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B41D996E24
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02FB2B22D63
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:34:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA958B23C8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40D07FBA2;
-	Wed,  9 Oct 2024 14:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B301A0BE0;
+	Wed,  9 Oct 2024 14:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C4BAQQI7";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TertyEBa"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJBRMXqC"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902B617555;
-	Wed,  9 Oct 2024 14:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484424; cv=fail; b=MmVmpmV0S+MztrGdJpNAzu4GrBtN+J0VLGTEwC72LzjW1uR9y1oVb/1JT6rGMp0EE78cTa+YX4XhevoNP34LGpFCEIxvowcGI3BnzbHEXcB1ixJUXJJCHndWTaEcywUV7DsDma6x4sKU3r1QuNTOQkb1DLMsn5E/4MbL/NuSxbg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484424; c=relaxed/simple;
-	bh=fPmk9I6rlIPOX+22fgVstENRN8ZJUQpAUTkKfGstzDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DqmDe3MId7FRoxKdPXVVxIBiOVc3vYRJWMo0aSSvZVcyjOcMJlsahAss7rfK+g45FHMKEDM+DorNRi2peLDAVFS2xEYauBPPRVDEIp63DMkC661ZRFhiU00SyxDEYSU2Bp4CiWp1k8HUoFpEf6RiBMiZRQ6Z6ffgo+JHWHaGHys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=C4BAQQI7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TertyEBa; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499DfdBV004619;
-	Wed, 9 Oct 2024 14:32:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=/x8wBvaPpjmHHwKUdR
-	vLLISstp7VXcDCRWcub3zAciA=; b=C4BAQQI7GSGT5qeel0JcaOoFq+roE8kVgR
-	snvtkgkQzqzJGazrwXqZ70/PIjkeMc4O7Gd1Qr1PFC3sPwRwxtH/agRrARncau0x
-	Qs6aO09fDIAaFpr76hCwGHCUVK91lwURuzhfAwkcB0pT1sg6ipexssmbHHmW+6Rp
-	f51aIkNW7ChHeHzQ8n+Gze7dg2aCJmYfxyGSn+GDii84Yha83TLmgbZo/sX6cYD4
-	/BRiV3+Eq3GjTCZ1ZwNlNgKDeI30Rb/2KmVYZMiAgfpsFOZYFmkEhtPuZp0hQSHA
-	ykgWhvCMVTbxZfGRB7TIXNBXEQG/dJqlQWsH+Yrr48oES83pN1LA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 423034rq4t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 14:32:56 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 499DqiZv019130;
-	Wed, 9 Oct 2024 14:32:55 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uweyfym-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 14:32:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=km0kRC08812ZoVxwZA5wfh0bRxxFAc8UvSBiafsOb7VnwTLhlSUvhuqR/r2neW/8YUsTPWd8lXWZ4XtOPOWRPXPRqtcT8h08GxE8dpvndruWKRhOhe0ZzRE9dxwta8vVT3qXM5kOc+deqHou9m+2Cnkih0ZTPygr0mHYYdBaEeP3WyOxOJcmDI5Xgaqe89X3eItCIjqot2lHJCd+0hzMwlCIEJkq+PCfhTFz8E844/iSHlOo3SjizAcvXbfFvslipxYqA5h1nSYd8pBsRg6x8P+6nJ6EEzPZspWm/PH3TsCZx1QdA2+N1up4dQixdnMlpqcmbgK3euGWYx6x42vCqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/x8wBvaPpjmHHwKUdRvLLISstp7VXcDCRWcub3zAciA=;
- b=xa2HGqKgJDzJP0/KagEAs+RR9BKnjTVeCNP0iQGlI3JU12VEeZFnvpOqIfmD3PycwnLUIrabIBYBr6hh0sJyDp2VYMkTygg6K2ayQucLiXrc/2hm+apkP4u3OEEwBGIWPmdWt+vxy3oIAiBPOHu3DusM4vGR1qzWG9pUmsbw7ZGXEvV/yJt0+JHeEkDqvWjeQwoPYDy+5f1lj2Rxi6OaG/PnzLVf4Y5wXAt2O80RFlewTzGOp+EqYoFKAyj6ByxKnfklGf7/lDOpxWpn1GuDzq5VW7mtzTessWltLCuzAsE60f5HpXc8s8BoCQn/fEzcP1HIP6SlX1M5+SgI1XsdZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D054126BF1;
+	Wed,  9 Oct 2024 14:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728484483; cv=none; b=FrlaTEWZihAkLdnEIh7iwtQBffVZTF+r92FvDA/RuKduaSt9WyR8bRmKAodzGFfqmRMqkVj14s2gjKbTtWyDK6+D6jY6RP3gRsvj6pmgmwMLsrJFFPOreqyihUZL7vaWVKv4HE1dTeS+v8i8hoG9Yo73/g/Um4+i0pn3D5i2tkw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728484483; c=relaxed/simple;
+	bh=7c8gEB50w0/252V8mh0s6JifNpaNfzrvHypAywEgpf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E7KXLRFgFSV4s9TyRkY3BrUoFgaPtIBXD4nH7RDCAGuHHRdzB5QXCVHYkIE68FdxLlFEd2XiEZH2SZMp/5/7zyPcnpx/bwxuBbOdebipMGNOukE+eg/1A3o2AMHX/B8GBUl0UFIqZNKfoHsH+zf47udZH011tFc71gwEuJmwtnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJBRMXqC; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7afc592ca19so117959285a.1;
+        Wed, 09 Oct 2024 07:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/x8wBvaPpjmHHwKUdRvLLISstp7VXcDCRWcub3zAciA=;
- b=TertyEBaa5YlD4tnpOkcvcPv2wyzRCF7Bdxj2xZnYnWXMGfh433cMWCmIBA9pc5w2lYHRACiRiM+wajYxkuSnx1xENAh480dHVCGkQCVpKUaxt11W8raGXKkG+pTLk5iffQyOa8PTFHcnC6aHYaSNPDeuBJ05Bxn1ZD5z88ZucU=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by IA0PR10MB7370.namprd10.prod.outlook.com (2603:10b6:208:3dd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
- 2024 14:32:48 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
- 14:32:48 +0000
-Date: Wed, 9 Oct 2024 15:32:46 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: David Hildenbrand <david@redhat.com>, Arnd Bergmann <arnd@kernel.org>,
-        linux-mm@kvack.org, "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Christian Brauner <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>, Helge Deller <deller@gmx.de>,
-        Kees Cook <kees@kernel.org>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Linux-Arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 5/5] [RFC] mm: Remove MAP_UNINITIALIZED support
-Message-ID: <fcd1afe6-16f6-4a51-8bb4-08ece80337f4@lucifer.local>
-References: <20240925210615.2572360-1-arnd@kernel.org>
- <20240925210615.2572360-6-arnd@kernel.org>
- <b7f7f849-00d1-49e5-8455-94eb9b45e273@redhat.com>
- <1a1f118e-9a7c-4c66-b956-d21eb36fce48@app.fastmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a1f118e-9a7c-4c66-b956-d21eb36fce48@app.fastmail.com>
-X-ClientProxiedBy: LO4P265CA0023.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ae::13) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+        d=gmail.com; s=20230601; t=1728484480; x=1729089280; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYvTTh3ATKWJOexUuHMRYzN6+ScC1tH/4+UEFE+ph4g=;
+        b=aJBRMXqCDWRAXzYVFCBgDyguuRtmTH/PDUH4nU9TYNkD1VmcdqpKGvJKtPmYY2q0GG
+         nyCeIO7SeDF2gm2RE7T4uQx4odzZzdygenqFxuplyLSVJYXFjUFQHt9nKPH8aH3Z2Nhu
+         SHDSA01EeezjCZlqmKyXuI/b7s6EXTxWO4Rml4/LMyajM69vlccfrFAb5Nk+FvViwZQR
+         3v+3e6VCQR9mi7yE1o1Eihqoc4tgjIFRyuO/ODMgWCw1rCtUHGaGwgj6GOTZbys0PtM1
+         oCX2VbRNHAaBzZL2KWMXM5dFzOIVRESsv2nJbdn+txx43sDFF6vytPS+kYTwVt/fdNjr
+         M0uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728484480; x=1729089280;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fYvTTh3ATKWJOexUuHMRYzN6+ScC1tH/4+UEFE+ph4g=;
+        b=s4eC6I4bHz+3HCeZKcYzv+FcbV1dUm+9yOXN7SisqVQG35FPcBSmEM1i9nyOjJFRzN
+         xSVR1PO0m86l+9QgsB4Cgy6fCTWCf7Mw3KrwFIqrVxrRi1GyY3pEZMpbPI7iUiw2t12x
+         RddymHghXzz6I7QabmAHd8IEyaoLzyLyBn9CyrCZ2anZBvh72rXuRQRXtx0OPrXLT1NM
+         sp3d74jeH6oTrm9NU6OLNzJxLlDarpMT5puwGFgv/ljHP/JYj04vxD14/a4uUIDKREtc
+         MV84gzlVUQOz5wh6qoQjr78ofJkD9JWKr6fIgYT+tChD/v5pNylZ0SLoFkvg4sV5gTlz
+         MqyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1H2fpPWYD1rSSW7z/zsdUAN7yQYcWq7J7R6EkWUwWj1WO6cTZxcRji7p2xCxumPRIJP4WJ5GUMn5JcLs=@vger.kernel.org, AJvYcCXxm4BGvPdA9rKJo/wlb4cl6XgTRy5WV+GNr7+fp7Q01BD5IQfVwufQd3F8EVeuCXBdtRhL/Ldhhxk5KrYh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdLuxuMscbR4XRwY4duIXpn64mr2wRxkvIpEhQe5YhDtXsBa+j
+	B2PPmGvDR15wAIUTJYTihhPG28eUjQK4w1nN9Np5xkusrHTfhqr9u27wy45M
+X-Google-Smtp-Source: AGHT+IG5RPqj6gZKuFlLT24dUR6WuriG1+zrXDTP8sWzVBrqMGv08Q43bbdZNKOrDw2B6g7L4to/ig==
+X-Received: by 2002:a05:620a:c4a:b0:7a9:a7b4:57f1 with SMTP id af79cd13be357-7b0874cbe8emr432369485a.59.1728484480402;
+        Wed, 09 Oct 2024 07:34:40 -0700 (PDT)
+Received: from localhost.localdomain ([2620:10d:c091:600::1:6bd1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7afce7a2bc0sm120989785a.61.2024.10.09.07.34.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Oct 2024 07:34:39 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+To: rust-for-linux@vger.kernel.org
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Fiona Behrens <me@kloenk.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	=?UTF-8?q?=C3=8D=C3=B1igo=20Huguet?= <ihuguet@redhat.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH v4] rust: query the compiler for dylib path
+Date: Wed,  9 Oct 2024 10:33:00 -0400
+Message-ID: <20241009143301.6006-2-tamird@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CANiq72mS8F98WRsuc82Co6zyw1eYSGSQmr0brGwSkq-Zy4qivA@mail.gmail.com>
+References: <CANiq72mS8F98WRsuc82Co6zyw1eYSGSQmr0brGwSkq-Zy4qivA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|IA0PR10MB7370:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3802db9f-4932-4d35-b49a-08dce86f3f8e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7N/M2g5aQ6AoKg5/kd9rwV9imS3w1u41fKu43dE6q76t7KB8iUoICxwSn8jJ?=
- =?us-ascii?Q?TBihNEDEvvtlpE+uDIRc3PMe7utv9hOLJ25qaQ87egGIi+yXOwhGTY2MqeVo?=
- =?us-ascii?Q?HPmzkMOZC6DscyyjXG2MThLqZ3nWl9tl5oeKwWuORPTTseWfQiNkGEqjxSQ0?=
- =?us-ascii?Q?QAjrPV8dC+m6Tu17XCNSsUXHd+mOkP4nvoebl0N2JoV11e5DAZfIUnZBD/aU?=
- =?us-ascii?Q?5S87/vQdo59BInQkb1HRui4qT2ro4PenCQzI0Yq21zPBY9YTRORU94HAisjX?=
- =?us-ascii?Q?jNg8MosnqqWsFrEjaXwydeYPRuzQTIWlt75RBsqSDLfTGOKNHMALvBpd70VL?=
- =?us-ascii?Q?WbepA350oUpkpeFYfFh1GYCkvcbF+L43X/CKwC4N/tA8Ez1cvIGqYvEYxRD2?=
- =?us-ascii?Q?W8nmtavQZconLJaPPZQvdSdpnPK9uP4QjNJN5xW4gWeiX+gL9froXp4Pv7p/?=
- =?us-ascii?Q?N7skAV2JLM8wP7xdwJU9ISEk+v2dUG3wNVNlOHtM8THiRBBXrljfEcVmAlUB?=
- =?us-ascii?Q?EN8ZBGnX2sRrGuuFyaZgwWYMJ3mC6mDlDiWO/q1Q1Xc+USJzWdYF4j7KGfSz?=
- =?us-ascii?Q?fUPEQK2DZzmSDdABXD4ISr1x/vcBwVLWQ5xeojnIa+d6SSguGSTUpEgjZWV0?=
- =?us-ascii?Q?qrvy8ClJ+JjFgsl1rpX4ZkzS0DzYxGU6txejmr44rVYwqm1TdBT5XyX1awii?=
- =?us-ascii?Q?T07MQ2t/rL4vT8SKVwrYdH3XfAroBrncUTGxVaImG+NVnPSPXyxgNWqU483s?=
- =?us-ascii?Q?uWcCOszgsqjHRSadQDkwkTxN6tbm647jfL+b3g6h1TgBJRFqu5hGsLQnnm09?=
- =?us-ascii?Q?gbq/LDUC/CCjO57HHimRacZ5sYLQVdmds1nDc30zBIemkrzrYtBj6hSYJHXo?=
- =?us-ascii?Q?NEoBR2zruYthKNv9lXCDfGclw079DENE0e8YNhf9+dvzqeiuW1AaVJAEtT7u?=
- =?us-ascii?Q?vTtQBm/Q5k5WuwSV12USIvyccRARKSenz6KJ8CDbgMEsJRjUsB3AchpKcvab?=
- =?us-ascii?Q?dT+W7Ewl+utga8c5QG3VlS7ZtIxlLgLM/8rroqXnEwP8pQ3DAzL+YF6dEjMu?=
- =?us-ascii?Q?L36maGUU6EfKh85BSNuzYpZ2C75oc9Yjh4wxf4EFr3JLPBg6JhAHeshHVioC?=
- =?us-ascii?Q?C7szbLZpxeUV50ySQqekenKXsMueUpPQqunDIKGnFanxu2JxUon1R5sBaVOg?=
- =?us-ascii?Q?seVscXRjpsfDXZLdbS36oK1/T50/SBLsRdKVWlLoDUc1z97Mlx2hBVZSYuo/?=
- =?us-ascii?Q?FCI5mgJQDLZTEq8I1/1xnMuAH78pWppJYdLqtj45iw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7TKMfW8DmRgAQAfVU1YAy+rqRds6e6RLtNRtNEEFdGzZH07xBU0+Xs+ujM2G?=
- =?us-ascii?Q?HT/L5mUlJQS5sH/qzidGWW0qc3IaOlnNnn/2HaJdTpOK07Xzp/Asxo+NFEkp?=
- =?us-ascii?Q?sHoSSl9kRLjo3r3XnnQga0MPIEwQfVHuWRlJFZq+NC3CzvBaZK1nLO1fBEwX?=
- =?us-ascii?Q?yDFbqdMEw2dooxsuSN+gkT7PLljsy8NrEm7T+rH/a4B5JsfPSxtLnND35SpU?=
- =?us-ascii?Q?xwUwXNpdxJfrfo1xMbPa1lgcSHs5/fq5oh7/wpdq1e6eC0AFKHryOfrE+i/C?=
- =?us-ascii?Q?kePTqJTpSP7M+nNkgb433jL9+qzm0fhp0Iz6MNvTBdipxq1qWM2UjhPjINT0?=
- =?us-ascii?Q?NM/YUFQTgu7NAqMSWQaZdY4dC8RXKSSFWoib9SsS00MYvjDg446kY4NEVYcJ?=
- =?us-ascii?Q?/quwv1gNGKm1JxH+/JFuAR3CEHs2wls6iyt03YPbUjVTo5137gn8xTKK8Y64?=
- =?us-ascii?Q?oDoZU0M64c9hXRhWJ2/HpVgGXdklYtqne3cmwm5l5ZgmV5zqreNxalmkYJxZ?=
- =?us-ascii?Q?xe7Sumz4jyMN60+1oxTiCTn4kYB8RrtBtioORAZ8WmLWw6BVBHsM/Kd5Gbyu?=
- =?us-ascii?Q?vlpUZpyRUUUvBvaZ6vblqdNTZzkf/8GlMehcUjlNtomTpjVDEwxpz8azJ9S2?=
- =?us-ascii?Q?sa61osnNzYOEZkJVPJvKTth6aWgZcWUJLuAAxVt/wXUc9BYKReLArdtywHdK?=
- =?us-ascii?Q?+2PsVrHQ6dNGG9IcJWxtkuuM5TAWeTV1X/C9UtG4TltVm/X0ev2F0kd3RHPS?=
- =?us-ascii?Q?Gm1R5elZo+vr/VQRpeVsWQgEH+RvEBIpOduzwKkyP/n59Ch+QnsWPW0jbdAi?=
- =?us-ascii?Q?JSoSjr9NLl1Iy1kGeSVxd2NhDknb08QHGBMS+Whn3tOqMv4hihWFk/PD16m7?=
- =?us-ascii?Q?X+OW+Fq2o+0I8ww8vaWMcck818GdFwXAEAgY5b7tYOiycBDFgcQ7H0gbtY+p?=
- =?us-ascii?Q?xLyl2opmEqS2NE+AkmkYvgBCiDqKnOY0XzXlYLsAICgcTRpx3rImsocd/+hP?=
- =?us-ascii?Q?hJqOG3TTB+il7LQQsmLHb3Vv05cWtqgg1Up4MLkFDSJUlNw29Vem9EYmk3QG?=
- =?us-ascii?Q?m1rhxaGpMfVkufiKVEe+SKVw7SDc2iIXXzq6cYd7oIKD2EHkr4lPGHvF3Xwo?=
- =?us-ascii?Q?myvQWT0PBrHfSxQMy03us1MI9+2z9V6C1wxper7/5Qo6emeGALQzNs2OEEJZ?=
- =?us-ascii?Q?7+fvSO9THRULKfwHd+mHzFhNGCpp4Sunwme99ca73fO8eaCDZ8eSdcrEgE2r?=
- =?us-ascii?Q?0p7bcip9SlOP6RwTLz8ecNwrdNrhOVt7IqezUvLHWEe8WDXX/3AIMIhN2j1N?=
- =?us-ascii?Q?tXlvleeu8NQ8ZYCK+jafyM3eyIqM5a4qET9Z+QIe81VOhgTfgcyPXs+BBoi0?=
- =?us-ascii?Q?sefjQfMHo1wUKTJxoWw3ZXQNK7rQxW0wPKRfqr1iRd/Vj9YY+OfUH5XUUEyw?=
- =?us-ascii?Q?/lA53pZ5w0iUSElV88oQkSK7m5DHh8+y6O/9PRQVnjzDLz8ElydRN5ztNe3j?=
- =?us-ascii?Q?lxT7+TiXVotblX4Kc6roVYjhuvoOeEpY8O3XHzKqwsYOLP4kcAZXq371NGHK?=
- =?us-ascii?Q?2oadHu6GUbcUxmocCJKZ/FhD0jBBBkbAAUBznISvZQiHgb5lbXPU7RAvD1zN?=
- =?us-ascii?Q?Ng=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	n1ZjaYGcxhlrfnybMim6imnPPMamuArFxkVrt51ixlBxg6Y023IbbAuVGPrVi2kcnKqclAOMLWfKzdACgB60pvuIleVIs5l+FC9lWDnHaRCmY8LyU9wDYjL9yBzTlMEUuM7zmsuctYAgaEobapb2ksRh2B6PReoSuesLW2K//s4Gv7LldfTZLV7FaNE6Z6ae2+bDH3VsLqoE9tANBQ7aQE9ZT86QwXfJMmYGjbMpviL4s/Rc7E1A2N9IQzolqrUO9kX+gRo+FwJ+r3EJxu5YW8cR3Er8GmTRPJt4BEpxUcSNYKa9WO1ucxRguK6igpQIErDGL7SbROMK9iUt15JNMowGI897bQMB80hRNfypMWn8XnSZpJLCovVR7IooEQIs3O/NMca8jepf1L1CL/laiyJA6QR7ABBGTwjl1sfzrNhmlaLfH0bkYxuWwyHR/q/gjZG9Pczw03tqBPFzF2pSZeejH6BP1PU9xZGkL/m0NJ2FzyTIOXE30igfRa87de1M+iZAVIvKXV2ogGfAZScvRqYDsg4Zgw9zSArXYkVUkJ6Oxv2Nl3dW/HEvjYhfbsSqCsdFQgt+sDlblQ5qupT1ZjhJXb2lUh7DQHRFaf4+Xpg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3802db9f-4932-4d35-b49a-08dce86f3f8e
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 14:32:48.5893
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hvL42HVkZlRIO5pZfcpCI0uVQGxRHsnSRLeY9Xjp1wk526ou1bvWMKxffe/hiBitWHEEGXhYDKpiS6z1wpBuyZNQpVwxTEGdanffPtHv+W4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7370
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_12,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 mlxscore=0
- malwarescore=0 bulkscore=0 mlxlogscore=900 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410090089
-X-Proofpoint-GUID: EWmiXcNgyZcG3bW_48ouBLDLJCcMo8DG
-X-Proofpoint-ORIG-GUID: EWmiXcNgyZcG3bW_48ouBLDLJCcMo8DG
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 01:54:09PM +0000, Arnd Bergmann wrote:
-> On Thu, Sep 26, 2024, at 08:46, David Hildenbrand wrote:
-> > On 25.09.24 23:06, Arnd Bergmann wrote:
-> >
-> > The first, uncontroversial step could indeed be to make
-> > MAP_UNINITIALIZED a nop, but still leave the definitions in mman.h etc
-> > around.
-> >
-> > This is the same we did with MAP_DENYWRITE. There might be some weird
-> > user out there, and carelessly reusing the bit could result in trouble.
-> > (people might argue that they are not using it with MAP_HUGETLB, so it
-> > would work)
-> >
-> > Going forward and removing MAP_UNINITIALIZED is a bit more
-> > controversial, but maybe there really isn't any other user around.
-> > Software that is not getting recompiled cannot be really identified by
-> > letting it rest in -next only.
-> >
-> > My take would be to leave MAP_UNINITIALIZED in the headers in some form
-> > for documentation purposes.
->
-> I don't think there is much point in doing this in multiple
-> steps, either we want to break it at compile time or leave
-> it silently doing nothing. There is also very little
-> difference in practice because applications almost always
-> use sys/mman.h instead of linux/mman.h.
->
-> FWIW, the main user appears to be the uClibc and uclibc-ng
-> malloc() implementation for NOMMU targets:
->
-> https://git.uclibc.org/uClibc/commit/libc/stdlib/malloc/malloc.c?id=00673f93826bf1f
->
-> Both of these also define this constant itself as 0x4000000
-> for all architectures.
->
-> There are a few others that I could find with Debian codesearch:
->
-> https://sources.debian.org/src/monado/21.0.0+git2905.e26a272c1~dfsg1-2/src/external/tracy/client/tracy_rpmalloc.cpp/?hl=890#L889
-> https://sources.debian.org/src/systemtap/5.1-4/testsuite/systemtap.syscall/mmap.c/?hl=224#L224
-> https://sources.debian.org/src/fuzzel/1.11.1+ds-1/shm.c/?hl=488#L488
-> https://sources.debian.org/src/notcurses/3.0.7+dfsg.1-1/src/lib/fbuf.h/?hl=35#L35
-> https://sources.debian.org/src/lmms/1.2.2+dfsg1-6/src/3rdparty/rpmalloc/rpmalloc/rpmalloc/rpmalloc.c/?hl=1753#L1753
->
-> All of these will fall back to not passing MAP_UNINITIALIZED
-> if it's not defined, which is what happens on glibc and musl.
->
->        Arnd
+Rust proc-macro crates are loaded by the compiler at compile-time, so
+are always dynamic libraries; on macOS, these artifacts get a .dylib
+extension rather than .so.
 
-My point of view on this basis is to rip the bandaid off and get rid. Agree
-with DavidH it's worth keeping some kind of documentation that these
-existed around so somebody grepping and confused can see what happened...
+Replace hardcoded paths ending in .so with paths obtained from the
+compiler.
+
+This allows the kernel to build with CONFIG_RUST=y on macOS.
+
+Co-developed-by: Fiona Behrens <me@kloenk.dev>
+Signed-off-by: Fiona Behrens <me@kloenk.dev>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+V3 -> V4: Added motivation. Added missing Signed-off-by.
+V2 -> V3: Added .strip() to rustc output to remove errant newline.
+V1 -> V2: De-duplicated and sorted imports. Changed Signed-off-by to
+Co-developed-by.
+
+ .gitignore                        |  1 +
+ Makefile                          |  2 +-
+ rust/Makefile                     | 21 ++++++++++++---------
+ scripts/generate_rust_analyzer.py | 15 +++++++++++----
+ 4 files changed, 25 insertions(+), 14 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index a61e4778d011..088696a6a46a 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -22,6 +22,7 @@
+ *.dtb.S
+ *.dtbo.S
+ *.dwo
++*.dylib
+ *.elf
+ *.gcno
+ *.gcda
+diff --git a/Makefile b/Makefile
+index a9e723cb0596..470e6f20c513 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1513,7 +1513,7 @@ MRPROPER_FILES += include/config include/generated          \
+ 		  certs/x509.genkey \
+ 		  vmlinux-gdb.py \
+ 		  rpmbuild \
+-		  rust/libmacros.so
++		  rust/libmacros.so rust/libmacros.dylib
+ 
+ # clean - Delete most, but leave enough to build external modules
+ #
+diff --git a/rust/Makefile b/rust/Makefile
+index 0856fd6bc610..94ae550ae8b3 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -11,9 +11,6 @@ always-$(CONFIG_RUST) += exports_core_generated.h
+ obj-$(CONFIG_RUST) += helpers/helpers.o
+ CFLAGS_REMOVE_helpers/helpers.o = -Wmissing-prototypes -Wmissing-declarations
+ 
+-always-$(CONFIG_RUST) += libmacros.so
+-no-clean-files += libmacros.so
+-
+ always-$(CONFIG_RUST) += bindings/bindings_generated.rs bindings/bindings_helpers_generated.rs
+ obj-$(CONFIG_RUST) += alloc.o bindings.o kernel.o
+ always-$(CONFIG_RUST) += exports_alloc_generated.h exports_helpers_generated.h \
+@@ -36,9 +33,15 @@ always-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.c
+ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated.o
+ obj-$(CONFIG_RUST_KERNEL_DOCTESTS) += doctests_kernel_generated_kunit.o
+ 
+-# Avoids running `$(RUSTC)` for the sysroot when it may not be available.
++# Avoids running `$(RUSTC)` when it may not be available.
+ ifdef CONFIG_RUST
+ 
++libmacros_name := $($(RUSTC) --print file-names --crate-name macros --crate-type proc-macro - < /dev/null)
++libmacros_extension := $(patsubst libmacros.%,%,$(libmacros_name))
++
++always-$(CONFIG_RUST) += $(libmacros_name)
++no-clean-files += $(libmacros_name)
++
+ # `$(rust_flags)` is passed in case the user added `--sysroot`.
+ rustc_sysroot := $(shell MAKEFLAGS= $(RUSTC) $(rust_flags) --print sysroot)
+ rustc_host_target := $(shell $(RUSTC) --version --verbose | grep -F 'host: ' | cut -d' ' -f2)
+@@ -118,10 +121,10 @@ rustdoc-alloc: $(RUST_LIB_SRC)/alloc/src/lib.rs rustdoc-core rustdoc-compiler_bu
+ 	+$(call if_changed,rustdoc)
+ 
+ rustdoc-kernel: private rustc_target_flags = --extern alloc \
+-    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
++    --extern build_error --extern macros=$(objtree)/$(obj)/$(libmacros_name) \
+     --extern bindings --extern uapi
+ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-macros \
+-    rustdoc-compiler_builtins rustdoc-alloc $(obj)/libmacros.so \
++    rustdoc-compiler_builtins rustdoc-alloc $(obj)/$(libmacros_name) \
+     $(obj)/bindings.o FORCE
+ 	+$(call if_changed,rustdoc)
+ 
+@@ -342,10 +345,10 @@ quiet_cmd_rustc_procmacro = $(RUSTC_OR_CLIPPY_QUIET) P $@
+ 		-Clink-args='$(call escsq,$(KBUILD_HOSTLDFLAGS))' \
+ 		--emit=dep-info=$(depfile) --emit=link=$@ --extern proc_macro \
+ 		--crate-type proc-macro \
+-		--crate-name $(patsubst lib%.so,%,$(notdir $@)) $<
++		--crate-name $(patsubst lib%.$(libmacros_extension),%,$(notdir $@)) $<
+ 
+ # Procedural macros can only be used with the `rustc` that compiled it.
+-$(obj)/libmacros.so: $(src)/macros/lib.rs FORCE
++$(obj)/$(libmacros_name): $(src)/macros/lib.rs FORCE
+ 	+$(call if_changed_dep,rustc_procmacro)
+ 
+ quiet_cmd_rustc_library = $(if $(skip_clippy),RUSTC,$(RUSTC_OR_CLIPPY_QUIET)) L $@
+@@ -424,7 +427,7 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
+ $(obj)/kernel.o: private rustc_target_flags = --extern alloc \
+     --extern build_error --extern macros --extern bindings --extern uapi
+ $(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/alloc.o $(obj)/build_error.o \
+-    $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
++    $(obj)/$(libmacros_name) $(obj)/bindings.o $(obj)/uapi.o FORCE
+ 	+$(call if_changed_rule,rustc_library)
+ 
+ endif # CONFIG_RUST
+diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+index d2bc63cde8c6..04ff5b25b851 100755
+--- a/scripts/generate_rust_analyzer.py
++++ b/scripts/generate_rust_analyzer.py
+@@ -8,6 +8,7 @@ import json
+ import logging
+ import os
+ import pathlib
++import subprocess
+ import sys
+ 
+ def args_crates_cfgs(cfgs):
+@@ -35,8 +36,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+     crates_cfgs = args_crates_cfgs(cfgs)
+ 
+     def append_crate(display_name, root_module, deps, cfg=[], is_workspace_member=True, is_proc_macro=False):
+-        crates_indexes[display_name] = len(crates)
+-        crates.append({
++        crate = {
+             "display_name": display_name,
+             "root_module": str(root_module),
+             "is_workspace_member": is_workspace_member,
+@@ -47,7 +47,15 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+             "env": {
+                 "RUST_MODFILE": "This is only for rust-analyzer"
+             }
+-        })
++        }
++        if is_proc_macro:
++            proc_macro_dylib_name = subprocess.check_output(
++                [os.environ["RUSTC"], "--print", "file-names", "--crate-name", display_name, "--crate-type", "proc-macro", "-"],
++                stdin=subprocess.DEVNULL,
++            ).decode('utf-8').strip()
++            crate["proc_macro_dylib_path"] = f"{objtree}/rust/{proc_macro_dylib_name}"
++        crates_indexes[display_name] = len(crates)
++        crates.append(crate)
+ 
+     # First, the ones in `rust/` since they are a bit special.
+     append_crate(
+@@ -77,7 +85,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+         [],
+         is_proc_macro=True,
+     )
+-    crates[-1]["proc_macro_dylib_path"] = f"{objtree}/rust/libmacros.so"
+ 
+     append_crate(
+         "build_error",
+-- 
+2.47.0
+
 
