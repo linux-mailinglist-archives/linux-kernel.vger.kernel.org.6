@@ -1,389 +1,191 @@
-Return-Path: <linux-kernel+bounces-357857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFEA99770E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA3299770F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A30B1F21536
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415261F21536
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592071E2611;
-	Wed,  9 Oct 2024 20:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E52B1E1A14;
+	Wed,  9 Oct 2024 20:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="xmKsTM0s"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv48pitJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B737740849;
-	Wed,  9 Oct 2024 20:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753C11C9B99;
+	Wed,  9 Oct 2024 20:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507399; cv=none; b=A8EFvk2VjDESWFvlbka1EafuxVHVeb8y9ukwryN+5Ur3MNP4RGhrt1YS+5u+ElkVJDOMKlzGWO4N2IMcLKvAaiqBDX6vbWjNXA548E98kl2TzbWOi9lD786RHn9qTSst1q9pcUE5Ne39g+IjKbbnp4ldA9RH2lZ/d0tAPntaw44=
+	t=1728507409; cv=none; b=l446kOWZaVBuLsvuJ8JmVydCmZd1EccGdQtEd5cpBMzZlQqyNDwclGj0RcXcL1VoD9VRcZBF5wuCZ2QEjT0ebLte+1I3qYbxbTBK0wL0CznQJ0QwT5I2iwcGVUF3flmRjt6FapyCxcMLimAhtHeBJp1JIEkH/NNdEWLVoBk7Xz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507399; c=relaxed/simple;
-	bh=sB7L/+DP7+wsazntw0eYyJbiuzRfbOCPdlDYZcDQzsE=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fd6mdYiIgH78mtX272xfAeR3RutFr/pj0IKrklVexojPV+iAPSvaRn9Q21GV3nIfp7VqxXLZE8FTWVKPEga0kLxJ91sGnMWF9c0nLQ1MGSJWZ1CRTiruuxVG6c/bwcZ8EVCh+judm7MZ4O19LhioPKmXaUe7+6SA6wHETqYNms8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=xmKsTM0s; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:From:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=KkVDYwEdUXr7HgZjftAfw5lK2G4Novf4Z64rkQh2tdA=; b=xmKsTM0sA8LbTuyNRCURdLBKbx
-	F2XzQQg1XQKa4m3+TRUYMKi+az89ybwuJZpwHDKT7gNTYH2wN3wpxPzMdgP/05hgO2GUtalJblUAW
-	MZ8Z2uvp/50na85I4+Z+AySNyyeVOtNxmxZjdFmnZQ1xtS08xuN7LufmfZF3j/VrBrN1JrzSWGOPV
-	fwQjr9kECsMoROtDQ9rbSUOlz4MFHWqMcvUsoFLiIl/7Ky7UGLtcPWV1cxPILl0dOiRWXPLn90ywl
-	Vw5bB1IeU9yLJ0ACeBPAqu2Ipy+q8LgTaA2Q1P2WLf7s+FssnRYEuhPn2ui1ITuDz1s9FVfzlnVnW
-	ZI8bwg6w==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Tony Lindgren <tony@atomide.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	linux-omap@vger.kernel.org,
-	Kevin Hilman <khilman@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>,
-	linux-clk@vger.kernel.org,
-	Tero Kristo <kristo@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 2/2] dt-bindings: clock: ti: Convert divider.txt to json-schema
-Date: Wed,  9 Oct 2024 22:56:19 +0200
-Message-Id: <20241009205619.16250-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241009205619.16250-1-andreas@kemnade.info>
-References: <20241009205619.16250-1-andreas@kemnade.info>
+	s=arc-20240116; t=1728507409; c=relaxed/simple;
+	bh=MQn5pIzSNKNxCJ4TyVpTFxXGMIrdzloKUY4LYoTkavM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkOzyCidkMo0umIZ2wsbBBA/1DHCwjN/exo01kUh7w9AvGzzUcolDQ5Qp+VW6Qayjx+b3oa50LAd8bZl0ZDTNbuIEVnUC4pdEv+/FFRRMdX+uQyJEx5TG2nLjwXQPaFsklDicBKU9+SqtTkx8jwkPChF8JbPlQ5mogBCZgBQWWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv48pitJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC7C8C4CEC3;
+	Wed,  9 Oct 2024 20:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728507409;
+	bh=MQn5pIzSNKNxCJ4TyVpTFxXGMIrdzloKUY4LYoTkavM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hv48pitJTSx3GjCMKb0KzKzJMd10mBWDtGD0BpbOl00bN9oI7iY8I8A1vpG15Q1z3
+	 VL0OKIwqedK5yWpWdK0BEHSnux/X+LleTMZO11lGT5Wmsdxz4tuC/mVAzQFfk5kp8a
+	 qhizYvyIb5Y4wQkSH5woJJpMzp+cA3JQw7Nzf/+9cuprTjukwTlf+TStoSwzhSMlAz
+	 nb0MD9IMbswmWR5eGtj55eocrs/poh6BT4OECVN1au3+lPzCH22oWenlCVlBfFOe4V
+	 kjkS3GHtjVv5iM+Og91tWOMszzKGg7XtRuFT00AXWiDzXZ6VIaB+X6oBGddzgjgDAD
+	 fh038QupYP+4g==
+Date: Wed, 9 Oct 2024 22:56:46 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH 2/3] rcu/nocb: Fix rcuog wake-up from offline softirq
+Message-ID: <ZwbuDj_tjpWzQDhL@pavilion.home>
+References: <20241002145738.38226-1-frederic@kernel.org>
+ <20241002145738.38226-3-frederic@kernel.org>
+ <CAEXW_YQSBwGME1+vKHSM8+svtosunk-QO2oMygFKgapPE3b45w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEXW_YQSBwGME1+vKHSM8+svtosunk-QO2oMygFKgapPE3b45w@mail.gmail.com>
 
-Convert the OMAP divider clock device tree binding to json-schema.
-Specify the creator of the original binding as a maintainer.
+Le Wed, Oct 09, 2024 at 02:23:15PM -0400, Joel Fernandes a écrit :
+> Hi Frederic,
+> 
+> On Wed, Oct 2, 2024 at 10:57 AM Frederic Weisbecker <frederic@kernel.org> wrote:
+> >
+> > After a CPU has set itself offline and before it eventually calls
+> > rcutree_report_cpu_dead(), there are still opportunities for callbacks
+> > to be enqueued, for example from an IRQ. When that happens on NOCB, the
+> > rcuog wake-up is deferred through an IPI to an online CPU in order not
+> > to call into the scheduler and risk arming the RT-bandwidth after
+> > hrtimers have been migrated out and disabled.
+> >
+> > But performing a synchronized IPI from an IRQ is buggy as reported in
+> > the following scenario:
+> >
+> >         WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_single
+> >         Modules linked in: rcutorture torture
+> >         CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00012-g9139f93209d1 #1
+> >         Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
+> >         RIP: 0010:smp_call_function_single
+> >         <IRQ>
+> >         swake_up_one_online
+> >         __call_rcu_nocb_wake
+> >         __call_rcu_common
+> >         ? rcu_torture_one_read
+> >         call_timer_fn
+> >         __run_timers
+> >         run_timer_softirq
+> >         handle_softirqs
+> >         irq_exit_rcu
+> 
+> This call stack seems a bit confusing with the context of the first
+> paragraph. In the beginning of changelog, you had mentioned the issue
+> happens from IRQ, but in fact the callstack here is from softirq
+> right? The IRQ issue should already be resolved in current code
+> AFAICS.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- .../devicetree/bindings/clock/ti/divider.txt  | 115 ------------
- .../bindings/clock/ti/ti,divider-clock.yaml   | 175 ++++++++++++++++++
- 2 files changed, 175 insertions(+), 115 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
- create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+Indeed, I need to s/IRQ/softirq for clarity.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/divider.txt b/Documentation/devicetree/bindings/clock/ti/divider.txt
-deleted file mode 100644
-index 4d7c76f0b356..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/divider.txt
-+++ /dev/null
-@@ -1,115 +0,0 @@
--Binding for TI divider clock
--
--This binding uses the common clock binding[1].  It assumes a
--register-mapped adjustable clock rate divider that does not gate and has
--only one input clock or parent.  By default the value programmed into
--the register is one less than the actual divisor value.  E.g:
--
--register value		actual divisor value
--0			1
--1			2
--2			3
--
--This assumption may be modified by the following optional properties:
--
--ti,index-starts-at-one - valid divisor values start at 1, not the default
--of 0.  E.g:
--register value		actual divisor value
--1			1
--2			2
--3			3
--
--ti,index-power-of-two - valid divisor values are powers of two.  E.g:
--register value		actual divisor value
--0			1
--1			2
--2			4
--
--Additionally an array of valid dividers may be supplied like so:
--
--	ti,dividers = <4>, <8>, <0>, <16>;
--
--Which will map the resulting values to a divisor table by their index:
--register value		actual divisor value
--0			4
--1			8
--2			<invalid divisor, skipped>
--3			16
--
--Any zero value in this array means the corresponding bit-value is invalid
--and must not be used.
--
--The binding must also provide the register to control the divider and
--unless the divider array is provided, min and max dividers. Optionally
--the number of bits to shift that mask, if necessary. If the shift value
--is missing it is the same as supplying a zero shift.
--
--This binding can also optionally provide support to the hardware autoidle
--feature, see [2].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] Documentation/devicetree/bindings/clock/ti/autoidle.txt
--
--Required properties:
--- compatible : shall be "ti,divider-clock" or "ti,composite-divider-clock".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : link to phandle of parent clock
--- reg : offset for register controlling adjustable divider
--
--Optional properties:
--- clock-output-names : from common clock binding.
--- ti,dividers : array of integers defining divisors
--- ti,bit-shift : number of bits to shift the divider value, defaults to 0
--- ti,min-div : min divisor for dividing the input clock rate, only
--  needed if the first divisor is offset from the default value (1)
--- ti,max-div : max divisor for dividing the input clock rate, only needed
--  if ti,dividers is not defined.
--- ti,index-starts-at-one : valid divisor programming starts at 1, not zero,
--  only valid if ti,dividers is not defined.
--- ti,index-power-of-two : valid divisor programming must be a power of two,
--  only valid if ti,dividers is not defined.
--- ti,autoidle-shift : bit shift of the autoidle enable bit for the clock,
--  see [2]
--- ti,invert-autoidle-bit : autoidle is enabled by setting the bit to 0,
--  see [2]
--- ti,set-rate-parent : clk_set_rate is propagated to parent
--- ti,latch-bit : latch the divider value to HW, only needed if the register
--  access requires this. As an example dra76x DPLL_GMAC H14 divider implements
--  such behavior.
--
--Examples:
--dpll_usb_m2_ck: dpll_usb_m2_ck@4a008190 {
--	#clock-cells = <0>;
--	compatible = "ti,divider-clock";
--	clocks = <&dpll_usb_ck>;
--	ti,max-div = <127>;
--	reg = <0x190>;
--	ti,index-starts-at-one;
--};
--
--aess_fclk: aess_fclk@4a004528 {
--	#clock-cells = <0>;
--	compatible = "ti,divider-clock";
--	clocks = <&abe_clk>;
--	ti,bit-shift = <24>;
--	reg = <0x528>;
--	ti,max-div = <2>;
--};
--
--dpll_core_m3x2_div_ck: dpll_core_m3x2_div_ck {
--	#clock-cells = <0>;
--	compatible = "ti,composite-divider-clock";
--	clocks = <&dpll_core_x2_ck>;
--	ti,max-div = <31>;
--	reg = <0x0134>;
--	ti,index-starts-at-one;
--};
--
--ssi_ssr_div_fck_3430es2: ssi_ssr_div_fck_3430es2 {
--	#clock-cells = <0>;
--	compatible = "ti,composite-divider-clock";
--	clocks = <&corex2_fck>;
--	ti,bit-shift = <8>;
--	reg = <0x0a40>;
--	ti,dividers = <0>, <1>, <2>, <3>, <4>, <0>, <6>, <0>, <8>;
--};
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-new file mode 100644
-index 000000000000..31fe876fb40b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-@@ -0,0 +1,175 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti/ti,divider-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments divider clock
-+
-+maintainers:
-+  - Tero Kristo <kristo@kernel.org>
-+
-+description: |
-+  This clock It assumes a register-mapped adjustable clock rate divider
-+  that does not gate and has only one input clock or parent.  By default the
-+  value programmed into the register is one less than the actual divisor value.
-+  E.g:
-+
-+  register value    actual divisor value
-+  0                 1
-+  1                 2
-+  2                 3
-+
-+  This assumption may be modified by the following optional properties:
-+
-+  ti,index-starts-at-one - valid divisor values start at 1, not the default
-+  of 0.  E.g:
-+  register value    actual divisor value
-+  1                 1
-+  2                 2
-+  3                 3
-+
-+  ti,index-power-of-two - valid divisor values are powers of two.  E.g:
-+  register value    actual divisor value
-+  0                 1
-+  1                 2
-+  2                 4
-+
-+  Additionally an array of valid dividers may be supplied like so:
-+
-+  ti,dividers = <4>, <8>, <0>, <16>;
-+
-+  Which will map the resulting values to a divisor table by their index:
-+  register value    actual divisor value
-+  0                 4
-+  1                 8
-+  2                 <invalid divisor, skipped>
-+  3                 16
-+
-+  Any zero value in this array means the corresponding bit-value is invalid
-+  and must not be used.
-+
-+  The binding must also provide the register to control the divider and
-+  unless the divider array is provided, min and max dividers. Optionally
-+  the number of bits to shift that mask, if necessary. If the shift value
-+  is missing it is the same as supplying a zero shift.
-+
-+  This binding can also optionally provide support to the hardware autoidle
-+  feature, see [1].
-+
-+  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,divider-clock
-+      - ti,composite-divider-clock
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  ti,dividers: true
-+
-+  ti,bit-shift:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      number of bits to shift the divider value
-+
-+  ti,min-div:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      min divisor for dividing the input clock rate, only
-+      needed if the first divisor is offset from the default value (1)
-+
-+  ti,max-div:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      max divisor for dividing the input clock rate, only needed
-+      if ti,dividers is not defined.
-+
-+  ti,index-starts-at-one:
-+    type: boolean
-+    description:
-+      valid divisor programming starts at 1, not zero,
-+      only valid if ti,dividers is not defined
-+
-+  ti,index-power-of-two:
-+    type: boolean
-+    description:
-+      valid divisor programming must be a power of two,
-+      only valid if ti,dividers is not defined.
-+
-+  ti,autoidle-shift:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      bit shift of the autoidle enable bit for the clock,
-+      see [1].
-+
-+  ti,invert-autoidle-bit:
-+    type: boolean
-+    description:
-+      autoidle is enabled by setting the bit to 0,
-+      see [1]
-+
-+  ti,set-rate-parent:
-+    type: boolean
-+    description:
-+      clk_set_rate is propagated to parent            |
-+
-+  ti,latch-bit:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      latch the divider value to HW, only needed if the register
-+      compatible access requires this. As an example dra76x DPLL_GMAC
-+      H14 divider implements such behavior.
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clocks
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      dpll_usb_m2_ck: clock-controller@190 {
-+        #clock-cells = <0>;
-+        compatible = "ti,divider-clock";
-+        clocks = <&dpll_usb_ck>;
-+        ti,max-div = <127>;
-+        reg = <0x190>;
-+        ti,index-starts-at-one;
-+      };
-+
-+      aess_fclk: clock-controller@528 {
-+        #clock-cells = <0>;
-+        compatible = "ti,divider-clock";
-+        clocks = <&abe_clk>;
-+        ti,bit-shift = <24>;
-+        reg = <0x528>;
-+        ti,max-div = <2>;
-+      };
-+
-+      ssi_ssr_div_fck_3430es2: clock-controller@a40 {
-+        #clock-cells = <0>;
-+        compatible = "ti,composite-divider-clock";
-+        clocks = <&corex2_fck>;
-+        ti,bit-shift = <8>;
-+        reg = <0x0a40>;
-+        ti,dividers = <0>, <1>, <2>, <3>, <4>, <0>, <6>, <0>, <8>;
-+      };
-+    };
--- 
-2.39.5
+> 
+> >         ? tick_handle_periodic
+> >         sysvec_apic_timer_interrupt
+> >         </IRQ>
+> >
+> > The periodic tick must be shutdown when the CPU is offline, just like is
+> > done for oneshot tick. This must be fixed but this is not enough:
+> > softirqs can happen on any hardirq tail and reproduce the above scenario.
+> >
+> > Fix this with introducing a special deferred rcuog wake up mode when the
+> > CPU is offline. This deferred wake up doesn't arm any timer and simply
+> > wait for rcu_report_cpu_dead() to be called in order to flush any
+> > pending rcuog wake up.
+> [...]
+> > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> > index a9a811d9d7a3..7ed060edd12b 100644
+> > --- a/kernel/rcu/tree.h
+> > +++ b/kernel/rcu/tree.h
+> > @@ -290,6 +290,7 @@ struct rcu_data {
+> >  #define RCU_NOCB_WAKE_LAZY     2
+> >  #define RCU_NOCB_WAKE          3
+> >  #define RCU_NOCB_WAKE_FORCE    4
+> > +#define RCU_NOCB_WAKE_OFFLINE   5
+> >
+> >  #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
+> >                                         /* For jiffies_till_first_fqs and */
+> > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> > index 2fb803f863da..8648233e1717 100644
+> > --- a/kernel/rcu/tree_nocb.h
+> > +++ b/kernel/rcu/tree_nocb.h
+> > @@ -295,6 +295,8 @@ static void wake_nocb_gp_defer(struct rcu_data *rdp, int waketype,
+> >         case RCU_NOCB_WAKE_FORCE:
+> >                 if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
+> >                         mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
+> > +               fallthrough;
+> > +       case RCU_NOCB_WAKE_OFFLINE:
+> >                 if (rdp_gp->nocb_defer_wakeup < waketype)
+> >                         WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
+> >                 break;
+> > @@ -562,8 +564,16 @@ static void __call_rcu_nocb_wake(struct rcu_data *rdp, bool was_alldone,
+> >         lazy_len = READ_ONCE(rdp->lazy_len);
+> >         if (was_alldone) {
+> >                 rdp->qlen_last_fqs_check = len;
+> > -               // Only lazy CBs in bypass list
+> > -               if (lazy_len && bypass_len == lazy_len) {
+> > +               if (cpu_is_offline(rdp->cpu)) {
+> > +                       /*
+> > +                        * Offline CPUs can't call swake_up_one_online() from IRQs. Rely
+> > +                        * on the final deferred wake-up rcutree_report_cpu_dead()
+> > +                        */
+> > +                       rcu_nocb_unlock(rdp);
+> > +                       wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_OFFLINE,
+> > +                                          TPS("WakeEmptyIsDeferredOffline"));
+> > +               } else if (lazy_len && bypass_len == lazy_len) {
+> 
+> Since the call stack is when softirqs are disabled,  would an
+> alternative fix be (pseudocode):
+> 
+> Change the following in the "if (was_alldone)" block:
+> 
+>                if (!irqs_disabled_flags(flags)) {
+> 
+> to:
+>                if (!irqs_disabled_flags(flags) && !in_softirq())
+> 
+> ?
+> 
+> That way perhaps an additional RCU_NOCB flag is not needed.
+> 
+> Or does that not work for some reason?
 
+It works but this forces the wake-up through the timer when a callback is
+enqueued from softirqs. And waking up from the timer is a bit more overhead
+and also added GP delay. It could be this though:
+
+    if (!irqs_disabled_flags(flags) && cpu_online(smp_processor_id()))
+
+Hmm?
+
+Thanks.
+> 
+> thanks,
+> 
+>  - Joel
 
