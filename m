@@ -1,52 +1,109 @@
-Return-Path: <linux-kernel+bounces-356951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27945996946
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:52:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FB599694E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20AA1F244F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:52:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7DAB26C4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B482D1925BB;
-	Wed,  9 Oct 2024 11:52:35 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702991925AC;
+	Wed,  9 Oct 2024 11:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLYPyait";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WrkZoEAS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLYPyait";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WrkZoEAS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DD51922DA;
-	Wed,  9 Oct 2024 11:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C111922D6;
+	Wed,  9 Oct 2024 11:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474755; cv=none; b=e0yix4rDd+B7zbsJnB4HR0N2bs4qjg/gCDiKT9UqQEHz6PI/wa7a5T6T0DZN+DKtB3xQF6tX/ttQCfLAVfETRni0T5xpmo0/qbMVF3LX+zBX19s/x8EKQL0Juxu6UmknRPzYp6WbC0tp93PiuTU9tH3K5AFFfbQXiYALRlUs0i4=
+	t=1728474879; cv=none; b=rCfPug/1sSeePrmw6reMFVOrEEhZxoz34EOXeEEA037Kr+2o2ItImrUprj4vbuk7KgUpC+h4I6lzESA9NKs8p1QhfzoDX+ZhFCCIlKd2IJjwRwThOnapR0BcosuyNO7RE2s7/Ss0WYM40gm0crkXfOR3kBGdNIeJClxWzqWcRlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474755; c=relaxed/simple;
-	bh=tOY/lPf/BdIO3Ajl6LWHJxWjxkAveQ94QJQbWdlBEe4=;
+	s=arc-20240116; t=1728474879; c=relaxed/simple;
+	bh=mlMIwJbmsMcapczAeVjnxlgtadHyKjGMSsBtOH0MOw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F0Wa4xOJJtNOqrtAKVHwvvHgb58hCk2Mcx0dgvH8ruLAHyBkrywMGv2BPwiEKBt/SD/QiwpjmOI08t8z4KGg6EOu8jPNRJD+njL03DWQnAyOgseGHxTl20j285sPVth+rxUwlqaZbpu2mG03w3jlm3ib8j3Z6ZCcag7uKGpOrAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syVEt-0000000067Z-05Lf;
-	Wed, 09 Oct 2024 11:52:23 +0000
-Date: Wed, 9 Oct 2024 12:52:13 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: populate host_interfaces when
- attaching PHY
-Message-ID: <ZwZubYpZ4JAhyavl@makrotopia.org>
-References: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
- <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6h329waMZFf/lmu/WVQEkJ5m4ne2pLgi7a7jnhFE2aUPCRwhmQwxdEv9MY55iJctstvpEu2XjvERhOJ5faDNlvjkUM3oBRjlHJAMikXXJOWazvP+h4plGeo/tJdHNKu5cdqUkJ9YzB7UDYu8It7Sk99Awc/kltxCM2RMqx3J9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLYPyait; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WrkZoEAS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLYPyait; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WrkZoEAS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4DD6321E5D;
+	Wed,  9 Oct 2024 11:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728474876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
+	b=mLYPyaitTcegU8E6eMKZAutBgCCB+zCZWUJZ7wim12jFiEspOZvA3V6NiE3bIBNbtPPT7+
+	TCVlQIgLf7hGe/KAv5n0f6LTjrquvho33fWCAxCo59ER7P6E5y1jzEo6FWEjR5WuDRjl0O
+	r+TOz/770C5FysmZNwI8N9X5kNYWdnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728474876;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
+	b=WrkZoEASi/jBZ/ULqsAMhbXUKb2xpyb5lgf8fp+HhmzKwvVriwuOzDnucnHbnnVB64ppsn
+	oGEuo4Z4/rLUizDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mLYPyait;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WrkZoEAS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728474876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
+	b=mLYPyaitTcegU8E6eMKZAutBgCCB+zCZWUJZ7wim12jFiEspOZvA3V6NiE3bIBNbtPPT7+
+	TCVlQIgLf7hGe/KAv5n0f6LTjrquvho33fWCAxCo59ER7P6E5y1jzEo6FWEjR5WuDRjl0O
+	r+TOz/770C5FysmZNwI8N9X5kNYWdnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728474876;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
+	b=WrkZoEASi/jBZ/ULqsAMhbXUKb2xpyb5lgf8fp+HhmzKwvVriwuOzDnucnHbnnVB64ppsn
+	oGEuo4Z4/rLUizDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36E8A13A58;
+	Wed,  9 Oct 2024 11:54:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TRdICvxuBmdoEAAAD6G6ig
+	(envelope-from <chrubis@suse.cz>); Wed, 09 Oct 2024 11:54:36 +0000
+Date: Wed, 9 Oct 2024 13:53:31 +0200
+From: Cyril Hrubis <chrubis@suse.cz>
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, f.fainelli@gmail.com, rwarsow@gmx.de,
+	pavel@denx.de, conor@kernel.org, shuah@kernel.org,
+	allen.lkml@gmail.com, LTP List <ltp@lists.linux.it>,
+	patches@lists.linux.dev, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org, broonie@kernel.org,
+	lkft-triage@lists.linaro.org, srw@sladewatkins.net,
+	patches@kernelci.org, akpm@linux-foundation.org,
+	jonathanh@nvidia.com, torvalds@linux-foundation.org,
+	sudipm.mukherjee@gmail.com, linux@roeck-us.net
+Subject: Re: [LTP] [PATCH 6.10 000/482] 6.10.14-rc1 review
+Message-ID: <ZwZuuz2jTW5evZ6v@yuki.lan>
+References: <20241008115648.280954295@linuxfoundation.org>
+ <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
+ <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,71 +112,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
+In-Reply-To: <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
+X-Rspamd-Queue-Id: 4DD6321E5D
+X-Spam-Score: -2.98
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.98 / 50.00];
+	BAYES_HAM(-2.97)[99.87%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[linaro.org,linuxfoundation.org,suse.cz,kernel.org,mit.edu,gmail.com,gmx.de,denx.de,lists.linux.it,lists.linux.dev,vger.kernel.org,lists.linaro.org,sladewatkins.net,kernelci.org,linux-foundation.org,nvidia.com,roeck-us.net];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim,linux.it:url]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Russell,
+Hi!
+Work in progress, see:
+https://lists.linux.it/pipermail/ltp/2024-October/040433.html
 
-On Wed, Oct 09, 2024 at 10:01:09AM +0100, Russell King (Oracle) wrote:
-> On Wed, Oct 09, 2024 at 02:57:03AM +0100, Daniel Golle wrote:
-> > Use bitmask of interfaces supported by the MAC for the PHY to choose
-> > from if the declared interface mode is among those using a single pair
-> > of SerDes lanes.
-> > This will allow 2500Base-T PHYs to switch to SGMII on most hosts, which
-> > results in half-duplex being supported in case the MAC supports that.
-> > Without this change, 2500Base-T PHYs will always operate in 2500Base-X
-> > mode with rate-matching, which is not only wasteful in terms of energy
-> > consumption, but also limits the supported interface modes to
-> > full-duplex only.
-> 
-> We've had a similar patch before, and it's been NAK'd. The problem is
-> that supplying the host_interfaces for built-in PHYs means that the
-> hardware strapping for the PHY interface mode becomes useless, as does
-> the DT property specifying it - and thus we may end up selecting a
-> mode that both the MAC and PHY support, but the hardware design
-> doesn't (e.g. signals aren't connected, signal speed to fast.)
-> 
-> For example, take a board designed to use RXAUI and the host supports
-> 10GBASE-R. The first problem is, RXAUI is not listed in the SFP
-> interface list because it's not usable over a SFP cage.
-
-I thought about that, also boards configured for RGMII but both MAC
-and PHY supporting SGMII or even 2500Base-X would be such a case.
-In order to make sure we don't switch to link modes not supported
-by the design I check if the interface mode configured in DT is
-among those suitable for use with an SFP (ie. using a single pair
-of SerDes lanes):
-if (test_bit(pl->link_interface, phylink_sfp_interfaces))
-	phy_interface_and(phy_dev->host_interfaces, phylink_sfp_interfaces,
-			  pl->config->supported_interfaces);
-
-Neither RXAUI nor RGMII modes are among phylink_sfp_interfaces, so
-cases in which those modes are configured in DT are already excluded.
-
-> So, the
-> host_interfaces excludes that, and thus the PHY thinks that's not
-> supported. It looks at the mask and sees only 10GBASE-R, and
-> decides to use that instead with rate matching. The MAC doesn't have
-> support for flow control, and thus can't use rate matching.
-> 
-> Not only have the electrical charateristics been violated by selecting
-> a faster interface than the hardware was designed for, but we now have
-> rate matching being used when it shouldn't be.
-
-As we are also using using rate matching right now in cases when it
-should not (and thereby inhibiting support for half-duplex modes), I
-suppose the only good solution would be to allow a set of interface
-modes in DT instead of only a single one.
-
-Or, as that is the only really relevant case, we can be more strict
-on the condition and additional modes to be added, ie. check if both
-PHY and MAC support both 2500Base-X and SGMII, and only add SGMII
-in case 2500Base-X is selected in DT.
-
-I have never seen designs on which SGMII and 2500Base-X would both
-be supported by the SoC but use a different set of pins. Also, as
-2500Base-X is 2.5x as fast as SGMII, it's safe to assume that a
-board which has been designed for 2500Base-X would also be fine
-using SGMII.
-
-Let me know of either of the above would be acceptable.
+-- 
+Cyril Hrubis
+chrubis@suse.cz
 
