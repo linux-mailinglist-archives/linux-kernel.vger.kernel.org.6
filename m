@@ -1,304 +1,136 @@
-Return-Path: <linux-kernel+bounces-357770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684E59975B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE3A9975BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F561C22E4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37228281A88
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9636B1E133F;
-	Wed,  9 Oct 2024 19:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0FE1E1327;
+	Wed,  9 Oct 2024 19:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ELKKzw4W"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iugtz3cB"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F3D1E1312
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C26B1D318A;
+	Wed,  9 Oct 2024 19:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728502480; cv=none; b=ZKIic84mGS9mtPleAp2nwTP25pX7qJurLIgufDW0/dFoAD5rg+pcg2Pm5yZLSCghA4Vwyvb7eIRTp6ufC0ICyMFMCDyep9ZNE8wu6PqpDNPs0ag9nk/2a8pzJSTSUdASYTPXPL5DMp4dw/wPsG4yktwBDuaJN8sbAbkPFVltd0U=
+	t=1728502639; cv=none; b=IrPw/IzSfNTztLbs3URunE5WAUhKtJs/1sTwcveTJgMinlPxvYkbVGOqTlO4S7Epb4uL9Klw5IR86MXj8+tdCZHquovJL5enBQF/2HaWV3IeYSHI51rlHaQA+RqNC2aysri2KSzmSe25u9nAdEGFU6NvNhobSbpUKYqTih2M7o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728502480; c=relaxed/simple;
-	bh=qK5hOnw9jfx2BfY4OtrYNRGZWBgC9fK10OTGA6+wTxw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kxPCkpvhl53Br/jiXgELhnRmiynrcEsvBRmnYtSqLwyoLoQSXFHag9376KQB7VLHc4BPuWt/gCHry3Vr5YjpAWvfwSA6dUFv2iCUu53h7T8uC2Hr9xDbvtP3jUjbS0fSPrDGiKs2Yg4Cx1MNZ3c+JbqJkg9i8jDHvYZJ+yV75sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ELKKzw4W; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e123d3d22so161931b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 12:34:39 -0700 (PDT)
+	s=arc-20240116; t=1728502639; c=relaxed/simple;
+	bh=yfnl9wnKLAH43BhXhHaeVnvLuTap4gCs21PcEP8hLag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SH3Gij/eH3FI68k9TRJKhNWuP+QViHlM3GqCyiTmKlaSrdQHgMekQA6vtV0slmScj5Xwnyn/x8mCfvKqdpwNdn1WjnkJyicpxVfsxYxzEM/01hdtf7hYq68pCvaa3M2LFwRnY+UdhajtqX7a0YCzWcgXid7xy6Nx+/vB0dTsg+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iugtz3cB; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45f05f87ca5so1276741cf.2;
+        Wed, 09 Oct 2024 12:37:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728502478; x=1729107278; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wyAVjnacB7jC3cIomKyX/c7gAMM1T7N80hTnVLZyTvg=;
-        b=ELKKzw4WcwE2g74UT8PuJpjp01GZUfay5OZXPAGQKpJMpkhAkXV7i3xAkSRPdC1pRX
-         3NgNA19W07MBBUUK+OKT7c1t0RQvTiIzC4JahBwmmHsxZAfoQChiQzp1R4sNM9PKDcS/
-         tWFisztoX5IYwXOc2o1PbVp1U4PccXAnQFyzx+eedwW+a8nOLVdc4j59ezSoftk8jRtl
-         x7hBnkIdbOEXiPX1KMku+P24lOP6SvGG9IDAq8o0GTxOZV05D4a12zUjelpsxM7tUVKa
-         kYCOaOLXRwzfMPba+5hQ53DX6Tl92bKTXVvDVsbO4zNQno5XJ6SOpRIPY91okbitj1h3
-         Hjpw==
+        d=gmail.com; s=20230601; t=1728502637; x=1729107437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AeY+531wVEOKyYvPQ23C+PCHJtQWCZt5wgvONe9jcpo=;
+        b=Iugtz3cBYom57L3CULMgc7G6k8fhvS8HzKUqW1xTiZ3Sj69J7wyJQ9EBTX2nsnnUzV
+         Q6HlfuBuLDi90X5DLQ+EtrePLQOrXsuCFwIlcx0F7vnekPtO6csPF5emsvZPLga5kd3B
+         u9YS9AHWwysOZ5jHFva0OsvbvmRE06tcT1IyhHSSbvfhbXIAWZojHEyJTL7uZEDRZrS+
+         oNVeAX6Khq+PQAWxEXU63HD1WGnP2WIPSuD1q7NHo8UVXLwO9QSDJf9aOEZC3bbSKqf9
+         EvxnYHbcnO8O0Gtjft7GVoD/7SBBS2Ufe7tDsO2zFWQvtObVwXYQDUviJIWCS7i8O4Z6
+         BBgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728502478; x=1729107278;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wyAVjnacB7jC3cIomKyX/c7gAMM1T7N80hTnVLZyTvg=;
-        b=abjzDXjoIqbgtlyeuqa624icipAf61IM9L4UNI8jfHBHYtPZ5tRqQrIuZ8jOdqokVv
-         s0lIg89fiotTj2AGfiuA195JzFop0/iyxbev4in6L+9xoBn8NfRoTY9DisES52ll84wE
-         Ir9FG+zOYd5j+aV/k1npWwQ5BFWxoBGp1fGGiNUcK3j2pvkUh1bQEaaZ6YVmeqXR6iQe
-         2oIjhYu0vi7eci2Niu9jL2cY4cX1vHHUNfsRcAKCYtmnESBWwlDhW+2pK7Z1XvuGxld0
-         AZV9I4oL2WJJ/K2UZd8csEvCW5So8r5bDCPAAgw1l1FYOOS2d8x/Zn5H6zMYXSveEvVj
-         3BxQ==
-X-Gm-Message-State: AOJu0YxA3ZxEOdOMkObMwKW6h07eo4MA1FGsmy94hrG6Pzrs6lmxTGFR
-	C8MSKLp3gr0ej4x3ZPxYM7FMtLDKkzMahNfJ8Jx8y9FZ7lLlYERqvqbPN7HQfO6V7qpTRFUhKrI
-	1Dw==
-X-Google-Smtp-Source: AGHT+IHIHDe6Bn7Ahqapi6/P1RufsoIkJbrtXAU0menkMdQ4f9/DCSB+xQkTuuKLU5Q7zJ8hzKyoBN102rY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:8c86:b0:717:8ab0:2439 with SMTP id
- d2e1a72fcca58-71e1dc0b7dcmr3314b3a.6.1728502478302; Wed, 09 Oct 2024 12:34:38
- -0700 (PDT)
-Date: Wed, 9 Oct 2024 12:34:37 -0700
-In-Reply-To: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
+        d=1e100.net; s=20230601; t=1728502637; x=1729107437;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AeY+531wVEOKyYvPQ23C+PCHJtQWCZt5wgvONe9jcpo=;
+        b=k0FcmX0W/bxVez9nV+Ygn/LGylKaVoeqW+yCZuF48i1/GOKlBqCRnrdRWgZ4xZkovN
+         eBRX+tchee0xn/ohA2Rz12EviGUkzmofZWm2uQpRIoQGXiS9BM8lFdcrqrKuONbR+1zf
+         6oHMPO09mm5olk9G1NdLhzXKwJykv+KHrD6cs3rLFqfE8SdplM71SL8vleQkhRKHf9/+
+         w2BUj9Ynn7PjFGg3laI//EmHkQDE4qfbaLqC0riouBDSPcU3eOMX2AN+YUkj+apdICM6
+         qjLiEMUDkIN3WqXgVa89OEciUbD6M5DJdhdg1/Rcsd/kqP/cmtEejaGTLr4ziAghRbgt
+         k5sA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFTf08y7gjyXwWaiVZj/y4gvxVElWYnCUv/ETbaumPWScvmIVkJIVilcoGMgWbbR9RZai0WkVIHiA=@vger.kernel.org, AJvYcCUzf7NMV9SV/m85MIWMII6fgOU30hiPdQ21V0k7PVxipxz3EDScpjQ4c6rlwRn93YgNndgbZvUr3u7grqQZ@vger.kernel.org, AJvYcCUzqkyTuGu9Qw9CpEa4Bufjt9Tb/nAD1eJyI48yY+HSXHPpVYSYiTqxRtcCXx4v0efg4cQ66XZ0ESCi+ybFYw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZobWBVWTlI+NCkbkFSGQo0e6sv4w8EvOagUmOFgURN0eTTJNw
+	AFuSr7a+hzNi1R2jpvVd/Xhv63fuUnodTASQ4ij9hUQwgJwZ6PID
+X-Google-Smtp-Source: AGHT+IFmQNidanZEo1iJfH03sW/6YFXSHvGf1HoTnU+Lu30/hGsutXRwEKfvoda+w7Ih7PCIsUqAbQ==
+X-Received: by 2002:a05:622a:138b:b0:458:2e21:e422 with SMTP id d75a77b69052e-45fb0e75330mr49739781cf.50.1728502636865;
+        Wed, 09 Oct 2024 12:37:16 -0700 (PDT)
+Received: from localhost.localdomain ([2620:10d:c091:600::1:6bd1])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4603ef1fa00sm2630041cf.36.2024.10.09.12.37.16
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Oct 2024 12:37:16 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] XArray: minor documentation improvements
+Date: Wed,  9 Oct 2024 15:36:03 -0400
+Message-ID: <20241009193602.41797-2-tamird@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <ZwbazZpTSAn9aAC7@google.com>
-Subject: Re: [PATCH v2 1/1] x86/reboot: KVM: Guard nmi_shootdown_cpus_on_restart()
- with ifdeffery
-From: Sean Christopherson <seanjc@google.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>
-Content-Type: multipart/mixed; charset="UTF-8"; boundary="Osa6c5ZHj6sBiqsE"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+- Replace "they" with "you" where "you" is used in the preceding
+  sentence fragment.
+- Use "erasing" rather than "storing `NULL`" when describing multi-index
+  entries. Split this into a separate sentence.
+- Add "call" parentheses on "xa_store" for consistency and
+  linkification.
 
---Osa6c5ZHj6sBiqsE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Oct 08, 2024, Andy Shevchenko wrote:
-> The nmi_shootdown_cpus_on_restart() in some cases may be not used.
-> This, in particular, prevents kernel builds with clang, `make W=1`
-> and CONFIG_WERROR=y:
-> 
-> arch/x86/kernel/reboot.c:957:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
->   957 | static inline void nmi_shootdown_cpus_on_restart(void)
->       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Fix this by guarging the definitions with the respective KVM ifdeffery.
-> 
-> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> inline functions for W=1 build").
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> v1: suggested by Dave Hansen
-> v2: rebased on top of the latest changes in the file
->  arch/x86/kernel/reboot.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-
-
-Heh, I tried fixing this too, and have patches to clean things up, but I ended up
-not posting them because I decided the W=1 warning was less ugly than the resulting
-code in nmi_shootdown_cpus().
-
-If we're willing to take on a bit of weirdness in nmi_shootdown_cpus(), then much
-of the #ifdeffery can go away.  Patches attached (lightly tested).
-
-$ git diff --stat next..HEAD
- arch/x86/kernel/reboot.c | 26 ++++++++------------------
- 1 file changed, 8 insertions(+), 18 deletions(-)
-
---Osa6c5ZHj6sBiqsE
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-x86-reboot-Allow-blindly-calling-nmi_shootdown_cpus-.patch"
-
-From f91d4f1cc04d7955587aac3f919fd6696a648f5f Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 3 Sep 2024 10:14:27 -0700
-Subject: [PATCH 1/3] x86/reboot: Allow "blindly" calling nmi_shootdown_cpus()
- without a callback
-
-Warn if nmi_shootdown_cpus() is called after the crash IPI has been issued
-if and only if the caller wants to run a specific callback, and drop the
-check nmi_shootdown_cpus_on_restart() whose sole purpose was to avoid
-triggering the warning.  This will allow removing the "on restart" variant.
-
-Note, the only caller of nmi_shootdown_cpus_on_restart() unconditionally
-disables IRQs, i.e. doubling down on disabling IRQs when a crash IPI has
-already been issued doesn't affect the resulting functionality.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- arch/x86/kernel/reboot.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ Documentation/core-api/xarray.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 615922838c51..25f68952af57 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -915,10 +915,14 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	/*
- 	 * Avoid certain doom if a shootdown already occurred; re-registering
- 	 * the NMI handler will cause list corruption, modifying the callback
--	 * will do who knows what, etc...
-+	 * will do who knows what, etc...  Blindly attempting a shootdown is
-+	 * allowed if the caller's goal is purely to ensure a shootdown occurs,
-+	 * i.e. if the caller doesn't want to run a specific callback.
- 	 */
--	if (WARN_ON_ONCE(crash_ipi_issued))
-+	if (crash_ipi_issued) {
-+		WARN_ON_ONCE(callback);
- 		return;
-+	}
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6..d79d4e4ceff6 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+ to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+ to retrieve the tag of an entry.  Tagged pointers use the same bits that
+ are used to distinguish value entries from normal pointers, so you must
+-decide whether they want to store value entries or tagged pointers in
+-any particular XArray.
++decide whether use want to store value entries or tagged pointers in any
++particular XArray.
  
- 	/* Make a note of crashing cpu. Will be used in NMI callback. */
- 	crashing_cpu = safe_smp_processor_id();
-@@ -956,8 +960,7 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
+ The XArray does not support storing IS_ERR() pointers as some
+ conflict with value entries or internal entries.
+@@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
+ occupy a range of indices.  Once stored to, looking up any index in
+ the range will return the same entry as looking up any other index in
+ the range.  Storing to any index will store to all of them.  Multi-index
+-entries can be explicitly split into smaller entries, or storing ``NULL``
+-into any entry will cause the XArray to forget about the range.
++entries can be explicitly split into smaller entries. Erasing any entry
++will cause the XArray to forget about the range.
  
- static inline void nmi_shootdown_cpus_on_restart(void)
- {
--	if (!crash_ipi_issued)
--		nmi_shootdown_cpus(NULL);
-+	nmi_shootdown_cpus(NULL);
- }
+ Normal API
+ ==========
+@@ -64,7 +64,7 @@ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+ pointer at every index.
  
- /*
-
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+ You can then set entries using xa_store() and get entries
+-using xa_load().  xa_store will overwrite any entry with the
++using xa_load().  xa_store() will overwrite any entry with the
+ new entry and return the previous entry stored at that index.  You can
+ use xa_erase() instead of calling xa_store() with a
+ ``NULL`` entry.  There is no difference between an entry that has never
 -- 
-2.47.0.rc1.288.g06298d1525-goog
+2.47.0
 
-
---Osa6c5ZHj6sBiqsE
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0002-x86-reboot-Open-code-nmi_shootdown_cpus_on_restart-i.patch"
-
-From 5d417af0c51adc11ed0de6a30aa1ddfb2ccba875 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Thu, 5 Sep 2024 11:36:45 -0700
-Subject: [PATCH 2/3] x86/reboot: Open code nmi_shootdown_cpus_on_restart()
- into its sole user
-
-To fix a W=1 warning due to nmi_shootdown_cpus_on_restart() being unused
-if KVM support is disabled, fold nmi_shootdown_cpus_on_restart() into its
-one and only user, emergency_reboot_disable_virtualization().
-
-No functional change intented.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409010207.jrH6sNV4-lkp@intel.com
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kernel/reboot.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 25f68952af57..8c6f6da6ee8e 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -528,8 +528,6 @@ static inline void kb_wait(void)
- 	}
- }
- 
--static inline void nmi_shootdown_cpus_on_restart(void);
--
- #if IS_ENABLED(CONFIG_KVM_X86)
- /* RCU-protected callback to disable virtualization prior to reboot. */
- static cpu_emergency_virt_cb __rcu *cpu_emergency_virt_callback;
-@@ -595,7 +593,8 @@ static void emergency_reboot_disable_virtualization(void)
- 		cpu_emergency_disable_virtualization();
- 
- 		/* Disable VMX/SVM and halt on other CPUs. */
--		nmi_shootdown_cpus_on_restart();
-+		if (IS_ENABLED(CONFIG_SMP))
-+			nmi_shootdown_cpus(NULL);
- 	}
- }
- #else
-@@ -958,11 +957,6 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	 */
- }
- 
--static inline void nmi_shootdown_cpus_on_restart(void)
--{
--	nmi_shootdown_cpus(NULL);
--}
--
- /*
-  * Check if the crash dumping IPI got issued and if so, call its callback
-  * directly. This function is used when we have already been in NMI handler.
-@@ -990,8 +984,6 @@ void nmi_shootdown_cpus(nmi_shootdown_cb callback)
- 	/* No other CPUs to shoot down */
- }
- 
--static inline void nmi_shootdown_cpus_on_restart(void) { }
--
- void run_crash_ipi_callback(struct pt_regs *regs)
- {
- }
--- 
-2.47.0.rc1.288.g06298d1525-goog
-
-
---Osa6c5ZHj6sBiqsE
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0003-x86-reboot-Delete-CONFIG_SMP-n-stub-for-nmi_shootdow.patch"
-
-From dfbd634a1acafb969794fff9ed027bedcfd187ef Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 3 Sep 2024 10:21:49 -0700
-Subject: [PATCH 3/3] x86/reboot: Delete CONFIG_SMP=n stub for
- nmi_shootdown_cpus()
-
-Remove the CONFIG_SMP=n implementation of nmi_shootdown_cpus() as all
-callers invoke nmi_shootdown_cpus() if and only if CONFIG_SMP=y.  Keep
-the unguarded declaration to play nice with using IS_ENABLED(CONFIG_SMP)
-in if-statements (to avoid #ifdefs); thanks to dead code elimination, all
-supported compilers will drop the call before linking.
-
-No functional change intended.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kernel/reboot.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
-index 8c6f6da6ee8e..2c9299394a22 100644
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -979,11 +979,6 @@ void __noreturn nmi_panic_self_stop(struct pt_regs *regs)
- }
- 
- #else /* !CONFIG_SMP */
--void nmi_shootdown_cpus(nmi_shootdown_cb callback)
--{
--	/* No other CPUs to shoot down */
--}
--
- void run_crash_ipi_callback(struct pt_regs *regs)
- {
- }
--- 
-2.47.0.rc1.288.g06298d1525-goog
-
-
---Osa6c5ZHj6sBiqsE--
 
