@@ -1,76 +1,67 @@
-Return-Path: <linux-kernel+bounces-357470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B91499719D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0869971CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669A0B21166
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F6A28238E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AB11E2838;
-	Wed,  9 Oct 2024 16:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10541A2540;
+	Wed,  9 Oct 2024 16:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bApfItvi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OitXDxRF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64A31E0481;
-	Wed,  9 Oct 2024 16:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8DE38DE5;
+	Wed,  9 Oct 2024 16:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491277; cv=none; b=Y6ltpNiu1NPm4Um6+xovLvWdU1nXkB4/Pv1raQTBbZWygSKH0gKFuNthUiGTm8uI5opnalgCAtV/Xi48RN3l29jg2X0h4nB9lnImkXRrsIPpLnpBpQDQNN6fx4ZeV+Nr4g9nu3nNxmxgXyg+GYGFwEc+J0TCsHGexMFSiOulj3s=
+	t=1728491661; cv=none; b=U20QMeH7Sm3/YD2bW+em7kHy8MwadeNyFIZYxAjXBCwQ4N9E5a2g+KdSsjBX2AMX070UKiRKL+IB/PlC98dBPSbT8z52MgnJAYzvTGQij6FZySEuCBqgXGgTu1zmFSr5DsKZtFbJsEl8+kTnaPvXtyniqSn6cZ92wtediy4IlOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491277; c=relaxed/simple;
-	bh=5IONwWAaygzDPnMaidc2cVsIS1VTE48ucYzxzIFEfRs=;
+	s=arc-20240116; t=1728491661; c=relaxed/simple;
+	bh=K5athNe1/NvnaRmNTmFsQwsUp9p+aYNd5zMwqloPMQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czzc0gFI5J3ouR2ZvzD1TfZS/WkR98zbBZiLZxG2PqgrA2gg7zAZaO1raRT80X+UstvwayVAWPwCUm2I3gruHY+eB8qTg84urOyf3JoexTWcHRoEZT4HVRtSHAJ51654SnbYKQ6WHJwoDFoDw4USGG9It+rQdaF3FRKR/JUNLRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bApfItvi; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728491276; x=1760027276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5IONwWAaygzDPnMaidc2cVsIS1VTE48ucYzxzIFEfRs=;
-  b=bApfItviV/I1Z0u3zLELfP9Wianikem1TIuWehvTqQcVHqyYVuzfj5+g
-   +MvVkBI/fTZoeCXa+1uw3Y5MdWjd28cDXio9OyszSKkqbWVStdvBVBfxi
-   KB+PTelXv9yGxHIFssu3LaRt5R7G5PmEXMFuIcEBEuuUyzSdz+8g+A9Wa
-   LlOeDj0XuDQmjfP8LRuwdNBEVFQOQwmMdrrNagfZki6mn/j8JoevqmMXY
-   U2rDWhSU9qrkwJZ/2ZtI03IYpxz8iEus1GoVq37vQgPlFX5MLNjwmJGB4
-   PaVn2nntkhS5xZa84QHhKKKqRGDQgO0NGL/nS7msZo8Sv3wS6mIrfW3L5
-   A==;
-X-CSE-ConnectionGUID: EpHP8rbZSiu9n8Z57vJU9A==
-X-CSE-MsgGUID: my6SKx7dQh2nmUustK0M4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27923222"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="27923222"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:27:55 -0700
-X-CSE-ConnectionGUID: oQoVtMfHTjmqz0Cmn1i1Zg==
-X-CSE-MsgGUID: CPHxacxfT/GicCpeJ5tzmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="80292162"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:27:54 -0700
-Date: Wed, 9 Oct 2024 09:33:44 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
-	x86@kernel.org, linux-pm@vger.kernel.org, hpa@zytor.com,
-	peterz@infradead.org, thorsten.blum@toblux.com,
-	yuntao.wang@linux.dev, tony.luck@intel.com, len.brown@intel.com,
-	srinivas.pandruvada@intel.com, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
- timer shutdown
-Message-ID: <20241009163344.GA25814@ranerica-svr.sc.intel.com>
-References: <20241009072001.509508-1-rui.zhang@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rb+qfeVTrs7n+cpceMrY7BuHww9UYIQlliXcQqcyF5QpIPnL6fO3Tzk2KzRJaGFQ0fRVQqbgftzS5zoVcZsCqQN7gjBSIanP2sqvL/1/KpshQW7ICiTNAKifaitqUgbwQu0GlP6SWtqFGeP678e4r8JNMpHtMK3+DbBPeiyWblU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OitXDxRF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74FF6C4CEC3;
+	Wed,  9 Oct 2024 16:34:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728491660;
+	bh=K5athNe1/NvnaRmNTmFsQwsUp9p+aYNd5zMwqloPMQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OitXDxRFnp1UlcuCm875dCX+SvbASzcx22JV0ZGCer7G7XreuuTkzhK9buH7LHOOK
+	 WzpOBl9ZxQxRoCbJIWkEbXCUqSqcmCoBXSF8L7BDSbjOIffHuTVH0r6k2ENV/NZ0mH
+	 W3tXC3JVqtvaKi+wwuIp6P6Jp5eX6idpXEy1ZSdeN5ZUMneZZkt0AeSqgezGm5fpXG
+	 SglM3YZgT/QkKFDzZD797oSbWkxRdtpS3EVGJ0GL5H6aff3SvoZCX7luiwMf6zkuiy
+	 aEEm9zhzDfh5RhRHNvueT19o0cs2uIOJEUFlL9IJzKA+PBN/H9etLWAUH20/dgkDyK
+	 Zz1Zbxtg/njvg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syZdo-000000005Y2-1KZR;
+	Wed, 09 Oct 2024 18:34:24 +0200
+Date: Wed, 9 Oct 2024 18:34:24 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sm8450: Add Broadcast_AND region in
+ LLCC block
+Message-ID: <ZwawkF17sxYRk_vC@hovoldconsulting.com>
+References: <20240718-x1e80100-dts-llcc-add-broadcastand_region-v1-1-20b6edf4557e@linaro.org>
+ <39df7ff4-7f22-4715-a0f7-eb2475bd7b55@linaro.org>
+ <Zpj8cWfcqYj8rUOP@hovoldconsulting.com>
+ <ZpkOgpGCKp/w13la@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,18 +70,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009072001.509508-1-rui.zhang@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <ZpkOgpGCKp/w13la@linaro.org>
 
-On Wed, Oct 09, 2024 at 03:20:01PM +0800, Zhang Rui wrote:
-> This 12-year-old bug prevents some modern processors from achieving
-> maximum power savings during suspend. For example, Lunar Lake systems
+On Thu, Jul 18, 2024 at 03:45:54PM +0300, Abel Vesa wrote:
+> On 24-07-18 13:28:49, Johan Hovold wrote:
+> > On Thu, Jul 18, 2024 at 01:20:37PM +0200, Konrad Dybcio wrote:
+> > > On 18.07.2024 12:20 PM, Abel Vesa wrote:
+> > > > Add missing Broadcast_AND region to the LLCC block for x1e80100,
+> > > > as the LLCC version on this platform is 4.1 and it provides the region.
+> > > > 
+> > > > This also fixes the following error caused by the missing region:
+> > > > 
+> > > > [    3.797768] qcom-llcc 25000000.system-cache-controller: error -EINVAL: invalid resource (null)
+> > 
+> > Please say something about this error only showing up in linux-next,
+> > which has 055afc34fd21 ("soc: qcom: llcc: Add regmap for Broadcast_AND region"
+> > region")).
+> 
+> Hm, now that I think of it, maybe I should drop the fixes tag
+> altogether, as it fits more into the "new support" category strictly
+> because of that commit you mentioned.
 
-Two nits:
+Looks like you forgot to respin this one so that the error is now logged
+with mainline since 6.11 and commit 055afc34fd21 ("soc: qcom: llcc: Add
+regmap for Broadcast_AND region"):
 
-> gets 0% package C-states during suspend to idle and this causes energy
-> star compliance tests to fail.
+	qcom-llcc 25000000.system-cache-controller: error -EINVAL: invalid resource (null)
 
-s/gets/get/
-s/energy start/Energy Star/
+Can you please respin as soon as possible with an updated commit message
+and a CC stable tag to suppress the error?
+
+> > > > Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+> > > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > > > ---
+> > > 
+> > > Please fix the commit title
+> > 
+> > And that.
+> 
+> Yep. Will do.
+
+Don't forget to update Subject.
+
+Johan
 
