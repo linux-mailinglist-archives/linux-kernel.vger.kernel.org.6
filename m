@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-357289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D82996F17
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:01:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F639996F1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29EC1C213BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:01:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70F63B27AAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2CF1E480;
-	Wed,  9 Oct 2024 15:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC87E1C9B77;
+	Wed,  9 Oct 2024 15:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qW6eSMY6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oEcSSy0I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAE3537FF;
-	Wed,  9 Oct 2024 15:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7B719DF6A;
+	Wed,  9 Oct 2024 15:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486024; cv=none; b=SNmtSb47fhvRr3fWkFPBSKya/HfPLTtO0M0+1sacPR/pSbTXTaDR8Ux7eAGOy5QeSrqFy+YW5uqO5WJEHtakjPL84F2PUIBI/w0GBaBgGq/MQS2jXH4ABiHpHMwS4O82GrJfTif8/9hDm6BuDNzseSrtVb6RQqhOU50gziQDJCU=
+	t=1728486060; cv=none; b=szsPPGkx1eawJL+xBpGJ1ZebD4i16Wf+e7fP46ms1KKlhgd1H68MOkSVW1QeFVZjloJeZasgbd+2hga96ODgSKYghKH84ZBVl15UK9oH17CJXSSL1f9uuJIwW4e/9ZIeusIUvgoV17eGtElQEkcE6gukb+LWtRVEunroE3eRauE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486024; c=relaxed/simple;
-	bh=D0XqC48xeaaF/Gw7gpqXxx4RqDkm+MnppecvEnCEpig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9GxapzJwEZN2kdDZc6JBhmWmnLAegS4Q/ta7Ds+oEmGyQ1J5H5Y0PDSgpIYo9x4uYbjM2p02ImxPeBpVVTHNsZ5twGYj5enZoMfAB7UKyMsqYXDYM1vHMnsVWaSQ3Y8X3njtLGvG+g5Jrg3pDQ6Pf3wNSzv8+YtjoDArQLbeGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qW6eSMY6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBD4C4CEC3;
-	Wed,  9 Oct 2024 15:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728486024;
-	bh=D0XqC48xeaaF/Gw7gpqXxx4RqDkm+MnppecvEnCEpig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qW6eSMY6s7/qAll04dwOz/7yMIlizS8cRC64xwYK/Sza+B2Y00qXklitkmq0kG2+X
-	 9PR6K2OzUIIY+RbX1D081p3egbuR4lGlmviKUQ8r8Mew2t5FZx1vH+SNdq5kAvy1Wl
-	 hcv1Ehk49H2IdeF4kp3bzm3J/pHClJeN7qgv8Vxue900lhJ1ZvXolRgyAm+d/f1XWn
-	 IY0mXmkaj/4nL+SwkcyEDFo+QxF+h6U7tHpf6nJtV6hdUa2sI76OkGZImanWKzw+8F
-	 spwEkdsZFy0AQz8lj2/UYJ3SGOEWjheJm/6qH6BlxImUtp89uMh07CKC6XoX+HHMxX
-	 kyGHUlblJn6Vg==
-Date: Wed, 9 Oct 2024 17:00:18 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, l.stach@pengutronix.de,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v5 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
- "atu" for i.MX8M PCIe Endpoint
-Message-ID: <ZwaagtTx1ar1CW4V@ryzen.lan>
-References: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
- <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1728486060; c=relaxed/simple;
+	bh=oH0V7311o5jJFSC+Juj6Lnod0HtYmGqkFFOe/VLRi8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKKR09NL+h8Qhloq0i0EKKus+KIusH5TCJ4vRqDKYKV6adOdPRQqjwTt1cz3CduZUIwvfFc+jzEus8nLVOCPr6S30ITOZUGonHMklmXdZpNzK69ubNkVVMNIe8/6fBzN/pStR94xzqqG85/hxeQtr2zkryBhL5UGJ0yzxjenbE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oEcSSy0I; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728486058; x=1760022058;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oH0V7311o5jJFSC+Juj6Lnod0HtYmGqkFFOe/VLRi8M=;
+  b=oEcSSy0I9lXZjtIIkUlynkypjgEKNdcfJC+WIB2ZHlm/jQWGzF84ZJa0
+   RqioJpyWW+yY7JPMtTzLdl9ceWIGss95v2oHhTn1SQctj6zCAgeSfhKkU
+   2hMXsHg+nr23VNmz/jn3uWW4JD4eKkN8hFykllfXkByXoRpK/d2AS9TCr
+   JRCRS0+1QuE0TV9dku1LMoM1bSvOTu4vCd6lLWFW3vTHMvticsfCPBHlr
+   5+/xPj7SE8WHvsnGgrpQXpB7BYWOp+PZ7wc9aFkrlDScnFT7nrNwBQV09
+   7nTGJnyZNBaY7pAs49CbBI1HCG4Pb+0wiG4hrHl7SYqcmLdvxy9bZSTF8
+   w==;
+X-CSE-ConnectionGUID: Fvyy5FR2QhWXP6sRwY1l1Q==
+X-CSE-MsgGUID: fTj/x2PnRRyVCOqBhVcqVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38359327"
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="38359327"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:00:58 -0700
+X-CSE-ConnectionGUID: rQ/+j2qnTnuCqvnEvu9oQg==
+X-CSE-MsgGUID: QF9a9E4aRoqX8DRMM1lSIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="75880957"
+Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.223.14]) ([10.124.223.14])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:00:58 -0700
+Message-ID: <b4cae913-282a-4772-a2b0-d2638adfe486@intel.com>
+Date: Wed, 9 Oct 2024 08:00:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: x86/urgent] x86/bugs: Use code segment selector for VERW
+ operand
+To: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Robert Gill <rtgill82@gmail.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, stable@vger.kernel.org,
+ #@tip-bot2.tec.linutronix.de, 5.10+@tip-bot2.tec.linutronix.de,
+ Dave Hansen <dave.hansen@linux.intel.com>, Brian Gerst <brgerst@gmail.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org
+References: <172842753652.1442.15253433006014560776.tip-bot2@tip-bot2>
+ <20241009061102.GBZwYediMceBEfSEFo@fat_crate.local>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241009061102.GBZwYediMceBEfSEFo@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 03:42:20PM +0800, Richard Zhu wrote:
-> Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
-> 
-> For i.MX8M PCIe EP, the dbi2 and atu addresses are pre-defined in the
-> driver. This method is not good.
-> 
-> In commit b7d67c6130ee ("PCI: imx6: Add iMX95 Endpoint (EP) support"),
-> Frank suggests to fetch the dbi2 and atu from DT directly. This commit is
-> preparation to do that for i.MX8M PCIe EP.
-> 
-> These changes wouldn't break driver function. When "dbi2" and "atu"
-> properties are present, i.MX PCIe driver would fetch the according base
-> addresses from DT directly. If only two reg properties are provided, i.MX
-> PCIe driver would fall back to the old method.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> index a06f75df8458..84ca12e8b25b 100644
-> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> @@ -65,12 +65,14 @@ allOf:
->      then:
->        properties:
->          reg:
-> -          minItems: 2
-> -          maxItems: 2
-> +          minItems: 4
-> +          maxItems: 4
+On 10/8/24 23:11, Borislav Petkov wrote:
+>>  .macro CLEAR_CPU_BUFFERS
+>> -	ALTERNATIVE "", __stringify(verw _ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+>> +#ifdef CONFIG_X86_64
+>> +	ALTERNATIVE "", "verw mds_verw_sel(%rip)", X86_FEATURE_CLEAR_CPU_BUF
+>> +#else
+>> +	/*
+>> +	 * In 32bit mode, the memory operand must be a %cs reference. The data
+>> +	 * segments may not be usable (vm86 mode), and the stack segment may not
+>> +	 * be flat (ESPFIX32).
+>> +	 */
+>> +	ALTERNATIVE "", "verw %cs:mds_verw_sel", X86_FEATURE_CLEAR_CPU_BUF
+>> +#endif
+> So why didn't we ifdef the "verw mds_verw_sel(%rip)" and "verw
+> %cs:mds_verw_sel" macro argument instead of adding more bigger ugly ifdeffery?
 
-Now it seems like this patch has already been picked up,
-but how is this not breaking DT backwards compatibility?
+I'm not jumping for joy about how it looks, but I applied it because
+it's good enough and the regression was about to get its driver's
+license. ;)
 
-You are here increasing minItems, which means that an older DT
-should now fail to validate using the new schema?
-
-I thought that it was only acceptable to add new optional properties
-after the DT binding has been accepted.
-
-What am I missing?
-
-
-If the specific compatible isn't used by any DTS in a released kernel,
-then I think that the commit log should have clearly stated so,
-and explained that that is the reason why it is okay to break DT backwards
-compatibility.
-
-
-Kind regards,
-Niklas
-
->          reg-names:
->            items:
->              - const: dbi
->              - const: addr_space
-> +            - const: dbi2
-> +            - const: atu
->  
->    - if:
->        properties:
-> @@ -129,8 +131,11 @@ examples:
->  
->      pcie_ep: pcie-ep@33800000 {
->        compatible = "fsl,imx8mp-pcie-ep";
-> -      reg = <0x33800000 0x000400000>, <0x18000000 0x08000000>;
-> -      reg-names = "dbi", "addr_space";
-> +      reg = <0x33800000 0x100000>,
-> +            <0x18000000 0x8000000>,
-> +            <0x33900000 0x100000>,
-> +            <0x33b00000 0x100000>;
-> +      reg-names = "dbi", "addr_space", "dbi2", "atu";
->        clocks = <&clk IMX8MP_CLK_HSIO_ROOT>,
->                 <&clk IMX8MP_CLK_HSIO_AXI>,
->                 <&clk IMX8MP_CLK_PCIE_ROOT>;
-> -- 
-> 2.37.1
-> 
+I did spend some time noodling to come up with _some_ common 32/64-bit
+implementation, but 32-bit is just too special of a snowflake.
 
