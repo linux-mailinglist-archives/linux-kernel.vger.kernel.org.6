@@ -1,101 +1,293 @@
-Return-Path: <linux-kernel+bounces-357127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D3E996BDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94EC996BDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E88D1F21D98
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C7528161D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAA7198A29;
-	Wed,  9 Oct 2024 13:29:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FEB18C92A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFA7197A97;
+	Wed,  9 Oct 2024 13:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="fABxu4P/"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEEE192583
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480591; cv=none; b=tGnk5ftAEYgnXt3fdHBjbzp2O5vAFCg2tu4EQIxeX3YSlAsQavHoMe43R22SQ2lQAr4ORVxURAzrgOgmLokWR8yuCtRDc+fqeKO8BdyXzQap0CNC7OKylm/Smz885QSqFY+HTLC/5R391Lihnu20G58FKuNMNJXi7ldY4QvT9Xk=
+	t=1728480614; cv=none; b=mU80Cr5Pao6eih3C0pH5es8vQA16GMUPAltLC+P3RKeu2vVsYQMOZtzRp1rNatYw38/fPaAucN8sjS1Dz1zhlDM1TTuu3R+VhnvpMNk1minq+WanVWIllWZtHJakn+BfGXXqLTkvJYyy55izV+sgl8hBnar0FPZdgxcF2dbSgnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480591; c=relaxed/simple;
-	bh=MOH0aLrszP/7+AYlkDVCm5CN76bwWTO+1ItQcDjDNcs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QBPZLgourLfZC12qel/GEqJyX4H8MklMMgSQvk0cAIgUWl3u4UXRhe54b8jhTUTtoKn+qlTgI2xHTy172YE7AAJZbfDiCZetA7Gi5PsMXt4oStvq9JvHCYBMMmbKHww6pwpLf6SsnCGNaM+MhXzT2E+AqOGtY5uBP39W31GNoJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EED2FEC;
-	Wed,  9 Oct 2024 06:30:19 -0700 (PDT)
-Received: from [10.57.85.216] (unknown [10.57.85.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D94E3F58B;
-	Wed,  9 Oct 2024 06:29:48 -0700 (PDT)
-Message-ID: <db908eb5-fa01-400a-a6c1-36a5ebddb47c@arm.com>
-Date: Wed, 9 Oct 2024 14:29:46 +0100
+	s=arc-20240116; t=1728480614; c=relaxed/simple;
+	bh=l1EOQkhxaNMEb0c23pFrQuttKWwlPFuD+SnneqwfcII=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UH8+ELKkXb4+OrVzdXVMZdYjmZh104Fy+gXSduvX7HMU1UiefKDv+bB+BjGnj7AS4YYPyUwuZMnVqhjd+oviuAFMhxZ23j9Vllq9+neT4Fqna3+LAu7OOrKrANXZdrwpTdoJy5X+PGWIhsfpN7VTqwR/E0kM10uGf3Ftc6PJEbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=fABxu4P/; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fac47f0b1aso81318921fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1728480611; x=1729085411; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=47baqCnQCvkfvrwoy37anFk6NSMQvffBtJAu5gT3YZk=;
+        b=fABxu4P/YFN39efjhg8koDiM+kWMECpSs5cDa0gpIA6hDFjrPVMYjkJmCgw5lPSn0x
+         A+7B2VHHnY/EPaXl1Lg+ELBqiin9NR9GeTrZXs/ufHlZSMHX21lBInM6Jz7UtRPaCVTe
+         zG6/Aew3eX/SyyiGjGoCM2SAbI3cYsvZucgxE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728480611; x=1729085411;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=47baqCnQCvkfvrwoy37anFk6NSMQvffBtJAu5gT3YZk=;
+        b=VLeqjZQoaM98FANnKYZNFX2yY+e6QEDKifPmRk839l3aqsxkLpmGnYlln1WY5JB+W0
+         MLJazJiQVjr2Ucrc2fMZz2yN4pgxbXSHAtoyoUq3sqg/L+V4Ir/7yXOjcRzfYufSpgqh
+         V0UvBEm2D79CjVBl1pUNqMZFvQ6dxtGuKYqf8yi8pICqin2WZmH5Eo/0RyiAsSiG7vNn
+         d60OQUXBiQirtcnVH126wsvvDBMlxiXJ2OtodSc+FYorVOH7sgqGe+fMHTojJZli/gUg
+         6wXpLGYvByFD/HsM9qpp7P4QOsDkBMas666fFwsqZRofgs2mUtjjpFZ1uf8NKOJp+WN4
+         kF8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZf0EfzuMQCvBcnoRjR53TRsE+DzE6BotZHn/fC9B8PFg69Ws8v84HU6cQl6Dnv6DFYR9W2wD9b7e7Ovk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOj6S3kIbWcAprbj766HiIqpz9g4Yv2ubKyzt9VUjetdlJ5ZFe
+	/oy3ubOytzdhbwSFB49scA3ttOXSRCVL/LlXlcmBh1v8XJgCN8E+tYaVhz/o7Rw=
+X-Google-Smtp-Source: AGHT+IGzs8AU/VidaqWomdqq3zlWcnDvu5kW/cZXUPcR7Heq9OLcNFfOUxKuKAPf8diwyUfBEMfPRw==
+X-Received: by 2002:a2e:1312:0:b0:2fa:cdac:8723 with SMTP id 38308e7fff4ca-2fb1f849b4fmr193341fa.29.1728480610830;
+        Wed, 09 Oct 2024 06:30:10 -0700 (PDT)
+Received: from localhost ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2faf9adcb62sm14228011fa.63.2024.10.09.06.30.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 06:30:10 -0700 (PDT)
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>,  Fan Ni <fan.ni@samsung.com>,
+  Jonathan Cameron <Jonathan.Cameron@huawei.com>,  Navneet Singh
+ <navneet.singh@intel.com>,  Jonathan Corbet <corbet@lwn.net>,  Andrew
+ Morton <akpm@linux-foundation.org>,  Dan Williams
+ <dan.j.williams@intel.com>,  Davidlohr Bueso <dave@stgolabs.net>,  Alison
+ Schofield <alison.schofield@intel.com>,  Vishal Verma
+ <vishal.l.verma@intel.com>,  linux-btrfs@vger.kernel.org,
+  linux-cxl@vger.kernel.org,  linux-doc@vger.kernel.org,
+  nvdimm@lists.linux.dev,  linux-kernel@vger.kernel.org,  Petr Mladek
+ <pmladek@suse.com>,  Steven Rostedt <rostedt@goodmis.org>,  Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>,  Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>,  Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v4 02/28] printk: Add print format (%pra) for struct range
+In-Reply-To: <20241007-dcd-type2-upstream-v4-2-c261ee6eeded@intel.com> (Ira
+	Weiny's message of "Mon, 07 Oct 2024 18:16:08 -0500")
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-2-c261ee6eeded@intel.com>
+Date: Wed, 09 Oct 2024 15:30:14 +0200
+Message-ID: <871q0p5rq1.fsf@prevas.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64/ptdump: Test PMD_TYPE_MASK for block mapping
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
- <20241005123824.1366397-4-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241005123824.1366397-4-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 05/10/2024 13:38, Anshuman Khandual wrote:
-> arm64 block mapping requires given page table entry's bits[1:0] to be "01".
-> But now only bit[1] is checked to be clear, while also implicitly assuming
-> bit[0] to be set. This modifies ptdump to check both the relevant bits via
-> the mask PMD_TYPE_MASK and check the resultant value against PMD_TYPE_MASK.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Ira Weiny <ira.weiny@intel.com> writes:
 
 > ---
->  arch/arm64/mm/ptdump.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-> index 264c5f9b97d8..8cec0da4cff2 100644
-> --- a/arch/arm64/mm/ptdump.c
-> +++ b/arch/arm64/mm/ptdump.c
-> @@ -80,10 +80,10 @@ static const struct ptdump_prot_bits pte_bits[] = {
->  		.set	= "CON",
->  		.clear	= "   ",
->  	}, {
-> -		.mask	= PTE_TABLE_BIT,
-> -		.val	= PTE_TABLE_BIT,
-> -		.set	= "   ",
-> -		.clear	= "BLK",
-> +		.mask	= PMD_TYPE_MASK,
-> +		.val	= PMD_TYPE_SECT,
-> +		.set	= "BLK",
-> +		.clear	= "   ",
->  	}, {
->  		.mask	= PTE_UXN,
->  		.val	= PTE_UXN,
+>  Documentation/core-api/printk-formats.rst | 13 ++++++++
+>  lib/test_printf.c                         | 26 +++++++++++++++
+>  lib/vsprintf.c                            | 55 +++++++++++++++++++++++++++----
+>  3 files changed, 88 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> index 14e093da3ccd..03b102fc60bb 100644
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -231,6 +231,19 @@ width of the CPU data path.
+>  
+>  Passed by reference.
+>  
+> +Struct Range
+> +------------
 
+Probably neither of those words should be capitalized.
+
+> +
+> +::
+> +
+> +	%pra    [range 0x0000000060000000-0x000000006fffffff]
+> +	%pra    [range 0x0000000060000000]
+> +
+> +For printing struct range.  struct range holds an arbitrary range of u64
+> +values.  If start is equal to end only 1 value is printed.
+> +
+> +Passed by reference.
+> +
+>  DMA address types dma_addr_t
+>  ----------------------------
+>  
+> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> index 5afdf5efc627..e3e75b6d10a0 100644
+> --- a/lib/test_printf.c
+> +++ b/lib/test_printf.c
+> @@ -432,6 +432,31 @@ struct_resource(void)
+>  	     "%pR", &test_resource);
+>  }
+>  
+> +static void __init
+> +struct_range(void)
+> +{
+> +	struct range test_range = {
+> +		.start = 0xc0ffee00ba5eba11,
+> +		.end = 0xc0ffee00ba5eba11,
+> +	};
+> +
+> +	test("[range 0xc0ffee00ba5eba11]", "%pra", &test_range);
+> +
+> +	test_range = (struct range) {
+> +		.start = 0xc0ffee,
+> +		.end = 0xba5eba11,
+> +	};
+> +	test("[range 0x0000000000c0ffee-0x00000000ba5eba11]",
+> +	     "%pra", &test_range);
+> +
+> +	test_range = (struct range) {
+> +		.start = 0xba5eba11,
+> +		.end = 0xc0ffee,
+> +	};
+> +	test("[range 0x00000000ba5eba11-0x0000000000c0ffee]",
+> +	     "%pra", &test_range);
+> +}
+> +
+
+Thanks for including tests!
+
+Rather than the struct assignments, I think it's easier to read if you
+just do
+
+  struct range r;
+
+  r.start = 0xc0ffee00ba5eba11;
+  r.end   = r.start;
+  ...
+
+  r.start = 0xc0ffee;
+  r.end   = 0xba5eba11;
+  ...
+
+which saves two lines per test and for the first one makes it more
+obvious that the start and end values are identical.
+
+>  static void __init
+>  addr(void)
+>  {
+> @@ -807,6 +832,7 @@ test_pointer(void)
+>  	symbol_ptr();
+>  	kernel_ptr();
+>  	struct_resource();
+> +	struct_range();
+>  	addr();
+>  	escaped_str();
+>  	hex_string();
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 09f022ba1c05..f8f5ed8f4d39 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -1039,6 +1039,19 @@ static const struct printf_spec default_dec04_spec = {
+>  	.flags = ZEROPAD,
+>  };
+>  
+> +static noinline_for_stack
+> +char *hex_range(char *buf, char *end, u64 start_val, u64 end_val,
+> +		struct printf_spec spec)
+> +{
+> +	buf = number(buf, end, start_val, spec);
+> +	if (start_val != end_val) {
+> +		if (buf < end)
+> +			*buf++ = '-';
+
+No. Either all your callers pass a (probably stack-allocated) buffer
+which is guaranteed to be big enough, in which case you don't need the
+"if (buf < end)", or if some callers may "print" directly to the buffer
+passed to vsnprintf(), the buf++ must still be done unconditionally in
+order that vsnprintf(NULL, 0, ...) [used by fx kasprintf] can accurately
+determine how large the output string would be.
+
+So, either
+
+  *buf++ = '-'
+
+or
+
+  if (buf < end)
+    *buf = '-';
+  buf++;
+
+Please don't mix the two. 
+
+
+
+> +		buf = number(buf, end, end_val, spec);
+> +	}
+> +	return buf;
+> +}
+> +
+>  static noinline_for_stack
+>  char *resource_string(char *buf, char *end, struct resource *res,
+>  		      struct printf_spec spec, const char *fmt)
+> @@ -1115,11 +1128,7 @@ char *resource_string(char *buf, char *end, struct resource *res,
+>  		p = string_nocheck(p, pend, "size ", str_spec);
+>  		p = number(p, pend, resource_size(res), *specp);
+>  	} else {
+> -		p = number(p, pend, res->start, *specp);
+> -		if (res->start != res->end) {
+> -			*p++ = '-';
+> -			p = number(p, pend, res->end, *specp);
+> -		}
+> +		p = hex_range(p, pend, res->start, res->end, *specp);
+>  	}
+>  	if (decode) {
+>  		if (res->flags & IORESOURCE_MEM_64)
+> @@ -1140,6 +1149,34 @@ char *resource_string(char *buf, char *end, struct resource *res,
+>  	return string_nocheck(buf, end, sym, spec);
+>  }
+>  
+> +static noinline_for_stack
+> +char *range_string(char *buf, char *end, const struct range *range,
+> +		   struct printf_spec spec, const char *fmt)
+> +{
+> +#define RANGE_DECODED_BUF_SIZE		((2 * sizeof(struct range)) + 4)
+> +#define RANGE_PRINT_BUF_SIZE		sizeof("[range -]")
+> +	char sym[RANGE_DECODED_BUF_SIZE + RANGE_PRINT_BUF_SIZE];
+
+I don't think these names or the split in two constants helps
+convincing that's the right amount. I have to think quite a bit to see
+that 2*sizeof is because struct range has two u64 and we're printing in
+hex so four-bits-per-char and probably the +4 are for two time "0x".
+
+Why not just size the buffer directly using an "example" string?
+
+  char sym[sizeof("[range 0x0123456789abcdef-0x0123456789abcdef]")]
+
+> +	char *p = sym, *pend = sym + sizeof(sym);
+> +
+> +	struct printf_spec range_spec = {
+> +		.field_width = 2 + 2 * sizeof(range->start), /* 0x + 2 * 8 */
+> +		.flags = SPECIAL | SMALL | ZEROPAD,
+> +		.base = 16,
+> +		.precision = -1,
+> +	};
+> +
+> +	if (check_pointer(&buf, end, range, spec))
+> +		return buf;
+> +
+> +	*p++ = '[';
+> +	p = string_nocheck(p, pend, "range ", default_str_spec);
+
+We really should have mempcpy or stpcpy. I don't see the point of using
+string_nocheck here, or not including the [ in the string copy (however
+it's done). But yeah, without stpcpy() that's a bit awkward. 
+
+Rasmus
 
