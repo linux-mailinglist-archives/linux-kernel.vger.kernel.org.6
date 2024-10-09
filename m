@@ -1,88 +1,191 @@
-Return-Path: <linux-kernel+bounces-357174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656A2996CF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF827996CF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3D5281A11
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C29D28411A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70532199FB5;
-	Wed,  9 Oct 2024 13:59:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BE7199E8D;
+	Wed,  9 Oct 2024 14:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="D+F3g5qS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i65qpZyv"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6894199FA0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BC6196C86;
+	Wed,  9 Oct 2024 13:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728482346; cv=none; b=LxkJS8rxclcekYvUemijRbODCTyPAi02+VwemPTQPYMeHpeV7gV8uiJRUbULVue/byfG2O2hqXawtF84xVYBj5MgUk111hNuU7PI1R8KmMriOskzohnuw7AhbWNq1m34KvQnlcz1dbV3wofYGub76YXXcm2QbCxJAnaps+9nyDU=
+	t=1728482399; cv=none; b=BXfo5wJrAJeL9f85+ATuuga2ZtJ2tBu9AzkprIVEw6gM/Uzg7S8gkdShRyMRYbk6RLdaWEudoBrDkZDWH+jEdV9lSTKQyGAtNIkbm3VbXf/hdEES8b6EtI89pwRpPl/UQiUA98jp+ZA/BfDw6ANjhBtk+8yVcFMwH1dzCjiKd94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728482346; c=relaxed/simple;
-	bh=UiXOYGhi09FbiLK08wnzmsQ7P0ugRtXYloj4gHvOG7c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O3CDzR/zMvd3hOKwFZqmO12cRANOvtGdgVEK6FHx3kc+Nx2FsYGZEn6SYVRmOd8R83Y3lwY2+mJa9RgzuNGj4F7TQBBFrsj+v/SDSW5pG8HWy5xaJJzSM0wj5IyyyGN6q+7R2HdI7G1dgIyLM4K/n0v+5+t2slgPR6LYC80AzyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a392e9a8a4so20911895ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:59:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728482344; x=1729087144;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PcwKS8IZf+tCbxTp2xw2zoEBy4y1bAD9E+aHpLTswNs=;
-        b=KeiBfuDqxWh+g1ZMj7IucUkWVHDaYT0oaCefcNh+Xc+VrpUgtM/oRazEpOUIs9+bO0
-         lJy7Q5CaORxrmmRe7WcC4YM0NyTUZm9LlHziGMBBdCGckNJoRVVTNuasC6th1Home217
-         5IT22qKVxxuD88rW8rmubdcJ8KNhM/X6b8+NOfv7VX95SIvmA4+5OK2UdTxzrg0CNnMw
-         hgha2nB3bJWyLYZfK/u3DLjL5g4nzVR/I/6qKaCdvzGm2yjiarHckJQhD65HXBqEZAkh
-         E3+HbQEusWVdYKEpb9qwl9ZAhxI7ucagY45paxY/uOojEgo6GUd9mz7O3AgCCSwXdjDQ
-         x0xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLoh03KUXfqk9/9I91k8Cg1tJ4f7iUHf7NmXeFv5xfnqEWMmbsAWEZoADUg5OQExlBAbR1tUYgPqiT44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCJjq7i8Yqs6tWre0DbRUfL3RL3S+FjomRlsGFKNMKh14H4oGE
-	2qhcnB6W0fvlN7oHmVu0vj9g4DqUCb0FdyvTaL/J+//f3PiO5sLvTiyXQFHQg96cllZS1XLftKt
-	A0P5rRsLQ07Epp/GYrQ6CkfMj1U0vP6GhDg5XOuoarLAu7Hncx91gPpw=
-X-Google-Smtp-Source: AGHT+IG2iYqwOHNqRdBl+b/ZzBo08O8Ucn0EawPGs0yDWydlzNn7igtj7Ti7oEI0KHY5WZPv+49Sn4Sy/o1liIWOlNw5Cdmq3ALq
+	s=arc-20240116; t=1728482399; c=relaxed/simple;
+	bh=eYvQROEvvW1yDEEyLCG+OafAa2uujGTZCXesBAt3Uf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4vpinhuUT+Z9cP2QAym6a1cDzaqBe+5w2S0KzDcgebpIPzzX3fc0rcfihqu7jwYUJJGTtM9a7QEuiFSCN4ou+uRGO9ui5QaMZVEFYqR4exT6xvsRkGYYnzHJD/ybRn+oKywoFcFAq0S0JRONX3+8YSjiQvDtIy9lXbI+inJkhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=D+F3g5qS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i65qpZyv; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id B69EF11401D6;
+	Wed,  9 Oct 2024 09:59:54 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Wed, 09 Oct 2024 09:59:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1728482394;
+	 x=1728568794; bh=PVGBHbIhqNvxDQEChY11ROMGXvZ7A+537QO2TTJjVlc=; b=
+	D+F3g5qS3Ip3v5bIfGjdQKGnWIk3uCXdvq/cUtE7ibQeb6Y5QeaVKxjXSqflAfq8
+	+n5yN8VWIBvU8qLb8MW1eNAwAuIVLU25uWltJbRV78yTGWvg2YQIK3DWfJ37/HWt
+	siEAB8DoH2xGmvulLkS0dYjTav430XJMRtW/pJ5v/7yTLbtDGK3R2CLNznVA5Xwg
+	oVzOf2LahJ9e05SibYDBYejVMHtJDFstGXzwGOc6LC4exdEm7CE2d+/MoiAtw1dL
+	htXtrjx0t29tWh6O4DYjh7XL3iq9xbXXmFMK5HCydot1QXO5AOTDHbZBxtvATBQ0
+	MLNz2ZX1lKELMNwf3VOZkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728482394; x=
+	1728568794; bh=PVGBHbIhqNvxDQEChY11ROMGXvZ7A+537QO2TTJjVlc=; b=i
+	65qpZyvEfMc6/4H+g7ugNEbF1uNLxJJv5G0VUcJEfG7C0FpEs3latw2c4uLzeca3
+	qBP5RukCXI0FGq3ShQRdsb+fyl90VGAm5+PSS0/OccdEBo/aUYRRV7H3zRIHfsQo
+	IsX+eYoZ43d/4PUHxDXIUwXmd549gZj50r5ZTz/78CcTBbuhChAVQYUcFQdwFzKA
+	6DxTF/8ciyuQeppmvYbEKMaSpn7vJHaZjilH1iVgQp5lcCpXz85dcldD5kSDJuvp
+	buBZgGR+wTx5NbziTVeOWVGtAIfNGgjMK4SJmU+xY35W8DHV8Alz4HfXXWrn0eA+
+	16FGxuwht1lBtGXGdam2Q==
+X-ME-Sender: <xms:WYwGZxWfVOt1zygoNeIYHlKeyl7x8iPNzg1N_g_burd2WtzDnlGGqQ>
+    <xme:WYwGZxm2Rl9lXJlZb9w9h2_6jdHlKQrrc-lIVdqDHLu8tG-xlMXhYw_hW5rIaHbwn
+    EQoVYFWkhS6I43Yj_A>
+X-ME-Received: <xmr:WYwGZ9ZWIp0uYzjpap-lJV4_6ypC_7bEmmXlvrCji4arEC63Jl5tseGVgoE3CEW1Jza7rnYMG48RYke-ByEgw1THQ2as0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgjeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeforghtihgrshcuuehjpphrlhhinhhguceomhessghjohhrlhhinhhgrd
+    hmvgeqnecuggftrfgrthhtvghrnhepkeefieeutddvteeguedthedvudfggfevgeevkeeg
+    geefkeeufffffeelleevgefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepmhessghjohhrlhhinhhgrdhmvgdpnhgspghrtghpthhtohepledp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgrrhgvsehsuhhsvgdruggvpdhrtg
+    hpthhtohepkhgsuhhstghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhtghhsehl
+    shhtrdguvgdprhgtphhtthhopegulhgvmhhorghlsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegtrghsshgvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    nhhvmhgvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqsghlohgtkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrg
+    htihgrshdrsghjohhrlhhinhhgseifuggtrdgtohhm
+X-ME-Proxy: <xmx:WYwGZ0Wpzqf8BPUI7r4BIzE3-RsOhTgV71w19yC5JEv3OUzUAAeNsA>
+    <xmx:WYwGZ7nU8Tx-clkD6ulhiLb8jp5kBUhZIp1a8WVPZ2jOzpIM-GM0UQ>
+    <xmx:WYwGZxdliEEsrQ6druNxnMD5s7jaOI65Okn2_emRkdSA9pt3EHOfNQ>
+    <xmx:WYwGZ1FGtwdkPcQT0o_-8ghy7O1owMTdDp5CxdjUbEw2eOrRnmxsFA>
+    <xmx:WowGZ0ilJOmLheR48W4lgZwGSTQigPfx2IeWgkuqcGmO3lqwqkTQqfxv>
+Feedback-ID: if4314918:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Oct 2024 09:59:52 -0400 (EDT)
+Message-ID: <3a680224-8f45-4612-bc11-40515c30e7e8@bjorling.me>
+Date: Wed, 9 Oct 2024 15:59:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fce:b0:3a3:3e17:994e with SMTP id
- e9e14a558f8ab-3a397cfc554mr27815995ab.9.1728482343906; Wed, 09 Oct 2024
- 06:59:03 -0700 (PDT)
-Date: Wed, 09 Oct 2024 06:59:03 -0700
-In-Reply-To: <tencent_3212D5C64009A62EE86ED08C8467FD46D606@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67068c27.050a0220.1139e6.0000.GAE@google.com>
-Subject: Re: [syzbot] [usb?] possible deadlock in chaoskey_release
-From: syzbot <syzbot+685e14d04fe35692d3bc@syzkaller.appspotmail.com>
-To: eadavis@qq.com, gregkh@linuxfoundation.org, keithp@keithp.com, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nvme: make independent ns identify default
+To: Hannes Reinecke <hare@suse.de>, kbusch@kernel.org, hch@lst.de,
+ dlemoal@kernel.org, cassel@kernel.org, linux-nvme@lists.infradead.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>
+References: <20241008145503.987195-1-m@bjorling.me>
+ <20241008145503.987195-2-m@bjorling.me>
+ <a33f4ebe-de7d-479b-97d6-3d98e34ab94f@suse.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
+In-Reply-To: <a33f4ebe-de7d-479b-97d6-3d98e34ab94f@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 09-10-2024 08:16, Hannes Reinecke wrote:
+> On 10/8/24 16:55, Matias Bjørling wrote:
+>> From: Matias Bjørling <matias.bjorling@wdc.com>
+>>
+>> The NVMe 2.0 specification adds an independent identify namespace
+>> data structure that contains generic attributes that apply to all
+>> namespace types. Some attributes carry over from the NVM command set
+>> identify namespace data structure, and others are new.
+>>
+>> Currently, the data structure only considered when CRIMS is enabled or
+>> when the namespace type is key-value.
+>>
+>> However, the independent namespace data structure
+>> is mandatory for devices that implement features from the 2.0+
+>> specification. Therefore, we can check this data structure first. If
+>> unavailable, retrieve the generic attributes from the NVM command set
+>> identify namespace data structure.
+>>
+>> Signed-off-by: Matias Bjørling <matias.bjorling@wdc.com>
+>> ---
+>>   drivers/nvme/host/core.c | 7 +++----
+>>   1 file changed, 3 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+>> index 0dc8bcc664f2..9cbef6342c39 100644
+>> --- a/drivers/nvme/host/core.c
+>> +++ b/drivers/nvme/host/core.c
+>> @@ -3999,7 +3999,7 @@ static void nvme_scan_ns(struct nvme_ctrl *ctrl, 
+>> unsigned nsid)
+>>   {
+>>       struct nvme_ns_info info = { .nsid = nsid };
+>>       struct nvme_ns *ns;
+>> -    int ret;
+>> +    int ret = 1;
+>>       if (nvme_identify_ns_descs(ctrl, &info))
+>>           return;
+>> @@ -4015,10 +4015,9 @@ static void nvme_scan_ns(struct nvme_ctrl 
+>> *ctrl, unsigned nsid)
+>>        * data structure to find all the generic information that is 
+>> needed to
+>>        * set up a namespace.  If not fall back to the legacy version.
+>>        */
+>> -    if ((ctrl->cap & NVME_CAP_CRMS_CRIMS) ||
+>> -        (info.ids.csi != NVME_CSI_NVM && info.ids.csi != NVME_CSI_ZNS))
+>> +    if (!nvme_ctrl_limited_cns(ctrl))
+>>           ret = nvme_ns_info_from_id_cs_indep(ctrl, &info);
+>> -    else
+>> +    if (ret > 0)
+>>           ret = nvme_ns_info_from_identify(ctrl, &info);
+>>       if (info.is_removed)
+> 
+> That is a very odd coding. 'info' will only be filled out for a non-zero
+> return value of nvme_ns_info_from_cs_indep().
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I may have misunderstood. Only if nvme_ns_info_from_cs_indep() return 0 
+will the information be filled. Otherwise, if it is an NVMe error, 
+nvme_ns_info_from_identify() is tried, otherwise it's a hard error, and 
+it errors out completely.
 
-Reported-by: syzbot+685e14d04fe35692d3bc@syzkaller.appspotmail.com
-Tested-by: syzbot+685e14d04fe35692d3bc@syzkaller.appspotmail.com
+> So why not check for that?
+> But if we get an NVME status back there is a fair chance that something 
+> else than 'invalid field' (or whatever indicated that the command is not 
+> supported). That then would cause the device to be misdetected without 
+> the admin knowning.
+> Shouldn't we add a message if we fall back to nvme_ns_info_from_identify()?
 
-Tested on:
+Hmm, we could. Buuuut, at this point, there's more devices falling back 
+to nvme_ns_info_from_identify(), than devices that implements the 
+independent ns identify data structure. So I wouldn't mind it being 
+silent. If we want to debug a potential misdetection, tracing could be 
+enabled to track down what's happening.
 
-commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=115fbf9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=685e14d04fe35692d3bc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=105e1327980000
+> 
+> Cheers,
+> 
+> Hannes
 
-Note: testing is done by a robot and is best-effort only.
 
