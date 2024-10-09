@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-357006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C01F996A44
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2635996A4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7AC1C22AE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FCCF2821F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5F21953A1;
-	Wed,  9 Oct 2024 12:42:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BC9195FD1;
+	Wed,  9 Oct 2024 12:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwUo3r6l"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77252194ACA;
-	Wed,  9 Oct 2024 12:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C036D194096
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 12:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728477731; cv=none; b=DsFjCZmhZqB3/x5upnEgimK1v/d9OhuuYtDJZf1z/ozcvTwjRGJWfHEY1GxQb2KWvrRqkJswGJ2O0g/ZX3Q04+1H1AV9Y5n5zl6FwPy7ONCRwhxMEThg+A9RoQqKcZYPKqo+ovoc6kRsVXV3Qwr52YxYz9HFuiA/rAy8BOuwBuA=
+	t=1728477784; cv=none; b=loWeLRIM0nPGBWodw/O+oRpDzfPYIGZOsMe5mLpcAmNARqFPRCkisGaYMyKe/MnMjILJcxME9cDksG/v4TO5HG71g+QPwHP5cU4tfwcvZomS0bGPVWWpt9tEWNmNHjrIeNEZFtqnDJFtKnp3DPdgLEaL9fxc3Aou//WtMSm339o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728477731; c=relaxed/simple;
-	bh=FBeCe84ePWum+frqJl3ahOPHsMe4Ua2FWQMYnIXwT+Q=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DzsHXXBL6ObuI6v+93M+zDzDVIL/IhjkQXVLkvC28gmXuR3qkaTFm8fy4JoO46L3Amslz/A/1JfmnHJ3YK0e+Itc2A1161hC1NxgMsPwLSOuoHcZRtuheVPhW4nY2ju1XUWyS29bpHZjiVNpp01IkNaPuM4QeIVtKMsxR98eavg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNstm1QhBz6K70v;
-	Wed,  9 Oct 2024 20:40:48 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D819D140133;
-	Wed,  9 Oct 2024 20:42:05 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Oct
- 2024 14:42:03 +0200
-Date: Wed, 9 Oct 2024 13:42:01 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 05/28] dax: Document dax dev range tuple
-Message-ID: <20241009134201.000011b4@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-5-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-5-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728477784; c=relaxed/simple;
+	bh=jlKRlQacEER6Za7EZRqVQpjIcMp+FPvaE/7TRDm3NVg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h7B0ZgDNDywSF38NyT4KpmxN0GrDKBlFEkDn/nshB9hg9VXE+bl9H4/ZuPuzmTlzy6B3BH22PnlgLX1aVXMaFRrZGKvYwiNJsR38o62S0RbUqoe3t0BS9AgkFrw1UncF6E8I1+V0Qgz4a4cJEDhQoJf6Y6r3mSM3op0pxV6R0pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TwUo3r6l; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fabd2c4ac0so74946371fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 05:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728477781; x=1729082581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bd2ajZJTXWCZQHWCkMWh5ZbyjSLmxQS7L7ieRQ73iRo=;
+        b=TwUo3r6lGnbD1I/WC8PiDuFylRK7PSkYgkVWCPRU9ILdC9a3fxnGj59PbzU8dSROt7
+         sXpeJ9f+jxr/LFB6VJRS1bkWGL4CbAwkQ9I32OIcZwmjeNsQX6Ui0+9HjO6/znpdd1hq
+         pBqlIFoL0Aalt32OGjUPOrBggdhLyEf3KW0S0Dst4T8+5Wdm0CkeUKkkiFH16b7IhLcQ
+         qU032dps6CFTHwDp0U1RtwILJVgHE3tKYeeLXN/jchHThi/bSmvxHDsTEphNsMTY6RUv
+         JxG+M9glNJd4RR57F5JjcQG8U4SJwhPvpgHCRcvbC8fvGMQjGkmZFWyujh5SipkPYPq3
+         8sSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728477781; x=1729082581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bd2ajZJTXWCZQHWCkMWh5ZbyjSLmxQS7L7ieRQ73iRo=;
+        b=Xi9pJX0uGDK6WjlYmwJDjwGy8gt1ov1jFTVqd9YXrcPp2Y19ALSHI3UJNTXm10NGLP
+         WVmWMsiXBKylaLGjZtUHb4MA172cUxlbAqpLk4phLrjxIshtqMNauRdUQkQs1xU1Jyh4
+         O6NZ+DtXqrFqWij3C6MbBkZl7pk6E2GktTO+I5pX2T9EqmDPlsnTI3skgeMULvnTmYlO
+         IkAKHBbXbTKn/hE0e5LMSV8LhdQjwCiK11OdxcFq0FdunLH9HfCSwMox66q0nrF3LPvD
+         GR6dEtLBjefu7BwcM3oS5T8ZUcKo4jpmThrS4Rka32mJmVIuEHlLngcwRoA1NA3tU1FJ
+         DCEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUts1uIdcwBChL6tyPgqoNKg6hnk1neFM8hKT8PkrprT5snjv+bKje8jqQcEthc3onR/+KUbsdM+7SXWww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoQ//6dXut752icSAT7gJulnpFbHMiKR3DJkVeFmlSkZoarQJm
+	pdkUI1+r6eLr/gi0rdGGfHhaKJXeLx3UbwzhmE36gpTw+hp1hp8QGkAzgetSNk/psQXUCE2yf26
+	KRge76IO0NSeOOYYtvpuCmaEAMr3DisPWionw2A==
+X-Google-Smtp-Source: AGHT+IEFgCDjyhZzABbrE9/Mt3Cgr5SJ5rFDI1tE+jCgT6KNs1U7nwfDRGp32qlMOZ67IKjpEklL5xofkX663cD6H7A=
+X-Received: by 2002:a2e:bc1f:0:b0:2fa:cf5b:1e8e with SMTP id
+ 38308e7fff4ca-2fb1872ba6amr16140461fa.2.1728477780725; Wed, 09 Oct 2024
+ 05:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20241008-th1520-pinctrl-fixes-v3-0-5b60db446a49@tenstorrent.com>
+In-Reply-To: <20241008-th1520-pinctrl-fixes-v3-0-5b60db446a49@tenstorrent.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 9 Oct 2024 14:42:48 +0200
+Message-ID: <CACRpkda+Rrsfs706o+K1g-252sZG7FqZGO4uYoFEMnNbUzx53Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] pinctrl: th1520: Improve code quality
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 07 Oct 2024 18:16:11 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Wed, Oct 9, 2024 at 3:17=E2=80=AFAM Drew Fustini <dfustini@tenstorrent.c=
+om> wrote:
 
-> The device DAX structure is being enhanced to track additional DCD
-> information.
-> 
-> The current range tuple was not fully documented.  Document it prior to
-> adding information for DC.
-> 
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-Isn't this a nested struct?
-https://docs.kernel.org/doc-guide/kernel-doc.html#nested-structs-unions
+> This series contains code quality improvements for the new TH1520
+> pinctrl driver [1]:
+>
+>  - Fix smatch warning that the return value is not correctly set when an
+>    unknown pin error occurs
+>  - Linus suggested using guarded mutexs so I've converted the thp->mutex
+>    lock to that usage.
+>  - Linus also suggested using a scoped iterator for the DT for-each
+>    child node loop: for_each_available_child_of_node_scoped.
+>
+> The series is based on the linusw devel branch [2].
 
-I'm not quite sure how we document when it's a nested pointer to a
-a structure.  Is it the same as for a 'normal' nested struct?
-  
-> ---
-> Changes:
-> [iweiny: move to start of series]
-> ---
->  drivers/dax/dax-private.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-> index 446617b73aea..ccde98c3d4e2 100644
-> --- a/drivers/dax/dax-private.h
-> +++ b/drivers/dax/dax-private.h
-> @@ -58,7 +58,10 @@ struct dax_mapping {
->   * @dev - device core
->   * @pgmap - pgmap for memmap setup / lifetime (driver owned)
->   * @nr_range: size of @ranges
-> - * @ranges: resource-span + pgoff tuples for the instance
-> + * @ranges: range tuples of memory used
-> + * @pgoff: page offset
-      @ranges.pgoff?
-etc
+Thanks Drew all three patches applied, excellent work as usual!
 
-> + * @range: resource-span
-> + * @mapping: device to assist in interrogating the range layout
->   */
->  struct dev_dax {
->  	struct dax_region *region;
-> 
-
+Yours,
+Linus Walleij
 
