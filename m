@@ -1,136 +1,149 @@
-Return-Path: <linux-kernel+bounces-357771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE3A9975BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:37:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633569975C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37228281A88
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1C42826CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0FE1E1327;
-	Wed,  9 Oct 2024 19:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4211E1C38;
+	Wed,  9 Oct 2024 19:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iugtz3cB"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBxCPJXj"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C26B1D318A;
-	Wed,  9 Oct 2024 19:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E12F40849;
+	Wed,  9 Oct 2024 19:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728502639; cv=none; b=IrPw/IzSfNTztLbs3URunE5WAUhKtJs/1sTwcveTJgMinlPxvYkbVGOqTlO4S7Epb4uL9Klw5IR86MXj8+tdCZHquovJL5enBQF/2HaWV3IeYSHI51rlHaQA+RqNC2aysri2KSzmSe25u9nAdEGFU6NvNhobSbpUKYqTih2M7o8=
+	t=1728502649; cv=none; b=YKwb01Xh2gnHktWyeEvcAJ2eKUVs5Or8/JZXZ7Rg50HJVDGMV3jtiGCjD68HUunEIHJIgHT780nUD5o7uuz7FvPe/CBtMvuMp9u0Fi3sMvyv0o3eoXt9c5NfFZsXazgxJfkKvkNCCsM7lYdm1SwlnvzyQCX1SEMEIERL+cRcFvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728502639; c=relaxed/simple;
-	bh=yfnl9wnKLAH43BhXhHaeVnvLuTap4gCs21PcEP8hLag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SH3Gij/eH3FI68k9TRJKhNWuP+QViHlM3GqCyiTmKlaSrdQHgMekQA6vtV0slmScj5Xwnyn/x8mCfvKqdpwNdn1WjnkJyicpxVfsxYxzEM/01hdtf7hYq68pCvaa3M2LFwRnY+UdhajtqX7a0YCzWcgXid7xy6Nx+/vB0dTsg+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iugtz3cB; arc=none smtp.client-ip=209.85.160.173
+	s=arc-20240116; t=1728502649; c=relaxed/simple;
+	bh=B0G8uI4hwgShGq+/JoLlhdBAjD3k55IDNeJ0SfYd18w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OAHZr9H+uAJh2hXDMJC8/k9HWyfin/6tna9APOR+QOytS0jzMLOgYTEM2D/O4a2pc5BMInMype/Fu6KzStnD6uwJKzSvJzrpQrVxkDsfXD72x2ZvUildMuxbbczJvSagItCIMj/V8ZJF3pSd+Z/40fjs+od+XGINQev2+EFkgaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBxCPJXj; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45f05f87ca5so1276741cf.2;
-        Wed, 09 Oct 2024 12:37:17 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2a97c2681so187502a91.2;
+        Wed, 09 Oct 2024 12:37:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728502637; x=1729107437; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AeY+531wVEOKyYvPQ23C+PCHJtQWCZt5wgvONe9jcpo=;
-        b=Iugtz3cBYom57L3CULMgc7G6k8fhvS8HzKUqW1xTiZ3Sj69J7wyJQ9EBTX2nsnnUzV
-         Q6HlfuBuLDi90X5DLQ+EtrePLQOrXsuCFwIlcx0F7vnekPtO6csPF5emsvZPLga5kd3B
-         u9YS9AHWwysOZ5jHFva0OsvbvmRE06tcT1IyhHSSbvfhbXIAWZojHEyJTL7uZEDRZrS+
-         oNVeAX6Khq+PQAWxEXU63HD1WGnP2WIPSuD1q7NHo8UVXLwO9QSDJf9aOEZC3bbSKqf9
-         EvxnYHbcnO8O0Gtjft7GVoD/7SBBS2Ufe7tDsO2zFWQvtObVwXYQDUviJIWCS7i8O4Z6
-         BBgQ==
+        d=gmail.com; s=20230601; t=1728502646; x=1729107446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B0G8uI4hwgShGq+/JoLlhdBAjD3k55IDNeJ0SfYd18w=;
+        b=nBxCPJXj/etTM/acDt/CILdJ15C661g6JWVBHkX0MBZ6rLOm4lcOixcJGMdezjcpEJ
+         zit07TX9y0LwDXh+5XRX9GVaN63b2Y47y0GFYaBY5YeB/Z/cJRW8spzNw770c76no6zq
+         5lrP73FyLCRksYlh73fO863Snuy6oAYovRnOX6jcMkdnDyx1URTDxVDjKUVijyR73mAT
+         HnpMColFtx2g+vIFfQ6tX9XFzpMW9Fk3nESii3v0WxdTM+SX7YFpmV6mrp8/RDrrNJOP
+         wEHyaZbn3uC4VKWvBgFaycEJMqrDeb23wriZa2Rd53NMiCO0Jiaa2u7D02SF3t6u0tDI
+         OhHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728502637; x=1729107437;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AeY+531wVEOKyYvPQ23C+PCHJtQWCZt5wgvONe9jcpo=;
-        b=k0FcmX0W/bxVez9nV+Ygn/LGylKaVoeqW+yCZuF48i1/GOKlBqCRnrdRWgZ4xZkovN
-         eBRX+tchee0xn/ohA2Rz12EviGUkzmofZWm2uQpRIoQGXiS9BM8lFdcrqrKuONbR+1zf
-         6oHMPO09mm5olk9G1NdLhzXKwJykv+KHrD6cs3rLFqfE8SdplM71SL8vleQkhRKHf9/+
-         w2BUj9Ynn7PjFGg3laI//EmHkQDE4qfbaLqC0riouBDSPcU3eOMX2AN+YUkj+apdICM6
-         qjLiEMUDkIN3WqXgVa89OEciUbD6M5DJdhdg1/Rcsd/kqP/cmtEejaGTLr4ziAghRbgt
-         k5sA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFTf08y7gjyXwWaiVZj/y4gvxVElWYnCUv/ETbaumPWScvmIVkJIVilcoGMgWbbR9RZai0WkVIHiA=@vger.kernel.org, AJvYcCUzf7NMV9SV/m85MIWMII6fgOU30hiPdQ21V0k7PVxipxz3EDScpjQ4c6rlwRn93YgNndgbZvUr3u7grqQZ@vger.kernel.org, AJvYcCUzqkyTuGu9Qw9CpEa4Bufjt9Tb/nAD1eJyI48yY+HSXHPpVYSYiTqxRtcCXx4v0efg4cQ66XZ0ESCi+ybFYw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZobWBVWTlI+NCkbkFSGQo0e6sv4w8EvOagUmOFgURN0eTTJNw
-	AFuSr7a+hzNi1R2jpvVd/Xhv63fuUnodTASQ4ij9hUQwgJwZ6PID
-X-Google-Smtp-Source: AGHT+IFmQNidanZEo1iJfH03sW/6YFXSHvGf1HoTnU+Lu30/hGsutXRwEKfvoda+w7Ih7PCIsUqAbQ==
-X-Received: by 2002:a05:622a:138b:b0:458:2e21:e422 with SMTP id d75a77b69052e-45fb0e75330mr49739781cf.50.1728502636865;
-        Wed, 09 Oct 2024 12:37:16 -0700 (PDT)
-Received: from localhost.localdomain ([2620:10d:c091:600::1:6bd1])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4603ef1fa00sm2630041cf.36.2024.10.09.12.37.16
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 09 Oct 2024 12:37:16 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] XArray: minor documentation improvements
-Date: Wed,  9 Oct 2024 15:36:03 -0400
-Message-ID: <20241009193602.41797-2-tamird@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1728502646; x=1729107446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B0G8uI4hwgShGq+/JoLlhdBAjD3k55IDNeJ0SfYd18w=;
+        b=C9d/AI/FL0fIx379+mB8O6wdrjoASlfIr6C0MBfnXF5012AdyZu0knXl/wWC8Ir5wD
+         A9+V1EY6ezxRyz0DenoVhkPN7fBi/avlQWOKitxrixfe7hzqRcHD1rljQzFYSPClars9
+         jii3wEbJSar3E061r20YnyJ2q/oISNmAme6+hqHLg8LXqHb21UWQN8C/n40Cxwn7e9Z2
+         E8c+ehd4e2KD5lbxUxfpqwKzYcvGc7LQ+k8ldGhcoFEycVqGI5wPZ8VQnEjMb1IExwwi
+         MLSLCiMZeCNyeAusewVRp1QRG0X2wN8XQhrE2/NIf4qwqfLPsCCcg3BeZA1omkGFg/pI
+         1Uag==
+X-Forwarded-Encrypted: i=1; AJvYcCUkAKKHv/Sk1sTS/L1+EckHQX0kjyf+HQhMNyc3PPX23LlDwaYzwqPcMKcSARneEWWAEfc=@vger.kernel.org, AJvYcCV5WbEeWhHGFvjnGxEMeCaNBigTkk2AgBJHgfti5ngV7ps3yk8bU+hukahC1Wc2vpeuipUkS9cMEz+oCXbehvuhsa4H@vger.kernel.org, AJvYcCWYWK8nK6QIsqoNTT0zQxJs7OlgoEQ0HEra4aAXwyiOfuIpu7aJH/G/3WTTr9gU/o03SimLoNF9X1bAejIj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBuVA1HonodQE1UPynkEPJItl8yHoYE/p+/o3KgHA2VM7YYI88
+	oofGf2Vz8e77YKOByQbVYDKOswVw2aCSQnC/1XY9FLAU7G5c6FWE+wr/diI6yOAYUE7JoaytCV3
+	b9YputUTy42Xx7uIc+o1pRKHkMkA=
+X-Google-Smtp-Source: AGHT+IGGmW/6/MnDDSXp8paozBcmrsqqmQRDfwgUCq1zX2ea1Ia9vKFqUtc48dIbbLDp6MvD9w2LMyx3qwM9Vn6jZTg=
+X-Received: by 2002:a17:90a:db8e:b0:2d8:e7db:9996 with SMTP id
+ 98e67ed59e1d1-2e2c6333812mr1421771a91.13.1728502646371; Wed, 09 Oct 2024
+ 12:37:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241001225207.2215639-1-andrii@kernel.org> <20241001225207.2215639-4-andrii@kernel.org>
+ <20241003-lachs-handel-4f3a9f31403d@brauner> <20241004-holzweg-wahrgemacht-c1429b882127@brauner>
+ <CAEf4BzY5fy1VVykbSdcLbVhaHRuT6pRNYNgpYteaD79vRM7N5A@mail.gmail.com> <20241009-eisvogel-zugelangt-d211199df267@brauner>
+In-Reply-To: <20241009-eisvogel-zugelangt-d211199df267@brauner>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 9 Oct 2024 12:37:13 -0700
+Message-ID: <CAEf4Bzb_=Qk3GgLfKE+JAhUudYfLMsQypu-33uKRi4q-kmGiqg@mail.gmail.com>
+Subject: Re: [PATCH v2 tip/perf/core 3/5] fs: add back RCU-delayed freeing of
+ FMODE_BACKING file
+To: Christian Brauner <brauner@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
+	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, mingo@kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-- Replace "they" with "you" where "you" is used in the preceding
-  sentence fragment.
-- Use "erasing" rather than "storing `NULL`" when describing multi-index
-  entries. Split this into a separate sentence.
-- Add "call" parentheses on "xa_store" for consistency and
-  linkification.
+On Wed, Oct 9, 2024 at 3:36=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Fri, Oct 04, 2024 at 12:58:00PM GMT, Andrii Nakryiko wrote:
+> > On Fri, Oct 4, 2024 at 1:01=E2=80=AFAM Christian Brauner <brauner@kerne=
+l.org> wrote:
+> > >
+> > > On Thu, Oct 03, 2024 at 11:13:54AM GMT, Christian Brauner wrote:
+> > > > On Tue, Oct 01, 2024 at 03:52:05PM GMT, Andrii Nakryiko wrote:
+> > > > > 6cf41fcfe099 ("backing file: free directly") switched FMODE_BACKI=
+NG
+> > > > > files to direct freeing as back then there were no use cases requ=
+iring
+> > > > > RCU protected access to such files.
+> > > > >
+> > > > > Now, with speculative lockless VMA-to-uprobe lookup logic, we do =
+need to
+> > > > > have a guarantee that struct file memory is not going to be freed=
+ from
+> > > > > under us during speculative check. So add back RCU-delayed freein=
+g
+> > > > > logic.
+> > > > >
+> > > > > We use headless kfree_rcu_mightsleep() variant, as file_free() is=
+ only
+> > > > > called for FMODE_BACKING files in might_sleep() context.
+> > > > >
+> > > > > Suggested-by: Suren Baghdasaryan <surenb@google.com>
+> > > > > Cc: Christian Brauner <brauner@kernel.org>
+> > > > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > > ---
+> > > >
+> > > > Reviewed-by: Christian Brauner <brauner@kernel.org>
+> > >
+> > > Fwiw, I have another patch series for files that I'm testing that wil=
+l
+> > > require me to switch FMODE_BACKING to a SLAB_TYPSAFE_BY_RCU cache. Th=
+at
+> > > shouldn't matter for your use-case though.
+> >
+> > Correct, we assume SLAB_TYPESAFE_BY_RCU semantics for the common case
+> > anyways. But hopefully my change won't cause major merge conflicts
+> > with your patch set.
+>
+> Please drop this patch and pull the following tag which adds
+> SLAB_TYPE_SAFE_BY_RCU protection for FMODE_BACKING files aligning them
+> with regular files lifetime (even though not needed). The branch the tag
+> is based on is stable and won't change anymore:
+>
+> git pull -S git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git tag=
+s/vfs-6.13.for-bpf.file
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- Documentation/core-api/xarray.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-index 77e0ece2b1d6..d79d4e4ceff6 100644
---- a/Documentation/core-api/xarray.rst
-+++ b/Documentation/core-api/xarray.rst
-@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
- to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
- to retrieve the tag of an entry.  Tagged pointers use the same bits that
- are used to distinguish value entries from normal pointers, so you must
--decide whether they want to store value entries or tagged pointers in
--any particular XArray.
-+decide whether use want to store value entries or tagged pointers in any
-+particular XArray.
- 
- The XArray does not support storing IS_ERR() pointers as some
- conflict with value entries or internal entries.
-@@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
- occupy a range of indices.  Once stored to, looking up any index in
- the range will return the same entry as looking up any other index in
- the range.  Storing to any index will store to all of them.  Multi-index
--entries can be explicitly split into smaller entries, or storing ``NULL``
--into any entry will cause the XArray to forget about the range.
-+entries can be explicitly split into smaller entries. Erasing any entry
-+will cause the XArray to forget about the range.
- 
- Normal API
- ==========
-@@ -64,7 +64,7 @@ allocated ones.  A freshly-initialised XArray contains a ``NULL``
- pointer at every index.
- 
- You can then set entries using xa_store() and get entries
--using xa_load().  xa_store will overwrite any entry with the
-+using xa_load().  xa_store() will overwrite any entry with the
- new entry and return the previous entry stored at that index.  You can
- use xa_erase() instead of calling xa_store() with a
- ``NULL`` entry.  There is no difference between an entry that has never
--- 
-2.47.0
-
+Ok, will drop. It will on Peter to pull this tag into tip/perf/core,
+but I'll mention all this in the cover letter (and will pull locally
+for testing, of course). Thanks.
 
