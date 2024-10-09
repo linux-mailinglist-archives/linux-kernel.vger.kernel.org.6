@@ -1,92 +1,90 @@
-Return-Path: <linux-kernel+bounces-357939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E468099782C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:03:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE52199782F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E66C1C2261B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F9A1F22CB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68DF1E2842;
-	Wed,  9 Oct 2024 22:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4524F1E283D;
+	Wed,  9 Oct 2024 22:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WV6vF9/2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="R16IwXGB"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0621A18CC1E;
-	Wed,  9 Oct 2024 22:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E2917BB0C;
+	Wed,  9 Oct 2024 22:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511401; cv=none; b=sPJwT+/gPK+sQT2/ofo+KFRbh2mqBZroJI6RhCfdMDlxLjFxHVn5zC57fYf7B29gJQjNxtSXhfo4XOo6H4efZqmiXXtk2iAVMpjuRoN9luoTfKMOcc2Vl5FOVGkAIq3wi5xFvkjD1uE+TUfbMMKOwKZKz2wTTm8UtUaz2tM7fYM=
+	t=1728511545; cv=none; b=NX79ahUabthsdxiesyva8CIK8FYh4o1l8AKryQ7ECE3G17ZaHIKEfzRdpL+1OFDrI87DKxUMXEcX9AWmHIjiztVsWpsOCAuaVAzg07kf04fobHuzF5gH1G9efUvD/SB63rXp8qiyAXuRCepwpAN81UMI/iqTvfbbFRbNrl+8Lto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728511401; c=relaxed/simple;
-	bh=wHu0vL5OYfmu+L39nIZU7+e1wsKSMJA58f6KwHUZgcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVdmdWkdUm7he+ykE2K4H4G8XxJG7C9CeAK5lCVZO6kvYJ7MOA27R7pepGsqO+QUlDZLU3H6cN5bz5aJQTzQb0CFlY+FrBIlPhzhXLeOcHEt6AKApolMNyDakPR29kU8SuApjpP77jTELPg10x5SIG2Of6GdSOafak9HWVnsHKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WV6vF9/2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D998C4CEC3;
-	Wed,  9 Oct 2024 22:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728511399;
-	bh=wHu0vL5OYfmu+L39nIZU7+e1wsKSMJA58f6KwHUZgcI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WV6vF9/2fDQLRiQPFYPkhYe8w4fpee9+NbNJZy0nVD5UsYX/9qnd+VZN5aZqKkPa9
-	 fMNDVQcholTOjszBa+mA2ZH84jZ798H9vTL7erJBZm/O+W1DepFkMNBGeLz52Kwnpj
-	 fS1Gw3kxcO8cgDd5vwwko4bWQr1sHg3dGR6WvnpCUCqRw8mL5EVRy1LH9vBOnq1Oet
-	 mPuSzCByAW6VY9aRwT/feic4jL3wopgxfwXyYXDtoAAGMvEYKk4RFO09ffMIZG6baH
-	 veTgjlvlCFKSy5SMiVgCqdrmaDnB1h1MFQWxikEn+cZato8SeAGvDVcQWyTxiCMAS8
-	 tz8hPaEzluwmw==
-Date: Wed, 9 Oct 2024 18:03:17 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: Cyril Hrubis <chrubis@suse.cz>,
-	Anders Roxell <anders.roxell@linaro.org>, Jan Kara <jack@suse.cz>,
-	lkft-triage@lists.linaro.org, allen.lkml@gmail.com,
-	stable@vger.kernel.org, shuah@kernel.org, f.fainelli@gmail.com,
-	jonathanh@nvidia.com, patches@kernelci.org, linux@roeck-us.net,
-	srw@sladewatkins.net, broonie@kernel.org,
-	LTP List <ltp@lists.linux.it>,
-	Christian Brauner <brauner@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, rwarsow@gmx.de, pavel@denx.de,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, conor@kernel.org,
-	patches@lists.linux.dev, akpm@linux-foundation.org,
-	torvalds@linux-foundation.org, sudipm.mukherjee@gmail.com
-Subject: Re: [LTP] [PATCH 6.10 000/482] 6.10.14-rc1 review
-Message-ID: <Zwb9pbX7MnPqGPoM@sashalap>
-References: <20241008115648.280954295@linuxfoundation.org>
- <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
- <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
- <ZwZuuz2jTW5evZ6v@yuki.lan>
- <CAASaF6wdvXAZyPNn-H4F8qq6MpHmOOm9R+K+ir9T_sOG-nXpoA@mail.gmail.com>
+	s=arc-20240116; t=1728511545; c=relaxed/simple;
+	bh=wxF79zloP0555edTYf3CDSmVOmYgTFrK1mTExF/iD/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pTRjk11IdvEFUWRTESj4dGTogApqDJGV1zN6h1y9Rb9xquD+7wsyh5ZSUCM9vffxElHJKF6HVzsA8oe89NkEm0kU/1WhUSpy/kbzlGl1rKQWRH5cDuI9DJwpCpDcpsQGJEQajbTtbu6s9qHkWRF43hxicjZA+TjHBFZijt4vBcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=R16IwXGB; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4ABCF42BFE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728511543; bh=GHDVqJYVncsyLXfe8qK6kBUI51p/2a3Wwqa6+2vFPRc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R16IwXGBK5EY8sN05mtSLHMC4ghhhkIjPFbQy9XAOCm/obkELNzX5S6NuVi1lNr0a
+	 QLCb9gOr2ukJanfsEw1e9vCXP8Z/m59B+H6m6iT84HnDkiZu9wT5IukQRvl499KNDR
+	 zafwJutTC5Ke4hbsKRJSpyROgGjv13g0wup1N2U52WgC5IFg32mQIDZ5vFCq/mfaLN
+	 Q89K6+ynVHXkL6kvH1MusABIEJxCqDNCKQDuRMOc6LoECqQmlz5lYwdMKl0L4nNQRI
+	 GvDQitEnwfIYAWOcoJTpxQvLHbI5f82Xogfn/QecGEQv9fGYFIR961kzCw1fXvFYn3
+	 ee6tjQgu0WWIg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 4ABCF42BFE;
+	Wed,  9 Oct 2024 22:05:43 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org,
+ christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+In-Reply-To: <20241009.210353-murky.mole.elite.putt-JnYGYHfGrAtK@cyphar.com>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <87msjd9j7n.fsf@trenco.lwn.net>
+ <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
+ <20241009.210353-murky.mole.elite.putt-JnYGYHfGrAtK@cyphar.com>
+Date: Wed, 09 Oct 2024 16:05:42 -0600
+Message-ID: <87y12x7wzt.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAASaF6wdvXAZyPNn-H4F8qq6MpHmOOm9R+K+ir9T_sOG-nXpoA@mail.gmail.com>
+Content-Type: text/plain
 
-On Wed, Oct 09, 2024 at 02:03:31PM +0200, Jan Stancek wrote:
->On Wed, Oct 9, 2024 at 1:56 PM Cyril Hrubis <chrubis@suse.cz> wrote:
->>
->> Hi!
->> Work in progress, see:
->> https://lists.linux.it/pipermail/ltp/2024-October/040433.html
+Aleksa Sarai <cyphar@cyphar.com> writes:
+
+>> In fairness, this is how statx works and statx does this to not require
+>> syscall retries to figure out what flags the current kernel supports and
+>> instead defers that to stx_mask.
+>> 
+>> However, I think verifying the value is slightly less fragile -- as long
+>> as we get a cheap way for userspace to check what flags are supported
+>> (such as CHECK_FIELDS[1]). It would kind of suck if userspace would have
+>> to do 50 syscalls to figure out what request_mask values are valid.
 >
->and https://lore.kernel.org/linux-ext4/20241004221556.19222-1-jack@suse.cz/
+> Unfortunately, we probably need to find a different way to do
+> CHECK_FIELDS for extensible-struct ioctls because CHECK_FIELDS uses the
+> top bit in a u64 but we can't set a size that large with ioctl
+> numbers...
 
-I'll drop the offending commit, we can grab it along with the fix once
-it lands in Linus's tree.
+Add a separate PIDFD_GET_VALID_REQUEST_MASK ioctl()?
 
--- 
-Thanks,
-Sasha
+But then I'm bad at designing interfaces...
+
+jon
 
