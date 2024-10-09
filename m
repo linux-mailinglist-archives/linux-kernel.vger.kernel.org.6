@@ -1,199 +1,102 @@
-Return-Path: <linux-kernel+bounces-356373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63537996023
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E04996026
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB8D286DC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781971C22B73
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDBC17798F;
-	Wed,  9 Oct 2024 06:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F6317837F;
+	Wed,  9 Oct 2024 06:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2ky4dlH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Ft/CDDTs"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCC81547F0;
-	Wed,  9 Oct 2024 06:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97471547F0;
+	Wed,  9 Oct 2024 06:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728456633; cv=none; b=CRKGQz4ARVJItLTLBu3klOt4f1oYcNE7PMqqweaAj7veYEc9KWU3+caKRPTrZQtaLpNcvipEMTGVrOhxHj0Q6xaF5tEUdhYlXi8b2LKEN8YXqiwJt41gwidVnJC9KhMVqtfnH2PeaeGrHhfgWHlHPjKETcJODtpzL1SxCo+F70Y=
+	t=1728456690; cv=none; b=AIqI6AzDfaGlanrJU+tJo4E6BtHtkPD5lRghgUEYhD9wwD29rZAQSW7Uvm5ppUm3hI3zbabbLr7oeZPO9wm3Rt/aSTGmMrb4AfSvaO+q6UnJifeQE3jwT2yEv/LiF2CilW9RkU1NosvU5/s4twsubvn4g24QKnFfha8RRa+LvVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728456633; c=relaxed/simple;
-	bh=7dRLVqirDkMhI7Do48VuLPt5cdTI++FZolVltJyhwlY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tPYUo+h0bmyJFjlWnmjC2NgVYRP2sbI079kOWzLVJKhnXeW6IejOJD40BrJMdt4uryweAG9p8dBq7SZxMb+Gci4gabPJubhq4X6BQkoGaHiIS7p0jPdei5kkwYYhOnOm63yA7YnJObHLylpsGfPZq+kwpTn7F7Xhh+1mEaI8bXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2ky4dlH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA23C4CEC5;
-	Wed,  9 Oct 2024 06:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728456633;
-	bh=7dRLVqirDkMhI7Do48VuLPt5cdTI++FZolVltJyhwlY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p2ky4dlHlMIX1zVcZEdEZP5jjP/GioDOAL3idbq+p5lHiTqOGL1VuRAWlqGHYOhSu
-	 m2je1o7yaVNshIXnuqPxIttVeyOaQ7so1dNT0DSMAjlOzwUVuwF0new2J5p8lIl8CI
-	 n+VBCaG0dKi5xcXHlQr5aoDZKDig+PfraDLBpFpcIctQOW98x6IEhjyJ0Vq1zQDr2n
-	 2hrsq+jPkXBeudD5hW6fy+5HcaTDKH4RRTdamIX9nnMAu8XmRpeGDMkRUSyt5+6RiN
-	 +aw//i0K4ykst1PiaDJ6YJG9hqpLvEZn0I0gZXShSJ+ZQr6xiH+pcnL+mtTyMJ/0LH
-	 +Zr1l3cPopAXA==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53991d05416so7975008e87.2;
-        Tue, 08 Oct 2024 23:50:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVoC7Rc0aSz+vUnUCsEN4ZVOYYZuR5XlVLfXUjWApOfnW9LlZccGRVxWC+ist7nvHYnN2P8w6uCb1r/@vger.kernel.org, AJvYcCWmAy2PZrqUU9q63g1jWC1XEFyBjI6LcXAMvI/xTCjJhowi9kvIyzRJENW7JlU0kVCINUsXJCMG0Afz@vger.kernel.org, AJvYcCXixLN4G52AffidiCqOZU9Mso2gFlSQ4i3X6kTo8xMw1b1g/Rhd60ZpI9AcldFmPqFYYflfHrRHbPojvcOJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw1V/b6Jgz99yJKCSVh6rqGA4GLGUIqOdBJb1lOdH4rtAXNnMM
-	1dYbtaTx/BAqOjQZ8XqMxJnqd0n7Tgt7XstFc2VsafRDc+lk2rEl5x2UpqMih+bnTY5UNZmcxCr
-	q/FNkIt2DCUGp4ceMsUv+Xh3RoF8=
-X-Google-Smtp-Source: AGHT+IHDxANZNMM/51ZrtmeyfRxGBOO8vMlyrE3rPE9oBN8O49jRbpNTFIcvObyMtvioEte3wceMAWwLkgx6U81mowk=
-X-Received: by 2002:a05:6512:1091:b0:539:8d9b:b61c with SMTP id
- 2adb3069b0e04-539c4968056mr963410e87.51.1728456631673; Tue, 08 Oct 2024
- 23:50:31 -0700 (PDT)
+	s=arc-20240116; t=1728456690; c=relaxed/simple;
+	bh=8H8d7EbC8TXl/MYFkUlquUEXOOcN90YUDxZa1rW/1wg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qlMWsZVth3WLa8UB1Y9fzJSPRUURTNC5W1tuAsErWDdiT/+o+RKqZcswIMzBApalN7jjZEmXjSjNYjZdgLJHi2ZOfwTau6w6pgJMgADBfJjxEjBIcvem8lywrV2LE5NV0zznYEIIXnZNJbEHGIkevZCecKEOSMEFwaMsJQBWqTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Ft/CDDTs; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=x8E8MzQmckFTlTyyPWZRdTEm/mndjzwaTj5unLsNYJA=;
+	t=1728456689; x=1729666289; b=Ft/CDDTsywF1lK105nmcimBOlZfxF/qnNnTQjB/lkVYzXiE
+	zRCAZVM7++s9t2OzsULCpVWZF7NqoFP8P95eoR1+T8+jDkkb9n3x0irt2TVqsyyCyanL8776vkUpP
+	elAtXSdd4RnRMXTdYHpfFwTEDj99X2AqXx0XlmLEBm9aWLwF2qqVSZASUsXaFRvSO9hZr0oxcKPp5
+	R+63ahS8cIoFSezS7477WsTM6n/pROwrZyHfOfYXG6HK/Cs3sCVOacX6QEaMZFy4w8DVjS85c2icN
+	49QIZ3TNt//csgK7gi2Rcbze9eDNq6hLsjdxSndo9SeG50LjblNFL/0jFYMrAcKQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1syQXb-000000050YG-26jV;
+	Wed, 09 Oct 2024 08:51:23 +0200
+Message-ID: <317aeb02110105be1483d13c204bfb48d4d19c61.camel@sipsolutions.net>
+Subject: Re: linux-next: manual merge of the wireless-next tree with Linus'
+ tree
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Rothwell
+	 <sfr@canb.auug.org.au>
+Cc: Kalle Valo <kvalo@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Tree Davies <tdavies@darkphysics.net>
+Date: Wed, 09 Oct 2024 08:51:22 +0200
+In-Reply-To: <2024100945-engross-appraisal-d1f0@gregkh>
+References: <20241009114455.52db31ad@canb.auug.org.au>
+	 <2024100945-engross-appraisal-d1f0@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009064517.2678456-1-kobak@nvidia.com>
-In-Reply-To: <20241009064517.2678456-1-kobak@nvidia.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 9 Oct 2024 08:50:20 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGrS+z=Kx2uPaZPKbLFeKGEfKDQ61HOvRF7U5=akktS9w@mail.gmail.com>
-Message-ID: <CAMj1kXGrS+z=Kx2uPaZPKbLFeKGEfKDQ61HOvRF7U5=akktS9w@mail.gmail.com>
-Subject: Re: [PATCH V7] acpi/prmt: find block with specific type
-To: KobaK <kobak@nvidia.com>
-Cc: Matt Ochs <mochs@nvidia.com>, James Morse <james.morse@arm.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, 
-	linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-malware-bazaar: not-scanned
 
-On Wed, 9 Oct 2024 at 08:45, KobaK <kobak@nvidia.com> wrote:
->
-> From: kobak <kobak@nvidia.com>
->
-> PRMT needs to find the correct type of block to
-> translate the PA-VA mapping for EFI runtime services.
->
-> The issue arises because the PRMT is finding a block of
-> type EFI_CONVENTIONAL_MEMORY, which is not appropriate for
-> runtime services as described in Section 2.2.2 (Runtime
-> Services) of the UEFI Specification [1]. Since the PRM handler is
-> a type of runtime service, this causes an exception
-> when the PRM handler is called.
->
->     [Firmware Bug]: Unable to handle paging request in EFI runtime service
->     WARNING: CPU: 22 PID: 4330 at drivers/firmware/efi/runtime-wrappers.c:341
->         __efi_queue_work+0x11c/0x170
->     Call trace:
->
-> Find a block with specific type to fix this.
-> PRMT find a block with EFI_MEMORY_RUNTIME for PRM handler and PRM context.
-> If no suitable block is found, a warning message will be prompted
-> but the procedure continues to manage the next PRM handler.
-> However, if the PRM handler is actually called without proper allocation,
-> it would result in a failure during error handling.
->
-> By using the correct memory types for runtime services,
-> ensure that the PRM handler and the context are
-> properly mapped in the virtual address space during runtime,
-> preventing the paging request error.
->
-> The issue is really that only memory that has been remapped for
-> runtime by the firmware can be used by the PRM handler, and so the
-> region needs to have the EFI_MEMORY_RUNTIME attribute.
->
-> [1] https://uefi.org/sites/default/files/resources/UEFI_Spec_2_10_Aug29.pdf
-> Fixes: cefc7ca46235 ("ACPI: PRM: implement OperationRegion handler for the PlatformRtMechanism subtype")
-> Signed-off-by: Koba Ko <kobak@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> Reviewed-by: Zhang Rui <rui.zhang@intel.com>
+On Wed, 2024-10-09 at 08:43 +0200, Greg Kroah-Hartman wrote:
+>=20
+> Johannes, any objection if I just pull in your wireless-next tree into
+> my staging-next branch so that we don't get these issues going forward?
+>=20
+> It's not going to be rebased, right?
+>=20
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+It's not.
 
-This needs a cc:stable too
+However, Stephen also reported a build failure that you don't want to
+pull in, so you can either
 
-> ---
-> V2:
-> 1. format the changelog and add more about error handling.
-> 2. replace goto
-> V3: Warn if parts of handler are missed during va-pa translating.
-> V4: Fix the 0day
-> V5: Fix typo and pr_warn warning
-> V6: use EFI_MOMOERY_RUNTIME to find block and split goto refactor as a single
-> patch
-> V7:
-> 1. refine the codes and commit description as per comments
-> 2. drop goto refacotr
-> ---
->
->  drivers/acpi/prmt.c | 27 ++++++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-> index 1cfaa5957ac4..51f5ae3d4350 100644
-> --- a/drivers/acpi/prmt.c
-> +++ b/drivers/acpi/prmt.c
-> @@ -72,17 +72,21 @@ struct prm_module_info {
->         struct prm_handler_info handlers[] __counted_by(handler_count);
->  };
->
-> -static u64 efi_pa_va_lookup(u64 pa)
-> +static u64 efi_pa_va_lookup(efi_guid_t *guid, u64 pa)
->  {
->         efi_memory_desc_t *md;
->         u64 pa_offset = pa & ~PAGE_MASK;
->         u64 page = pa & PAGE_MASK;
->
->         for_each_efi_memory_desc(md) {
-> -               if (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)
-> +               if ((md->attribute & EFI_MEMORY_RUNTIME) &&
-> +                   (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)) {
->                         return pa_offset + md->virt_addr + page - md->phys_addr;
-> +               }
->         }
->
-> +       pr_warn("Failed to find VA for GUID: %pUL, PA: %p", guid, pa);
-> +
->         return 0;
->  }
->
-> @@ -148,9 +152,15 @@ acpi_parse_prmt(union acpi_subtable_headers *header, const unsigned long end)
->                 th = &tm->handlers[cur_handler];
->
->                 guid_copy(&th->guid, (guid_t *)handler_info->handler_guid);
-> -               th->handler_addr = (void *)efi_pa_va_lookup(handler_info->handler_address);
-> -               th->static_data_buffer_addr = efi_pa_va_lookup(handler_info->static_data_buffer_address);
-> -               th->acpi_param_buffer_addr = efi_pa_va_lookup(handler_info->acpi_param_buffer_address);
-> +               th->handler_addr =
-> +                       (void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
-> +
-> +               th->static_data_buffer_addr =
-> +                       efi_pa_va_lookup(&th->guid, handler_info->static_data_buffer_address);
-> +
-> +               th->acpi_param_buffer_addr =
-> +                       efi_pa_va_lookup(&th->guid, handler_info->acpi_param_buffer_address);
-> +
->         } while (++cur_handler < tm->handler_count && (handler_info = get_next_handler(handler_info)));
->
->         return 0;
-> @@ -277,6 +287,13 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
->                 if (!handler || !module)
->                         goto invalid_guid;
->
-> +               if (!handler->handler_addr ||
-> +                   !handler->static_data_buffer_addr ||
-> +                   !handler->acpi_param_buffer_addr) {
-> +                       buffer->prm_status = PRM_HANDLER_ERROR;
-> +                       return AE_OK;
-> +               }
-> +
->                 ACPI_COPY_NAMESEG(context.signature, "PRMC");
->                 context.revision = 0x0;
->                 context.reserved = 0x0;
-> --
-> 2.43.0
->
+ * pull in commit 836265d31631 ("wifi: remove iw_public_data from struct
+   net_device") from before the build failure,
+
+ * pull in commit 4991d2e7ad38 ("staging: don't recommend using
+   lib80211") which is really all you care about (both staging
+   patches I had are included at that point), or
+
+ * give me an hour or so to revert commit aee809aaa2d1 ("wifi: cfg80211:
+   unexport wireless_nlevent_flush()") which caused a build failure.
+
+
+But if the conflict is to Linus's tree, is that even going to help?
+Seems like I should pull in -rc2 and solve this one and the ks7010 one
+that way? Just need to check with net-next?
+
+johannes
 
