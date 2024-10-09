@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-357760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879E3997584
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:21:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9686B997587
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2998E281F79
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:21:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F10DB20E6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A201E1A34;
-	Wed,  9 Oct 2024 19:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF415191F82;
+	Wed,  9 Oct 2024 19:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="hKq5LyrD"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LoX1egWX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CE15CD49;
-	Wed,  9 Oct 2024 19:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091351714A5;
+	Wed,  9 Oct 2024 19:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728501632; cv=none; b=NyZ4E0WzPohsKz2w9t8u+HM6yxItPjN+/AziHMnz/o93OsJA+HL+LgpiBAojRb0/s9gEDSb9fxfRdMOAIQ6yy2rLUjTmWcRXshAcdlsgtCKPmQhLvpC0suwDMMqKSLcHC0+bb+2ifTOX2omk8pvlKQTmrvZg7tG8b4DnKoVg8g4=
+	t=1728501779; cv=none; b=pH4YjeYpHcEOE+rREkhWuev5PgRQBobItbrJGfvy6oE+Qv30c8wBoGyvD+YYMjYoIidlMkolRcLsaCEr3qIGd+OkU3brIgp04D2hivlQV4MT8BVcEWMiTNPxpOWwAm7zMYjVWbzLrPpMQ40uiX3egPRrAYmdTRhwdSX66MjujmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728501632; c=relaxed/simple;
-	bh=vaFkN0y+BNJI4hpWx9vTBvxzUz2+CG3St1LnByGwgBQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sv9uL2l2MeE1EJ1bMUuCRl1xLW5WF7bCC+ANTsXSCnjJoANVyGfieclaAoLp2rldrP7fJ79hPOjeC1uCoW8Y3bzfByN1NiCYM831A8W+YKWVHQOS76CnRNWhOw1LHXy8kO2YXRMBCZ0EK2WIkVIQVccFHmG0eNNqHfUtFmSAgGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=hKq5LyrD; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B673742B27
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728501629; bh=NFviVX6j8uoh4WNDflXHr0jIuDjjpUm7uym8YfejszM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hKq5LyrDtlrqbNzbqYGA0gOoNl8uPiRPMtFw5Ajbk+izIzknVl0BhuHHdtTNbnvve
-	 t1UVx8u5j3B2I536JDmlzFtss1/mJcszQFlrSsO5Rltktd1IQPIKaJ/SlGa+WS5P7y
-	 uxZuCU9MBkH3k5KmgElcu9z0WFiBxNDuItiiOfIqFaOC8DZIjm9CW05nV4j7LtDyXa
-	 pAVq0b2uwt3JcKddIKZLzBoGz/tjaynGzXTxF38/UgrabPOrGzjPNvVE9JdL/YwkaU
-	 yDdm72ub45A1Hbhi+zuq0nZ89O0rK3K/G9dA7XU9eHrQVgrpwQfu8vVUIMIjtVqNdt
-	 FR5aKKQ2a56gA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	s=arc-20240116; t=1728501779; c=relaxed/simple;
+	bh=68MlPt2FmdqlZvjTx3dO1Nr6d8Bi+A3lDI3oCIC23ZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YeLyGLl36uykW9kYfu5BSyIlrz0lUrDfWbrbGkNo3mPlDgjKFIh0tKV/g+wsYQbjJ8TbXzbhm5vQUEv4ZGz11uB+Ije58U4UhvgNTXhWca+seMiHcABeSILwn41+q5kyq2KsFe3pTiywMxRa4XKV7mwMMhoHNJbWn4xdt6VRpZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LoX1egWX; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AF02140E021E;
+	Wed,  9 Oct 2024 19:22:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Qfk0Fl5xrSLP; Wed,  9 Oct 2024 19:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1728501768; bh=8xGJ1I642Bej1YYAfHVN3HEC/SQoBeK/jSb2L/ehR94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LoX1egWX/cKLa3MvCUkvvP0PGzMMdQm4pO5As13C/5RwJtARIeqSZ3z+QQziUoPrO
+	 OXBbLAWFf9R+gvefw0N9mNtViF6QXneQD8/NSoT/gqPactVtCdk+S1lnL7hvU2tIcr
+	 H2GZQQODp0TkvAna7eNDdDy44+nu68sTIX5KZZa90KnPgqS1NcrD4oIN+BRecZEJPc
+	 OSyLtDlgtiWcX+75vhRdry73iZk6J62mkb/XhsEYHdcohQqRdFAcUhtu7tHP6CcKzB
+	 ZRiPHgW89HEroEP28MHy8ZzBmWxlRBO9xp+Mh6t6esAzEevo7hjyRpJlBoLszCxx2g
+	 gxjnrVD5MQ58MHhNk1BR9VLXiXot+4+lJEC7BLX9qj2A+aUZPw22OX6861ZOfzdimp
+	 F8rafzJH0XzSE3snfsGYLk6b4j+VhPYoKtm+sBjO4+zZ6b2UwmD/otceNtwbHKUr2Y
+	 nLLYYQZUqDuyAuG8+48CsaD3NgoVtYLUFEoVsUJZctvaUZBtObQsoLy1ig2+oANa4d
+	 9Bnyfb11n6mJ90LMFbMjOfBD69PMNHIT4bGtfO17zQY/wjaEWJ3F7hTlOqbPrdLP4V
+	 6vHwggHmlsTpsjYdh0Y/HZaIBbn0n/UXSjtYqv4O8YwD85Dpqo7msKsae6lX2pkDLw
+	 tO+xkqF4Ck9Yxu5Tb8wv0U+c=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B673742B27;
-	Wed,  9 Oct 2024 19:20:29 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org
-Cc: christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-In-Reply-To: <20241008121930.869054-1-luca.boccassi@gmail.com>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
-Date: Wed, 09 Oct 2024 13:20:28 -0600
-Message-ID: <87msjd9j7n.fsf@trenco.lwn.net>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1EBDA40E0163;
+	Wed,  9 Oct 2024 19:22:24 +0000 (UTC)
+Date: Wed, 9 Oct 2024 21:22:17 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Priyanka Singh <priyanka.singh@nxp.com>,
+	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+	Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/6] EDAC: fsl-ddr, add imx9 support
+Message-ID: <20241009192217.GPZwbX6V_PL26Hq6-6@fat_crate.local>
+References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
+ <ZvsNJrxF6TpUC6ws@lizhi-Precision-Tower-5810>
+ <20241002090834.GAZv0Nkp5YKcy86UmZ@fat_crate.local>
+ <ZwalsAJdaHjtD1/E@lizhi-Precision-Tower-5810>
+ <20241009162038.GNZwatVpTr9rOEyfQs@fat_crate.local>
+ <ZwbL7iM2SV5cMb3d@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZwbL7iM2SV5cMb3d@lizhi-Precision-Tower-5810>
 
-luca.boccassi@gmail.com writes:
+On Wed, Oct 09, 2024 at 02:31:10PM -0400, Frank Li wrote:
+> Generally, 7-10 days is reasonable frequent to ask. Contributor also takes
+> their time and efforts to make kernel better. Why they have to endure a
+> questioning
 
-> As discussed at LPC24, add an ioctl with an extensible struct
-> so that more parameters can be added later if needed. Start with
-> returning pid/tgid/ppid and creds unconditionally, and cgroupid
-> optionally.
+You're asking me about your patches! I'm enduring questioning!
 
-I was looking this over, and a couple of questions came to mind...
+> or accusatory tone!
 
-> Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-> ---
+Where is that accusatory tone exactly? Please point me to it.
 
-[...]
+> These patches was already takes more than 3 months. I ask just because
+> avoid to hold for the another 3 months just because some none technical
+> reason.
 
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 80675b6bf884..15cdc7fe4968 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -2,6 +2,7 @@
->  #include <linux/anon_inodes.h>
->  #include <linux/file.h>
->  #include <linux/fs.h>
-> +#include <linux/cgroup.h>
->  #include <linux/magic.h>
->  #include <linux/mount.h>
->  #include <linux/pid.h>
-> @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
->  	return poll_flags;
->  }
->  
-> +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
-> +{
-> +	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-> +	size_t usize = _IOC_SIZE(cmd);
-> +	struct pidfd_info kinfo = {};
-> +	struct user_namespace *user_ns;
-> +	const struct cred *c;
-> +	__u64 request_mask;
-> +
-> +	if (!uinfo)
-> +		return -EINVAL;
-> +	if (usize < sizeof(struct pidfd_info))
-> +		return -EINVAL; /* First version, no smaller struct possible */
-> +
-> +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
-> +		return -EFAULT;
+I'm sorry that you have to hold for three months. I, like all maintainers, am
+swamped with work for the next 10 years. You asking every 7-10 days does not
+really help.
 
-You don't check request_mask for unrecognized flags, so user space will
-not get an error if it puts random gunk there.  That, in turn, can make
-it harder to add new options in the future.
+You're on the TODO list and I will get to your patches when I get to them.
 
-> +	c = get_task_cred(task);
-> +	if (!c)
-> +		return -ESRCH;
+-- 
+Regards/Gruss,
+    Boris.
 
-[...]
-
-> +
-> +	/*
-> +	 * If userspace and the kernel have the same struct size it can just
-> +	 * be copied. If userspace provides an older struct, only the bits that
-> +	 * userspace knows about will be copied. If userspace provides a new
-> +	 * struct, only the bits that the kernel knows about will be copied and
-> +	 * the size value will be set to the size the kernel knows about.
-> +	 */
-> +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
-> +		return -EFAULT;
-
-Which "size value" are you referring to here; I can't see it.
-
-If user space has a bigger struct, should you perhaps zero-fill the part
-the kernel doesn't know about?
-
-> +	return 0;
-> +}
-
-Thanks,
-
-jon
+https://people.kernel.org/tglx/notes-about-netiquette
 
