@@ -1,109 +1,118 @@
-Return-Path: <linux-kernel+bounces-357935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBC8997801
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:59:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD04997805
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4F6282BCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA881F2247E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E976F1E2839;
-	Wed,  9 Oct 2024 21:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE231E32CE;
+	Wed,  9 Oct 2024 21:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XV8Cf9WF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Lfhx58LF"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44184183CD9;
-	Wed,  9 Oct 2024 21:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A9C183CD9;
+	Wed,  9 Oct 2024 21:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511161; cv=none; b=p+1NAP2jq28a+BFgEfXlZil5rfGxU6Li0xmVmXSj0m/xemGkA6X+Tg8qfdscKaYuuQhBnboTHe6tWaLjG4EXvb2uRmVm2sVxU/cwyRfTNmc1cM18pV75PwWcUp1XHSeHjD6+nRxaGzw63MKB1f/4RXSFgXaJYvrTB3A8h2tAGiU=
+	t=1728511167; cv=none; b=QuNY5GHeRD1vxNDYy4NWQUwhSVRuqMcucLRA62NwVninUYVII0Xp1Ysso/YBGks1XxKjuuaNhXdHXnHZzxqxrds8Nn30DjtsuNj9VF5DlLvvl5rWnZ3zsPeB6SWmd+QYYJ6IAYt/6b4hZAG+CTpGIApNPoalzebIuAbzRQdhE7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728511161; c=relaxed/simple;
-	bh=3iPkCZd7Ze3Pw2qjP/KQH1bohgxIQnqUObgKA6pmLok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHBy9Du7eg2I3BSsx95vNdr0loz+3IriX+9QTOalKtWP9nGEB3tqCOigNTm1K7eHH9fKfSYO2VyxUCspvFiAh4DIsoNd2qIpxtd7DWMKqfTD6mW4nQpQm2D7aMp20ERxGBYw8hdhnwc/uKf8hAvE5U27IwSMUqXMT5CWE8x9SYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XV8Cf9WF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A4ECC4CEC3;
-	Wed,  9 Oct 2024 21:59:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728511160;
-	bh=3iPkCZd7Ze3Pw2qjP/KQH1bohgxIQnqUObgKA6pmLok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XV8Cf9WFfgGK9PPlKzZ1Fi8KDOo83q3+7p7S0Aob3nvfJMAW9TT0Yiuh0xSZygwlr
-	 tCl0ooaAWSSEeZsyf2YrKhdRuKiIY7q/TmMS4kC3m11W5NQZcpjf85Wln7l3zC1rVL
-	 Adew5ZJU6FC0nKT8eTVneAHLic+v9rEVCSkCuGX1/Yd66yRrmyIr6wUGJAs1ulb1Gu
-	 1EI/nehBL0xrVGAA3ovWpQj+RNsxSt8YE8K+41jIXs1J484ArDDheTiKJ0HjjS8qrM
-	 KDaNeqPVQ233IXqbJqohPukfLardPgJXfkJjmnXDngObVNg7WeiDw80FcCVKO66HQz
-	 oN/74X5nK/law==
-Date: Wed, 9 Oct 2024 17:59:19 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
-Message-ID: <Zwb8t7ngmnVYV9_m@sashalap>
-References: <20241008115648.280954295@linuxfoundation.org>
- <50b64beb-ba52-4238-a916-33f825c751d9@rnnvmail201.nvidia.com>
+	s=arc-20240116; t=1728511167; c=relaxed/simple;
+	bh=E5AWC27aG0o5CisvhFleFhR3/dF6OzCogmbvKgH3AVc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I+Jms2dn8cgd8gyOV6TflIUNTQxjHEZSy8sBhXtMzpEamMi/C4kwu/kVDA6AhTURHyk5nymAQzdaMZW4aOId9Zrp1RxJNsGFTtO725wnpGmwWS+r0RijrhAKu07yJzFpBjQZi/13o9/1VYcy3VmNPPzKMlfLuEw5Ht++PJXAFP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Lfhx58LF; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 539E742BFE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728511164; bh=XXDMsRlCKxTG6eBTaXeYupkf28S4+lkWp0XdWJLcz3o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Lfhx58LFy3EJoF0gVVY5dCY472M426TbheH4EW/a12vVWIo9v00rnP8u1EzkCbI3d
+	 ZWRA20ONrtHUZIkYfhHvHp/o519eJkv160jA9twbuVXUhd0uRInjE2hbCoYjUu6Fc+
+	 ZuhUs7oFAeLMCZeuQR/LL7G5xytPXavxXHmZTFpoyVnxFtga17LzM49mDsMgCZyLr2
+	 5YnGjYSaHlSuRwNCbVBAeq+Jfm3nXBt5/fxoK7DSR9U80zBe1rH7VcOY5aw53U2RuE
+	 3tl9O3H4huJ2lg7zL3YPmRc0p6P71T22mscANvXduAN2iQUuUKfqrwkKTeqJiFtIp8
+	 2jIrNiOmFqG9A==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 539E742BFE;
+	Wed,  9 Oct 2024 21:59:24 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Tamir Duberstein <tamird@gmail.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Tamir Duberstein <tamird@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] XArray: minor documentation improvements
+In-Reply-To: <20241009205237.48881-2-tamird@gmail.com>
+References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
+ <20241009205237.48881-2-tamird@gmail.com>
+Date: Wed, 09 Oct 2024 15:59:23 -0600
+Message-ID: <875xq19bus.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <50b64beb-ba52-4238-a916-33f825c751d9@rnnvmail201.nvidia.com>
+Content-Type: text/plain
 
-On Wed, Oct 09, 2024 at 07:58:55AM -0700, Jon Hunter wrote:
->On Tue, 08 Oct 2024 14:01:03 +0200, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 6.10.14 release.
->> There are 482 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
->
->All tests passing for Tegra ...
->
->Test results for stable-v6.10:
->    10 builds:	10 pass, 0 fail
->    26 boots:	26 pass, 0 fail
->    116 tests:	116 pass, 0 fail
->
->Linux version:	6.10.14-rc1-gd44129966591
->Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->                tegra20-ventana, tegra210-p2371-2180,
->                tegra210-p3450-0000, tegra30-cardhu-a04
->
->Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Tamir Duberstein <tamird@gmail.com> writes:
 
-Did this one not fail on the same cgroup issue as 6.11? we had the
-offending commit in all trees.
+> - Replace "they" with "you" where "you" is used in the preceding
+>   sentence fragment.
+> - Use "erasing" rather than "storing `NULL`" when describing multi-index
+>   entries. Split this into a separate sentence.
+> - Add "call" parentheses on "xa_store" for consistency and
+>   linkification.
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+> V1 -> V2: s/use/you/ (Darrick J. Wong)
+>
+>  Documentation/core-api/xarray.rst | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
--- 
+So sorry to pick nits, but it's that kind of patch...:)
+
+> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+> index 77e0ece2b1d6..75c83b37e88f 100644
+> --- a/Documentation/core-api/xarray.rst
+> +++ b/Documentation/core-api/xarray.rst
+> @@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+>  to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+>  to retrieve the tag of an entry.  Tagged pointers use the same bits that
+>  are used to distinguish value entries from normal pointers, so you must
+> -decide whether they want to store value entries or tagged pointers in
+> -any particular XArray.
+> +decide whether you want to store value entries or tagged pointers in any
+> +particular XArray.
+>  
+>  The XArray does not support storing IS_ERR() pointers as some
+>  conflict with value entries or internal entries.
+> @@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
+>  occupy a range of indices.  Once stored to, looking up any index in
+>  the range will return the same entry as looking up any other index in
+>  the range.  Storing to any index will store to all of them.  Multi-index
+> -entries can be explicitly split into smaller entries, or storing ``NULL``
+> -into any entry will cause the XArray to forget about the range.
+> +entries can be explicitly split into smaller entries. Erasing any entry
+> +will cause the XArray to forget about the range.
+
+I'm not convinced that this is better.  This is programmer
+documentation, and "storing NULL" says exactly what is going on.
+"Erasing" is, IMO, less clear.
+
+Whatever; if Willy's happy I'll certainly apply this.
+
 Thanks,
-Sasha
+
+jon
 
