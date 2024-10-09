@@ -1,168 +1,103 @@
-Return-Path: <linux-kernel+bounces-357448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C3D997153
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C65199715A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B093128766B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2922C1F29629
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640661E572B;
-	Wed,  9 Oct 2024 16:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DCE1E7C3D;
+	Wed,  9 Oct 2024 16:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iCRCJ/KC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y73bd84L"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DDC1E571E;
-	Wed,  9 Oct 2024 16:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B02B1E1027;
+	Wed,  9 Oct 2024 16:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490665; cv=none; b=iCiaxwydWIRut6JgKVvUlVwLyeDOWyBW1AjkP5PI5SbvOQvcFhETJ6iEhmXRfPl9ASQ7x43ayJwIYV6OahNUZ7ltWyl+h5N+dxQyYSjQyCPV0WT3S7+AJEE2OR88aDRhs5y65CvJC6KBIHF4b8KBi1yfQjV+3xeqesnm8m9jqAc=
+	t=1728490692; cv=none; b=QFAo6nhWyrhjHbT5nHbEkrHSABxAULn/qP5G/94m9PxGGhBtsmkV5l7NmGzgdBnLsJZTwlKua4m5uVJbfWWKmJpe93jDNytjITfpU+YMw+MALeoffAf++J/zbdz1+mpwZJb4KQy7L1eaDDqHybrfsildQv/RG57/fkw0MCHWeWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490665; c=relaxed/simple;
-	bh=6i1GdfoSgkbtdK5sBlHSQIXbHTBjQFwOpESet3AYHC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oZ7xKzGCeCZVN+mxPWrmwqxmqhoRlsy89nyTR7k8ka/pd3SYvWIFttF2KDwkX4mlUW31VkX5O7PyDXIqw5CqfXf8nffrX4kv3Uvl9356AIqQO+SfYFUjir+A9PNfgjRCFa57LfZ/hnZUaQNxtinW1QTIKN68KsWtyHMr+pYq6rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iCRCJ/KC; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728490664; x=1760026664;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6i1GdfoSgkbtdK5sBlHSQIXbHTBjQFwOpESet3AYHC8=;
-  b=iCRCJ/KC70KoLoPpKQWqJpgjjf/eBu1csDtLoe8/NWYkDkL050C9DJXo
-   ibkQDlBu/z1pr/X22qEf6D7sT19rblAG3QGfQEx/RQWE2Nw3o2WzatGLz
-   5tRx8+A2Ra412/GqkbezS7bkz5dGOi5tobT+DAQOQ2MfmH9HhQfvZ3yqA
-   pJBwMKXkYqwoof8G9UIOSSi56QuzZVBL0T6HUXmuuKzUyDGlZ8C6Z0/fS
-   OJKR+cbyrDOO3jaruCdd1gKWkiEnHC9/fxlphLfG5JbwHd74oQlH49Q/H
-   r2sWFDi5mekACl2fyF0nKq5ATZx3gLshEU/3LIgb1/giVWMli7bTXvYLz
-   w==;
-X-CSE-ConnectionGUID: LUfpVzTyRvCz03AtRU5I6g==
-X-CSE-MsgGUID: OFu14R/yT7+hMQr+u1U/qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31699550"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="31699550"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:17:43 -0700
-X-CSE-ConnectionGUID: FLVpvBRRTLuyRpdqjYspEg==
-X-CSE-MsgGUID: D9zazPphTIaf5oKrGaozzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="75975659"
-Received: from yaaguila-mobl.amr.corp.intel.com (HELO [10.125.83.153]) ([10.125.83.153])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:17:42 -0700
-Message-ID: <879b3437-c706-47c4-b1aa-b2def940f569@linux.intel.com>
-Date: Wed, 9 Oct 2024 09:17:40 -0700
+	s=arc-20240116; t=1728490692; c=relaxed/simple;
+	bh=R+bwzfBn+NKlXqBtED1qZHPLvdXju454ckxASZOT07c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=phx8DtmVvyCSQPgHQOqRNc0qahuBKj+KSp+HIG9m4RNI6pQ8Wrq9yBdgpB6IF+o0hRXh5VbCECC58R+r6lJEKd9enY/R40cjR+NP/1IluOo9OEXXsnCe7DRORH8AWhlvh4fqkbppjJnH1vUKueXE169WB0XcYOOsNnOAMnYrWwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y73bd84L; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71df49bbc2fso659036b3a.1;
+        Wed, 09 Oct 2024 09:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728490690; x=1729095490; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R+bwzfBn+NKlXqBtED1qZHPLvdXju454ckxASZOT07c=;
+        b=Y73bd84L7tYYRW/id5i6GGDgdI3zkr+UwlsKW7IXWcmFCKo2TDwzHukdw4n59+/axn
+         8fPIYWKuMSt1lMgY7FESXEEgk4xQA8WylrCGqekkQxj/Of1puXGecn94n5iDs0iBoUsQ
+         Vvs63rCH7LDKue1/Oi8eA3qf8ZvJKD5/comdlADKFxIAdeob9JUTUc3+80/9xmS/Sp03
+         MhDQ6bPQC6wgbkPkvvpoCSqu7dGyZ0PTaB8tA7+tKRA9xNoEDZE5IzutGoV5oZZKbUZR
+         vxzW4rBXxiIxn7gJ+zUVDdQpIN2rXBjtiGO5Mzftw2QVm1pxZPWPXA2wbsRkeArkgzjI
+         c2EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728490690; x=1729095490;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R+bwzfBn+NKlXqBtED1qZHPLvdXju454ckxASZOT07c=;
+        b=vBYIToEuu1A4vTqjuk/mM4v6XlyXCIIB1cpl74vIN2PI1tZiVSIBqF+Ps84X8s50U8
+         g2drlUPQzpIqnSv/ro1xkft38PYYKgbQC4NDX2hqxvr7E1qoCfkzCrf6fZY3s8hgwFi7
+         F+iSVoAvcHehVKjdcoUFu9GgAF7ZQUtMMUiabdeYUJzHBnxHX5ojPg+QknWHwIsEs4uL
+         JXVCQXSRSHzL0VkmBLuYeNWeDGbpcYq0enUYMP1JEoyY5ZReyNCFRQeFfFUKsOD0ni26
+         S+OwRRT6N4x5ZbYqtKOHxmZ8UQQuTsRSnI/zDPcnxrWtNunQyTshayVcjgu0XMq0IeNx
+         4N1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV+KNJSiFD2WyqO5ZDfWTo6g12wCmzqcHRRT+Uac/XmaqDbo1p9dJcfKjd1jP5eKXd83DOwpHP50Z4fmzePhLQ=@vger.kernel.org, AJvYcCXoAfCVUru+lfWvh4p7gt3cDpiGdNjFoX2S07ntrsEhJReSGiL95VK2f5P/yclYuEww6SoQlwTvJ6sC58o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBp92YKmkooaQtzulOFRXPYs455hicQPqogesgfpOmlGxjzsR8
+	57vK/Ze7gaovDKdBq+CSf8lFbdXGXiq1G+/iaMErKSOp0G0QMqYNkhSx8tvLBumH5nmMsskx5aY
+	q7EY8vyDwlFYEvZ64J3bdkHpaFbw=
+X-Google-Smtp-Source: AGHT+IGhMG0D0vHb8wqt6AK3Wy3fqC5nAxT59P0MQjx12rPH1Ylv8DUettlfSVcXfSwdUoOrc8Rqnmv7IptsZo8l0pw=
+X-Received: by 2002:a05:6a00:2d18:b0:717:8b4e:98ad with SMTP id
+ d2e1a72fcca58-71e1dab4274mr2116195b3a.0.1728490690256; Wed, 09 Oct 2024
+ 09:18:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] x86/bugs: Create single parameter for VERW based
- mitigations
-To: "Kaplan, David" <David.Kaplan@amd.com>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "hpa@zytor.com" <hpa@zytor.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>
-References: <20240924223140.1054918-2-daniel.sneddon@linux.intel.com>
- <LV3PR12MB92651F4DF654C886B9F2BCF7947E2@LV3PR12MB9265.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-In-Reply-To: <LV3PR12MB92651F4DF654C886B9F2BCF7947E2@LV3PR12MB9265.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241009151017.26685-1-tamird@gmail.com> <813594ff-b167-4ae2-8105-e2f958ec2cc7@gmail.com>
+ <CANiq72nUT6cFXCGg4jfN07W7UE-8vma=o9a5DQjsRwtNsKUGbQ@mail.gmail.com> <CAJ-ks9=ejys3cQsKRkHkZGLFJ_Po9B4yeWKAuSHyQ3vBRDJXwg@mail.gmail.com>
+In-Reply-To: <CAJ-ks9=ejys3cQsKRkHkZGLFJ_Po9B4yeWKAuSHyQ3vBRDJXwg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 9 Oct 2024 18:17:55 +0200
+Message-ID: <CANiq72=M+rgJGLOBeSYygQzJZa9XnVvaWgi3DKUyT1Z_Rq=1Kw@mail.gmail.com>
+Subject: Re: [PATCH] rust: remove unnecessary #includes
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Dirk Behme <dirk.behme@gmail.com>, rust-for-linux@vger.kernel.org, 
+	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Dirk Behme <dirk.behme@de.bosch.com>, Filipe Xavier <felipe_life@live.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/24 12:24, Kaplan, David wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
->> -----Original Message-----
->> From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
->> Sent: Tuesday, September 24, 2024 5:32 PM
->> To: Jonathan Corbet <corbet@lwn.net>; Thomas Gleixner <tglx@linutronix.de>;
->> Borislav Petkov <bp@alien8.de>; Peter Zijlstra <peterz@infradead.org>; Josh
->> Poimboeuf <jpoimboe@kernel.org>; Ingo Molnar <mingo@redhat.com>; Dave
->> Hansen <dave.hansen@linux.intel.com>; x86@kernel.org
->> Cc: hpa@zytor.com; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> pawan.kumar.gupta@linux.intel.com
->> Subject: [PATCH 1/6] x86/bugs: Create single parameter for VERW based
->> mitigations
->>
->> There are currently 4 mitigations that use VERW to flush different cpu buffers. This
->> can cause confusion when trying to disable all the different VERW mitigations.
->> Simplify enabling/disabling these mitigations by creating a single parameter for
->> controlling them.
-> 
-> Just curious, what is the use case for disabling the different VERW mitigations (but not other mitigations)?  Is that a testing/debugging use case or a production use case?
-> 
->>
->> Future work will focus on combining similar code used in selecting these mitigations
->> to further simplify.
->>
->> Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
->> ---
->>  .../admin-guide/kernel-parameters.txt         | 16 +++++++++
->>  arch/x86/kernel/cpu/bugs.c                    | 34 +++++++++++++++++++
->>  2 files changed, 50 insertions(+)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt
->> b/Documentation/admin-guide/kernel-parameters.txt
->> index 09126bb8cc9f..66b567c4dce5 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -628,6 +628,21 @@
->>       cio_ignore=     [S390]
->>                       See Documentation/arch/s390/common_io.rst for details.
->>
->> +     clear_cpu_buffers=
->> +                     [X86]
->> +                     Controls the mitigations that use
->> +                     X86_FEATURE_CLEAR_CPU_BUF, namely
->> +                     Micro-architectrual Data Sampling (MDS)
->> +                     MMIO Stale Data
->> +                     TSX Async Abort (TAA)
->> +                     Register File Data Sampling (RFDS)
->> +
->> +                     The options are:
->> +                     on              - Enable cpu buffer clearing
->> +                     on,nosmt        - Enable cpu buffer clearing and disable
->> +                                       SMT
->> +                     off             - Disables cpu buffer clearing
->> +
-> 
-> At the x86 uconf at LPC, someone asked me about if we should have command line options that were mitigation-focused rather than bug-focused (like to enable STIBP, IBRS, etc.).  The feedback I had there applies to this series too, which is that I'm concerned this makes things more difficult for users because users are reacting to bugs, they're not experts in mitigations.  A user wants to know how to mitigate CVE XYZ, and the bug-specific command line options support that.  It's an extra step to say that to mitigate MDS, you have to figure out that MDS requires clearing cpu buffers, and therefore you should set this mitigation-specific option.
-> 
-> My general concern with this series is it seems to tie X86_FEATURE_CLEAR_CPU_BUF directly to these 4 bugs.  What would happen if hypothetically there was a new bug that required X86_FEATURE_CLEAR_CPU_BUF and some other mitigation?  With the existing bug-specific options this is easy enough, as the new bug could force this feature and do whatever else it needed.  But with a mitigation-specific option like this one, it would seem to be harder as it might require multiple options to mitigate one bug.  And could create conflicts if you enable that new mitigation but disable clear_cpu_buffers.
-> 
+On Wed, Oct 9, 2024 at 6:12=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
+>
+> Thanks for calling out the grammar fix, I'll state that in v2. Should I s=
+plit it
+> into a separate patch?
 
-Any new bug that is using X86_FEATURE_CLEAR_CPU_BUF will be related to these
-existing bugs regardless. We may need to add another option to this parameter,
-similar to what we do with ",nosmt", but I would hope that would be sufficient.
-With the existing bug-focused parameters we have the same potential for
-conflicts. What if I say "reg_file_data_sampling=off mds=full"? Since mds is on
-rfds will be on even though I requested it off. The intent of this parameter is
-to remove such conflicts.
+Yes, please (ideally as an independent patch, i.e. it does not need to
+be in the same series).
 
-> I do get the point that these specific 4 bugs are all closely related.  Another idea to consider could be a single command line option for these 4 bugs, but is tied to the bugs themselves, not the mitigation.  That might be more future-proof as the scope remains only about these 4 bugs, not the mitigation itself.
-> 
-
-Are you suggesting a name change away from "clear_cpu_buffers" since it is
-clearly about the mitigation rather than the bug? I'm not sure there is a good
-common name for those 4 bugs that isn't about the mitigation, but I'm open to
-any suggestions.
-
-> --David Kaplan
-
+Cheers,
+Miguel
 
