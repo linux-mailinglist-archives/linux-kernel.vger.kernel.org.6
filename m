@@ -1,196 +1,143 @@
-Return-Path: <linux-kernel+bounces-357287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5806996F0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA444996F06
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ED5DB21696
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A147281F91
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D4B1A00C9;
-	Wed,  9 Oct 2024 14:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D471D318A;
+	Wed,  9 Oct 2024 14:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L4VTorjz"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2052.outbound.protection.outlook.com [40.107.94.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRIhHAqw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F331DF99B;
-	Wed,  9 Oct 2024 14:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728485980; cv=fail; b=t+IUPKOFNchOm9jcKoTURMTgwDK98BZ8DaDXxUggJp0e9pGWQLJT+HUguR5Egmy61jxSK+sCu/fUgdVuM+4KikiQXTxodlmCvE2bjeqRntsRjhtNVb5NU07qZCxNC++UEjj2vqJq5n39CA8YAZTYFzRILldb9K1wrq8//1+1EhU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728485980; c=relaxed/simple;
-	bh=DOZlnvGRyabINgCs+c+7C8x2tfTVhfGwtJ9Q6GREv5Y=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=FXX6qnyZo2pbJX+lzF+KwQVjf7y153OylEl9jUKib97XZSQDbrJBHu+owvEQFZJhGgQikKrGg7U1kM0bCDPvZGwLDV1sOm5uktefN3KBEyxrFCwrUg5k9d1ObycO41P1Sr1HnznqN4m6rOLxZdQq+2RUQVpkyf1Di3/irJ7OMLc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=L4VTorjz; arc=fail smtp.client-ip=40.107.94.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FPZ2ON9hkMGhKHwAnM30oJ51YmF9evXeIAO2Vo4gFpZhNPWFmYU8N3lleAgztduKL9srmUYjMwVXuJQL+9ww5QV4VgyZ4GYJ6K5TYR9r/4SpFPqvFu8cQ83gVUoI5RnbGCKpIp75db2ywSemKMxbUkdf5Sd8TUewYeUPFdqn+YoGX+HtFLTEtpmJKg24Xt+AE0kgF/bjTHJT5c682ISNy1HlD5vcf7mwlw38//vRjDA5DYy8YUdkn7hmMek0aroA5gavhcr7p51kRu+V0XQ+JpYi15qyKfO+BBqjF+zGVT5L8MrV9v5ie7uGscFV5e8caxntUaHKtKMh9mftJPsWTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dFS3ecRBgRdztR8Qzdz3EyD3TlH4oa/MKdNoknxFzrQ=;
- b=qK6i3QSA86ezDscoClgzGkFXxzzb3ORwfqr8QExfMJ+iaZBxJq/vjaJYrmv92hQETeP0nprOwwdkBWUrs2o5kjhXKesTACUmOY+Wln0+S8fAlpR0UoLzJhbKVYnSwjUBfjnJjC3cNRrBKiYCvNywtWrF/qJmu8fUHDwu8iTYPexhSv0uz8NA/U+RTFzMAj/EwusINm65e6+HWJnhFyyfuEF4cXmz9VEiYF6CqMp3vUHt3rFAOwWCzherLYanuwUGyPCxsouTdpG2U053HdMJUigHJw5RGw+VShymKv4NI4QG4JCDd+MZmbXGm/bSsRAh6i/+sZyyMLMVXT6ERlI0Sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dFS3ecRBgRdztR8Qzdz3EyD3TlH4oa/MKdNoknxFzrQ=;
- b=L4VTorjzpTzfM8RXTZfP55JtRWnORS8M3Pcyh4kZRPpw697Vr+7/02hRS+BJyhCPHMmVQDmhS2yGvprKgcToE8+Id7oELS9PS2T4PVXZGwawlBKTIefyGB7PS/zZ+ue+paxQdX7JUVSHhU4hNQujrOQzlsQiJjYhNh2LimXbiOcmX7oSjOI4wei/mqXNiqNFQGFXTKUlS/8J0p7yGBpkXvXgiydfam3OpLKuWKdrkv3O1p8rk6JTYGCfqq4iv2onZGlAqi+DUJ+PL9PpL0/OpC+WoBCox1Qx7YqMquaKrz46r9+zjjsR2yqhWVkVoUJSwOsxKk+uLgqoCwzgnaMGQA==
-Received: from BLAPR05CA0010.namprd05.prod.outlook.com (2603:10b6:208:36e::19)
- by PH0PR12MB7010.namprd12.prod.outlook.com (2603:10b6:510:21c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
- 2024 14:59:31 +0000
-Received: from BN3PEPF0000B372.namprd21.prod.outlook.com
- (2603:10b6:208:36e:cafe::b1) by BLAPR05CA0010.outlook.office365.com
- (2603:10b6:208:36e::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.6 via Frontend
- Transport; Wed, 9 Oct 2024 14:59:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN3PEPF0000B372.mail.protection.outlook.com (10.167.243.169) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8069.0 via Frontend Transport; Wed, 9 Oct 2024 14:59:30 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Oct 2024
- 07:59:15 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 9 Oct 2024
- 07:59:14 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Wed, 9 Oct 2024 07:59:14 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.11 000/558] 6.11.3-rc1 review
-In-Reply-To: <20241008115702.214071228@linuxfoundation.org>
-References: <20241008115702.214071228@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66011A2562;
+	Wed,  9 Oct 2024 14:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728485968; cv=none; b=VQpwO2/cBexytBSLWJceQE04VBDw1FOQ+PLj8YU71joZX4evNHWkoFE0Cjm6dt2IbarCT0CWXvBLXALGPKMs+OAkz3g3iAqbDGvJYXfUe4XqrnSBl62G4NNqx39kTNfGPICgrWYNqpEzLrcBmKq06ep68IL3cNXf6/rXlStnYaA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728485968; c=relaxed/simple;
+	bh=S6Oq4Cl8cwV10b0MxDD4bAzcwNwphys1J9zfQElXCyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2C2oEAjdJv86zCyXyy2vAfwViv11VSQAc9BkqjEdzG72YdbIZBQDBRYAjUrygufmfneJpkF1lxHuwMY0xjTt11nBSdLVcvTz4JyCCr4r91QAgAboMkXnvDZCtKbEaDdClnwwCB8rQWka+Vq0YC5c1r3xmmpd3xjqlGslVLEDmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRIhHAqw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA065C4CEC3;
+	Wed,  9 Oct 2024 14:59:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728485968;
+	bh=S6Oq4Cl8cwV10b0MxDD4bAzcwNwphys1J9zfQElXCyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rRIhHAqwqrFRZMBMrJ8ebfmFCYfPNCaYkn0ZEfGd+KSfij9Ja6LDL8c1srGRiIL6n
+	 0gDKIiNZRsLhzYLn9AamZuybBKkZCqSN/OlHzVWrpoICRDSL2yz0yYPl5u1fCVVA6l
+	 RuAuKZKeX61vurd3ZuKUp+iAhH4VWFPnMeVRuPUlFQs9rmTvgcwFsFHoRGd4iXUz4n
+	 P2cwhU/MER6we8GpOc9pPt/SsqJCz+EdwOUgY1x+OEdI2P0bEcsSSIYoQzTe1mLoWW
+	 63uNUdUrh36rDgVc/lgWO7MELr0GKDOH0Rnw55RtsuE/+VLYsfin+NRnxC4Fa9GXk4
+	 vzuUgINcAavNQ==
+Date: Wed, 9 Oct 2024 09:59:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Frank Li <Frank.Li@nxp.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: backlight: convert
+ zii,rave-sp-backlight.txt to yaml
+Message-ID: <20241009145925.GA465237-robh@kernel.org>
+References: <20241008-zii_yaml-v1-0-d06ba7e26225@nxp.com>
+ <20241008-zii_yaml-v1-2-d06ba7e26225@nxp.com>
+ <20241009142758.GB16179@aspen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <526e573e-c352-484b-9b24-1f83abc93f8b@rnnvmail202.nvidia.com>
-Date: Wed, 9 Oct 2024 07:59:14 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B372:EE_|PH0PR12MB7010:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c6cc5b2-013a-4dbf-0137-08dce872faaa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SXJrM0lCb3pWeTB0dlVHb2ZrNDNOZjc4TXkydmM4aXBGejZoUWhYQUdiY0E4?=
- =?utf-8?B?N2FTdDVqM25ORVVyU1o4cmh6NHZkUlljamF4cHBGWjdwSXJNZ2xHUjJ3bEx4?=
- =?utf-8?B?V2tWMUdoYzBrdDYwY3FSN05HS1l3ZFg5MEx4WTdLWWRXUG9KRTY0M0syVUEv?=
- =?utf-8?B?Q2NrMVZKT0lCd0ZQcXQvZjV1Vm4rSisvWWZhWVlIc3lqWFUwNUZpbmZ5eVc0?=
- =?utf-8?B?U3htTXN5R3FMWnloWE83cmN6T2YwUUlBMk1pbkVOemNzR256cXdSRzFjcmJS?=
- =?utf-8?B?TXc5WmU5WCtNMTdGZE1ZR0Vmbi9sNlVmTTRwTGw3Y1FhU0ZUNU5xeFp5bTc4?=
- =?utf-8?B?NkF5ZU92U05wc0t0VzZ4Vms1dXZtdzhza1JoV1pSc2dqcVlhVHc0dkovMHBX?=
- =?utf-8?B?a09GYUx0SjhRLytTbDV3aHMycC9EYVVaSFp0MTZxa2FiY2hMZFYyeE92VmJX?=
- =?utf-8?B?REUwNyt4SFdQQTJPTG1QdFFvaWF5QmFwWSs5VGVEVFBuUzFiVElOZlF4cXNN?=
- =?utf-8?B?MzYydXpVSmsxMDJIR29GdlEyYlJzd253YWUveDkzMWcwVEdmdk5JejZ6RUxN?=
- =?utf-8?B?Y1lndThBUWJHb3ExVEVGVFdIWm56THJEVWxRRm8rOGZVUFJSRjY2czJEWGVq?=
- =?utf-8?B?NGpXcTlkRGdxdW5qbldqdGRxUDdJRGF5UmlFZjMxZzk3aUx2MHBMZC90Mk1n?=
- =?utf-8?B?emFJdXpHRDc1cEJYQ05NS3dSanN1aFl3a2c1Rk9Fak5qcXJxYTVtWXBwcEhG?=
- =?utf-8?B?cHIvRDJvYVIzWlBtNDNFbkZsU1Z4U1VHc21LbDM1ZjZxaDZIUy9MMFNaNEdP?=
- =?utf-8?B?SzhkUlVxeG5vVFlKY0RPbm12VVZyMk9NN2V1WU1ZRWJiS1NuQSs5QjJUWU8z?=
- =?utf-8?B?aEhsaGpITDRubmV6Z3FkOFhRSFJCNklsSktSSVMvRHc4clk2YnFEbGk1TkZl?=
- =?utf-8?B?OGhqYkxreExDMWZOUENwbExlT3F0U3hkSk9SRXdNYmNvOWFGb0JPenRjSW42?=
- =?utf-8?B?ZStXQ3VXL0xUNExnWm9NK0hkbm9VbVYrR2hiQ29OMEUxcitvVkZXMEhDT2pa?=
- =?utf-8?B?c1QybDlxc2tKMVkwVHZyTkNGR1FaOHU3M1RIeG03Q0lKN25GazBicWZpbGxH?=
- =?utf-8?B?eXJPTzlpeGZaMVFUMWYxd3BkcjF4SFF0M3owOS83dTJBK2ZyZWpoZnNQMkcy?=
- =?utf-8?B?SEtTZFNIZUUzZ3Nla3M0bHlFb2U1ZUMyc0MvcnJLVDBmNW90U3NIYkpYN0N5?=
- =?utf-8?B?UlFGSWVxc0NmNGt6RXRFUUdiRW5RN1dTSUhIQ3U5bjA1cWI3Nld2bzc1QjRR?=
- =?utf-8?B?SGVMcVdhMy9EdDBqZGRIU0VHTkZ1Y1MzZDdjNVlHejFUZnVBVVROdHhOc0pH?=
- =?utf-8?B?Q0ZhSlRFdGg0RU1WdmJNQzZYVGZRdStKdG1pSWRDQVFLQkZ0M053N2d2VDQv?=
- =?utf-8?B?cENpcXplMTJYd1o4d1R4RGJuQm5rTEd3OUZ3ekVLYi9BZ0FnWlhYNnNRSk1T?=
- =?utf-8?B?ck9pRHhQNXMwZlFqZUF0cmpiZ0tqUVJyV3JYOXgweE5mMVN1NmVKaXVLeGY5?=
- =?utf-8?B?UUtLK01SWGdyOHcySWRralpBSXZVbWUrYXJXZzBFTmN1NVhKWWsxdlMxNlpW?=
- =?utf-8?B?VDlwSHZTSzU0R3Y4cDRJRnhTK0pZQ3l1c3lpa0M1NXV3UDM3L0Q4Q2l5a0lk?=
- =?utf-8?B?cTYralNEendTdXUyMXErYnMzUGxJSE9NeVZWdmhxU3o5U2Jua0VPTGxsN2tK?=
- =?utf-8?B?TGw3cDB5MG0zMG1ramN5U1JQa3VsMW05SmZ6UGZTSnRwd245cVhtaTJJQTYx?=
- =?utf-8?B?WW9TQXlJeUgySlRvbjdUdz09?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 14:59:30.7097
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c6cc5b2-013a-4dbf-0137-08dce872faaa
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B372.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7010
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009142758.GB16179@aspen.lan>
 
-On Tue, 08 Oct 2024 14:00:30 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.3 release.
-> There are 558 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Oct 09, 2024 at 03:27:58PM +0100, Daniel Thompson wrote:
+> On Tue, Oct 08, 2024 at 06:00:58PM -0400, Frank Li wrote:
+> > Convert device tree binding doc zii,rave-sp-backlight.txt to yaml format.
+> > Additional Changes:
+> > - Remove mfd parent node at example.
+> > - Ref to backlight's common.yaml
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../leds/backlight/zii,rave-sp-backlight.txt       | 23 --------------
+> >  .../leds/backlight/zii,rave-sp-backlight.yaml      | 36 ++++++++++++++++++++++
+> >  2 files changed, 36 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
+> > deleted file mode 100644
+> > index ff5c921386502..0000000000000
+> > --- a/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
+> > +++ /dev/null
+> > @@ -1,23 +0,0 @@
+> > -Zodiac Inflight Innovations RAVE Supervisory Processor Backlight Bindings
+> > -
+> > -RAVE SP backlight device is a "MFD cell" device corresponding to
+> > -backlight functionality of RAVE Supervisory Processor. It is expected
+> > -that its Device Tree node is specified as a child of the node
+> > -corresponding to the parent RAVE SP device (as documented in
+> > -Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
+> > -
+> > -Required properties:
+> > -
+> > -- compatible: Should be "zii,rave-sp-backlight"
+> > -
+> > -Example:
+> > -
+> > -	rave-sp {
+> > -		compatible = "zii,rave-sp-rdu1";
+> > -		current-speed = <38400>;
+> > -
+> > -		backlight {
+> > -			compatible = "zii,rave-sp-backlight";
+> > -		};
+> > -	}
+> > -
+> > diff --git a/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml
+> > new file mode 100644
+> > index 0000000000000..fe9dba8231bf1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml
+> > @@ -0,0 +1,36 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/leds/backlight/zii,rave-sp-backlight.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Zodiac Inflight Innovations RAVE Supervisory Processor Backlight
+> > +
+> > +maintainers:
+> > +  - Lee Jones <lee@kernel.org>
 > 
-> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
-> Anything received after that time might be too late.
+> How did you arrive at this maintainer list?
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.3-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> It's not the usual backlight group and it also doesn't match the
+> maintainer for the mfd bindings.
 
-Failures detected for Tegra ...
+It should be someone that has Zodiac h/w, not backlight maintainers 
+either. If we can't identify anyone then maybe the platform should be 
+removed.
 
-Test results for stable-v6.11:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	115 pass, 1 fail
+Rob
 
-Linux version:	6.11.3-rc1-gdd3578144a91
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Test failures:	tegra194-p2972-0000: boot.py
-
-
-Jon
 
