@@ -1,103 +1,142 @@
-Return-Path: <linux-kernel+bounces-357132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A23996C0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:32:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E209996C14
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6038B27055
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11321F215D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7A1196C7C;
-	Wed,  9 Oct 2024 13:32:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692831917E7
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201F5198A32;
+	Wed,  9 Oct 2024 13:33:09 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C5822EEF;
+	Wed,  9 Oct 2024 13:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480729; cv=none; b=r7VSheUvuvd7DDkc2+vf+UijHiVGmwoF5nYNNY4ecncYBaTngeV6yo5+MZ1Fa6ddt62ZHTZCs8PTSM2bMoqNTdsrhGgxhTrcxmE2/B8P7xf8tNAVAyJIbZbP61HBrwpyPsJShvOZxZj22rBJCERSPlU+QwF8VCrzrVxupvHk/M8=
+	t=1728480788; cv=none; b=hKYKRL+B0YqZ0viJcDpvPjUMCfOTYa5zvNO6yCpXubrsCPW+Opn5BtDmqufkIvlps0lZbfegnXep+/tdtw0+jxjcm4nE7sPDrT2J7AmaWRMSMFE9ZT3TG7hvf1aMEp5CKpdHqWpRpsTC4qPcag9kd/IZHzIP0DDdw5nt+TrdSEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480729; c=relaxed/simple;
-	bh=B/c27+MLFSfQ0SDvLKo7evuSk33cUyxxuoqi7orjZhc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7yNhQzj6VZ0JxWJ/GVTDD5bbZ/niTGgf1/mHEW97/Q1yZBwtMcWyNxV+IlCapOB9vxO5UknvsdLO0IKLlS1Jh29BJ+djH3+AKktQ7YKJd3Giu5YO155sWY1RKQZGk6dBv+TjNNwKWCslO5lHmNNG2k7aX0TEQo9aVxEseqn9qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8165BFEC;
-	Wed,  9 Oct 2024 06:32:37 -0700 (PDT)
-Received: from [10.57.85.216] (unknown [10.57.85.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 761253F58B;
-	Wed,  9 Oct 2024 06:32:06 -0700 (PDT)
-Message-ID: <0ef88192-2523-418f-8ab7-442766a1c444@arm.com>
-Date: Wed, 9 Oct 2024 14:32:05 +0100
+	s=arc-20240116; t=1728480788; c=relaxed/simple;
+	bh=IFohZxECtwwdtC2YdM15WtXADKYoFT74BVnT0QxITvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uBSOa9VKMpGjg4VMM4Aoc5Rfp6ZAWwLX1SGbVKrs2mfaiJc5Qao9+v3Fi4CZXJY3uYxCWDUgezunfMMh75wlb4agJcuaWUlEqZzLq3n/ewPwJ7ThGZZoj25iIU4zA+F+lEKKtOMueadDFSlhkZar8ASAASddGYD0ocXyaPwLxM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syWo7-000000006kL-2RHT;
+	Wed, 09 Oct 2024 13:32:51 +0000
+Date: Wed, 9 Oct 2024 14:32:45 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: leds: add 'active-high'
+ property
+Message-ID: <ZwaF_VNG3TE33rfb@makrotopia.org>
+References: <e91ca84ac836fc40c94c52733f8fc607bcbed64c.1728145095.git.daniel@makrotopia.org>
+ <4qk3lpdx47b27ru47avpiygijtu5kkax44t3o4wb2wv5m5djoz@uziseiklyq3d>
+ <ZwKK4xMlqq3TyDyt@makrotopia.org>
+ <6d3hvesqhslk7jaszo44orbaqabl7go6duzpu4beye44sa6lpn@b3c56bp6x3ce>
+ <ZwPGbUWImzlbEqb-@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] arm64/mm: Drop PXD_TABLE_BIT
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241005123824.1366397-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwPGbUWImzlbEqb-@makrotopia.org>
 
-On 05/10/2024 13:38, Anshuman Khandual wrote:
-> Clearing PXD_TABLE_BIT i.e bit[1] on a page table entry always operates on
-> the assumption that subsequent PXD_VALID i.e bit[0] is set. That's because
-> bits[1:0]="01" makes a block mapping. So it is prudent to treat bits[1:0]
-> as a single register field, which should be updated as block or table etc.
-> Although mk_[pmd|pud]_sect_prot() helpers go to some extent in using these
-> PXD_TYPE_SECT macros, their usage is not really consistent else where.
+On Mon, Oct 07, 2024 at 12:30:53PM +0100, Daniel Golle wrote:
+> On Mon, Oct 07, 2024 at 08:38:27AM +0200, Krzysztof Kozlowski wrote:
+> > On Sun, Oct 06, 2024 at 02:04:35PM +0100, Daniel Golle wrote:
+> > > On Sun, Oct 06, 2024 at 02:44:44PM +0200, Krzysztof Kozlowski wrote:
+> > > > I think this should be just string enum, see marvell,marvell10g.yaml
+> > > 
+> > > I found the vendor-specific 'marvell,polarity' property in
+> > > https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231214201442.660447-5-tobias@waldekranz.com/
+> > > 
+> > > However, I can't find that file in any Linux tree.
+> > > 
+> > > Looking at the suggested patch on patchwork, I got a few questions on
+> > > how to deal with the situation as of today:
+> > > 
+> > > So should the existing support for the 'active-low' and
+> > > 'inactive-high-impedance' properties be replaced by that string enum?
+> > > Or should the string property be interpreted in addition to the
+> > > bools defined in leds/common.yaml?
+> > > 
+> > > Should the string property be defined for each PHY or should we move
+> > > it into a common file?
+> > > 
+> > > If so, should that common file also be leds/common.yaml or should we
+> > > create a new file only for PHY LEDs instead?
+> > > 
+> > > Sorry for being confused, I don't mind going down what ever path to have
+> > > LED polarity configurable properly in DT.
+> > 
+> > Let's ignore my idea.
+> > 
+> > However I still wonder whether your choice for lack of properties is
+> > appropriate. Lack of properties as "bootloader default" means it can
+> > change. Why would anyone prefer to keep bootloader default? The wiring
+> > is fixed - it's never "we design PCB based on bootloader, so with new
+> > bootloader we will change PCB"?
+> > 
+> > And if you meant bootstrapping through some hardwired configuration,
+> > then again it is known and defined.
 > 
-> This series removes these table bit clearing for block mapping creation and
-> eventually completely drops off those table macros.
-
-Given the issue I just noticed in patch 2, I'm not sure if it's going to be
-practical to remove the table bit after all? Sorry I didn't spot this before.
-
+> I agree, and my original intention was to just always apply polarity
+> settings and force people to correctly declare them in DT.
+> However, that would break DT compatibility on devices not making use
+> of those properties and relying only on strapping or bootloader
+> defaults. See also RFC discussed here:
 > 
-> This series applies on v6.12-rc1.
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Anshuman Khandual (5):
->   arm64/mm: Drop pte_mkhuge()
->   arm64/mm: Replace PXD_TABLE_BIT with PXD_TYPE_[MASK|SECT]
->   arm64/ptdump: Test PMD_TYPE_MASK for block mapping
->   KVM: arm64: ptdump: Test PMD_TYPE_MASK for block mapping
->   arm64/mm: Drop PXD_TABLE_BIT
-> 
->  arch/arm64/include/asm/pgtable-hwdef.h |  6 +-----
->  arch/arm64/include/asm/pgtable.h       | 20 ++++++++------------
->  arch/arm64/kvm/ptdump.c                |  4 ++--
->  arch/arm64/mm/hugetlbpage.c            |  2 +-
->  arch/arm64/mm/ptdump.c                 |  8 ++++----
->  5 files changed, 16 insertions(+), 24 deletions(-)
+> https://patchwork.kernel.org/project/netdevbpf/patch/473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org/
 > 
 
+I see that the series was marked as "Not Applicable" in patchwork.
+What is the reason for that? To me it looks like it can be applied on
+today's net-next cleanly:
+
+[daniel@box linux.git]$ git fetch https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
+From https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
+ * branch                      HEAD       -> FETCH_HEAD
+[daniel@box linux.git]$ git checkout FETCH_HEAD
+HEAD is now at 6607c17c6c5e net: mana: Enable debugfs files for MANA device
+[daniel@box linux.git]$ wget -q -O - https://patchwork.kernel.org/series/895863/mbox/ | git am
+Applying: dt-bindings: leds: add 'active-high' property
+Applying: net: phy: support 'active-high' property for PHY LEDs
+Applying: net: phy: aquantia: correctly describe LED polarity override
+Applying: net: phy: mxl-gpy: correctly describe LED polarity
+[daniel@box linux.git]$ 
+
+Or did I misunderstand the meaning of "Not Applicable"? If so, please
+clarify.
 
