@@ -1,149 +1,167 @@
-Return-Path: <linux-kernel+bounces-357373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB42699707F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:07:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112BC997082
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4AE282501
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C1BBB24E96
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101B21E0E16;
-	Wed,  9 Oct 2024 15:43:45 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36E31F4FD9;
+	Wed,  9 Oct 2024 15:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CT6Vcdes"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE28A1E04BC;
-	Wed,  9 Oct 2024 15:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24151E04BC;
+	Wed,  9 Oct 2024 15:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488624; cv=none; b=u/WLD+8V1SSprcpGESOd7TDhT/U+pKxVexDLJCm9tVbJ9wRNkbhXIZAlDHkxxWs8nKktfqoAujwFvXmGyNerVpRojRgpp+VPVAlSjbifSLRxdhwNPzKn1xSwC960m58Xe37iGvhJvoQjjFVxmKBMKwqVXyU+r39sLjeolZLT9c0=
+	t=1728488633; cv=none; b=hHanQFQ6Tkr9ySTyiztGNjzbuxDheiuw1KBWYvg4n2EzW3CLSoxGK8Le1SDKkLj5yCq+QXgiPg/M9WzxTkI7tCzXk2D4pKH7eW02tayDquIp2Hgz+bz1M10KttTxeM7B6bebWqwnw6yny+Gx1RVDvDedtFvbtZO5IEtx/XEukm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488624; c=relaxed/simple;
-	bh=T6nSVu7xD4TeDzmBtg2Zjb6z+8tFfEDQAmFE9kob5+4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G11j21z+Lo2grjI+DhB7NjZeSlGZhdtR0hNmUY31H4NDCyKJceYHVENhPZduEn76g7lO+vm7A9WfRUtaeeyB+RDJeXFhILscHA5x98ZJJIGIs5Q9FVg2V01KFUWaZxREuzilj6VRjs9kSBUkWxS3x7rcQc7xYjDMU6O69BFVyAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XNxVT1Fjfz9v7JS;
-	Wed,  9 Oct 2024 23:23:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 9B4291400CA;
-	Wed,  9 Oct 2024 23:43:30 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwA35saapAZnBzaLAg--.4531S2;
-	Wed, 09 Oct 2024 16:43:30 +0100 (CET)
-Message-ID: <69ed92fde951b20a9b976d48803fe9b5daaa9eea.camel@huaweicloud.com>
-Subject: Re: [PATCH 2/3] ima: Ensure lock is held when setting iint pointer
- in inode security blob
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
- ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Wed, 09 Oct 2024 17:43:20 +0200
-In-Reply-To: <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <20241008165732.2603647-2-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728488633; c=relaxed/simple;
+	bh=ALCn5nX2IVltGWpCr8Pfx5ViOJxPdmVSP4zL12BOUm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IVc2Y24JxDfpT7ZyaW8P1vyS8vfqyRyR7Fol2w96+N1VMV0V+OzUsaZlRqHu+eu+FGdvV5/fS4aJOPUdJ0DG/34vu7TYQk/hl624wRxOZUhFF+Pfsoe/qyODqYoUcpSjGE090HgATKiTcl+VbiQvWo4Y0u2ZZ8wbD/VJZtCPaok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CT6Vcdes; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7aa086b077so826845266b.0;
+        Wed, 09 Oct 2024 08:43:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728488630; x=1729093430; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=anu0cTMQYHGCKMgsjTpzIjdO1NCpBTN/hmAIcwURhZ8=;
+        b=CT6VcdesT2PykXFCNMa9ogBSx/8y3cLa281gfoy2pJT5Rmjs7rhSl3+iyc+4Eisthm
+         gd3uNdbLGdHQC4ZcnLXDPJE6ic5MsWKk6HN7oM5wJZCa1303RsmGFo/U/tkzHyf7LnjF
+         RDX0347MxxCq5lFeifcjPqjylbcCny6TDAF3n2lEndcCd2i8E6fEg+5OgF1GT++BRgtt
+         vyFhTEwXW8aCv+XW0ipwsQtP6yo+GDksnpIG3sKzk5fJ+jITn3jT0z474i8whB/GwXLt
+         jlTFqCyQ4Bm14hgX4lVNh1x0gY0ufytcdiwP3dHuFHD878GbRz2PyNivnfkKOZ0fNn4N
+         m4RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728488630; x=1729093430;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=anu0cTMQYHGCKMgsjTpzIjdO1NCpBTN/hmAIcwURhZ8=;
+        b=L0/MjGHif+eqOPgBj63RjCAfDkNBmYrYSMSfXr2ZdAUuBS4Ng88+MYvFqi6GPMc1pk
+         G+V5sU2ZIFPT7tQh/hkE9Av0+/pteJyAfIywuJCJlauMnY/TEX619T5Cmug78SkS9ADG
+         iYaWvfZ5JXQ4MxtB6vQAgzs69UtEUo/equ1gTyL5d4CHgwIv9rjyArPW1f1prhUzfuGP
+         Va1l8deAzJw1UjgDlwrRxbJM1nclrHX2dgJ9nLDGikvrg1xOr5fu1L2z4IlpCTJS+XbW
+         vi+FOf9r1b6ijRO+GLRPbWdFjODJVoCRrdJv0A0lI1kPZGei3jKpsDl6LE0a2mgu8Vcz
+         452g==
+X-Forwarded-Encrypted: i=1; AJvYcCWifpDtasRwej+r3BP4WKB06HgeSWPbHoReX3PUCkQTQvYa/0Z3FABbiSO0mo5hSD20A+BUTzs/Fq47byw=@vger.kernel.org, AJvYcCX1lSLKls0x7MscdhchH425reB7ejb/Z4n/gyBFTNHwreGl4GMRZTiqZYBjKB1Ec5rsHuiIGQrs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMd39SQ2MJQTmbruB95brpahjlEUrwG34ciYib3JYSNJyeE69s
+	/E227Z4WWnLQ8kFWxylAKVfgtOD+9rqNXnzc1Qz14Zij4uOi7ipM
+X-Google-Smtp-Source: AGHT+IGMEn8xUymg5M9O0Cbi2djrOzdY6QGvxyYG/ZDhLZVh3ETv3LF4VWiQ4wB4z45ZIcnINUh+OQ==
+X-Received: by 2002:a17:906:c14b:b0:a99:89e9:a43d with SMTP id a640c23a62f3a-a999e81aa13mr63814366b.39.1728488629601;
+        Wed, 09 Oct 2024 08:43:49 -0700 (PDT)
+Received: from [192.168.42.207] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e62392csm677484666b.52.2024.10.09.08.43.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 08:43:49 -0700 (PDT)
+Message-ID: <f88adb83-618b-4be3-8357-0aabcf3a2db8@gmail.com>
+Date: Wed, 9 Oct 2024 16:44:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwA35saapAZnBzaLAg--.4531S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy7ZF13XryxWw43AFykuFg_yoW8ZryfpF
-	Wqga4UJ34UXFW7uF43tF9xZFWSg3ySgFW8Gw45Jw1qyFyDZr1jqr48tr17ury5Cr40y3WI
-	vw1ag3Z8uw1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGcF5ngMAgAAs8
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.12-rc1: Lockdep regression bissected
+ (virtio-net/console/scheduler)
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
+ Breno Leitao <leitao@debian.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, gregkh@linuxfoundation.org,
+ mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+ kuba@kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vschneid@redhat.com, axboe@kernel.dk,
+ Heng Qi <hengqi@linux.alibaba.com>
+References: <20241003-savvy-efficient-locust-ae7bbc@leitao>
+ <20241003153231.GV5594@noisy.programming.kicks-ass.net>
+ <20241003-mahogany-quail-of-reading-eeee7e@leitao>
+ <20241004-blazing-rousing-lynx-8c4dc9@leitao>
+ <Zv_IR9LAecB2FKNz@pathway.suse.cz> <8434l6sjwz.fsf@jogness.linutronix.de>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <8434l6sjwz.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-10-09 at 11:41 -0400, Paul Moore wrote:
-> On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> >=20
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > IMA stores a pointer of the ima_iint_cache structure, containing integr=
-ity
-> > metadata, in the inode security blob. However, check and assignment of =
-this
-> > pointer is not atomic, and it might happen that two tasks both see that=
- the
-> > iint pointer is NULL and try to set it, causing a memory leak.
-> >=20
-> > Ensure that the iint check and assignment is guarded, by adding a lockd=
-ep
-> > assertion in ima_inode_get().
-> >=20
-> > Consequently, guard the remaining ima_inode_get() calls, in
-> > ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the lockd=
-ep
-> > warnings.
-> >=20
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/ima/ima_iint.c |  5 +++++
-> >  security/integrity/ima/ima_main.c | 14 ++++++++++++--
-> >  2 files changed, 17 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima=
-/ima_iint.c
-> > index c176fd0faae7..fe676ccec32f 100644
-> > --- a/security/integrity/ima/ima_iint.c
-> > +++ b/security/integrity/ima/ima_iint.c
-> > @@ -87,8 +87,13 @@ static void ima_iint_free(struct ima_iint_cache *iin=
-t)
-> >   */
-> >  struct ima_iint_cache *ima_inode_get(struct inode *inode)
-> >  {
-> > +       struct ima_iint_cache_lock *iint_lock;
-> >         struct ima_iint_cache *iint;
-> >=20
-> > +       iint_lock =3D ima_inode_security(inode->i_security);
-> > +       if (iint_lock)
-> > +               lockdep_assert_held(&iint_lock->mutex);
-> > +
-> >         iint =3D ima_iint_find(inode);
-> >         if (iint)
-> >                 return iint;
->=20
-> Can you avoid the ima_iint_find() call here and just do the following?
->=20
->   /* not sure if you need to check !iint_lock or not? */
->   if (!iint_lock)
->     return NULL;
->   iint =3D iint_lock->iint;
->   if (!iint)
->     return NULL;
+On 10/8/24 16:18, John Ogness wrote:
+> On 2024-10-04, Petr Mladek <pmladek@suse.com> wrote:
+>> On Fri 2024-10-04 02:08:52, Breno Leitao wrote:
+>>> 	 =====================================================
+>>> 	 WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
+>>> 	 6.12.0-rc1-kbuilder-virtme-00033-gd4ac164bde7a #50 Not tainted
+>>> 	 -----------------------------------------------------
+>>> 	 swapper/0/1 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+>>> 	 ff1100010a260518 (_xmit_ETHER#2){+.-.}-{2:2}, at: virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969)
+>>>
+>>> 	and this task is already holding:
+>>> 	 ffffffff86f2b5b8 (target_list_lock){....}-{2:2}, at: write_ext_msg (drivers/net/netconsole.c:?)
+>>> 	 which would create a new lock dependency:
+>>> 	  (target_list_lock){....}-{2:2} -> (_xmit_ETHER#2){+.-.}-{2:2}
+>>>
+>>> 	but this new dependency connects a HARDIRQ-irq-safe lock:
+>>> 	  (console_owner){-...}-{0:0}
+> 
+> ...
+> 
+>>> 	to a HARDIRQ-irq-unsafe lock:
+>>> 	  (_xmit_ETHER#2){+.-.}-{2:2}
+> 
+> ...
+> 
+>>> 	other info that might help us debug this:
+>>>
+>>> 	 Chain exists of:
+>>> 	console_owner --> target_list_lock --> _xmit_ETHER#2
+>>>
+>>> 	  Possible interrupt unsafe locking scenario:
+>>>
+>>> 		CPU0                    CPU1
+>>> 		----                    ----
+>>> 	   lock(_xmit_ETHER#2);
+>>> 					local_irq_disable();
+>>> 					lock(console_owner);
+>>> 					lock(target_list_lock);
+>>> 	   <Interrupt>
+>>> 	     lock(console_owner);
+> 
+> I can trigger this lockdep splat on v6.11 as well.
+> 
+> It only requires a printk() call within any interrupt handler, sometime
+> after the netconsole is initialized and has had at least one run from
+> softirq context.
+> 
+>> My understanding is that the fix is to always take "_xmit_ETHER#2"
+>> lock with interrupts disabled.
+> 
+> That seems to be one possible solution. But maybe there is reasoning why
+> that should not be done. (??) Right now it is clearly a spinlock that is
 
-Yes, I also like it much more.
+It's expensive, and it's a hot path if I understand correctly which
+lock that is. And, IIRC the driver might spend there some time, it's
+always nicer to keep irqs enabled if possible.
 
-Thanks
+> being taken from both interrupt and softirq contexts and does not
+> disable interrupts.
 
-Roberto
+It rather seems the xmit lock is bh protected, but printk is a one
+off case taking it with irqs disabled. I wonder if the printk side
+could help with that, e.g. offloading sending from hardirq to softirq?
 
+> I will check if there is some previous kernel release where this problem
+> does not exist.
 
+-- 
+Pavel Begunkov
 
