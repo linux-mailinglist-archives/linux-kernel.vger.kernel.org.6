@@ -1,229 +1,194 @@
-Return-Path: <linux-kernel+bounces-357326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7CE5996FD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:37:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D85996FE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B821C20848
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:37:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56575B227D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3AD1DD545;
-	Wed,  9 Oct 2024 15:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD2F1E0DAB;
+	Wed,  9 Oct 2024 15:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EUkrJGmY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L0KRP1Rt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44AB19995D;
-	Wed,  9 Oct 2024 15:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170BB1A2630;
+	Wed,  9 Oct 2024 15:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728487642; cv=none; b=Anu+dnTZfup8HgGKWP5IZ302J0lXCqUtZEikEOv7vNJPSJ8r87UNhR1VDkW6SYDTl+X5ju0KSi2fBNmPX3MNC0ts2JuLpeVrRr64R6AsXqrjyzrZKUEIUKp81BmSCLa46V6e3dJDQ3bD8Z8uLBxps4+cODZJsweD4YEOY/08eMo=
+	t=1728487719; cv=none; b=Td6RPBAkAGp2Eh+pDXFgx/AB6mcNYl5Nvk4iMcfeA58ElvO5z1tm/jeMB+1OahvuM234wRmoH9L/r7ZD8Ev+bSxt+/9+saX59HGQ5WeefioDsbwWa5DKRPHrrGNPkdE9n4fh/fRIg8Uyp/vhDfoXvuvqJDeg1jfqZ/eOKmXnc1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728487642; c=relaxed/simple;
-	bh=8CTz5U7/VECzPYtbnlt8j1fISZM1Hcvu91JGyBIjdWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pMys4qtpiVfHBd1rJcA25axRGhXkKaLmrKvpzu7MYGU/NZ3iMwxypgrmWOHReyPjeOl5K6S0+yyo1BpC5U2DBvc7s+qQHigRBYXKtvhs3VV3sF14wTGEmnEj7Y66pIGqe6p7GyqhHvnWIPW2yLtbx3CVf6uyLevY0d14fURKWYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EUkrJGmY; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1728487719; c=relaxed/simple;
+	bh=qor5oKVZ0f0YphXLdqbFq9ooAP3Cp1QdipBUG5qGRbk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ny8IcIF05u5qqOlxFlE942ekRe7pJGacgDQdHyTK6nvqw8IzzfJJYA8vdRd6aVJGAWQEhAssDo3YniLJZOjNhbIeIbB3UVEt8ivJtX9zW9ZlBVqzp8AqmODAnlHf0UXvzDciPRlAP7zsVooCZvXA/v0BFDbgFgXg/kQrbAXcSw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L0KRP1Rt; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728487641; x=1760023641;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8CTz5U7/VECzPYtbnlt8j1fISZM1Hcvu91JGyBIjdWI=;
-  b=EUkrJGmYYEuFHyA7iZquXFftqxSHNa9TcYvw6QAfKoH/X4zI00M44/3e
-   ZRu89oIhESJljeHrR9+H6tXLfEfPXiQnhyGQzdqhrRyULwDX9xrjkO30e
-   IwOKCMnggEFPIGsPCZc0/zbKGIVIWTaD9Yn2PEv6PhuMoJWH9eBZeIMJG
-   Sa1cth5gGDfrrQGA2msMkWilhWu2B2j2myJ1+KkVJi0X7oZADfy/z8JSu
-   QcdQ8l81/WgMJMAL81mrL5gcVlyW36oCqiymtGSskYaugcNtk+1OAnSbZ
-   WDLFi/3I3FGJkLttRISJyztp4+vycwjOIk/xyuet7EBlMa2fRzdD2I3HT
-   Q==;
-X-CSE-ConnectionGUID: JL9L0mZKQgKi5n//vIoEyQ==
-X-CSE-MsgGUID: rJQLJvg7QFCHHPUSj+zuGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39157222"
+  t=1728487717; x=1760023717;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qor5oKVZ0f0YphXLdqbFq9ooAP3Cp1QdipBUG5qGRbk=;
+  b=L0KRP1Rt0a/tdKuMmnmTNaGOLwOjEiEVxnyT74sfWQ6PrY3q/OsY1rOE
+   tTvrepaRuPMAJ8wHrW7pWHHUKL+MeO300PIIPI9fVQ6haz8o0xNIfMbio
+   pw/Es1NCsNDnIjI8OOt/sgzjjoBpNFMC4rtShKHSP//n21f87Zm6TaV1B
+   Me2Tlf0Go2w9gvz6W4hM0/NZmNBZ8d2AatEv4pkMVrekJIGP/QI2YPc8s
+   LhblXMCaE2wxjTnNwmUyioiww1XCxbFHMQihFuv5owveHDAy8ZNK0vj24
+   /qgROlxihxLids1AgdfklmxoB8IrhrhuZmy6/LeCuA9WjrgnAZqR11H9G
+   w==;
+X-CSE-ConnectionGUID: jYQ8kHbPQPaMKBVsXlsrWQ==
+X-CSE-MsgGUID: U0UQ+movS6yFdngpvZZVEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27675670"
 X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="39157222"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:27:20 -0700
-X-CSE-ConnectionGUID: 19tQyeMvTYWj9gFAtLE0Tg==
-X-CSE-MsgGUID: t5dq7ntfToqNG7PqPiSmhA==
+   d="scan'208";a="27675670"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:28:36 -0700
+X-CSE-ConnectionGUID: TJjpBHFITlyCTnekg6tM7A==
+X-CSE-MsgGUID: rcZAiaprQk2fbrUSKDhElA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="80272195"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:27:19 -0700
-Received: from [10.212.60.176] (kliang2-mobl1.ccr.corp.intel.com [10.212.60.176])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 0ED7220B5782;
-	Wed,  9 Oct 2024 08:27:17 -0700 (PDT)
-Message-ID: <ba80cbe4-877a-4b5f-a5d6-de16fc1d2d4d@linux.intel.com>
-Date: Wed, 9 Oct 2024 11:27:16 -0400
+   d="scan'208";a="81305733"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by orviesa004.jf.intel.com with ESMTP; 09 Oct 2024 08:28:32 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 00/18] idpf: XDP chapter III: core XDP changes (+libeth_xdp)
+Date: Wed,  9 Oct 2024 17:27:38 +0200
+Message-ID: <20241009152756.3113697-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf callchain: Remove unused callchain_branch_counts
-To: Namhyung Kim <namhyung@kernel.org>, linux@treblig.org
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andi Kleen <ak@linux.intel.com>, Thomas Falcon <thomas.falcon@intel.com>
-References: <20241006012204.373803-1-linux@treblig.org>
- <ZwYVCTsf8p3v22HQ@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZwYVCTsf8p3v22HQ@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+XDP for idpf is currently 5 chapters:
+* convert Rx to libeth;
+* convert Tx and stats to libeth;
+* generic XDP and XSk code changes (this);
+* actual XDP for idpf via libeth_xdp;
+* XSk for idpf (^).
 
+Part III does the following:
+* does some cleanups with marking read-only bpf_prog and xdp_buff
+  arguments const for some generic functions;
+* allows attaching already registered XDP memory model to Rxq info;
+* allows mixing pages from several Page Pools within one XDP frame;
+* optimizes &xdp_frame structure and removes no-more-used field;
+* adds generic functions to build skbs from xdp_buffs (regular and
+  XSk) and attach frags to xdp_buffs (regular and XSk);
+* adds helper to optimize XSk xmit in drivers;
+* extends libeth Rx to support XDP requirements (headroom etc.) on Rx;
+* adds libeth_xdp -- libeth module with common XDP and XSk routines.
 
-On 2024-10-09 1:30 a.m., Namhyung Kim wrote:
-> On Sun, Oct 06, 2024 at 02:22:04AM +0100, linux@treblig.org wrote:
->> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->>
->> callchain_branch_counts() was added in 2016 by commit
->> 3dd029ef9401 ("perf report: Calculate and return the branch flag counting")
->> but unused.
+They are implemented mostly as inlines with inline callback arguments.
+They will be then uninlined in the drivers with sane function sizes,
+but without any indirect calls.
+All those inlines and macros really removes tons of driver code, which
+is mostly the same across the drivers minus HW-specific part. You just
+basically need functions which read Rx descriptors and fill Tx
+descriptors, call a couple macros and that's it. The rest is written
+once in libeth_xdp.
+All exception and cold code are external. Error handling etc, anything
+that don't happen at line rates, are external. Only the hottest things
+are inlined ensuring driver code doesn't bloat for no gain and that
+cold code won't push hot code into more cachelines than wanted.
 
-It seems the original patchset was not well organized. This function is
-actually used by the last patch of the series.
-https://lore.kernel.org/lkml/1477876794-30749-7-git-send-email-yao.jin@linux.intel.com/
+Note on diffstat: don't be scared, almost 1500 lines are documentation
+explaining everything in details. The actual new code is around 2500.
 
-But for some reason, the last patch was not merged. I think Andi gave
-the Acked-by for the whole series. It might be just accidentally missed.
+Alexander Lobakin (17):
+  jump_label: export static_key_slow_{inc,dec}_cpuslocked()
+  skbuff: allow 2-4-argument skb_frag_dma_map()
+  unroll: add generic loop unroll helpers
+  bpf, xdp: constify some bpf_prog * function arguments
+  xdp, xsk: constify read-only arguments of some static inline helpers
+  xdp: allow attaching already registered memory model to xdp_rxq_info
+  page_pool: make page_pool_put_page_bulk() actually handle array of
+    pages
+  page_pool: allow mixing PPs within one bulk
+  xdp: get rid of xdp_frame::mem.id
+  xdp: add generic xdp_buff_add_frag()
+  xdp: add generic xdp_build_skb_from_buff()
+  xsk: allow attaching XSk pool via xdp_rxq_info_reg_mem_model()
+  xsk: make xsk_buff_add_frag really add a frag via
+    __xdp_buff_add_frag()
+  xsk: add generic XSk &xdp_buff -> skb conversion
+  xsk: add helper to get &xdp_desc's DMA and meta pointer in one go
+  libeth: support native XDP and register memory model
+  libeth: add a couple of XDP helpers (libeth_xdp)
 
-I think the missed feature is still useful.
-We will redo the test and re-post it.
+Toke Høiland-Jørgensen (1):
+  net: Register system page pool as an XDP memory model
 
-Thanks,
-Kan
+ drivers/net/ethernet/intel/libeth/Kconfig     |    6 +
+ drivers/net/ethernet/intel/libeth/Makefile    |    6 +
+ include/net/libeth/types.h                    |  102 +-
+ include/net/page_pool/types.h                 |    7 +-
+ drivers/net/ethernet/intel/libeth/priv.h      |   37 +
+ include/linux/bpf.h                           |   12 +-
+ include/linux/filter.h                        |    9 +-
+ include/linux/netdevice.h                     |    7 +-
+ include/linux/skbuff.h                        |   49 +-
+ include/linux/unroll.h                        |   43 +
+ include/net/libeth/rx.h                       |    6 +-
+ include/net/libeth/tx.h                       |   34 +-
+ include/net/libeth/xdp.h                      | 1864 +++++++++++++++++
+ include/net/libeth/xsk.h                      |  684 ++++++
+ include/net/xdp.h                             |  185 +-
+ include/net/xdp_sock_drv.h                    |   52 +-
+ include/net/xsk_buff_pool.h                   |   10 +-
+ .../net/ethernet/freescale/dpaa/dpaa_eth.c    |    2 +-
+ drivers/net/ethernet/intel/i40e/i40e_xsk.c    |   30 +-
+ drivers/net/ethernet/intel/ice/ice_xsk.c      |   32 +-
+ drivers/net/ethernet/intel/libeth/rx.c        |   22 +-
+ drivers/net/ethernet/intel/libeth/tx.c        |   39 +
+ drivers/net/ethernet/intel/libeth/xdp.c       |  444 ++++
+ drivers/net/ethernet/intel/libeth/xsk.c       |  264 +++
+ drivers/net/veth.c                            |    4 +-
+ kernel/bpf/cpumap.c                           |    2 +-
+ kernel/bpf/devmap.c                           |    8 +-
+ kernel/jump_label.c                           |    2 +
+ net/bpf/test_run.c                            |    2 +-
+ net/core/dev.c                                |   20 +-
+ net/core/filter.c                             |   41 +-
+ net/core/page_pool.c                          |   50 +-
+ net/core/skbuff.c                             |    2 +-
+ net/core/xdp.c                                |  311 ++-
+ net/xdp/xsk_buff_pool.c                       |   40 +
+ 35 files changed, 4215 insertions(+), 213 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/libeth/priv.h
+ create mode 100644 include/net/libeth/xdp.h
+ create mode 100644 include/net/libeth/xsk.h
+ create mode 100644 drivers/net/ethernet/intel/libeth/tx.c
+ create mode 100644 drivers/net/ethernet/intel/libeth/xdp.c
+ create mode 100644 drivers/net/ethernet/intel/libeth/xsk.c
 
->>
->> Remove it and it's helpers.
-> 
-> Kan, are you ok with this?
-> 
-> Thanks,
-> Namhyung
-> 
->>
->> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
->> ---
->>  tools/perf/util/callchain.c | 71 -------------------------------------
->>  tools/perf/util/callchain.h |  4 ---
->>  2 files changed, 75 deletions(-)
->>
->> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
->> index 0c7564747a14..11435b72afbe 100644
->> --- a/tools/perf/util/callchain.c
->> +++ b/tools/perf/util/callchain.c
->> @@ -1266,77 +1266,6 @@ int callchain_node__fprintf_value(struct callchain_node *node,
->>  	return 0;
->>  }
->>  
->> -static void callchain_counts_value(struct callchain_node *node,
->> -				   u64 *branch_count, u64 *predicted_count,
->> -				   u64 *abort_count, u64 *cycles_count)
->> -{
->> -	struct callchain_list *clist;
->> -
->> -	list_for_each_entry(clist, &node->val, list) {
->> -		if (branch_count)
->> -			*branch_count += clist->branch_count;
->> -
->> -		if (predicted_count)
->> -			*predicted_count += clist->predicted_count;
->> -
->> -		if (abort_count)
->> -			*abort_count += clist->abort_count;
->> -
->> -		if (cycles_count)
->> -			*cycles_count += clist->cycles_count;
->> -	}
->> -}
->> -
->> -static int callchain_node_branch_counts_cumul(struct callchain_node *node,
->> -					      u64 *branch_count,
->> -					      u64 *predicted_count,
->> -					      u64 *abort_count,
->> -					      u64 *cycles_count)
->> -{
->> -	struct callchain_node *child;
->> -	struct rb_node *n;
->> -
->> -	n = rb_first(&node->rb_root_in);
->> -	while (n) {
->> -		child = rb_entry(n, struct callchain_node, rb_node_in);
->> -		n = rb_next(n);
->> -
->> -		callchain_node_branch_counts_cumul(child, branch_count,
->> -						   predicted_count,
->> -						   abort_count,
->> -						   cycles_count);
->> -
->> -		callchain_counts_value(child, branch_count,
->> -				       predicted_count, abort_count,
->> -				       cycles_count);
->> -	}
->> -
->> -	return 0;
->> -}
->> -
->> -int callchain_branch_counts(struct callchain_root *root,
->> -			    u64 *branch_count, u64 *predicted_count,
->> -			    u64 *abort_count, u64 *cycles_count)
->> -{
->> -	if (branch_count)
->> -		*branch_count = 0;
->> -
->> -	if (predicted_count)
->> -		*predicted_count = 0;
->> -
->> -	if (abort_count)
->> -		*abort_count = 0;
->> -
->> -	if (cycles_count)
->> -		*cycles_count = 0;
->> -
->> -	return callchain_node_branch_counts_cumul(&root->node,
->> -						  branch_count,
->> -						  predicted_count,
->> -						  abort_count,
->> -						  cycles_count);
->> -}
->> -
->>  static int count_pri64_printf(int idx, const char *str, u64 value, char *bf, int bfsize)
->>  {
->>  	return scnprintf(bf, bfsize, "%s%s:%" PRId64 "", (idx) ? " " : " (", str, value);
->> diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
->> index 86ed9e4d04f9..d7741fa9e9de 100644
->> --- a/tools/perf/util/callchain.h
->> +++ b/tools/perf/util/callchain.h
->> @@ -298,10 +298,6 @@ void free_callchain(struct callchain_root *root);
->>  void decay_callchain(struct callchain_root *root);
->>  int callchain_node__make_parent_list(struct callchain_node *node);
->>  
->> -int callchain_branch_counts(struct callchain_root *root,
->> -			    u64 *branch_count, u64 *predicted_count,
->> -			    u64 *abort_count, u64 *cycles_count);
->> -
->>  void callchain_param_setup(u64 sample_type, const char *arch);
->>  
->>  bool callchain_cnode_matched(struct callchain_node *base_cnode,
->> -- 
->> 2.46.2
->>
-> 
+-- 
+2.46.2
+
 
