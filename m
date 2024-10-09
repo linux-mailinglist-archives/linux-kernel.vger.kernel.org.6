@@ -1,122 +1,159 @@
-Return-Path: <linux-kernel+bounces-356883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EDFE996823
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE6A99681F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39C72868DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C722288E04
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60401917E3;
-	Wed,  9 Oct 2024 11:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03551917D0;
+	Wed,  9 Oct 2024 11:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CTmscKQS"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlxcAB21"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF7418FDA5;
-	Wed,  9 Oct 2024 11:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB14E18D650;
+	Wed,  9 Oct 2024 11:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728472391; cv=none; b=TAB0KL9E8AyqfJ3QSrppiZL1M8zTvNDxgtkEkVPIngtMtSonmN1c16g0T+uvlHpJEKGhYZRLNrtojGE4rZnTHwZSfbFVQu5zw5WmC/H/yPFu4RT5JDNUzeG0EcM2SfXZffI0mAvAjd3i7oHKJmuXNnEESW2KGhmAmFTOEAcszdA=
+	t=1728472360; cv=none; b=WKnxRXRSXdq/jTchvbKC0ZlQFNwaGyku92UxY+dMeMuSRbEc3FupFHNT4VbcC34x1vuWXasx8vUlOQeP7+OE9T4CBHyKokMqvV6ejL+vq2VwTOVqGdazgqTgZaNCOToN4akaMgY5L/BQ1XWcyowyD1JIEE1uG7sdzQoxafomMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728472391; c=relaxed/simple;
-	bh=qX+mA08DLyAXi1H7Huu+eGvfQcA/tRypWuV1n8HMJ08=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XhSMGu+fILB2M0t21GyJeCeLwY79uLKjmtJlLJk39F7vICclav7Dc3Ohjqdxm6rv17jpVMa5LyOmJ69MSoiNS3wu/3A+C8J2yoUfUgdHjsbvGWjASExMngtdLe3SRqm9q/zZvLo4epaGclw3vtyswsY5dr2YeFoHJueZW+qeV+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CTmscKQS; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728472343; x=1729077143; i=markus.elfring@web.de;
-	bh=CmiVees2hX0CJRf1Bpt/vCFWZaY/cbKkPONcZT2YXwE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CTmscKQS/R58YI8WwhE+yjKW9v/7O9kIudoNoyVPcxcMDY87UqaGw9j/Ev3Rykvq
-	 8y6uiD4ocauwKTNfeWSmKHqPlHsKVaIRSRRCgdGQxJXSveuhyM6b/yymXnmm7B1Bb
-	 NLNTwS4RmMkfpi8IIwESggGrKs7ILfMWBFl4jLgqlnOfRDO3NvdWENqmgNrH4Ax9n
-	 Q57tWUt+i4uiLzYp57qJzOln0JpOMdOb5146jZ8ARr6RvDvVMd8F1iZY5SKYgb+TR
-	 mztC435KLtNLoZFoRWh6IcuBnp85FUb6ruSirmJkqG9JnIC3xCKQmjh9l1dq7EUfn
-	 Oatza6V+3FFO33Mihw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Madzi-1tZUOT2Dgw-00cl2a; Wed, 09
- Oct 2024 13:12:23 +0200
-Message-ID: <fbbe290b-4dd4-4a65-acfb-8150b621a5c7@web.de>
-Date: Wed, 9 Oct 2024 13:12:21 +0200
+	s=arc-20240116; t=1728472360; c=relaxed/simple;
+	bh=odr3KYGuwaICoyzUPe/rTktD0YnP2NYwUdz0JzWijOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DpGI4CQqq8uoUOjpCIQP0jGet8/YMyG/2fVsA/DMZro94OCrA02sIz5SXuOWQGMvpAmROjNFYOdkdF5MAKNbIQd6sSSmLnuH0vmCFfv3CAzaspHI6Wvsfci8g1TYt8gYV1NtDweG1oGMP88udPRiAhUP7prBcP0Fqdwc13bl2Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlxcAB21; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7db54269325so5512850a12.2;
+        Wed, 09 Oct 2024 04:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728472358; x=1729077158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=odr3KYGuwaICoyzUPe/rTktD0YnP2NYwUdz0JzWijOI=;
+        b=KlxcAB21vC9jwugsY4vyQgtpskVcYIe/LXT3tdhxNyZozVm9DwBt6rjlpEYPXhSd+u
+         LbHAetVjINIh2yDwiEqtWpr4KwoRM0rWw9GssmpZNDb6G6NpJVA/UQtSlti03+mpk+rD
+         ss0JtKfMYPqiQk+aZTb3XBECrwyjEjmAgQj2L0MwktXEdk2gfjCwNNV0xrUVaW0gTvUo
+         cYLkN/QezAIOA+nHS4cVQfpAB2kPvTtbk3H8hG8VStF7I6dVruGJZxz33vGJgEho+mYO
+         FoFXa1Da+S6RiHhKibG/aBKGA8SDKaEfngHMl46MpbRYI1k4WGwg1QA/t4anCngVuX3v
+         wQZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728472358; x=1729077158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=odr3KYGuwaICoyzUPe/rTktD0YnP2NYwUdz0JzWijOI=;
+        b=RtJijIt1mA+ojh7QZG/V2oNTc9RicASwqcx3tZg3rMTdSpalR7e9d4DcImNC7k8iHc
+         IneJJKBELle9BnNrbTCMLdS3qk4WapZgHvSL9HGjiGztbgA9P/KOYY3dvO2Wt3oRypj0
+         NW0Xaysn3jFSJHQZC3BwVkJVCRS/c1RSg7/Czv3HYGuJm61eReQxbA8iT+2XqzPzaZje
+         Fw1TA05S0mUprVcwgEZuaVCo5PlAZ4ptv+yrAObRtLCY50rIhv2nkzmSL9mkVv85NBeo
+         BurmKLHRoqOG1+nxIo+OmvkHMjVAPNLxGLgxqf9/9YJtqAgSI+Y59zlw0YN3H/Div17m
+         JuOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPASGSuSRObJfN+ZiOD5tlV8U0xHJ5fJI5LwRyHld2KrCo58+2ZfM9e0QDxOHgAaRc5MUS92+0rPc3@vger.kernel.org, AJvYcCX5KsjRedmALmUWboKI8oXMNZn/98pJu9Nixv/qX9rsrJlSofiPbViUiLKv+TL1EB/ZSmiXf51dWzVBNdBq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt7KrEtW6JN9Hbsjm+ZwsnX2PmmTwr9GeyzJ3izgiec+8luF2Q
+	2yXdwfUHxmNsMzlnMbGaBjUTN80M3uXGxnJPhM/+K4/qvowNG70To+7P9z7bIszNwqJcESVqjy3
+	rvhADkR8ANmdBnKyFkbS8x4w0WA==
+X-Google-Smtp-Source: AGHT+IFwysyjBLU7ERqLumIJZpSaa7EbDDdS4YrYb7gYDEqaa8ju2PO2q8BQXBp1mVBphI1pWXcv7wgvxz3fAs4YzQ4=
+X-Received: by 2002:a17:90a:2d86:b0:2e2:973b:f8df with SMTP id
+ 98e67ed59e1d1-2e2a25519d9mr2434624a91.35.1728472357961; Wed, 09 Oct 2024
+ 04:12:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Weidong Wang <wangweidong.a@awinic.com>
-References: <20241009094313.8820-1-zhujun2@cmss.chinamobile.com>
-Subject: Re: [PATCH v3?] ASoC: codecs: aw88399: Fix error handling in
- aw_dev_get_dsp_status()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241009094313.8820-1-zhujun2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240930202639.37606-1-jihed.chaibi.dev@gmail.com> <e009fba7-7881-433a-9e33-f4c5f9d0fd86@linaro.org>
+In-Reply-To: <e009fba7-7881-433a-9e33-f4c5f9d0fd86@linaro.org>
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Date: Wed, 9 Oct 2024 13:12:26 +0200
+Message-ID: <CANBuOYrqCGd5x8Gh8DocMAPhGwDts4dKF-NGTGbqpL_OBtXrUg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: microchip: sam9x7: Add missing usart-mode property
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: claudiu.beznea@tuxon.dev, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, conor+dt@kernel.org, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8pc6Vr5WhFwFtYdO5jKwC4wy9m70WPVXhHQSpdeRW0xiW+GzZei
- 9X8VAehrnm6M3LZRpyHB4OZJpAxRi44n7HVE8i9IzJc9y7xy12+eSih9JQNV46Sj+kP2Wc0
- O1hlCnnBF/Df2BQ/iP/+rhAGJwMi0BGWs6SzuFPSAYsD8CqzU3lUuetpJTq+nPoUPH+09aG
- rvAtUxjLpeqg1ZCw1Jkcw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KxeBCJykDkc=;6U74B9J8sUp2lcGsuewT7kNrO/m
- SqEE8rp9shg7qBCkGdYsPQRFwXsnZ62/b6Cg14B97U8JzIMQ/yP3BJh9+J8stf0F844BLIrag
- Cp90dJ6J8lZLYNIXkupgh7cDyaDr4TvBLMLW4sEFrIh7IJb/rJH+6UTGszjrYPGWnMw7aYFiB
- cwK/85i87u0I7b/1Q7ec5IDqdNfntErW2V5upJZV+0hZrT2MVL/HQq+XhqfDaU+mhzag9JRmU
- VWTaFYv5hnYrH6V6RtUoRN7mOl0goRqWDVJ9JielCp8VV66udw+Mpt7fv7SWukfBT2Og7ka0v
- /b74yIQWJ4WqhMFv5/rG+3py7FqzFzkIVZ1OVieEaSTHNkSTBYWSOz9987xcMX58IOuqX1tnH
- CS1htd5VaryZKND6J60jPyCg5jyLFhetR2C+/S3WYY9x+rrgIUgmzzi0qRd/tYdIvbMNolJTG
- T6n0NSi+i+GGFJFePAgRdJ+I+I5QcZpQ0yCWZjEfD50aI8mbUqFOe9nlBCEnwlcDSemq6jCd5
- /SvSLdvd76kIb5H/QP13rgBCiBaIq/pbMxTk9Yt5kfyTY0Eex0awVw/CtZddXQg8Pk1dRPIxM
- vae4M4zaxw5Xbw4DujKgfVeFCh5LV46LCaOoZKy4J9GFpiytB3YuTAWr+FH7wf2QhzRF7Unzq
- hmXsY/F62Aoo9ZYp4oQALRUHfqwlxHZj9fxNRplKUxYZc1iRWygn92wHEzRAztLlxuEsaNtey
- QWSJ7dHGgEUyDkqMgpKuiFBRUwL+vlRC9CHYTUxBjrd2BGnS1JtRniMsp6zzZ/WpCsHwy0z6A
- pJFeboDJnnp2q3HtHZiMu9gA==
 
-> Changed the error handling in aw_dev_get_dsp_status to return -EPERM dir=
-ectly
-> instead of setting it to a variable.
+Hi Krzysztof, thanks for the feedback,
 
-* How do you think about to choose an imperative wording for an improved c=
-hange description?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n94
+I reached out to the developers who initiated the DT support for the
+new sam9x7 devices, he explained to me the general workflow, turns out
+the dts files aren't yet in linux-next.
 
-* Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n145
+> I think you work on some really old Linux kernel, judging by CC list.
 
-=E2=80=A6
-> ---
-> V1 -> V2:
-> - add a dot after the commit
-> - modify commit info
+Indeed, I used get_maintainer on an old kernel, my bad. Will update
+the CC list & the patch once the new DT files make it into linux-next.
 
-Can it be that higher version numbers would be more appropriate according =
-to
-the evolving patch review?
+Best regards,
+Jih=C3=A8d
 
-Regards,
-Markus
+
+
+On Tue, Oct 1, 2024 at 1:44=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 30/09/2024 22:26, Jihed Chaibi wrote:
+> > Add the atmel,usart-mode property to UART nodes in Microchip SAM9X75
+> > boards' device trees (boards which inherit sam9x7.dtsi). This ensures
+> > compliance with the atmel at91-usart.yaml schema and resolves errors
+> > that occur during DT validation, such as:
+>
+> That's redundant statement.
+>
+> >
+> > arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: serial@200:
+> > serial@200' does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
+> > from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml=
+#
+> >
+> > arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb:
+> > serial@200: atmel,use-dma-rx: False schema does not allow True
+> > from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml=
+#
+> >
+> > arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb:
+> > serial@200: atmel,fifo-size: False schema does not allow 16
+> > from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml=
+#
+>
+> And why is this a property of SoC? Does not look right, at least nothing
+> here explains this.
+>
+> Trim the commit msg to relevant logs and statements. You do not have to
+> explain everyone what dtbs_check is.
+>
+> >
+> >
+> > By adding "atmel,usart-mode =3D <AT91_USART_MODE_SERIAL>" to UART nodes
+> > 0 up until 12, these errors are resolved, ensuring proper DTB validatio=
+n.
+>
+> But in the same time you entirely skipped relevant information: why is
+> this a correct fix for the issue.
+>
+> >
+> > This issue has been tested on the sam9x75 (sam9x75eb & sam9x75_curiosit=
+y)
+> > boards, both of which inherit the sam9x7.dtsi file.
+> >
+> > Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+>
+> I think you work on some really old Linux kernel, judging by CC list.
+>
+> Please rebase on latest next or mainline kernel.
+>
+> Best regards,
+> Krzysztof
+>
 
