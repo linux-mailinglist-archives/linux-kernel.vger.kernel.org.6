@@ -1,91 +1,131 @@
-Return-Path: <linux-kernel+bounces-357280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B5F996EE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:57:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326B4996EF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43FB1F226C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36FA285B8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AD81CACDC;
-	Wed,  9 Oct 2024 14:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4981A1A2562;
+	Wed,  9 Oct 2024 14:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBQPSSQu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cAFkyQ5P"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B435F1A3BD8;
-	Wed,  9 Oct 2024 14:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15041199FDE;
+	Wed,  9 Oct 2024 14:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728485795; cv=none; b=p+Pow0xMMstfaUZAK2ghEI0vzX7uY17eNeY5CKhiumP8KG9BVtGUsDF61CgiITOMcPK4VEKRDCrxWsxhX1cx3uBiwVPYIVfh5qIjeDHk7U9gs1WVPkQFT0QXnQxSlhuUoXw/o74EuoY4n4W3F+Ppjw3mGsXpV3SdqhFXFd8PPSI=
+	t=1728485858; cv=none; b=BXZ6RwUAZguR+dbnFbw89k1QPFTruD5OCwL0tmtm6tSFXbnT3TKdBbNO0K+9djw9GIHYMrqr3HDvdwukvBaUI5Wj1JYIxBzJtyWPiqwU9ZfOu0vva/Sg6FxGClpZdVg3K39Xsu/uQjVIDOgKzf1Y37HkRsgbe8QOs+vbmhMAR+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728485795; c=relaxed/simple;
-	bh=VRU+FuIHtHFwHpslUJLbxF3s4z/fvcd2THOG7jtM6Jg=;
+	s=arc-20240116; t=1728485858; c=relaxed/simple;
+	bh=j0cEzanLX1CYnvQvAA99nHokiocU8wYsKgvYal2Ot1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kr2WnoM7z0OeONe5Cq+GfM5FRQtp2d7OZkwsKon5qMoc1cmiVl6pkd23s9TjNTqGKUHwgIIQQ7VH5EwdbAShPOkXhrRPk2O7XylnQQ6htZdByI+LqSaWuLHchLRtBy3QBoAEXHwvOp+VgiW+Mk5YuTU3Ut9qpxXdW4VDiwssc4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBQPSSQu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06566C4CECD;
-	Wed,  9 Oct 2024 14:56:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728485795;
-	bh=VRU+FuIHtHFwHpslUJLbxF3s4z/fvcd2THOG7jtM6Jg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=UN+Tzu3sHIwguoZudzdDaHQtKvVIO+9iHfRRAAIl37yY7lF6GOVfgPAlAj2zyiH5WybLmSdP2V4sPjBT/9xNcC7QZYlRT+U0lvpq0pxunPIRO8vKTAr+8qbQkg6SLEoSbtwrarhkmJ+Y4tXGulU2N+jFvewIsosMNFrCKAG1XxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cAFkyQ5P; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [132.205.230.3])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 780E12EC;
+	Wed,  9 Oct 2024 16:55:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728485757;
+	bh=j0cEzanLX1CYnvQvAA99nHokiocU8wYsKgvYal2Ot1o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nBQPSSQuGXnhNouT2yHeXSNQ3z68kVKRH7uuaFD7KzOyLBYx9UqO8lsAest8Y2QpK
-	 q6yK271Lq2I/K58I1REoRaY8fagwLLh/RVPmS3DAEbgHswUmwK4R6v9ov/58EY8Tyh
-	 eqf+lzmJftOlPwNuGsrdsRp+2Ln/LvvJbWIKHAQBZ6Ex6Fc3yA6uhXbc03USVuqy1Y
-	 ST70OEqKJAItLvKjJ8ArrpfaAjbaJMx7LgiHTBxXClAWwgscZsnT1NM3OqIEgla6KR
-	 W1xZLPCWfUsVbXoCy5d2+UeTzC7TNpxTyJmi9k0y9JUY8TxY2tO/UXroAoXjHFRD58
-	 CR8TiTGtLvCHA==
-Date: Wed, 9 Oct 2024 08:56:32 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>, dlemoal@kernel.org,
-	cassel@kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Matias =?iso-8859-1?Q?Bj=F8rling?= <matias.bjorling@wdc.com>
-Subject: Re: [PATCH 1/2] nvme: make independent ns identify default
-Message-ID: <ZwaZoJayzu6XZom1@kbusch-mbp>
-References: <20241008145503.987195-1-m@bjorling.me>
- <20241008145503.987195-2-m@bjorling.me>
- <20241009074611.GB16181@lst.de>
+	b=cAFkyQ5PMoAUGi7K2tHgOnrxoGEPpq4aHZrOCI2XG3+txYsDKXccYdAzEJIXhHnPL
+	 e/LPCSkL0Pay82pzgNhdTL1QhE3KrSUVNQ7Lutc9pM3uzPTp4zyKKis/OedV+x5cio
+	 5vjExZ/BHbYbqOJYPrrBlay9q5lOLKSmFAeeHCEE=
+Date: Wed, 9 Oct 2024 17:57:30 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2] v4l2-subdev: Return -EOPNOTSUPP for unsupported pad
+ type in call_get_frame_desc()
+Message-ID: <20241009145730.GA16955@pendragon.ideasonboard.com>
+References: <20241007123809.89281-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241007181654.GD14766@pendragon.ideasonboard.com>
+ <ZwYcSZyEFtyl8QpQ@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009074611.GB16181@lst.de>
+In-Reply-To: <ZwYcSZyEFtyl8QpQ@kekkonen.localdomain>
 
-On Wed, Oct 09, 2024 at 09:46:11AM +0200, Christoph Hellwig wrote:
-> On Tue, Oct 08, 2024 at 04:55:02PM +0200, Matias Bjørling wrote:
-> > However, the independent namespace data structure
-> > is mandatory for devices that implement features from the 2.0+
-> > specification. Therefore, we can check this data structure first. If
-> > unavailable, retrieve the generic attributes from the NVM command set
-> > identify namespace data structure.
+On Wed, Oct 09, 2024 at 06:01:45AM +0000, Sakari Ailus wrote:
+> Hi Laurent,
 > 
-> I'm not a huge fan of this.  For pre-2.0 controllers this means
-> we'll now send a command that will fail most of them time.  And for
-> all the cheap low-end consumer device I'm actually worried that they'll
-> get it wrong and break something.
+> On Mon, Oct 07, 2024 at 09:16:54PM +0300, Laurent Pinchart wrote:
+> > Hi Prabhakar,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Mon, Oct 07, 2024 at 01:38:09PM +0100, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > 
+> > > The `get_frame_desc()` operation should always be called on a source pad,
+> > > which is indicated by the `MEDIA_PAD_FL_SOURCE` flag. This patch adds a
+> > > check in `call_get_frame_desc()` to ensure that the `MEDIA_PAD_FL_SOURCE`
+> > > flag is set for the pad before invoking `get_frame_desc()`. If the pad is
+> > > not a source pad, the function will return an `-EOPNOTSUPP` error,
+> > > signaling that the operation is not supported on non-source pads.
+> > > 
+> > > Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > > v1->v2
+> > > - Added a check for CONFIG_MEDIA_CONTROLLER, as the `entity` member in 
+> > >   `struct v4l2_subdev` is only available when CONFIG_MEDIA_CONTROLLER
+> > >   is enabled.
+> > > ---
+> > >  drivers/media/v4l2-core/v4l2-subdev.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > index de9ac67574bb..446fbc3805c7 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > @@ -325,6 +325,11 @@ static int call_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+> > >  	unsigned int i;
+> > >  	int ret;
+> > >  
+> > > +#if defined(CONFIG_MEDIA_CONTROLLER)
+> > > +	if (!(sd->entity.pads[pad].flags & MEDIA_PAD_FL_SOURCE))
+> > 
+> > As this should really not happen, I wonder if we shouldn't be more
+> > vocal:
+> > 
+> > 	if (WARN_ON(!(sd->entity.pads[pad].flags & MEDIA_PAD_FL_SOURCE)))
+> > 
+> > Sakari, what do you think ? Either way,
+> 
+> I wouldn't as this is probably going to be user-triggerable. The problem
+> shouldn't be too hard to find out either.
 
-We already send identify commands that we expect may break on pre-2.0
-controllers: the Identify NS Descriptor List.
+I don't expect .get_frame_desc() to be callable with user-controllable
+arguments, but I'm OK not using WARN_ON().
 
-We have other quirks for disabling specific identifications (ex:
-nvme_ctrl_limited_cns, NVME_QUIRK_NO_NS_DESC_LIST) in case something
-really break certain identifies. But I think anything >= 1.3 should be
-fine: the CNS handling is well defined from that point onward, so we
-shouldn't make anything harder than necessary from assuming someone got
-identication this wrong.
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> Thanks!
 
-The only pain I can think of is that some controllers increment their
-error log count, and SMART tools creates unnecessary alerts for that.
+-- 
+Regards,
+
+Laurent Pinchart
 
