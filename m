@@ -1,68 +1,133 @@
-Return-Path: <linux-kernel+bounces-356095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE7995C6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8C2995C6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A371F253F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B85731C22405
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B579BA53;
-	Wed,  9 Oct 2024 00:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325CD530;
+	Wed,  9 Oct 2024 00:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/KW0Sns"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QnPfjmpA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB35717736;
-	Wed,  9 Oct 2024 00:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C179EA;
+	Wed,  9 Oct 2024 00:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728434632; cv=none; b=AaODUqqorBCtKn/YRMy6BFHV9VEEtHzOI6z7nrTj2+k9CG4psnj+bkZ8mEeXoGqSPX1VC+zLkekTY8dM9ymz+H7PuFz25/WWKrRnXZ8gPOBpV1XHOQZ+0RVvUDrxkXnMXcopx2d1rZ9PBYPP4SIQpDnZvsATI9og31/6bTAZm94=
+	t=1728434700; cv=none; b=jtm7RMQ7t4MAV1NF5/oay75cdabuCW/OdzUkwLOOoK25SQ9RZwWytQk7xh4NMN22XVVVNNePTvgKzx18Sxe9ODZWo1yfJmSOH17SSE/ke6g/Jvi5R/qLgsykBNPBdgLfpL1XdNRtYGgX1I56MldF3vjr8xoTeK8vJKZEKL5EIbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728434632; c=relaxed/simple;
-	bh=+KtawNoVqw4hPRzxMqpCWUA1p0+Zssu2Ey9oH/NftTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MNLSUR96OPPHXvA0caeYWt36tY35jgoXIB3Q1UtyVsHujRg64wlXo7J54+MfHj96AurpfWYuJ2V0iejNl8fT1bUPXeZrw0uJ8T8vr/q9dUABg70J76qnTgvP3UmNw/m720inO94a2u292nkQ6DIF+vyUeg3ncM6fcQVNjAskelg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/KW0Sns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E97B3C4CECC;
-	Wed,  9 Oct 2024 00:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728434632;
-	bh=+KtawNoVqw4hPRzxMqpCWUA1p0+Zssu2Ey9oH/NftTI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q/KW0SnsCBF90EYh7IG4qfqbHGOk68XsQh6rL99S+j0hTxb1rj6o4pIfGDuQm8jIi
-	 hWd9uTbp/S+a9thYBnfuAxCOvUGKF6sEdP4ekqwDtjieaypcWbrXfcO9vOlCWl3ph5
-	 Rb0Gr1CFEO3VVKqpeugYwdELo6Uvsf8c6ifAbGCMadYV4q7cNyUeDt++za8m4ORonu
-	 e1jBToRv7LA55v3jftH4hugV+VF1zFh+JtEfDYQ4iYKXZ2qisu/l8RLibbasTRt+4U
-	 +iNjBxtdmjAp8Ac6vEVuyCGjT3bbpO3q4Y4V9aVgXW3r3cYoWBVDLBs7lyUiHNeNRc
-	 IXQjiowtJ+S2Q==
-Date: Tue, 8 Oct 2024 17:43:50 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: <davem@davemloft.net>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [PATCH net-next v20 14/14] mm: page_frag: add an entry in
- MAINTAINERS for page_frag
-Message-ID: <20241008174350.7b0d3184@kernel.org>
-In-Reply-To: <20241008112049.2279307-15-linyunsheng@huawei.com>
-References: <20241008112049.2279307-1-linyunsheng@huawei.com>
-	<20241008112049.2279307-15-linyunsheng@huawei.com>
+	s=arc-20240116; t=1728434700; c=relaxed/simple;
+	bh=LcYBSAt2WmfbTdrkbUFEBmpBqWEGTUpWfgCGzhGqpwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gM1Z9PC5dwkyGyQcbKlbTRRkT1fJyKKLvfpKLa49pov2VxVcLeUxRSKVusFTeeuHkxiTD+kPPMG5kfM88Hfws09snMs7hf4RsIxcGfnMwJ0hAOiIHMD57cPbZ3lwt2IiNGnjWStp9L8Ns33S9xgTJzP4pW1JSBRnH5u7JiS94uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QnPfjmpA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728434695;
+	bh=RXN51MLDI2R2QyOtshsJQTkJZtwKN8Dmf1gBWRzdo1Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QnPfjmpAFLaCq0lLbEG6wTtcLo1k+oQm1amnP+1B0Vk9IGCJ+kZLlk9gRTAQQ0Koj
+	 chywpKedz2Kn2mNxgWto2bsY4YJdo1WQhSBZPQIUCVhMwT5lkYFA8fID9/KDRz7vMd
+	 O7j+VH3U6wTZXG4N9jaEiHrE1Y+vXUjoWmmkIS4tbv/AJ9QuIg0AwXRT+geiEsk8Po
+	 7WiUtZExF5WQa6vlqb83J2cZXypLV1i/6DY45apGbuZiOKY0WAdCjr7Cz41DvEBJcn
+	 iFsb6iH6hZsvmc4LUFnDtDpaqWn5UIYozVgs3mrPk2GvShXl1RLuJW/K0Au+m1GyT4
+	 18FAyiorjnlog==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNZ0l2PZRz4wcy;
+	Wed,  9 Oct 2024 11:44:55 +1100 (AEDT)
+Date: Wed, 9 Oct 2024 11:44:55 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Johannes Berg <johannes.berg@intel.com>,
+ Wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Tree Davies <tdavies@darkphysics.net>
+Subject: linux-next: manual merge of the wireless-next tree with Linus' tree
+Message-ID: <20241009114455.52db31ad@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/cy25zv_kQV4WXhV.NuxvSfa";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/cy25zv_kQV4WXhV.NuxvSfa
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Oct 2024 19:20:48 +0800 Yunsheng Lin wrote:
-> +M:	Yunsheng Lin <linyunsheng@huawei.com>
+Hi all,
 
-The bar for maintaining core code is very high, if you'd 
-like to be a maintainer please start small.
+Today's linux-next merge of the wireless-next tree got conflicts in:
+
+  drivers/staging/rtl8192e/rtl8192e/r8190P_def.h
+  drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.c
+  drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+  drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h
+  drivers/staging/rtl8192e/rtl8192e/r8192E_phy.c
+  drivers/staging/rtl8192e/rtl8192e/r8192E_phy.h
+  drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+  drivers/staging/rtl8192e/rtl8192e/rtl_core.h
+  drivers/staging/rtl8192e/rtl8192e/rtl_dm.c
+  drivers/staging/rtl8192e/rtl8192e/rtl_ps.c
+  drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
+  drivers/staging/rtl8192e/rtl819x_BAProc.c
+  drivers/staging/rtl8192e/rtl819x_HTProc.c
+  drivers/staging/rtl8192e/rtl819x_TSProc.c
+  drivers/staging/rtl8192e/rtllib.h
+  drivers/staging/rtl8192e/rtllib_rx.c
+  drivers/staging/rtl8192e/rtllib_softmac_wx.c
+
+between commits:
+
+  5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+  5e6bf74d63c2 ("Staging: rtl8192e: Rename variable RxDrvInfoSize")
+and many others
+
+from Linus' tree (pre v6.12-rc2) and commit:
+
+  be9be9f54f22 ("staging: rtl8192e: delete the driver")
+
+from the wireless-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/cy25zv_kQV4WXhV.NuxvSfa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcF0gcACgkQAVBC80lX
+0GwZ+AgAmGKzGKsTtfw9LQ6bQvROvaiJBeB3qIJHyM2CsAfO/LYIiZovU7Fk14bF
+gOLZocY6URxj2pIjgVXn0dZ7yuEGCppFDXpyVyojEzkOhJHmuREkl/jJ4Kigi1mu
+/KNV6cJGGH2amyxTCzxGo+H/0rkR8ziA19g87gWXA0lFhct0nJaaSS2asw61VUTc
+YfXqOJpTkh3MRL+7k9Kt51dHfgCW61fIijVervmDdsjFviPCHe9/DnvyoJQ+cKVL
+z+i0u6r+1NDLCFrHBOPqaRfE5auFkOdn4OOF1qx+jp5FWT7Xbd8bW2JQeJfNDNH9
+te/TGQajZHf84B1NwL23AhxerfTgaA==
+=HIPM
+-----END PGP SIGNATURE-----
+
+--Sig_/cy25zv_kQV4WXhV.NuxvSfa--
 
