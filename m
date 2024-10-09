@@ -1,115 +1,277 @@
-Return-Path: <linux-kernel+bounces-356090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B94995C5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F124995C5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C871F24A68
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F96286617
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4BC9476;
-	Wed,  9 Oct 2024 00:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617AE8F6B;
+	Wed,  9 Oct 2024 00:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cwjtu7tt"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="nMLWrDcL"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE152F29;
-	Wed,  9 Oct 2024 00:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA01F6FC3;
+	Wed,  9 Oct 2024 00:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728434295; cv=none; b=CEdiQR4Il3MMzQJ17VbmNY9hJ/JmloG1P4OeSEk8xuY1wWQTC0kiTsKQ/SbMJSspsNa09MoxmPdiZ0u5P6p9GertDWoazPGeo+xzqMN38jP49ky+y2qD83vmRZUBUus6pkqdUS3UvVkAxGMaehYvFcCVYZJLSvoduB7iopfEmm8=
+	t=1728434331; cv=none; b=gXrRuEU1h6BJiJ2xbZPrEDbtKdBLW/Lkin5Ady2JWFaVkfK5ofWRSdCec9rBDthg2A8VG6GyLo33uT4336d1WVxJalIE62yS7GMhSTNvgSOowjnQeixtymVHrLBK37tFgtxuGmbSyGbeOLbWgetznrY4dSyHRipyatBsoTEVOEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728434295; c=relaxed/simple;
-	bh=cFg1g/et9BU8Qj45SQLrUl9ATZqm04ySlBfiOZbGGjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ivzp/Y6QHdHOVfTUelzFbUshEWkUKnUxCbKIuKUK0fs6+2jCEoedttAi3uTTa14TPT3TKhsdtRqO3vUkr6qVXGaSvcGh832P5lmGMKA4+nb9ZZTK7EBstozBb+QW+AnYwZOEotN2TnSIxaRx1eLw+TRS8+60wyEiUk9uGZpEjk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cwjtu7tt; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728434291;
-	bh=HDu01CeWqVR+Il/yZAdEBNfJ3edcScmEJNEt9NKBZL0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Cwjtu7ttC8W+wsOI7TI+P7wwn9DMbTZ/3CoJsCte/AiT4M+Zu7vy8QoV+W4bJa2UC
-	 l6b15HEPJ21BE+ls7uTUH8LA3Tw0H422e0RgkuYN/YOGCQtDCuqOT6lSmavkCVs3sb
-	 yazKt+fXwmjlpnhV/GDJX3C16eUFq4bJMEuGCCbZcbFR37+tbdGkuRU+L4DyZ4M1un
-	 JbM/1F+mzBC/NqPjAMxzSKAezOjnhBJYbohkqZcCDUWL0+29hR+13NvLcIzrD/nsG8
-	 56WxUw/eQOC4LY2BsQH0wNunucCcsfg7USWiLYaseEBGu1fwvpGL+96CYNZ3h6MAgx
-	 HErPbEu8bcAWA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNYrz0J8Rz4wc1;
-	Wed,  9 Oct 2024 11:38:11 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 11:38:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Johannes Berg
- <johannes.berg@intel.com>, Wireless <linux-wireless@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Philipp Hortmann
- <philipp.g.hortmann@gmail.com>
-Subject: linux-next: manual merge of the wireless-next tree with Linus' tree
-Message-ID: <20241009113811.1e84de60@canb.auug.org.au>
+	s=arc-20240116; t=1728434331; c=relaxed/simple;
+	bh=FNiGcNDdWZAfqdOlNLP8MEL4gG75wdC6blEwsW0IXF4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=grjgEWaim4mP0m0Zc/3Jx0RoRO0GsNO9nGfIFucR3wuBiYFuwCKTlH+ZtSQ4a0L4px+20Irt6v6K76ayFq53izYsAJdqMYcuhbsFbWMQzxettKf/ErPBh0nw6S/OKbmHxA2uCZuJH+aV8/BapviDjB42JGNdlQpPTh6zAY2OBQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=nMLWrDcL; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Y9ujbLGcNFl7q8q9tH5BMo3oqehtyT+2F1O/LhXoBoM=; b=nMLWrDcLoixfAuLS
+	RRgIo5tdo4r9N0P525la1hceb0TW5HBIqxAoZ8Cu1cX6EuHvEOJ21A6PMIT6JSoiat+gbU1UCv2aJ
+	uz27y/Fjcs5TEWIlBauZOIgNzl2LR3R8SXYgeA3uDCD2xAWUc2HRYrvCPQCZZSZwRE/EYU1sxZBur
+	RsS1omPRRYfcBzOKYVU/hu1cy1NM6ayLLJxFG2/mXYW7iShZR7RF3ylAaTHVO6REZth3cdDqxzjx+
+	h7Fkz4l753bHqRl17cxu3sv0H2XP0YHj+eqLFqKIfzg6Jci256gTFDNFATQy93/RqYOtPeFUPcUun
+	7f9insdf00TuaO2RLA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1syKiw-009q6V-1r;
+	Wed, 09 Oct 2024 00:38:42 +0000
+From: linux@treblig.org
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] net: liquidio: Remove unused cn23xx_dump_pf_initialized_regs
+Date: Wed,  9 Oct 2024 01:38:41 +0100
+Message-ID: <20241009003841.254853-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Rn0UiJTZ=aoPi81aK7YpV_t";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/Rn0UiJTZ=aoPi81aK7YpV_t
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Hi all,
+cn23xx_dump_pf_initialized_regs() was added in 2016's commit
+72c0091293c0 ("liquidio: CN23XX device init and sriov config")
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+but hasn't been used.
 
-  drivers/staging/ks7010/TODO
+Remove it.
 
-between commit:
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../cavium/liquidio/cn23xx_pf_device.c        | 169 ------------------
+ .../cavium/liquidio/cn23xx_pf_device.h        |   2 -
+ 2 files changed, 171 deletions(-)
 
-  d93e795b8621 ("staging: ks7010: Remove unused driver")
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+index b3c81a2e9d46..9ad49aea2673 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -36,175 +36,6 @@
+  */
+ #define CN23XX_INPUT_JABBER 64600
+ 
+-void cn23xx_dump_pf_initialized_regs(struct octeon_device *oct)
+-{
+-	int i = 0;
+-	u32 regval = 0;
+-	struct octeon_cn23xx_pf *cn23xx = (struct octeon_cn23xx_pf *)oct->chip;
+-
+-	/*In cn23xx_soft_reset*/
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%llx\n",
+-		"CN23XX_WIN_WR_MASK_REG", CVM_CAST64(CN23XX_WIN_WR_MASK_REG),
+-		CVM_CAST64(octeon_read_csr64(oct, CN23XX_WIN_WR_MASK_REG)));
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_SLI_SCRATCH1", CVM_CAST64(CN23XX_SLI_SCRATCH1),
+-		CVM_CAST64(octeon_read_csr64(oct, CN23XX_SLI_SCRATCH1)));
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_RST_SOFT_RST", CN23XX_RST_SOFT_RST,
+-		lio_pci_readq(oct, CN23XX_RST_SOFT_RST));
+-
+-	/*In cn23xx_set_dpi_regs*/
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_DPI_DMA_CONTROL", CN23XX_DPI_DMA_CONTROL,
+-		lio_pci_readq(oct, CN23XX_DPI_DMA_CONTROL));
+-
+-	for (i = 0; i < 6; i++) {
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_DPI_DMA_ENG_ENB", i,
+-			CN23XX_DPI_DMA_ENG_ENB(i),
+-			lio_pci_readq(oct, CN23XX_DPI_DMA_ENG_ENB(i)));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_DPI_DMA_ENG_BUF", i,
+-			CN23XX_DPI_DMA_ENG_BUF(i),
+-			lio_pci_readq(oct, CN23XX_DPI_DMA_ENG_BUF(i)));
+-	}
+-
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n", "CN23XX_DPI_CTL",
+-		CN23XX_DPI_CTL, lio_pci_readq(oct, CN23XX_DPI_CTL));
+-
+-	/*In cn23xx_setup_pcie_mps and cn23xx_setup_pcie_mrrs */
+-	pci_read_config_dword(oct->pci_dev, CN23XX_CONFIG_PCIE_DEVCTL, &regval);
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_CONFIG_PCIE_DEVCTL",
+-		CVM_CAST64(CN23XX_CONFIG_PCIE_DEVCTL), CVM_CAST64(regval));
+-
+-	dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-		"CN23XX_DPI_SLI_PRTX_CFG", oct->pcie_port,
+-		CN23XX_DPI_SLI_PRTX_CFG(oct->pcie_port),
+-		lio_pci_readq(oct, CN23XX_DPI_SLI_PRTX_CFG(oct->pcie_port)));
+-
+-	/*In cn23xx_specific_regs_setup */
+-	dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-		"CN23XX_SLI_S2M_PORTX_CTL", oct->pcie_port,
+-		CVM_CAST64(CN23XX_SLI_S2M_PORTX_CTL(oct->pcie_port)),
+-		CVM_CAST64(octeon_read_csr64(
+-			oct, CN23XX_SLI_S2M_PORTX_CTL(oct->pcie_port))));
+-
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_SLI_RING_RST", CVM_CAST64(CN23XX_SLI_PKT_IOQ_RING_RST),
+-		(u64)octeon_read_csr64(oct, CN23XX_SLI_PKT_IOQ_RING_RST));
+-
+-	/*In cn23xx_setup_global_mac_regs*/
+-	for (i = 0; i < CN23XX_MAX_MACS; i++) {
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_PKT_MAC_RINFO64", i,
+-			CVM_CAST64(CN23XX_SLI_PKT_MAC_RINFO64(i, oct->pf_num)),
+-			CVM_CAST64(octeon_read_csr64
+-				(oct, CN23XX_SLI_PKT_MAC_RINFO64
+-					(i, oct->pf_num))));
+-	}
+-
+-	/*In cn23xx_setup_global_input_regs*/
+-	for (i = 0; i < CN23XX_MAX_INPUT_QUEUES; i++) {
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_IQ_PKT_CONTROL64", i,
+-			CVM_CAST64(CN23XX_SLI_IQ_PKT_CONTROL64(i)),
+-			CVM_CAST64(octeon_read_csr64
+-				(oct, CN23XX_SLI_IQ_PKT_CONTROL64(i))));
+-	}
+-
+-	/*In cn23xx_setup_global_output_regs*/
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_SLI_OQ_WMARK", CVM_CAST64(CN23XX_SLI_OQ_WMARK),
+-		CVM_CAST64(octeon_read_csr64(oct, CN23XX_SLI_OQ_WMARK)));
+-
+-	for (i = 0; i < CN23XX_MAX_OUTPUT_QUEUES; i++) {
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_PKT_CONTROL", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_PKT_CONTROL(i)),
+-			CVM_CAST64(octeon_read_csr(
+-				oct, CN23XX_SLI_OQ_PKT_CONTROL(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_PKT_INT_LEVELS", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_PKT_INT_LEVELS(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_OQ_PKT_INT_LEVELS(i))));
+-	}
+-
+-	/*In cn23xx_enable_interrupt and cn23xx_disable_interrupt*/
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"cn23xx->intr_enb_reg64",
+-		CVM_CAST64((long)(cn23xx->intr_enb_reg64)),
+-		CVM_CAST64(readq(cn23xx->intr_enb_reg64)));
+-
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"cn23xx->intr_sum_reg64",
+-		CVM_CAST64((long)(cn23xx->intr_sum_reg64)),
+-		CVM_CAST64(readq(cn23xx->intr_sum_reg64)));
+-
+-	/*In cn23xx_setup_iq_regs*/
+-	for (i = 0; i < CN23XX_MAX_INPUT_QUEUES; i++) {
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_IQ_BASE_ADDR64", i,
+-			CVM_CAST64(CN23XX_SLI_IQ_BASE_ADDR64(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_IQ_BASE_ADDR64(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_IQ_SIZE", i,
+-			CVM_CAST64(CN23XX_SLI_IQ_SIZE(i)),
+-			CVM_CAST64(octeon_read_csr
+-				(oct, CN23XX_SLI_IQ_SIZE(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_IQ_DOORBELL", i,
+-			CVM_CAST64(CN23XX_SLI_IQ_DOORBELL(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_IQ_DOORBELL(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_IQ_INSTR_COUNT64", i,
+-			CVM_CAST64(CN23XX_SLI_IQ_INSTR_COUNT64(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_IQ_INSTR_COUNT64(i))));
+-	}
+-
+-	/*In cn23xx_setup_oq_regs*/
+-	for (i = 0; i < CN23XX_MAX_OUTPUT_QUEUES; i++) {
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_BASE_ADDR64", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_BASE_ADDR64(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_OQ_BASE_ADDR64(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_SIZE", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_SIZE(i)),
+-			CVM_CAST64(octeon_read_csr
+-				(oct, CN23XX_SLI_OQ_SIZE(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_BUFF_INFO_SIZE", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_BUFF_INFO_SIZE(i)),
+-			CVM_CAST64(octeon_read_csr(
+-				oct, CN23XX_SLI_OQ_BUFF_INFO_SIZE(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_PKTS_SENT", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_PKTS_SENT(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_OQ_PKTS_SENT(i))));
+-		dev_dbg(&oct->pci_dev->dev, "%s(%d)[%llx] : 0x%016llx\n",
+-			"CN23XX_SLI_OQ_PKTS_CREDIT", i,
+-			CVM_CAST64(CN23XX_SLI_OQ_PKTS_CREDIT(i)),
+-			CVM_CAST64(octeon_read_csr64(
+-				oct, CN23XX_SLI_OQ_PKTS_CREDIT(i))));
+-	}
+-
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_SLI_PKT_TIME_INT",
+-		CVM_CAST64(CN23XX_SLI_PKT_TIME_INT),
+-		CVM_CAST64(octeon_read_csr64(oct, CN23XX_SLI_PKT_TIME_INT)));
+-	dev_dbg(&oct->pci_dev->dev, "%s[%llx] : 0x%016llx\n",
+-		"CN23XX_SLI_PKT_CNT_INT",
+-		CVM_CAST64(CN23XX_SLI_PKT_CNT_INT),
+-		CVM_CAST64(octeon_read_csr64(oct, CN23XX_SLI_PKT_CNT_INT)));
+-}
+-
+ static int cn23xx_pf_soft_reset(struct octeon_device *oct)
+ {
+ 	octeon_write_csr64(oct, CN23XX_WIN_WR_MASK_REG, 0xFF);
+diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.h b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.h
+index e6f31d0d5c0b..234b96b4f488 100644
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.h
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.h
+@@ -59,8 +59,6 @@ int validate_cn23xx_pf_config_info(struct octeon_device *oct,
+ 
+ u32 cn23xx_pf_get_oq_ticks(struct octeon_device *oct, u32 time_intr_in_us);
+ 
+-void cn23xx_dump_pf_initialized_regs(struct octeon_device *oct);
+-
+ int cn23xx_sriov_config(struct octeon_device *oct);
+ 
+ int cn23xx_fw_loaded(struct octeon_device *oct);
+-- 
+2.46.2
 
-from Linus' tree and commit:
-
-  4991d2e7ad38 ("staging: don't recommend using lib80211")
-
-from the wireless-next tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Rn0UiJTZ=aoPi81aK7YpV_t
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcF0HMACgkQAVBC80lX
-0GxnqQf6AoOvxR0AXUsgmbJqzWtGQrpNiqt/Puq0zzPOIwX8/B2OH/ycd7iCgW1z
-l+lYAPxQmPror/1aggEMB9p4vrAWM/dLtkE29ZmKSJRhcqYsVzJ3V9draReXXwx5
-XOs8CHj9qk22lUzkEj00yL2IEOiRrb6Uzy98T4R0RrbKI4pB85Jun3hrWvjs5oJR
-Jkgq6s8yDmWdisDjjhFkswfjfx4FifW9EwutTF3TeU/iKK1A1acSSnQxzzN3geAK
-3QjULXqhosc9NpGi5m+QNOxm4nQoikr/ZmeR9fGGMMbjy6965yio01dWdVPTdfyy
-ESHl7mqU1dYEvoS85FFN8P6nqAnYyQ==
-=7D4S
------END PGP SIGNATURE-----
-
---Sig_/Rn0UiJTZ=aoPi81aK7YpV_t--
 
