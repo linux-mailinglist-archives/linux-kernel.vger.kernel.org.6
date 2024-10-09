@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-357168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263AB996CD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1C3996CDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F0C1F23D19
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A778328556D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0949D19994B;
-	Wed,  9 Oct 2024 13:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3B919ABB4;
+	Wed,  9 Oct 2024 13:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oCG8j05w"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3DvLrwr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914938DE5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5732317C220;
+	Wed,  9 Oct 2024 13:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728482113; cv=none; b=S0riZsdr/1DtyQx/TvfEWrGYgYbOYM8cTWJZ0dRiTXSuqmxdD0sDZjVl0qT7/ihKGUvEAfHRgRbiYBvq3hwr+PPKFqsGPG2pDG8BNOjz/UI8JzDUaQ34vqQNqIyW1NmibpmTSlt6Wd7Mw9wAsvKBTjOzQVcJWSmgMziEgb6+38I=
+	t=1728482122; cv=none; b=mIv18/yCrI/QcQ74Eh4kezwNJ2iKHrM2rV2ZUXp3rodNtXsWISMPCxqG5Tr/FoOqJH07s1E37S88+c6Z0+us8xVc3vScEFNqauYNU3Pwg65skzXFCgPFfc40gUyBWk0ltGGvDLw6v7OOTLF/QtyRSmnzLckNkYlreufCGIm1KOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728482113; c=relaxed/simple;
-	bh=k7DdMpwjWrSVnF70efu9Nz576OUVbA8sKqdX/14wnt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u4w7f8nUHiuRuavD598zpL1dOTSFYAkYqB3zD+ANgAJkPAPeuuEFye9/7XslO4pm6XO0heBmBhAfveWENrZTdS0XLftoiKbS+MRMfFTtAB0OMTQtLxWkiDt/+ydo3gduj/Ktrs4Nwfh9QY2rKBWzrYyswveLXiCSGmHRj6n1huE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oCG8j05w; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c90333aaf1so1808477a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728482110; x=1729086910; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SZu/+gdB6bHOpVTSHgDrGd7M0vlZH+wWHXs8Fc7Ognc=;
-        b=oCG8j05wTvCRp6vvzQmviTE+7OxKi2R33pYXFANxx/MoQpPtxXbadjuFE3LAlxp5UX
-         AbFmeoLKcmiWcsl0UW/E64zZH3r9oVdxKbWKpBH04Lc+IPRCj/wozgCxdMxo9o/3hrse
-         J2vzv8LLWzdP0Mivo24woY9fql9xSSl8SZpi+uKx3CKvc+9ySyjwKQ0rP6yEkSd38Mt0
-         hgSFLNYwdZ/ihhUrJSTcPWG5fbCIxFx++eH5GN2h40VDP0BEt9iwBM5w8NevAFrDWN9c
-         RZFHgK0t+g65896P1/tcnREi+LaIqdatwjAM7CtJdt2RWt2ZZ/iI9P97C6LDAcNdUCPQ
-         LW4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728482110; x=1729086910;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SZu/+gdB6bHOpVTSHgDrGd7M0vlZH+wWHXs8Fc7Ognc=;
-        b=u3exeoC777DqomARJhA0BZbO3/cZ7QIFI8CjzODlvGKAjBvHlo4MHTJ0XPS2jvkPLu
-         ffYUNpNk9AcFCCw6gvDWYhmL8qCMtNUM7Zlm4vIL5Nr9lMGi/2C8ZVzokBqf32qUNCHI
-         3uay5AoveapwJmGrjYyt3oZGrtPVWL1oCYpF34I36RbcNfDjvygslR3KfIX1H3Q1NZDn
-         V8mT+YywTXXE8Ldqbjr4TAl0mtC82zkLgqKT7z0xDbyV2l8CT49KEYA1+4d4u9a+NOT5
-         CObWfsO0UzIN6J7g1md0KXFLfAYv+Okzy9UocoNjyzPOfy4GBwVdfZx30+61Ww/LbkCK
-         H5Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3osvx47zQFIW+G2tSChD2jIqtO23lPDXL08ogmxIhsNMIeQH5xtlGR0J6D3F+HzWc0gwcxYeEgcX2sZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHRXRtewsfgPBGENXoZlbt5ucK4l3qXs53zkayGfRlssKg0hW9
-	L9II9h5LVBnWtz7/gym7w5Rg3KH6UOPx29dDqq5/dDa65l+gXmbDOYplqu0uko9Vd3u8070yfO5
-	KSjG2a7nVN9cAde9CrEwqq6bZCvAYgXpCVb+3
-X-Google-Smtp-Source: AGHT+IEtAzSUDyXHbQ3P6oqVQMFsthgaasp7xwpxPc8RphUDDeGCLQ4wnkjhhmtyLiaqxF2Wb39RmFXqv580ZGOJAew=
-X-Received: by 2002:a50:8dc7:0:b0:5c9:1b62:48f4 with SMTP id
- 4fb4d7f45d1cf-5c91d58cedamr2219054a12.15.1728482109811; Wed, 09 Oct 2024
- 06:55:09 -0700 (PDT)
+	s=arc-20240116; t=1728482122; c=relaxed/simple;
+	bh=W5mZ+lQsEIIxs0TPUpj4vctd0nBepzjEDVoahNZU1ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUOxmoDULpX1FjHKMcS5Iey5Z7uqx9i/nYbiZfIJxJN2L9SBhb4yS/GlazQyZePwX0Q+8nP0n8m1yD3yW9DhC0sfcMcum+70bAeq+DP8BkIL12pS23xrvSCSLH5Gxl0uYZwA928kpzefWLKQlozwlhLGCURiMP1oHs8OvGx1qV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3DvLrwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F22C4CEC3;
+	Wed,  9 Oct 2024 13:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728482122;
+	bh=W5mZ+lQsEIIxs0TPUpj4vctd0nBepzjEDVoahNZU1ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O3DvLrwr2bMSVVGcMJPMhLJM3IUgCPhvZ3XD5Z96aiGiaZm6ig1yPEGlTNuel3Nop
+	 YptOYWplu0oZoiGQAucl1hr3hKUAGuoxBgI3AjZofIpYRjoXiq1La8kHONYuX9j10J
+	 DRV6VxzhzpNzPL/qwo3iwzEMRRaDpz8khxfd7Wu2/A1LHp54noExkPIUC0rNK5itGU
+	 formmo0lf2AcftUhiuZoC7xZsMBQNPKDxVj6KG8zZ9RgrJtPh5LxBAiUxHyHpddC0G
+	 3V3Abs3wtfz8e8VBRD2k4vyESiyOfrHDQiyo0cCqT2dtJRsL1xbtYvA2iMP3C6XyIN
+	 29zi4HIRqKUTg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syX9x-000000003R4-1iAY;
+	Wed, 09 Oct 2024 15:55:25 +0200
+Date: Wed, 9 Oct 2024 15:55:25 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, stable@vger.kernel.org,
+	Aniket Randive <quic_arandive@quicinc.com>
+Subject: Re: [PATCH v2 1/7] serial: qcom-geni: fix premature receiver enable
+Message-ID: <ZwaLTRHKXXhq6Qiu@hovoldconsulting.com>
+References: <20241001125033.10625-1-johan+linaro@kernel.org>
+ <20241001125033.10625-2-johan+linaro@kernel.org>
+ <CAD=FV=V31VFVoTWstVUnC_qDBmaUCb5Xv7pyUxUto7mquR5U4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008163205.3939629-1-leitao@debian.org> <cea1458c-6445-45d0-bfa1-3c093384cc90@kernel.org>
-In-Reply-To: <cea1458c-6445-45d0-bfa1-3c093384cc90@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 9 Oct 2024 15:54:56 +0200
-Message-ID: <CANn89iLH=Y0GuZz3b2p5d7MtEcPFt62+Z4LBbdiRDtE157ER1w@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: Remove likely from l3mdev_master_ifindex_by_index
-To: David Ahern <dsahern@kernel.org>
-Cc: Breno Leitao <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, kernel-team@meta.com, 
-	"open list:L3MDEV" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=V31VFVoTWstVUnC_qDBmaUCb5Xv7pyUxUto7mquR5U4Q@mail.gmail.com>
 
-On Tue, Oct 8, 2024 at 8:25=E2=80=AFPM David Ahern <dsahern@kernel.org> wro=
-te:
->
-> On 10/8/24 10:32 AM, Breno Leitao wrote:
-> > The likely() annotation in l3mdev_master_ifindex_by_index() has been
-> > found to be incorrect 100% of the time in real-world workloads (e.g.,
-> > web servers).
+On Thu, Oct 03, 2024 at 11:29:58AM -0700, Doug Anderson wrote:
+> On Tue, Oct 1, 2024 at 5:51 AM Johan Hovold <johan+linaro@kernel.org> wrote:
 > >
-> > Annotated branches shows the following in these servers:
+> > The receiver should not be enabled until the port is opened so drop the
+> > bogus call to start rx from the setup code which is shared with the
+> > console implementation.
 > >
-> >       correct incorrect  %        Function                  File       =
-       Line
-> >             0 169053813 100 l3mdev_master_ifindex_by_index l3mdev.h    =
-         81
-> >
-> > This is happening because l3mdev_master_ifindex_by_index() is called
-> > from __inet_check_established(), which calls
-> > l3mdev_master_ifindex_by_index() passing the socked bounded interface.
-> >
-> >       l3mdev_master_ifindex_by_index(net, sk->sk_bound_dev_if);
-> >
-> > Since most sockets are not going to be bound to a network device,
-> > the likely() is giving the wrong assumption.
-> >
-> > Remove the likely() annotation to ensure more accurate branch
-> > prediction.
-> >
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > This was added for some confused implementation of hibernation support,
+> > but the receiver must not be started unconditionally as the port may not
+> > have been open when hibernating the system.
+> 
+> Could you provide a motivation for your patch in the description? Is
+> patch needed for something (perhaps a future patch in the series)? Is
+> it fixing a bug? Does it save power? Is the call harmless but cleaner
+> to get rid of?
+
+I was trying to bring some order to this driver so that the receiver is
+enabled when the port is opened and disabled when it is closed again as
+expected, and get rid of the random calls added in places where they do
+not belong (e.g., as Bjorn also mentioned, why was the call to start rx
+added in the port setup code if it was needed for hibernation?).
+
+Data "received" over the wire before opening the port should not be
+processed, but it also turns out that enabling the receiver before the
+port is opened can confuse the firmware and break the "stale" rx timer
+handling so that data is only forwarded in chunks of 12 bytes instead of
+when each char is received.
+
+> > Fixes: 35781d8356a2 ("tty: serial: qcom-geni-serial: Add support for Hibernation feature")
+> > Cc: stable@vger.kernel.org      # 6.2
+> > Cc: Aniket Randive <quic_arandive@quicinc.com>
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > > ---
-> >  include/net/l3mdev.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >  drivers/tty/serial/qcom_geni_serial.c | 1 -
+> >  1 file changed, 1 deletion(-)
 > >
->
-> Reviewed-by: David Ahern <dsahern@kernel.org>
+> > diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> > index 6f0db310cf69..9ea6bd09e665 100644
+> > --- a/drivers/tty/serial/qcom_geni_serial.c
+> > +++ b/drivers/tty/serial/qcom_geni_serial.c
+> > @@ -1152,7 +1152,6 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+> >                                false, true, true);
+> >         geni_se_init(&port->se, UART_RX_WM, port->rx_fifo_depth - 2);
+> >         geni_se_select_mode(&port->se, port->dev_data->mode);
+> > -       qcom_geni_serial_start_rx(uport);
+> 
+> FWIW, I found at least one thing that's broken by your patch. If you
+> enable kgdb (but _not_ "kgdboc_earlycon") and then add "kgdbwait" to
+> the kernel command line parameters then things will be broken after
+> your patch. You'll drop into the debugger but can't interact with it.
+> The "kgdboc_earlycon" path handles this because of
+> "qcom_geni_serial_enable_early_read()" but it doesn't seem like
+> there's anything that handles it for normal kgdb. If you drop in the
+> debugger later it'll probably work if you've got an "agetty" running
+> because that'll enable the RX path.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Ok, so the kgdb has started relying on this call since d8851a96ba25
+("tty: serial: qcom-geni-serial: Add a poll_init() function"). Thanks
+for pointing that out.
+
+The polled console code should not be calling the port setup code
+unconditionally anyway so I'll fix this up as well in v3.
+
+Johan
 
