@@ -1,186 +1,108 @@
-Return-Path: <linux-kernel+bounces-357091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4143C996B66
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:10:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB52996B68
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4592823EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4601C22AF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9685A192D78;
-	Wed,  9 Oct 2024 13:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAAA192D6A;
+	Wed,  9 Oct 2024 13:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfFPoU37"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hFUX9Hmd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5378291E;
-	Wed,  9 Oct 2024 13:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBE0291E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728479417; cv=none; b=P0DBsCHXiDA+IAHbUbW2XHyLuM8Vcmp6qRQqcIGUnaWEzbLIx8HamNrO37nINM2U303hAbSCoEkNuSDP5zN0Ulb2Jb8EENmnivirRKIiIp7Naw+MiyN84gSosfFq8QEePF2ArLPjwK8BWofJ/ilTymJdCR0IZ3sO4vCJh46/n2U=
+	t=1728479425; cv=none; b=SkyjoRq+SOEGcTvQkIMQZaplH38pukoPDntM3LiO3KcWkJHRJhtfUMLpAnpy4UcE/2OA2t9kdb8JEpAW5Gzktt0tPJJpbuNL96OO0W9O+snjZog+89ZwIweuyZRmVaQ36VNBgWoBqQaOHXd4M75MeK14PJ6//sX0PhLqdW5rkEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728479417; c=relaxed/simple;
-	bh=3rSk0qpMy3mRiaF8HFu8PwiCPAK8Cf3r5DxZutgdUBM=;
+	s=arc-20240116; t=1728479425; c=relaxed/simple;
+	bh=CWJzYgn/Y/+lUqiztQGewVb+jXOTSYgNUo3XS0WMDrM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ldnns2wacm/Pvxk2qv3vUv00EYrJ+JetIt3xBDsrqZUPnMDUygHN8FsLPJRnnU2eyq4cVYsuDGV4iob1iXO647yB6amGCNinD4lwFC6D3KkgWGgXZtvMGOQGVMT9jSMnoE6dHRW3no416NDystqsZW3g0n3rwusKuF6gDk5LbuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfFPoU37; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99636C4CEC5;
-	Wed,  9 Oct 2024 13:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728479416;
-	bh=3rSk0qpMy3mRiaF8HFu8PwiCPAK8Cf3r5DxZutgdUBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dfFPoU37rt3pJvQ42mzAS+9f4v18U+dqeeaV9a4URYhutlLffKuInN0zqt+3Jsxpb
-	 Qjvcr5iqzzwC2PLKNUpvkve7KhykeKSTFQRvUceuQS34e2vaQQ92uj1tQSy1sXR4A0
-	 v7pRy9PD6lPq61d1JLkVZHEZE1I3hcFmF39bMwx3ycVnH/gOX+bWBV2tP6FQ/fXWoy
-	 y3F0l5swnwgmtQFnQwO/XwulXBsOnZCnvIiFJDJnHuvg3+3GwOkKej5oSzF7zlCYcX
-	 sQvoVyIEGs17g21lNOgBoUKiEXs7cXhs2vCClkWB19p83dKZt37BO/YNgB/aOwLlOk
-	 R3QqAJfGpJwCA==
-Date: Wed, 9 Oct 2024 15:10:11 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Zheng Zengkai <zhengzengkai@huawei.com>, guohanjun@huawei.com,
-	sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org,
-	lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
-Message-ID: <ZwaAsyQnI0a0gTtL@lpieralisi>
-References: <20241008082429.33646-1-zhengzengkai@huawei.com>
- <86v7y355zr.wl-maz@kernel.org>
- <57e9adb8-a34a-6d63-24b8-4ad0abb74bf9@huawei.com>
- <86r08p5x4g.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3k7ChjJMFdAg3jD4yedtDdjw8dNd+cR5JoHYI76wmjjdsC54INHMBIAAzv1r496V/vxivjNQSihvKUefFfybv+OvfITGSTSxN6kL2tR0xwl5NKuk1qz57MVkVhQSflW0R+Vu872Laeq1icC47G5pOrTT7sUEbDUD8udJBDwwZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hFUX9Hmd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ESw401B8qGnKFVz+xxl9J4Tihn4ZExqj3WKxS50htgU=; b=hFUX9HmdcVJ3Dski1jbtqJcQOR
+	xPrefi4hnplnwIw10DAdVjmHqxpcAgR7cFrhYmwtx0daryM2ZvNbsJ4/lLNtLS9fFVLaxIyyZOBMr
+	z+jO/dUBSiDlR7vYIIAdpx4X/Gf8FZoFmMs/DsaXy4mukvdYhpD5Wj3xa4xKikDslz9gov1EkgD+j
+	OVqxqyovNhtmSDYlPmevem6H7g30PN2fzucAiFXO87a8s8a818MOEPNNROfVotOHlDL7MtmiGO9J+
+	T2Y2YXMrhlBgKVwwXxTqXAuXrR1prTcqqd/nZcQ1njVMUmBLFwHyrf/jrk9TgwNE40bAFk2EZ4zIz
+	DfJ1V7ig==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syWSF-00000004tUE-3nJV;
+	Wed, 09 Oct 2024 13:10:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EF7D130057A; Wed,  9 Oct 2024 15:10:15 +0200 (CEST)
+Date: Wed, 9 Oct 2024 15:10:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Maarten Lankhorst <maarten@lankhorst.se>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+Message-ID: <20241009131015.GP17263@noisy.programming.kicks-ass.net>
+References: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <86r08p5x4g.wl-maz@kernel.org>
+In-Reply-To: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
 
-On Wed, Oct 09, 2024 at 12:33:35PM +0100, Marc Zyngier wrote:
-> On Tue, 08 Oct 2024 15:04:52 +0100,
-> Zheng Zengkai <zhengzengkai@huawei.com> wrote:
-> > 
-> > 
-> > 在 2024/10/8 16:55, Marc Zyngier 写道:
-> > > On Tue, 08 Oct 2024 09:24:29 +0100,
-> > > Zheng Zengkai <zhengzengkai@huawei.com> wrote:
-> > >> According to GTDT Table Structure of ACPI specification, the result of
-> > >> expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
-> > >> with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
-> > > There is no such language in the spec. It simply says "Offset to the
-> > > Platform Timer Structure[] array from the start of this table".
-> > OK, I mean that in current code, the condition of this check is redundant.
+On Wed, Oct 09, 2024 at 11:20:31AM +0200, Thomas Hellstr�m wrote:
+> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
+> number of acquired lockdep_maps of mutexes of the same class, and also
+> keeps a pointer to the first acquired lockdep_map of a class. That pointer
+> is then used for various comparison-, printing- and checking purposes,
+> but there is no mechanism to actively ensure that lockdep_map stays in
+> memory. Instead, a warning is printed if the lockdep_map is freed and
+> there are still held locks of the same lock class, even if the lockdep_map
+> itself has been released.
 > 
-> That's not my reading if it. Where do you see another validity check
-> that makes this one superfluous?
+> In the context of WW/WD transactions that means that if a user unlocks
+> and frees a ww_mutex from within an ongoing ww transaction, and that
+> mutex happens to be the first ww_mutex grabbed in the transaction,
+> such a warning is printed and there might be a risk of a UAF.
 > 
-> > >> in function acpi_gtdt_init(), so the condition of the "invalid timer
-> > >> data" check will never be true, remove the EINVAL error check branch
-> > >> and change to void return type for acpi_gtdt_init() to simplify the
-> > >> function implementation and error handling by callers.
-> > > And ACPI tables are well known to be always correct, right?
-> > Not always, check is needed, but should be changed.
+> Note that this is only problem when lockdep is enabled and affects only
+> dereferences of struct lockdep_map.
 > 
-> You are not changing it, you are getting rid of it, and I don't see
-> you replacing it with anything else.
+> Adjust to this by adding a fake lockdep_map to the acquired context and
+> make sure it is the first acquired lockdep map of the associated
+> ww_mutex class. Then hold it for the duration of the WW/WD transaction.
 > 
-> > >> Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
-> > >> GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
-> > >> not be called with parameter platform_timer_count set to NULL and we
-> > >> can explicitly initialize the integer variable which is used for storing
-> > >> the number of platform timers by caller to zero, so there is no need to
-> > >> do null pointer check for platform_timer_count in acpi_gtdt_init(),
-> > >> remove it to make code a bit more concise.
-> > >> 
-> > >> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
-> > >> ---
-> > >> Changes in v2:
-> > >> - initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
-> > >> 
-> > >> v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
-> > >> ---
-> > >>   drivers/acpi/arm64/gtdt.c            | 31 +++++++---------------------
-> > >>   drivers/clocksource/arm_arch_timer.c |  6 ++----
-> > >>   include/linux/acpi.h                 |  2 +-
-> > >>   3 files changed, 11 insertions(+), 28 deletions(-)
-> > >> 
-> > >> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-> > >> index c0e77c1c8e09..7fe27c0edde7 100644
-> > >> --- a/drivers/acpi/arm64/gtdt.c
-> > >> +++ b/drivers/acpi/arm64/gtdt.c
-> > >> @@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
-> > >>    * @table:			The pointer to GTDT table.
-> > >>    * @platform_timer_count:	It points to a integer variable which is used
-> > >>    *				for storing the number of platform timers.
-> > >> - *				This pointer could be NULL, if the caller
-> > >> - *				doesn't need this info.
-> > >> - *
-> > >> - * Return: 0 if success, -EINVAL if error.
-> > >>    */
-> > >> -int __init acpi_gtdt_init(struct acpi_table_header *table,
-> > >> +void __init acpi_gtdt_init(struct acpi_table_header *table,
-> > >>   			  int *platform_timer_count)
-> > >>   {
-> > >> -	void *platform_timer;
-> > >>   	struct acpi_table_gtdt *gtdt;
-> > >>     	gtdt = container_of(table, struct acpi_table_gtdt, header);
-> > >>   	acpi_gtdt_desc.gtdt = gtdt;
-> > >>   	acpi_gtdt_desc.gtdt_end = (void *)table + table->length;
-> > >>   	acpi_gtdt_desc.platform_timer = NULL;
-> > >> -	if (platform_timer_count)
-> > >> -		*platform_timer_count = 0;
-> > >>     	if (table->revision < 2) {
-> > >>   		pr_warn("Revision:%d doesn't support Platform Timers.\n",
-> > >>   			table->revision);
-> > >> -		return 0;
-> > >> +		return;
-> > >>   	}
-> > >>     	if (!gtdt->platform_timer_count) {
-> > >>   		pr_debug("No Platform Timer.\n");
-> > >> -		return 0;
-> > >> +		return;
-> > >>   	}
-> > >>   -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> > >> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-> > >> -		pr_err(FW_BUG "invalid timer data.\n");
-> > >> -		return -EINVAL;
-> > >> -	}
-> > >> -	acpi_gtdt_desc.platform_timer = platform_timer;
-> > >> -	if (platform_timer_count)
-> > >> -		*platform_timer_count = gtdt->platform_timer_count;
-> > >> -
-> > >> -	return 0;
-> > >> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> > > And now you are trusting something that potentially points to some
-> > > unexpected location, blindly using it. It is bad enough that the
-> > > current checks are pretty poor (no check against the end of the
-> > > table for the first timer entry), but you are making it worse.
-> > > 
-> > > 	M.
-> > 
-> > Can I use the second and third bytes (the length) of platform timer
-> > structure to check against the end of the table ?
+> This has the side effect that trying to lock a ww mutex *without* a
+> ww_acquire_context but where a such context has been acquire, we'd see
+> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
+> modify that particular test to not acquire a ww_acquire_context if it
+> is not going to be used.
 > 
-> That's how it is supposed to be done indeed.
+> v2:
+> - Lower the number of locks in the test-ww_mutex
+>   stress(STRESS_ALL) test to accommodate the dummy lock
+>   introduced in this patch without overflowing lockdep held lock
+>   references.
 
-AFAICS I think first we need to check whether the platform_timer pointer
-is within gtdt bounds (< gtdt_end) before de-referencing what it points
-at to detect the (first) GT entry length and check that it is within
-gtdt_end too. We do that only in next_platform_timer() for subsequent
-GT blocks.
-
-I agree with Marc, current check is fine, we should add to it, not
-remove it.
-
-Thanks,
-Lorenzo
+Thanks, I rebased tip/locking/core, which should now have this patch.
 
