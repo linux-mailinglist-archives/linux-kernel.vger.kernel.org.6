@@ -1,215 +1,246 @@
-Return-Path: <linux-kernel+bounces-359080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3908399872C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3031998A63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D291F24ABE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F91D1F2A51D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5571C9B9F;
-	Thu, 10 Oct 2024 13:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7CA42A8C;
+	Thu, 10 Oct 2024 14:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V8bdCEgH"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2068.outbound.protection.outlook.com [40.107.22.68])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="FEpg/DDd"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010064.outbound.protection.outlook.com [52.101.69.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557361C7B78;
-	Thu, 10 Oct 2024 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCA41CBE83
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565702; cv=fail; b=U6YWC5A4FdGfgP2K2eX12+8EcE2/AYKldvDcJqqtawcprnYNDLU6skSfqZ1LNCDFwAHVWNzgPjHJRYjT+/dWpcoVqrB4unxBQv9XSq0RQaE35moV4eNNdyFWOEys+HB7zUL6oU9GRQL6eB0mNU8ARBclVvd7Js/hcoSX3Wso6tE=
+	t=1728571044; cv=fail; b=XAhiXyjQtSDnT6okkQbmVvLjVvIR163CpaVKk5Rl+feVi1hPYClaf048nKaLCEs1DBEd4/qESQ0cz9Oml7ZNUHlMeSpgv3P3Q/q1jwlQSaBN/ccoRTxLE147y8vHTsBQy7oOUy9T9BRWr+qYcGLyCg6NuxbV4w0clhnr3sl9dSI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565702; c=relaxed/simple;
-	bh=iYBK78a+Veha2jT8f1uZSmVDomwWOBR1U1jhCHLjars=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hqS3o1DxvKv7U/XSUFZMECFrVEL3CHrqZVLcQW7HHTa+c10sJxBldU9oHkRCGOd4WZHT8opqjt9dMBaUBXUsUsmcDZoBPvF6e3VOTPb8AQF+sFtn0AiQyiiIG9erF9gLvu6+vBz9aDNwRZeHB3Q0hwUC+8s+GHE8YwrlaaQMpfc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V8bdCEgH; arc=fail smtp.client-ip=40.107.22.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1728571044; c=relaxed/simple;
+	bh=TRsycoyyjEwerWQwChe+8WNhA9QBgdpZIKEe3vuDw8o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z2uy0FPiQtcvc8Zji8KP9nuyog4hhzqiSuPmxfDP955qcGlKgkakS6EjhakFgj72SSd65sBLcfQ4rm0ZWjo6pNCoXvC3picw9aGf99pRuT9/wPVndnh39764gq15s9J2V+MQIeGJtZ8dWHvUFV9SQif63rvSbS5NuK8KuJIl410=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=FEpg/DDd; arc=fail smtp.client-ip=52.101.69.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nhy91HLSWrxJIOgvQvLD3uOp2bjuPPAa9jA1KYd6xsw57bS4FE9avWyKbNS2oEyZ1DeCaE6Vq8Pq2idMIADrwtB+MBS+7nPvqvTkCucLsjE07TcXLVE8b/Q8iZP+mivdwhxyzkrT/KJY6dUZ6lbu1n+JxsfblENW7GmHVdRkdDsrW2KXFwUSMegz45IRM6v4jJYksbXMPOQanX0gr933uHEt5u7W7WAh1fHxTxYqc3jOG5kwVnIc9483OM8U+9AOaY47Yu2NOox7KfY+Og1chZY25Jyrxd4DVW8qDNRPmPIlIUa6PSZ+UdqfILxRcGFywjZ+hd8R7YrC0FtvGXqJXw==
+ b=inl+LC515Bj16BFJhI1PFGK36yOAwpMXHsLevPGBUVO1E6jLEGHR+EbbBoS+6xNSDUH7nxDphvrGQzPQ+bGGE73SnVrkBUos4e1FKUX3dx6ZZRCWzUi9vU5DP+utn+kyOfQ/3yrVpEmsI79YGrZ0lXzzi6RXuH7P7FQEYudq6m9aVWK8ogsFL9Fevf0W5BjHMFVOH34gUnccrilNxeU/zwciNCoa3Nl/PEbPBQrHNxRz5lLqegGrErIgwFGlf2JgZGbEIq5tbGrQ4kMY/jdJvTGE1AK/myYUHxMjGujMOUU6IuucEVT6sLbd62pdgLoHwCDvDcgFe0KdwhigRvLH6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zji7s8K+Teg4OxfNj1MVznN+HT4AZg2VTOahJVV0FbM=;
- b=xg+o336XPBaEEaeQh4bQHKPwUl+xxzOjHi0xQa8OvzECsR1hpGwV0D8n4QBcKyxx7ZsUCVEc+IgtM6n3MObil2Abj9NIhDYvycuJjBp6DCbvkGt/SZlowDCXmbDEAzUlOCMMwXCRd+ixFD5SICDRE/aMlzf3uvGv8FK/zbZr1gouaB6dhtw6dWK6iD9nC/zEODJny3B+h/UA9+os8tVf/+BcbO+dZnijuK/wfyg3ajAcUWkxZ1de/3L+2SlrfK2lmVoUBqASvDtpfeFuOoQLfaMw7JYY5qaTtTLJe9S1KFTAZ2ZpKlRDAZEHj3UDVnn2ByGB+m7L1AlWKDeMqpeKwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=tborzWGfPDp9YO6wd8Qo/xRfje5Zar7veGCegh2UkuQ=;
+ b=aKY2q+Bjogos+citL/Oz8n98ZORR/+6+pUi5/Fly/LgroXpnL/Gx29/VxgyZ7pdyxNouHz5yG56Ka33dcRMNXbRfR40S/zlxZrumNGpBFh8XmsxfvGM237C6KzhcA2Dp2gvsTPpB7bbBOtgsUwZ59HZUBwKVir10neD145edpM1jUndHYNa9m0IjFioyGl2MFeiCHEBH8ULjTazezq6tsYeSyIgx0e60sGQh51Zl31d3728Tvfa4ORPqlZiXgivkHCNStp5PhEPJNYDKL8Deix2pVvlXYvRfxovpZqhyCeCyxDKTtEdheeILeTw2NW7ZNRcs2NeRa7yuHzPnv5wtOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zji7s8K+Teg4OxfNj1MVznN+HT4AZg2VTOahJVV0FbM=;
- b=V8bdCEgHva3UfvRv0uMyKJrcqDnQSMnh/AaNVtPb0/P6OS2XakJNprClata+9rHxOg/2DcvvdIV4+c7DKYo6Ts7bqXteXQtDYVibRa57ixKjAZf3uJ3lFMKmmMhC8PpcXCszQSHLQYa7+nL4o8HLroslNp4a0QSjE/KSUdlO9HrEGcqNKYG0s5YZFp93Y6uu5aI9zpD5/Hz9lZMNiheYMkDS84aF30lYUVRMxmRwwzhSviKUgTU5ES3ExByI8ZlpxhPETc8yawN5kUaXN6TwirMmbQWB+B1JiSeQcRopX4POzxG0xVUgiYIltX4WQbyWlVjYBH9pOQ+N5ycDM/mdAg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB8PR04MB7065.eurprd04.prod.outlook.com (2603:10a6:10:127::9)
- by GVXPR04MB9950.eurprd04.prod.outlook.com (2603:10a6:150:11a::13) with
+ bh=tborzWGfPDp9YO6wd8Qo/xRfje5Zar7veGCegh2UkuQ=;
+ b=FEpg/DDdhK0KwQeFTsTeOuXjYzrO/Q3O9klvGXlEEhHINFjhzvgcc2EoWT7OdAj+odi3nnn9vrQvdkYdShBkXwXJBNbaiUiEuMPYmleNuklGGZ0g+hw00hMZDgWg3HL5AvRFdpSFR4N7CcyRcO3eF0gkfn8U9bMrEC/hqKibt1c=
+Received: from AM9P193CA0001.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:21e::6)
+ by DU0PR02MB8093.eurprd02.prod.outlook.com (2603:10a6:10:322::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
- 2024 13:08:16 +0000
-Received: from DB8PR04MB7065.eurprd04.prod.outlook.com
- ([fe80::8af7:8659:9d42:bd84]) by DB8PR04MB7065.eurprd04.prod.outlook.com
- ([fe80::8af7:8659:9d42:bd84%6]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
- 13:08:16 +0000
-Date: Thu, 10 Oct 2024 22:10:31 -0700
-From: Pengfei Li <pengfei.li_1@nxp.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
-	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
-	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
-Message-ID: <ZwizR5YkT1Q9jKzf@pengfei-OptiPlex-Tower-Plus-7010>
-References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
- <20240627082426.394937-2-pengfei.li_1@nxp.com>
- <ZwZuTWspV54Pn0GN@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwZuTWspV54Pn0GN@linaro.org>
-X-ClientProxiedBy: SI2PR04CA0013.apcprd04.prod.outlook.com
- (2603:1096:4:197::6) To DB8PR04MB7065.eurprd04.prod.outlook.com
- (2603:10a6:10:127::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Thu, 10 Oct
+ 2024 14:37:14 +0000
+Received: from AM3PEPF00009B9E.eurprd04.prod.outlook.com
+ (2603:10a6:20b:21e:cafe::ff) by AM9P193CA0001.outlook.office365.com
+ (2603:10a6:20b:21e::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18 via Frontend
+ Transport; Thu, 10 Oct 2024 14:37:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM3PEPF00009B9E.mail.protection.outlook.com (10.167.16.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Thu, 10 Oct 2024 14:37:14 +0000
+Received: from pc52311-2249 (10.0.5.60) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Oct
+ 2024 16:37:13 +0200
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: Richard Weinberger <richard@nod.at>, Zhihao Cheng
+	<chengzhihao1@huawei.com>, Sascha Hauer <s.hauer@pengutronix.de>
+CC: <kernel@axis.com>, Sascha Hauer <s.hauer@pengutronix.de>, "Richard
+ Weinberger" <richard@nod.at>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
+Date: Wed, 9 Oct 2024 16:46:59 +0200
+Message-ID: <1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB8PR04MB7065:EE_|GVXPR04MB9950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86ca7d6a-2fc1-4039-8e4a-08dce92c9ab6
+X-MS-TrafficTypeDiagnostic: AM3PEPF00009B9E:EE_|DU0PR02MB8093:EE_
+X-MS-Office365-Filtering-Correlation-Id: f02a3c20-ae99-40f0-33f3-08dce93908b7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|38350700014;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yf14fKgec9xR1f1tfWz73HW0aBnSu8yC8zgTKp+O1sD0NPBQ3ayxBYex4qVx?=
- =?us-ascii?Q?JQu5UxwXp/4jGyclEuM5M5xojvNB4QSD5AOO0HOWpmR/Lg07DsSzP2mdOpJz?=
- =?us-ascii?Q?KVvj/Mfya+e5aEj6fq6Xzdpy/2WpEdYjj25qPWyl2TIyKDZ3dzc7T7OE4SFl?=
- =?us-ascii?Q?xKv0qgi5E/ZafjXseDlZm80t4h8pjuedf62PyopJstDBZEezlpULi3iU4Fe0?=
- =?us-ascii?Q?W+hMdOVdQn6wCdyj64TwBK56bSnaZNpDMC/QHnZvZAPGg5OHqbEHLcRv/4zN?=
- =?us-ascii?Q?f8l4KbwfB6dGNJLDrxOuUlXeU5CXKmzquGiaCdKWW2ZlcwiIJBvG6x3PN7iU?=
- =?us-ascii?Q?eb4bI4MaYo53r/k9PPtAV1GXxctQ4an6zNI7bCUTGp+HHyqrG5itHlBJ9kzz?=
- =?us-ascii?Q?2eNJ4ddo1c09oZ0sXiU9SgvDG3t358Z9tEbJaWkpqPR7mwgHUtadxCHAp8wm?=
- =?us-ascii?Q?GPyjxgZfGiPpQlZeNS6NKEhq0LL9FHBZHmYnW+C9c/v37/NXrbnraqOsxe9X?=
- =?us-ascii?Q?jzzFXGW7FTyHO6KCFBVk7Jh9yzMVvbf2hDvcamV/Zdt0k7xR2V83L9gL0o1u?=
- =?us-ascii?Q?3eYEHMuPgM4eaXLDVyxXEG9/oyDAxH76i25vKw18jJwK5ZagOaRifas7WgON?=
- =?us-ascii?Q?eyA2YR1LoN4nNOu4ZF3Jl2SA0UBzND/RpsGeMjdfxOzAYQqaGhVY5JT0lE+X?=
- =?us-ascii?Q?XgJFHL+eyLYSzRycWKDDPVDCEZmad7J4kzTs/DtUoVDvmqTa2n+QWz4KUf6I?=
- =?us-ascii?Q?7aaYwjAfsWwUGC78/g0kS7ajInEoNT6frB5GDtT8Wrxd5zDOk1UndiIxvdZ4?=
- =?us-ascii?Q?FaDereIWqj6xtFvlaXR+SGq8exx6Hbi94/kliNRHkZ92M29JAa3hIZk1A+oZ?=
- =?us-ascii?Q?vOryZCg7TfCPMCTu7f89a9v7wKtQZ7I4Bocb207k6V6PedM7twOAahX24X+3?=
- =?us-ascii?Q?GY0LncPTQTTAD2j8Wzy6DNyWKPh+ke8pSjZxUC4Jk/JAEQTq+arjuExusqpL?=
- =?us-ascii?Q?XWg5eK7h5sEqqraMp1N4pL/+pV7LtKt7wqfROJ/wfhqGrAAYOFtnWxPyTfvk?=
- =?us-ascii?Q?jNzBQc8erh25qe3PZUYQ2kkXikXSDRsj276ehCmFLk3rhOEfxiGh7Ip1O8r1?=
- =?us-ascii?Q?AsPwypBA7bBLw3Bnp5LypTEUPm9JktiTtZQqmEEdDvw54rnn/mFIChNLWySW?=
- =?us-ascii?Q?Qeai4XPi3XZTb4Or0xoZ66Ka1xDVRH0vItUMT7nX2PzSp7BFqwVemfLtPfo7?=
- =?us-ascii?Q?AdecpoYzue26B8lo1AmhHCTiihjRAnElCv2fv9MVnL39Y8oVRxv1WYdDcMOj?=
- =?us-ascii?Q?oOeXwtFcZKI8RsIPuzuDc3LD4/R4SbySK4QnQR/uVgbzpQ=3D=3D?=
+	=?us-ascii?Q?3Kb7G/1Z3B+v4uqFU7zPjFY3KOPZ2ETDTtw8zni10OKG7fAHDP0dxneH8bFg?=
+ =?us-ascii?Q?lrbFKbRekDk5+Mo8ciR9rT3YpmguLGa04mINuyj8LIymp177pzmXg0iJZWi9?=
+ =?us-ascii?Q?AvGeypeATyJ5dLucBFVv1bEu+ArEe2f+Zn0R9TJzdahgvHQ3NJuJlP58ck2K?=
+ =?us-ascii?Q?C9dRhKw5F8osU1D853EIxfbZtiVJJ2wAutMUwN4SyUsH/ITSGP3OTf8V30vx?=
+ =?us-ascii?Q?SWkNNZKtlG+rlULw7CAQwOb3TRbac7ZmEanWkrZODf+Pvy47xYvQyOZ4QrlY?=
+ =?us-ascii?Q?7xqoARjP3IU8PE/YIQ3GFVF8aG22+7L8lyQUicFZlMP15mjzLdgb+4LQpwlC?=
+ =?us-ascii?Q?oYgwN3Zt+JCwI6DuP4/fd4A5YhTB1aDTjzk4jW1+ifrEMBw9F1SPAqq8MpHV?=
+ =?us-ascii?Q?zx1ZOVRe5CCyAlzaT02TnTrU3kJKhk3o5xdtT8vXHpQBUHHZuUfHjIosre0M?=
+ =?us-ascii?Q?Nh5Qhtean04d0o5KZ+4lizKiXAE/3Hjs3aS477qhmzvzDLbHXnoYwxZTj9BY?=
+ =?us-ascii?Q?ABaN5TzW7CwwcwjYoSXZcaOyMYOOv5soz+/IaFhz3zIExqRJyxr1gutgNdNy?=
+ =?us-ascii?Q?bNxqxv4FzLQQkweyb1yc45UszRbZUhmnoM7s5M3Ez0/XgEc1/gw8mucFptUU?=
+ =?us-ascii?Q?MK36QfljWjN8ysH4fEAn6em3bQ5+xKOOitEx35I5ddKR35MjSALtQpUvfDi1?=
+ =?us-ascii?Q?0SNDia2JHNb/j9un4l/pSDDKocVwWh9MZkXqShuTpebqy1A9joKWhpqwqpSn?=
+ =?us-ascii?Q?qPeTSWw7Z0B57BthjiIA5cmR7VJ7cuR6Dr2T8xyWjywK4tmC+d0zEyrB/LX6?=
+ =?us-ascii?Q?tJ3ZQQjsrbB5yaaSvyx5rXMyfnTNakaNGqPPtrdnihof5dGUTJQH1swqYsii?=
+ =?us-ascii?Q?NaxgrAbmyv5KyuYCs7ngc2h6CWfrhbBFwFSQaOxxU1HuT1S8S7CzC/hrPVkk?=
+ =?us-ascii?Q?ygD7bvhRko4BzPLpVEac6lLbE04EvVCYWvysQYnSP2MEMXs94VEnrRbGcozO?=
+ =?us-ascii?Q?Go7fwd4PjVQ+O5+/ogHXem0jhGgO70OujrqIOJKu2d4EBQtdA0b/cVET+l6V?=
+ =?us-ascii?Q?0Pk+paGUn5K+0lW/QeS3aMZk8ZrueDhF8JPHI87gTBZLriC2tvXHEazFKGhz?=
+ =?us-ascii?Q?H7c8hz7jbR2X6mSkmwl6MblCGgt8PufPNEBDghPQlE+RhL2627N5C0U2Zp03?=
+ =?us-ascii?Q?BQEGJkiHMEmM51LzM+Uol/6g0+MTffxkhdreThlDCbTNoLkChOWHJoPdmmv0?=
+ =?us-ascii?Q?uGLaBHPBtUrxs0HI4MirLfwig0W/SkyVc1IHPuscAFXP5G1S9Y2GclyPXZBS?=
+ =?us-ascii?Q?q40kyMUwyIz5WxtFR8+WWiF1OyNX3RVJX1b1dlsXNfO1e23KAYRK5ExOjJpb?=
+ =?us-ascii?Q?iyKpDvdlccAWQ2jxj0PpR3zJQR3U?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7065.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NayqYjdntLYpthd2vZEkihF6iG65x1AJBer0nZEwLyDk5NCwGGkmNPUyybqz?=
- =?us-ascii?Q?duGWIIyAwIpSxEFFJecQH5OAQAaJbUpd0JCbwRh94jG4D/byPpk/r1cfYyQY?=
- =?us-ascii?Q?08Y3P3l8NOn39LyAvmw3kTdgLjn89dCeGD13Kgv6YYsQmlOttdWFWPgUDJyh?=
- =?us-ascii?Q?ffZS/wu8VwhmGFMp2hXbn7A7Nr4aF66l7GhMPBHiz+0k8kOhqo95W7GoNeqw?=
- =?us-ascii?Q?D2Cc5mo7RDmMcVDaibGNATSD5iPRHtmi6AjqEs1paarnjiCCctjbDSO1iO5J?=
- =?us-ascii?Q?T+92k1uBWPE77WBmZKbgmMHesLB591wI7grqPJ5YWHyTlmH/2R4xgL6AVcsv?=
- =?us-ascii?Q?FwlORn/Vyf0M3GuZC2ElilOryguSvE3KrLKFAoy03H8NBnjp81/r++Fs8jUo?=
- =?us-ascii?Q?iruBlQgbhI4yo3j9cp7rtc4UMxgZ3FVeBp1tzxtv403PQNXRJpWfjaIS/F0D?=
- =?us-ascii?Q?YhC79CEoI1OLimpG03JzlCzweIO4OWdFp+Ihn+OkzrZzOx+igdxOLxBmeGDj?=
- =?us-ascii?Q?jTO/UTMX1u8zcOUTgUvCUYYWZrvFa8Q/buwN7pWdVEWReZiBzZQ6h3Umslx7?=
- =?us-ascii?Q?8iXJMB9ro9ddlb8xRq8ceLVxRoFN/HLfdK1h53cuWG8DHpuYmOsTVwPemlTv?=
- =?us-ascii?Q?cYYoSMvnX0Ft+VRLK29kPYpAlrjwLtGeoIw6NnbYakNLjSgNelX/+VTz0zYL?=
- =?us-ascii?Q?fO3HueiXpVFk1n4UBpOTL7Dw9ekrf+ie+Pjd7EFuycCy4CaIeTOqnSOKnxtB?=
- =?us-ascii?Q?KD7mz4WET7Ek7Y79m3LtKAnPrHN76RqnLyqye+DKYrmT6pDoG/hHchLfEMiT?=
- =?us-ascii?Q?jOhy66pHsqUb2FKaO3TXVJSvs56v0QFxPygyTTa6vlmEd3QB/e4O3Q6BrJgF?=
- =?us-ascii?Q?4wYlY4h/rkYgkEAjASvg5j+wNzjKH93jMCnEzIaG7Y0GHGTP12zXduuLyiwh?=
- =?us-ascii?Q?Yx9PNxRZnVibxHeIX/1tUTPvOZjX3pd7+tqWXqO5FGG97MJQXIPYSFW8MOwv?=
- =?us-ascii?Q?AHs+0NmxdolAbgEo3+FlPujNKlU7zjqa4MoFRUWqEHnAP0ogzb7r2bQVWZhl?=
- =?us-ascii?Q?noRk0PLv0LRgRL0CHEbG1cZvErZg+v+ovpgBgxCvHXP7qHRgSiINfa8iqSsd?=
- =?us-ascii?Q?PJd4C4gqO5rGofh4XxcLeU1i5D6Lp8/5mtg8W4gglPQFc/2mP+vookQlDDqM?=
- =?us-ascii?Q?8anNiCny8Ou+lVBVt75ky6k35K2YQFsFJS1CE6/KiNJZpSk+yqe84tk1mVUM?=
- =?us-ascii?Q?tYKPHfnEJZQV+FkbU+8NNxG9Hmx8srU1gVO6zqW8GIC3gnp083QjLzi2vV2q?=
- =?us-ascii?Q?40eNNCrYVoY7wnXTfxBG9ZnZsuCOPidOG6AFUYXNL4foDLZtLGSScuupvana?=
- =?us-ascii?Q?om10nCJpZwhmXnYkcT5AVHs6ITllC4nfzevTj7UT/yu55iYJwa1JOBSAG8HW?=
- =?us-ascii?Q?7a26Wy+JM/uoLFqLWKWzZKsOm+ciEXFTLN+OaBOkLi6wlBifwJghMbYy3srX?=
- =?us-ascii?Q?HoYE+diOjokUPIAskgxxQ5D7WCtxUIzdSmE43j8MAnahAGQOU9x18Rkjo0au?=
- =?us-ascii?Q?ugpNE4NAYXKDknkU9AjgT+We/9UHjZaFG8F0JEs+?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86ca7d6a-2fc1-4039-8e4a-08dce92c9ab6
-X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7065.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 13:08:16.5939
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 14:37:14.7930
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w+d25rw1ozovLDkle5SZq0mDXyaToPOzSpT68LTHIW+Xmz3BiHv5clbfzYCiNv1TW6COuvUlY18R3NWzl4at6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9950
+X-MS-Exchange-CrossTenant-Network-Message-Id: f02a3c20-ae99-40f0-33f3-08dce93908b7
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF00009B9E.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR02MB8093
 
-On Wed, Oct 09, 2024 at 02:51:41PM +0300, Abel Vesa wrote:
-> On 24-06-27 16:24:25, Pengfei Li wrote:
-> > IMX93_CLK_END was previously defined in imx93-clock.h to indicate
-> > the number of clocks, but it is not part of the ABI, so it should
-> > be moved to clk driver.
-> > 
-> > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> > ---
-> > 
-> > Notes:
-> >     Change for v2:
-> >     - Use pre-processor define to simplify code.
-> > 
-> >  drivers/clk/imx/clk-imx93.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> > index c6a9bc8ecc1f..c8b65146e76e 100644
-> > --- a/drivers/clk/imx/clk-imx93.c
-> > +++ b/drivers/clk/imx/clk-imx93.c
-> > @@ -15,6 +15,8 @@
-> >  
-> >  #include "clk.h"
-> >  
-> > +#define IMX93_CLK_END 202
-> > +
-> 
-> TBH, I don't like this. And I still don't understand the reason.
-> 
-> Where are the clocks you want to add ?
+Running
 
-Hi Abel,
+  rm -f /etc/test-file.bin
+  dd if=/dev/urandom of=/etc/test-file.bin bs=1M count=60 conv=fsync
 
-I re-sent a new version of the patch set which includes changes to add the new clocks:
-https://lore.kernel.org/all/20241011045736.308338-1-pengfei.li_1@nxp.com/
+in a loop, with `CONFIG_UBIFS_FS_AUTHENTICATION`, KASAN reports:
 
-> 
-> And why wouldn't it be OK to just keep this in the bindings header even
-> if you need to add more clocks ?
+  BUG: KASAN: use-after-free in ubifs_tnc_end_commit+0xa5c/0x1950
+  Write of size 32 at addr ffffff800a3af86c by task ubifs_bgt0_20/153
 
-Krzysztof has help explained this:
-https://lore.kernel.org/all/a07828a4-8040-42cb-8c62-8939cac4d9de@kernel.org/.
+  Call trace:
+   dump_backtrace+0x0/0x340
+   show_stack+0x18/0x24
+   dump_stack_lvl+0x9c/0xbc
+   print_address_description.constprop.0+0x74/0x2b0
+   kasan_report+0x1d8/0x1f0
+   kasan_check_range+0xf8/0x1a0
+   memcpy+0x84/0xf4
+   ubifs_tnc_end_commit+0xa5c/0x1950
+   do_commit+0x4e0/0x1340
+   ubifs_bg_thread+0x234/0x2e0
+   kthread+0x36c/0x410
+   ret_from_fork+0x10/0x20
 
-> 
-> For the moment, I don't see the value of this change.
-> 
-> Sorry, but NACK.
-> 
-> >  enum clk_sel {
-> >  	LOW_SPEED_IO_SEL,
-> >  	NON_IO_SEL,
-> > -- 
-> > 2.34.1
-> > 
-> 
+  Allocated by task 401:
+   kasan_save_stack+0x38/0x70
+   __kasan_kmalloc+0x8c/0xd0
+   __kmalloc+0x34c/0x5bc
+   tnc_insert+0x140/0x16a4
+   ubifs_tnc_add+0x370/0x52c
+   ubifs_jnl_write_data+0x5d8/0x870
+   do_writepage+0x36c/0x510
+   ubifs_writepage+0x190/0x4dc
+   __writepage+0x58/0x154
+   write_cache_pages+0x394/0x830
+   do_writepages+0x1f0/0x5b0
+   filemap_fdatawrite_wbc+0x170/0x25c
+   file_write_and_wait_range+0x140/0x190
+   ubifs_fsync+0xe8/0x290
+   vfs_fsync_range+0xc0/0x1e4
+   do_fsync+0x40/0x90
+   __arm64_sys_fsync+0x34/0x50
+   invoke_syscall.constprop.0+0xa8/0x260
+   do_el0_svc+0xc8/0x1f0
+   el0_svc+0x34/0x70
+   el0t_64_sync_handler+0x108/0x114
+   el0t_64_sync+0x1a4/0x1a8
+
+  Freed by task 403:
+   kasan_save_stack+0x38/0x70
+   kasan_set_track+0x28/0x40
+   kasan_set_free_info+0x28/0x4c
+   __kasan_slab_free+0xd4/0x13c
+   kfree+0xc4/0x3a0
+   tnc_delete+0x3f4/0xe40
+   ubifs_tnc_remove_range+0x368/0x73c
+   ubifs_tnc_remove_ino+0x29c/0x2e0
+   ubifs_jnl_delete_inode+0x150/0x260
+   ubifs_evict_inode+0x1d4/0x2e4
+   evict+0x1c8/0x450
+   iput+0x2a0/0x3c4
+   do_unlinkat+0x2cc/0x490
+   __arm64_sys_unlinkat+0x90/0x100
+   invoke_syscall.constprop.0+0xa8/0x260
+   do_el0_svc+0xc8/0x1f0
+   el0_svc+0x34/0x70
+   el0t_64_sync_handler+0x108/0x114
+   el0t_64_sync+0x1a4/0x1a8
+
+The offending `memcpy` is in `ubifs_copy_hash()`. Fix this by checking
+if the `znode` is obsolete before accessing the hash (just like we do
+for `znode->parent`).
+
+Fixes: 16a26b20d2af ("ubifs: authentication: Add hashes to index nodes")
+Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+---
+I'm not entirely sure if this is the _correct_ way to fix this. However,
+testing shows that the problem indeed disappears.
+
+My understanding is that the `znode` could concurrently be deleted (with
+a reference in an unprotected code section without `tnc_mutex`). The
+assumption is that in this case it would be sufficient to check
+`ubifs_zn_obsolete(znode)`, like as in the if-statement for
+`znode->parent` just below.
+
+I'll be happy to get any helpful feedback!
+
+ fs/ubifs/tnc_commit.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
+index a55e04822d16..0b358254272b 100644
+--- a/fs/ubifs/tnc_commit.c
++++ b/fs/ubifs/tnc_commit.c
+@@ -891,8 +891,10 @@ static int write_index(struct ubifs_info *c)
+ 		mutex_lock(&c->tnc_mutex);
+ 
+ 		if (znode->cparent)
+-			ubifs_copy_hash(c, hash,
+-					znode->cparent->zbranch[znode->ciip].hash);
++			if (!ubifs_zn_obsolete(znode))
++				ubifs_copy_hash(c, hash,
++					znode->cparent->zbranch[znode->ciip]
++					.hash);
+ 
+ 		if (znode->parent) {
+ 			if (!ubifs_zn_obsolete(znode))
+-- 
+2.39.2
+
 
