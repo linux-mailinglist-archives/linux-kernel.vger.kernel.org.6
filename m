@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-356633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF9996461
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:04:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B647499645E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA40E1C21757
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E832F1C21F7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA53189B8D;
-	Wed,  9 Oct 2024 09:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F988188906;
+	Wed,  9 Oct 2024 09:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gVFXMVlk"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Z/4AAVJ8"
+Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5527117C22B;
-	Wed,  9 Oct 2024 09:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99BAEADC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464663; cv=none; b=jaohQj/2lL+2ssiiywZyuiE6b7MxG2ZXbfUIFpSea5NeUurWK4u/a+LXKZl9B1V1rLiPNjmGe1oC4KtWc7WxkHd9DFih/5kY6VD/8cBCLx5Wms6XuNbHNRLR45m+wWcXcfiXkUxrbgd0VEdWFvXUXqYzymAprCUrSx6Q/I4S4tU=
+	t=1728464647; cv=none; b=gnv7mpAAGTvwCnbeBFf3qKMwP+cK8BHCtBMmEqrucge3o44/a3sWZItz4SHT+w3L+IA3PAUutQRj2nxN6HHtQCwohlXDP2O+S7sg+EbKzssV6rOH3L+jfpV0+WhpGgpx6ekBMpo0dJpYRE+lptF8VAbontOkzrcIbdN+8ZOx4rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464663; c=relaxed/simple;
-	bh=b7RJRJVgA89EWJjISnYqjjufULQlbCh9Igo5Ve3Av1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJ5DjXOsByZck3eu1ZTvyt+KhPChi3GAJGr1rscGEAjsFIyHPY7kOKpXnjc2eJF9ItXnSWSPIyZOaYFMOc5gap8w7NthhLM/Na0KlKpZx7O/hUJzaeRD9E5m95r+ZVNcZrJo7K/sqAOLT8YOOGlV7cWMjT7kcpRzrk0PfYfYU6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=gVFXMVlk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=c8bp6/c7buf8wyfEKQc0rCpuGOfc8jy1CqBEMoOnPYM=; b=gVFXMVlkYWewi9O1/PZcq/2riG
-	Xoy59hwqrTIRFBSYt5f9GXci0g/XZuf/B6+LHDbpJkm3+tu3ULnvjMV0+4RxpguAfezNTe551r86n
-	xseHlKK3elKKsCYKWur3/fIESltF4mwYuGkFGY0a4XFx3+m/mdX2fZRRszF0rbKY+ahUOyM31WHEo
-	1IyWPjORsSjQllWpkQa1BV3L374KmwkYxfg2SdtnPSSS9pp9zD3qUJS+ToF/+wbr3F/VSFy9F3odv
-	4lCPQYuVCbg3XS3NdOXTKErA4qdoyj86BSwxz6prdiFdLAnTgPKvyxFR0un1BtTVsGQ8xos7n9tR4
-	8oTzequQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40144)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sySc1-0000Eg-34;
-	Wed, 09 Oct 2024 10:04:05 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sySbx-00069g-31;
-	Wed, 09 Oct 2024 10:04:01 +0100
-Date: Wed, 9 Oct 2024 10:04:01 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	git@amd.com
-Subject: Re: [RFC PATCH net-next 3/5] net: macb: Update USX_CONTROL reg's
- bitfields and constants.
-Message-ID: <ZwZHAZrqLY1EBRHM@shell.armlinux.org.uk>
-References: <20241009053946.3198805-1-vineeth.karumanchi@amd.com>
- <20241009053946.3198805-4-vineeth.karumanchi@amd.com>
+	s=arc-20240116; t=1728464647; c=relaxed/simple;
+	bh=U6gTVCR1SWTecSiJAAHM+y+OKQr6E2+zzUL4EqKAKQs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ojf4JATQt5p4n62+bG0TwO22L88yP+SOebxDNSJWORMb9KkW0yk2OH7+GPGjcR7yDnemU9mFqEek24UEekEM+ephyqjg7NZLkAvGHzOL3wMZRRzZG0XzwXo0mxXYxAAg39jnJkALiuRfNh3bAyj5eY3DBta6HosgrKTKsliRSQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Z/4AAVJ8; arc=none smtp.client-ip=203.205.221.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728464643; bh=znLFiy+Gufz/jmUYElMhphI9lilg+HPkttgJBBSJ1Zg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Z/4AAVJ8lid8NDsE1d9831TxSvJwFgL8b8LukcCkNNmAgbype6yhDhUHK0/JHte+D
+	 711UPai+sII+vy1gK0utk88hPBBneokO6y/wTqLP5hu3m8hFEdZzfjzF64HxwvFjFV
+	 omtLr/5Lcht95M1b2tHzMeuhN/y3sdQHsu0LiZeU=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 101B3450; Wed, 09 Oct 2024 17:04:01 +0800
+X-QQ-mid: xmsmtpt1728464641tfqymlxz3
+Message-ID: <tencent_A51B5C25CDBA1CBBBA33419EFB1B3B4B6508@qq.com>
+X-QQ-XMAILINFO: Mv8oRO7AAqEFCi8/+23yj9RvGTM4xhOcV9cFi0S3fEc6ZyVRH0eL6FyG6prOdZ
+	 2jlu2tEv8IWL/Dw65ctrVUyEJaNJxSRXJ7SYWZe8/Xr1GuTu+vVy2fmvYOoUMM6YcfTtxuzlyBRM
+	 t9kynckh7qbH4rb7Cc5NnppQfpmRoTu27GWzs0tQnTBKqNgl/EHkl5YCwlzNUGH1kuZptqnzI9+Z
+	 npHozYWIwbXci4k31GI3Ox2OlO0T6vHxvoMwN66mR3AQD0qIzIDG8Ky+XGM0tESpbAvKyY/DhDZ2
+	 rRRg5E4VyBORDh2kr1iceD8uZ8UikI7WFns4VZ6HUSL80n68l6oux77xSHJkmF96cCq7vYiqFT5b
+	 kqhuAKvyssVpSV+ZbVDVH2z9jb05vb1DqA1QFNFpoM52KaP6uR8RNWAQvVf8W2KWYutXNd3iMqWW
+	 q2V03ik8lmAF7ZTxg0IFGokNw6nQ7e5mv2EFzlbO5n5hG4mdt1UUIfVZiwNTve8Wolh2U3o30jc0
+	 zoDFYtTOP+O9EEIN4tUrHqadJORw6UqQplvW4Rzof0OV+lPHVpZVT0MjLY+Gi86es8DGT4lf3bpm
+	 8CUFJ8nJm9VqtFJwRzGTVnrHxhGGsW20t4LJ0O45wlD466c10v4NjU6um8XKIkBC0XdAXFnyG+6W
+	 0klfunbiBgR05AknL06ZIxUXMI1m2qqWoqkSWGcf04qtOVzfO/JH7wnrjYRxpU08X5LYSt6XG/2l
+	 /7fXN6Z7J51CopLBRoR3PinJ001GF1lorrsnjRYWXe1F4KYl7daNyCZ5hlLoa8sqq4C2w6rT4r1l
+	 HCoSBniyeq7u0HxwZCYYgxMAelY2fO/EkUAHhkdIWfZjWGdsiQQQlx9BnvRUyrzfv4VauyFOJUA/
+	 SufmHquoEQ4SXyanEiO4P8LvbiS7dmR2ox0I0I1ScE5dRb5P5oeW66GUFVi1hjqHyEw/1DVuaTNI
+	 KoSJ7RwymVRL4tF+iqe2RUt+CMEVTbrd9r6+9LdJNEyLe8qz7x52TeMHk5Y0JodEOXtPs+hp6UKc
+	 67S/yJ2QlzmSOHiOqh
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1f8ca5ee82576ec01f12@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [usb?] possible deadlock in chaoskey_open
+Date: Wed,  9 Oct 2024 17:04:02 +0800
+X-OQ-MSGID: <20241009090401.1236433-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <6705f457.050a0220.3f80e.0021.GAE@google.com>
+References: <6705f457.050a0220.3f80e.0021.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009053946.3198805-4-vineeth.karumanchi@amd.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 11:09:44AM +0530, Vineeth Karumanchi wrote:
-> New bitfeilds of USX_CONTROL register:
-> - GEM_RX_SYNC: RX Reset: Reset the receive datapath.
-> 
-> Constants of the bitfeilds in USX_CONTROL reg:
-> - HS_SPEED_*: Multiple speed constants of USX_SPEED bitfeild.
-> - MACB_SERDES_RATE_*: Multiple serdes rate constants of
->   SERDES_RATE bitfeild.
-> 
-> Since MACB_SERDES_RATE_* and HS_SPEED_* are register constants,
-> move them to the header file.
-> 
-> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+delay get the chaoskey_list_lock, avoid to circular locking dependency
+chaoskey_release has a wrong logic lock for chaoskey_list_lock, it need unlock.
 
-...
+#syz test
 
-> +/* Constants for USX_CONTROL */
-> +#define HS_SPEED_10000M				4
-> +#define HS_SPEED_5000M				3
-> +#define HS_SPEED_2500M				2
-> +#define HS_SPEED_1000M				1
-> +#define MACB_SERDES_RATE_10G			1
-> +#define MACB_SERDES_RATE_5G			0
-> +#define MACB_SERDES_RATE_2_5G			0
-> +#define MACB_SERDES_RATE_1G			0
+diff --git a/drivers/usb/misc/chaoskey.c b/drivers/usb/misc/chaoskey.c
+index e8b63df5f975..225863321dc4 100644
+--- a/drivers/usb/misc/chaoskey.c
++++ b/drivers/usb/misc/chaoskey.c
+@@ -232,10 +232,10 @@ static void chaoskey_disconnect(struct usb_interface *interface)
+ 	if (dev->hwrng_registered)
+ 		hwrng_unregister(&dev->hwrng);
+ 
+-	mutex_lock(&chaoskey_list_lock);
+ 	usb_deregister_dev(interface, &chaoskey_class);
+ 
+ 	usb_set_intfdata(interface, NULL);
++	mutex_lock(&chaoskey_list_lock);
+ 	mutex_lock(&dev->lock);
+ 
+ 	dev->present = false;
+@@ -319,7 +319,7 @@ static int chaoskey_release(struct inode *inode, struct file *file)
+ bail:
+ 	mutex_unlock(&dev->lock);
+ destruction:
+-	mutex_lock(&chaoskey_list_lock);
++	mutex_unlock(&chaoskey_list_lock);
+ 	usb_dbg(interface, "release success");
+ 	return rv;
+ }
 
-I'm not sure having multiple definitions for the same value for the same
-field makes sense. Maybe call it MACB_SERDES_RATE_5G_2G5_1G ?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
