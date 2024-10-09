@@ -1,49 +1,72 @@
-Return-Path: <linux-kernel+bounces-356961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15D299696B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:00:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A773E996971
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7744A284F19
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:00:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219BFB2299D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E44192B89;
-	Wed,  9 Oct 2024 12:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14560192B89;
+	Wed,  9 Oct 2024 12:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bei0ifpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FFal7dpZ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9685B824BD;
-	Wed,  9 Oct 2024 12:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B183819068E;
+	Wed,  9 Oct 2024 12:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728475230; cv=none; b=uctws09CohZYg7rshSrW0Odfl9eYDw+vaHFmtMHyEA7+iMYoxtc9uO7E3CMM89E4ZAvAL8zYtYUsbTPo4IgshCcSca9F4hWHf6Zit718s/zB8GXPM5oZ8cB8UfP9MIcYwMyuzZTsV54TSPi2Wt9uwgAOfWw4zS6IcREgSCTwcBA=
+	t=1728475342; cv=none; b=G82toymlM3ie2IvBqaclOYYwRyHL4amEM7fzIeX67Nx7Bp5wnXsaq2PplrZqwCyyukN9iUtDKYWdf/81VHTTF1KXkImxdNvuBB/B5LdjvZ5kr21CUOusta+Qc05aFwWlIpZpodY1wZo6GREmDvuWUY6QQmYYpTsX3bvmSZ78Q+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728475230; c=relaxed/simple;
-	bh=nlYHzGLhj4rclM0KV2hJPZZjHX3Pq+0hLcWIbKNYt6U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=DYRfgGkI/5hrxomgk2xLPqDlkK9Lfbhjz4Rtv9s6gzRr6mZClLa+KdpYPIv93R4UIqFITqJs6y3SsRwywwadC3lWmfbyMIFmvX+huDZGyq3/QvShifRe43rtkUMTC8PTuheyuYaGH5WfRS7hF2HrjkPL7q8gmnqKbDJ9HFPys4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bei0ifpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D449C4CEC5;
-	Wed,  9 Oct 2024 12:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728475230;
-	bh=nlYHzGLhj4rclM0KV2hJPZZjHX3Pq+0hLcWIbKNYt6U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Bei0ifpaz5UyOcpbAoIQ/5jgS9f0bs1bopKr4p9bB1IdH7bpZrJS6rASX/xKCNMxL
-	 iGpBFAsQ7jOCV6BL6dHQ6k/jVFdIZ5SRaD8UbdsMcajgdo4Xgb0+oZOSqlfr3Lhg0i
-	 VBH0wV4eodrSZbUz6XRsDboDiR2khDtyDlmBAh2C/nwAvSbYuqQlMmcN/euld64eVv
-	 iyaHbzgHtliHOg2/1q9mAeg05sQnU1mGicjvbdDgDrRwWDM3F8+sZ+UXSGQMZLVaVo
-	 DmMrAYp7UxgR9GrSaNI9MjBcdrQ0V1XwTXgYYSRsOMnxUzB7p7qT+GudXYoGwVL+Xn
-	 n2r3Ct1rFgA5g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE42E3806644;
-	Wed,  9 Oct 2024 12:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728475342; c=relaxed/simple;
+	bh=JS05tjTZ6VGXiAeuh5EpRJiPd4v2JoHnLHFs0xLRpXA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fvsk1WfREo+Fe3m7dzRAiWqBiL9LIfaCrB40OO2jMRZzzMUE4O9BXe3mAUHPV+3O0WgdZd1CgwQfuDpydwJ480BA1SHUNZex7ZgB3Ybx6dwlKoFmDkbzda7rinVMO9JIivZ0DfH/JW/cZBtkPwxS3LKwPMEsAjPQhirCO2a2iCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FFal7dpZ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 52335f4a863611ef8b96093e013ec31c-20241009
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=wft0wMYjRol19sQXS7lU7PGKjsnYG5Yenj+/tz3tTQ8=;
+	b=FFal7dpZ0mU4QV8mNteFS69YCD4IM/KxlT1xJXqeXJQqK39BEj5tbJIJ6qbQiVf15rXDeAj3wkvwb+YNmMr0OfalAQrolFsEK+uxZHcHrW4Q3vazMbP3CjT4Mjq+sqBXpwRbLPsxEtDOnHkV2CN+wBEQsrckRkNqwNJqVBr26aw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:d9ea9141-0f78-4c11-8c3b-8ab414a5ec60,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:8dc5fe64-444a-4b47-a99a-591ade3b04b2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 52335f4a863611ef8b96093e013ec31c-20241009
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <andy-ld.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 940317029; Wed, 09 Oct 2024 20:02:13 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 9 Oct 2024 20:02:09 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 9 Oct 2024 20:02:08 +0800
+From: Andy-ld Lu <andy-ld.lu@mediatek.com>
+To: <ulf.hansson@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<wenbin.mei@mediatek.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Andy-ld Lu <andy-ld.lu@mediatek.com>
+Subject: [PATCH v3 0/3] Add mtk-sd support for MT8196
+Date: Wed, 9 Oct 2024 20:01:23 +0800
+Message-ID: <20241009120203.14913-1-andy-ld.lu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +74,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2] improve multicast join group performance
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172847523450.1241124.965690201878894665.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Oct 2024 12:00:34 +0000
-References: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
-In-Reply-To: <20241007-igmp-speedup-v1-0-6c0a387890a5@pengutronix.de>
-To: Jonas Rebmann <jre@pengutronix.de>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, madalin.bucur@nxp.com,
- sean.anderson@seco.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@pengutronix.de
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.718400-8.000000
+X-TMASE-MatchedRID: 6Pyq8tKkRyftt0HEL3BUV7iMC5wdwKqdLoYOuiLW+uXfq/+cvg1NCKip
+	18v0DWYVnxamL54dKNbAFycL8Ymu1rhhaFskSWDqYwaJXrf2IXSL6a+kPOEFsJ6fSoF3Lt+MMqR
+	wky9xOk45imXDx6zyYOFr39PS7zaEgZI1n6aNUzbJ5W6OZe5hhYEcpMn6x9cZOW8XgChxVdgwfX
+	HHXt4W1FoqhwIvssPy3c3CRAd2bOE2UEKHDN0wzBlckvO1m+JcTJDl9FKHbrmdohxAwFG9tKPFj
+	JEFr+olwXCBO/GKkVqOhzOa6g8KraTORqtbRsP2nTRjrsQn0THUTvWJ9mbf13z4B5fjDcKL3YG1
+	Y8RuI/JK31unxphxzudGiGOk5aHhKyVJb/VK9KDdknd0aVk9DuLDq7G+Ik/yv22xKJRyIGVDnOx
+	ozmpp1r+WvXJiKHRLKUZy1dpMKy4=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.718400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 02CD6116B37BFC20CAFB3C4A291E803122577B9430CD7D288F9F17C22E29986A2000:8
 
-Hello:
+There are some new features for Mediatek SoC MT8196, which include new
+command/data transmitting and receiving path (abbreviated as tx/rx), and
+two modified register settings.
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+The driver code has to be adapted to implement the above changes, and the
+compatible string 'mediatek,mt8196-mmc' is added to driver and devicetree
+bindings.
 
-On Mon, 07 Oct 2024 16:17:10 +0200 you wrote:
-> This series seeks to improve performance on updating igmp group
-> memberships such as with IP_ADD_MEMBERSHIP or MCAST_JOIN_SOURCE_GROUP.
-> 
-> Our use case was to add 2000 multicast memberships on a TQMLS1046A which
-> took about 3.6 seconds for the membership additions alone. Our userspace
-> reproducer tool was instrumented to log runtimes of the individual
-> setsockopt invocations which clearly indicated quadratic complexity of
-> setting up the membership with regard to the total number of multicast
-> groups to be joined. We used perf to locate the hotspots and
-> subsequently optimized the most costly sections of code.
-> 
-> [...]
+---
+Changes in v3:
+- Separate the settings for stop_dly_sel and pop_en_cnt to a different
+  commit; 
+- Add the original value of stop_dly_sel to the platdata of legacy SoCs,
+  for unified code setting;
+- Change to return if host->top_base is NULL in msdc_new_tx_setting function,
+  to simplify coding;
+- Optimize the location of assignment for 'timing_changed' in msdc_set_mclk
+  function.
 
-Here is the summary with links:
-  - [1/2] net: ipv4: igmp: optimize ____ip_mc_inc_group() using mc_hash
-    https://git.kernel.org/netdev/net-next/c/69a3272d787c
-  - [2/2] net: dpaa: use __dev_mc_sync in dpaa_set_rx_mode()
-    https://git.kernel.org/netdev/net-next/c/298f70b37144
+Changes in v2:
+- Use compatible string 'mediatek,mt8196-mmc' to replace 'mediatek,msdc-v2';
+- Remove the 'mediatek,stop-dly-sel', 'mediatek,pop-en-cnt' and 'mediatek,
+  prohibit-gate-cg' in devicetree bindings, due to SoC dependent;
+- Add 'stop_dly_sel' and 'pop_en_cnt' to the compatiblity structure for
+  different register settings;
+- The SoC's upgraded version would discard the bus design that detect source
+  clock CG when the CPU access the IP registers, so drop the related control
+  flow with 'prohibit_gate_cg' flag.
 
-You are awesome, thank you!
+Link to v1:
+https://patchwork.kernel.org/patch/13812924
+
+---
+Andy-ld Lu (3):
+  mmc: mtk-sd: Add support for MT8196
+  mmc: mtk-sd: Add two settings in platdata
+  dt-bindings: mmc: mtk-sd: Add support for MT8196
+
+ .../devicetree/bindings/mmc/mtk-sd.yaml       |   2 +
+ drivers/mmc/host/mtk-sd.c                     | 166 +++++++++++++++---
+ 2 files changed, 147 insertions(+), 21 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
 
