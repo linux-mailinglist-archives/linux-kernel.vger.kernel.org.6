@@ -1,116 +1,110 @@
-Return-Path: <linux-kernel+bounces-356087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE099995C54
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:36:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDC8995C56
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6140286642
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:36:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6965BB20EB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C69D9476;
-	Wed,  9 Oct 2024 00:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35B81B815;
+	Wed,  9 Oct 2024 00:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="c8TnBXKt"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="MOuo0z6F"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09723C24;
-	Wed,  9 Oct 2024 00:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2721799B;
+	Wed,  9 Oct 2024 00:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728434153; cv=none; b=e59TROi0KWb5oxon8+IjkFmYml8qknKiUN23V573AHTV9DStgxrTBSCi5RTfYLTB9M4wrmyTE6ZblcCk1OImlfX7TN51mCGjb+ZEbaH0shdvLw3PQmUlSUj4CmnxCiKr5wmMmG2BJMLmnuZcNZGGacW7xCiW1jvo3LFK79V8jBk=
+	t=1728434158; cv=none; b=Z2ScSCTnNXd7o94IaHO7b1N+OXvvIuaJJUWjeOXuJZEzB8UelRFZ5XlwRCpEyiaGSRIHAcooUV7ZSP7iGIztJEJidqcP64uG5gqm91jnU+sHDgl2dn3ERacuuCeLMmhkyWYmV59WRj7G4XuU0XzeRVuAV0/P07oV6UVnfOao5Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728434153; c=relaxed/simple;
-	bh=rKQjvdbpyeunpt6XCbMmyGs87AfcrgaMMoUiyaGYC6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Klw1LnHrmi5E/hAmXXZb8YtdwnGmwC/jXkWbIEirEE6hrqVmkIr02Xn+bWms0yD4fIg1v2aJHymhlr9eRfm9DTXrtObb6IOkNXbQ3gPqslTczk8TT8npm513/V1KcTyaQt7IXzVy86RuJzJ8PnzTc+wWxRqvSSOiDknJNBVvMjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=c8TnBXKt; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728434140;
-	bh=3nr0S2WZmd+H0ZX1iN4+J+Y17/he9bKRURG+4Pyq2KA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=c8TnBXKtdZg/kBs0Mg6eta/Pie7JtcWLOfwutGu2A2HSaclwas3fk35EngFrxSmem
-	 mAdYhgkI38BXWMsUsjLdtk/sRgCZ2VSc1eQdpue/MKpoxkjkAViCE/c5OhPRG1J0su
-	 kE4sGPO/gFeP2nBpE1JObfFPQbBvtEjv7SMZDILWv0qPpoaVgealJZf1rIcFXpbmzm
-	 RR5WH2YQVbTGVzatZLgzHqXrGmH1Wb9Zhyx2oTFgq9CgSWeUDHPMwS+JL4gZecWwnk
-	 iipgVH9fNA1Zf1/1+VHFqbXx0VKdNQfOOulpe2qlwliHV7n+aKVGXvZ1x2R9+skMVl
-	 Ixniu0ksGUaNg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNYp32mLpz4wc1;
-	Wed,  9 Oct 2024 11:35:38 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 11:35:37 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Johannes Berg
- <johannes.berg@intel.com>, Wireless <linux-wireless@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the wireless-next tree with the origin
- tree
-Message-ID: <20241009113537.4676291f@canb.auug.org.au>
+	s=arc-20240116; t=1728434158; c=relaxed/simple;
+	bh=Eqp2TaTL1PGixvSTGuIYJ8m+VzhdOUq4BR4L1lda1F8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o4Vn/NqbnTOYGawpy0AdZUeXnp9b86LH3E3GQpuhSGV3D2BAUiPbLPpUvqOpBZjGxpPu/DPtiClSXV1l7nkLEwX3eA2di1ehPHRz+ADOC4r4IIMnVTEc8CxvVuWbgUkLpTx4YJ8SiNKvkFIIkpCdgDRf3njwtGQDkiQ1Oz4Wkn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=MOuo0z6F; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=D53qcqndZN41LdB8jmYSBPt0pULZhYP/DP0iF6Zx1rM=; b=MOuo0z6FFJCMnCKp
+	CidotFhMlIsCUmpm4VAe1PqQ5ZQ5Au8GfN+XjZ9QuQ0Lnl8UNbxZnVgVkszHUDfFu+SFSHTEes2C0
+	FzQUG6XfwjHKZFjWF319OQv6C/JuOu/XY+xjoKu4MU2+LZzP5a3l7cb+i29/eyAlMjAxWrJPCchWv
+	xxMWTH1nyVEOv0n/tZe8bXoFFO9v32heKCtWHuXMef58D+YIANSwhYqKLrPAcO9OSXp6V77inLwme
+	OgkXcIiQYWHIjto9HApnt/y0VfoE68pK5yKLKsIuQvDNPJfqCWX0W4mDjR7nM0cUFSwfgRXUvE5cE
+	442F/hYMd3DsNGOXVQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1syKgD-009q2z-12;
+	Wed, 09 Oct 2024 00:35:53 +0000
+From: linux@treblig.org
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] clk: Remove unused clk_hw_rate_is_protected
+Date: Wed,  9 Oct 2024 01:35:52 +0100
+Message-ID: <20241009003552.254675-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bRwV=ZrCg/mL_1X=HbkeSyD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/bRwV=ZrCg/mL_1X=HbkeSyD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Hi all,
+clk_hw_rate_is_protected() was added in 2017's commit
+e55a839a7a1c ("clk: add clock protection mechanism to clk core")
 
-Today's linux-next merge of the wireless-next tree got a conflict in:
+but has been unused.
 
-  drivers/net/wireless/intel/ipw2x00/libipw_crypto_tkip.c
+Remove it.
 
-between commit:
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/clk/clk.c            | 6 ------
+ include/linux/clk-provider.h | 1 -
+ 2 files changed, 7 deletions(-)
 
-  1842442007cd ("wifi: lib80211: Constify struct lib80211_crypto_ops")
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d02451f951cf..9b45fa005030 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -608,12 +608,6 @@ bool clk_hw_is_prepared(const struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_is_prepared);
+ 
+-bool clk_hw_rate_is_protected(const struct clk_hw *hw)
+-{
+-	return clk_core_rate_is_protected(hw->core);
+-}
+-EXPORT_SYMBOL_GPL(clk_hw_rate_is_protected);
+-
+ bool clk_hw_is_enabled(const struct clk_hw *hw)
+ {
+ 	return clk_core_is_enabled(hw->core);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7e43caabb54b..5cbd112d1187 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1360,7 +1360,6 @@ unsigned long clk_hw_get_flags(const struct clk_hw *hw);
+ 	(clk_hw_get_flags((hw)) & CLK_SET_RATE_PARENT)
+ 
+ bool clk_hw_is_prepared(const struct clk_hw *hw);
+-bool clk_hw_rate_is_protected(const struct clk_hw *hw);
+ bool clk_hw_is_enabled(const struct clk_hw *hw);
+ bool __clk_is_enabled(struct clk *clk);
+ struct clk *__clk_lookup(const char *name);
+-- 
+2.46.2
 
-from the origin tree and commit:
-
-  02f220b52670 ("wifi: ipw2x00/lib80211: move remaining lib80211 into libip=
-w")
-
-from the wireless-next tree.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/bRwV=ZrCg/mL_1X=HbkeSyD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcFz9kACgkQAVBC80lX
-0GxlVwgAneo+fBuDm0gWv0takeoLYmJpex/Jvh4YrIunZ+R4ASum8v3qHGd0PMJh
-+FlDXRWue5lKag7mabxrbGLktqVwghvcXv4xE56OLrzvuKgE/WoGJDXrK9gr1Z1x
-Mzec34Bo+4oM6HbLYq+dAj4liBgWLLBrNgP8d3SAscwGD6NiC6xuSO0K7rxt5yJ1
-sXq0V1gGfzOxsmffvnX4QpOvCRurH1kll3LWA17uJy+DB8ovEn/at61vLsXNjUdz
-GEhhRjxQHY7MhTbmGM662BdGmMbXHpJRNPyX4As7i9plSGl+gOIaqVkf3YJMvMER
-dsgGWd35hj9TmjCc/F4S0Vp4eqNZ6A==
-=8N1t
------END PGP SIGNATURE-----
-
---Sig_/bRwV=ZrCg/mL_1X=HbkeSyD--
 
