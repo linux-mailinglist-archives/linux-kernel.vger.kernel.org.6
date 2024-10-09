@@ -1,37 +1,73 @@
-Return-Path: <linux-kernel+bounces-356465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2ABC996179
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:53:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CCD99617D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EBD2281FF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA6C1F2138E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F94186E38;
-	Wed,  9 Oct 2024 07:53:02 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78766187859;
+	Wed,  9 Oct 2024 07:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FbPPFQvJ"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1616B185940;
-	Wed,  9 Oct 2024 07:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F79186E4A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460382; cv=none; b=XTbCLuMzv9336a1U2TbJ7m3MtqHm3M1+ZTHy1nrzXpkWFtydjpfNimZiz5RvQJHtqDSwVUkiR3a8OqREu9KnQuNpAvujuV149TWqnUDBarmHFABYPLAMNGNnorIshF677l79ge6dWCkXwyCJ02K8IWV3pKytTkPTtxFR0HFsrM8=
+	t=1728460405; cv=none; b=gteCY5ptQBo3OUY0YBPw86ww6QuM550e5K6ak6gNWU6xHSull4qwKIUvRq54DfKqIe1Els99QQYDbrgh8o0krXlV0JJCs5NaGxnfsCysUj1HUgpLtVHORl8LYbDaF7a6SE2BfRpxmofZNLldH4hLXk/l7OzCeybkB9+NTe2M1/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460382; c=relaxed/simple;
-	bh=+pLjG6qVfCrJjYwRdzb2oD8RD5WYMl+eOpx7RaGqGs4=;
+	s=arc-20240116; t=1728460405; c=relaxed/simple;
+	bh=0nVeT7W5+Phhjja0nEmY6ftWXeXsW/gjY9Bp9By1aqc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FS68tWFlYiVrkATr6nAWq5e6wUZ69HQWiG4Kl1oVCx02pi3LYMfpzrHuXZKTERn2V47V9ipeMb0jy2MJbLwgg4V7fyeQZA54yIXuc+zEbFNvkfcC5qqpacWA6SnnLwpy/CrPr1eTdh/ZThOa04zuYOnymXRpFOMCzKpOjvUSv74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D808D1BF208;
-	Wed,  9 Oct 2024 07:52:56 +0000 (UTC)
-Message-ID: <c5cd71d1-8779-45d9-965d-8459d060857b@ghiti.fr>
-Date: Wed, 9 Oct 2024 09:52:56 +0200
+	 In-Reply-To:Content-Type; b=WNLursL6WtAYfFUU3QEKRMdIFa7gJUYD/tsajgf9txaBSlVUulEWH1an0VOAknw+AI5lDjgKSA4knBzL7rnNsSu84fnYCKbPvguYKtMEfySfDqMPi/i0Xi3OzqkkuDpvzBNK7mf8tGSh+F5jPj4np/J0R+/+BJ4DAQB3PUoJstg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FbPPFQvJ; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99543ab209so399226466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1728460402; x=1729065202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2HCfwfKIq9ZbARroJ3ctAyi9/a5TyTRYtSwRyww5eKk=;
+        b=FbPPFQvJ76u70lTZmv6PYQKszH/Sh80zhvXmGS44iJDYoO+r0Mpk8lKmZ05sbWiRxy
+         LVRRWlW/mUEzpWhQSlH6Tm1zCt4V/9VlvQLvJomx84jC5pjvv7ff2JLwnok/kLPa7pxm
+         KhL2KJ96mmrgTm6r9gZgrMzwvTBmA+VICjfXOd/oGrX9aHuVBveGVvNoShaaZQ3pEtr3
+         eDH6MxdhFngDUBhk2yYcutDITf322TSMhNuz3cRwMB5qrmKAhKt5EVDf2KK4Q1jMIjF8
+         4Tr9gu+mdABJZ7rbm5PNhQY5duyD9+csx17CNr/Wzvnkiqd09FeirnwLrWpLPju90o9m
+         dbLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728460402; x=1729065202;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HCfwfKIq9ZbARroJ3ctAyi9/a5TyTRYtSwRyww5eKk=;
+        b=DQnk5Eyf+m5x8FXlE4Kesrt72WxoRpegrfPOMiErlEaydJeWtvYGzybiYgDLM8IHGe
+         mB8lSF/o1xTNndfF/Jf1jc3P9ytBErtKcCzZnDAWtJcTI+rPepvSLtGlAPxyXMXrUK4b
+         m+BpF5tUNxJDtrjZ18kvCoadLKkq4evF7eh3RoNf+FDneDKqQs6692RpddzjKMN6cDSe
+         cZHZA6Ptkw0OTUQUcddwerO0ePce9FxbBpcATQfbzBUg83QbcCHVrKCGCOF8XfdX/f86
+         vwp/QxWBHmXek4+rhwiv5MS/TOHsUhhTUjrEfYzPR7/ltN91QlYnjVNPJp7yZiff/0g/
+         PTkw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+fiLcls4YNcdWL6TTJaBocz2S9pxDB/zbQ0zfhL7Le18YK/NIUco2Bw7v6qgXCDwq3rZQlF8HgzyUyvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4qgeiIYSRxK2vQ0kJctzALXIdblWJYnO2mdoKr1sdJ4dMOCzv
+	/q3BfX0/powK4HeqvDJpVufRp3oQtg1DhsgYEVw/bI28EbzQeb6JsNX0lfXLCUQ=
+X-Google-Smtp-Source: AGHT+IGQNbg3+XlDlAPHm+pG+j/DlGK4MmpO+b+YCiy639M+XJvMH8CAruvFmcbUVf8BjeF+BMsxiw==
+X-Received: by 2002:a17:907:9485:b0:a8d:4631:83b0 with SMTP id a640c23a62f3a-a998d10bb80mr97448566b.5.1728460402185;
+        Wed, 09 Oct 2024 00:53:22 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.23])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99309aa6afsm610392466b.112.2024.10.09.00.53.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 00:53:21 -0700 (PDT)
+Message-ID: <bb4bf1af-ea62-433d-ab5e-982055a4cec9@tuxon.dev>
+Date: Wed, 9 Oct 2024 10:53:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,117 +75,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
+Subject: Re: [PATCH v2 2/3] pinctrl: renesas: rzg2l: Add support for
+ enabling/disabling open-drain outputs
 Content-Language: en-US
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
- <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
- <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
- <2d907c14-5b43-446e-9640-efb0fa0ba385@ghiti.fr>
- <a3308767-eb30-446b-8c70-32b36a3075e4@canonical.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <a3308767-eb30-446b-8c70-32b36a3075e4@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
-
-On 09/10/2024 09:47, Heinrich Schuchardt wrote:
-> On 09.10.24 09:34, Alexandre Ghiti wrote:
->> Hi Heinrich,
->>
->> On 01/10/2024 17:24, Heinrich Schuchardt wrote:
->>> On 01.10.24 15:51, Alexandre Ghiti wrote:
->>>> Hi Heinrich,
->>>>
->>>> On 29/09/2024 16:02, Heinrich Schuchardt wrote:
->>>>> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
->>>>> EFI binary does not rely on pages that are both executable and
->>>>> writable.
->>>>>
->>>>> The flag is used by some distro versions of GRUB to decide if the EFI
->>>>> binary may be executed.
->>>>>
->>>>> As the Linux kernel neither has RWX sections nor needs RWX pages for
->>>>> relocation we should set the flag.
->>>>>
->>>>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>>>> Cc: <stable@vger.kernel.org>
->>>>> Signed-off-by: Heinrich Schuchardt 
->>>>> <heinrich.schuchardt@canonical.com>
->>>>> ---
->>>>>   arch/riscv/kernel/efi-header.S | 2 +-
->>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/riscv/kernel/efi-header.S 
->>>>> b/arch/riscv/kernel/efi- header.S
->>>>> index 515b2dfbca75..c5f17c2710b5 100644
->>>>> --- a/arch/riscv/kernel/efi-header.S
->>>>> +++ b/arch/riscv/kernel/efi-header.S
->>>>> @@ -64,7 +64,7 @@ extra_header_fields:
->>>>>       .long    efi_header_end - _start            // SizeOfHeaders
->>>>>       .long    0                    // CheckSum
->>>>>       .short    IMAGE_SUBSYSTEM_EFI_APPLICATION        // Subsystem
->>>>> -    .short    0                    // DllCharacteristics
->>>>> +    .short    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT    // 
->>>>> DllCharacteristics
->>>>>       .quad    0                    // SizeOfStackReserve
->>>>>       .quad    0                    // SizeOfStackCommit
->>>>>       .quad    0                    // SizeOfHeapReserve
->>>>
->>>>
->>>> I don't understand if this fixes something or not: what could go 
->>>> wrong if we don't do this?
->>>>
->>>> Thanks,
->>>>
->>>> Alex
->>>>
->>>
->>>
->>> Hello Alexandre,
->>>
->>> https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/ 
->>> uefi-ca-memory-mitigation-requirements
->>> describes Microsoft's effort to improve security by avoiding memory 
->>> pages that are both executable and writable.
->>>
->>> IMAGE_DLL_CHARACTERISTICS_NX_COMPAT is an assertion by the EFI 
->>> binary that it does not use RWX pages. It may use the 
->>> EFI_MEMORY_ATTRIBUTE_PROTOCOL to set whether a page is writable or 
->>> executable (but not both).
->>>
->>> When using secure boot, compliant firmware will not allow loading a 
->>> binary if the flag is not set.
->>
->>
->> Great, so that's a necessary fix, it will get merged in the next rc 
->> or so:
->>
->> Fixes: cb7d2dd5612a ("RISC-V: Add PE/COFF header for EFI stub")
->
-> Thanks for reviewing.
->
-> At the time of commit cb7d2dd5612a (2020-10-02) the requirement did 
-> not exist. I guess a Fixes: tag is not applicable under these 
-> circumstances.
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241004123658.764557-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241004123658.764557-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241004123658.764557-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Hmm ok, indeed that would be weird since it is not the culprit, I'll 
-remove it and it will simply fail to apply for kernels before this 
-commit, no big deal I guess.
 
-Thanks again Heinrich!
+On 04.10.2024 15:36, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add support for enabling and disabling open-drain outputs.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Alex
+I gave it a simple try on RZ/G3S. All good. You can add:
 
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
->
-> Best regards
->
-> Heinrich
+> ---
+> v1->v2
+> - Implemented PIN_CONFIG_DRIVE_OPEN_DRAIN to disable open drain
+> ---
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> index b2d309f742af..8d576cc74003 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -139,6 +139,7 @@
+>  #define IEN(off)		(0x1800 + (off) * 8)
+>  #define PUPD(off)		(0x1C00 + (off) * 8)
+>  #define ISEL(off)		(0x2C00 + (off) * 8)
+> +#define NOD(off)		(0x3000 + (off) * 8)
+>  #define SD_CH(off, ch)		((off) + (ch) * 4)
+>  #define ETH_POC(off, ch)	((off) + (ch) * 4)
+>  #define QSPI			(0x3008)
+> @@ -160,6 +161,7 @@
+>  #define IOLH_MASK		0x03
+>  #define SR_MASK			0x01
+>  #define PUPD_MASK		0x03
+> +#define NOD_MASK		0x01
+>  
+>  #define PM_INPUT		0x1
+>  #define PM_OUTPUT		0x2
+> @@ -1337,6 +1339,18 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+>  		break;
+>  	}
+>  
+> +	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> +	case PIN_CONFIG_DRIVE_PUSH_PULL:
+> +		if (!(cfg & PIN_CFG_NOD))
+> +			return -EINVAL;
+> +
+> +		arg = rzg2l_read_pin_config(pctrl, NOD(off), bit, NOD_MASK);
+> +		if (!arg && param != PIN_CONFIG_DRIVE_PUSH_PULL)
+> +			return -EINVAL;
+> +		if (arg && param != PIN_CONFIG_DRIVE_OPEN_DRAIN)
+> +			return -EINVAL;
+> +		break;
+> +
+>  	case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
+>  		if (!(cfg & PIN_CFG_IOLH_RZV2H))
+>  			return -EINVAL;
+> @@ -1466,6 +1480,15 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+>  			rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, index);
+>  			break;
+>  
+> +		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> +		case PIN_CONFIG_DRIVE_PUSH_PULL:
+> +			if (!(cfg & PIN_CFG_NOD))
+> +				return -EINVAL;
+> +
+> +			rzg2l_rmw_pin_config(pctrl, NOD(off), bit, NOD_MASK,
+> +					     param == PIN_CONFIG_DRIVE_OPEN_DRAIN ? 1 : 0);
+> +			break;
+> +
+>  		case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
+>  			if (!(cfg & PIN_CFG_IOLH_RZV2H))
+>  				return -EINVAL;
 
