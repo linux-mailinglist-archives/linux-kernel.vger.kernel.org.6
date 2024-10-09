@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-357904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B1F99779A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:36:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC889977A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953901C21CAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:36:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4AC1F22CD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3861E32AD;
-	Wed,  9 Oct 2024 21:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F391E376F;
+	Wed,  9 Oct 2024 21:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gOGcY4CI"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c4fjM8mh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5213519006B;
-	Wed,  9 Oct 2024 21:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730181E260E;
+	Wed,  9 Oct 2024 21:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509772; cv=none; b=FpaMKvW01JWptfWbYbVxDtWHlQasTAzfGu47cossyHP8MwGU/dfO0aSymQczcS26POocvUoGT4Vml6d2P2TQAgkqFNRhLEexngtj6+uYMXgEfgzqPecgHxttWltgEUbz3ivy4xmU8tkSzajIZZN3Cgqfey7abAkWGWhzfAHrla8=
+	t=1728509953; cv=none; b=r+7ueQbpreUThVnN53mRnYgRfTVH/MGnPtsP/XyC+u4Y8S67ylVOeerS7EYsirOW1w+Ikxz0/ueQP/F8hxIOmMQI18UWP4HAveQeAwcyJo+aidgEqIhpxiL/6BwcrxM50O3xcNuc+IJLr8OlTqAYAMzVJoLTAD8IKmQ7Sp/a7uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509772; c=relaxed/simple;
-	bh=JjQ58lAi0I4mO9nrVwLWZQl1BVbaTRns7iTVwGFiRz4=;
+	s=arc-20240116; t=1728509953; c=relaxed/simple;
+	bh=CU+bKdiLvhjPIp++UvcHAtv6o7pUO4NwmdT+Nl/+Mmg=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CNnCZM+ECH44bWPmNjznM+7BJYg6B6inBCjhmCpPSD1OSPWRtI0w9fmVqv4CeLfqvqNLcGycfmnxEydTK1vUp1XpcRPAhvqOF/lAG6vDEE+KZcNQiziwDLkadWoimQo7VgHNgCqnTFiPosfBuAKQlNvx8n6aZuOdvDzY6gkbrNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gOGcY4CI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987EEC4CEC3;
-	Wed,  9 Oct 2024 21:36:11 +0000 (UTC)
+	 Mime-Version:Content-Type; b=XG3fDg437bH3j+ZGINaOoAx0BmIXDAmgUIMKnF429Hgx9H/qb3suxoaivCrd2Z0H4fqG0vMZz3GcpIkKergRw53+/ukFHbyAIOfX/8jpROiPAbKCBZhhxx9CFMcqN9ti9Qd0/h3sK9LLraltGx1TPh2ZEcX/wyfKMF0gE014DKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=c4fjM8mh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E030C4CECC;
+	Wed,  9 Oct 2024 21:39:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1728509771;
-	bh=JjQ58lAi0I4mO9nrVwLWZQl1BVbaTRns7iTVwGFiRz4=;
+	s=korg; t=1728509952;
+	bh=CU+bKdiLvhjPIp++UvcHAtv6o7pUO4NwmdT+Nl/+Mmg=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gOGcY4CI/E0GxlCF9cNBRjet6aK5De29v5mdO33Qrqd+bQ/2DrXF8y+aAq2R9yKwu
-	 KnyreTR6iP/xZcEhTz+g12oxytWU39lq8NZm5V+QQwEJryPED7qvVry6bJXFP818jx
-	 yMx1D6eTPz3kD2LjLFj7F464MNSUJ2gan4LxRId0=
-Date: Wed, 9 Oct 2024 14:36:11 -0700
+	b=c4fjM8mh1xyF18VWzdhvax0bPPTQt/GhWBC3RJnAhZpKuNmkNW+TkHuG1kLn029Qa
+	 XRwKFO55BoE1+EI4tUu3cOF83idppwKsknOIr4RZPYc+99gm3eJOLEMRd+XeYshE15
+	 H2LUgvyVArQ/IObC2276H0mlt7DtbkVKkiQBGFAY=
+Date: Wed, 9 Oct 2024 14:39:11 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Brendan Higgins
- <brendanhiggins@google.com>, David Gow <davidgow@google.com>, Kuan-Wei Chiu
- <visitorckw@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Luis Felipe Hernandez
- <luis.hernandez093@gmail.com>
-Subject: Re: linux-next: manual merge of the kunit-next tree with the mm
- tree
-Message-Id: <20241009143611.a3d89cdd15451641c92eb25f@linux-foundation.org>
-In-Reply-To: <2dda047a-199f-406d-9998-fa85939e8106@linuxfoundation.org>
-References: <20241009162719.0adaea37@canb.auug.org.au>
-	<b005d39f-2b75-4a26-a78c-5cd8f7076399@linuxfoundation.org>
-	<2dda047a-199f-406d-9998-fa85939e8106@linuxfoundation.org>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: Marco Elver <elver@google.com>, andreyknvl@gmail.com,
+ bpf@vger.kernel.org, dvyukov@google.com, glider@google.com,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, ryabinin.a.a@gmail.com,
+ syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com,
+ vincenzo.frascino@arm.com
+Subject: Re: [PATCH v4] mm, kasan, kmsan: copy_from/to_kernel_nofault
+Message-Id: <20241009143911.3c394e1bc598f59ce764a67c@linux-foundation.org>
+In-Reply-To: <CACzwLxhJTHJ-rjwrvw5ni6jRfCG5euzN73EcckTSuM6jhoNvXA@mail.gmail.com>
+References: <CANpmjNN3OYXXamVb3FcSLxfnN5og-cS31-4jJiB3jrbN_Rsuag@mail.gmail.com>
+	<20241008192910.2823726-1-snovitoll@gmail.com>
+	<CANpmjNO9js1Ncb9b=wQQCJi4K8XZEDf_Z9E29yw2LmXkOdH0Xw@mail.gmail.com>
+	<CACzwLxhJTHJ-rjwrvw5ni6jRfCG5euzN73EcckTSuM6jhoNvXA@mail.gmail.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,26 +63,27 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 9 Oct 2024 15:00:19 -0600 Shuah Khan <skhan@linuxfoundation.org> wrote:
+On Wed, 9 Oct 2024 00:42:25 +0500 Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
 
-> > Andrew,
-> > Another one related to move from lib/ lib/tests/
-> > 
-> > If you would like to take these patches - it is perfectly
-> > fine with me. If not I can handle these.
+> > > v4:
+> > > - replaced Suggested-By with Reviewed-By: Marco Elver
+> >
+> > For future reference: No need to send v+1 just for this tag. Usually
+> > maintainers pick up tags from the last round without the original
+> > author having to send out a v+1 with the tags. Of course, if you make
+> > other corrections and need to send a v+1, then it is appropriate to
+> > collect tags where those tags would remain valid (such as on unchanged
+> > patches part of the series, or for simpler corrections).
 > 
-> Andrew,
+> Thanks! Will do it next time.
 > 
-> I dropped this one from linux-kselftest kunit branch.
-> The link to this patch if it isn't in your Inbox:
-> 
-> https://lore.kernel.org/all/20240924032200.167622-1-luis.hernandez093@gmail.com/
-> > 
-> > Adding David as well for feedback on this
-> 
-> David, I think lib/ kunit patches can go through Andrew's tree.
-> Renaming is causing merge conflicts.
-> 
+> Please advise if Andrew should need to be notified in the separate cover letter
+> to remove the prev. merged  to -mm tree patch and use this v4:
+> https://lore.kernel.org/all/20241008020150.4795AC4CEC6@smtp.kernel.org/
 
-Cool.  David, I think it's simplest to just resend everything please.
+I've updated v3's changelog, thanks.
+
+I kept Marco's Suggested-by:, as that's still relevant even with the
+Reviewed-by:.
+
 
