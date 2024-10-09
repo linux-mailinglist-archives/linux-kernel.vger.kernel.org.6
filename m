@@ -1,243 +1,127 @@
-Return-Path: <linux-kernel+bounces-357295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE45E996F46
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:11:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23745996F4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DBD9283DA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:11:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E04BB22441
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F761A3049;
-	Wed,  9 Oct 2024 15:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058BA198833;
+	Wed,  9 Oct 2024 15:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNWd22v4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="l2EyHGqb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNWd22v4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="l2EyHGqb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hefr1fPy"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3401A2643;
-	Wed,  9 Oct 2024 15:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED522188739
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486272; cv=none; b=YcA8GdX3xlfwJPuekN3XN1DhvlT6oIEGJrEJkY7XI4MUrH0RRScpUCatXLWK8HI3wo3pb9wp+ffVUf3pqMNZTiwbskZdKh7P7iqNQkBVUkQtLYnBhA+XxPmZuozwwZOoTfEW70PQne0s9mREgl5CmN0mTeQhfcEgmqmyhq+7Qcg=
+	t=1728486300; cv=none; b=ieAFIzO/vivCg81JNmp9U1VzJEaJZi8wqsHXElbYUCjA5WWtoLYk+sz1kI0qmXygSiIP8em3D4ZLAay2J1kKYfe8bhwnbzXgwOrLTE6pGgT/nzXP5z2421rneV0nWKyxTGUgBxjWChsEFb0trba0tnIimx18teP63i09T4t96Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486272; c=relaxed/simple;
-	bh=Ym4Ggfuv7F6hLfOe7KUxwstzA2cWlD55d4NA/zJTleQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er5X4uPSkyhAtfWu1xivR6hNaSATX6QbsHXkW5KNK8IwBv2BPS655m/eouaihZpAIfsFvjDzW2d5pNYWuLwyZWRtf7PvbmzW8bBeftFthFfZBSfztjYvKt+vGz8sjDK/qgnAXRYI6vKaYv9mj+cnDxr8i2rWeIGgVVms62bpT2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNWd22v4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=l2EyHGqb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNWd22v4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=l2EyHGqb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5045E1F896;
-	Wed,  9 Oct 2024 15:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728486261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
-	b=LNWd22v4/oUdMQ3TXQa19FIA7ecl3NXAqfwRCF3ebyT/BQ7x3U08S4ERkMoihGN0SuzorU
-	Nn8NgSqYrTa41WriQ1rNBgrV5HYPuDauZ1sN1Vr65bP5CCnQZ6VpxySarW6CibH0QDioVb
-	ncZndUEGJJt0ZHBCzRVWfHR+dutUtz4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728486261;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
-	b=l2EyHGqbKKU7MRPmRvyxwIcFVD64T+QFc5iCl4Be7MaAkQad6sQZwJI1lo0Citp+9QJkam
-	a2T0z3iFsB0DzRCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728486261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
-	b=LNWd22v4/oUdMQ3TXQa19FIA7ecl3NXAqfwRCF3ebyT/BQ7x3U08S4ERkMoihGN0SuzorU
-	Nn8NgSqYrTa41WriQ1rNBgrV5HYPuDauZ1sN1Vr65bP5CCnQZ6VpxySarW6CibH0QDioVb
-	ncZndUEGJJt0ZHBCzRVWfHR+dutUtz4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728486261;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
-	b=l2EyHGqbKKU7MRPmRvyxwIcFVD64T+QFc5iCl4Be7MaAkQad6sQZwJI1lo0Citp+9QJkam
-	a2T0z3iFsB0DzRCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4232C136BA;
-	Wed,  9 Oct 2024 15:04:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id J8YmEHWbBmdRUAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 15:04:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EBBFFA0896; Wed,  9 Oct 2024 17:04:20 +0200 (CEST)
-Date: Wed, 9 Oct 2024 17:04:20 +0200
-From: Jan Kara <jack@suse.cz>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>,
-	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
-Message-ID: <20241009150420.wan5f7pucgse7j2n@quack3>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728486300; c=relaxed/simple;
+	bh=uPUaOv2QrzSaUf4LArS8+PSibvq85NPqivVxaIxcqnY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=raj+qRoU/byntLjeArXvZr8QWZxUBG6vZ7fgKDh3XHrsNDiaR3b+SsVZFyCrWgIdzeYXhiyGuQq6mfSh8P2g51QUC42Ll1c7RfjacDdkJKmBNRzHl7Wif5vEI7pTl4cdKp8Q3cKdw4P7R0mKryY1GG48GJPs5frDYIzg3zqkG4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hefr1fPy; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e251ba2243so14878217b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728486298; x=1729091098; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a8TTqJOaZnfBA+i3DdeHlnHy8Opvxrk5SUeEQ665whA=;
+        b=hefr1fPyrNDihae/WRAOV3FfbL2F/7jPh7jJGngO2Vi4WF1EPdyWquMDuWIBX4MXvX
+         xtQ8atO52mQIdk+NO/rJNKjxJRzkZ3gUhTd1YHdNgRy8hCbPiadzKfncEFKSOfAK2x73
+         24CHiFUmvrxHnyi1XEpoFVQ/Yhz6eEjVfoZgd9PYkeAe3gxVCyTXRl65fczI3wV1JfUS
+         f4EYtNRpO+B2cr9ebW+gWQW+EIZm24xBHINCnFJmRQho2FdqL8WavN1M5y4ky15DHr9h
+         iaV4GwrLeI0vweAvPYKREbiyZ8aqwxA4uTP5Z++3WSyNDAWhrDHKTZHDbqMTf09/NxuK
+         2asg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728486298; x=1729091098;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a8TTqJOaZnfBA+i3DdeHlnHy8Opvxrk5SUeEQ665whA=;
+        b=EryeEjq5SiTsfKRBPMIPXZA9/khLkddNy6+3ZuyFRxuIykeZA60hCefnmuz1vKZi0z
+         ZUdfmRuhS+WXpS5lxihLQhk3Wa0Zyx1pwpsvHxZ+Eq4ZdnWkYc+AmlsASNoMpbsjqwTA
+         vUwxMt7s5O3UEq3HplhIf1VcaM5yG6zECwxil4IG8UdTTuNnN3sCg5tqKJCQPWJNA5fi
+         Nz687it/JYFyXu2Laff5rmXh4b5V16ny3JLXXfpFFHsGa2njTIzRjvhidskljC0ccAeI
+         sm6Evqjrw3fWnaa0GxwX5zXy8lc5p1GIMJgDF1doGPKb/05KbpVZeJfcft3g1+wyNbsP
+         BxuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIe0sBAfy/ldZs9W5g9CJDGuxoTep5omZiqa3iSh0XUFWSU7rCB45ebA3byVjr1ddBo6O7IAHpNR5J7EA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2diVEp31Ejf72KK6WR651SeaRBz+f2a9XaTLSqwHpVAs4MatI
+	OUXU5OCYmYqTijibOr1iNaN3MMkNuduZgJ2Mbku0667cPMqTtfN5JiN66qjX1/DR+3NqITevbVI
+	1Yg==
+X-Google-Smtp-Source: AGHT+IGxFiVDW/oEtOCIg0CVNCO6RB2GNcn8OUHtfbGXlgiBNs0NANmOo24ozhMrY1k+G+YEoGSelxcuUgI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:2e81:b0:6be:523:af53 with SMTP id
+ 00721157ae682-6e30dfbaae9mr206247b3.3.1728486297981; Wed, 09 Oct 2024
+ 08:04:57 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed,  9 Oct 2024 08:04:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+Message-ID: <20241009150455.1057573-1-seanjc@google.com>
+Subject: [PATCH 0/6] KVM: Fix bugs in vCPUs xarray usage
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, Michal Luczaj <mhal@rbox.co>, Sean Christopherson <seanjc@google.com>, 
+	Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 09-10-24 11:31:50, Gao Xiang wrote:
-> As Allison reported [1], currently get_tree_bdev() will store
-> "Can't lookup blockdev" error message.  Although it makes sense for
-> pure bdev-based fses, this message may mislead users who try to use
-> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
-> then.
-> 
-> Add get_tree_bdev_flags() to specify extensible flags [2] and
-> GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
-> since it's misleading to EROFS file-backed mounts now.
-> 
-> [1] https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
-> [2] https://lore.kernel.org/r/ZwUkJEtwIpUA4qMz@infradead.org
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+This series stems from Will's observation[*] that kvm_vm_ioctl_create_vcpu()'s
+handling of xa_store() failure when inserting into vcpu_array is technically
+broken, although in practice it's impossible for xa_store() to fail.
 
-Looks good. Feel free to add:
+After much back and forth and staring, I realized that commit afb2acb2e3a3
+("KVM: Fix vcpu_array[0] races") papered over underlying bugs in
+kvm_get_vcpu() and kvm_for_each_vcpu().  The core problem is that KVM
+allowed other tasks to see vCPU0 while online_vcpus==0, and thus trying
+to gracefully error out of vCPU creation led to use-after-free failures.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+So, rather than trying to solve the unsolvable problem for an error path
+that should be impossible to hit, fix the underlying issue and ensure that
+vcpu_array[0] is accessed if and only if online_vcpus is non-zero.
 
-								Honza
+Patch 3 fixes a race Michal identified when we were trying to figure out
+how to handle the xa_store() mess.
 
-> ---
-> v1: https://lore.kernel.org/r/20241008095606.990466-1-hsiangkao@linux.alibaba.com
-> change since v1:
->  - add get_tree_bdev_flags() suggested by Christoph.
-> 
->  fs/super.c                 | 26 ++++++++++++++++++++------
->  include/linux/fs_context.h |  6 ++++++
->  2 files changed, 26 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index 1db230432960..c9c7223bc2a2 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1596,13 +1596,14 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
->  EXPORT_SYMBOL_GPL(setup_bdev_super);
->  
->  /**
-> - * get_tree_bdev - Get a superblock based on a single block device
-> + * get_tree_bdev_flags - Get a superblock based on a single block device
->   * @fc: The filesystem context holding the parameters
->   * @fill_super: Helper to initialise a new superblock
-> + * @flags: GET_TREE_BDEV_* flags
->   */
-> -int get_tree_bdev(struct fs_context *fc,
-> -		int (*fill_super)(struct super_block *,
-> -				  struct fs_context *))
-> +int get_tree_bdev_flags(struct fs_context *fc,
-> +		int (*fill_super)(struct super_block *sb,
-> +				  struct fs_context *fc), unsigned int flags)
->  {
->  	struct super_block *s;
->  	int error = 0;
-> @@ -1613,10 +1614,10 @@ int get_tree_bdev(struct fs_context *fc,
->  
->  	error = lookup_bdev(fc->source, &dev);
->  	if (error) {
-> -		errorf(fc, "%s: Can't lookup blockdev", fc->source);
-> +		if (!(flags & GET_TREE_BDEV_QUIET_LOOKUP))
-> +			errorf(fc, "%s: Can't lookup blockdev", fc->source);
->  		return error;
->  	}
-> -
->  	fc->sb_flags |= SB_NOSEC;
->  	s = sget_dev(fc, dev);
->  	if (IS_ERR(s))
-> @@ -1644,6 +1645,19 @@ int get_tree_bdev(struct fs_context *fc,
->  	fc->root = dget(s->s_root);
->  	return 0;
->  }
-> +EXPORT_SYMBOL_GPL(get_tree_bdev_flags);
-> +
-> +/**
-> + * get_tree_bdev - Get a superblock based on a single block device
-> + * @fc: The filesystem context holding the parameters
-> + * @fill_super: Helper to initialise a new superblock
-> + */
-> +int get_tree_bdev(struct fs_context *fc,
-> +		int (*fill_super)(struct super_block *,
-> +				  struct fs_context *))
-> +{
-> +	return get_tree_bdev_flags(fc, fill_super, 0);
-> +}
->  EXPORT_SYMBOL(get_tree_bdev);
->  
->  static int test_bdev_super(struct super_block *s, void *data)
-> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-> index c13e99cbbf81..4b4bfef6f053 100644
-> --- a/include/linux/fs_context.h
-> +++ b/include/linux/fs_context.h
-> @@ -160,6 +160,12 @@ extern int get_tree_keyed(struct fs_context *fc,
->  
->  int setup_bdev_super(struct super_block *sb, int sb_flags,
->  		struct fs_context *fc);
-> +
-> +#define GET_TREE_BDEV_QUIET_LOOKUP		0x0001
-> +int get_tree_bdev_flags(struct fs_context *fc,
-> +		int (*fill_super)(struct super_block *sb,
-> +				  struct fs_context *fc), unsigned int flags);
-> +
->  extern int get_tree_bdev(struct fs_context *fc,
->  			       int (*fill_super)(struct super_block *sb,
->  						 struct fs_context *fc));
-> -- 
-> 2.43.5
-> 
+Patch 4 reverts afb2acb2e3a3.
+
+Patches 5 and 6 are tangentially related cleanups.
+
+[*] https://lkml.kernel.org/r/20240730155646.1687-1-will%40kernel.org
+
+Sean Christopherson (6):
+  KVM: Explicitly verify target vCPU is online in kvm_get_vcpu()
+  KVM: Verify there's at least one online vCPU when iterating over all
+    vCPUs
+  KVM: Grab vcpu->mutex across installing the vCPU's fd and bumping
+    online_vcpus
+  Revert "KVM: Fix vcpu_array[0] races"
+  KVM: Don't BUG() the kernel if xa_insert() fails with -EBUSY
+  KVM: Drop hack that "manually" informs lockdep of kvm->lock vs.
+    vcpu->mutex
+
+ include/linux/kvm_host.h | 16 ++++++++--
+ virt/kvm/kvm_main.c      | 68 ++++++++++++++++++++++++++++++----------
+ 2 files changed, 65 insertions(+), 19 deletions(-)
+
+
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.47.0.rc0.187.ge670bccf7e-goog
+
 
