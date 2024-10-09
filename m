@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-356997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3469C996A12
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:32:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32132996A14
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6651B1C220EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF4E1F2430F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4715A194147;
-	Wed,  9 Oct 2024 12:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1Ztz3Eg"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1143194ACA;
+	Wed,  9 Oct 2024 12:32:40 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6127A192B6B;
-	Wed,  9 Oct 2024 12:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F57192B95;
+	Wed,  9 Oct 2024 12:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728477146; cv=none; b=Q9GDyYz6gACC0zfrx6bkpJGmvsSz5yu5dqVuObDEVBElRDiK0NMrklgOplVGBOgGYadj5Q2qtw3Gys71lnOiGH7xErI/8CexsZavoPyDXoGiy23lnzfXYX5M2ZzlqTg/Gs0bsducKsIWV8RqgmDz0HXWffIxGkUA9G2wZG5c0Ns=
+	t=1728477160; cv=none; b=q0s9R23GZoWBCUFwn3iwrBnXsWm1mncDRU7qRY2uQOO5W/p2C45HBeqfP73NUgxlR0GYcbsijEiZkoCr2hpbMLY+Tr9QDi0ksMwSs59BH7X2tGSM4LQsEmtzr5Io/vfPJ5x6/ggAXLSFb9+3QIkWz06uvx2Y47MrD896eOVpVRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728477146; c=relaxed/simple;
-	bh=ZCH7AEVp8yz/8UK3lIBATKhHCBdELuNOK9/9lnJSnAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kSvyXMf3KG7EsNZJi75tIWe6iwPMyq2nsJVN7FQ+5RQs4ATQ4M3cpBuLHOmD3tDumZRFJS4/Ek6SnIL89AgDzQWl8dZ6jk40nuhA02t459DISJJc54RKUBDtRtF4g3OqL7oL3GHwNVBsWgxIHc4EnVBSnLol+Pnus3aml3JMQIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1Ztz3Eg; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71defa23174so694181b3a.3;
-        Wed, 09 Oct 2024 05:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728477145; x=1729081945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoL22N1zkJY5+zHlWx6b9rySvR2NnQPaN7lfDWm/21o=;
-        b=N1Ztz3Egu0T6YhRbxFwA/jFaF6BzuAdZRN1KNFH0qppe/71Pzc1n+2Sh63pXdY/MkE
-         D4nPtcrKWpUCK0fTlJ+RLfVBFs0Jv1GJnC+rqvvhzum5a7TswX6hVvC4HxyrDrcVzK9U
-         qFLLjpbs+4BBlqa8TMKE1ukDrIiEyG9EJdF3xiCR7ZF3+TO3+VvSu2KIsHIjvN33Aape
-         fBgXqPOFYcS740kcFSgNwrHCgwPjXGJ1ULF/dnIg0lWzVoDrDm68jAbADWOUu+RM3rWC
-         R98d3zBigTIq0und/Ir+VaRqrCAUm7lHp8gcQikhlPInTR6g1JGDSptMajuZcDodXcCd
-         co9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728477145; x=1729081945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qoL22N1zkJY5+zHlWx6b9rySvR2NnQPaN7lfDWm/21o=;
-        b=ZvKVShtHVcH4tiYav07ykdjGTM3yeCpJCLiuhrZTy8U9ck4xVbWLlvb7a7ijQ/3hxE
-         ekPe3ZP6LdNy+xPrICh30FnbYwdsJDcVrY9VY3CVUlHXPJBV1o7AyYX46NFXv+a+v0nl
-         QPV9VcX8pM3jHwOzPU9kKxpN/ObDXw4DzTBCEKbJqLzLgqhEfiu/2ibRk8hS31sfgUz/
-         f2fF7MKmjVnIdAuk3ZS1fCrBYLXykAvOE9i5E4pWrnlCThE8F/c9C6m7FN72mvKzZeky
-         IShRK8MPhPMbDkn2WqPjXWfFMbWzCpAKbMWEVLGcr/0pCl4hhHB4vbYPyHy9HwwJJOWB
-         JICQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXU5AzlMt///j50Mr7fUCTzjtGVSQhb93JHlbASVSEcPtzOmWu4ZVXyPHNGZDWlJ2GUCmPvRGMBgRprbms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvojlBeenSGStVoApZqWv/aR5vnkc3DcmWGNGaP3/1MXq7jjyi
-	SAZH9/cPNubOkgahA0OJOON3AeXfzYVr/SFj2tzQ15spoSe1XnNdXMbeadsFIgBAafbXOrCJ2Cs
-	O1Fsh4GqROe1k55x4xnv1iXc/BJQ=
-X-Google-Smtp-Source: AGHT+IF+xs7+Yd6jeDsyH3nhGnSr+++9BwB2Y4D9T9/6pnlJ1sPHN85IM1Q1zku2QTFGp4eEKu5yffwKFAgNG8V1V2Y=
-X-Received: by 2002:a05:6a00:2314:b0:70d:2289:4c55 with SMTP id
- d2e1a72fcca58-71e1dbcabd4mr1565577b3a.5.1728477144542; Wed, 09 Oct 2024
- 05:32:24 -0700 (PDT)
+	s=arc-20240116; t=1728477160; c=relaxed/simple;
+	bh=JxPeNyGf6R6l8PYvNsvYdX2dUSjUcmnQS7P8Nbd7M4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqs5B0TRsXiwOwmvJ5pixn7NDqHkTpScmw5nqzEcxyLWAz+8thTW62vAXrRKZEi1zLlIgGXsTcSb765Hep98MRN+Xl6+aMACY9/qRtkxJ4HH5GJQpPRo2Z0vd1/2WuOUynPV5drYyCbu9PYomXcE1CNugcWozgv2u3Q3SWF8nAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syVrd-000000006Mn-1FZa;
+	Wed, 09 Oct 2024 12:32:25 +0000
+Date: Wed, 9 Oct 2024 13:32:20 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
+Message-ID: <ZwZ31IkwY-bum7T0@makrotopia.org>
+References: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
+ <bc9e4e95-8896-4087-8649-0d8ec6e2cb69@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009014810.23279-1-christiansantoslima21@gmail.com>
-In-Reply-To: <20241009014810.23279-1-christiansantoslima21@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 9 Oct 2024 14:32:11 +0200
-Message-ID: <CANiq72m9_DUG67keD+Sa660X08_Sm1MSm9NB2K2iEUme5DpozQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: transmute: Add implementation for FromBytes trait
-To: Christian dos Santos de Lima <christiansantoslima21@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc9e4e95-8896-4087-8649-0d8ec6e2cb69@lunn.ch>
 
-On Wed, Oct 9, 2024 at 3:48=E2=80=AFAM Christian dos Santos de Lima
-<christiansantoslima21@gmail.com> wrote:
->
-> +pub unsafe trait FromBytes {
-> +    ///Converts a slice of Bytes into a Reference to Self
-> +    ///
-> +    /// # Examples
-> +    /// ```
-> +    ///    pub unsafe trait FromBytes {
+On Wed, Oct 09, 2024 at 02:16:29PM +0200, Andrew Lunn wrote:
+> > +static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
+> > +				      unsigned long modes)
+> > +{
+> > +	bool active_low = false;
+> > +	u32 mode;
+> > +
+> > +	if (index >= XWAY_GPHY_MAX_LEDS)
+> > +		return -EINVAL;
+> > +
+> > +	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+> > +		switch (mode) {
+> > +		case PHY_LED_ACTIVE_LOW:
+> > +			active_low = true;
+> > +			break;
+> > +		case PHY_LED_ACTIVE_HIGH:
+> > +			break;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	return phy_modify(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index),
+> > +			  active_low ? XWAY_GPHY_LED_INV(index) : 0);
+> 
+> This does not appear to implement the 'leave it alone' option.
 
-Apart from what Alice mentions (which is critical, since we are
-looking to get into stable Rust as soon as feasible -- please see
-https://rust-for-linux.com/unstable-features#usage-in-the-kernel),
-please also format the code, documentation and examples appropriately
-(please see other files to see how it is usually done, we mostly
-follow Rust's standard library conventions).
+The framework already implements that. The function is never called with
+modes == 0.
+See commit 7ae215ee7bb8 net: phy: add support for PHY LEDs polarity modes:
 
-> +        unsafe {
-> +            let slice_ptr =3D slice_of_bytes.as_ptr() as *const Self;
-> +            &*slice_ptr
-> +        }
+       if (of_property_read_bool(led, "active-low"))
+               set_bit(PHY_LED_ACTIVE_LOW, &modes);
+       if (of_property_read_bool(led, "inactive-high-impedance"))
+               set_bit(PHY_LED_INACTIVE_HIGH_IMPEDANCE, &modes);
 
-Please note that we require `// SAFETY` comments too. Missing those is
-already a warning/error (depending on the kernel configuration) in
-rust-next.
+       if (modes) {
+               /* Return error if asked to set polarity modes but not supported */
+               if (!phydev->drv->led_polarity_set)
+                       return -EINVAL;
 
-Thanks for the patch!
+               err = phydev->drv->led_polarity_set(phydev, index, modes);
+               if (err)
+                       return err;
+       }
 
-Cheers,
-Miguel
+So in case none of the LED polarity properties are set in DT, modes is 0
+and hence led_polarity_set() isn't called.
+
+I considered to change that with my suggested patch
+https://patchwork.kernel.org/project/netdevbpf/patch/473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org/
+
+But it was rightously critizised for breaking existing DT which assume
+LED polarity not being touched if none of the polarity properties are
+present.
 
