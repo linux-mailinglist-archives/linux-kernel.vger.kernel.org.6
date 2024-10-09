@@ -1,59 +1,67 @@
-Return-Path: <linux-kernel+bounces-357896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EB399777B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:28:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4B7997785
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC03AB21363
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784351F22AFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DBA1E260B;
-	Wed,  9 Oct 2024 21:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A349C1E261A;
+	Wed,  9 Oct 2024 21:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mt6VVG8h"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKX0jZfw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E180840849;
-	Wed,  9 Oct 2024 21:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F247317A583;
+	Wed,  9 Oct 2024 21:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509277; cv=none; b=ClYn53L6fcnbTIvCYhMZeKWAIkB8pJ/zl9M5NR4xeu71MBdHUN9RLFUkMZQ4iH5jhXUHVAfvF705F+tUx4gQMj0dwOkXQ0+Ng/lRuGMA82/ZtFjNlcgYJwN2R/0OGVra5OP09YpjdXcvumM8ZHnobFXxO+RTlKo+qjKN4BV4/g8=
+	t=1728509478; cv=none; b=VPAKmrkWVkefwFPzId7KhBkDEL7yzhS+EbnYoKpJA5DXnKKSsuqiP0P5eeJcoO0zGw1RQEmphSHw4jCXdk11rWIFf84Zj1E+6HH2LLvlI7p+7NqQ3HXsLRDzfe7+MH1rXO6picCtZrNjlt7UJ+wno1YiLbZjR2xxk9udIhYc/yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509277; c=relaxed/simple;
-	bh=ainHOw4Ua0qbGXmen8DD/3dmJodbMIUGFkPPxoCJcvM=;
+	s=arc-20240116; t=1728509478; c=relaxed/simple;
+	bh=CDmpHt4cVnqH2CMq/UZ5gellTMhqUaoAikzncUK3EyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsCTV2s9vlvCTpYUd+eZL2MsILFVfcOUmri8jGSBEEDFVFxn1kyEnrw3I/DCcs2VkWMCvUHPwZyBMkLw/wc7zDBX+lMpM2D+JmyExxV2DXYfrg74emgzTBjCrv26vjsTkVLV9xMrtjnRSVZiot0PsS/iCEf5DokxZi/L3yz7w1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mt6VVG8h; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1ZHaiqEDhqVmUaU2flF6CKG/GFCPewK/7YW45FHwl2s=; b=mt6VVG8hicoCdxs+l5DuL861/E
-	9wqwexImAPoInknT9yjguDi0Q1CLf6ijsOF+YC48tn5KT61UkdANeEA2sFIFxunN3e/ZBmZoMDwEw
-	9gyiMvjO8GfsuJaCoy83kk+6GHC7BurcYhrnUD+flgsMrYEr/8KURN9K2f1nr/LBISN4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1syeDQ-009XsP-3H; Wed, 09 Oct 2024 23:27:28 +0200
-Date: Wed, 9 Oct 2024 23:27:28 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v0] net: dsa: mv88e6xxx: Fix uninitialised err
- value
-Message-ID: <78bedc6e-01fc-4d6c-8521-76e2b941c4a7@lunn.ch>
-References: <20241009212319.1045176-1-aryan.srivastava@alliedtelesis.co.nz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jH8Cl0GCRbq+YYfd1c625iNRKaXvwYq+qAntQJWJ/KACIovJl7YDG2/D3z/H+7Hp+FXBmoPngodvglAorTFZ32Jw+Jjrlq+hkg7YTHnVqnlQBsjqBe40tB/S+y4g1U+ijRtWUrcUYFE78nTTd0yMZQ5HfXzqks4Lglo713eA9Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKX0jZfw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66189C4CECE;
+	Wed,  9 Oct 2024 21:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728509477;
+	bh=CDmpHt4cVnqH2CMq/UZ5gellTMhqUaoAikzncUK3EyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fKX0jZfwvEI6+/cfTuvHWPCQAu78JEr7r5kIJ4yyqhLTQ7LaaFd9jUJXNkNrHOA4k
+	 SyGb7YOqnaNCSY+RLxmLt8aCxiRLPfqIQOg96gZgw3zfTRhiS+Docl21mdJ5i/+vHN
+	 j5sMy+WJlODGqoaQnrHmjzkLbTgMGUCiDraZ2L56wm+Rbu9HMALs1iC2PXVIJRwP8Z
+	 dXFOnBwVrUgiQbalOfaurxuGZeM2ms7C5ZbKolb7JMj4+Wc13YBKUw48Ts7pNBZPKD
+	 8ttlmj52TAKy9EERvJ7K8AKpWAZoUSeH+L6NIiDbxmzdFRP/vz5GSMhxixpJHA+/tu
+	 6B4r5v11Tf70w==
+Date: Wed, 9 Oct 2024 16:31:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mantas Pucka <mantas@8devices.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-phy@lists.infradead.org, quic_ppratap@quicinc.com,
+	quic_jackp@quicinc.com
+Subject: Re: [PATCH 1/4] dt-bindings: usb: qcom,dwc3: Add QCS8300 to USB DWC3
+ bindings
+Message-ID: <20241009213116.GA740340-robh@kernel.org>
+References: <20241009195348.2649368-1-quic_kriskura@quicinc.com>
+ <20241009195348.2649368-2-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,16 +70,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009212319.1045176-1-aryan.srivastava@alliedtelesis.co.nz>
+In-Reply-To: <20241009195348.2649368-2-quic_kriskura@quicinc.com>
 
-On Thu, Oct 10, 2024 at 10:23:19AM +1300, Aryan Srivastava wrote:
-> The err value in mv88e6xxx_region_atu_snapshot is now potentially
-> uninitialised on return. Initialise err as 0.
+On Thu, Oct 10, 2024 at 01:23:45AM +0530, Krishna Kurapati wrote:
+> Update dt-bindings to add QCS8300 to USB DWC3 controller list.
+> The second controller of QCS8300 is High speed only capable and
+> doesn't have ss_phy_irq.
 > 
-> Fixes: ada5c3229b32 ("net: dsa: mv88e6xxx: Add FID map cache")
-> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
