@@ -1,122 +1,102 @@
-Return-Path: <linux-kernel+bounces-357458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5648E997166
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:29:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB41299716A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE2F1F2969C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:29:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67E85B25D82
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2D21D0E34;
-	Wed,  9 Oct 2024 16:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68461E0E15;
+	Wed,  9 Oct 2024 16:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GEjFQCEE"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLqwNoVN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D66C1AED5C;
-	Wed,  9 Oct 2024 16:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309F1E04B5;
+	Wed,  9 Oct 2024 16:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490885; cv=none; b=J2GPARvsaCIZHeBmx8zwsTarqP1RdP6nAC81mNVfqrUWyhEt6RcQb5/vcZOYj5VsSJeUzVzby/CxXFQMdi1V+FvNF5q0NYsRoa6SMK6GAD3b30Ii/NrbUCBQyVcZodu7z5951F/EAwSB5O7IsfMfTejx6ikS4M8Gfe9+dsnBEPA=
+	t=1728490901; cv=none; b=QCE7nOwPUg0meTbS4nOJpzBdKNh2kLvRJJ4+E2El/D6h2jQb7LIaZAY56flXTcIQG/+CPU+ZAjT/BJ9LvpJow0bDmDhpMBoWx6IiWq+I+eQEJq8X6+5Q0uF9iowCxUvz0qcuqfuZNTU+0k75/7kZiDXbNSzeXNeMddP8+Ao5aLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490885; c=relaxed/simple;
-	bh=Ok9ZtuIgcD+MQaNILCyMh17zxRIUPLnuQH0j3hcqwJ4=;
+	s=arc-20240116; t=1728490901; c=relaxed/simple;
+	bh=G8QnFXEwN9p8AEXQN6J3L68kS1BkNHs26s8ufdLC5vo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4fG49jR/8oI5FmhjfpdvpYT2y0HeN0wXLYsRXuAqppvmkheLp51HR3meCwbDAezFRiQNLsZKq5H1QpeYQ63biraZhLGIvnuUYV5LpxGBuPqpzPR3QOrPyNZoz04QLRX8uz8wbukFzGjmzw2hyN1tXxWuUWp0Y/yu3x6ZW6BUQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GEjFQCEE; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D10FD40E0285;
-	Wed,  9 Oct 2024 16:21:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mHKlzqZqGJYT; Wed,  9 Oct 2024 16:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728490869; bh=bbDRV4m3jwpRnQ+O2uAwiQT09VhhIkvuVjmqabiMkbw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5BO97ZZzHkDFYhVIP9wUKuhA6xMTI18OSDfoBFmquEDSVvFFliN4J2CNpMHSOMdjzy5YpAqC3rvakruRBKPYjkgVbQEQQTiWGZNs5zIxgRtClmRWXEddM9fXdBCQM8M+WJeyNmCmft8oxbcb2dOr4f07v+GZPbTdQmSEaJIyzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLqwNoVN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 516A4C4CEC3;
+	Wed,  9 Oct 2024 16:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728490900;
+	bh=G8QnFXEwN9p8AEXQN6J3L68kS1BkNHs26s8ufdLC5vo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GEjFQCEEW0f+s3OboPolT+yyvsB+S7PvMd200t4SmlBWZNzfIXOK/Lwh2XhZkKBKQ
-	 wx1/R7FGO8zDMnZ0zRF/+tfsErBhzsXogYsfCZmSJOOow4jx08wNzLvZYOM7vyNWq4
-	 kPZoMJ/9IP79foPP3lBleVSBPwLfEpsfyA9UvBhWQbkSp7e0CIkjWoxdILhzQq6tmS
-	 v8g6UaY3aPIzS2F/CPoJv8w2ibAVeOJ63AQJZZBdlpc5RunCqEmcOKbyutak49pbEn
-	 I3A86/eyI8KaM0ObuuNs6i5A8MZRFQ39FPQUQK8UxuTn7AwJT6QyziIMMPE47eRFWd
-	 2QOL8bUpW7qPZL8Rfmniqjan2IgSCjyU/Mg4/Q7bXANE3w3iSnoCzRmt8vcQAImVGf
-	 C1CWEysp/9rYn8u0j3HZNE0NPeqK3CXV++xnCovCVKTYJyH/0HNuBSsZYnNfOw28uU
-	 cR5NCqt7Ava9PYzmheFz10qJErsrBIqXCQw8JTsu6jjxA4zdhdfvQQBWQD0CoTXM89
-	 9KdyoBaQkpj2ckEvif7AOmO+K8gxUsTQCHi5DuRjPYhc2fa1jIpryUi43dAbd0S7hs
-	 2vXhaZaiQXBH1E4MghJF8+w+JxuipkttIGQuvstTzWjr5mm0qBz8yemZGD/KhgzE5D
-	 fq9QQwRe3AIeYT7SijyTzt9g=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 64B6D40E0163;
-	Wed,  9 Oct 2024 16:20:44 +0000 (UTC)
-Date: Wed, 9 Oct 2024 18:20:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Priyanka Singh <priyanka.singh@nxp.com>,
-	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>,
-	Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 0/6] EDAC: fsl-ddr, add imx9 support
-Message-ID: <20241009162038.GNZwatVpTr9rOEyfQs@fat_crate.local>
-References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
- <ZvsNJrxF6TpUC6ws@lizhi-Precision-Tower-5810>
- <20241002090834.GAZv0Nkp5YKcy86UmZ@fat_crate.local>
- <ZwalsAJdaHjtD1/E@lizhi-Precision-Tower-5810>
+	b=TLqwNoVNYkmN9GMvy2D/6dIedLXX6m7noGHpLKCw+UMctZnY5iF/edxLaOgpSfkWF
+	 8+D1bPF7CYXe3Qv0I40u4D0qMUcil6W3OrMg7oh/P+Nu8/fOFYjctnXfS6pS/73+f6
+	 V56iFAJ7TZSH3vAKNKADZVzgcQ4d00FH7H4pYeoLIIPsUZ5IsE7V2VgloFESs0C2WK
+	 nuF/LyGRWn7UYab0ptbNxjiltS8OWVPLdg0hC4ePNhYu1TJHCWzxisIXQmz0fqJIlQ
+	 gX2m6BFPFfhWRSgXxj0JJpQNA6CSp0V93B0y6dvmJ4ar7JAsyi1Vp2Y6+72VETQ3lo
+	 Um+MH28C88BWg==
+Date: Wed, 9 Oct 2024 17:21:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	bpf@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH v3] selftests: sched_ext: Add sched_ext as proper
+ selftest target
+Message-ID: <ZwatkYOsp7m40yR7@finisterre.sirena.org.uk>
+References: <20241008153519.1270862-1-bjorn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yz8x4PDVpg37np1h"
 Content-Disposition: inline
-In-Reply-To: <ZwalsAJdaHjtD1/E@lizhi-Precision-Tower-5810>
+In-Reply-To: <20241008153519.1270862-1-bjorn@kernel.org>
+X-Cookie: Editing is a rewording activity.
 
-Frank,
 
-On Wed, Oct 09, 2024 at 11:48:00AM -0400, Frank Li wrote:
-> Krzy already sent patch remove him from MAINTANINERS.
-> 
-> Do you have any more concerns about this patch series?
+--yz8x4PDVpg37np1h
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What are you actually asking?
+On Tue, Oct 08, 2024 at 05:35:18PM +0200, Bj=F6rn T=F6pel wrote:
 
-Whether I should drop everything I'm doing and review your patches?
+> The sched_ext selftests is missing proper cross-compilation support, a
+> proper target entry, and out-of-tree build support.
 
-Do you need to read about the kernel development process and when new stuff
-gets queued for the next merge window?
+Tested-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-Let's cut to the chase and you explain to me what the reason is for you not
-waiting patiently for your turn to come but keep pinging.
+There's still the thing with picking up the host kernel if there's not a
+binary built, but that's a generic thing with all the BPF based stuff
+that should be addressed separately.
 
-So, which is it?
+--yz8x4PDVpg37np1h
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Regards/Gruss,
-    Boris.
+-----BEGIN PGP SIGNATURE-----
 
-https://people.kernel.org/tglx/notes-about-netiquette
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGrZAACgkQJNaLcl1U
+h9Br6Af/Srr3jmfSdOS51x6LjbX5ESOwqIIU5SRAp9ldg1rfeBkDnXovLXLY8elP
+VYftR7nol6ENaZ4Te9tHALpoI5S/Ifxn21a5l7vVWBnruaVlCARWleHsXop5RjxL
+KivYy9oheVr2o4ChUguU/oGvlb+AUVT0P7AEQIjYc5zRb8Usxw/hxWX/JMcnOkaZ
+R+nDXA53+WJXLTkbWs2oCkon208kIQvjePSrn2Zck+quoDdwgK3jO/vAVfzLKrG1
+ohi/oXSbB2AgqPORrNMXVzJ94/JeNjrNrgYajyo2MB6tDQ+aAp63hogJFRQyEDg2
+prXC5VLJ1FIDFfm3KzgOWy64lNueYw==
+=GLMz
+-----END PGP SIGNATURE-----
+
+--yz8x4PDVpg37np1h--
 
