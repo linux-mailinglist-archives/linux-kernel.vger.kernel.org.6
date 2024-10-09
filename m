@@ -1,120 +1,151 @@
-Return-Path: <linux-kernel+bounces-357567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401EF9972B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA869972C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F279C285250
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:11:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B959F1C222F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F911D271C;
-	Wed,  9 Oct 2024 17:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6722C1E0DCE;
+	Wed,  9 Oct 2024 17:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYk4Kvk1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cg5b/3J1"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D8848CDD;
-	Wed,  9 Oct 2024 17:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A38B1DFE24;
+	Wed,  9 Oct 2024 17:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728493867; cv=none; b=WwH6ygiJ4By5dAPTkGuaAcdP/O8jZ/m838kkOwrqHJz9VyH1Q/R6vyIf6KmNAtE80x80UPAp45yfoGRpXURGtjU7+LrRWJuQmxmR0XvIRx7qMvFzQL24q5ST9CFUiXWry8dgK9u9i7nNUuMO2nCFUHm9XhApoQFyoDCnCbMR4Ow=
+	t=1728493980; cv=none; b=RdH6T5suLb/R9oBB5bDKQ3GRozpMSVJvNaicP37ruWEZrvHoifNdkXfk89cH64DNg4+5XoVVW9GUxuiIIUylHVIVniXO3U/MDSgyLfPsFI+u+JgCRpD42LzB2udqRFyiDNAhS+O7JccVm8uItGP0V4layzUGCvcevd6mW9RwiTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728493867; c=relaxed/simple;
-	bh=rGOvvnzp2dt2tRWEA9TxFXfky1CLdrBypq1DemqWQBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=McejnzHrGUEy2sQRQ7pRCabcqWesrfNeICZLVHCgBr3O7vPm+V910Z+Nvi66TTtzYcHyCMKvXDEdZ3seig6etDDflNySc8moUK5e3QUVSIq5gTEkSzAW6hqGkhPoyureLDtC+NU9owqAgbqkpR6k59lSdEeqKv3C6GzXLHC15+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYk4Kvk1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E058BC4CECE;
-	Wed,  9 Oct 2024 17:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728493866;
-	bh=rGOvvnzp2dt2tRWEA9TxFXfky1CLdrBypq1DemqWQBs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jYk4Kvk1gY1uvFbXCPYRUAUbrhlp/+8wAbme3d62xKuAC9Th3k48Kg6AvrjLST2SR
-	 pykIeziMLP7jfYEDJ9UOu0GIzQEL7po1ZnWJmodHOy0MA65xAH4YhII/VOCt9mR8Vj
-	 2J79y4o+575tcdWhPW/cbP5hIqsCCOXJxJTOfMwtgGr9/3MPB8h7wmihK1CPa70wY6
-	 tZ/mGJjZpNx92L+cKvvipPpVAU+hupjVBDGRIcykTA16Ln/SXoj5nwxDtuGvsJR2Lh
-	 ju6EubqZ1RoyAfbn4AmFvnD1l1uAWqJ1TrQPGNOuJnXdxtItZaowtD86t5CXBqdFsN
-	 eE8fHnT6ClHwg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53991d05416so8796874e87.2;
-        Wed, 09 Oct 2024 10:11:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUd4pHfVLnwBgajKxgA88oABuBXLlTrwyUu1NjfGaPwqHZa6wgn3SlsZ2tfLB+RTv31gVWtusXgHjU4J0c=@vger.kernel.org, AJvYcCWr8oTt+hjTJ9SuoXJUWlGBlS2QlLQPysZmSvboG94TP6wOk6+x6JSJc61S0xl/8sGQt11e9FoEherouJHBfS6iRHsY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLmEY0ZXvC8+UYwWvFKMjk22Fm4AA3jJUrYIkOq9ewrrZcMeIw
-	Wo+mHlNzE76hJS/SFzp+WAY7eC0Vhs4ulNZpyjAfvyt786PyGi5RmvFcaB+kg/Hbc32ZFaj3mam
-	cL2WIMWe/1xlcWl3iQsDB0+M987Q=
-X-Google-Smtp-Source: AGHT+IGNJAwzhfHJj0HOj5vHsytQW4u22wVUYU59ysyKknL8uIV+alUYqiOogmDp5RRStrx50BlGDPRCxCNYdpkdQ9Q=
-X-Received: by 2002:a05:6512:1394:b0:52c:cd77:fe03 with SMTP id
- 2adb3069b0e04-539c4899100mr3127476e87.14.1728493865313; Wed, 09 Oct 2024
- 10:11:05 -0700 (PDT)
+	s=arc-20240116; t=1728493980; c=relaxed/simple;
+	bh=ps7yp/ZWbapIQhC0uqrwY9XJKajSwhNNImyZt+1+twY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=JHTa0qcWv53oUlbQ92zcd+YFpmx0EVXxlVKLMG450LQOiGU+LqLNmFN87Hv+duFUxzvS1jHRGonjT2rhxS9B2uSMVxUErp1febu+so5zd+W1TxmACxTNK9bhx6v19OoAT1qg5cbTgLQuonaI2SJnSTCPr3DO+SafDUZUzO0iUpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cg5b/3J1; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cc8782869so71858145e9.2;
+        Wed, 09 Oct 2024 10:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728493977; x=1729098777; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCrrrWhv3dQaAiqQKhwPQGsc5yyQQKRtf0rbAQxCapE=;
+        b=Cg5b/3J10o+ejgcZghq03b0lEPsZph1aQDu0L5arEhT1vROSJcXQ1G96LwIh+jwi57
+         rvYeCWfWMyMLpAMKB9H6mjV2jgLWGjL7Wpa/lxV3ft6soJAQOSL0qP6J5DFLe/XeFWkP
+         VnDJK+l+RXiNAaNBMbA2FtBQ1LG6TAHlJEgMrGjNd9p237r2hA3H+ihBqTfXQOT76r4Z
+         gGuoajB7sIaLVB4clLnI2Es4n0ZsqMtBos3vZkaYFqCQctTamq34EXLGuJmlsYzfWXUO
+         iCRD0Y20RHNDqwkMsqv73mKcV/ZFzAUY6VyUaQb0smv7PH46zs5y4yWiYuN6PzGE3Vkn
+         79ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728493977; x=1729098777;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCrrrWhv3dQaAiqQKhwPQGsc5yyQQKRtf0rbAQxCapE=;
+        b=p1LMigPkg5qbVFO6aSR8Wh8TKvCwQXr5B1vS7dAl2RHX+4kmWjsVqU6HUYFJ1u53/P
+         Ls10n2djkigBhSUkVIN7JA89TeH+yUDVLCVlbYg/vpIJMHOD5OQl+DrVQPcMlHjGOjjM
+         MjNVzsF0ATr/OHaLBg3JwotWo1rdV8ZH3mh7Nd0zk3doJgH5NbLP7O8UX239/oSg5VLo
+         Dc7PIvGStIIdcFb1jEguQgLeknPYNqeqf9iDaUf7FDDnXIIt/ZQN8iH186utbS2kxg6F
+         1/ZYVkrv8rS1UsOMZqg2ybq7eyvVCGZU7N61bbUhbP8uE51WXJa2e9Ks2BehoBTnpO2e
+         0OnA==
+X-Forwarded-Encrypted: i=1; AJvYcCU05hvL7HVU+8fx74ETU4O6Co2IuBSJsGP3Sj5SozD9m5EfgLRzz9Bl0b9mprN0/P+fjPuulxLzbDOaYXZ4@vger.kernel.org, AJvYcCWwPLtjnMGuvkrLizCaGDZOlffjYXuhpavYBOcqrZ3VZ8H6J3Gf16bHX0sUiLyFdZWfGyRVU8jAESUeC6Dq@vger.kernel.org, AJvYcCXFa9aGJP6fcmYR5Dzk0Ty9URhyRTKgHgQHSAzQAhO7jSsf7oBLMZTHKfqnGkHVvVNixWWe5TZaSBq0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/Q8u6p5CANTUBlaHUG65XDgxMnG46YU7kUEpmLFbyVI4SErUE
+	V8ZyKNc0dgeBXcMjwXRDRbuwr37sszdKDuXvs0Z9ntL/Xb30GXBRPVekIg==
+X-Google-Smtp-Source: AGHT+IF4I5CmGa9hcugWiBWjkOlBhbMKeUrlWDazU08v09g6kAUQr2elrd5mrvrr7e4MNY0RZYyfxA==
+X-Received: by 2002:a05:600c:19ca:b0:42c:df54:1908 with SMTP id 5b1f17b1804b1-430ccf4c829mr23359995e9.18.1728493977265;
+        Wed, 09 Oct 2024 10:12:57 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-430ccf5f5e1sm25778805e9.26.2024.10.09.10.12.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 10:12:56 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Richard van Schagen <vschagen@icloud.com>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [RFC PATCH 1/2] dt-bindings: crypto: Add Mediatek EIP-93 crypto engine
+Date: Wed,  9 Oct 2024 19:12:20 +0200
+Message-ID: <20241009171223.12695-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009153901.3878233-2-ardb+git@google.com> <20241009120257.7b2de987@gandalf.local.home>
- <CAMj1kXFjd8AuHaBMLap6RZ18PR9_Cwv2GFbBkswj-e5YpaQFdA@mail.gmail.com>
- <20241009121931.6156accd@gandalf.local.home> <CAMj1kXEwpXPWVm2X8ZzpMc0JoynA=H8kABzD_Bb5+JEhULEr8Q@mail.gmail.com>
- <20241009123153.4a26f226@gandalf.local.home>
-In-Reply-To: <20241009123153.4a26f226@gandalf.local.home>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 9 Oct 2024 19:10:53 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFcxOTKBZzT8gar58xZn+hsAN0gnu3ELKoYzmcXF76H5A@mail.gmail.com>
-Message-ID: <CAMj1kXFcxOTKBZzT8gar58xZn+hsAN0gnu3ELKoYzmcXF76H5A@mail.gmail.com>
-Subject: Re: [PATCH] x86/ftrace: Don't bother preserving/restoring R10/R11
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 9 Oct 2024 at 18:31, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed, 9 Oct 2024 18:25:25 +0200
-> Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> > > Say we have code of:
-> > >
-> > >         pushq   r10
-> > >         pushq   r11
-> > >         call    foo
-> > >         popq    r11
-> > >         popq    r10
-> > >
-> > > Where we add a kprobe to the start of foo, the callback should be able to
-> > > see what r10 and r11 were.
-> >
-> > Why exactly is that? The contents of R10 and R11 have no purpose going
-> > forward, so is it just to see what some previous code may have left in
-> > them?
->
-> Because the probe is on the call. Unless they were used between the push
-> and the call, they still have the value you may be looking for.
->
+Add bindings for the Mediatek EIP-93 crypto engine. The same IP is also
+present on Airoha SoC.
 
-Right. So putting a probe on foo() is a way to inspect the register
-values during the execution if its caller. Fair enough.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ .../bindings/crypto/mediatek,mtk-eip93.yaml   | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
 
-> >
-> > > But the restore part is for the function foo to
-> > > see. It shouldn't care about r10 or r11 and if a kprobe updates them, it
-> > > should not have any effect.
-> > >
-> > > What does restoring r10 and r11 give us?
-> > >
-> >
-> > Nothing. Which is why I don't understand why you would need to record
-> > them in the first place.
->
-> As I mentioned above. Unless they are used after they are pushed, you still
-> have access to them on the call (or the kprobe attached to ftrace).
->
+diff --git a/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml b/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
+new file mode 100644
+index 000000000000..b0173b4da42d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/crypto/mediatek,mtk-eip93.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Mediatek EIP93 crypto engine
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++properties:
++  compatible:
++    enum:
++      - mediatek, mtk-eip93
++      - airoha,mtk-eip93
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    crypto@1e004000 {
++      compatible = "airoha,mtk-eip93";
++      reg = <0x1fb70000 0x1000>;
++
++      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++    };
+-- 
+2.45.2
 
-OK. I just didn't imagine this usage mode, where you probe foo() to
-capture the values of dead registers in its callers.
-
-I'll send a v2 and drop the first hunk.
 
