@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-357840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1F49976D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:48:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1726D9976DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614911F24395
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:48:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CC51F2427E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB072F2F;
-	Wed,  9 Oct 2024 20:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96EF1E282D;
+	Wed,  9 Oct 2024 20:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CA0DUhOA"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkFOcWnp"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEC71E1305
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 20:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7181E1305;
+	Wed,  9 Oct 2024 20:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728506710; cv=none; b=cOjX7dJA+aooOm3fA/QZ2xVN+eluNty/DhEsF4uytYj4BrvNb2nxgImzfUHsSZnN09BHDOCQ+dZds9OZxwYfIKZZNbvi0wR/bEyaYdLhGb1I6VltJu7GCSKzc1Xbmr4ixLhs5CFHWonTrD9SA1MVo93Y3cHkhVsSnXIUWGm1teo=
+	t=1728506798; cv=none; b=ni4JQfCpjv9PuSpIW/Yeg7X7Sm5a3Gd5yofGBWJ/q97x7pBL8uoNwFAiOIsZ843axeVF+0oLW+fEn0ju9Q9xC2GP+/FGkK82MXY52DPtgneDmYWOMaUL9pYsJtqM+Nw+kgWRpBYtiNOlP2EYUAQX24qmLOceurhqAoAiMAUxFe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728506710; c=relaxed/simple;
-	bh=nYfwcpUZdYjL0pSQsLCQsnTPhCrsZbtNDAclhh7uAlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R89wlngWZnLRRR68yTIV8e5GiF8urpxe48HgNzPJjPgqqp8MmG9g8eAAreNTmMwocrGX59oh2q8qxnBGhZGLHq9nLUhCS8/wHBzCo489b+SxS+YEwrs9+xypM1LO14dA+D7VNc7mtv6NjETaHllj95UhYapHzS34MoAI2374KrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CA0DUhOA; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so258456e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 13:45:07 -0700 (PDT)
+	s=arc-20240116; t=1728506798; c=relaxed/simple;
+	bh=Qz2j/PP1lOLYfkIT8rGz6zxJ0SpWVcP9cqhxdmqDxdU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hanxVRqMR8dMJYs+DwOlbxMMBga/armBx6g4oatH+fwN/tXKvHMl02mG2V+B+CkOPsZ0RQeJ+UYkqUGsr9BTsxVGl6hIledWEL01uiEgGFyeIMxQoC6llbhhSY7SdKyndE5k8crPE0xlBDACAK7YErfUcyPcFLq1btSXpw0HJic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkFOcWnp; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e3121be692so3130787b3.1;
+        Wed, 09 Oct 2024 13:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728506706; x=1729111506; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728506795; x=1729111595; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ta9iSL75PsN6aTymrbgB+q4HfOgRpGxi4PmyF2v6vbQ=;
-        b=CA0DUhOAYPkYbyJBh7lNPOw3xA39W0oiOzUZP1IhVzBGm59TXIEWFZHjqdtetS/Gp6
-         XdVuCyUXA6OLvLn3KLh8qkJ/Rs5dhHY4Lvpw88zBMTRIXj0GTCrSOAHB7kLIILyjH/TT
-         Bc4v0RUKGMrXweGr2SiOEVPL9alVXHpitlzevHawX8UpDeEaXFv46pWNFmP+3flUXRuN
-         bsUmmw7Nsw2iyyg7zcFBXrAVALZbYwCGcKUTvssnnUxk2yV0EfNPk1uLLrL0lSHaYgZf
-         XNG/6q5bzqznm4wwxN4Pk3ymaTj6rbelImEYFz3NhBCl7cbFWa0kJTMhL8iesewOp6Y7
-         ZMvA==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vLyjlujieScv3UgYNOTdCR9B2JU1g3jTaSo//GoTfjk=;
+        b=FkFOcWnpsDs2HP8JFn8p3DpyQdjUiY21AtRy1Gcb2mhE4GkADY5/99x5xxZRYg87PX
+         yDXFTpCKqEW4j6qccpMIMPWLH6S+DTIlsoUsW7Ix+J12CMRE6jsTaCiVgAufB9F1XFDj
+         xo5krV3c8w/8A63J2VEVhJOoV14hrvgC8RK8p8eP5BWJ3vDvNXggTGgzh0zjUIfOqJgy
+         wtMtyXYZkhr0dLb98RvEfWyXK+XUn4rqtl6/iCpZQ7J1Dvytx0RXyf/GCS6zi26NpU+q
+         iQzUd4iQlB077w/1JzCIv9SzWub/mYWAP7tAozoBgfjcyQUSPxjgrfFpA79ugofdhhHj
+         XaPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728506706; x=1729111506;
+        d=1e100.net; s=20230601; t=1728506795; x=1729111595;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ta9iSL75PsN6aTymrbgB+q4HfOgRpGxi4PmyF2v6vbQ=;
-        b=TtrgYTxoRFAu1V/Xd9xyQ77w5qxoIAT2Ht4qUrOn8bh5s1JK8+AUA8Z032WIZPdX7B
-         TcnQ7UwGN/Vp2RHOq9QVmPkz57wdjio3oSd53AepH2O/mbyAC12KjQQLWwkeXrvJ+ItT
-         1tfKsFePd+1eLYK4p9M9lA3tvoT8Mzu8YA3JjAYgqWp4ygmXJ06IspDHo/R/x0xl4A7H
-         JO6uemhNhVYhEBLoTP8Qvo70rVU2oRAvZ4kaYDaH882UJtOg6KYIMZqYtYtwWa4moSJf
-         0L3YJ77x81BDBQ7INnrtL2dZDYtG7WXMUxHqJdVA6PiLoJf/X9DotZcr69t7cTgVgwWy
-         ejWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2aTqptSBepVPNDj85cc1RZCVDAnQGdbpPDVgEBNtOqLGX6QC10fhSauoKELvJpG6VoURVOI9rwATZ/2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztuluDPT/8Ss5i9Hw+fF36cCkkkPWwq9d4DY8HtLcuIAohReAz
-	nxiFcfwOVsKeSOT60CUVYYUnrjJWfZ2/R4eNUsK1UCJcpoo6u22xWQl3PQksgMI=
-X-Google-Smtp-Source: AGHT+IHAOMpRwEYJiHDMI8w8bMB34NUeQt076rTlzeHhr88PtHM4vDWcgfzfmZ8rkVIsUWadQsA5Og==
-X-Received: by 2002:a05:6512:ac4:b0:52c:dfa0:dca0 with SMTP id 2adb3069b0e04-539c495b90bmr2596983e87.43.1728506706141;
-        Wed, 09 Oct 2024 13:45:06 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4894a647sm266411f8f.16.2024.10.09.13.45.05
+        bh=vLyjlujieScv3UgYNOTdCR9B2JU1g3jTaSo//GoTfjk=;
+        b=lhWwZCvCAHyAWxBU9iVx/SMu34Zb2tAaOlpoU3BtbO0kEKWgr/vUFKBUJQhG2mFGNI
+         CEfmb6USTjnZM1At2OdtrvqjTJE3rcDdWHvs59jvIKbPM8jKvEjScJu1jVFeDySXDUIz
+         S7pLQ/IlBGQ2BUgIQCKyPwSUjv0zhH+UhrqWH03EuJETQz9T9zFUxAFE2IU0bChpIxod
+         4HAuGIvtqLbm5L78EaCUGThuQ5ZyC7uBz+gMvZur1tdCrCJwVPfNWLNg4XpknDITczZ2
+         83SWKVix1apC3LfiCFg/xrXtZAGS10kQO+mbQsjmT0nzXppJHM/1RTWaAKU2oUSX7mBz
+         Hv5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUeL9uzRMRN2ERJ4cgMztezVXY6KIr6hD9pJVn41e1CfRtq1LGP8Qqx5GDSLATC4bvVfCV90YK/3HCz@vger.kernel.org, AJvYcCVTmQm4o0YUm4G5imeI1jxOb9Wf0lTrglkFMf/5+f0R///ZA2HgMxNwL/aqrgBG3cAHshib2lDxhR3UBw==@vger.kernel.org, AJvYcCWU8bJCjpo/vwCyZwdK9PDCcbe2cK+M3utK71lTDGTVOpqhfrW2IqU78LGni3X+e/HF8skaU2yJzs7j7tao@vger.kernel.org, AJvYcCXlo3bH0nU9ArVndeawhCPAZy6ry5IkUiiBHlz8JRNNY+DhiOzMNvTAd5gVpHBIdNfHKljQA1kjezex@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztwy8/PT1PzsMgiJXs0unuoq2Nl7RSmtqU6znzgTvigRUqUDTD
+	GUGpqZWzYB+bS+lXJ5xMyk8RYb1xb2W9enK2GhOKEQ+2l+39jDRh
+X-Google-Smtp-Source: AGHT+IFf4sz0TRbyD8Yi6n4r3mk7Izok61UXQMKHBV9h+m6UNoJBfctWfVmJRgfhGF7zrm5BJMEVaQ==
+X-Received: by 2002:a05:690c:640d:b0:6e3:2e20:a03c with SMTP id 00721157ae682-6e32e20a24cmr20593397b3.26.1728506795085;
+        Wed, 09 Oct 2024 13:46:35 -0700 (PDT)
+Received: from fan ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2d93d40c8sm20479477b3.83.2024.10.09.13.46.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 13:45:05 -0700 (PDT)
-Date: Wed, 9 Oct 2024 23:45:01 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
-Message-ID: <263ceb04-f909-45d8-b9b2-5de86617ea25@stanley.mountain>
-References: <20241009200528.36343-1-everestkc@everestkc.com.np>
+        Wed, 09 Oct 2024 13:46:34 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Wed, 9 Oct 2024 13:46:19 -0700
+To: ira.weiny@intel.com
+Cc: Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 13/28] cxl/mem: Expose DCD partition capabilities in
+ sysfs
+Message-ID: <Zwbrm690XW_8ImRW@fan>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-13-c261ee6eeded@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,54 +94,249 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009200528.36343-1-everestkc@everestkc.com.np>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-13-c261ee6eeded@intel.com>
 
-On Wed, Oct 09, 2024 at 02:05:25PM -0600, Everest K.C. wrote:
-> Variable `now` is declared without initialization. The variable
-> could be accessed inside the if-else statements following the
-> variable declaration, before it has been initialized.
+On Mon, Oct 07, 2024 at 06:16:19PM -0500, ira.weiny@intel.com wrote:
+> From: Navneet Singh <navneet.singh@intel.com>
 > 
-> This patch initializes the variable to
-> `inode_set_ctime_current(inode)` by default.
+> To properly configure CXL regions on Dynamic Capacity Devices (DCD),
+> user space will need to know the details of the DC partitions available.
 > 
-> This issue was reported by Coverity Scan.
+> Expose dynamic capacity capabilities through sysfs.
 > 
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-
-Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_mgtime")
-
-Maybe the WARN_ON_ONCE() should be updated to check ATTR_ATIME as well?
-
-regards,
-dan carpenter
-
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
 > ---
->  fs/attr.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Changes:
+> [iweiny: Change .../memX/dc/* to .../memX/dcY/*]
+> [iweiny: add read only and shareable attributes from DSMAS]
+> [djiang: Split sysfs docs]
+> [iweiny: Adjust sysfs doc dates]
+> [iweiny: Add qos details]
+> ---
+>  Documentation/ABI/testing/sysfs-bus-cxl |  45 ++++++++++++
+>  drivers/cxl/core/memdev.c               | 126 ++++++++++++++++++++++++++++++++
+>  2 files changed, 171 insertions(+)
 > 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index c614b954bda5..77523af2e62d 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -284,7 +284,7 @@ EXPORT_SYMBOL(inode_newsize_ok);
->  static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->  {
->  	unsigned int ia_valid = attr->ia_valid;
-> -	struct timespec64 now;
-> +	struct timespec64 now = inode_set_ctime_current(inode);
+> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
+> index 3f5627a1210a..b865eefdb74c 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-cxl
+> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
+> @@ -54,6 +54,51 @@ Description:
+>  		identically named field in the Identify Memory Device Output
+>  		Payload in the CXL-2.0 specification.
 >  
->  	if (ia_valid & ATTR_CTIME) {
->  		/*
-> @@ -293,8 +293,6 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->  		 */
->  		if (ia_valid & ATTR_DELEG)
->  			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
-> -		else
-> -			now = inode_set_ctime_current(inode);
->  	} else {
->  		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
->  		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-> -- 
-> 2.43.0
+> +What:		/sys/bus/cxl/devices/memX/dcY/size
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.
+> +		dcY/size is the size of each of those partitions.
+> +
+> +What:		/sys/bus/cxl/devices/memX/dcY/read_only
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.
+> +		dcY/read_only indicates true if the region is exported
+> +		read_only from the device.
+> +
+> +What:		/sys/bus/cxl/devices/memX/dcY/shareable
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.
+> +		dcY/shareable indicates true if the region is exported
+> +		shareable from the device.
+> +
+> +What:		/sys/bus/cxl/devices/memX/dcY/qos_class
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.  For CXL host
+> +		platforms that support "QoS Telemmetry" this attribute conveys
+> +		a comma delimited list of platform specific cookies that
+> +		identifies a QoS performance class for the persistent partition
+> +		of the CXL mem device. These class-ids can be compared against
+> +		a similar "qos_class" published for a root decoder. While it is
+> +		not required that the endpoints map their local memory-class to
+> +		a matching platform class, mismatches are not recommended and
+> +		there are platform specific performance related side-effects
+> +		that may result. First class-id is displayed.
+>  
+>  What:		/sys/bus/cxl/devices/memX/pmem/qos_class
+>  Date:		May, 2023
+> diff --git a/drivers/cxl/core/memdev.c b/drivers/cxl/core/memdev.c
+> index 84fefb76dafa..2565b10a769c 100644
+> --- a/drivers/cxl/core/memdev.c
+> +++ b/drivers/cxl/core/memdev.c
+> @@ -2,6 +2,7 @@
+>  /* Copyright(c) 2020 Intel Corporation. */
+>  
+>  #include <linux/io-64-nonatomic-lo-hi.h>
+> +#include <linux/string_choices.h>
+>  #include <linux/firmware.h>
+>  #include <linux/device.h>
+>  #include <linux/slab.h>
+> @@ -449,6 +450,123 @@ static struct attribute *cxl_memdev_security_attributes[] = {
+>  	NULL,
+>  };
+>  
+> +static ssize_t show_size_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%#llx\n", mds->dc_region[pos].decode_len);
+> +}
+> +
+> +static ssize_t show_read_only_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%s\n",
+> +			  str_false_true(mds->dc_region[pos].read_only));
+
+For this function and below, why str_false_true instead of
+str_true_false??
+
+Fan
+> +}
+> +
+> +static ssize_t show_shareable_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%s\n",
+> +			  str_false_true(mds->dc_region[pos].shareable));
+> +}
+> +
+> +static ssize_t show_qos_class_dcN(struct cxl_memdev *cxlmd, char *buf, int pos)
+> +{
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);
+> +
+> +	return sysfs_emit(buf, "%d\n", mds->dc_perf[pos].qos_class);
+> +}
+> +
+> +#define CXL_MEMDEV_DC_ATTR_GROUP(n)						\
+> +static ssize_t dc##n##_size_show(struct device *dev,				\
+> +				 struct device_attribute *attr,			\
+> +				 char *buf)					\
+> +{										\
+> +	return show_size_dcN(to_cxl_memdev(dev), buf, (n));			\
+> +}										\
+> +struct device_attribute dc##n##_size = {					\
+> +	.attr	= { .name = "size", .mode = 0444 },				\
+> +	.show	= dc##n##_size_show,						\
+> +};										\
+> +static ssize_t dc##n##_read_only_show(struct device *dev,			\
+> +				      struct device_attribute *attr,		\
+> +				      char *buf)				\
+> +{										\
+> +	return show_read_only_dcN(to_cxl_memdev(dev), buf, (n));		\
+> +}										\
+> +struct device_attribute dc##n##_read_only = {					\
+> +	.attr	= { .name = "read_only", .mode = 0444 },			\
+> +	.show	= dc##n##_read_only_show,					\
+> +};										\
+> +static ssize_t dc##n##_shareable_show(struct device *dev,			\
+> +				     struct device_attribute *attr,		\
+> +				     char *buf)					\
+> +{										\
+> +	return show_shareable_dcN(to_cxl_memdev(dev), buf, (n));		\
+> +}										\
+> +struct device_attribute dc##n##_shareable = {					\
+> +	.attr	= { .name = "shareable", .mode = 0444 },			\
+> +	.show	= dc##n##_shareable_show,					\
+> +};										\
+> +static ssize_t dc##n##_qos_class_show(struct device *dev,			\
+> +				      struct device_attribute *attr,		\
+> +				      char *buf)				\
+> +{										\
+> +	return show_qos_class_dcN(to_cxl_memdev(dev), buf, (n));		\
+> +}										\
+> +struct device_attribute dc##n##_qos_class = {					\
+> +	.attr	= { .name = "qos_class", .mode = 0444 },			\
+> +	.show	= dc##n##_qos_class_show,					\
+> +};										\
+> +static struct attribute *cxl_memdev_dc##n##_attributes[] = {			\
+> +	&dc##n##_size.attr,							\
+> +	&dc##n##_read_only.attr,						\
+> +	&dc##n##_shareable.attr,						\
+> +	&dc##n##_qos_class.attr,						\
+> +	NULL,									\
+> +};										\
+> +static umode_t cxl_memdev_dc##n##_attr_visible(struct kobject *kobj,		\
+> +					       struct attribute *a,		\
+> +					       int pos)				\
+> +{										\
+> +	struct device *dev = kobj_to_dev(kobj);					\
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);				\
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);	\
+> +										\
+> +	/* Not a memory device */						\
+> +	if (!mds)								\
+> +		return 0;							\
+> +	return a->mode;								\
+> +}										\
+> +static umode_t cxl_memdev_dc##n##_group_visible(struct kobject *kobj)		\
+> +{										\
+> +	struct device *dev = kobj_to_dev(kobj);					\
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(dev);				\
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlmd->cxlds);	\
+> +										\
+> +	/* Not a memory device or partition not supported */			\
+> +	if (!mds || n >= mds->nr_dc_region)					\
+> +		return false;							\
+> +	return true;								\
+> +}										\
+> +DEFINE_SYSFS_GROUP_VISIBLE(cxl_memdev_dc##n);					\
+> +static struct attribute_group cxl_memdev_dc##n##_group = {			\
+> +	.name = "dc"#n,								\
+> +	.attrs = cxl_memdev_dc##n##_attributes,					\
+> +	.is_visible = SYSFS_GROUP_VISIBLE(cxl_memdev_dc##n),			\
+> +}
+> +CXL_MEMDEV_DC_ATTR_GROUP(0);
+> +CXL_MEMDEV_DC_ATTR_GROUP(1);
+> +CXL_MEMDEV_DC_ATTR_GROUP(2);
+> +CXL_MEMDEV_DC_ATTR_GROUP(3);
+> +CXL_MEMDEV_DC_ATTR_GROUP(4);
+> +CXL_MEMDEV_DC_ATTR_GROUP(5);
+> +CXL_MEMDEV_DC_ATTR_GROUP(6);
+> +CXL_MEMDEV_DC_ATTR_GROUP(7);
+> +
+>  static umode_t cxl_memdev_visible(struct kobject *kobj, struct attribute *a,
+>  				  int n)
+>  {
+> @@ -525,6 +643,14 @@ static struct attribute_group cxl_memdev_security_attribute_group = {
+>  };
+>  
+>  static const struct attribute_group *cxl_memdev_attribute_groups[] = {
+> +	&cxl_memdev_dc0_group,
+> +	&cxl_memdev_dc1_group,
+> +	&cxl_memdev_dc2_group,
+> +	&cxl_memdev_dc3_group,
+> +	&cxl_memdev_dc4_group,
+> +	&cxl_memdev_dc5_group,
+> +	&cxl_memdev_dc6_group,
+> +	&cxl_memdev_dc7_group,
+>  	&cxl_memdev_attribute_group,
+>  	&cxl_memdev_ram_attribute_group,
+>  	&cxl_memdev_pmem_attribute_group,
 > 
+> -- 
+> 2.46.0
+> 
+
+-- 
+Fan Ni
 
