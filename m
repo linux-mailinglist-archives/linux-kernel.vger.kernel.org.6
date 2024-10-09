@@ -1,142 +1,232 @@
-Return-Path: <linux-kernel+bounces-357133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E209996C14
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:33:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B86996C3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11321F215D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F8B281CA8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201F5198A32;
-	Wed,  9 Oct 2024 13:33:09 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C0C199E80;
+	Wed,  9 Oct 2024 13:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3neOl0y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C5822EEF;
-	Wed,  9 Oct 2024 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD05190462;
+	Wed,  9 Oct 2024 13:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480788; cv=none; b=hKYKRL+B0YqZ0viJcDpvPjUMCfOTYa5zvNO6yCpXubrsCPW+Opn5BtDmqufkIvlps0lZbfegnXep+/tdtw0+jxjcm4nE7sPDrT2J7AmaWRMSMFE9ZT3TG7hvf1aMEp5CKpdHqWpRpsTC4qPcag9kd/IZHzIP0DDdw5nt+TrdSEo=
+	t=1728480888; cv=none; b=Z2eINOjI2aU0YxCsNUnHslmhYJbTngidl5avMIkzs7Y4ZR2kvfrbfg3SosxuqFTy+hrw5t5evGGiy7YHEF4LcOQABqP/4igYSp/nSktmr737eDlcAiiTKidlUtZj7S6qrjt0uguK0XdAy3PbKLWtaaBDeRCc7hrcwAu84OaOaJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480788; c=relaxed/simple;
-	bh=IFohZxECtwwdtC2YdM15WtXADKYoFT74BVnT0QxITvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBSOa9VKMpGjg4VMM4Aoc5Rfp6ZAWwLX1SGbVKrs2mfaiJc5Qao9+v3Fi4CZXJY3uYxCWDUgezunfMMh75wlb4agJcuaWUlEqZzLq3n/ewPwJ7ThGZZoj25iIU4zA+F+lEKKtOMueadDFSlhkZar8ASAASddGYD0ocXyaPwLxM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syWo7-000000006kL-2RHT;
-	Wed, 09 Oct 2024 13:32:51 +0000
-Date: Wed, 9 Oct 2024 14:32:45 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Xu Liang <lxu@maxlinear.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] dt-bindings: leds: add 'active-high'
- property
-Message-ID: <ZwaF_VNG3TE33rfb@makrotopia.org>
-References: <e91ca84ac836fc40c94c52733f8fc607bcbed64c.1728145095.git.daniel@makrotopia.org>
- <4qk3lpdx47b27ru47avpiygijtu5kkax44t3o4wb2wv5m5djoz@uziseiklyq3d>
- <ZwKK4xMlqq3TyDyt@makrotopia.org>
- <6d3hvesqhslk7jaszo44orbaqabl7go6duzpu4beye44sa6lpn@b3c56bp6x3ce>
- <ZwPGbUWImzlbEqb-@makrotopia.org>
+	s=arc-20240116; t=1728480888; c=relaxed/simple;
+	bh=e0gqHlZkDT5WvXlJLxiiH51AUvpJH6OopoCW36UMFTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hRFVrw3eJcJ+dnhgjvlteKcJ+U4Z1OnxblcpdTkdy4P/MU8bphu3ut4yYISToG0gUycyRkYpms1KC8BtRN8fWn1rELh0RxCCLxV0rNqaSnNgMqafDolaNrdIlBU+mUTVEkFRsYIC24MJeSxGuMO3tnJ0thcnkvKLH+D6wfJZbNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3neOl0y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45939C4CEC5;
+	Wed,  9 Oct 2024 13:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728480886;
+	bh=e0gqHlZkDT5WvXlJLxiiH51AUvpJH6OopoCW36UMFTI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U3neOl0ybb4Ab65jgWhp3xT7HcEy4YMuUgGV+fe0qorbYgOtJiVf4vdBC8aSbF+zk
+	 VaSzmlKJr1Td+ZlEfUnqPwPvP3ItSIxZE3mhiSqTU0Y+ILn1z2LAcj5l0mNd964u9E
+	 IJiiL6vn/nZ84NJqFn6bT+eDEGpN/zUWDJjiTS1Nw44OfqVQU1G+/BklpTTM5qjnQt
+	 qFWcWXBTn592t1uwoUFl7fAOhoRDLvjep0N3/TGk+zJy9Qodx9ZM9pOn4mlQ+m1tjB
+	 +zz3ljVHlk8StJ6aovxl3cW8GcQDcp3o2MYDG6IpoR0lwS4CMa0F2Pi7cYkeI0mOAq
+	 BM9t8zEhFY8Sg==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5e7ae4c504fso3516272eaf.1;
+        Wed, 09 Oct 2024 06:34:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCYBHtap9eFCW3ArtkPXaJnLn5ePbzRMLF94mTPKDCWvHZaXlO+efrZQ9WoBsAW0rGiCPuWUm/2hvW@vger.kernel.org, AJvYcCUJRLIt8++Asms4Z6YFGduZz8EUvaosy8ELAKdBk+YukWLoGYsCrAtZdLTQc+ePCbKPuLAKP+Q6Zddn@vger.kernel.org, AJvYcCUkPQvB1cQEd6oDHYzl+hw0cOlWz0zA32hTDm3HcGJ0BcYfiF6olPe/8ROtsL9QjfHFIUclxOMX4k1jzLI=@vger.kernel.org, AJvYcCV+aUdQXyBHAQNGH+brWQcmtteeQij7cC3p3WZpGRHm3y8ytXsWqv2rTFgdcJi1SvgsXPm7fj8AfpEI@vger.kernel.org, AJvYcCV/SF2Y8hgvSLREEQc3GPe+mhTti6rVXDdkPnBHdVtfBymF2iS04KGUf2U50I8yY3ugTXfAhBjz8ZxFAfPC@vger.kernel.org, AJvYcCVAYbdllUvcFJHe9+OctVfnyiD1tBGVy8aMJw1USr80rTMmRyHUt2uwlClssBFzEacOJTeSmY3ufPkZ@vger.kernel.org, AJvYcCVx0ILIb2bqJQwGWfceTiTswMWA7qkQBF3IDNK3Y++9GLJQKODRq+kbM8nNuT3GzDjMDDmj/exrfiLmHWxbyWvT@vger.kernel.org, AJvYcCW1arAhCLgfrrrpmNH8RanrE0gw8qbtN97USny55mxxStVROHs0OMiv6MGpBFbXIhOH4kvdsi6qRNOpsrI=@vger.kernel.org, AJvYcCW4uK4pp/SfwHOf8uV1KoMQH4aO0RVtfqyJg//wiE9xXy+VP3lt2iakoAfe5+Nj0B50bs1nkwoVfdhVIPr1ZtZ2kA==@vger.kernel.org, AJvYcCWMWHrYPU+Wj7NG
+ TB2viIz++k/HlsVtqdh7QGTchZSaPcS9eruc6QMo5nmbhl/3j4x7rYQhz199pS5H@vger.kernel.org, AJvYcCWY1lWuqm50sh0wqMQMb+jDeJM+5Al6i42vWPqEiagWwABWr8vmt3d3vq9HKLiTtUNmtX7dEwefsI4=@vger.kernel.org, AJvYcCX3/WApf0RVgTI4rS7fgqUNzwuIRFSnJi0/x3ucVs2nDFYdO2MIrbZYThNNCwEGBOpzAwTK0EbU87Eo@vger.kernel.org, AJvYcCX9EDj4AyeWl5BKC2QlKRGaDYJzv0/hphzvGEfgGlK8Dpcf+46uKBu63g5b0eYIqHhJd6cXfC33@vger.kernel.org, AJvYcCXIB0DquxdKTLyab8yODrwn6Tlh9jjDfSHjxtm9fuMqtD1tpa4wuK65HOYAzXtvvY6TZZau8tiIIz0r/nqHVhc=@vger.kernel.org, AJvYcCXKRq6frWMsrT1XWrvf13RSumJym9g1pd6E8CgisgVautUqJ+mNDLK6my7dU/DRGFhJWvGkjqjJqiDZGFyN@vger.kernel.org, AJvYcCXPLfXcgojrQWn5dzzgPtuZpIGeyk1TBqBpQmBuBV0mwNY8kpNEJ2UCQpLUiUGQ4SwS5+Lz9dHRkffSsg==@vger.kernel.org, AJvYcCXTR+XrB33gvXCC3gkxiLVco9iP2hjj9cKBXmn5FUgvCC43QOGCsSe5OwDUYDubrm3Bj/Wf4fb5KGRj@vger.kernel.org, AJvYcCXchzfBXIXTdWLD8grIaI7Y7jNnWL6rqNLCCErTzbGLYjzIfQamfIqB4MzX1OhILl0fcvzQfiKQwZCq@vger.kernel.org, AJvYcCXsg22ML+HaZwTtG/y6l6UZNcCgdKEpRV1K6j8zuoK+E0qBh2l9gn6y5ubGXUrnxRpAzQaatusnfW3eUYm
+ W@vger.kernel.org, AJvYcCXtXbSqnrF9IfHakH1CLfhw7uDd/khZ9tDC/RwUkUFRD6vTCBh1T2V5L56FXtzBEt3F9UABgnX7rnsRaLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi/Hxvnc7e8NrjIW5/GnwKMx7fVvoVB1d02sUfbqGECs4pEIz/
+	0eY293poLJic+qEAqL8Bod+C1gJLSEuI/VrqBUE4KJxWyf9eWEIbXEm0Zrtg6kTZcTN0xPq9OGG
+	2f1HTVEYCyeoz/zOiJzRTuo8BNxI=
+X-Google-Smtp-Source: AGHT+IGPvjQmX3zbZk+/LQ5kxG4XslEJ8m7y5iETpKVOpmsBmOdZ4tET2kRXnqT/piSrFy5yYrBa2CfwSNatwWXgz3s=
+X-Received: by 2002:a05:6820:270f:b0:5e5:c489:6f3c with SMTP id
+ 006d021491bc7-5e987bc9df9mr1249377eaf.5.1728480885551; Wed, 09 Oct 2024
+ 06:34:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwPGbUWImzlbEqb-@makrotopia.org>
+References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
+ <CAPDyKFp0N6UJhnHS164Tdf=xkWB0jzq65L9TdvYazeBQ-6WjeQ@mail.gmail.com>
+ <20241007184924.GH14766@pendragon.ideasonboard.com> <CAPDyKFpQVnF7eQv3dup8k-3EijnMjuveCG9sZ=Rpey1Y6MBJEg@mail.gmail.com>
+ <20241007222502.GG30699@pendragon.ideasonboard.com> <CAPDyKFrGNwna6Y2pqSRaBbRYHKRaD2ayqQHLtoqLPOu9Et7qTg@mail.gmail.com>
+ <CAJZ5v0jvJyS7D5-wURi2kyWN-rmNa+YqupeQJ000pQRVd9VBcQ@mail.gmail.com> <41a0ad69-912b-4eb3-84f7-fb385433c056@opensource.cirrus.com>
+In-Reply-To: <41a0ad69-912b-4eb3-84f7-fb385433c056@opensource.cirrus.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Oct 2024 15:34:33 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gbrhMpPT0fHYSC+ES5WS5kv7XkM2hj9M4vpNwFFs6xsQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gbrhMpPT0fHYSC+ES5WS5kv7XkM2hj9M4vpNwFFs6xsQ@mail.gmail.com>
+Subject: Re: [PATCH 00/51] treewide: Switch to __pm_runtime_put_autosuspend()
+To: Richard Fitzgerald <rf@opensource.cirrus.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+	linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org, 
+	linux-input@vger.kernel.org, patches@opensource.cirrus.com, 
+	iommu@lists.linux.dev, imx@lists.linux.dev, 
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
+	linux-serial@vger.kernel.org, greybus-dev@lists.linaro.org, 
+	asahi@lists.linux.dev, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 12:30:53PM +0100, Daniel Golle wrote:
-> On Mon, Oct 07, 2024 at 08:38:27AM +0200, Krzysztof Kozlowski wrote:
-> > On Sun, Oct 06, 2024 at 02:04:35PM +0100, Daniel Golle wrote:
-> > > On Sun, Oct 06, 2024 at 02:44:44PM +0200, Krzysztof Kozlowski wrote:
-> > > > I think this should be just string enum, see marvell,marvell10g.yaml
-> > > 
-> > > I found the vendor-specific 'marvell,polarity' property in
-> > > https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20231214201442.660447-5-tobias@waldekranz.com/
-> > > 
-> > > However, I can't find that file in any Linux tree.
-> > > 
-> > > Looking at the suggested patch on patchwork, I got a few questions on
-> > > how to deal with the situation as of today:
-> > > 
-> > > So should the existing support for the 'active-low' and
-> > > 'inactive-high-impedance' properties be replaced by that string enum?
-> > > Or should the string property be interpreted in addition to the
-> > > bools defined in leds/common.yaml?
-> > > 
-> > > Should the string property be defined for each PHY or should we move
-> > > it into a common file?
-> > > 
-> > > If so, should that common file also be leds/common.yaml or should we
-> > > create a new file only for PHY LEDs instead?
-> > > 
-> > > Sorry for being confused, I don't mind going down what ever path to have
-> > > LED polarity configurable properly in DT.
-> > 
-> > Let's ignore my idea.
-> > 
-> > However I still wonder whether your choice for lack of properties is
-> > appropriate. Lack of properties as "bootloader default" means it can
-> > change. Why would anyone prefer to keep bootloader default? The wiring
-> > is fixed - it's never "we design PCB based on bootloader, so with new
-> > bootloader we will change PCB"?
-> > 
-> > And if you meant bootstrapping through some hardwired configuration,
-> > then again it is known and defined.
-> 
-> I agree, and my original intention was to just always apply polarity
-> settings and force people to correctly declare them in DT.
-> However, that would break DT compatibility on devices not making use
-> of those properties and relying only on strapping or bootloader
-> defaults. See also RFC discussed here:
-> 
-> https://patchwork.kernel.org/project/netdevbpf/patch/473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org/
-> 
+On Wed, Oct 9, 2024 at 2:48=E2=80=AFPM Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
+>
+> On 08/10/2024 7:24 pm, Rafael J. Wysocki wrote:
+> > On Tue, Oct 8, 2024 at 12:35=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro=
+.org> wrote:
+> >>
+> >> On Tue, 8 Oct 2024 at 00:25, Laurent Pinchart
+> >> <laurent.pinchart@ideasonboard.com> wrote:
+> >>>
+> >>> Hi Ulf,
+> >>>
+> >>> On Tue, Oct 08, 2024 at 12:08:24AM +0200, Ulf Hansson wrote:
+> >>>> On Mon, 7 Oct 2024 at 20:49, Laurent Pinchart wrote:
+> >>>>> On Fri, Oct 04, 2024 at 04:38:36PM +0200, Ulf Hansson wrote:
+> >>>>>> On Fri, 4 Oct 2024 at 11:41, Sakari Ailus wrote:
+> >>>>>>>
+> >>>>>>> Hello everyone,
+> >>>>>>>
+> >>>>>>> This set will switch the users of pm_runtime_put_autosuspend() to
+> >>>>>>> __pm_runtime_put_autosuspend() while the former will soon be re-p=
+urposed
+> >>>>>>> to include a call to pm_runtime_mark_last_busy(). The two are alm=
+ost
+> >>>>>>> always used together, apart from bugs which are likely common. Go=
+ing
+> >>>>>>> forward, most new users should be using pm_runtime_put_autosuspen=
+d().
+> >>>>>>>
+> >>>>>>> Once this conversion is done and pm_runtime_put_autosuspend() re-=
+purposed,
+> >>>>>>> I'll post another set to merge the calls to __pm_runtime_put_auto=
+suspend()
+> >>>>>>> and pm_runtime_mark_last_busy().
+> >>>>>>
+> >>>>>> That sounds like it could cause a lot of churns.
+> >>>>>>
+> >>>>>> Why not add a new helper function that does the
+> >>>>>> pm_runtime_put_autosuspend() and the pm_runtime_mark_last_busy()
+> >>>>>> things? Then we can start moving users over to this new interface,
+> >>>>>> rather than having this intermediate step?
+> >>>>>
+> >>>>> I think the API would be nicer if we used the shortest and simplest
+> >>>>> function names for the most common use cases. Following
+> >>>>> pm_runtime_put_autosuspend() with pm_runtime_mark_last_busy() is th=
+at
+> >>>>> most common use case. That's why I like Sakari's approach of repurp=
+osing
+> >>>>> pm_runtime_put_autosuspend(), and introducing
+> >>>>> __pm_runtime_put_autosuspend() for the odd cases where
+> >>>>> pm_runtime_mark_last_busy() shouldn't be called.
+> >>>>
+> >>>> Okay, so the reason for this approach is because we couldn't find a
+> >>>> short and descriptive name that could be used in favor of
+> >>>> pm_runtime_put_autosuspend(). Let me throw some ideas at it and mayb=
+e
+> >>>> you like it - or not. :-)
+> >>>
+> >>> I like the idea at least :-)
+> >>>
+> >>>> I don't know what options you guys discussed, but to me the entire
+> >>>> "autosuspend"-suffix isn't really that necessary in my opinion. Ther=
+e
+> >>>> are more ways than calling pm_runtime_put_autosuspend() that trigger=
+s
+> >>>> us to use the RPM_AUTO flag for rpm_suspend(). For example, just
+> >>>> calling pm_runtime_put() has the similar effect.
+> >>>
+> >>> To be honest, I'm lost there. pm_runtime_put() calls
+> >>> __pm_runtime_idle(RPM_GET_PUT | RPM_ASYNC), while
+> >>> pm_runtime_put_autosuspend() calls __pm_runtime_suspend(RPM_GET_PUT |
+> >>> RPM_ASYNC | RPM_AUTO).
+> >>
+> >> __pm_runtime_idle() ends up calling rpm_idle(), which may call
+> >> rpm_suspend() - if it succeeds to idle the device. In that case, it
+> >> tags on the RPM_AUTO flag in the call to rpm_suspend(). Quite similar
+> >> to what is happening when calling pm_runtime_put_autosuspend().
+> >
+> > Right.
+> >
+> > For almost everybody, except for a small bunch of drivers that
+> > actually have a .runtime_idle() callback, pm_runtime_put() is
+> > literally equivalent to pm_runtime_put_autosuspend().
+> >
+> > So really the question is why anyone who doesn't provide a
+> > .runtime_idle() callback bothers with using this special
+> > pm_runtime_put_autosuspend() thing,
+>
+> Because they are following the documentation? It says:
+>
+> "Drivers should call pm_runtime_mark_last_busy() to update this field
+> after carrying out I/O, typically just before calling
+> pm_runtime_put_autosuspend()."
+>
+> and
+>
+> "In order to use autosuspend, subsystems or drivers must call
+> pm_runtime_use_autosuspend() (...), and thereafter they should use the
+> various `*_autosuspend()` helper functions instead of the non#
+> autosuspend counterparts"
+>
+> So the documentation says I should be using pm_runtime_put_autosuspend()
+> instead of pm_runtime_put().
+>
+> Seems unfair to criticise people for following the documentation.
 
-I see that the series was marked as "Not Applicable" in patchwork.
-What is the reason for that? To me it looks like it can be applied on
-today's net-next cleanly:
+I'm not criticising anyone, just wondering why they do what they do.
 
-[daniel@box linux.git]$ git fetch https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
-From https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
- * branch                      HEAD       -> FETCH_HEAD
-[daniel@box linux.git]$ git checkout FETCH_HEAD
-HEAD is now at 6607c17c6c5e net: mana: Enable debugfs files for MANA device
-[daniel@box linux.git]$ wget -q -O - https://patchwork.kernel.org/series/895863/mbox/ | git am
-Applying: dt-bindings: leds: add 'active-high' property
-Applying: net: phy: support 'active-high' property for PHY LEDs
-Applying: net: phy: aquantia: correctly describe LED polarity override
-Applying: net: phy: mxl-gpy: correctly describe LED polarity
-[daniel@box linux.git]$ 
+"Because it is documented this way" is a fair answer, but it doesn't
+invalidate the observation that the difference between
+pm_runtime_put_autosuspend() and pm_runtime_put() boils down to the
+cases when the .runtime_idle() callback is present (which are few and
+far between so to speak).  Moreover, there are call sites using
+pm_runtime_*() functions even though they may not know whether or not
+autosuspend is enabled for the target devices, so the advice given in
+the documentation cannot be universally followed regardless.
 
-Or did I misunderstand the meaning of "Not Applicable"? If so, please
-clarify.
+This thread is about the way to go, generally speaking, and what I'm
+saying is effectively that replacing pm_runtime_put_autosuspend() with
+pm_runtime_put() almost everywhere (if not just everywhere) would be
+fine with me.
+
+I also think that the current users of pm_runtime_put_autosuspend()
+that is not immediately preceded by pm_runtime_mark_last_busy() can be
+readily switched over to using pm_runtime_put() instead of it and then
+pm_runtime_put_autosuspend() can be made call
+pm_runtime_mark_last_busy(), so the latter can be removed from the
+code using the former.  Note that this last step does not require
+tree-wide changes, because calling pm_runtime_mark_last_busy() twice
+in a row for the same device is not a problem.
+
+Of course, the documentation needs to be updated in accordance with
+the code changes, which didn't happen when previous changes were made
+to pm_runtime_put() and that likely is why it does not reflect the
+current code.
 
