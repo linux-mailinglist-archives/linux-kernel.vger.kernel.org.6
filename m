@@ -1,64 +1,37 @@
-Return-Path: <linux-kernel+bounces-356429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5039960F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3CD9960F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C0A1C20D5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92E211F26586
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7793417E472;
-	Wed,  9 Oct 2024 07:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bM+fpfwK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D935D17E010;
+	Wed,  9 Oct 2024 07:34:26 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4673D36D;
-	Wed,  9 Oct 2024 07:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404A84E18;
+	Wed,  9 Oct 2024 07:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728459211; cv=none; b=P99Cfx6p8CN/qStiiXj8he2X5EjUAYhLoj8e7uPnGdKgjRCPB6IKy//606xDAr+2l2OlbG8mln6s1nM99TqkosK7FuheMuO0NXEO+ttFM4TyAhXWOIRgATz3NfEMbsMgTr04lxZpSffwHJqt9CrF+gY1ziMT1rAs1mFOGF3MWLI=
+	t=1728459266; cv=none; b=ijjulNFfJYouw4dx43im08SV3DqNKKm7nf2qETTcRGAJG1J7MEscqaFpMccLLr41x0hvK/0ZKmyeeBuFkOXU2D1vpUYWvzds234/cuqnGXV6JROSsyJs66FAwNGo5IpeTSBLMdr4o9Sdmn8ls5z9Ba7Wq+H8/AvoGWwXYf1HPjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728459211; c=relaxed/simple;
-	bh=8GAHgHjYxQwFO+o1uKFke1ZThRSGSbbBWN09VFfVzG8=;
+	s=arc-20240116; t=1728459266; c=relaxed/simple;
+	bh=7MhXp1AXaj2dv6t4+ER4/pUAo9L42Uogq9Sb6gLqWSI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8Uoo2VodE59UQ1BPvSipOJVEOfdpU9tqZPSRD6rCos5rHoxLtHF4iIZ3bCFfLmRfQN0RwzIihRTUyzIhIkHozhrw4AFJcW4ACEXsL2WviAOAAIsTTSR5AY8Rk+20Qnl2l6ycHZQn8DoFH53fSf+zvbKEXHewjL3EJXLF/lGf64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bM+fpfwK; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728459210; x=1759995210;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8GAHgHjYxQwFO+o1uKFke1ZThRSGSbbBWN09VFfVzG8=;
-  b=bM+fpfwKz+hOdiuuRYzAP8pCKDeKp68nAGQExi06OCo1Vy6dBK+tuFUX
-   +VksJXNN/+VC7oskRXwnoUwbtdCa7CwjKNXz0pyLwWGM0bLAatDcRRao8
-   4oDUidc4frLuJhED+ALAdQq8ydZ78TAIpKrz7R+qjvOV1yf3q76jXIyrc
-   IdyoPdhVYOAyw707Nm2BqQJIqXM9lzpGJqK+a77P2h0qGpnceitUiBdkb
-   /KeAhqPd8lKsbJS8iS5svgWMtUwa/1cRtK9AoWiLA8iQXK1d8cj1Siexi
-   Ua8W/3z37v/aNQASdYtTc/jEyBjlpx+tEcLmRq08kP0KqEbCs5P1d2xrh
-   Q==;
-X-CSE-ConnectionGUID: 4jCPJq6CSJSfQEWpmqKksg==
-X-CSE-MsgGUID: ITpv7/aRTnaMPE4N0iVxcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="15363062"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="15363062"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 00:33:25 -0700
-X-CSE-ConnectionGUID: tdgdPtR0Qvqsq/70+BP1ig==
-X-CSE-MsgGUID: Voobu18BRZO1Pj0HNgctpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="106921699"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 00:33:20 -0700
-Message-ID: <737eeb51-b5eb-4585-a9d2-f1578b21d86f@linux.intel.com>
-Date: Wed, 9 Oct 2024 09:33:16 +0200
+	 In-Reply-To:Content-Type; b=mEQIIZz9+d6IKnOyehB9il5icPfl/rAw53VI4qoVR02CnS4QlW/c0s6YE3Is/yfjvm7GW9bYkUCmf2cCRkDWgo75uKh6EztfTMQmPVOcarxlm76lrnWakfuS9TeDaXfxu7kTnvrytpWRun0VJpppbVL50wJPwXTQ0eDadPm7iIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 226911BF209;
+	Wed,  9 Oct 2024 07:34:18 +0000 (UTC)
+Message-ID: <2d907c14-5b43-446e-9640-efb0fa0ba385@ghiti.fr>
+Date: Wed, 9 Oct 2024 09:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,93 +39,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] usb: add apis for sideband uasge tracking
-To: Guan-Yu Lin <guanyulin@google.com>, Thinh.Nguyen@synopsys.com,
- gregkh@linuxfoundation.org, mathias.nyman@intel.com,
- stern@rowland.harvard.edu, elder@kernel.org, oneukum@suse.com,
- yajun.deng@linux.dev, dianders@chromium.org, kekrby@gmail.com,
- perex@perex.cz, tiwai@suse.com, tj@kernel.org, stanley_chang@realtek.com,
- andreyknvl@gmail.com, christophe.jaillet@wanadoo.fr,
- quic_jjohnson@quicinc.com, ricardo@marliere.net, grundler@chromium.org,
- niko.mauno@vaisala.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, badhri@google.com, albertccwang@google.com,
- quic_wcheng@quicinc.com, pumahsu@google.com
-References: <20241009054429.3970438-1-guanyulin@google.com>
- <20241009054429.3970438-4-guanyulin@google.com>
+Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
+ <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
+ <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20241009054429.3970438-4-guanyulin@google.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-On 10/9/2024 7:42 AM, Guan-Yu Lin wrote:
-> Introduce sb_usage_count and corresponding apis to track sideband usage
-> on each usb_device. A sideband refers to the co-processor that accesses
-> the usb_device via shared control on the same USB host controller. To
-> optimize power usage, it's essential to monitor whether ther sideband is
-> actively using the usb_device. This information is vital when
-> determining if a usb_device can be safely suspended during system power
-> state transitions.
-> 
-> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
-> ---
->   drivers/usb/core/driver.c | 54 +++++++++++++++++++++++++++++++++++++++
->   include/linux/usb.h       | 13 ++++++++++
->   2 files changed, 67 insertions(+)
-> 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index 0c3f12daac79..c1ba5ed15214 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1673,6 +1673,60 @@ void usb_disable_autosuspend(struct usb_device *udev)
->   }
->   EXPORT_SYMBOL_GPL(usb_disable_autosuspend);
->   
-> +/**
-> + * usb_sideband_get - notify usb driver there's a new active sideband
-> + * @udev: the usb_device which has an active sideband
-> + *
-> + * An active sideband indicates that another entity is currently using the usb
-> + * device. Notify the usb device by increasing the sb_usage_count. This allows
-> + * usb driver to adjust power management policy based on sideband activities.
-> + */
-> +void usb_sideband_get(struct usb_device *udev)
-> +{
-> +	struct usb_device *parent = udev;
+Hi Heinrich,
 
-Is it really "parent" in this case? Perhaps better variable name would 
-just be "device".
+On 01/10/2024 17:24, Heinrich Schuchardt wrote:
+> On 01.10.24 15:51, Alexandre Ghiti wrote:
+>> Hi Heinrich,
+>>
+>> On 29/09/2024 16:02, Heinrich Schuchardt wrote:
+>>> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
+>>> EFI binary does not rely on pages that are both executable and
+>>> writable.
+>>>
+>>> The flag is used by some distro versions of GRUB to decide if the EFI
+>>> binary may be executed.
+>>>
+>>> As the Linux kernel neither has RWX sections nor needs RWX pages for
+>>> relocation we should set the flag.
+>>>
+>>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>>> Cc: <stable@vger.kernel.org>
+>>> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+>>> ---
+>>>   arch/riscv/kernel/efi-header.S | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi- 
+>>> header.S
+>>> index 515b2dfbca75..c5f17c2710b5 100644
+>>> --- a/arch/riscv/kernel/efi-header.S
+>>> +++ b/arch/riscv/kernel/efi-header.S
+>>> @@ -64,7 +64,7 @@ extra_header_fields:
+>>>       .long    efi_header_end - _start            // SizeOfHeaders
+>>>       .long    0                    // CheckSum
+>>>       .short    IMAGE_SUBSYSTEM_EFI_APPLICATION        // Subsystem
+>>> -    .short    0                    // DllCharacteristics
+>>> +    .short    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT    // 
+>>> DllCharacteristics
+>>>       .quad    0                    // SizeOfStackReserve
+>>>       .quad    0                    // SizeOfStackCommit
+>>>       .quad    0                    // SizeOfHeapReserve
+>>
+>>
+>> I don't understand if this fixes something or not: what could go 
+>> wrong if we don't do this?
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+>
+>
+> Hello Alexandre,
+>
+> https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/uefi-ca-memory-mitigation-requirements 
+>
+> describes Microsoft's effort to improve security by avoiding memory 
+> pages that are both executable and writable.
+>
+> IMAGE_DLL_CHARACTERISTICS_NX_COMPAT is an assertion by the EFI binary 
+> that it does not use RWX pages. It may use the 
+> EFI_MEMORY_ATTRIBUTE_PROTOCOL to set whether a page is writable or 
+> executable (but not both).
+>
+> When using secure boot, compliant firmware will not allow loading a 
+> binary if the flag is not set.
 
-> +
-> +	do {
-> +		atomic_inc(&parent->sb_usage_count);
-> +		parent = parent->parent;
-> +	} while (parent);
-> +}
-> +EXPORT_SYMBOL_GPL(usb_sideband_get);
-> +
-> +/**
-> + * usb_sideband_put - notify usb driver there's a sideband deactivated
-> + * @udev: the usb_device which has a sideband deactivated
-> + *
-> + * The inverse operation of usb_sideband_get, which notifies the usb device by
-> + * decreasing the sb_usage_count. This allows usb driver to adjust power
-> + * management policy based on sideband activities.
-> + */
-> +void usb_sideband_put(struct usb_device *udev)
-> +{
-> +	struct usb_device *parent = udev;
 
-Similarly here.
+Great, so that's a necessary fix, it will get merged in the next rc or so:
 
-> +
-> +	do {
-> +		atomic_dec(&parent->sb_usage_count);
-> +		parent = parent->parent;
-> +	} while (parent);
-> +}
-> +EXPORT_SYMBOL_GPL(usb_sideband_put);
-> +
+Fixes: cb7d2dd5612a ("RISC-V: Add PE/COFF header for EFI stub")
+
+Thanks,
+
+Alex
+
+
+>
+> Best regards
+>
+> Heinrich
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
