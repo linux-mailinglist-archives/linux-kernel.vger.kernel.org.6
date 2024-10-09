@@ -1,822 +1,317 @@
-Return-Path: <linux-kernel+bounces-356510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13D899624B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:20:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE9999624D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402931F229E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:20:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0848FB2468B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AFB17C220;
-	Wed,  9 Oct 2024 08:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mJVuUW+V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5C3189BAC;
+	Wed,  9 Oct 2024 08:20:31 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A94184535
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6270188A1C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462024; cv=none; b=cX8ebSK6UhJFaumN7haS2qQinxSOh1JS07PZZw6e0SpT7s3ygt22ly/8hUx1uSfAqILVM+Dy5qx/ODqJGOHajMxpNoR5AuuSef94RRF1vnG5MVb0BTniOSVfHFCPuWdSjAe8UgKVrKvNuvZAcqo1EaFWK8WOjE5MKCf3TL8moYM=
+	t=1728462030; cv=none; b=gocxhtcLsAy/g6vgXYYwmr1cTVFyBlBK+CqlqqIATsitYaAkhZlyhWR1oC6D4TbYofIXRoMnqvcAkqJPEgrWU0wqzZwUTtE2zb+aBtrfB2rnbnhrQHrHrZVel3+fOu7dKZdcvSGJvXxgvAKUc2lgOujOw7BacxxK7aeFe93MkCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462024; c=relaxed/simple;
-	bh=rG0XqoZFGH9Y2c0xiFmDQwWZ2CiVzBgcK+dusQrBmB8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BvzHLhjupm9LkKoLU+QxvZ0GaF06TmS3JZ1SMHT/KUXl+9KJUDp/lpgr9dLW58GbQK1tILjU9HqeQWkc1htTXf6AFwEKLzE7enfc04E+piy9UKFeQWsXhLIckaYVljoUe3j+4rAW0OTxd8jw/dpIaNbpujcea56Iwr1kw7bYkCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mJVuUW+V; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728462022; x=1759998022;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=rG0XqoZFGH9Y2c0xiFmDQwWZ2CiVzBgcK+dusQrBmB8=;
-  b=mJVuUW+VCBjwmXkmWpHWHT0XroqZPxcNUnEVccDuWnyyFt7mLGCbXjL4
-   8dcLpKqbDXlz12DAw8tm/r/5jgLbwBzpOARh7V9H3FgKCjKt4sTUVNbY4
-   rMf+h8wM4W26d75y40oen8Tnr/qyrPHU+pnVcwui6zUUB/En9GWxvPGHk
-   LIPPPLJFKG4mY8gv3T4lc0zaVVLgA+qJ/g9wPXp7P5LkxscIzqrNpDq02
-   lPNA3MSDGnx5TmHR8/Hr+saV3Tfm6XVmvO5kYGbbCVLT/xuK5Buxd83xq
-   NZo0mZqpROfU9QH/sshKrtxkBIJLHJszpE4UGVU7FEHk9uvqv0lf2kZBL
-   Q==;
-X-CSE-ConnectionGUID: GUGtMz0mQ3iV36z4ML9vBQ==
-X-CSE-MsgGUID: c9XLwfCURxmdF1k3QsW7pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="15367463"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="15367463"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:20:22 -0700
-X-CSE-ConnectionGUID: ZNbW5dmWSg6vFSPxhdR8vg==
-X-CSE-MsgGUID: i0j0TLMTQkiMkJMiJWvM/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="81009908"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.80])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:20:15 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: shiyongbang <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
- tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
-Cc: liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com,
- shiyongbang@huawei.com, libaihan@huawei.com, shenjian15@huawei.com,
- shaojijie@huawei.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH drm-dp 2/4] drm/hisilicon/hibmc: add dp link moduel in
- hibmc drivers
-In-Reply-To: <20240930100610.782363-3-shiyongbang@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240930100610.782363-1-shiyongbang@huawei.com>
- <20240930100610.782363-3-shiyongbang@huawei.com>
-Date: Wed, 09 Oct 2024 11:20:12 +0300
-Message-ID: <878quxbscj.fsf@intel.com>
+	s=arc-20240116; t=1728462030; c=relaxed/simple;
+	bh=m1OUkGtvY+Hi0BWH+KBTwbhRWSdoHHGqgTc+v6OOJ1I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PEKV7MdtNwLniF9cFaj/rGzAQn1opFC4gyfDkwRYTOr7pd+o79LBRyjzEAel3RnzFeLQcOw+ZHjlnz2rgeImQL2Ryi+BZy+meRuO1useBA8UsLdHF0mgE7yzQIFG+72Cyu84GvtJ6xh8rIWfJzIABGE21WlRedZoUAenhRjvUyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83542775244so16386239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:20:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728462028; x=1729066828;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKtYnZpLW00TayaO42hrnKURGmLYf8kT1tzKb4ZE8jw=;
+        b=vHSZ5WpsayZBfpe+auV6qp3PdxWi3EYwr5y693ytdNF3jVgEqxFw2r2i8FdJ2Dd77p
+         j7Et2euzIciti77fdyqdDQ+KqtHiQGdkpOwIewblI40cpyFgtENjfuLG3RuX2uyCMzWa
+         rjnRIMhV9FbHXavjn9dp9SEIdnj54hCxCymVKsrIcauipr3IStuMxXN7d/vbNOXKskYF
+         DDzXwVD9BnHoPFhK2fw75hcGCMy8g71oXbAI1/oxvMuD/K1xjibfdIwb70W9atx7CGD9
+         JNyiM5xFic7X+x8JPpHXUVAuf17OSDQcmnswRBuMn++6wAGLuNGnS92nJ5c1otAujoTN
+         eG7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXp/2pqQIQHoQI9IuLpC9Pj1hfML2uXMnAsEThA8VaU65DQk+n9m/lF0iivblrp+LNRkdqcKPIwoVu91S8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCvpkJHtJGlr+2Sf2VlqZFjz8pSa4v1OF+k8u9iKNCiforXV3+
+	+ScUmSq8lMkjwBhevY+dfqQ6QuOMrlIGTBpCmENsbABC5aptvK0ZecvXT3Txn6ZH+ShN0vWK6uO
+	0cngEupKlG4oGVP7BstGFzWalUubWyVvgM77fV3TLO1qGHRna9iofDVE=
+X-Google-Smtp-Source: AGHT+IEVORNLYt3OfC+xyLzRjpMveDCSW7DOnfRYhg2wzA0byMjAxtWK2BjrsPriYp+BCpSnObQbdd67HFxYZ7pMQ/nruGIOgZ9h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:2161:b0:3a2:763b:c83e with SMTP id
+ e9e14a558f8ab-3a3974efe24mr13838755ab.5.1728462027851; Wed, 09 Oct 2024
+ 01:20:27 -0700 (PDT)
+Date: Wed, 09 Oct 2024 01:20:27 -0700
+In-Reply-To: <66f5a0ca.050a0220.46d20.0002.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67063ccb.050a0220.22840d.0010.GAE@google.com>
+Subject: Re: [syzbot] [net?] INFO: task hung in new_device_store (5)
+From: syzbot <syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com>
+To: boqun.feng@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	hdanton@sina.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, penguin-kernel@i-love.sakura.ne.jp, 
+	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 30 Sep 2024, shiyongbang <shiyongbang@huawei.com> wrote:
-> From: baihan li <libaihan@huawei.com>
->
-> Add link training process functions in this moduel.
+syzbot has found a reproducer for the following issue on:
 
-Lots of duplication of drm_dp_helper.[ch] stuff here too. I'll mention a
-few inline, but there's more.
+HEAD commit:    5b7c893ed5ed Merge tag 'ntfs3_for_6.12' of https://github...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c09f9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=05f9cecd28e356241aba
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1635f707980000
 
-BR,
-Jani.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/508d25adbdbb/disk-5b7c893e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ecd795cf996e/vmlinux-5b7c893e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d5433a3025f3/bzImage-5b7c893e.xz
 
->
-> Signed-off-by: baihan li <libaihan@huawei.com>
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   2 +-
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c | 258 ++++++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c | 390 +++++++++++++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h |  24 ++
->  4 files changed, 673 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h
->
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> index 8770ec6dfffd..94d77da88bbf 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
-> -	       dp/dp_aux.o
-> +	       dp/dp_aux.o dp/dp_link.o
->  
->  obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
-> new file mode 100644
-> index 000000000000..4091723473ad
-> --- /dev/null
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_kapi.c
-> @@ -0,0 +1,258 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +// Copyright (c) 2024 Hisilicon Limited.
-> +
-> +#include <linux/io.h>
-> +#include <linux/delay.h>
-> +#include "dp_config.h"
-> +#include "dp_comm.h"
-> +#include "dp_reg.h"
-> +#include "dp_kapi.h"
-> +#include "dp_link.h"
-> +
-> +#define DP_LINK_RATE_HBR 0xa
-> +
-> +static int hibmc_dp_link_init(struct hibmc_dp_dev *dp)
-> +{
-> +	dp->link.cap.lanes = 2;
-> +	dp->link.train_set = devm_kzalloc(dp->dev->dev,
-> +					  dp->link.cap.lanes * sizeof(u8), GFP_KERNEL);
-> +	if (!dp->link.train_set)
-> +		return -ENOMEM;
-> +
-> +	dp->link.cap.link_rate = DP_LINK_RATE_HBR;
-> +
-> +	return 0;
-> +}
-> +
-> +static void hibmc_dp_aux_init(struct hibmc_dp_dev *dp)
-> +{
-> +	struct hibmc_dp_aux *aux = &dp->aux;
-> +
-> +	aux->addr = dp->base;
-> +	/* aux read/write lock */
-> +	mutex_init(&aux->lock);
-> +	dp_write_bits(aux->addr + DP_AUX_REQ, DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
-> +	dp_write_bits(aux->addr + DP_AUX_REQ, DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
-> +	dp_write_bits(aux->addr + DP_AUX_REQ, DP_CFG_AUX_MIN_PULSE_NUM, DP_MIN_PULSE_NUM);
-> +}
-> +
-> +static void hibmc_dp_aux_uninit(struct hibmc_dp_dev *dp)
-> +{
-> +	struct hibmc_dp_aux *aux = &dp->aux;
-> +
-> +	mutex_destroy(&aux->lock);
-> +}
-> +
-> +static void hibmc_dp_set_tu(struct hibmc_dp_dev *dp, struct dp_mode *mode)
-> +{
-> +	u32 tu_symbol_frac_size;
-> +	u32 tu_symbol_size;
-> +	u64 pixel_clock;
-> +	u64 rate_ks;
-> +	u8 lane_num;
-> +	u32 value;
-> +	u32 bpp;
-> +
-> +	pixel_clock = mode->pixel_clock;
-> +	lane_num = dp->link.cap.lanes;
-> +	if (lane_num == 0) {
-> +		drm_err(dp->dev, "set tu failed, lane num cannot be 0!\n");
-> +		return;
-> +	}
-> +
-> +	bpp = DP_BPP;
-> +	rate_ks = dp->link.cap.link_rate * DP_LINK_RATE_CAL;
-> +	value = (pixel_clock * bpp * 5000) / (61 * lane_num * rate_ks);
-> +
-> +	if (value % 10 == 9) { /* 10: div, 9: carry */
-> +		tu_symbol_size = value / 10 + 1; /* 10: div */
-> +		tu_symbol_frac_size = 0;
-> +	} else {
-> +		tu_symbol_size = value / 10; /* 10: div */
-> +		tu_symbol_frac_size = value % 10 + 1; /* 10: div */
-> +	}
-> +
-> +	drm_info(dp->dev, "tu value: %u.%u value: %u\n",
-> +		 tu_symbol_size, tu_symbol_frac_size, value);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_PACKET,
-> +		      DP_CFG_STREAM_TU_SYMBOL_SIZE, tu_symbol_size);
-> +	dp_write_bits(dp->base + DP_VIDEO_PACKET,
-> +		      DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE, tu_symbol_frac_size);
-> +}
-> +
-> +static void hibmc_dp_set_sst(struct hibmc_dp_dev *dp, struct dp_mode *mode)
-> +{
-> +	u32 hblank_size;
-> +	u32 htotal_size;
-> +	u32 htotal_int;
-> +	u32 hblank_int;
-> +	u32 fclk; /* flink_clock */
-> +
-> +	fclk = dp->link.cap.link_rate * DP_LINK_RATE_CAL;
-> +
-> +	/* ssc: 9947 / 10000 = 0.9947 */
-> +	htotal_int = mode->h_total * 9947 / 10000;
-> +	htotal_size = (u32)((u64)htotal_int * fclk / (DP_SYMBOL_PER_FCLK * mode->pixel_clock));
-> +
-> +	/* ssc: max effect bandwidth 53 / 10000 = 0.53% */
-> +	hblank_int = mode->h_blank - mode->h_active * 53 / 10000;
-> +	hblank_size = (u64)hblank_int * fclk * 9947 /
-> +		      ((u64)mode->pixel_clock * 10000 * DP_SYMBOL_PER_FCLK);
-> +
-> +	drm_info(dp->dev, "h_active %u v_active %u htotal_size %u hblank_size %u",
-> +		 mode->h_active, mode->v_active, htotal_size, hblank_size);
-> +	drm_info(dp->dev, "flink_clock %u pixel_clock %u", fclk, mode->pixel_clock);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_HORIZONTAL_SIZE, DP_CFG_STREAM_HTOTAL_SIZE, htotal_size);
-> +	dp_write_bits(dp->base + DP_VIDEO_HORIZONTAL_SIZE, DP_CFG_STREAM_HBLANK_SIZE, hblank_size);
-> +}
-> +
-> +static void hibmc_dp_link_cfg(struct hibmc_dp_dev *dp, struct dp_mode *mode)
-> +{
-> +	u32 timing_delay;
-> +	u32 vblank;
-> +	u32 hstart;
-> +	u32 vstart;
-> +
-> +	vblank = mode->v_total - mode->v_active;
-> +	timing_delay = mode->h_sync + mode->h_back;
-> +	hstart = mode->h_sync + mode->h_back;
-> +	vstart = mode->v_sync + mode->v_back;
-> +
-> +	dp_write_bits(dp->base + DP_TIMING_GEN_CONFIG0,
-> +		      DP_CFG_TIMING_GEN0_HBLANK, mode->h_blank);
-> +	dp_write_bits(dp->base + DP_TIMING_GEN_CONFIG0,
-> +		      DP_CFG_TIMING_GEN0_HACTIVE, mode->h_active);
-> +
-> +	dp_write_bits(dp->base + DP_TIMING_GEN_CONFIG2,
-> +		      DP_CFG_TIMING_GEN0_VBLANK, vblank);
-> +	dp_write_bits(dp->base + DP_TIMING_GEN_CONFIG2,
-> +		      DP_CFG_TIMING_GEN0_VACTIVE, mode->v_active);
-> +	dp_write_bits(dp->base + DP_TIMING_GEN_CONFIG3,
-> +		      DP_CFG_TIMING_GEN0_VFRONT_PORCH, mode->v_front);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG0,
-> +		      DP_CFG_STREAM_HACTIVE, mode->h_active);
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG0,
-> +		      DP_CFG_STREAM_HBLANK, mode->h_blank);
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG2,
-> +		      DP_CFG_STREAM_HSYNC_WIDTH, mode->h_sync);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG1,
-> +		      DP_CFG_STREAM_VACTIVE, mode->v_active);
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG1,
-> +		      DP_CFG_STREAM_VBLANK, vblank);
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG3,
-> +		      DP_CFG_STREAM_VFRONT_PORCH, mode->v_front);
-> +	dp_write_bits(dp->base + DP_VIDEO_CONFIG3,
-> +		      DP_CFG_STREAM_VSYNC_WIDTH, mode->v_sync);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_MSA0,
-> +		      DP_CFG_STREAM_VSTART, vstart);
-> +	dp_write_bits(dp->base + DP_VIDEO_MSA0,
-> +		      DP_CFG_STREAM_HSTART, hstart);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_CTRL,
-> +		      DP_CFG_STREAM_VSYNC_POLARITY, mode->v_pol);
-> +	dp_write_bits(dp->base + DP_VIDEO_CTRL,
-> +		      DP_CFG_STREAM_HSYNC_POLARITY, mode->h_pol);
-> +
-> +	/* MSA mic 0 and 1*/
-> +	writel(DP_MSA1, dp->base + DP_VIDEO_MSA1);
-> +	writel(DP_MSA2, dp->base + DP_VIDEO_MSA2);
-> +
-> +	hibmc_dp_set_tu(dp, mode);
-> +
-> +	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_RGB_ENABLE, 0x1);
-> +	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_VIDEO_MAPPING, 0);
-> +
-> +	/*divide 2: up even */
-> +	if (timing_delay % 2)
-> +		timing_delay++;
-> +
-> +	dp_write_bits(dp->base + DP_TIMING_MODEL_CTRL,
-> +		      DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1, timing_delay);
-> +
-> +	hibmc_dp_set_sst(dp, mode);
-> +}
-> +
-> +int hibmc_dp_kapi_init(struct hibmc_dp *dp)
-> +{
-> +	struct drm_device *drm_dev = dp->drm_dev;
-> +	struct hibmc_dp_dev *dp_dev;
-> +	int ret;
-> +
-> +	dp_dev = devm_kzalloc(drm_dev->dev, sizeof(struct hibmc_dp_dev), GFP_KERNEL);
-> +	if (!dp_dev)
-> +		return -ENOMEM;
-> +
-> +	dp->dp_dev = dp_dev;
-> +
-> +	dp_dev->dev = drm_dev;
-> +	dp_dev->base = dp->mmio + DP_OFFSET;
-> +
-> +	hibmc_dp_aux_init(dp_dev);
-> +
-> +	ret = hibmc_dp_link_init(dp_dev);
-> +	if (ret) {
-> +		drm_err(drm_dev, "dp link init failed\n");
-> +		hibmc_dp_aux_uninit(dp_dev);
-> +		return ret;
-> +	}
-> +
-> +	/* hdcp data */
-> +	writel(DP_HDCP, dp_dev->base + DP_HDCP_CFG);
-> +	/* int init */
-> +	writel(0, dp_dev->base + DP_INTR_ENABLE);
-> +	writel(DP_INT_RST, dp_dev->base + DP_INTR_ORIGINAL_STATUS);
-> +	/* rst */
-> +	writel(DP_DPTX_RST, dp_dev->base + DP_DPTX_RST_CTRL);
-> +	/* clock enable */
-> +	writel(DP_CLK_EN, dp_dev->base + DP_DPTX_CLK_CTRL);
-> +
-> +	return 0;
-> +}
-> +
-> +void hibmc_dp_kapi_uninit(struct hibmc_dp *dp)
-> +{
-> +	hibmc_dp_aux_uninit(dp->dp_dev);
-> +}
-> +
-> +void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
-> +{
-> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
-> +
-> +	if (enable) {
-> +		dp_write_bits(dp_dev->base + DP_VIDEO_CTRL, BIT(0), 0x1);
-> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
-> +		dp_write_bits(dp_dev->base + DP_DPTX_GCTL0, BIT(10), 0x1);
-> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
-> +	} else {
-> +		dp_write_bits(dp_dev->base + DP_DPTX_GCTL0, BIT(10), 0);
-> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
-> +		dp_write_bits(dp_dev->base + DP_VIDEO_CTRL, BIT(0), 0);
-> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
-> +	}
-> +
-> +	msleep(50);
-> +}
-> +
-> +int hibmc_dp_mode_set(struct hibmc_dp *dp, struct dp_mode *mode)
-> +{
-> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
-> +	int ret;
-> +
-> +	if (!dp_dev->link.status.channel_equalized) {
-> +		ret = dp_link_training(dp_dev);
-> +		if (ret) {
-> +			drm_err(dp->drm_dev, "dp link training failed, ret: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	hibmc_dp_display_en(dp, false);
-> +	hibmc_dp_link_cfg(dp_dev, mode);
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
-> new file mode 100644
-> index 000000000000..0a10cae1d8a4
-> --- /dev/null
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
-> @@ -0,0 +1,390 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +// Copyright (c) 2024 Hisilicon Limited.
-> +
-> +#include <linux/delay.h>
-> +#include <drm/drm_device.h>
-> +#include <drm/drm_print.h>
-> +#include "dp_comm.h"
-> +#include "dp_reg.h"
-> +#include "dp_link.h"
-> +#include "dp_aux.h"
-> +
-> +static int dp_link_training_configure(struct hibmc_dp_dev *dp)
-> +{
-> +	u8 buf[2];
-> +	int ret;
-> +
-> +	/* DP 2 lane */
-> +	dp_write_bits(dp->base + DP_PHYIF_CTRL0, DP_CFG_LANE_DATA_EN,
-> +		      dp->link.cap.lanes == DP_LANE_NUM_2 ? 0x3 : 0x1);
-> +	dp_write_bits(dp->base + DP_DPTX_GCTL0, DP_CFG_PHY_LANE_NUM,
-> +		      dp->link.cap.lanes == DP_LANE_NUM_2 ? 0x1 : 0);
-> +
-> +	/* enhanced frame */
-> +	dp_write_bits(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_FRAME_MODE, 0x1);
-> +
-> +	/* set rate and lane count */
-> +	buf[0] = dp->link.cap.link_rate;
-> +	buf[1] = DPCD_ENHANCED_FRAME_EN | dp->link.cap.lanes;
-> +	ret = dp_aux_write(dp, DPCD_LINK_BW_SET, buf, sizeof(buf));
-> +	if (ret) {
-> +		drm_err(dp->dev, "dp aux write link rate and lanes failed, ret: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* set 8b/10b and downspread */
-> +	buf[0] = 0x10;
-> +	buf[1] = 0x1;
-> +	ret = dp_aux_write(dp, DPCD_DOWNSPREAD_CTRL, buf, sizeof(buf));
-> +	if (ret)
-> +		drm_err(dp->dev, "dp aux write 8b/10b and downspread failed, ret: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int dp_link_pattern2dpcd(struct hibmc_dp_dev *dp, enum dp_pattern_e pattern)
-> +{
-> +	switch (pattern) {
-> +	case DP_PATTERN_NO:
-> +		return DPCD_TRAINING_PATTERN_DISABLE;
-> +	case DP_PATTERN_TPS1:
-> +		return DPCD_TRAINING_PATTERN_1;
-> +	case DP_PATTERN_TPS2:
-> +		return DPCD_TRAINING_PATTERN_2;
-> +	case DP_PATTERN_TPS3:
-> +		return DPCD_TRAINING_PATTERN_3;
-> +	case DP_PATTERN_TPS4:
-> +		return DPCD_TRAINING_PATTERN_4;
-> +	default:
-> +		drm_err(dp->dev, "dp link unknown pattern %d\n", pattern);
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int dp_link_set_pattern(struct hibmc_dp_dev *dp, enum dp_pattern_e pattern)
-> +{
-> +	int ret;
-> +	u8 buf;
-> +
-> +	ret = dp_link_pattern2dpcd(dp, pattern);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	buf = (u8)ret;
-> +	if (pattern != DPCD_TRAINING_PATTERN_DISABLE && pattern != DPCD_TRAINING_PATTERN_4) {
-> +		buf |= DPCD_SCRAMBLING_DISABLE;
-> +		dp_write_bits(dp->base + DP_PHYIF_CTRL0, DP_CFG_SCRAMBLE_EN, 0x1);
-> +	} else {
-> +		dp_write_bits(dp->base + DP_PHYIF_CTRL0, DP_CFG_SCRAMBLE_EN, 0);
-> +	}
-> +
-> +	dp_write_bits(dp->base + DP_PHYIF_CTRL0, DP_CFG_PAT_SEL, pattern);
-> +
-> +	ret = dp_aux_write(dp, DPCD_TRAINING_PATTERN_SET, &buf, sizeof(buf));
-> +	if (ret)
-> +		drm_err(dp->dev, "dp aux write training pattern set failed\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static int dp_link_training_cr_pre(struct hibmc_dp_dev *dp)
-> +{
-> +	u8 *train_set = dp->link.train_set;
-> +	int ret;
-> +	u8 i;
-> +
-> +	ret = dp_link_training_configure(dp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = dp_link_set_pattern(dp, DP_PATTERN_TPS1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < dp->link.cap.lanes; i++)
-> +		train_set[i] = DPCD_VOLTAGE_SWING_LEVEL_2 | DPCD_PRE_EMPHASIS_LEVEL_0;
-> +
-> +	ret = dp_aux_write(dp, DPCD_TRAINING_LANE0_SET, train_set, dp->link.cap.lanes);
-> +	if (ret)
-> +		drm_err(dp->dev, "dp aux write training lane set failed\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static bool dp_dpcd_cr_done_check_and_update(u8 lane_status, u8 lane_count,
-> +					     u8 *cr_done_lanes)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com
 
-drm_dp_clock_recovery_ok().
+INFO: task syz-executor:5469 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21680 pid:5469  tgid:5469  ppid:5459   flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ new_device_store+0x1b4/0x890 drivers/net/netdevsim/bus.c:166
+ kernfs_fop_write_iter+0x3a0/0x500 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:590 [inline]
+ vfs_write+0xa6d/0xc90 fs/read_write.c:683
+ ksys_write+0x183/0x2b0 fs/read_write.c:736
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5edcf7cadf
+RSP: 002b:00007f5edd25f220 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f5edcf7cadf
+RDX: 0000000000000003 RSI: 00007f5edd25f270 RDI: 0000000000000005
+RBP: 00007f5edcff13d2 R08: 0000000000000000 R09: 00007f5edd25f077
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 00007f5edd25f270 R14: 00007f5eddc64620 R15: 0000000000000003
+ </TASK>
 
-> +{
-> +	bool is_ok = true;
-> +	u8 val;
-> +
-> +	*cr_done_lanes = GENMASK(lane_count - 1, 0);
-> +
-> +	for (u8 lane = 0; lane < lane_count; lane++) {
-> +		val = lane_status >> (lane * AUX_4_BIT);
-> +		if ((val & DPCD_CR_DONE_BITS) == 0) {
-> +			*cr_done_lanes &= ~(BIT(lane));
-> +			is_ok = false;
-> +		}
-> +	}
-> +
-> +	return is_ok;
-> +}
-> +
-> +static bool dp_dpcd_eq_is_ok(u8 lane_status, u8 lane_count)
+Showing all locks held in the system:
+2 locks held by kworker/u8:0/11:
+2 locks held by kworker/u8:1/12:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
+3 locks held by kworker/u8:3/52:
+5 locks held by kworker/u9:0/54:
+ #0: ffff888218331148 ((wq_completion)hci6){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888218331148 ((wq_completion)hci6){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90000bf7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90000bf7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff88802a7b0d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:327
+ #3: ffff88802a7b0078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5567
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:1957 [inline]
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_conn_failed+0x15d/0x300 net/bluetooth/hci_conn.c:1262
+1 lock held by kswapd1/89:
+3 locks held by kworker/u8:5/1060:
+ #0: ffff88814b89a948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88814b89a948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90003ee7d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90003ee7d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
+3 locks held by kworker/1:2/1852:
+3 locks held by kworker/u8:8/2936:
+4 locks held by kworker/u8:12/3063:
+ #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90009ce7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90009ce7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcc52d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
+ #3: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: wg_destruct+0x25/0x2e0 drivers/net/wireguard/device.c:246
+1 lock held by klogd/4679:
+2 locks held by udevd/4690:
+1 lock held by dhcpcd/4903:
+2 locks held by getty/4995:
+ #0: ffff88802e5950a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+3 locks held by kworker/1:3/5284:
+ #0: ffff88801ac81948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac81948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90003fc7d00 ((crda_timeout).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90003fc7d00 ((crda_timeout).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: crda_timeout_work+0x15/0x50 net/wireless/reg.c:540
+5 locks held by kworker/u9:5/5333:
+ #0: ffff888175b57948 ((wq_completion)hci8){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888175b57948 ((wq_completion)hci8){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90003da7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90003da7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff88807caccd80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:327
+ #3: ffff88807cacc078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5567
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:1957 [inline]
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_conn_failed+0x15d/0x300 net/bluetooth/hci_conn.c:1262
+6 locks held by kworker/u9:6/5335:
+ #0: ffff888219140948 ((wq_completion)hci7){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888219140948 ((wq_completion)hci7){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90003c27d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90003c27d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff88804a2e4d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:327
+ #3: ffff88804a2e4078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5567
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:1957 [inline]
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_conn_failed+0x15d/0x300 net/bluetooth/hci_conn.c:1262
+ #5: ffffffff8e93d378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:297 [inline]
+ #5: ffffffff8e93d378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:976
+5 locks held by kworker/u9:7/5337:
+ #0: ffff888218333948 ((wq_completion)hci5){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888218333948 ((wq_completion)hci5){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90003c07d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90003c07d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff88807edc8d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:327
+ #3: ffff88807edc8078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5567
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:1957 [inline]
+ #4: ffffffff8fe3e668 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_conn_failed+0x15d/0x300 net/bluetooth/hci_conn.c:1262
+3 locks held by kworker/1:5/5405:
+4 locks held by kworker/0:5/5438:
+ #0: ffff88801ac81948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac81948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc9000360fd00 ((reg_check_chans).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc9000360fd00 ((reg_check_chans).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: reg_check_chans_work+0x99/0xfd0 net/wireless/reg.c:2480
+ #3: ffff8880787d0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:6014 [inline]
+ #3: ffff8880787d0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: reg_leave_invalid_chans net/wireless/reg.c:2468 [inline]
+ #3: ffff8880787d0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: reg_check_chans_work+0x164/0xfd0 net/wireless/reg.c:2483
+1 lock held by syz-executor/5463:
+ #0: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+1 lock held by syz-executor/5464:
+ #0: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+3 locks held by syz-executor/5465:
+4 locks held by syz-executor/5469:
+ #0: ffff8880322e8420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
+ #0: ffff8880322e8420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
+ #1: ffff888085516888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
+ #2: ffff8880272140f8 (kn->active#56){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
+ #3: ffffffff8f56fea8 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: new_device_store+0x1b4/0x890 drivers/net/netdevsim/bus.c:166
+7 locks held by syz-executor/5470:
+ #0: ffff8880322e8420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
+ #0: ffff8880322e8420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
+ #1: ffff888084d7e888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
+ #2: ffff8880272141e8 (kn->active#55){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
+ #3: ffffffff8f56fea8 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: del_device_store+0xfc/0x480 drivers/net/netdevsim/bus.c:216
+ #4: ffff88807fb830e8 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
+ #4: ffff88807fb830e8 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
+ #4: ffff88807fb830e8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xce/0x7c0 drivers/base/dd.c:1293
+ #5: ffff88807fb84250 (&devlink->lock_key#4){+.+.}-{3:3}, at: nsim_drv_remove+0x50/0x160 drivers/net/netdevsim/dev.c:1672
+ #6: ffffffff8fcd1dc8 (rtnl_mutex){+.+.}-{3:3}, at: unregister_nexthop_notifier+0x17/0x40 net/ipv4/nexthop.c:3913
 
-drm_dp_channel_eq_ok().
+=============================================
 
-> +{
-> +	u8 val;
-> +
-> +	for (u8 lane = 0; lane < lane_count; lane++) {
-> +		val = (lane_status >> (lane * AUX_4_BIT));
-> +		if ((val & DPCD_EQ_DONE_BITS) != DPCD_EQ_DONE_BITS)
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static bool dp_link_get_adjust_train(struct hibmc_dp_dev *dp, u8 lane_status)
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 4690 Comm: udevd Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:mark_lock+0x3/0x360 kernel/locking/lockdep.c:4686
+Code: 04 ff ff ff e8 9e b9 54 0a 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 41 57 <41> 56 41 55 41 54 53 48 83 ec 10 49 89 f7 48 89 3c 24 49 bd 00 00
+RSP: 0018:ffffc9000305f2c8 EFLAGS: 00000006
+RAX: 000000000005054b RBX: ffff88807eb664e0 RCX: ffffffff9a3cc903
+RDX: 0000000000000003 RSI: ffff88807eb664e0 RDI: ffff88807eb65a00
+RBP: ffffc9000305f388 R08: ffffffff901cee2f R09: 1ffffffff2039dc5
+R10: dffffc0000000000 R11: fffffbfff2039dc6 R12: ffff88807eb66500
+R13: 0000000000000000 R14: ffff88807eb664d8 R15: 1ffff1100fd6cc9b
+FS:  00007efdac2c9c80(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c00091d660 CR3: 000000007e158000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ mark_held_locks kernel/locking/lockdep.c:4321 [inline]
+ __trace_hardirqs_on_caller kernel/locking/lockdep.c:4339 [inline]
+ lockdep_hardirqs_on_prepare+0x282/0x780 kernel/locking/lockdep.c:4406
+ trace_hardirqs_on+0x28/0x40 kernel/trace/trace_preemptirq.c:61
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+ _raw_spin_unlock_irqrestore+0x8f/0x140 kernel/locking/spinlock.c:194
+ __debug_check_no_obj_freed lib/debugobjects.c:998 [inline]
+ debug_check_no_obj_freed+0x561/0x580 lib/debugobjects.c:1019
+ free_pages_prepare mm/page_alloc.c:1115 [inline]
+ free_unref_page+0x41b/0xf20 mm/page_alloc.c:2638
+ discard_slab mm/slub.c:2677 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3145
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3220
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4449
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
+ anon_vma_chain_alloc mm/rmap.c:143 [inline]
+ anon_vma_fork+0x1fa/0x580 mm/rmap.c:365
+ dup_mmap kernel/fork.c:713 [inline]
+ dup_mm kernel/fork.c:1674 [inline]
+ copy_mm+0xd7c/0x1f40 kernel/fork.c:1723
+ copy_process+0x1845/0x3d50 kernel/fork.c:2372
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2784
+ __do_sys_clone kernel/fork.c:2927 [inline]
+ __se_sys_clone kernel/fork.c:2911 [inline]
+ __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2911
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7efdabefca12
+Code: 41 5d 41 5e 41 5f c3 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 10 48 8b 15 e7 43 0f 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffde4edde98 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000559c91bf0801 RCX: 00007efdabefca12
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000559c91be0910
+R10: 00007efdac2c9f50 R11: 0000000000000246 R12: 0000559c91c06ae0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000559c91be0910
+ </TASK>
 
-drm_dp_get_adjust_request_voltage()
-drm_dp_get_adjust_request_pre_emphasis()
 
-> +{
-> +	u8 pre_emph[DP_LANE_NUM_MAX] = {0};
-> +	u8 voltage[DP_LANE_NUM_MAX] = {0};
-> +	bool changed = false;
-> +	u8 train_set;
-> +	u8 lane;
-> +
-> +	/* not support level 3 */
-> +	for (lane = 0; lane < dp->link.cap.lanes; lane++) {
-> +		voltage[lane] = (lane_status & (DPCD_VOLTAGE_SWING_LANE_0 << (AUX_4_BIT * lane)))
-> +			  << DPCD_VOLTAGE_SWING_SET_S;
-> +		pre_emph[lane] = (lane_status & (DPCD_PRE_EMPHASIS_LANE_0 << (AUX_4_BIT * lane)))
-> +			   << DPCD_PRE_EMPHASIS_SET_S;
-> +	}
-> +
-> +	for (lane = 0; lane < dp->link.cap.lanes; lane++) {
-> +		train_set = voltage[lane] | pre_emph[lane];
-> +		if (dp->link.train_set[lane] != train_set) {
-> +			changed = true;
-> +			dp->link.train_set[lane] = train_set;
-> +		}
-> +	}
-> +
-> +	return changed;
-> +}
-> +
-> +static int dp_link_reduce_rate(struct hibmc_dp_dev *dp)
-> +{
-> +	u8 link_rate_map[DP_LINK_RATE_NUM] = {DP_LINK_RATE_0, DP_LINK_RATE_1,
-> +					      DP_LINK_RATE_2, DP_LINK_RATE_3};
-> +
-> +	for (u8 i = 0; i < DP_LINK_RATE_NUM; i++) {
-> +		if (link_rate_map[i] == dp->link.cap.link_rate) {
-> +			if (i == 0) {
-> +				drm_err(dp->dev, "dp link training reduce rate failed, already lowest rate\n");
-> +				return -EFAULT;
-> +			}
-> +			dp->link.cap.link_rate = link_rate_map[i - 1];
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	drm_err(dp->dev, "dp link training reduce rate failed, rate match failed\n");
-> +	return -EFAULT;
-> +}
-> +
-> +static int dp_link_reduce_lane(struct hibmc_dp_dev *dp)
-> +{
-> +	/* currently only 1 lane */
-> +	dp->link.cap.lanes = DP_LANE_NUM_1;
-> +
-> +	return 0;
-> +}
-> +
-> +static int dp_link_training_cr(struct hibmc_dp_dev *dp)
-> +{
-> +	u8 lane_status[DP_LANE_STATUS_SIZE] = {0};
-> +	bool level_changed;
-> +	u32 voltage_tries;
-> +	u32 cr_tries;
-> +	u32 max_cr;
-> +	int ret;
-> +
-> +	/*
-> +	 * DP 1.4 spec define 10 for maxtries value, for pre DP 1.4 version set a limit of 80
-> +	 * (4 voltage levels x 4 preemphasis levels x 5 identical voltage retries)
-> +	 */
-> +	max_cr = dp->link.cap.rx_dpcd_revision >= DPCD_REVISION_14 ? 10 : 80;
-> +
-> +	voltage_tries = 1;
-> +	for (cr_tries = 0; cr_tries < max_cr; cr_tries++) {
-> +		msleep(50);
-> +
-> +		ret = dp_aux_read(dp, DPCD_LANE0_1_STATUS, lane_status, DP_LANE_STATUS_SIZE);
-> +		if (ret) {
-> +			drm_err(dp->dev, "Get lane status failed\n");
-> +			return ret;
-> +		}
-> +
-> +		ret = dp_dpcd_cr_done_check_and_update(lane_status[0], dp->link.cap.lanes,
-> +						       &dp->link.status.cr_done_lanes);
-> +		if (ret) {
-> +			drm_info(dp->dev, "dp link training cr done\n");
-> +			dp->link.status.clock_recovered = true;
-> +			return 0;
-> +		}
-> +
-> +		if (voltage_tries == 5) {
-> +			drm_info(dp->dev, "same voltage tries 5 times\n");
-> +			dp->link.status.clock_recovered = false;
-> +			return 0;
-> +		}
-> +
-> +		ret = dp_aux_read(dp, DPCD_ADJUST_REQUEST_LANE0_1, lane_status,
-> +				  DP_LANE_STATUS_SIZE);
-> +		if (ret) {
-> +			drm_err(dp->dev, "Get adjust status failed\n");
-> +			return ret;
-> +		}
-> +
-> +		level_changed = dp_link_get_adjust_train(dp, lane_status[0]);
-> +		ret = dp_aux_write(dp, DPCD_TRAINING_LANE0_SET, dp->link.train_set,
-> +				   dp->link.cap.lanes);
-> +		if (ret) {
-> +			drm_err(dp->dev, "Update link training failed\n");
-> +			return ret;
-> +		}
-> +
-> +		voltage_tries = level_changed ? 1 : voltage_tries + 1;
-> +	}
-> +
-> +	drm_err(dp->dev, "dp link training clock recovery %u timers failed\n", max_cr);
-> +	dp->link.status.clock_recovered = false;
-> +
-> +	return 0;
-> +}
-> +
-> +static int dp_link_training_channel_eq(struct hibmc_dp_dev *dp)
-> +{
-> +	u8 lane_status[DP_LANE_STATUS_SIZE] = {0};
-> +	enum dp_pattern_e tps;
-> +	u8 eq_tries;
-> +	int ret;
-> +
-> +	if (dp->link.cap.is_tps4)
-> +		tps = DP_PATTERN_TPS4;
-> +	else if (dp->link.cap.is_tps3)
-> +		tps = DP_PATTERN_TPS3;
-> +	else
-> +		tps = DP_PATTERN_TPS2;
-> +
-> +	ret = dp_link_set_pattern(dp, tps);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (eq_tries = 0; eq_tries < EQ_MAX_RETRY; eq_tries++) {
-> +		msleep(50);
-> +
-> +		ret = dp_aux_read(dp, DPCD_LANE0_1_STATUS, lane_status, DP_LANE_STATUS_SIZE);
-> +		if (ret) {
-> +			drm_err(dp->dev, "get lane status failed\n");
-> +			break;
-> +		}
-> +
-> +		ret = dp_dpcd_cr_done_check_and_update(lane_status[0], dp->link.cap.lanes,
-> +						       &dp->link.status.cr_done_lanes);
-> +		if (!ret) {
-> +			drm_info(dp->dev, "clock recovery check failed\n");
-> +			drm_info(dp->dev, "cannot continue channel equalization\n");
-> +			dp->link.status.clock_recovered = false;
-> +			break;
-> +		}
-> +
-> +		ret = dp_dpcd_eq_is_ok(lane_status[0], dp->link.cap.lanes);
-> +		if (ret) {
-> +			dp->link.status.channel_equalized = true;
-> +			drm_info(dp->dev, "dp link training eq done\n");
-> +			break;
-> +		}
-> +
-> +		ret = dp_aux_read(dp, DPCD_ADJUST_REQUEST_LANE0_1,
-> +				  lane_status, DP_LANE_STATUS_SIZE);
-> +		if (ret) {
-> +			drm_err(dp->dev, "Get adjust status failed\n");
-> +			return ret;
-> +		}
-> +
-> +		dp_link_get_adjust_train(dp, lane_status[0]);
-> +
-> +		ret = dp_aux_write(dp, DPCD_TRAINING_LANE0_SET,
-> +				   dp->link.train_set, dp->link.cap.lanes);
-> +		if (ret) {
-> +			drm_err(dp->dev, "Update link training failed\n");
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (eq_tries == EQ_MAX_RETRY)
-> +		drm_err(dp->dev, "channel equalization failed %u times\n", eq_tries);
-> +
-> +	dp_link_set_pattern(dp, DP_PATTERN_NO);
-> +
-> +	return ret;
-> +}
-> +
-> +static int dp_link_downgrade_training_cr(struct hibmc_dp_dev *dp)
-> +{
-> +	if (dp_link_reduce_rate(dp))
-> +		return dp_link_reduce_lane(dp);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dp_link_downgrade_training_eq(struct hibmc_dp_dev *dp)
-> +{
-> +	if ((!dp->link.status.clock_recovered && dp->link.status.cr_done_lanes != 0) ||
-> +	    (dp->link.status.clock_recovered && !dp->link.status.channel_equalized)) {
-> +		if (!dp_link_reduce_lane(dp))
-> +			return 0;
-> +	}
-> +
-> +	return dp_link_reduce_rate(dp);
-> +}
-> +
-> +int dp_link_training(struct hibmc_dp_dev *dp)
-> +{
-> +	struct hibmc_dp_link *link = &dp->link;
-> +	int ret;
-> +
-> +	while (true) {
-> +		ret = dp_link_training_cr_pre(dp);
-> +		if (ret)
-> +			goto err;
-> +
-> +		ret = dp_link_training_cr(dp);
-> +		if (ret)
-> +			goto err;
-> +
-> +		if (!link->status.clock_recovered) {
-> +			ret = dp_link_downgrade_training_cr(dp);
-> +			if (ret)
-> +				goto err;
-> +			continue;
-> +		}
-> +
-> +		ret = dp_link_training_channel_eq(dp);
-> +		if (ret)
-> +			goto err;
-> +
-> +		if (!link->status.channel_equalized) {
-> +			ret = dp_link_downgrade_training_eq(dp);
-> +			if (ret)
-> +				goto err;
-> +			continue;
-> +		}
-> +
-> +		return 0;
-> +	}
-> +
-> +err:
-> +	dp_link_set_pattern(dp, DP_PATTERN_NO);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h
-> new file mode 100644
-> index 000000000000..3271cdc4550c
-> --- /dev/null
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/* Copyright (c) 2024 Hisilicon Limited. */
-> +
-> +#ifndef DP_LINK_H
-> +#define DP_LINK_H
-> +
-> +#include "dp_comm.h"
-> +
-> +#define DP_LANE_NUM_MAX		2
-> +#define DP_LANE_STATUS_SIZE	1
-> +#define DP_LANE_NUM_1		0x1
-> +#define DP_LANE_NUM_2		0x2
-> +
-> +enum dp_pattern_e {
-> +	DP_PATTERN_NO = 0,
-> +	DP_PATTERN_TPS1,
-> +	DP_PATTERN_TPS2,
-> +	DP_PATTERN_TPS3,
-> +	DP_PATTERN_TPS4,
-> +};
-> +
-> +int dp_link_training(struct hibmc_dp_dev *dp);
-> +
-> +#endif
-
--- 
-Jani Nikula, Intel
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
