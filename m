@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-356503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46462996225
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:14:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB286996233
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0776A280FC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A492F281DAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0EF188012;
-	Wed,  9 Oct 2024 08:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EA218870E;
+	Wed,  9 Oct 2024 08:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a2xV2uc4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HSuu8o0f"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A2F16D9DF
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250581537D7
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728461665; cv=none; b=bgMHOKxxY8oRMzDodwX5JvgmJaaGQuCu/2GaBNq8pStkcDAnbPOgu1ewRz2vMYFxYaTcJ+OEVxqPMYeXwjmQKyOkpofq4NlB4yObbgJl6oX8ST/ML9p6FYAxWsmoWAUnisSXE5BZA5jqs74uu9yovgkL+XbOhKT3Nmls8mMOs60=
+	t=1728461718; cv=none; b=Wc6JzF7v1Q++UqNxXu0TFw0uwOwcVwxt0TRxWY+22NXSCtxcFAdUrfpuQLfISIp/Jjvm2Q4zjKh+pOPVO5TFmRqIpCpffxFjHRK9Aq6gE0czWIDpHDiHkZTU6T3PDRpGzmbSGRg2T5PjLg1U3I1L9u5zbIriouPx6rxsLFqOU9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728461665; c=relaxed/simple;
-	bh=AXLP2KyrAqjaejcHnTbI8HMVGaKN1T0qdKQjIwPuqBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hxZhxr5/OsIkSaosqxnsiVsrYbEJBVAds7M3J6KohbrhNVZZPIkm/qOsoYmDZKyJjHZPRQG4GlG4tRqKx1kSpKzqoLKczxAaT4n5lblSAZ9j/cn1RMs6L0/HvL9HPLPDxGAlw8RAJJUQiin56oJtVrURLmmHRsiOmyWlNPPZD4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a2xV2uc4; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1728461718; c=relaxed/simple;
+	bh=4IZ9kpdlykp+ZcsHXczVOJRE1epELVCs54RvK50CheI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cFjZx+PToxUYirQzOWQa09H7yLIbu3lCeehRei+kHA3BvbMUFI6LS1lLmhb2Xq2cGcsJca5pQaYDWndOwGQBK0AbPVLHiPNiFlojECyueAggZnQOG384RMDnjHlwk1nE+TUs1+RrdpDXo/Yq883RIHnUTwb2esubKmwAa3jwbD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HSuu8o0f; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728461662;
+	s=mimecast20190719; t=1728461716;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H7WnLoztQpWL0UuoG5WJ33odis8tMGytHkOB4fwng3Y=;
-	b=a2xV2uc4q1vxavas8BzK8kn/5hZXlZTfrOJlH+LsXKZ+FF+39oCNXX3Rho5GuiVi/QGyJB
-	zNClLnEF/OlalblNwqNRFB0Td2GGQoYWb4OqIDLTjMYSxwnRJWduycLJt8S/nzmNOhPUrp
-	X+v7bPZ3w29KvHvnf+eYoq/4Krsf7AM=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Avzij+L+4NBcCeyDm835566DodnsC8NlmStQMnsvhLg=;
+	b=HSuu8o0fu/Io5fr3anU2Iia4JmUWGyWPZ5RY3rmtmda+zDTqcYsHbUXlgzh1diGgoyzqQP
+	bbowu36UhE1JTjDI8pVHFw4CoXxToPb9dyC1XnHBZDEDUWVM5aH3xKERlVWe1LWOAyyo6y
+	noVvehCO4BUkJN0X1hNpX2bDb/WpnGg=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-xi4eDfcPP6uAv3tGV_8vgg-1; Wed, 09 Oct 2024 03:45:27 -0400
-X-MC-Unique: xi4eDfcPP6uAv3tGV_8vgg-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2e281e07f14so2234768a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:45:12 -0700 (PDT)
+ us-mta-301-EQqE1zPHOQOfO4Vyzigtnw-1; Wed, 09 Oct 2024 03:57:36 -0400
+X-MC-Unique: EQqE1zPHOQOfO4Vyzigtnw-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7acdd745756so1279349485a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:57:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728459912; x=1729064712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H7WnLoztQpWL0UuoG5WJ33odis8tMGytHkOB4fwng3Y=;
-        b=oOmRf1iqtAFFIeMu76/1fgXBu0S4FBFKsKYx+Rx2XHiW1WCrcHQ5yGTtxvM7p6spcX
-         uuiDNyKKq40SZmf03uJ/ojamBSeIiIY/CP2P1FgBAZZm2zbtguHiz3vEPqxGwK1ZsNq8
-         XUt18GW+tsWIrLZ/OA0sHj2tRXLtELwRLr0yTvU2vk/NUJmgKujcZml0BlVOkvQC36Gh
-         KLwZ5b8S7aL3R6Ti1TleGIYQXhyg/awd7ESBC/AVY8l+swCDq6Zowhgjj0NpQgHprZE5
-         4o0VRX3qLMKMA6ay9OOMCcavsdDy7PrLSg/z1Pt8jyxjNm/ZhkvgaIeaAEikGC8wrRIY
-         OThg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJHt3ka9c1SJzJkWXCzTkwiT3vXL5dhJMPSUgxVdX9zCIQQZGNTLjW5xIeyaGjVLff82JOKLRMR1xtC/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPYTCuh5V4RoNjNvFJKE1tgFdjw8zR6Yxu5br/uGfkFBuTcrUh
-	vKdYzk+WM97OPxRFHS/t3pHr/HFnz0lULZopdyDkpdbgVdZ6yNsJlyG0DmjYf19ZkZk15ssdWZL
-	dNFq6vneg9/CbYHdZTVWXkcc9QAgJwZc1kW2pRsLwG+Lbsjpo6szy/ygOGN7iogFtA4jmcftVZo
-	n3oOi53BpWd7Tml+ZcwnUoNKpAJ4CZhT+2JB3k
-X-Received: by 2002:a17:90b:4a52:b0:2e2:991c:d795 with SMTP id 98e67ed59e1d1-2e2a2587e6cmr1772597a91.40.1728459911735;
-        Wed, 09 Oct 2024 00:45:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUXS3Vu8tqbV1XHkGBTCNaL2VDRz7beWlworvX+yKRqbV5bgZG5ofneJzBijB1Dsili4oRB7g3ygL6aKFSPxI=
-X-Received: by 2002:a17:90b:4a52:b0:2e2:991c:d795 with SMTP id
- 98e67ed59e1d1-2e2a2587e6cmr1771623a91.40.1728459881543; Wed, 09 Oct 2024
- 00:44:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728460640; x=1729065440;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Avzij+L+4NBcCeyDm835566DodnsC8NlmStQMnsvhLg=;
+        b=rNAQWIuX+rCWXEsquM+DXrgRwgyrwto3U458sPPgzo/P6kKxkFV8CF5cRBNFiq18jT
+         zBIsWYzhgsQwA6HI4c5+qtq5btucwOT56QuuXFhj7Dkick0+Ej8uLr+4F7v7bk5qSXzt
+         tRn+pjM+5yHLjqXXXrei2rRPIM/hz+YssOos68vrFIeG8M0QpmMtQPAd7IpPE0uqFBsg
+         qKnnULD9Bs+t3dqBECkKV6U0tPOrzXfU+JuCQktUeRsvKu6nLoTMeCNXs4JdQiCqH6Hg
+         Xj8SxXVhI1Jl1/LU44yGvB0Iu05C4aijcoF6/LTQAiHx0m5ufqApTpnWmdtP3gEhenzK
+         F4Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUidCk7RiQY+JmdzCVHgBhj0M1GTFdjseKT2aWMMXs4HU+wu6JVK1onsjIH1My3B5zX3RgngVtwc3QZM8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNxnNTgx2uJRT0mRb99bUjn+Kq/vfPScDNIp/Kf1bWBPFWH0XY
+	WZvjL0SfYDmLcJUmFyp3ePW+I7pGZcz2SmA+YctN/ZQVl0vAVf3a7+gj1qB/6yvz8VjFBZyMwEw
+	MtjG6DXykS1H9h7xyWg8EuEracOcbwE71AqBKMqSydhdn/puzh3UWlvHKmElc/w==
+X-Received: by 2002:a05:620a:4509:b0:7a9:c333:c559 with SMTP id af79cd13be357-7b0874a9a24mr209132785a.48.1728460640221;
+        Wed, 09 Oct 2024 00:57:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESo0NmZIHT1z6RekNTQiUjGY/96nXVPyjFU/Gy078glQMkADkOM4numum8sa85/IUGjTMTBQ==
+X-Received: by 2002:a05:620a:4509:b0:7a9:c333:c559 with SMTP id af79cd13be357-7b0874a9a24mr209130985a.48.1728460639838;
+        Wed, 09 Oct 2024 00:57:19 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75615aa2sm437290585a.14.2024.10.09.00.57.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 00:57:18 -0700 (PDT)
+Date: Wed, 9 Oct 2024 09:57:11 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, mst@redhat.com, 
+	michael.christie@oracle.com, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 1/7] vhost: Add a new modparam to allow userspace
+ select vhost_task
+Message-ID: <d4h4g7txswidmpau5i6evvnragzzgtbxgoelorcolowweb4qjo@ujevaic3uzrv>
+References: <20241004015937.2286459-1-lulu@redhat.com>
+ <20241004015937.2286459-2-lulu@redhat.com>
+ <olbm26f3ifb6ypfmfl22xszbpevqsxc3ogfzosrb44ujtzt6pw@uh7irbqfy5jr>
+ <CACGkMEt-8hdiAaAPjNAPNSNtBFHK+ogCndHFJMtYpjEzoTK6Qg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-rss-v5-0-f3cf68df005d@daynix.com> <20241008-rss-v5-5-f3cf68df005d@daynix.com>
-In-Reply-To: <20241008-rss-v5-5-f3cf68df005d@daynix.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 9 Oct 2024 15:44:30 +0800
-Message-ID: <CACGkMEt054F1AZP7V0ocbUce_AvQV_Cw-K21y7Ky1gWa=eSpCA@mail.gmail.com>
-Subject: Re: [PATCH RFC v5 05/10] tun: Pad virtio header with zero
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEt-8hdiAaAPjNAPNSNtBFHK+ogCndHFJMtYpjEzoTK6Qg@mail.gmail.com>
 
-On Tue, Oct 8, 2024 at 2:55=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix.=
-com> wrote:
+On Wed, Oct 09, 2024 at 03:28:19PM GMT, Jason Wang wrote:
+>On Mon, Oct 7, 2024 at 9:31 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
+>>
+>> On Fri, Oct 04, 2024 at 09:58:15AM GMT, Cindy Lu wrote:
+>> >The vhost is now using vhost_task and working as a child of the owner thread.
+>> >While this makes sense from containerization POV, some old userspace is
+>> >confused, as previously vhost not
+>>
+>> not what?
+>>
+>> > and so was allowed to steal cpu resources
+>> >from outside the container. So we add the kthread API support back
+>>
+>> Sorry, but it's not clear the reason.
+>>
+>> I understand that we want to provide a way to bring back the previous
+>> behavior when we had kthreads, but why do we want that?
+>> Do you have examples where the new mechanism is causing problems?
+>>
 >
-> tun used to simply advance iov_iter when it needs to pad virtio header,
-> which leaves the garbage in the buffer as is. This is especially
-> problematic when tun starts to allow enabling the hash reporting
-> feature; even if the feature is enabled, the packet may lack a hash
-> value and may contain a hole in the virtio header because the packet
-> arrived before the feature gets enabled or does not contain the
-> header fields to be hashed. If the hole is not filled with zero, it is
-> impossible to tell if the packet lacks a hash value.
+>The main difference is whose (kthreadd or the owner) attributes
+>(namespace, affinities) would vhost thread inherit.
 >
-> In theory, a user of tun can fill the buffer with zero before calling
-> read() to avoid such a problem, but leaving the garbage in the buffer is
-> awkward anyway so fill the buffer in tun.
->
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>The owner's attributes tend to be different from kthreadd, so
+>management might be surprised for example, vhost might be created in
+>different namespaces or having different scheduling affinities.
 
-This sounds like an independent fix that is worth going to -net first.
+Okay, so this requires some API to allow the managment to understand how 
+the device vhost will be created.
 
-Thanks
+But why do we need to restore the old behavior with a kthread where the 
+resource accounting is completely disconnected from userspace?
+For the old managments that don't expect this?
 
-> ---
->  drivers/net/tun_vnet.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/tun_vnet.h b/drivers/net/tun_vnet.h
-> index 7c7f3f6d85e9..c40bde0fdf8c 100644
-> --- a/drivers/net/tun_vnet.h
-> +++ b/drivers/net/tun_vnet.h
-> @@ -138,7 +138,8 @@ static inline int tun_vnet_hdr_put(int sz, struct iov=
-_iter *iter,
->         if (copy_to_iter(hdr, sizeof(*hdr), iter) !=3D sizeof(*hdr))
->                 return -EFAULT;
->
-> -       iov_iter_advance(iter, sz - sizeof(*hdr));
-> +       if (iov_iter_zero(sz - sizeof(*hdr), iter) !=3D sz - sizeof(*hdr)=
-)
-> +               return -EFAULT;
->
->         return 0;
->  }
->
-> --
-> 2.46.2
->
+BTW I would suggest adding all this information in this commit, in the 
+parameter/IOCTL documentation, and in the cover letter because IMHO it 
+is very important.
+
+Thanks,
+Stefano
 
 
