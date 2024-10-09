@@ -1,109 +1,76 @@
-Return-Path: <linux-kernel+bounces-356935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A9F9968F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:36:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A14B9968F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9550F1F25F3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:36:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599021C22EE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBD61922E9;
-	Wed,  9 Oct 2024 11:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94281922E9;
+	Wed,  9 Oct 2024 11:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zRqDbGRF"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pZnZkX/z"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A44191F66
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2987191F89;
+	Wed,  9 Oct 2024 11:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728473778; cv=none; b=NqPvpzDFfFXLmSqEEcPFVRsrfjjR6aeNrRcFXhPGMtluk4MQh9RWFTsXwdoORV3jxNknmD87CBD7QU93B1NO7OE5e5PEVt64XQDYFUAjXMhubHbh4f+ybsTDMAD3XLt/nHpgLUxIxaPHKfKYJ8tQjVuJYYLI9gkWEqQODnUBy2U=
+	t=1728473832; cv=none; b=EL5I0UHZTGjB2Cx8DM8glgQaxQ7BZD0Jl/5zUCnTFLjuU5CSUQhzgqfAUlI1X2U4nwdbn0smnhIL3vN4aGixYa+b3Uk+VpQH18GCpW5/32KY5E7iSUjneuUoTBFq6qMV4+78DJks4X5w2rqxOzulge5IjWtLoe6VoFlT2YbjJN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728473778; c=relaxed/simple;
-	bh=BSKbXKJqzTsd3uaOfVQYvC+3CVoZeM7xAmzIRqlfg+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rzZj4I7xz76+O/w+m36UUafyqV1T42k9cfadUZIOkNtt3bWDBMRgNpRPzEK7BknOyZkXucZ8wx6Mf8IrEi/1xMWhKAd2xqTQ/Ay84pTZ2tg7lw0PfVX/qQbauR0T1yGfwHgrrj1AihRwC7GBGCG0f9DuH0TZkdx6ESUQOYNFrLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zRqDbGRF; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fac3f20f1dso73077961fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:36:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728473775; x=1729078575; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ulmNMFxv/3Cp2Bz+2y+sXqWfdub8KWmBh74jTPivB+s=;
-        b=zRqDbGRFNFVjsQ8hwHhadNeDsvl94ICaQBMvDrTDZ+Ur3xPKEkRECBRj/2hdsvA2Mi
-         QK5Bp7Wk23fmFLqB1gUWy2X74pGAz5A4d3VMU8EtYM96K1Gk+OSMp4CQ+hBjUQiEoK6b
-         PLC3xcDh1gp64Evmm43NJL311zdJiD7v37phi5kUieYc5OEGFw8mI3cxpgbfaaNb4B5d
-         thFDftJ+YBVRWBSYhsOertMVD/u/9M7W1toWa7Jq54R8K3rAWiSBE6VWdJuygrkjfQTl
-         oLLiS7O/BYeODxoIpsBvs/pPX0m3p/+1/mahogA3yc0DVcEpUHQccEZxgGwdkQ64h17A
-         /gXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728473775; x=1729078575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ulmNMFxv/3Cp2Bz+2y+sXqWfdub8KWmBh74jTPivB+s=;
-        b=h41u0EUnk3JyKxnKmx77FiGKCi0CEcFebdCNAW2xfLwodnZlj40WPzHmy171HOjRP8
-         iVfTZqA7uxA2SnB+kjhj0S3iwlVxoz53yfu+6EeTwkdvNQ4wXS16bD0F6Q+n6F2fJ3RI
-         dWAou5UIG/5MXHo7H37eM9SCnyAhOuA5Dc1bBPqrnBELKfcSZNKyPfPK3cRAWu2hy0Ga
-         vmR0FsjKnXkfWQyYA4OcfUFvlnUe1jPkqu4Db2BnVyjYHThmanJYalcaz3Tv/9xlKj1E
-         O27j566mwsuUCUUe9Rm+90SSqx/gFBfceDnqeOh84cnUGBmtdXQFcYVRt1wpO+AeeJOh
-         jyYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHF61w/2rdm+QGQSx2vabsrrNSS7k+XNZSGvH6Mkzr/MXCWjlUBo7EKVB2Lh4CsS4bXYgXut14VUuumq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMVVvQ4s5xcv1EKVBqzgQOOVrwDYL5U1OoyBBFPJ8FIBAi6ZPY
-	CXgnyL1/FPtXjwGOt0TxU0a13LhyoRQWk7/URBgP3X2QoNnAAWCIc4pQuA72hpDEf9SeH6Byg61
-	2YBgiTcmgWnsIztGuTYeFmX4cn344dMGeuF19wA==
-X-Google-Smtp-Source: AGHT+IFQL8HqNRjIVR+UudCx6cwyjDEbayIZi+vVchkMN2pOXLQmyPRZirCYhwW99AJa3LiMKdJ1kZ/+fJRKckyit7k=
-X-Received: by 2002:a2e:a582:0:b0:2fa:de52:f03c with SMTP id
- 38308e7fff4ca-2fb1871b375mr13956081fa.5.1728473775033; Wed, 09 Oct 2024
- 04:36:15 -0700 (PDT)
+	s=arc-20240116; t=1728473832; c=relaxed/simple;
+	bh=Rho3rFXpbK+cEsaIjikHsw+oQVoZZV8d6YiDgDH7Rsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITQHMSWKCvvz7sv25wJJpAVBY4HWxCf+dMyvaGRbTZ8lQ8EJbbIZfqvk0yds/s5ZA/U/cxyeeuBFaDpTO6OoYGNZwzG/5LgLt3QzvEMwYtaW8r0UlkPLrQkc00CvZ0FnRKvhiE+pHDdNDGUVxyTAyHXkGjUNXSiEtumyD6Ewo6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pZnZkX/z; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1EiTVLSlj4Cq86TlBOOJj7bBQhU7XUCwisc8VqcnPiI=; b=pZnZkX/zpoWSx0mfIMnL+oFtIm
+	uUBqkO81MXcUZUAF6+R4jW/910wfSgF42qxzNc8raqeyYnhZvZVeo+2/XJwlTrwXVjdLiIZzVQyf6
+	2TJNL1YHLyQmEL8WNHOWfkadCS8u096fJnNeNf6v2htTOltA2Pwh94uDVcUwFtXNu3OqChTS0uvlf
+	9boc/HmtXuSy/MVawyqRRCihKBCi9sWUbmQCzgZxxzsXC2P5TG86DFl2QPfrW+3yH4LSuJsUr/0yx
+	WdYz3RRYBWIa2qUqvtLgzxjSenk338EuIBpUROAdzfZaFvZ6K3zv84LrxrJrE/OBUVPEp+P1EY+2z
+	kDfenvWA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1syV0A-0000000959i-23EO;
+	Wed, 09 Oct 2024 11:37:10 +0000
+Date: Wed, 9 Oct 2024 04:37:10 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] block: Fix uninitialized symbol 'bio' in
+ blk_rq_prep_clone
+Message-ID: <ZwZq5hIJSmQW1Sxa@infradead.org>
+References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+ <20241008175215.23975-1-surajsonawane0215@gmail.com>
+ <ZwYxA1sfQdaj0Hy3@infradead.org>
+ <6e290cc3-0be1-4ee9-8e13-351f8cd9f658@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-mbly-i2c-v2-0-ac9230a8dac5@bootlin.com> <20241009-mbly-i2c-v2-6-ac9230a8dac5@bootlin.com>
-In-Reply-To: <20241009-mbly-i2c-v2-6-ac9230a8dac5@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 9 Oct 2024 13:36:03 +0200
-Message-ID: <CACRpkdbqPMb7MSnEeK4vADrfeZD=dk6GA=A_i2M-53eGmJkTag@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] i2c: nomadik: support >=1MHz speed modes
-To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	=?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e290cc3-0be1-4ee9-8e13-351f8cd9f658@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Oct 9, 2024 at 12:23=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootl=
-in.com> wrote:
+On Wed, Oct 09, 2024 at 04:30:56PM +0530, Suraj Sonawane wrote:
+> Should I submit a new version with the added empty line and explanation
+> about the tool and function issues?
 
->  - BRCR value must go into the BRCR1 field when in high-speed mode.
->    It goes into BRCR2 otherwise.
->
->  - Remove fallback to standard mode if priv->sm > I2C_FREQ_MODE_FAST.
->
->  - Set SM properly in probe; previously it only checked STANDARD versus
->    FAST. Now we set STANDARD, FAST, FAST_PLUS or HIGH_SPEED.
->
->  - Remove all comment sections saying we only support low-speeds.
->
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+Let's wait for Jens if he wants a resend or not.  In the meantime
+just tell us what tool you are using.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
 
