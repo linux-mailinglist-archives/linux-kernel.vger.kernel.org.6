@@ -1,149 +1,220 @@
-Return-Path: <linux-kernel+bounces-357816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A707997677
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:33:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7037E997678
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC001C227BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C4428341F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B621E1A30;
-	Wed,  9 Oct 2024 20:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pvg/OsU0"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F9D186E3F;
+	Wed,  9 Oct 2024 20:34:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E80A1684AE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 20:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB1F1714A4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 20:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728506009; cv=none; b=jnYMO+xCor14hi0XkVYD1pUtKxlUbvAfsJY/dCjMCBmYqQ9FxDu1XMqw94N8E93paRn4oaHLK9PFBRNYXPMrxFWXXayc/6zGpdQFFYokgdTIZddYA8Y+sj3yTF502lCNJzYMXps0hdC2zzCvlmQ0+Bsn2pTtK93h5BJ3z/fPHgk=
+	t=1728506064; cv=none; b=GXq++nWQ/hYciPvkbJpbp76fVvWA6IByQhEYz0sYkc3G1By3bXSFLjnVmYQqI4enYgLXFD6GlrJPtsTp92RbStF8wsa78an7oplL/CDWUBQAPtqlBzRsJW777o9aZdKIT7NXQg1dwxX9Qjyg7oSAYbr3tEdDTmyTNKfRa3pF62o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728506009; c=relaxed/simple;
-	bh=g3Z6xVqchyvePEhyFbcGCbGYDr+RxMXxMhTkzYEJUwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rxJ5P8knbxbutTF4LU2wNPqnMsttJYsjbVOze0T6QlkH+xTmW0CLz07BXoOTWqh+dsxunI5bgvTM4MWfINPUkqZsNat3ShHl80O/wVG+6qCGgioVYMRDlPa5w/bQkRMetAq1WGOJKUkud0EPsHJlEZK0BusxTZrt0tkuzyX37Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pvg/OsU0; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4601a471aecso20791cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 13:33:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728506007; x=1729110807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g3Z6xVqchyvePEhyFbcGCbGYDr+RxMXxMhTkzYEJUwc=;
-        b=pvg/OsU0EgxynbPOHrpB/tBFQVlp2OjSF1iN2VvwyYFi5RPcqHCYmiEai3XYLZRGkb
-         l83pB2mU0ZSXMeX6uO5Mfi8iekQ+tVFVmEjmSEFhM4ppx/aILS9EkRqeVwRqzEHw/OA+
-         edzuplx8+YbpbA4fx7dKw+Zq6t/8gECqDSTZPfXVyk64QMQ6nvXNTNXdBIju7TcXloer
-         HSpklMDde5yCsVOqzt7gjI2BaomyvczAhblVjrMSvyamGdSJgt4/05xthhx94kk2k3ye
-         v/USPsXA0ILtZr5j7WK8Knrg90MKbZaDmd6SCAN+cUP5v2jLD/DA7+Rqu9wHiCFJGUWy
-         /Ejw==
+	s=arc-20240116; t=1728506064; c=relaxed/simple;
+	bh=HYNqo+FrutBFmzXam6OlwpksWYE+FxVlu10MgYsz8Ig=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Qqrt25P8XxLf3io8gtc38Ob5E7O0CBq2VnqduYRemXjw+g+LhiUzY2FUkTV7a79JGJ8Vhw9Fvae+NI2I6OQxpAQcyN5nHnoPlYrXH4aoPvldKBDk2Y1WazIdldKPljdAWnluJaJfrZ9BThtAWC4aJzGwu3FMm6+2sF0EpU+wQUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34eef9ec9so3066465ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 13:34:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728506007; x=1729110807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g3Z6xVqchyvePEhyFbcGCbGYDr+RxMXxMhTkzYEJUwc=;
-        b=mv+24/SqGUCW2v0aI93mmRP1LkTODHeXcrF7++ciSiRltN2TiFR9wphBOlA5/wcGOH
-         OgDF/TaD3AzNoeegHu6T/77EKiEY5AJ6BciCnZWIQ1uvrSihMBiAsJ6ifBtlo3O4XdJT
-         jasuCV6HBPkCsI6eYeiyqQbMTnYMzdprjh6KxS7re9iQbQZKqYvp4gy3UJBJ1d7wu+kq
-         Cgg7k8KgLJQL+lAGHrZQ4jImYkmB2twy6N2FpuNl/MlRRe48L4VqPX2kEvCFjHMl6XOy
-         +x/kZw+vLv4JjD/gq5niApZUB/4CRc+Rf38LpjCOa7/o6TNGP55zsHzZBx0Si6ITeVr6
-         aV4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVReQaF9pWjUhbbXcOLtcgFCI55vMMUtRi3wSnFFLz3Jp3w4yW8e3xgfOORyHR2t3NlDY+TmF9jn2hDErA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw13qMSI7+VYOe3nMTinfcA+f7mVsFBTuxn68dcxEpp0TXLtKVT
-	fuvTzGdzusXBO+r6AAHntHPHCHcxiw6Lzic14MOc+Vf3Mj5gWrI11wdrtOmEE6LJClACYMT8WVz
-	n/VHIvTsSkr80a2KWMI0V4L9GJ0VviDFGjya/
-X-Google-Smtp-Source: AGHT+IH2eHhPIlYCkvIKDRvl0HccBxY6IuEQCiXmalbJ952EMdFHDlwr+M0C26/wqu6RWinAzZSETQFZjxJu8xv+JI0=
-X-Received: by 2002:a05:622a:5497:b0:447:dbac:facd with SMTP id
- d75a77b69052e-46040469e85mr751951cf.24.1728506007151; Wed, 09 Oct 2024
- 13:33:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728506062; x=1729110862;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QSYix+4rQWG4VjgXOlQwElhZAFJZ4sWfAYzwYaj7dE4=;
+        b=sewXydEaWabqjBGpwHIF00cXRbxG5TIj6di5kb1H4ep4sj1dTTPk1U6zoAWLMUyFu6
+         ONsvq8busnJpC4Pjtz/mAhcxIHUPtl2Krkl9R52T52MeLm9u3wkd7kkv7GvcW7u90FXg
+         rdlQLQAqjfL5ay02NYQF5rS747+N1HX3135f6KBat+BAtkempuXAEZaZOHE+F3TgwIn7
+         ZD6Jvj781Z3eBxfdpUySI7BwcluL6FUhZUQxe4V/Ph08fg+wCuyu2rSeOSV0V3Ezyzk7
+         5oW0Uncqr0BlffEKEDoj15Z31UedBdGKmFhqOz0E79VaiAeGnnD9QEJDS1T7Ook0DThD
+         a0Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXWCFPolG23SzglsahQXCoCGHYSlexYtrZFYE1CmXzP9dY5/iuFzZq2a8qE0Jk/Xq/WjGvJROuTrTJKg4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGZ+ox7p575SWbjWAmELM2c09oic1fdLT2ckUDice9w/Gn9JZ9
+	Q3eelAbL17z4GSbxS1tWHafQyGBXeRUwHoJ5oOXkJ9ebJdaSyeysKZgHbrZKVZD6JJHyp1AOqwm
+	BAb2ZVEH8JtjlYZsHE+XvFrnryZ86p6XR7u7VOQuqICYL8iUdrmpSgIE=
+X-Google-Smtp-Source: AGHT+IFqWY2Y+yRqTYxICn0rzd+ydkpIiiHtWT9HnjvF0MhokQEm033nAmGMsRIaHa+q6t1QRUKs07PVaO/27OoRuS3gxneOn5nw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-cfi-patchable-all-v1-1-512481fd731d@google.com>
- <ZwbAvEnrzu6UUgGl@J2N7QTR9R3> <CAH5fLgipBfd5pNKqniXqFudruyGaJG=LDc5MEf3Yxq1yRMmQcw@mail.gmail.com>
-In-Reply-To: <CAH5fLgipBfd5pNKqniXqFudruyGaJG=LDc5MEf3Yxq1yRMmQcw@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Wed, 9 Oct 2024 20:32:50 +0000
-Message-ID: <CABCJKuej95SJjJuCuzwFpPUJG+iprc=gFgnZmuAE_MU5yMAppg@mail.gmail.com>
-Subject: Re: [PATCH] cfi: rust: pass -Zpatchable-function-entry on all architectures
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Matthew Maurer <mmaurer@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Kees Cook <kees@kernel.org>, 
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, rust-for-linux@vger.kernel.org
+X-Received: by 2002:a05:6e02:152b:b0:3a2:463f:fd9e with SMTP id
+ e9e14a558f8ab-3a397ce4910mr36647315ab.6.1728506061764; Wed, 09 Oct 2024
+ 13:34:21 -0700 (PDT)
+Date: Wed, 09 Oct 2024 13:34:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6706e8cd.050a0220.67064.0053.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_find_path
+From: syzbot <syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 8:15=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> On Wed, Oct 9, 2024 at 7:43=E2=80=AFPM Mark Rutland <mark.rutland@arm.com=
-> wrote:
-> >
-> > There's an existing incompatibility between CFI and pre-function NOPs
-> > for C code, because we override -fpatchable-function-entry on a
-> > per-function basis (e.g. for noinstr and notrace), and we don't
-> > currently have a mechanism to ensure the CFI tag is in the same place
-> > regardless. This is why arm64 has CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS
-> > depend on !CFI.
-> >
-> > For C code at least, just using regular -fpatchable-function-entry=3DM =
-or
-> > -fpatchable-function-entry=3DM,0 shouldn't change the location of the C=
-FI
-> > tag relative to the function entrypoint, and so should have no adverse
-> > effect on CFI.
-> >
-> > Is Rust any different here?
->
-> Ah, no it shouldn't be. Sami can you confirm?
+Hello,
 
-KCFI is implemented in the LLVM back-end, so the behavior is exactly
-the same for both C and Rust.
+syzbot found the following issue on:
 
-> > As above, I suspect this isn't necessary to make CFI work, for any case
-> > that works with C today, due to -fpatchable-funtion-entry being
-> > overridden on a per-function basis. Are you seeing a problem in
-> > practice, or was this found by inspection?
-> >
-[..]
-> Well, I was told that it's a problem and was able to trigger a failure
-> on x86. I didn't manage to trigger one on arm64, but I wasn't sure
-> whether that was me doing something wrong, or whether the problem only
-> exists on x86. We already have the flag on x86 for FINEIBT, but I
-> thought on the off chance that it's not a problem in practice on arm,
-> it still doesn't hurt to add the flag.
+HEAD commit:    27cc6fdf7201 Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1653c79f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f8af0b3195caed62
+dashboard link: https://syzkaller.appspot.com/bug?extid=66c146268dc88f4341fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12af7bd0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1153c79f980000
 
-This only impacts KCFI on x86 at the moment. However, we should
-nevertheless pass the same patchable-function-entry flags to both
-compilers on other architectures too.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/87f1d994309a/disk-27cc6fdf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9c7ccdaf7e44/vmlinux-27cc6fdf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7dc828e4bf0e/bzImage-27cc6fdf.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/036cff156a70/mount_0.gz
 
-> Regarding the AAPCS64 calling convention thing ... rustc uses the Rust
-> calling convention for functions internally in Rust code and I don't
-> know whether that changes anything relevant for what you mention.
-> Matthew/Sami do you know?
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-AFAIK this shouldn't be a problem, but Matt knows this much better, so
-I'll let him explain.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=111b7d27980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=131b7d27980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=151b7d27980000
 
-Sami
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+==================================================================
+BUG: KASAN: use-after-free in __ocfs2_find_path+0x203/0x7e0 fs/ocfs2/alloc.c:1824
+Read of size 4 at addr ffff8880707fb000 by task syz-executor231/5221
+
+CPU: 1 UID: 0 PID: 5221 Comm: syz-executor231 Not tainted 6.12.0-rc1-syzkaller-00306-g27cc6fdf7201 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ __ocfs2_find_path+0x203/0x7e0 fs/ocfs2/alloc.c:1824
+ ocfs2_find_leaf+0xcf/0x230 fs/ocfs2/alloc.c:1938
+ ocfs2_get_clusters_nocache+0x1ad/0xbf0 fs/ocfs2/extent_map.c:418
+ ocfs2_get_clusters+0x5bd/0xbd0 fs/ocfs2/extent_map.c:621
+ ocfs2_extent_map_get_blocks+0x24c/0x7d0 fs/ocfs2/extent_map.c:668
+ ocfs2_read_virt_blocks+0x313/0xb20 fs/ocfs2/extent_map.c:983
+ ocfs2_read_dir_block fs/ocfs2/dir.c:508 [inline]
+ ocfs2_find_entry_el fs/ocfs2/dir.c:715 [inline]
+ ocfs2_find_entry+0x43b/0x2780 fs/ocfs2/dir.c:1080
+ ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1981
+ ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2003
+ _ocfs2_get_system_file_inode fs/ocfs2/sysfile.c:136 [inline]
+ ocfs2_get_system_file_inode+0x305/0x7b0 fs/ocfs2/sysfile.c:112
+ ocfs2_init_global_system_inodes+0x32c/0x730 fs/ocfs2/super.c:457
+ ocfs2_initialize_super fs/ocfs2/super.c:2248 [inline]
+ ocfs2_fill_super+0x2f47/0x5750 fs/ocfs2/super.c:994
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdb53261dea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff04142618 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fff04142630 RCX: 00007fdb53261dea
+RDX: 0000000020004440 RSI: 0000000020000780 RDI: 00007fff04142630
+RBP: 0000000000000004 R08: 00007fff04142670 R09: 0000000000004444
+R10: 0000000001000000 R11: 0000000000000282 R12: 0000000001000000
+R13: 00007fff04142670 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x707fb
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 ffffea0001c1ff08 ffff8880b8744af0 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x8(__GFP_MOVABLE), pid 1, tgid 1 (swapper/0), ts 11895450743, free_ts 13010080278
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ split_free_pages mm/page_alloc.c:6478 [inline]
+ alloc_contig_range_noprof+0x821/0xe20 mm/page_alloc.c:6605
+ __alloc_contig_pages mm/page_alloc.c:6634 [inline]
+ alloc_contig_pages_noprof+0x4b3/0x5c0 mm/page_alloc.c:6714
+ debug_vm_pgtable_alloc_huge_page+0xaf/0x100 mm/debug_vm_pgtable.c:1084
+ init_args+0x83b/0xb20 mm/debug_vm_pgtable.c:1266
+ debug_vm_pgtable+0xe0/0x550 mm/debug_vm_pgtable.c:1304
+ do_one_initcall+0x248/0x880 init/main.c:1269
+ do_initcall_level+0x157/0x210 init/main.c:1331
+ do_initcalls+0x3f/0x80 init/main.c:1347
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+ kernel_init+0x1d/0x2b0 init/main.c:1469
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcd0/0xf00 mm/page_alloc.c:2638
+ free_contig_range+0x152/0x550 mm/page_alloc.c:6748
+ destroy_args+0x8a/0x840 mm/debug_vm_pgtable.c:1017
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+ do_one_initcall+0x248/0x880 init/main.c:1269
+ do_initcall_level+0x157/0x210 init/main.c:1331
+ do_initcalls+0x3f/0x80 init/main.c:1347
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+ kernel_init+0x1d/0x2b0 init/main.c:1469
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff8880707faf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8880707faf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8880707fb000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                   ^
+ ffff8880707fb080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff8880707fb100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
