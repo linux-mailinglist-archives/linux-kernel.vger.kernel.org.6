@@ -1,109 +1,52 @@
-Return-Path: <linux-kernel+bounces-356953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FB599694E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:54:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF4099694C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7DAB26C4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84C91F25C52
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702991925AC;
-	Wed,  9 Oct 2024 11:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLYPyait";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WrkZoEAS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLYPyait";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WrkZoEAS"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDA41925B7;
+	Wed,  9 Oct 2024 11:54:28 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C111922D6;
-	Wed,  9 Oct 2024 11:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB73118DF74;
+	Wed,  9 Oct 2024 11:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474879; cv=none; b=rCfPug/1sSeePrmw6reMFVOrEEhZxoz34EOXeEEA037Kr+2o2ItImrUprj4vbuk7KgUpC+h4I6lzESA9NKs8p1QhfzoDX+ZhFCCIlKd2IJjwRwThOnapR0BcosuyNO7RE2s7/Ss0WYM40gm0crkXfOR3kBGdNIeJClxWzqWcRlw=
+	t=1728474868; cv=none; b=O6kD8DwueEhbw8NjmiUSfXNgrffYyZ5cZYk/cwaJBFHrq/RJB89x0CpNjZ+D/9d3oDpRGRI4/etgHV4J13ia4J9fJaE1a77+CmTznAgckID2aXvSfm+aSbrpNPxAYV0yr2ButMfIkLOG9qOhIzPij7nW3h1P8xgAw2Kz7gkulAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474879; c=relaxed/simple;
-	bh=mlMIwJbmsMcapczAeVjnxlgtadHyKjGMSsBtOH0MOw4=;
+	s=arc-20240116; t=1728474868; c=relaxed/simple;
+	bh=Wp3EDPFUnKdGSbtitStte2ziWY5yHem1tWP5j5Y5eDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6h329waMZFf/lmu/WVQEkJ5m4ne2pLgi7a7jnhFE2aUPCRwhmQwxdEv9MY55iJctstvpEu2XjvERhOJ5faDNlvjkUM3oBRjlHJAMikXXJOWazvP+h4plGeo/tJdHNKu5cdqUkJ9YzB7UDYu8It7Sk99Awc/kltxCM2RMqx3J9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLYPyait; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WrkZoEAS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLYPyait; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WrkZoEAS; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4DD6321E5D;
-	Wed,  9 Oct 2024 11:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728474876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
-	b=mLYPyaitTcegU8E6eMKZAutBgCCB+zCZWUJZ7wim12jFiEspOZvA3V6NiE3bIBNbtPPT7+
-	TCVlQIgLf7hGe/KAv5n0f6LTjrquvho33fWCAxCo59ER7P6E5y1jzEo6FWEjR5WuDRjl0O
-	r+TOz/770C5FysmZNwI8N9X5kNYWdnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728474876;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
-	b=WrkZoEASi/jBZ/ULqsAMhbXUKb2xpyb5lgf8fp+HhmzKwvVriwuOzDnucnHbnnVB64ppsn
-	oGEuo4Z4/rLUizDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mLYPyait;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WrkZoEAS
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728474876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
-	b=mLYPyaitTcegU8E6eMKZAutBgCCB+zCZWUJZ7wim12jFiEspOZvA3V6NiE3bIBNbtPPT7+
-	TCVlQIgLf7hGe/KAv5n0f6LTjrquvho33fWCAxCo59ER7P6E5y1jzEo6FWEjR5WuDRjl0O
-	r+TOz/770C5FysmZNwI8N9X5kNYWdnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728474876;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUvGL+sPmRmjMQqWkjor2e4sPlA8EZDWqN+kZ9oteLo=;
-	b=WrkZoEASi/jBZ/ULqsAMhbXUKb2xpyb5lgf8fp+HhmzKwvVriwuOzDnucnHbnnVB64ppsn
-	oGEuo4Z4/rLUizDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36E8A13A58;
-	Wed,  9 Oct 2024 11:54:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TRdICvxuBmdoEAAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Wed, 09 Oct 2024 11:54:36 +0000
-Date: Wed, 9 Oct 2024 13:53:31 +0200
-From: Cyril Hrubis <chrubis@suse.cz>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>, f.fainelli@gmail.com, rwarsow@gmx.de,
-	pavel@denx.de, conor@kernel.org, shuah@kernel.org,
-	allen.lkml@gmail.com, LTP List <ltp@lists.linux.it>,
-	patches@lists.linux.dev, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, broonie@kernel.org,
-	lkft-triage@lists.linaro.org, srw@sladewatkins.net,
-	patches@kernelci.org, akpm@linux-foundation.org,
-	jonathanh@nvidia.com, torvalds@linux-foundation.org,
-	sudipm.mukherjee@gmail.com, linux@roeck-us.net
-Subject: Re: [LTP] [PATCH 6.10 000/482] 6.10.14-rc1 review
-Message-ID: <ZwZuuz2jTW5evZ6v@yuki.lan>
-References: <20241008115648.280954295@linuxfoundation.org>
- <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
- <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6k1/V2xRV0ILCr3rTmD8L+gXmOASHKYhK4+nbUgfpJeyyVM8+bvr9skYj6jkQ3j28gU8613zHGAVRJpW8pnW8WG0TtMVDbYVb30wfGpGsJnNhbOZmMaP3Z45HFsRJ4IamoWcTGZanEdKnuBojEfMPIP1FdXk9TlWK5FuOe6PGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syVGn-0000000068D-2bDd;
+	Wed, 09 Oct 2024 11:54:21 +0000
+Date: Wed, 9 Oct 2024 12:54:18 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: phy: realtek: read duplex and gbit
+ master from PHYSR register
+Message-ID: <ZwZu6rCtKf-A165a@makrotopia.org>
+References: <66d82d3f04623e9c096e12c10ca51141c345ee84.1728438615.git.daniel@makrotopia.org>
+ <ZwZUl1jG0bc2q8Le@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,47 +55,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
-X-Rspamd-Queue-Id: 4DD6321E5D
-X-Spam-Score: -2.98
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.98 / 50.00];
-	BAYES_HAM(-2.97)[99.87%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linaro.org,linuxfoundation.org,suse.cz,kernel.org,mit.edu,gmail.com,gmx.de,denx.de,lists.linux.it,lists.linux.dev,vger.kernel.org,lists.linaro.org,sladewatkins.net,kernelci.org,linux-foundation.org,nvidia.com,roeck-us.net];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:dkim,linux.it:url]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <ZwZUl1jG0bc2q8Le@shell.armlinux.org.uk>
 
-Hi!
-Work in progress, see:
-https://lists.linux.it/pipermail/ltp/2024-October/040433.html
+On Wed, Oct 09, 2024 at 11:01:59AM +0100, Russell King (Oracle) wrote:
+> On Wed, Oct 09, 2024 at 02:53:03AM +0100, Daniel Golle wrote:
+> > -static void rtlgen_decode_speed(struct phy_device *phydev, int val)
+> > +static void rtlgen_decode_physr(struct phy_device *phydev, int val)
+> >  {
+> > -	switch (val & RTLGEN_SPEED_MASK) {
+> > +	/* bit 2
+> > +	 * 0: Link not OK
+> > +	 * 1: Link OK
+> > +	 */
+> > +	phydev->link = !!(val & RTL_VND2_PHYSR_LINK);
+> 
+> Be careful with this. The link status bit in the BMSR is latched-low,
+> meaning that it guarantees to inform the reader that the link failed at
+> some point between the preceding read and current read.
+> 
+> This is important to know, so code can react to a possibly different
+> negotiation result (we must see a link-fail to recognise a different
+> set of negotiation results.)
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+The datasheet calls that bit "Real Time Link Status".
+If you think we should not use it, I will drop it.
 
