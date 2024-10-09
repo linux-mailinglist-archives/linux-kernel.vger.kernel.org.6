@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-356185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280D7995DB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:23:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C03F995DB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7F01F25BA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:23:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46631C2168F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B262126BED;
-	Wed,  9 Oct 2024 02:23:16 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D050133987;
+	Wed,  9 Oct 2024 02:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ra/k8liZ"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9477603A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 02:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01DE364BA;
+	Wed,  9 Oct 2024 02:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728440595; cv=none; b=V3ABhzGQTJ4gpUKZak/udPr5St2ffsMaNgSdkIWvuorRA9+7RieeKg/rbSFrXP2BGC9z/clpOWVpVrTfxYJZMMHaoQk9fj5+zIMWo67GB6SezqpTCjTdAtLpHlbk0QMqm+MaE0sGXbfIIm/GmOSHvU4m/zJwT/eCBRwtdnAwySo=
+	t=1728440636; cv=none; b=dT3jEOVQRbLCAJEMVzfz4T8H0haSFE7OU14P6zwn8ajXlozHQ1U5yDdyZqx7sH84URwdXr9CHC67+8sncllK7atfmeuBJscuN3QSyNILPynS2QFe1q8dCSOHoiwF5ISv7rajzkldm9SCKddrLbbVGpKicvkpGDIfGSqZSj8Xqxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728440595; c=relaxed/simple;
-	bh=uosJ9Xg1KQ/Q7IPgKqFK6pDa9QD+ieL8y/y9lQ1DXBU=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=XUEQZU4tnVnhBxOyWOCRccctifOEhTfEDNd8g2sUHG57FsZmDGKOzISsdup4rZHeX6MzhqM0jfJsUS5+Tpt6Bnn1akOimgC3RcGI8dkc272uMgYCM66j1cCydXUKqZYguuSnoWm5HfjB7AsWg0/EoQGm+DYjV5k6sinQHHQDCng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XNc810qy0z1T8P4;
-	Wed,  9 Oct 2024 10:21:21 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id F074F140133;
-	Wed,  9 Oct 2024 10:23:03 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 9 Oct 2024 10:23:03 +0800
-Subject: Re: [PATCH 1/1] ubifs: Try to recover from missing znode
-To: Benedikt Spranger <b.spranger@linutronix.de>,
-	<linux-kernel@vger.kernel.org>
-CC: <linux-mtd@lists.infradead.org>, Richard Weinberger <richard@nod.at>
-References: <20241008133342.1937674-1-b.spranger@linutronix.de>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <0840be30-63bc-449d-a9a4-c4e6b54c8885@huawei.com>
-Date: Wed, 9 Oct 2024 10:23:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1728440636; c=relaxed/simple;
+	bh=knGaRzWiMt58OjjMDy6xjYY1UEFJWK7kbpikuX7QDxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yt2fRxZdSuDfXBtGu6vPhD17AQL2jgDBJxw9gAdvaHzHsZBO04AMhvux8XB2E0h9h+E/W025CamBRe9ffRap67OCK6XsxFYJ7CC4MANs4meF8Da6Bl1rDHFcNFldGPFzAYksvUYlQgzim9U+5yR+Yd2rfnxxXW8loeMTuG9RtCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ra/k8liZ; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728440631; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=0oGkB/tDg0LkjjcyvIc/sA7bFYxjsoWvYZTsGCGfcnQ=;
+	b=ra/k8liZHGPwYx3ximsb+j0KufEI/P0/s/EQW/KTbJ9cR3m3ppusRp4g+gU2MVa2RhFUaRZdzuLTl0VggkIq/gV9OU/bt+FwhSO2cOSZeRzyFB/z5T+lYWw2mryKZef5zEsGty4F/FANcD08cJU9AQ+1djJSf7QLh9Uef3JjSnQ=
+Received: from 30.221.128.133(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WGgzOBr_1728440629)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Oct 2024 10:23:50 +0800
+Message-ID: <2e3f676a-ef03-4618-852d-ceb3b620a640@linux.alibaba.com>
+Date: Wed, 9 Oct 2024 10:23:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241008133342.1937674-1-b.spranger@linutronix.de>
-Content-Type: text/plain; charset="gbk"; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: Add rcu ptr in btf_id_sock_common_types
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, xuanzhuo@linux.alibaba.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241008080916.44724-1-lulie@linux.alibaba.com>
+ <80cb3d4b-cebb-4f08-865d-354110a54467@linux.dev>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <80cb3d4b-cebb-4f08-865d-354110a54467@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk500005.china.huawei.com (7.202.194.90)
 
-�� 2024/10/8 21:33, Benedikt Spranger д��:
-> After powercut on a system using ubifs mounting failed:
-> 
-> 2024-09-30T12:38:26.880487+02:00 sonja kernel: UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node type (255 but expected 9)
-> 2024-09-30T12:38:26.880506+02:00 sonja kernel: UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node at LEB 103:46920, LEB mapping status 0
-> 2024-09-30T12:38:26.880509+02:00 sonja kernel: Not a node, first 24 bytes:
-> 2024-09-30T12:38:26.880510+02:00 sonja kernel: 00000000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff                          ........................
-> 
-> While traversing over zbranches during the journal replay one zbranch
-> points to a znode, which was not written to the flash and therefore the
-> flash is empty.
 
-UBIFS guarantees two things for znodes:
-1) all index nodes(in commit seq N) are written on flash before master 
-nodes(for commit seq N) are written.
-2) all index nodes(in commit seq N) won't be erased from flash before 
-master nodes(for commit seq N+1) are written.
-So, I don't understand that why znodes not exist during journal replaying?
+
+On 2024/10/9 03:05, Martin KaFai Lau wrote:
+> On 10/8/24 1:09 AM, Philo Lu wrote:
+>> Sometimes sk is dereferenced as an rcu ptr, such as skb->sk in tp_btf,
+>> which is a valid type of sock common. Then helpers like bpf_skc_to_*()
+>> can be used with skb->sk.
+>>
+>> For example, the following prog will be rejected without this patch:
+>> ```
+>> SEC("tp_btf/tcp_bad_csum")
+>> int BPF_PROG(tcp_bad_csum, struct sk_buff* skb)
+>> {
+>>     struct sock *sk = skb->sk;
+>>     struct tcp_sock *tp;
+>>
+>>     if (!sk)
+>>         return 0;
+>>     tp = bpf_skc_to_tcp_sock(sk);
 > 
-> Try to recover from that by inserting an empty znode instead of failing.
+> If the use case is for reading the fields in tp, please use the 
+> bpf_core_cast from the libbpf's bpf_core_read.h. bpf_core_cast is using 
+> the bpf_rdonly_cast kfunc underneath.
 > 
-> Signed-off-by: Benedikt Spranger <b.spranger@linutronix.de>
-> Reviewed-by: John Ogness <john.ogness@linutronix.de>
-> ---
->   fs/ubifs/io.c       | 16 ++++++++++++++++
->   fs/ubifs/tnc_misc.c |  6 +++++-
->   2 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ubifs/io.c b/fs/ubifs/io.c
-> index 01d8eb170382..0bbb426f9006 100644
-> --- a/fs/ubifs/io.c
-> +++ b/fs/ubifs/io.c
-> @@ -1110,6 +1110,22 @@ int ubifs_read_node(const struct ubifs_info *c, void *buf, int type, int len,
->   		return err;
->   
->   	if (type != ch->node_type) {
-> +		/*
-> +		 * While recovering, we may face lost data i.e. empty flash.
-> +		 * Give callsites a hint by returning -ENODATA.
-> +		 */
-> +		if (c->replaying) {
-> +			u8 *b = buf;
-> +
-> +			for (l = 0; l < len; l++) {
-> +				if (b[l] != 0xff)
-> +					break;
-> +			}
-> +			if (l == len) {
-> +				ubifs_errc(c, "no node, but empty flash");
-> +				return -ENODATA;
-> +			}
-> +		}
->   		ubifs_errc(c, "bad node type (%d but expected %d)",
->   			   ch->node_type, type);
->   		goto out;
-> diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
-> index d3f8a6aa1f49..4d085fc1300f 100644
-> --- a/fs/ubifs/tnc_misc.c
-> +++ b/fs/ubifs/tnc_misc.c
-> @@ -300,7 +300,11 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
->   	err = ubifs_read_node(c, idx, UBIFS_IDX_NODE, len, lnum, offs);
->   	if (err < 0) {
->   		kfree(idx);
-> -		return err;
-> +		/*
-> +		 * While recovering we may face a non written znode.
-> +		 * Inject an empty znode in this case.
-> +		 */
-> +		return (err == -ENODATA) ? 0 : err;
->   	}
->   
->   	err = ubifs_node_check_hash(c, idx, zzbr->hash);
-> 
+
+Thank you! This works for me so this patch is unnecessary then.
+
+Just curious is there any technical issue to include rcu_ptr into 
+btf_id_sock_common_types? AFAICT rcu_ptr should also be a valid ptr 
+type, and then btf_id_sock_common_types will behave like (PTR_TO_BTF_ID 
++ &btf_sock_ids[BTF_SOCK_TYPE_SOCK_COMMON]) in bpf_func_proto.
+
+Thanks.
+-- 
+Philo
 
 
