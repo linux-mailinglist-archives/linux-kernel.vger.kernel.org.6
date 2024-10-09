@@ -1,110 +1,107 @@
-Return-Path: <linux-kernel+bounces-357207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A58996D91
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:24:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A03996D8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61AD61C219BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:24:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F7E1F22541
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB41A19CC34;
-	Wed,  9 Oct 2024 14:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1358219CC3E;
+	Wed,  9 Oct 2024 14:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="C5mocmDW"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+JAntiq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E52199EB4
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7A319049B;
+	Wed,  9 Oct 2024 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728483846; cv=none; b=b685xIDRdAIKUKrl+oFbsJz2dkWjrL4sItrIeupdF38b+pz4pq66UAxSZLXMcmt8l3pLhv6mdAktCEW94BgnM/iev27K9sblABEMoJgoLDScPFMJEgL/MF9JRmmJo5uWWr/+kZWjNM2+0csiGF420xXNzAV0xg53qzdjEksrIlI=
+	t=1728483778; cv=none; b=taXRBf4ken/HqJmQXP0xvkN4BJqiWEmvWrGSOMRgkmMEN0xzuzUBMUcPLfGD1anSJJ5k5ic24TFR5FXidcYU5fOPYUuvS/BcjJr1AFvK+Vp/KhtdjxjloaWGDt8w3y5dGylsQlRTU6zz64G+HN2EwOMsB33mi2Dz5o3kELBZ46Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728483846; c=relaxed/simple;
-	bh=f9JNAxo07Q5dbhlbZTO/hOtteaSp0+62aExhm9YLEPk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FSAFfniF7biHDLJfMBUHDjh42sENwI8AD88HmjmiZs2HD5+q+wwd//Q3QeLo1LFsa+kprSzvYUGDB7kzGHYfnE0HwhRH9bqke3gJfodE+LPsJ9NbWl0j/fRWT8SUBNOSvEkfgf/VIHVruZa58P+spIKMayWAqIGzXfn7lIHJgTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=C5mocmDW; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499C8JMn006254;
-	Wed, 9 Oct 2024 16:23:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	p2zU0J8Ozzt2FEFRpgTVYICyFeINndEpbE2yibsv9bg=; b=C5mocmDWIyl4eS+2
-	rWzd7ksodcyUxo7yZWUTAkBqHEnRHnNid8sOZRDYAIUu5ecSzaTooQ7ByYH7SEfZ
-	Xb/F9+Aa2DZU+6cqhgKEYNs3E2b15gH969zHfciHKLOcqy2mlReXMi26OeQ8NAX3
-	S4tP4l347WNrmMnjnR9Y/S5piRp9hDOtBBKy+rSedPCXDP6ViBUKxaxvtGbujOd8
-	9VH3wvzW00rwhcx3kVqfa+h/VbxYwS3oHJJaA2kGqdfUVL3U/NnI04ilbgu8GgZr
-	fbdQUMTuDFwgqQECb77+DDyM/uITDeS06/doJIK3k50JyX9A2Cgt9vdEukG833fH
-	GT0MVQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4257n8d5xt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 16:23:52 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AF0B14004D;
-	Wed,  9 Oct 2024 16:23:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 574E52612A5;
-	Wed,  9 Oct 2024 16:22:41 +0200 (CEST)
-Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 9 Oct
- 2024 16:22:41 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <linux@armlinux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <christian.bruel@foss.st.com>, <alexandre.torgue@foss.st.com>
-Subject: [PATCH 1/1] ARM: decompressor: Use Domain Manager Access permissions
-Date: Wed, 9 Oct 2024 16:22:22 +0200
-Message-ID: <20241009142222.1489500-2-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241009142222.1489500-1-christian.bruel@foss.st.com>
-References: <20241009142222.1489500-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1728483778; c=relaxed/simple;
+	bh=wtEsNUmQl3YVDb/bJFbMxGfYT682EXAnciOU7xyHN4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ad88etabzg8GOcy0X1OyqkwOg3YyTgBN3NtC34zHVZxTvoFf1+i0uu8M460Py3sIW/WJOWHW+AM8n1tEBrvH2FnotchA+VcygtTHjd7wVNfPTZHHjnX9SP/iiVBL5zLpeZQhdNLxzjxUKKta6WN5kO4QHVK5RrcRn04dW7yYn3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+JAntiq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E785FC4CEC3;
+	Wed,  9 Oct 2024 14:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728483778;
+	bh=wtEsNUmQl3YVDb/bJFbMxGfYT682EXAnciOU7xyHN4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l+JAntiq4+YA7crhGkv7KxbR9LIAPtwGlt3ut7OVEZ7YpkOiCBHtvRiBh53IkzVUd
+	 DJh2HJK0gSn10cQGk3RCnDCeFQTjFIH9th+e3TjJaDFqWC3w+VYizY2Xlku82aA3CB
+	 7P3/9qtdpkl5CVpH57qOBxehqQCL/SwkOqSLFxISffdcXMAsCR7gkMEqP+XEYF3VSy
+	 jb40qqnyVc1whbzZtVblPbxJB3Joiqf/lTLx/TwV6URQiaE3diRMBoQUAjhGoUtKoo
+	 KMObAvikFPBDBkzu9bNGXsrIjXUXaIONknzXKqbMWUGIn+JpHbW0CLxOSQgW0uRK5L
+	 d1nVaMTKjFo/w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syXaf-000000003pu-21Uh;
+	Wed, 09 Oct 2024 16:23:01 +0200
+Date: Wed, 9 Oct 2024 16:23:01 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] serial: qcom-geni: drop flip buffer WARN()
+Message-ID: <ZwaRxZyAXGR5zRu_@hovoldconsulting.com>
+References: <20241001125033.10625-1-johan+linaro@kernel.org>
+ <20241001125033.10625-7-johan+linaro@kernel.org>
+ <CAD=FV=W9fEQ-g_LWK18SfZq4ZmFN_QbrBCwKRx3BTc0i-UXEcA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+In-Reply-To: <CAD=FV=W9fEQ-g_LWK18SfZq4ZmFN_QbrBCwKRx3BTc0i-UXEcA@mail.gmail.com>
 
-EL1 exec access with read/write permissions result in a Permission Fault if
-SCTLR.WXN or SCTLR.UWXN is set by the trusted firmware.
-Since XN attribute is not checked for domains marked a Manager, change
-the domain used for kernel relocation.
+On Thu, Oct 03, 2024 at 01:06:43PM -0700, Doug Anderson wrote:
+> On Tue, Oct 1, 2024 at 5:51 AM Johan Hovold <johan+linaro@kernel.org> wrote:
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm/boot/compressed/head.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > @@ -570,9 +570,8 @@ static void handle_rx_uart(struct uart_port *uport, u32 bytes, bool drop)
+> >
+> >         ret = tty_insert_flip_string(tport, port->rx_buf, bytes);
+> >         if (ret != bytes) {
+> > -               dev_err(uport->dev, "%s:Unable to push data ret %d_bytes %d\n",
+> > -                               __func__, ret, bytes);
+> > -               WARN_ON_ONCE(1);
+> > +               dev_err_ratelimited(uport->dev, "failed to push data (%d < %u)\n",
+> > +                               ret, bytes);
+> 
+> Not that it really matters, but since you're fixing the type of
+> "bytes" to %u you probably should fix "ret" to %u too, which means
+> changing the type of it? Officially tty_insert_flip_string returns the
+> (unsigned) size_t.
 
-diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index 9f406e9c0ea6..d4ee205f3b9c 100644
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -888,7 +888,7 @@ __armv7_mmu_cache_on:
-  ARM_BE8(	orr	r0, r0, #1 << 25 )	@ big-endian page tables
- 		mrcne   p15, 0, r6, c2, c0, 2   @ read ttb control reg
- 		orrne	r0, r0, #1		@ MMU enabled
--		movne	r1, #0xfffffffd		@ domain 0 = client
-+		movne	r1, #0xffffffff		@ domains = Manager
- 		bic     r6, r6, #1 << 31        @ 32-bit translation system
- 		bic     r6, r6, #(7 << 0) | (1 << 4)	@ use only ttbr0
- 		mcrne	p15, 0, r3, c2, c0, 0	@ load page table pointer
--- 
-2.34.1
+Yeah, that was changed recently, but apparently not all callers were
+updated. I'll just leave this as is for now too.
+ 
+> As a nit, I'd also say that your error message shouldn't assert "<"
+> unless you change your "if" test to "<". It seems safer to use != so
+> IMO the printout should also say "!=".
 
+Possibly, but if we ever hit that we have bigger problems.
+
+> I'd hope you're not hitting this error a lot because it means you're
+> dropping bytes, but getting rid of the WARN_ON and changing to
+> ratelimited makes sense to me.
+
+No, this was just something I noticed when reviewing the function.
+
+Johan
 
