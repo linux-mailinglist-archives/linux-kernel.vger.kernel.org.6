@@ -1,227 +1,125 @@
-Return-Path: <linux-kernel+bounces-356860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5B69967DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:58:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9CD9967E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A82528439E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D43FB2314F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E2F1917C9;
-	Wed,  9 Oct 2024 10:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C761917C7;
+	Wed,  9 Oct 2024 10:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="ZyGEMPci"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdGsIKZ9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA35418BC36;
-	Wed,  9 Oct 2024 10:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F15D19049B;
+	Wed,  9 Oct 2024 10:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728471514; cv=none; b=lyRnXYcbjsDatS/J2fcoOrY96CbPAImCYtnvYXVppG1KDRA4r2ZJOgpy4K8kLxarKg5OKvCpbBuI1s8L7ojC9yXPCjoKTNDzh/7Rt4RIVw9Tw4pmR63Nly3oGw3IA3Uv+ki1C0+WmCXjO1TkwMugY1BkPaIHuKJxe1IEtIA3pQg=
+	t=1728471548; cv=none; b=V/o5HhZUfuX4wOu3UbJ4F/MrP5fl5G8g1DN4WyKMnaY0p1fETlnZI4wdgIuSRuD0gEadaPx4PTGy0dJbNsnHHxcr7cRyzqwoE20ufupFzWbSDTMw5LzDWupbws3+ogOWI1/Ws5Rt1WWnvc1h2CIyYt8BRCkrjdiB/TUp736Kwp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728471514; c=relaxed/simple;
-	bh=/L0HeoREtlbZRvzxpfTCUjU7nLGJzk145c5MdADPt6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NY3EkEQRhfEYpmlSQtWRLx5xAjUd7dRnnlootDjehyTm/dSKFIaqET7DSiS8Ik/TSb3KPvzb6Od2LH/2WoY7RK4ains+MPuqtJTcsMvbvEm1kMg28YyWsp6VAU0mP6wSUhxniP6xYTLC188eYfOyrnbQG+4kKh65wXd1eyOhhDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=ZyGEMPci; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Fiona Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1728471503; bh=YCDuk3KEgjZaCFi5Pt7v/P59ADMvQb3dHrp/CUXem8U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZyGEMPci225eQjGaKqKHqbAzI/arjNl+dBz8irFHyPXiPesqrq62SsX4dXfVxQ4TZ
-	 ps3bvUOmtunpRdtNZ/B5bkIaRPdca3hS5O5T0ZnI4Yqh5EXjkECG0OY5vmVvo2vkT1
-	 q210b13efooSpHBfQt2LkoC8Yw3E3uijHQKwrYMQ=
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Fiona Behrens <me@kloenk.dev>
-Subject: [RFC PATCH 2/2] samples: rust: led sample
-Date: Wed,  9 Oct 2024 12:57:59 +0200
-Message-ID: <20241009105759.579579-3-me@kloenk.dev>
-In-Reply-To: <20241009105759.579579-1-me@kloenk.dev>
-References: <20241009105759.579579-1-me@kloenk.dev>
+	s=arc-20240116; t=1728471548; c=relaxed/simple;
+	bh=xeAjzDULJnF+69KjJwTqAoX43npj68BsDBynQYrVTjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=miZ2PcTAkbdt/VHQKOTfFJ+5VA2RLxC1qcWPzydEZ/yd8h/pf8rM93c++3uFmnrDyrUVg85J5ZiBFDxVbRmuKVj8NQQdgYgE1wkTUEmYnPIFw44ZDrqaIVVcQ6RNQZ3vlm8FkuHfszPW8jVruPDr6HbRCCQF6NnFXnXhKNonoFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdGsIKZ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988FBC4CEC5;
+	Wed,  9 Oct 2024 10:59:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728471547;
+	bh=xeAjzDULJnF+69KjJwTqAoX43npj68BsDBynQYrVTjM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BdGsIKZ9BeXI3qHoiOHlRfowyKiZj8WdV74MVwV3oawwnSt85m5qcg3zMUBkV0w19
+	 SPK/bufEcKbJSMsSOrU1EMS3CnTxKE4KIcT6f8KOJwV8g4ebzU4pAz3yYlyvudCNvI
+	 v5aLm6/aUs0o/pmIUZQKsmzoWXIyUcM4oRpqXQGVuW4VfWzINDBj62gdvLRajOu79h
+	 YoIae6J1tiV0CJ2eUAXjUf5C/EDm6jt0NBWXEtUIeyJ3cw3kk4ZlfruFsQ+5EKkeOX
+	 pLTHC9+SYPu6oVFfx5TnDMAjnrlhVJrkX10k/QRgDbhh9ATu9KGnjFtwEwPrTZggzB
+	 ufoZ3F9MJW+bQ==
+Date: Wed, 9 Oct 2024 11:58:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Steen Hegelund <steen.hegelund@microchip.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v7 3/6] reset: mchp: sparx5: Map cpu-syscon locally in
+ case of LAN966x
+Message-ID: <20241009-walnut-unending-aed5b687454c@spud>
+References: <20241003081647.642468-1-herve.codina@bootlin.com>
+ <20241003081647.642468-4-herve.codina@bootlin.com>
+ <71fb65a929e5d5be86f95ab76591beb77e641c14.camel@microchip.com>
+ <CAMuHMdVR8UfZyGUS1c3nZqvPYBNs7oSe5p1GjCA3BYwrz8-bdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cndNbLBuvwOtOy9M"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVR8UfZyGUS1c3nZqvPYBNs7oSe5p1GjCA3BYwrz8-bdQ@mail.gmail.com>
 
-Provide an initial sample LED driver that just prints the current
-requested LED state.
 
-This is not intended to be merged, but as a placeholder until the
-abstactions for hardware access are written.
+--cndNbLBuvwOtOy9M
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Fiona Behrens <me@kloenk.dev>
----
- samples/rust/Kconfig     |  10 ++++
- samples/rust/Makefile    |   1 +
- samples/rust/rust_led.rs | 103 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 114 insertions(+)
- create mode 100644 samples/rust/rust_led.rs
+On Wed, Oct 09, 2024 at 12:20:32PM +0200, Geert Uytterhoeven wrote:
+> Hi Steve,
+>=20
+> On Wed, Oct 9, 2024 at 9:30=E2=80=AFAM Steen Hegelund
+> <steen.hegelund@microchip.com> wrote:
+> > On Thu, 2024-10-03 at 10:16 +0200, Herve Codina wrote:
+> > > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > > know the content is safe
+>=20
+> Hmm, the email I received directly from Herv=C3=A9 did not have the part
+> you are quoting, so it looks like you are subject to a MiTM-attack ;-)
 
-diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-index b0f74a81c8f9..910f15ef6951 100644
---- a/samples/rust/Kconfig
-+++ b/samples/rust/Kconfig
-@@ -30,6 +30,16 @@ config SAMPLE_RUST_PRINT
- 
- 	  If unsure, say N.
- 
-+config SAMPLE_RUST_LED
-+       tristate "Led subsystem"
-+       help
-+	This option builds the Rust LED subsystem sample.
-+
-+	To compile this as a module, choose M here:
-+	the module will be called rust_led.
-+
-+	If unsure, say N.
-+
- config SAMPLE_RUST_HOSTPROGS
- 	bool "Host programs"
- 	help
-diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-index 03086dabbea4..1299ca1e9ebb 100644
---- a/samples/rust/Makefile
-+++ b/samples/rust/Makefile
-@@ -2,5 +2,6 @@
- 
- obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
- obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
-+obj-$(CONFIG_SAMPLE_RUST_LED)			+= rust_led.o
- 
- subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+= hostprogs
-diff --git a/samples/rust/rust_led.rs b/samples/rust/rust_led.rs
-new file mode 100644
-index 000000000000..0085f7484ea1
---- /dev/null
-+++ b/samples/rust/rust_led.rs
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//! Rust LED sample.
-+
-+use core::time::Duration;
-+
-+use kernel::c_str;
-+use kernel::leds::{Brightness, Color, Led, LedConfig, Operations};
-+use kernel::prelude::*;
-+
-+module! {
-+    type: RustLed,
-+    name: "rust_led",
-+    author: "Rust for Linux Contributors",
-+    description: "Rust led sample",
-+    license: "GPL",
-+}
-+
-+/// Rust LED sample driver
-+// Hold references in scope as droping would unregister the LED
-+#[allow(dead_code)]
-+struct RustLed {
-+    /// LED which just supports on/off.
-+    on_off: Pin<Box<Led<LedOnOff>>>,
-+    /// LED which supports brightness levels and blinking.
-+    blink: Pin<Box<Led<LedBlinking>>>,
-+}
-+
-+impl kernel::Module for RustLed {
-+    fn init(_module: &'static ThisModule) -> Result<Self> {
-+        pr_info!("registering on_off led\n");
-+        let on_off = Box::pin_init(
-+            Led::register_with_name(
-+                c_str!("sample:red:on_off"),
-+                None,
-+                &LedConfig { color: Color::Red },
-+                LedOnOff,
-+            ),
-+            GFP_KERNEL,
-+        )?;
-+
-+        let blink = Box::pin_init(
-+            Led::register_with_name(
-+                c_str!("sample:green:blink"),
-+                None,
-+                &LedConfig {
-+                    color: Color::Green,
-+                },
-+                LedBlinking,
-+            ),
-+            GFP_KERNEL,
-+        )?;
-+
-+        Ok(Self { on_off, blink })
-+    }
-+}
-+
-+struct LedOnOff;
-+
-+#[vtable]
-+impl Operations for LedOnOff {
-+    const MAX_BRIGHTNESS: u8 = 1;
-+
-+    fn brightness_set(_this: &mut Led<Self>, brightness: Brightness) {
-+        match brightness {
-+            Brightness::Off => pr_info!("Switching led off\n"),
-+            Brightness::On(v) => pr_info!("Switching led on: {}\n", v.get()),
-+        }
-+    }
-+}
-+
-+struct LedBlinking;
-+
-+impl LedBlinking {
-+    const HW_DURATION: Duration = Duration::from_millis(1000);
-+}
-+
-+#[vtable]
-+impl Operations for LedBlinking {
-+    const MAX_BRIGHTNESS: u8 = 255;
-+
-+    fn brightness_set(_this: &mut Led<Self>, brightness: Brightness) {
-+        match brightness {
-+            Brightness::Off => pr_info!("blinking: off\n"),
-+            Brightness::On(v) => pr_info!("blinking: on at {}\n", v.get()),
-+        }
-+    }
-+
-+    fn blink_set(
-+        _this: &mut Led<Self>,
-+        delay_on: Duration,
-+        delay_off: Duration,
-+    ) -> Result<(Duration, Duration)> {
-+        pr_info!("blinking: try delay {delay_on:?} {delay_off:?}\n");
-+        if !(delay_on.is_zero() && delay_off.is_zero())
-+            && !(delay_on == Self::HW_DURATION && delay_off == Self::HW_DURATION)
-+        {
-+            return Err(EINVAL);
-+        }
-+
-+        pr_info!("blinking: setting dealy\n");
-+        Ok((Self::HW_DURATION, Self::HW_DURATION))
-+    }
-+}
--- 
-2.46.0
+Yeah, unfortunately we are subjected to that. This one at least just
+adds some text, there's another "MiTM attacker" we have that sometimes
+crops up and has a side effect of tab-to-space conversion. The joys of
+corporate IT.
 
+--cndNbLBuvwOtOy9M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwZh8wAKCRB4tDGHoIJi
+0lfaAQDEiHS7Rxt7GPKHgI4elepFbJpqoYoimbiJmOxyO003UgD/UVz8BnS0gXHT
+d4vnv47DPKzMLjGYw5WnRL1P8t+NmQs=
+=nI7S
+-----END PGP SIGNATURE-----
+
+--cndNbLBuvwOtOy9M--
 
