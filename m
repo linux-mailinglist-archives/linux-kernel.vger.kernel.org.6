@@ -1,113 +1,364 @@
-Return-Path: <linux-kernel+bounces-356649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C9C996494
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9624A996499
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50EC1C23A98
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:13:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D74D281868
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6721318A6B1;
-	Wed,  9 Oct 2024 09:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D085118A6CD;
+	Wed,  9 Oct 2024 09:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G7TA20Kg"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y5XpvUSG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1B188929
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3803D3BB48
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465188; cv=none; b=GDIpRLYvaqJRlQlb8KkFjOLN0mrePoOAk1BWU7AIMvCImGhGB0JX7X5xNunWW205jfNnlx/KY6980sVOGQ0S+8rTuAvyMvZK3i/P+RjlMevEQOUvGXHQYuBssgcM5ShOwshS3Qz2c69zxZhe4DsU1eNdWBBhS0SCydqwFIHxFw0=
+	t=1728465235; cv=none; b=dGtP6XCbvplrHx6ZrA5bon6A81m0C4MjXEPN601HZcr4I2QQj/tiL9N3gHiZmd5YSHYETIyqkCa9/9lNuOYWoPjvDP8LU/GCTc40wLlTs0lULRRGtlpDXLyINZ/1w8RYL415TNApc3ne/crdtcU1UyQtC+JXEJxlhN06/u2kKqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465188; c=relaxed/simple;
-	bh=ZtXnvvqwwvSgYyRuGL2zc0fQLfyQ5ojitTUrV2UI/p0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNWZkNzf+EpdL4E8l1LAuBtIY2KlwY8eziExDADs9cfYZO5uHFemQnCUwvZblDaWLqx9QOvQ6aYQLt8s2VdqGXrQV0l9nctb4Jk1zUeehv8VL3/Cv2Yb/Bzt6xM5KXb8yoz7mGLwlgEUTkV5CRU9WsSOTNk66tH+VB3+639FCj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G7TA20Kg; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 13D4C40E0194;
-	Wed,  9 Oct 2024 09:13:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gCIZPBN66lGb; Wed,  9 Oct 2024 09:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728465178; bh=vFRAC3+utwi/1G+fGmawDfHtZtcHA038WfspHtbjt9E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G7TA20KgmTXKNUaOS2qPQOKqC88vrp2pEbHd3P1N14rbuh5SuJ2hubVzJszUvswcM
-	 J4c9/RyXuuNYUxM1kmcfRfHGXUW3mH9cduTx3o/xG7bAGL/RzUs+oSAxM+fC+R4YSw
-	 yrcJxEgtJc1oA9tbhAAMYq1a+VpDdN+tvU9GgXWJzg8baizJeZ9zKwero0L7OFGzCu
-	 fWDueEh+Viqp1dZey7twmA/Oxs/7D9k1fZPSh3t5Vimtol2k2LLgWQQv4aHvQjGHbg
-	 ++3+Pq5suTpoCsUN3ENmrS93aPTXZ1MV/AUz4lbFVhOJRiZGwPw34vX0vcjuIDs8Cj
-	 GM5rsBcVNfzEknj816wie5ZzGOnUiHAsAvmWAlXP37WTU8p0ekR1DQ43+AF48Ccash
-	 vUf18g7Ypl8akgCAJgr/nYm5aOPOk1a2zuQQ1RjNmGm0hiribirjBp/E2ZRhG9qqaE
-	 TcJ1PLwgEcCo3n/nilsz+tZrTBmC9gs6ZqPO2TdbgK4+xjHiTI5tmxTijX7v1FNrlK
-	 RTxizbrCc4PbN6VA3zTLySYwuliG0N5Px4UUM9BJkMNCeRM7egR3LAK7ytRq/yu/6z
-	 WyVsoAkP0U+fhWw397cqlEv4mx2F+d3DjUUPX0ug8Vu4ur+Jw8QBxi6dWMbMJ7xjjv
-	 pRJPkxP3xs6vrvBYVCrcsJuc=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 055A740E0191;
-	Wed,  9 Oct 2024 09:12:52 +0000 (UTC)
-Date: Wed, 9 Oct 2024 11:12:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: AMD zen microcode updates breaks boot
-Message-ID: <20241009091247.GCZwZJDwFETmN5pEGe@fat_crate.local>
-References: <91194406-3fdf-4e38-9838-d334af538f74@kernel.dk>
- <20240928061038.GAZved3hMSU3XahWrJ@fat_crate.local>
- <5fe1e264-c285-4988-b1e3-46771d07172b@kernel.dk>
- <20240930044313.GAZvosYZF5mHi2OZbC@fat_crate.local>
- <d7aff674-ad92-4a36-9ebf-8d3c42774723@kernel.dk>
- <CC418B80-5ED9-4F64-917F-BA6F94130F83@alien8.de>
- <ad9638b4-0a4a-4cd0-9fcb-2690693da157@kernel.dk>
+	s=arc-20240116; t=1728465235; c=relaxed/simple;
+	bh=9TP0WjfU+hcaixoy+bZ6ZKceceIXrMZNxOYFFh2JXxE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=r8ZfmaX+4JMsVVZg1SrOsM2wDhDYdjNMqrx/MR1zWojsWENyh5K4yKTiLROgamsYC8HSigmnc/dbr3qCxgRIsv/nYh2v2r0HVsOWGSUSa1+itV1sK0iZ9nDVRXxyKHp5VPsZGvxNE+qBfEBFg7U8UrQNTVv6GBtMzbnPt9EESHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y5XpvUSG; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728465232; x=1760001232;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=9TP0WjfU+hcaixoy+bZ6ZKceceIXrMZNxOYFFh2JXxE=;
+  b=Y5XpvUSGGn8eVPA6acTHAjcMcMMGiRyPoinQebXCwFhSIXFa1pvzoJY7
+   eL4NHrzI3oeqOrJYJ4TER1iM6n8TE2Q1HKHSghtMZpRzevfuF+cMC0LqF
+   ucLHTCnlocPB0F6OGj7Xl0+ysAih77O7E71fC3FjqtCQ8HqarZiACHmlz
+   4FVmoB0FOKjsImKceg3aXdKk2767wMSsdayNW8JBzczWjravYJdO66dds
+   ye+y894j7Q89/Y97s3OUUITXf09zi2kw8B8vosGzFWjiRQVZd+vt2B6l4
+   7kcKQvROWnNUKyO2pqPTwCEHy7+DeXjFWu5RNOIhxR0FqCdF7ELQc1ckO
+   g==;
+X-CSE-ConnectionGUID: U1Zyph15SlaT3zPEx1L3zw==
+X-CSE-MsgGUID: s+eWGHv2RPusjFVTjKYZQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31452533"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="31452533"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:13:52 -0700
+X-CSE-ConnectionGUID: 91FDdqdkSsW+v+tRyXz0dg==
+X-CSE-MsgGUID: ozr4sKpfT56ZBHF5tJBZzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="76290234"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.245.243]) ([10.245.245.243])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:13:48 -0700
+Message-ID: <b21d911286a620b16ea1a30c704491876962812a.camel@linux.intel.com>
+Subject: Re: [PATCH RESEND] locking/ww_mutex: Adjust to lockdep nest_lock
+ requirements
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, Peter Zijlstra
+ <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>, Will Deacon
+ <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Maarten Lankhorst <maarten@lankhorst.se>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+ linux-kernel@vger.kernel.org,  intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Date: Wed, 09 Oct 2024 11:13:46 +0200
+In-Reply-To: <202410091542.f6c4a438-oliver.sang@intel.com>
+References: <202410091542.f6c4a438-oliver.sang@intel.com>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ad9638b4-0a4a-4cd0-9fcb-2690693da157@kernel.dk>
 
-On Mon, Sep 30, 2024 at 10:25:21AM -0600, Jens Axboe wrote:
-> Hmm, seems like a pretty standard cpu and updated microcode fw, no? But
-> if it's just me, we can just defer until it gets fixed, at least for
-> some more rcs. I just pruned the microcode for now to work around it, as
-> it's pretty annoying to forget about doing the reverts and then booting
-> a broken kernel. The box takes minutes to post+boot.
+On Wed, 2024-10-09 at 15:42 +0800, kernel test robot wrote:
+>=20
+>=20
+> Hello,
+>=20
+> kernel test robot noticed
+> "WARNING:at_kernel/locking/lockdep.c:#__lock_acquire" on:
+>=20
+> commit: d417c66b8b12b5706c9df4ddf5367af540f195c6 ("[PATCH RESEND]
+> locking/ww_mutex: Adjust to lockdep nest_lock requirements")
+> url:
 
-With the microcode blob removed so that no loading happens, what microcode
-does this box have?
+This is weird. This is an overflow warning indicating that the number
+of locks held overflows the 12-bit unsigned hlock->references.
 
-Still 0x0aa00215?
+I don't see it on local testing where hlock->references exactly maxes
+out with 2048 which is the expected value from 2047 locks in the test
+plus one extra dummy lock from the patch.
 
-I.e., what does:
+OTOH there might be a reason why the number of locks originally was set
+to 2047, and why we don't see more instances of this error. Could it be
+gcc-12 packing problem perhaps.
 
-$ grep microcode /proc/cpuinfo | sort | uniq -c
+Anyway if this is indeed the problem, it should suffice to lower the
+number of locks in the selftest to 2046...
 
-say?
+I'll send out an additional version of the patch to do just that.
 
-Thx.
+/Thomas
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> https://github.com/intel-lab-lkp/linux/commits/Thomas-Hellstr-m/locking-w=
+w_mutex-Adjust-to-lockdep-nest_lock-requirements/20241002-205818
+> base:
+> https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git=C2=A0d00b83d416e=
+7
+> 3bc3fa4d21b14bec920e88b70ce6
+> patch link:
+> https://lore.kernel.org/all/20241002125611.361001-1-thomas.hellstrom@linu=
+x.intel.com/
+> patch subject: [PATCH RESEND] locking/ww_mutex: Adjust to lockdep
+> nest_lock requirements
+>=20
+> in testcase: kernel-selftests
+> version: kernel-selftests-x86_64-977d51cf-1_20240508
+> with following parameters:
+>=20
+> 	group: locking
+>=20
+>=20
+>=20
+> compiler: gcc-12
+> test machine: 4 threads Intel(R) Xeon(R) CPU E3-1225 v5 @ 3.30GHz
+> (Skylake) with 16G memory
+>=20
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>=20
+>=20
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new
+> version of
+> the same patch/commit), kindly add following tags
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes:
+> > https://lore.kernel.org/oe-lkp/202410091542.f6c4a438-oliver.sang@intel.=
+com
+>=20
+>=20
+> [=C2=A0=C2=A0 63.327071][=C2=A0 T246] ------------[ cut here ]-----------=
+-
+> [=C2=A0=C2=A0 63.332388][=C2=A0 T246] DEBUG_LOCKS_WARN_ON(hlock->referenc=
+es <
+> references)
+> [ 63.332410][ T246] WARNING: CPU: 2 PID: 246 at
+> kernel/locking/lockdep.c:5058 __lock_acquire
+> (kernel/locking/lockdep.c:5058 (discriminator 9))=20
+> [=C2=A0=C2=A0 63.348622][=C2=A0 T246] Modules linked in: test_ww_mutex(+)
+> openvswitch nf_conncount nf_nat nf_conntrack nf_defrag_ipv6
+> nf_defrag_ipv4 psample btrfs blake2b_generic xor zstd_compress
+> raid6_pq libcrc32c intel_rapl_msr intel_rapl_common
+> x86_pkg_temp_thermal intel_powerclamp sd_mod coretemp sg kvm_intel
+> ipmi_devintf ipmi_msghandler i915 kvm binfmt_misc drm_buddy intel_gtt
+> drm_display_helper crct10dif_pclmul crc32_pclmul crc32c_intel mei_wdt
+> ghash_clmulni_intel ttm wmi_bmof sha512_ssse3 ahci rapl
+> drm_kms_helper libahci video intel_cstate intel_uncore serio_raw
+> libata mei_me i2c_i801 mei i2c_smbus intel_pch_thermal ie31200_edac
+> wmi acpi_pad tpm_infineon loop fuse drm dm_mod ip_tables sch_fq_codel
+> [=C2=A0=C2=A0 63.409553][=C2=A0 T246] CPU: 2 PID: 246 Comm: kworker/u16:5=
+ Tainted: G
+> S=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 6.10.0-04481-gd417c66b8b12 #1
+> [=C2=A0=C2=A0 63.419907][=C2=A0 T246] Hardware name: HP HP Z238 Microtowe=
+r
+> Workstation/8183, BIOS N51 Ver. 01.63 10/05/2017
+> [=C2=A0=C2=A0 63.429471][=C2=A0 T246] Workqueue: test-ww_mutex stress_ino=
+rder_work
+> [test_ww_mutex]
+> [ 63.436889][ T246] RIP: 0010:__lock_acquire
+> (kernel/locking/lockdep.c:5058 (discriminator 9))=20
+> [ 63.442284][ T246] Code: d2 0f 85 15 0c 00 00 44 8b 0d 7d df c7 04
+> 45 85 c9 0f 85 d0 fe ff ff 48 c7 c6 c0 c1 2a 84 48 c7 c7 00 91 2a 84
+> e8 8d 39 e5 ff <0f> 0b e9 b6 fe ff ff 41 be 02 00 00 00 e9 11 f7 ff
+> ff 31 db e9 bb
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+> =C2=A0=C2=A0 0:	d2 0f=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	rorb=C2=A0=C2=A0 %cl,(%rdi)
+> =C2=A0=C2=A0 2:	85 15 0c 00 00 44=C2=A0=C2=A0=C2=A0=C2=A0	test=C2=A0=C2=
+=A0 %edx,0x4400000c(%rip)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> # 0x44000014
+> =C2=A0=C2=A0 8:	8b 0d 7d df c7 04=C2=A0=C2=A0=C2=A0=C2=A0	mov=C2=A0=C2=A0=
+=C2=A0 0x4c7df7d(%rip),%ecx=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #
+> 0x4c7df8b
+> =C2=A0=C2=A0 e:	45 85 c9=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	test=C2=A0=C2=A0 %r9d,%r9d
+> =C2=A0 11:	0f 85 d0 fe ff ff=C2=A0=C2=A0=C2=A0=C2=A0	jne=C2=A0=C2=A0=C2=
+=A0 0xfffffffffffffee7
+> =C2=A0 17:	48 c7 c6 c0 c1 2a 84=C2=A0	mov=C2=A0=C2=A0=C2=A0 $0xffffffff84=
+2ac1c0,%rsi
+> =C2=A0 1e:	48 c7 c7 00 91 2a 84=C2=A0	mov=C2=A0=C2=A0=C2=A0 $0xffffffff84=
+2a9100,%rdi
+> =C2=A0 25:	e8 8d 39 e5 ff=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	callq=
+=C2=A0 0xffffffffffe539b7
+> =C2=A0 2a:*	0f 0b=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	ud2=C2=A0=C2=A0=C2=A0=C2=A0		<--=
+ trapping
+> instruction
+> =C2=A0 2c:	e9 b6 fe ff ff=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	jmpq=
+=C2=A0=C2=A0 0xfffffffffffffee7
+> =C2=A0 31:	41 be 02 00 00 00=C2=A0=C2=A0=C2=A0=C2=A0	mov=C2=A0=C2=A0=C2=
+=A0 $0x2,%r14d
+> =C2=A0 37:	e9 11 f7 ff ff=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	jmpq=
+=C2=A0=C2=A0 0xfffffffffffff74d
+> =C2=A0 3c:	31 db=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	xor=C2=A0=C2=A0=C2=A0 %ebx,%ebx
+> =C2=A0 3e:	e9=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	.byte 0xe9
+> =C2=A0 3f:	bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	.byte 0xbb
+>=20
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =C2=A0=C2=A0 0:	0f 0b=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	ud2=C2=A0=C2=A0=C2=A0=20
+> =C2=A0=C2=A0 2:	e9 b6 fe ff ff=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	=
+jmpq=C2=A0=C2=A0 0xfffffffffffffebd
+> =C2=A0=C2=A0 7:	41 be 02 00 00 00=C2=A0=C2=A0=C2=A0=C2=A0	mov=C2=A0=C2=A0=
+=C2=A0 $0x2,%r14d
+> =C2=A0=C2=A0 d:	e9 11 f7 ff ff=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	=
+jmpq=C2=A0=C2=A0 0xfffffffffffff723
+> =C2=A0 12:	31 db=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	xor=C2=A0=C2=A0=C2=A0 %ebx,%ebx
+> =C2=A0 14:	e9=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	.byte 0xe9
+> =C2=A0 15:	bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	.byte 0xbb
+> [=C2=A0=C2=A0 63.461748][=C2=A0 T246] RSP: 0018:ffffc9000141f7a8 EFLAGS: =
+00010086
+> [=C2=A0=C2=A0 63.467683][=C2=A0 T246] RAX: 0000000000000000 RBX: 00000000=
+00000001
+> RCX: 0000000000000027
+> [=C2=A0=C2=A0 63.475525][=C2=A0 T246] RDX: 0000000000000027 RSI: 00000000=
+00000004
+> RDI: ffff8883b5330c48
+> [=C2=A0=C2=A0 63.483354][=C2=A0 T246] RBP: ffff888430688000 R08: 00000000=
+00000001
+> R09: ffffed1076a66189
+> [=C2=A0=C2=A0 63.491172][=C2=A0 T246] R10: ffff8883b5330c4b R11: 00000000=
+00000001
+> R12: ffff888430688f58
+> [=C2=A0=C2=A0 63.499015][=C2=A0 T246] R13: 00000000000000a0 R14: ffff8884=
+1d5b1f28
+> R15: 0000000000000000
+> [=C2=A0=C2=A0 63.506860][=C2=A0 T246] FS:=C2=A0 0000000000000000(0000)
+> GS:ffff8883b5300000(0000) knlGS:0000000000000000
+> [=C2=A0=C2=A0 63.515659][=C2=A0 T246] CS:=C2=A0 0010 DS: 0000 ES: 0000 CR=
+0:
+> 0000000080050033
+> [=C2=A0=C2=A0 63.522116][=C2=A0 T246] CR2: 00005566d67bd842 CR3: 00000004=
+3b67e002
+> CR4: 00000000003706f0
+> [=C2=A0=C2=A0 63.529942][=C2=A0 T246] DR0: 0000000000000000 DR1: 00000000=
+00000000
+> DR2: 0000000000000000
+> [=C2=A0=C2=A0 63.537768][=C2=A0 T246] DR3: 0000000000000000 DR6: 00000000=
+fffe0ff0
+> DR7: 0000000000000400
+> [=C2=A0=C2=A0 63.545591][=C2=A0 T246] Call Trace:
+> [=C2=A0=C2=A0 63.548744][=C2=A0 T246]=C2=A0 <TASK>
+> [ 63.551537][ T246] ? __warn (kernel/panic.c:693)=20
+> [ 63.555470][ T246] ? __lock_acquire (kernel/locking/lockdep.c:5058
+> (discriminator 9))=20
+> [ 63.560262][ T246] ? report_bug (lib/bug.c:180 lib/bug.c:219)=20
+> [ 63.564637][ T246] ? handle_bug (arch/x86/kernel/traps.c:239)=20
+> [ 63.568838][ T246] ? exc_invalid_op (arch/x86/kernel/traps.c:260
+> (discriminator 1))=20
+> [ 63.573389][ T246] ? asm_exc_invalid_op
+> (arch/x86/include/asm/idtentry.h:621)=20
+> [ 63.578283][ T246] ? __lock_acquire (kernel/locking/lockdep.c:5058
+> (discriminator 9))=20
+> [ 63.583090][ T246] ? __lock_acquire (kernel/locking/lockdep.c:5058
+> (discriminator 9))=20
+> [ 63.587884][ T246] lock_acquire (kernel/locking/lockdep.c:466
+> kernel/locking/lockdep.c:5758 kernel/locking/lockdep.c:5721)=20
+> [ 63.592243][ T246] ? stress_inorder_work (kernel/locking/test-
+> ww_mutex.c:456) test_ww_mutex
+> [ 63.598787][ T246] ? __pfx_lock_acquire
+> (kernel/locking/lockdep.c:5724)=20
+> [ 63.603676][ T246] ? __pfx_do_raw_spin_lock
+> (kernel/locking/spinlock_debug.c:114)=20
+> [ 63.608899][ T246] ? __pfx___might_resched
+> (kernel/sched/core.c:8392)=20
+> [ 63.614036][ T246] ? __ww_mutex_lock+0x94c/0x2b50=20
+> [ 63.619954][ T246] __ww_mutex_lock+0x1f9/0x2b50=20
+> [ 63.625696][ T246] ? stress_inorder_work (kernel/locking/test-
+> ww_mutex.c:456) test_ww_mutex
+> [ 63.632218][ T246] ? stress_inorder_work (kernel/locking/test-
+> ww_mutex.c:456) test_ww_mutex
+> [ 63.638750][ T246] ? __pfx___ww_mutex_lock+0x10/0x10=20
+> [ 63.644940][ T246] ? __mutex_unlock_slowpath
+> (arch/x86/include/asm/atomic64_64.h:101 include/linux/atomic/atomic-
+> arch-fallback.h:4329 include/linux/atomic/atomic-long.h:1506
+> include/linux/atomic/atomic-instrumented.h:4481
+> kernel/locking/mutex.c:929)=20
+> [ 63.650454][ T246] ? lock_is_held_type
+> (kernel/locking/lockdep.c:5497 kernel/locking/lockdep.c:5827)=20
+> [ 63.655348][ T246] ? __pfx___might_resched
+> (kernel/sched/core.c:8392)=20
+> [ 63.660502][ T246] ? ww_mutex_lock (kernel/locking/mutex.c:878)=20
+> [ 63.665047][ T246] ww_mutex_lock (kernel/locking/mutex.c:878)=20
+> [ 63.669432][ T246] stress_inorder_work (kernel/locking/test-
+> ww_mutex.c:456) test_ww_mutex
+> [ 63.675813][ T246] ? __pfx_stress_inorder_work (kernel/locking/test-
+> ww_mutex.c:434) test_ww_mutex
+> [ 63.682709][ T246] ? lock_is_held_type
+> (kernel/locking/lockdep.c:5497 kernel/locking/lockdep.c:5827)=20
+> [ 63.687600][ T246] process_one_work (kernel/workqueue.c:3236)=20
+> [ 63.692398][ T246] ? __pfx_lock_acquire
+> (kernel/locking/lockdep.c:5724)=20
+> [ 63.697307][ T246] ? __pfx_process_one_work
+> (kernel/workqueue.c:3133)=20
+> [ 63.702545][ T246] ? assign_work (kernel/workqueue.c:1202)=20
+> [ 63.707003][ T246] ? lock_is_held_type
+> (kernel/locking/lockdep.c:5497 kernel/locking/lockdep.c:5827)=20
+> [ 63.711899][ T246] worker_thread (kernel/workqueue.c:3306
+> kernel/workqueue.c:3390)=20
+> [ 63.716353][ T246] ? __pfx_worker_thread (kernel/workqueue.c:3339)=20
+> [ 63.721334][ T246] kthread (kernel/kthread.c:389)=20
+> [ 63.725270][ T246] ? __pfx_kthread (kernel/kthread.c:342)=20
+> [ 63.729732][ T246] ret_from_fork (arch/x86/kernel/process.c:153)=20
+> [ 63.734019][ T246] ? __pfx_kthread (kernel/kthread.c:342)=20
+> [ 63.738485][ T246] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+> [=C2=A0=C2=A0 63.743119][=C2=A0 T246]=C2=A0 </TASK>
+> [=C2=A0=C2=A0 63.746012][=C2=A0 T246] irq event stamp: 10527
+> [ 63.750118][ T246] hardirqs last enabled at (10527):
+> finish_task_switch+0x1b6/0x950=20
+> [ 63.760389][ T246] hardirqs last disabled at (10526): __schedule
+> (kernel/sched/core.c:6416 (discriminator 1))=20
+> [ 63.769458][ T246] softirqs last enabled at (10478): handle_softirqs
+> (arch/x86/include/asm/preempt.h:26 kernel/softirq.c:401
+> kernel/softirq.c:582)=20
+> [ 63.778864][ T246] softirqs last disabled at (10473): __irq_exit_rcu
+> (kernel/softirq.c:589 kernel/softirq.c:428 kernel/softirq.c:637)=20
+> [=C2=A0=C2=A0 63.788185][=C2=A0 T246] ---[ end trace 0000000000000000 ]--=
+-
+>=20
+>=20
+>=20
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20241009/202410091542.f6c4a438-ol=
+iver.sang@intel.com
+>=20
+>=20
+>=20
+
 
