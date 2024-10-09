@@ -1,274 +1,124 @@
-Return-Path: <linux-kernel+bounces-356140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4561F995CF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:28:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C020995CF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B96981F25D5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C590A1F231E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB6429429;
-	Wed,  9 Oct 2024 01:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i9msE94f"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FDD2629D;
+	Wed,  9 Oct 2024 01:28:12 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E11D364AE;
-	Wed,  9 Oct 2024 01:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6C81F947;
+	Wed,  9 Oct 2024 01:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728437305; cv=none; b=fhDBoiyIZamFlaLj1MagNJpo+izNoRvscOxK4LNViGUmYXWU8hCf7c2wz/HxBvr4ki+D8uKK0HyljjxIeVmePGCOK48zhP0ornfCiQ16FJWls0qwVGdapRuFHgqser1cuf9K7sLBOtT99qkLi68eRVx0Y3Wq0jwQZToSVWjAY6I=
+	t=1728437291; cv=none; b=stDW8FRqjZXKdiL5lcasbGAQjU8cZkI/3PHa/Oyutrn/S5y5tY1zbT5TxTgwuLrqIG+jlVNUnc/9Qw7/3TbBu2PjaYQp6IxR9YBg7EX/dWXpfbs4cjLVkwgc+iH78EzUYEN1AnLZOnZShxufpkDSinKcpJGI39vOZ4csMLGPmTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728437305; c=relaxed/simple;
-	bh=oKrWsj0O/Nlo4rrHs/iCycL28wO1QB8vzihNMhgc2eY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TNDs+z3SUer8yuLPTsHUfHZmGYpMh8FIi7xyNuzueMn/FYUAS3OGNJ+wNErBs1DILmceXuFdvkE0oCYua5HxCkSqkM/aqYpMZHvz8Zw8ORaTsOyFwR0R++oMnxR1UOjab93TLIyD6Z6tIF/XlOiwEnoE791Puyo1DAo1fJBnX2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i9msE94f; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 498H3xpr022606;
-	Wed, 9 Oct 2024 01:28:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=T1ngBHzXAUC6PWjMk0KSVS
-	3Ni9BJwLovX98Row3Sw2U=; b=i9msE94fGKR3E8tCE22GUnndM0FLV17REh4cMP
-	9x5Pel0qo5a+0xuncIdvn8k3hbcAg8MS9Rj4EAZtuyHjPIsQ6O3z2ivJGjME8ulH
-	DENmaL+aRlsGz9ySKZhZVQ0SkH6qPpLhnaNj2BUsqfCDcOjm/444wbGUn4MdtnsV
-	GNcp+sn5yoNmRP5aZhgUFZ8WhNx7na4Bk7QWQK44RQP1QzpOCu7xKXSHGgEUgU+M
-	bjYTLMWva7NkxgsSKjv0kU6VQrdxVn1eGyXtEgWK2YbaOwVCFSBJWdA8MTaUd+Cu
-	TxwJNtdESdD2PlpVlMD9fu6C8CF9KEwTbEefBMNOb4Ovu+QQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaevey6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 01:28:17 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4991SGKN024884
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 01:28:16 GMT
-Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+	s=arc-20240116; t=1728437291; c=relaxed/simple;
+	bh=Zt+WvHMFV+vq/afMTD+xu/ynJMNR45HNAScKN6fRejY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r/HaZMoOUGlsyYOWqPpBTnC9imFp9cvWHfa2JT5QD3LWNBIjjpxIdA+4Lepiue6m5vc4nbfeppC0YEVI5zBw+fBXtR0vnow79deiNX/eQnPo57tAyoJ5NVtmdtCyANGjB8Qg0nuQ7tAXkTW0qNVoJiYKTwwxBpFZBtFcxP88AS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XNZxm3CtFz20q26;
+	Wed,  9 Oct 2024 09:27:24 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 90A2D1A016C;
+	Wed,  9 Oct 2024 09:28:00 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 8 Oct 2024 18:28:14 -0700
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-To: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <agross@kernel.org>, <andersson@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
-        <stanimir.k.varbanov@gmail.com>,
-        Miaoqing Pan <quic_miaoqing@quicinc.com>
-Subject: [PATCH v3] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-Date: Wed, 9 Oct 2024 09:27:38 +0800
-Message-ID: <20241009012738.2840558-1-quic_miaoqing@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+ 15.1.2507.39; Wed, 9 Oct 2024 09:28:00 +0800
+Message-ID: <d7604803-a26b-448e-a4d8-7247f8ca7bf2@huawei.com>
+Date: Wed, 9 Oct 2024 09:28:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: R2rx9bkmIcoL0smXS9fJdr1jD0_maAgj
-X-Proofpoint-GUID: R2rx9bkmIcoL0smXS9fJdr1jD0_maAgj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410090008
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH resend v3] bcachefs: Fix NULL pointer dereference in
+ bch2_opt_to_text
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+CC: <kent.overstreet@linux.dev>, <linux-bcachefs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com>
+References: <f8fcc1e6-6de6-4d60-83a7-83e95a7d6b6e@huawei.com>
+ <20241008135105.7426-1-pvmohammedanees2003@gmail.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20241008135105.7426-1-pvmohammedanees2003@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
-board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
 
-Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
----
-v2:
-  - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
-  - relocate pcieport0 node in alphabetical order.
-v3:
-  - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
 
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 121 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
- 2 files changed, 122 insertions(+), 1 deletion(-)
+On 2024/10/8 21:51, Mohammed Anees wrote:
+> Hi Hongbo,
+> 
+>> As definition, max is the right bound for value. opt->max - 1 is valid.
+>> May be you should remove the equals sign.
+> 
+> This is not true, max is not the right upper bound when it comes to
+> this but rather the size of the array instead, therefore opt->max - 1
+> is where we should stop.
+> 
+> const struct bch_option bch2_opt_table[] = {
+> #define OPT_BOOL()		.type = BCH_OPT_BOOL, .min = 0, .max = 2
+> #define OPT_UINT(_min, _max)	.type = BCH_OPT_UINT,			\
+> 				.min = _min, .max = _max
+> #define OPT_STR(_choices)	.type = BCH_OPT_STR,			\
+> 				.min = 0, .max = ARRAY_SIZE(_choices),	\
+> 				.choices = _choices
+> ...
+> 
+> Here if you look at OPT_STR you see that it is indeed the size
+> of the array.
+> 
+>> It should be no problem to just solve this null pointer issue() (How is
+>> this stack triggered, may be I lost something.), but this should be a
+> 
+> The reason this is triggered is because in bch2_opt_to_text,
+> the parameter v passed is beyond the number of options available
+> to Opt_str_hash.
+> 
+> #define BCH_STR_HASH_OPTS()		\
+> 	x(crc32c,		0)	\
+> 	x(crc64,		1)	\
+> 	x(siphash,		2)
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 0c1b21def4b6..2546e9b86555 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -27,6 +27,83 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	vreg_conn_1p8: vreg_conn_1p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_1p8";
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8654au_1_gpios 4 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	vreg_conn_pa: vreg_conn_pa {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_pa";
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8654au_1_gpios 6 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	wcn6855-pmu {
-+		compatible = "qcom,wcn6855-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_en_state>, <&wlan_en_state>;
-+
-+		vddio-supply = <&vreg_conn_pa>;
-+		vddaon-supply = <&vreg_l2c>;
-+		vddpmu-supply = <&vreg_conn_1p8>;
-+		vddrfa0p95-supply = <&vreg_l2c>;
-+		vddrfa1p3-supply = <&vreg_l6e>;
-+		vddrfa1p9-supply = <&vreg_s5a>;
-+		vddpcie1p3-supply = <&vreg_l6e>;
-+		vddpcie1p9-supply = <&vreg_s5a>;
-+
-+		bt-enable-gpios = <&pmm8654au_1_gpios 8 GPIO_ACTIVE_HIGH>;
-+		wlan-enable-gpios = <&pmm8654au_1_gpios 7 GPIO_ACTIVE_HIGH>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -453,6 +530,20 @@ &pmm8654au_1_gpios {
- 			  "USB2_PWR_EN",
- 			  "USB2_FAULT";
- 
-+	wlan_en_state: wlan-en-state {
-+		pins = "gpio7";
-+		function = "normal";
-+		output-low;
-+		bias-pull-down;
-+	};
-+
-+	bt_en_state: bt-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		output-low;
-+		bias-pull-down;
-+	};
-+
- 	usb2_en_state: usb2-en-state {
- 		pins = "gpio9";
- 		function = "normal";
-@@ -702,6 +793,25 @@ &pcie1_phy {
- 	status = "okay";
- };
- 
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1101";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		qcom,ath11k-calibration-variant = "SA8775P";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &remoteproc_adsp {
- 	firmware-name = "qcom/sa8775p/adsp.mbn";
- 	status = "okay";
-@@ -744,6 +854,17 @@ &uart17 {
- 	pinctrl-0 = <&qup_uart17_default>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn6855-bt";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+	};
- };
- 
- &ufs_mem_hc {
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index e8dbc8d820a6..8d42b5e9c7d6 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -5570,7 +5570,7 @@ pcie0: pcie@1c00000 {
- 
- 		status = "disabled";
- 
--		pcie@0 {
-+		pcieport0: pcie@0 {
- 			device_type = "pci";
- 			reg = <0x0 0x0 0x0 0x0 0x0>;
- 			bus-range = <0x01 0xff>;
--- 
-2.25.1
+ok, got! the length of bch2_str_hash_types is bigger than 
+BCH_STR_HASH_OPTS, I miss this. Thank you.
 
+> Passing a value v of 3 attempts to access a non-existent fourth element.
+> This value v corresponds to str_hash in the bch_opts structure within the
+> bch_fs struct. Since print_mount_opts checks each option, it seems
+> appropriate to add the validation there. Please let me know if
+> I've misunderstood anything.
+
+This situation is due to syzbot constructing abnormal data, for example, 
+in the case of bool type option, there may not be an exception here, but 
+the printed values may no longer be 0 or 1, this will not cause program 
+failure, but it does not match the expected value. Moreover, for 
+BITFIELD type option, the value may also exceed the number of bits, 
+which should also pose a risk of overflow when printing in prt_bitflags.
+
+Thanks,
+Hongbo
+> 
+> Thanks!
+> 
 
