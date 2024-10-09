@@ -1,129 +1,92 @@
-Return-Path: <linux-kernel+bounces-356746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C9D996618
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3DD6996619
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A5C1C248B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 008291C24A72
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824A718DF6B;
-	Wed,  9 Oct 2024 09:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BFC1917D7;
+	Wed,  9 Oct 2024 09:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wTv2PEY2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xfV2vvxK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jmgV7pnJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F921191473;
-	Wed,  9 Oct 2024 09:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CE618E35B;
+	Wed,  9 Oct 2024 09:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467632; cv=none; b=diIiPFm1/dkqhyCGjcBMKghGUs1Sishrz0fd28aFnwUaFN/MAWp/ILCcLaYPvewtZV1FoYlX+LgdDzVeZ9qNdHV7RCKcplBSeV9CL4ClhJoDDMYkDRTJecOoycol17isoIQ16jOVKrk9EYDjumN5kmKMagIqhjmG0c932oueFfM=
+	t=1728467635; cv=none; b=eAHSaUrZwXNQSpfDAPQ6vAR9F7ECIMgITTcKO4l2ORHb9eAs5RvPbMY7EVH/RYnC3hqo3Q1oQ46TP2PM8YRX1UAClDTPzFU82LtpGDt2AO43krhVSMF1XHJ+xPA3z7SpugSMwEsxNnKvo5ntApBKJvJVCfOiVo0qwN6Kiydks7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467632; c=relaxed/simple;
-	bh=APXoPI3sAa0KzUuaFaTkeExBRaD6Rs7QrzhV8+V+BWI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h1qbVObNG06hIukyQ3R7BfTkLsiNasBnYRPOY228QP5yna5w4oBYmnOuR5ih8dwqf3EXx0RL+l0vj7EcanZCxVf1+P+2G0PwKLV6gTQbaa22wCHW8JGlUL7sOIXtNWvixfUaRPCm5ne1SLDDgdwo4HOVM6Cc023ujBSP2bJTdcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wTv2PEY2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xfV2vvxK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728467628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6wmZgNbeW2JvNpgS3a2aAd/BziZrZJXCOv9QKhyUbc=;
-	b=wTv2PEY2kWMLaAJKXKiBpf9A5u9zDq+2sj7mN3+o5DZzQXNoig2aWKyM9WUX6vo1MMwo4m
-	JZVwAc5nAGBXC43dXPfUj1ciKSZPvpAvpH5eFOxpRy1cxdUAh1qHX1nPeMiWtaPYqB0l5m
-	BOAd7tAFfY48yqstgeQZv1zSU8BiVaRhefAneA/3rfdFXKGqY7MzNNRdBwdsP4nq/Ktlks
-	uhQzW0aOiPFdgdQg3+k5eu/cRsXQWsX/IfxyiqxViDThlm01uFvyGlT2OAqJtFQnoCq1es
-	voVbesIDlGVMNXv/Sdlq0R/s4AE3Kg2hQ2Az8a9wSOJJKY+U++mUynZVc7gzpw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728467628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V6wmZgNbeW2JvNpgS3a2aAd/BziZrZJXCOv9QKhyUbc=;
-	b=xfV2vvxKqwHS3e2NZf+o4Ycj3Rylk+sm6QJKNHUG69+ZDGMo9G6Yy6aQV4AKWWDur5Dmz7
-	4uVMoCJvvWoSNSDw==
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>, Andy Lutomirski
- <luto@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao
- <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter
- Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann
- <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v3 2/2] vdso: Introduce vdso/page.h
-In-Reply-To: <20241003152910.3287259-3-vincenzo.frascino@arm.com>
-References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
- <20241003152910.3287259-3-vincenzo.frascino@arm.com>
-Date: Wed, 09 Oct 2024 11:53:47 +0200
-Message-ID: <87wmihr49g.ffs@tglx>
+	s=arc-20240116; t=1728467635; c=relaxed/simple;
+	bh=wWY/kBHBtGx7dSflkfMGklu+KpxJfc4bWMZJCrBuCoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icDFU+Umq0JgDGiMxWiHThtIhfMuEXdiumNOnX+nlEfVL1iyCxQD5Fu8saR0F8nZLz+ZOFh2ytU42Dk9kRTn5PsO7mbVdQjQ4qSaTnBez2vH41/fqC29BKNRbXvtsk40T/tsFZMuWgqgCKBNhgLC/rF2tX9PW4UPKTjshTvdaE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jmgV7pnJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81152C4CED1;
+	Wed,  9 Oct 2024 09:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728467635;
+	bh=wWY/kBHBtGx7dSflkfMGklu+KpxJfc4bWMZJCrBuCoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jmgV7pnJWU5qlvVnGLrGm14zAet+kbdyrsyQqwxJ9Wun9WrSdPD2sn7JACNDU6nIg
+	 Pf6b1EPfErURXQUiYXno0Pc691Nbo7SHqwD+goC1vhapahN5LpIo/nLxNb4gVAZiFI
+	 tB0bjcr19wClwPm76U1LmgVUtkpLZgrItnLwWbMc=
+Date: Wed, 9 Oct 2024 11:53:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Cc: Dominik Karol =?utf-8?Q?Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>,
+	tdavies@darkphysics.net, dan.carpenter@linaro.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] staging: rtl8192e: Use MSR_LINK_* macros
+Message-ID: <2024100944-baton-manger-3768@gregkh>
+References: <20240921122113.30009-1-dominik.karol.piatkowski@protonmail.com>
+ <9bb46e16-eb37-4d76-a917-e0f1e738fd04@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9bb46e16-eb37-4d76-a917-e0f1e738fd04@gmail.com>
 
-On Thu, Oct 03 2024 at 16:29, Vincenzo Frascino wrote:
-> The VDSO implementation includes headers from outside of the
-> vdso/ namespace.
->
-> Introduce vdso/page.h to make sure that the generic library
-> uses only the allowed namespace.
->
-> Note: on a 32-bit architecture UL is an unsigned 32 bit long. Hence when
-> it supports 64-bit phys_addr_t we might end up in situation in which
-> the
+On Sun, Sep 22, 2024 at 09:01:09PM +0200, Philipp Hortmann wrote:
+> On 9/21/24 2:22 PM, Dominik Karol Piątkowski wrote:
+> > There were two seemingly not used macros defined in r8192E_hw.h:
+> > MSR_LINK_ADHOC and MSR_LINK_MASTER.
+> > 
+> > There is one function explicitly updating MSR (Media Status Register):
+> > _rtl92e_update_msr - only MSR_LINK_MASK and MSR_LINK_MANAGED are used
+> > there. However, in rtl92e_set_reg, inside HW_VAR_MEDIA_STATUS section,
+> > MSR is also updated - covering more than MSR_LINK_MANAGED case.
+> > 
+> > This series makes use of appropriate MSR_LINK_* macros in rtl92e_set_reg
+> > and removes duplicated MSR_* macros. While at it, fix camel case variable
+> > in rtl92e_set_reg function.
+> > 
+> > Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
+> > 
+> > Dominik Karol Piątkowski (2):
+> >    staging: rtl8192e: Use MSR_LINK_* macros
+> >    staging: rtl8192e: r8192E_dev.c: Rename btMsr variable
+> > 
+> >   drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 14 +++++++-------
+> >   drivers/staging/rtl8192e/rtl8192e/r8192E_hw.h  |  6 +-----
+> >   2 files changed, 8 insertions(+), 12 deletions(-)
+> > 
+> 
+> Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+> 
 
-We end up with nothing.
+This driver is now deleted from the tree, sorry.
 
-> top 32 bit are cleared. To prevent this issue this patch provides
-> separate macros for PAGE_MASK.
-
-'this patch' is redundant information.
-
-git grep 'This patch' Documentation/process/
-
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __VDSO_PAGE_H
-> +#define __VDSO_PAGE_H
-> +
-> +#include <uapi/linux/const.h>
-> +
-> +/*
-> + * PAGE_SHIFT determines the page size.
-> + *
-> + * Note: This definition is required because PAGE_SHIFT is used
-> + * in several places throuout the codebase.
-> + */
-> +#define PAGE_SHIFT      CONFIG_PAGE_SHIFT
-> +
-> +#define PAGE_SIZE	(_AC(1,UL) << CONFIG_PAGE_SHIFT)
-> +
-> +#if defined(CONFIG_PHYS_ADDR_T_64BIT)
-> +#define PAGE_MASK	(~((1 << CONFIG_PAGE_SHIFT) - 1))
-> +#else
-> +#define PAGE_MASK	(~(PAGE_SIZE-1))
-
-#define PAGE_MASK	(~(PAGE_SIZE - 1))
-
-please.
-
-Thanks,
-
-        tglx
+greg k-h
 
