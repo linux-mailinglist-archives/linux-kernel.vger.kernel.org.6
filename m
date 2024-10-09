@@ -1,135 +1,82 @@
-Return-Path: <linux-kernel+bounces-357248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C875996E73
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:43:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93589996E77
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 158D9B21B94
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA46287149
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267561A08C2;
-	Wed,  9 Oct 2024 14:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5554519CC29;
+	Wed,  9 Oct 2024 14:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cIHKu2rk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvSSIvCO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E815519DF5F;
-	Wed,  9 Oct 2024 14:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C5012EBEA;
+	Wed,  9 Oct 2024 14:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484987; cv=none; b=RaQ2oXbANYSTDFhmCTdyg8RUZuSARlacV8WG9yQbYIf/I6b7/uAaCCSJOZGdlKigA4gTdnESSA8umFCJMZPelFIXxFcPnpGADerPLnOera7WcZmbCxKwqeD75yMosllYA5mCrAcnRj/7C83H2kVFChuiZSsZrzjlN2/vAvUFzl0=
+	t=1728485014; cv=none; b=I+CfaI86dXFW2h06x8twq0oi+y/iwfWXfkgwfOA6b3gyPjXk2LAHNG4l4X6j8HgtjlE6RFUNAISYKseyaiGLMhyf8s/dSh+lIfvlbNP883B2ybPyZ8r5Fh3I6zj4zNWuU5H/N8YogMyPJJxZ2CnQrQVZtoI8FO6eMDLIuuHFNvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484987; c=relaxed/simple;
-	bh=hf4on/r5tPwKyDpoq+OEWgpFtnZGs8sN7/MSF1eK+4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2pqDpGZvzgwClY/FxRlivrIVh7rDtuhXn/7tpuG1Ab+0e3ZP4OukmNDx1EPQhzjIAR5+G61AW+uKhGVkKMAAQ3eW7IP8dCRe603DnTBjeNDa6dqSIxbD1oZHRKJS7YLWNTWJDvEBgYW7aaQBnbHy+c7bHqfKG+mui/SPZ+v+NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cIHKu2rk; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728484986; x=1760020986;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hf4on/r5tPwKyDpoq+OEWgpFtnZGs8sN7/MSF1eK+4M=;
-  b=cIHKu2rkscPknfuJ/oboQ3MjvgfW8jyjmjQhwEaGeCLlXfMq9h+OoT4e
-   wfq0YnVBC1WoybSE+uoOlSPVdleKJZkbKhAWn8fWppJLMRvvHIdqL++1C
-   9CMUIYtOQtFETCABldz+O4Ntm1d9FVs/Mnh1qCbUiSmMIVxFMBuN5yhit
-   46tATQRNNzVtH4VoQDdgQI+kESK4PUQk6oiAwatJQAE/fMG4XXf9Bl0Xc
-   hVXS61O3XwEslObPixuBTrBMYAhF6xwnRsc95HenfbV789HLtMpAhPhST
-   SLRaHpPwIOEUAch/m6nzSLyC1E6aBXiJsij8bVs1AFyWoBVuldM45jAk+
-   Q==;
-X-CSE-ConnectionGUID: KSi0YeU4QS2R1F5hlLAngA==
-X-CSE-MsgGUID: NQc8K75lTjqRnbS4JElNEA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27737863"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="27737863"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 07:43:05 -0700
-X-CSE-ConnectionGUID: 72lAOzH0S52oi+21m+H9pg==
-X-CSE-MsgGUID: cn1yz7O5TCeTmob0zzsP7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="81289743"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 09 Oct 2024 07:43:01 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E3F47807; Wed, 09 Oct 2024 17:42:59 +0300 (EEST)
-Date: Wed, 9 Oct 2024 17:42:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Fan Ni <fan.ni@samsung.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v4 02/28] printk: Add print format (%pra) for struct range
-Message-ID: <ZwaWc0-VxNpNeWBN@black.fi.intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-2-c261ee6eeded@intel.com>
- <ZwVkNNpVrJ4lHQ8p@black.fi.intel.com>
- <20241009132737.000046ca@Huawei.com>
+	s=arc-20240116; t=1728485014; c=relaxed/simple;
+	bh=XpufhfIwBFzW0DRqV9iSYAuW1EUgE4gZ9XDPghDF980=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bDgKkVGoLKvht402AxKOZ9Irb/9PoTE8oCe3B/rSpXGYrkbPgSlroiAYI3B9Pfmzq0uxOeQWEPrrMWsnkpm1GhSxTHaqVpvHwqjSoslUCI4AOkUYF+Zib5pvpXOTh3IUvy5aJtHXm3h66nsOaKKW4JEZ4OdXQGEu8U9ZWP85om8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvSSIvCO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5A9C4CEC3;
+	Wed,  9 Oct 2024 14:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728485013;
+	bh=XpufhfIwBFzW0DRqV9iSYAuW1EUgE4gZ9XDPghDF980=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=QvSSIvCO0QBVSIjf7t8Xr9t4a7X9q+hgEezm/Qt+NGcOrNios7XHAEGgeHB9Cn7zU
+	 d2MBFPEnEFayBmHt8gQc+iZxKsyAZWs4Pp384RAij5d2dQRW1O0YruwZKLPUAWohVU
+	 BD8+g8aG3NVAZLClu+tjZahTj3g7x6FC3IjHZ1e+q3a1YD86NS57JX2m0z0MIFyXiM
+	 A4XtOYgfqlFFZJD8kmNCAxeKiYkqhc32BCyUbwG7v2meLWf6Q0W1WXuzMDiEB74VCa
+	 v3GYa6sTXSdoiGU0K2o06HcdJeukCmsYw2NYxrX7Skvzrd0z+35zjRMbG/RAMJmXUA
+	 aJUIuefm7ediA==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, 
+ hdegoede@redhat.com, linux@treblig.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240919232758.639925-1-linux@treblig.org>
+References: <20240919232758.639925-1-linux@treblig.org>
+Subject: Re: (subset) [PATCH] backlight: Remove notifier
+Message-Id: <172848501143.600706.12618555351534391287.b4-ty@kernel.org>
+Date: Wed, 09 Oct 2024 15:43:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009132737.000046ca@Huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Wed, Oct 09, 2024 at 01:27:37PM +0100, Jonathan Cameron wrote:
-> On Tue, 8 Oct 2024 19:56:20 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, Oct 07, 2024 at 06:16:08PM -0500, Ira Weiny wrote:
-
-...
-
-> > > +static void __init
-> > > +struct_range(void)
-> > > +{
-> > > +	struct range test_range = {
-> > > +		.start = 0xc0ffee00ba5eba11,
-> > > +		.end = 0xc0ffee00ba5eba11,
-> > > +	};  
-> > 
-> > A side note, can we add something like
-> > 
-> > #define DEFINE_RANGE(start, end)	\
-> > 	(struct range) {		\
-> > 		.start = (start),	\
-> > 		.end = (end),		\
-> > 	}
-> > 
-> > in range.h and use here and in the similar cases?
+On Fri, 20 Sep 2024 00:27:58 +0100, linux@treblig.org wrote:
+> backlight_register_notifier and backlight_unregister_notifier have
+> been unused since
+>   commit 6cb634d0dc85 ("ACPI: video: Remove code to unregister acpi_video
+> backlight when a native backlight registers")
 > 
-> DEFINE_XXXX at least sometimes is used in cases that create the
-> variable as well.  E.g. DEFINE_MUTEX()
+> With those not being called, it means that the backlight_notifier
+> list is always empty.
+> 
+> [...]
 
-I understand your point, but since there are many similarities to struct
-resource, I would stick with naming convention in ioport.h.
+Applied, thanks!
 
-> INIT_RANGE() maybe?
+[1/1] backlight: Remove notifier
+      commit: 5461f3fd74a89757f95f351eb0bc26aafc2a2e91
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+--
+Lee Jones [李琼斯]
 
 
