@@ -1,75 +1,90 @@
-Return-Path: <linux-kernel+bounces-357958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F727997880
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:31:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05E8997887
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01D0A1F239DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06911C21650
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4F818CC1F;
-	Wed,  9 Oct 2024 22:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKrWmWQ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F394C1E284E;
+	Wed,  9 Oct 2024 22:34:18 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54159145B2C;
-	Wed,  9 Oct 2024 22:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAC1185949;
+	Wed,  9 Oct 2024 22:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728513094; cv=none; b=BZA9ncY2P708o36OaxjQAl4oSn7TzVshAxYmhBN4jdSChJbX63QbFVbW1k2rEQIxA+ajcuR/8XroTskk6b3UHWKsu8wBToakWtLSgMhKv7me3XT+k7haVYtJhLEa7IbBqpnQf21x4UIvvvgl132597ZAfELaRhlWddUHFdEeXzE=
+	t=1728513258; cv=none; b=ckT9sSAeXDgdVMjv4kEOuB4oqsQAVp6+tGPwyuf1UW8OX+BEfjGncT4JWKZ4LMiygXE/ApXFkuaiZhlwxe5oy2ic5qXJloho9+BGJOXdsptBXqdKrnWGovtgEXlBhNpGIx9wjQu6cpXtv9GUfIWU4qJh7tKEEsh6LHHzmBznF1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728513094; c=relaxed/simple;
-	bh=/ctDSn+W94oOs7qo3do5T7WuCYl7K5I57xpME4eDnjc=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Ee2QXFM8oNeLCBn/iibm69JjKBRRn0tPUA8mLIEnYgkaVyeib4REeinUzM/M3PefvF1pjcRYuRWsTf7Dd2FNfw7Z2KlWHTrCRzMAH8AJz/mSYtOt8j1uTzZj/1hJIoIdEfScMXVXuSUYKMpj1oUGSmKju22SZ6k/uicCHAGV4eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKrWmWQ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3AB3C4CEC3;
-	Wed,  9 Oct 2024 22:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728513093;
-	bh=/ctDSn+W94oOs7qo3do5T7WuCYl7K5I57xpME4eDnjc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=CKrWmWQ21hgGZLilMnIxEvMYqBfMaVmhIkAqx1Rss3KDpE2HnCck71TX73KeCjilg
-	 Pfq5vb78mq7yd3HF/e4XOST0XQ0g2yIsd11L+rOTM3LiLUzQl66zFAm9lh95PI9BAK
-	 5uAC1oOMG5UvJbY4tr1qXfm8vBCVXwGLp6cFskXN8bIcxu2O/cDNTLi1pNQIjFx2qn
-	 j6bGlWOs2h2RhFGpUqLF8vKWDfUl6whAEhgyH01Tv4dFgiVEqn9BpQHHjOnPMm7w3j
-	 9QiiZA+iam0pLg3Wa6XKSIynACXvAhc/pgMw3qhcsjMFNZV5sSy1d2Z3peeenI0H/3
-	 HvIYFkC5aigpw==
-Message-ID: <a0662187e806af01f4faf3f0875c5ed4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728513258; c=relaxed/simple;
+	bh=yFqd026lGIBH4U1L5dmmxB1xoS90MCAzCPpG9GqZXRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IR8xz35WVNmeOCuJZYKlsw2sobOUYg/VhEsoEPqB38yIPi6VK4Dliz4yp/TGjxLLlJ/x+RqTTjJiH+m0hu9cxmZCccyMDwf+3/F3+f1YekL+8WC0+WZOeqfO0NSz6xHWh+CyR9D+MOAmKTWKyzOIM3rj6Jb6SV+7C8igtUOSUsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1syfFx-0001nT-TE; Thu, 10 Oct 2024 00:34:09 +0200
+Date: Thu, 10 Oct 2024 00:34:09 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Florian Westphal <fw@strlen.de>, Richard Weinberger <richard@nod.at>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, kadlec@netfilter.org, pablo@netfilter.org,
+	rgb@redhat.com, upstream+net@sigma-star.at
+Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
+Message-ID: <20241009223409.GE3714@breakpoint.cc>
+References: <20241009203218.26329-1-richard@nod.at>
+ <20241009213345.GC3714@breakpoint.cc>
+ <CAHC9VhSFHQtg357WLoLrkN8wpPxDRmD_qA55NHOUEwFpE_pbrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241001-spmi-pmic-arb-scoped-v1-1-5872bab34ed6@gmail.com>
-References: <20241001-spmi-pmic-arb-scoped-v1-1-5872bab34ed6@gmail.com>
-Subject: Re: [PATCH] spmi: pmic-arb: fix return path in for_each_available_child_of_node()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Abel Vesa <abel.vesa@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 09 Oct 2024 15:31:31 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSFHQtg357WLoLrkN8wpPxDRmD_qA55NHOUEwFpE_pbrg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Quoting Javier Carrasco (2024-10-01 05:55:52)
-> This loop requires explicit calls to of_node_put() upon early exits
-> (break, goto, return) to decrement the child refcounter and avoid memory
-> leaks if the child is not required out of the loop.
->=20
-> A more robust solution is using the scoped variant of the macro, which
-> automatically calls of_node_put() when the child goes out of scope.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 979987371739 ("spmi: pmic-arb: Add multi bus support")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
+Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Oct 9, 2024 at 5:34 PM Florian Westphal <fw@strlen.de> wrote:
+> > Richard Weinberger <richard@nod.at> wrote:
+> > > When recording audit events for new outgoing connections,
+> > > it is helpful to log the user info of the associated socket,
+> > > if available.
+> > > Therefore, check if the skb has a socket, and if it does,
+> > > log the owning fsuid/fsgid.
+> >
+> > AFAIK audit isn't namespace aware at all (neither netns nor userns), so I
+> > wonder how to handle this.
+> >
+> > We can't reject adding a -j AUDIT rule for non-init-net (we could, but I'm sure
+> > it'll break some setups...).
+> >
+> > But I wonder if we should at least skip the uid if the user namespace is
+> > 'something else'.
+> 
+> This isn't unique to netfilter and the approach we take in the rest of
+> audit is to always display UIDs/GIDs in the context of the
+> init_user_ns; grep for from_kuid() in kernel/audit*.c.
 
-Applied to spmi-next
+Hmm, audit_netlink_ok() bails with -ECONNREFUSED for current_user_ns()
+!= &init_user_ns, so audit_log_common_recv_msg() won't be called from
+tasks that reside in a different userns.
+
+If you say its fine and audit can figure out that the retuned
+uid is not related to the initial user namespace, then ok.
+
+I was worried audit records could blame wrong/bogus user id.
 
