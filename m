@@ -1,190 +1,199 @@
-Return-Path: <linux-kernel+bounces-357097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E3B996B89
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37108996B8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8B0B23C58
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B1721C22DBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEDD192B6D;
-	Wed,  9 Oct 2024 13:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B181990B3;
+	Wed,  9 Oct 2024 13:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vTRAmYFh"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i4qqYEMg"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EB5192B88
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1517D198E61
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728479741; cv=none; b=OZA8rXEtR7HulVHlcQdweYIRy2rEBC4VP89m9lCZ23j+++TGeH6hI/eWVYY523fV3/vIgOPnFx+9DqG6SfoUCip3gTdLZWiMDkZDwh2qEGTCOgvc++AP+CiXo7lOwWIkMtj2Lv4bSsfuRmshotf0vWzmyJNgA0n+S6cHOTaKrIc=
+	t=1728479744; cv=none; b=CDmEM8pfUUVxlbqTx5pJ4ZTGxklvoA0urE9AoM23BJH6kbIy3DaaQ6SQTW+KRQC4HRSoskh4jx47hrYGDEG00dLVDbgFCXZvM7QyjWjydlmaCAsatN1p46I2ZCvyzxAG6NcEWag/RzuUWNWQZCkNjpxGInN1Bs0u7/MInOyPSxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728479741; c=relaxed/simple;
-	bh=a/g/KSMW6CmKID3bt4x5A8ciB/In9mNPhttKBVqxwd8=;
+	s=arc-20240116; t=1728479744; c=relaxed/simple;
+	bh=QY80xoSul4lqnRdDXy0A4DLg+iqvq8dK629KPoYYwPc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QZUwpz1AJa9Vu4zIggKWyWRjU4PcMIZhnpMwb0y+Xp+Qll38OhU1gD7Jr6izRuYWtsWMBZ/Zhg4fQj8ox4J1RfakMlyiyltRF18zj8q7T7BpNCsxRAoTUWAhXe0Gtdzs0yLiCthrfjcjjpIqsSiScP/3xpCzGlgk60ByVnl78t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vTRAmYFh; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03caab48a2so691289276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:15:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=NG3fvQLd6mtXCKxC5I6Pp438dbjgmhSTOufHNBYh6p/k/0PK5+oNiRfV8OvN2TY6Qo8ABWs2QJf74gAQIe3C7usPfJNkHo31558oBC6mh5wXJvM94VAthqPeaQk9Q9axw/ENGe0oEn0nECMgiV3wxBODFFs2KM+7O9FMo/A2710=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i4qqYEMg; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71df49bbc2fso631714b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:15:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728479738; x=1729084538; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=X/BVh51Wei3dZ71+FMVXs9o7VKFoyrGm7h9GIR6kEtE=;
-        b=vTRAmYFht/6gtE3EfOPePLxI7aJqqRSor3wPT3b9v9SPIfsSaDHxeBqnFCw77sTj1j
-         vPk9a4fdpd+n/k3ICHYOKVrl18e2yhXregPVwLiTN7xpvkzVXOiSJh7K7iNBYp9Oh3cp
-         zZuZ3NgiBNyPDY2cL5sJajnZiTMySkl70b8TAibMV1B4Ur8vrKzOScMZejcwAMzFlzUP
-         VSr22scPyCzKIpkkiu3Xdl799I02aywApVnZdTqUe2zUNs90+TNoh3BwuSokcfu52HWA
-         nTCFaXfh74V5uMs54ed5c2WgWZvSBDVUDm8cajaEqp+RzLiYMfkdaPL4qEuKy5OiuqUB
-         8+PQ==
+        d=chromium.org; s=google; t=1728479742; x=1729084542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AezCl3XC5C5GQBLJAx5C4b8m0Qz1+/rCKzT+NVp/CdI=;
+        b=i4qqYEMg7qA/q2N5Bsrrj+YFN3aDZSXzt4U3c5c0TLSbc7GZ+cvMFa/l8QicSOSyxt
+         du0IxtX8YmSggte1hPizbPzB3P6Z+V3n9rGZ2dqRZPDvebvjlBxRIu3jpQmLUYJcEYyH
+         EzQHliJJcHHfoclIGzHtV9tDUoZUxKJw0zIck=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728479738; x=1729084538;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X/BVh51Wei3dZ71+FMVXs9o7VKFoyrGm7h9GIR6kEtE=;
-        b=XIB80E6Q1HqkAjBVHzF0N+Y3pjmlPIM3LBddWL4Ne0Wt/rEYvcXuiMnLDl+pzePWoY
-         6R9VbtR7X5s+/mH09SheNdMiTzOPhLHf2bzwiZjP4h/+ZsFdvHewCUnXaswatLKZdL51
-         w9LR31gorjsMN3qkeRnxwREdamspSZDfz7U8Tk+8mHYjtX5Ij108UizzD4WOeg1ODFZN
-         gTRhIobMcDDAQiReavwihiGVn6p/HcJPpD6O4+9OOUVX3d2Q/Hyl71CBu430ueRn55et
-         tD6DYr2F6e+nxTDjL6z/I3VvaQgjrvkpHDp2sS4Prm2V7/EPSZ1MO9G0/PI0TxsE0vRV
-         2CQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWq1Wewyoo7I90QrTfCeQtbE1KNJxM8CEmgJaTv/rmBo6b4xzhJMd9kBbED81ZwhCzbBpWj/6VAuZes1Do=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuNNsWM6u2flS0RYEdwMr4aSAq3IcdFNxI+9z4R8q4HOetwyA2
-	hyaK11q/t9zVCEbihRNtmtGEfoe5pJNIXtHLvt0Q59eXTIx4TpIMwkPNRgAnIX4JfjBDOSzvh3H
-	E0plFf049riqHJRiWYGUvQoZQa2wzfzFQuFCl+Q==
-X-Google-Smtp-Source: AGHT+IHp9MRWyf8+0EngQ/HGstXTs67OY8NhmDANMfWbtr8KbjZARvSO50M8FTVHd6rQq5UIIfOKejL4W5ObG6+T/7A=
-X-Received: by 2002:a05:6902:18d3:b0:e0b:4cb6:ec53 with SMTP id
- 3f1490d57ef6-e28fe348682mr1747706276.3.1728479738519; Wed, 09 Oct 2024
- 06:15:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728479742; x=1729084542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AezCl3XC5C5GQBLJAx5C4b8m0Qz1+/rCKzT+NVp/CdI=;
+        b=PPVwK3yqntt2DcW+mGwX0HxiFUg9SG2V7y2jiRnhglmQhsIShEHQM+blejodPORtwu
+         3otCIC4OgePJVQVUkYMytJzO6rTXJZ+7TnU4uMmmaIm4SAKKGOv2iBdzFmvA5wdR0lIZ
+         f3TFxksaodKwYgFQn3IpjrLo8rOfRqKu8lhON+nF6upQrm9IuJ85A2ZnCni3jZ3bgaDK
+         BshD9jDwtQHZbAhjCMC38KijKRO3RVu1mWjFtd1jwd/4VglmRLMYyXJsVcgrPx2bV8c5
+         Kr+z4KxEozKy9GHOsCOTdEmWsK2EXNWUp1AUiWetLQMMsQr8LtWUHaxEJGwUFGKrRuRJ
+         YSdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUDX92/JBnU3hLVqQfcyT6aZ6gsvgzcx5r5Z3L5BE/bQDcyvWUUfoYc+WwaeJ0Cmm2QGuZUxBA2HtHSnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOOhH8SYvKTQNcn/nYlpJVvPNmeAltECTHQKw0nrdoJ944alxD
+	W0z1DuiYDPIgj0J+4mTxYBtW45W6p4U7RDFtRhCoX5UciaqDh7ohDudn44GgF+beVfagjPZPKFA
+	9ZCIkNRNzQB2XKG+MlQGmX7uSU0XcpyPj2w+c
+X-Google-Smtp-Source: AGHT+IHNYx9w82IwVnkJmInyQL+VZf6dJDDuwIW9e07G4B02vFRRBPiSt5Q1LoEoGbMj4AB5yvwijylwxjuZcRJkAUc=
+X-Received: by 2002:a05:6a00:2d83:b0:71e:1499:7461 with SMTP id
+ d2e1a72fcca58-71e1dbb86b5mr1682752b3a.4.1728479742454; Wed, 09 Oct 2024
+ 06:15:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com> <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Oct 2024 15:15:02 +0200
-Message-ID: <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+References: <9679a031-3858-4fef-bb8e-1cf436696095@mail.ru>
+In-Reply-To: <9679a031-3858-4fef-bb8e-1cf436696095@mail.ru>
+From: Florent Revest <revest@chromium.org>
+Date: Wed, 9 Oct 2024 15:15:30 +0200
+Message-ID: <CABRcYmL8=3o4T9+2O9Yr5D=qCoGM83mshj92b3H7FokqxspE9A@mail.gmail.com>
+Subject: Re: [PATCH bpf] bpf: fix %p% runtime check in bpf_bprintf_prepare
+To: Ilya Shchipletsov <rabbelkin@mail.ru>
+Cc: bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org, 
+	Nikita Marushkin <hfggklm@gmail.com>, lvc-project@linuxtesting.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+On Wed, Oct 9, 2024 at 12:58=E2=80=AFPM Ilya Shchipletsov <rabbelkin@mail.r=
+u> wrote:
+>
+> Fuzzing reports a warning in format_decode()
+>
+> Please remove unsupported %=EF=BF=BD in format string
+> WARNING: CPU: 0 PID: 5091 at lib/vsprintf.c:2680 format_decode+0x1193/0x1=
+bb0 lib/vsprintf.c:2680
+> Modules linked in:
+> CPU: 0 PID: 5091 Comm: syz-executor879 Not tainted 6.10.0-rc1-syzkaller-0=
+0021-ge0cce98fe279 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 04/02/2024
+> RIP: 0010:format_decode+0x1193/0x1bb0 lib/vsprintf.c:2680
+> Call Trace:
+>  <TASK>
+>  bstr_printf+0x137/0x1210 lib/vsprintf.c:3253
+>  ____bpf_trace_printk kernel/trace/bpf_trace.c:390 [inline]
+>  bpf_trace_printk+0x1a1/0x230 kernel/trace/bpf_trace.c:375
+>  bpf_prog_21da1b68f62e1237+0x36/0x41
+>  bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+>  __bpf_prog_run include/linux/filter.h:691 [inline]
+>  bpf_prog_run include/linux/filter.h:698 [inline]
+>  bpf_test_run+0x40b/0x910 net/bpf/test_run.c:425
+>  bpf_prog_test_run_skb+0xafa/0x13a0 net/bpf/test_run.c:1066
+>  bpf_prog_test_run+0x33c/0x3b0 kernel/bpf/syscall.c:4291
+>  __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5705
+>  __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
+>  __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> The problem occurs when trying to pass %p% at the end of format string,
+> which would result in skipping last % and passing invalid format string
+> down to format_decode() that would cause warning because of invalid
+> character after %.
+>
+> Fix issue by advancing pointer only if next char is format modifier.
+> If next char is null/space/punct, then just accept formatting as is,
+> without advancing the pointer.
+>
+> Fixes: 48cac3f4a96d ("bpf: Implement formatted output helpers with bstr_p=
+rintf")
+> Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
+> Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
+> Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
 
-> +
-> +static int ufs_rockchip_runtime_suspend(struct device *dev)
-> +{
-> +       struct ufs_hba *hba = dev_get_drvdata(dev);
-> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+This looks like
+https://syzkaller.appspot.com/bug?extid=3De2c932aec5c8a6e1d31c could you
+add:
 
-pd_to_genpd() isn't safe to use like this. It's solely to be used by
-genpd provider drivers.
+Reported-by: syzbot+e2c932aec5c8a6e1d31c@syzkaller.appspotmail.com
 
+> ---
+>  kernel/bpf/helpers.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index c9e235807cac..bd771d6aacdb 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -892,14 +892,19 @@ int bpf_bprintf_prepare(char *fmt, u32 fmt_size, co=
+nst u64 *raw_args,
+>                                 goto fmt_str;
+>                         }
+>
+> +                       if (fmt[i + 1] =3D=3D 'K' || fmt[i + 1] =3D=3D 'x=
+' ||
+> +                           fmt[i + 1] =3D=3D 's' || fmt[i + 1] =3D=3D 'S=
+') {
+> +                               if (tmp_buf)
+> +                                       cur_arg =3D raw_args[num_spec];
+> +                               i++;
+> +                               goto nocopy_fmt;
+> +                       }
 > +
-> +       clk_disable_unprepare(host->ref_out_clk);
-> +
-> +       /*
-> +        * Shouldn't power down if rpm_lvl is less than level 5.
+>                         if (fmt[i + 1] =3D=3D 0 || isspace(fmt[i + 1]) ||
+> -                           ispunct(fmt[i + 1]) || fmt[i + 1] =3D=3D 'K' =
+||
+> -                           fmt[i + 1] =3D=3D 'x' || fmt[i + 1] =3D=3D 's=
+' ||
+> -                           fmt[i + 1] =3D=3D 'S') {
+> +                           ispunct(fmt[i + 1])) {
+>                                 /* just kernel pointers */
 
-Can you elaborate on why we must not power-off the power-domain when
-level is less than 5?
+Maybe we should duplicate or drop this comment ? The intent there was
+to say "we only have to copy from raw_args" which apply to both blocks
+now. In hindsight it doesn't seem to be a very useful comment though
+so maybe it's not worth keeping around.
 
-What happens if we power-off anyway when the level is less than 5?
+>                                 if (tmp_buf)
+>                                         cur_arg =3D raw_args[num_spec];
+> -                               i++;
+>                                 goto nocopy_fmt;
+>                         }
+>
+> --
+> 2.43.0
+>
 
-> +        * This flag will be passed down to platform power-domain driver
-> +        * which has the final decision.
-> +        */
-> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
-> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
-> +       else
-> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
+Could you extend test_snprintf_negative() in
+tools/testing/selftests/bpf/prog_tests/snprintf.c to cover %p% ? FWIW:
+This exact same problem already happened in a previous life of this
+code https://lkml.kernel.org/netdev/85a08645-453b-78ad-e401-55d2894fa64a@io=
+gearbox.net/T/
+so it would be interesting to add more thorough test cases to convince
+ourselves that everything works well now, like %pB% too or others
+maybe ?
 
-The genpd->flags is not supposed to be changed like this - and
-especially not from a genpd consumer driver.
-
-I am trying to understand a bit more of the use case here. Let's see
-if that helps me to potentially suggest an alternative approach.
-
-> +
-> +       return ufshcd_runtime_suspend(dev);
-> +}
-> +
-> +static int ufs_rockchip_runtime_resume(struct device *dev)
-> +{
-> +       struct ufs_hba *hba = dev_get_drvdata(dev);
-> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> +       int err;
-> +
-> +       err = clk_prepare_enable(host->ref_out_clk);
-> +       if (err) {
-> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
-> +               return err;
-> +       }
-> +
-> +       reset_control_assert(host->rst);
-> +       usleep_range(1, 2);
-> +       reset_control_deassert(host->rst);
-> +
-> +       return ufshcd_runtime_resume(dev);
-> +}
-> +
-> +static int ufs_rockchip_system_suspend(struct device *dev)
-> +{
-> +       struct ufs_hba *hba = dev_get_drvdata(dev);
-> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> +
-> +       /* Pass down desired spm_lvl to Firmware */
-> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
-> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
-
-Can you please elaborate on what goes on here? Is this turning off the
-power-domain that the dev is attached to - or what is actually
-happening?
-
-> +
-> +       return ufshcd_system_suspend(dev);
-> +}
-> +
-> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
-> +       SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_system_suspend, ufshcd_system_resume)
-> +       SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
-> +       .prepare         = ufshcd_suspend_prepare,
-> +       .complete        = ufshcd_resume_complete,
-> +};
-> +
-> +static struct platform_driver ufs_rockchip_pltform = {
-> +       .probe = ufs_rockchip_probe,
-> +       .remove = ufs_rockchip_remove,
-> +       .driver = {
-> +               .name = "ufshcd-rockchip",
-> +               .pm = &ufs_rockchip_pm_ops,
-> +               .of_match_table = ufs_rockchip_of_match,
-> +       },
-> +};
-> +module_platform_driver(ufs_rockchip_pltform);
-> +
-
-[...]
-
-Kind regards
-Uffe
+Thanks!
 
