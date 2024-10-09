@@ -1,449 +1,628 @@
-Return-Path: <linux-kernel+bounces-356500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74BF9961FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D390D996220
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076151F233BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:11:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6317C1F230C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798C2184527;
-	Wed,  9 Oct 2024 08:11:40 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E5018801E;
+	Wed,  9 Oct 2024 08:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y2+sx7Pd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6BD18872F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEBA184535
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728461499; cv=none; b=bB+i/yVfXWNtEhGheflrWfdfSjQNQ/9Xzq5DKH2p/u4oAd8uwbDboNfTT/QUj+NmKSvmDsrQ2CG8AKs9zVeOOTbpng//c4d1HW2DFl5PHUUJWik80/CyvHlsgfhTuAfl2P1O9rNM2onIx14dcUM28hejqJzkWfgoCLNF9QHhw+w=
+	t=1728461614; cv=none; b=bARwCy1c/1n9t8/LNCIQBc97rfXc86VXEyFELF92R84SzfZEzWu0ivXVJAwuaJ+axhYnH6FmdhOHF3rhAnezup47TXdE/apLG68GUk5St5aZCXib8wAQw/nFyPLVUAFcm2OXx2q25APhgUCxmlSl74jYupqThVUPOGqoViMEC4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728461499; c=relaxed/simple;
-	bh=wiwkY2xo0Ar7nDNvoBr0VD6znJPf4NhqPdh1THn2SOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=siqheGn9G5P/9sP7F2fBUwn602THoM9cWqta/0EzjRLo36CQ5bC6G5luw0nRLsMOcCYnk9wHPs+XSX1/XwT9gH6q1zo4c7tTzJY3EY7lwIBPeN1nN49XPV6n9HvLJn165sM9BkwMT2Cnn47FVBV66MRhlGIItO2Cmq92woEUXsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9932aa108cso656558966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:11:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728461495; x=1729066295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6a5+0M9H/wWhUYSVgpJpB37C2tEsqtnox/q8tbp9Cfw=;
-        b=NAvCi3gtpc9/57CUikx00ka6sjVMBsKVOJKYI5ckkXSXoBSP8S2VVKWU+vS4XEXjBr
-         WrC4WhqKaMm7Y0BPRebWEeUlNmfgkZ1+0CGBOgQl638scnJ+66LyKy1eyS/42PuFeggT
-         ZgtY7NZZ7wZVId8EAUiKiE7EEyUZ7xVdVw86NHo6giUwDq/C/nSiQWj8r2uh74IRUIRp
-         F3DAff0xQxgLW2fGpfMxl7WyCxZxiFsi/3e5yuKMmgNlAvHbRrXWhuD2K/n4iTqN1rFx
-         LxK8ArpX7b0M/ZAAX9VqP4gEG7boIJXZlZnILF8wZP42s/WDkKAjluuXucS8cV7dW++m
-         SBSQ==
-X-Gm-Message-State: AOJu0YxVSjCGLofTPLaik7V3AHwVScxS/yEucqS0qsn64qeNKO9Uwp3I
-	mCpO/AHONRPXkRpKXBIK480puNmpGhkemDmXdWzn8qCdm9xcf1KlH2r59zp95GFJkho21lW0Ji+
-	ai9xw71Xpj8zgKQX+3qZzancTJ+I=
-X-Google-Smtp-Source: AGHT+IFwsXFgMyUU8Nw/D9AVxlvYKfyWoBO9RJQ4NCOf5KL0d9CktueYOBTHoqv5UT65XUB3njAWH+DuTHsA6gLemJs=
-X-Received: by 2002:a17:907:6eaa:b0:a99:7a05:a652 with SMTP id
- a640c23a62f3a-a998d114ec3mr132287266b.13.1728461495156; Wed, 09 Oct 2024
- 01:11:35 -0700 (PDT)
+	s=arc-20240116; t=1728461614; c=relaxed/simple;
+	bh=x6VlJI+6QJvOeEb9tCgEHttkIFTm0Ap9+oAOD22mjos=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LEb51gyKuC+yeI1GHItf/cUr9cuhouk/RHQWUV9yolCF652f1eKDAUXSu5JHb1J31C22zKqLafsTibhqPMxM/0k0Az/wbkOrvqjGQqGrkXPgClZyK1iSHMXFHCkWFW8znFUMLo8vJb55KGI4aompARQna8d8WOg8UdQGI9PpINM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y2+sx7Pd; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728461612; x=1759997612;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=x6VlJI+6QJvOeEb9tCgEHttkIFTm0Ap9+oAOD22mjos=;
+  b=Y2+sx7PdsHRIwqUN0Y3mGoLgDCpK0SBAP7NdoNexPcas12GmoELfeCtz
+   09+I+s+Riklzp5kotxUocnERwRrwIDb08KlQ+PJDX47TpaOMptHRByP+M
+   t9dpcm4lddUJ0r/RMjvlKMJYlgcVf/XSSux0SfO608tA5Oskg9Pq1dV9p
+   Q/GMrJ51I+9Y5RFhoJC7p9hbDNT24Nm+4LP85EkfotC0IB+5YYMGkwk5f
+   60gUB6/wd330YPh8JZ6E3FXN1I2f+m0Ipiupam2g7odm6WZisE6oFpGcx
+   mgjRB1Gs600bgmcFrhEpfSmeN6bJysM2tZnnU82ozh9cPYUBNlQD37nqL
+   Q==;
+X-CSE-ConnectionGUID: k0o/D+/GQmuVH5/RBlPLXg==
+X-CSE-MsgGUID: VpfpMMrDSX6PXnTvwvmP+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27830395"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="27830395"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:13:30 -0700
+X-CSE-ConnectionGUID: So09Sv7cTmKceFT1qGA3fQ==
+X-CSE-MsgGUID: L+gYW7wtTl6o/RByGx7uWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="80748196"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.80])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:13:24 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: shiyongbang <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
+ tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
+Cc: liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com,
+ shiyongbang@huawei.com, libaihan@huawei.com, shenjian15@huawei.com,
+ shaojijie@huawei.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
+ drivers
+In-Reply-To: <20240930100610.782363-2-shiyongbang@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240930100610.782363-1-shiyongbang@huawei.com>
+ <20240930100610.782363-2-shiyongbang@huawei.com>
+Date: Wed, 09 Oct 2024 11:13:21 +0300
+Message-ID: <87bjztbsny.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008201107.38520-1-ak.alexander.kozhinov@gmail.com>
-In-Reply-To: <20241008201107.38520-1-ak.alexander.kozhinov@gmail.com>
-From: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
-Date: Wed, 9 Oct 2024 17:11:23 +0900
-Message-ID: <CAMZ6Rq+AfFvrRG4muTyK6xrOQ-Wa8n8Ha5XG=yesna+1FGHXzw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] can: gs_usb.c: add usb endpoint address detection
- at driver probe step
-To: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maximilian Schneider <max@schneidersoft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Alexander,
-
-On Wed. 9 Oct. 2024 at 05:09, Alexander Kozhinov
-<ak.alexander.kozhinov@gmail.com> wrote:
-> There is an approach made to implement gs_usb firmware/driver based on
-> Zephyr RTOS. It was found that USB stack of Zephyr RTOS overwrites USB
-> EP addresses, if they have different last 4 bytes in absence of other
-> endpoints.
+On Mon, 30 Sep 2024, shiyongbang <shiyongbang@huawei.com> wrote:
+> From: baihan li <libaihan@huawei.com>
 >
-> For example in case of gs_usb candlelight firmware EP-IN is 0x81 and
-> EP-OUT 0x02. If there are no additional USB endpoints, Zephyr RTOS will
-> overwrite EP-OUT to 0x01. More information can be found in the
-> discussion with Zephyr RTOS USB stack maintainer here:
+> Add dp aux read/write functions. They are basic functions
+>  and will be used later.
+
+You're supposed to use struct drm_dp_aux, add a .transfer function,
+initialize it with intel_dp_aux_init(), and register with
+intel_dp_aux_register(). Then you can use the standard drm_dp_dpcd_*
+calls to access aux. They handle a lot of the boilerplate for DP
+aux. You'll also get the i2c and aux device nodes for free. As well as a
+lot of helpers based on struct drm_dp_aux interface.
+
+There's a lot of duplication in this patch otherwise too. The DPCD
+register macros, a dupe for struct drm_dp_aux_msg, etc.
+
+
+BR,
+Jani.
+
 >
-> https://github.com/zephyrproject-rtos/zephyr/issues/67812
->
-> There are already two different gs_usb FW driver implementations based
-> on Zephyr RTOS:
->
-> 1. https://github.com/CANnectivity/cannectivity
->    (by: https://github.com/henrikbrixandersen)
-> 2. https://github.com/zephyrproject-rtos/zephyr/compare/main...KozhinovAl=
-exander:zephyr:gs_usb
->    (by: https://github.com/KozhinovAlexander)
->
-> At the moment both Zephyr RTOS implementations use dummy USB endpoint,
-> to overcome described USB stack behavior from Zephyr itself. Since
-> Zephyr RTOS is intended to be used on microcontrollers with very
-> constrained amount of resources (ROM, RAM) and additional endpoint
-> requires memory, it is more convenient to update the gs_usb driver in
-> the Linux kernel.
->
-> To fix this problem, update the gs_usb driver from using hard coded
-> endpoint numbers to evaluate the endpoint descriptors and use the
-> endpoints provided there.
-
-Thanks for this v3, the code looks good but your patch series has several i=
-ssue:
-
-  - you did not put in CC the most relevant mailing list:
-    linux-can@vger.kernel.org (you only added the generic
-    linux-kernel@vger.kernel.org address)
-
-  - you sent a single message with five patches. Each patch should be
-    sent in a different message (but in the same thread).
-    git send-email, if used correctly, should manage this for you.
-
-  - when you address comments, you should directly add those to the
-    initial patch. The idea is that you should split your work in
-    different logical changes. Here, there is only one logical change:
-    replace hardcoded endpoint by automatic detection and so, there
-    should be only one patch.
-
-  - Instead, you should add a quick changelog at the end of the
-    patch. Typically, add a "---" (the cutter) after your
-    Signed-off-by tag and put the changelog after this
-    cutter. Everything after the cutter will be discarded when the
-    maintainers pick-up your patch.
-
-For extra details, refer to this guide:
-
-  https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-
-
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Maximilian Schneider <max@schneidersoft.net>
-> Signed-off-by: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
+> Signed-off-by: baihan li <libaihan@huawei.com>
 > ---
->  drivers/net/can/usb/gs_usb.c | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
+>  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 227 +++++++++++++++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h  |  80 +++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  88 +++++++
+>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  76 +++++++
+>  5 files changed, 473 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+>  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
 >
-> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-> index bc86e9b329fd..f3eb447267f9 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -43,9 +43,6 @@
->  #define USB_XYLANTA_SAINT3_VENDOR_ID 0x16d0
->  #define USB_XYLANTA_SAINT3_PRODUCT_ID 0x0f30
->
-> -#define GS_USB_ENDPOINT_IN 1
-> -#define GS_USB_ENDPOINT_OUT 2
-> -
->  /* Timestamp 32 bit timer runs at 1 MHz (1 =C2=B5s tick). Worker account=
-s
->   * for timer overflow (will be after ~71 minutes)
->   */
-> @@ -336,6 +333,9 @@ struct gs_usb {
->
->         unsigned int hf_size_rx;
->         u8 active_channels;
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> index d25c75e60d3d..8770ec6dfffd 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
+> +hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+> +	       dp/dp_aux.o
+>  
+>  obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+> new file mode 100644
+> index 000000000000..e85ac22c18a9
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+> @@ -0,0 +1,227 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +// Copyright (c) 2024 Hisilicon Limited.
 > +
-> +       u8 ep_in;
-> +       u8 ep_out;
->  };
->
->  /* 'allocate' a tx context.
-> @@ -687,7 +687,7 @@ static void gs_usb_receive_bulk_callback(struct urb *=
-urb)
->
->  resubmit_urb:
->         usb_fill_bulk_urb(urb, parent->udev,
-> -                         usb_rcvbulkpipe(parent->udev, GS_USB_ENDPOINT_I=
-N),
-> +                         usb_rcvbulkpipe(parent->udev, parent->ep_in),
->                           hf, dev->parent->hf_size_rx,
->                           gs_usb_receive_bulk_callback, parent);
->
-> @@ -819,7 +819,7 @@ static netdev_tx_t gs_can_start_xmit(struct sk_buff *=
-skb,
->         }
->
->         usb_fill_bulk_urb(urb, dev->udev,
-> -                         usb_sndbulkpipe(dev->udev, GS_USB_ENDPOINT_OUT)=
-,
-> +                         usb_sndbulkpipe(dev->udev, dev->parent->ep_out)=
-,
->                           hf, dev->hf_size_tx,
->                           gs_usb_xmit_callback, txc);
->
-> @@ -926,7 +926,7 @@ static int gs_can_open(struct net_device *netdev)
->                         usb_fill_bulk_urb(urb,
->                                           dev->udev,
->                                           usb_rcvbulkpipe(dev->udev,
-> -                                                         GS_USB_ENDPOINT=
-_IN),
-> +                                                         dev->parent->ep=
-_in),
->                                           buf,
->                                           dev->parent->hf_size_rx,
->                                           gs_usb_receive_bulk_callback, p=
-arent);
-> @@ -1421,6 +1421,18 @@ static int gs_usb_probe(struct usb_interface *intf=
-,
->         struct gs_device_config dconf;
->         unsigned int icount, i;
->         int rc;
-> +       struct usb_host_interface *host_iface;
-> +       struct usb_endpoint_descriptor *ep_in, *ep_out;
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/minmax.h>
+> +#include <drm/drm_device.h>
+> +#include <drm/drm_print.h>
+> +#include "dp_comm.h"
+> +#include "dp_reg.h"
+> +#include "dp_aux.h"
 > +
-> +       host_iface =3D intf->cur_altsetting;
+> +static void dp_aux_reset(const struct hibmc_dp_aux *aux)
+> +{
+> +	dp_write_bits(aux->addr + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x0);
+> +	usleep_range(10, 15);
+> +	dp_write_bits(aux->addr + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x1);
+> +}
 > +
-> +       /* Find common bulk endpoints reverse */
-> +       rc =3D usb_find_common_endpoints_reverse(host_iface, &ep_in, &ep_=
-out, NULL,
-> +                                                                        =
-               NULL);
-> +       if (rc) {
-> +               dev_err(&intf->dev, "Required endpoints not found\n");
-> +               return rc;
-> +       }
->
->         /* send host config */
->         rc =3D usb_control_msg_send(udev, 0,
-> @@ -1466,6 +1478,10 @@ static int gs_usb_probe(struct usb_interface *intf=
-,
->         usb_set_intfdata(intf, parent);
->         parent->udev =3D udev;
->
-> +       /* store the detected endpoints */
-> +       parent->ep_in =3D ep_in->bEndpointAddress;
-> +       parent->ep_out =3D ep_out->bEndpointAddress;
+> +static void dp_aux_read_data(struct hibmc_dp_aux *aux, u8 *buf, u8 size)
+> +{
+> +	u32 reg_num;
+> +	u32 value;
+> +	u32 num;
+> +	u8 i, j;
 > +
->         for (i =3D 0; i < icount; i++) {
->                 unsigned int hf_size_rx =3D 0;
->
-> --
-> 2.43.0
->
->
-> From d0b4d3b1f5fd1b4c33bc5d8f83ed49d04a2286c4 Mon Sep 17 00:00:00 2001
-> From: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> Date: Tue, 8 Oct 2024 21:25:51 +0200
-> Subject: [PATCH v3 2/5] can: gs_usb.c: store pipe instead of endpoint add=
-ress
->
-> This change implements nitpick: instead of storing the ep_in and ep_out i=
-n your priv, you can
-> instead directly store the result of usb_rcvbulkpipe(parent->udev,
-> parent->ep_in) and usb_sndbulkpipe(dev->udev, dev->parent->ep_out).
->
-> Signed-off-by: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> ---
->  drivers/net/can/usb/gs_usb.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-> index f3eb447267f9..e6511af5f692 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -334,8 +334,8 @@ struct gs_usb {
->         unsigned int hf_size_rx;
->         u8 active_channels;
->
-> -       u8 ep_in;
-> -       u8 ep_out;
-> +       unsigned int pipe_in;
-> +       unsigned int pipe_out;
->  };
->
->  /* 'allocate' a tx context.
-> @@ -687,7 +687,7 @@ static void gs_usb_receive_bulk_callback(struct urb *=
-urb)
->
->  resubmit_urb:
->         usb_fill_bulk_urb(urb, parent->udev,
-> -                         usb_rcvbulkpipe(parent->udev, parent->ep_in),
-> +                         parent->pipe_in,
->                           hf, dev->parent->hf_size_rx,
->                           gs_usb_receive_bulk_callback, parent);
->
-> @@ -819,7 +819,7 @@ static netdev_tx_t gs_can_start_xmit(struct sk_buff *=
-skb,
->         }
->
->         usb_fill_bulk_urb(urb, dev->udev,
-> -                         usb_sndbulkpipe(dev->udev, dev->parent->ep_out)=
-,
-> +                         dev->parent->pipe_out,
->                           hf, dev->hf_size_tx,
->                           gs_usb_xmit_callback, txc);
->
-> @@ -925,8 +925,7 @@ static int gs_can_open(struct net_device *netdev)
->                         /* fill, anchor, and submit rx urb */
->                         usb_fill_bulk_urb(urb,
->                                           dev->udev,
-> -                                         usb_rcvbulkpipe(dev->udev,
-> -                                                         dev->parent->ep=
-_in),
-> +                                         dev->parent->pipe_in,
->                                           buf,
->                                           dev->parent->hf_size_rx,
->                                           gs_usb_receive_bulk_callback, p=
-arent);
-> @@ -1479,8 +1478,8 @@ static int gs_usb_probe(struct usb_interface *intf,
->         parent->udev =3D udev;
->
->         /* store the detected endpoints */
-> -       parent->ep_in =3D ep_in->bEndpointAddress;
-> -       parent->ep_out =3D ep_out->bEndpointAddress;
-> +       parent->pipe_in =3D usb_rcvbulkpipe(parent->udev, ep_in->bEndpoin=
-tAddress);
-> +       parent->pipe_out =3D usb_sndbulkpipe(parent->udev, ep_out->bEndpo=
-intAddress);
->
->         for (i =3D 0; i < icount; i++) {
->                 unsigned int hf_size_rx =3D 0;
-> --
-> 2.43.0
->
->
-> From 6515df86641c6eda6dc3e3c4a8f1fc8625835f89 Mon Sep 17 00:00:00 2001
-> From: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> Date: Tue, 8 Oct 2024 21:37:13 +0200
-> Subject: [PATCH v3 3/5] can: gs_usb.c: use reverse xmas tree declaration
->
-> This change implements request: Move this declaration up (c.f. the Revers=
-e christmas tree declarations).
->
-> Signed-off-by: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> ---
->  drivers/net/can/usb/gs_usb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-> index e6511af5f692..a88448dbc6af 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -1412,6 +1412,8 @@ static int gs_usb_probe(struct usb_interface *intf,
->                         const struct usb_device_id *id)
->  {
->         struct usb_device *udev =3D interface_to_usbdev(intf);
-> +       struct usb_endpoint_descriptor *ep_in, *ep_out;
-> +       struct usb_host_interface *host_iface;
->         struct gs_host_frame *hf;
->         struct gs_usb *parent;
->         struct gs_host_config hconf =3D {
-> @@ -1420,8 +1422,6 @@ static int gs_usb_probe(struct usb_interface *intf,
->         struct gs_device_config dconf;
->         unsigned int icount, i;
->         int rc;
-> -       struct usb_host_interface *host_iface;
-> -       struct usb_endpoint_descriptor *ep_in, *ep_out;
->
->         host_iface =3D intf->cur_altsetting;
->
-> --
-> 2.43.0
->
->
-> From cddd8290dd877eddcac31366ae69188b79fc35e8 Mon Sep 17 00:00:00 2001
-> From: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> Date: Tue, 8 Oct 2024 21:40:59 +0200
-> Subject: [PATCH v3 4/5] can: gs_usb.c: use rforward usb endpoints search
->
-> This change implements request: Any specific reason for doing this in rev=
-erse? The previous
-> GS_USB_ENDPOINT_IN and GS_USB_ENDPOINT_OUT macros were respectively 1
-> and 2, so at the beginning. And in such a case, the normal search
-> would find those quicker.
->
-> Signed-off-by: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> ---
->  drivers/net/can/usb/gs_usb.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-> index a88448dbc6af..24f715f9c436 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -1426,8 +1426,7 @@ static int gs_usb_probe(struct usb_interface *intf,
->         host_iface =3D intf->cur_altsetting;
->
->         /* Find common bulk endpoints reverse */
-> -       rc =3D usb_find_common_endpoints_reverse(host_iface, &ep_in, &ep_=
-out, NULL,
-> -                                                                        =
-               NULL);
-> +       rc =3D usb_find_common_endpoints(host_iface, &ep_in, &ep_out, NUL=
-L, NULL);
->         if (rc) {
->                 dev_err(&intf->dev, "Required endpoints not found\n");
->                 return rc;
-> --
-> 2.43.0
->
->
-> From b65448554e172c8b419605411248d83846764a1d Mon Sep 17 00:00:00 2001
-> From: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> Date: Tue, 8 Oct 2024 21:43:10 +0200
-> Subject: [PATCH v3 5/5] can: gs_usb.c: skip new variable declaration
->
-> This change implements nipick: no need to declare a new variable for host=
-_iface which is used
-> only once.
->
-> Signed-off-by: Alexander Kozhinov <ak.alexander.kozhinov@gmail.com>
-> ---
->  drivers/net/can/usb/gs_usb.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-> index 24f715f9c436..d93410682d4b 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -1413,7 +1413,6 @@ static int gs_usb_probe(struct usb_interface *intf,
->  {
->         struct usb_device *udev =3D interface_to_usbdev(intf);
->         struct usb_endpoint_descriptor *ep_in, *ep_out;
-> -       struct usb_host_interface *host_iface;
->         struct gs_host_frame *hf;
->         struct gs_usb *parent;
->         struct gs_host_config hconf =3D {
-> @@ -1423,10 +1422,9 @@ static int gs_usb_probe(struct usb_interface *intf=
-,
->         unsigned int icount, i;
->         int rc;
->
-> -       host_iface =3D intf->cur_altsetting;
-> -
->         /* Find common bulk endpoints reverse */
-> -       rc =3D usb_find_common_endpoints(host_iface, &ep_in, &ep_out, NUL=
-L, NULL);
-> +       rc =3D usb_find_common_endpoints(intf->cur_altsetting,
-> +                                                                       &=
-ep_in, &ep_out, NULL, NULL);
->         if (rc) {
->                 dev_err(&intf->dev, "Required endpoints not found\n");
->                 return rc;
-> --
-> 2.43.0
->
+> +	reg_num = round_up(size, AUX_4_BYTE) / AUX_4_BYTE;
+> +	for (i = 0; i < reg_num; i++) {
+> +		/* number of bytes read from a single register */
+> +		num = min(size - i * AUX_4_BYTE, AUX_4_BYTE);
+> +		value = readl(aux->addr + DP_AUX_RD_DATA0 + i * AUX_4_BYTE);
+> +		/* convert the 32-bit value of the register to the buffer. */
+> +		for (j = 0; j < num; j++)
+> +			buf[i * AUX_4_BYTE + j] = value >> (j * AUX_8_BIT);
+> +	}
+> +}
+> +
+> +static void dp_aux_write_data(struct hibmc_dp_aux *aux, u8 *buf, u8 size)
+> +{
+> +	u32 reg_num;
+> +	u32 value;
+> +	u8 i, j;
+> +	u32 num;
+> +
+> +	reg_num = round_up(size, AUX_4_BYTE) / AUX_4_BYTE;
+> +	for (i = 0; i < reg_num; i++) {
+> +		/* number of bytes written to a single register */
+> +		num = min_t(u8, size - i * AUX_4_BYTE, AUX_4_BYTE);
+> +		value = 0;
+> +		/* obtain the 32-bit value written to a single register. */
+> +		for (j = 0; j < num; j++)
+> +			value |= buf[i * AUX_4_BYTE + j] << (j * AUX_8_BIT);
+> +		/* writing data to a single register */
+> +		writel(value, aux->addr + DP_AUX_WR_DATA0 + i * AUX_4_BYTE);
+> +	}
+> +}
+> +
+> +static u32 dp_aux_build_cmd(const struct hibmc_dp_aux_msg *msg)
+> +{
+> +	u32 aux_cmd = msg->request << AUX_CMD_REQ_TYPE_S;
+> +
+> +	if (msg->size)
+> +		aux_cmd |= (msg->size - 1) << AUX_CMD_REQ_LEN_S;
+> +	else
+> +		aux_cmd |= 1 << AUX_CMD_I2C_ADDR_ONLY_S;
+> +
+> +	aux_cmd |= msg->address << AUX_CMD_ADDR_S;
+> +
+> +	return aux_cmd;
+> +}
+> +
+> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
+> +static int dp_aux_parse_xfer(struct hibmc_dp_aux *aux, struct hibmc_dp_aux_msg *msg)
+> +{
+> +	u32 buf_data_cnt;
+> +	u32 aux_status;
+> +	int ret = 0;
+> +
+> +	aux_status = readl(aux->addr + DP_AUX_STATUS);
+> +	msg->reply = (aux_status & DP_CFG_AUX_STATUS) >> DP_CFG_AUX_STATUS_S;
+> +
+> +	if (aux_status & DP_CFG_AUX_TIMEOUT)
+> +		return -ETIMEDOUT;
+> +
+> +	/* only address */
+> +	if (!msg->size)
+> +		return 0;
+> +
+> +	if (msg->reply != DP_AUX_ACK)
+> +		return 0;
+> +
+> +	buf_data_cnt = (aux_status & DP_CFG_AUX_READY_DATA_BYTE) >> AUX_READY_DATA_BYTE_S;
+> +
+> +	switch (msg->request) {
+> +	case DP_NATIVE_W:
+> +		ret = msg->size;
+> +		break;
+> +	case DP_I2C_MOT_W:
+> +		if (buf_data_cnt == AUX_I2C_WRITE_SUCCESS)
+> +			ret = msg->size;
+> +		else if (buf_data_cnt == AUX_I2C_WRITE_PARTIAL_SUCCESS)
+> +			ret = (aux_status & DP_CFG_AUX) >> DP_CFG_AUX_S;
+> +		break;
+> +	case DP_NATIVE_R:
+> +	case DP_I2C_MOT_R:
+> +		buf_data_cnt--;
+> +		/* only the successful part of data is read */
+> +		if (buf_data_cnt != msg->size) {
+> +			ret = -EBUSY;
+> +		} else { /* all data is successfully read */
+> +			dp_aux_read_data(aux, msg->buf, msg->size);
+> +			ret = msg->size;
+> +		}
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
+> +static int dp_aux_xfer(struct hibmc_dp_aux *aux, struct hibmc_dp_aux_msg *msg)
+> +{
+> +	u32 aux_cmd;
+> +	int ret;
+> +	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
+> +
+> +	aux_cmd = dp_aux_build_cmd(msg);
+> +	writel(aux_cmd, aux->addr + DP_AUX_CMD_ADDR);
+> +
+> +	/* enable aux transfer */
+> +	dp_write_bits(aux->addr + DP_AUX_REQ, DP_CFG_AUX_REQ, 0x1);
+> +	ret = readl_poll_timeout(aux->addr + DP_AUX_REQ, val, !(val & DP_CFG_AUX_REQ), 50, 5000);
+> +	if (ret) {
+> +		dp_aux_reset(aux);
+> +		return ret;
+> +	}
+> +
+> +	return dp_aux_parse_xfer(aux, msg);
+> +}
+> +
+> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
+> +static int dp_aux_rw(struct hibmc_dp_aux *aux, u32 address, u8 *buffer, u8 request, u8 size)
+> +{
+> +	struct hibmc_dp_aux_msg msg;
+> +	u32 retry;
+> +	int ret;
+> +
+> +	msg.address = address;
+> +	msg.request = request;
+> +	msg.buf = buffer;
+> +	msg.size = size;
+> +
+> +	mutex_lock(&aux->lock);
+> +
+> +	writel(0, aux->addr + DP_AUX_WR_DATA0);
+> +	writel(0, aux->addr + DP_AUX_WR_DATA1);
+> +	writel(0, aux->addr + DP_AUX_WR_DATA2);
+> +	writel(0, aux->addr + DP_AUX_WR_DATA3);
+> +
+> +	dp_aux_write_data(aux, buffer, size);
+> +
+> +	for (retry = 0; retry < AUX_RW_MAX_RETRY; retry++) {
+> +		ret = dp_aux_xfer(aux, &msg);
+> +		if (ret < 0) {
+> +			if (ret == -EBUSY) {
+> +				usleep_range(450, 500);
+> +				continue;
+> +			} else if (ret == -ETIMEDOUT) {
+> +				continue;
+> +			} else {
+> +				goto exit;
+> +			}
+> +		}
+> +		switch (msg.reply & DP_AUX_NATIVE_REPLY_MASK) {
+> +		case DP_AUX_ACK:
+> +			goto exit;
+> +		case DP_AUX_NACK:
+> +		case DP_AUX_DEFER:
+> +			usleep_range(450, 500);
+> +			continue;
+> +		default:
+> +			ret = -EINVAL;
+> +			goto exit;
+> +		}
+> +	}
+> +
+> +exit:
+> +	mutex_unlock(&aux->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +int dp_aux_write(struct hibmc_dp_dev *dp, u32 address, u8 *buffer, u8 size)
+> +{
+> +	int ret;
+> +
+> +	ret = dp_aux_rw(&dp->aux, address, buffer, DP_NATIVE_W, size);
+> +	if (ret != size) {
+> +		drm_err(dp->dev, "dp aux dpcd write failed, address:0x%x, size:%u, ret:%d!\n",
+> +			address, size, ret);
+> +		if (ret < 0)
+> +			return ret;
+> +		else
+> +			return -EFAULT;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int dp_aux_read(struct hibmc_dp_dev *dp, u32 address, u8 *buffer, u8 size)
+> +{
+> +	int ret;
+> +
+> +	ret = dp_aux_rw(&dp->aux, address, buffer, DP_NATIVE_R, size);
+> +	if (ret != size) {
+> +		drm_err(dp->dev, "dp aux dpcd read failed, address:0x%x, size:%u, ret:%d!\n",
+> +			address, size, ret);
+> +		if (ret < 0)
+> +			return ret;
+> +		else
+> +			return -EFAULT;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+> new file mode 100644
+> index 000000000000..9b738cf2cc6a
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+> @@ -0,0 +1,80 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (c) 2024 Hisilicon Limited. */
+> +
+> +#ifndef DP_AUX_H
+> +#define DP_AUX_H
+> +
+> +#include <linux/bitops.h>
+> +#include "dp_comm.h"
+> +
+> +#define DP_I2C_MOT_W			0x4
+> +#define DP_I2C_MOT_R			0x5
+> +#define DP_NATIVE_W			0x8
+> +#define DP_NATIVE_R			0x9
+> +
+> +#define AUX_I2C_WRITE_SUCCESS		0x1
+> +#define AUX_I2C_WRITE_PARTIAL_SUCCESS	0x2
+> +
+> +#define EQ_MAX_RETRY			5
+> +#define AUX_RW_MAX_RETRY		7
+> +
+> +#define DPCD_LINK_BW_SET		0x0100
+> +#define DPCD_LANE_COUNT_SET		0x0101
+> +#define DPCD_TRAINING_PATTERN_SET	0x0102
+> +#define DPCD_TRAINING_LANE0_SET		0x0103
+> +#define DPCD_DOWNSPREAD_CTRL		0x0107
+> +#define DPCD_LANE0_1_STATUS		0x0202
+> +#define DPCD_ADJUST_REQUEST_LANE0_1	0x0206
+> +
+> +#define DPCD_VOLTAGE_SWING_LANE_0	(BIT(0) | BIT(1))
+> +#define DPCD_PRE_EMPHASIS_LANE_0	(BIT(2) | BIT(3))
+> +#define DPCD_VOLTAGE_SWING_SET_S	0
+> +#define DPCD_PRE_EMPHASIS_SET_S		3
+> +#define DPCD_SCRAMBLING_DISABLE		BIT(5)
+> +#define DPCD_CR_DONE_BITS		BIT(0)
+> +#define DPCD_EQ_DONE_BITS		(BIT(0) | BIT(1) | BIT(2))
+> +#define DPCD_ENHANCED_FRAME_EN		0x80
+> +
+> +#define DPCD_TRAINING_PATTERN_DISABLE	0x0
+> +#define DPCD_TRAINING_PATTERN_1		0x1
+> +#define DPCD_TRAINING_PATTERN_2		0x2
+> +#define DPCD_TRAINING_PATTERN_3		0x3
+> +#define DPCD_TRAINING_PATTERN_4		0x7
+> +#define DPCD_VOLTAGE_SWING_LEVEL_0	FIELD_PREP(GENMASK(1, 0), 0)
+> +#define DPCD_VOLTAGE_SWING_LEVEL_1	FIELD_PREP(GENMASK(1, 0), 1)
+> +#define DPCD_VOLTAGE_SWING_LEVEL_2	FIELD_PREP(GENMASK(1, 0), 2)
+> +#define DPCD_VOLTAGE_SWING_LEVEL_3	FIELD_PREP(GENMASK(1, 0), 3)
+> +#define DPCD_PRE_EMPHASIS_LEVEL_0	FIELD_PREP(GENMASK(4, 3), 0)
+> +#define DPCD_PRE_EMPHASIS_LEVEL_1	FIELD_PREP(GENMASK(4, 3), 1)
+> +#define DPCD_PRE_EMPHASIS_LEVEL_2	FIELD_PREP(GENMASK(4, 3), 2)
+> +#define DPCD_PRE_EMPHASIS_LEVEL_3	FIELD_PREP(GENMASK(4, 3), 3)
+> +
+> +#define DP_LINK_RATE_NUM		4
+> +#define DP_LINK_RATE_0			0x6
+> +#define DP_LINK_RATE_1			0xA
+> +#define DP_LINK_RATE_2			0x14
+> +#define DP_LINK_RATE_3			0x1E
+> +#define DP_AUX_NATIVE_REPLY_MASK	(0x3 << 4)
+> +#define DP_AUX_ACK			(0 << 4)
+> +#define DP_AUX_NACK			(0x1 << 4)
+> +#define DP_AUX_DEFER			(0x2 << 4)
+> +#define DP_CFG_AUX_S			17
+> +#define DP_CFG_AUX_STATUS_S		4
+> +
+> +#define AUX_4_BYTE			4
+> +#define AUX_4_BIT			4
+> +#define AUX_8_BIT			8
+> +#define AUX_RESET_INTERVAL		15
+> +#define AUX_RETRY_INTERVAL		500
+> +#define AUX_READY_DATA_BYTE_S		12
+> +
+> +/* aux_cmd_addr register shift */
+> +#define AUX_CMD_REQ_TYPE_S		0
+> +#define AUX_CMD_REQ_LEN_S		4
+> +#define AUX_CMD_ADDR_S			8
+> +#define AUX_CMD_I2C_ADDR_ONLY_S		28
+> +
+> +int dp_aux_write(struct hibmc_dp_dev *dp, u32 address, u8 *buffer, u8 size);
+> +int dp_aux_read(struct hibmc_dp_dev *dp, u32 address, u8 *buffer, u8 size);
+> +
+> +#endif
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+> new file mode 100644
+> index 000000000000..931f08a70bb4
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+> @@ -0,0 +1,88 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (c) 2024 Hisilicon Limited. */
+> +
+> +#ifndef DP_COMM_H
+> +#define DP_COMM_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/bitops.h>
+> +#include <linux/errno.h>
+> +#include <linux/mutex.h>
+> +#include <linux/kernel.h>
+> +#include <linux/io.h>
+> +
+> +#define REG_LENGTH 32
+> +
+> +static inline u32 dp_read_bits(void __iomem *addr, u32 bit_mask)
+> +{
+> +	u32 reg_val;
+> +
+> +	reg_val = readl(addr);
+> +
+> +	return (reg_val & bit_mask) >> __ffs(bit_mask);
+> +}
+> +
+> +static inline void dp_write_bits(void __iomem *addr, u32 bit_mask, u32 val)
+> +{
+> +	u32 reg_val;
+> +
+> +	reg_val = readl(addr);
+> +	reg_val &= ~bit_mask;
+> +	reg_val |= (val << __ffs(bit_mask)) & bit_mask;
+> +	writel(reg_val, addr);
+> +}
+> +
+> +enum dpcd_revision {
+> +	DPCD_REVISION_10 = 0x10,
+> +	DPCD_REVISION_11,
+> +	DPCD_REVISION_12,
+> +	DPCD_REVISION_13,
+> +	DPCD_REVISION_14,
+> +};
+> +
+> +struct hibmc_dp_aux_msg {
+> +	u32 address;
+> +	u8 request;
+> +	u8 *buf;
+> +	u8 size;
+> +	u8 reply;
+> +};
+> +
+> +struct hibmc_dp_aux {
+> +	struct mutex lock; /* aux transfer lock */
+> +	void __iomem *addr;
+> +};
+> +
+> +struct link_status {
+> +	bool clock_recovered;
+> +	bool channel_equalized;
+> +	u8 cr_done_lanes;
+> +};
+> +
+> +struct link_cap {
+> +	enum dpcd_revision rx_dpcd_revision;
+> +	u8 link_rate;
+> +	u8 lanes;
+> +	bool is_tps3;
+> +	bool is_tps4;
+> +};
+> +
+> +struct hibmc_dp_link {
+> +	struct link_status status;
+> +	u8 *train_set;
+> +	struct link_cap cap;
+> +};
+> +
+> +struct hibmc_dp_dev {
+> +	struct hibmc_dp_link link;
+> +	struct hibmc_dp_aux aux;
+> +	struct drm_device *dev;
+> +	void __iomem *base;
+> +};
+> +
+> +static inline struct hibmc_dp_dev *to_dp_dev_s(struct hibmc_dp_aux *aux)
+> +{
+> +	return container_of(aux, struct hibmc_dp_dev, aux);
+> +}
+> +
+> +#endif
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> new file mode 100644
+> index 000000000000..3dcb847057a4
+> --- /dev/null
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+> @@ -0,0 +1,76 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (c) 2024 Hisilicon Limited. */
+> +
+> +#ifndef DP_REG_H
+> +#define DP_REG_H
+> +
+> +#define DP_AUX_CMD_ADDR			0x50
+> +#define DP_AUX_WR_DATA0			0x54
+> +#define DP_AUX_WR_DATA1			0x58
+> +#define DP_AUX_WR_DATA2			0x5c
+> +#define DP_AUX_WR_DATA3			0x60
+> +#define DP_AUX_RD_DATA0			0x64
+> +#define DP_AUX_REQ			0x74
+> +#define DP_AUX_STATUS			0x78
+> +#define DP_PHYIF_CTRL0			0xa0
+> +#define DP_VIDEO_CTRL			0x100
+> +#define DP_VIDEO_CONFIG0		0x104
+> +#define DP_VIDEO_CONFIG1		0x108
+> +#define DP_VIDEO_CONFIG2		0x10c
+> +#define DP_VIDEO_CONFIG3		0x110
+> +#define DP_VIDEO_PACKET			0x114
+> +#define DP_VIDEO_MSA0			0x118
+> +#define DP_VIDEO_MSA1			0x11c
+> +#define DP_VIDEO_MSA2			0x120
+> +#define DP_VIDEO_HORIZONTAL_SIZE	0X124
+> +#define DP_TIMING_GEN_CONFIG0		0x26c
+> +#define DP_TIMING_GEN_CONFIG2		0x274
+> +#define DP_TIMING_GEN_CONFIG3		0x278
+> +#define DP_HDCP_CFG			0x600
+> +#define DP_INTR_ENABLE			0x720
+> +#define DP_INTR_ORIGINAL_STATUS		0x728
+> +#define DP_DPTX_RST_CTRL		0x700
+> +#define DP_DPTX_CLK_CTRL		0x704
+> +#define DP_DPTX_GCTL0			0x708
+> +#define DP_TIMING_MODEL_CTRL		0x884
+> +#define DP_TIMING_SYNC_CTRL		0xFF0
+> +
+> +#define DP_CFG_AUX_SYNC_LEN_SEL			BIT(1)
+> +#define DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
+> +#define DP_CFG_STREAM_FRAME_MODE		BIT(6)
+> +#define DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
+> +#define DP_CFG_LANE_DATA_EN			GENMASK(11, 8)
+> +#define DP_CFG_PHY_LANE_NUM			GENMASK(2, 1)
+> +#define DP_CFG_AUX_REQ				BIT(0)
+> +#define DP_CFG_AUX_RST_N			BIT(4)
+> +#define DP_CFG_AUX_TIMEOUT			BIT(0)
+> +#define DP_CFG_AUX_READY_DATA_BYTE		GENMASK(16, 12)
+> +#define DP_CFG_AUX				GENMASK(24, 17)
+> +#define DP_CFG_AUX_STATUS			GENMASK(11, 4)
+> +#define DP_CFG_SCRAMBLE_EN			BIT(0)
+> +#define DP_CFG_PAT_SEL				GENMASK(7, 4)
+> +#define DP_CFG_TIMING_GEN0_HACTIVE		GENMASK(31, 16)
+> +#define DP_CFG_TIMING_GEN0_HBLANK		GENMASK(15, 0)
+> +#define DP_CFG_TIMING_GEN0_VACTIVE		GENMASK(31, 16)
+> +#define DP_CFG_TIMING_GEN0_VBLANK		GENMASK(15, 0)
+> +#define DP_CFG_TIMING_GEN0_VFRONT_PORCH		GENMASK(31, 16)
+> +#define DP_CFG_STREAM_HACTIVE			GENMASK(31, 16)
+> +#define DP_CFG_STREAM_HBLANK			GENMASK(15, 0)
+> +#define DP_CFG_STREAM_HSYNC_WIDTH		GENMASK(15, 0)
+> +#define DP_CFG_STREAM_VACTIVE			GENMASK(31, 16)
+> +#define DP_CFG_STREAM_VBLANK			GENMASK(15, 0)
+> +#define DP_CFG_STREAM_VFRONT_PORCH		GENMASK(31, 16)
+> +#define DP_CFG_STREAM_VSYNC_WIDTH		GENMASK(15, 0)
+> +#define DP_CFG_STREAM_VSTART			GENMASK(31, 16)
+> +#define DP_CFG_STREAM_HSTART			GENMASK(15, 0)
+> +#define DP_CFG_STREAM_VSYNC_POLARITY		BIT(8)
+> +#define DP_CFG_STREAM_HSYNC_POLARITY		BIT(7)
+> +#define DP_CFG_STREAM_RGB_ENABLE		BIT(1)
+> +#define DP_CFG_STREAM_VIDEO_MAPPING		GENMASK(5, 2)
+> +#define DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1	GENMASK(31, 16)
+> +#define DP_CFG_STREAM_TU_SYMBOL_SIZE		GENMASK(5, 0)
+> +#define DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE	GENMASK(9, 6)
+> +#define DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
+> +#define DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
+> +
+> +#endif
+
+-- 
+Jani Nikula, Intel
 
