@@ -1,137 +1,82 @@
-Return-Path: <linux-kernel+bounces-357522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE74997228
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D1F99722A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7338B1F25D3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:45:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E6E286375
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC9D1D4176;
-	Wed,  9 Oct 2024 16:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9276E19ABAB;
+	Wed,  9 Oct 2024 16:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCn6f7Nw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vttrs5KZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD898489;
-	Wed,  9 Oct 2024 16:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D2C1C4631;
+	Wed,  9 Oct 2024 16:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728492103; cv=none; b=dRbed0MEGwFc24JuZOKAX/3wHC0zomLvy4rvQ622YGYnoP7ruU+Y+yrK7tXHsbjlJAKqUtA4ux6tienGZGNJgQwvCOucxA5O1gsI5buMOaIxnn57S8OiysB2TFepMDZ7gN/uulZ+6XZs04VgWgvG43qRs6qis+Y8YfoF/hHCZd8=
+	t=1728492104; cv=none; b=cVl/YEXbRdV9PBoXHmxLUPP+yMN7fQW7KusORzAH5ynDgljHAFV5ArD+pGmfa+MTtbsPhktxeAqJNkii3BxLaki9NIFr6lTwNCUujBk733xwr0p5b2mavkU/2z8QGWYdxx5yJafPCEsAqg+9eswipgr4oPl9nbaM+8UUnOzH68s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728492103; c=relaxed/simple;
-	bh=SuOAR2vHN+6P/wt8e/JT5JWIZ40oSAuu1ZrE3uAWQto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mh3KFaTzQJUGTj70EO8MwDhvdaEaBAEkxSBlAN4tuVlHH98n6aQLtSBgzku5kgNUzIcftU2RpUnS016ACAGVflGXntQhQeum5joG0VAgJnWPU0w3OfB+rWj8JNKjLbYdnBbwXop1L00PKYg56ApdFYhMyRLBUjMJ1/YsuOWi+nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCn6f7Nw; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728492102; x=1760028102;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SuOAR2vHN+6P/wt8e/JT5JWIZ40oSAuu1ZrE3uAWQto=;
-  b=KCn6f7NwuQJIREwklW1eb7UD1qJ2hujHxk4Fv8eOznigCDuUa9FB9vxt
-   Exm3LeIt7HXwsC5tQOQVpHRVUXd9+0EOzN1SAxZn4AFFe8d1o/ltxlZYA
-   tRJ61A+7ubwu32yReECrsU93ARei/0mrmypki1U6mQy0xWmZvromniNUc
-   W+AG+lkL2j14CNcx1NRcdrPyQG/omaCkFdPHfp+/ZFkHCeNQkOe/RnAkj
-   EjI6WSP5D81uWR87eoDephtWGFWqgfzQ99TEMfk/A/DeOWJktH09Bxa/8
-   G8n0D72FlaArfeeU+8codsQOw70aTBljI9na/gJK6PF66EWnrB7C3c4cQ
-   Q==;
-X-CSE-ConnectionGUID: sT12dmCjSpedKGoOFizpxw==
-X-CSE-MsgGUID: j992Q9PKRPaqgBblrPalpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27925178"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="27925178"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:41:35 -0700
-X-CSE-ConnectionGUID: BoH5p+sNT16HM/o8l46ceQ==
-X-CSE-MsgGUID: C2ml4FNfQHia87RfzaBaIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="80296012"
-Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.223.14]) ([10.124.223.14])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:41:33 -0700
-Message-ID: <1a91fc10-58f3-4d1f-9598-df5267774874@intel.com>
-Date: Wed, 9 Oct 2024 09:41:33 -0700
+	s=arc-20240116; t=1728492104; c=relaxed/simple;
+	bh=/DG49ZE8Q+idHvWM4FgxgFRGf10ADFAGuGSYPUabRkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJbHDfdxmoepTNMBCWyVwmjCrzZYY/mnLNrCRK45OcuqpaaM6NWRDfdfGNkauFnWvLFpMCKHglgkwTqKa1+xIN24NQ63tO4HkeNd/TIm8NXPnMLZk/FIGYPSJbBkdncZlBndHpelDmKHu77rH3aZ3Dgca6yG1BEKNES3gCf53rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vttrs5KZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FE9C4CEC3;
+	Wed,  9 Oct 2024 16:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728492103;
+	bh=/DG49ZE8Q+idHvWM4FgxgFRGf10ADFAGuGSYPUabRkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vttrs5KZijoyf1OU5PgfEEZLZGlA1N4Odz1SyfRUcr+sZeLdCfxQpYHeZn9LEe3Cm
+	 W7u1kXp81+pmr4Z2irbmzriJTjGpXw0jCdyzLKoSOdo8B2oKjnyP+o+E3rQpEoMGfz
+	 dqEbrA4Aw9HyetDUtdN9H0iuUeDyHrCbu31ZDcU2wF7jyO4OgQk8+1qWVrb+QkOJl1
+	 krQjFQ69h9eFUzwz4A1cKQ5WoARmS3lXh7Mv/DTv7Z6z6Cd7bDqkZDNfpE9kkdtj2G
+	 G6/GRZYFu87uI6AeGkhFOn++vm4rp9QTg1jV8xk1nESVKM4ztGSa+jINcalf2MLsLT
+	 U8UkIZ7l60nAQ==
+Date: Wed, 9 Oct 2024 06:41:42 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>, xavier_qy@163.com,
+	lizefan.x@bytedance.com, hannes@cmpxchg.org, mkoutny@suse.com,
+	akpm@linux-foundation.org, jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Enhance union-find with KUnit tests and
+ optimization improvements
+Message-ID: <ZwayRgFsfgZglODN@slm.duckdns.org>
+References: <20241007152833.2282199-1-visitorckw@gmail.com>
+ <ZwZIXxQLyJUL_nOW@infradead.org>
+ <ZwaPdSOMWQzuoPWU@visitorckw-System-Product-Name>
+ <1ccd6411-5002-4574-bb8e-3e64bba6a757@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
- timer shutdown
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- x86@kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
- linux-pm@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
- thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com,
- len.brown@intel.com, srinivas.pandruvada@intel.com,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241009072001.509508-1-rui.zhang@intel.com>
- <CAJZ5v0hVhYhKbiNc_DAqbZqRNe=MAmS9QCiL4uAw-m-U19M=2A@mail.gmail.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAJZ5v0hVhYhKbiNc_DAqbZqRNe=MAmS9QCiL4uAw-m-U19M=2A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ccd6411-5002-4574-bb8e-3e64bba6a757@redhat.com>
 
-On 10/9/24 04:24, Rafael J. Wysocki wrote:
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> x86 folks, this is quite nasty, so please make it high-prio.
+On Wed, Oct 09, 2024 at 10:53:08AM -0400, Waiman Long wrote:
+> The current union_find code is pretty small. Putting it there in lib allows
+> it to be used by other kernel subsystems when needed. I believe it should
+> stay in lib. If a slight increase in kernel size is a concern, we can update
+> the Makefile to make its build depend on CONFIG_CPUSETS which can be taken
+> out when it is being used by another kernel subsystem.
 
-How much linux-next soak time do you think this needs?  We'd ideally
-like to give it a week in x86/urgent.
+Yeah, let's CONFIG it for nwo and see whether there are more use cases. If
+that doesn't happen, we can fold it back into cpuset.
+
+Thanks.
+
+-- 
+tejun
 
