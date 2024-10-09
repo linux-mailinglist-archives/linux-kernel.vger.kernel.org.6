@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-358016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B15799793E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:39:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B200A997941
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B028284702
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E122C1C21D77
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDE71E5730;
-	Wed,  9 Oct 2024 23:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAA41E4121;
+	Wed,  9 Oct 2024 23:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="luyYqsnj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4dqNLTt"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDD81E500C;
-	Wed,  9 Oct 2024 23:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD951E282B;
+	Wed,  9 Oct 2024 23:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728517163; cv=none; b=SPJWdquP6VjC682zp84vufTesmB8AVevp27e8kkUKwo9Ot1zD6XC4hMLxz6HrX/MSBz3XNW0YoYGvvVFCvUPF0j/eGWkyJXhHtMn/qJ7RXrjlmufG3N78KPeLK4XMuVsRxF5nWtaRkbLzyv349/vUG3QiXlA7vMX/sDSw3XGGkg=
+	t=1728517281; cv=none; b=AdTzgjLvTJdQ8iNgyo8c70Aujq99Lmu+1zBaQQH+5fKUgAkXE8eMMCAIpNFWpOCVC/tIpXVZaXovp/lZ/OZclZYx7r6PjhetYIGgD6tVYoI7YgWyU9Ja4JZmREyKkiKyITc92o/9VdktKYL/jKZ2CVIS5EhEMG30ZhL4xV3ZvsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728517163; c=relaxed/simple;
-	bh=SqHKUX3ni+UCyG6SrWvipnX5MBaFvPn/3CS1v1vVSuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rQOyxXJ0Ekx3SllG3nkEj3S5SjQLTiQIScYwtru5oH8wGKhXzZlZooiefL1gyEffSjGA5icjGmchqbZ6IHFR2Z5V1Ok+KU0D+O2MFP0DCbVBhfzXFeIgwFyv6s1esq+8DqmOjR5ibukpqyCT3EO03jELg1Pc5m8JLs86jLJk8jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=luyYqsnj; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1728517281; c=relaxed/simple;
+	bh=CNesG7FGcoT/a+eEEk3+j8joxt3TDHqw+TPFTXvAMfE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l7I3B15mwPPj3zHQaRG3Lmw3I/3O6Ld8eTfH6NT2VXKzaU2DVdJxVF3NBEpA5WmZPkdc4CwELHi/3gusWFX/IEQQpKoYObM9dQd/Ai7E0qlDpwn5LzuIMr8UJl4dNjPQ5jHOOiEKEUcKq2mromF3Ez7wAAdGAPoBvs198yvS9pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4dqNLTt; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b64584fd4so2863195ad.1;
-        Wed, 09 Oct 2024 16:39:22 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so83170f8f.0;
+        Wed, 09 Oct 2024 16:41:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728517161; x=1729121961; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728517278; x=1729122078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rbJmDiU6TlWSPoOSKzFRLYQw2IfiIt/YPYRBKDoA7jk=;
-        b=luyYqsnjG5awMcI/MIHZ8zkvxthKzxw60KwaDHnFN6iqj/CX3Z9aCoqa3SS/Nq/KSE
-         l9yg1EgoD+PFv4tWofC2+pTh0ZT1pVy6L+UiB+rPwoQ2OCMSOMLws9XfWZG3UJw5fcr+
-         9B20VkhslQNG6DM/4BEu+Ee4TEe8twhvvMYFsWfKUE3FqY0zxu0d0um1vemlRJgfVM9z
-         1T6zUEitYyG9aiR0JR1BYCOZZtIWJDs+C9c0WRyfYlP+hKHwYzk996mzKlCC76woab6S
-         SeIs4544ug4FD6aaMPq6WWuBH4BxTPn+NasHt4DzfXGpI761rhY93s3SNaVZec8zGdXK
-         r5kA==
+        bh=NV6IS5DWa+7uSQHx5EG2LlvpJvo8gaGC4KIn0m9Kmxo=;
+        b=V4dqNLTtW8HpfotDI7NVv+Tt3xdixROiGYQIIiOPWmIbIgU6YdAQlF7NOR/LNmQua4
+         55/XUBjk9b9uPWm9HmhcQTHBQee066atDdHOPxumqdEGx5flWRGIggc9rg3oW94j6TF1
+         1eFRZ3E1KUZL1UDiwoo5eV+BEMp2Dz1sxaqFqjkJwBXjr1aW6MjBtb/KrbHQsp088zGO
+         cdzL3YKn3ytqv684kg/CkTlW6UNqaukRki0rbE0PwyBl0X4IZJ0RQXuBx32y7LtnPNFh
+         3tEJPGUgpuIwWYYIXgKQVByl1f3ShIPrA7qZVh8SmQxhC73yEZGBb/sOxyJUOdEad3Wh
+         evrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728517161; x=1729121961;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728517278; x=1729122078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rbJmDiU6TlWSPoOSKzFRLYQw2IfiIt/YPYRBKDoA7jk=;
-        b=ih/L26mMJpKE2G/KGPh0HZo6+1XjLpGZtSByKEINsBK2Fgq/7XH3rkQ92IccvLs1C9
-         jQC2PQ38D5IsXYBXt9WL7x5PwZnNDqTAd0nBOjx/g2ZkjVTRPlLb/SN92e6iksSChfu2
-         itinD+gOhqXzUI8WD/OzmCCct0BU+wf6ynNEtqhp0X4GXV99Pl0/ahWETBslMEmfQ/i4
-         eW29E9XkjG0SvmRJgI8xca3igXWpJo5QeZF9NmZZalldL1BcXFFdouUKJbWnyZAPRBnm
-         qurGX7Kwrkrgd9speacFNkBGPBIEIRv3/+Z9qIxTb214TVkU5m/ZluUsI1oqZxvLKlkM
-         RNFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAx0DGdBtPJWTP8aaX0GuDzC0hG/I3mgTyTeBYeI/D3fTtf5Bu7LA2ADtMoFNAT7yU0T2c+qHRPpZK9z+/@vger.kernel.org, AJvYcCW86dCbf+whomcW0kTNe0clC/4MgfK8fvf4SaWLaKPRT/IW5XeBLCHsVv2nOSYbHLQGmmMtzkziYgA2QIj3@vger.kernel.org, AJvYcCWJ0VsVhEGAKXHcSvFPPYPw/H7T68PWjSs/8knlqBOFfsZCDh2/jmI62p6RdoaN7m5jUpwnyFt2m5qb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzafjuYs9erhThXSTU+UQj81v9Q/csqwK8PHXF2BJ7F0vvgqorw
-	0zKtS+KbCXYGEgH1a07O/8J5Q//8Vw3NApLHlwfyHmyLUkSDDx/U
-X-Google-Smtp-Source: AGHT+IEAlPWlQdhTKe4dwmryZ7XBwMKUfZUGGHcTXo9YAHd0e88UPVlFRQlqG8m8GpbXl+Jr74IIlg==
-X-Received: by 2002:a17:903:185:b0:207:c38:9fd7 with SMTP id d9443c01a7336-20c7ec9fe31mr25346995ad.22.1728517161541;
-        Wed, 09 Oct 2024 16:39:21 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138ced26sm75786245ad.74.2024.10.09.16.39.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 16:39:21 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>
-Cc: Yixun Lan <dlan@gentoo.org>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/2] serial: 8250_dw: Add Sophgo SG2044 quirk
-Date: Thu, 10 Oct 2024 07:39:06 +0800
-Message-ID: <20241009233908.153188-3-inochiama@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241009233908.153188-1-inochiama@gmail.com>
-References: <20241009233908.153188-1-inochiama@gmail.com>
+        bh=NV6IS5DWa+7uSQHx5EG2LlvpJvo8gaGC4KIn0m9Kmxo=;
+        b=HPFnr5ALKcG46t20YMaW0pVvex9nBmtkWCqqtu9ibljWNM8YEvUYzhj9ZTdotVstNK
+         2uIf3wo4l7kjtak64FGGWnVs6XSkFF5FdU+B7e5EsHA8+bHTUlesSwIIdQUgPRyDZ7SH
+         qZARUB7GwXFTF37rvyAJEr81flXTFgJIE8OrfM6PPkFzw9DBOPmELWR5OCwJMV+KZwC7
+         2zr13Q0FuoGVkG8LX2vZN49bMygDryQF+OUHajmwqEyBiWB2sqDRLCbNJyeA3X5gvgBY
+         cl+xj1T06tXC1hpDnlaUgz8PVXTx0rNrHZCpOEOlLxgJBOThaAMzd7ctlHEWzOjZlsTM
+         1cFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvKdn3qMcS0sBPIs0OLXuOy+f6JIULa/feS0814WT2p3dS1Yio2avn2DPgbfL+61KH6sptI3pF@vger.kernel.org, AJvYcCW51Gxd6yAzgCJ/B2EWU5ahz0tPh6YU9ZB/LGM+Nh51BsHq6Xtxn1wlZqXnG2mP1CGufAtdYOVAO1Djnpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy6O2PSM7iYqEi45uhgavmwPLuryMFJKxMNie7rs87mXJkO2Ot
+	8vOQcEEGubJcycPw+yLVD99BYtxdCawbpVk9hwuWmjHnRE8uNLIehmX6eEgPcmzXlA2FkRsZN9U
+	mu/nwVsv9R7u6hTVrquwgb7ttlm/VEg==
+X-Google-Smtp-Source: AGHT+IH6236Rx+1SLLug8rPn5iG8s8FC6z+M5OjhHc3ocP0zbDgQyxE3mAqgxQFxYRpaqgXhMKa30LvOxFCv6SzBgWY=
+X-Received: by 2002:adf:e78d:0:b0:37d:3280:203a with SMTP id
+ ffacd0b85a97d-37d47e93ccbmr1180232f8f.10.1728517277639; Wed, 09 Oct 2024
+ 16:41:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241008112049.2279307-1-linyunsheng@huawei.com> <20241008112049.2279307-10-linyunsheng@huawei.com>
+In-Reply-To: <20241008112049.2279307-10-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Wed, 9 Oct 2024 16:40:40 -0700
+Message-ID: <CAKgT0Ue_mp1JB2XffSx-9siR4V6u3U_jEyy91BUqTS9C6TJ5mw@mail.gmail.com>
+Subject: Re: [PATCH net-next v20 09/14] net: rename skb_copy_to_page_nocache() helper
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SG2044 relys on an internal divisor when calculating bitrate, which
-means a wrong clock for the most common bitrates. So add a quirk for
-this uart device to skip the set rate call and only relys on the
-internal UART divisor.
+On Tue, Oct 8, 2024 at 4:27=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
+>
+> Rename skb_copy_to_page_nocache() to skb_add_frag_nocache()
+> to avoid calling virt_to_page() as we are about to pass virtual
+> address directly.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/net/sock.h | 9 +++------
+>  net/ipv4/tcp.c     | 7 +++----
+>  net/kcm/kcmsock.c  | 7 +++----
+>  3 files changed, 9 insertions(+), 14 deletions(-)
+>
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index e282127092ab..e0b4e2daca5d 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -2192,15 +2192,12 @@ static inline int skb_add_data_nocache(struct soc=
+k *sk, struct sk_buff *skb,
+>         return err;
+>  }
+>
+> -static inline int skb_copy_to_page_nocache(struct sock *sk, struct iov_i=
+ter *from,
+> -                                          struct sk_buff *skb,
+> -                                          struct page *page,
+> -                                          int off, int copy)
+> +static inline int skb_add_frag_nocache(struct sock *sk, struct iov_iter =
+*from,
+> +                                      struct sk_buff *skb, char *va, int=
+ copy)
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- drivers/tty/serial/8250/8250_dw.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This is not adding a frag. It is copying to a frag. This naming is a
+hard no as there are functions that actually add frags to the skb and
+this is not what this is doing. It sounds like it should be some
+variant on skb_add_rx_frag and it isn't.
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index ab9e7f204260..6b7c75670f29 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -750,6 +750,11 @@ static const struct dw8250_platform_data dw8250_renesas_rzn1_data = {
- 	.quirks = DW_UART_QUIRK_CPR_VALUE | DW_UART_QUIRK_IS_DMA_FC,
- };
- 
-+static const struct dw8250_platform_data dw8250_sophgo_sg2044_data = {
-+	.usr_reg = DW_UART_USR,
-+	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
-+};
-+
- static const struct dw8250_platform_data dw8250_starfive_jh7100_data = {
- 	.usr_reg = DW_UART_USR,
- 	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
-@@ -760,6 +765,7 @@ static const struct of_device_id dw8250_of_match[] = {
- 	{ .compatible = "cavium,octeon-3860-uart", .data = &dw8250_octeon_3860_data },
- 	{ .compatible = "marvell,armada-38x-uart", .data = &dw8250_armada_38x_data },
- 	{ .compatible = "renesas,rzn1-uart", .data = &dw8250_renesas_rzn1_data },
-+	{ .compatible = "sophgo,sg2044-uart", .data = &dw8250_sophgo_sg2044_data },
- 	{ .compatible = "starfive,jh7100-uart", .data = &dw8250_starfive_jh7100_data },
- 	{ /* Sentinel */ }
- };
--- 
-2.47.0
-
+Instead of "_add_" I would suggest you stick with "_copy_to_" as the
+action as the alternative would be confusing as it implies you are
+going to be adding this to frags yourself.
 
