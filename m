@@ -1,214 +1,172 @@
-Return-Path: <linux-kernel+bounces-356286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D21995F01
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:38:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D8B995F06
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F0E1F24844
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A384B245F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387EE15F3F9;
-	Wed,  9 Oct 2024 05:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADF6156F5D;
+	Wed,  9 Oct 2024 05:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuJAVyMh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zWbzOzPE"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2050.outbound.protection.outlook.com [40.107.94.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6C915FD01;
-	Wed,  9 Oct 2024 05:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728452330; cv=none; b=JpizkYvrV/3oSXwQksQ6tYCEy9o/F8KMqo7cvvlQPTYBMpVe5a2YpNr0wGvI8I2Vm+lejvovv0LYeo1Xc67/2xRVurFHXW5Q385Rj9G3/ZgAlo5hYz0PDdaKCXmp8yvuD05xeC0fEdap3i0OMZ+1zlSM97DmckGlyhBoJIPNbOQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728452330; c=relaxed/simple;
-	bh=AodUmJbjAEyzv85xinf1CRD33stakirAqexHC332BW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqwnNpbspBZa3XG+Cgyfx/sqb/j/pKz3NlfkYygDcKrENsMaBKLulkvj/045VWCr55cIQ+xhrx2cT1FiufKpoqtSMAH//8DuS/UoCDXFomWNlOQmjtgYx+eGYId5oJ287D4Rjo7PAT3kOI3r8nyW9sJzEvN84NXNY4AAyaLb+8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuJAVyMh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A11CC4CEC5;
-	Wed,  9 Oct 2024 05:38:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728452329;
-	bh=AodUmJbjAEyzv85xinf1CRD33stakirAqexHC332BW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZuJAVyMhLKziVFJZ07qBbe/keCjj6eJkozA2uJHINXQlGIVCVuYUsBtbJoQI9p30y
-	 xrB93ocsRQ0y561Q7KqPWb0XN6hIJHvC2jPrPpBTdzEx1BCmdeUc9usKllVY9BbM/I
-	 Tu3Kn/qJeTJiT7X5O1dpql+0NtZatCr0LumrXllt8xXavwestlhpIO1ONw82hK7Mb7
-	 LoubJ7qD9mzcOChIwqg1as4MnG6AUr484+a5vBpEKPi3TbRwGpsrZntpExh+Hhe8tM
-	 foUNGAfnNge/cXGmra4b003q/5MEQKBIuU6xBgb5JjOuDGSc/49MTklTSaYZxPQcG9
-	 pWqsxCRF/eMzw==
-Date: Tue, 8 Oct 2024 22:38:47 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Leo Yan <leo.yan@linux.dev>, Howard Chu <howardchu95@gmail.com>,
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
-Message-ID: <ZwYW54gKOfnUboeZ@google.com>
-References: <20241001171950.233723-1-irogers@google.com>
- <CAP-5=fWExR7ae=dgiAG8BCtDN0XDwnzy9=SBbE0cy5S1Luw-4A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EC1156242;
+	Wed,  9 Oct 2024 05:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728452399; cv=fail; b=GF0+CdEzjH7TmzN405MzlYie4AHDQ38QkoGB+pYOiBQcxmxnFJ1YTv8tvxWKmbEGiDDeZ+LCyccEagArJ4sLc0CFGixKXk65EYx8CN2CoIPxuV8llxSH+EYLNKC/SS/NotKTvBUEO7fxo3ilN0JpFxb/gmx99U94Z07I7ff5xnQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728452399; c=relaxed/simple;
+	bh=QjymJCAoSY0HiRLhIl3lrphjATOlJxyKO9znTmWZzg4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hbsuw4ihqWRg/CH/dv0sYGXMrYbAtG/vLTrAjCRfQgw7Z8ZOvlv4SY/cWl8owiDkBlxjkPLPxfW/kizvN4TWSsVgC6pGOqG/bbhNudRnmu358soR9gf073RxA/n3sUnudbvdHXDDcoOk4ASX8OsWYi8f7N0JYlprFM/tfNP+CMc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zWbzOzPE; arc=fail smtp.client-ip=40.107.94.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n2915e5pklzH56rK/+lKtsgcD85zSwkxYJLzEB6aq+8tD7Cy97BMqZ1JoJteRBBz/Ky99RhoTRHlCeurmAtf0NeRjFceR4I7anRG5kv9RjcVQWJH8fFGgY+a6LNUFVYzrSg5YvAABK50xgPYmeUI08edI1ZxKRZQnRTEzK6Ha2Z4FGC/kOV8TB0le3o4XSos7YsilmAm7+RPx+QnU/tSXfZC2o38f69jnEfhBrJuCNnT23Ml6DBWdyv2/fQX1hiu5jTL/mOZ8cgDeWgwWTD29INsyL/8R1V6a1yqKJi1X6w7KR8C04iV/YrbnMnGsl0x71DxXJxmig3VkQgPm2/XMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fwPOf8LNuss9/YlEeBFBch5+GpuVfatXcAJysv1v7Vk=;
+ b=Q/B5MJGGDBqfN8oKNKEu5PvtvtFfZSI056977cMmdAlPeAIFsbzsYbkgGIbnOXghhvWWPbbxGY0LRrqCdlRyu6ENsnMWJELwZLEKBkUqiLFuvzCjs33qtYAZjs5cZfmC6MxZDBXGdEz9KvG1sOZYAt1FFJqNP+F3KPmt1CEpMC9kti57uPYKBPTpWkREtfxCLQj3VfItWHzY2w62jakIF2dd7LoXnwlOeG8A55oo7l7SHY/DGN6OXMsdf63W9i0mhr3a5s0KZU48z81OOMM8ebRf23ntjOhaPw+Evq7/WayEYY3QS/sAFzM9FCk7LnBrMPjFZGiAnBIWkRXoxEOllQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=microchip.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fwPOf8LNuss9/YlEeBFBch5+GpuVfatXcAJysv1v7Vk=;
+ b=zWbzOzPEr+RDvy2Q1iA7ZfLGDUtcaZOqlwdJ3+CS+AktkUduZnOoAcTxnJ1zV6cW0JpYRh2rMtOGINQbbP4rnr9MJP7pQn9BFZ1hJSVo+2TTXz5P7GY4teFBQBTEsdTueVnEUFSGhRG8P2xBbL38cw3wtjSu+o2JP+dFxUExQv0=
+Received: from SJ0PR05CA0017.namprd05.prod.outlook.com (2603:10b6:a03:33b::22)
+ by IA0PR12MB7627.namprd12.prod.outlook.com (2603:10b6:208:437::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Wed, 9 Oct
+ 2024 05:39:54 +0000
+Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
+ (2603:10b6:a03:33b:cafe::9e) by SJ0PR05CA0017.outlook.office365.com
+ (2603:10b6:a03:33b::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16 via Frontend
+ Transport; Wed, 9 Oct 2024 05:39:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Wed, 9 Oct 2024 05:39:54 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
+ 2024 00:39:53 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
+ 2024 00:39:52 -0500
+Received: from xhdvineethc40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 9 Oct 2024 00:39:47 -0500
+From: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux@armlinux.org.uk>, <andrew@lunn.ch>
+CC: <vineeth.karumanchi@amd.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <git@amd.com>
+Subject: [RFC PATCH net-next 0/5] net: macb: Add versal2 10GBE device support
+Date: Wed, 9 Oct 2024 11:09:41 +0530
+Message-ID: <20241009053946.3198805-1-vineeth.karumanchi@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWExR7ae=dgiAG8BCtDN0XDwnzy9=SBbE0cy5S1Luw-4A@mail.gmail.com>
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|IA0PR12MB7627:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37e51b53-5bcb-4b4b-513f-08dce824cd79
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|1800799024|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qdyIudWFnUcpxD6deFGkUO1pyPFJLHW5KxQ5HYVb9KyTW4IrgsElXWVqWr3d?=
+ =?us-ascii?Q?gyEC5Za/zLwzbKCANSPiP/cQbkr8uOD89DWud6DbqtykaquJm5YPOjzl4lWb?=
+ =?us-ascii?Q?q6JnM6ENBCy7W3DHFpkh15Jn/yvCiub2GeXCheH4VnhHl++0XaNViVnONgEO?=
+ =?us-ascii?Q?eSbaa0v4odNGOT1uDQjY81wr1hnhMwBX/BiUEvPr9CYhdgQ4hId9hpkZlHDA?=
+ =?us-ascii?Q?lJWEFqdBQN7jJE8ccFpWp0X/zuQpsNh849jksnBgS3xyIEcUPdvuIOCwvoAP?=
+ =?us-ascii?Q?jh5Hu+YSpAvAd7+1njMy5VBmfM1fVy5ojuBwHsIQDL14LnrVEkaEYec7ivJX?=
+ =?us-ascii?Q?lNK5kTsm7JmT3gIKTIH37OUl2Ex4/NN65fac5kbdc01Tgm3dpV63U9PMXqLS?=
+ =?us-ascii?Q?fmBBodeRV8RVyT7u7VruFBtGzSENrvp4Rsns5O7uTk3PxpK5EEaELQ/Xuj29?=
+ =?us-ascii?Q?H/lWCtRJUD4He8EctgVbPMCtyoQLIbDl4wClOhBcFwMEmv3l1u5bswEH/vuB?=
+ =?us-ascii?Q?r8hkOUJBtaUQWKqzf0ajF+KByUwtrpFF4shiy7WuhqxKyfd6E0VGs1nKrlHe?=
+ =?us-ascii?Q?zuSRKd24uRZiDfHKBcSSyxUEFwJ89lFDH9J4H2NBfysdYvbntxap2jsifq2c?=
+ =?us-ascii?Q?H4o+c3EHqVXrF4Dz9Y4NVLcGok2apzV+0uzlWmH9JSkKc6kSI63EhIB02Ktk?=
+ =?us-ascii?Q?97/bhUxBO6DvM8exLa2itVrVux2lRCSsWj6LRJolMVYEm6Udrsu4pj2ebuFE?=
+ =?us-ascii?Q?htUt/DWuMO7kKOkxh3JpdtWCGlL3eixv4gGpBzzhW/TFAT+u5yo2+rU6bXmH?=
+ =?us-ascii?Q?rURvfAfkSmErTqubz9rQ0QhxB5HbLSsFf6+0oPNhQOrB27ZDMMQPTv8nXaLX?=
+ =?us-ascii?Q?CSOW954Xycb8IyV2yLbGPjYMyPXKYtFKqwHhMtMOtybi01ftLgBJ9x/fSET3?=
+ =?us-ascii?Q?hVNd1l/TKnYWqWZV/7ZXRolGoGs0zNUy0HDbem2h3XI98tIKfaLLO+OjJIVv?=
+ =?us-ascii?Q?f46lWjz/KMnzVNKlsRwStLH+UMKH3tIPTve4KnB5hX+3DviC2Nr/F6jTQ+/x?=
+ =?us-ascii?Q?01m+laJEvGXGDgaLZIvRhKw7tOjOnyvVW8bIGhO7kmvUG8N45+lzgY3xyNrN?=
+ =?us-ascii?Q?JXMLcwBoVeWzNhYg1OHyPDl0BoGkbbjsmgoHP8qkxMVHZwZgN9747I8Ql26C?=
+ =?us-ascii?Q?5FHxNprm+WpS0u+V4eJkcj2eqsWVONXOWgINejYsOEaEgjBDjA1hHfuN5MVK?=
+ =?us-ascii?Q?GUxfVL2OPfj/UIlli9PiWLEZSk0witOih5KGXRt8QRk/rYvNTFfMvg7FFfGZ?=
+ =?us-ascii?Q?XEzIR8fhMV/b3/XGPe6eUG0HVahC9NFPeoRxJ91OZoPu6VfkeqLBFUkR7uew?=
+ =?us-ascii?Q?kIbunjRBdEI8u0HtaxH+mVgbXOU6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 05:39:54.2108
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37e51b53-5bcb-4b4b-513f-08dce824cd79
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D1.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7627
 
-On Tue, Oct 08, 2024 at 11:55:29AM -0700, Ian Rogers wrote:
-> On Tue, Oct 1, 2024 at 10:19 AM Ian Rogers <irogers@google.com> wrote:
-> >
-> > The path detection for "Setup struct perf_event_attr" test is brittle
-> > and leads to the test frequently not running. Running shell tests is
-> > reasonably robust, so make the test a shell test. Move the test files
-> > to reflect this.
-> 
-> Ping.
-> 
-> I think this is worthwhile cleanup for the attributes test. It should
-> avoid problems like:
-> https://lore.kernel.org/lkml/ZroNTkdA8XDFaDks@x1/
+10GBE IP is a HighSpeed mac that supports 1G, 2.5G, 5G, and 10G speeds
+and has two PCS. It has USX PCS for higher speed and SGMII PCS for
+lower speed transmission.
 
-Sorry, it's not clear to me what was the problem.  Can you please say it
-again briefly?
+Auto-neg is disabled for this IP in versal2 device, hence "fixed-link"
+at the specified speed is used. It is an expansion of the fixed-line speed
+at 10G currently being implemented. These modifications are tested using
+a HW board configuration without a PHY with QSFP.
 
-Thanks,
-Namhyung
+The IP contains MDIO lines, and the goal is to use auto-neg in the PHY
+and set the agreed-upon speed in the MAC. These adjustments will be made
+in the following phase after the extra hardware is available.
 
-> 
-> > Ian Rogers (3):
-> >   perf test: Add a shell wrapper for "Setup struct perf_event_attr"
-> >   perf test: Remove C test wrapper for attr.py
-> >   perf test: Move attr files into shell directory where they are used
-> >
-> >  tools/perf/Makefile.perf                      |   5 +-
-> >  tools/perf/perf.c                             |   2 -
-> >  tools/perf/tests/Build                        |   1 -
-> >  tools/perf/tests/attr.c                       | 218 ------------------
-> >  tools/perf/tests/builtin-test.c               |   1 -
-> >  tools/perf/tests/shell/attr.sh                |  22 ++
-> >  tools/perf/tests/{ => shell}/attr/README      |   0
-> >  tools/perf/tests/{ => shell}/attr/base-record |   0
-> >  .../tests/{ => shell}/attr/base-record-spe    |   0
-> >  tools/perf/tests/{ => shell}/attr/base-stat   |   0
-> >  .../tests/{ => shell}/attr/system-wide-dummy  |   0
-> >  .../tests/{ => shell}/attr/test-record-C0     |   0
-> >  .../tests/{ => shell}/attr/test-record-basic  |   0
-> >  .../{ => shell}/attr/test-record-branch-any   |   0
-> >  .../attr/test-record-branch-filter-any        |   0
-> >  .../attr/test-record-branch-filter-any_call   |   0
-> >  .../attr/test-record-branch-filter-any_ret    |   0
-> >  .../attr/test-record-branch-filter-hv         |   0
-> >  .../attr/test-record-branch-filter-ind_call   |   0
-> >  .../attr/test-record-branch-filter-k          |   0
-> >  .../attr/test-record-branch-filter-u          |   0
-> >  .../tests/{ => shell}/attr/test-record-count  |   0
-> >  .../tests/{ => shell}/attr/test-record-data   |   0
-> >  .../{ => shell}/attr/test-record-dummy-C0     |   0
-> >  .../tests/{ => shell}/attr/test-record-freq   |   0
-> >  .../attr/test-record-graph-default            |   0
-> >  .../attr/test-record-graph-default-aarch64    |   0
-> >  .../{ => shell}/attr/test-record-graph-dwarf  |   0
-> >  .../{ => shell}/attr/test-record-graph-fp     |   0
-> >  .../attr/test-record-graph-fp-aarch64         |   0
-> >  .../attr/test-record-group-sampling           |   0
-> >  .../tests/{ => shell}/attr/test-record-group1 |   0
-> >  .../tests/{ => shell}/attr/test-record-group2 |   0
-> >  .../{ => shell}/attr/test-record-no-buffering |   0
-> >  .../{ => shell}/attr/test-record-no-inherit   |   0
-> >  .../{ => shell}/attr/test-record-no-samples   |   0
-> >  .../tests/{ => shell}/attr/test-record-period |   0
-> >  .../{ => shell}/attr/test-record-pfm-period   |   0
-> >  .../tests/{ => shell}/attr/test-record-raw    |   0
-> >  .../{ => shell}/attr/test-record-spe-period   |   0
-> >  .../attr/test-record-spe-period-term          |   0
-> >  .../attr/test-record-spe-physical-address     |   0
-> >  .../attr/test-record-user-regs-no-sve-aarch64 |   0
-> >  .../test-record-user-regs-old-sve-aarch64     |   0
-> >  .../attr/test-record-user-regs-sve-aarch64    |   0
-> >  .../perf/tests/{ => shell}/attr/test-stat-C0  |   0
-> >  .../tests/{ => shell}/attr/test-stat-basic    |   0
-> >  .../tests/{ => shell}/attr/test-stat-default  |   0
-> >  .../{ => shell}/attr/test-stat-detailed-1     |   0
-> >  .../{ => shell}/attr/test-stat-detailed-2     |   0
-> >  .../{ => shell}/attr/test-stat-detailed-3     |   0
-> >  .../tests/{ => shell}/attr/test-stat-group1   |   0
-> >  .../{ => shell}/attr/test-stat-no-inherit     |   0
-> >  tools/perf/tests/{ => shell/lib}/attr.py      |   0
-> >  tools/perf/tests/tests.h                      |   1 -
-> >  tools/perf/util/evsel.c                       | 122 +++++++++-
-> >  tools/perf/util/util.h                        |   7 -
-> >  57 files changed, 142 insertions(+), 237 deletions(-)
-> >  delete mode 100644 tools/perf/tests/attr.c
-> >  create mode 100755 tools/perf/tests/shell/attr.sh
-> >  rename tools/perf/tests/{ => shell}/attr/README (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/base-record (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/base-record-spe (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/base-stat (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/system-wide-dummy (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-C0 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-basic (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-any (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_call (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_ret (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-hv (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-ind_call (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-k (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-u (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-count (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-data (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-dummy-C0 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-freq (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-default (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-default-aarch64 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-dwarf (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp-aarch64 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-group1 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-group2 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-no-buffering (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-no-inherit (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-no-samples (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-period (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-pfm-period (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-raw (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-period (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-period-term (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-physical-address (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-no-sve-aarch64 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-old-sve-aarch64 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-sve-aarch64 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-C0 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-basic (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-default (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-1 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-2 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-3 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-group1 (100%)
-> >  rename tools/perf/tests/{ => shell}/attr/test-stat-no-inherit (100%)
-> >  rename tools/perf/tests/{ => shell/lib}/attr.py (100%)
-> >
-> > --
-> > 2.46.1.824.gd892dcdcdd-goog
-> >
+Vineeth Karumanchi (5):
+  dt-bindings: net: macb: Add support for versal2 10gbe device
+  net: macb: Add versal2 10GBE device support
+  net: macb: Update USX_CONTROL reg's bitfields and constants.
+  net: macb: Configure High Speed Mac for given speed.
+  net: macb: Get speed and link status runtime.
+
+ .../devicetree/bindings/net/cdns,macb.yaml    |  1 +
+ drivers/net/ethernet/cadence/macb.h           | 13 +++
+ drivers/net/ethernet/cadence/macb_main.c      | 84 +++++++++++++++----
+ 3 files changed, 84 insertions(+), 14 deletions(-)
+
+-- 
+2.34.1
+
 
