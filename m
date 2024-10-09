@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-357466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1261D997193
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5949997195
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD521C22AE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65CB12842E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DA01EABA4;
-	Wed,  9 Oct 2024 16:26:01 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00967149E00;
+	Wed,  9 Oct 2024 16:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSMJf5Yv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B208A1E9077;
-	Wed,  9 Oct 2024 16:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2E51E285C;
+	Wed,  9 Oct 2024 16:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491161; cv=none; b=BT09vHid1i96jJm80Jq+D+pZLXef+7OgruGY5Xqx0XsTuU9eF8nqmc1P57NcXEfqxya+MdO+gwJre2ZxnXjCBo2gyvWPoSTdO8uzOh8RoNyLZFImWBZ5cZlxjYxR0TeJUOnwwvzgFUZf4rBeXktVYGHZkHjKaKrbzaePR9murTc=
+	t=1728491200; cv=none; b=BPqUZXvqnGbIxRw4PS0NDECK+8fYdKObCk6IrN/b6RyZzPok0fvdKKtrw2ifoZMEExw9r9XdVCNQhSw0DUWtvcLcuPXQZTgQMylGOfCgNQml0ZDNVaRl9FsW3S/NUe33qfahLv3qJljXAvRWIIdcokb6DB1UH3+NA7QbpXrZdJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491161; c=relaxed/simple;
-	bh=h8/ahP4xmd8XMO+JEsxeM006YnQkw2gH0McVP4Kprq0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hUGgCL4q+B98Ai9bv74Z6gCL4ChkGfm59HTBacd2veUZAO0zpZIuEqVh8RYNruzolTWisonpQZrDXXA508wXTlfwqFnGsmrpHCd7soKqC7K7NKQju4jXDGqTiVxp4UPnz2WXT+bkFrL7UqZb8VBYTC+E/ejDarmOrGYbu40hxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XNyRQ1Dt4z9v7HK;
-	Thu, 10 Oct 2024 00:05:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id A3B69140203;
-	Thu, 10 Oct 2024 00:25:55 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDndy+LrgZnl_KFAg--.57862S2;
-	Wed, 09 Oct 2024 17:25:55 +0100 (CET)
-Message-ID: <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
- ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Wed, 09 Oct 2024 18:25:45 +0200
-In-Reply-To: <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
-	 <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728491200; c=relaxed/simple;
+	bh=UYuDl25axeC8L+3RX7L0LERIgnmmg03ITxZL5PJpNdI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NPakbFPTmB7TjCdwotUgF/Z8dwHAKwZInj/QjBwXygBRSQ11Qe/2iZepuhrjjSrGEvqMgyG6+s05GuZ8XV4UwJ2pfW/N0frtYWlk+pPnvQfvAfi0h8VSaSa02bU7gRqh4Upgtz/7Um31vl6c+8EuRfpi1L6XRwH3QP1i6VIU9BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSMJf5Yv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5440EC4CEC3;
+	Wed,  9 Oct 2024 16:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728491199;
+	bh=UYuDl25axeC8L+3RX7L0LERIgnmmg03ITxZL5PJpNdI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=nSMJf5YvzT+QslzGw0M0kAAyMWl/wZbwnY5A3F6w5VGm7+wEL/bojhf/xbzh3yVFT
+	 JUgYXQ7il8/yAdrYv3hdvhEcYQxl3WSJ8UZOUOGvziadon0ygS3cvNXBNa3Wruckr6
+	 rJJaaAWEBSOygP+C/ZiueeKEWbKQ3ZkLIKVW2ExMlS8agZnDgEpynkLQg8D0V01PGh
+	 IDACbTDQ+lsxwbps3nvuDdt11BYrEsl8Tp4VLyzhYIxUts9+K6oW6PoPQbWwZ9XxeL
+	 4JD4E/PaqO1qeSSJpA1gfothg0+8aB3TF/1MHEQSOvhED8e3TOQkOGvnTtQP/XHr1z
+	 /5R5Mr7Z7+P7w==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 09 Oct 2024 12:26:32 -0400
+Subject: [PATCH] fs: grab current_time() in setattr_copy_mgtime() when
+ ATTR_CTIME is unset
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDndy+LrgZnl_KFAg--.57862S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw47AF1xXF4rZr4DCw1rJFb_yoW8Zw17pa
-	y2g3WYkr1ktry29rWftFZruaySk3yrWFZrX3Z7Jr1kZas7Zr1jqr1fG345uFy5GryxAw1I
-	qF1UWwn8Cw1DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrs
-	qXDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGcF5v4MbwAAsU
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-mgtime-v1-1-383b9e0481b5@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALeuBmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNL3dz0kszcVN00M3MjC1OjFDPz5GQloOKCotS0zAqwQdGxtbUAZRh
+ fJ1gAAAA=
+X-Change-ID: 20241009-mgtime-f672852d67cc
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1233; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=UYuDl25axeC8L+3RX7L0LERIgnmmg03ITxZL5PJpNdI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnBq674ZX0VDNVAHHinEwqEy+bXkux6MUEqvVc8
+ qiUOc/Y1mCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZwauuwAKCRAADmhBGVaC
+ FZ5ID/48wlcjnfOuNSI/y3uSIxj1XoYmkGFYi43I+XRSK1Su0az1/RVXZP1vrEqJxZpgx4xtn/0
+ 4nCKW9puENWee3+6pa+RYt9hQCHx+eFPE0I/Y2RwoEWABLiZfM+EpJxR9oOE/4zsOiH9bcXnkrZ
+ y2LC2txksmU5/emKm0Gj4WYFVe5Ba8n2x3KIdFWRI7CVlluoWgPrbfDU8Ll8Gnau75n9rlEpQsM
+ hR6Z9lpvr7/hG0GGwcE6gVYjR6m2IBwPRMY3o0PIhP/njzwyCVvOwp4JGVKSiJfTB19Nrgu/1RA
+ mffej752kxEzgYXLqZgWGxOVyJVU4yc4P8jEs6I6EgISNte19yLme9w+Q0ffpKLeBrDmICv2BHY
+ KLajW9J9Rc1nzAEkzM5MayffuW0+6eCnI2szYi/L4wCQy0yL3DgMughuojNp+k6V0bgbYQq0CkF
+ zg5tA1RHfzsqPSgZJDYccgBNXTxQE7lHVLIcU5WFwpy0e5d4D9IqHxcYpsKseDcncBopS6rl4Eu
+ XJPmlhTqu8f0jvCoQ2vRXUHpvMKBCqq9VVg2cFN4XJ2yXB8zFaD0lt/KmmCWDvNtScn5PWBWfON
+ xKj4vfO0xpgbBdA06uS1WcZAe6KQK++Cg/q4Yp1SBFcKGRdHaaf32xjPnAN0QjUh3RD4g1n9a4A
+ S+jzvPiMnyBglCA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, 2024-10-09 at 11:37 -0400, Paul Moore wrote:
-> On Wed, Oct 9, 2024 at 11:36=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >=20
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > Move out the mutex in the ima_iint_cache structure to a new structure
-> > > called ima_iint_cache_lock, so that a lock can be taken regardless of
-> > > whether or not inode integrity metadata are stored in the inode.
-> > >=20
-> > > Introduce ima_inode_security() to simplify accessing the new structur=
-e in
-> > > the inode security blob.
-> > >=20
-> > > Move the mutex initialization and annotation in the new function
-> > > ima_inode_alloc_security() and introduce ima_iint_lock() and
-> > > ima_iint_unlock() to respectively lock and unlock the mutex.
-> > >=20
-> > > Finally, expand the critical region in process_measurement() guarded =
-by
-> > > iint->mutex up to where the inode was locked, use only one iint lock =
-in
-> > > __ima_inode_hash(), since the mutex is now in the inode security blob=
-, and
-> > > replace the inode_lock()/inode_unlock() calls in ima_check_last_write=
-r().
-> > >=20
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/integrity/ima/ima.h      | 26 ++++++++---
-> > >  security/integrity/ima/ima_api.c  |  4 +-
-> > >  security/integrity/ima/ima_iint.c | 77 ++++++++++++++++++++++++++---=
---
-> > >  security/integrity/ima/ima_main.c | 39 +++++++---------
-> > >  4 files changed, 104 insertions(+), 42 deletions(-)
-> >=20
-> > I'm not an IMA expert, but it looks reasonable to me, although
-> > shouldn't this carry a stable CC in the patch metadata?
-> >=20
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
->=20
-> Sorry, one more thing ... did you verify this patchset resolves the
-> syzbot problem?  I saw at least one reproducer.
+With support of delegated timestamps, nfsd can issue a setattr that sets
+the atime, but not the ctime. Ensure that when the ctime isn't set that
+"now" is set to the current coarse-grained time.
 
-Uhm, could not reproduce the deadlock with the reproducer. However,
-without the patch I have a lockdep warning, and with I don't.
+Reported-by: Jan Kara <jack@suse.cz>
+Closes: https://lore.kernel.org/linux-fsdevel/20241009153022.5uyp6aku2kcfeexp@quack3/
+Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_mgtime")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+A fix for bug that Jan reported. Christian, it may be best to fold this
+into d8d11298e8a1.
+---
+ fs/attr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I asked syzbot to try the patches. Let's see.
+diff --git a/fs/attr.c b/fs/attr.c
+index c614b954bda5244cc20ee82a98a8e68845f23bd7..9caf63d20d03e86c535e9c8c91d49c2a34d34b7a 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -298,6 +298,7 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+ 	} else {
+ 		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
+ 		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
++		now = current_time(inode);
+ 	}
+ 
+ 	if (ia_valid & ATTR_ATIME_SET)
 
-Thanks
+---
+base-commit: 109aff7a3b294d9dc0f49d33fc6746e8d27e46f6
+change-id: 20241009-mgtime-f672852d67cc
 
-Roberto
-
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
