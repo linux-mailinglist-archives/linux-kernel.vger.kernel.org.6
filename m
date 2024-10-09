@@ -1,153 +1,208 @@
-Return-Path: <linux-kernel+bounces-356681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86CA4996532
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7ED996533
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA1BB21A1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE6E1F26061
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA6318F2E3;
-	Wed,  9 Oct 2024 09:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C735D18FC8F;
+	Wed,  9 Oct 2024 09:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YhbrNKQO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FJlB3ykK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECD118E76E;
-	Wed,  9 Oct 2024 09:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546F2188929
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465649; cv=none; b=jE+KEEHlBWWRRe4RPKPoBareS+VlyHK3mRPljcjGI5USP9dEgM65R7O8t2sOyxnKHHAk69W6ZQdOnDOxohMEortjWNb/b5+kLzsAJ7xqxrTvSOkHfpocPg5IFuJW7AAuIek9E1zVypPS5xwnw4en/kbhwh1ln8ZjS7evwJxcSpE=
+	t=1728465651; cv=none; b=RnIgdWXpNv3dTx1KQz54EyDvemlLeRCr9oH1HzDYqdxgiZzSrrdKpxobh6JHWNU173QZzOZkFXeqTTfY0VUH0EdTArHteNjRI7SW1Y10O/MRztww27pG2ZWwH1N3VzHsTPytelJdHCapSagjf03t6NnRMByBlhm7SH0OuyXXVZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465649; c=relaxed/simple;
-	bh=aeOCbk0PsLtE5JzLWPFz2lzRfvXT6wwOoAgjwany9N8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jg8cB7ENdatD/sL9XP0jiXCq1ekIGqDg4lgkdgokZpE4yJ5AAz480wACTirCA4a1Y3vOQREfYuT/CODo5N4Ic5mQzP1ON0HqmGQDDfqh0+jWGOAFwxDOpWALc0/ttXJZKSGa0PFp8j5cGd3UzEycj6mOaEMslRBg1pQHtkRzrFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YhbrNKQO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499786KF026815;
-	Wed, 9 Oct 2024 09:20:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nopzlFAvEnKmID7NT6spIwtKQ7l5wvtm5oKw6QdIjsQ=; b=YhbrNKQOcHz22qpM
-	K1gqu1DOL1FXgo+mBI8bx0t9fOKIzVa6CVknXH4lpuvemDZqtx/oodRnwvdRErt6
-	C1KqhTo2dbphfz6p3DvCQQDRmYIuf1sXI3uNCDMVuYl1VtC0EqQMp/jlbV8cABtt
-	eSCc9M1YkSrgqrP7t+NsI5vGV15u6uOT5r3QlEbTERAWeJn/G1k5YF5E2QgzXPkY
-	/5/hFLYkGSNRHK6thxHnY+Ysx5TnXPOn7AfRpSfXLP5g64xXtpNoXsg49xKgalOW
-	2cxhD514jh6u+Bhzvlxhc/EIBm/08DvOpSlsqqht5GqopjD7Yboq4RhQ/o1yAlZt
-	6bweew==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xqa2bym-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 09:20:37 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4999Kbvk025740
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 09:20:37 GMT
-Received: from [10.239.133.242] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
- 02:20:33 -0700
-Message-ID: <0525c2a9-45a5-4654-aaf4-b0ab9e161884@quicinc.com>
-Date: Wed, 9 Oct 2024 17:20:26 +0800
+	s=arc-20240116; t=1728465651; c=relaxed/simple;
+	bh=Pd3SHnCEE8moULvhFWXTFLWNeS6Qs4kOTEaFTwtkVqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ks2B67W0sHbpc97mFcoRZjj5Xx35C5yqRouGBeb4jtErsfwvsk82on13anwzJV2vaiD0csz17Ham070Fh/VxpTS4cfjmiKJHkwa6osorc1ztAZ1KWc+yv7npRY4830aiF6rKTiguIADh2B+Q7mt1oMs5Gb9NiUDxtuCfh2VY6+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FJlB3ykK; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728465649; x=1760001649;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Pd3SHnCEE8moULvhFWXTFLWNeS6Qs4kOTEaFTwtkVqQ=;
+  b=FJlB3ykKcIVQ+n7vQpUPvCmI1LMydh6OXkkuSAlS/ZD38CW651EhgczD
+   fDRMTlRfxVpz78tGSAF63bM09pWhfPJrZqNc3oCA1PcpnZd7AKNA/dV1Z
+   QuebQ4H4YfpENxpqsWYplcdIG70GoiX/PiU1Sllp+KUo3psVXk3oeqhns
+   2MO1ouQRK4mlXJYf0N8wkNfETEG0/IKh4Qy8Or+dJ4v2E0lZ3G7zSwKaf
+   VbjvgY5MEUgxqu7jBHmFcf6ueFt5sTBGr23SbL83xqv3gpbH8cvqEyYxj
+   9H87qn/bnHoMCjeusIwnKDWxxtIH2iQCYnf96RKnRTqCysXwZBeqq7ocN
+   A==;
+X-CSE-ConnectionGUID: VX7mL/GJReGCrHiuGKSqMA==
+X-CSE-MsgGUID: j0pUF1yjSnyio+ucuiEtyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27911560"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="27911560"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:20:43 -0700
+X-CSE-ConnectionGUID: M3tE0CP0Rbm7CoBNBsufWg==
+X-CSE-MsgGUID: qnSrorKTRh+L3b2pZjyoOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="76625385"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO fedora..) ([10.245.245.243])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:20:40 -0700
+From: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+To: intel-xe@lists.freedesktop.org
+Cc: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Maarten Lankhorst <maarten@lankhorst.se>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock requirements
+Date: Wed,  9 Oct 2024 11:20:31 +0200
+Message-ID: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Coresight: Narrow down the matching range of tpdm
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20241009085042.1098-1-quic_songchai@quicinc.com>
- <a7fc66fe-0fb3-4d2c-8f23-03ccd46a4766@arm.com>
-Content-Language: en-US
-From: songchai <quic_songchai@quicinc.com>
-In-Reply-To: <a7fc66fe-0fb3-4d2c-8f23-03ccd46a4766@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ITtbRwbSSCE1pC52BwfFQ4pT3RPX6ch1
-X-Proofpoint-GUID: ITtbRwbSSCE1pC52BwfFQ4pT3RPX6ch1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410090061
 
+When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
+number of acquired lockdep_maps of mutexes of the same class, and also
+keeps a pointer to the first acquired lockdep_map of a class. That pointer
+is then used for various comparison-, printing- and checking purposes,
+but there is no mechanism to actively ensure that lockdep_map stays in
+memory. Instead, a warning is printed if the lockdep_map is freed and
+there are still held locks of the same lock class, even if the lockdep_map
+itself has been released.
 
-On 10/9/2024 4:54 PM, Suzuki K Poulose wrote:
-> On 09/10/2024 09:50, Songwei Chai wrote:
->> The format of tpdm's peripheral id is 1f0exx. To avoid potential
->> conflicts in the future, update the .id_table's id to 0x001f0e00.
->> This update will narrow down the matching range and prevent incorrect
->> matches. For example, another component's peripheral id might be
->> f0e00, which would incorrectly match the old id.
->>
->> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-tpdm.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c 
->> b/drivers/hwtracing/coresight/coresight-tpdm.c
->> index b7d99e91ab84..8e2985d17549 100644
->> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
->> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
->> @@ -1308,8 +1308,8 @@ static void tpdm_remove(struct amba_device *adev)
->>    */
->>   static struct amba_id tpdm_ids[] = {
->>       {
->> -        .id = 0x000f0e00,
->> -        .mask = 0x000fff00,
->> +        .id = 0x001f0e00,
->> +        .mask = 0x00ffff00,
->>       },
->>       { 0, 0, NULL },
->>   };
->>
->
-> Please could you add "Fixes" tag for this ? You don't want an old 
-> kernel detect something else as TPDM, so this must go to stable kernels.
-> Also, while at it, please could you intend the id and mask values with
-> tabs, so it is easier to what exactly we are matching ? e.g,
-Thanks for your quick response, Suzuki.
-Corrected it in the new version!
->
->
->     .id    = 0x001f0e00,
->     .mask    = 0x00ffff00,
->
-> Kind regards
-> Suzuki
->
->
+In the context of WW/WD transactions that means that if a user unlocks
+and frees a ww_mutex from within an ongoing ww transaction, and that
+mutex happens to be the first ww_mutex grabbed in the transaction,
+such a warning is printed and there might be a risk of a UAF.
+
+Note that this is only problem when lockdep is enabled and affects only
+dereferences of struct lockdep_map.
+
+Adjust to this by adding a fake lockdep_map to the acquired context and
+make sure it is the first acquired lockdep map of the associated
+ww_mutex class. Then hold it for the duration of the WW/WD transaction.
+
+This has the side effect that trying to lock a ww mutex *without* a
+ww_acquire_context but where a such context has been acquire, we'd see
+a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
+modify that particular test to not acquire a ww_acquire_context if it
+is not going to be used.
+
+v2:
+- Lower the number of locks in the test-ww_mutex
+  stress(STRESS_ALL) test to accommodate the dummy lock
+  introduced in this patch without overflowing lockdep held lock
+  references.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Maarten Lankhorst <maarten@lankhorst.se>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+---
+ include/linux/ww_mutex.h       | 14 ++++++++++++++
+ kernel/locking/test-ww_mutex.c |  8 +++++---
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+index bb763085479a..a401a2f31a77 100644
+--- a/include/linux/ww_mutex.h
++++ b/include/linux/ww_mutex.h
+@@ -65,6 +65,16 @@ struct ww_acquire_ctx {
+ #endif
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	struct lockdep_map dep_map;
++	/**
++	 * @first_lock_dep_map: fake lockdep_map for first locked ww_mutex.
++	 *
++	 * lockdep requires the lockdep_map for the first locked ww_mutex
++	 * in a ww transaction to remain in memory until all ww_mutexes of
++	 * the transaction have been unlocked. Ensure this by keeping a
++	 * fake locked ww_mutex lockdep map between ww_acquire_init() and
++	 * ww_acquire_fini().
++	 */
++	struct lockdep_map first_lock_dep_map;
+ #endif
+ #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+ 	unsigned int deadlock_inject_interval;
+@@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
+ 	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+ 	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
+ 			 &ww_class->acquire_key, 0);
++	lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
++			 &ww_class->mutex_key, 0);
+ 	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
++	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
+ #endif
+ #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+ 	ctx->deadlock_inject_interval = 1;
+@@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
+ static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
+ {
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
++	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+ 	mutex_release(&ctx->dep_map, _THIS_IP_);
+ #endif
+ #ifdef DEBUG_WW_MUTEXES
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 10a5736a21c2..5d58b2c0ef98 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
+ 	int ret;
+ 
+ 	ww_mutex_init(&mtx.mutex, &ww_class);
+-	ww_acquire_init(&ctx, &ww_class);
++	if (flags & TEST_MTX_CTX)
++		ww_acquire_init(&ctx, &ww_class);
+ 
+ 	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+ 	init_completion(&mtx.ready);
+@@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
+ 		ret = wait_for_completion_timeout(&mtx.done, TIMEOUT);
+ 	}
+ 	ww_mutex_unlock(&mtx.mutex);
+-	ww_acquire_fini(&ctx);
++	if (flags & TEST_MTX_CTX)
++		ww_acquire_fini(&ctx);
+ 
+ 	if (ret) {
+ 		pr_err("%s(flags=%x): mutual exclusion failure\n",
+@@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
++	ret = stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.46.0
+
 
