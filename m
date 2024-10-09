@@ -1,194 +1,150 @@
-Return-Path: <linux-kernel+bounces-357860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72801997712
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19618997716
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33EA7282E6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:57:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2391C20C42
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F7A1E25FB;
-	Wed,  9 Oct 2024 20:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB12D191473;
+	Wed,  9 Oct 2024 20:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="dNYyzfgE"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aLX3mtzO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46941E2316;
-	Wed,  9 Oct 2024 20:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1921A17C22F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 20:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507431; cv=none; b=c4MqLAfq0hsYO01y0nmzf+4XDCLs3z++RSGpZRntQ0fk/WrG4tF+aCIJe8xP0cvjP4rSrO1KbiOP4T3/+eisDrs4WKoq0K8AI/hnvLop7QrCR9QqzWaQn/VHSZPqReSO+TlV7le5xHMusdhWgxcAp2+AShNhuppSg/ThcHpez+M=
+	t=1728507509; cv=none; b=uJx4LUt+w3bmW295H13Nd4JGn59OywkbIf1KwHSgX6YFIbaYxkjhQrw1dhc9vNpfhas9xvFBWfbGETNMpPHd01JpgfHJ3PV0uuzlmCIsxB6OBZ4djMBvkncC6jbi6ar9cTtjnDlDJ89lgZsAQl5xkOrIVcYK7Ht97nXEtNz5LNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507431; c=relaxed/simple;
-	bh=OhXzzYRz/FznOqT31/spFj8IGR43NqoxMfupYzzSpyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ds5C4APxLGEL1vArKk2AJHgQjmJDXojkTUa4mbh5ctInm145VEQauoZ2g5bN/1eZw27b5wDeE2wHTfczQB2v/x07hMOK2pvDOzSEszfK+Kydk7mu+ekuPHCY6AZ6itnsQeyevQkK9f+ClDS3H/JSUe5N83jZiu2EGL7pEB4h/xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=dNYyzfgE; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XP4vP6gznz9tFG;
-	Wed,  9 Oct 2024 22:57:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1728507426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZXtC4ki0Cgt4wUQPkF8ctVO2OLggLPi73aR2RRs0kuQ=;
-	b=dNYyzfgEJYLByOdtBexIuEd06qlE90YKpABTagw/Uiro6Ddaj7wXXla3tIfWXLI18n0Mw0
-	VZNHUC4WFf07QXEXKDA0oApOZsfu7yfFYw2JTxBe4kiCK1UnkWmo1/n+Do4IAsIXoYJVQD
-	9VW/4WKGajmxvnGLNUy1WeoofurrKLTUkIiy1wYFo1z0WM04j0BrLzXGlv/BYbUabymtHY
-	mDrA4+mrWtomfsjFs4Cs+qv/B1jDPoTyjwQKy5NH1D75bbMifC5bzqUQ6nG28dTnlcd5wO
-	iPjABS10QAhcqdwlZJR8/+mGzPEv1jNZmR3hzF/JnWGIidZCRtUFsq3cpnxPdw==
-Date: Thu, 10 Oct 2024 07:56:53 +1100
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <87msjd9j7n.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728507509; c=relaxed/simple;
+	bh=wFdDor0k0PKZpuilD/lcZK9jvH29CCzgUDiFRek3xbU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=amSEW6tW5pLmdo28yMgaATQGoiLFq0JUJ435Y+P2dW/pfKGjjQy+JB0mDAiEL0M8qt2U+DBWJ1zbTcE6PnwRwC+Rarc2uv8dDTpnCIGKSeZasH0ptsbeOSkTfJPZzhhWTSB5fHQAjgonaOdZe4yOPA3qlVYYVwRNvujVPpqIpTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aLX3mtzO; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728507507; x=1760043507;
+  h=date:from:to:cc:subject:message-id;
+  bh=wFdDor0k0PKZpuilD/lcZK9jvH29CCzgUDiFRek3xbU=;
+  b=aLX3mtzOZ0cmjq7qlxrQ1kZ+SlE9VXSiTPrIdDxuulbAD1zFTG3SSdPi
+   ViWE5Yeu7yIAfUenuR/UkiJ8J3uaurlx1lHt83f47+PN5/IL8m2FhVV4S
+   lpS58NrtsSAgjFIu2u0W19KOMXsUgHZD+toCdX9vMOKft84D5SXyKwiNP
+   IYcE+vW/tGEjiclM2IDbaj7bXpTfenq3/ITIHfklqXRUfH3bWxW/xPkxh
+   pvvQ31GqZfcPSPDC0ohLYF3YlqOe651Kya9sZ77guZJ5SJLGNa0Nhx5KV
+   RXPGe80kda13aWBYjgX1HA1GBdUoGrAfFrRWaH2TOUhvU2tj7BF7nV0fO
+   g==;
+X-CSE-ConnectionGUID: KWALlrEeQBaBXNgPvb48ig==
+X-CSE-MsgGUID: AZnyvp0VQ4ecF7doLd5GyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27282164"
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="27282164"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 13:58:21 -0700
+X-CSE-ConnectionGUID: zVLcxHRUTyOs0blDHcSacA==
+X-CSE-MsgGUID: n2FmCR5XQGC4/r+jPH8sEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="107224618"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 09 Oct 2024 13:58:21 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sydlC-0009nA-0L;
+	Wed, 09 Oct 2024 20:58:18 +0000
+Date: Thu, 10 Oct 2024 04:57:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ e4d2102018542e3ae5e297bc6e229303abff8a0f
+Message-ID: <202410100432.3uGmUL5N-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d55dcuzddrcqkjin"
-Content-Disposition: inline
-In-Reply-To: <87msjd9j7n.fsf@trenco.lwn.net>
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: e4d2102018542e3ae5e297bc6e229303abff8a0f  x86/bugs: Use code segment selector for VERW operand
 
---d55dcuzddrcqkjin
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+elapsed time: 768m
 
-On 2024-10-09, Jonathan Corbet <corbet@lwn.net> wrote:
-> luca.boccassi@gmail.com writes:
->=20
-> > As discussed at LPC24, add an ioctl with an extensible struct
-> > so that more parameters can be added later if needed. Start with
-> > returning pid/tgid/ppid and creds unconditionally, and cgroupid
-> > optionally.
->=20
-> I was looking this over, and a couple of questions came to mind...
->=20
-> > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-> > ---
->=20
-> [...]
->=20
-> > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > index 80675b6bf884..15cdc7fe4968 100644
-> > --- a/fs/pidfs.c
-> > +++ b/fs/pidfs.c
-> > @@ -2,6 +2,7 @@
-> >  #include <linux/anon_inodes.h>
-> >  #include <linux/file.h>
-> >  #include <linux/fs.h>
-> > +#include <linux/cgroup.h>
-> >  #include <linux/magic.h>
-> >  #include <linux/mount.h>
-> >  #include <linux/pid.h>
-> > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, stru=
-ct poll_table_struct *pts)
-> >  	return poll_flags;
-> >  }
-> > =20
-> > +static long pidfd_info(struct task_struct *task, unsigned int cmd, uns=
-igned long arg)
-> > +{
-> > +	struct pidfd_info __user *uinfo =3D (struct pidfd_info __user *)arg;
-> > +	size_t usize =3D _IOC_SIZE(cmd);
-> > +	struct pidfd_info kinfo =3D {};
-> > +	struct user_namespace *user_ns;
-> > +	const struct cred *c;
-> > +	__u64 request_mask;
-> > +
-> > +	if (!uinfo)
-> > +		return -EINVAL;
-> > +	if (usize < sizeof(struct pidfd_info))
-> > +		return -EINVAL; /* First version, no smaller struct possible */
-> > +
-> > +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(reques=
-t_mask)))
-> > +		return -EFAULT;
->=20
-> You don't check request_mask for unrecognized flags, so user space will
-> not get an error if it puts random gunk there.  That, in turn, can make
-> it harder to add new options in the future.
+configs tested: 58
+configs skipped: 128
 
-In fairness, this is how statx works and statx does this to not require
-syscall retries to figure out what flags the current kernel supports and
-instead defers that to stx_mask.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-However, I think verifying the value is slightly less fragile -- as long
-as we get a cheap way for userspace to check what flags are supported
-(such as CHECK_FIELDS[1]). It would kind of suck if userspace would have
-to do 50 syscalls to figure out what request_mask values are valid.
+tested configs:
+alpha            allnoconfig    gcc-14.1.0
+arc             allmodconfig    clang-20
+arc              allnoconfig    gcc-14.1.0
+arc             allyesconfig    clang-20
+arm             allmodconfig    clang-20
+arm              allnoconfig    gcc-14.1.0
+arm             allyesconfig    clang-20
+arm64           allmodconfig    clang-20
+arm64            allnoconfig    gcc-14.1.0
+csky             allnoconfig    gcc-14.1.0
+hexagon          allnoconfig    gcc-14.1.0
+i386            allmodconfig    clang-18
+i386             allnoconfig    clang-18
+i386            allyesconfig    clang-18
+i386               defconfig    clang-18
+loongarch       allmodconfig    gcc-14.1.0
+loongarch        allnoconfig    gcc-14.1.0
+m68k            allmodconfig    gcc-14.1.0
+m68k             allnoconfig    gcc-14.1.0
+m68k            allyesconfig    gcc-14.1.0
+microblaze      allmodconfig    gcc-14.1.0
+microblaze       allnoconfig    gcc-14.1.0
+microblaze      allyesconfig    gcc-14.1.0
+mips             allnoconfig    gcc-14.1.0
+nios2            allnoconfig    gcc-14.1.0
+openrisc         allnoconfig    clang-20
+openrisc        allyesconfig    gcc-14.1.0
+openrisc           defconfig    gcc-12
+parisc          allmodconfig    gcc-14.1.0
+parisc           allnoconfig    clang-20
+parisc          allyesconfig    gcc-14.1.0
+parisc             defconfig    gcc-12
+powerpc         allmodconfig    gcc-14.1.0
+powerpc          allnoconfig    clang-20
+powerpc         allyesconfig    gcc-14.1.0
+riscv           allmodconfig    gcc-14.1.0
+riscv            allnoconfig    clang-20
+riscv           allyesconfig    gcc-14.1.0
+riscv              defconfig    gcc-12
+s390            allmodconfig    gcc-14.1.0
+s390             allnoconfig    clang-20
+s390            allyesconfig    gcc-14.1.0
+s390               defconfig    gcc-12
+sh              allmodconfig    gcc-14.1.0
+sh               allnoconfig    gcc-14.1.0
+sh              allyesconfig    gcc-14.1.0
+sh                 defconfig    gcc-12
+sparc           allmodconfig    gcc-14.1.0
+sparc64            defconfig    gcc-12
+um               allnoconfig    clang-20
+um                 defconfig    gcc-12
+um            i386_defconfig    gcc-12
+um          x86_64_defconfig    gcc-12
+x86_64           allnoconfig    clang-18
+x86_64          allyesconfig    clang-18
+x86_64             defconfig    clang-18
+x86_64         rhel-8.3-rust    clang-18
+xtensa           allnoconfig    gcc-14.1.0
 
-[1]: https://lore.kernel.org/all/20241010-extensible-structs-check_fields-v=
-3-0-d2833dfe6edd@cyphar.com/
-
->=20
-> > +	c =3D get_task_cred(task);
-> > +	if (!c)
-> > +		return -ESRCH;
->=20
-> [...]
->=20
-> > +
-> > +	/*
-> > +	 * If userspace and the kernel have the same struct size it can just
-> > +	 * be copied. If userspace provides an older struct, only the bits th=
-at
-> > +	 * userspace knows about will be copied. If userspace provides a new
-> > +	 * struct, only the bits that the kernel knows about will be copied a=
-nd
-> > +	 * the size value will be set to the size the kernel knows about.
-> > +	 */
-> > +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
-> > +		return -EFAULT;
->=20
-> Which "size value" are you referring to here; I can't see it.
->=20
-> If user space has a bigger struct, should you perhaps zero-fill the part
-> the kernel doesn't know about?
->=20
-> > +	return 0;
-> > +}
->=20
-> Thanks,
->=20
-> jon
->=20
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---d55dcuzddrcqkjin
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZwbuFQAKCRAol/rSt+lE
-b+61AP9z34v88831vNhUGO4J98E8hhrVDOwy/Tb7RXMibZ3xXAEA0s0kMSF5Fhii
-t9QCkSeLpRkv9NQj420kdMg3O+RnUQk=
-=TOuq
------END PGP SIGNATURE-----
-
---d55dcuzddrcqkjin--
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
