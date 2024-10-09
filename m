@@ -1,49 +1,63 @@
-Return-Path: <linux-kernel+bounces-357046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51874996AD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:54:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9D9996ADB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F25E81F28613
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7AB71F28EDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E771E0B9A;
-	Wed,  9 Oct 2024 12:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB2519884B;
+	Wed,  9 Oct 2024 12:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWwrtTNS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhsulU5g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BBE1E009C;
-	Wed,  9 Oct 2024 12:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989B7191F74;
+	Wed,  9 Oct 2024 12:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728478229; cv=none; b=PKkSpHWBCeS2BBOc1aIELl+57eNBcwvlnpJrKr8OQwPPK+x3n9HO5ZjS+d7zpCBHzwYuXvgRj8zImoWdsgSSjhLmtc14Yfp3gQ+hTfXViXBXQIVknmYgdBQ1Hf4hRpEN3AzRnmEne0g7tTm1wNzZvHZ2OrJrzyD43MCsSruuRzk=
+	t=1728478303; cv=none; b=YMXWcc566Ybbkiez/ZC5tCWNy0m70dFnJqCjPmavINCDc6iTxHbwp8BCVgJ47hRhi3Vb1WLP7nY8vUe2N4tyTu5fKsF/PH9LfC13j+smtUwXjvm2SbNGR6pT57zBAYuF+MOklQ27JCZ9vaELJqkUAcdmilJa3N/djFJh/xaQZsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728478229; c=relaxed/simple;
-	bh=K5DD2nAAM9lfRuDqw8wPZsWCJoleX524mImPuhi+4Pg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=p/p0IvxVAn9h5ASXwR8fw3WawuUhK2YoKk6NLSBWCcrEUOIBfoffqlEQsEYax730yhXKwddr2jujPlHv3qZrWYLxxsHD0ovlni26osrT8vcwo4XA+zOXdd/kaW/+7CbgK1xtmiA2LoOox+OcmwKmoWY0hYzQGCwqb37Hx0JgPFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWwrtTNS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFF5C4CEC5;
-	Wed,  9 Oct 2024 12:50:28 +0000 (UTC)
+	s=arc-20240116; t=1728478303; c=relaxed/simple;
+	bh=tly/MWZa0oRwFhms5sXnxLza3S15ZekHONwA8y2aC14=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6jDgEAIOe8bIlrrp76kyO0BfVlfhZaxIP+niDl5SqGOD5eLRqSNLyOgxiZPZ7SSNpcI+Cw+Svbo7K9TIL6tCYl+Ig+6WeeBULTHRZ4LqByI8Ew38DBdgyyY0JN2to0WDt4PdUWmaPtANY+PmSozI4N8++4Z+2aS7ZsdLpf5lm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhsulU5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B4CC4CEC5;
+	Wed,  9 Oct 2024 12:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728478228;
-	bh=K5DD2nAAM9lfRuDqw8wPZsWCJoleX524mImPuhi+4Pg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uWwrtTNS7htGOAnLifiVgjm9InAuzyYYyRVisxDRLW6kSfxL8lxchyzcWkOPMOfD2
-	 AYX+v1gWMM6ljfiC6Ll6Zq0dLVWj2DVuhdvx565Fe7BtM3A4aGywXyBleSJ7ZLTQW5
-	 yPhrz+JPfPN1cZS9iSFp/sV8koU3UUZE/9qGbMOJaQEHFL2soKe7T36Tn8hzFaxYRj
-	 MXklM7o9t0x0wfn+UcC3rQ8HmEx+fGDO9QmZLHk2pCRkW2vtlzjNywWRA26PS1DMs/
-	 G0lPDQGLsb8LdwjN4ZWENaNt+53ODH4h2D7mTOBuNt/2e/TPYJur6Sw1vPJB6ZO6Dt
-	 d8Ykxtfi7MjgQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B733806644;
-	Wed,  9 Oct 2024 12:50:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1728478303;
+	bh=tly/MWZa0oRwFhms5sXnxLza3S15ZekHONwA8y2aC14=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OhsulU5gMWY2KUpsQ+d4mPHopGIcxIKSaTFrcQvM5tm48hpFaIhzK1okWJbCNvwN7
+	 891YvaBt/K3Qr5r9zamr1xzW5kkuuJfUh/DLU96gxZ+Vpw8PLv34RFa9wayohY0Z5w
+	 GQlUnLtyXhJIvKEZ98ypfU6IOpWcIVH5E49BR8bXnyCNZF6K8Kz60NhjlSnKO89hwk
+	 cF/Gme5eYTUwxCpLgYZwvd+ZHJz6mTMTwQXq0lf9pZ8zF6X3vyPVoe39f5044TtMJF
+	 CdD905g60v1cLx5R8W3fMzqW20F1ZiYcNDDw/i5jiuKGs0qBjNb+iUzbiM/2UfpOkG
+	 lF+7vw7/8BDYQ==
+From: neeraj.upadhyay@kernel.org
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	paulmck@kernel.org,
+	joel@joelfernandes.org,
+	frederic@kernel.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	peterz@infradead.org,
+	neeraj.upadhyay@amd.com,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+Subject: [PATCH v2 00/10] Make RCU Tasks scan idle tasks
+Date: Wed,  9 Oct 2024 18:21:17 +0530
+Message-Id: <20241009125127.18902-1-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,46 +65,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: mana: Enable debugfs files for MANA device
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172847823298.1258225.9909858718336376294.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Oct 2024 12:50:32 +0000
-References: <1728371175-906-1-git-send-email-shradhagupta@linux.microsoft.com>
-In-Reply-To: <1728371175-906-1-git-send-email-shradhagupta@linux.microsoft.com>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- longli@microsoft.com, horms@kernel.org, kotaranov@microsoft.com,
- schakrabarti@linux.microsoft.com, erick.archer@outlook.com,
- pavan.chebbi@broadcom.com, ahmed.zaki@intel.com, colin.i.king@gmail.com,
- shradhagupta@microsoft.com
 
-Hello:
+From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Architectures for which all deep-idle and entry-exit functions are
+marked noinstr, synchronize_rcu_tasks_rude() is not required. However,
+disabling synchronize_rcu_tasks_rude() for such architectures require
+RCU-tasks to pay attention to idle tasks until they enter the context
+where RCU is not watching. In addition, NMI context need to track RCU-tasks
+entry/exit for NO_HZ_FULL CPUs. This series adds changes for both of
+these requirements.
 
-On Tue,  8 Oct 2024 00:06:15 -0700 you wrote:
-> Implement debugfs in MANA driver to be able to view RX,TX,EQ queue
-> specific attributes and dump their gdma queues.
-> These dumps can be used by other userspace utilities to improve
-> debuggability and troubleshooting
-> 
-> Following files are added in debugfs:
-> 
-> [...]
+The series is available in git tree at:
 
-Here is the summary with links:
-  - [net-next,v2] net: mana: Enable debugfs files for MANA device
-    https://git.kernel.org/netdev/net-next/c/6607c17c6c5e
+https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=rcu.tasks.idle
 
-You are awesome, thank you!
+Changes since v1: https://lore.kernel.org/lkml/20240807163506.434885-1-neeraj.upadhyay@kernel.org/
+
+- Split into multiple patches (Paul)
+- Various restructuring updates (Frederic)
+- Fix race with early boot code (Frederic)
+- Check RCU watching state for idle injection tasks.
+- Include patch to turn synchronize_rcu_tasks_rude() into noop
+  for architectures with CONFIG_ARCH_WANTS_NO_INSTR enabled.
+
+Neeraj Upadhyay (9):
+  rcu: Change rdp arg to cpu number for
+    rcu_watching_snap_stopped_since()
+  rcu: Make some rcu_watching_* functions global
+  rcu/tasks: Move holdout checks for idle task to a separate function
+  rcu/tasks: Create rcu_idle_task_is_holdout() definition for !SMP
+  rcu/tasks: Consider idle tasks not running on CPU as non-holdouts
+  rcu/tasks: Check RCU watching state for holdout idle tasks
+  rcu/tasks: Check RCU watching state for holdout idle injection tasks
+  rcu/tasks: Make RCU-tasks pay attention to idle tasks
+  context_tracking: Invoke RCU-tasks enter/exit for NMI context
+
+Paul E. McKenney (1):
+  rcu: Allow short-circuiting of synchronize_rcu_tasks_rude()
+
+ .../RCU/Design/Requirements/Requirements.rst  |  12 +-
+ kernel/context_tracking.c                     |  11 +-
+ kernel/rcu/rcu.h                              |   4 +
+ kernel/rcu/tasks.h                            | 148 ++++++++++++++----
+ kernel/rcu/tree.c                             |  16 +-
+ kernel/rcu/tree_exp.h                         |   2 +-
+ 6 files changed, 140 insertions(+), 53 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.40.1
 
 
