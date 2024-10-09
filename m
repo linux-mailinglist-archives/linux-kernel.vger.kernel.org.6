@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-357907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188E09977AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB789977AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4864F1C2217A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D042849BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACA31E2831;
-	Wed,  9 Oct 2024 21:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D79F1E25F6;
+	Wed,  9 Oct 2024 21:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="uAQmhduh"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qcF8FN2g"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48981A0AFA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BED1E2836
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510044; cv=none; b=K+eY/q7Ry1yfOVSTABCoBLDrEXBULfgSj1O0DnoUD9gRs3TwZzF6JGewYK50v804rFK1BNRPQrbWjVX/n8Xjqnq8PNKOoOYngXe20xLa3gFvgexjPWDgPFB+VUUQ/AtEMyBd2kSAfHI0GfyyHsi7x5iyoPxgyWoLugvOKVi7rec=
+	t=1728509969; cv=none; b=Mq0f9icpMXNBgsvrODqlIARdbWDVi09/BVsZRATiWQxuIsf24F7lFgWwRvuM5hBcGJJsuA9puswAwhsrrZayl04mYdfS7fQXrMhnoP0tywLo5Lq3ozQj9wQxrl0vylNQ6doSMLHFi2bGc4ttyaAKBoW2IxEkcrk4PEhWmOz6otA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510044; c=relaxed/simple;
-	bh=xmvB2RyLMa1YACntjup38BYSkXAwWiROYL+k31jpxMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f167NMjKN6AKzWj6sduoeq5whNkD55QV/pF8H7v9uyH7V0LVro0luDD0iKVsku3nkUzD+XICq1aLbG8NgHeNxGBSVFKN4/Q/xXUo5Q7nYIiUkk5ke4DnbX1hyFt2KTNkYXzSgZV+jjzVvIQZqrho/02CPsBit9f4yjE11mQNG0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=uAQmhduh reason="signature verification failed"; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-71df0dbee46so214896b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:40:41 -0700 (PDT)
+	s=arc-20240116; t=1728509969; c=relaxed/simple;
+	bh=0c8BGVnrDotw/l9gQJKQcQ7lWr1R/wso75ZgmKjyqM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aqKKXte7mZpR7wiOfzSxM/nkNCIiIxniF7OR0/Mv9rW0V9c6HnpdnsfC7HA70ZGeYydVNb8qpD2u2YMkzfEihtFeDak7VVlejkh71ATa/r9T5Fy7aLtTeoHEiV6v0WwFD9eT0GkwDbKNhQHhu/5KGgIAXdXdCQYyUniTZfrnDV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qcF8FN2g; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43055b43604so1987775e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:39:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728510041; x=1729114841; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728509964; x=1729114764; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/X1R7jziJAUOGlYud471jpMxA58653P4VmVwYBUwEFw=;
-        b=uAQmhduhmCgiK8mphc+5rGOcy0OI65zm+XEVegUjogxzxO5R668XxLOsR/XC7I5gvL
-         tpQdQ5XALzCHqy0bXCY/bUB2hV7qa2A0IDwHvHMgXKsOMJ1gqcnYIjyWqrHlLCDtSRxM
-         xyFoTUw1d0CQYx4Wff+6ZPRj8RWcY4sDQ43GiUx+pO/7FXJwNpC5sucMHLPCqrokpH6S
-         0oeL/pmEMG+LzraxwZYstbZwkAhC7b4YtVH6HMvsYQcdpjiNNRZf/0d0bJZflhM8NMJx
-         v8X4urvCvTk5RfhuQzZkP7GLd1qCME2+7sAN3OH3B1vNdAf25dX2+0JZfTBu8VpWBeVQ
-         W3Bw==
+        bh=s0rQaNhfJdgiX0j7tD96ubppthlL5BXRY1P1em0FGpw=;
+        b=qcF8FN2gxA8SnKixTG/3ZYVgeO5yE9kQ6InFqq1dyF2xJE2faGgb+HsELquc9cL4zo
+         k1FtdvWIf/UZ53/mP+4ktIMqOVJJxXcOcqtcYcJeKkXXL8gVRnX8engnMP9owEEXaxgy
+         kgzZIIzHgu4P0XEOLEz/iPT6Y1f3ZFEOUTfE1gtXdss62IA6OORo+bB0cbNsBhHKYn7S
+         XpFCdhd3/RNEP5Zn7+fcyVVTF1YeIfdhgZNPkKIBld5vOVNjSHXWcZuAGQt1PrUj03fE
+         rDiwcYYh8RGWQLCRlQg4pIWumTf+GkOR6L0VrRdRS3Ym4K1qWem9UKd7IvWJPgqO3lDF
+         DL4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510041; x=1729114841;
+        d=1e100.net; s=20230601; t=1728509964; x=1729114764;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/X1R7jziJAUOGlYud471jpMxA58653P4VmVwYBUwEFw=;
-        b=l2KVLPKn5QsmYtvNh3dyYSn2mQcTJ+enUBH7c47dgsCrlXkmo+Wkhw3wvkrQuGTG93
-         07DZWOhY28LKKd8NtA/MluGE3YP7HDzy+bpgEhB/sDwMdkNhoxKFbUbFSALvM37sC6YM
-         JjleNp5bBHdOKJRo+V7Mc4E5mSYMDxIrOnMwRjcdD9RDFpgTPSmEAyoC5HvvpEE2hZyX
-         AfHYCvYrRdCaw9E4GGq6mngQNuK9MlQ52DfuK+8GWJ5NZZ6N4ySO7J5m31LeCImJylQy
-         k9YPASgDmN95T6HRtUHhhIlZuVKCS/jxtv/QdLpieQia9VpbIcUuDGFtCCRtVxkyFp9b
-         zhcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXznVoqCL9dwNaGA4S+vZQVpdnsV3shmcbVa7QOeKcXNM2z3hZP6XaJjb60q0rv9rbvjTe4bpWx5nzYaBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN3R2h/MxkpoaDsI/+EDQvm1xJndZCJE4LwOptLYUcM/g7p1KU
-	4WRwQFDjZmS/gs6HDK47rIR+K4essazzc1eMjPVTRMUIfdw/lbPeF2Mb75a24k8=
-X-Google-Smtp-Source: AGHT+IEVjxb8q3sxQHY7BRbeLePk3SvJC2jHMCY+loRxISySa+TSK3hZmXPkiAMN30Y1g+VBgiK0xw==
-X-Received: by 2002:a05:6a00:2394:b0:71e:1b6d:5a94 with SMTP id d2e1a72fcca58-71e1db64896mr6487949b3a.5.1728510040550;
-        Wed, 09 Oct 2024 14:40:40 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.158])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71e03288a37sm5717000b3a.155.2024.10.09.14.40.33
+        bh=s0rQaNhfJdgiX0j7tD96ubppthlL5BXRY1P1em0FGpw=;
+        b=pOojSJBmw82MFehh+pi/LMfn6rMcdWzF9rMLfuNhPSyYOB8ohpZuY72hp/dA//QT0S
+         mAe+y00JnqYqYmX3kZLVrxVnyVSXwZVynvrXCA506VpiCma5a1Ag85ww9+qDOO2qbm5i
+         6GPM7t7R8pI+maO+GFjwX3xSDlCacr37KBVD/IbADIl4DhmLjo43Fx4Dbd0auqiwqIgO
+         mMGTDI0SJ+JL5Guv38XbgbCGgSh60ftRmoZwm2TrEU94Ykqm/mAXzDS7wNbVIR8ljV+A
+         xptxVQ0izx6gWHzFsDBL2SCrICZko5t84UYJJVRrlEgpSNXf1quGl6q7nLGQyM9Uiwui
+         iJXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ2EgoKPWpw9zpBAG6MciVmkWeVVyjfkkpuuswYtchSUMp3iXaRS3f2W18SF5N7aGuv3YPKU2mjgs8X+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDwNhTbJAQz/pcyDaSswDUScsl38yLahH1sMk+UoqhCDW28QsG
+	Xy3fT2wq33onpwlTKGXJ3lruZ4BOOftNEIfL8VQwS79YuSaAePw0piUt/ht/zkU=
+X-Google-Smtp-Source: AGHT+IHez/gJ3C7S4ZMoTbKBhBekhmZA9UOUpT5+Euj3ZsVoNpslzJmb3UVF+KWraCIHsaINTqAyCw==
+X-Received: by 2002:a05:600c:1381:b0:42c:b23f:7ba5 with SMTP id 5b1f17b1804b1-430ccf1bb2emr31960565e9.10.1728509964030;
+        Wed, 09 Oct 2024 14:39:24 -0700 (PDT)
+Received: from localhost.localdomain ([2.125.184.148])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d70b4291sm30519035e9.35.2024.10.09.14.39.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:40:40 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org,
+        Wed, 09 Oct 2024 14:39:23 -0700 (PDT)
+From: Alexey Klimov <alexey.klimov@linaro.org>
+To: linux-sound@vger.kernel.org,
+	srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	broonie@kernel.org,
+	dmitry.baryshkov@linaro.org,
+	krzysztof.kozlowski@linaro.org,
+	pierre-louis.bossart@linux.intel.com,
+	vkoul@kernel.org,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] drm/xe/guc: Fix dereference before Null check
-Date: Wed,  9 Oct 2024 15:39:20 -0600
-Message-ID: <20241009213922.37962-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH] ASoC: qcom: sdm845: add missing soundwire runtime stream alloc
+Date: Wed,  9 Oct 2024 22:39:22 +0100
+Message-ID: <20241009213922.999355-1-alexey.klimov@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,49 +90,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pointer list->list is derefrenced before the Null check.
-Fix this by moving the Null check outside the for loop, so that
-the check is performed before the derefrencing.
+During the migration of Soundwire runtime stream allocation from
+the Qualcomm Soundwire controller to SoC's soundcard drivers the sdm845
+soundcard was forgotten.
 
-This issue was reported by Coverity Scan.
-https://scan7.scan.coverity.com/#/project-view/51525/11354
-?selectedIssue=1600335
+At this point any playback attempt or audio daemon startup, for instance
+on sdm845-db845c (Qualcomm RB3 board), will result in stream pointer
+NULL dereference:
 
-Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
+ Unable to handle kernel NULL pointer dereference at virtual
+ address 0000000000000020
+ Mem abort info:
+   ESR = 0x0000000096000004
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x04: level 0 translation fault
+ Data abort info:
+   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+ user pgtable: 4k pages, 48-bit VAs, pgdp=0000000101ecf000
+ [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
+ Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+ Modules linked in: ...
+ CPU: 5 UID: 0 PID: 1198 Comm: aplay
+ Not tainted 6.12.0-rc2-qcomlt-arm64-00059-g9d78f315a362-dirty #18
+ Hardware name: Thundercomm Dragonboard 845c (DT)
+ pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : sdw_stream_add_slave+0x44/0x380 [soundwire_bus]
+ lr : sdw_stream_add_slave+0x44/0x380 [soundwire_bus]
+ sp : ffff80008a2035c0
+ x29: ffff80008a2035c0 x28: ffff80008a203978 x27: 0000000000000000
+ x26: 00000000000000c0 x25: 0000000000000000 x24: ffff1676025f4800
+ x23: ffff167600ff1cb8 x22: ffff167600ff1c98 x21: 0000000000000003
+ x20: ffff167607316000 x19: ffff167604e64e80 x18: 0000000000000000
+ x17: 0000000000000000 x16: ffffcec265074160 x15: 0000000000000000
+ x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+ x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+ x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffff167600ff1cec
+ x5 : ffffcec22cfa2010 x4 : 0000000000000000 x3 : 0000000000000003
+ x2 : ffff167613f836c0 x1 : 0000000000000000 x0 : ffff16761feb60b8
+ Call trace:
+  sdw_stream_add_slave+0x44/0x380 [soundwire_bus]
+  wsa881x_hw_params+0x68/0x80 [snd_soc_wsa881x]
+  snd_soc_dai_hw_params+0x3c/0xa4
+  __soc_pcm_hw_params+0x230/0x660
+  dpcm_be_dai_hw_params+0x1d0/0x3f8
+  dpcm_fe_dai_hw_params+0x98/0x268
+  snd_pcm_hw_params+0x124/0x460
+  snd_pcm_common_ioctl+0x998/0x16e8
+  snd_pcm_ioctl+0x34/0x58
+  __arm64_sys_ioctl+0xac/0xf8
+  invoke_syscall+0x48/0x104
+  el0_svc_common.constprop.0+0x40/0xe0
+  do_el0_svc+0x1c/0x28
+  el0_svc+0x34/0xe0
+  el0t_64_sync_handler+0x120/0x12c
+  el0t_64_sync+0x190/0x194
+ Code: aa0403fb f9418400 9100e000 9400102f (f8420f22)
+ ---[ end trace 0000000000000000 ]---
 
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+0000000000006108 <sdw_stream_add_slave>:
+    6108:       d503233f        paciasp
+    610c:       a9b97bfd        stp     x29, x30, [sp, #-112]!
+    6110:       910003fd        mov     x29, sp
+    6114:       a90153f3        stp     x19, x20, [sp, #16]
+    6118:       a9025bf5        stp     x21, x22, [sp, #32]
+    611c:       aa0103f6        mov     x22, x1
+    6120:       2a0303f5        mov     w21, w3
+    6124:       a90363f7        stp     x23, x24, [sp, #48]
+    6128:       aa0003f8        mov     x24, x0
+    612c:       aa0203f7        mov     x23, x2
+    6130:       a9046bf9        stp     x25, x26, [sp, #64]
+    6134:       aa0403f9        mov     x25, x4        <-- x4 copied to x25
+    6138:       a90573fb        stp     x27, x28, [sp, #80]
+    613c:       aa0403fb        mov     x27, x4
+    6140:       f9418400        ldr     x0, [x0, #776]
+    6144:       9100e000        add     x0, x0, #0x38
+    6148:       94000000        bl      0 <mutex_lock>
+    614c:       f8420f22        ldr     x2, [x25, #32]!  <-- offset 0x44
+    ^^^
+This is 0x6108 + offset 0x44 from the beginning of sdw_stream_add_slave()
+where data abort happens.
+wsa881x_hw_params() is called with stream = NULL and passes it further
+in register x4 (5th argument) to sdw_stream_add_slave() without any checks.
+Value from x4 is copied to x25 and finally it aborts on trying to load
+a value from address in x25 plus offset 32 (in dec) which corresponds
+to master_list member in struct sdw_stream_runtime:
+
+struct sdw_stream_runtime {
+        const char  *              name;	/*     0     8 */
+        struct sdw_stream_params   params;	/*     8    12 */
+        enum sdw_stream_state      state;	/*    20     4 */
+        enum sdw_stream_type       type;	/*    24     4 */
+        /* XXX 4 bytes hole, try to pack */
+ here-> struct list_head           master_list;	/*    32    16 */
+        int                        m_rt_count;	/*    48     4 */
+        /* size: 56, cachelines: 1, members: 6 */
+        /* sum members: 48, holes: 1, sum holes: 4 */
+        /* padding: 4 */
+        /* last cacheline: 56 bytes */
+
+Fix this by adding required calls to qcom_snd_sdw_startup() and
+sdw_release_stream() to startup and shutdown routines which restores
+the previous correct behaviour when ->set_stream() method is called to
+set a valid stream runtime pointer on playback startup.
+
+Reproduced and then fix was tested on db845c RB3 board.
+
+Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: stable@vger.kernel.org
+Fixes: 15c7fab0e047 ("ASoC: qcom: Move Soundwire runtime stream alloc to soundcards")
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
-V1 -> V2: - Combined the `!list->list` check in preexisting if statement
-	  - Added Fixes tag 
-	  - Added the link to the Coverity Scan report 
+ sound/soc/qcom/sdm845.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
-index 41262bda20ed..947c3a6d0e5a 100644
---- a/drivers/gpu/drm/xe/xe_guc_capture.c
-+++ b/drivers/gpu/drm/xe/xe_guc_capture.c
-@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- {
- 	int i;
+diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+index 75701546b6ea..a479d7e5b7fb 100644
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -15,6 +15,7 @@
+ #include <uapi/linux/input-event-codes.h>
+ #include "common.h"
+ #include "qdsp6/q6afe.h"
++#include "sdw.h"
+ #include "../codecs/rt5663.h"
  
--	if (!list || list->num_regs == 0)
-+	if (!list || !list->list || list->num_regs == 0)
- 		return;
+ #define DRIVER_NAME	"sdm845"
+@@ -416,7 +417,7 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
+ 		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
+ 		break;
+ 	}
+-	return 0;
++	return qcom_snd_sdw_startup(substream);
+ }
  
- 	if (!regs)
-@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- 		struct __guc_mmio_reg_descr desc = list->list[i];
- 		u32 value;
+ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+@@ -425,6 +426,7 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+ 	struct snd_soc_card *card = rtd->card;
+ 	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
+ 	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
++	struct sdw_stream_runtime *sruntime = data->sruntime[cpu_dai->id];
  
--		if (!list->list)
--			return;
--
- 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
- 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
- 		} else {
+ 	switch (cpu_dai->id) {
+ 	case PRIMARY_MI2S_RX:
+@@ -463,6 +465,9 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+ 		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
+ 		break;
+ 	}
++
++	data->sruntime[cpu_dai->id] = NULL;
++	sdw_release_stream(sruntime);
+ }
+ 
+ static int sdm845_snd_prepare(struct snd_pcm_substream *substream)
 -- 
-2.43.0
+2.45.2
 
 
