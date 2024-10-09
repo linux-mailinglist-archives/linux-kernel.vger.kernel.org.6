@@ -1,96 +1,123 @@
-Return-Path: <linux-kernel+bounces-356981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0649969DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D319969DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8451A284EC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9291F2378C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C833519413C;
-	Wed,  9 Oct 2024 12:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45FC192D91;
+	Wed,  9 Oct 2024 12:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEVL8XDB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBtHeT28"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255BE192D82;
-	Wed,  9 Oct 2024 12:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336961922DE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 12:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728476499; cv=none; b=qu0T4YkEfIAvnUI3oMsaJCxn5ByD+gjlSqmNHcqsJCz5zOxBWUvD23/P37nNmTSVyLnhPbb6L2JrNab81p6UERIOLkcz/DyntNfZgVeIj2exXEAcF1xTmE5IfpTXz8lF8bZIOicM9sHzZGzEGMjm9OR9HetEq+iS5Sb6FOKw0Uc=
+	t=1728476540; cv=none; b=IYdqslJf3DQhvXgqO4dKggC+wY4WqWwPsSUU81TEDP1wX2Kxq1dVuyVWgdSg2KU1DymiS4Mq/T3nlZgZbvTw5lqWsMhBaMxKn3pqlKNKvJ0ju7XEw1dgRmiyZS913np3kAY/wb9IUu94tZCbK+UtmXwE6lrxbnPJ/tKuLPz10Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728476499; c=relaxed/simple;
-	bh=VNb1K2HvXG3DCvZoVEpmWdPbO9+s7NF2fKv/98Juzc8=;
+	s=arc-20240116; t=1728476540; c=relaxed/simple;
+	bh=pfpkVqS/zK73IKhw6LUi9n/2MQuf2vXG6yP2uBgZrco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLpTQpY6a7FDPvZhgp0BVbB0m2yq5P2nw5mazDMRs4Hnjy+F+LodFmHYfq5C7Q2O3xybO92Co6+G0ij3rEhhQjwsaGj09JSpbzY/khR5vjf68rMBP2NkscrJ8PCSCiXjA0IH8FVotehEytI/4BrtmlZDJZIMjjU/YR3ReGV47ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEVL8XDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7431C4CEC5;
-	Wed,  9 Oct 2024 12:21:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZrmAp3+YYtoSTMo/LfXrnLUYgnkvVZrmH0Q+rPD7YrqIN6nUoI5di2PdMHh7Pgi0wJu2em6IQfbSdKtG5kr7MpcV1ljMzpIqk5+miTBkeACu+kR+SNopm6uCGDUMZcZ+lhIdLi8FgAz2Skzk70cxW0vsN+WAjUkmdPSmds0+KGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBtHeT28; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69D23C4CEC5;
+	Wed,  9 Oct 2024 12:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728476498;
-	bh=VNb1K2HvXG3DCvZoVEpmWdPbO9+s7NF2fKv/98Juzc8=;
+	s=k20201202; t=1728476539;
+	bh=pfpkVqS/zK73IKhw6LUi9n/2MQuf2vXG6yP2uBgZrco=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nEVL8XDB54B3CSDd9QD+aN/dNRv6/AcIDKBMQwbcYsJEZSYz6iJyc8+/LNsJeaZCm
-	 2SrAoCyGxeQnl5fCOb/c/qpsRtV0EtrOdceugAS6GmQrBSMQqbztg1wXCA8XaLIV3i
-	 BCCSlJYSO0RgFQZRDzzduTr4HlgqW3/usowJQUMpwxY3uRJPfK3bljmY27oj+T6HN/
-	 Tn03jdXMZv+ta6W3s0L18Y454nMh9rSzwWOIJtzpCPM3AdnHgpVP/IPSLhHBS18/5+
-	 6RrYfR21rEFf7zpaHmIkyJ07ElxHY4Ns90xuyDf8E/A64WBya3LOVTJQTjUx3HHu7n
-	 U3kPQddtqmA9w==
-Date: Wed, 9 Oct 2024 13:21:34 +0100
-From: Simon Horman <horms@kernel.org>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] netdevsim: copy addresses for both in and
- out paths
-Message-ID: <20241009122134.GP99782@kernel.org>
-References: <20241008122134.4343-1-liuhangbin@gmail.com>
- <20241008122134.4343-3-liuhangbin@gmail.com>
+	b=PBtHeT28e6qBxVEsYTPgOBxkjLtk7SWDnX7d6lH/T+WIlE7yaZlKyjsY95772f2Dm
+	 ODX4XnCVbERHYMFdwEnVazSjXAwLnJxkbsWfIdo5XPSa7XY+xqHXo9B6TCaH1J9p0I
+	 jthdNrZcsGOhkyvp/fWwWfHGg9KZAxP5NVMDZQ/K7p19qwb2wAfVYPkZmC+pzFBPhg
+	 ouQTASTRI5PmxADn5IALMkABbgTb3ipVzXMUGaa+jreVn2GSMn0NhI/LHmY1pIFlhv
+	 o0AIAFSQStc7YLO5p5vfWMUxvx9xPxF02cQOgAJFDBJ8UPrsZKNwNGzg4R5EAUSnat
+	 gct/HHH8pyGLg==
+Date: Wed, 9 Oct 2024 14:22:16 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v2 09/15] timers: Add a warning to usleep_range_state()
+ for wrong order of arguments
+Message-ID: <ZwZ1ePAzuyJBlxNy@localhost.localdomain>
+References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+ <20240911-devel-anna-maria-b4-timers-flseep-v2-9-b0d3f33ccfe0@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241008122134.4343-3-liuhangbin@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-9-b0d3f33ccfe0@linutronix.de>
 
-On Tue, Oct 08, 2024 at 12:21:34PM +0000, Hangbin Liu wrote:
-> The current code only copies the address for the in path, leaving the out
-> path address set to 0. This patch corrects the issue by copying the addresses
-> for both the in and out paths. Before this patch:
+Le Wed, Sep 11, 2024 at 07:13:35AM +0200, Anna-Maria Behnsen a écrit :
+> There is a warning in checkpatch script that triggers, when min and max
+> arguments of usleep_range_state() are in reverse order. This check does
+> only cover callsites which uses constants. Move this check into the code as
+> a WARN_ON_ONCE() to also cover callsites not using constants and get rid of
+> it in checkpatch.
 > 
->   # cat /sys/kernel/debug/netdevsim/netdevsim0/ports/0/ipsec
->   SA count=2 tx=20
->   sa[0] tx ipaddr=0.0.0.0
->   sa[0]    spi=0x00000100 proto=0x32 salt=0x0adecc3a crypt=1
->   sa[0]    key=0x3167608a ca4f1397 43565909 941fa627
->   sa[1] rx ipaddr=192.168.0.1
->   sa[1]    spi=0x00000101 proto=0x32 salt=0x0adecc3a crypt=1
->   sa[1]    key=0x3167608a ca4f1397 43565909 941fa627
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Joe Perches <joe@perches.com>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> ---
+>  kernel/time/sleep_timeout.c | 2 ++
+>  scripts/checkpatch.pl       | 4 ----
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
-> After this patch:
-> 
->   = cat /sys/kernel/debug/netdevsim/netdevsim0/ports/0/ipsec
->   SA count=2 tx=20
->   sa[0] tx ipaddr=192.168.0.2
->   sa[0]    spi=0x00000100 proto=0x32 salt=0x0adecc3a crypt=1
->   sa[0]    key=0x3167608a ca4f1397 43565909 941fa627
->   sa[1] rx ipaddr=192.168.0.1
->   sa[1]    spi=0x00000101 proto=0x32 salt=0x0adecc3a crypt=1
->   sa[1]    key=0x3167608a ca4f1397 43565909 941fa627
-> 
-> Fixes: 7699353da875 ("netdevsim: add ipsec offload testing")
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> diff --git a/kernel/time/sleep_timeout.c b/kernel/time/sleep_timeout.c
+> index 21f412350b15..4b805d7e1903 100644
+> --- a/kernel/time/sleep_timeout.c
+> +++ b/kernel/time/sleep_timeout.c
+> @@ -364,6 +364,8 @@ void __sched usleep_range_state(unsigned long min, unsigned long max, unsigned i
+>  	ktime_t exp = ktime_add_us(ktime_get(), min);
+>  	u64 delta = (u64)(max - min) * NSEC_PER_USEC;
+>  
+> +	WARN_ON_ONCE(max < min);
+> +
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Should it try to "fix" to avoid overflow?
 
+if WARN_ON_ONCE(max < min)
+    delta = 0
+
+>  	for (;;) {
+>  		__set_current_state(state);
+>  		/* Do not return before the requested sleep time has elapsed */
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 39032224d504..ba3359bdd1fa 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -7088,10 +7088,6 @@ sub process {
+>  			if ($min eq $max) {
+>  				WARN("USLEEP_RANGE",
+>  				     "usleep_range should not use min == max args; see Documentation/timers/timers-howto.rst\n" . "$here\n$stat\n");
+> -			} elsif ($min =~ /^\d+$/ && $max =~ /^\d+$/ &&
+> -				 $min > $max) {
+> -				WARN("USLEEP_RANGE",
+> -				     "usleep_range args reversed, use min then max; see Documentation/timers/timers-howto.rst\n" . "$here\n$stat\n");
+
+Perhaps it doesn't hurt to keep the static check?
+
+Thanks.
+>  			}
+>  		}
+>  
+> 
+> -- 
+> 2.39.2
+> 
 
