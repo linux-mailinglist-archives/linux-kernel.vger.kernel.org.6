@@ -1,85 +1,139 @@
-Return-Path: <linux-kernel+bounces-357676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E919973F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:02:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2F99973FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302671C2264D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727891F26295
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7281DEFCE;
-	Wed,  9 Oct 2024 18:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2AF1E1C09;
+	Wed,  9 Oct 2024 18:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7wb2KD4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9+JjfhU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C529192D6A;
-	Wed,  9 Oct 2024 18:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732FA1E1A0B;
+	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496969; cv=none; b=KqKV7z9iRezj2YjeWF57okhREP0xrQd7KySh0E7cV7jWHqFOo/ONrWDrIzIkPzL50B9sLTbvRIkJkdxsrlzVqrbCCcBmBBAlqp/FfPbIGRBVuTbjavx5yvddsGo0AxDMOwO6nETdCK/RAwGDlsp8MSGnhXA5nfy0WuQsqUBDObI=
+	t=1728496976; cv=none; b=N85Y4XtFnOLa6Yjmn3eAijCg3APTkbK4iHGgAI61WWzaQ+dUQ7xGBBeSoJhSaIUuV2R0PfkkEfDTLGSrNIZY6xx2lhze5j0bcFtnXFM86x8qpH2rJAkzaUt2wmQATYnFMIaHmo5sEiSmn/Foi1fe20ItpbyEMiY18hPT5G56KyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728496969; c=relaxed/simple;
-	bh=6bpf8Ex9s1V96vm2Q27AA51LFfXFXo5q7B4swtNvgTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hko3TdduOsGm2hqT4p35TlDKLWIi+ob5XExPlPsZ9QDXHkk95LEr3VtmqQ94HFKvrTNc4C8BkC0DDojQY0Njh3TstVsoVN73o/oSoEMsXvEyPG5OIqI+TEBLwJPK4t/ZkXlQrITmU7qmGEb0v3HhrFd0q76MW2EAIhLHi8qmAnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7wb2KD4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC878C4CEC3;
-	Wed,  9 Oct 2024 18:02:48 +0000 (UTC)
+	s=arc-20240116; t=1728496976; c=relaxed/simple;
+	bh=r+7xfcD7mxFvIDSheG/tRqNVT2+4G41e+4hHqbryp2E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Yipe5MjUv/37TIfoKoK0LkSCmgZQU87OR4fDctFoq3QfxKJy9Zdauk3FMr/OudtJ9iy9qCHj2lY3dSpvfYvxJmLNmcZguo3ttZgQzxDJaIIOyrpWFa6TLVLH4FupmmPrUn073NLTucrj28atsgC4CEDV1qzTy4gv3JFqbmFVkVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9+JjfhU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B694C4CEC3;
+	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728496968;
-	bh=6bpf8Ex9s1V96vm2Q27AA51LFfXFXo5q7B4swtNvgTU=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=B7wb2KD41fSzPRMC80G2lWP89ZTXUfb/A6keAUU0JbqOqEC0ryIaFxKKeOSQbiZQl
-	 f60GKke2pnknnKK5ZTyEROTECYwUuUQTgWV3ZKwhD0aE6IXxonsO2u+OKmb8tRW6hG
-	 Q45cfHTKJyKeJGuC9SCemI+Rp9Z9J+ymmIgsYFd2lXcfCKk80UfeHXlcUN0gJ08p0u
-	 TNXGDJIwjPkuy/jkhpE4Rsk/2ff47nxl5PnBi23IBOTm/K0WxW3vv4AsIIs9SKeAQc
-	 5SxQVpPs0JTsw1Uw01r2/wMHzN3hoEqOn9O0ltRyHVg9VQi1ai5KjM2VqegQk0JreG
-	 OsaV2C+xOKngw==
+	s=k20201202; t=1728496976;
+	bh=r+7xfcD7mxFvIDSheG/tRqNVT2+4G41e+4hHqbryp2E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=W9+JjfhUmZ0+opHk7pINHKDaAMx12EBs+g5xii95TnzTdZpm4L5kOxRr4gnI+Xeem
+	 ap1FKMIO95RXZNa5pbu6/o0hkU/XRlvF8A3wktDQk/Gh/L17L9SjB/qyWoDe2nv56Y
+	 ZELzekIeDVEYWYitKZE2mYpdsjBEAUtsYLPhpSMyxWhzwb1dRify3dwUUTbyoo+HLl
+	 +JMJL5sOK8ESs32Z8o8Vn73NBts9VkHDhu2MZJcTlMBzW9myq4NpZ+od1yCiPCC4tK
+	 uliwR3xDVlq4n40M0a8QX1z8l0X4XE6fMXG2OyetxkYrviigaENKaln4g+nkwOhEAc
+	 imltHfVJibScA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 74299CE08E5; Wed,  9 Oct 2024 11:02:48 -0700 (PDT)
-Date: Wed, 9 Oct 2024 11:02:48 -0700
+	id C50D8CE08E5; Wed,  9 Oct 2024 11:02:55 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
-To: frederic@kernel.org, rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH rcu 0/5] Torture-test changes for v6.13
-Message-ID: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+To: frederic@kernel.org,
+	rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 1/5] refscale: Add test for sched_clock()
+Date: Wed,  9 Oct 2024 11:02:49 -0700
+Message-Id: <20241009180253.777965-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
+References: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+This commit adds a "sched-clock" test for the sched_clock() function.
 
-This series contains torture-test changes for v6.13:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/refscale.c | 38 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-1.	Add test for sched_clock().
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index 0db9db73f57f2..639d1cfc657b2 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -36,6 +36,7 @@
+ #include <linux/slab.h>
+ #include <linux/torture.h>
+ #include <linux/types.h>
++#include <linux/sched/clock.h>
+ 
+ #include "rcu.h"
+ 
+@@ -498,6 +499,39 @@ static const struct ref_scale_ops acqrel_ops = {
+ 
+ static volatile u64 stopopts;
+ 
++static void ref_sched_clock_section(const int nloops)
++{
++	u64 x = 0;
++	int i;
++
++	preempt_disable();
++	for (i = nloops; i >= 0; i--)
++		x += sched_clock();
++	preempt_enable();
++	stopopts = x;
++}
++
++static void ref_sched_clock_delay_section(const int nloops, const int udl, const int ndl)
++{
++	u64 x = 0;
++	int i;
++
++	preempt_disable();
++	for (i = nloops; i >= 0; i--) {
++		x += sched_clock();
++		un_delay(udl, ndl);
++	}
++	preempt_enable();
++	stopopts = x;
++}
++
++static const struct ref_scale_ops sched_clock_ops = {
++	.readsection	= ref_sched_clock_section,
++	.delaysection	= ref_sched_clock_delay_section,
++	.name		= "sched-clock"
++};
++
++
+ static void ref_clock_section(const int nloops)
+ {
+ 	u64 x = 0;
+@@ -1083,8 +1117,8 @@ ref_scale_init(void)
+ 	int firsterr = 0;
+ 	static const struct ref_scale_ops *scale_ops[] = {
+ 		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
+-		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
+-		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
++		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &sched_clock_ops, &clock_ops,
++		&jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
+ 	};
+ 
+ 	if (!torture_init_begin(scale_type, verbose))
+-- 
+2.40.1
 
-2.	Add --no-affinity parameter to kvm.sh.
-
-3.	Correct affinity check.
-
-4.	Add guest_os_delay module parameter.
-
-5.	Avoid printing cpu=-1 for no-fault RCU boost failure.
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/kernel/rcu/rcutorture.c                                        |    9 +-
- b/kernel/rcu/refscale.c                                          |   38 ++++++++
- b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh |   43 +++++-----
- b/tools/testing/selftests/rcutorture/bin/kvm.sh                  |    6 +
- kernel/rcu/refscale.c                                            |   19 ++++
- 5 files changed, 90 insertions(+), 25 deletions(-)
 
