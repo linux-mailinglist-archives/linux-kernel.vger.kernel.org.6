@@ -1,98 +1,142 @@
-Return-Path: <linux-kernel+bounces-357129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE3D996BE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:30:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC3F996BE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488BD282B74
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:30:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EB801C22A6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2FF198E74;
-	Wed,  9 Oct 2024 13:30:24 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4F98F45
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3BE19885D;
+	Wed,  9 Oct 2024 13:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fStKmwy/"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F637462;
+	Wed,  9 Oct 2024 13:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480624; cv=none; b=WtohR3TQm52sJRjA/nnG+RIONaUE1cthYBpM3kyYczoW0lu3zTdqaNeiVoowfSQU1XDYqrQ39+fRn5umlnYmts0+3SXYWCSAtQ4xN4pitQlNjLCZEYt4eRG9YNOftdCslMVz6xSv1Xu06bYZ7yslYU7IamzBWwXXbCim+hFB3eM=
+	t=1728480686; cv=none; b=e4xxX1IXT6IZET4himAfj8lFKK+VBXuHEtXcoJpVH741mb4H7yvD8v/mjJQkwbUYgJxezlqM5LA/dPdTZ4MSA9HUH30b40fKXlwwS9rhNivUe3ZEec2A++43JxebOKzMKFAcNSofxmCd/xNJOHqKfnS7GEBFDmgrUc2IlYoudk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480624; c=relaxed/simple;
-	bh=QpJ/8EwRppC1UU+NnWIBUk/jF5UeSHguB4Zl+ucY5sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GQIczXsAWVoXEXwa6lDJwXbSgVfe93Gx6pwsvogglPeMUqMKWz4x5rgJZCwWifHsOl8GUvC4erPVBYb9YXKmwICqaMJ/ISCLtDXIz4Rp2t4qLn4qK/un1Gq97Zasa8NtfYz+NWaODJmqc/PpWCfU2kDMcW32OAK6Xj4XrENnxac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FEC1FEC;
-	Wed,  9 Oct 2024 06:30:52 -0700 (PDT)
-Received: from [10.57.85.216] (unknown [10.57.85.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7BD383F58B;
-	Wed,  9 Oct 2024 06:30:20 -0700 (PDT)
-Message-ID: <ade5437e-39db-4e95-9d32-b51a16bfc9ef@arm.com>
-Date: Wed, 9 Oct 2024 14:30:18 +0100
+	s=arc-20240116; t=1728480686; c=relaxed/simple;
+	bh=giV52/vmcYWViMZfBPIzXa2HgtORI8AVA0AJ4iUjPB4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=QpP6N6gxj32UyhtbCYcsEIuOcjGgVsu9uQ8XwuFpqtvLzh23mUut9fsrJ7pAWkOaCpz4QxdQwUV3OgAeCWopm8PpwOvhuvQpmoh/hmL+UNTBJzp1bpizxoKmuHJBYYDblVaX5boifxWHGSBaSMHMm/eScR7N/hpO9Pay4p+mM5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fStKmwy/; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4D4E5FF807;
+	Wed,  9 Oct 2024 13:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728480681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bmB3TVTLAYoejXpiOXxmeOtUKDtgamIRXEwjeFLgEBk=;
+	b=fStKmwy/a24cNXVfFv6HOUgx+VRqdHvokCfSDoeKcmZlfI0GqbtJ28FJ9zrNBeaHj7GEw+
+	fIZ+67ymxDtcBZ+TNboySyb1WBuu5p0YRdx5g5tZAl6/qhnTnjtQorle0NkVYsOw5W9uNg
+	lZmarUQQCIjCip+Btj+2b8xmshPg7rxw68036EQ39F1+eITNH6v4I+hY+aS+vO92c1jUQu
+	QRhqUDGLBnpCuH/WReRH/nVMQJiiOLQ6Dnw9DjQvEfjkHtkyjJfdJ8NhIkXhWFuf5IpptN
+	L1PNEXUI38bsO6NMETaOhCrmx03cPoLPmNUyvDdwbUFHj5u4k0MrEZTMB1z/fw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] KVM: arm64: ptdump: Test PMD_TYPE_MASK for block
- mapping
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
- <20241005123824.1366397-5-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241005123824.1366397-5-anshuman.khandual@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 09 Oct 2024 15:31:20 +0200
+Message-Id: <D4RB9IS3O0L1.2G9E2688BL4PZ@bootlin.com>
+Subject: Re: [PATCH v2 5/6] i2c: nomadik: fix BRCR computation
+Cc: "Andi Shyti" <andi.shyti@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Linus Walleij" <linus.walleij@linaro.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241009-mbly-i2c-v2-0-ac9230a8dac5@bootlin.com>
+ <20241009-mbly-i2c-v2-5-ac9230a8dac5@bootlin.com>
+ <CACRpkdZyyFR1niN+w_t43uE0XASKMzkUHGHuHWdj_VXCKLTR-g@mail.gmail.com>
+In-Reply-To: <CACRpkdZyyFR1niN+w_t43uE0XASKMzkUHGHuHWdj_VXCKLTR-g@mail.gmail.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 05/10/2024 13:38, Anshuman Khandual wrote:
-> This changes stage-2 ptdump making it test given page table entries against
-> PMD_TYPE_SECT on PMD_TYPE_MASK bits for a block mapping, as is the case for
-> stage-1 ptdump.
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Hello Linus,
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+On Wed Oct 9, 2024 at 1:34 PM CEST, Linus Walleij wrote:
+> On Wed, Oct 9, 2024 at 12:23=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@boo=
+tlin.com> wrote:
+> > --- a/drivers/i2c/busses/i2c-nomadik.c
+> > +++ b/drivers/i2c/busses/i2c-nomadik.c
+> > @@ -454,9 +454,12 @@ static void setup_i2c_controller(struct nmk_i2c_de=
+v *priv)
+> >          * operation, and the other is for std, fast mode, fast mode
+> >          * plus operation. Currently we do not supprt high speed mode
+> >          * so set brcr1 to 0.
+> > +        *
+> > +        * BRCR is a clock divider amount. Pick highest value that
+> > +        * leads to rate strictly below target.
+> >          */
+>
+> You could push in some more details from the commit message here so it's =
+not
+> so terse.
 
-> ---
->  arch/arm64/kvm/ptdump.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
-> index e4a342e903e2..098416d7e5c2 100644
-> --- a/arch/arm64/kvm/ptdump.c
-> +++ b/arch/arm64/kvm/ptdump.c
-> @@ -52,8 +52,8 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
->  		.set	= "AF",
->  		.clear	= "  ",
->  	}, {
-> -		.mask	= PTE_TABLE_BIT | PTE_VALID,
-> -		.val	= PTE_VALID,
-> +		.mask	= PMD_TYPE_MASK,
-> +		.val	= PMD_TYPE_SECT,
->  		.set	= "BLK",
->  		.clear	= "   ",
->  	},
+Most of the details from the commit message come from behavior changes:
+what was done previously versus what is the new behavior we implement.
+
+Having a clock divider picking the bus rate that is below the target
+speed rather than above sounds rather intuitive. Eg when you ask for
+400kHz you want <=3D400kHz, not >=3D400kHz.
+
+I'll add that last sentence "Eg when you ask for 400kHz you want a bus
+rate <=3D400kHz (and not >=3D400kHz)". It is straight forward and easy to
+understand.
+
+> >         brcr1 =3D FIELD_PREP(I2C_BRCR_BRCNT1, 0);
+> > -       brcr2 =3D FIELD_PREP(I2C_BRCR_BRCNT2, i2c_clk / (priv->clk_freq=
+ * div));
+> > +       brcr2 =3D FIELD_PREP(I2C_BRCR_BRCNT2, i2c_clk / (priv->clk_freq=
+ * div) + 1);
+>
+> Doesn't the last part correspond to something like
+> #include <linux/math.h>
+> u64 scaler =3D DIV_ROUND_DOWN_ULL(i2c_clk, (priv->clk_freq * div));
+> brcr2 =3D FIELD_PREP(I2C_BRCR_BRCNT2, (u32)scaler);
+>
+> Certianly one of the in-kernel division helpers like DIV_ROUND_DOWN
+> round_up() etc are better to use IMO, but I might not be understanding th=
+e
+> fine details of the math here.
+
+Indeed what we want is:
+	DIV_ROUND_DOWN(i2c_clk, priv->clk_freq * div)
+
+I see no reason to use DIV_ROUND_DOWN_ULL(). It would be useful if
+	i2c_clk + (priv->clk_freq * div)
+had a chance to overflow.
+
+Worst case is:
+	3_400_000 + (48_000_000 * 3) =3D 147_400_000
+
+Will send v3 straight away as this is a significant change,
+thanks Linus!
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
