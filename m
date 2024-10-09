@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-357141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18552996C52
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BBC996C54
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B454B27964
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:38:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FD21F2275C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402131991B5;
-	Wed,  9 Oct 2024 13:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECE71993B8;
+	Wed,  9 Oct 2024 13:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fog81OU1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ji5edDWZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955C1198A25;
-	Wed,  9 Oct 2024 13:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2881D1991A5;
+	Wed,  9 Oct 2024 13:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481072; cv=none; b=ES2NIbi0KWbocD7wOBQ80Q4foe02hD4ZUhQbfbnJqfDPN/4wFz30S2IacmhhaEoR/g4V7AcVcApwQXVl6GrOD6RoptT1iAmwr8sNf1uCtM/TyLpgoI4N8e7gL0jxdI4KaxsQg6R57/l2DsL7XAA7KQfxiJUxyn6dO5wEdpfww+Q=
+	t=1728481077; cv=none; b=oXQ+6X14at1IKipL7lxSwftQt+HQ16rWmedbqAg/j8MfVHkngXajLaIGRZPxFegK4wUCZFpK2eAiQuE/TYe0c5aTPme9Xs9R47ECE//+nTtzRiVBauP8jbkqLnSASgcPTGUoZ7iuh+Uo6uJKQ79AIurh1fwMnEgMX9gCErDM4U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481072; c=relaxed/simple;
-	bh=FRa49j8KQxaEOnV6Aimw0MapA9Lysb1eUV6fb8guLTs=;
+	s=arc-20240116; t=1728481077; c=relaxed/simple;
+	bh=inqUPwZrCwgQ0WwB63ubH2s8Z1BG2g5wB8rNGIfOqew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yx043RvB1YrrbMW2CAo4BF6WsteAOAJzHDPzQNXf76Lkkwd9ZNz8CdYkueqqFZrJXEdvmzKh6ljUsXFQHtoKD9J5pe9LTFSfPkiEBcGWGwdVmjyEi+r9l6FE7gEVEz1RY3poor3cwAFc8L/abTHL4Hp2PRatTciKVkvsKYLv00s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fog81OU1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9F61C4CEC5;
-	Wed,  9 Oct 2024 13:37:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVdG/DA38s2wnwlulIUGelXotXfl9ZoOHjbaD6ocutqVUsnwyOJJ1+8gnxTfK3JXicNrdqcA8SeROP9CaAcoJnJtD0BM535vxQFREd3pFxSj7oIj4yZLtjNzmAzlcg0+qQpa6g3HS4ZEkyLDJ5cMBbE+xyevAdUE1aEax9PHgzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ji5edDWZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA7CC4CED1;
+	Wed,  9 Oct 2024 13:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728481072;
-	bh=FRa49j8KQxaEOnV6Aimw0MapA9Lysb1eUV6fb8guLTs=;
+	s=k20201202; t=1728481077;
+	bh=inqUPwZrCwgQ0WwB63ubH2s8Z1BG2g5wB8rNGIfOqew=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fog81OU15SqVibKE4ULX0GWqPjxySqR9iQkFhoG7Qrgh+sjEKjEI8tC+1B2JX0nAh
-	 IifWunaa7QikR0rVQ1mLepIc7/nT2omPiDKEVMDN4NZxKdihVGI+2sIHIFIVsYXcwH
-	 O3zbBwAooir1zCCX3T0np3XdueXnN/axVJhr23NJ6RWZd4JdRHBikE0IztdTttyN/G
-	 pwGOQkAjJgzq3ftVPi76dQRFZyndfjPASz2cXJajiTQoLybbwRaCl32A65R7x4MhQu
-	 7vcSit3RFdj/9CfoOG5geujoSiyr8TOsywt53nbMATEnLbPCCmxiN3BSkfbM123OU+
-	 daPaJN9FqRkaA==
-Date: Wed, 9 Oct 2024 14:37:46 +0100
-From: Simon Horman <horms@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: idosch@nvidia.com, kuba@kernel.org, aleksander.lobakin@intel.com,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com,
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com,
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v7 03/12] net: tunnel: make
- skb_vlan_inet_prepare() return drop reasons
-Message-ID: <20241009133746.GA99782@kernel.org>
-References: <20241009022830.83949-1-dongml2@chinatelecom.cn>
- <20241009022830.83949-4-dongml2@chinatelecom.cn>
+	b=Ji5edDWZ4qxDrXTD1PWyWgdqj3onWa6afzPIJcunhsh8tuIhGo7qjAP7/Hn0ZRNuB
+	 rzDCLXx0ZoLKsc8MkQDVqSLIeAKXxxPJ6GBKg6HcDazkSNVKDuYPqJdkuC2Wc+NwOd
+	 vV2KqojpkOKY3fEOcMh+wiVK5khghqn4easGo9Quyhe26c3WkQLzwuYfRSjUaAbkCg
+	 RZv4Jq8GeSm3poAgn49Ey9wnOgbLqHL1VmBJQiLfj/kBrwnOAdNjHkVNW52GPtRBuV
+	 GuNB1P/IGQsoGfFcaJNuHssY5q2x5SXi5PXxwWUWmzebicw8PgeFdheu7x5pj+POtK
+	 Rp2Y+yGJ2XrGQ==
+Date: Wed, 9 Oct 2024 14:37:52 +0100
+From: Lee Jones <lee@kernel.org>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: avel@ucw.cz, lee@kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: leds: replace divide condition 'shift / 16'
+ with 'shift >= 16'
+Message-ID: <20241009133643.GI276481@google.com>
+References: <20240922174020.49856-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241009022830.83949-4-dongml2@chinatelecom.cn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240922174020.49856-1-kdipendra88@gmail.com>
 
-On Wed, Oct 09, 2024 at 10:28:21AM +0800, Menglong Dong wrote:
-> Make skb_vlan_inet_prepare return the skb drop reasons, which is just
-> what pskb_may_pull_reason() returns. Meanwhile, adjust all the call of
-> it.
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Staging!  Why Staging?
+
+On Sun, 22 Sep 2024, Dipendra Khadka wrote:
+
+> Smatch reported following:
+> '''
+> drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+> drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+> '''
+> Replacing 'shift / 16' with 'shift >= 16'.
+
+More info please.
+
+- What is the current problem you're attempting to solve?
+- How does this patch help with that?
+- What are the consequences for not applying this fix?
+
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 > ---
-> v5:
-> - make skb_vlan_inet_prepare() return drop reasons, instead of introduce
->   a wrapper for it.
-> v3:
-> - fix some format problems,  as Alexander advised
+>  drivers/leds/leds-bcm6328.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
+> index 246f1296ab09..13f535ccba0b 100644
+> --- a/drivers/leds/leds-bcm6328.c
+> +++ b/drivers/leds/leds-bcm6328.c
+> @@ -113,7 +113,7 @@ static void bcm6328_led_mode(struct bcm6328_led *led, unsigned long value)
+>  	unsigned long val, shift;
+>  
+>  	shift = bcm6328_pin2shift(led->pin);
+> -	if (shift / 16)
+> +	if (shift >= 16)
+>  		mode = led->mem + BCM6328_REG_MODE_HI;
+>  	else
+>  		mode = led->mem + BCM6328_REG_MODE_LO;
+> @@ -357,7 +357,7 @@ static int bcm6328_led(struct device *dev, struct device_node *nc, u32 reg,
+>  		break;
+>  	case LEDS_DEFSTATE_KEEP:
+>  		shift = bcm6328_pin2shift(led->pin);
+> -		if (shift / 16)
+> +		if (shift >= 16)
+>  			mode = mem + BCM6328_REG_MODE_HI;
+>  		else
+>  			mode = mem + BCM6328_REG_MODE_LO;
+> -- 
+> 2.43.0
+> 
+> 
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+-- 
+Lee Jones [李琼斯]
 
