@@ -1,53 +1,64 @@
-Return-Path: <linux-kernel+bounces-357777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03BB9975E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:44:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30C39975DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110FA1F237B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:44:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E051C20AB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE0C1E1A30;
-	Wed,  9 Oct 2024 19:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434B41E1051;
+	Wed,  9 Oct 2024 19:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QKhKPlfA"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AaXFH/xb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21CE1D356C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653ED2629D;
+	Wed,  9 Oct 2024 19:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728503062; cv=none; b=IehR++8sFo6Hc1uwonWnRmzGLXtCRZm7ToW+ukDaoLXVz13M5LWXMpivsCc2T9N548amLVliF8qIMFD2mtJ+osJTp8ypuyAY8zSJfKqLIZLkzh1joi4xu2rGNWbf+zjT4jMGcu/CmEbX1KFvmJ3ojxDrC3gxmhT8uj3mpjYdh1Y=
+	t=1728503057; cv=none; b=KWmQWqbjso6l/PscpAXkenIdCo9yGCO6EsDeQtKTE5SWpTaCplWTLmB2XZ9YCr9g0yWMlfyWQ8kxKIArhwFhmCTnX8ZYV61v16PnvuKjRM3dnMP95CwPB+M+YqGV4+H5cbiOCqBkjTUUJQgY+tEvuZo0a/NSeEZM/0QXsDTy+7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728503062; c=relaxed/simple;
-	bh=mATPx8c2voUWusUIBApRv+J1dsXwkVLU5ho/N9rL6TM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mU6g3YY6wmvc5k24fplq5KkSFE3hD6FbVbPPJmb4x06dcJzTUw5l9vHZgaAoooXJ4E+JlUXx+Y98nj3begmppEsrrl1r2p8jk6gcnFD+V2bhwxyvfdQmQ4ARlKMDkoNgqg7MKErV1069sf5DXOvn4qnE8kw7GwfgnT5w+MbxRUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QKhKPlfA; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TZ6rT2WT9yvw56zkrk//d+3wxBzpnHGZZMRlTHFdpy4=; b=QKhKPlfA/9jfWgKYFgNaV0KvAD
-	ah+NJy9R8HgYQIO14WSd9KP2oZzx+p0se8JhqHgHGMkhBpgvmaf5Gmp7adauL5SWlBpOFgnhLY7yt
-	F3rNgllUPSfqSLKKlMSLs1p5+AtifbofKhNwv23+J38qA35F3FvqstTFmsmeGZurr8u4Gu6c1nlo+
-	bC4AuBQ8YIZ+urk937O6L1/tnpYCVgXGnhxZ/TeAJlmtTylnqsO6RAnBiHw3J4mxSv1bABXmhzCwY
-	XZkcFHByfrLvqdDWRnCq40jnXfbUaLDJ0FDOSzMqQN+MUlZCAuwuhslNwantdEMWZ1CpPu0r7zGyM
-	l8TQCsMA==;
-Received: from [187.57.199.212] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sycbL-0074UU-Aq; Wed, 09 Oct 2024 21:44:03 +0200
-Message-ID: <bb91d63d-c61a-4063-bf14-4cbbb62bec12@igalia.com>
-Date: Wed, 9 Oct 2024 16:43:58 -0300
+	s=arc-20240116; t=1728503057; c=relaxed/simple;
+	bh=1pgldR4TDMi05Jhf4Io963ZyBUXdGxSLlxMrZyb+vOo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VYmpbMAAzhhifoQgzM89eE9m5CJRlEJSXdStJFgkPxj9LOO9SXsPwWn14twEsunDZVbwd1saDdiEnTiNS8RMeH5pS1iqy6RvsukKYBhA7kchDX5PJEjjP+6+bqhktlBRK23K8veQeVxiN7PoaSJqvl3NizJW4Zd/FQhpo+WvfBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AaXFH/xb; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728503057; x=1760039057;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=1pgldR4TDMi05Jhf4Io963ZyBUXdGxSLlxMrZyb+vOo=;
+  b=AaXFH/xbCc408uWQ1Kj3eAR4yIb6p7tauurpydwg3PkjHMg7GJDMrPYN
+   c0UsRlao0WMlrqRdnTCf33Vg/43bXcKxPVfk2HnyhezffwKeDBmHWFQiU
+   DgcWdMGgnxD8ns35zs6aEw2O7Z98YlpztfdNPhcbHlyrWPakjgSrCkBjD
+   aNrYKJScdmGnnGeW3et62i22PwFOIWUqenUvBpKW8jWSxIuZZ1+DSQS8L
+   v2IgCCusCt/BeUxTZBBQkxH/9+SOrnUgHRXShEGJUOTMSN2LRcXcg93Sq
+   cJTbxTRE3vo49kRsTlYVtMyyCzy9B7S1rrW4RZdhYDxh9IejfaNou9SvQ
+   A==;
+X-CSE-ConnectionGUID: +rvZ6sYVSDiAWyFW0Cr04A==
+X-CSE-MsgGUID: hQzVeq5HQ0S2r7mIuw5LtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31531197"
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="31531197"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 12:44:16 -0700
+X-CSE-ConnectionGUID: xuGlGIvVTd2vkMsbKRl62Q==
+X-CSE-MsgGUID: 8UmA5RcWSDmcw15KWj8avA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="107108658"
+Received: from yaaguila-mobl.amr.corp.intel.com (HELO [10.125.83.153]) ([10.125.83.153])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 12:44:14 -0700
+Message-ID: <83686f5b-7957-432c-9e2c-d54e381c06c9@linux.intel.com>
+Date: Wed, 9 Oct 2024 12:44:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,97 +66,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] futex: Rewrite get_inode_sequence_number() to make
- code simpler
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>
-References: <20241004085257.10908-1-ubizjak@gmail.com>
+Subject: Re: [PATCH 1/6] x86/bugs: Create single parameter for VERW based
+ mitigations
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+To: "Kaplan, David" <David.Kaplan@amd.com>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "hpa@zytor.com" <hpa@zytor.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>
+References: <20240924223140.1054918-2-daniel.sneddon@linux.intel.com>
+ <LV3PR12MB92651F4DF654C886B9F2BCF7947E2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <879b3437-c706-47c4-b1aa-b2def940f569@linux.intel.com>
+ <LV3PR12MB9265A30309277CBB4A9B81D1947F2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <7c1de6fb-fa83-47bc-a57b-e6700860513d@linux.intel.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241004085257.10908-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <7c1de6fb-fa83-47bc-a57b-e6700860513d@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Uros,
-
-Em 04/10/2024 05:52, Uros Bizjak escreveu:
-> Rewrite get_inode_sequence_number() to make code simpler:
+On 10/9/24 09:39, Daniel Sneddon wrote:
 > 
-> a) Rewrite FOR loop to a DO-WHILE loop with returns moved
-> out of the loop.
-> 
-> b) Use atomic64_inc_return() instead of atomic64_add_return().
-> 
-> c) Use !atomic64_try_cmpxchg_relaxed(*ptr, &old, new) instead of
-> atomic64_cmpxchg_relaxed (*ptr, old, new) != old.  x86 CMPXCHG
-> instruction returns success in ZF flag, so this change also saves
-> a compare instruction after CMPXCHG.
+>>>
+>>> Are you suggesting a name change away from "clear_cpu_buffers" since it is
+>>> clearly about the mitigation rather than the bug? I'm not sure there is a good
+>>> common name for those 4 bugs that isn't about the mitigation, but I'm open
+>>> to any suggestions.
+>>>
+>>
+>> Yes, I think that would be better.  I wasn't sure on a name either.  In the RFDS webpage I see it described as "similar to data sampling transient execution attacks".  Perhaps something like that could be an umbrella term?
+>>
 
-Remember, it's easy to see in the diff that you replace the function, 
-but might be not so clear why you did so. I think it would be better to 
-understand if you write like:
+data sampling feels a little too generic. How about something like
+microarch_data_sampling?
 
-We are trying to set a value for the i_sequence, that we expect that is 
-zero, but if we fail to do so, we are happy to use the current non-zero 
-i_sequence value that we found. Instead of using 
-atomic64_cmpxchg_relaxed(), use atomic64_try_cmpxchg_relaxed() which 
-provides a better semantic for this situation.
-
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Darren Hart <dvhart@infradead.org>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: "André Almeida" <andrealmeid@igalia.com>
-> ---
-> v2: Explicitly initialize "old" to zero before the call to
-> atomic64_try_cmpxchg_relaxed(). Rewrite commit message to
-> state the motivation for the patch.
-> ---
->   kernel/futex/core.c | 18 ++++++++----------
->   1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-> index 136768ae2637..ac650f7ed56c 100644
-> --- a/kernel/futex/core.c
-> +++ b/kernel/futex/core.c
-> @@ -173,23 +173,21 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
->   static u64 get_inode_sequence_number(struct inode *inode)
->   {
->   	static atomic64_t i_seq;
-> -	u64 old;
-> +	u64 old, new;
->   
->   	/* Does the inode already have a sequence number? */
->   	old = atomic64_read(&inode->i_sequence);
->   	if (likely(old))
->   		return old;
->   
-> -	for (;;) {
-> -		u64 new = atomic64_add_return(1, &i_seq);
-> -		if (WARN_ON_ONCE(!new))
-> -			continue;
-> +	do {
-> +		new = atomic64_inc_return(&i_seq);
-> +	} while	(WARN_ON_ONCE(!new));
->   
-> -		old = atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, new);
-> -		if (old)
-> -			return old;
-> -		return new;
-> -	}
-> +	old = 0;
-
-Please initialize it in the variable declaration.
-
-> +	if (!atomic64_try_cmpxchg_relaxed(&inode->i_sequence, &old, new))
-> +		return old;
-> +	return new;
->   }
->   
->   /**
 
