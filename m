@@ -1,71 +1,94 @@
-Return-Path: <linux-kernel+bounces-358012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C238D99792F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:37:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EF9997932
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D821F1C20D36
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:37:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93366B229DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479231E5015;
-	Wed,  9 Oct 2024 23:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvmxhVdK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A86E1E3DD4;
+	Wed,  9 Oct 2024 23:38:14 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04AF1E47A5;
-	Wed,  9 Oct 2024 23:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977EF169397
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 23:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728517001; cv=none; b=GWzxAWkU0hYlD8DUHkmgNXWip6gc4ZQvDd/qCLOrxWqEnRdQIH8R416HqqUIoR71Srsn0XRUX2zu6sUZ86dOj9MtAmlaMfxmU5HlLqSnZ9A+1gWB0f6DOFfakinmhxHKl+dQAYp8sBp53UjG7ojzUyC94wFX8SgcrWLF1Pm3RsI=
+	t=1728517094; cv=none; b=gE/3C+f2aPhsdzsNQvHMvHOp3O3GtCBEieJfFK2VUR/1J8LXbCBXTCL6N9jcl+F3XXI/Bdm5EwxSjit6dI7HGu3wQPcSWse8jOeIWI4tPhlcO2BmMLz0WbrGG8NjdYeT6CKJCNLkl4iavzVWWOULiRqdnTV9BLO47dHpGDz1Yxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728517001; c=relaxed/simple;
-	bh=hwDlfa3ra04ZdUArBbyefdHz8Us7A772ktBDQcegki8=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=DRshIDgzUf4SursZM8qNSt0AkUTL81n0vXqhWgjXcNPuhhnESbMaILac+PHAsrbwWVWfYat/0jRCKxv8fA/057Xc7Hxc/XbatNCUmxLI8gl0A2cMuL+IWuR4n08rAkX1dY35NhlndIh41/DKIYT93dELwEF2EPdPueZJYbaxm8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvmxhVdK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B427C4CECF;
-	Wed,  9 Oct 2024 23:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728517000;
-	bh=hwDlfa3ra04ZdUArBbyefdHz8Us7A772ktBDQcegki8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fvmxhVdKylBQGIf6/yOpqX0klEYGhBpIb1MufmshPWCkUurI0zy/3iLYeJG6sMHHq
-	 t6CVIGY5YCdLMQfJfOuRACTD3V8vMXcuF/fwrmR4ELKOUjg6ATNe58jj0hrfzD8B33
-	 k9KnXR9sw17gLwHkXKeR57b8ta7428pLetg6yu4FcSAJmLCG067/Aq5/Qm4S65Anox
-	 P2VbimmXXKMsz4kbmbEUnrVIECXEuiSIvOO7NeA0Li/Q5qwQ5CkWUAOgdgsqCvogOO
-	 Cfh9oWD3mFwTH4LUp0cw/uWchwR2sdP0gZ56au+zrIkeyPItCaKjDs5mQaJakmxJGD
-	 SwpXNTB8heK3g==
-Message-ID: <859add80e7737b1f9efffceb88c54e75.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728517094; c=relaxed/simple;
+	bh=3G/6R++b9vYj4FRd5vTu0OZai85D5ZFaHhqrAG01FuY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EuAx7LiElvsxBAKIcm+tj3C4zvALaDE6RMm0wxQLYvS3cdu3CVdwOQ1/5kEz6fnMVzP4ICpxc3MxCFdObV4K/fI9jyDXh56eXIq5cC1Ho3eEJUUIz6XWuqBTHib8onPZJGpVEvPBC95YMyo4rrch6P9abG5lYr7zel8weJJu7ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id 84804db4-8697-11ef-8860-005056bdd08f;
+	Thu, 10 Oct 2024 02:37:59 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 10 Oct 2024 02:37:59 +0300
+To: Sean Christopherson <seanjc@google.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v2 1/1] x86/reboot: KVM: Guard
+ nmi_shootdown_cpus_on_restart() with ifdeffery
+Message-ID: <ZwcT149jx-iOmEfl@surfacebook.localdomain>
+References: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
+ <ZwbazZpTSAn9aAC7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240822002433.1163814-4-sboyd@kernel.org>
-References: <20240822002433.1163814-1-sboyd@kernel.org> <20240822002433.1163814-4-sboyd@kernel.org>
-Subject: Re: [PATCH 3/3] clk: test: Add KUnit tests for clock-assigned-rates{-u64} DT properties
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, Peng Fan <peng.fan@nxp.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Wed, 09 Oct 2024 16:36:38 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwbazZpTSAn9aAC7@google.com>
 
-Quoting Stephen Boyd (2024-08-21 17:24:30)
-> Add unit tests for the two types of assigned rate properties. Test
-> different combinations of assigned clocks and make sure that rates
-> aren't assigned when the DT properties are malformed or are zero.
->=20
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+Wed, Oct 09, 2024 at 12:34:37PM -0700, Sean Christopherson kirjoitti:
+> On Tue, Oct 08, 2024, Andy Shevchenko wrote:
+> > The nmi_shootdown_cpus_on_restart() in some cases may be not used.
+> > This, in particular, prevents kernel builds with clang, `make W=1`
+> > and CONFIG_WERROR=y:
+> > 
+> > arch/x86/kernel/reboot.c:957:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
+> >   957 | static inline void nmi_shootdown_cpus_on_restart(void)
+> >       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > Fix this by guarging the definitions with the respective KVM ifdeffery.
+> > 
+> > See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> > inline functions for W=1 build").
 
-Applied to clk-next
+> Heh, I tried fixing this too, and have patches to clean things up, but I ended up
+> not posting them because I decided the W=1 warning was less ugly than the resulting
+> code in nmi_shootdown_cpus().
+
+CONFIG_WERROR=y is the default (at least in the current defconfigs for x86).
+My goal is to match what ARM builds survive (to some extend?), i.e. W=1, so
+may one apply either version I provided or yours?
+
+> If we're willing to take on a bit of weirdness in nmi_shootdown_cpus(), then much
+> of the #ifdeffery can go away.  Patches attached (lightly tested).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
