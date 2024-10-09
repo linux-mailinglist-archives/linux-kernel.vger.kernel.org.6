@@ -1,177 +1,113 @@
-Return-Path: <linux-kernel+bounces-357702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650D499742E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:09:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61847997415
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9713D1C23DA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:09:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC63CB24570
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2651E4113;
-	Wed,  9 Oct 2024 18:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A06A1E0DFA;
+	Wed,  9 Oct 2024 18:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIebKXLR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR3/7DyK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088CD1E1C06;
-	Wed,  9 Oct 2024 18:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84491E049A;
+	Wed,  9 Oct 2024 18:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497242; cv=none; b=shN8k6ZFxGfqq7cBdTRUowp9nz2d/Kc1pgpKlOrSV/Cr9rQIGD05g+EoXOudnaWwm9OFG/VjYQdJHUYyuFgDziGusH5P4AZpcT0/xYVqQBBDercECZ4kLs8huUisIxEU8wBvUXt9iahpT/L7QOQCHfjDnTSabwSAK/8xmTQ1KGg=
+	t=1728497237; cv=none; b=AfBDKq+HnzJFIXcjEDt/yVnXNBUQpwr+1Phe22E+GQzZQC3Dw3xtaUx/GVQnP1ETVB1+37470xHiy2OXeWG6QyoXO60ZWm95yxh52fNrmvzQ6nEwAdNM2veQHqywBLdCqmxJDk6YOnNuyY3OxZYC5+7feVHsUEB+6ICqfjelDfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728497242; c=relaxed/simple;
-	bh=fJSvDPbs5qEe3xzeWqWg6cC0gjZ2F5XS48/PJ5m/X38=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DppF1/R3wd7nVk5cTtcA44SIMC/Z+R+3j0WATyW+wtZDgFbznooZXWsLxrLvwD2FeCulURM3mVPMP/3Rv0dC0/hTLnbI2IuchEZ1nn1TuXFDeeTpX61TomrnwEzTkm0mBXJ3TdwD/zl0zGWrSeVzQM3tKVATHZi/Iu+6PpNNlUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIebKXLR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F9BC4CEE2;
-	Wed,  9 Oct 2024 18:07:21 +0000 (UTC)
+	s=arc-20240116; t=1728497237; c=relaxed/simple;
+	bh=6R3+ZzJ3wC8hJaVq4t8tQzf+S+GvwCzlc3djTWezkYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KzmoaHMjun/F144DSZH2jBTQoGmqmG6HDe7F1bP9oDlTuyMxGvVSvpsL5Ioop1yT/uuIXiCJU/Ak4FqMX9MgRpmOrAfFNsDMoPyw8ko+GUoAX7/3t1bdzpZS7vGFADbi4zYV2q7Z/icQ21LkpUrdKiJgJpGAZXtRKwZy1tifP6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DR3/7DyK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51ACFC4CEC3;
+	Wed,  9 Oct 2024 18:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728497241;
-	bh=fJSvDPbs5qEe3xzeWqWg6cC0gjZ2F5XS48/PJ5m/X38=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iIebKXLRBvuGkKsUXQp3OUpXr4QkO4OifoHojg5c6FpRqIe8J+1Cm3ubv3rMhbh2B
-	 3RileIR4LzHrqZMx1H0jLs59/FC1WibWZyEstgc7+N/1bRkC7tIicYSr0U4QjFfXFV
-	 CF/x8efgx9UPPQSJnM+WakwXapvWFFybFmL5XUrlJk1gAN0NMaJDLaFus1wnZao1Y2
-	 UBRPbVF+Ejnl2CQusdrvY84v2+S+jX4Iso2sVyziNM9pOY7NXIJfLT1d1PS0AoLjXM
-	 h6haaafswXNwSADUYq3Ezy5Arf9rVtHE+zebxi6PIi6MgE818FYnDTvCBPWDZG7GXB
-	 JzUdItZrQEGxw==
+	s=k20201202; t=1728497237;
+	bh=6R3+ZzJ3wC8hJaVq4t8tQzf+S+GvwCzlc3djTWezkYU=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=DR3/7DyKiCiiR6fp8+tBqxUmKZnNxgvkpRny+Cx4UWuWufYvrmaeRROR54eUMnooQ
+	 InLEMlg2tO9N59eYLbzv3Z8wqpL6rJUVnAVG98eAFH7zOnnmXo0laFhYkbQXBR/VHw
+	 ivCHC+EFjrkcLmipZrz4sfV7+nNIU6q1CYNF4UZM5ojgyZEpyXo99d17y93aGEMt5A
+	 RmtDGKqinMLcLkD2WKXhbNKyoJyg3iK0a1oXki9HLsHmWpBu9p3tUDwIu/Z8EPIBQ4
+	 W8+TQF1iJrnoju9NoW2EPai1vKULRVFk0hlNLa9yUiMG1DSlMQrYAl0RKtnYO7dZup
+	 ABsxETRinQREg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2991CCE1408; Wed,  9 Oct 2024 11:07:21 -0700 (PDT)
+	id F10D9CE08E5; Wed,  9 Oct 2024 11:07:16 -0700 (PDT)
+Date: Wed, 9 Oct 2024 11:07:16 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
-To: frederic@kernel.org,
-	rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	bpf@vger.kernel.org
-Subject: [PATCH rcu 09/12] rcutorture: Add reader_flavor parameter for SRCU readers
-Date: Wed,  9 Oct 2024 11:07:16 -0700
-Message-Id: <20241009180719.778285-9-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
-References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
+To: frederic@kernel.org, rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH rcu 0/12] SRCU-lite changes for v6.13
+Message-ID: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This commit adds an rcutorture.reader_flavor parameter whose bits
-correspond to reader flavors.  For example, SRCU's readers are 0x1 for
-normal and 0x2 for NMI-safe.
+Hello!
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: <bpf@vger.kernel.org>
----
- .../admin-guide/kernel-parameters.txt         |  8 +++++
- kernel/rcu/rcutorture.c                       | 30 ++++++++++++++-----
- 2 files changed, 30 insertions(+), 8 deletions(-)
+This series adds support and testing for srcu_read_lock_lite()
+and srcu_read_unlock_lite(), which avoid smp_mb(), but add a
+couple of synchronize_rcu() calls to the grace-period processing
+and may only be used where RCU is watching.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 7edc5a5ba9c98..2d5a09ff6449b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5421,6 +5421,14 @@
- 			The delay, in seconds, between successive
- 			read-then-exit testing episodes.
- 
-+	rcutorture.reader_flavor= [KNL]
-+			A bit mask indicating which readers to use.
-+			If there is more than one bit set, the readers
-+			are entered from low-order bit up, and are
-+			exited in the opposite order.  For SRCU, the
-+			0x1 bit is normal readers and the 0x2 bit is
-+			for NMI-safe readers.
-+
- 	rcutorture.shuffle_interval= [KNL]
- 			Set task-shuffle interval (s).  Shuffling tasks
- 			allows some CPUs to go into dyntick-idle mode
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index ea71a23b45d8b..daf60c988299d 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -111,6 +111,7 @@ torture_param(int, nocbs_nthreads, 0, "Number of NOCB toggle threads, 0 to disab
- torture_param(int, nocbs_toggle, 1000, "Time between toggling nocb state (ms)");
- torture_param(int, read_exit_delay, 13, "Delay between read-then-exit episodes (s)");
- torture_param(int, read_exit_burst, 16, "# of read-then-exit bursts per episode, zero to disable");
-+torture_param(int, reader_flavor, 0x1, "Reader flavors to use, one per bit.");
- torture_param(int, shuffle_interval, 3, "Number of seconds between shuffles");
- torture_param(int, shutdown_secs, 0, "Shutdown time (s), <= zero to disable.");
- torture_param(int, stall_cpu, 0, "Stall duration (s), zero to disable.");
-@@ -646,10 +647,20 @@ static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
- 
- static int srcu_torture_read_lock(void)
- {
--	if (cur_ops == &srcud_ops)
--		return srcu_read_lock_nmisafe(srcu_ctlp);
--	else
--		return srcu_read_lock(srcu_ctlp);
-+	int idx;
-+	int ret = 0;
-+
-+	if ((reader_flavor & 0x1) || !(reader_flavor & 0x7)) {
-+		idx = srcu_read_lock(srcu_ctlp);
-+		WARN_ON_ONCE(idx & ~0x1);
-+		ret += idx;
-+	}
-+	if (reader_flavor & 0x2) {
-+		idx = srcu_read_lock_nmisafe(srcu_ctlp);
-+		WARN_ON_ONCE(idx & ~0x1);
-+		ret += idx << 1;
-+	}
-+	return ret;
- }
- 
- static void
-@@ -673,10 +684,11 @@ srcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
- 
- static void srcu_torture_read_unlock(int idx)
- {
--	if (cur_ops == &srcud_ops)
--		srcu_read_unlock_nmisafe(srcu_ctlp, idx);
--	else
--		srcu_read_unlock(srcu_ctlp, idx);
-+	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
-+	if (reader_flavor & 0x2)
-+		srcu_read_unlock_nmisafe(srcu_ctlp, (idx & 0x2) >> 1);
-+	if ((reader_flavor & 0x1) || !(reader_flavor & 0x7))
-+		srcu_read_unlock(srcu_ctlp, idx & 0x1);
- }
- 
- static int torture_srcu_read_lock_held(void)
-@@ -2404,6 +2416,7 @@ rcu_torture_print_module_parms(struct rcu_torture_ops *cur_ops, const char *tag)
- 		 "n_barrier_cbs=%d "
- 		 "onoff_interval=%d onoff_holdoff=%d "
- 		 "read_exit_delay=%d read_exit_burst=%d "
-+		 "reader_flavor=%x "
- 		 "nocbs_nthreads=%d nocbs_toggle=%d "
- 		 "test_nmis=%d\n",
- 		 torture_type, tag, nrealreaders, nfakewriters,
-@@ -2416,6 +2429,7 @@ rcu_torture_print_module_parms(struct rcu_torture_ops *cur_ops, const char *tag)
- 		 n_barrier_cbs,
- 		 onoff_interval, onoff_holdoff,
- 		 read_exit_delay, read_exit_burst,
-+		 reader_flavor,
- 		 nocbs_nthreads, nocbs_toggle,
- 		 test_nmis);
- }
--- 
-2.40.1
+1.	Rename srcu_might_be_idle() to srcu_should_expedite().
 
+2.	Introduce srcu_gp_is_expedited() helper function.
+
+3.	Renaming in preparation for additional reader flavor.
+
+4.	Bit manipulation changes for additional reader flavor.
+
+5.	Standardize srcu_data pointers to "sdp" and similar.
+
+6.	Add srcu_read_lock_lite() and srcu_read_unlock_lite().
+
+7.	Allow inlining of __srcu_read_{,un}lock_lite().
+
+8.	Expand RCUTORTURE_RDR_MASK_[12] to eight bits.
+
+9.	Add reader_flavor parameter for SRCU readers.
+
+10.	Add srcu_read_lock_lite() support to rcutorture.reader_flavor.
+
+11.	Add light-weight SRCU scenario.
+
+12.	Add srcu_read_lock_lite() support using "srcu-lite".
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/admin-guide/kernel-parameters.txt              |    4 
+ b/Documentation/admin-guide/kernel-parameters.txt            |    8 
+ b/include/linux/srcu.h                                       |   21 -
+ b/include/linux/srcutree.h                                   |    2 
+ b/kernel/rcu/rcutorture.c                                    |   28 -
+ b/kernel/rcu/refscale.c                                      |   51 ++
+ b/kernel/rcu/srcutree.c                                      |   16 
+ b/tools/testing/selftests/rcutorture/configs/rcu/CFLIST      |    1 
+ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L      |   10 
+ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot |    3 
+ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-N.boot |    1 
+ b/tools/testing/selftests/rcutorture/configs/rcu/TREE10      |    2 
+ include/linux/srcu.h                                         |   86 +++-
+ include/linux/srcutree.h                                     |   44 ++
+ kernel/rcu/rcutorture.c                                      |   37 +
+ kernel/rcu/srcutree.c                                        |  207 ++++++-----
+ 16 files changed, 361 insertions(+), 160 deletions(-)
 
