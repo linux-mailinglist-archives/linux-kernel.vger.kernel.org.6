@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-356904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2377199687B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E0A996880
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA521F214C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0C81F240D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F2E191F7F;
-	Wed,  9 Oct 2024 11:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFF4192B67;
+	Wed,  9 Oct 2024 11:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlFU/+bk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeESnne9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F37191F65;
-	Wed,  9 Oct 2024 11:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E86192590;
+	Wed,  9 Oct 2024 11:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728472829; cv=none; b=CKs7RpdsGDNIUw7rizbgrzBMvfym5AlibIJLTCyJGGWBKCvochpCwcXGQZWDS6nUVKGmnVSJfXLxEZjqupzugMo2hcJgRwQhMKNmHm4UyjHfbVvVYEmGSp2FEWqJUlDrrlosbrCXLFdviTx8ODSS/0wxbBr4yheXmljMrt7e280=
+	t=1728472836; cv=none; b=o+R1SU4eeZ0wlYRqGsojOxpiY+3/qp7rRkahjuD0ymxbR+fhZ8urxdPGWanpatbIDSLMO8G4z4nP8DAZEuv1iGw2ujLMBgv0cAb7u/dn3AdSImpQ+jB3C0hrY8myjyAtYLAUhQ+khCE+2lSeTQ4OmzbTV+aWle+Z6hhi78mIVCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728472829; c=relaxed/simple;
-	bh=lepe6ODduukxewlVrTOaBuryD6wgIVqOjUmzDxDh/z8=;
+	s=arc-20240116; t=1728472836; c=relaxed/simple;
+	bh=PO8I+wMbjxk9wJfkhxRi+SCshRAINl3eIBujy6ev3Ls=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nVT3+4aJHLwl2UwHiFrJxZJSFMOcBweNYbLhIiyOnj1KEsEfGyr3gQjcfZjEIGF1euJLqpZ8UzW3tMTZxMZZwwDecy5SoxizQmFdspAYbcVzBVxaOENccF76wOfHa2Yv/lV6zLRQBnkzpQEEX42kWTAsgRbhN7ZyeXYtArULprA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlFU/+bk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59B9C4CEC5;
-	Wed,  9 Oct 2024 11:20:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=fMbm+WsHhTwMtMNVFWBBhmOcJbBxaZ1Pumu7KdXIbXI7OZ9RDyo75UkF9uW4c5As9qIdz1l72aLuUp3S4JhTcabA+LPmQfRd8e0qEsNOzal/hJmVhxfNRtRDZfcQ8oZvqy8TMGjLiKD/I4bSZEsE9HcDimQf2+RvTEMYIjCYfMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeESnne9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0266BC4CEC5;
+	Wed,  9 Oct 2024 11:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728472828;
-	bh=lepe6ODduukxewlVrTOaBuryD6wgIVqOjUmzDxDh/z8=;
+	s=k20201202; t=1728472836;
+	bh=PO8I+wMbjxk9wJfkhxRi+SCshRAINl3eIBujy6ev3Ls=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qlFU/+bkB9I0OcSqk1Xi+HBurMSooYbDCGd8t6R++uew6iIoCP6nOJVdvA2cd708B
-	 Vqr9vyWmGdGYQ/oz0xfXQTbZNVJg40xdbrRgjhU3ZhP/f1BzZNUUvCDXgxqAtoUSVS
-	 YMfsWt5K8wZHw8y18LQad0u160oDxh+I4uMhKeboNPRY6n9WYJ3dU8ql2B+01rheRi
-	 KlPIb59iKPqi1K2WH2dmlv9JlUMH9pgw5Aqa7QofF4h/0IbeSxy14Woq2r2m1zAGB2
-	 B3H1CTDVO8EKgAQUw/XjxA0fOHuoujMQJpLwAvco965pQjGkLjG5qa4g82aZ5uYnv8
-	 J0aClMZBNwyJw==
+	b=PeESnne9gUBTqt1NgQA+awNIHrQWQTICrFJrCONIO3tOGkbY/2LmnOhHfDZSYfTgR
+	 cph7avFYYMzp+p1RYXzh1ibKqxQOU1IJNokN8s/KhovSMS1GWpHXYlwMctZR9wchsL
+	 T8TIEEMKdnkygw0j70wYKL6ojUHV8zd99fDLP3EFGE3CN/nLNzZxciE51NVgXCmCsv
+	 3IDlMd41VXau/Kbj9+i+R53gKepIZpI88SszBWGmlTAY0HuLBAV8/tmjKqjjsA/ZTO
+	 6QxFNXZnjTElDshCgCE5B1Jb0NwpHjFPPG+dD3DQplF3yfE/UQ9USOoB/yyckfofv1
+	 yUJkB24Uq9/Rg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BBF3806644;
-	Wed,  9 Oct 2024 11:20:34 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D3D3806644;
+	Wed,  9 Oct 2024 11:20:41 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix race condition for VLAN
- table access
+Subject: Re: [PATCH net-next v7] ptp: Add support for the AMZNC10C 'vmclock'
+ device
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172847283307.1228916.1437413215215722558.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Oct 2024 11:20:33 +0000
-References: <20241007054124.832792-1-danishanwar@ti.com>
-In-Reply-To: <20241007054124.832792-1-danishanwar@ti.com>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: robh@kernel.org, jan.kiszka@siemens.com, diogo.ivo@siemens.com,
- andrew@lunn.ch, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
- davem@davemloft.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com, vigneshr@ti.com,
- rogerq@kernel.org
+ <172847284000.1228916.8770974683503977940.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Oct 2024 11:20:40 +0000
+References: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
+In-Reply-To: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: richardcochran@gmail.com, peter.hilber@opensynergy.com,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+ ridouxj@amazon.com, virtio-dev@lists.linux.dev, rluu@amazon.com,
+ chashper@amazon.com, abuehaze@amazon.com, pabeni@redhat.com,
+ christopher.s.hall@intel.com, jasowang@redhat.com, jstultz@google.com,
+ mst@redhat.com, netdev@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de,
+ xuanzhuo@linux.alibaba.com, maz@kernel.org, mark.rutland@arm.com,
+ daniel.lezcano@linaro.org, a.zummo@towertech.it,
+ alexandre.belloni@bootlin.com, qemu-devel@nongnu.org, horms@kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by David S. Miller <davem@davemloft.net>:
 
-On Mon, 7 Oct 2024 11:11:24 +0530 you wrote:
-> The VLAN table is a shared memory between the two ports/slices
-> in a ICSSG cluster and this may lead to race condition when the
-> common code paths for both ports are executed in different CPUs.
+On Sun, 06 Oct 2024 08:17:58 +0100 you wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> Fix the race condition access by locking the shared memory access
-> 
-> Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> The vmclock device addresses the problem of live migration with
+> precision clocks. The tolerances of a hardware counter (e.g. TSC) are
+> typically around ±50PPM. A guest will use NTP/PTP/PPS to discipline that
+> counter against an external source of 'real' time, and track the precise
+> frequency of the counter as it changes with environmental conditions.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] net: ti: icssg-prueth: Fix race condition for VLAN table access
-    https://git.kernel.org/netdev/net/c/ff8ee11e7785
+  - [net-next,v7] ptp: Add support for the AMZNC10C 'vmclock' device
+    https://git.kernel.org/netdev/net-next/c/205032724226
 
 You are awesome, thank you!
 -- 
