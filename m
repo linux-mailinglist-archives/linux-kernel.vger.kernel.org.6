@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-357443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8233D997144
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:25:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D9D997146
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF21B1C220F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:25:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC9A1F2959F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444231F7087;
-	Wed,  9 Oct 2024 16:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE161F8909;
+	Wed,  9 Oct 2024 16:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHtGCIig"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTxs4UUX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04E61F7080;
-	Wed,  9 Oct 2024 16:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB61AD3E2;
+	Wed,  9 Oct 2024 16:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490447; cv=none; b=TxSV6Eow0gameTkdimrRPHIR9O37Kh2RK07fUYpiolHawxbufa835R8pcmc0oNdqXjcsEw9mUDSqnaR/OmMFNldxlF4sLGE58phIq9Mu4ycDNWBsU864UH3Z73nnojG2viCnLxWt3EXxBHZc4/ZL7zU18fQDPGk60f5ndI3GlWM=
+	t=1728490460; cv=none; b=elzEcNbVo+E9LcYWZhvwyCXFb4ab/cUWNtQj0dIZEY2Caq4ddYEn5dbVndfy3WBts4+7ZLOzXHY3MPuiRx5/FOV/3ILAiR6kOeNQSUdHdtaDeDIRaP60y+MrAPI1FplMvRKtQv+QGJsBrh5u8DZBf0N/H4J9D8oEl/sUHv5sD0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490447; c=relaxed/simple;
-	bh=PL5o97ExCqcN7XNy41khy8PdoDWkAGT0RRDbUP7371M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RbTf7V9+31/KgA/hJbESotZEJTa6FL+Z0b79fs3LGRRTHFbL2RyBljlmq0DvBIYY7j8t6fEwBt649zYYLjGIGLKeATxl4/Gz4VAQCDhg0rCsjgljHQQlb4rbG+lJzXFiBoaIbBxg3AJ+UaehBgbhnHjb9tRzDAVJ3pom28JsHNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHtGCIig; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2577DC4CEC3;
-	Wed,  9 Oct 2024 16:14:07 +0000 (UTC)
+	s=arc-20240116; t=1728490460; c=relaxed/simple;
+	bh=z1LuONDl3RATSbrn2d4WdFShwqbOSB+zQTg8FzcAjwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAUQJB63KkBeabWLj654BenFCdR8XTj0i0edJx2g+SqJ4GKphSgh8w+RFIHD/VbpTVYStDCN+vj3nWzMTNWLM0qTmk6j/DC7aSeIc6yab7o8yss/HgqV22JHrUcU4qvZ20GUfvdQpvk+thPa6m0bJOjiyn1gRmxQnUEVJwPV8r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTxs4UUX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922F8C4CEC3;
+	Wed,  9 Oct 2024 16:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728490447;
-	bh=PL5o97ExCqcN7XNy41khy8PdoDWkAGT0RRDbUP7371M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QHtGCIiguNmatToABbPuH4jKXlaEyxZG9UyiS0M5iTIS3ZimJh1xWiJBweviD72l8
-	 vJbla+5P4Cs9Cnr23/WHzX+UJ+POHEBZqF/FfbVrOlYrtHOxiA9aJQB46oYSAPoAHm
-	 wCM1T0LEzX3NzhanOZN2uik+ydyScfcc2Ptv78ksbM7YdHYBfcYGCLQCwKcpev5KFJ
-	 RgNfCuNX5rA/aemwlFNiwpW9y3+iEML7FmeEJ0otti6S0hClbb7aBHIRyrRkWmN59j
-	 bSjw+S3FHqXZZuvMhwzMeoZrB1AbsvHLK1W+eH5Yhx8QeU344yEG/tkErPiauYF0ZY
-	 VYVzLVpL7RiDA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53997328633so9571877e87.3;
-        Wed, 09 Oct 2024 09:14:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnYaQizO6oGyCsgNvq4kw2rvO5rHfEdCmCNnGknUrf43kox3oHyUrXB/WPPxtHn3o2eFomVGervv8nB8k=@vger.kernel.org, AJvYcCXZJ/567DQhWKCivYufpK7NA6u8Ah3dx0KGi+twAJEhG6DDDack2CDqjW3BQOMPWSa+CcBoC1miUWJ7deRvOYa3CuLW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR98Tp1rjwjXxxCXo4Rt62Bz7AABFVx+nhOANXsYWsXMHKQoFu
-	94pZA7lGrPvIdsP1o4O2GFyBs84LS/+xQbNWh7qPFX9IHVrZ8meUDPu/goqCo3l+9b0EtURF/1E
-	Ft4OMBHUz4gzk+IDm8t+bnZOf6Qk=
-X-Google-Smtp-Source: AGHT+IEawgTB50U3SwPa0RrbmgOj/cQdmn1k1Cl34NjzxbXnBCNbZULDaI6yEgFa0VeVThE8j88hxC07CtBQdYdTApI=
-X-Received: by 2002:a05:6512:280a:b0:539:9fbb:4331 with SMTP id
- 2adb3069b0e04-539c4967f41mr2929555e87.54.1728490445557; Wed, 09 Oct 2024
- 09:14:05 -0700 (PDT)
+	s=k20201202; t=1728490459;
+	bh=z1LuONDl3RATSbrn2d4WdFShwqbOSB+zQTg8FzcAjwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GTxs4UUXEhk+erP28HEvJ8KD6wwObGsaBCMP2nbe5397fFDHtP91UcgQzypXmq8pX
+	 n8P+VbfRFdjByQp/oguFMWgwfrIbHJrsGqUk9czQ7X0lV2y4ex2TBS8VNk2COL2VwN
+	 QfUUMvlLRyM2vU/6uo+o9NLsnhCBGa6WFy41s9G6P1JnEdF1Y45A7xPk103LUJYUHk
+	 ReVX5yQf3Cy25DfapuKfWI2EyyYT6GD0Go/bb4iLjQ3vQt1yA236Cd705g+SLscsCl
+	 jWcpP5LdHai5W2a5KmmrTJNkmc4DyeFz4sQiHjg9J6pPg7q9UeRQ1CqWfyFnO/PO0R
+	 hM8ucgAk6e5XQ==
+Date: Wed, 9 Oct 2024 18:14:17 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	netdev@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 12/15] iopoll/regmap/phy/snd: Fix comment referencing
+ outdated timer documentation
+Message-ID: <Zwar2Qu-_ivvMnJT@localhost.localdomain>
+References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+ <20240911-devel-anna-maria-b4-timers-flseep-v2-12-b0d3f33ccfe0@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009153901.3878233-2-ardb+git@google.com> <20241009120257.7b2de987@gandalf.local.home>
-In-Reply-To: <20241009120257.7b2de987@gandalf.local.home>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 9 Oct 2024 18:13:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFjd8AuHaBMLap6RZ18PR9_Cwv2GFbBkswj-e5YpaQFdA@mail.gmail.com>
-Message-ID: <CAMj1kXFjd8AuHaBMLap6RZ18PR9_Cwv2GFbBkswj-e5YpaQFdA@mail.gmail.com>
-Subject: Re: [PATCH] x86/ftrace: Don't bother preserving/restoring R10/R11
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-12-b0d3f33ccfe0@linutronix.de>
 
-On Wed, 9 Oct 2024 at 18:02, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Wed,  9 Oct 2024 17:39:01 +0200
-> Ard Biesheuvel <ardb+git@google.com> wrote:
->
-> > diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-> > index 214f30e9f0c0..9e13f9b203d1 100644
-> > --- a/arch/x86/kernel/ftrace_64.S
-> > +++ b/arch/x86/kernel/ftrace_64.S
-> > @@ -216,8 +216,6 @@ SYM_INNER_LABEL(ftrace_regs_caller_op_ptr, SYM_L_GLOBAL)
-> >       movq %r14, R14(%rsp)
-> >       movq %r13, R13(%rsp)
-> >       movq %r12, R12(%rsp)
-> > -     movq %r11, R11(%rsp)
-> > -     movq %r10, R10(%rsp)
-> >       movq %rbx, RBX(%rsp)
->
-> This may need to still be saved. Even though they are pretty much useless,
-> it can be used by kprobes, and perhaps they want to see what's in R10 or
-> R11 from the caller. I'm not sure we want to remove this. Especially since
-> we are even saving "flags"!
->
+Le Wed, Sep 11, 2024 at 07:13:38AM +0200, Anna-Maria Behnsen a écrit :
+> Function descriptions in iopoll.h, regmap.h, phy.h and sound/soc/sof/ops.h
+> copied all the same outdated documentation about sleep/delay function
+> limitations. In those comments, the generic (and still outdated) timer
+> documentation file is referenced.
+> 
+> As proper function descriptions for used delay and sleep functions are in
+> place, simply update the descriptions to reference to them. While at it fix
+> missing colon after "Returns" in function description and move return value
+> description to the end of the function description.
+> 
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Heiner Kallweit <hkallweit1@gmail.com>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-sound@vger.kernel.org
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-Are you saying kprobes will call this hook from arbitrary other
-locations (where R10/R11 might be live), rather than only from the
-fentry hook?
-
-> That is, this part is visible by the callbacks, and the ftrace_get_regs()
-> is to return a fully populated pt_regs if FTRACE_OPS_FL_SAVE_REGS is set.
->
-
-Fair enough.
-
-> >       /* Copy saved flags */
-> >       movq MCOUNT_REG_SIZE(%rsp), %rcx
-> > @@ -256,7 +254,6 @@ SYM_INNER_LABEL(ftrace_regs_call, SYM_L_GLOBAL)
-> >       movq R14(%rsp), %r14
-> >       movq R13(%rsp), %r13
-> >       movq R12(%rsp), %r12
-> > -     movq R10(%rsp), %r10
->
-> This part of the patch I think is perfectly fine. We haven't been restoring
-> R11 for 12 years I'm sure nobody will notice if we don't restore R10.
->
-
-Not sure I follow this reasoning tbh. R10/R11 are guaranteed to be
-dead, so I don't see any point in preserving them. But if you do
-capture them, shouldn't you at least ensure that the captured values
-match the values that the callee will observe? (even though they are
-dead and we know it will never look at them)
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
