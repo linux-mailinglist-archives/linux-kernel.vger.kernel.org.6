@@ -1,120 +1,93 @@
-Return-Path: <linux-kernel+bounces-357853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2689976FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:54:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62DB9976FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9163FB21196
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6551FB23278
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7404E1E25E9;
-	Wed,  9 Oct 2024 20:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1DD191473;
+	Wed,  9 Oct 2024 20:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="l79Ms5YQ"
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RGdLAoHq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A36188926
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 20:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DD41E261C;
+	Wed,  9 Oct 2024 20:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507207; cv=none; b=mm+mSmsIsDUebOA1VNnMqV4+l4O1PhPQzVYNILn7T59L+tkfIn4ZKm7SebgJWX+ePda9yyn6SzvREih9FA2T5zc/LG5b4COa4lonBofyuIxTAY9woAbT8FP9/IFV3tVF7fSCgDkCSS4nelIusfceUDkCfGlqu7hBIwP8mzqXuMo=
+	t=1728507215; cv=none; b=RSX/Ag+zUOX61Wv2+iLri5NvNiuH4E4SNJvzGIUQiOw9sVILBI70HFZ8fuj54kUMlWdvN+VnVE0CDRM+2nt2sutYhutw4Co8t36hbhgIzoFpIUN9NefJc8FO6G07vG8ZX/UwWmQ3LMjVuzhAG/y9o1V1trBz7RdsYmazYqoWJFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507207; c=relaxed/simple;
-	bh=ekPqjQ2dHnJ035CLRD35iLHb55UjhEt5HHfSh+y+Q5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ofBB2Wolb8l/EVKleniHqaCqjgMsJR+vvR41ve/NLu10TaBdQ9rxtm7dhx8ZjeDgBWP0jhV6Kb1ewkEQvWmVyKYQDhX9+xzjub7mDqGycpt/vHj+6qzX1RLsU8jhA8UxXK2MAAgPpWlt9dVbRutCanuIX4i56aICIsGkfz5Deqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=l79Ms5YQ; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ydgIsdEnS6TFnydgLsgFfi; Wed, 09 Oct 2024 22:53:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728507197;
-	bh=Yqu53K0lI1nXfnkJIPwVNUp3/6poySz8F2BQ5rNMqHI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=l79Ms5YQ4tcp7DvjRTv2RnVxeYMtyXnOc4I6JeQ+ZQEQYuTJTDjbH1+CvMy/GZrFD
-	 5sTNDgRMoHZCecnPZyhx23AU1dRNqLVW2Z+0oVLZxTJh2y4qVW4jyZ9KvJ7eRRQFhQ
-	 ExJmvbD32Pe9AJduH+eS0xGO5/BwKyrha3oUeVJ9TMYzUhl4vV46jH8OaU0ZPgNBgj
-	 47HmpJqr6Le/Egc4udXtCNJn8HZckniMh5/+uqNyb275C1cnMI4oQ3BTxJzX2Hdf2x
-	 OrGDAOWaPW5rIKTHOVuI320v5NM9snnFnI/FSJSNadQMn6yfxvZEACaFHSj3KgZArF
-	 KglL3pGgc5ZhA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 09 Oct 2024 22:53:17 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jens Wiklander <jens.wiklander@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] rpmb: Remove some useless locking
-Date: Wed,  9 Oct 2024 22:53:06 +0200
-Message-ID: <b1fcc6707ec2b6309d50060fa52ccc2c892afde2.1728507153.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr>
-References: <df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1728507215; c=relaxed/simple;
+	bh=FcJRErXKWZeyLJXsOZFTRdu9dQaNgwhiRsBx9Yx1msw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iozhX8U413859+ykRDnU6uaUZ3B9/IAAHn9cmj3KzNCuzITbrSHNwvA5cRI4CtL3r/oT9AyPrmKX1lnNDmZvAmlLQ3VLld4KzvtF1cZWpYfgYXaZ4H8M6vgJHJ90BUQeV+rG223fs2kfMlGVJ+VvdbgRIzkAErWVCnerhbtvuI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RGdLAoHq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CEFC4CEC3;
+	Wed,  9 Oct 2024 20:53:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728507215;
+	bh=FcJRErXKWZeyLJXsOZFTRdu9dQaNgwhiRsBx9Yx1msw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RGdLAoHqDhMPhThS6WboV0n8T0pbrH2j5Ccj7HZxLCbGXgIaPwUxsjisE08oYVC+Y
+	 qahBh2nuv8HxDP+HP3o/jKtufyEey8tPUCsfR2hnsR59JobBzNgA3k4s1gahzXrAce
+	 JDWUme9qd72FY8x/f542eVq2Wmz/kfYrBCwL/lpA=
+Date: Wed, 9 Oct 2024 16:53:33 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Hsin-Te Yuan <yuanhsinte@chromium.org>, Daolong Zhu <jg_daolongzhu@mediatek.corp-partner.google.com>, 
+	Hsin-Yi Wang <hsinyi@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the mediatek tree
+Message-ID: <20241009-prudent-pompous-sheep-40ed20@lemur>
+References: <20241009071543.5230cf79@canb.auug.org.au>
+ <c97da0be-6924-48de-9cf3-0ba9d5e6a73e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c97da0be-6924-48de-9cf3-0ba9d5e6a73e@kernel.org>
 
-There is no need for explicit locking when using the ida API, as stated in
-the doc related to ida_alloc_range() / ida_free().
+On Wed, Oct 09, 2024 at 09:52:14AM GMT, AngeloGioacchino Del Regno wrote:
+> >    65b99309a9c1 ("arm64: dts: mt8183: Damu: add i2c2's i2c-scl-internal-delay-ns")
+> >    025869564bf8 ("arm64: dts: mt8183: cozmo: add i2c2's i2c-scl-internal-delay-ns")
+> >    3d3bc7cb46e8 ("arm64: dts: mt8183: burnet: add i2c2's i2c-scl-internal-delay-ns")
+> >    5bbddfd0470f ("arm64: dts: mt8183: fennel: add i2c2's i2c-scl-internal-delay-ns")
+> > (The above also has an empty Reviewed-by tag)
+> >    ca80f75083f6 ("arm64: dts: mt8183: set DMIC one-wire mode on Damu")
+> > 
+> > are missing a Signed-off-by from their authors.
+> > 
+> 
+> The empty R-b happened because b4 didn't interpret "<email>2" correctly
+> and dropped the email entirely. We should probably report that to the authors.
 
-So remove rpmb_mutex.
+Consider it reported. :) However, I'm not sure I understand what the situation
+is. When I pull that series with ``b4 -slH shazam``, all the trailers are
+properly preserved as far as I can tell:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-See:
-https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L375
-https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L484
----
- drivers/misc/rpmb-core.c | 5 -----
- 1 file changed, 5 deletions(-)
+    arm64: dts: mt8183: Damu: add i2c2's i2c-scl-internal-delay-ns
 
-diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
-index ad1b5c1a37fa..2d653926cdbb 100644
---- a/drivers/misc/rpmb-core.c
-+++ b/drivers/misc/rpmb-core.c
-@@ -13,7 +13,6 @@
- #include <linux/slab.h>
- 
- static DEFINE_IDA(rpmb_ida);
--static DEFINE_MUTEX(rpmb_mutex);
- 
- /**
-  * rpmb_dev_get() - increase rpmb device ref counter
-@@ -63,9 +62,7 @@ static void rpmb_dev_release(struct device *dev)
- {
- 	struct rpmb_dev *rdev = to_rpmb_dev(dev);
- 
--	mutex_lock(&rpmb_mutex);
- 	ida_free(&rpmb_ida, rdev->id);
--	mutex_unlock(&rpmb_mutex);
- 	kfree(rdev->descr.dev_id);
- 	kfree(rdev);
- }
-@@ -175,9 +172,7 @@ struct rpmb_dev *rpmb_dev_register(struct device *dev,
- 		goto err_free_rdev;
- 	}
- 
--	mutex_lock(&rpmb_mutex);
- 	ret = ida_alloc(&rpmb_ida, GFP_KERNEL);
--	mutex_unlock(&rpmb_mutex);
- 	if (ret < 0)
- 		goto err_free_dev_id;
- 	rdev->id = ret;
--- 
-2.46.2
+    Add i2c2's i2c-scl-internal-delay-ns.
 
+    Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
+    Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+    Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+    Signed-off-by: Daolong Zhu <jg_daolongzhu@mediatek.corp-partner.google.com>
+    Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+    Link: https://lore.kernel.org/r/20241009-i2c-delay-v1-4-6cf59721c1d1@chromium.org
+    Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+
+-K
 
