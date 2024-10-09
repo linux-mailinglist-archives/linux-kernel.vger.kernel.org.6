@@ -1,81 +1,170 @@
-Return-Path: <linux-kernel+bounces-357236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD3996E45
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:39:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7BA996E46
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751821C214D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ECBC282D7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51924127E18;
-	Wed,  9 Oct 2024 14:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOnAwFQ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5763BBEB;
-	Wed,  9 Oct 2024 14:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3132114A0AB;
+	Wed,  9 Oct 2024 14:39:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB02C127E18;
+	Wed,  9 Oct 2024 14:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484748; cv=none; b=SG/TzUuHcYpjPe5ucI3o7b35YjWT5+ImD55FBXmFnb9ynz/3cob1iIF612cl1E6xflLsjPlXDUuK2kjHHNIhR7x4O7E02QLA91V1wwcFCtICkVcwSJGuJvYm/qjlrxyeP5UpPnuZgEwL9l0n5jgMQ+68QleSvIgPYCcJFnScxWs=
+	t=1728484772; cv=none; b=fOWaSPVO9gFW4QRRC8kdVmB2t3wi6eW0JkF7qCQzMCjzrLFzvSIgbFP/NUbwbBfCIrWiSTjOW2GZb//GKYQonylobZ7dotTkDJwnKdzl6kr/XhU0qoQt7gGjpZmic5Eq794GMYcFpE9j9PZxMVCbOGbyVIBT6C7B+BrOpNTz+0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484748; c=relaxed/simple;
-	bh=x/NP/skFyVirDq7NleZWKTVC4o17L0/jCPs9bvIuCRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pHzZugUVgL0pL2l45/jC6I9cP8DuTIoIlUT8FryfRElRzPxb9aToT/Gwj7Ldt+wNziixcvNKkDoXkD4+7SWd47svB+SvQ3yM9Z2vN9yJTFpUQ0nZ59UkkRsEEwRU5BmxGlGOo3A4tCSjUhMBgVPym0vzgQEHB4Q9Gvxd7fhz7os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOnAwFQ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FD6BC4CEC3;
-	Wed,  9 Oct 2024 14:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728484748;
-	bh=x/NP/skFyVirDq7NleZWKTVC4o17L0/jCPs9bvIuCRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oOnAwFQ4DgOh+WKq6fEWT8jH1bGT+gX4Yly02dxpRjec9iyTCYGo2LpbSZHz43Jv1
-	 qBlPh4qVyEK7FwF4QXvS6QDeMyJlDVerbRu2vEQpIiaeOYqajmqtB2AYLlYxr0vC5x
-	 8qmauEb343Z95zN/8nRxp+qj9lNjbTd/iVCtq1R61eU3AbtN/09v2iJn3y6q1Z452P
-	 Ieju1Eg8zFLFPRYNAPYv9V7jk0iLV3ywhVkGxnZtrBrBCwECuW11vBOkFWA2gFIQZb
-	 ERfoHfgMkNMSsWUBpBEgU+jQNAfluB+fKjN/JqTMp7gndg5AXVpzA8K1fVQoa1LjpU
-	 H/GQ/L90Wz/jA==
-Date: Wed, 9 Oct 2024 15:39:03 +0100
-From: Lee Jones <lee@kernel.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: pavel@ucw.cz, aren@peacevolution.org, tzimmermann@suse.de,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jjhiblot@traphandler.com, guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: Re: [RESEND. PATCH] leds: rgb: leds-group-multicolor: Correct the
- typo 'acccess'
-Message-ID: <20241009143903.GL276481@google.com>
-References: <DA8E8FA1F45D2F5A+20240929092057.1037448-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1728484772; c=relaxed/simple;
+	bh=E2Q/Z9HmKJzZCPdr6+3P8OqkCoRO4OHda0l6tZENExs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pZGmbs7ysrua32L2QgphZxoSGlrtwlE5B9wZ6llmgquE8HOHjNFkFBIKI0ZEKO+mW5jZ52Iwe9D78n46aiFw21vSeFqVgVrYCMm4RWK38dbpIwplFIA8u/SZAXEWLwRz1BArf6HeWers8EpKUSqAS9aKWdAtl4CDTwzw049fsaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CB79FEC;
+	Wed,  9 Oct 2024 07:39:59 -0700 (PDT)
+Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94B053F58B;
+	Wed,  9 Oct 2024 07:39:28 -0700 (PDT)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	quic_sibis@quicinc.com,
+	johan@kernel.org,
+	konradybcio@kernel.org,
+	johan+linaro@kernel.org
+Subject: [PATCH] firmware: arm_scmi: Skip opp duplicates
+Date: Wed,  9 Oct 2024 15:39:05 +0100
+Message-ID: <20241009143905.2440438-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.46.1
+Reply-To: 20241007060642.1978049-3-quic_sibis@quicinc.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DA8E8FA1F45D2F5A+20240929092057.1037448-1-wangyuli@uniontech.com>
 
-On Sun, 29 Sep 2024, WangYuli wrote:
+Buggy firmware can reply with duplicated PERF opps descriptors.
 
-> There is a spelling mistake of 'acccess' which should be instead of
-> 'access'.
-> 
-> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Link: https://lore.kernel.org/all/0c768bf6-bc19-43de-a30b-ff5e3ddfd0b3@suse.de/
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  drivers/leds/rgb/leds-group-multicolor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Ensure that the bad duplicates reported by the platform firmware doesn't
+get added to the opp-tables.
 
-Already applied.
+Reported-by: Johan Hovold <johan+linaro@kernel.org>
+Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+A new version to include in this series that should address the limit case
+described by Sibi...not tested, of course :P
+---
+ drivers/firmware/arm_scmi/perf.c | 40 ++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 2d77b5f40ca7..32f9a9acd3e9 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -373,7 +373,7 @@ static int iter_perf_levels_update_state(struct scmi_iterator_state *st,
+ 	return 0;
+ }
+ 
+-static inline void
++static inline int
+ process_response_opp(struct device *dev, struct perf_dom_info *dom,
+ 		     struct scmi_opp *opp, unsigned int loop_idx,
+ 		     const struct scmi_msg_resp_perf_describe_levels *r)
+@@ -386,12 +386,16 @@ process_response_opp(struct device *dev, struct perf_dom_info *dom,
+ 		le16_to_cpu(r->opp[loop_idx].transition_latency_us);
+ 
+ 	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
+-	if (ret)
++	if (ret) {
+ 		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
+ 			 opp->perf, dom->info.name, ret);
++		return ret;
++	}
++
++	return 0;
+ }
+ 
+-static inline void
++static inline int
+ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
+ 			struct scmi_opp *opp, unsigned int loop_idx,
+ 			const struct scmi_msg_resp_perf_describe_levels_v4 *r)
+@@ -404,9 +408,11 @@ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
+ 		le16_to_cpu(r->opp[loop_idx].transition_latency_us);
+ 
+ 	ret = xa_insert(&dom->opps_by_lvl, opp->perf, opp, GFP_KERNEL);
+-	if (ret)
++	if (ret) {
+ 		dev_warn(dev, "Failed to add opps_by_lvl at %d for %s - ret:%d\n",
+ 			 opp->perf, dom->info.name, ret);
++		return ret;
++	}
+ 
+ 	/* Note that PERF v4 reports always five 32-bit words */
+ 	opp->indicative_freq = le32_to_cpu(r->opp[loop_idx].indicative_freq);
+@@ -415,13 +421,21 @@ process_response_opp_v4(struct device *dev, struct perf_dom_info *dom,
+ 
+ 		ret = xa_insert(&dom->opps_by_idx, opp->level_index, opp,
+ 				GFP_KERNEL);
+-		if (ret)
++		if (ret) {
+ 			dev_warn(dev,
+ 				 "Failed to add opps_by_idx at %d for %s - ret:%d\n",
+ 				 opp->level_index, dom->info.name, ret);
+ 
++			/* Cleanup by_lvl too */
++			xa_erase(&dom->opps_by_lvl, opp->perf);
++
++			return ret;
++		}
++
+ 		hash_add(dom->opps_by_freq, &opp->hash, opp->indicative_freq);
+ 	}
++
++	return 0;
+ }
+ 
+ static int
+@@ -429,16 +443,22 @@ iter_perf_levels_process_response(const struct scmi_protocol_handle *ph,
+ 				  const void *response,
+ 				  struct scmi_iterator_state *st, void *priv)
+ {
++	int ret;
+ 	struct scmi_opp *opp;
+ 	struct scmi_perf_ipriv *p = priv;
+ 
+-	opp = &p->perf_dom->opp[st->desc_index + st->loop_idx];
++	opp = &p->perf_dom->opp[p->perf_dom->opp_count];
+ 	if (PROTOCOL_REV_MAJOR(p->version) <= 0x3)
+-		process_response_opp(ph->dev, p->perf_dom, opp, st->loop_idx,
+-				     response);
++		ret = process_response_opp(ph->dev, p->perf_dom, opp,
++					   st->loop_idx, response);
+ 	else
+-		process_response_opp_v4(ph->dev, p->perf_dom, opp, st->loop_idx,
+-					response);
++		ret = process_response_opp_v4(ph->dev, p->perf_dom, opp,
++					      st->loop_idx, response);
++
++	/* Skip BAD duplicates received from firmware */
++	if (ret)
++		return ret == -EBUSY ? 0 : ret;
++
+ 	p->perf_dom->opp_count++;
+ 
+ 	dev_dbg(ph->dev, "Level %d Power %d Latency %dus Ifreq %d Index %d\n",
 -- 
-Lee Jones [李琼斯]
+2.46.1
+
 
