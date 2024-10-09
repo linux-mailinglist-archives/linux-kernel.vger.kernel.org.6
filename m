@@ -1,147 +1,219 @@
-Return-Path: <linux-kernel+bounces-356556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54E6996306
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:38:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59FC996312
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E7E1F267A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:38:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D223EB24D92
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A19418EFC9;
-	Wed,  9 Oct 2024 08:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69EF18FDD2;
+	Wed,  9 Oct 2024 08:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TS6vRhlq"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dlcKQg3a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F2A18C90C;
-	Wed,  9 Oct 2024 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172518A92D
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462881; cv=none; b=GyDhRvt6Vk1g++WN7bN6RXkBVSNHy3koTYREtIQJjZbgBfNFWE14L613NlUKcwx9Ap+MPRX16Sgmp3oIrDZWnQIgRJmMjIBwl44sDOIJhO7f/IgOCOst7HVCHQ6uTcZE19afMzAnnojqRUfxCvJwwmE0eSnpCkdYzu+WeUYwlNc=
+	t=1728463004; cv=none; b=RAeNh7362aPunR/T8hDFKeO5F7it957NKNMYUKeD2AfDJKhQnaEHpEI/WysFdVlMenGD1Aj72UqIOuE8G7Pm3+Dmf2daIrg0jlxVzFRa5VNNzuGn6T3vtZH2/KsoE7NiCPYYqvqLGk5FXsmOPcbqqyanxdiPrBDCMX9jWjnqtw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462881; c=relaxed/simple;
-	bh=DURfCzNm14S3kcD36oPUwdwkaRsCbyoEFVmAg+zXraQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvPrxZaTlFlQILOADsVmzPC36yzKqxtoPTU13OdRIyb38k5uFw9/TMUQ53Xpgwi/NFjLL/KUcU0Hu0sQcLSUaD7dD9dlXcAp9nAd4RzvcQ7tZ2c/ToQJsHcU8DOptgJOgu/N/IVz2rdDj980fsGV3E85IbkYDcC87bqR/j1tPX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TS6vRhlq; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=PtwpbRKWqxB2jBjhgHzQ6zioERMfziYSGMTo9/kJ2vQ=; b=TS6vRhlq5SNkoce/bP7O1M8E76
-	PxYUMUtbhzChqYCRvFZDrdd7yARkRdDSZnozcoNr/Iokauy2kn8Q3zjWc+LQWWQ8HSXxPhqnnybca
-	HPrzUFVJEkNUrqwcxhM3edJnZ63jm6lMM3emzpQlh6p+vXLy50Po/lTBBPWI0izATqKHv9QK9s6Ml
-	MRXJSx6I01BAVKXbLnf6hKCH9TSwqbyMkFsAq4YtKNacX0LmQdp6wwKqvSzRdoY593cp9CMw35vXy
-	VR1qoe+1swhgdIb2S70TrTzyxWPG3ph+y2qsxFqxXVQ6rqR4kZEY71ACJ2AsZs+ABOh3sBj+j4So9
-	rd698BtQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1syRzS-007yYc-0Y;
-	Wed, 09 Oct 2024 16:34:28 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 09 Oct 2024 16:34:27 +0800
-Date: Wed, 9 Oct 2024 16:34:27 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>
-Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
- Turris Omnia
-Message-ID: <ZwZAExmK52txvHE8@gondor.apana.org.au>
-References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
- <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
- <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
- <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
+	s=arc-20240116; t=1728463004; c=relaxed/simple;
+	bh=bwupmCthuGaQS+qMZ/7SrXy7Oyd/5BoNqSfbGXSX0bk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=StR6cVkM+ZBbUMEs0Z3rO8FcJ7CvtCmyzP0qhHsO0fXkMp5bbYgNWg0TeFB8jFvCLtz3pfuHpkKKiL+9MC4W0yUAFr0T9ef1zvMbSnWzmbxWcWcTEDc0UbmPkHWMEa3o5bdYFsNQmSWLMWuJv7uVi65iShme5Q5uZtZwZ9MKdhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dlcKQg3a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728463001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mOyNV1blUkGi8SBN/l2nmGqTH8tAJ4tec1wRLOcI2Z8=;
+	b=dlcKQg3a8m+Ov6dKMeyzaVgzv5GTg/ltRgXo6J2rEa/VbSXMTlOF36tYdo4ROEvCY6DTnH
+	pmlsL6Ol4Q95DfEcPMvKsk4hgHB4hb+Tgt7AjwR3orCVzVmQqdlSbSC7oIE2Ll0ZJHFSiU
+	A2cJiEeFaoC2Ro2OAOXoC43KMkpb6C4=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-HG-IjJrbPDuYjjaYtm_ZKw-1; Wed, 09 Oct 2024 04:36:40 -0400
+X-MC-Unique: HG-IjJrbPDuYjjaYtm_ZKw-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7afc3f4faaaso255632985a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:36:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728462999; x=1729067799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mOyNV1blUkGi8SBN/l2nmGqTH8tAJ4tec1wRLOcI2Z8=;
+        b=FHcsetU06ToPNwfTzc95Cy53dJZyB2sEM5vAC5HQpQkTu+X032IQXkdedZOe1gIZj1
+         ikXqQJ2l6fdQ/DEht9uy8yVq4rVjOkA6Jwd/uVTMpH01k87HU//fSwUeuvTaKdMr7gmO
+         k9tyR/hGh7Kgj4wY42Npk5dKtFBr7Agm6ap4/Jux44lFpRpbIUFR75FvMA+h2qHOU0WA
+         QFNEK+JDUgJud3k1hvlD6MQ0+ReSbDG1FJr6hCo8h8j9M105HTbJfCfSN11gve6k2I/s
+         NuzJ4kDBb0QL9XAxXAem3UIA2DcdPb6hK6Iq5GOU+4xif5hCZO4w5PiN9tAfSB2jfzjK
+         I4Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUS2M0sXRLbFrZhkL/1IErgW1hI97IWK6MP9zSUR6c0qGToHD6kvtVVj3zkx8pGozsSm65+urUQ/lKFy84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg0qPKnbP40XJDqAQbmglhqyRIIVTjraAwjIz0OdjdpLtGf0ok
+	75W9q6Hwh8fkqByiB+MwqxSVri74juloIZOQ0QtaQAA+/EAXB2ag7SLvq/NKFJFKChyrXc+mKWY
+	oxqAmorP7kXx6uItaJicb6+11mM7YlxjhfnmOK63Fo65r4tlNU69lTWltG5s2Qw==
+X-Received: by 2002:a05:620a:29c7:b0:7a2:1db:e286 with SMTP id af79cd13be357-7b0874cd670mr234485885a.52.1728462999296;
+        Wed, 09 Oct 2024 01:36:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFU56nfNbRn4xRa9L06f5Bja7V/qokH03xrDBZWS39o5ckdxWurQft3H7j0iSjtDvnBZDt4+Q==
+X-Received: by 2002:a05:620a:29c7:b0:7a2:1db:e286 with SMTP id af79cd13be357-7b0874cd670mr234479185a.52.1728462998841;
+        Wed, 09 Oct 2024 01:36:38 -0700 (PDT)
+Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75615aa2sm439643585a.14.2024.10.09.01.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 01:36:38 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Breno Leitao <leitao@debian.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Soumya Negi <soumya.negi97@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Yi Liu <yi.l.liu@intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Ye Bin <yebin10@huawei.com>,
+	=?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Marc Zyngier <maz@kernel.org>
+Cc: linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-sound@vger.kernel.org
+Subject: [RFC PATCH 00/13] Remove implicit devres from pci_intx()
+Date: Wed,  9 Oct 2024 10:35:06 +0200
+Message-ID: <20241009083519.10088-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 10:57:00PM +0200, Klaus Kudielka wrote:
->
-> I would be happy to support development of a fix, by testing on my
-> spare Omnia.
+Hi all,
 
-As a first step, please apply the following patch and send me the
-result kernel messages.
+this series removes a problematic feature from pci_intx(). That function
+sometimes implicitly uses devres for automatic cleanup. We should get
+rid of this implicit behavior.
 
-> If the above is true, the only other option I see is to declare the
-> driver BROKEN, since existing CESA users are likely sitting on a time
-> bomb. Some file systems do use hash algorithms, as far as I know?
+To do so, a pci_intx() version that is always-managed, and one that is
+never-managed are provided. Then, all pci_intx() users are ported to the
+version they need. Afterwards, pci_intx() can be cleaned up and the
+users of the never-managed version be ported back to pci_intx().
 
-I'll send a separate patch to disable the hash algorithms by lowering
-their priorities.
+This way we'd get this PCI API consistent again.
 
-Thanks,
+The last patch obviously reverts the previous patches that made drivers
+use pci_intx_unmanaged(). But this way it's easier to review and
+approve. It also makes sure that each checked out commit should provide
+correct behavior, not just the entire series as a whole.
+
+Merge plan for this would be to enter through the PCI tree.
+
+Please say so if you've got concerns with the general idea behind the
+RFC.
+
+Regards,
+P.
+
+Philipp Stanner (13):
+  PCI: Prepare removing devres from pci_intx()
+  ALSA: hda: hda_intel: Use always-managed version of pcim_intx()
+  drivers/xen: Use never-managed version of pci_intx()
+  net/ethernet: Use never-managed version of pci_intx()
+  net/ntb: Use never-managed version of pci_intx()
+  misc: Use never-managed version of pci_intx()
+  vfio/pci: Use never-managed version of pci_intx()
+  PCI: MSI: Use never-managed version of pci_intx()
+  ata: Use always-managed version of pci_intx()
+  staging: rts5280: Use always-managed version of pci_intx()
+  wifi: qtnfmac: use always-managed version of pcim_intx()
+  HID: amd_sfh: Use always-managed version of pcim_intx()
+  Remove devres from pci_intx()
+
+ drivers/ata/ahci.c                            |  2 +-
+ drivers/ata/ata_piix.c                        |  2 +-
+ drivers/ata/pata_rdc.c                        |  2 +-
+ drivers/ata/sata_sil24.c                      |  2 +-
+ drivers/ata/sata_sis.c                        |  2 +-
+ drivers/ata/sata_uli.c                        |  2 +-
+ drivers/ata/sata_vsc.c                        |  2 +-
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c        |  4 ++--
+ drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c |  2 +-
+ .../wireless/quantenna/qtnfmac/pcie/pcie.c    |  2 +-
+ drivers/pci/devres.c                          | 24 +++----------------
+ drivers/pci/pci.c                             | 14 +----------
+ drivers/staging/rts5208/rtsx.c                |  2 +-
+ include/linux/pci.h                           |  1 +
+ sound/pci/hda/hda_intel.c                     |  2 +-
+ 15 files changed, 18 insertions(+), 47 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
---
-diff --git a/drivers/crypto/marvell/cesa/cesa.c b/drivers/crypto/marvell/cesa/cesa.c
-index 5fd31ba715c2..d1f069169f82 100644
---- a/drivers/crypto/marvell/cesa/cesa.c
-+++ b/drivers/crypto/marvell/cesa/cesa.c
-@@ -127,6 +127,8 @@ static irqreturn_t mv_cesa_int(int irq, void *priv)
- 		if (!(status & mask))
- 			break;
- 
-+		pr_err("mv_cesa_int: %d 0x%x 0x%x\n", engine->id, status, mask);
-+
- 		/*
- 		 * TODO: avoid clearing the FPGA_INT_STATUS if this not
- 		 * relevant on some platforms.
-diff --git a/drivers/crypto/marvell/cesa/hash.c b/drivers/crypto/marvell/cesa/hash.c
-index 8d84ad45571c..ec4e9db1c8ab 100644
---- a/drivers/crypto/marvell/cesa/hash.c
-+++ b/drivers/crypto/marvell/cesa/hash.c
-@@ -167,6 +167,8 @@ static void mv_cesa_ahash_std_step(struct ahash_request *req)
- 	unsigned int digsize;
- 	int i;
- 
-+	pr_err("mv_cesa_ahash_step_req: %d %p\n", engine->id, req);
-+
- 	mv_cesa_adjust_op(engine, &creq->op_tmpl);
- 	if (engine->pool)
- 		memcpy(engine->sram_pool, &creq->op_tmpl,
-@@ -397,6 +399,8 @@ static void mv_cesa_ahash_complete(struct crypto_async_request *req)
- 	}
- 
- 	atomic_sub(ahashreq->nbytes, &engine->load);
-+
-+	pr_err("mv_cesa_ahash_complete: %d %p\n", engine->id, ahashreq);
- }
- 
- static void mv_cesa_ahash_prepare(struct crypto_async_request *req,
-@@ -418,6 +422,8 @@ static void mv_cesa_ahash_req_cleanup(struct crypto_async_request *req)
- 	struct ahash_request *ahashreq = ahash_request_cast(req);
- 	struct mv_cesa_ahash_req *creq = ahash_request_ctx(ahashreq);
- 
-+	pr_err("mv_cesa_ahash_req_cleanup: %d %p\n", creq->base.engine->id, ahashreq);
-+
- 	if (creq->last_req)
- 		mv_cesa_ahash_last_cleanup(ahashreq);
- 
-@@ -796,6 +802,7 @@ static int mv_cesa_ahash_queue_req(struct ahash_request *req)
- 	engine = mv_cesa_select_engine(req->nbytes);
- 	mv_cesa_ahash_prepare(&req->base, engine);
- 
-+	pr_err("mv_cesa_ahash_queue_req: %d %p\n", engine->id, req);
- 	ret = mv_cesa_queue_req(&req->base, &creq->base);
- 
- 	if (mv_cesa_req_needs_cleanup(&req->base, ret))
+2.46.1
+
 
