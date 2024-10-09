@@ -1,142 +1,162 @@
-Return-Path: <linux-kernel+bounces-356347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FED995FD1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:31:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F735995FD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1761F22D56
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:31:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A391F2383C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC5D156960;
-	Wed,  9 Oct 2024 06:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BF11741CB;
+	Wed,  9 Oct 2024 06:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9lBn07f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OctRa8PT"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1131DA5F;
-	Wed,  9 Oct 2024 06:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED86B55E53
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728455465; cv=none; b=SIZd9bowDTSSIdzdAvjSp6q18e1zOqt+SNWYVGN8SNqCeOy2Ra+VpGxgWC9NWh7XFOJXa4k5GmtLYDl/t27eh/bhV53PQO0hKZlEaVU2uT5Go+T2lBXfKekOHNdXvPfH4abfGoQqsRTciGJaU8TFAHyuIzeTfmNXi+Az0ZYY6VI=
+	t=1728455531; cv=none; b=rDS8k1N+RkuaTnou65z2i/o05Hglu9duxku4AfMXM7ceE8MGS+9vHe7Lu4BiTSnH32Q5T5Mym4Th6Abbgd/QVdNKzXWN+v9++0PwShCMeL9PVkDWgCRrfnl1pHmvbAe+HotL3MOayehye5PGJkLHkGTDsL39JGgRNbRjzW1ZdXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728455465; c=relaxed/simple;
-	bh=i5bI9bYBkdQtiuRREOvIQVOmYuxX3Or8TeWiSNQvLek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ghx3MiJatEQ4DogbpNuxlcxpCTywgfnhYF8UFZYV/Z3MxF6RXRtNjFwkiT7eBlTSFPLZYS6c8XG9IC0uT4PrvWT2X5IyAx4ZjmwMO0Qh5r12wESZfux7Yg895k8wjP3ja5/0M4oBuBBmazDoLmttthBtFffAYHfuIpn21eVScxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9lBn07f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53B21C4CEC5;
-	Wed,  9 Oct 2024 06:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728455464;
-	bh=i5bI9bYBkdQtiuRREOvIQVOmYuxX3Or8TeWiSNQvLek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E9lBn07f2sVThjU5dMuOej0wAHVmWtRyI5nznSG1d0T+TmpWyWSKbs7hgnLA5gCiG
-	 LnXsSpI4RC8XuuFTDLaWoNPXtkkncgv/9+NC1EZP02EZ2W0DYTwCsWxFU/IonMq3OJ
-	 VzldIDoP/cfv8FDXyCGNLwbDoc3UqoviBTLDowTkyxrIyUPymHRrnUalHcdMxF1/E2
-	 ouZaQTl42QxjLs8IPR85ZQqNegQkP/q4LNUudsWH9Lg1LezYW2QWigEgdPUC1Me1+z
-	 XzeTs/PL2OU6/XQM19G4TXykzS0xvKyJc1wXHoX+rXDFsYK2beQ+B/SCCEEoOSe+Kk
-	 UrPW0h+0DSV4g==
-Date: Wed, 9 Oct 2024 08:31:00 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, 
-	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	m.szyprowski@samsung.com, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: mailbox: Add thead,th1520-mailbox
- bindings
-Message-ID: <sknianfahozghrk6tdmcwxbbi6mixgw3y4vskzucga7r7hkfjz@yschcrxbbwm5>
-References: <20241008174852.222374-1-m.wilczynski@samsung.com>
- <CGME20241008174909eucas1p1b34518ef9a643313d41349f476f0659a@eucas1p1.samsung.com>
- <20241008174852.222374-3-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1728455531; c=relaxed/simple;
+	bh=R0gUvxwSv1A4XoB1T5evhfuqxPVo1TkeJSTpTi9sPuY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qIO76bA7OQax0jox9ebnKEwMbjCaOBzpXPrXZa5UtCZ5JmVEXdDbxVKsdicX/SQz/tHSHWpbKGfx8tNbkRV43ZV4VkIROcKJdagcLXW9M8c9Y7uOEj6nSvvHL3bV8Z+BLGPfLHtQetW6Zj6rNcbRgwENJqAhJV643fH4jpXy1i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OctRa8PT; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c718bb04a3so8939674a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 23:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1728455528; x=1729060328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xrlBK00E06m+Xyn4M4YQ83K424bss7id65740TmKjwY=;
+        b=OctRa8PTv+N5PrEGsbmRkCoqe/HGQMGRuAWDLrLN/PDHX1dQhgKwSZedLFutRo6Uu0
+         STUiqEcy+UVTtKIK0AGn42OUp4ewtPrWnZt8Z78BSSUZvWeRaWwEGf53Mr8AslnwFgp0
+         kJyU8j9kafVX/uzdMXhkgES25ZCMFM6yXPa1+qlXkfiXFctNQ1IKNT63qyiuZFORI8rp
+         xDNZsAgTXSrRK5UkECmp/38y7QxuBaaAciFtDxtYjyKVnT7Vw+Qgev+Pu2uYTnC8yXwQ
+         JxXf6PIEd6siJ9hvzDv+Nnm5SdVJMDkMOO8NpqZLQS0idhCgZUzZsQdCMdg+yZP9/GfV
+         /r2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728455528; x=1729060328;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xrlBK00E06m+Xyn4M4YQ83K424bss7id65740TmKjwY=;
+        b=vc2BYrYiuDabV/R38d8027JcbPO4Y96QJtZA/0WYtpLfqhjuVOsDaKcHPtNZjua5eA
+         /y0SOVKe7CGSuYaoLAfjID1UaEj6tO/9djWfnYeg1ssULUqZF3WXVyKpmrzKhc7BlfR3
+         WtabAKezoyC0IyJ/9FEWBS7O1CaL94LtZqKY8x/8fElt6qq7V9ycLN/8BI3TCM57D1eg
+         TZx+1Md/55TIgUIM5M8jFz1x33I2DbmHIpLrZ38AMaxqGz6UaUtIoVOutrUF9ha63oqs
+         m8kdYw23x6ymfEVNZbF9TmmUSRl6F1V8ms08x5NxY1X0kgV6sJCT7sKGys6hoRxGLeFU
+         vOFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmp658YCuGY0qIquxdL5yvvXckZs6gfzpYmBYAv1fK/hVICouK2UwDV+M4GG5Tg/CwYJlP2TBIgRu90uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7WeR8D8Dxu3sCmiWbE/SK/vn94s/e6MVJR3Ik1fX9TA8ZtvGb
+	W/dAzobx3+0KGnaiIPqblA0lB1TXNUjM5aaIm2ENVOK+5zANpse2m/KgTURe1xw=
+X-Google-Smtp-Source: AGHT+IF1ch/zlHLFvZnA537gd6NerYD1w+UTbuG6UhIr+ue/n1LS9w7GlBYhfU0kWo9/NodgFhvh3g==
+X-Received: by 2002:a17:907:e20c:b0:a99:49b0:e5b2 with SMTP id a640c23a62f3a-a998d117e39mr117766366b.3.1728455528147;
+        Tue, 08 Oct 2024 23:32:08 -0700 (PDT)
+Received: from ?IPV6:2001:a61:2a51:d701:2d49:fdc9:7cfb:5cc8? ([2001:a61:2a51:d701:2d49:fdc9:7cfb:5cc8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9936bc91f4sm578785466b.56.2024.10.08.23.32.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Oct 2024 23:32:07 -0700 (PDT)
+Message-ID: <3b57fcc4-919f-4e50-80a4-04da24f61857@suse.com>
+Date: Wed, 9 Oct 2024 08:32:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241008174852.222374-3-m.wilczynski@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] scsi: qla2xxx: make target send correct LOGO
+To: Anastasia Kovaleva <a.kovaleva@yadro.com>, target-devel@vger.kernel.org
+Cc: njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ bvanassche@acm.org, quinn.tran@cavium.com, nab@linux-iscsi.org,
+ himanshu.madhani@cavium.com, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@yadro.com
+References: <20241008132402.26164-1-a.kovaleva@yadro.com>
+ <20241008132402.26164-3-a.kovaleva@yadro.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.com>
+In-Reply-To: <20241008132402.26164-3-a.kovaleva@yadro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 07:48:51PM +0200, Michal Wilczynski wrote:
-> diff --git a/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
-> new file mode 100644
-> index 000000000000..32c265f39c29
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
+On 10/8/24 15:24, Anastasia Kovaleva wrote:
+> Upon removing the ACL from the target, it sends a LOGO command to the
+> initiator to break the connection. But HBA fills port_name and port_id
+> of the LOGO command with all zeroes, which is not valid. The initiator
+> sends a reject for this command, but it is not being processed on the
+> target, since it assumes LOGO can never fail. This leaves a system in a
+> state where the initiator thinks it is still logged in to the target and
+> can send commands to it, but the target ignores all incoming commands
+> from this initiator.
+> 
+> If, in such a situation, the initiator sends some command (e.g. during a
+> scan), after not receiving a response for a timeout duration, it sends
+> ABORT for the command. After a timeout on receiving an ABORT response,
+> the initiator sends LOGO to the target. Only after that, the initiator
+> can successfully relogin to the target and restore the connection. In
+> the end, this whole situation hangs the system for approximately a
+> minute.
+> 
+> By default, the driver sends a LOGO command to HBA filling only port_id,
+> expecting HBA to match port_id with the correct port_name from it's
+> internal table. HBA doesn't do that, instead filling these fields with
+> all zeroes.
+> 
+> This patch makes the driver send a LOGO command to HBA with port_name
+> and port_id in the I/O PARMETER fields. HBA then copies these values to
+> corresponding fields in the LOGO command frame.
+> 
+> Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
+> Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+> ---
+>   drivers/scsi/qla2xxx/qla_iocb.c | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/scsi/qla2xxx/qla_iocb.c b/drivers/scsi/qla2xxx/qla_iocb.c
+> index 0b41e8a06602..90026fca14dc 100644
+> --- a/drivers/scsi/qla2xxx/qla_iocb.c
+> +++ b/drivers/scsi/qla2xxx/qla_iocb.c
+> @@ -2486,6 +2486,17 @@ qla24xx_logout_iocb(srb_t *sp, struct logio_entry_24xx *logio)
+>   	logio->port_id[1] = sp->fcport->d_id.b.area;
+>   	logio->port_id[2] = sp->fcport->d_id.b.domain;
+>   	logio->vp_index = sp->vha->vp_idx;
+> +	logio->io_parameter[0] = cpu_to_le32(sp->vha->d_id.b.al_pa |
+> +				 sp->vha->d_id.b.area << 8 |
+> +				 sp->vha->d_id.b.domain << 16);
+> +	logio->io_parameter[1] = cpu_to_le32(sp->vha->port_name[3] |
+> +				 sp->vha->port_name[2] << 8 |
+> +				 sp->vha->port_name[1] << 16 |
+> +				 sp->vha->port_name[0] << 24);
+> +	logio->io_parameter[2] = cpu_to_le32(sp->vha->port_name[7] |
+> +				 sp->vha->port_name[6] << 8 |
+> +				 sp->vha->port_name[5] << 16 |
+> +				 sp->vha->port_name[4] << 24);
+>   }
+>   
+>   static void
 
-If there is going to be new bersion, drop blank line.
+Now that looks like serious debugging. Well done.
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/thead,th1520-mbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: T-head TH1520 Mailbox Controller
-> +
-> +description:
-> +  The T-head mailbox controller enables communication and coordination between
-> +  cores within the SoC by passing messages (e.g., data, status, and control)
-> +  through mailbox channels. It also allows one core to signal another processor
-> +  using interrupts via the Interrupt Controller Unit (ICU).
-> +
-> +maintainers:
-> +  - Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: thead,th1520-mbox
-> +
-> +  reg:
-> +    items:
-> +      - description: Mailbox local base address
-> +      - description: Remote ICU 0 base address
-> +      - description: Remote ICU 1 base address
-> +      - description: Remote ICU 2 base address
-> +
-> +  reg-names:
-> +    items:
-> +      - const: local
-> +      - const: remote-icu0
-> +      - const: remote-icu1
-> +      - const: remote-icu2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  '#mbox-cells':
-> +    const: 2
-> +    description: |
-> +      Specifies the number of cells needed to encode the mailbox specifier.
-> +      The mailbox specifier consists of two cells:
-> +        - Destination CPU ID.
-> +        - Type, which can be one of the following:
-> +            - 0:
-> +                - TX & RX channels share the same channel.
-> +                - Equipped with 7 info registers to facilitate data sharing.
-> +                - Supports IRQ for signaling.
-> +            - 1:
-> +                - TX & RX operate as doorbell channels.
-> +                - Does not have dedicated info registers.
-> +                - Lacks ACK support.
-> +
-> +additionalProperties: false
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-If there is going to be new bersion, this goes after required:, just
-like in example schema and all other bindings.
+Cheers,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.com                               +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
