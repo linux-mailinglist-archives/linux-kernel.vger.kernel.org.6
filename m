@@ -1,146 +1,461 @@
-Return-Path: <linux-kernel+bounces-357706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53AC2997437
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41F4997444
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F174F1F22959
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:11:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6CCF1C250B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453BF1E1C25;
-	Wed,  9 Oct 2024 18:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DAD1E1A07;
+	Wed,  9 Oct 2024 18:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="zvPbp9qZ"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJMj/RwM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6B61E47A9
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4066C2E0;
+	Wed,  9 Oct 2024 18:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497249; cv=none; b=sUJ7b2/2VDHUzE14HE1mxHatrHe4KN68EmWB3Xsf/dDlot/2QNXRGbBBRMn5PhR3MoMIhRSEo2kmpoaZHJRqQUWsJYnOCDoQFbKwo8vHVaydR/UANSlEt7REjRHbfjZtSaBnlfSfQKlyEg/e3ulW5ZFB8+jB5Ye7GRvL4cwxNlo=
+	t=1728497325; cv=none; b=MYsb4m7qpb/d/3ZGLwB3wGp/KGKuKpvNvYhpJYzuDI4l/4hLVGaFn6QK34cs65SEpzOyg7i1IfQ+5dnji3iFdVR1vw1UNMlthKXJhToxxWLvfnY6wy8pPOcfE7PaxY9n0mst6P8NdwdhGn9DvI9TKOcY+cZpK+g/lMKDXKQTgm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728497249; c=relaxed/simple;
-	bh=EEA9n8EKVuqwjoaU8xFSnE5n9WHqzdY3/Ze8q36DibQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiI5fPdEQM0pautA0XCPgSxyXxucGqHFzjXD9rH77ZbaIffJ8n7mP8djIG61oz+ppBKIsWLI8g+B2XeL7+32I7c3sqNrRiAlQbBSOUJoV/0e3R56wRQkbC42gWEniX/WZvuIpazn4jm7f+foKePToOEcLlPgutrUUds1ylG4M8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=zvPbp9qZ; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b02420b600so2675185a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 11:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1728497245; x=1729102045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VcKIKjFFXK/pS61017tWFdVnKhermK+qoG7rd4+wtqU=;
-        b=zvPbp9qZHJqjMb3GJgqWZA9gRC3q/rsb+siweQ/zXeQFs4C+j+f7i3VFvalPfmDdLO
-         gjBQEP1B83QGD0L77+jbbi+JnVaYr248BJex7NDwIlZ7UGczzNsy0HDp1zHt0qbRyFp/
-         tn1RZoi9CHvpVISM7C0NVdkUl736ypHYDiJFAq8H4OJleuQxV5ZbX0oYxt+F8/wva9gX
-         ZRX1KSgCgdpRnnu6de61d92xHKdGu57+P5l2nnuoCdr8fMEhrFjTSD8WFt1K7EvsUgBC
-         1RhunHciUEghtA+1OIhdkNO7jeltUUT7iy5DHs/BxjpkpqpIf7KrfNOsdM6rzcX7dg5I
-         fLSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728497245; x=1729102045;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VcKIKjFFXK/pS61017tWFdVnKhermK+qoG7rd4+wtqU=;
-        b=rZDZsMTgEBZb2+WGc80sjvKaV5YJf5EQjOoJt7BFDtUw60mF/htBvd6h7B7rvN2lKT
-         CESGkM/qXYwSVMn1YBdukZZHgjujHjpz2JcIWkAoFF3woGGFhdW4IieTu0IICbuCYdVD
-         6WGourI+NLfxFN44FkSyMV6wlw9BI+1JUFcN+4x71858rljepUf0GxsPnVGCmoZ27sBz
-         hkHvaj4BME5Csk9qPeIycFjj5a7FyGDGLNy3I8Xfn0+Qv37T1ROq8Wr1NG1TG2xtIZPq
-         7i7N+LSt1RcQynFb+QlbBi87b+7pX0sNNtxxdp+Zrgzv2nAFb0vtxGfa/kHtO2TwZQT+
-         ybLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVvMy3fGxvBS4CnbTB3mHiSklVlKMnjx9dbHTxCjY6/BFkw7bAoF0At1HxIIqS0LehXbXqR/L3YnJNnqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuDW6khXb5HxZ+si/Hr/jrmPdle4WgTW/gma3WxtZAdbGUwhGP
-	o7W7RJ0ruCmpM9dfxolMDhrdxtd39U98Kdje1MdLsStCEGlC75LCCNmzq/42370=
-X-Google-Smtp-Source: AGHT+IGXngKYT3dFEA0sPgqcLJmf5vE14K+Prq/oZohyFklv4PBlQGh/cKRA9mAbjHHwCZUeGMk5GA==
-X-Received: by 2002:a05:620a:460b:b0:7ae:5c5b:a3e8 with SMTP id af79cd13be357-7b07954f02amr378290285a.34.1728497244587;
-        Wed, 09 Oct 2024 11:07:24 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7afceb513b4sm132146785a.19.2024.10.09.11.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 11:07:23 -0700 (PDT)
-Date: Wed, 9 Oct 2024 14:07:19 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Klaus Kudielka <klaus.kudielka@gmail.com>,
-	Chris Bainbridge <chris.bainbridge@gmail.com>,
-	linux-kernel@vger.kernel.org, bsegall@google.com,
-	dietmar.eggemann@arm.com, efault@gmx.de, juri.lelli@redhat.com,
-	mgorman@suse.de, mingo@redhat.com, rostedt@goodmis.org,
-	tglx@linutronix.de, vincent.guittot@linaro.org, vschneid@redhat.com,
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org,
-	spasswolf@web.de, regressions@lists.linux.dev,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Subject: Re: [REGRESSION] Re: [PATCH 17/24] sched/fair: Implement delayed
- dequeue
-Message-ID: <20241009180719.GD6937@cmpxchg.org>
-References: <20240830123458.3557-1-spasswolf@web.de>
- <ZvA7n9GNoD-ipjkj@debian.local>
- <1ee5f5828e2021bf1051dc1f9b6f01a8c061ffb1.camel@gmail.com>
- <2128d714-90f7-1598-b32b-559206fce5de@amd.com>
- <20241004123506.GR18071@noisy.programming.kicks-ass.net>
- <20241004135744.GB1658449@cmpxchg.org>
- <fae14e09-cd35-5feb-c3b4-8318a76b26a3@amd.com>
- <c97da254-9add-85bb-cd46-7c0d5ac77548@amd.com>
- <f82def74-a64a-4a05-c8d4-4eeb3e03d0c0@amd.com>
+	s=arc-20240116; t=1728497325; c=relaxed/simple;
+	bh=hqOufzUYwi6FU5ByNNY/TolUAj4pzuJhjk48rd474jc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLdwe2/I4HR4Xk9xBQ16BjJeTvMVVF1bO2h7KoPFlTvoIBZo0WNosOH3AJQcIhKo/8RIrq9F5yepHkvyW5SJzmleQl2da9aEMUMEZ7Zi+3hCH8WbWHyubPYsrC3+FSQ5AA11sIJ/eEQ2qAY9OLaMUHf6DYQzrXNQVp3OoX/yVfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJMj/RwM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B4D5C4CEC3;
+	Wed,  9 Oct 2024 18:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728497324;
+	bh=hqOufzUYwi6FU5ByNNY/TolUAj4pzuJhjk48rd474jc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UJMj/RwManJo9L0pQDuA+FPUXaqsC+QrO9vUtpsQrSuwO5NzofjpjQMWhP1HR7h9v
+	 K1lwrQe917hA8p9jPBIa6o4h9zfwn27mV6Fdt8BibhfISAtkXWRPKZ4YseqxUHvH1d
+	 EC2C+SwUzk7uKHkzbo3fNoh2s49P0VD2qtg+V4MuVS+gpRo4BQjNYtgEzCR+Rkayzi
+	 oIu3I7y/oldDovshjKWj6gjMoJxP7ygujeUQN2k3nn7IVdzyT/80K7Ag0MVln7TE+u
+	 InlaBaWhygIXDbE7hHoMIjSYBkKvKUfXs8/z8WNWCRlWz6FZS532il8TlKeJmjPMBJ
+	 IF5Lx+lH9Luhw==
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Mike Rapoport <rppt@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>,
+	Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-modules@vger.kernel.org,
+	linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v5 0/8] x86/module: use large ROX pages for text allocations
+Date: Wed,  9 Oct 2024 21:08:08 +0300
+Message-ID: <20241009180816.83591-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f82def74-a64a-4a05-c8d4-4eeb3e03d0c0@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 09:54:52PM +0530, K Prateek Nayak wrote:
-> From 2e15180e18b51e9a2bc0d7050e915a70d2673a06 Mon Sep 17 00:00:00 2001
-> From: K Prateek Nayak <kprateek.nayak@amd.com>
-> Date: Fri, 4 Oct 2024 15:24:35 +0000
-> Subject: [RFC PATCH] sched/psi: Fixup PSI accounting with DELAY_DEQUEUE
-> 
-> After the merge of DELAY_DEQUEUE, "psi: inconsistent task state: warning
-> were seen early into the boot. The crux of the matter is the fact that
-> when a task is delayed, and the delayed task is then migrated, the
-> wakeup context may not have any idea that the task was moved from its
-> previous runqueue. This is the same reason psi_enqueue() considers
-> only ...
-> 
->      (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED)
-> 
-> ... as a wakeup. In case of a wakeup with migration, PSI forgoes
-> clearing the TSK_IOWAIT flag which seems to be the issue I encountered
-> in my splat previously.
-> 
-> With that said, the below diff, based on Peter's original approach
-> currently seems to work for me in the sense that I have not seen the
-> inconsistent state warning for a while now with my stress test.
-> 
-> Two key points of the approach are:
-> 
-> o It uses "p->migration_flags" to indicate a delayed entity has
->    migrated to another runqueue and convey the same during psi_enqueue().
-> 
-> o It adds ENQUEUE_WAKEUP flag alongside ENQUEUE_DELAYED for
->    enqueue_task() in ttwu_runnable() since psi_enqueue() needs to know of
->    a wakeup without migration to clear the TSK_IOWAIT flag it would have
->    set during psi_task_switch() for blocking task and going down the
->    stack for enqueue_task_fair(), there seem to be no other observer of
->    the ENQUEUE_WAKEUP flag other than psi_enqueue() in the requeue path.
-> 
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-Tested-by: Johannes Weiner <hannes@cmpxchg.org>
+Hi,
 
-It fixes the warning and bogus pressure values after stressing it for
-an hour or so with tons of cpu contention and cgroup movements.
+These patches add support for using large ROX pages for allocations of
+executable memory on x86.
+
+They address Andy's comments [1] about having executable mappings for code
+that was not completely formed.
+
+The approach taken is to allocate ROX memory along with writable but not
+executable memory and use the writable copy to perform relocations and
+alternatives patching. After the module text gets into its final shape, the
+contents of the writable memory is copied into the actual ROX location
+using text poking.
+
+The allocations of the ROX memory use vmalloc(VMAP_ALLOW_HUGE_MAP) to
+allocate PMD aligned memory, fill that memory with invalid instructions and
+in the end remap it as ROX. Portions of these large pages are handed out to
+execmem_alloc() callers without any changes to the permissions. When the
+memory is freed with execmem_free() it is invalidated again so that it
+won't contain stale instructions.
+
+The module memory allocation, x86 code dealing with relocations and
+alternatives patching take into account the existence of the two copies,
+the writable memory and the ROX memory at the actual allocated virtual
+address.
+
+The patches are available at git:
+https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git/log/?h=execmem/x86-rox/v5
+
+[1] https://lore.kernel.org/all/a17c65c6-863f-4026-9c6f-a04b659e9ab4@app.fastmail.com
+
+v4: https://lore.kernel.org/all/20241007062858.44248-1-rppt@kernel.org
+* Fix copy/paste error in looongarch (Huacai)
+
+v3: https://lore.kernel.org/all/20240909064730.3290724-1-rppt@kernel.org
+* Drop ftrace_swap_func(). It is not needed because mcount array lives
+  in a data section (Peter)
+* Update maple_tree usage (Liam)
+* Set ->fill_trapping_insns pointer on init (Ard)
+* Instead of using VM_FLUSH_RESET_PERMS for execmem cache, completely
+  remove it from the direct map
+
+v2: https://lore.kernel.org/all/20240826065532.2618273-1-rppt@kernel.org
+* add comment why ftrace_swap_func() is needed (Steve)
+
+Since RFC: https://lore.kernel.org/all/20240411160526.2093408-1-rppt@kernel.org
+* update changelog about HUGE_VMAP allocations (Christophe) 
+* move module_writable_address() from x86 to modules core (Ingo)
+* rename execmem_invalidate() to execmem_fill_trapping_insns() (Peter)
+* call alternatives_smp_unlock() after module text in-place is up to
+  date (Nadav)
+
+Mike Rapoport (Microsoft) (8):
+  mm: vmalloc: group declarations depending on CONFIG_MMU together
+  mm: vmalloc: don't account for number of nodes for HUGE_VMAP allocations
+  asm-generic: introduce text-patching.h
+  module: prepare to handle ROX allocations for text
+  arch: introduce set_direct_map_valid_noflush()
+  x86/module: perpare module loading for ROX allocations of text
+  execmem: add support for cache of large ROX pages
+  x86/module: enable ROX caches for module text
+
+ arch/alpha/include/asm/Kbuild                 |   1 +
+ arch/arc/include/asm/Kbuild                   |   1 +
+ .../include/asm/{patch.h => text-patching.h}  |   0
+ arch/arm/kernel/ftrace.c                      |   2 +-
+ arch/arm/kernel/jump_label.c                  |   2 +-
+ arch/arm/kernel/kgdb.c                        |   2 +-
+ arch/arm/kernel/patch.c                       |   2 +-
+ arch/arm/probes/kprobes/core.c                |   2 +-
+ arch/arm/probes/kprobes/opt-arm.c             |   2 +-
+ arch/arm64/include/asm/set_memory.h           |   1 +
+ .../asm/{patching.h => text-patching.h}       |   0
+ arch/arm64/kernel/ftrace.c                    |   2 +-
+ arch/arm64/kernel/jump_label.c                |   2 +-
+ arch/arm64/kernel/kgdb.c                      |   2 +-
+ arch/arm64/kernel/patching.c                  |   2 +-
+ arch/arm64/kernel/probes/kprobes.c            |   2 +-
+ arch/arm64/kernel/traps.c                     |   2 +-
+ arch/arm64/mm/pageattr.c                      |  10 +
+ arch/arm64/net/bpf_jit_comp.c                 |   2 +-
+ arch/csky/include/asm/Kbuild                  |   1 +
+ arch/hexagon/include/asm/Kbuild               |   1 +
+ arch/loongarch/include/asm/Kbuild             |   1 +
+ arch/loongarch/include/asm/set_memory.h       |   1 +
+ arch/loongarch/mm/pageattr.c                  |  21 ++
+ arch/m68k/include/asm/Kbuild                  |   1 +
+ arch/microblaze/include/asm/Kbuild            |   1 +
+ arch/mips/include/asm/Kbuild                  |   1 +
+ arch/nios2/include/asm/Kbuild                 |   1 +
+ arch/openrisc/include/asm/Kbuild              |   1 +
+ .../include/asm/{patch.h => text-patching.h}  |   0
+ arch/parisc/kernel/ftrace.c                   |   2 +-
+ arch/parisc/kernel/jump_label.c               |   2 +-
+ arch/parisc/kernel/kgdb.c                     |   2 +-
+ arch/parisc/kernel/kprobes.c                  |   2 +-
+ arch/parisc/kernel/patch.c                    |   2 +-
+ arch/powerpc/include/asm/kprobes.h            |   2 +-
+ .../asm/{code-patching.h => text-patching.h}  |   0
+ arch/powerpc/kernel/crash_dump.c              |   2 +-
+ arch/powerpc/kernel/epapr_paravirt.c          |   2 +-
+ arch/powerpc/kernel/jump_label.c              |   2 +-
+ arch/powerpc/kernel/kgdb.c                    |   2 +-
+ arch/powerpc/kernel/kprobes.c                 |   2 +-
+ arch/powerpc/kernel/module_32.c               |   2 +-
+ arch/powerpc/kernel/module_64.c               |   2 +-
+ arch/powerpc/kernel/optprobes.c               |   2 +-
+ arch/powerpc/kernel/process.c                 |   2 +-
+ arch/powerpc/kernel/security.c                |   2 +-
+ arch/powerpc/kernel/setup_32.c                |   2 +-
+ arch/powerpc/kernel/setup_64.c                |   2 +-
+ arch/powerpc/kernel/static_call.c             |   2 +-
+ arch/powerpc/kernel/trace/ftrace.c            |   2 +-
+ arch/powerpc/kernel/trace/ftrace_64_pg.c      |   2 +-
+ arch/powerpc/lib/code-patching.c              |   2 +-
+ arch/powerpc/lib/feature-fixups.c             |   2 +-
+ arch/powerpc/lib/test-code-patching.c         |   2 +-
+ arch/powerpc/lib/test_emulate_step.c          |   2 +-
+ arch/powerpc/mm/book3s32/mmu.c                |   2 +-
+ arch/powerpc/mm/book3s64/hash_utils.c         |   2 +-
+ arch/powerpc/mm/book3s64/slb.c                |   2 +-
+ arch/powerpc/mm/kasan/init_32.c               |   2 +-
+ arch/powerpc/mm/mem.c                         |   2 +-
+ arch/powerpc/mm/nohash/44x.c                  |   2 +-
+ arch/powerpc/mm/nohash/book3e_pgtable.c       |   2 +-
+ arch/powerpc/mm/nohash/tlb.c                  |   2 +-
+ arch/powerpc/mm/nohash/tlb_64e.c              |   2 +-
+ arch/powerpc/net/bpf_jit_comp.c               |   2 +-
+ arch/powerpc/perf/8xx-pmu.c                   |   2 +-
+ arch/powerpc/perf/core-book3s.c               |   2 +-
+ arch/powerpc/platforms/85xx/smp.c             |   2 +-
+ arch/powerpc/platforms/86xx/mpc86xx_smp.c     |   2 +-
+ arch/powerpc/platforms/cell/smp.c             |   2 +-
+ arch/powerpc/platforms/powermac/smp.c         |   2 +-
+ arch/powerpc/platforms/powernv/idle.c         |   2 +-
+ arch/powerpc/platforms/powernv/smp.c          |   2 +-
+ arch/powerpc/platforms/pseries/smp.c          |   2 +-
+ arch/powerpc/xmon/xmon.c                      |   2 +-
+ arch/riscv/errata/andes/errata.c              |   2 +-
+ arch/riscv/errata/sifive/errata.c             |   2 +-
+ arch/riscv/errata/thead/errata.c              |   2 +-
+ arch/riscv/include/asm/set_memory.h           |   1 +
+ .../include/asm/{patch.h => text-patching.h}  |   0
+ arch/riscv/include/asm/uprobes.h              |   2 +-
+ arch/riscv/kernel/alternative.c               |   2 +-
+ arch/riscv/kernel/cpufeature.c                |   3 +-
+ arch/riscv/kernel/ftrace.c                    |   2 +-
+ arch/riscv/kernel/jump_label.c                |   2 +-
+ arch/riscv/kernel/patch.c                     |   2 +-
+ arch/riscv/kernel/probes/kprobes.c            |   2 +-
+ arch/riscv/mm/pageattr.c                      |  15 +
+ arch/riscv/net/bpf_jit_comp64.c               |   2 +-
+ arch/riscv/net/bpf_jit_core.c                 |   2 +-
+ arch/s390/include/asm/set_memory.h            |   1 +
+ arch/s390/mm/pageattr.c                       |  11 +
+ arch/sh/include/asm/Kbuild                    |   1 +
+ arch/sparc/include/asm/Kbuild                 |   1 +
+ arch/um/kernel/um_arch.c                      |  16 +-
+ arch/x86/entry/vdso/vma.c                     |   3 +-
+ arch/x86/include/asm/alternative.h            |  14 +-
+ arch/x86/include/asm/set_memory.h             |   1 +
+ arch/x86/include/asm/text-patching.h          |   1 +
+ arch/x86/kernel/alternative.c                 | 160 +++++----
+ arch/x86/kernel/ftrace.c                      |  30 +-
+ arch/x86/kernel/module.c                      |  45 ++-
+ arch/x86/mm/init.c                            |  26 +-
+ arch/x86/mm/pat/set_memory.c                  |   8 +
+ arch/xtensa/include/asm/Kbuild                |   1 +
+ include/asm-generic/text-patching.h           |   5 +
+ include/linux/execmem.h                       |  25 ++
+ include/linux/module.h                        |   9 +
+ include/linux/moduleloader.h                  |   4 +
+ include/linux/set_memory.h                    |   6 +
+ include/linux/text-patching.h                 |  15 +
+ include/linux/vmalloc.h                       |  60 ++--
+ kernel/module/main.c                          |  77 +++-
+ kernel/module/strict_rwx.c                    |   3 +
+ mm/execmem.c                                  | 328 +++++++++++++++++-
+ mm/internal.h                                 |   1 +
+ mm/vmalloc.c                                  |  14 +-
+ 118 files changed, 831 insertions(+), 235 deletions(-)
+ rename arch/arm/include/asm/{patch.h => text-patching.h} (100%)
+ rename arch/arm64/include/asm/{patching.h => text-patching.h} (100%)
+ rename arch/parisc/include/asm/{patch.h => text-patching.h} (100%)
+ rename arch/powerpc/include/asm/{code-patching.h => text-patching.h} (100%)
+ rename arch/riscv/include/asm/{patch.h => text-patching.h} (100%)
+ create mode 100644 include/asm-generic/text-patching.h
+ create mode 100644 include/linux/text-patching.h
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.43.0
+
+
+*** BLURB HERE ***
+
+Mike Rapoport (Microsoft) (8):
+  mm: vmalloc: group declarations depending on CONFIG_MMU together
+  mm: vmalloc: don't account for number of nodes for HUGE_VMAP
+    allocations
+  asm-generic: introduce text-patching.h
+  module: prepare to handle ROX allocations for text
+  arch: introduce set_direct_map_valid_noflush()
+  x86/module: perpare module loading for ROX allocations of text
+  execmem: add support for cache of large ROX pages
+  x86/module: enable ROX caches for module text
+
+ arch/alpha/include/asm/Kbuild                 |   1 +
+ arch/arc/include/asm/Kbuild                   |   1 +
+ .../include/asm/{patch.h => text-patching.h}  |   0
+ arch/arm/kernel/ftrace.c                      |   2 +-
+ arch/arm/kernel/jump_label.c                  |   2 +-
+ arch/arm/kernel/kgdb.c                        |   2 +-
+ arch/arm/kernel/patch.c                       |   2 +-
+ arch/arm/probes/kprobes/core.c                |   2 +-
+ arch/arm/probes/kprobes/opt-arm.c             |   2 +-
+ arch/arm64/include/asm/set_memory.h           |   1 +
+ .../asm/{patching.h => text-patching.h}       |   0
+ arch/arm64/kernel/ftrace.c                    |   2 +-
+ arch/arm64/kernel/jump_label.c                |   2 +-
+ arch/arm64/kernel/kgdb.c                      |   2 +-
+ arch/arm64/kernel/patching.c                  |   2 +-
+ arch/arm64/kernel/probes/kprobes.c            |   2 +-
+ arch/arm64/kernel/traps.c                     |   2 +-
+ arch/arm64/mm/pageattr.c                      |  10 +
+ arch/arm64/net/bpf_jit_comp.c                 |   2 +-
+ arch/csky/include/asm/Kbuild                  |   1 +
+ arch/hexagon/include/asm/Kbuild               |   1 +
+ arch/loongarch/include/asm/Kbuild             |   1 +
+ arch/loongarch/include/asm/set_memory.h       |   1 +
+ arch/loongarch/mm/pageattr.c                  |  19 +
+ arch/m68k/include/asm/Kbuild                  |   1 +
+ arch/microblaze/include/asm/Kbuild            |   1 +
+ arch/mips/include/asm/Kbuild                  |   1 +
+ arch/nios2/include/asm/Kbuild                 |   1 +
+ arch/openrisc/include/asm/Kbuild              |   1 +
+ .../include/asm/{patch.h => text-patching.h}  |   0
+ arch/parisc/kernel/ftrace.c                   |   2 +-
+ arch/parisc/kernel/jump_label.c               |   2 +-
+ arch/parisc/kernel/kgdb.c                     |   2 +-
+ arch/parisc/kernel/kprobes.c                  |   2 +-
+ arch/parisc/kernel/patch.c                    |   2 +-
+ arch/powerpc/include/asm/kprobes.h            |   2 +-
+ .../asm/{code-patching.h => text-patching.h}  |   0
+ arch/powerpc/kernel/crash_dump.c              |   2 +-
+ arch/powerpc/kernel/epapr_paravirt.c          |   2 +-
+ arch/powerpc/kernel/jump_label.c              |   2 +-
+ arch/powerpc/kernel/kgdb.c                    |   2 +-
+ arch/powerpc/kernel/kprobes.c                 |   2 +-
+ arch/powerpc/kernel/module_32.c               |   2 +-
+ arch/powerpc/kernel/module_64.c               |   2 +-
+ arch/powerpc/kernel/optprobes.c               |   2 +-
+ arch/powerpc/kernel/process.c                 |   2 +-
+ arch/powerpc/kernel/security.c                |   2 +-
+ arch/powerpc/kernel/setup_32.c                |   2 +-
+ arch/powerpc/kernel/setup_64.c                |   2 +-
+ arch/powerpc/kernel/static_call.c             |   2 +-
+ arch/powerpc/kernel/trace/ftrace.c            |   2 +-
+ arch/powerpc/kernel/trace/ftrace_64_pg.c      |   2 +-
+ arch/powerpc/lib/code-patching.c              |   2 +-
+ arch/powerpc/lib/feature-fixups.c             |   2 +-
+ arch/powerpc/lib/test-code-patching.c         |   2 +-
+ arch/powerpc/lib/test_emulate_step.c          |   2 +-
+ arch/powerpc/mm/book3s32/mmu.c                |   2 +-
+ arch/powerpc/mm/book3s64/hash_utils.c         |   2 +-
+ arch/powerpc/mm/book3s64/slb.c                |   2 +-
+ arch/powerpc/mm/kasan/init_32.c               |   2 +-
+ arch/powerpc/mm/mem.c                         |   2 +-
+ arch/powerpc/mm/nohash/44x.c                  |   2 +-
+ arch/powerpc/mm/nohash/book3e_pgtable.c       |   2 +-
+ arch/powerpc/mm/nohash/tlb.c                  |   2 +-
+ arch/powerpc/mm/nohash/tlb_64e.c              |   2 +-
+ arch/powerpc/net/bpf_jit_comp.c               |   2 +-
+ arch/powerpc/perf/8xx-pmu.c                   |   2 +-
+ arch/powerpc/perf/core-book3s.c               |   2 +-
+ arch/powerpc/platforms/85xx/smp.c             |   2 +-
+ arch/powerpc/platforms/86xx/mpc86xx_smp.c     |   2 +-
+ arch/powerpc/platforms/cell/smp.c             |   2 +-
+ arch/powerpc/platforms/powermac/smp.c         |   2 +-
+ arch/powerpc/platforms/powernv/idle.c         |   2 +-
+ arch/powerpc/platforms/powernv/smp.c          |   2 +-
+ arch/powerpc/platforms/pseries/smp.c          |   2 +-
+ arch/powerpc/xmon/xmon.c                      |   2 +-
+ arch/riscv/errata/andes/errata.c              |   2 +-
+ arch/riscv/errata/sifive/errata.c             |   2 +-
+ arch/riscv/errata/thead/errata.c              |   2 +-
+ arch/riscv/include/asm/set_memory.h           |   1 +
+ .../include/asm/{patch.h => text-patching.h}  |   0
+ arch/riscv/include/asm/uprobes.h              |   2 +-
+ arch/riscv/kernel/alternative.c               |   2 +-
+ arch/riscv/kernel/cpufeature.c                |   3 +-
+ arch/riscv/kernel/ftrace.c                    |   2 +-
+ arch/riscv/kernel/jump_label.c                |   2 +-
+ arch/riscv/kernel/patch.c                     |   2 +-
+ arch/riscv/kernel/probes/kprobes.c            |   2 +-
+ arch/riscv/mm/pageattr.c                      |  15 +
+ arch/riscv/net/bpf_jit_comp64.c               |   2 +-
+ arch/riscv/net/bpf_jit_core.c                 |   2 +-
+ arch/s390/include/asm/set_memory.h            |   1 +
+ arch/s390/mm/pageattr.c                       |  11 +
+ arch/sh/include/asm/Kbuild                    |   1 +
+ arch/sparc/include/asm/Kbuild                 |   1 +
+ arch/um/kernel/um_arch.c                      |  16 +-
+ arch/x86/entry/vdso/vma.c                     |   3 +-
+ arch/x86/include/asm/alternative.h            |  14 +-
+ arch/x86/include/asm/set_memory.h             |   1 +
+ arch/x86/include/asm/text-patching.h          |   1 +
+ arch/x86/kernel/alternative.c                 | 160 +++++----
+ arch/x86/kernel/ftrace.c                      |  30 +-
+ arch/x86/kernel/module.c                      |  45 ++-
+ arch/x86/mm/init.c                            |  26 +-
+ arch/x86/mm/pat/set_memory.c                  |   8 +
+ arch/xtensa/include/asm/Kbuild                |   1 +
+ include/asm-generic/text-patching.h           |   5 +
+ include/linux/execmem.h                       |  25 ++
+ include/linux/module.h                        |   9 +
+ include/linux/moduleloader.h                  |   4 +
+ include/linux/set_memory.h                    |   6 +
+ include/linux/text-patching.h                 |  15 +
+ include/linux/vmalloc.h                       |  60 ++--
+ kernel/module/main.c                          |  77 +++-
+ kernel/module/strict_rwx.c                    |   3 +
+ mm/execmem.c                                  | 328 +++++++++++++++++-
+ mm/internal.h                                 |   1 +
+ mm/vmalloc.c                                  |  14 +-
+ 118 files changed, 829 insertions(+), 235 deletions(-)
+ rename arch/arm/include/asm/{patch.h => text-patching.h} (100%)
+ rename arch/arm64/include/asm/{patching.h => text-patching.h} (100%)
+ rename arch/parisc/include/asm/{patch.h => text-patching.h} (100%)
+ rename arch/powerpc/include/asm/{code-patching.h => text-patching.h} (100%)
+ rename arch/riscv/include/asm/{patch.h => text-patching.h} (100%)
+ create mode 100644 include/asm-generic/text-patching.h
+ create mode 100644 include/linux/text-patching.h
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.43.0
+
 
