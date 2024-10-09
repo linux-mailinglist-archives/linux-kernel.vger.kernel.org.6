@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-356719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2581499659C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:38:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552AB9965A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5470E1C213F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2BDEB2335B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA547189520;
-	Wed,  9 Oct 2024 09:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199EA18C938;
+	Wed,  9 Oct 2024 09:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jpMlhsOf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AcLymq+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EE4176AB5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A4C18A92C;
+	Wed,  9 Oct 2024 09:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728466710; cv=none; b=kRYcqIIABtiuK5tPhw4/8v/QDL3YxwA3llgbL5KNWe502MJtnNilY6NQX/Yj0aAECsyoL2AA49myG3Mp/6H4mBTtt3T2dlIFEl+phMekFiV8WQdYo/raAjY5Y6gRu8O1tOfV82VPDHwj+0pmAl/G949tvZ+vfIB8cFWYKQUsBoQ=
+	t=1728466729; cv=none; b=prFeuXZjxjZBc93wv8edNPbqcUY1KofiAl5gt6F1U2olnTZJTVY7jBw0FAp1AH+Jtmz3qOitdoP5botYwkKbfXAtgai+BMC4YUUNhLYpkII8cQnbCd7JqpmMbACAT84AYuY6e30o/UgM0a2NpudWHZITDXhXhddnwoFDsVleVjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728466710; c=relaxed/simple;
-	bh=aGeuVzjmFfKhtNsDcqyEG1QhHCAlTEz544fl8iWTuvA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jtcn9ytg39y8vSLkULwnYGizeDpEIokTwJpwhoLufJJ53eDvF3r+91/e7JPNUiXkVFmpk8jn0hxTRXXU3IErVDu8Nu+ys7ZmeH82rkfysep3t9btJOZuJ8PZWTF7TwbACQ72H8alGvENrnohtTfm0Mwer5JfAmZfwYUWvb4+Ka8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jpMlhsOf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4996QEfI014232;
-	Wed, 9 Oct 2024 09:38:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=mB11MqhjrdbezmMyBd9hVL
-	ETfc7M2OTBcldOgM+DDh8=; b=jpMlhsOfHY9iT6RCZJ8aqKJPlMMwXnJx4vr+qT
-	xmKSTs5bUrIo0az+jk/hGowtLjN6RKGrueqmgoN+bxsfE7/LyaZs4iw+EAv0A7O3
-	+YtMXOG8O+K1h8YpLhG1+L0AB6DMIeoGNEUseM3XKhBi/kj9VJStHWrfW+DDhAk2
-	U0uPqJ3xMyYcCH5R9muG0zoRR4YwagY1PXw+FkSoM637qX7qL1vJ5mTrS5QFEUZn
-	AayYfi753Z1IeU0YSV7o35XQ+uf3ONNIxXhSbJWOxJrVgVRAXykNele3p1fFR2ZP
-	WEjlhPjn3ALcmBk2PC/Twk1fehOd7ThILjm36aZzcCCTUZcQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42513u3rg3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 09:38:09 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4999c8U3015141
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 09:38:08 GMT
-Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 02:38:05 -0700
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <vschneid@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <quic_zhonhan@quicinc.com>
-Subject: [PATCH RESEND] sched: idle: Optimize the generic idle loop by removing needless memory barrier
-Date: Wed, 9 Oct 2024 17:37:45 +0800
-Message-ID: <20241009093745.9504-1-quic_zhonhan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728466729; c=relaxed/simple;
+	bh=Jw9m9MFXObg+vZ7wq05G3wqyWtyj3AK1eBeQfJJK90U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBlxEih2Csikk9VWf4y7W32fhYH4ScQE7t2bYKCeDP3giTH2VRNUpP9HVnbJmTsdAAEc1U9vteu+PNRk6E1rZBJsHb748tm6n5wVcPCDGwXrjBbuHGus/jVA863Kve8xMVKb3t9GLN7RA3XKnJ7MPKhq4ScYwVtTEUw39Ma8gGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AcLymq+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B808BC4CEC5;
+	Wed,  9 Oct 2024 09:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728466728;
+	bh=Jw9m9MFXObg+vZ7wq05G3wqyWtyj3AK1eBeQfJJK90U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AcLymq+hoDLhN3h3N8nHp58BgFOa4jDynBqk5dzipxHtlbGOU9EoJHZr1xWIGUvqd
+	 1/8BzU9GNB5AWykOOa82//nU/OkQpZ2Tl07ETsLRXZZMd4MYEMeaOwuFdvt3dbdEkn
+	 E0Fd5uSJFrxi3J4FjD1qWeIfBp1sHnDUf7i3tpjk=
+Date: Wed, 9 Oct 2024 11:38:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Soumya Negi <soumya.negi97@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
+	Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-staging@lists.linux.dev, kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Subject: Re: [RFC PATCH 10/13] staging: rts5280: Use always-managed version
+ of pci_intx()
+Message-ID: <2024100936-brunette-flannels-0d82@gregkh>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+ <20241009083519.10088-11-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: EEKWr1xUWb9gJyqfV-1cp1G0b8I_jG2J
-X-Proofpoint-GUID: EEKWr1xUWb9gJyqfV-1cp1G0b8I_jG2J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=559 malwarescore=0 spamscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0
- mlxscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410090063
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009083519.10088-11-pstanner@redhat.com>
 
-The memory barrier rmb() in generic idle loop do_idle() function is not
-needed, it doesn't order any load instruction, just remove it as needless
-rmb() can cause performance impact.
+On Wed, Oct 09, 2024 at 10:35:16AM +0200, Philipp Stanner wrote:
+> pci_intx() is a hybrid function which can sometimes be managed through
+> devres. To remove this hybrid nature from pci_intx(), it is necessary to
+> port users to either an always-managed or a never-managed version.
+> 
+> rts5208 enables its PCI-Device with pcim_enable_device(). Thus, it needs the
+> always-managed version.
+> 
+> Replace pci_intx() with pcim_intx().
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+>  drivers/staging/rts5208/rtsx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The rmb() was introduced by the tglx/history.git commit f2f1b44c75c4
-("[PATCH] Remove RCU abuse in cpu_idle()") to order the loads between
-cpu_idle_map and pm_idle. It pairs with wmb() in function cpu_idle_wait().
-
-And then with the removal of cpu_idle_state in function cpu_idle() and
-wmb() in function cpu_idle_wait() in commit 783e391b7b5b ("x86: Simplify
-cpu_idle_wait"), rmb() no longer has a reason to exist.
-
-After that, commit d16699123434 ("idle: Implement generic idle function")
-implemented a generic idle function cpu_idle_loop() which resembles the
-functionality found in arch/. And it retained the rmb() in generic idle
-loop in file kernel/cpu/idle.c.
-
-And at last, commit cf37b6b48428 ("sched/idle: Move cpu/idle.c to
-sched/idle.c") moved cpu/idle.c to sched/idle.c. And commit c1de45ca831a
-("sched/idle: Add support for tasks that inject idle") renamed function
-cpu_idle_loop() to do_idle().
-
-Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
----
- kernel/sched/idle.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index d2f096bb274c..ab911d1335ba 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -271,7 +271,6 @@ static void do_idle(void)
- 	tick_nohz_idle_enter();
- 
- 	while (!need_resched()) {
--		rmb();
- 
- 		/*
- 		 * Interrupts shouldn't be re-enabled from that point on until
--- 
-2.25.1
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
