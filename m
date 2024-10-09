@@ -1,104 +1,85 @@
-Return-Path: <linux-kernel+bounces-357810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE187997668
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE9399766E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CFD8B2230A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2555E282725
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7321E22E2;
-	Wed,  9 Oct 2024 20:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4641A1E200E;
+	Wed,  9 Oct 2024 20:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2qzkbhuA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUx+NO/N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFFD537FF;
-	Wed,  9 Oct 2024 20:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F029161313;
+	Wed,  9 Oct 2024 20:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728505472; cv=none; b=WcE3JInD5H2u8Xi/fn6nAUvemJX9HnWCn/tuhzPMr8/QZOkq64WIj/hByn9x/exfgk3RRDcXMlJINHldOhA9LmjTEGyPNCQpLKyYHn6UbeCJV7FEZq57JSVEoRwhXKdKR5UQ5BG+Pg+EaG2lqxDrBqBqejfv5GrV8KriSRWr7DQ=
+	t=1728505523; cv=none; b=Toti7RTLLnBF2uB1G2XkqInJjPAZlt7wzePhxZNOIm3FOOWUfPpE26zDGPS8N05lNBvjo7ZAC3LVCOIOvE8CIs6Hh7J16oub2X/i63smEqKf9F/QHfueha0fwNf/AENfYC2I+h1urYRuTIsSITgZFYOjr1AzE1X1kqa4iC0b0cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728505472; c=relaxed/simple;
-	bh=Eajpzm9cUrzs//zMnCTfeMFhUIL/3eN5uDlR9BWdmqo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lho2JHfQ4A9pxxtrR41iBO9Z+JUYfiff3C9GU+7gzqZhCz6D+sOYWJnTw80+TGmddRfR7WEACPWORuS9h2BrzOjon+8qrH4T12eZYpjY/vVGsS0nA+lBsB9ZEdTzC2YBsOoNodUzyHbkv5yFSfUfupBhZzN6Pd4eXZfZwXeU7aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2qzkbhuA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D537EC4CECC;
-	Wed,  9 Oct 2024 20:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1728505469;
-	bh=Eajpzm9cUrzs//zMnCTfeMFhUIL/3eN5uDlR9BWdmqo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=2qzkbhuAMgino0DZ1hZZqBEMfexCBWtSiEWzzjILyq+cbaAjGfaWTcyToRrfMFDWm
-	 Pjg8qjtjvKxkLVmq5KcKfEzMazZd7B9b+cvi3EOmzQaV9Z6xen8oKafvJ4u9r6ZkXt
-	 owPHlRmA15/hxoqOKllm//ythdYQC4jZ89tWfNZw=
-Date: Wed, 9 Oct 2024 13:24:27 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski
- <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain
- <bcain@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, Christoph
- Hellwig <hch@infradead.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>,
- Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge Deller
- <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
- <mingo@redhat.com>, Johannes Berg <johannes@sipsolutions.net>, John Paul
- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet
- <kent.overstreet@linux.dev>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>,
- Max Filippov <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
- Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>,
- Song Liu <song@kernel.org>, Stafford Horne <shorne@gmail.com>, Steven
- Rostedt <rostedt@goodmis.org>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>,
- Uladzislau Rezki <urezki@gmail.com>, Vineet Gupta <vgupta@kernel.org>, Will
- Deacon <will@kernel.org>, bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX
- pages
-Message-Id: <20241009132427.5c94fb5942bae3832446bca5@linux-foundation.org>
-In-Reply-To: <20241009180816.83591-8-rppt@kernel.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
-	<20241009180816.83591-8-rppt@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728505523; c=relaxed/simple;
+	bh=9DcWRqzRXQ7bjuDcrr4wCjK/5kicZsX5VMPHI05/h6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fW6v1v7xn5xWkxT7fuwdbAUAnTpAAU4z1yz2h26GTA5v+MC/jWoXDYlpWcZ6jPWoe02SY3k4ICbGT0zd1OHu1mWbdix6yFF9G85gbprCu+ycY+yuNraakNbI8/rDx9oIxUhCD5G7w9MAhL4lztVERcwIBYO3B8Cqgib2rKJoMJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUx+NO/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDDA4C4CEC3;
+	Wed,  9 Oct 2024 20:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728505523;
+	bh=9DcWRqzRXQ7bjuDcrr4wCjK/5kicZsX5VMPHI05/h6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jUx+NO/NCskAYhlHNu0yu/+6op5AwZFKFcNiDh0IHtwF5IcU9CGgua7scNlOXbkcS
+	 aHEHby+MK4Xr1CrN4gDMBE0DmaymLdLumYwkhe81Sh5zjLJ8QtJHcMOpLImQebl2MS
+	 jIrzgL45AciurmR+cSj9GNKrLHzEXvNdRb7q7Y6QBhRNLqFLOPn0DasqlTIqkYq/Uz
+	 pJLWG5cpqITuHNFLDpqJs/JdCEHmMwzGcIZtwIOEAgia9+eNrwZtCI40MCqUDUQ7aa
+	 2IzdXQuipvfXbLXZ7PXpqOkIj+J407heML2kja2gXD4ZkfyqWgn0vbiTjNTvUywS3i
+	 8DCiyt+udTxpw==
+Date: Wed, 9 Oct 2024 15:25:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 3/7] dt-bindings: PCI: qcom,pcie-x1e80100: Add
+ 'global' interrupt
+Message-ID: <20241009202522.GA611063-robh@kernel.org>
+References: <20241009091540.1446-1-quic_qianyu@quicinc.com>
+ <20241009091540.1446-4-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009091540.1446-4-quic_qianyu@quicinc.com>
 
-On Wed,  9 Oct 2024 21:08:15 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+On Wed, Oct 09, 2024 at 02:15:36AM -0700, Qiang Yu wrote:
+> Document 'global' SPI interrupt along with the existing MSI interrupts so
+> that QCOM PCIe RC driver can make use of it to get events such as PCIe
+> link specific events, safety events, etc.
 
-> Using large pages to map text areas reduces iTLB pressure and improves
-> performance.
+Is it required for some reason vs. being optional? It's fine to break 
+the ABI because...?
 
-Are there any measurable performance improvements?
+Answer those questions with your commit msg.
 
-What are the effects of this series upon overall memory consumption?
-
-The lack of acks is a bit surprising for a v5 patch, but I'll add all
-this to mm.git for some testing, thanks.
-
+> 
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> ---
+>  .../devicetree/bindings/pci/qcom,pcie-x1e80100.yaml    | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
