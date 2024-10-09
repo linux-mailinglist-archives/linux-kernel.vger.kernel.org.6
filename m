@@ -1,115 +1,140 @@
-Return-Path: <linux-kernel+bounces-356735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0CE9965F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:52:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7E199660D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C6D286012
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCC11F26A74
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826FE18D640;
-	Wed,  9 Oct 2024 09:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ECF18DF78;
+	Wed,  9 Oct 2024 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mQNccgmj"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EkiODHtH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2C518B46B;
-	Wed,  9 Oct 2024 09:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C884818FC85;
+	Wed,  9 Oct 2024 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467570; cv=none; b=q+NdF2yW4gNSWD7gtyKyr6QHMYZZSe0YWvC1BVUYgvTcFtZZUJi1ahh0LZuZlSaN3L24rb88GEpv8kp4G94i7nFpvhVOuD+Pgh9d+fl++xYXlCLBhpImmVrS+q0NN7YzVch4LRxgBwUcgUuwSC5SEyKBoUe7CrftohRd9ZlnpBI=
+	t=1728467605; cv=none; b=WV+CYnDhtpUiFrjbFcNgbDG3W8zIr9WY1ypioq7eB6vXp93ZIbOnL9jWvC48Z6OvuffRzQMsnsIjZrky90NKsMFCE1NI79m6Y6au2lJG7NuKOFUIpxOM6MSP1VReKobbDODPw0yhyDgFYni2wz45liuMi4O5ydjPdtb2ejpCCoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467570; c=relaxed/simple;
-	bh=b0ZbQneXmo6dvdqwYl843ohgOyb8+AdpviLApC1gU+g=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=CytNTPGz9VsmmzJh6RwK3NheZZVHSJHDotBViJbBeF71w7zg/GR1f1DR9HmgibpthCd9+cwTt5fRbVLeLz957g3NrtSMq5EmD13WCIAmkx5KLFHANaXuPixD771C/a7ehTDMgOLJtro1OA5ICn/xj0AJmtFJeY7hh0FzdIGgRTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mQNccgmj; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728467541; x=1729072341; i=markus.elfring@web.de;
-	bh=b0ZbQneXmo6dvdqwYl843ohgOyb8+AdpviLApC1gU+g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mQNccgmj+GGuMxY0hnCHZtsXw0MLprYAqGNGYzBtN6QpCxC95xN4jVOHeyEY26GP
-	 V496DoB/OczRyFbWyUacA0vuOJBl7/5rtUB4+M7Ukedc8ecvWpYB6Yng6iCwUA4p2
-	 f8SjLT25RLdzLf92fxVQLqafw+bowugIKs8AiQJtwuR29/h20El3B8XehQEIuYu1q
-	 gY1m+KD8UMBKKrYq46ZoykWbdVJI92nNqkX3F9/cTqvClYg8WcxnV7TyCu6grx2a8
-	 KFBCB0jl1hQfe6A1E5gS0zr5T9J3ZCygg3cCSTC3SkCckundJwn7N9wyP+DDhxF1E
-	 nBXDOSXqaqNYQcNOEQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkElP-1tj7vg09If-00k7Ko; Wed, 09
- Oct 2024 11:52:21 +0200
-Message-ID: <36ec69a0-4412-497b-9efc-fe9e980059ed@web.de>
-Date: Wed, 9 Oct 2024 11:52:19 +0200
+	s=arc-20240116; t=1728467605; c=relaxed/simple;
+	bh=EqWOymihfMQu67iuY30CPwxqwpDv/+xgSPHEJquv/zI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NBhc44uKwy0+LccxCVefuCRkOslu86YRtrL9Qe+ce+RhZl5e1ex1BVWRmrAwdEsS55ash1F8HAnMo+wE8gsWmkhnFG1SwVSwwDErulGVgcq/1YFy+VwhvArqUy/UOLuECGj3zmwCWCmiiTvHvbbPXSAeOajSnoVi5jU8+v1u7IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EkiODHtH; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728467604; x=1760003604;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EqWOymihfMQu67iuY30CPwxqwpDv/+xgSPHEJquv/zI=;
+  b=EkiODHtH3mhDx5EZLQYReZ9I++UQuJherM4Ud8jzWbc/JhXdWF6zffax
+   aY+jxnFHjl4Bm3pfPb8PfhKhvWmVFduQfpdhZsMQLQ2i2dIprHaytJCax
+   qbp+8JmrJBxrcUDFEtB37TNcBzhCm1DMe03aaW2FJsk78mo8dr7pfRhI4
+   Ev38Ac0u80JJDWeY1aF/6roFodjq4ozuxPkUY2m57v2ExorBSvtAn5vYy
+   PQT8f+qeO/cCINSYzcQCHjfAttWsLtlUyb7XPjC5dQwGKBTD619ktOOqp
+   f6wKKmX4L0jgOLiqR9rZsF+mXmMqOOb7UMfBYuSmjNl4CBKclsYqDe6lt
+   w==;
+X-CSE-ConnectionGUID: sxaBT0kESKO9ZqBAkGQi4A==
+X-CSE-MsgGUID: 0aB86OkxSVSTSCKBwP80TA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38322952"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="38322952"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:53:23 -0700
+X-CSE-ConnectionGUID: PuTQTLqlRiSTyokNYBQrwg==
+X-CSE-MsgGUID: 80Lqs5EmRtm5kwHVCrcpeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="76506864"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.41])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 02:53:18 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v8 4/8] PCI/quirks: Abstract LBMS seen check into own function
+Date: Wed,  9 Oct 2024 12:52:19 +0300
+Message-Id: <20241009095223.7093-5-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
+References: <20241009095223.7093-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
- "Geoffrey D. Bennett" <g@b4.vu>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
-References: <20241009092305.8570-1-zhujun2@cmss.chinamobile.com>
-Subject: Re: [PATCH v2] ALSA: scarlett2: Add error check after retrieving PEQ
- filter values
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241009092305.8570-1-zhujun2@cmss.chinamobile.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kwJKxbcCqTJXdcUoNSlif8Wg4Gd+7Xq/uXThOP/+wdPeTCN70+l
- +qku761SoPK6W8HjEOj810tWDJ9QcXbEQA3EG27KCkU5bMUnC25KlIqTas9PCZl23PH+rY5
- n03cMzhmY5w4sS+cM5PSsRDiIN6pE5UtP5M2kGBd/xPg7zg9UDmdOB9fMkeM0MPr/NGFCJu
- 3ApFHGHMlh2rXGIkjAGmw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rLOrM/0n6C0=;vDYcfc8q8mlJ+EFx7vGU6RrZF5j
- 1baS06f2oKbS6Nip330vp/de6ZNvQxeXXwzrYxCD1jcn3tVW+ptlmYPplbVekzB5zDotahqK1
- CNtC7WKox7h3NuAQla88ur18uwnSHe67qFxob36WPo1viEfWU+1RySLKABD3tCqmZRVlw6clj
- nOIbA1nMOndh3CySrwqYswNdMcZrDUgLYbnOQJiqNlpEyt76VomlES7CnArbEKOQKZ9lNmfp8
- ZF+2rEtHzcb+UcF+fPo04I9j/vCQqcK6+PxAJKNPLWuhOHY+N09450nsurCNWKjkq4J5N/x+n
- 0GrZedCmDr3gPS32JAqkTI6cH4MQnsrkEXQjjwCgRJjR5YKHxFdN3cSn5CTnjTsuzpdsP7Di5
- lkCLIxe5hKG1rHkdeHl9q+n70HUxvJVz979fBTbuGX1PykT+yKEUGJ/IgKpkcZB57WUllMvBR
- Vl8K7/+RjDfQeGQCUFFBTGCBGL89YMOA6JREXS7uOWcVfOa3gbXNlYeQLkmLldXg7Vh9E5FH6
- JkWaVyiEIO1noCG46peuwdYNjeOC9cqoZSsAELJGPFdpvg5ojfvhQHQB8kfUA20nEu/1MZ8K9
- SumNPz8xWjde03gVIyJT3VyqxIvJTSaCywJxl+u9F3Bdxs6B+qo/cKTukxgqB1EBlA0bpbF8l
- jJ2USnhg3MVa2u+NYuDhTkFZLTUA7NZ8g2vJKgBivjVVzZEcZ3fFqOOwUKg623wkX6YaRErEQ
- I3Aedqg/AcauO11aG1maemtOvtcGhcjIgcaqVR4w8LBC+V36XGzI3sw2jt5WPY4TimBQtoLpJ
- Uz4DRCH7U5SXA5g/DCoElzLg==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Cc: <stable@vger.kernel.org>
+The Target Speed quirk in pcie_failed_link_retrain() uses the presence
+of LBMS bit as one of the triggering conditions effectively
+monopolizing the use of that bit. An upcoming change will introduce a
+PCIe bandwidth controller which sets up an interrupt to track LBMS. As
+LBMS will be cleared by the interrupt handler, the Target Speed quirk
+will no longer be able to observe LBMS directly.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n262
+As a preparatory step for the change, extract the LBMS seen check into
+own function out of pcie_failed_link_retrain().
 
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/quirks.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> ---
-> V1 -> V2:
-> - commit wit a dot
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index dccb60c1d9cc..a560ea403b8e 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -33,6 +33,11 @@
+ #include <linux/switchtec.h>
+ #include "pci.h"
+ 
++static bool pcie_lbms_seen(struct pci_dev *dev, u16 lnksta)
++{
++	return lnksta & PCI_EXP_LNKSTA_LBMS;
++}
++
+ /*
+  * Retrain the link of a downstream PCIe port by hand if necessary.
+  *
+@@ -96,8 +101,7 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
+ 
+ 	pcie_capability_read_word(dev, PCI_EXP_LNKCTL2, &lnkctl2);
+ 	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
+-	if ((lnksta & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_DLLLA)) ==
+-	    PCI_EXP_LNKSTA_LBMS) {
++	if (!(lnksta & PCI_EXP_LNKSTA_DLLLA) && pcie_lbms_seen(dev, lnksta)) {
+ 		u16 oldlnkctl2 = lnkctl2;
+ 
+ 		pci_info(dev, "broken device, retraining non-functional downstream link at 2.5GT/s\n");
+-- 
+2.39.5
 
-A dot was appended to a change description.
-
-
-> - add tag "Cc"
-=E2=80=A6
-
-Do you expect that the tag =E2=80=9CFixes=E2=80=9D will be added by an oth=
-er contributor finally?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12-rc2#n145
-
-Regards,
-Markus
 
