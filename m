@@ -1,157 +1,213 @@
-Return-Path: <linux-kernel+bounces-357874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E391699773B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BC199773C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 709E5B21461
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:06:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8641C20E4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72AA1A4E92;
-	Wed,  9 Oct 2024 21:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17401E22E6;
+	Wed,  9 Oct 2024 21:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f5w6oddU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wcmI951r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="PnIHSVnU"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C427613A409
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A07913A409;
+	Wed,  9 Oct 2024 21:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507970; cv=none; b=tdufqf+UiYdG7RlaeT8q8sS29mVQmCEHEAiLwKp4YO9DEdfxyWuEtaS8XZkczZ2GBUJZEzlXfsT0pNC818FhC6EB2HvIC+BGtFU5w6bx4RfLZqL/LEVQV8kqH+b1bRoWfz3k71MQynNTX5t5gYf7V6fIQNXAf5aXu5FvUkcRyGQ=
+	t=1728508017; cv=none; b=Mauw9pcwzi5OczQpuwVCjIbajTBa7SwA5BV3CLvaVmA03co8LjP3pkJGkrJ/qsB9qRPv+MEBY32X4Kr3XOlcnezgL4KCb2J1bj+0LptksztZvGUDK28QmrbyjtiJYsNddOHJe/JxhXJwAXZ800uvQ1ITir90pNECo5uXEPep5GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507970; c=relaxed/simple;
-	bh=+icK/yZ+lx2XO3GvoozPUd1m6e6MzzJfKwNgaabPYjo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PPAQpJ/jsyGoHBQo6DIckxz/3BhMVzRnHSzfsXJGLaeTzvqifBOxRYOxvIMnkkCxRyix/xIMYpzAOH7XmRp8Agk2FKwPYPshzmFIkm8mVFh8lZryrDpCERMR/oJXilkMrrXLouS0RwhRrqL0XMuLg7tdFgNgWDRhZjAFu9ylTws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f5w6oddU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wcmI951r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728507961;
+	s=arc-20240116; t=1728508017; c=relaxed/simple;
+	bh=5KVHH6st84LeYGoFXg34NLO88KcY3/iymKc/NmHqTwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fT1q9qR0H4TOhj70FbGLxF9BgATIYyCpH+WwfKiR9jqFPqLyWcGOXUmip5js1iCz0nA0mfnJJDP7GK5Hik5QGtxbKcHqNRSquSL7e37fSaK5jzHsAhuCf841WPW9nt+CBKbHqP8v8EbxwwO+E9KBddqIq/LVyN4BzHgOCei3As8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=PnIHSVnU; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XP56f6j7rz9tkZ;
+	Wed,  9 Oct 2024 23:06:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1728508011;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PLrNPMEax/1XIv2gXbIgjHBnuZM6tq+rjJmA8NEhnew=;
-	b=f5w6oddUuCV1gSW8WwAg58xy92fFtXPD26TYG83nP/x4rfo7yj7v1667T7TwMu1Q01eOVz
-	XyfpsNkJSbgNHhxM+4OFKdkAha31N4VdSzXmKp2meVfPiRQlxO86fxwF4Vw98Qq7/gnK3W
-	4b/DDS35gwPEA9SRZwAZHwpwvPYakFkN8D43QvWejhc/gDHpl8rl6g7hVN+hxuvLTuCc/W
-	UXR3S6H8mBn/QhR8Otqc/Hh/Jknn5UrmPKqzsOkG+3bgGE0KstZ/4IcuP8vy1cqnPg2iD0
-	nfRp7cdfXUoLS0yCUS6mARy8tMk6Du5tyQHfd7cUb0JU4/J6dSl2cyi7lWAOGw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728507961;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PLrNPMEax/1XIv2gXbIgjHBnuZM6tq+rjJmA8NEhnew=;
-	b=wcmI951rEhrizlJbyWpwjcF+mf3zBsi1kgRHGiUdm6Z3JXwjkqfgVKRXOaU1vWqerzfiBO
-	D6gzdlAjF185xJDw==
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Ankur Arora <ankur.a.arora@oracle.com>,
- mingo@kernel.org, linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, efault@gmx.de
-Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
-In-Reply-To: <20241009164355.1ca1d3d3@gandalf.local.home>
-References: <20241007074609.447006177@infradead.org>
- <20241008153232.YwZfzF0r@linutronix.de> <87wmihdh3u.fsf@oracle.com>
- <20241009062019.1FJYnQL1@linutronix.de>
- <20241009080202.GJ17263@noisy.programming.kicks-ass.net>
- <20241009100133.2569e2a7@gandalf.local.home> <87h69lqbk0.ffs@tglx>
- <20241009164355.1ca1d3d3@gandalf.local.home>
-Date: Wed, 09 Oct 2024 23:06:00 +0200
-Message-ID: <87ed4pq953.ffs@tglx>
+	bh=thuBoLHIm6U4EHRwPs4+cilp+u3Urmn+GlVFejTXhCY=;
+	b=PnIHSVnUturPQWmkKXqyX5404qtG3WbwpxjTB7VUQ1AwdZeQknWl5gCMMjteayehzbNekR
+	geLDxhSRZNZmJzzbLrc/Q8bwplye0CE3b+j8wjQVGyJWMYxp+rg/GwaQNvX+Yq7KWbm48t
+	ycFmHQgCzQwUoV1psGKHypdCxTxWTH/d4+td5JVYA5Lpz6eiZXCRePmkUKmE3GBC87UpAu
+	Z1H64kgHFYmW/VGtnOaMui2Zyop5GJUft02N588QOikEvfgCj3VtM3jLx9Np6va/dKIgxH
+	wNudreZfo+O0lnfDd61c+pZ/ZZe5GOkMmaJ1ved5JsyYxQAChgn+bwajxmdJGw==
+Date: Thu, 10 Oct 2024 08:06:44 +1100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241009.210353-murky.mole.elite.putt-JnYGYHfGrAtK@cyphar.com>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <87msjd9j7n.fsf@trenco.lwn.net>
+ <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="57z5kvqx5z2wfdae"
+Content-Disposition: inline
+In-Reply-To: <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
+X-Rspamd-Queue-Id: 4XP56f6j7rz9tkZ
 
-On Wed, Oct 09 2024 at 16:43, Steven Rostedt wrote:
-> On Wed, 09 Oct 2024 22:13:51 +0200
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->> The reason why this works is that preempt_enable() actually has a
->> meaning while it does not with NONE.
->
-> Looking around, I see the pattern of checking need_resched() from within a
-> loop where a spinlock is held. Then after the break of the loop and release
-> of the spinlock, cond_resched() is checked, and the loop is entered again.
->
-> Thus, I guess this is the reason you are saying that it should just check
-> NEED_RESCHED and not the LAZY variant. Because if we remove that
-> cond_resched() then it would just re-enter the loop again with the LAZY
-> being set.
->
-> Hmm, but then again...
->
-> Perhaps these cond_resched() is proper? That is, the need_resched() /
-> cond_resched() is not something that is being done for PREEMPT_NONE, but
-> for preempt/voluntary kernels too. Maybe these cond_resched() should stay?
-> If we spin in the loop for one more tick, that is actually changing the
-> behavior of PREEMPT_NONE and PREEMPT_VOLUNTARY, as the need_resched()/cond_resched()
-> helps with latency. If we just wait for the next tick, these loops (and
-> there's a lot of them) will all now run for one tick longer than if
-> PREEMPT_NONE or PREEMPT_VOLUNTARY were set today.
 
-You are looking at it from the wrong perspective. You are trying to
-preserve the status quo. I know that's the path of least effort but it's
-the fundamentally wrong approach.
+--57z5kvqx5z2wfdae
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    spin_lock(L);
-    while ($cond) {
-          do_stuff();
-          if (need_resched()) {
-          	spin_unlock(L);
-                resched();
-                spin_lock(L);
-          }
-    }
-    spin_unlock(L);
+On 2024-10-10, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2024-10-09, Jonathan Corbet <corbet@lwn.net> wrote:
+> > luca.boccassi@gmail.com writes:
+> >=20
+> > > As discussed at LPC24, add an ioctl with an extensible struct
+> > > so that more parameters can be added later if needed. Start with
+> > > returning pid/tgid/ppid and creds unconditionally, and cgroupid
+> > > optionally.
+> >=20
+> > I was looking this over, and a couple of questions came to mind...
+> >=20
+> > > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+> > > ---
+> >=20
+> > [...]
+> >=20
+> > > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > > index 80675b6bf884..15cdc7fe4968 100644
+> > > --- a/fs/pidfs.c
+> > > +++ b/fs/pidfs.c
+> > > @@ -2,6 +2,7 @@
+> > >  #include <linux/anon_inodes.h>
+> > >  #include <linux/file.h>
+> > >  #include <linux/fs.h>
+> > > +#include <linux/cgroup.h>
+> > >  #include <linux/magic.h>
+> > >  #include <linux/mount.h>
+> > >  #include <linux/pid.h>
+> > > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, st=
+ruct poll_table_struct *pts)
+> > >  	return poll_flags;
+> > >  }
+> > > =20
+> > > +static long pidfd_info(struct task_struct *task, unsigned int cmd, u=
+nsigned long arg)
+> > > +{
+> > > +	struct pidfd_info __user *uinfo =3D (struct pidfd_info __user *)arg;
+> > > +	size_t usize =3D _IOC_SIZE(cmd);
+> > > +	struct pidfd_info kinfo =3D {};
+> > > +	struct user_namespace *user_ns;
+> > > +	const struct cred *c;
+> > > +	__u64 request_mask;
+> > > +
+> > > +	if (!uinfo)
+> > > +		return -EINVAL;
+> > > +	if (usize < sizeof(struct pidfd_info))
+> > > +		return -EINVAL; /* First version, no smaller struct possible */
+> > > +
+> > > +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(requ=
+est_mask)))
+> > > +		return -EFAULT;
+> >=20
+> > You don't check request_mask for unrecognized flags, so user space will
+> > not get an error if it puts random gunk there.  That, in turn, can make
+> > it harder to add new options in the future.
+>=20
+> In fairness, this is how statx works and statx does this to not require
+> syscall retries to figure out what flags the current kernel supports and
+> instead defers that to stx_mask.
+>=20
+> However, I think verifying the value is slightly less fragile -- as long
+> as we get a cheap way for userspace to check what flags are supported
+> (such as CHECK_FIELDS[1]). It would kind of suck if userspace would have
+> to do 50 syscalls to figure out what request_mask values are valid.
 
-is the bogus pattern which was introduced to deal with the NONE
-shortcomings. That's what we want to get rid of and not proliferate.
+Unfortunately, we probably need to find a different way to do
+CHECK_FIELDS for extensible-struct ioctls because CHECK_FIELDS uses the
+top bit in a u64 but we can't set a size that large with ioctl
+numbers...
 
-For the transition phase we obviously need to do:
+Then again, _IOC_SIZEBITS is 14 so we could easily set the ioctl size to
+something >PAGE_SIZE fairly easily at least...
 
-    while ($cond) {
-          spin_lock(L);
-          do_stuff();
-          spin_unlock(L);
-          cond_resched();
-    }
+> [1]: https://lore.kernel.org/all/20241010-extensible-structs-check_fields=
+-v3-0-d2833dfe6edd@cyphar.com/
+>=20
+> >=20
+> > > +	c =3D get_task_cred(task);
+> > > +	if (!c)
+> > > +		return -ESRCH;
+> >=20
+> > [...]
+> >=20
+> > > +
+> > > +	/*
+> > > +	 * If userspace and the kernel have the same struct size it can just
+> > > +	 * be copied. If userspace provides an older struct, only the bits =
+that
+> > > +	 * userspace knows about will be copied. If userspace provides a new
+> > > +	 * struct, only the bits that the kernel knows about will be copied=
+ and
+> > > +	 * the size value will be set to the size the kernel knows about.
+> > > +	 */
+> > > +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
+> > > +		return -EFAULT;
+> >=20
+> > Which "size value" are you referring to here; I can't see it.
+> >=20
+> > If user space has a bigger struct, should you perhaps zero-fill the part
+> > the kernel doesn't know about?
+> >=20
+> > > +	return 0;
+> > > +}
+> >=20
+> > Thanks,
+> >=20
+> > jon
+> >=20
+>=20
+> --=20
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
 
-And once all the problems with LAZY are sorted then this cond_resched()
-line just goes away and the loop looks like this:
 
-    while ($cond) {
-          spin_lock(L);
-          do_stuff();
-          spin_unlock(L);
-    }
 
-There is absolutely no argument that the spinlock held section needs to
-spawn the loop. We fixed up several of these constructs over the years
-and none of them caused a performance regression. Quite the contrary
-quite some of them improved performance because dropping the lock lets
-other CPUs interleave.
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-Seriously, this crap preserving mindset has to stop. If we go new ways
-then we go them all the way.
+--57z5kvqx5z2wfdae
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There is a cost involved for cleaning the existing crap up, but that
-cost is well worth it, because anything else is just adding to the ever
-increasing accumulation of technical debt. We have enough of that
-already.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZwbwZAAKCRAol/rSt+lE
+b/t6AP4oQ3DHdJAeYSOk3qxzyT8nhRDxIvyE8VJYV/VRGBDgNwEA6wwrbKQFdopZ
+vt65Uj1g0wGGX5D0KkI2uKu03UT4TQg=
+=8+Qn
+-----END PGP SIGNATURE-----
 
-        tglx
+--57z5kvqx5z2wfdae--
 
