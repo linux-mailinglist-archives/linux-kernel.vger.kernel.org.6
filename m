@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-357891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C19899776B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3343C997769
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45D17B2274D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:24:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46921F232D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A251DF734;
-	Wed,  9 Oct 2024 21:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F501E25FB;
+	Wed,  9 Oct 2024 21:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="TukQrfPB"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqrAB98l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DDC17A583
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65C92119;
+	Wed,  9 Oct 2024 21:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509088; cv=none; b=XNlGbMJ3rRC+4ItGN5z/PZogb19+1+gSgFFif6p9gff5UJytGaxUKqngZjfFqKvG3CN1EL9YqZuMBMQsF9jf40WUZ66cgw55cdLGbhzB8Hm3Ttg+odUgTRMFjqgMvOL3/y2MemIrA4ua5NHzoqpi9VCBm5V9/CmKRbthlsQNHJw=
+	t=1728509042; cv=none; b=e4rkCq29IC2A3qjOSOZNf2LdURt1YdaGwIqyXy+KRPDD8+WDrk5KFNbIbVtNQrYJUDy5bC1m21eB1+i+WxD+TaFroneVGZ84uoBFLGPfqhzFPQKiyaO66kBz2RBqY8wJ+TrsotRMy+NyalLdAwl5H1MlavKdqCvBwcrpPwdM884=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509088; c=relaxed/simple;
-	bh=XkHTIL5ybZufqNUnm8IrxZ7npMRbQ/hDL0sjfcRz70o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jmxHybAvn6DGdihbqX43NisFXR6EUPDrsGB7H0wO9DeMZEme4bIGIqbjeqAwir938ASq40LSfkaIRQoTkflKgFPBmeNmoFmBHtmYEVqAqI9iLnjFx6224vn9JiLASVsjdDwdp+0qKXaKADlwLxsX8t+6OAepTcIf/a42nLlVrI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=TukQrfPB; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8DB862C011D;
-	Thu, 10 Oct 2024 10:24:37 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728509077;
-	bh=a9DXvHVrOAXnUtvjBlxwLT7e72jk38nPPA7GGqjeS98=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TukQrfPBQlLFwizFZA/1XVtyavcxoZSGqVwIt1b1TxmLP5iaWKOYAMlFxHd15lclm
-	 vYps7ONsDoTBMVRas/XJx+yluLwtfXYPVEo+98HMAPtVZK860q3+hQSMNoi1sdJuLb
-	 RhXNiISTZ3mF6xZrXpgP21/A3x5/sWCdyK/8XOb3ZlxVkODThe8AITrE800aIT8PZq
-	 dcam3poP6NeJZhyPOZpQhR/lbyUi8CMQdJTLSdiVjrniFBNN+zYcZTV2Xx9ypEQ0jl
-	 aLORveE0C0NRAsPau3a42qjtD1RsSlJ5ZuLxC4G3k7HlYkR2t7gJ+l9c2oWBmB/mxO
-	 XKNnnrbbeBG7g==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6706f4950000>; Thu, 10 Oct 2024 10:24:37 +1300
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
-	by pat.atlnz.lc (Postfix) with ESMTP id 4BB9013ED7B;
-	Thu, 10 Oct 2024 10:24:37 +1300 (NZDT)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id 476672A0BF8; Thu, 10 Oct 2024 10:24:37 +1300 (NZDT)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
+	s=arc-20240116; t=1728509042; c=relaxed/simple;
+	bh=BjEvB7skkEeR6d+4kVsgommqWcL5Ch3q5u9TPLPNrVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FRyXa7crIblvma0dSg/ogtL5RNKPILMTd2CXBlz4KICqR+pHa5YEzPA8qZco5Ikuug9nRTz8IENNGi1VrR4S/aHAEcCt6mYY75XC9rYWAm/MrvtMMRHZfAaKQnN1OV9i4ALse9yd4CDdyRcq5+6+tVNpQMX+5cCUsy3YWsKNmuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqrAB98l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1E5C4CEC3;
+	Wed,  9 Oct 2024 21:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728509041;
+	bh=BjEvB7skkEeR6d+4kVsgommqWcL5Ch3q5u9TPLPNrVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pqrAB98leIdj82zuYYUEUn+3JmIzM8kOG1niL8LYQxL1P8up1LKWsv25+F2mTPaMt
+	 F1lqhqogyrlVqBDReczONoUt/GCXcetIUCLRqe1Bsx2WR860+jfxcPkgqiynGV7LUq
+	 8uM7NUK0eaHIvbR4M+uDmmdsGU1aM0yo9o087NYG/B/+BBwSWDkDyOXYoQR+AnktEa
+	 /8ITYjZTYcMh0/mCLuuZriL8zfXHa7cjwUMNh5ykhfk7/kf5mK94QiNyAipzuQpnzr
+	 jsLiVy++8UETOmfboawJBPJPGdJ6sQB1HajdxptNbCqH9aa2OEiuIgRYPsrX78Ie4E
+	 JScIBdRUDWdtA==
+Date: Wed, 9 Oct 2024 16:24:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v0] net: dsa: mv88e6xxx: Fix uninitialised err value
-Date: Thu, 10 Oct 2024 10:23:19 +1300
-Message-ID: <20241009212319.1045176-1-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.46.0
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Richard van Schagen <vschagen@icloud.com>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [RFC PATCH 1/2] dt-bindings: crypto: Add Mediatek EIP-93 crypto
+ engine
+Message-ID: <20241009212400.GA735586-robh@kernel.org>
+References: <20241009171223.12695-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=6706f495 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=1RBs_uGY3QX_kSjkThsA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009171223.12695-1-ansuelsmth@gmail.com>
 
-The err value in mv88e6xxx_region_atu_snapshot is now potentially
-uninitialised on return. Initialise err as 0.
+On Wed, Oct 09, 2024 at 07:12:20PM +0200, Christian Marangi wrote:
+> Add bindings for the Mediatek EIP-93 crypto engine. The same IP is also
+> present on Airoha SoC.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/crypto/mediatek,mtk-eip93.yaml   | 40 +++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml b/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
+> new file mode 100644
+> index 000000000000..b0173b4da42d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/crypto/mediatek,mtk-eip93.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mediatek EIP93 crypto engine
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek, mtk-eip93
 
-Fixes: ada5c3229b32 ("net: dsa: mv88e6xxx: Add FID map cache")
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/net/dsa/mv88e6xxx/devlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+space?
 
-diff --git a/drivers/net/dsa/mv88e6xxx/devlink.c b/drivers/net/dsa/mv88e6=
-xxx/devlink.c
-index ef3643bc43db..795c8df7b6a7 100644
---- a/drivers/net/dsa/mv88e6xxx/devlink.c
-+++ b/drivers/net/dsa/mv88e6xxx/devlink.c
-@@ -376,7 +376,7 @@ static int mv88e6xxx_region_atu_snapshot(struct devli=
-nk *dl,
- 	struct dsa_switch *ds =3D dsa_devlink_to_ds(dl);
- 	struct mv88e6xxx_devlink_atu_entry *table;
- 	struct mv88e6xxx_chip *chip =3D ds->priv;
--	int fid =3D -1, count, err;
-+	int fid =3D -1, err =3D 0, count;
-=20
- 	table =3D kmalloc_array(mv88e6xxx_num_databases(chip),
- 			      sizeof(struct mv88e6xxx_devlink_atu_entry),
---=20
-2.46.0
+Why mediatek and mtk? Is eip93 an SoC? 
 
+> +      - airoha,mtk-eip93
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    crypto@1e004000 {
+> +      compatible = "airoha,mtk-eip93";
+> +      reg = <0x1fb70000 0x1000>;
+> +
+> +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
+> -- 
+> 2.45.2
+> 
 
