@@ -1,210 +1,165 @@
-Return-Path: <linux-kernel+bounces-356243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C5A995E6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3563E995E7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661771C21E5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08FF31C21E70
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC6114E2D6;
-	Wed,  9 Oct 2024 04:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D2413A265;
+	Wed,  9 Oct 2024 04:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rsSbDGm1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="I5qMwwz7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X7nRv5Nr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3g6cKlPB"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j4wgdquz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC307208D0;
-	Wed,  9 Oct 2024 04:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3352938DC0
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 04:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728446539; cv=none; b=nSPqbRm33TmXsw0kYKKSk9ezLZEH4uuzwuxvRtpsNgVoitGFN9zeiOVZaDdUK8QdMOz6ovyFgFmTxvgBZCqhGC/Nxhss9VQXOFszicjRNIfpPkgM+5ARMmx50/OTFZw90+s7QITazJGyVAYcvpohDPVa1AFVaQgvh+PVD3fnMDc=
+	t=1728447392; cv=none; b=rOlMaNM0vcnAEilKGaHlv7nvyITGrsKa4rR5cAK45y2m5jveASwiaQq0V2amjM7h0PuLbxm2l7moDVLUT3WXD6h/v3f7qPpxxsvCk9MMj01HkHzzCSDPbFDvhuHlVVXIGXBJhsC/wR/pQF6bgfmAKfXdJRwo2EoHysptjKCqJdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728446539; c=relaxed/simple;
-	bh=ZCmr6Jko34VqmD4TInSmUrrSkXVgMiEdj1LIiH2dQvE=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=TnB935e7JJwk0qIJIL5nkSGA4GSIHxWEANsk9eQvTReclvcOFmfhBLHjT8skxuoJ6U7f2JZmB4QvWi7aBjspjtn/V4/LbIEmd3OEFeKnxngp6wOGTPI9/y/S7+pZ0XoRs0viO1qqokJoSP2Ep67ZAY0HesUh6Gp1z6kiSKfXBok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rsSbDGm1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=I5qMwwz7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X7nRv5Nr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3g6cKlPB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D3FA21FE6A;
-	Wed,  9 Oct 2024 04:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728446535; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wqo8sSF1CPsmAksuNelZaO6AY0CRJYERvryEEhSHHdM=;
-	b=rsSbDGm1Ob/4eGh6EWZdaqdg5NSQ2ImptoAoly8xXSig1Yd5BLUV9NKsMoncLi3vxOF09n
-	D/oR0Q96Fx1bWcbjeQ6mzEG+nAiKgIpEkyQKTvnesX091BDaI13rclYTb0ikj2HT7Pyqs5
-	5F0aNfw5mC+IAFGzisl+CxWVGrT4x8s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728446535;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wqo8sSF1CPsmAksuNelZaO6AY0CRJYERvryEEhSHHdM=;
-	b=I5qMwwz7Nc0ilQ3hvn6oX/CYnlZrOlTVszLSKV0aiMm5fgdSugpLZTscW76hRb1gjTM3ax
-	8eUhhBdF2K5ZjfBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=X7nRv5Nr;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3g6cKlPB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728446530; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wqo8sSF1CPsmAksuNelZaO6AY0CRJYERvryEEhSHHdM=;
-	b=X7nRv5NrVkLbg+NO3n48GXR/njxNGEFffbNM29WJxS58kTqT421ltvXcXgvF4y8bFgeseO
-	phLg5SFszhAYymMqWFBSEEv+R/e+b55RC0CawDiuxCGlOjMqSn6TYy9Lb6Pv0aQMOC46Yf
-	TOSmglJU8Mt7gbD7VqvBbr7n5qi1Jlk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728446530;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wqo8sSF1CPsmAksuNelZaO6AY0CRJYERvryEEhSHHdM=;
-	b=3g6cKlPB8J4Or+mnAWKVP7YEyiWj88LsBVWqdLgGPrcyJpCGzz7/ILRti9iuy0lLZwxhmN
-	8zP0BV9yoOHweKCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2616B132BD;
-	Wed,  9 Oct 2024 04:02:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Lg03Mz8ABmdLAgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 09 Oct 2024 04:02:07 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1728447392; c=relaxed/simple;
+	bh=M4d2jOZZqfKpzWFfGSamwuRPKlayPZoicYOtG1LSiR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gCttRHm1hFuBA4FXCIJkgNayvV60q7vDP7fbFUqd1DbOoAF+GKybs0A2nwAHPA8pxww2cQlZOYR0a0sbima5MXw0SKYJochLZURax3Akygx1M9UouUzZ5sUb9xLP+o/84aIAcpTH5iTMIlQo/oBt0jQQWYxuro+/VOxRI1J7dFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j4wgdquz; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728447391; x=1759983391;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=M4d2jOZZqfKpzWFfGSamwuRPKlayPZoicYOtG1LSiR0=;
+  b=j4wgdquzo6lV6A0e8a9o0amfC+DQQmKB8ZodMmrOkycAurD4zL75jUmZ
+   cMYD5+jV6zceom25tDrbRWfx3ofmlckF+pl5aoYqYn4OwOC0icTWHOV29
+   huEkuvcmanTsD5i5V7rOQyNJUTSqAmJdha6NlItOEYMyzt4Um6SdtJj+C
+   L+kMIbt0+BhUYjQAEAJZ4nWNnFc9MFY8GOLXn3mb59ODmCEqlknGG/xVQ
+   EyfZlUwUg1Ae8NHNTg5YfQKfkTpRWwDzwwswHLP42pw5sCcCjh1L/aP5g
+   SJ5vRDRD0dwcMMdf90BGVdJtaIwB/9sYTliMjFtRI3B0F/MrhT8OqYFBQ
+   w==;
+X-CSE-ConnectionGUID: bOEE+cBJRhyifHZO+EHQJQ==
+X-CSE-MsgGUID: LMjjx0jATkCg8AURlCiPMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="53126966"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="53126966"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 21:16:30 -0700
+X-CSE-ConnectionGUID: O9Is6FHoS7CD+qGn6Zcb+Q==
+X-CSE-MsgGUID: Nn4HZwF9Ryq5M7Emp5n9Cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="80095674"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by fmviesa003.fm.intel.com with ESMTP; 08 Oct 2024 21:16:25 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: Yi Liu <yi.l.liu@intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Kalle Valo <kvalo@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	mst@redhat.com,
+	Jason Wang <jasowang@redhat.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	ath10k@lists.infradead.org,
+	ath11k@lists.infradead.org,
+	Lyude Paul <lyude@redhat.com>,
+	Beleswar Padhi <b-padhi@ti.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v4 0/4] iommu: Refactoring domain allocation interface
+Date: Wed,  9 Oct 2024 12:11:43 +0800
+Message-ID: <20241009041147.28391-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra" <peterz@infradead.org>,
- "Kent Overstreet" <kent.overstreet@linux.dev>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linux Next Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-In-reply-to: <20241009144511.5fd62c94@canb.auug.org.au>
-References: <20241009144511.5fd62c94@canb.auug.org.au>
-Date: Wed, 09 Oct 2024 15:02:00 +1100
-Message-id: <172844652013.444407.16580824583469743404@noble.neil.brown.name>
-X-Rspamd-Queue-Id: D3FA21FE6A
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Wed, 09 Oct 2024, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->=20
-> In file included from include/linux/fs.h:6,
->                  from include/linux/highmem.h:5,
->                  from include/linux/bvec.h:10,
->                  from include/linux/blk_types.h:10,
->                  from include/linux/bio.h:10,
->                  from fs/bcachefs/bcachefs.h:188,
->                  from fs/bcachefs/fs.c:4:
-> fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
-> fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *' fro=
-m incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatible-po=
-inter-types]
->   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
+The IOMMU subsystem has undergone some changes, including the removal
+of iommu_ops from the bus structure. Consequently, the existing domain
+allocation interface, which relies on a bus type argument, is no longer
+relevant:
 
-The fix we want is to replace that line with
-   struct wait_bit_queue_entry wait;
-I should have checked more carefully - sorry.
+    struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
 
-I guess we wait for rc3?
+This series is designed to refactor the use of this interface. It
+proposes a new interface iommu_paging_domain_alloc() to replace
+iommu_domain_alloc(). This interface is for allocating iommu paging
+domains for kernel drivers. It takes a device pointer as a parameter,
+which better reflects the current design of the IOMMU subsystem.
 
-Kent: could you please make that change?  The inode_bit_waitqueue() does
-initialisation equivalent of DEFINE_WAIT_BIT() so you only need the declarati=
-on.
+The majority of device drivers currently using iommu_domain_alloc() do
+so to allocate a domain for a specific device and then attach that
+domain to the device. These cases can be straightforwardly migrated to
+the new interface.
 
-Thanks,
-NeilBrown
+The drm/tegra driver is a bit different in that the device pointer
+passed to the helper, which allocates the iommu domain, is not the one
+that will be used for the kernel DMA API. Move the existing logic in
+iommu_domain_alloc() into the driver to ensure it works as intended.
 
+Now that all consumers of iommu_domain_alloc() have switched to the new
+interface, we can finally remove iommu_domain_alloc(). This removal
+paves the way for the IOMMU subsystem to support multiple iommu drivers.
+Additionally, the individual iommu driver implementation for domain
+allocation could also be simplified, as there will always be a valid
+device pointer passed along the path.
 
->       |                               ^
-> include/linux/wait_bit.h:22:20: note: in definition of macro '__WAIT_BIT_KE=
-Y_INITIALIZER'
->    22 |         { .flags =3D word, .bit_nr =3D bit, }
->       |                    ^~~~
-> fs/bcachefs/fs.c:281:9: note: in expansion of macro 'DEFINE_WAIT_BIT'
->   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
->       |         ^~~~~~~~~~~~~~~
-> fs/bcachefs/fs.c:281:31: note: (near initialization for 'wait.key.flags')
->   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
->       |                               ^
-> include/linux/wait_bit.h:22:20: note: in definition of macro '__WAIT_BIT_KE=
-Y_INITIALIZER'
->    22 |         { .flags =3D word, .bit_nr =3D bit, }
->       |                    ^~~~
-> fs/bcachefs/fs.c:281:9: note: in expansion of macro 'DEFINE_WAIT_BIT'
->   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
->       |         ^~~~~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   2382d68d7d43 ("sched: change wake_up_bit() and related function to expect=
- unsigned long *")
->=20
-> I have reverted commit
->=20
->   35f4c66b66c4 ("Merge branch into tip/master: 'sched/core'")
->=20
-> for today.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
+Change log:
+
+v4:
+ - 4 patches remained in this series. These patches have been reviewed
+   and ack'ed but missed the merge window of v6.12-rc1. I resent them in
+   a series to make it go through the iommu tree.
+
+v3: https://lore.kernel.org/linux-iommu/20240610085555.88197-1-baolu.lu@linux.intel.com/
+ - Remove the proposed iommu_user_domain_alloc() interface.
+ - Most of the patches have been merged through the subsystem trees.
+
+v2: https://lore.kernel.org/linux-iommu/20240604015134.164206-1-baolu.lu@linux.intel.com/
+ - Drop the vt-d patches which implement paging domain support from this
+   series. I will post them in a separate series later.
+ - Convert all drivers that call iommu_domain_alloc() to use the new
+   interface and remove iommu_domain_alloc() from the tree.
+ - For the drm/msm driver, make the code compatible with the no-IOMMU
+   case.
+ - Various cleanups and refinements.
+
+v1: https://lore.kernel.org/linux-iommu/20240529053250.91284-1-baolu.lu@linux.intel.com/
+
+Lu Baolu (4):
+  remoteproc: Use iommu_paging_domain_alloc()
+  media: nvidia: tegra: Use iommu_paging_domain_alloc()
+  drm/nouveau/tegra: Use iommu_paging_domain_alloc()
+  iommu: Remove iommu_domain_alloc()
+
+ include/linux/iommu.h                         |  6 ----
+ .../drm/nouveau/nvkm/engine/device/tegra.c    |  4 +--
+ drivers/iommu/iommu.c                         | 36 -------------------
+ .../media/platform/nvidia/tegra-vde/iommu.c   |  7 ++--
+ drivers/remoteproc/remoteproc_core.c          |  6 ++--
+ 5 files changed, 9 insertions(+), 50 deletions(-)
+
+-- 
+2.43.0
 
 
