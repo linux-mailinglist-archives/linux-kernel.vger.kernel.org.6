@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-356967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC29799697C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:03:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 997AD99696C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8B32849AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED241F23625
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15F6192B99;
-	Wed,  9 Oct 2024 12:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85916192B7C;
+	Wed,  9 Oct 2024 12:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="J2yN2wWv"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKVYtJhO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA84192B89;
-	Wed,  9 Oct 2024 12:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32BD18EFE0;
+	Wed,  9 Oct 2024 12:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728475367; cv=none; b=QBWtFJIJTgIzsmWF4rqwP2n74nXUvuGuwoCFivR85ANT38tfYCc+Am3bYl+9cjs0+DdWn6WqTE6vRZh/nULsXEkmDreEWzcmxIKXtPmp70PQpeSExoijxiiXHk9HPGip7MMsrpp3NDgS3uU2TK9tfI8Q6ui6nqsSIFgoqP1ba+k=
+	t=1728475313; cv=none; b=nWE5mwBzOo4JZVKZ1TEGHez1aX0zY2KVZeoAopDuJDajsSnIqeI8hq9fmhXEa8mlTIjbfAAkWaR4XBHjm/3g1xgm8Zym6YmFoZ5oVDdT/Qv5CHTYB7TVHwpqGwZZ6yC6Cy4tIWFSIgVv/bPiFPHS7QxFXd9No5Bv8BHJVCt40dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728475367; c=relaxed/simple;
-	bh=5eJ5itnq5Pqo2kCd+48EfVWhNr9i4pzZ8iS7x/qcYKc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CXiFg39mfpCjRXMDImLyMCmbPHnpl2YfijnX2IVa2BSe+vvBeCDajyXQ62KoERqten9J0vdRYEfq2Mm3fhBztTrM/1KoIw9LyAnxMKw94mwPv5mZVYU3bvU4AmJQGj4q2Atx30p6ZnuyT9EQtNYgymBzcUj7eB6Pi5XdU4NCMC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=J2yN2wWv; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 6127667c863611ef88ecadb115cee93b-20241009
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=0HZS/yt81yGM8+lk4cRjFAiTKAwgRjPBEqGkttJks2E=;
-	b=J2yN2wWvcJj7fWAxi2uQ0GiJfEaN2dMt3RLgzcpdlUPDgYiVjPu9w3EAobvyGA36vEM5+64Ww0bQA4h8mg1gXAmq/oIOjSzDePIz/RYrZ7snXL/QqgNvnRRXCiGK57JV/dXTFAmCf7IgwTG8zuy3PBrrxfk/lrrMTneDVafzuo8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:7ccae316-1702-40d6-b998-af3b96d4bb48,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:ebc6fe64-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 6127667c863611ef88ecadb115cee93b-20241009
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <andy-ld.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1072874375; Wed, 09 Oct 2024 20:02:38 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 9 Oct 2024 20:02:37 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 9 Oct 2024 20:02:36 +0800
-From: Andy-ld Lu <andy-ld.lu@mediatek.com>
-To: <ulf.hansson@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
-	<wenbin.mei@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Andy-ld Lu <andy-ld.lu@mediatek.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 3/3] dt-bindings: mmc: mtk-sd: Add support for MT8196
-Date: Wed, 9 Oct 2024 20:01:26 +0800
-Message-ID: <20241009120203.14913-4-andy-ld.lu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241009120203.14913-1-andy-ld.lu@mediatek.com>
-References: <20241009120203.14913-1-andy-ld.lu@mediatek.com>
+	s=arc-20240116; t=1728475313; c=relaxed/simple;
+	bh=zeg7d9mAEdtrJLKo6NlpC32nCow+JsGBo1Wskv/IHqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yx2wt7Y7KotlpcDhGWibWR+AMaQnVTHEdCXM4oWcfOqLa925dXG8qPLplphtX/3jDEcSDB83Vrt74H94UvB4ASCJml3+kfK6bx5fzK1HZEkk8FCAaa94Z0fUzAoYOHh+Ih+nuuwcu/QWCS+WzxqU7lUFRKgu4kWL/BHJGm+7gpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKVYtJhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17649C4CEC5;
+	Wed,  9 Oct 2024 12:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728475312;
+	bh=zeg7d9mAEdtrJLKo6NlpC32nCow+JsGBo1Wskv/IHqA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VKVYtJhOY26FBiMjwtV8B8XfCgY10sPmmH0d3ezBJeWPQVZTNl88YO6kVnv/9KtQo
+	 UhQsfv0KShlil1R0GvI4K/Mto1ogHg94ntFrOm+ucSogRk/56pcjV0gY8uJZdf3ELB
+	 LAZfMmkH/zU2IYfn69lCQjDeUCed4mEVvcZ8iyQ2EuA7FfsJGBK+E+IREBGkqXwD0b
+	 tmVcm30LNbJiR3g2lNHybF0UvtPn5ybLmyQlJvDYoLJIf7J9L41ls5J7TyOmu7K1RC
+	 v3JgO0y/amCPIljlKhUQXb0fqIY8alqIBG0v5yv86PMyAFlqc76axZwwKQ5a2ibFuY
+	 MfwRFsD5y/qxA==
+Date: Wed, 9 Oct 2024 14:01:49 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, damon@lists.linux.dev,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 08/15] mm/damon/core: Use generic upper bound
+ recommondation for usleep_range()
+Message-ID: <ZwZwrXpRlMW_22kk@localhost.localdomain>
+References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+ <20240911-devel-anna-maria-b4-timers-flseep-v2-8-b0d3f33ccfe0@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-flseep-v2-8-b0d3f33ccfe0@linutronix.de>
 
-Extend the devicetree bindings to include the MT8196 mmc controller,
-new tx/rx would be supported from MT8196, and the register settings
-of STOP_DLY_SEL and POP_EN_CNT would also be variant.
+Le Wed, Sep 11, 2024 at 07:13:34AM +0200, Anna-Maria Behnsen a écrit :
+> The upper bound for usleep_range_idle() was taken from the outdated
+> documentation. As a recommondation for the upper bound of usleep_range()
+> depends on HZ configuration it is not possible to hard code it.
+> 
+> Use the define "USLEEP_RANGE_UPPER_BOUND" instead.
+> 
+> Cc: SeongJae Park <sj@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: damon@lists.linux.dev
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Reviewed-by: SeongJae Park <sj@kernel.org>
 
-Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- Documentation/devicetree/bindings/mmc/mtk-sd.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-index c532ec92d2d9..9281a0326891 100644
---- a/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mtk-sd.yaml
-@@ -24,6 +24,7 @@ properties:
-           - mediatek,mt8135-mmc
-           - mediatek,mt8173-mmc
-           - mediatek,mt8183-mmc
-+          - mediatek,mt8196-mmc
-           - mediatek,mt8516-mmc
-       - items:
-           - const: mediatek,mt7623-mmc
-@@ -190,6 +191,7 @@ allOf:
-             - mediatek,mt8186-mmc
-             - mediatek,mt8188-mmc
-             - mediatek,mt8195-mmc
-+            - mediatek,mt8196-mmc
-             - mediatek,mt8516-mmc
-     then:
-       properties:
--- 
-2.46.0
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
