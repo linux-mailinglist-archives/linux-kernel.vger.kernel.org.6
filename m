@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-357463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6293899718C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:31:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E5C99718D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87B871C21115
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:31:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E66C6B26D9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9081E8834;
-	Wed,  9 Oct 2024 16:24:46 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996EA1E5722;
+	Wed,  9 Oct 2024 16:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbYFTZPT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206DB1946C8;
-	Wed,  9 Oct 2024 16:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B601E284A;
+	Wed,  9 Oct 2024 16:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491086; cv=none; b=mXUMuVPJAo0cAxki0s07V/rg0Ew+W8HnDNUHhsWHdpI9aIzmt4+WRoQ/bWOm5t1fU3Q8EzROtKKKuiKnQn4ta7fJK3vrWa2BxxHC6oCMlFrx53JBgGvs4t0/ihERiRT6gZZwatYViuKzznlnk/xYhR/nWwmz8GKbt5ZS+s+65MU=
+	t=1728491139; cv=none; b=QxuvV9k2DZJXktOhsi13JZUJVF03Q0Bgerdwh9YKLRCviFwUJX0GEDJr4U42jTAVK/WmqEOZheAqY8sg1CSegeoRD150vzONgPrbERrp/g/I8wtEpiSEqlzE9QP1KOHfqBzm17QFFZNfEbpJZA2y92cbbMpIbSYBCF/amLQ7tWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491086; c=relaxed/simple;
-	bh=cPDY6DRM/8+Jf0IhF/3ZWCf+7ZyeYPERaB2SfibvR7s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=X2uF5lwa93iGHUxYZIUPvJgKMztysSRBl+K8lU4w+/b21AFCYmYSVf4Kb2egnLJSyzqG6MUdzWtAPZj7UtvWWq4AeLusvxPPdcJQnfqBbfSbCrN2jWKaw525qUQlZtjBvfMnxdtV3ZCcbAmI8Ceir2n5RGt755gy9VQl7tELC88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XNyPw40bgz9v7Hs;
-	Thu, 10 Oct 2024 00:04:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 51C761400CA;
-	Thu, 10 Oct 2024 00:24:40 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAHSzJArgZn9+6FAg--.60142S2;
-	Wed, 09 Oct 2024 17:24:39 +0100 (CET)
-Message-ID: <aa987698a5b36713f5d85e1c4c2ce9b6e2abf06c.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
- ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Wed, 09 Oct 2024 18:24:29 +0200
-In-Reply-To: <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728491139; c=relaxed/simple;
+	bh=5A8e03ALIcArafOwwK8FQgrsFnyos8sAzJz6+73DYrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dWDw+De7UpNoSTHCpt6dIfQcEnZ0CIt0XLQKxfqAXbo/RImKNkZiC8v3i3jLCp0aQK/KyD+jg6L2OGIA7lAcThFHD6SCLT4kdwipUMTWXOcChgvL4WzWtva5ENMfvangfISiMJeV1oTgYS6jnu5qDWrx0Om5nXieicS4A9ze6JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbYFTZPT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A3AC4CECF;
+	Wed,  9 Oct 2024 16:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728491138;
+	bh=5A8e03ALIcArafOwwK8FQgrsFnyos8sAzJz6+73DYrs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QbYFTZPT3hvwspGh+kWa5InhFxuP7UeyWhsLE2ww6/uUl5uGZVriDVvKzmKtdBy2Z
+	 ccLRJJHiDCJI7f1Hs8OrsqS0WxPIhL50mOqkfMM5vfyl5srmNSsK4Yr48EC800hAcn
+	 iAmxOLV14TIvvGY+6DZisQ71RT+V6xHbeDPETmHqGbF+17/YDDyQZL78St2kcHW9Oh
+	 WdVGs9qdp2zHa+U9lVW6+1VipdFAUskyZzI85GrrrE2hTN4R0Imva+xDYKetV3/wrw
+	 7pleMIskhiNEho62gHvfuB+j6fJkk77pp/h10mAjmZobEN8q02obIHalKt81Oyb05w
+	 +Milhm+ou3vZg==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5398996acbeso8023678e87.1;
+        Wed, 09 Oct 2024 09:25:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK6RAh3qc0Rcw1grSmlJkgnZKDz8ZHLt9hGIuiPiH35AyP1JgZvcjLgbfaTzDdM+oS4j2QQDENT3PGsVONBXLsR0Ct@vger.kernel.org, AJvYcCXhth3EPxX7xriCefaECp9BqY1yecBQ680TDNKSCNHNXIvkBOpEzR1Afip0a7O62JE1S+NPQ5wYi3WR79o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDrZTPP/Lt8w/vpPuZR5sFbVPzJtOjXagB/L4x6k9Zc7vy30wg
+	zIxu2h37m9tfFUL0tafX/XdPrMx5FKatbz3oItX9G8ZZcMIZiT9vNMyNbJTZuhq8+KpM6p8ySkh
+	TYssLKBZmrF4BGAEgsXqzB+HDzVg=
+X-Google-Smtp-Source: AGHT+IFdvxIZIq7dRRjXJhsBI26xjA6XKjsk9PesdGyZPoHzNTW6/hoyjugC+9+sRHBNgWuf7hqA7LvcQbxj5KDag2E=
+X-Received: by 2002:a05:6512:3d93:b0:530:ae22:a6f0 with SMTP id
+ 2adb3069b0e04-539c488cb71mr2451030e87.5.1728491136896; Wed, 09 Oct 2024
+ 09:25:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAHSzJArgZn9+6FAg--.60142S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ur1UKry5AryDXF17JrW7CFg_yoW8WFyDpa
-	yag3W5Gr1ktrZI9rWftFZruaySk3yxWF4DJwnrJw1vvas3ur1jqryrCw1ru345GryIy34I
-	qF1agwn8Cw1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGcF5ngMWwAAsl
+References: <20241009153901.3878233-2-ardb+git@google.com> <20241009120257.7b2de987@gandalf.local.home>
+ <CAMj1kXFjd8AuHaBMLap6RZ18PR9_Cwv2GFbBkswj-e5YpaQFdA@mail.gmail.com> <20241009121931.6156accd@gandalf.local.home>
+In-Reply-To: <20241009121931.6156accd@gandalf.local.home>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 9 Oct 2024 18:25:25 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEwpXPWVm2X8ZzpMc0JoynA=H8kABzD_Bb5+JEhULEr8Q@mail.gmail.com>
+Message-ID: <CAMj1kXEwpXPWVm2X8ZzpMc0JoynA=H8kABzD_Bb5+JEhULEr8Q@mail.gmail.com>
+Subject: Re: [PATCH] x86/ftrace: Don't bother preserving/restoring R10/R11
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-10-09 at 11:36 -0400, Paul Moore wrote:
-> On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> >=20
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Move out the mutex in the ima_iint_cache structure to a new structure
-> > called ima_iint_cache_lock, so that a lock can be taken regardless of
-> > whether or not inode integrity metadata are stored in the inode.
-> >=20
-> > Introduce ima_inode_security() to simplify accessing the new structure =
-in
-> > the inode security blob.
-> >=20
-> > Move the mutex initialization and annotation in the new function
-> > ima_inode_alloc_security() and introduce ima_iint_lock() and
-> > ima_iint_unlock() to respectively lock and unlock the mutex.
-> >=20
-> > Finally, expand the critical region in process_measurement() guarded by
-> > iint->mutex up to where the inode was locked, use only one iint lock in
-> > __ima_inode_hash(), since the mutex is now in the inode security blob, =
-and
-> > replace the inode_lock()/inode_unlock() calls in ima_check_last_writer(=
-).
-> >=20
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/ima/ima.h      | 26 ++++++++---
-> >  security/integrity/ima/ima_api.c  |  4 +-
-> >  security/integrity/ima/ima_iint.c | 77 ++++++++++++++++++++++++++-----
-> >  security/integrity/ima/ima_main.c | 39 +++++++---------
-> >  4 files changed, 104 insertions(+), 42 deletions(-)
->=20
-> I'm not an IMA expert, but it looks reasonable to me, although
-> shouldn't this carry a stable CC in the patch metadata?
->=20
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
+On Wed, 9 Oct 2024 at 18:19, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 9 Oct 2024 18:13:54 +0200
+> Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> > > > @@ -256,7 +254,6 @@ SYM_INNER_LABEL(ftrace_regs_call, SYM_L_GLOBAL)
+> > > >       movq R14(%rsp), %r14
+> > > >       movq R13(%rsp), %r13
+> > > >       movq R12(%rsp), %r12
+> > > > -     movq R10(%rsp), %r10
+> > >
+> > > This part of the patch I think is perfectly fine. We haven't been restoring
+> > > R11 for 12 years I'm sure nobody will notice if we don't restore R10.
+> > >
+> >
+> > Not sure I follow this reasoning tbh. R10/R11 are guaranteed to be
+> > dead, so I don't see any point in preserving them. But if you do
+> > capture them, shouldn't you at least ensure that the captured values
+> > match the values that the callee will observe? (even though they are
+> > dead and we know it will never look at them)
+>
+> Say we have code of:
+>
+>         pushq   r10
+>         pushq   r11
+>         call    foo
+>         popq    r11
+>         popq    r10
+>
+> Where we add a kprobe to the start of foo, the callback should be able to
+> see what r10 and r11 were.
 
-Thanks, will add in the new version.
+Why exactly is that? The contents of R10 and R11 have no purpose going
+forward, so is it just to see what some previous code may have left in
+them?
 
-Roberto
+> But the restore part is for the function foo to
+> see. It shouldn't care about r10 or r11 and if a kprobe updates them, it
+> should not have any effect.
+>
+> What does restoring r10 and r11 give us?
+>
 
-
+Nothing. Which is why I don't understand why you would need to record
+them in the first place.
 
