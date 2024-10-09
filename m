@@ -1,112 +1,190 @@
-Return-Path: <linux-kernel+bounces-357554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF213997275
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:57:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E34B997277
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A81B2820E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021841F22B34
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787031A0BFF;
-	Wed,  9 Oct 2024 16:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431461A4F0C;
+	Wed,  9 Oct 2024 16:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="nPwcRHUE"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i4kvVtlI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qw1Thf14";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i4kvVtlI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qw1Thf14"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2591A255A;
-	Wed,  9 Oct 2024 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C638F1991B6;
+	Wed,  9 Oct 2024 16:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728492956; cv=none; b=ShqwLv8CA8CsSHiOmlxpqfs57VSWIPwqKTlauc+A6GhHd1B/BQf5wyxboiUCswz2wpiRid+mQ/NsV5FV4LRUYW6B9ggRbbTHYF06AsfJOa5BuR0UPX7BFEZGLHwg/iPiGnvGR7vOyAKgmOFnKj0Reb/G7t2nJVnKGE5ZF+AqtxY=
+	t=1728492994; cv=none; b=fCcZB/t5E2etJxUA3JpPa5qghJd2aWAZ5/JOLwytvxXT7eQhK8hM7Kc5xX/YTfTluE5x+A5lPcG9KUspNvAxnxz3VJvbRYXReBR3/YS9L/J882yBOkOjhhxhe0IMm2LcX4zCrLrN6jDK7x7HEtFW5t/rr9MntUFpy6d2/8ZB7Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728492956; c=relaxed/simple;
-	bh=DEi1cBSFHKuZs2fumvcXnBwnFPPwKC0cx8YDDRfHkWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PWBd0pYz6TGPZpFrb8S9nglwuAA6RxBc+lii53qddMoKTg4CudMIgbwwUp8ebkV6JgJvNWn5p4iwLujjM5fDPFSPSU5A4bRRBN7HxSah/fCuOGmAjVDEr3oTbAYNQpxj9P9SGvKUOt50mah83RHN1rxq803WGrJQxnTg9qhXmP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=nPwcRHUE; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout1.routing.net (Postfix) with ESMTP id 39BBD4105D;
-	Wed,  9 Oct 2024 16:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1728492953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1728492994; c=relaxed/simple;
+	bh=Y1f6IJnRYF29Eq3PI5vgzdeUr9Mbsns9nINXOjdPA24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alYpbQRt7rZ4eYYOZ+VwEgGCdMFHVJRKoksUn1NNVOljCCYf8sfCXbM7nv0Z+ovC7DDwmQZEuAQWIgraorkk47eY3VSgyZdcOdcJXdRLKt6OvedPCnZarbPrkdxTVUvqPy/6bnYlbSrG/T0Wxtbglq0W3NUOQyKoAz/QxOYOKLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i4kvVtlI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qw1Thf14; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i4kvVtlI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qw1Thf14; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BCC0921DF8;
+	Wed,  9 Oct 2024 16:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728492990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Xvumcaz9LMidfFIP90W2O23YVGZiQ4aWOQ5hzZZ1KJ8=;
-	b=nPwcRHUEdi6VOFAYuJfqkaRKXg+zoRGehoAnpSu8pmhXdrkaodzkaKgLCZA/artmtNARhU
-	TOPz4uu6OIu9KUog53WqrKHvvYp3nv1LnZVl8hifc03gpgOHRrI29Qv0gHsTqjlGH/MlsE
-	rITFFt3dFttNChPQadjUARm8CHdnzvk=
-Received: from frank-u24.. (fttx-pool-217.61.150.182.bambit.de [217.61.150.182])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 4F06310030B;
-	Wed,  9 Oct 2024 16:55:52 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Chaotian Jing <chaotian.jing@mediatek.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wenbin Mei <wenbin.mei@mediatek.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	daniel@makrotopia.org,
-	john@phrozen.org,
-	eladwf@gmail.com,
-	ansuelsmth@gmail.com
-Subject: [PATCH v3 2/2] mmc: mtk-sd: add support for mt7988
-Date: Wed,  9 Oct 2024 18:55:42 +0200
-Message-ID: <20241009165547.5959-3-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241009165547.5959-1-linux@fw-web.de>
-References: <20241009165547.5959-1-linux@fw-web.de>
+	bh=MGD59A1e01pYnN95FgLMB7cBzpem21vRVd0iHeQxI9A=;
+	b=i4kvVtlIYgqKd6zbBLyq8zZDIliQmrsklGtM9mmzi/8lWEU+FZX0LsyiNKJH1sQejxf2mE
+	tV9RYjkHwpco4Jrx3NC/P5KZwTRp0MuI8nM18h3n54jgwrGtRT1vwM9NSpquK6Cxgv+Yfa
+	hsZSFU+h/FGNfv9Cf9WeWrmPnhYMQqQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728492990;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MGD59A1e01pYnN95FgLMB7cBzpem21vRVd0iHeQxI9A=;
+	b=qw1Thf14tCfqXymtv7D9JwyaIZIMQHyIpIKWUW+mu7XtmMrdcBm49k4CAcMWuPOjFnZqAr
+	zkfEcaycF/NiuMCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=i4kvVtlI;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qw1Thf14
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728492990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MGD59A1e01pYnN95FgLMB7cBzpem21vRVd0iHeQxI9A=;
+	b=i4kvVtlIYgqKd6zbBLyq8zZDIliQmrsklGtM9mmzi/8lWEU+FZX0LsyiNKJH1sQejxf2mE
+	tV9RYjkHwpco4Jrx3NC/P5KZwTRp0MuI8nM18h3n54jgwrGtRT1vwM9NSpquK6Cxgv+Yfa
+	hsZSFU+h/FGNfv9Cf9WeWrmPnhYMQqQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728492990;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MGD59A1e01pYnN95FgLMB7cBzpem21vRVd0iHeQxI9A=;
+	b=qw1Thf14tCfqXymtv7D9JwyaIZIMQHyIpIKWUW+mu7XtmMrdcBm49k4CAcMWuPOjFnZqAr
+	zkfEcaycF/NiuMCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B3A91136BA;
+	Wed,  9 Oct 2024 16:56:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /GPYK761BmeHcgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 16:56:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 51F82A0896; Wed,  9 Oct 2024 18:56:26 +0200 (CEST)
+Date: Wed, 9 Oct 2024 18:56:26 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: grab current_time() in setattr_copy_mgtime() when
+ ATTR_CTIME is unset
+Message-ID: <20241009165626.wwuy4gcwkjy2sc6n@quack3>
+References: <20241009-mgtime-v1-1-383b9e0481b5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 4d18607f-4818-410b-874c-06e44f110b2b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009-mgtime-v1-1-383b9e0481b5@kernel.org>
+X-Rspamd-Queue-Id: BCC0921DF8
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.cz:dkim,suse.cz:email];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_THREE(0.00)[3];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Wed 09-10-24 12:26:32, Jeff Layton wrote:
+> With support of delegated timestamps, nfsd can issue a setattr that sets
+> the atime, but not the ctime. Ensure that when the ctime isn't set that
+> "now" is set to the current coarse-grained time.
+> 
+> Reported-by: Jan Kara <jack@suse.cz>
+> Closes: https://lore.kernel.org/linux-fsdevel/20241009153022.5uyp6aku2kcfeexp@quack3/
+> Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_mgtime")
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> A fix for bug that Jan reported. Christian, it may be best to fold this
+> into d8d11298e8a1.
 
-Add support for mmc on MT7988 SoC.
+Looks good to me. Feel free to add:
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
-changes:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-v3:
-- reuse mt7986 platform data instead of copy
----
- drivers/mmc/host/mtk-sd.c | 1 +
- 1 file changed, 1 insertion(+)
+although I agree with Jeff it's best to fold this into the original patch.
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 89018b6c97b9..aaf27fd211c1 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -629,6 +629,7 @@ static const struct of_device_id msdc_of_ids[] = {
- 	{ .compatible = "mediatek,mt7620-mmc", .data = &mt7620_compat},
- 	{ .compatible = "mediatek,mt7622-mmc", .data = &mt7622_compat},
- 	{ .compatible = "mediatek,mt7986-mmc", .data = &mt7986_compat},
-+	{ .compatible = "mediatek,mt7988-mmc", .data = &mt7986_compat},
- 	{ .compatible = "mediatek,mt8135-mmc", .data = &mt8135_compat},
- 	{ .compatible = "mediatek,mt8173-mmc", .data = &mt8173_compat},
- 	{ .compatible = "mediatek,mt8183-mmc", .data = &mt8183_compat},
+								Honza
+
+> ---
+>  fs/attr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/attr.c b/fs/attr.c
+> index c614b954bda5244cc20ee82a98a8e68845f23bd7..9caf63d20d03e86c535e9c8c91d49c2a34d34b7a 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -298,6 +298,7 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+>  	} else {
+>  		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
+>  		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
+> +		now = current_time(inode);
+>  	}
+>  
+>  	if (ia_valid & ATTR_ATIME_SET)
+> 
+> ---
+> base-commit: 109aff7a3b294d9dc0f49d33fc6746e8d27e46f6
+> change-id: 20241009-mgtime-f672852d67cc
+> 
+> Best regards,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
