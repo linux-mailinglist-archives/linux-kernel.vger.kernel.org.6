@@ -1,188 +1,163 @@
-Return-Path: <linux-kernel+bounces-357827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEF699769F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FC49976AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E9A31C22528
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6D21C2231A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9021B1E32D5;
-	Wed,  9 Oct 2024 20:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD7D1E47D9;
+	Wed,  9 Oct 2024 20:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8JLrtGu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hukEGIaA"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E0B199FB8;
-	Wed,  9 Oct 2024 20:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824621E22F5;
+	Wed,  9 Oct 2024 20:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728506497; cv=none; b=mMEcJe0KZn8O7wJ9qcZhuZcoICRda7ltvsHgKfnIYb/OAEekZJHk6Y9biTKOqA9XgN1ze6XdkVGhaV8SoT0zsOL3LuY2E/xZ01wQfH+t35EmbGXbz0JdNi50LidbxvUwXedsIuUKrCVGXlJpa1unWaA/aII1b8lzqI3Xu39HMA4=
+	t=1728506509; cv=none; b=DlqLtXYtC5I4YMt9T8VsWEUuaUEd4iYfpk3TAMmUL5T80qxp5bM8+70RCyFIStZRb8b7/jzV/X9iQmu9WTlik41UmpdVSPMY99YFf5yGwDkNO9xIBVTWh1C7zoZkYMMb/wrna46Ryo2NO4pP50CpJBvNX0vy+xQEHFG5YyIchZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728506497; c=relaxed/simple;
-	bh=yza4YUbv4ZDOEyFxjvWcvVnI7e/+TRmYuEUahLq5Ssg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jffhZBSXSSYUjgfnkdiiBoSJz9alWpfCKGdYdiC6SSwWAiKU7gqblPIOqMncI2KpMvhjZfUDxxslpPkOZE9t3Ciaho7BDpDlStiqDZAhKHpWfIUBZfztTZnxnFX9cafWKjBdHGQ84O545EJBRzmwWdhTGyEXio7CAUVkDgIsJOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8JLrtGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8CEC4CEC3;
-	Wed,  9 Oct 2024 20:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728506494;
-	bh=yza4YUbv4ZDOEyFxjvWcvVnI7e/+TRmYuEUahLq5Ssg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=p8JLrtGuhuocV0VijNTrh7LhsLYeElAZiICXJ7v4CNiFV6vlWbye7fcB++dqV5UmP
-	 NDE/3T7TpyyeF59ZwiIb1VMJfB1j//awGZLqqyJl47MvDNqvIefWQm1vq2N7xthsVI
-	 KgAt4maTd/WbnYI8XYzG5kV8JQpuGPHhQnuZFUeOTGJul3EHRj8ebgzwDQl62/YaV2
-	 icVFK9DNWk23PchNvBHnBjUF9EkKRpOBPIqSLdsZWM6hl8038ch+LWz8uWwkItwCox
-	 DfoYsGYgif9u5/57tXeeW3Sds+T6tWoUpUpBxf9PrnqwWFe/flF40kNh9XaimSCd8X
-	 2YEk0hR0qrrig==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	David Gow <davidgow@google.com>,
-	devicetree@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] of: Skip kunit tests when arm64+ACPI doesn't populate root node
-Date: Wed,  9 Oct 2024 13:41:31 -0700
-Message-ID: <20241009204133.1169931-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+	s=arc-20240116; t=1728506509; c=relaxed/simple;
+	bh=w9pCLkNbrQoLg1k3mahFOF/NkFKpOA1SibfIdCm3zLI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJZh0ShCb2S+rd5zOY7v+y2Q1zB62oYr1DUq0VjYDH5plSdRb9wq22PHm/v7C7JWHgWlOEY30W1Et6SRmNqobGP624ihGmwicmJfM7S6r71geLWnkq2bSWKJiq7O9y5h4qtftOcT6yAshdrYIiro0Tt25J3wyKRrKjhnTzNh/Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hukEGIaA; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c8a2579d94so168967a12.0;
+        Wed, 09 Oct 2024 13:41:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728506506; x=1729111306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQF2rqqlC2ZA1LKXQ0ck6TwzR+w+uVrwQifk5iiRn24=;
+        b=hukEGIaAAnjW8b4F9SAnK5MgA+UTgQf9Kj1Q3TpgLBEOrqqKLf8POZFKRdxaD5rLDt
+         oLb/H4umEYUx+qGRcQXTe48nfd8EXvBnbzL+NrXKWBbygda3BF6hf0+LNwNS5f+8t9bu
+         i6Hf49+yER9I+CuWnrQSCiF2tLHCOQMleqxQ9jSPg7hLhePkXvWQiRcPQfI8INs/oiJw
+         VREehCUeOiTQVN+3e/0reBDmfNedogptvYwPieRwlTwfi4h4AwCK4wCARLnoH+8GokC6
+         lf4y/1Jjx7pNqrZh7+SqKzXSKJBLzRSiy+aqu80TJLtlcX6RwYipEf4fEv24V0hxUfDD
+         DmLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728506506; x=1729111306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YQF2rqqlC2ZA1LKXQ0ck6TwzR+w+uVrwQifk5iiRn24=;
+        b=vpiABfDtdubOtoyJuu1GJ5E8Lxrumhg9Q0RP1y+m8AnsUK79/TtGeyeyDpWiqR02p2
+         vZZ+2knJrPiIqTGri9i8aINF1279OwCnvw6LE4192k5MD2PihtMgcu3VryHPdUamcGxD
+         IPaUvLB7FqVJdZqPAWVAWikw2sUXszwwduLn5yowbmQrCP/ZPbBHpQNB1uFaJNMVnDCz
+         VztHLIku4sJITJwirbFE+gkZCI2YZ7sFUlmdNKW61YSALt+0kFmBPxd3Gjca3QS1TuL6
+         QfMbuzfVAZHBN06Yl1AM8lopdlFyG1oHMmNo1o87Qs0rR1LYgX/pBiIamHS96EXn3lgJ
+         OLQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwvlEl9Pkg8lOEBaZPaNdfRcYEZj7dLqaDblpDvFjPNulROG0pCK+EQInO3SK29NUzCsI=@vger.kernel.org, AJvYcCWtMAjhQaKktTj0nha4J/U1bjz96/MnztgzIS9orUnRe5zmSVMM2tYdmUhNRd16IYOztLxhewjk/SYGjuay@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+GTdI/Qo79rPcVoOL/DFa2vyj8w2vvLccCkFAKmUV2XlyEA/k
+	2LtX05nYiL1A6DE14wM25j2WIhBge/clvkIKkYMxZi8A9kTXZ/yi
+X-Google-Smtp-Source: AGHT+IH1q9gzkNj3dyPFi/3lejnYdf8z4IfmMdtH0FmDLemybkwb7IfxVLNH3OIw80UiUO6jzzUr2w==
+X-Received: by 2002:a17:907:d20:b0:a99:4ba9:c965 with SMTP id a640c23a62f3a-a998d327a84mr314305066b.44.1728506505580;
+        Wed, 09 Oct 2024 13:41:45 -0700 (PDT)
+Received: from krava (85-193-35-211.rib.o2.cz. [85.193.35.211])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99414b675esm635493966b.10.2024.10.09.13.41.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 13:41:45 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 9 Oct 2024 22:41:42 +0200
+To: Jiri Olsa <olsajiri@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <Zwbqhkd2Hneftw5F@krava>
+References: <Zr3q8ihbe8cUdpfp@krava>
+ <CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
+ <20240816101031.6dd1361b@rorschach.local.home>
+ <Zr-ho0ncAk__sZiX@krava>
+ <20240816153040.14d36c77@rorschach.local.home>
+ <ZsMwyO1Tv6BsOyc-@krava>
+ <20240819113747.31d1ae79@gandalf.local.home>
+ <ZsRtOzhicxAhkmoN@krava>
+ <20240820110507.2ba3d541@gandalf.local.home>
+ <Zv11JnaQIlV8BCnB@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv11JnaQIlV8BCnB@krava>
 
-A root node is required to apply DT overlays. A root node is usually
-present after commit 7b937cc243e5 ("of: Create of_root if no dtb
-provided by firmware"), except for on arm64 systems booted with ACPI
-tables. In that case, the root node is intentionally not populated
-because it would "allow DT devices to be instantiated atop an ACPI base
-system"[1].
+On Wed, Oct 02, 2024 at 06:30:30PM +0200, Jiri Olsa wrote:
+> On Tue, Aug 20, 2024 at 11:05:07AM -0400, Steven Rostedt wrote:
+> > On Tue, 20 Aug 2024 12:17:31 +0200
+> > Jiri Olsa <olsajiri@gmail.com> wrote:
+> > 
+> > > > Could it be possible that the verifier could add to the exception table for
+> > > > all accesses to tracepoint arguments? Then if there's a NULL pointer
+> > > > dereference, the kernel will not crash but the exception can be sent to the
+> > > > user space process instead? That is, it sends SIGSEV to the task accessing
+> > > > NULL when it shouldn't.  
+> > > 
+> > > hm, but that would mean random process that would happened to trigger
+> > > the tracepoint would segfault, right? I don't think we can do that
+> > 
+> > Better than a kernel crash, isn't it?  I thought the guarantee of BPF was
+> > not to ever crash the kernel. Crashing user space may be bad, but not
+> > always fatal, and something that can be fixed by fixng the BPF program that
+> > was loaded.
+> > 
+> > > 
+> > > it seems better to teach verifier which tracepoint arguments can be NULL
+> > > and deny load of the bpf program that would not check such argument properly
+> > 
+> > These are not mutually exclusive. I think you want both. Adding annotation
+> > is going to be a whack-a-mole game as new tracepoints will always be
+> > created with new possibly NULL parameters and even old tracepoints can add
+> > that too. There's nothing to stop that.
+> > 
+> > The exception table logic will prevent any missed checks from causing a
+> > kernel crash, and your annotations will keep user space from crashing.
+> > 
+> > -- Steve
+> 
+> sorry for delay.. reviving this after plumbers and other stuff that got in a way
+> 
+> Steven,
+> we were discussing this in plumbers and you had an idea on doing this
+> automatically through objtool.. IIRC you meant tracking instructions
+> that carry argument pointers for NULL checks
+> 
+> AFAICS we'd need to do roughly:
+>   - for each tracepoint we'd need to interpret one of the functions
+>     where TP_fast_assign macro gets unwinded:
+>       perf_trace_##call
+>       trace_custom_event_raw_event_##call
+>       trace_event_raw_event_##call
+>   - we can't tell at this point which argument is kernel object,
+>     so we'd need to check all arguments (assuming we can get their count)
+>   - store argument info (if it has null check) into some elf tables and
+>     use those later in bpf verifier
+>   - it's all arch specific 
+> 
+> on first look it seems hard and fragile (given it's arch specific)
+> but I might be easily wrong with above.. do you have an idea on how
+> this could work?
 
-Introduce an OF function that skips the kunit test if the root node
-isn't populated. Limit the test to when both CONFIG_ARM64 and
-CONFIG_ACPI are set, because otherwise the lack of a root node is a bug.
-Make the function private and take a kunit test parameter so that it
-can't be abused to test for the presence of the root node in non-test
-code.
+Hi Josh,
+we'd like to have information on which of tracepoint's arguments can be NULL
 
-Use this function to skip tests that require the root node. Currently
-that's the DT tests and any tests that apply overlays.
+Steven had an idea that objtool could help with that by doing something like
+what's described above.. would you have any thoughts on that?
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/r/6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net
-Link: https://lore.kernel.org/r/Zd4dQpHO7em1ji67@FVFF77S0Q05N.cambridge.arm.com [1]
-Fixes: 893ecc6d2d61 ("of: Add KUnit test to confirm DTB is loaded")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/of/of_kunit_helpers.c | 15 +++++++++++++++
- drivers/of/of_private.h       |  3 +++
- drivers/of/of_test.c          |  3 +++
- drivers/of/overlay_test.c     |  3 +++
- 4 files changed, 24 insertions(+)
-
-diff --git a/drivers/of/of_kunit_helpers.c b/drivers/of/of_kunit_helpers.c
-index 287d6c91bb37..7b3ed5a382aa 100644
---- a/drivers/of/of_kunit_helpers.c
-+++ b/drivers/of/of_kunit_helpers.c
-@@ -10,6 +10,19 @@
- #include <kunit/test.h>
- #include <kunit/resource.h>
- 
-+#include "of_private.h"
-+
-+/**
-+ * of_root_kunit_skip() - Skip test if the root node isn't populated
-+ * @test: test to skip if the root node isn't populated
-+ */
-+void of_root_kunit_skip(struct kunit *test)
-+{
-+	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
-+		kunit_skip(test, "arm64+acpi doesn't populate a root node");
-+}
-+EXPORT_SYMBOL_GPL(of_root_kunit_skip);
-+
- #if defined(CONFIG_OF_OVERLAY) && defined(CONFIG_OF_EARLY_FLATTREE)
- 
- static void of_overlay_fdt_apply_kunit_exit(void *ovcs_id)
-@@ -36,6 +49,8 @@ int of_overlay_fdt_apply_kunit(struct kunit *test, void *overlay_fdt,
- 	int ret;
- 	int *copy_id;
- 
-+	of_root_kunit_skip(test);
-+
- 	copy_id = kunit_kmalloc(test, sizeof(*copy_id), GFP_KERNEL);
- 	if (!copy_id)
- 		return -ENOMEM;
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index 04aa2a91f851..c235d6c909a1 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -42,6 +42,9 @@ extern raw_spinlock_t devtree_lock;
- extern struct list_head aliases_lookup;
- extern struct kset *of_kset;
- 
-+struct kunit;
-+extern void of_root_kunit_skip(struct kunit *test);
-+
- #if defined(CONFIG_OF_DYNAMIC)
- extern int of_property_notify(int action, struct device_node *np,
- 			      struct property *prop, struct property *old_prop);
-diff --git a/drivers/of/of_test.c b/drivers/of/of_test.c
-index c85a258bc6ae..b0557ded838f 100644
---- a/drivers/of/of_test.c
-+++ b/drivers/of/of_test.c
-@@ -7,6 +7,8 @@
- 
- #include <kunit/test.h>
- 
-+#include "of_private.h"
-+
- /*
-  * Test that the root node "/" can be found by path.
-  */
-@@ -36,6 +38,7 @@ static struct kunit_case of_dtb_test_cases[] = {
- 
- static int of_dtb_test_init(struct kunit *test)
- {
-+	of_root_kunit_skip(test);
- 	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
- 		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE");
- 
-diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
-index 19a292cdeee3..7cbf9a472111 100644
---- a/drivers/of/overlay_test.c
-+++ b/drivers/of/overlay_test.c
-@@ -11,6 +11,8 @@
- #include <kunit/of.h>
- #include <kunit/test.h>
- 
-+#include "of_private.h"
-+
- static const char * const kunit_node_name = "kunit-test";
- static const char * const kunit_compatible = "test,empty";
- 
-@@ -62,6 +64,7 @@ static void of_overlay_apply_kunit_cleanup(struct kunit *test)
- 	struct device *dev;
- 	struct device_node *np;
- 
-+	of_root_kunit_skip(test);
- 	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
- 		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE for root node");
- 
-
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
-
+thanks,
+jirka
 
