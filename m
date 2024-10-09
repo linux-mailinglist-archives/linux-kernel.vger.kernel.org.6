@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-357954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70690997869
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:22:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A431997877
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0251EB22E02
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370861C228BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA2A1E32C9;
-	Wed,  9 Oct 2024 22:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3811E379F;
+	Wed,  9 Oct 2024 22:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mIuRj7j8"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wiwa3rlr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FA916BE3A;
-	Wed,  9 Oct 2024 22:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A7816BE3A;
+	Wed,  9 Oct 2024 22:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728512528; cv=none; b=W2ZXJjnwZtzIQ7pGTbhSVEOzy00dQKhEeiGAW6rmoFw/GM0K2lQe/nEFFy3QPoW/fOIgzInTpUcxCEEfxV1lMlFd3X6SIZSP0LhCFPakI1WsZiz7LnBdTiffvGgw5NPSi6HycLRHcLUUVeH0Oa2igZA4Ofj5JPd2swI29dt/4YY=
+	t=1728512633; cv=none; b=ZFo8BFFJTy6kc/8ZL25UxCnTBthkV7yoiGVu6a9s6EBCleeckbd4w9UGshJWOPY9C1oXc1rSEFNiclMpNrXhBbV2irQH+mYaiQIPvrOKDPQVuL0RNPMV1c7xe86nwfpPgXHDcu7/uliYIZKF3arUQln6RyucfWHpiMlghB+yP3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728512528; c=relaxed/simple;
-	bh=t2grafQ4p5qcPLkHVLDhCLzP8cWU7FO81QJnhVWwcr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cAIzHxIPP+CUQT9VltacadB1ixB7nKyz6kIehqgJV3/MzZDe6fnETe933EStEgA8XDgfFo4hyQbxzj6RxH7J6WA3MJyUsf9VRDKkNdu91MXkdA2sWW4VKijotOMfC6m1umUnfuUlu7ToIjcrEK5igW32Xk+ev9Ybe0e7/NJ0GtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mIuRj7j8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=EOYU8y4+qI/COMS/ju+DcVNRCAm1uZYZJBornpKVAuw=; b=mIuRj7j8eZEgpO5sH3Bj/L47OG
-	S2IGXdvnH2o5Gk4BDASpjWkQs7AVXcwb32o0X1ofIMWJI+4ZVNTkD0m1CgUYf6bfVtFhbbRX14guT
-	gyPry2F7ICdNe7oR9IK3mOSNM+A9UG6nEYbACHRPCRNN6kCAC97Nnnhk8xP+8bKWNvmKI9wlz9nkH
-	SgNc2ZxzVNja9GlAYU9O56sINaztznj+//jwcc5KoIdQHrzBF2knYVq6Bu4Th8YzRlsxI0Riu19aa
-	e7DxMuXPmcu1ttlbdOYDjS1/5PElfw3iMMfxQuruErtqhIM+33GD3Q6PjcFUQBgjvQIBbVIDfVwsY
-	vqngR5Kg==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syf4F-00000005xB0-40PE;
-	Wed, 09 Oct 2024 22:22:05 +0000
-Message-ID: <b4a4668d-1280-446e-b1a9-a01fd073fd8f@infradead.org>
-Date: Wed, 9 Oct 2024 15:22:02 -0700
+	s=arc-20240116; t=1728512633; c=relaxed/simple;
+	bh=w4l9dzDzlilO4E+6HL//zAT4zhaj8ld4amfc5zECEfQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BgZFNti6Cp5Zfvo74gnk4Y8sLJAE2yWeVysachcCehMVU98fZPCD6GG8MhgZ7YuMkXblZpnp/uSOOh6Fmb/P8mNrKQwAZMewbybzD/XACx8v86FzAZG7HvMag8xUwjXsZowwlyicC2jB2InIeWDF+mHEezf9NUBZfSYXQMXOLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wiwa3rlr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C8D7C4CECC;
+	Wed,  9 Oct 2024 22:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728512632;
+	bh=w4l9dzDzlilO4E+6HL//zAT4zhaj8ld4amfc5zECEfQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Wiwa3rlrYH9BC46EoCHkt+QLbJoTT1X2QA01HAqIYKjAte3oUq44GaeL+zZ4AkJ2c
+	 2fmhTarWCgJZzvugjgiXFaapdrUxRw+aMHjQkxk7R7tMQ4X8TAISQfJF8mwZjkVS1k
+	 P8ckfmO9JeSeyS8x4lu0kJaTjkOtHpLIIPYKJmo4HQ1/9VWZa6uO3ff20ntiwcvv+8
+	 WNsOi1fvz3WyQp8/mTsIKp1bTZX1Q46ddgghD/obeQF4nyOrExSGPC7njchLh/Wo1L
+	 w8uAfe7NKlqBlMlX1oAMsBsi5zUdQStu0GaxZpBZ0z6hB0R3qZA3l0SEImsa2B3CEC
+	 jNcMMmsZn1/Ag==
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a394418442so1476475ab.0;
+        Wed, 09 Oct 2024 15:23:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU61D2CRcLaVMIBuI6bY2KR8gDO+54vJTIDrd9dXpGnlhfz9PSeIgFxDEo0aa683hEME9WacFNEcK75/Q==@vger.kernel.org, AJvYcCU6d3T+xfYZy2ZFXy9VmY0Bz4A9MHDIH3H1Dt3ynUChED1Q2uAlSOfIdOM6LQQ9gJ3QHvtJ58hVz3HIyt6ZAg==@vger.kernel.org, AJvYcCUAd9vKSVac0AFdqFCSYRMUhYB+UQLfnbKVNt9XTL7TY1kal0FuLABW1DsLU43cPhtJW/5DDpstPUugb0hi@vger.kernel.org, AJvYcCUYrvTnCSh4MK873qv36UUCOhdtHj19TbOGgvM8d0S8sWOsfqIyiJ6jPS0CEqCe9YN2eoeS1IyefRRd1mNpLA==@vger.kernel.org, AJvYcCVI5+g2UIN13rDvUyTWLgNl03epMtsNWRHbF8T6c3XzRTEe5Te85331sYOS5vLSJ23RA4w=@vger.kernel.org, AJvYcCW5r0tPZikGROllmLilDHOQcXRNzPcUchdGX0JolS0jcZy30DBVKz4HMtBSYTVRlFHWXAQCfX1lLLx0fw==@vger.kernel.org, AJvYcCWIF2EZtnabVrRizeMQ/Tep9LTVr87ZDxZx83HJvZQQQ86NsOwKQHEzOKDN0Xqawqdss2IsMK+oO/OFnG3apSU=@vger.kernel.org, AJvYcCWW7Pza1E4TOk00NSKM83YK/yh7inog4RCog7HafeZksnpyNXVeFZSoFS5NHHbNTJ47fNcRqy0QITM+Vw==@vger.kernel.org, AJvYcCXCTVRsAhw+rPuKzky04p2bXjw8VQZ82+vrCqfA4Yx0DnKKYncBjkvhgSv79h37ER6NxmrHjY27AuB+/w==@vger.kernel.org, AJvYcCXZRssXwAo/
+ AoVv+xF31T8SbmiHry76PkvJONpDdg1KO/SSvumEAS5ouqmtI6xptdmebRNO62viHxFfT5k=@vger.kernel.org, AJvYcCXbg/L4OaMANur3cTXZeXkAmiqmyFSK97rxe7C5AHGfqMAi/4MIVi9X8X3oe03WPJ1PJjJxhdVnmVODVzTSzoA8gESi@vger.kernel.org, AJvYcCXpMyniBp7nUwtryj0Diu50gmpx6gzO6of+c7dZofHAtVJRf6vBep9vIVdkig4y3/RA7XDZODFZ33O86nEc@vger.kernel.org, AJvYcCXvXb0vrL9zsDB5gWaymu5B7GP/LIsC0kSisKZlo3yGno3edCKU/B6Jm+pbe0yvNRKmGUHLzNlxAFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXv35Vz6MPYXtnQB6bXHLaTDBgUIz1+Bcw9ur/SOVy01qpX3mK
+	8AU3HMd55oMTZ91TqFK75LVJk+fRg3aWoLiA1riG08HddGm4Y6BbnmK+3053It5O/qJYBG15IR0
+	V5jvbKTFl4U5B0UDDgnKBlf2+VeQ=
+X-Google-Smtp-Source: AGHT+IE+0c/kMVosLTSGHy+n6QvIYJcOAn6W5BXDQkMmjF/nhxZwOJHSZ6SOjh26Vu9mUcUiW0DFRwoy/+Y0vdg6KQk=
+X-Received: by 2002:a05:6e02:1fe6:b0:3a0:aac2:a0a4 with SMTP id
+ e9e14a558f8ab-3a397cffa21mr40549325ab.9.1728512631542; Wed, 09 Oct 2024
+ 15:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] XArray: minor documentation improvements
-To: Tamir Duberstein <tamird@gmail.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
- <20241009205237.48881-2-tamird@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241009205237.48881-2-tamird@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241009180816.83591-1-rppt@kernel.org> <20241009180816.83591-5-rppt@kernel.org>
+In-Reply-To: <20241009180816.83591-5-rppt@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 9 Oct 2024 15:23:40 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW66etfdU3Fvk0KsELXcgWD6_TkBFjJ-BTHQu5OejDsP2w@mail.gmail.com>
+Message-ID: <CAPhsuW66etfdU3Fvk0KsELXcgWD6_TkBFjJ-BTHQu5OejDsP2w@mail.gmail.com>
+Subject: Re: [PATCH v5 4/8] module: prepare to handle ROX allocations for text
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@quicinc.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Christoph Hellwig <hch@infradead.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, 
+	Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>, 
+	Stafford Horne <shorne@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Uladzislau Rezki <urezki@gmail.com>, Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>, 
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-um@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 9, 2024 at 11:10=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
+te:
+[...]
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 88ecc5e9f523..7039f609c6ef 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -367,6 +367,8 @@ enum mod_mem_type {
+>
+>  struct module_memory {
+>         void *base;
+> +       void *rw_copy;
+> +       bool is_rox;
+>         unsigned int size;
 
+Do we really need to hold the rw_copy all the time? I was
+thinking we only need a temporary buffer when we want to
+update anything. The buffer might be much smaller than "size".
 
-On 10/9/24 1:52 PM, Tamir Duberstein wrote:
-> - Replace "they" with "you" where "you" is used in the preceding
->   sentence fragment.
-> - Use "erasing" rather than "storing `NULL`" when describing multi-index
->   entries. Split this into a separate sentence.
-> - Add "call" parentheses on "xa_store" for consistency and
->   linkification.
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> V1 -> V2: s/use/you/ (Darrick J. Wong)
-> 
->  Documentation/core-api/xarray.rst | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-> index 77e0ece2b1d6..75c83b37e88f 100644
-> --- a/Documentation/core-api/xarray.rst
-> +++ b/Documentation/core-api/xarray.rst
+Thanks,
+Song
 
-> @@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
->  occupy a range of indices.  Once stored to, looking up any index in
->  the range will return the same entry as looking up any other index in
->  the range.  Storing to any index will store to all of them.  Multi-index
-> -entries can be explicitly split into smaller entries, or storing ``NULL``
-
-Is storing %NULL does by making a function call or just by doing
-	*xa1 = NULL;
-
-?
-
-> -into any entry will cause the XArray to forget about the range.
-> +entries can be explicitly split into smaller entries. Erasing any entry
-> +will cause the XArray to forget about the range.
-
-Clearing any entry by calling xa_erase() will cause the XArray to forget about the range.
-
-
->  
->  Normal API
->  ==========
-
-
--- 
-~Randy
+[...]
 
