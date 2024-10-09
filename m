@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-357307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A555996F70
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39559996F73
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E627F280E7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8267280F58
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9DD1E2611;
-	Wed,  9 Oct 2024 15:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6BB1E2834;
+	Wed,  9 Oct 2024 15:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYSCu6RG"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNWxBi4f"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43AF1E25EB;
-	Wed,  9 Oct 2024 15:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38711E25FE;
+	Wed,  9 Oct 2024 15:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486556; cv=none; b=GAkt2KTuQkk7SYuiBJJ/bMmSHeKkmxvuqaIBalWF6k76aQmK7sQDRCeGD6Sc4/43jD95CmvmV5rAJ3fIbppHoWVnBIUHRbCgms5ZCL3wDpLPuAEXnhvGv5D2JiHFaGkVd7GoQYPKGpjNybc7Bp5KsoUm8/h8hNf7Tsc/A4iys9E=
+	t=1728486557; cv=none; b=u1LFmlGdVN6NWz/AjBoWbSTWBBGcBi0QmWCm6Jl9K8DJQ+KsmaG61zpXFWbxAhxF9GU01uPFnH1JzA/lLMRYspFAvmJBFiwM9/GLiZR/yhGfoLDZp7+Z3mxE9jHgnSYX6MoKQEm3OKEQYeE0xHAvzn7iOmHtov232WE6Wq1wOUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486556; c=relaxed/simple;
-	bh=8E4fr1Sq/NtXc9NlBNm/OB/QNGso+ly2Jqs2ZWzRZDo=;
+	s=arc-20240116; t=1728486557; c=relaxed/simple;
+	bh=8Nxq3DBjGh+N1qOzmBsPWjVg42NnuOUFW+T5n27Uk9Q=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gvYcBi7VDVx75bax2FJsIm1GSuvGzEDyARxyKfOAKPyeb82SnHnHR7XdH+fvx+YRDXwEyxcbQXjog4suRUqajGat/ilMZK2r8WXDpctjQkgM7gdyaqJt1vQj/5bXGWh+ggAEkQlJtZHodyM7QpFda5OCDpnZ95Xg7kuPCSlpffY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYSCu6RG; arc=none smtp.client-ip=209.85.208.46
+	 In-Reply-To:To:Cc; b=B7nNMtbp1tkojI808iW4t5nHdnie8xwvP6xX2pcM3pj+buUwJEnLzDqITuLeqTyFEkC/wYK7HQqXnCMNY6EC8QNxmmlS8GcwMpCT1PYD0Fq95M+NX8+743mX1XOEQH7xBb5kshbA5pd6N0He9T+Xs+3DUJxDJbVj4AEM+GU8ox4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNWxBi4f; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c91d0eadbfso1246142a12.0;
-        Wed, 09 Oct 2024 08:09:14 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9957588566so433715666b.3;
+        Wed, 09 Oct 2024 08:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728486553; x=1729091353; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728486554; x=1729091354; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JEvUlk1jL136GgzQVqdT9mrooxY8Q/uLvCPC41MEpWc=;
-        b=BYSCu6RGTBWRZa+gzFarYHW2uxnvLADBuaW5i5DL3Dk2Wdi2277SBIk7hefjy2dnDP
-         mTCiOw7Xsag6UytaxdFCP5O24xghyCT/2xuYsSpg9tzYO3A9wAOKSor5F5PlUFnbO8Xm
-         Ukts1atHYsPbOBx7rnnxxwB7rk0Kc8aVZpNVUC19+F5Rq1xegRzCBQ+Q/ACC5BAb3+Yn
-         deaWcRirRjtfz1XGK1xQ0aY6nv1DXO7+d5GnYdktxngun5v/MIugJtUUWetrw6RRjdFG
-         x4qr1z4p1UTfJn4WsR8RSM/maIcFOn3czdr78GYcHNO8oOLpCpPwjMNSFXsE9dtu2B5V
-         DoXA==
+        bh=pPRpID3jJTn8I9V4JMm2nGYUdsIJs/RBQaF/mHpfi60=;
+        b=BNWxBi4fUAm1XehdASPQd/bL7/e/v3N2g24jEC1238MRCHWCdLyEOut2+rRHWG98Sa
+         CIJ+E7cy9ntcUFnwIE8+nP705r+L92LyV/hCKnVE0ORDF7SNGI04Zak7GEZ8UprU/Pfp
+         klRp4kbzsYWnXbDBM+5Ka4U9O8dcgUSi1w44iwYGvHqMwNaNbQwsdGzVXKLYoO6m3MwP
+         aam8BGuXat0DoowilGUo9D6woLDibaPshf/G+TTZFAuO/YhIyKVIT/MF7VkG31XhDkTX
+         5mOqOsjANZw1GDn6qcYThj2uUBIp2hPCdFH5LyqOOUMwhUo02buuRklt9lEe4oQjllgW
+         DSww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728486553; x=1729091353;
+        d=1e100.net; s=20230601; t=1728486554; x=1729091354;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JEvUlk1jL136GgzQVqdT9mrooxY8Q/uLvCPC41MEpWc=;
-        b=iD31KVN75nIZ07cLAuzJE9O1PeRbNOt6YE5i6hH4Ip1MgmNmwWbARSz8ZqaJrsDZM/
-         iGnDLG9PJDGMN4F4qzyVoejgWNIyDAPaTxgVrNPX2L8EmJdjdBf1nMw1JbxU6eT2DRfV
-         KvfAwN5scoOsuRdM7qDsVmLMIunQ/ORI0WmsFkG/dmXfGZYMrPjkDxn5s54lDAk7nh4+
-         i2T+J7Pg8fw/V3Z111zpLg/EV+z/ZvrZhbUa3HHLig3fBjG8QWvprCvbNNYsIJ+giqb6
-         FM/WwXxwRZTsDp2jwf97FVcZvZmMRlDT5FqEuD3UU4lfV4mH9rcnm1VuZABH63plOLtP
-         i1NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxub6OjtWO+2xtYcp841bW0I1Y+/w9zrbNO2JlSHmODmKsiADcM6lUBFXD1o5UnmXtg8XEFWc5tLia@vger.kernel.org, AJvYcCXc2VzmwzcbmEqC+uDaCrNIAjAtZNtIgUbADuf+t12eVu4dTQB8wVbwCM/hQbhL7MdoAjz4kbGLBmEnOsac@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz4TxtO5Q5gr9riXumI3rxBfBe1TCptb1YhYbFwrjKEovWUa0m
-	U7tW/BJnGihCalccT/Hi9/bTvxA9wwJCJkpsJYjdot8Lrzghil5m
-X-Google-Smtp-Source: AGHT+IFpmC0d/mSmKW6krwhiMHYg5RC1Y698kV0WymUaPKy3TEmRyQ4FGV+J9yIkDTIheiYLIN+iZg==
-X-Received: by 2002:a17:907:9620:b0:a99:4601:b9d8 with SMTP id a640c23a62f3a-a998d34dd72mr221987366b.63.1728486552647;
-        Wed, 09 Oct 2024 08:09:12 -0700 (PDT)
+        bh=pPRpID3jJTn8I9V4JMm2nGYUdsIJs/RBQaF/mHpfi60=;
+        b=ZyCvN15BxlGo3aQF1OYlXvf7Xa8un7mxpxAlLxjU6fR97GPy9ceyU1hjHZcj940fzH
+         fc57yzUvM/UAeKtfpH1A2iDrqAH7sz2rfuVIsabOcarNpsv5GnPus9gPFq/J5cxOeyAa
+         Ur7e+N8rkRzHBy65tsjztSvtqrOHgJaDT2C3ltz8zf5S9GDIZcGlYMuGjLB9ofVCezUV
+         sAcSJ/pGTD7rOW/EaWJu+WIbwTWAyKuQFr4WCgWvluMQkOt3EVcDoWJo5TVWVY2twDMO
+         mGiJdNQ/LDZu+hV/TVTJEZgrIsnwoG3vsELyUxIwXRrmw0D/INeBD19WiXGcyZjFjvgM
+         UMxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7Gy+40p8iMDsw7loL9wkcoHKCQpnA70viot2SOVlgWLF8YNhRDMzzePYtcfVUg9piBomodp0AFK2G@vger.kernel.org, AJvYcCVCtmX0wLWKGgM1R/KXvqhDcd4xLMQwh+OB+GuChL4L4z2jvIgQQIAxja9P33iDCXnYKNojzxnU0j0CWF7I@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEfF5xcw9fP9GT/gVB5PQ9vxo5iEMoRwSD2fSJUiuGjE0+VvBU
+	IRyQuiqHAC8W1e/KiRSa+51OPhUPDaNWuFypkbPKpCfFRH1lhVjj
+X-Google-Smtp-Source: AGHT+IGGYGjTYmD19xzpwSLKjHIxB0DbuZAy4atQClezI1moGKPNbhTo/EOOQnZ7DkDNbk29GhdCOw==
+X-Received: by 2002:a17:907:96ab:b0:a99:5c22:fef6 with SMTP id a640c23a62f3a-a998d124293mr231186166b.1.1728486553903;
+        Wed, 09 Oct 2024 08:09:13 -0700 (PDT)
 Received: from [127.0.1.1] (leased-line-46-53-189-107.telecom.by. [46.53.189.107])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a992e7b19b8sm668861766b.154.2024.10.09.08.09.11
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a992e7b19b8sm668861766b.154.2024.10.09.08.09.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 08:09:12 -0700 (PDT)
+        Wed, 09 Oct 2024 08:09:13 -0700 (PDT)
 From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Wed, 09 Oct 2024 18:09:06 +0300
-Subject: [PATCH v7 1/3] drm/mipi-dsi: add mipi_dsi_compression_mode_multi
+Date: Wed, 09 Oct 2024 18:09:07 +0300
+Subject: [PATCH v7 2/3] dt-bindings: panel: add Samsung s6e3ha8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241009-starqltechn_integration_upstream-v7-1-9967bd15c7c5@gmail.com>
+Message-Id: <20241009-starqltechn_integration_upstream-v7-2-9967bd15c7c5@gmail.com>
 References: <20241009-starqltechn_integration_upstream-v7-0-9967bd15c7c5@gmail.com>
 In-Reply-To: <20241009-starqltechn_integration_upstream-v7-0-9967bd15c7c5@gmail.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -88,69 +88,132 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+ linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728486550; l=2054;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728486550; l=3291;
  i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=8E4fr1Sq/NtXc9NlBNm/OB/QNGso+ly2Jqs2ZWzRZDo=;
- b=3lUOctdE19ggiM11q2NWrCsulpMt6YIvZwdld84ZfRF1xxEwgUNOc/0E6sjnhacb1QQpmn5rW
- +UfFVu+REpyCxjbZlh5SXgWHsSvzNbXq/x7EmsExNxjBBTHAO1nUPkG
+ bh=8Nxq3DBjGh+N1qOzmBsPWjVg42NnuOUFW+T5n27Uk9Q=;
+ b=CEaDa7s2RpvOgyvsKNpJkaf+X2Rmwq5fRRg4ToYc5g9Ornc3LI1+WdxcF2VPXLnlZN4QkFTrv
+ 1RKmRDoE04xDKDrAuFR0HmscmkY6J7JYmdD3c52kUCKBwhGNa4QfkfX
 X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
  pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-mipi_dsi_compression_mode_multi can help with
-error handling.
+Add binding for the Samsung s6e3ha8 panel found in the Samsung S9.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 ---
-Changes in v7:
-- fix kernel doc
----
- drivers/gpu/drm/drm_mipi_dsi.c | 16 ++++++++++++++++
- include/drm/drm_mipi_dsi.h     |  2 ++
- 2 files changed, 18 insertions(+)
+Changes for v5:
+- fix required properties order
+- fix example indentation
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index 2bc3973d35a1..5e5c5f84daac 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -1520,6 +1520,22 @@ void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
- }
- EXPORT_SYMBOL(mipi_dsi_compression_mode_ext_multi);
- 
-+/**
-+ * mipi_dsi_compression_mode_multi() - enable/disable DSC on the peripheral
-+ * @ctx: Context for multiple DSI transactions
-+ * @enable: Whether to enable or disable the DSC
-+ *
-+ * Enable or disable Display Stream Compression on the peripheral using the
-+ * default Picture Parameter Set and VESA DSC 1.1 algorithm.
-+ */
-+void mipi_dsi_compression_mode_multi(struct mipi_dsi_multi_context *ctx,
-+				     bool enable)
-+{
-+	return mipi_dsi_compression_mode_ext_multi(ctx, enable,
-+						   MIPI_DSI_COMPRESSION_DSC, 0);
-+}
-+EXPORT_SYMBOL(mipi_dsi_compression_mode_multi);
+Changes in v4:
+- change dts example intendation from tabs
+ to spaces
+- remove reset-gpios description
+---
+ Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml | 75 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ MAINTAINERS                                                          |  5 +++++
+ 2 files changed, 80 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml
+new file mode 100644
+index 000000000000..05a78429aaea
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml
+@@ -0,0 +1,75 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/samsung,s6e3ha8.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- /**
-  * mipi_dsi_dcs_nop_multi() - send DCS NOP packet
-  * @ctx: Context for multiple DSI transactions
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index f725f8654611..94400a78031f 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -280,6 +280,8 @@ void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
- 					 bool enable,
- 					 enum mipi_dsi_compression_algo algo,
- 					 unsigned int pps_selector);
-+void mipi_dsi_compression_mode_multi(struct mipi_dsi_multi_context *ctx,
-+				     bool enable);
- void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
- 					  const struct drm_dsc_picture_parameter_set *pps);
++title: Samsung s6e3ha8 AMOLED DSI panel
++
++description: The s6e3ha8 is a 1440x2960 DPI display panel from Samsung Mobile
++  Displays (SMD).
++
++maintainers:
++  - Dzmitry Sankouski <dsankouski@gmail.com>
++
++allOf:
++  - $ref: panel-common.yaml#
++
++properties:
++  compatible:
++    const: samsung,s6e3ha8
++
++  reg:
++    maxItems: 1
++
++  reset-gpios: true
++
++  port: true
++
++  vdd3-supply:
++    description: VDD regulator
++
++  vci-supply:
++    description: VCI regulator
++
++  vddr-supply:
++    description: VDDR regulator
++
++required:
++  - compatible
++  - reset-gpios
++  - vdd3-supply
++  - vci-supply
++  - vddr-supply
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    dsi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@0 {
++            compatible = "samsung,s6e3ha8";
++            reg = <0>;
++            vci-supply = <&s2dos05_ldo4>;
++            vddr-supply = <&s2dos05_buck1>;
++            vdd3-supply = <&s2dos05_ldo1>;
++            te-gpios = <&tlmm 10 GPIO_ACTIVE_HIGH>;
++            reset-gpios = <&tlmm 6 GPIO_ACTIVE_HIGH>;
++            pinctrl-0 = <&sde_dsi_active &sde_te_active_sleep>;
++            pinctrl-1 = <&sde_dsi_suspend &sde_te_active_sleep>;
++            pinctrl-names = "default", "sleep";
++
++            port {
++                panel_in: endpoint {
++                    remote-endpoint = <&mdss_dsi0_out>;
++                };
++            };
++        };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 84086d47db69..ccc3cf5114c6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7389,6 +7389,11 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/display/panel/samsung,s6d7aa0.yaml
+ F:	drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
  
++DRM DRIVER FOR SAMSUNG S6E3HA8 PANELS
++M:	Dzmitry Sankouski <dsankouski@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml
++
+ DRM DRIVER FOR SITRONIX ST7586 PANELS
+ M:	David Lechner <david@lechnology.com>
+ S:	Maintained
 
 -- 
 2.39.2
