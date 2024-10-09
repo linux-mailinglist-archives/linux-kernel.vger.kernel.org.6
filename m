@@ -1,94 +1,140 @@
-Return-Path: <linux-kernel+bounces-357150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01E2996C82
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:44:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9858996C86
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4ACC284ABB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:44:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D977B23092
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109E41991B2;
-	Wed,  9 Oct 2024 13:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4891991A1;
+	Wed,  9 Oct 2024 13:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikULBheg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="qdNUZd/n";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="hB4hSmKR"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB191990A7;
-	Wed,  9 Oct 2024 13:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54001991CC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481461; cv=none; b=Mo5BnfQfLF5ZEb3jnazrYiAKX8eDYI4+mu1tCZvfyJonRe+eA1l066c/g9cu3S0aTOSpHdg2HADMu1yn4rBKim0jrwbKJzi6KnPTMFAUUrpq7h611sHwL09vbchx5J2RAmekngcDTJPMKbXnxjiFT9aM2Gx/0HDAapcMa5qJ7a8=
+	t=1728481506; cv=none; b=KHcstHyOJHZxOKzly1kNAgdeeVqjDSzGcNsMlIXvVsEFm8SiudtHLHkqWzAxl2DtNvphc9kQ2pE+3C5gF9iEMXqVDcv66VoPE122jUOWreQTa1Y6ZS1l/YwyJIPxwVp5yjxGWB35ZcfHxPypShXlH91DAED+ufdrEaZSBwVdrQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481461; c=relaxed/simple;
-	bh=4s3Ll570CEXXXOM35CmndjfaF+lPBtnfxA2ujcrrsec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEy8iqaQfqVqiJnIalKWhmqbkVtqxR5hlX6EJ1c0/D3Jec5LqtNJPgY1+ETfASh17evztW6xHKUo82uBETXBF8Tdq7LLCzbQZNmO4fkq9RXkHMUab1Ru3Xh8zoQri/J90jOmodj+F2F2J7teJSL99l88G1Xtq2TNLj+eoFeqRd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikULBheg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D9E6C4CEC5;
-	Wed,  9 Oct 2024 13:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728481460;
-	bh=4s3Ll570CEXXXOM35CmndjfaF+lPBtnfxA2ujcrrsec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ikULBheg5mrkdUjA0NV2K5MP8cAcKv2Qf0js3IZ8aV8wRKu2zKNc4k2+gsq/vhTqS
-	 MWP62VtedEWtDo70hGjETHLT953VYZEjZqa41K9wHudEGcrqvc272wiF+xFX2lipTf
-	 CdkySdGSX+rnP/GbO0MkNWg+Sc98REQ/zMABlZF4YSo0yVxCw2QcBL7czHlzIBru2W
-	 pEBKoFMVeuvI+rYz0LS9Ydjs6EwvIqwzmJRsWC0uMOO+WnNw0ILsF6ikQwoYxE/pY0
-	 wLUYFbOpz29woAm8k4NGpkLWA0tCIE14AjwGEtTC1sH4/SSKUE/AcSc2lsquabnnrF
-	 cTTtRjYxO5ikA==
-Date: Wed, 9 Oct 2024 14:44:16 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH] mfd: rtc: bd7xxxx Drop IC name from IRQ
-Message-ID: <20241009134416.GJ276481@google.com>
-References: <ZvVNCfk10ih0YFLW@fedora>
+	s=arc-20240116; t=1728481506; c=relaxed/simple;
+	bh=5r+GMHSj63RYi/J4H0h7uqDa4DrIu6yTU3ihuErU0pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AFPfLzTGiPlM9MrFLbSZebIthTRU+p5bXrJYXr7ygW8rsfzYcjEj6IRLK670kg4FMocd8biBk4WPAaK4OfsZjqw0zrQ7qvhpJnKiBmQzuxFnxbA3+xGkcUvjNhhGNLOno/8EH8KwiH221O7+pGOf//qv3IzzPzj0NnQevw/AHSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=qdNUZd/n; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=hB4hSmKR; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=qdNUZd/nVEljgYp/f1vPbtQdck4IsprrIYzmCPogI7HPF8YJB3Ox/1Pzf4NtNOqTFsjB2GuGHxRuUchJK3h5Q2mGRJg8UyrIZTbKU5dDap/1PkGkwQCs1lFcGVfnxehbODlCd4E3nKXzfO14Q/xCsAEUv/1V12Bw+JX9V4T/DBE8yUHubZwvXFJFLKWcoo+QEMJAfq/BoTK7AcgQzDU6qtq7QdJ1mihYTSEVYrUhkB5UJJaPhKzQcsEYCmRx42Q/9DEtgbk0Ci03QW3h6pR9tdLd+xxeydhBS1jlSv2M9Hja3YFOcrsY+5GkXXc2QTjcL6T1ytfVjr0xuTpbG4iJVw==; s=purelymail3; d=lkcamp.dev; v=1; bh=5r+GMHSj63RYi/J4H0h7uqDa4DrIu6yTU3ihuErU0pg=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=hB4hSmKRysELw5XqyuU07J/N0tgIHTlecw0aZ2JllPh3cmBXzxDWTdORnlsNdx75sv0/wjGRN2G9kuQsAujHw2JGGvNioQbJ94ULyRDYGtIfPuY/gkY5yJ1WKXOhezWF0EqmrDVM3kuSthFV7vhQ+5hrH2pm+1uU/F35X9NGsawSY4zNtYcM3k0zfy/rryLNLFqH2e4LZFyRqJiYddAbbfsgf1lANsKgEhiixl5jGblx7nJLKbytAhQFQpohibM+1zbNRIs5F9UFoDVEw8sIEiZMyGRrXS0nSNY/opJmJvMphArpaFisvr+slszhGPXx4FZqG0yGk6ZSDAtdIyDG1w==; s=purelymail3; d=purelymail.com; v=1; bh=5r+GMHSj63RYi/J4H0h7uqDa4DrIu6yTU3ihuErU0pg=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 40580:7130:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 875396785;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Wed, 09 Oct 2024 13:44:41 +0000 (UTC)
+Message-ID: <b8c3c51e-375f-4139-8336-76b6df56e8ea@lkcamp.dev>
+Date: Wed, 9 Oct 2024 10:44:38 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZvVNCfk10ih0YFLW@fedora>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: sm750: Fix missing config in Kconfig
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Fabricio Gasperin <fgasperin@lkcamp.dev>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+ Teddy Wang <teddy.wang@siliconmotion.com>, linux-fbdev@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ ~lkcamp/patches@lists.sr.ht
+References: <20240921180612.57657-1-fgasperin@lkcamp.dev>
+ <20240921180612.57657-2-fgasperin@lkcamp.dev>
+ <2024100925-lend-aging-2ff3@gregkh>
+Content-Language: en-US
+From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+In-Reply-To: <2024100925-lend-aging-2ff3@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 26 Sep 2024, Matti Vaittinen wrote:
+Hi Greg,
 
-> A few ROHM PMICs have an RTC block which can be controlled by the
-> rtc-bd70528 driver. The RTC driver needs the alarm interrupt information
-> from the parent MFD driver. The MFD driver provides the interrupt
-> information as a set of named interrupts, where the name is of form:
-> <PMIC model>-rtc-alm-<x>, where x is an alarm block number.
+On 10/9/24 06:56, Greg Kroah-Hartman wrote:
+> On Sat, Sep 21, 2024 at 03:06:09PM -0300, Fabricio Gasperin wrote:
+>> Fixes the following compilation error:
+>>
+>> ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+>> ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+>> ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+>>
+>> Signed-off-by: Fabricio Gasperin <fgasperin@lkcamp.dev>
+>> ---
+>>   drivers/staging/sm750fb/Kconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/staging/sm750fb/Kconfig b/drivers/staging/sm750fb/Kconfig
+>> index 08bcccdd0f1c..eca1aa43d725 100644
+>> --- a/drivers/staging/sm750fb/Kconfig
+>> +++ b/drivers/staging/sm750fb/Kconfig
+>> @@ -3,6 +3,7 @@ config FB_SM750
+>>   	tristate "Silicon Motion SM750 framebuffer support"
+>>   	depends on FB && PCI && HAS_IOPORT
+>>   	select FB_MODE_HELPERS
+>> +	select FB_IOMEM_FOPS
+>>   	select FB_CFB_FILLRECT
+>>   	select FB_CFB_COPYAREA
+>>   	select FB_CFB_IMAGEBLIT
+>> -- 
+>> 2.46.1
+>>
+>>
 > 
-> From the RTC driver point of view it is irrelevant what the PMIC name
-> is. It is sufficient to know this is alarm interrupt for a block X. The
-> PMIC model information is carried to RTC via the platform device ID.
-> Hence, having the PMIC model in the interrupt name is only making things
-> more complex because the RTC driver needs to request differently named
-> interrupts on different PMICs, making code unnecessary complicated.
-> 
-> Simplify this slightly by always using the RTC driver name 'bd70528' as
-> the prefix for alarm interrupts, no matter what the exact PMIC model is,
-> and always request the alarm interrupts of same name no matter what the
-> PMIC model is.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
-> ---
-> This contains both the RTC and MFD changes in order to not break the
-> functionality between commits to different subsystems.
+> What is causing this error? What commit created the problem, and why
+> has no one reported it yet?
 
-I can take it with an RTC Ack and an indication whether an immutable
-branch should be created and shared.
+This happens because drivers/staging/sm750fb/sm750.c, defines an fb_ops 
+structure:
 
--- 
-Lee Jones [李琼斯]
+static const struct fb_ops lynxfb_ops = {
+	.owner = THIS_MODULE,
+	FB_DEFAULT_IOMEM_OPS,
+	...
+};
+
+FB_DEFAULT_IOMEM_OPS expands to the fb_io_* helpers declared in 
+include/linux/fb.h and defined in drivers/video/fbdev/core/fb_io_fops.c; 
+however, the latter is gated by FB_IOMEM_FOPS, so when compiling a 
+kernel with CONFIG_STAGING=y + CONFIG_FB=m + CONFIG_FB_SM750=m, you get 
+the following error:
+
+ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] 
+undefined!
+ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+
+So in order to solve it we select FB_IOMEM_FOPS, much like the other 
+FB_* drivers do in drivers/video/fbdev/Kconfig.
+
+Not entirely sure why this wasn't caught before, but the commit that 
+broke the build for sm750fb is 6b180f66c0dd ("fbdev: Provide I/O-memory 
+helpers as module"), which made the fb_io_* helpers be built as a 
+separate module instead of being bundled in fb.o (which is what sm750fb 
+was relying on). I think Fabricio can add a "Fixes:" tag in v2.
+
+Thanks,
+Vinicius
+
+> 
+> confused,
+> 
+> greg k-h
+
 
