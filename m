@@ -1,166 +1,147 @@
-Return-Path: <linux-kernel+bounces-357748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9C3997529
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:55:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B710799752D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02770B22125
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7124A280FC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5CB1E0E18;
-	Wed,  9 Oct 2024 18:55:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA591E103B;
+	Wed,  9 Oct 2024 18:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFdtEiMe"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F397198A0D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151A71DF734;
+	Wed,  9 Oct 2024 18:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728500128; cv=none; b=U/KvStU1RwM6fBi+ZThA/3PFQj6KHwCEjPGMAfeoLkyvb7wwGUydik6OfWxpQ8PzE5qe4s3U2bFQfGbEA6z1R2yDRB/eyzefMHX2xemK1ISJetBDW38RNP4z7sZYRA+pi66BMFnR373EtnYKsnRtorFeSZMfzdm7w3Jf6FGs+zE=
+	t=1728500168; cv=none; b=fFTq7+T5/RNWyNa8silSPt74ygOAn1NntfN5B+fFNt3soU2h1KeHmbCv9ZxLVwlaVoxHgaS5Oy6ZuVM0qm0T5yRSai5Ipa03x32BDjbpwxBXsKCMIQ6XmuiGC3b78THB2y7YIjusCURB3BHdduBIBDE8VWwK4NW3KVQ19tfxQCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728500128; c=relaxed/simple;
-	bh=ILzxRfAfHH+xFxX/Cf2A8zfeKsIelMpNCaO2Sz59Nuo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gWyaX1UGtpafjcCMtw8xlkqvTzDDIiTJb9h7GlWeBFAY4znHS6D3XVLU71KEkUQIWxXtb6DzkS5ZvIapk2w3OpX1ui8wu1IoM7joaE3TVD6JPHURA4RPjYyf2wlMitHArEAhwkGF4SkVXZssi9hqgPjx5Km/JDaPTrSlx3lcDKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce4692a4so1334935ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 11:55:27 -0700 (PDT)
+	s=arc-20240116; t=1728500168; c=relaxed/simple;
+	bh=bDmdoVXY7CIoUgvBCektb8QqAKjFivIrLKLaMALmR8c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RK4W07g3ORSyobUyYkFDmpPHtfTp+g70Np2ONCZGoh3yqbQ5hpKDwv4MQhp5gROD79/AO/bldPduF5jFT04nusSjx4gB31L+9HSvKuZPe//o8pdUV5Pd1Xyb4Yb94ScNYW6mtwJtJ3QmvL73HroLntdeEqD2LIBN88baEXeOIbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFdtEiMe; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37ccd81de57so92966f8f.0;
+        Wed, 09 Oct 2024 11:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728500165; x=1729104965; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIpvepU04vQBrfFdCPxrz99wuy/omHJnmjxH9oK+R3c=;
+        b=EFdtEiMeKBYoh/1f02Znu04eubotSLbFmTZyNiekGV6BDwcECz+roVofIjEnR9kM5M
+         KUncT7jlNkKg0fj0PN8SXkvvDq6CACnsgZ8mMSd+1IBJl/+H1G8efuUiVEYolpKGDXo6
+         qhSt0jGS0Udq38W12Rnelc48mRmZSCiBw5YUKTJhR0pJ/CCbFjFsD9v9NcuTLeEq3qZE
+         mgg2BIcnMfN1BLhg4jQW+6r188pAPR5h1BnDlXU4Jt/quHOJgwZVrvk+aUOojUCxuSG6
+         wbihTqq8l0z45xnGBn9ByuJLriZPcIuB9lo6xM9OPkxV3GoQJFrnmdp/fOSLqD1hbHn6
+         LvhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728500126; x=1729104926;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a2xYr9xVFTAqHGtSEFJ/Xyk8Q+Pr3Bx5SlYvO23peo0=;
-        b=eaB54/i4kr5mfimwV6Ei0UHielLoTmX7MiRk3NStydgr5aEeKuTvK+wq4hjfg62qUz
-         FTLTIYAolpfWGh2yHEoa30a3ZUWcFcw9DVy/anVMGPKTZNs41dUPXjJ7wlBnrFirsARJ
-         lht/n7CoBy7V0RHozuTQZTGKHhKJyL1485DlFXsjUjlE5nP1YYwrbAADU+YH9hP1/q+x
-         J4Z6itS3mcuV8vE3YQ6ldqh4LEerSWwD4I82Gcm0jbLbpnOPqZc7iTHrlfNttfXikZpf
-         ywEdNiJ6Nunf0M6+pbC9chIgJbLWjtUODVdJznjApO557+7yjWN4i7uzZ/gE9ruv2LWK
-         /2GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHwD2lZSAFX1qX6Ux0QsaILNYK5iWgso2FyAe7qRoNxPBjjNYyICc5u0JU/3G6H+MhAz6vXAs0OF9wxU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwY/LOoU7O8sS9s5B7OCajomty6eivdkCczbZl2JqAeHhM2LBj
-	8U6WvZ6MPxcx86UJ/vU1jP6dfdQtc9b11a0GnT2A+YnFAAp+fl+Xlty+5hCe5ct8jw3nGIBHmEP
-	EYGVzKeEsKe7bee+3Jjc9qmSaJLhVXjAtM+1jvEYbIZPvFkxrnM6/Tng=
-X-Google-Smtp-Source: AGHT+IGLOxW5BdtEIwtH55sohFj4cFtR4kcnA7LSXITw8dpGaVFOY7jGpS74atxt8WWhBllMLxZDbnJ+XFvS2f9IJ/aQERLSu6Sg
+        d=1e100.net; s=20230601; t=1728500165; x=1729104965;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zIpvepU04vQBrfFdCPxrz99wuy/omHJnmjxH9oK+R3c=;
+        b=YR77l2jsNOMXFdMjHKKRNqaTROWn4Pve2rzYzC7vWKy1q2or3liI/pCtMdMBefAPph
+         AMXjbhZBGq5ztvixEKsJ74ZtdpBNWeNPc8SLqUeQ75wGJ+khu4Njg/VoCsiyb6vLTeKO
+         gF5MCkj5O7w6H5GDCpzKMbopmPjv05HXOUt4Ir7+t4Noa2w4UAIePUSEVcel4WvP6Exr
+         gRwue8Y5EY+YYt507JZgDl0sRm7+9dXAISgkvPflv7ApZ5uXHp/HeJVNFiuFlJCwji8T
+         SJsvqdz63pqxMCDpWIWniwaDET7kzrlNZFfeQFHiy6b8EeyMYkn4l9VOI36PZyYu9yO2
+         85aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVQ/LH2n8ldYcmprh7mtRGv68MoLvxWMBd6nMibyUw+eVAHgId55WoNHTr9f42PcWprTrTJ3YNq6Aps6g=@vger.kernel.org, AJvYcCWxBQUolsmaS9D/M8iri843UFDZ7ZRzXSrxUdmD1ih2nXqQxNlndXaRfklpJZ/XQHLIJLTnYDL1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqzGUaPK49glu+4iqC9HQC4lmPpCdeOBmZ6mHZkwg6dl2s+zYX
+	5jjXo1OxlXwS3tgGtnRDGrgNZww4dsDhZCFAA7kE7fFlu7ATnGOW
+X-Google-Smtp-Source: AGHT+IHse50ItBhMs4WbNWj7zCSStUhkgvCUXnkFifblSKxOnGbsgqfGOAg30DPZ4LeSggMA6sQ05A==
+X-Received: by 2002:a05:6000:12c7:b0:374:c33d:377d with SMTP id ffacd0b85a97d-37d481d2de3mr535398f8f.28.1728500164528;
+        Wed, 09 Oct 2024 11:56:04 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-268e-1448-f66b-a421.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:268e:1448:f66b:a421])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695e606sm11098835f8f.69.2024.10.09.11.56.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 11:56:04 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Wed, 09 Oct 2024 20:55:44 +0200
+Subject: [PATCH] platform/chrome: cross_ec_type: fix missing fwnode
+ reference decrement
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1949:b0:3a2:762b:faf0 with SMTP id
- e9e14a558f8ab-3a3a70d7681mr3916065ab.11.1728500126434; Wed, 09 Oct 2024
- 11:55:26 -0700 (PDT)
-Date: Wed, 09 Oct 2024 11:55:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6706d19e.050a0220.67064.0050.GAE@google.com>
-Subject: [syzbot] [ppp?] KMSAN: uninit-value in ppp_async_push (4)
-From: syzbot <syzbot+1d121645899e7692f92a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-cross_ec_typec_fwnode_handle_put-v1-1-f17bdb48d780@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAK/RBmcC/x2NUQrDIBAFrxL2O4Km0pJcJQRpdG0Xiopr0paQu
+ 3fpz8DA8N4BjJWQYeoOqLgTU04ipu/AP+/pgYqCOAx6sEbrUfmamR16175FGN8pB3SShhe6sjU
+ 1RnNZ7Rrs9RZBZkrFSJ//xbyc5w+tKpxncgAAAA==
+To: Prashant Malani <pmalani@chromium.org>, 
+ Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+ Guenter Roeck <groeck@chromium.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728500163; l=1888;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=bDmdoVXY7CIoUgvBCektb8QqAKjFivIrLKLaMALmR8c=;
+ b=EmUsMKkTErMHN4XM+jmurxP4+C4URCWyPOGoOx1wI8mwEe4xW8V9rGPTrAe0arwMzUPp9AxQd
+ VbxhZp61SbaAUJWQym7tAgwREsrnndOM0fPqTerlEO1e3dCy5Vi0vkE
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hello,
+The device_for_each_child_node() macro requires explicit calls to
+fwnode_handle_put() upon early exits (return, break, goto) to decrement
+the fwnode's refcount, and avoid levaing a node reference behind.
 
-syzbot found the following issue on:
+Add the missing fwnode_handle_put() after the common label for all error
+paths.
 
-HEAD commit:    1868f9d0260e Merge tag 'for-linux-6.12-ofs1' of git://git...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13730e07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acaa65be5f19fc5a
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d121645899e7692f92a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127f8080580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b86c27980000
+Cc: stable@vger.kernel.org
+Fixes: fdc6b21e2444 ("platform/chrome: Add Type C connector class driver")
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+I usually switch to the scoped variant of the macro to fix such issues,
+but given that the fix is relevant for stable kernels, I have provided
+the "classical" approach by adding the missing fwnode_handle_put().
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/51af83d2907b/disk-1868f9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4cd235c942a6/vmlinux-1868f9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a321106ef897/bzImage-1868f9d0.xz
+If switching to the scoped variant is desired, please let me know.
+This driver and cross_typec_switch could be easily converted.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1d121645899e7692f92a@syzkaller.appspotmail.com
+By the way, I wonder why all error paths are redirected to the same
+label to unregister ports, even before registering them (which seems to
+be harmless because unregistered ports are ignored, but still). With this
+fix, that jump to the label is definitely required, but if the scoped
+variant is used, maybe some simple returns would be enough.
+---
+ drivers/platform/chrome/cros_ec_typec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-=====================================================
-BUG: KMSAN: uninit-value in ppp_async_encode drivers/net/ppp/ppp_async.c:545 [inline]
-BUG: KMSAN: uninit-value in ppp_async_push+0xb4f/0x2660 drivers/net/ppp/ppp_async.c:675
- ppp_async_encode drivers/net/ppp/ppp_async.c:545 [inline]
- ppp_async_push+0xb4f/0x2660 drivers/net/ppp/ppp_async.c:675
- ppp_async_send+0x130/0x1b0 drivers/net/ppp/ppp_async.c:634
- ppp_channel_bridge_input drivers/net/ppp/ppp_generic.c:2280 [inline]
- ppp_input+0x1f1/0xe60 drivers/net/ppp/ppp_generic.c:2304
- pppoe_rcv_core+0x1d3/0x720 drivers/net/ppp/pppoe.c:379
- sk_backlog_rcv+0x13b/0x420 include/net/sock.h:1113
- __release_sock+0x1da/0x330 net/core/sock.c:3072
- release_sock+0x6b/0x250 net/core/sock.c:3626
- pppoe_sendmsg+0x2b8/0xb90 drivers/net/ppp/pppoe.c:903
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:745
- ____sys_sendmsg+0x903/0xb60 net/socket.c:2603
- ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2657
- __sys_sendmmsg+0x3be/0x950 net/socket.c:2743
- __do_sys_sendmmsg net/socket.c:2772 [inline]
- __se_sys_sendmmsg net/socket.c:2769 [inline]
- __x64_sys_sendmmsg+0xbc/0x120 net/socket.c:2769
- x64_sys_call+0xb6e/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:308
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4092 [inline]
- slab_alloc_node mm/slub.c:4135 [inline]
- kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4187
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
- __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1322 [inline]
- sock_wmalloc+0xfe/0x1a0 net/core/sock.c:2732
- pppoe_sendmsg+0x3a7/0xb90 drivers/net/ppp/pppoe.c:867
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:745
- ____sys_sendmsg+0x903/0xb60 net/socket.c:2603
- ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2657
- __sys_sendmmsg+0x3be/0x950 net/socket.c:2743
- __do_sys_sendmmsg net/socket.c:2772 [inline]
- __se_sys_sendmmsg net/socket.c:2769 [inline]
- __x64_sys_sendmmsg+0xbc/0x120 net/socket.c:2769
- x64_sys_call+0xb6e/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:308
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 5200 Comm: syz-executor848 Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
-
+diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+index c7781aea0b88..f1324466efac 100644
+--- a/drivers/platform/chrome/cros_ec_typec.c
++++ b/drivers/platform/chrome/cros_ec_typec.c
+@@ -409,6 +409,7 @@ static int cros_typec_init_ports(struct cros_typec_data *typec)
+ 	return 0;
+ 
+ unregister_ports:
++	fwnode_handle_put(fwnode);
+ 	cros_unregister_ports(typec);
+ 	return ret;
+ }
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: b6270c3bca987530eafc6a15f9d54ecd0033e0e3
+change-id: 20241009-cross_ec_typec_fwnode_handle_put-9f13b4bd467f
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
