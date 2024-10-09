@@ -1,133 +1,271 @@
-Return-Path: <linux-kernel+bounces-356493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B592A9961E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:09:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD889961F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5A928B117
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872C01F230E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339B2187FE7;
-	Wed,  9 Oct 2024 08:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59021885BF;
+	Wed,  9 Oct 2024 08:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cftHmGrL"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pTzDL30i"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC1A17C22B;
-	Wed,  9 Oct 2024 08:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138FC15C13A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728461349; cv=none; b=OFA4wBNQo2ZWvEyJzTRKCszAQKxKygA0qvH2lYLfcIMxDhCIwMT3t3nvAo/W3XdF2itTzrusdbkWZ+bdWetz1qHuu4mucqPJXG7jQ70l8wUsSWig38DJ+A+6YL4SsHYrVqx1+6tsdUC7PYKRJ1czHn5F2rX5gwKVdpR/gWciey8=
+	t=1728461446; cv=none; b=Y2J8oZ4RQKEYlC8Pkc4iIlxnLZtDKrFKQjs4OxbqTreJjX1KsSQZ1vF8LMFL/KA0sLlyImso/pSutP5wU9uL9gmd+Pmg+/uwhgRss94UGob8J9z9kFsYQSaWujg+x2dad0SXZqgUEfbVikQmYK6KGubNdqbA45SgHVLSCBFStzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728461349; c=relaxed/simple;
-	bh=JfIehgtjQ/3cHAs4Kql6eDBeVHKqU2Dj7SBpfPwTiUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O+ocQ4bfzTXJa9fCcY0kAu8nQ60sHZuGCXrm+SyxU8m7wZBYYwmKbqvjw/rM/ydUkhUJmEjfRRfK6ecvLa57YChi1tlZaq4XhjbUigfWaKHrbr0kV57WuxG+3krEipkHwP5ngmogRYTqZr40pqXg9UwgLz31NpflrMO/80+4nSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cftHmGrL; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbbb1727eso66199815e9.2;
-        Wed, 09 Oct 2024 01:09:07 -0700 (PDT)
+	s=arc-20240116; t=1728461446; c=relaxed/simple;
+	bh=JTALTDfpJwLvZW8krOmlWY7fXxiJm7mB5IXqDHxOnis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tjn5PvyG9WXDDPA5PpYNcns9+YndwJUbiUwiLgI1hLAQmGT2K20PnRShlzdk5kB/vT0aQn6sCx/iIsKMv4W+EndwfuHMfZ993IIr7iQ24lDm/d+BceHNmUyUv8JrGyrxW0Ubqcj766v9+ZBh664YsHReeQmFJC5IrDmxBe+l8S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pTzDL30i; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d39d9f782so381888f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728461346; x=1729066146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4StYDE/mLk4guuVT3VcCXOSWw8o4duh+319HH+EHD8=;
-        b=cftHmGrLpzk3Gg6FVqPHluQSqNNMQSJcI2WEui2Zd2sV782OwCa9ARysC8WTs91cJd
-         05ItIb8cQuUMHJDOQ4yhBg+kvTkXoXy2T6eD7t0lgNZbu8wwJcU6tHKr6dhbhzFksn/V
-         bflXlnyR8Itv1GSZsTZfkUVFSz76N3PZ63VwbqmVoI5qZ6XSz/iJD3hEhW7ai0Yl11o2
-         p0fxS0hqLgmUxk6JfznWzAO0JrrHGn03vPIVgJdE4Rd968rT/oc399IMFuC21s/4Lp6w
-         1hB9LZSh2cFwBWrBVrLkOxzNFcJflbzQzfDrbyn8rbEmQJ7fFdvthkLSJEjtnAq/fNlM
-         Ykyw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728461442; x=1729066242; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnWodi7I3io7lPP1RwAH8LUYr+WZNKZMf06zlJ4yNoo=;
+        b=pTzDL30i4XA6nuvXQiuLfQ4ITZ7VNA1EUZQD5hibztUpgAdYS+nxkqJWq56uEGPKUm
+         6z/wCAcIkGOtxT2zrc2G4xykj0aDHUKysz8zHE4CfY1525m3O8InNQVTkMiJdWhHVwIu
+         AuaUCl7OMM+mnPCNX0UaHYYuCptFJlbCSJ/05Hj3s18QXj/wfqHsIaImwVxhXeczv7uL
+         dbuiYddYgdiM9BXuNorXI2iXMA+qRey8hcpBxjKEaTMacbsz/66uFD9vH7ZYUaIuBTEM
+         xceXARKzHL2u/p8mIDaKXT5spNjELZmjuo5uummUA6HOAIFP/Cfy+m20AV97YQB2k+rJ
+         ZZSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728461346; x=1729066146;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o4StYDE/mLk4guuVT3VcCXOSWw8o4duh+319HH+EHD8=;
-        b=B6hIqcMzeOEGv0GHBmrXk4e2nQw+rn8pI34/twQc6cB3icBgKhxeolYc7kH/rD8IAJ
-         n6XpRBPCsiB+ndnQgg97/5XJo7p8Zji2Gw42EByKG3GnIcGCu4F0xYgdlcwGRnOmsyUR
-         IQTjAPfH1R4lRAUWE2ZVgs7aRUdkMQsjF0tgobg/FU+rKhhwcF8u9baqVFWsqfFdtRZ3
-         bmo4fBNGhf9lQprrS2mHcIPmJuf1NBekR6t+a9bve9PXVG549DasvVvRb0p3a1veGpDk
-         gHkxNrfOYC64Se1R+etlN12AjW35quwDcsFKdPBbrVJWxE4WydumpZS4J8E7MsYErRIL
-         2TSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUknkrPs/6fQHQ1bNyNqVxuJvHXIbmXtb8yWyMFo+TsUmhti3dZGKpBVOZDYjH0O2uCXQ4CBzBZSJ63Kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG1OcqN82nJdS+0ATEEWw61IhbzpQwLjiwglmzPzeRixuowasY
-	RUFk7BDpRjnUkVz8h4VekpHVxHzhgYRy78MWSfazxH5iWlgi0z7j
-X-Google-Smtp-Source: AGHT+IEu9ciwUYqQdluCHvHz4e4VtxoCNipe/cWBWWJHYKV0bGeX9IUegN2O+tlAJNTC4Lfi+fhBMA==
-X-Received: by 2002:a05:600c:3593:b0:42f:5ca3:d784 with SMTP id 5b1f17b1804b1-430ccf20504mr12905305e9.14.1728461346092;
-        Wed, 09 Oct 2024 01:09:06 -0700 (PDT)
-Received: from localhost ([84.79.205.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf4b1a0sm12054835e9.14.2024.10.09.01.09.05
+        d=1e100.net; s=20230601; t=1728461442; x=1729066242;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gnWodi7I3io7lPP1RwAH8LUYr+WZNKZMf06zlJ4yNoo=;
+        b=G2XFAV60AvEbx32eGInzw5pLWKFqygM+g6iTU2CyWpImjFKKSG08o0scSIK52bYbWs
+         HfBFhzpjkEys3YnrsorXBLVs0OBjdGUBccpWM+2c6nG8K2z4PXdxBSpm5qKHURdCUQow
+         k4twZMIfxB80k6TmX3pywUnXc8LXxzJoYO0eEGEzjQyJwYVBpBDlJhW6lzPPj1BJuUBF
+         l+aegMmH6pA5nO66kTYtjV4TvOyU7IVgU7UV+8Lerl74jjwF15e2lk++jqrhaiGFVJA0
+         v+GquqoqtUDe+CbpG3hwV36jCB617uR2/t6KLgeAEtoM7L8fE7W5pVyyH/EAlszwDxmW
+         h43Q==
+X-Gm-Message-State: AOJu0YxMta61SeIWXEFt22TvYRuEaoSdga5eOWRgH9xFl7gSC2Btqqqv
+	naWgz+pGMXcxpc/igY1FKFzkpQpwXKG6bcPYg6w31HgF3UagTlBk5JSWFgmXyaQ=
+X-Google-Smtp-Source: AGHT+IGh8K2dUO1w72QQsRRDwWg/X9XbAnFa43Fl/ahd72gRhImUWO/xzGJZhmEAsokUQYN6eBnxCg==
+X-Received: by 2002:a5d:4e51:0:b0:37d:39e8:cb6d with SMTP id ffacd0b85a97d-37d3ab318acmr716234f8f.56.1728461442237;
+        Wed, 09 Oct 2024 01:10:42 -0700 (PDT)
+Received: from localhost (p509151f9.dip0.t-ipconnect.de. [80.145.81.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf1f776sm12305265e9.3.2024.10.09.01.10.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 01:09:05 -0700 (PDT)
-From: Roi Martin <jroi.martin@gmail.com>
-To: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roi Martin <jroi.martin@gmail.com>
-Subject: [PATCH] btrfs: fix uninitialized pointer free on add_inode_ref
-Date: Wed,  9 Oct 2024 10:08:33 +0200
-Message-ID: <20241009080833.1355894-1-jroi.martin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        Wed, 09 Oct 2024 01:10:41 -0700 (PDT)
+Date: Wed, 9 Oct 2024 10:10:40 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: William Qiu <william.qiu@starfivetech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	Hal Feng <hal.feng@starfivetech.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v15] pwm: opencores: Add PWM driver support
+Message-ID: <na6yfg45w74l3deaoi5gr5wcefxbjslztsltm6737rs4cktpbn@myvsa6ye6xpp>
+References: <20240914095114.31100-1-william.qiu@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5ft5dx5frm54rk25"
+Content-Disposition: inline
+In-Reply-To: <20240914095114.31100-1-william.qiu@starfivetech.com>
 
-The "add_inode_ref" function does not initializes the "name" struct
-when it is declared.  If any of the following calls to
-"read_one_inode" returns NULL,
 
-	dir = read_one_inode(root, parent_objectid);
-	if (!dir) {
-		ret = -ENOENT;
-		goto out;
-	}
+--5ft5dx5frm54rk25
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	inode = read_one_inode(root, inode_objectid);
-	if (!inode) {
-		ret = -EIO;
-		goto out;
-	}
+Hello William,
 
-then "name.name" would be freed on "out" before being initialized.
+On Sat, Sep 14, 2024 at 05:51:14PM +0800, William Qiu wrote:
+> diff --git a/drivers/pwm/pwm-ocores.c b/drivers/pwm/pwm-ocores.c
+> new file mode 100644
+> index 000000000000..d0161b9379d1
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-ocores.c
+> @@ -0,0 +1,241 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * OpenCores PWM Driver
+> + *
+> + * https://opencores.org/projects/ptc
+> + *
+> + * Copyright (C) 2018-2023 StarFive Technology Co., Ltd.
+> + *
+> + * Limitations:
+> + * - The hardware only supports inverted polarity.
+> + * - The hardware minimum period / duty_cycle is (1 / pwm_apb clock frequency).
+> + * - The hardware maximum period / duty_cycle is (U32_MAX / pwm_apb clock frequency).
+> + * - The output is set to a low level immediately when disabled.
 
-out:
-	...
-	kfree(name.name);
+Huh, that's a 100% relative duty cycle. But fine, that gives the
+opportunity to find bugs in consumer drivers. :-)
 
-This issue was reported by Coverity with CID 1526744.
+> + * - When configuration changes are done, they get active immediately without resetting
+> + *   the counter. This might result in one period affected by both old and new settings.
+> + */
+> +
+> [...]
+> +static inline void ocores_pwm_writel(struct ocores_pwm_device *ddata,
+> +				     unsigned int channel,
+> +				     unsigned int offset, u32 val)
+> [...]
+> +static inline struct ocores_pwm_device *chip_to_ocores(struct pwm_chip *chip)
+> [...]
+> +static void __iomem *starfive_get_ch_base(void __iomem *base,
+> +					  unsigned int channel)
 
-Signed-off-by: Roi Martin <jroi.martin@gmail.com>
----
- fs/btrfs/tree-log.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would be great if all functions had the same prefix. This simplifies
+debugging with tracing, because you can just enable traces for
+"ocores_pwm_*".
 
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index e2ed2a791f8f..35c452bab1ca 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -1374,7 +1374,7 @@ static noinline int add_inode_ref(struct btrfs_trans_handle *trans,
- 	struct inode *inode = NULL;
- 	unsigned long ref_ptr;
- 	unsigned long ref_end;
--	struct fscrypt_str name;
-+	struct fscrypt_str name = { 0 };
- 	int ret;
- 	int log_ref_ver = 0;
- 	u64 parent_objectid;
+> [...]
+> +static int ocores_pwm_apply(struct pwm_chip *chip,
+> +			    struct pwm_device *pwm,
+> +			    const struct pwm_state *state)
+> +{
+> +	struct ocores_pwm_device *ddata = chip_to_ocores(chip);
+> +	u32 ctrl_data = 0;
+> +	u64 period_data, duty_data;
+> +
+> +	if (state->polarity != PWM_POLARITY_INVERSED)
+> +		return -EINVAL;
+> +
+> +	period_data = mul_u64_u32_div(state->period, ddata->clk_rate, NSEC_PER_SEC);
+> +	if (!period_data)
+> +		return -EINVAL;
+> +
+> +	if (period_data > U32_MAX)
+> +		period_data = U32_MAX;
+> +
+> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_LRC, (u32)period_data);
 
-base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
--- 
-2.46.0
+The cast isn't needed.
 
+> +	duty_data = mul_u64_u32_div(state->duty_cycle, ddata->clk_rate, NSEC_PER_SEC);
+> +	if (!duty_data)
+> +		return -EINVAL;
+> +
+> +	if (duty_data > U32_MAX)
+> +		duty_data = U32_MAX;
+> +
+> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_HRC, (u32)duty_data);
+
+ditto.
+
+> +	ctrl_data = ocores_pwm_readl(ddata, pwm->hwpwm, REG_OCPWM_CTRL);
+> +	if (state->enabled)
+> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL,
+> +				  ctrl_data | REG_OCPWM_CNTR_EN | REG_OCPWM_CNTR_OE);
+> +	else
+> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL,
+> +				  ctrl_data & ~(REG_OCPWM_CNTR_EN | REG_OCPWM_CNTR_OE));
+
+If you're clearing REG_OCPWM_CNTR_OE (Output Enable?), does the output
+really go low? Or is that due to an external pull down on your board?
+
+> +
+> +	return 0;
+> +}
+> [...]
+> +static int ocores_pwm_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *id;
+> +	struct device *dev = &pdev->dev;
+> +	struct ocores_pwm_device *ddata;
+> +	struct pwm_chip *chip;
+> +	struct clk *clk;
+> +	struct reset_control *rst;
+> +	int ret;
+> +
+> +	id = of_match_device(ocores_pwm_of_match, dev);
+> +	if (!id)
+> +		return -EINVAL;
+
+Error message here? Better use device_get_match_data() here. Then you
+don't need the of-specific headers (IIUC).
+
+> +	chip = devm_pwmchip_alloc(&pdev->dev, 8, sizeof(*ddata));
+> +	if (IS_ERR(chip))
+> +		return -ENOMEM;
+> +
+> +	ddata = chip_to_ocores(chip);
+> +	ddata->data = id->data;
+> +	chip->ops = &ocores_pwm_ops;
+> +
+> +	ddata->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(ddata->regs))
+> +		return dev_err_probe(dev, PTR_ERR(ddata->regs),
+> +				     "Unable to map IO resources\n");
+> +
+> +	clk = devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk),
+> +				     "Unable to get pwm's clock\n");
+> +
+> +	ret = devm_clk_rate_exclusive_get(dev, clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rst = devm_reset_control_get_optional_exclusive(dev, NULL);
+> +	if (IS_ERR(rst))
+> +		return dev_err_probe(dev, PTR_ERR(rst),
+> +				     "Unable to get pwm's reset\n");
+> +
+> +	ret = reset_control_deassert(rst);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_add_action_or_reset(dev, ocores_pwm_reset_control_assert, rst);
+> +	if (ret)
+> +		return ret;
+
+If you respin anyhow, switch to
+devm_reset_control_get_optional_exclusive_deasserted(). Up to now this
+only exists in next, but I'd care to apply this is a way that doesn't
+fail to build then.
+
+> +	ddata->clk_rate = clk_get_rate(clk);
+> +	if (ddata->clk_rate > NSEC_PER_SEC)
+> +		return -EINVAL;
+> +
+> +	ret = devm_pwmchip_add(dev, chip);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
+> +
+> +	return 0;
+> +}
+
+Best regards
+Uwe
+
+--5ft5dx5frm54rk25
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcGOn0ACgkQj4D7WH0S
+/k7nQAf/bNcqXvu5TM3xqi4I4b+vs57zbYGuw+lY9NUbX36V9Jb2oWrOO1Tx+nh2
+RJnM2SCN7UyH4+LHxlMmwBeIiTKRUDJNxmA9b0pUq4EJEGu+xFRaKuMQwKfQIvxI
+WiHmMTOpNykYfyG2tWfSC36Hjkg1oUT1JoYVsOpQsld6oF6MVmeWBVRY7eGA0EV0
+/kLjPJPUTWHAMv6IW679W8HzWJqoSg6b+c8Y5Xi6sYAo6Nu9SX9WR43BFPV3Kj4N
+USlNSw2dUgzd8aTvJhNpX5WIaWwi8X3xUwxP5BtY5540clB68nzkFJHrw65nZKwz
+ERTDsQkQT2C2tZ63uMZGmFUp+PRmXA==
+=9Var
+-----END PGP SIGNATURE-----
+
+--5ft5dx5frm54rk25--
 
