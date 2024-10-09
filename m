@@ -1,398 +1,194 @@
-Return-Path: <linux-kernel+bounces-358018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB00997954
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:51:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE04997956
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791D71F2325E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C331C21263
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014391E47AB;
-	Wed,  9 Oct 2024 23:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3701E3DFA;
+	Wed,  9 Oct 2024 23:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBwPZS/c"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hDs6+y+/"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2771F1E282B;
-	Wed,  9 Oct 2024 23:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728517863; cv=none; b=Hcnw7eJtGX1VnIPixsNVRP8MwjAOtUPUpOcy1dws+qQmsNSMHAFIX1MmFFJSrApD4ksEm/cD3s14vKsz7XyYoxPfy5ZVM8zB4NEJsPgpCBtVfDK/0NceB6z/fvcDEkDGgTaqZefQ6Xa4W6WLL2iveG+WFfrtaxYA8V/J6mA3qsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728517863; c=relaxed/simple;
-	bh=0kNu8+u6Dba/wR+xL4/Gs6ADgT9EeNPVy3bxJHRObkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C7kqF2hZa0rd186cSIbkRLK6Y7IxxwF+Ct2yhNRJzSPqTXjNF8Scp5CjfGUvo6cKyAt44CLEJPEla+67SVg9XRnBriSyvH9/m+wS3/iMjxJiszrpQ2PCorPl4GZ62+pGvuknxKgQfjnYImrxL8ynbtG/5hrorn8HZaJaYNCUziY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBwPZS/c; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43115b31366so2355885e9.3;
-        Wed, 09 Oct 2024 16:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728517859; x=1729122659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1C5EhyIJlH5dsKSUlSz9TFCvZCAMtETZs60RR+mrYOw=;
-        b=YBwPZS/crDwwKBmomMXf5eVo452Vv6XKPE0L48K5hpsqBk2L9l307Z0LndgPw6/i8I
-         HM7WN9cA479Aj+PferZYBF/ZJSnTfXIxlf7ygB5E+z8K0unMH4V2l0hOjgsrnhvkbVuq
-         turILEx2WGQGcp6yNxrr4HlncD1GPHp9rqfyySo24Vyj5KzMr/fHkPqfvUipGf0Uandf
-         FLtn6cAcnjjHIiuVzs77T7e8DrzR5OvJrhewtWWk1zQXyqV4taKqFnGKa9Nd9ClyJbkl
-         YxmwSgRTETbFFxWv/DdIPqzTTCJSei5n8a/ttJJtqvPzkS0pFX3mqmkIh4qSKkmX3FRx
-         g/Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728517859; x=1729122659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1C5EhyIJlH5dsKSUlSz9TFCvZCAMtETZs60RR+mrYOw=;
-        b=o0r3DHME+Y4T6ytp6jjBZCYH7RGhcWe8xPvGsjE4O+NezVKkjayZNu/IWzEll+a6u0
-         YeH8RazzJur8DlKcuU6PE/RFAUsPPluEjAJxCaDdyg8cTuOCjyo3kI1RjOQcIqOGgusr
-         RykrExsDI30iJgR0LgnCrIaMyOvjjSRaxUKAEWKzELlfd8sl73G17LKUWU4+HJv2FKqf
-         VVXIzv06IQyRbrSWBDBqH6VhZe9wqOz89ktdoOe0JGhr4g5uKoOq04iInjdrfpcP11TV
-         mphDZmzS35XRGxjDQ0M3rKbtmdJaeiGSYbMx6vbYa4fbk9e61VPORt6QK/Egn58lzU/W
-         ZQ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUfHuT2AbJO6gEm7sWPmFzG545LrjRiVM8uvQ+h1zTX5fBTQ4Mk1eFq6YuUaJ+GaeTwMTcxQfF0@vger.kernel.org, AJvYcCW6RZAn1kHCVnhkqibAeGHoDj6kMF+5J0xgNRNGAzVlfNy6k5/wSN6Qyr6+7np2vdpUAa5iSMI+8CS0ZOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWhAQZwMGMqGpd0JymaFMR5if3bRq6KiUMekYiGi3DxdDRFNr8
-	7ukc6+NJX9rGavhC355k6LDCpibo3xYVTZaUSOJeGC7SzxFTZe9kFJQSQnc6CHO9NsAsUSnUulf
-	UmhllHOvqQxTp5SWKPC2bpEORcYU=
-X-Google-Smtp-Source: AGHT+IErJ/vcpeSs9ve+RmX8+TdqD8teL/9J7kobSk8QuLKj8zecJijnF/1hEcJgqGiwP6YyQCNxzm9vAp1X5dK4CR0=
-X-Received: by 2002:adf:e5c2:0:b0:37c:d2ac:dd7d with SMTP id
- ffacd0b85a97d-37d3aa34a10mr3072228f8f.30.1728517859170; Wed, 09 Oct 2024
- 16:50:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F084B191F65
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 23:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728517887; cv=fail; b=P3O/jO54xxMDP/reOYHAb2nVTKuHeX90ki+eyMpzw0Xm7O2pJdY5qgMlqXbdZM1TStnvoDoYlMVv8tHa6gLZfKDMlSCtOGeHipli0RNx4M2Raw1KEAjYIgWtZNnaG76jYO1Rjc0IMcCHocfBjoUpGLjXnTfNi7cupuNJAGMW35U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728517887; c=relaxed/simple;
+	bh=SH+oXH7RGSH7bGAB5GA3V/lOEKWL1iDda4giTzG8tvI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=pNkiCS0X0oH6JgDu58quRJGpwnj4ax9CThwhWxtiTbfllhcf4ROj6Sbt/TaV9nkAMh79lhIuuy+M4VEGpsX7BLmihcPQLYDr1waRM4VEctrvzn4wGHuDiUkRc2g62E774zNv4mToSTjuu8//jH0SEqBe1zrT0+9OyTqiQCb07Ec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hDs6+y+/; arc=fail smtp.client-ip=40.107.223.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mb5yWOoIxWpxkAGr9XgiEU+EERFdShzc+nmCf57fd7qowUHUhzIrznMjbCErqzMUWPhYBJeEmv2eMXplRoVteByO1jgUq+0h68bAQS2scP3t257upqlP0pj2j2RICQEGkAQ1kvg00MfvqES8cBP+dJBL9smX7uyfnede6ov+N/WFP1IBU+m/Grr5YwKTchm9+8LZ8thj0qq3cxemLIaTHy0cv8+wQfRi922BeAK3OAXvU957o/wpzPoGKLaktvlHaPeOq9XEwM/0LT26TZpFEzXtBSNaHoP2trwmvkOzcqgkJcaYskhcL4nvXa7x+6LbUhD03GkrhFdTLH4LT2TEXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eX2OAhCGpcFZh7VQw47FwA6hEQBvjr6MRTa+rb55kAk=;
+ b=mWKN67DAg8aC59sGb2NnUvjEcPui+EAFN1lcainLymus7Lp4djGq9JJHr5o5VAklaPtinZhOa1/JmQ8s1Nl9l3cOF/SMuURoRwiUFEnv5zjDRwfNTpHYIcqWKeZDhoJqTGiQiHieU4DUClK6GRlHfZMVgU8vy8Kujm4p+W9YBHW/MZyes9z4rG+5oAss61xvsQARbnsotpc0qIXMGVh9YZuevzdx3megvFk2HdvaobrwMNcM2drj0+rMFN6ykfxNUoW0ExVmhdDopGUwd+q5/OmY4dawAhS7ec6Jzl545GIgYqfcogAycVcpMJMqGZzn2xi2SLUP7iEKctXYKcu8Xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eX2OAhCGpcFZh7VQw47FwA6hEQBvjr6MRTa+rb55kAk=;
+ b=hDs6+y+/cS6YR2e9rNF8alcRUWAPQBQt5Ws/ti0N43pxYY5zXBc0DMPKvSaJOAHHYOhPjKDJp2dHWcJQjOs7qyVJP2mEgaCmpfMyK+tjYIGbx/wdByGG3ICkF+HxFsm0CFX76PsAa/97V9ONDlTmiAyJoV7Jq0LSVJP2SdXFg3U=
+Received: from MN2PR05CA0021.namprd05.prod.outlook.com (2603:10b6:208:c0::34)
+ by SJ0PR12MB7007.namprd12.prod.outlook.com (2603:10b6:a03:486::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
+ 2024 23:51:21 +0000
+Received: from BL6PEPF00022572.namprd02.prod.outlook.com
+ (2603:10b6:208:c0:cafe::7e) by MN2PR05CA0021.outlook.office365.com
+ (2603:10b6:208:c0::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16 via Frontend
+ Transport; Wed, 9 Oct 2024 23:51:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00022572.mail.protection.outlook.com (10.167.249.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Wed, 9 Oct 2024 23:51:21 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
+ 2024 18:51:20 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
+ 2024 18:51:20 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 9 Oct 2024 18:51:19 -0500
+Message-ID: <7cd0ba15-2c60-3b0f-a388-46e7b46a09d7@amd.com>
+Date: Wed, 9 Oct 2024 16:51:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008112049.2279307-1-linyunsheng@huawei.com> <20241008112049.2279307-7-linyunsheng@huawei.com>
-In-Reply-To: <20241008112049.2279307-7-linyunsheng@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Wed, 9 Oct 2024 16:50:22 -0700
-Message-ID: <CAKgT0UdgoyE0BzZoyXzxWYtAakJGWKORSZ25LbO1-=Q_Stiq9w@mail.gmail.com>
-Subject: Re: [PATCH net-next v20 06/14] mm: page_frag: reuse existing space
- for 'size' and 'pfmemalloc'
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 8, 2024 at 4:27=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
-> wrote:
->
-> Currently there is one 'struct page_frag' for every 'struct
-> sock' and 'struct task_struct', we are about to replace the
-> 'struct page_frag' with 'struct page_frag_cache' for them.
-> Before begin the replacing, we need to ensure the size of
-> 'struct page_frag_cache' is not bigger than the size of
-> 'struct page_frag', as there may be tens of thousands of
-> 'struct sock' and 'struct task_struct' instances in the
-> system.
->
-> By or'ing the page order & pfmemalloc with lower bits of
-> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
-> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
-> And page address & pfmemalloc & order is unchanged for the
-> same page in the same 'page_frag_cache' instance, it makes
-> sense to fit them together.
->
-> After this patch, the size of 'struct page_frag_cache' should be
-> the same as the size of 'struct page_frag'.
->
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
->  include/linux/mm_types_task.h   | 19 +++++----
->  include/linux/page_frag_cache.h | 24 ++++++++++-
->  mm/page_frag_cache.c            | 75 +++++++++++++++++++++++----------
->  3 files changed, 86 insertions(+), 32 deletions(-)
->
-> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.=
-h
-> index 0ac6daebdd5c..a82aa80c0ba4 100644
-> --- a/include/linux/mm_types_task.h
-> +++ b/include/linux/mm_types_task.h
-> @@ -47,18 +47,21 @@ struct page_frag {
->  #define PAGE_FRAG_CACHE_MAX_SIZE       __ALIGN_MASK(32768, ~PAGE_MASK)
->  #define PAGE_FRAG_CACHE_MAX_ORDER      get_order(PAGE_FRAG_CACHE_MAX_SIZ=
-E)
->  struct page_frag_cache {
-> -       void *va;
-> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> +       /* encoded_page consists of the virtual address, pfmemalloc bit a=
-nd
-> +        * order of a page.
-> +        */
-> +       unsigned long encoded_page;
-> +
-> +       /* we maintain a pagecount bias, so that we dont dirty cache line
-> +        * containing page->_refcount every time we allocate a fragment.
-> +        */
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
->         __u16 offset;
-> -       __u16 size;
-> +       __u16 pagecnt_bias;
->  #else
->         __u32 offset;
-> +       __u32 pagecnt_bias;
->  #endif
-> -       /* we maintain a pagecount bias, so that we dont dirty cache line
-> -        * containing page->_refcount every time we allocate a fragment.
-> -        */
-> -       unsigned int            pagecnt_bias;
-> -       bool pfmemalloc;
->  };
->
->  /* Track pages that require TLB flushes */
-> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
-che.h
-> index 0a52f7a179c8..dba2268e451a 100644
-> --- a/include/linux/page_frag_cache.h
-> +++ b/include/linux/page_frag_cache.h
-> @@ -3,18 +3,38 @@
->  #ifndef _LINUX_PAGE_FRAG_CACHE_H
->  #define _LINUX_PAGE_FRAG_CACHE_H
->
-> +#include <linux/bits.h>
->  #include <linux/log2.h>
->  #include <linux/mm_types_task.h>
->  #include <linux/types.h>
->
-> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> +/* Use a full byte here to enable assembler optimization as the shift
-> + * operation is usually expecting a byte.
-> + */
-> +#define PAGE_FRAG_CACHE_ORDER_MASK             GENMASK(7, 0)
-> +#else
-> +/* Compiler should be able to figure out we don't read things as any val=
-ue
-> + * ANDed with 0 is 0.
-> + */
-> +#define PAGE_FRAG_CACHE_ORDER_MASK             0
-> +#endif
-> +
-> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT         (PAGE_FRAG_CACHE_ORDER_MA=
-SK + 1)
-> +
-> +static inline bool page_frag_encoded_page_pfmemalloc(unsigned long encod=
-ed_page)
-> +{
-> +       return !!(encoded_page & PAGE_FRAG_CACHE_PFMEMALLOC_BIT);
-> +}
-> +
-
-Rather than calling this encoded_page_pfmemalloc you might just go
-with decode_pfmemalloc. Also rather than passing the unsigned long we
-might just want to pass the page_frag_cache pointer.
-
->  static inline void page_frag_cache_init(struct page_frag_cache *nc)
->  {
-> -       nc->va =3D NULL;
-> +       nc->encoded_page =3D 0;
->  }
->
->  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache =
-*nc)
->  {
-> -       return !!nc->pfmemalloc;
-> +       return page_frag_encoded_page_pfmemalloc(nc->encoded_page);
->  }
->
->  void page_frag_cache_drain(struct page_frag_cache *nc);
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index 4c8e04379cb3..4bff4de58808 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -12,6 +12,7 @@
->   * be used in the "frags" portion of skb_shared_info.
->   */
->
-> +#include <linux/build_bug.h>
->  #include <linux/export.h>
->  #include <linux/gfp_types.h>
->  #include <linux/init.h>
-> @@ -19,9 +20,41 @@
->  #include <linux/page_frag_cache.h>
->  #include "internal.h"
->
-> +static unsigned long page_frag_encode_page(struct page *page, unsigned i=
-nt order,
-> +                                          bool pfmemalloc)
-> +{
-> +       BUILD_BUG_ON(PAGE_FRAG_CACHE_MAX_ORDER > PAGE_FRAG_CACHE_ORDER_MA=
-SK);
-> +       BUILD_BUG_ON(PAGE_FRAG_CACHE_PFMEMALLOC_BIT >=3D PAGE_SIZE);
-> +
-> +       return (unsigned long)page_address(page) |
-> +               (order & PAGE_FRAG_CACHE_ORDER_MASK) |
-> +               ((unsigned long)pfmemalloc * PAGE_FRAG_CACHE_PFMEMALLOC_B=
-IT);
-> +}
-> +
-> +static unsigned long page_frag_encoded_page_order(unsigned long encoded_=
-page)
-> +{
-> +       return encoded_page & PAGE_FRAG_CACHE_ORDER_MASK;
-> +}
-> +
-> +static void *page_frag_encoded_page_address(unsigned long encoded_page)
-> +{
-> +       return (void *)(encoded_page & PAGE_MASK);
-> +}
-> +
-> +static struct page *page_frag_encoded_page_ptr(unsigned long encoded_pag=
-e)
-> +{
-> +       return virt_to_page((void *)encoded_page);
-> +}
-> +
-
-Same with these. Instead of calling it encoded_page_XXX we could
-probably just go with decode_page, decode_order, and decode_address.
-Also instead of passing an unsigned long it would make more sense to
-be passing the page_frag_cache pointer, especially once you start
-pulling these out of this block.
-
-If you are wanting to just work with the raw unsigned long value in
-the file it might make more sense to drop the "page_frag_" prefix from
-it and just have functions for handling your "encoded_page_" value. In
-that case you might rename page_frag_encode_page to
-"encoded_page_encode" or something like that.
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 11/11] accel/amdxdna: Add firmware debug buffer support
+Content-Language: en-US
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240911180604.1834434-1-lizhi.hou@amd.com>
+ <20240911180604.1834434-12-lizhi.hou@amd.com>
+ <1a2bb8fc-0242-d86b-1de0-cc9eec1c61c0@quicinc.com>
+ <08835e82-f9e4-52e5-5d03-fa31ecf63314@amd.com>
+In-Reply-To: <08835e82-f9e4-52e5-5d03-fa31ecf63314@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022572:EE_|SJ0PR12MB7007:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf87d6ad-5b38-4e48-8484-08dce8bd46b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MTJ3RWRrUEQwQnRtRngxOEx3ejh5YnlKa2pGMlVuQlUzQ2RTUlZmZ1hid1JP?=
+ =?utf-8?B?WWczcnhSNStFdEIzR0RNS1dPODd3Nk1zdWhhTHBycjFzRm5qRkZTNUVLdWkr?=
+ =?utf-8?B?eTBtTDZqWkdJeDNZdDZneEVaR0NiWFllMnNUaUdDZkhyZ2dUa25aazJZK1Z0?=
+ =?utf-8?B?UGdHOVowb3p6ek5DZTJuR3FvTW5iTXEvV3hBT2JrdDNnOUY1TDFpZkxvdVRm?=
+ =?utf-8?B?c3l1amc0OXpmb1JJQ0dFNUd0MTRMRW43OUxTZ3BMSWs2MFNVQnhKR2ppODgy?=
+ =?utf-8?B?aWttMEZ5NEVHc2JVRk9LNEkxQjB2TVE2NFlkZERwNkFpYkxGUVcyQnZPZkh1?=
+ =?utf-8?B?U3BZZ2tSQ0tJd1I5M1QxZEtrVDJyekxvdUFRaitjOHl5cCs0N2RxS3hFWGs4?=
+ =?utf-8?B?ZnRHb1Qxc3pGbk1BVWNyU05kNDVQRDJtdkMyTi83VHJWUDJINzF5YjcxMTFi?=
+ =?utf-8?B?dWpHbjBiYVdodnJVOVgrVjNxK3FVSjU0ekZXR2xwa2JwRjFydWlYZCt3Q2hC?=
+ =?utf-8?B?YTl6T2VIa21CM3FucHZ2b0VPeitSUlYwRXdSc255UVVwb0NSdDkyM2Y0Qlds?=
+ =?utf-8?B?YldRRnM1RG1MZUMvSVZucmFON3k3RmZ0aFMzeHJzbFdkdUZsOHpNUFpBQVhK?=
+ =?utf-8?B?ODFSenUxd0tZN2orUVprVVMvRkMrVE5SMEw3NGZSN3lsK3N5d0JlNFRLWnBW?=
+ =?utf-8?B?ZDQyemEwL2lFQi9YUnBKUUJaTXUvTWF3dGZETUNPcEhrTENnalBROWhUSkJr?=
+ =?utf-8?B?cDhISUNqOHNkNldmZWpZRXR1M0x5UmUyaUNIclVwWWVpRTFJWW5Fb2FxY1l1?=
+ =?utf-8?B?MHdFcnBCT2h4SDBnMnVlckN0dXlaTndqSUJackxXd1IydlVuN25EZzFBdWRy?=
+ =?utf-8?B?ZUo4WTNnak9nVW8zeWdpMWhKbnBVMTRtYjQ1bGx4OUVnNWF5aGNQMzQvaHB6?=
+ =?utf-8?B?dlpKWHJnc21adFVHbmRhNk5Ybm84b2tac1lpVkFxQnJsQUNVbGpNTGZYMnI2?=
+ =?utf-8?B?a3VFODRFQzl6YmV6ekdKSHhsZmtON2FlTlUzNFdWODcxSGE2QkF6eU5vSjFu?=
+ =?utf-8?B?SXVyNWVFa3p4UFFMT3pzOFc0Ymo3ZXdkV2VKZTJOQ0tEUDBIeE9YSXJwRXdD?=
+ =?utf-8?B?cnpNTDRsYmpPOFRrZjVLd3pxYUY2TFRaWFN4cWFqeXZ2TTFLYms2ckw5WXFo?=
+ =?utf-8?B?TlE5anpUNjZrYXRLYnlMZlVpMC9hY0ViRTNDOHpINW9ENE91N09SQkI1VXhC?=
+ =?utf-8?B?bUJJWUE5b2h4RDNMNDkyUS85eFZxMTZnQ25hUEhTYm1NSmZBSG4yMWF3dTRm?=
+ =?utf-8?B?eGVLcnlBU0Rjck8vZUFuMDFId2dpMEdoUnBlVGtuVjVIeHVoendUY1YwT2tm?=
+ =?utf-8?B?SXMvMXBnUFFZSlVQd0Z6QWZPdGl5ejE5cDZCZnhXM0RtVmljRkpPQ0daay9H?=
+ =?utf-8?B?clVZN3g5alp1aFNkdWl3NENzdDY5eS9uNGtSMEZGQWoxYVp3QWVXcS94a2tV?=
+ =?utf-8?B?Vk1wZUZIQmpjaWN6R3RkODNkYTJrM0h4UE1CcFU5SjRseTJQZmowSkVvcEla?=
+ =?utf-8?B?MEIwRkVQWGZzWWJLOW9kU2JIclV4d2k4TEJ6MXVaN1RlbmM1RlJSMlhjVnR3?=
+ =?utf-8?B?MEU0eXNDU0NpOHdzMVlUWnl0cjRQZXRiUnh2U0RZNE5aNis5dUNtN2FZZUQw?=
+ =?utf-8?B?SEdXTjErT0x5V3lVZ3JiVU40VFlKY1FoUU80ejlOQWFDcUhFaWdkMGYzTzVK?=
+ =?utf-8?B?aGJ5ZC9PdE10alZsU1dycGF2MVlqT1VqSlFOMVR6TnNieDVjVW5HU2s0VDlv?=
+ =?utf-8?B?Z1ZMbnVHdWM1S0Q0bW1pSUVZSXE4TFFiS1dDZzlVd2VIbGJ3TXJ4Rk5Td0M3?=
+ =?utf-8?Q?LFhosDO0zdVa3?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 23:51:21.1684
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf87d6ad-5b38-4e48-8484-08dce8bd46b4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022572.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7007
 
 
-> +static unsigned int page_frag_cache_page_size(unsigned long encoded_page=
-)
-> +{
-> +       return PAGE_SIZE << page_frag_encoded_page_order(encoded_page);
-> +}
-> +
->  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->                                              gfp_t gfp_mask)
->  {
-> +       unsigned long order =3D PAGE_FRAG_CACHE_MAX_ORDER;
->         struct page *page =3D NULL;
->         gfp_t gfp =3D gfp_mask;
+On 10/9/24 09:22, Lizhi Hou wrote:
 >
-> @@ -30,23 +63,26 @@ static struct page *__page_frag_cache_refill(struct p=
-age_frag_cache *nc,
->                    __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->         page =3D alloc_pages_node(NUMA_NO_NODE, gfp_mask,
->                                 PAGE_FRAG_CACHE_MAX_ORDER);
-> -       nc->size =3D page ? PAGE_FRAG_CACHE_MAX_SIZE : PAGE_SIZE;
->  #endif
-> -       if (unlikely(!page))
-> +       if (unlikely(!page)) {
->                 page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
-> +               order =3D 0;
-> +       }
+> On 10/4/24 11:33, Jeffrey Hugo wrote:
+>> On 9/11/2024 12:06 PM, Lizhi Hou wrote:
+>>> User application may allocate a debug buffer and attach it to an NPU
+>>> context through the driver. Then the NPU firmware prints its debug
+>>> information to this buffer for debugging.
+>>
+>> I feel like I must be missing something. It looks like this patch 
+>> accepts a buffer from the user, and stores it. However I don't see 
+>> how the NPU firmware ever learns that this special buffer exists to 
+>> then use it.
 >
-> -       nc->va =3D page ? page_address(page) : NULL;
-> +       nc->encoded_page =3D page ?
-> +               page_frag_encode_page(page, order, page_is_pfmemalloc(pag=
-e)) : 0;
+> The debug function is incomplete while I was creating the patch. Thus, 
+> I put a line in TODO "Improve debug bo support".
 >
->         return page;
->  }
+> We made progress on this feature. Should I add the code to V4 patch? 
+> Or I can add it within future patches.
+
+Discussed this more internally. And we would postpone debug_bo feature. 
+Thus, I will  drop this patch for now.
+
+
+Thanks,
+
+Lizhi
+
 >
->  void page_frag_cache_drain(struct page_frag_cache *nc)
->  {
-> -       if (!nc->va)
-> +       if (!nc->encoded_page)
->                 return;
 >
-> -       __page_frag_cache_drain(virt_to_head_page(nc->va), nc->pagecnt_bi=
-as);
-> -       nc->va =3D NULL;
-> +       __page_frag_cache_drain(page_frag_encoded_page_ptr(nc->encoded_pa=
-ge),
-> +                               nc->pagecnt_bias);
-> +       nc->encoded_page =3D 0;
->  }
->  EXPORT_SYMBOL(page_frag_cache_drain);
+> Thanks,
 >
-> @@ -63,35 +99,29 @@ void *__page_frag_alloc_align(struct page_frag_cache =
-*nc,
->                               unsigned int fragsz, gfp_t gfp_mask,
->                               unsigned int align_mask)
->  {
-> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -       unsigned int size =3D nc->size;
-> -#else
-> -       unsigned int size =3D PAGE_SIZE;
-> -#endif
-> -       unsigned int offset;
-> +       unsigned long encoded_page =3D nc->encoded_page;
-> +       unsigned int size, offset;
->         struct page *page;
->
-> -       if (unlikely(!nc->va)) {
-> +       if (unlikely(!encoded_page)) {
->  refill:
->                 page =3D __page_frag_cache_refill(nc, gfp_mask);
->                 if (!page)
->                         return NULL;
->
-> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> -               /* if size can vary use size else just use PAGE_SIZE */
-> -               size =3D nc->size;
-> -#endif
-> +               encoded_page =3D nc->encoded_page;
-> +
->                 /* Even if we own the page, we do not use atomic_set().
->                  * This would break get_page_unless_zero() users.
->                  */
->                 page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->
->                 /* reset page count bias and offset to start of new frag =
-*/
-> -               nc->pfmemalloc =3D page_is_pfmemalloc(page);
->                 nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
->                 nc->offset =3D 0;
->         }
->
-> +       size =3D page_frag_cache_page_size(encoded_page);
->         offset =3D __ALIGN_KERNEL_MASK(nc->offset, ~align_mask);
->         if (unlikely(offset + fragsz > size)) {
->                 if (unlikely(fragsz > PAGE_SIZE)) {
-> @@ -107,13 +137,14 @@ void *__page_frag_alloc_align(struct page_frag_cach=
-e *nc,
->                         return NULL;
->                 }
->
-> -               page =3D virt_to_page(nc->va);
-> +               page =3D page_frag_encoded_page_ptr(encoded_page);
->
->                 if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
->                         goto refill;
->
-> -               if (unlikely(nc->pfmemalloc)) {
-> -                       free_unref_page(page, compound_order(page));
-> +               if (unlikely(page_frag_encoded_page_pfmemalloc(encoded_pa=
-ge))) {
-> +                       free_unref_page(page,
-> +                                       page_frag_encoded_page_order(enco=
-ded_page));
->                         goto refill;
->                 }
->
-> @@ -128,7 +159,7 @@ void *__page_frag_alloc_align(struct page_frag_cache =
-*nc,
->         nc->pagecnt_bias--;
->         nc->offset =3D offset + fragsz;
->
-> -       return nc->va + offset;
-> +       return page_frag_encoded_page_address(encoded_page) + offset;
->  }
->  EXPORT_SYMBOL(__page_frag_alloc_align);
->
-> --
-> 2.33.0
+> Lizhi
 >
 
