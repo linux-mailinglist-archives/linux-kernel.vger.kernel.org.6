@@ -1,135 +1,153 @@
-Return-Path: <linux-kernel+bounces-356680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AF599652F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CA4996532
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8211B281F5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA1BB21A1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50764192D97;
-	Wed,  9 Oct 2024 09:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA6318F2E3;
+	Wed,  9 Oct 2024 09:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AUB20Dct"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YhbrNKQO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0939189520;
-	Wed,  9 Oct 2024 09:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECD118E76E;
+	Wed,  9 Oct 2024 09:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465614; cv=none; b=MRl1FiDGONufcdvo6Ci/PMv7ZyVjVaTA+4ScYoIaiJmKViaR1oWZGTntH05/Wr/ywz6KkNMFPnjUk+ypE7sYwAX0/Ft5XeJJwgc44gmnAXPJUBum21Tfv97h9H3652FbSHbofpLLYQm4CVR6kU2edFvgIuFuirQIafAanOj8KxY=
+	t=1728465649; cv=none; b=jE+KEEHlBWWRRe4RPKPoBareS+VlyHK3mRPljcjGI5USP9dEgM65R7O8t2sOyxnKHHAk69W6ZQdOnDOxohMEortjWNb/b5+kLzsAJ7xqxrTvSOkHfpocPg5IFuJW7AAuIek9E1zVypPS5xwnw4en/kbhwh1ln8ZjS7evwJxcSpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465614; c=relaxed/simple;
-	bh=bAMqCfrwaXqFtyx4AvFX7ZFSSTTt4lqyv0dvCuSH7Tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAU4M22QIm6Uo8nrpm5Un/lRBUYUakA5hUZkjeNBBlx2j0lTA1nYfNOpCssvy+rgZCwt3TgAW6ZRNqwGjneRfc/J+Ag1DmLcmtvNUrfBiJa+RPEGjBBpFTyKrAyVWUoVCKaaEWQK8tDiC48o373YCfQ9DF4jKMuegVsc86eHT0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AUB20Dct; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=H2DwZUbEHckuGa0hfYPz82REyIpT7y3SCXZ306JtGkc=; b=AUB20DcteP860IY8sIhZEjo0kT
-	2SpZuG6aF/WvAMB9+18aLTw1/5nTptJoqzrUHYFtam9uqW3ybNRCxd098Li3wp2vE+FwiJfc+WeJu
-	dfNJso8EKnE1OoJhLIDFxUb7Nh26UeSOHJEI2xP7JGMGmWfEk0glgDdz8PaOTKt5aKHupzzGwIW3o
-	Y+HLfMYAZGWbBGsupVnW9BavfdOku/FE6cb9kM8Z/A+LioK9smPtaaa8Tk5A/1XyEPeWi3o2VfLgn
-	CXjeoXlZJm41Je/rgkE62zUtF/a/1v9Dqv/DenlgaRTiOS7mBWgLDfvj74tAiwEqQ3ZNl9axBo/oa
-	kzp9Dwaw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49396)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sySrO-0000Gf-09;
-	Wed, 09 Oct 2024 10:19:57 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sySrK-0006Ar-34;
-	Wed, 09 Oct 2024 10:19:55 +0100
-Date: Wed, 9 Oct 2024 10:19:54 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	git@amd.com
-Subject: Re: [RFC PATCH net-next 4/5] net: macb: Configure High Speed Mac for
- given speed.
-Message-ID: <ZwZKumS3IEy54Jsk@shell.armlinux.org.uk>
-References: <20241009053946.3198805-1-vineeth.karumanchi@amd.com>
- <20241009053946.3198805-5-vineeth.karumanchi@amd.com>
+	s=arc-20240116; t=1728465649; c=relaxed/simple;
+	bh=aeOCbk0PsLtE5JzLWPFz2lzRfvXT6wwOoAgjwany9N8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jg8cB7ENdatD/sL9XP0jiXCq1ekIGqDg4lgkdgokZpE4yJ5AAz480wACTirCA4a1Y3vOQREfYuT/CODo5N4Ic5mQzP1ON0HqmGQDDfqh0+jWGOAFwxDOpWALc0/ttXJZKSGa0PFp8j5cGd3UzEycj6mOaEMslRBg1pQHtkRzrFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YhbrNKQO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499786KF026815;
+	Wed, 9 Oct 2024 09:20:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nopzlFAvEnKmID7NT6spIwtKQ7l5wvtm5oKw6QdIjsQ=; b=YhbrNKQOcHz22qpM
+	K1gqu1DOL1FXgo+mBI8bx0t9fOKIzVa6CVknXH4lpuvemDZqtx/oodRnwvdRErt6
+	C1KqhTo2dbphfz6p3DvCQQDRmYIuf1sXI3uNCDMVuYl1VtC0EqQMp/jlbV8cABtt
+	eSCc9M1YkSrgqrP7t+NsI5vGV15u6uOT5r3QlEbTERAWeJn/G1k5YF5E2QgzXPkY
+	/5/hFLYkGSNRHK6thxHnY+Ysx5TnXPOn7AfRpSfXLP5g64xXtpNoXsg49xKgalOW
+	2cxhD514jh6u+Bhzvlxhc/EIBm/08DvOpSlsqqht5GqopjD7Yboq4RhQ/o1yAlZt
+	6bweew==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 422xqa2bym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 09:20:37 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4999Kbvk025740
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 09:20:37 GMT
+Received: from [10.239.133.242] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
+ 02:20:33 -0700
+Message-ID: <0525c2a9-45a5-4654-aaf4-b0ab9e161884@quicinc.com>
+Date: Wed, 9 Oct 2024 17:20:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009053946.3198805-5-vineeth.karumanchi@amd.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Coresight: Narrow down the matching range of tpdm
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20241009085042.1098-1-quic_songchai@quicinc.com>
+ <a7fc66fe-0fb3-4d2c-8f23-03ccd46a4766@arm.com>
+Content-Language: en-US
+From: songchai <quic_songchai@quicinc.com>
+In-Reply-To: <a7fc66fe-0fb3-4d2c-8f23-03ccd46a4766@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ITtbRwbSSCE1pC52BwfFQ4pT3RPX6ch1
+X-Proofpoint-GUID: ITtbRwbSSCE1pC52BwfFQ4pT3RPX6ch1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090061
 
-On Wed, Oct 09, 2024 at 11:09:45AM +0530, Vineeth Karumanchi wrote:
-> HS Mac configuration steps:
-> - Configure speed and serdes rate bits of USX_CONTROL register from
->   user specified speed in the device-tree.
-> - Enable HS Mac for 5G and 10G speeds.
-> - Reset RX receive path to achieve USX block lock for the
->   configured serdes rate.
-> - Wait for USX block lock synchronization.
-> 
-> Move the initialization instances to macb_usx_pcs_link_up().
 
-It only partly moves stuff there, creating what I can only call a mess
-which probably doesn't work correctly.
-
-Please consider the MAC and PCS as two separate boxes - register
-settings controlled in one box should not be touched by the other box.
-
-For example, macb_mac_config() now does this:
-
-        old_ncr = ncr = macb_or_gem_readl(bp, NCR);
-...
-        } else if (macb_is_gem(bp)) {
-...
-                ncr &= ~GEM_BIT(ENABLE_HS_MAC);
-...
-        if (old_ncr ^ ncr)
-                macb_or_gem_writel(bp, NCR, ncr);
-
-meanwhile:
-
-> @@ -564,14 +565,59 @@ static void macb_usx_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
->  				 int duplex)
->  {
->  	struct macb *bp = container_of(pcs, struct macb, phylink_usx_pcs);
-...
-> +	/* Enable HS MAC for high speeds */
-> +	if (hs_mac) {
-> +		config = macb_or_gem_readl(bp, NCR);
-> +		config |= GEM_BIT(ENABLE_HS_MAC);
-> +		macb_or_gem_writel(bp, NCR, config);
-> +	}
-
-Arguably, the time that this would happen is when the interface mode
-changes which would cause a full reconfiguration and thus both of
-these functions will be called, but it's not easy to follow that's
-what is going on here.
-
-It also looks like you're messing with MAC registers in the PCS code,
-setting the MAC speed there. Are the PCS and MAC so integrated together
-that abstracting the PCS into its own separate code block leads to
-problems?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+On 10/9/2024 4:54 PM, Suzuki K Poulose wrote:
+> On 09/10/2024 09:50, Songwei Chai wrote:
+>> The format of tpdm's peripheral id is 1f0exx. To avoid potential
+>> conflicts in the future, update the .id_table's id to 0x001f0e00.
+>> This update will narrow down the matching range and prevent incorrect
+>> matches. For example, another component's peripheral id might be
+>> f0e00, which would incorrectly match the old id.
+>>
+>> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-tpdm.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c 
+>> b/drivers/hwtracing/coresight/coresight-tpdm.c
+>> index b7d99e91ab84..8e2985d17549 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+>> @@ -1308,8 +1308,8 @@ static void tpdm_remove(struct amba_device *adev)
+>>    */
+>>   static struct amba_id tpdm_ids[] = {
+>>       {
+>> -        .id = 0x000f0e00,
+>> -        .mask = 0x000fff00,
+>> +        .id = 0x001f0e00,
+>> +        .mask = 0x00ffff00,
+>>       },
+>>       { 0, 0, NULL },
+>>   };
+>>
+>
+> Please could you add "Fixes" tag for this ? You don't want an old 
+> kernel detect something else as TPDM, so this must go to stable kernels.
+> Also, while at it, please could you intend the id and mask values with
+> tabs, so it is easier to what exactly we are matching ? e.g,
+Thanks for your quick response, Suzuki.
+Corrected it in the new version!
+>
+>
+>     .id    = 0x001f0e00,
+>     .mask    = 0x00ffff00,
+>
+> Kind regards
+> Suzuki
+>
+>
 
