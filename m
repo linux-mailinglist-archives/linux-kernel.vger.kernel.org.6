@@ -1,189 +1,120 @@
-Return-Path: <linux-kernel+bounces-357566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306CE9972B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:10:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401EF9972B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61B7CB22D04
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:10:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F279C285250
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE5A1D359E;
-	Wed,  9 Oct 2024 17:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F911D271C;
+	Wed,  9 Oct 2024 17:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLfaMd0h"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYk4Kvk1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BB514A611;
-	Wed,  9 Oct 2024 17:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D8848CDD;
+	Wed,  9 Oct 2024 17:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728493822; cv=none; b=gEVau1y9ORiljUkC1DoZaW5fmMs7S5MbXPoQYwTWLAjp36RWzMqCfXe6sUpjwBhv2rmTM7So6j+9fvi8VehK1KnYRm2umNATubdzI54sBMrKha8fALLJymb+mudMsI8prMWJHtXicg7xc3RfyyTIKBRoxQvKtVe86n0u4YIQJ/Q=
+	t=1728493867; cv=none; b=WwH6ygiJ4By5dAPTkGuaAcdP/O8jZ/m838kkOwrqHJz9VyH1Q/R6vyIf6KmNAtE80x80UPAp45yfoGRpXURGtjU7+LrRWJuQmxmR0XvIRx7qMvFzQL24q5ST9CFUiXWry8dgK9u9i7nNUuMO2nCFUHm9XhApoQFyoDCnCbMR4Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728493822; c=relaxed/simple;
-	bh=ji/gakLu/qIT18qKQ000acOtbeI7Zd5eSJ/x/GSUR+U=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gsi30tLJ7tlYCis/PFySXKaFiotNBYwKe4utb8YYPtBUTNHaL7JEmKQR0ucqMw3AkCzEzlvft6uRlxYG2w7ozWrB1IyB3Zd3r1/TAivxjLdv8KJoMxODI7XyZuZI8r7bpYtrAteF6SUPSwjfLdp1jIpJG01aBPmQ3zR/7Eo87ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLfaMd0h; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso5783108276.1;
-        Wed, 09 Oct 2024 10:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728493819; x=1729098619; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Chk44cch0ltIQeofSD5CiqT4vY5iO0SSNHIRHVLIjtY=;
-        b=mLfaMd0hG3R3vhSB6pTMtWZ6XeKphKalAMq4K+uHdc8B2fBt2tqjh5QILz9k3wqrWd
-         1bhTwZ2Ufxmaavuyh6dPZwXA9Ohf/ODVerz7ippB6anY37LsZHUhREsq96vWdD2SQN+U
-         2E1QowxkB8zhtCv6UDFP0qj3g6RaPmm8xxhJtEVn9lJdZZ7E24zoFkugB4OA8gZBkAz2
-         z8k1ri6dQz8vy7nbS9KgjFIuLVend3i7tdU1wFU3hVMJZBkT8p+VXA/Nz0b/Wsm97+EO
-         FRDTMe8s6RKsT5AjTURRMlF/GF8KYkPj70mT9eV1rZzeGhEZDQofrb2MbQ2VYa2Imi6r
-         vCJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728493819; x=1729098619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Chk44cch0ltIQeofSD5CiqT4vY5iO0SSNHIRHVLIjtY=;
-        b=v16owEesMfiTHnTDpzuggyRgd8+5lZD3xDRKPW+CMCVSaSQCb4wJiBwuep3YxauR8I
-         Aquw7JUL/Hnfjn/YogWmkLQrtRmb0yjyA+8wMR7S+Ogn8WVDLSWvnqiqs+HcAMruKzUf
-         t1EqtNKG713ZyXdaEBwaa/E+q4V/CwYgnDaoF/O7JvTjOFE/W2OFDXEKJOIjotdiJeeZ
-         0VKS+QG7UPyazNSm5m4e63IJVjgui0PV9iW3s1K+QU80ia+4eVX4HwvI163BzS/npdjq
-         AJ0oWXB3ySQl/sYcuhQpmfd2y8QT70C9m2Zm5f68smwZtv1/lkjB5NQb7rCnVKvyW1MQ
-         5gtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNdrX+lWORyPT4XbuDoavndh1Tgdn/IcX/0v0zlkDUoHNgG/kqe85FXt3QdKmWxuVp9/4tpWzM+QTZ@vger.kernel.org, AJvYcCUpE1RdgjdAiL56IxiGKom9m87sS5r0cozFiBnAbJ3qy/2Ez9Bh0EhucVO01fMMKItTuoGr719NKT0S@vger.kernel.org, AJvYcCVzBq2KPwXk9nmXrqHnhamZB1+gDVmX1R3sVWleMeuDl4n/Xq6iIpqcUaxxBk8v0PKujdMHhW4ACQnRZQ==@vger.kernel.org, AJvYcCVzO7c+SlpwWubV31w6PG5+ZefypCNscmpKE7HmP95E9gv/KgyaCkSLF9QMD2kAUAb0euLx6Juca0jllRGh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwjYMdtBooP3nfdk74osaZv8Fzu31K5JfL+KEeWNPXiQV4qZoT
-	T4dp4qtQNFbR32n8vw9h5kfiMuYq9EdhFkN2ArwT+qV4ra/RxXBp
-X-Google-Smtp-Source: AGHT+IE3r5HC98b7ltN7b94kiIbfr65zeIie3Egdm+UMr/y40gIfmJ3yDynf8CUNg4QQRZxCtnDuuw==
-X-Received: by 2002:a25:fc12:0:b0:e28:fee0:e971 with SMTP id 3f1490d57ef6-e28fee0eae8mr2393108276.22.1728493818638;
-        Wed, 09 Oct 2024 10:10:18 -0700 (PDT)
-Received: from fan ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e28a5dbd3a7sm1828233276.63.2024.10.09.10.10.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 10:10:18 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Wed, 9 Oct 2024 10:09:41 -0700
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v4 01/28] test printk: Add very basic struct resource
- tests
-Message-ID: <Zwa41SFUfDH0LCPJ@fan>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+	s=arc-20240116; t=1728493867; c=relaxed/simple;
+	bh=rGOvvnzp2dt2tRWEA9TxFXfky1CLdrBypq1DemqWQBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=McejnzHrGUEy2sQRQ7pRCabcqWesrfNeICZLVHCgBr3O7vPm+V910Z+Nvi66TTtzYcHyCMKvXDEdZ3seig6etDDflNySc8moUK5e3QUVSIq5gTEkSzAW6hqGkhPoyureLDtC+NU9owqAgbqkpR6k59lSdEeqKv3C6GzXLHC15+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYk4Kvk1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E058BC4CECE;
+	Wed,  9 Oct 2024 17:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728493866;
+	bh=rGOvvnzp2dt2tRWEA9TxFXfky1CLdrBypq1DemqWQBs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jYk4Kvk1gY1uvFbXCPYRUAUbrhlp/+8wAbme3d62xKuAC9Th3k48Kg6AvrjLST2SR
+	 pykIeziMLP7jfYEDJ9UOu0GIzQEL7po1ZnWJmodHOy0MA65xAH4YhII/VOCt9mR8Vj
+	 2J79y4o+575tcdWhPW/cbP5hIqsCCOXJxJTOfMwtgGr9/3MPB8h7wmihK1CPa70wY6
+	 tZ/mGJjZpNx92L+cKvvipPpVAU+hupjVBDGRIcykTA16Ln/SXoj5nwxDtuGvsJR2Lh
+	 ju6EubqZ1RoyAfbn4AmFvnD1l1uAWqJ1TrQPGNOuJnXdxtItZaowtD86t5CXBqdFsN
+	 eE8fHnT6ClHwg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53991d05416so8796874e87.2;
+        Wed, 09 Oct 2024 10:11:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUd4pHfVLnwBgajKxgA88oABuBXLlTrwyUu1NjfGaPwqHZa6wgn3SlsZ2tfLB+RTv31gVWtusXgHjU4J0c=@vger.kernel.org, AJvYcCWr8oTt+hjTJ9SuoXJUWlGBlS2QlLQPysZmSvboG94TP6wOk6+x6JSJc61S0xl/8sGQt11e9FoEherouJHBfS6iRHsY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLmEY0ZXvC8+UYwWvFKMjk22Fm4AA3jJUrYIkOq9ewrrZcMeIw
+	Wo+mHlNzE76hJS/SFzp+WAY7eC0Vhs4ulNZpyjAfvyt786PyGi5RmvFcaB+kg/Hbc32ZFaj3mam
+	cL2WIMWe/1xlcWl3iQsDB0+M987Q=
+X-Google-Smtp-Source: AGHT+IGNJAwzhfHJj0HOj5vHsytQW4u22wVUYU59ysyKknL8uIV+alUYqiOogmDp5RRStrx50BlGDPRCxCNYdpkdQ9Q=
+X-Received: by 2002:a05:6512:1394:b0:52c:cd77:fe03 with SMTP id
+ 2adb3069b0e04-539c4899100mr3127476e87.14.1728493865313; Wed, 09 Oct 2024
+ 10:11:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+References: <20241009153901.3878233-2-ardb+git@google.com> <20241009120257.7b2de987@gandalf.local.home>
+ <CAMj1kXFjd8AuHaBMLap6RZ18PR9_Cwv2GFbBkswj-e5YpaQFdA@mail.gmail.com>
+ <20241009121931.6156accd@gandalf.local.home> <CAMj1kXEwpXPWVm2X8ZzpMc0JoynA=H8kABzD_Bb5+JEhULEr8Q@mail.gmail.com>
+ <20241009123153.4a26f226@gandalf.local.home>
+In-Reply-To: <20241009123153.4a26f226@gandalf.local.home>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 9 Oct 2024 19:10:53 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFcxOTKBZzT8gar58xZn+hsAN0gnu3ELKoYzmcXF76H5A@mail.gmail.com>
+Message-ID: <CAMj1kXFcxOTKBZzT8gar58xZn+hsAN0gnu3ELKoYzmcXF76H5A@mail.gmail.com>
+Subject: Re: [PATCH] x86/ftrace: Don't bother preserving/restoring R10/R11
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 07, 2024 at 06:16:07PM -0500, Ira Weiny wrote:
-> The printk tests for struct resource were stubbed out.  struct range
-> printing will leverage the struct resource implementation.
-> 
-> To prevent regression add some basic sanity tests for struct resource.
-> 
-> To: Petr Mladek <pmladek@suse.com>
-> To: Steven Rostedt <rostedt@goodmis.org>
-> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> To: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Cc: linux-doc@vger.kernel.org
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+On Wed, 9 Oct 2024 at 18:31, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 9 Oct 2024 18:25:25 +0200
+> Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> > > Say we have code of:
+> > >
+> > >         pushq   r10
+> > >         pushq   r11
+> > >         call    foo
+> > >         popq    r11
+> > >         popq    r10
+> > >
+> > > Where we add a kprobe to the start of foo, the callback should be able to
+> > > see what r10 and r11 were.
+> >
+> > Why exactly is that? The contents of R10 and R11 have no purpose going
+> > forward, so is it just to see what some previous code may have left in
+> > them?
+>
+> Because the probe is on the call. Unless they were used between the push
+> and the call, they still have the value you may be looking for.
+>
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
-Tested-by: Fan Ni <fan.ni@samsung.com>
+Right. So putting a probe on foo() is a way to inspect the register
+values during the execution if its caller. Fair enough.
 
-> 
-> ---
-> [lkp: ensure phys_addr_t is within limits for all arch's]
-> ---
->  lib/test_printf.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 8448b6d02bd9..5afdf5efc627 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -386,6 +386,50 @@ kernel_ptr(void)
->  static void __init
->  struct_resource(void)
->  {
-> +	struct resource test_resource = {
-> +		.start = 0xc0ffee00,
-> +		.end = 0xc0ffee00,
-> +		.flags = IORESOURCE_MEM,
-> +	};
-> +
-> +	test("[mem 0xc0ffee00 flags 0x200]",
-> +	     "%pr", &test_resource);
-> +
-> +	test_resource = (struct resource) {
-> +		.start = 0xc0ffee,
-> +		.end = 0xba5eba11,
-> +		.flags = IORESOURCE_MEM,
-> +	};
-> +	test("[mem 0x00c0ffee-0xba5eba11 flags 0x200]",
-> +	     "%pr", &test_resource);
-> +
-> +	test_resource = (struct resource) {
-> +		.start = 0xba5eba11,
-> +		.end = 0xc0ffee,
-> +		.flags = IORESOURCE_MEM,
-> +	};
-> +	test("[mem 0xba5eba11-0x00c0ffee flags 0x200]",
-> +	     "%pr", &test_resource);
-> +
-> +	test_resource = (struct resource) {
-> +		.start = 0xba5eba11,
-> +		.end = 0xba5eca11,
-> +		.flags = IORESOURCE_MEM,
-> +	};
-> +
-> +	test("[mem 0xba5eba11-0xba5eca11 flags 0x200]",
-> +	     "%pr", &test_resource);
-> +
-> +	test_resource = (struct resource) {
-> +		.start = 0xba11,
-> +		.end = 0xca10,
-> +		.flags = IORESOURCE_IO |
-> +			 IORESOURCE_DISABLED |
-> +			 IORESOURCE_UNSET,
-> +	};
-> +
-> +	test("[io  size 0x1000 disabled]",
-> +	     "%pR", &test_resource);
->  }
->  
->  static void __init
-> 
-> -- 
-> 2.46.0
-> 
+> >
+> > > But the restore part is for the function foo to
+> > > see. It shouldn't care about r10 or r11 and if a kprobe updates them, it
+> > > should not have any effect.
+> > >
+> > > What does restoring r10 and r11 give us?
+> > >
+> >
+> > Nothing. Which is why I don't understand why you would need to record
+> > them in the first place.
+>
+> As I mentioned above. Unless they are used after they are pushed, you still
+> have access to them on the call (or the kprobe attached to ftrace).
+>
 
--- 
-Fan Ni
+OK. I just didn't imagine this usage mode, where you probe foo() to
+capture the values of dead registers in its callers.
+
+I'll send a v2 and drop the first hunk.
 
