@@ -1,187 +1,267 @@
-Return-Path: <linux-kernel+bounces-356691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7CD996551
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7090A996559
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE1B1C20BD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B4D1F23037
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CAF18B46B;
-	Wed,  9 Oct 2024 09:28:22 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B8618B470;
+	Wed,  9 Oct 2024 09:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jCRSKpOt"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2067.outbound.protection.outlook.com [40.107.212.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42937189B9D;
-	Wed,  9 Oct 2024 09:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728466102; cv=none; b=ZZdOr/Iq/NcenjkClGjjH8FRmYtD3r63uV2aUvW/A8yNX2vzHq8tSmfmWkqTai8rcyLG+BtrJNrM0a/CGquNOH0fpcqI4CtQMP905YoQWBUYLZD3Pj6AXHBbl2Y5MUkSsyvSSKkon/j3y0TRlTfzfUCv/pVUm6jKM/5wPV6STzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728466102; c=relaxed/simple;
-	bh=3uH0VHQ5FbfEU6U+DIwCrLir1cI06f1Nwd6HjQO06xc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VWb+d93DL7KPfsnat6A9MDzoy9eyV/7OZeG2zdljBUFWoSfJtrEEL1C3a7QK0EQKQni0xkqnOOX7k1LUkOWSxyOtdj96S6R03qm1yGGZTpK7V5f7HhhkJEnaucLDNy+1vcvG7afdB80MvATerALetNZVYfB2wxZl8LFOtg2sr38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6dde476d3dfso53403027b3.3;
-        Wed, 09 Oct 2024 02:28:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728466098; x=1729070898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K2aKKIBJN+fcgMd4SG9SyuTgYPFz3/hZQ2vaXaYBN9Y=;
-        b=AusfVUV6i4vaAArcHqJsYBY3mvtB+2+3x+P8zLNVT8TilslC4xS5cC0n2XBV+SFQ2T
-         EdYgD+gSUqtSuZxpG6Kx8SLCK9RLmJ7knezp/iruZNY3D8QBGoEm0MbZGE0hMB9izT1e
-         Hgfa+bEDXnckbPMQiW6VvUsny1GJPwKqWxK8j0e7EWPVsWCkYMBH5FggGUml/d4ltbPm
-         Kpmmo/ISo1ChiH6XtJSBViQxtY0A2DRslX31BxuYebTIB1eah5k9fc6f6pbKp/MvSbKN
-         WRyzIGzcB433lUlx8SLgzyteHb0GpkN5SjXjnMOBktU2FPhBmqWMlAYxljFwEhNoB/wE
-         r2JA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3IMA5JzjA+DnK7XTv46blvBWOzmdBRrqd1MmPUA3F2pxtI9ug+9ByjeVs7NnINi6Adf7tyTcRgp7l@vger.kernel.org, AJvYcCVY3A8M+zI5tVEO/2PQxT3VkdCJDaAPCuEDyLI7uHzz2CUIHC/C4wic3KUpBdkh8JbqCD582TlD17KUXImLcUyeXVM=@vger.kernel.org, AJvYcCXlfMRQHl+aRqnPZiK9TIL+UsXACrycCebOKmXMs9jCVA7lnal/J4cnoO9T84ObVR5dolg99e6IfpQlLCR5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4jkyblgKuTSwsAZlm0oXRAeWXUWyxH7dF+KLCUFrCjXDkPoJx
-	GKp/Pn0m+vqcLj9hqijCrSGXAzCT9msmjexjaFcCG4KleGbulk2XJ1YDfUHm
-X-Google-Smtp-Source: AGHT+IGwIN0KgjdXBRIUnow8+1heDS02mBfKjHKUuLUK/UOv5Zme7olUq6bkJ0wI+qmPgqskmxft5A==
-X-Received: by 2002:a05:690c:399:b0:6e2:71b:150 with SMTP id 00721157ae682-6e3221a1695mr15829927b3.29.1728466098234;
-        Wed, 09 Oct 2024 02:28:18 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e32b55ad9dsm266297b3.98.2024.10.09.02.28.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 02:28:17 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dde476d3dfso53402747b3.3;
-        Wed, 09 Oct 2024 02:28:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWTRq62LQzK82rHDL3z7M7ZXZ5sbLU+KYURtqU0Evh+iOJAu6Dooxjq6r5fcCVI7PrpHYXoLCGVkGOkZY/Va0ely2M=@vger.kernel.org, AJvYcCWoYhm7IbHwSkTrjwuOWb1kHO9LzeJFCxpeRQWMUbbTD2kfGUWTvupQizKHHbaeCS65SIlVV/thZ1m5Ip0e@vger.kernel.org, AJvYcCWs24KcHeMCk2LHo2vr/th014Vbsktt++vlekDwUS+US3QFyiFF6T6Htl42otzu4kD1rlW4KqBM+XVt@vger.kernel.org
-X-Received: by 2002:a05:690c:f06:b0:6e3:1f02:4069 with SMTP id
- 00721157ae682-6e322133df8mr20738077b3.7.1728466097482; Wed, 09 Oct 2024
- 02:28:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E559817;
+	Wed,  9 Oct 2024 09:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728466157; cv=fail; b=NqulGyNyq0ZwCEGSn5dsqPNP5r3Uzm3kWAXAqyohXqg5W4GPUCmEjhqWGJT89NraOPGncKVYeGGgAvIqI0ctvijwbAF15JSFubdk1Mv1FitF/OxUDzWxS8Nq6lpnak3zw9FOXDJoqt6qliqvTdXUqP5zSXHygyFv/DW8hwgE2Mc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728466157; c=relaxed/simple;
+	bh=K9wAB3/a4JCYNl1PFLvApWe8Poe/oFSmpEjlrDTR3x8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gaMWhejH4GPThYaMDSEHOYhT0NiJqkgJ+bVJZGuyCbFC5SfcZpjKw7PF7AeG6mec9AFwj/bgny+jlZNn5RTBHMgZ/Z2Nqp4a2CizSDEVDKgWVB/XJm3LZxRLTsaHDcoW1WrI9OzkDEYkF3oYza+7nlGXPME8afd8I63MbZZEvgk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jCRSKpOt; arc=fail smtp.client-ip=40.107.212.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eU6Kk8cf2y5fivsWckvKH56dVCnO5tMOHWUIQMgR/HuBcvvI/sg0AeVih1rDs1bO6UNhnwCRhN1u6OWkaohSDofCmTtkFRgid5xFzg/7E/34eCZ4ruQRsDyNJSaBnCLy29m4ABHFuqjDGMsTvKJmN6hK1R4xwNEUUCFYnvkJnXdFBLIzsb0n0YQX7AGPDbf6mPOcG92cXBaoR9g8cgHVoIstxNoSxBtShNuCBK+K+mwnOC9uSOAquITQtYm/iAnGEcVs2+VqszhfWogBqyoGVFevhfL2orj75742MZwXmzklMPudXNg9fRKWHLh9PW+orp4UlNJVrxtJ4POkviCFgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JtzwqcROgaFK2oO+UdVSrOkkMNkVMgEd5BqPcT+NERo=;
+ b=rCAwQGutlaDqb092KaH1OxokpL8De3zfNN2SLWj4/D6nPG2zzxYcS48KogzOkVl1LKLuoxqdIj+BGJnWKDZCPadC2cGV8DegmdhNzKgzTjyBM5EojpsuWK2QU/yk5PEwjAwvNbkXsAOSuZ//gsUTz3IpRl2Kh+WT/MccIBvkpF1dt8hH1rqh5Ze2vTPKitO8NI3GHKZ/HWnvzUc+Z8YpI0GlYiVOHr5aSVqyUQkljaV6L5UPpO94Xp889uNzupAFdbt3hoRnY/xlu525Q0dtc8OtrXRzdHcKLrnvU5A2asPZdK9pItVUG/36x/jndBaHZafFgAo7EB8ALUKeNrmGKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JtzwqcROgaFK2oO+UdVSrOkkMNkVMgEd5BqPcT+NERo=;
+ b=jCRSKpOtIVbKmmr3i8jiVipXJ6leZ9Oy7dV4RRWh/Qj44jLVoaanIK6M3y/UIjHJFdJ4I/5neIIoBsT3Q5rDMsbAF3KV8aGXto/4ooPRmjvJ4tlbJBHoYtuIE+lr9Vyv7hSlpIid/bLRCk4deJwoKS5rw+cGSeiC3+4dxdQhnyI=
+Received: from BN9PR03CA0102.namprd03.prod.outlook.com (2603:10b6:408:fd::17)
+ by SA1PR12MB8600.namprd12.prod.outlook.com (2603:10b6:806:257::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
+ 2024 09:29:11 +0000
+Received: from BL02EPF00021F6E.namprd02.prod.outlook.com
+ (2603:10b6:408:fd:cafe::91) by BN9PR03CA0102.outlook.office365.com
+ (2603:10b6:408:fd::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17 via Frontend
+ Transport; Wed, 9 Oct 2024 09:29:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00021F6E.mail.protection.outlook.com (10.167.249.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Wed, 9 Oct 2024 09:29:10 +0000
+Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
+ 2024 04:29:06 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: <linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>, <bp@alien8.de>,
+	<x86@kernel.org>, <kvm@vger.kernel.org>
+CC: <mingo@redhat.com>, <tglx@linutronix.de>, <dave.hansen@linux.intel.com>,
+	<pgonda@google.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<nikunj@amd.com>
+Subject: [PATCH v12 00/19] Add Secure TSC support for SNP guests
+Date: Wed, 9 Oct 2024 14:58:31 +0530
+Message-ID: <20241009092850.197575-1-nikunj@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008164935.335043-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB11346A1726BCE1687C6AFF519867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469ABB6393E0A6451034A4867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CA+V-a8vWpUmq9esgcnjWVcPb-jUaLuKvhJF2VwiWrCx5_nOtww@mail.gmail.com>
-In-Reply-To: <CA+V-a8vWpUmq9esgcnjWVcPb-jUaLuKvhJF2VwiWrCx5_nOtww@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Oct 2024 11:28:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdULuCWd1V0Az=NWHhSb7voDKbTo9rp3Excntp7qvTbbuQ@mail.gmail.com>
-Message-ID: <CAMuHMdULuCWd1V0Az=NWHhSb7voDKbTo9rp3Excntp7qvTbbuQ@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: r9a09g057: Add OPP table
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6E:EE_|SA1PR12MB8600:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3ae81c2-9694-4df2-0360-08dce844d513
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zMDzEjDsey6zhDyEZVBcC58Kp+52pLHH2rCzimAcUVu0twMe811JpslgCE9v?=
+ =?us-ascii?Q?gXMGLJ7h15IQ1RxbZJRp+p5XsaADXUUOMgwnp6dSjlKFVV0PfZKtIhBWiszT?=
+ =?us-ascii?Q?/i/quq8+g7GeOyfe8REWrrJw2jjRnjqDa1DYLQDIRJTTZO2dy8spjsmfVyqQ?=
+ =?us-ascii?Q?x9rH/BIU9clILGDx5k1MqlvfRYeKpOHFeoqH3R3k/bKx3uLAp8Jur00KqZN2?=
+ =?us-ascii?Q?YUhxk0padmY4mTmM9/l+PQbSPH+lkJlA86Ce2CX12wN5mpHsp1cWW4w86LlT?=
+ =?us-ascii?Q?+qyWnK+XH5RRGdWyIEGmHoEU+1xsWVS41yqQv9dZj8njI7KNYx9cpV1ggWlT?=
+ =?us-ascii?Q?tHWqBebKWdOMRUKIQ+Hhql4fvwWiiObNWv761FAY7vkTOovKIckCQj3pC4U0?=
+ =?us-ascii?Q?1BkaCIg5Soqb4D9XPzNX/snNUkUjSfBYyhb62KQtpOrWp6G72L8FM4lE3fry?=
+ =?us-ascii?Q?4JRL4e1aPOAYH4iusU0gwbZkBpUI3kIpz7YLRTqUmPYQi1TZ7RI67wB2HWz+?=
+ =?us-ascii?Q?l+q3nIotZYiUJQIVjNieEuK373ogrmbuafADPoSj/Xlik+kiSWolnLGrP9DD?=
+ =?us-ascii?Q?966mgxKOA8rfJFT4Mx15p8O54m1R0LxSU6qIa53RTeLJdDlHtYojaLme1o8W?=
+ =?us-ascii?Q?hM4o6zR+ZQSstPuNGOLH/bjENGyzhfHfV3xYaQiZjfah+px7w9SacxSR0ipU?=
+ =?us-ascii?Q?NAOClTA9MpisM4s9r+QjCydnPJKe21Xezrv4zgzrp+07q2WGSqtvdXUxNSvs?=
+ =?us-ascii?Q?2JBPXj8ydvNn4xrzTGjyzWcOqqwgCRXX0icL0vbxMtOOAI5kxL61lTWBSyJ5?=
+ =?us-ascii?Q?lnHJOVazEhr5l0ghkS1OZnGZzNaegG53Yna0XnOAMorVp84VdItnrALqizEG?=
+ =?us-ascii?Q?4qx5dXbRMf5ae/walYWnB2sPgPUGDJHf6Ism4Pyub5N400/MCOMMG3pZ0qeD?=
+ =?us-ascii?Q?4LZdKl65GEiImgPXzTt0jWctEazd5mmtX/mwftyizDiMHcA9ZBOKgawUXBXj?=
+ =?us-ascii?Q?7SzYIO+88ZQ9uK4ePsKhPtRNMT9SkYg0qn6NYt1XiMmcsvE1u4bmiyQvNRrK?=
+ =?us-ascii?Q?DMDu9UcUh6zZErGNU9WT5g6HIBfYtTSd9gYwUBINaUMVhQh4/VpYCw3FanNU?=
+ =?us-ascii?Q?I4N+wjZ5bnigOD+nNAuh10I2xO3nr8g4M8Pis8pU4/fPO1m822IMKpzqEbqw?=
+ =?us-ascii?Q?P5xLkTjzPoevSo1G9knOYgk5KVxW9GRIKc9hUwRcnvGfqJaZq4nemOxAUStP?=
+ =?us-ascii?Q?PFVYSUpQ1bMkrG+MAsLtxpaftBKubnQpReKkCxkPyQxM+b30x/4VozKE4vKh?=
+ =?us-ascii?Q?MPIpHiDRBzVRvlyhyy4wcg75WDl4nCmKClOYODe4J3SUjSivMJa/svslyxH/?=
+ =?us-ascii?Q?UpxoV7AHU2X/yrdMyr7Udf4L06P0?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 09:29:10.8887
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3ae81c2-9694-4df2-0360-08dce844d513
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8600
 
-Hi Prabhakar,
+This patchset is also available at:
 
-On Tue, Oct 8, 2024 at 10:10=E2=80=AFPM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Tue, Oct 8, 2024 at 6:33=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
-> > > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Add OPP table for RZ/V2H(P) SoC.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > > v1->v2
-> > > > - Set opp-microvolt to 800000 for frequencies below 1.1GHz
-> > > > ---
-> > > >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 41 ++++++++++++++++++=
-++++
-> > > >  1 file changed, 41 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm6=
-4/boot/dts/renesas/r9a09g057.dtsi
-> > > > index 1ad5a1b6917f..4bbe75b81f54 100644
-> > > > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > > @@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
-> > > >             clock-frequency =3D <0>;
-> > > >     };
-> > > >
-> > > > +   /*
-> > > > +    * The default cluster table is based on the assumption that th=
-e PLLCA55 clock
-> > > > +    * frequency is set to 1.7GHz. The PLLCA55 clock frequency can =
-be set to
-> > > > +    * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and add=
-itionally can be
-> > > > +    * clocked to 1.8GHz as well). The table below should be overri=
-dden in the board
-> > > > +    * DTS based on the PLLCA55 clock frequency.
-> > > > +    */
-> > > > +   cluster0_opp: opp-table-0 {
-> > > > +           compatible =3D "operating-points-v2";
-> > > > +
-> > > > +           opp-1700000000 {
-> > > > +                   opp-hz =3D /bits/ 64 <1700000000>;
-> > > > +                   opp-microvolt =3D <900000>;
-> > >
-> > > Not sure CA-55 can change voltage from 800mV to 900mV??
-> > > Based on Power Domain Control, it needs to be in AWO mode for changin=
-g the PD_CA55 voltage.
-> > >
-> > > The manual says OD voltage is 0.9V and ND voltage is 0.8V.
-> > >
-> > > Is 1.7GHZ is ND or OD?
-> >
-> > {1.7,1.6,1.5 GHz} is enabled when VDD09_CA55 is at 0.9 V
-> > and for 1.1 GHz it is 0.8V.
-> >
-> > Maybe when you do /2, /4, /8 using dividers, the voltage may be still
-> > the same??
-> >
-> I think you are right when BOOTPLLCA[1:0] pins are set to 1.7GHz the
-> VDD09_CA55 is at 0.9 V, further dividing the clock shouldnt affect the
-> voltage levels at the PMIC output.
->
-> Geert, please let me know if my understanding is incorrect.
+  https://github.com/AMDESE/linux-kvm/tree/sectsc-guest-latest
 
-The actual VDD09_CA55 voltage is controlled by the external PMIC
-(RAA215300).  It is the responsibility of the system designer to make
-sure VDD09_CA55 is at 0.9V when BOOTPLLCA[1:0] is strapped for OD,
-as CPU core clock rates higher than 1.1 GHz need a higher core voltage.
-I don't think it hurts to supply the higher core voltage while
-running the CPU core at low core frequencies, except for extra power
-consumption.
+and is based on v6.12-rc2
 
-To control VDD09_CA55 dynamically, the CPU cores should have cpu-supply
-properties pointing to the regulator controlling it (raa215300).
-I haven't checked how Linux behaves when no cpu-supply property is
-present, or when it points to a fixed regulator.
+Overview
+--------
 
-I am also wondering if other opps (1.1/1.5/1.6/1.8 GHz) should be
-added, too?  And probably any opp above 1.1GHz opp should be tagged with
-"turbo-mode"?
+Secure TSC allows guests to securely use RDTSC/RDTSCP instructions as the
+parameters being used cannot be changed by hypervisor once the guest is
+launched. More details in the AMD64 APM Vol 2, Section "Secure TSC".
 
-Gr{oetje,eeting}s,
+In order to enable secure TSC, SEV-SNP guests need to send a TSC_INFO guest
+message before the APs are booted. Details from the TSC_INFO response will
+then be used to program the VMSA before the APs are brought up. See "SEV
+Secure Nested Paging Firmware ABI Specification" document (currently at
+https://www.amd.com/system/files/TechDocs/56860.pdf) section "TSC Info"
 
-                        Geert
+SEV-guest driver has the implementation for guest and AMD Security
+Processor communication. As the TSC_INFO needs to be initialized during
+early boot before APs are started, move the guest messaging code from
+sev-guest driver to sev/core.c and provide well defined APIs to the
+sev-guest driver.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Patches:
+   01: Use AES GCM library
+02-03: SNP init error handling and cache secrets page address
+04-06: Preparatory patches for code movement
+07-08: Patches moving SNP guest messaging code from SEV guest driver to
+       SEV common code
+09-14: SecureTSC enablement patches
+15-16: Generic TSC/kvmclock improvements
+17-19: SecureTSC enablement patches.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Testing SecureTSC
+-----------------
+
+SecureTSC hypervisor patches based on top of SEV-SNP Guest MEMFD series:
+https://github.com/AMDESE/linux-kvm/tree/sectsc-host-latest
+
+QEMU changes:
+https://github.com/nikunjad/qemu/tree/snp-securetsc-latest
+
+QEMU commandline SEV-SNP with SecureTSC:
+
+  qemu-system-x86_64 -cpu EPYC-Milan-v2 -smp 4 \
+    -object memory-backend-memfd,id=ram1,size=1G,share=true,prealloc=false,reserve=false \
+    -object sev-snp-guest,id=sev0,cbitpos=51,reduced-phys-bits=1,secure-tsc=on \
+    -machine q35,confidential-guest-support=sev0,memory-backend=ram1 \
+    ...
+
+Changelog:
+----------
+v12:
+* Rebased on top of v6.12-rc2
+* Collected Reviewed-by (Tom)
+* Improve error handling in sme_enable() (Boris)
+* Drop handle_guest_request() copying routine (Boris)
+* Move VMPCK empty check inside the lock (Tom)
+* Drop export symbol for snp_issue_guest_request() (Tom)
+* Rename CC_ATTR_GUEST_SECURE_TSC as CC_ATTR_GUEST_SNP_SECURE_TSC (Tom)
+* Upgrade the tsc early and regular clock rating when TSC is invariant,
+  non-stop and stable (tglx)
+* Initialize kvm sched clock only when the kvmclock source is selected (Sean)
+* Abort SecureTSC enabled guests when kvmclock is selected (Sean)
+* Added patch to use TSC frequency using GUEST_TSC_FREQ MSR (Sean)
+
+v11: https://lore.kernel.org/lkml/20240731150811.156771-1-nikunj@amd.com/
+* Rebased on top of v6.11-rc1
+* Added Acked-by/Reviewed-by
+* Moved SEV Guest driver cleanups in the beginning of the series
+* Commit message updates
+* Enforced PAGE_SIZE constraints for snp_guest_msg
+* After offline discussion with Boris, redesigned and exported
+  SEV guest messaging APIs to sev-guest driver
+* Dropped VMPCK rework patches
+* Make sure movement of SEV core routines does not break the SEV Guest
+  driver midway of the series.
+
+
+Nikunj A Dadhania (19):
+  virt: sev-guest: Use AES GCM crypto library
+  x86/sev: Handle failures from snp_init()
+  x86/sev: Cache the secrets page address
+  virt: sev-guest: Consolidate SNP guest messaging parameters to a
+    struct
+  virt: sev-guest: Reduce the scope of SNP command mutex
+  virt: sev-guest: Carve out SNP message context structure
+  x86/sev: Carve out and export SNP guest messaging init routines
+  x86/sev: Relocate SNP guest messaging routines to common code
+  x86/cc: Add CC_ATTR_GUEST_SNP_SECURE_TSC
+  x86/sev: Add Secure TSC support for SNP guests
+  x86/sev: Change TSC MSR behavior for Secure TSC enabled guests
+  x86/sev: Prevent RDTSC/RDTSCP interception for Secure TSC enabled
+    guests
+  x86/sev: Mark Secure TSC as reliable clocksource
+  tsc: Use the GUEST_TSC_FREQ MSR for discovering TSC frequency
+  tsc: Upgrade TSC clocksource rating
+  x86/kvmclock: Use clock source callback to update kvm sched clock
+  x86/kvmclock: Abort SecureTSC enabled guest when kvmclock is selected
+  x86/cpu/amd: Do not print FW_BUG for Secure TSC
+  x86/sev: Allow Secure TSC feature for SNP guests
+
+ arch/x86/include/asm/msr-index.h        |   1 +
+ arch/x86/include/asm/sev-common.h       |   1 +
+ arch/x86/include/asm/sev.h              | 165 +++++-
+ arch/x86/include/asm/svm.h              |   6 +-
+ include/linux/cc_platform.h             |   8 +
+ arch/x86/boot/compressed/sev.c          |   3 +-
+ arch/x86/coco/core.c                    |   3 +
+ arch/x86/coco/sev/core.c                | 612 +++++++++++++++++++--
+ arch/x86/coco/sev/shared.c              |  10 +
+ arch/x86/kernel/cpu/amd.c               |   3 +-
+ arch/x86/kernel/kvmclock.c              |  42 +-
+ arch/x86/kernel/tsc.c                   |  22 +
+ arch/x86/mm/mem_encrypt.c               |   4 +
+ arch/x86/mm/mem_encrypt_amd.c           |   4 +
+ arch/x86/mm/mem_encrypt_identity.c      |  11 +-
+ drivers/virt/coco/sev-guest/sev-guest.c | 671 +++---------------------
+ arch/x86/Kconfig                        |   1 +
+ drivers/virt/coco/sev-guest/Kconfig     |   3 -
+ 18 files changed, 891 insertions(+), 679 deletions(-)
+
+
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+-- 
+2.34.1
+
 
