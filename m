@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-357193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A349996D54
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B29CE996D56
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242F81F25667
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 974E62842BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D24219B581;
-	Wed,  9 Oct 2024 14:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ce44ugnA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3703199FB0;
+	Wed,  9 Oct 2024 14:11:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A171A16F0E8;
-	Wed,  9 Oct 2024 14:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D38190059
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728483023; cv=none; b=qoScEHefrwKWuaIKGVOvf/5MDSppMn9TizMw18f3ScFvkC2/UzrvPp6iBDHDv6WUHf+xJcnfCdyennvyxbMV+Q7Mgk9eiO1l1FbZDtAMPj1MQuPGeKAQK2MEw+Cat0R7vI3tDoWya6RKcvfzE0TmqNKVWYZhHAnAkCHD6wG+kxU=
+	t=1728483066; cv=none; b=lWixX5CtJ1QCee4CH5VlPs8u7kV2mw57xm5GMwTXOsKCch5+XI6xfUdipR6VfkAgNFO1KhtZaLYVB8bzImOeOQIFUaIslytEDk9Xac9q5TWkiZkRiS+/KGxXglubGHz/Rre0qInUqu/JQ5BHg2dl/9agMVEeAtjCJQKInKvajBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728483023; c=relaxed/simple;
-	bh=BZV+eC9DqpJT5HQyiOQQwYWIjv7DqtZFUhE1ElmTqu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9LUH0GhsGwIEC4IOnUlGsq6Tnti7MW9WCyEp7x7kwo1GVlsuxt3qSqH7YUKRr5KInaPXsTH1Yq6/OVeHitJzq9Qcj6Dnk8j6m54jp1BbZJcKQqBPoxfcuEaGgziv4zvqDaZzUZtS3P7XMgE0LLRuVGSsEAXJYVKMXtinC/heU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ce44ugnA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEFAC4CEC3;
-	Wed,  9 Oct 2024 14:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728483023;
-	bh=BZV+eC9DqpJT5HQyiOQQwYWIjv7DqtZFUhE1ElmTqu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ce44ugnANYAo8mWRVVlbMixlkxMhEG9RS4KYS6ZctliWQ9C9Va48/BNTqlhj30bO7
-	 PxXin1pH9t4fiNIrbHTtjxidl8TvjPBPNHxnPWZJca/1fi53eTIC6EHEsjmZ5oJq7Z
-	 1ftS001bPcI5sfcceocHZITrtWiW8AFeEqxuR9aANwb8DOMXQB/I7cGQlSvjTd7HNg
-	 /qiWUMQCezlTNDb1D0QVWqK8Z7xgjt2h8Perj7umeiiy4amkXU6DbKXlNT9fv+aT0S
-	 9MNKo6QIxDopPpBE16q2FtLTzRYq4nVbowJTcx6+g29D79wMHuU2r/RwNwcysBXJCk
-	 TMDQVh7jjpijQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syXOU-000000003e6-33ld;
-	Wed, 09 Oct 2024 16:10:26 +0200
-Date: Wed, 9 Oct 2024 16:10:26 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, stable@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 2/7] serial: qcom-geni: fix shutdown race
-Message-ID: <ZwaO0hCKdPpojvnn@hovoldconsulting.com>
-References: <20241001125033.10625-1-johan+linaro@kernel.org>
- <20241001125033.10625-3-johan+linaro@kernel.org>
- <CAD=FV=UoU5Nd7sW66cjQzor+BP+W_f7uw0MGRaF6y7PH7KRN_g@mail.gmail.com>
+	s=arc-20240116; t=1728483066; c=relaxed/simple;
+	bh=E5VlqSK5Yy5eCZCXGBIXuXrYZYLY8dv4qDK2ZJ2suZQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eiFOJ0Qp+rdb5yeuyFDJXFX2tNYrYNmKM2zlWOUhUf7g1AQoc0dDtuXdsPJVT57Mp5l/TYQvKnsPEvqLrjPVI9QOw8PWvdVAW3wEms3LkSpsMpvGymBtsCSUyhG+D9fYGnzdZG0jT+8UbUdu8VRYx957Ul/g2S1O3RzvpoEKbjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a8b992d3so8033245ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:11:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728483063; x=1729087863;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H1nZyo7VbE3Qv+IxUbo0n80jVbJCFKyUqITSpcktzNc=;
+        b=Sd4IrZEwVVePaHqmDoUEDjqBikRz6ZtGd0PHQGRI1KaWo5kW+DRDhnsFQlPpovz5ru
+         fTcAMob/qFNd1h+r/n9wQx8wLuUJTafLntq8aGwHt8TTV77aIhomceOr5Ofn4pKjf19q
+         t2qWGUtU8dFRCgb82ELZwk0W5JfzaY+8WFDZjNGglpjRAOl+vEMBHV0vamD3J90DWW7K
+         qZTZWrnsAYRSDfJT2CxVVQy1HFLVMg0Dg5sHPO1itM8zpAwoGOtpmLyuKwdVxxPgIDMm
+         Hyh2E8744UUnAWfs/vCGrVFF4KJQAHWN5PXXnGcRTI8xhErqIGb9NlcmMi8n7sLlvhuS
+         KyYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOX2xd1u7JgWHNScHGATNgBgQz5eEJijoF3zyZt3Cb/rZA+sH0r8EmGwDe6T/H8bBFSevtpoE9rmH4Jxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXPb92Z1jWFigNzsOFHEbWeY76z/yHUqBXLaBTbBr9Hnh2jzI/
+	a/CCre55Qw1xY0c8dtjECQ8nWRr2OqaDdPi7WNlykKTper3Zh6yge8wlstzbGQpWgKJ6ixERFho
+	GGFJvpTtmv+2iRhEXMifCz8fNNrqvLKT6WqjE7Azku97uaryb73LmgMA=
+X-Google-Smtp-Source: AGHT+IE+ZykMCQTpL/RnyU1NUHCey1wwJP5n5CXtJ6e0BjTYsGNs3GZkFjIzfNNIUVKOtByYxRSovKlh1PjeW6+LIOMnSdcE8dym
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=UoU5Nd7sW66cjQzor+BP+W_f7uw0MGRaF6y7PH7KRN_g@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1fc6:b0:3a1:f6ac:621e with SMTP id
+ e9e14a558f8ab-3a3974fe61dmr21633515ab.7.1728483063110; Wed, 09 Oct 2024
+ 07:11:03 -0700 (PDT)
+Date: Wed, 09 Oct 2024 07:11:03 -0700
+In-Reply-To: <tencent_11642C456F589720E8CEEC46CD2879666E0A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67068ef7.050a0220.1139e6.0001.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_inline
+From: syzbot <syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 03, 2024 at 11:30:08AM -0700, Doug Anderson wrote:
-> On Tue, Oct 1, 2024 at 5:51 AM Johan Hovold <johan+linaro@kernel.org> wrote:
-> >
-> > A commit adding back the stopping of tx on port shutdown failed to add
-> > back the locking which had also been removed by commit e83766334f96
-> > ("tty: serial: qcom_geni_serial: No need to stop tx/rx on UART
-> > shutdown").
-> 
-> Hmmm, when I look at that commit it makes me think that the problem
-> that commit e83766334f96 ("tty: serial: qcom_geni_serial: No need to
-> stop tx/rx on UART shutdown") was fixing was re-introduced by commit
-> d8aca2f96813 ("tty: serial: qcom-geni-serial: stop operations in
-> progress at shutdown"). ...and indeed, it was. :(
-> 
-> I can't interact with kgdb if I do this:
-> 
-> 1. ssh over to DUT
-> 2. Kill the console process (on ChromeOS stop console-ttyMSM0)
-> 3. Drop in the debugger (echo g > /proc/sysrq-trigger)
+Hello,
 
-Yeah, don't do that then. ;)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Not sure how your "console process" works, but this should only happen
-if you do not enable the serial console (console=ttyMSM0) and then try
-to use a polled console (as enabling the console will prevent port
-shutdown from being called). That should probably just be disallowed.
+Reported-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
+Tested-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
 
-The console code, and the polled console code bolted on top, is a bit of
-a hack so corner cases like this are to be expected.
+Tested on:
 
-When the polled console code was introduced it was claimed that it would
-have "absolutely zero impact as long as CONFIG_CONSOLE_POLL is
-disabled". Perhaps I'm reading too much into it, but that statement is
-clearly ignoring the maintenance cost...
+commit:         75b607fa Merge tag 'sched_ext-for-6.12-rc2-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11060f07980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
+dashboard link: https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=142c5780580000
 
-Johan
+Note: testing is done by a robot and is best-effort only.
 
