@@ -1,103 +1,104 @@
-Return-Path: <linux-kernel+bounces-356836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF6A99677B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC23899677E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3FC1C242A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BF91F24881
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549F18E751;
-	Wed,  9 Oct 2024 10:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4DE18FC67;
+	Wed,  9 Oct 2024 10:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gUmMrRtD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NO8H+cgI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3763518E779;
-	Wed,  9 Oct 2024 10:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6694E18E751;
+	Wed,  9 Oct 2024 10:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728470333; cv=none; b=MVCwNagy3kbUYkVYIyon775+sP8RzXJ2pixHbWA5F3w4ZbUjiHySu5EKhn0Qj4amy4TjHuF9fXZRbHjMFY784MfXIE6ednNMPzgYODeyq1GYyM1wRsg1iJyNJb7cOaU1qlLj4uShKnjHkdaJiK6iwwZOTxdp4fLJfB9PRR69fxA=
+	t=1728470435; cv=none; b=BH+Oqcq73m5WW1WB8P4FxLDnFyiEbNfiramAWUm/ipa4VaONzpYQ/hYZTFbaPtodJnMqSifBDsvMp4oVmiFyJgpzlcQgiWCerP2Cf9maZkZj0OGoEgQyg4IapN5EJtPLNvIECaFwojz9gHyK/1W5rw4zdZhVFaBKnNXezgIGJ+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728470333; c=relaxed/simple;
-	bh=wxMFvAdDX0uHWtMZrgpWuEE2pLlU4FTWe4P2KTWWAV0=;
+	s=arc-20240116; t=1728470435; c=relaxed/simple;
+	bh=Rww3IS45r2NS+UekZyW+WghC6bwtpbCs4b/u3VzVP2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZBQEmq1Q7gQ41HcjCZMuHOTNjlX+p1jM4OqbbJiRYkI+6ikKOO4kkJqqgvfloaO6y1dKuy65cyuBVZ24yCIxBk3RZ+2CnDzh/ZepLJRszgRRujYHD72aaWgkfbCGQ2hS03KrOwZU8EopzW5W6JFqh3slS92dZgbHdbn6+9zPYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gUmMrRtD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 02A8740E0163;
-	Wed,  9 Oct 2024 10:38:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ygVfspruDksy; Wed,  9 Oct 2024 10:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728470325; bh=1AOv5qV0vwnw07PJQNH+GRr3t33WnsXNEi9bcra/9wE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1Xav5FwMHZKn4revHqod9BOQbDCdoiXsE8Gb8Jy0TOxyWutf7mgNzAILyVsAo5ACsLu0gCX4Iqmwr8mb2RzFad85bZnbuPGL0V53bvf21IOYMHNujkqAqhJWoFoLCHXZkPhz99a3K/1+sxyAWuy0hD+65dfohTUcScbbwCpt88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NO8H+cgI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF7AC4CEC5;
+	Wed,  9 Oct 2024 10:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728470434;
+	bh=Rww3IS45r2NS+UekZyW+WghC6bwtpbCs4b/u3VzVP2I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gUmMrRtDWbXvFRsxWpLUVrbormKMscY2hBDLWN1wqygXt6jmOzIujaf1V4FjkiQhF
-	 vhk9tl/3BmIb81dcPEVtJ3NvzoqQrOAxEMquEMMg6m3ROheoKvOa9ryEWeP7Ptdi7p
-	 95Jz1/4SilH1zGydAfJt6JaJdvORKvu1FRaF69Pantw9kYGxreR62UTu7yCfj489Sq
-	 fqjicyUEOUFSh/wjnlty3vfs16xjruRBencflYYgKGaWb2GSIZ+k0EeMkMtcAiehgw
-	 6hc9CfYhSJr/Reld7jd5uJzZf8TYwCQTs88FzZSGjPHeCZYxtpucLOGAe7Uw7s81+3
-	 Wb2f/r4ReD3kNWXESXO3XfPcISMbPw+yPSK/Oj54LBH1CNPT2Njn9GMen9FBYAVeSY
-	 LARjvPD/CQwWTg2p1CP0NsEsBWnnlJaKUpsFtQ2hH93VFg6YWTxP4lG7h2jTBGKrww
-	 HuMhcPcZHLjpZIFt9l2tT6l8qvOlm0nfSB3ORGmwQHyO6lQeQMBnXdORoxPEugkdFn
-	 AJFAcK93jHs9mwhI2kLVwiBh1DhSbCG1DC60c1DNPn63cWVDStApis/1QinCb9gf+o
-	 JcIOsM8HhRNWZnQ5tvY1O5juPCE4RELQ+oRq4CS5BqLYSzoA9Em3cpQ999KpzykdLl
-	 jAITZMdMs6x1AcIzmVoRh2X0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E045A40E0263;
-	Wed,  9 Oct 2024 10:38:27 +0000 (UTC)
-Date: Wed, 9 Oct 2024 12:38:21 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org
-Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
-Message-ID: <20241009103821.GEZwZdHeZlUjBjKQZ5@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
- <20241008191556.GNZwWE7EsxceGh4HM4@fat_crate.local>
- <8d0f9d2c-0ae4-442c-9ee4-288fd014599f@amd.com>
- <20241009052336.GAZwYTWDLWfSPtZe5b@fat_crate.local>
- <a1b2eba5-243c-4c7c-9ebd-3fce6cd4c973@amd.com>
+	b=NO8H+cgInQfzz9znSqpB4KWHRlzawJwIDsTBU5nn0ImIaZqiHVsV/T5vaVcfTuWIl
+	 vH39OrCDPF2pelg/eZgk79OWH0UKxZDqfr+Jqs0pXz+du7QYBib2+VdhWlZq8vaB6t
+	 ZDyYgCGh9th7PKTipEurkkIo0PNwTkOoH+q5uHMNXWmlikscY9maum3nHNkQBMUTs5
+	 fGzKOfKHbUswGzbhb9xBz4PeuDv6HEfHSAEChDYSns7A+fXWanksYdSSQB5Fx33tSd
+	 4VLCJSULdkwl0xgd84rxW8mmMzgRT37qWH9BoFaxyHInCqqkLb8nW8DulYplCFpw78
+	 d2Wy8/8hLpQGA==
+Date: Wed, 9 Oct 2024 11:40:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Weidong Wang <wangweidong.a@awinic.com>
+Subject: Re: [PATCH v2?] ASoC: codecs: aw88399: Fix error handling in
+ aw_dev_get_dsp_status function
+Message-ID: <ZwZdnxjkhnjEqQoQ@finisterre.sirena.org.uk>
+References: <20241009073938.7472-1-zhujun2@cmss.chinamobile.com>
+ <01d7c030-1d80-4533-9279-2b6961e712ac@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="191BPD28J/WmOGT9"
+Content-Disposition: inline
+In-Reply-To: <01d7c030-1d80-4533-9279-2b6961e712ac@web.de>
+X-Cookie: Editing is a rewording activity.
+
+
+--191BPD28J/WmOGT9
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a1b2eba5-243c-4c7c-9ebd-3fce6cd4c973@amd.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 11:31:07AM +0530, Neeraj Upadhyay wrote:
-> Before this patch, if hypervisor enables Secure AVIC  (reported in sev_status), guest would
-> terminate in snp_check_features().
+On Wed, Oct 09, 2024 at 10:43:51AM +0200, Markus Elfring wrote:
+> How do you think about to replace the word =E2=80=9Cfunction=E2=80=9D (in=
+ the summary phrase)
+> by parentheses?
 
-We want the guest to terminate at this patch too.
+Feel free to ignore Markus, he has a long history of sending
+unhelpful review comments and continues to ignore repeated requests
+to stop.
 
-The only case where the guest should not terminate is when the *full* sAVIC
-support is in. I.e., at patch 14.
+--191BPD28J/WmOGT9
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Regards/Gruss,
-    Boris.
+-----BEGIN PGP SIGNATURE-----
 
-https://people.kernel.org/tglx/notes-about-netiquette
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGXZ4ACgkQJNaLcl1U
+h9BGCwgAgHEHWi/IAg1nGDn9KSIF/kjI551WbarZlwd6UBNlHE4GMYjXDF/qXTdc
+7CeXVSd3urt2dN2GOfmwOZmcboQ02UdjJNdQJwFUjSxSuxIcdwB58amlO3fCBTV9
+iLld2deR6gXmwC8xsEuKiZa6h6nZiGinucUeXQJbiwkRrx+Zk9Cf9M2DUCwgBevf
+LbElj8hcgEFyRklr3Sguvxo9DYagYbWaRWZitsmnPFHt5ZXwBK4i9kT/eDERDr5V
+7t3aAbbUr/So0NCd4i7Z2pPzbAi/ySj8WGg3WMfYgSf3nFIbLCsC3PI1pmr9ksRg
+9/Y6c0EYagukNg5sgG4j7XKUJG/5Zw==
+=LEoq
+-----END PGP SIGNATURE-----
+
+--191BPD28J/WmOGT9--
 
