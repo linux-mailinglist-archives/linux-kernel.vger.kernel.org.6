@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-356919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324279968B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:24:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1CC9968AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C8B1C22C70
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C1BB218A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C55192D64;
-	Wed,  9 Oct 2024 11:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FDC1922F4;
+	Wed,  9 Oct 2024 11:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GG8exBYu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQkj8Ab2"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D26A1925AF;
-	Wed,  9 Oct 2024 11:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDC6191F8E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728472970; cv=none; b=m4tOiG5H59x2symr1jKpZUt0Rui6H+QA7nBo3sA0iE9iTwFIZPbXhdOn//3FmcrhbF9zP9StAzrq6WoqfQzwhs8haKg39umGtTVSxH7w9/cJU73u6f7LZ4g/MP4QbmW3Mvy77FzwQNf30W0gsz3yQwxBraOoW+V0F24em7LbodM=
+	t=1728472958; cv=none; b=uNfy730dyBOymynOQu2zE6Mo3p6EeneZHQ+USEMYWUOGHd4p89UH0CpQt8/MvxKjxzQBYyELYr7l2362Wm2wg/nGIighTFzTSHr2yr1V+MpAfZzFNwga2DicjWnntL/42c6c+uyWWKfYAX0J0NzbBB04/hVvcq6GWrmWYJjwbn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728472970; c=relaxed/simple;
-	bh=X+X5pqYz1T47iLwFfpzVNKgxYUB28qYfDSgtxnhoG2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hALU9M3oaQuRVLtIZRbgQ555uo7EB7kR7KMhofXrrPwLIf8fAo5g+RZTNt6S2keevCLNN6zzsuZDAcgapsMW5FlFjf9CPUt2sJmmyvOxwJf2KxVmbdHWkp8dcclHl9Y1k17haJJID/dq+jSdtvBCwrKw2TpdJQtNWVPouhK7fFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GG8exBYu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 023BB40E0284;
-	Wed,  9 Oct 2024 11:22:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id i4qykRlUbPsH; Wed,  9 Oct 2024 11:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728472960; bh=3Xost7FCGJwitvgxtuVBjex1pNOGJ+J8b2uM+8TsZPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GG8exBYuoax+VVUhvcB4YP+lw/9UuJsqkPJpJvg2iScEFePPgOhUBXrFH1vHUb6Ar
-	 ZVj6PNdMfaYKlwq6jHgmB4BNNaUcXSad6aDR+C9XsAsg9K7KKk13L9Sdz35txus0qS
-	 C/IkzFK4KoqEq28JpSSQwbljtjce2hIANLbjfX6KwAvfRyiK+JTSbeCh31bAkKntWH
-	 mh5O8VxNWre9vcRH5KWziVVfU9LCxGaWc38Ga14+JTrc32UC/Lw/K5e558TVQ1QfDE
-	 FmkRG7D3U3whbbaIi5L9xm05d2G3a67k882Brz3JvMuZoEgWHmMOHPSZqMJJ4Wm4JH
-	 rid4g4nzO0DTOqsszwlZBzEFwS4NDt04mCm+8ZpX87Pw28skcLW1tmBHR0J4qmVqcR
-	 6Q87Q4vC1MrlAhMHJzMUEBzH0L3cYbwVdyt69GnXOBxMb/NSSao1u325AdWLeIS0u5
-	 mSaWulIIMd3heI/NO9zMhD0c52X5jAZxmRKW9ssA9XalFVCY+eBSoldL9nFmgpHdIz
-	 GqKau8TKvUpGOhqobLShoOoX7frvZPcqg2DOs2yTNr7xnvd6BPnuTpgK8xuRxr/huq
-	 pyYP6f1vzg1P+oICs4rDQdLHoEp1Jkdg/lZVtevgobTgXthY0cIkgdVILAXkgP/C4x
-	 YazgUE6kWpUUibabECljtEVA=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EE0E440E0191;
-	Wed,  9 Oct 2024 11:22:21 +0000 (UTC)
-Date: Wed, 9 Oct 2024 13:22:16 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
-	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
-	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
-	kvm@vger.kernel.org
-Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
-Message-ID: <20241009112216.GHZwZnaI89RBEcEELU@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
- <sng54pb3ck25773jnajmnci3buczq4tnvuofht6rnqbfqpu77s@vucyk6py2wyf>
- <20241009104234.GFZwZeGsJA-VoHSkxj@fat_crate.local>
- <7vgwuvktoqzt5ue3zmnjssjqccqahr75osn4lrdnoxrhmqp5f6@p5cy6ypkchdv>
+	s=arc-20240116; t=1728472958; c=relaxed/simple;
+	bh=LGiw/oc9ETyEARgRG3P57WvWVitY9aVPClt8FRfIOtU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NoqXVdkdc3UKBCG4VKnOQgp8/WPIm8w9g9BdNtkBKJZegm0MDi15fB22O4V4fQ2Q7b8ZaH+zQMj33Mc2gyPhliuTRj4zTzoTN3+z+00aBZdL5Li/cvGjMPEXDVGekwQ7N+5tzRFb7MLOF1LVJyQPTKyA4U8UhnKqpd2ii6om7qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQkj8Ab2; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2facf00b0c7so7428631fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:22:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728472954; x=1729077754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LGiw/oc9ETyEARgRG3P57WvWVitY9aVPClt8FRfIOtU=;
+        b=bQkj8Ab24KLc7ZmUzcepDf6xshLlQ7KL2rKVtHKrfN138HHwTsRaRbySjyCISnjIjb
+         suGwrTxdKzVHM2BXDrNxOTe/ylLjAo5ZMg9GDCaqifo5wynlO230qzCMlncbtYANhOrS
+         l/a0HMy/OwRGCT5ye0U3dSjVvtwUYfLKa5yq2WUx9WU7f8NpI1R1gKQH3giUO4IhcdNh
+         5b1FYti00nHQj7u2ugbStGqDKp3O7FusgpVLkxG3aGUf43KAEIgHp4YaYqTVNaXpOxip
+         sx8Ji52k+jua7hyurFCanal31+amM1XzbyuSL0DALX/ERG+syOUgXfA6H6T1KLiL54wn
+         6pug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728472954; x=1729077754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LGiw/oc9ETyEARgRG3P57WvWVitY9aVPClt8FRfIOtU=;
+        b=pvzhXpiJlKPkkksR6fzdpmIvnj8MFD5tvdxSHmTPGUpWaoNYLbkQqG0Gc+dnMZUlj5
+         +qOeQejfMYLltFkXglOkXCW/F2wdulSDcR7WBs3U11fG/uYeY6sPGTt4fy3yERA6jC3i
+         kwu2Kfdpnro706ssp1TFtDu2tBxFdaGiqgGAsn3YC3mogSXWm7wuryzT3BeQI/E1aJMJ
+         SxnbmjgvAidkC8ePzdpIM9S1hxMTCcBiXnIOQ/4PSyRKjXeh1WSSgtrP6/X9woonY/e6
+         X5oLuir2mJLIc8NYiaK6sQUF+zjESGqFECVoGZQaNojCSesKlp77CYsx9R8W7fzI17Of
+         aJ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQtSQR8sLJAD546+gp2jykQLJTtORRPgAWVv7qQWEZvv6BgTx2Yn8CIWP3EOaY5HW64KEYVDK/81JEQZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlDRQETS5feG50Mhv9NeStmQIsgmPRJZtgjdpSbnw0ijbfCHc2
+	c//Nf+xnsw6FssiuQvqtid00nAdaj9vY+IkrR25u9Tmje/+bs0BQnTc1rJe5v0Vd7lQPc19Zmjh
+	/06YB2fhC6gT9t6EHvdbZvUdoRgdwmfxLMX7PvErIh4/55CYcaWs=
+X-Google-Smtp-Source: AGHT+IF9zAl8DQPl7zn/Ing4gQVNbPa2pljdHpuKWGx3GBhCA9FkwWGI/USumIRp9+/7OCW4AwqSo0p20trwIzg0dTU=
+X-Received: by 2002:a2e:809:0:b0:2fa:be1c:7ed7 with SMTP id
+ 38308e7fff4ca-2fb0de96d8dmr16651541fa.12.1728472954225; Wed, 09 Oct 2024
+ 04:22:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7vgwuvktoqzt5ue3zmnjssjqccqahr75osn4lrdnoxrhmqp5f6@p5cy6ypkchdv>
+References: <20241009-mbly-i2c-v2-0-ac9230a8dac5@bootlin.com> <20241009-mbly-i2c-v2-4-ac9230a8dac5@bootlin.com>
+In-Reply-To: <20241009-mbly-i2c-v2-4-ac9230a8dac5@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 9 Oct 2024 13:22:22 +0200
+Message-ID: <CACRpkdbyZMzEb2i-tjeUdns+cODBeQdgXPH7EAaEHQZ8=gAkaA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] i2c: nomadik: support Mobileye EyeQ6H I2C controller
+To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	=?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 02:03:48PM +0300, Kirill A. Shutemov wrote:
-> I would rather convert these three attributes to synthetic X86_FEATUREs
-> next to X86_FEATURE_TDX_GUEST. I suggested it once.
+On Wed, Oct 9, 2024 at 12:23=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootl=
+in.com> wrote:
 
-And back then I answered that splitting the coco checks between a X86_FEATURE
-and a cc_platform ones is confusing. Which ones do I use, X86_FEATURE or
-cc_platform?
+> Add EyeQ6H support to the nmk-i2c AMBA driver. It shares the same quirk
+> as EyeQ5: the memory bus only supports 32-bit accesses. Avoid writeb()
+> and readb() by reusing the same `priv->has_32b_bus` flag.
+>
+> It does NOT need to write speed-mode specific value into a register;
+> therefore it does not depend on the mobileye,olb DT property.
+>
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
 
-Oh, for SNP or TDX I use cpu_feature_enabled() but in generic code I use
-cc_platform.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Sounds confusing to me.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Yours,
+Linus Walleij
 
