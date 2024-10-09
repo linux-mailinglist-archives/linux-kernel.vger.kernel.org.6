@@ -1,234 +1,178 @@
-Return-Path: <linux-kernel+bounces-356281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7593995EF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A727F995EFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24D428659E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665242865DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722011487CD;
-	Wed,  9 Oct 2024 05:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F1815EFB9;
+	Wed,  9 Oct 2024 05:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G5JruwTr"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FIlUGqCy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C41415DBB3
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 05:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203E7149C50;
+	Wed,  9 Oct 2024 05:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728451765; cv=none; b=Li1LxnRu3kHg1iF2hxtJvve/pFuYAtb1fLlm16i8qFwPDhU4FFEJiOU/LnnIeqGGMl+3bp/Q5A6Wddp969QYazs/sYTx7wJWU5NepfpAjgmwOV//PfuEPJFP5O8AaL5uXfl+tGq0gMiI+SeEca3S0sXJPwG2sKEBrRywtg3sR4U=
+	t=1728451833; cv=none; b=aLafuEEii6cPByQ7Y8DEpz06puO8ZmztDMps9bPQMbmJm3KJtgikFZrTAUjk4i/j5G1LUrNh9/TzX8/M7oZPtE/H7SxLBkMuiCXb9rq1oKPjjhH5S7TSWOmr0GEWFE5XNujD69OfjemYXcXtUGGkKkUt+gU2cF9A6vmcgdl1LT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728451765; c=relaxed/simple;
-	bh=OBoCzZArSFPgtY+XzpCWy7XGfDqTIIl94ILCcqhCr+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d14QzCAButll5+pEWgdb0jn1mTXawtQxD6Ru0ond4+5n6DqKlVzI+tq1GtOe3IH/2rUdwa+a0X2eJNHTldBluvIwEz2TZ9FPNoJMekuybKhXIHAWsmJXxOFflS+dDWsLafXqMXzJ/BGl/9mKy8U5dJIB9fmGKtqdE5X9gIITM44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G5JruwTr; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a3a8e81897so2360995137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 22:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728451763; x=1729056563; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tCiKLx9rR66lKJZ0yCzrSNrW64yAvgeD84o2+iatpFA=;
-        b=G5JruwTr6yAzbJ+rxUOBzQH9mQP/1ZpV/1PVtO6LgscpPoZxsekoez33g2LdUw7v15
-         bTkVVnJR9ZVWULELwFBOk/haB0qs3oH7MCnrg1D6eTY1yRvK1UlPx1cb/NunLyrgUT9R
-         WZvOqPDwAqE77BZSnFsC9dwsnArCIsreoDOGez7/l2TAm5cbIyChFXGfImTXUXh3PbhK
-         au0LgxxPh3HbPiwbp2G3fIxKpNjjET3Ai6MkXU3Kva4OWEqqMfXq4Ou8W380XEhrlsRk
-         1wSjm1VxInOSeThzx7WVqiWsmG/L9Cz6EK5+o+Au5X/hpDSXpSa4/v2xOf6St7SurtvX
-         d/qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728451763; x=1729056563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tCiKLx9rR66lKJZ0yCzrSNrW64yAvgeD84o2+iatpFA=;
-        b=i/rh3gZ98i222QPnVrkMGG+pMuVUVQN6Squ6uIZPE/U3vPpLVkZUixfXLqQQzXSkyC
-         0Pjn9GuM4H4H2qlCLul4oO4WvRJ4/TrEgzrM0yxT/jBgF4U11jTL3jOo8H/KJoYrfcSj
-         C1Ach5zg9d5o6WrjSVia98rM7hWz5fm0JES6fxmFIcQSCCBSy0taoq+b/9M2zM/M8aYI
-         eZwmEqUJwWjdgNNkejfm5V0+8VqNvGUnDHWAJoRW9AzsxLVo2lgiVH9KHsSTVGH0SAZz
-         oEMYm7LNjid5i4MIml5e4uZtr6MkpWy5Kk10Elrk44nRuogm5uJnu3kqusRsdIBHChpF
-         lpMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0msI8RPJNF+voXBSRAstwasVTeTSo2fgDKOHha0BkM6c+V2tZgYS/23Sj/vBmAiilAQOAlG+KuLm7QuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz/8TbKep+Kuvl7zKMSwM0NLHT4H6ashP1eAvQKxhC/JJ6isiO
-	9HNLODTLXMJ9qRV23FcV5jyTFygFP0hHMXiOSG9Vevcr0xjozWwnHoOq2QZai4N3EDXbhEhy27j
-	22W7t7dcR2kTk4nIORhToPbRs6a+3HF28SlizWw==
-X-Google-Smtp-Source: AGHT+IEcGCHgN/Nj3U5qhLD6lgrzYU7T8ZcxgAgJFS75WLUI0nZsy/ZitTpWbJ/jXeNp0bK1KTTXpLFNuIpFI+P1egA=
-X-Received: by 2002:a05:6102:e0e:b0:4a3:c7ff:8263 with SMTP id
- ada2fe7eead31-4a448e14dbbmr1647756137.20.1728451762845; Tue, 08 Oct 2024
- 22:29:22 -0700 (PDT)
+	s=arc-20240116; t=1728451833; c=relaxed/simple;
+	bh=VSUYUmtY8quANbEQtNDYVtgnqU7DGn2JR+gtgjQdhfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlA74TxRteWlnFDX0ogTbayiLWYOMGqp9fEtw0jQqfZs8rGlK6Ar3ZrsyzDP/lXNEFkNjd+YIBhIFL3Ju3nvRtDw2lhqlDIA+yEEfMuAD90r4Sdzxv1PgZvAXw3plwXzEe0z/3fJgXzcI9E8u29Qf34qXUKiMwOLVJaZf2mM9cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FIlUGqCy; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728451832; x=1759987832;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VSUYUmtY8quANbEQtNDYVtgnqU7DGn2JR+gtgjQdhfI=;
+  b=FIlUGqCyd0VEay7VtYh2FdAQDqUm50w++TexV5C/s0Z+GOxJ065Ww52x
+   1f1j74e5w3eOM7urb6PuCswmaoRU4pfH+LA4SKcXoupv+JUi3PHlEcGuB
+   DgbfeNCqsh4IiKGasSPXKXnBOSAmvmatHWCZjaFHorMtR90cjW8/afPKV
+   ZLBKhJ1I5iJ9IeFIs7NhiNE90U2n21r8Tctryh6+1ixqXKdRbwJ9CAXQ8
+   uITn9DChOTIm9m4kxiFrMWaDVBA7IM7n1k/sYymjelXDr2zNEA62GxujS
+   H4ULk94oDQmpuccyUpT0HLn8e6sFlvqjjyZ8YiyNEgXKD8Y/WtgVjZFmk
+   g==;
+X-CSE-ConnectionGUID: iX47WNbKSqO9DWqLJzxppw==
+X-CSE-MsgGUID: f2oDss9QTM6VY3e9zhcXYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38315937"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="38315937"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 22:30:32 -0700
+X-CSE-ConnectionGUID: G0K6UK4bRL2KJG2uRRWW1Q==
+X-CSE-MsgGUID: 9nJqYqatTDq4Ckt1kyH8rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="106891950"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 08 Oct 2024 22:30:29 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syPHH-0008my-0a;
+	Wed, 09 Oct 2024 05:30:27 +0000
+Date: Wed, 9 Oct 2024 13:29:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Zhang <yidong.zhang@amd.com>, linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org, mdf@kernel.org, hao.wu@intel.com,
+	yilun.xu@intel.com
+Cc: oe-kbuild-all@lists.linux.dev, Yidong Zhang <yidong.zhang@amd.com>,
+	lizhi.hou@amd.com, Nishad Saraf <nishads@amd.com>,
+	Prapul Krishnamurthy <prapulk@amd.com>
+Subject: Re: [PATCH V1 2/3] drivers/fpga/amd: Add communication with firmware
+Message-ID: <202410091338.c38eM1Hd-lkp@intel.com>
+References: <20241007220128.3023169-2-yidong.zhang@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008115702.214071228@linuxfoundation.org>
-In-Reply-To: <20241008115702.214071228@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 9 Oct 2024 10:59:11 +0530
-Message-ID: <CA+G9fYtKrtzVZve=R_QiUUya5KUpAYn2R5andSk+ghPU21z3Dw@mail.gmail.com>
-Subject: Re: [PATCH 6.11 000/558] 6.11.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007220128.3023169-2-yidong.zhang@amd.com>
 
-On Tue, 8 Oct 2024 at 18:08, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.11.3 release.
-> There are 558 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.11.3-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi David,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+kernel test robot noticed the following build warnings:
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.12-rc2 next-20241008]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-## Build
-* kernel: 6.11.3-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: dd3578144a91f9258e2da8e085a412adc667dba5
-* git describe: v6.11.2-559-gdd3578144a91
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
-.2-559-gdd3578144a91
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Zhang/drivers-fpga-amd-Add-communication-with-firmware/20241008-060253
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241007220128.3023169-2-yidong.zhang%40amd.com
+patch subject: [PATCH V1 2/3] drivers/fpga/amd: Add communication with firmware
+config: i386-randconfig-054-20241009 (https://download.01.org/0day-ci/archive/20241009/202410091338.c38eM1Hd-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
 
-## Test Regressions (compared to v6.11.1-696-g10e0eb4cf267)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410091338.c38eM1Hd-lkp@intel.com/
 
-## Metric Regressions (compared to v6.11.1-696-g10e0eb4cf267)
-
-## Test Fixes (compared to v6.11.1-696-g10e0eb4cf267)
-
-## Metric Fixes (compared to v6.11.1-696-g10e0eb4cf267)
-
-## Test result summary
-total: 229679, pass: 200671, fail: 2692, skip: 26316, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 131 total, 129 passed, 2 failed
-* arm64: 43 total, 43 passed, 0 failed
-* i386: 18 total, 16 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 36 total, 35 passed, 1 failed
-* riscv: 16 total, 14 passed, 2 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 35 total, 35 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
+cocci warnings: (new ones prefixed by >>)
+>> drivers/fpga/amd/vmgmt-rm.c:183:2-3: Unneeded semicolon
 --
-Linaro LKFT
-https://lkft.linaro.org
+>> drivers/fpga/amd/vmgmt-rm.c:498:10-17: WARNING: vzalloc should be used for buffer, instead of vmalloc/memset
+
+vim +183 drivers/fpga/amd/vmgmt-rm.c
+
+   146	
+   147	int rm_queue_create_cmd(struct rm_device *rdev, enum rm_queue_opcode opcode,
+   148				struct rm_cmd **cmd_ptr)
+   149	{
+   150		struct rm_cmd *cmd = NULL;
+   151		int ret, id;
+   152		u16 size;
+   153	
+   154		if (rdev->firewall_tripped)
+   155			return -ENODEV;
+   156	
+   157		cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+   158		if (!cmd)
+   159			return -ENOMEM;
+   160		cmd->rdev = rdev;
+   161	
+   162		switch (opcode) {
+   163		case RM_QUEUE_OP_LOAD_XCLBIN:
+   164			fallthrough;
+   165		case RM_QUEUE_OP_LOAD_FW:
+   166			fallthrough;
+   167		case RM_QUEUE_OP_LOAD_APU_FW:
+   168			size = sizeof(struct rm_cmd_sq_bin);
+   169			break;
+   170		case RM_QUEUE_OP_GET_LOG_PAGE:
+   171			size = sizeof(struct rm_cmd_sq_log_page);
+   172			break;
+   173		case RM_QUEUE_OP_IDENTIFY:
+   174			size = 0;
+   175			break;
+   176		case RM_QUEUE_OP_VMR_CONTROL:
+   177			size = sizeof(struct rm_cmd_sq_ctrl);
+   178			break;
+   179		default:
+   180			vmgmt_err(rdev->vdev, "Invalid cmd opcode %d", opcode);
+   181			ret = -EINVAL;
+   182			goto error;
+ > 183		};
+   184	
+   185		cmd->opcode = opcode;
+   186		cmd->sq_msg.hdr.opcode = FIELD_PREP(RM_CMD_SQ_HDR_OPS_MSK, opcode);
+   187		cmd->sq_msg.hdr.msg_size = FIELD_PREP(RM_CMD_SQ_HDR_SIZE_MSK, size);
+   188	
+   189		id = ida_alloc_range(&rm_cmd_ids, RM_CMD_ID_MIN, RM_CMD_ID_MAX, GFP_KERNEL);
+   190		if (id < 0) {
+   191			vmgmt_err(rdev->vdev, "Failed to alloc cmd ID: %d", id);
+   192			ret = id;
+   193			goto error;
+   194		}
+   195		cmd->sq_msg.hdr.id = id;
+   196	
+   197		init_completion(&cmd->executed);
+   198	
+   199		*cmd_ptr = cmd;
+   200		return 0;
+   201	error:
+   202		kfree(cmd);
+   203		return ret;
+   204	}
+   205	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
