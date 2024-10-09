@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-357234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F7A996E36
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:37:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AAF996E43
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86DAD1F22290
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC091C211F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20C9126C16;
-	Wed,  9 Oct 2024 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxdKjGvi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDA9126C03;
+	Wed,  9 Oct 2024 14:38:07 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EB23BBEB;
-	Wed,  9 Oct 2024 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DF66F307;
+	Wed,  9 Oct 2024 14:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484672; cv=none; b=pS+jOwp67FARYrdDZMO7tkXlbohKGt6v7WA/6vWcsXiTeFHZouXZ0prayMHjilTM4XQ4/nJs+9ClMV6Uu1XxlBsasAHODrFEZZBxgFGerLG5FYUpXkhOY42JBfOaS1HsWnDrkGBwXPf/XXD7f1VZySZQ1CU+osatZ128mwHEquY=
+	t=1728484686; cv=none; b=Yf1P71DeqaQSESjUqt0JY8Pf04E2i435NBp/kpJMZTSEEFRBRt7sPquae4SW1ZUX0LqWH6rG55CdcIxHH2qxXy5FFsm02keHXCyaBJTC1s4O2ep1yc1RVqIqf85yLogzTWcVlGMTjepHR0ZXjniE47ONUKpHNpEqmoLLaMGXlk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484672; c=relaxed/simple;
-	bh=JyLQXlIY3hprDRzvgOzkk+Vbr1Y+4p+d5HP4RlzTaZQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oXycDdxFHS9FXiLvnrYJ5Mm+F+OkTCOictlXzmxWPP22dNZRYy3bAg3MfHqOIW3IzyXuxho4ma3aoR1YIaG22RAPFZ997zEa6I9dmaa6PvV+tUzsfc5IEYa0JIX/cZNU8ZsMbMUcC3M0BZhaHHnqmzw8A2WQG5IYBRHmuOr3z3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxdKjGvi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6414C4CEC3;
-	Wed,  9 Oct 2024 14:37:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728484672;
-	bh=JyLQXlIY3hprDRzvgOzkk+Vbr1Y+4p+d5HP4RlzTaZQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=sxdKjGviAJH0+YKizfdW39acH/s6REtA60jR2V3PHixq45DkwgMdGJWa3vE1r/bsD
-	 gAHa0fx4AYrPqwzLk1h4vgDv7gWh98PNlq717m+L3VcS8ucfhg0fhzbGfZSccciHor
-	 wywmXaijCjj8kf6CW1FarYai9mWKHArr++6pCXVL5JkYGbpUpMErouf7ep9oZ1VQAx
-	 EfOp/Hip2tzXVWto1/yMzD5ACbCs6V0JrNn5qYFf9eElT0XoiJ53pGPqi6737M8NgA
-	 EUp/0va95vBshA6DwlHkePPw8lnkZiTfWXnTdWV8qyAw+RtvjQTkYlMslcrqe8KLVr
-	 aW0NJYt+aZV+Q==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240927-leds_unused_leds_h-v1-0-46fbf41ed4ae@gmail.com>
-References: <20240927-leds_unused_leds_h-v1-0-46fbf41ed4ae@gmail.com>
-Subject: Re: [PATCH 0/6] leds: Remove local leds.h where not required
-Message-Id: <172848467067.595475.11662868342638735364.b4-ty@kernel.org>
-Date: Wed, 09 Oct 2024 15:37:50 +0100
+	s=arc-20240116; t=1728484686; c=relaxed/simple;
+	bh=ur2p4B0Kvh0c7htyE18mhoCQu0JesSX5db+QwZipDxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lpL2egbe0KAy75MUCgyC4glBw5zVJoli1zSemD03N4lVQ5iS2CliJr1HHv62YWrb4A1Upo4xFZZhR8LBae1BHsIx0erJ+d+KijZEM7uMdUw6AuI72bDcCY6yoEIhlast+HpmLuLhdS8utxlbPcML08yfxi2Zwbe+NTyMys/KNAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XNwTw0tTFz9sPd;
+	Wed,  9 Oct 2024 16:37:56 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id VPYRDQSqjFFY; Wed,  9 Oct 2024 16:37:56 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XNwTw03Cdz9rvV;
+	Wed,  9 Oct 2024 16:37:56 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E33838B77C;
+	Wed,  9 Oct 2024 16:37:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 5YCo0KwYOorb; Wed,  9 Oct 2024 16:37:55 +0200 (CEST)
+Received: from [192.168.233.133] (unknown [192.168.233.133])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 33B378B770;
+	Wed,  9 Oct 2024 16:37:54 +0200 (CEST)
+Message-ID: <f9693d48-1018-460f-a1ff-5990bcf92b66@csgroup.eu>
+Date: Wed, 9 Oct 2024 16:37:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] asm-generic: provide generic page_to_phys and
+ phys_to_page implementations
+To: Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-arch@vger.kernel.org
+References: <20241009114334.558004-1-hch@lst.de>
+ <20241009114334.558004-2-hch@lst.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241009114334.558004-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
 
-On Fri, 27 Sep 2024 23:37:39 +0200, Javier Carrasco wrote:
-> There is a logical tendency to move elements from the local leds.h to
-> the global one under include/linux/ to make them accessible for users
-> outside the leds subsystem. On the other hand, some users of the local
-> header, which also include the global one, do not need to include it
-> anymore as the elements they required are no longer there.
+
+
+Le 09/10/2024 à 13:43, Christoph Hellwig a écrit :
+> page_to_phys is duplicated by all architectures, and from some strange
+> reason placed in <asm/io.h> where it doesn't fit at all.
 > 
-> That has been the case for leds-gpio and leds-pwm, which used to obtain
-> led_init_default_state_get() from that header. I could not identify the
-> reason why the rest of affected drivers included leds.h from the
-> beginning, but I suppose they used to require something that might not
-> be there anymore, or it was just added "by default". Either way, they
-> don't require it in their current form.
+> phys_to_page is only provided by a few architectures despite having a lot
+> of open coded users.
 > 
-> [...]
+> Provide generic versions in <asm-generic/memory_model.h> to make these
+> helpers more easily usable.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   arch/alpha/include/asm/io.h         |  1 -
+>   arch/arc/include/asm/io.h           |  3 ---
+>   arch/arm/include/asm/memory.h       |  6 ------
+>   arch/arm64/include/asm/memory.h     |  6 ------
+>   arch/csky/include/asm/page.h        |  3 ---
+>   arch/hexagon/include/asm/page.h     |  6 ------
+>   arch/loongarch/include/asm/page.h   |  3 ---
+>   arch/m68k/include/asm/virtconvert.h |  3 ---
+>   arch/microblaze/include/asm/page.h  |  1 -
+>   arch/mips/include/asm/io.h          |  5 -----
+>   arch/nios2/include/asm/io.h         |  3 ---
+>   arch/openrisc/include/asm/page.h    |  2 --
+>   arch/parisc/include/asm/page.h      |  1 -
+>   arch/powerpc/include/asm/io.h       | 12 ------------
 
-Applied, thanks!
+As far as I understand, this patch silently drops part of commit 
+6bf752daca07 ("powerpc: implement CONFIG_DEBUG_VIRTUAL").
 
-[1/6] leds: flash: Remove unused local leds.h
-      commit: 827a0a3724c5e516b7c0dbfd3f0d907dc947a10b
-[2/6] leds: multicolor: Remove unused local leds.h
-      commit: 026432e7c26484eb613d8224c98e554c7bc7d768
-[3/6] leds: gpio: Remove unused local leds.h
-      commit: e7160d5ee369c016418ba239516d24f086130aa4
-[4/6] leds: lp50xx: Remove unused local leds.h
-      commit: d1aa93196ca601472f4300bed103ce74ff2e8a2b
-[5/6] leds: pwm: Remove unused local leds.h
-      commit: 9fd316962a2089f25db286c1042eeba3f08a2bed
-[6/6] leds: turris-omnia: Remove unused local leds.h
-      commit: 3cfd6ad3e1d9ea4ae2e13d384c3c95726593dae2
+Can you please clarify ?
 
---
-Lee Jones [李琼斯]
-
+Christophe
 
