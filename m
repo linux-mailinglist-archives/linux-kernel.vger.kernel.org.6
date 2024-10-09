@@ -1,266 +1,182 @@
-Return-Path: <linux-kernel+bounces-357189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE802996D39
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AC0996D48
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439A228453B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5269228304B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B88199FDD;
-	Wed,  9 Oct 2024 14:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E797D19D088;
+	Wed,  9 Oct 2024 14:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jHm0Xmvw"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="oQOs8kCK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oMeceCAt"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8A1199FB1;
-	Wed,  9 Oct 2024 14:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6F819ABAB;
+	Wed,  9 Oct 2024 14:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728482772; cv=none; b=ADUmxVhxtDsrz+3jwExezKrk5lVzuPkZaVv+h0bkTCVkzsduJpeweYSmUJ3OYozamMh2dHudL3dx3MUlBSFZsoETezp9yrxsoGIUNtLA7uxvdGp2H2j2nMdBeytSKnUz0tMtUALj9GLP5aRORL1CaSRMV6ln/Lefeqc/TyJ6z/g=
+	t=1728482813; cv=none; b=UXJnP/ArO8YLgHcMM3lcz3SLhcK2p1OWKbKO+Rp4+015wbr6x7OhrAekq9YEtnRpgYXHpJYeVklj7WKQSV55PJZ/z0ceY47ygB0HmzgqmX0Av1Mjevdj8jZ282/Qth5vBZBYS01hMal0TuchO9LrnMxJQOx4ApVAZhUr7tzW+jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728482772; c=relaxed/simple;
-	bh=8dDmyqULYHAkSt6pZF7dtcv3mSrEcsn1ZpMpG7A2MmQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hn2KXjKtPtvY5XDz4YL+ZR6LjTwBON74vgDuc97JOXh8E4oO9vpZSlDZ9NTiIIBHkusq0/8KuzBWUstO4sJ2/0tSIrytkhXCvYVp+5Zz6Eqw5OcUtyJ0K2yY3c5gd9v/lna5YyHh+j8Neay7SH9McUum+MNrwWTw5BapvcAe6jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jHm0Xmvw; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1728482767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W1ITkMiMoSN/pYqPWEMNqvLqGG5sdeNSnAC3XZQ2KnA=;
-	b=jHm0XmvwTEf+pUAU6hF3/HZ9MXYCrSNNJ/w/Qo3qky8TXfWmGuDZW5Sn484C8LZDmmBqLi
-	Ab/zKMkLb4A6oXr4efgvFaezpLpFt/rnCrAwH9zSq1ijh6dY3Goc/3TqADiuSFf1zg6tth
-	+jhS28CbKJ2qcg8dLSy6TuqV/8N3kTYntKeF55KE2AJoYTRAYba4rUreMXYwFTby9t3TmP
-	hQP05TGj8LaYXV3JyqrWSWtdfGy3jaTiWtJYA0hRZ9iXQNq+Fc+39vG3yvjHJoyui8gIPu
-	9JEVQtRu0HRy4EeAu7U0tpeE8q/wnkVM5wZhAMVabNNqFXtjIbd+66UyFxyaQg==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Subject: [PATCH] arm64: dts: rockchip: Add dtsi file for RK3399S SoC variant
-Date: Wed,  9 Oct 2024 16:06:00 +0200
-Message-Id: <59c524a9a12465c21e01b779b42749fae148c41d.1728482151.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1728482813; c=relaxed/simple;
+	bh=El3JqQRpLCkxhPsPMxKfjev55jeNH5mnmmxjPHwk2Ig=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Hr5QiaPj9Z9tXkl0CTFcp1JHdgbF93duUGkbekYnOxkhC+tqSPjFUE/UK26Onqu8r44xPe9Ex83OirfngW+b2ra01gVaPdHQaoXHn68VbTY61ec9bpVrusnQzYIV4dznT7kfyHizIzxMMGb8MIeO5k2HmzGe0cF0rqmBO0UkQIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=oQOs8kCK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oMeceCAt; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id EEAA61380261;
+	Wed,  9 Oct 2024 10:06:48 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 09 Oct 2024 10:06:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728482808;
+	 x=1728569208; bh=7AEiig9c/7wiIG97Hr2tulDdk8lJo3CwPWgfvG3cqr0=; b=
+	oQOs8kCK/NnoDFbeh8NYIFgnU7EWDJq210AZ17pgPcVr0s8t4Vq4QjsRC0QOkm8Q
+	jU6UCfS39M7vux56KrOng2F6Y0yrmrZzpWAKeXdUH11BGy73irTZQZopAtPBoIkT
+	1qC9nbDwA8/QYmCZINeI38PZMF52GH342I+9Xx4uF8HHCQoNYhw+Gl6pC0Fq/eRT
+	sKFmEByr3o62fi0DvAiYokJQUdQeXxzYLELzNb+wrIAU5eDcakrfFxQHKQxdH1O9
+	SfHAqBhlAMLApF0BxQP2CZcSwupwtvb+I4PNSyMIrfCHzthssd5U3WwMYy/6epDW
+	rVBtFbK/Zt7gxM1+EguZpg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728482808; x=
+	1728569208; bh=7AEiig9c/7wiIG97Hr2tulDdk8lJo3CwPWgfvG3cqr0=; b=o
+	MeceCAtz/bmQ10Z5D2RfVpXPfnSZkZguqJBx9lKa+IB8SFlwBCPlk5eEgsedk1Ie
+	lXF69pWqnMlOmP8/el8nzFs+N+NKzBsmp91Bivm/h9eXpymcH4Zmlqw+RhggqN5v
+	usMX3ePPR7QMH2UIKTSUK5NKiCsVomo/cryyyOEe4cHwZWQ8kdXYlrry93U9sDmP
+	SfRh7XW/SZAqG14pXP1hy4afWVVe8+b+b1MEnAvf/sRjrbTolgC7ZYkemBMpUUMw
+	AKYoXUl+0OsZy23/NtcODfuTUpj4FP4ZVjVxsYouXmnW5e1V615fvPw2n3qtF3rL
+	qCd2RQ66eCJAJaUhMoWfw==
+X-ME-Sender: <xms:-I0GZwkgABMbFhbjz5TAOeVpoKCpcWalQaX4IdSNB_nP5VmiOxElgw>
+    <xme:-I0GZ_3VF9LLk4LXZvZCIUX45tmeF4wKrKwW8xtPlyIdYcfa4bEIMHpaaENRKTmSm
+    4hUYMbpzfQANV3Cbyg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnh
+    gvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqshhnphhsqdgrrhgtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhr
+    tghpthhtoheplhhinhhugidquhhmsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdr
+    ohhrghdprhgtphhtthhopehlohhonhhgrghrtghhsehlihhsthhsrdhlihhnuhigrdguvg
+    hvpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdr
+    ohhrghdprhgtphhtthhopehhtghhsehlshhtrdguvgdprhgtphhtthhopehlihhnuhigqd
+    grlhhphhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:-I0GZ-rCA4Fl-YeMz1EBuIcKDdpCuuOpo3T0vD4P-oZf1RDDpjgaqQ>
+    <xmx:-I0GZ8mlUzBY8q2JinIfwPVZi9LXVI32mxMdmVvdp7L9Ai9Y55jtVA>
+    <xmx:-I0GZ-3wHxqRWliSbYlqcPrqe2D1EgoLFl-IXjLV57dSVwzcK3wCfg>
+    <xmx:-I0GZzsfcfMxXvtiXOnA8c6Djn-ORiK0A1lBW73Gqi1mdoezKwNZiQ>
+    <xmx:-I0GZ1v-G53-56c9PHxvQsMFLRDeTrW4Vm6CR0BrqtzB4K1yF0i2ERan>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6D3232220071; Wed,  9 Oct 2024 10:06:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Date: Wed, 09 Oct 2024 14:06:27 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christoph Hellwig" <hch@lst.de>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-um@lists.infradead.org, Linux-Arch <linux-arch@vger.kernel.org>
+Message-Id: <3e12014e-47a7-4cae-bcd1-87d301e1f80c@app.fastmail.com>
+In-Reply-To: <20241009114334.558004-2-hch@lst.de>
+References: <20241009114334.558004-1-hch@lst.de>
+ <20241009114334.558004-2-hch@lst.de>
+Subject: Re: [PATCH] asm-generic: provide generic page_to_phys and phys_to_page
+ implementations
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Following the hierarchical representation of the SoC data that's been already
-established in the commit 296602b8e5f7 ("arm64: dts: rockchip: Move RK3399
-OPPs to dtsi files for SoC variants"), add new SoC dtsi file for the Rockchip
-RK3399S SoC, which is yet another variant of the Rockchip RK3399 SoC.
+On Wed, Oct 9, 2024, at 11:43, Christoph Hellwig wrote:
+> page_to_phys is duplicated by all architectures, and from some strange
+> reason placed in <asm/io.h> where it doesn't fit at all.
+>
+> phys_to_page is only provided by a few architectures despite having a lot
+> of open coded users.
+>
+> Provide generic versions in <asm-generic/memory_model.h> to make these
+> helpers more easily usable.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-The only perceivable differences between the RK3399S and the RK3399 are in
-the supported CPU DVFS OPPs, which result from the RK3399S being binned for
-lower maximum CPU frequencies than the regular RK3399 variant.
+This is clearly a good idea, and I'm happy to take that through
+the asm-generic tree if there are no complaints.
 
-The RK3399S variant is used in the Pine64 PinePhone Pro only, [1] whose board
-dts file included the necessary adjustments to the CPU DVFS OPPs.  This commit
-effectively moves those adjustments into the separate RK3399S SoC dtsi file,
-following the above-mentioned "encapsulation" approach.
+Do you have any other patches that depend on it?
 
-The way the introduced RK3399S SoC variant dtsi file (rk3399s.dtsi) is named
-diverges from the way the two already present RK3399 SoC variant dtsi files
-(rk3399-op1.dtsi and rk3399-t.dtsi) are named, but that simply follows the
-commonly used and/or the official RK3399 SoC variant names.
+> -/*
+> - * Change "struct page" to physical address.
+> - */
+> -static inline phys_addr_t page_to_phys(struct page *page)
+> -{
+> -	unsigned long pfn = page_to_pfn(page);
+> -
+> -	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !pfn_valid(pfn));
+> -
+> -	return PFN_PHYS(pfn);
+> -}
 
-No functional changes are introduced, which was validated by decompiling and
-comparing the affected dtb file before and after these changes.
+This part is technically a change in behavior, not sure how
+much anyone cares.
 
-[1] https://wiki.pine64.org/index.php/PinePhone_Pro
+> diff --git a/include/asm-generic/memory_model.h 
+> b/include/asm-generic/memory_model.h
+> index 6796abe1900e30..3d51066f88f819 100644
+> --- a/include/asm-generic/memory_model.h
+> +++ b/include/asm-generic/memory_model.h
+> @@ -64,6 +64,9 @@ static inline int pfn_valid(unsigned long pfn)
+>  #define page_to_pfn __page_to_pfn
+>  #define pfn_to_page __pfn_to_page
+> 
+> +#define page_to_phys(page)	__pfn_to_phys(page_to_pfn(page))
+> +#define phys_to_page(phys)	pfn_to_page(__phys_to_pfn(phys))
 
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- .../dts/rockchip/rk3399-pinephone-pro.dts     |  23 +---
- arch/arm64/boot/dts/rockchip/rk3399s.dtsi     | 123 ++++++++++++++++++
- 2 files changed, 124 insertions(+), 22 deletions(-)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3399s.dtsi
+I think we should try to have a little fewer nested macros
+to evaluate here, right now this ends up expanding
+__pfn_to_phys, PFN_PHYS, PAGE_SHIFT, CONFIG_PAGE_SHIFT,
+page_to_pfn and __page_to_pfn. While the behavior is fine,
+modern gcc versions list all of those in an warning message
+if someone passes the wrong arguments.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-index 1a44582a49fb..5bc4ced81953 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-@@ -13,7 +13,7 @@
- #include <dt-bindings/input/gpio-keys.h>
- #include <dt-bindings/input/linux-event-codes.h>
- #include <dt-bindings/leds/common.h>
--#include "rk3399.dtsi"
-+#include "rk3399s.dtsi"
- 
- / {
- 	model = "Pine64 PinePhone Pro";
-@@ -456,27 +456,6 @@ mpu6500@68 {
- 	};
- };
- 
--&cluster0_opp {
--	opp04 {
--		status = "disabled";
--	};
--
--	opp05 {
--		status = "disabled";
--	};
--};
--
--&cluster1_opp {
--	opp06 {
--		opp-hz = /bits/ 64 <1500000000>;
--		opp-microvolt = <1100000 1100000 1150000>;
--	};
--
--	opp07 {
--		status = "disabled";
--	};
--};
--
- &io_domains {
- 	bt656-supply = <&vcc1v8_dvp>;
- 	audio-supply = <&vcca1v8_codec>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399s.dtsi b/arch/arm64/boot/dts/rockchip/rk3399s.dtsi
-new file mode 100644
-index 000000000000..e54f451af9f3
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3399s.dtsi
-@@ -0,0 +1,123 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+
-+#include "rk3399-base.dtsi"
-+
-+/ {
-+	cluster0_opp: opp-table-0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-microvolt = <825000 825000 1250000>;
-+			clock-latency-ns = <40000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <825000 825000 1250000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <850000 850000 1250000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <925000 925000 1250000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp-table-1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <408000000>;
-+			opp-microvolt = <825000 825000 1250000>;
-+			clock-latency-ns = <40000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <825000 825000 1250000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <816000000>;
-+			opp-microvolt = <825000 825000 1250000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <875000 875000 1250000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <950000 950000 1250000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <1416000000>;
-+			opp-microvolt = <1025000 1025000 1250000>;
-+		};
-+		opp06 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <1100000 1100000 1150000>;
-+		};
-+	};
-+
-+	gpu_opp_table: opp-table-2 {
-+		compatible = "operating-points-v2";
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <825000 825000 1150000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <297000000>;
-+			opp-microvolt = <825000 825000 1150000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <825000 825000 1150000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <875000 875000 1150000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <925000 925000 1150000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <1100000 1100000 1150000>;
-+		};
-+	};
-+};
-+
-+&cpu_l0 {
-+	operating-points-v2 = <&cluster0_opp>;
-+};
-+
-+&cpu_l1 {
-+	operating-points-v2 = <&cluster0_opp>;
-+};
-+
-+&cpu_l2 {
-+	operating-points-v2 = <&cluster0_opp>;
-+};
-+
-+&cpu_l3 {
-+	operating-points-v2 = <&cluster0_opp>;
-+};
-+
-+&cpu_b0 {
-+	operating-points-v2 = <&cluster1_opp>;
-+};
-+
-+&cpu_b1 {
-+	operating-points-v2 = <&cluster1_opp>;
-+};
-+
-+&gpu {
-+	operating-points-v2 = <&gpu_opp_table>;
-+};
+Changing the two macros above into inline functions
+would help as well, but may cause other problems.
+
+On a related note, it would be even better if we could come
+up with a generic definition for either __pa/__va or
+virt_to_phys/phys_to_virt. Most architectures define one
+of the two pairs in terms of the other, which leads to
+confusion with header include order.
+
+      Arnd
 
