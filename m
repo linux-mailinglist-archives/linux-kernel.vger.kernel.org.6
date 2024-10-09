@@ -1,180 +1,112 @@
-Return-Path: <linux-kernel+bounces-357575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466069972DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:17:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BE19972DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFCBC281DE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:16:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4177CB22008
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA671D27A5;
-	Wed,  9 Oct 2024 17:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119D41A2547;
+	Wed,  9 Oct 2024 17:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V/NxOHRj"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="kDDdgsYC"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C808814A611
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728494207; cv=fail; b=GbXCWX07mADD7dF8vdldbbac3/miMG/OeaAJ4vDzdjCSe0oFknCBF2V+G3ryTVJfzu2MwcOh8iqIzoOkFczZXe+cOA174gsXmjrw1po6BBRndh5M/IikE2bXnkdn+1HaSo3jfD01iMXgkWJ2ZM1TbDosYCt0roK+GKvl9fyPies=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728494207; c=relaxed/simple;
-	bh=WZGrjZBYjFNlcvosVLHfnFkekIXxKwVI1di+TbiK1tA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Zg7onVKomgBkwbTQYsPM0gYtbq0ekSBkpQvyUfmrrcejM3nmGzzo3HYyXDZfG2Nv3ZLTtMTaXWxD+eMr23w3IhJUbp5egLlOLpj875fmcnIsiaS4PuIm44wwdaIJSPXn4m0oajOSn3rQbPQeEHlgjT03xGoThip0vPCFilmkDsg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V/NxOHRj; arc=fail smtp.client-ip=40.107.237.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DFPnFFF89Mhh24q7QbOIafIQhBbK/oh/N4+fsJjiTGOPlmOsmYe3eSW/0nVQbD040nsJ7XGI4fVXkUGHzPZOCeVgOxbBYm5CBKkjPhDR9Aw2YHaQzeAQfBPNCYuO19CzCOq8+l2mdSbdw+rM4osQstihC3Sfns2ouACC90gEoVt/yMTdCAUCtxxwTTMeyYHM7G29Hn0zTAICrPqOl1ADJTfYO1C8wdl91h5CiZG/xXOlX5EKY9ZBue0qRbLgytF3rxbkbfQ7KZ/qU7EIX/WaRXOyWlnnsZPbmBX5xB5T3QCikeSKAW6UMkK4IwgQDuR9gL2nykpdyIhMwRals64vjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IYZTUMfT1THjUHLWlC/KI1rYIse6Y3fIVSg54AXOhjA=;
- b=ZVPpDAQewITXU2z9LyHLJR8L8RG8B5MmY7DdtpYJw7mUSDfdRzPnWJGv96GkfAUCg5irq1KtR3GyVged76xjfzcQ7fAQUamwX5nGXjvgm8dVdizDi9Qgudkc9TOSNgKhYCfklFzPqwn5qsiOTa5RYt3BV+aO7HWegOTCHIqQo2OGYdr0jQSnodEaZMRh8AGZeDpk8ACEX4cDPSlPuwj0uLTObn2s+3OOm+LO6oDVnc/td87Wv1jsP03SY/Wghy378mUa/idN5mIyNoTBEJDy14/6q5Zk0WZTJa/jGkYMn/24c7n/yPIj7zo0w05APWgkmsLtsrukTtoe0ezXPBleUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IYZTUMfT1THjUHLWlC/KI1rYIse6Y3fIVSg54AXOhjA=;
- b=V/NxOHRjQ9vGFgUF3i3Qc1b1BUrxIKnYybBr9Vev85QS/c5N5nGWO39aTCn9cCe6MhONY5+R44gxY0n5l+iNXcaF5fTVaLGNii8rS/hZAevTk6xaCdh2pe9S8G7IcMYFFe6mVMh7Q8HnR29vn5jk8KHmpYLq6xBZgaiT/dw44o8=
-Received: from CH0PR13CA0017.namprd13.prod.outlook.com (2603:10b6:610:b1::22)
- by MW4PR12MB7483.namprd12.prod.outlook.com (2603:10b6:303:212::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Wed, 9 Oct
- 2024 17:16:41 +0000
-Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
- (2603:10b6:610:b1:cafe::79) by CH0PR13CA0017.outlook.office365.com
- (2603:10b6:610:b1::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17 via Frontend
- Transport; Wed, 9 Oct 2024 17:16:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Wed, 9 Oct 2024 17:16:40 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
- 2024 12:16:40 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
- 2024 12:16:40 -0500
-Received: from [172.21.103.178] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 9 Oct 2024 12:16:39 -0500
-Message-ID: <03b3647b-49f9-4a9a-be65-3170bde65730@amd.com>
-Date: Wed, 9 Oct 2024 13:16:36 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE3A13F43A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728494323; cv=none; b=MFmBDJeXyD9dFxd/RdhHYkrayOlDxIXC1QqLdlpQKqjaMsJoawXJZXMStbtOx4I5dJuo7+itLVGEFvA4rvmaht0FSsJ44N/DsS0Gov6YchcdNt+3RyFY5xz99SNgYrUKkXbMlpxGRy3Z1EKrJG82hduuHG7jCL11w7xznGqIkV4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728494323; c=relaxed/simple;
+	bh=gfDfkb6E6BuglUSYEE7UIx2AT6P6NtLzD1hcTyfxqgY=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=p+KojloglJnBpdmV5KW5AzfDYZC3suN4ixFD9YefiUGvSiQNlSQfaAU73WZa/SvYe1tAgDKn6J+VbfW3Aere9L8ywQ9aODXSyfPTT8mTU3Y23T58jyHzyWHUo6HfykBfoDUPUSLYpF2ml/owjLi8TB9bC6r8ulTraV41AmAoxeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=kDDdgsYC; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e0b93157caso892262a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 10:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1728494321; x=1729099121; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tE15ibMGDi+NxxTDjcKlwgS0dglI70fk+X+ersajG3M=;
+        b=kDDdgsYCktzXRfjI6W9WOCWEy19wJdluLXSgV8qnHWsUv8q4vBN458O0E0f7IrC0Zu
+         c4rSYLf3xSoM0JkhqJEXeiNQfZ/q4ELn/kQkzgHvnO1bAMqecrVSE7pXCRnc8BXPGPLm
+         1IqI2TDtU2UsMxTDZfyOm2wqarLFscK1hx25QHO9zYntJJgrYukZYY0sRqzD4p8DffEz
+         +G29TkM16/6d/0BF0m/Dlb2acqahN3MBPsaTlKOxnuZNWw5wb4QK0FyimQedEkQQGO2q
+         M1XZwHSnmW4TUA8bGbMAGKFf19bX+HimHwcIMdy/1ZKsEWAMRusPUNz+fwhQ8W7Uy4s6
+         PV7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728494321; x=1729099121;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tE15ibMGDi+NxxTDjcKlwgS0dglI70fk+X+ersajG3M=;
+        b=SLLjUAXCIPYyQcu7iU9AcL88GtWdo+5w//RedlyO3Fc5++RLfRai4HURRvgoYeyLc4
+         XuWMp4kLTPzSshSg3kWWY92eVVofimOB1jL/cJbWjV+h9Mz6seMbpUxyUdrGiYoTsTUd
+         /0152JxJ4bm6m0uc+KOIHlni9Y492PsxICXeDK8HAGPefeHBiOcvXwRxemEMrgAXREgk
+         Xn0Uzdjb2I1CVTwxBDg75iM660v+wUYdI0WYDHGBIkYVx7u5r4AMqv/yivXTp0zcczYb
+         8SNR26y2Q5yrfsELFJDRSnlK45uh6jpLm9zJPcRN81qSv6+vkadCpg8LGRvgjd6wcQub
+         tuTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbRDfF8X0ZJiPVLy/6qH9ibQ6zMmAlGU5nS5NmWQ9gB4oxCxyU0kxd6hir4KXeo2YyZh9KES+/OBua4dY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD2hPRICuaSriri46zZX4yHFDB0PbWNI52ZeYD8kCP6PvEeRls
+	qU4ceObHsMPzEd5GOTSJQNfM5OVibiRGR4ynzGokNTGCjD1jH91tgGP0+yLMlWb3winnIeU6RwM
+	q
+X-Google-Smtp-Source: AGHT+IH+dUdqWJdilHkcfNrwnO/4bpYGAbPTeUc897OZzGRUfL0r6Othkiqnq9rjY7iXezEC0dz7jw==
+X-Received: by 2002:a17:90a:d913:b0:2e0:89f2:f60c with SMTP id 98e67ed59e1d1-2e2c805fe05mr543826a91.11.1728494320877;
+        Wed, 09 Oct 2024 10:18:40 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a8dd0fa9sm1849185a91.50.2024.10.09.10.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 10:18:40 -0700 (PDT)
+Date: Wed, 09 Oct 2024 10:18:40 -0700 (PDT)
+X-Google-Original-Date: Wed, 09 Oct 2024 10:18:38 PDT (-0700)
+Subject:     Re: [PATCH] tools: add forwarding header for arch/riscv/include/asm/fence.h
+In-Reply-To: <mvm5xq44bqh.fsf@suse.de>
+CC: linux-riscv@lists.infradead.org, Charlie Jenkins <charlie@rivosinc.com>,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, parri.andrea@gmail.com, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: schwab@suse.de
+Message-ID: <mhng-adb76a44-07c8-442c-8bcf-6f29d061c031@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] x86/xen: Avoid relocatable quantities in Xen ELF
- notes
-To: Ard Biesheuvel <ardb+git@google.com>, <linux-kernel@vger.kernel.org>
-CC: Ard Biesheuvel <ardb@kernel.org>, Juergen Gross <jgross@suse.com>, "Boris
- Ostrovsky" <boris.ostrovsky@oracle.com>, <x86@kernel.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20241009160438.3884381-7-ardb+git@google.com>
- <20241009160438.3884381-11-ardb+git@google.com>
-Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <20241009160438.3884381-11-ardb+git@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|MW4PR12MB7483:EE_
-X-MS-Office365-Filtering-Correlation-Id: f3b549d2-1dd0-44fe-1539-08dce8862424
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?anIrU3hEMWJGMjNDRnQzNDJDMEI3Qk1VekFkRjl0N1AwOUQvb2dHR3NPNnJT?=
- =?utf-8?B?MEpqMUxIRmI5Ulo0YmhNVGxuTjdkaVFqKzkxSFVZN1ZEQUs0bFZGelRpalVj?=
- =?utf-8?B?N1p5VGNaWHJNSTlTU0kvZjJ0c3U2UGxlWHNQVkdsN2p0dE5TQW4vRTVVY1Ni?=
- =?utf-8?B?TkFzRGtOdzVDOVZ4SDRlUFlwZmI2Mm9uRnpJR1AwOVU5YVNkMWUvOThEcmx5?=
- =?utf-8?B?NWlqdXVjQnRDRzE3MmFTNlBxbzRCV25uZzd1Vjdad05FTVlWUkxWN3JGOTFD?=
- =?utf-8?B?SCtGN2FlVzhIRnRITHRDdFFVNlFBcXVQUzBoeEc2cHFwK01hM0dKZUwrOWFa?=
- =?utf-8?B?M2pUZ0MyaldnejBudmtIOGVwM3lpZFFzMXpyWEF1MCtlWmtCSkRtbS9Nb3do?=
- =?utf-8?B?b0Y2K29PY1lGRm1jbUxpTWcwVTBOVTlNWnc1ZC9RVU1uc05jbzhpQTlEVlJa?=
- =?utf-8?B?ZVM3dEFham1qUy9iZnAwUW5pTnFLOXNtc1B3UFcvWDNBeEExRDUyc0NZZlN2?=
- =?utf-8?B?a0VEbjVzQUpUS00weHNBckhjdVV3QkFWblYrUHFFOUZpZ3dHMGhnd3JPNG5C?=
- =?utf-8?B?dklBWEgrczBCdWcxTVZVb3dUeW5uN1hoenA5a2VKeEZCR2MzOVB6NmZwaVU4?=
- =?utf-8?B?a284ektHb3ZlUVBuMDhLSU9oVjZQL1VjMjdxYWZRVVlKWXRGWDNsVHcxU1k3?=
- =?utf-8?B?QXZBb3ZWZXNDKzJzSVVIQitraVJBNmpVTFZ3MWpRNE45d2FFeWR3dzB4bk12?=
- =?utf-8?B?M0tpc3lpdklkbVlteUtSU2lWK0dpZ215bXlROStUMk1SWi9uWnpRMlhRdy9W?=
- =?utf-8?B?MmRLWVk5emc3VVhJaXBiWGlNcU92aGYwaGp5T2htb0ZFTm1xbEdhL1VOeHRx?=
- =?utf-8?B?TzB2b2k1YjBpL2NFWXUyVFI3MnoyMXRabytQZUZxYmFBZmpBaktkYTRiSTRz?=
- =?utf-8?B?clBFbFAzRllTM3ZoZnFhbXMyNWg4cG01OXIrYStnV2t6elpiM0Q4SmpTZDV0?=
- =?utf-8?B?L1ZjUGNhWHlWaFhXanpvU2tFRmdBNUJNaHFDc2N5QkptdVMzS2VnN01uc28z?=
- =?utf-8?B?bXdXbUErK1FXd3JPRVBYMjVFWkwzd0FBYWkxRGUvaDFiY3FlQzMyU2ZkOGlB?=
- =?utf-8?B?S3hweGVCWDFZb1RZNGsyYUxLTW5BS3BqSzNuSEpEWXZONDRxY25QNU9MUEow?=
- =?utf-8?B?KzlqdEJSbGdxK3VlT0ppSzIyS1dRakxGRDJxOWpQVjZkZm90U240bGtzRlBN?=
- =?utf-8?B?bzc5OFZ3QWVBU0hpSlg0OVBnaDYwakc5YTFxZEk5cE1sSk4zOEpjTnJWcnlG?=
- =?utf-8?B?UGh1Sm5MRmIyeEhNb2tzRld4Sk9IR3ZySFNUU2dvK0lMRkozWjU0RWtKYVVW?=
- =?utf-8?B?d1lZNGlRZjV5WWVZTWFWM2ZxODBjeE1iekFDUmlMbFA1a0s0dC9pQXU5TEhD?=
- =?utf-8?B?d2xhVjI2dzF2czViWWh0Nis4WFViYVo1dnE5MVlYQkRjTTIyZUlPZkdQR0k1?=
- =?utf-8?B?L1dZWVJ4czJZU05HY2xqN0p0Q290cXY2UVJLeUF3bkVlNUwxZlQ4SkZDUVcy?=
- =?utf-8?B?WkM2aDg5S20yZUMxNmd2TW1qL2FlcDY5bXVWcis2ZUtTS2FBNW5tanNMWWdq?=
- =?utf-8?B?RjB3Z0x4a1VqdG1UR09tT3lYVTI3dDRXcy9aRTVValpINE96bDRVdzZTcENK?=
- =?utf-8?B?V2c3emk1ck5JeHBsVlBkYTVRSzg1STVsNVF3cWkxWk5BRlovLytmVXZMbU52?=
- =?utf-8?B?SGs5YTZtZk9OMEdFYUdHK2tsN3FQMDZJdGdLR2pDaXBQTjErUjgzVmlRdyt4?=
- =?utf-8?B?V3daUlgvTWNkdWlCaXFrdlowRmM4U1d1Ri84N3pWWityam4rd3JQdFN1Uml0?=
- =?utf-8?Q?JGLMUZc38U0Ei?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 17:16:40.8592
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3b549d2-1dd0-44fe-1539-08dce8862424
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A348.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7483
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-09 12:04, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Xen puts virtual and physical addresses into ELF notes that are treated
-> by the linker as relocatable by default. Doing so is not only pointless,
-> given that the ELF notes are only intended for consumption by Xen before
-> the kernel boots. It is also a KASLR leak, given that the kernel's ELF
-> notes are exposed via the world readable /sys/kernel/notes.
-> 
-> So emit these constants in a way that prevents the linker from marking
-> them as relocatable. This involves place-relative relocations (which
-> subtract their own virtual address from the symbol value) and linker
-> provided absolute symbols that add the address of the place to the
-> desired value.
-> 
-> Tested-by: Jason Andryuk <jason.andryuk@amd.com>
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+On Mon, 07 Oct 2024 00:24:06 PDT (-0700), schwab@suse.de wrote:
+> This is needed so that <asm/barrier.h> can find <asm/fence.h> on riscv.
+>
+> Fixes: 6d74d178fe6e ("tools: Add riscv barrier implementation")
+> Signed-off-by: Andreas Schwab <schwab@suse.de>
+> ---
+>  tools/include/asm/fence.h | 3 +++
+>  1 file changed, 3 insertions(+)
+>  create mode 100644 tools/include/asm/fence.h
+>
+> diff --git a/tools/include/asm/fence.h b/tools/include/asm/fence.h
+> new file mode 100644
+> index 000000000000..917a173059a4
+> --- /dev/null
+> +++ b/tools/include/asm/fence.h
+> @@ -0,0 +1,3 @@
+> +#if defined(__riscv)
+> +#include "../../arch/riscv/include/asm/fence.h"
+> +#endif
 
-Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
+Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-Thanks,
-Jason
+Happy to pick this up via the RISC-V tree if you want.  Thanks!
 
