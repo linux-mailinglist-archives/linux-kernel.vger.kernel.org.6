@@ -1,127 +1,190 @@
-Return-Path: <linux-kernel+bounces-357096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57650996B85
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:15:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E3B996B89
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD561C22E82
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8B0B23C58
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669FF194AEB;
-	Wed,  9 Oct 2024 13:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEDD192B6D;
+	Wed,  9 Oct 2024 13:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2OLGGWjI"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vTRAmYFh"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4AA192D82
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EB5192B88
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728479680; cv=none; b=BWkKaOYN9FkQ/wTTOpoSomdq9UhNi/fUwK7EUT4QhG4P0EfsT/V1kcCuTOD7DEiwc81wPGSlIw9UivsYT6jISZxXbHfX1/aktg3eYJ80bpDIaoZWMak/MAslSZQAV1XIJjEaAvVV//uOhWrxbjxFZxPbQPRWv8N33MpuDUucIOA=
+	t=1728479741; cv=none; b=OZA8rXEtR7HulVHlcQdweYIRy2rEBC4VP89m9lCZ23j+++TGeH6hI/eWVYY523fV3/vIgOPnFx+9DqG6SfoUCip3gTdLZWiMDkZDwh2qEGTCOgvc++AP+CiXo7lOwWIkMtj2Lv4bSsfuRmshotf0vWzmyJNgA0n+S6cHOTaKrIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728479680; c=relaxed/simple;
-	bh=d3uSPZxORKmVlB66mNShAQmiJU7ra9Q4AGAbI3fZ8z8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fXINq+Ke2leDjXsEIkKAwoqZZ/K6la2O7ohj7ZHyQSHRXWaLQhA8ZcBzPD2sFZlNO41NXWrVCJx01fxW4Hx8BLZWIsvAGIxDYfCswBlbZd/YpOIXLs3QswbrNb50IimY4quaQJREcSiSwN2HAuPB3VtQAF65DRffeve+GXWAzyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2OLGGWjI; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6886cd07673so125848577b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:14:38 -0700 (PDT)
+	s=arc-20240116; t=1728479741; c=relaxed/simple;
+	bh=a/g/KSMW6CmKID3bt4x5A8ciB/In9mNPhttKBVqxwd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QZUwpz1AJa9Vu4zIggKWyWRjU4PcMIZhnpMwb0y+Xp+Qll38OhU1gD7Jr6izRuYWtsWMBZ/Zhg4fQj8ox4J1RfakMlyiyltRF18zj8q7T7BpNCsxRAoTUWAhXe0Gtdzs0yLiCthrfjcjjpIqsSiScP/3xpCzGlgk60ByVnl78t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vTRAmYFh; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03caab48a2so691289276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728479677; x=1729084477; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgsDKPkC09+Onhv3ZGoUVeFgaBkjKnGI6VWOvKgtHCM=;
-        b=2OLGGWjIXihdPod7b4tSfNInoBC8yJmZNH6CYCushwdRcewN7n3QlUGi/H6WCDinRe
-         emVcio9Srhl+AMsXeafWucSlq6n04sxs6j5sxwr1BYyXf143E37Kel6aTqCn84ON1COB
-         +ELmx+bWmfAUlgrtSJJ9v82SCVLp+j1Ps2LZP3wJHcY4LThZ0qcvDIVADz6my826yi2f
-         /MEPjCwJ56o9oMN2rwrYmu/RDGVrKC7GojfgTNtkoX98PGIPONIblo6KGBqqQ11vvSgY
-         fU/eVAzP7/koFQsPq1U254MVgwiWVsCktULFnuAYk+IYQQXW+6YBn7lZog5m07COdsgn
-         r2ew==
+        d=linaro.org; s=google; t=1728479738; x=1729084538; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/BVh51Wei3dZ71+FMVXs9o7VKFoyrGm7h9GIR6kEtE=;
+        b=vTRAmYFht/6gtE3EfOPePLxI7aJqqRSor3wPT3b9v9SPIfsSaDHxeBqnFCw77sTj1j
+         vPk9a4fdpd+n/k3ICHYOKVrl18e2yhXregPVwLiTN7xpvkzVXOiSJh7K7iNBYp9Oh3cp
+         zZuZ3NgiBNyPDY2cL5sJajnZiTMySkl70b8TAibMV1B4Ur8vrKzOScMZejcwAMzFlzUP
+         VSr22scPyCzKIpkkiu3Xdl799I02aywApVnZdTqUe2zUNs90+TNoh3BwuSokcfu52HWA
+         nTCFaXfh74V5uMs54ed5c2WgWZvSBDVUDm8cajaEqp+RzLiYMfkdaPL4qEuKy5OiuqUB
+         8+PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728479677; x=1729084477;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgsDKPkC09+Onhv3ZGoUVeFgaBkjKnGI6VWOvKgtHCM=;
-        b=BAaw8u3QhN4cNo/RhlMuevOW7cAPNpVYCUX1FH3bEV9t7wNVChr7b3THnoH3Mf2Bty
-         AezGUgb4+gFlqlfQdYBX3MrLw0w/2OC2WrIG8/mb+rdE8uAwH3I1qo2DdGmXrOsX/G0M
-         r1nRjDrxAb4ZL0BZsqHElLMNk7IEWgFtdcQMzIhaf7cufpKyR5JsYb0rR9ZJNYxaoS91
-         ah0ayc7IqQMIjZCBMN/7qYijfGh9mP4LtMjHyBl37FJhp9MeaP0sFvc+z3Gjz1dS7tcE
-         xK634cpjhtY9AocJaFi7Bjd1FXqI51WT/VtpnhAtM66ejjoiW1UHMIhSlpUQ4T6Fb0Jt
-         NVmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFESzTBjfEVcUfJ4GLg4mgGX874RCTpdbh8WdKOhyu7kBO1bW6tXl4Fr2lXuP5XqeRTtfk0dE/clc28Xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHLKuIu43RwdJf9mseSgg/DVxczeYeHEMCb3YlRKPgZEwhCoKc
-	WmolzagdGMV0ZTAXChxe0KXX2DDggL1sGWByXvZiOAuGH3Dv4UMvPfYr+hp1ZZJuME91HxtYHSk
-	TxQ==
-X-Google-Smtp-Source: AGHT+IEO0k4jXJioiSmPAvdcWPAQJDTNJQQZHdjpBAGmJ2rcmUcV4emzzrWNTnFXRkQogPoiWl6B2lJBrJw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:6c05:0:b0:e24:c3eb:ad03 with SMTP id
- 3f1490d57ef6-e28fe540170mr478276.10.1728479676345; Wed, 09 Oct 2024 06:14:36
- -0700 (PDT)
-Date: Wed, 9 Oct 2024 06:14:31 -0700
-In-Reply-To: <ZwZLN3i3wcJ4Tv4E@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1728479738; x=1729084538;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X/BVh51Wei3dZ71+FMVXs9o7VKFoyrGm7h9GIR6kEtE=;
+        b=XIB80E6Q1HqkAjBVHzF0N+Y3pjmlPIM3LBddWL4Ne0Wt/rEYvcXuiMnLDl+pzePWoY
+         6R9VbtR7X5s+/mH09SheNdMiTzOPhLHf2bzwiZjP4h/+ZsFdvHewCUnXaswatLKZdL51
+         w9LR31gorjsMN3qkeRnxwREdamspSZDfz7U8Tk+8mHYjtX5Ij108UizzD4WOeg1ODFZN
+         gTRhIobMcDDAQiReavwihiGVn6p/HcJPpD6O4+9OOUVX3d2Q/Hyl71CBu430ueRn55et
+         tD6DYr2F6e+nxTDjL6z/I3VvaQgjrvkpHDp2sS4Prm2V7/EPSZ1MO9G0/PI0TxsE0vRV
+         2CQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq1Wewyoo7I90QrTfCeQtbE1KNJxM8CEmgJaTv/rmBo6b4xzhJMd9kBbED81ZwhCzbBpWj/6VAuZes1Do=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuNNsWM6u2flS0RYEdwMr4aSAq3IcdFNxI+9z4R8q4HOetwyA2
+	hyaK11q/t9zVCEbihRNtmtGEfoe5pJNIXtHLvt0Q59eXTIx4TpIMwkPNRgAnIX4JfjBDOSzvh3H
+	E0plFf049riqHJRiWYGUvQoZQa2wzfzFQuFCl+Q==
+X-Google-Smtp-Source: AGHT+IHp9MRWyf8+0EngQ/HGstXTs67OY8NhmDANMfWbtr8KbjZARvSO50M8FTVHd6rQq5UIIfOKejL4W5ObG6+T/7A=
+X-Received: by 2002:a05:6902:18d3:b0:e0b:4cb6:ec53 with SMTP id
+ 3f1490d57ef6-e28fe348682mr1747706276.3.1728479738519; Wed, 09 Oct 2024
+ 06:15:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
- <ZuOCXarfAwPjYj19@google.com> <ZvUS+Cwg6DyA62EC@yzhao56-desk.sh.intel.com>
- <Zva4aORxE9ljlMNe@google.com> <ZvbB6s6MYZ2dmQxr@google.com>
- <ZvbJ7sJKmw1rWPsq@google.com> <ZwWEwnv1_9eayJjN@google.com> <ZwZLN3i3wcJ4Tv4E@yzhao56-desk.sh.intel.com>
-Message-ID: <ZwaBt0BzzG6Z0UGN@google.com>
-Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
- interesting change
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org, sagis@google.com, 
-	chao.gao@intel.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com> <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Oct 2024 15:15:02 +0200
+Message-ID: <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 09, 2024, Yan Zhao wrote:
-> On Tue, Oct 08, 2024 at 12:15:14PM -0700, Sean Christopherson wrote:
-> > On Fri, Sep 27, 2024, Sean Christopherson wrote:
-> > > ---
-> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > index ce8323354d2d..7bd9c296f70e 100644
-> > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > @@ -514,9 +514,12 @@ static u64 mmu_spte_update_no_track(u64 *sptep, u64 new_spte)
-> > >  /* Rules for using mmu_spte_update:
-> > >   * Update the state bits, it means the mapped pfn is not changed.
-> > >   *
-> > > - * Whenever an MMU-writable SPTE is overwritten with a read-only SPTE, remote
-> > > - * TLBs must be flushed. Otherwise rmap_write_protect will find a read-only
-> > > - * spte, even though the writable spte might be cached on a CPU's TLB.
-> > > + * If the MMU-writable flag is cleared, i.e. the SPTE is write-protected for
-> > > + * write-tracking, remote TLBs must be flushed, even if the SPTE was read-only,
-> > > + * as KVM allows stale Writable TLB entries to exist.  When dirty logging, KVM
-> > > + * flushes TLBs based on whether or not dirty bitmap/ring entries were reaped,
-> > > + * not whether or not SPTEs were modified, i.e. only the write-protected case
-> > > + * needs to precisely flush when modifying SPTEs.
-> > >   *
-> > >   * Returns true if the TLB needs to be flushed
-> > >   */
-> > > @@ -533,8 +536,7 @@ static bool mmu_spte_update(u64 *sptep, u64 new_spte)
-> > >          * we always atomically update it, see the comments in
-> > >          * spte_has_volatile_bits().
-> > >          */
-> > > -       if (is_mmu_writable_spte(old_spte) &&
-> > > -             !is_writable_pte(new_spte))
-> > > +       if (is_mmu_writable_spte(old_spte) && !is_mmu_writable_spte(new_spte))
-> > 
-> > It took me forever and a day to realize this, but !is_writable_pte(new_spte) is
-> > correct, because the logic is checking if the new SPTE is !Writable, it's *not*
-> > checking to see if the Writable bit is _cleared_.  I.e. KVM will flush if the
-> > old SPTE is read-only but MMU-writable.
-> For read-only, host-writable is false, so MMU-writable can't be true?
+[...]
 
-Read-only here refers to the SPTE itself, i.e. the !is_writable_pte() case.
+> +
+> +static int ufs_rockchip_runtime_suspend(struct device *dev)
+> +{
+> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+
+pd_to_genpd() isn't safe to use like this. It's solely to be used by
+genpd provider drivers.
+
+> +
+> +       clk_disable_unprepare(host->ref_out_clk);
+> +
+> +       /*
+> +        * Shouldn't power down if rpm_lvl is less than level 5.
+
+Can you elaborate on why we must not power-off the power-domain when
+level is less than 5?
+
+What happens if we power-off anyway when the level is less than 5?
+
+> +        * This flag will be passed down to platform power-domain driver
+> +        * which has the final decision.
+> +        */
+> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
+> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
+> +       else
+> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
+
+The genpd->flags is not supposed to be changed like this - and
+especially not from a genpd consumer driver.
+
+I am trying to understand a bit more of the use case here. Let's see
+if that helps me to potentially suggest an alternative approach.
+
+> +
+> +       return ufshcd_runtime_suspend(dev);
+> +}
+> +
+> +static int ufs_rockchip_runtime_resume(struct device *dev)
+> +{
+> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> +       int err;
+> +
+> +       err = clk_prepare_enable(host->ref_out_clk);
+> +       if (err) {
+> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
+> +               return err;
+> +       }
+> +
+> +       reset_control_assert(host->rst);
+> +       usleep_range(1, 2);
+> +       reset_control_deassert(host->rst);
+> +
+> +       return ufshcd_runtime_resume(dev);
+> +}
+> +
+> +static int ufs_rockchip_system_suspend(struct device *dev)
+> +{
+> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+> +
+> +       /* Pass down desired spm_lvl to Firmware */
+> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
+> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
+
+Can you please elaborate on what goes on here? Is this turning off the
+power-domain that the dev is attached to - or what is actually
+happening?
+
+> +
+> +       return ufshcd_system_suspend(dev);
+> +}
+> +
+> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
+> +       SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_system_suspend, ufshcd_system_resume)
+> +       SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
+> +       .prepare         = ufshcd_suspend_prepare,
+> +       .complete        = ufshcd_resume_complete,
+> +};
+> +
+> +static struct platform_driver ufs_rockchip_pltform = {
+> +       .probe = ufs_rockchip_probe,
+> +       .remove = ufs_rockchip_remove,
+> +       .driver = {
+> +               .name = "ufshcd-rockchip",
+> +               .pm = &ufs_rockchip_pm_ops,
+> +               .of_match_table = ufs_rockchip_of_match,
+> +       },
+> +};
+> +module_platform_driver(ufs_rockchip_pltform);
+> +
+
+[...]
+
+Kind regards
+Uffe
 
