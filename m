@@ -1,124 +1,183 @@
-Return-Path: <linux-kernel+bounces-357320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F225996FB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:29:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4EC996FBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9174B1C21F12
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:29:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C02BDB22170
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DC91E1A10;
-	Wed,  9 Oct 2024 15:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F541E1A37;
+	Wed,  9 Oct 2024 15:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="awaWthG+"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lm31+UCs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NkTzABFx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bO1iP7Pg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/2IkfBLb"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BCF1E133F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14C81E1A25;
+	Wed,  9 Oct 2024 15:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728487236; cv=none; b=YlaIfOuzhedfZQJUeoIBqPj3j5mn78IajM2NqDmj4IDnh2oSUtJUaD02aJ1aajVOI6JEWmQBdH5bcpzo9KOkR6xz/XUynGxyjEA/65p504jeXT83TXwZuLqZgz8yBUva0CnqdjaKXT4eXt5m2KdioVE9AnSnaSnEM39LWLZLfa0=
+	t=1728487253; cv=none; b=dh9sGRY/czpY+vFx+rRq1ADojp2j7Xd79XKNUkXVpiVGqhsEqm9KBi0SfAJI/DFYa7rJBlwyV9ddbYPOIosNjgXZXxAMa6xOBvGvT33ylnpSN5A/6aEqGthU6dDBKaLkCCESFSu8btmeTgqtNX+j2E9F3JhvMShM5XoQ12HbQj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728487236; c=relaxed/simple;
-	bh=j82239oWEOEbqR2Q0C352NPUpn5HJfDiSYxCTRU1L5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sn7NQrMDuxSCk9CBkpMSyiUMC4bDgJPYn07//XJyktETTWQ2+PhWD2i5A7zjO6OIP+pNaW4c9wVdM1Q5I5MBlejN5TXsprFslZl0Zs+/dYN8H7fC1yPvGf2KyKWdCcg0KPMBPThqbOzYCgOnXdZfID/RMX4GFVQXXS8yddSlZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=awaWthG+; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499Eu9H6015997;
-	Wed, 9 Oct 2024 15:20:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=HlHl6ChjHbnuvgtCTGs0ivDwGXG0c
-	XdbfUONSFCyc5Q=; b=awaWthG+OdkEZPf7DFC/4l36q9PN+ufdPc7Onl4d9X0wh
-	RZxXMW3LQC5cRnKVJ2gY0py60cEW/Mr//DQ7n8t+eAcUCNAAq/zna8Wu5lPOexP+
-	hNQrkTgYtHP4LXq0PeTvMBPylgTeHvf1Pc7Csr8j/QcDK8CMZ9QsImqsTl9yUSgG
-	BVI07eg2aE5kKbYVmA7gcoiRGqFxd+o3VMYdNTx9LJ1Ypj+SmEnpaV6/FQXO2PdS
-	lVAsayf5t5atJ3XJPPyKx1Xc7kkZbhKVAxF1143XqjYKRvehcrH+jj1EydcdVOnQ
-	2A3IpdNBPGTlwx4Jo/ddhC3NPPaedYti6p+/68vjw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42300e0n2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 15:20:14 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 499E1CA3015276;
-	Wed, 9 Oct 2024 15:20:13 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uw8rb4h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 09 Oct 2024 15:20:13 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 499FKCC1001460;
-	Wed, 9 Oct 2024 15:20:12 GMT
-Received: from sidkumar-mac.us.oracle.com (dhcp-10-39-198-16.vpn.oracle.com [10.39.198.16])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 422uw8rb23-1;
-	Wed, 09 Oct 2024 15:20:11 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        willy@infradead.org, richard.weiyang@gmail.com,
-        Sidhartha <sidhartha.kumar@oracle.com>
-Subject: [PATCH] maple_tree: remove conditionals to detect wr_node_store
-Date: Wed,  9 Oct 2024 11:20:07 -0400
-Message-ID: <20241009152007.2096-1-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728487253; c=relaxed/simple;
+	bh=survOVxA/zx0xwYQ/MbRTGIHTmXpnfh+GwbLLEcZYQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yl30SaX6JS9Su08hkSRxSOz7Grq1e7cmE59RGp6QkU/+Pex2/fPQlE0zLN0vl+aet6PFlhwcbtu7TEEedQm4Phb1vZICi+0gfioF2lTA8ycW0aN6HMNJdj9vsJDjr8yuq3QdqRIgUVtH+YLblE9tcpuOuiJS3+MkUBNfjuFwGpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lm31+UCs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NkTzABFx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bO1iP7Pg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/2IkfBLb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A704021E95;
+	Wed,  9 Oct 2024 15:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728487236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=lm31+UCs8WiVSd9Yz1J4qR15NZmjejLPZpxLmG1snj2OxoJ6puP9kAkr40zCiPvsOdhoy4
+	Nenwu7oNjIBMbZOfWIOB2L9522SZ+TZEnhMGA0RXFnlKhHoYkwByO3IAEZWG4Q9jO9zsV8
+	TbQ4zX1RIJYVg4dr6k7xZavIE0LPv+o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728487236;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=NkTzABFxMLvbyceEfWppx0kZjoyp4JGq0im7v5G9Z3T4rmi9ZZuQ7s6q58mYLw16cueWhL
+	O71qZmQdH7/HSMAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bO1iP7Pg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/2IkfBLb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728487235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=bO1iP7PglAqwn/zSFWDlyQlwfCktWTI+5npTLXFpMEKBkqPQ5cDz61yjy/7G0a5E/IvSvh
+	Kntnq4n0rugINGqoiduoUUgUTjfVJDFLD+PpUoipPd+0zJdEdYeoF/pXvNE8h3LetK+C94
+	pXZgLLy0yxTFlh2Bb3W5N0b39rLd/jQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728487235;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fo49WiSuG4sCrNKiK7epakneXryhlOqOWg2rfR6y4QM=;
+	b=/2IkfBLbUv6CtoZSGlQXFUmV/rnKDxLKzCV76UqZs3ly9CiJMLWv9CwTuKPSKHRJo7fen4
+	O0kjlspb6FTkk8CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99E6B13A58;
+	Wed,  9 Oct 2024 15:20:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t6GQJUOfBmfNVQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 15:20:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 43CD1A0896; Wed,  9 Oct 2024 17:20:35 +0200 (CEST)
+Date: Wed, 9 Oct 2024 17:20:35 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tang Yizhou <yizhou.tang@shopee.com>
+Cc: jack@suse.cz, hch@infradead.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm/page-writeback.c: Update comment for
+ BANDWIDTH_INTERVAL
+Message-ID: <20241009152035.cwkzs2ryy2fdrs2h@quack3>
+References: <20241009151728.300477-1-yizhou.tang@shopee.com>
+ <20241009151728.300477-2-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_14,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410090095
-X-Proofpoint-GUID: NyHvPBSqz9i1BDNvvD4hoG0zoFxVMeUa
-X-Proofpoint-ORIG-GUID: NyHvPBSqz9i1BDNvvD4hoG0zoFxVMeUa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009151728.300477-2-yizhou.tang@shopee.com>
+X-Rspamd-Queue-Id: A704021E95
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,shopee.com:email,suse.cz:dkim,suse.cz:email];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-From: Sidhartha <sidhartha.kumar@oracle.com>
+On Wed 09-10-24 23:17:27, Tang Yizhou wrote:
+> From: Tang Yizhou <yizhou.tang@shopee.com>
+> 
+> The name of the BANDWIDTH_INTERVAL macro is misleading, as it is not
+> only used in the bandwidth update functions wb_update_bandwidth() and
+> __wb_update_bandwidth(), but also in the dirty limit update function
+> domain_update_dirty_limit().
+> 
+> Currently, we haven't found an ideal name, so update the comment only.
+> 
+> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
 
-In mas_wr_store_type(), we check if new_end < mt_slots[wr_mas->type]. If
-this check fails, we know that ,after this, new_end is >= mt_min_slots.
-Checking this again when we detect a wr_node_store later in the function
-is reduntant. Because this check is part of an OR statement, the statement
-will always evaluate to true, therefore we can just get rid of it.
+Looks good. Feel free to add:
 
-Suggested-by; Wei Yang <richard.weiyang@gmail.com>
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
----
- lib/maple_tree.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 4b423330d83c..f5a12d37b352 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -4252,14 +4252,7 @@ static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
- 		return;
- 	}
- 
--	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
--		(mas->mas_flags & MA_STATE_BULK)) {
--		mas->store_type = wr_node_store;
--		return;
--	}
--
--	mas->store_type = wr_invalid;
--	MAS_WARN_ON(mas, 1);
-+	mas->store_type = wr_node_store;
- }
- 
- /**
+								Honza
+
+> ---
+>  mm/page-writeback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index fcd4c1439cb9..c7c6b58a8461 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -54,7 +54,7 @@
+>  #define DIRTY_POLL_THRESH	(128 >> (PAGE_SHIFT - 10))
+>  
+>  /*
+> - * Estimate write bandwidth at 200ms intervals.
+> + * Estimate write bandwidth or update dirty limit at 200ms intervals.
+>   */
+>  #define BANDWIDTH_INTERVAL	max(HZ/5, 1)
+>  
+> -- 
+> 2.25.1
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
