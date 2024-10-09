@@ -1,128 +1,132 @@
-Return-Path: <linux-kernel+bounces-357145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1DB996C70
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8033E996C76
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398871C21239
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36851C2112E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87B91991A4;
-	Wed,  9 Oct 2024 13:42:57 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564EA1991B6;
+	Wed,  9 Oct 2024 13:43:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BB3CA5B;
-	Wed,  9 Oct 2024 13:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC4B198E83;
+	Wed,  9 Oct 2024 13:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481377; cv=none; b=niTrS3S/aDmJ02RV19872FXCX4RT+88l1IlOl8Eo68C7ZEzpcnaai/Uxq0r5mJpNfYO5Qb09Syn6sr4EtuG8GafxJvrI5QYL0U4ElyN0IzR7r9PcOBgnAjY0dTu/6lioIOjsL8AI0M0vewfWc0X0/l5yGOVspkl30w4R7GJmdbc=
+	t=1728481400; cv=none; b=bflVi1I3sXQCRA9J5Xuq69/UhCSewrqT9j6/CyNmHx0GeU6I/Nye0lLX2v+orOhWjU6Ot2cmI8guJ56szBJ09gaHpmzczqIKH18d4yzIJWlu5BbDDRt4SO9sTiWGdd1QT2Fi2SOti4Px6B7xZ8psw0p5zlVGbBuDE0qSHu1izCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481377; c=relaxed/simple;
-	bh=OXVOr/LAUsUjd+dup1SvboCZCzCpINd2Hkc7UPq8A/g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LGeATb02o8W9nJWpNHdwtqpfmZoXpGmP8NvRMwAqpehhimWYgrQPt4vag8KlUF97VJ1ymYz9xkUEg2P2h6qYJ6udf/DsSfO64BEL/rWn+/pvfa0HvRvIy03rxmCgjZTKTiTaVopZi+4KSPOXrrxqoVl0OYyuvkynwhTY5h7S7kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: by air.basealt.ru (Postfix, from userid 490)
-	id 590242F2023D; Wed,  9 Oct 2024 13:42:52 +0000 (UTC)
-X-Spam-Level: 
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	by air.basealt.ru (Postfix) with ESMTPSA id 8CB462F2023B;
-	Wed,  9 Oct 2024 13:42:51 +0000 (UTC)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bo liu <bo.liu@senarytech.com>
-Cc: Vasiliy Kovalev <kovalev@altlinux.org>
-Subject: [PATCH v2] ALSA: hda/conexant - Fix audio routing for HP EliteOne 1000 G2
-Date: Wed,  9 Oct 2024 16:42:48 +0300
-Message-Id: <20241009134248.662175-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1728481400; c=relaxed/simple;
+	bh=S/oj15sxPWHK5m6VWGXl6leJe6peXcKr2JHoaMiRrOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a8O9ERMIM20wqlEFlzpeiIfFxDLaOz9UQBhhnHxHjs/DpO1IYseE4NBu+Lg0iBOTy9tYjG4z6P6WcnaY0TJ5sDcTN9LIAYi2jQVG6SO5Lm+WCcS0hS+JWOOZts9NesHAZAcT3+0f88tuIzc1z0WCinDrvwAFMX4h0av4TFaQgZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62A7C4CECD;
+	Wed,  9 Oct 2024 13:43:16 +0000 (UTC)
+Date: Wed, 9 Oct 2024 09:43:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, "linux-arch@vger.kernel.org"
+ <linux-arch@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland
+ <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen
+ N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
+  Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas 
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav 
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] ftrace: Consolidate ftrace_regs accessor
+ functions for archs using pt_regs
+Message-ID: <20241009094321.3f41f8a4@gandalf.local.home>
+In-Reply-To: <20241009134723.6b9eabfdc3cfee10f3757d85@kernel.org>
+References: <20241008230527.674939311@goodmis.org>
+	<20241008230629.118325673@goodmis.org>
+	<20241009134723.6b9eabfdc3cfee10f3757d85@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There is a problem with simultaneous audio output to headphones and
-speakers, and when headphones are turned off, the speakers also turn
-off and do not turn them on.
+On Wed, 9 Oct 2024 13:47:23 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-However, it was found that if you boot linux immediately after windows,
-there are no such problems. When comparing alsa-info, the only difference
-is the different configuration of Node 0x1d:
+> > --- /dev/null
+> > +++ b/include/linux/ftrace_regs.h
+> > @@ -0,0 +1,36 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _LINUX_FTRACE_TYPES_H
+> > +#define _LINUX_FTRACE_TYPES_H  
+>                ^^^^^^^^^^^^^^^^  Is this _LINUX_FTRACE_REGS_H?
 
-working conf. (windows): Pin-ctls: 0x80: HP
-not working     (linux): Pin-ctls: 0xc0: OUT HP
+Ah, I originally called it ftrace_types.h, but later decided that name
+didn't really fit. I changed all references to it but this one.
 
-This patch disable the AC_PINCTL_OUT_EN bit of Node 0x1d and fixes the
-described problem.
+Thanks for catching this.
 
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
----
- sound/pci/hda/patch_conexant.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> 
+> 
+> > +
+> > +/*
+> > + * For archs that just copy pt_regs in ftrace regs, it can use this default.
+> > + * If an architecture does not use pt_regs, it must define all the below
+> > + * accessor functions.
+> > + */
+> > +#ifndef HAVE_ARCH_FTRACE_REGS
+> > +struct __arch_ftrace_regs {
+> > +	struct pt_regs		regs;
+> > +};
+> > +
+> > +#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+> > +
+> > +struct ftrace_regs;
+> > +
+> > +#define ftrace_regs_get_instruction_pointer(fregs) \
+> > +	instruction_pointer(arch_ftrace_get_regs(fregs))
+> > +#define ftrace_regs_get_argument(fregs, n) \
+> > +	regs_get_kernel_argument(arch_ftrace_get_regs(fregs), n)
+> > +#define ftrace_regs_get_stack_pointer(fregs) \
+> > +	kernel_stack_pointer(arch_ftrace_get_regs(fregs))
+> > +#define ftrace_regs_return_value(fregs) \
+> > +	regs_return_value(arch_ftrace_get_regs(fregs))
+> > +#define ftrace_regs_set_return_value(fregs, ret) \
+> > +	regs_set_return_value(arch_ftrace_get_regs(fregs), ret)
+> > +#define ftrace_override_function_with_return(fregs) \
+> > +	override_function_with_return(arch_ftrace_get_regs(fregs))
+> > +#define ftrace_regs_query_register_offset(name) \
+> > +	regs_query_register_offset(name)
+> > +
+> > +#endif /* HAVE_ARCH_FTRACE_REGS */
+> > +
+> > +#endif /* _LINUX_FTRACE_TYPES_H */  
+> 
+> Ditto.
+> 
+> Others looks good to me.
+> 
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index b61ce5e6f5ec5..956cb71c3bee1 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -303,6 +303,7 @@ enum {
- 	CXT_FIXUP_HP_SPECTRE,
- 	CXT_FIXUP_HP_GATE_MIC,
- 	CXT_FIXUP_MUTE_LED_GPIO,
-+	CXT_FIXUP_HP_ELITEONE_OUT_DIS,
- 	CXT_FIXUP_HP_ZBOOK_MUTE_LED,
- 	CXT_FIXUP_HEADSET_MIC,
- 	CXT_FIXUP_HP_MIC_NO_PRESENCE,
-@@ -320,6 +321,19 @@ static void cxt_fixup_stereo_dmic(struct hda_codec *codec,
- 	spec->gen.inv_dmic_split = 1;
- }
- 
-+/* fix widget control pin settings */
-+static void cxt_fixup_update_pinctl(struct hda_codec *codec,
-+				   const struct hda_fixup *fix, int action)
-+{
-+	if (action == HDA_FIXUP_ACT_PROBE) {
-+		/* Unset OUT_EN for this Node pin, leaving only HP_EN.
-+		 * This is the value stored in the codec register after
-+		 * the correct initialization of the previous windows boot.
-+		 */
-+		snd_hda_set_pin_ctl(codec, 0x1d, AC_PINCTL_HP_EN);
-+	}
-+}
-+
- static void cxt5066_increase_mic_boost(struct hda_codec *codec,
- 				   const struct hda_fixup *fix, int action)
- {
-@@ -971,6 +985,10 @@ static const struct hda_fixup cxt_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = cxt_fixup_mute_led_gpio,
- 	},
-+	[CXT_FIXUP_HP_ELITEONE_OUT_DIS] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = cxt_fixup_update_pinctl,
-+	},
- 	[CXT_FIXUP_HP_ZBOOK_MUTE_LED] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = cxt_fixup_hp_zbook_mute_led,
-@@ -1061,6 +1079,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x103c, 0x83b2, "HP EliteBook 840 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83e5, "HP EliteOne 1000 G2", CXT_FIXUP_HP_ELITEONE_OUT_DIS),
- 	SND_PCI_QUIRK(0x103c, 0x8402, "HP ProBook 645 G4", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8427, "HP ZBook Studio G5", CXT_FIXUP_HP_ZBOOK_MUTE_LED),
- 	SND_PCI_QUIRK(0x103c, 0x844f, "HP ZBook Studio G5", CXT_FIXUP_HP_ZBOOK_MUTE_LED),
--- 
-2.33.8
+Thanks,
 
+I'll send a v2 with this update.
+
+-- Steve
 
