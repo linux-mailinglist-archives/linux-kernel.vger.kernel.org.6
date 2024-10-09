@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-357202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3616996D85
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEED9996D88
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A088C286E00
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:20:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E252E1C217F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51658196D9A;
-	Wed,  9 Oct 2024 14:20:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57D819CC28;
-	Wed,  9 Oct 2024 14:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B43199920;
+	Wed,  9 Oct 2024 14:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYLSgIOn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC5B19C552;
+	Wed,  9 Oct 2024 14:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728483640; cv=none; b=j7wLkDrLs4znNhzJ2eQf6vLHRP/Am0t5xx/GbxvZHMSKaZNfeCpSOD/Sn7vQ10oI86hW8ErheHqsJ/t8AXtKdVnLtR/rUSzDaBTu15iFPbrXKPGaHye1BHvQGcOsVod83MyaL0vQvqFMP+t7dPHrUKzbVtkFcGtivbhfdC8rGFA=
+	t=1728483650; cv=none; b=K3XoMoXInFPvzuW8pt9KMc30EvdTd/1phLvN0S4A0gfn2S3vN/3jV4/cj9euz2XU4EbipHwSTrvIJ3qYu9moBFHw7SU1ssjhV0bKU/vGlYgtJBfJ1LlUT+2DlOwYItGwYlh4AQ7B09g/v9A3sGzZCRgCxFm2o+BpsPSJOXZnq9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728483640; c=relaxed/simple;
-	bh=ARmVYoTgtZue47e90CxZTUi70TVs2cN8F4uDpE7a+OA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sERbmpM2ue/AVt60htSpKbNb9SmOPmmrqKRqmAg8LSBSa0s/XJPNE9IRc58ZycEy/i40MypSaG9BEW94wijuoZtZaSGxjSjKx/IxVZ3tiE8EZnEJY/hIjVjCQOnfjkr5wPYAisRO1iuL/UfdZ7wyxYfvb5qrdT8hrj+xMt3yyeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E88D2FEC;
-	Wed,  9 Oct 2024 07:21:07 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C16673F58B;
-	Wed,  9 Oct 2024 07:20:36 -0700 (PDT)
-Date: Wed, 9 Oct 2024 15:20:33 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>, sudeep.holla@arm.com,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	johan@kernel.org, konradybcio@kernel.org
-Subject: Re: [PATCH V2 2/2] firmware: arm_scmi: Skip adding bad duplicates
-Message-ID: <ZwaRMWG7iCEjp1Q3@pluto>
-References: <20240904031324.2901114-1-quic_sibis@quicinc.com>
- <20240904031324.2901114-3-quic_sibis@quicinc.com>
- <Zth7DZmkpOieSZEr@pluto>
- <Zth9EMydkwvJ30T0@pluto>
- <53d929a2-2f54-ac97-3184-861442e8622b@quicinc.com>
+	s=arc-20240116; t=1728483650; c=relaxed/simple;
+	bh=QViY9lx7IRmLT83VCb/QN5MYrQn/DBbOjGPf3qXYL5s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bB9gHtScZelvGypDBtQNmdQoEQU8X9pHbJSJjy8aH62xnrOCZ/kwzQ8pCAE5be2emaK1pRtw0OLrQzDEX9YOkz1iUHxem55eWZDM329VfJnMoaRkSSrrmDG8VHebqjuEkhyJeY2gx0qwrzrzhf5ysX/GUijGVYl2dmB75nXHybU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYLSgIOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D826C4CEC3;
+	Wed,  9 Oct 2024 14:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728483650;
+	bh=QViY9lx7IRmLT83VCb/QN5MYrQn/DBbOjGPf3qXYL5s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PYLSgIOnaefqWMugYlxXrb0D/Ib2TT0NidJoR91A+I1KWnvbwjXA0TxGSS0XmSl/t
+	 e1h6UyqPFeZRjST9LWLXu/xaRjJm09Wwqh+ivTZ2pJHOuW5b1ziZDieAyV1AHxfoh5
+	 XlHRXxaULCD77+zDBcjrqONuXkTD9gHK7jaPvJ5oBraQM0/TDKqWKc/tLkoMY/NEwb
+	 sgN5WDbkK/YRwUZNth0ww+iuxri65xvNLYd5sOxsUSeL/0hbp4iFspHsDXjOUaYp21
+	 i9ADNApYJRTUBPG17ZeZkWmSrrI+wtRizpR3mthj9G/+KycKO84hmPqYJdjET+30xB
+	 PmzE+wa1LVh7Q==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Gene Chen <gene_chen@richtek.com>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, stable@vger.kernel.org
+In-Reply-To: <20240927-leds_device_for_each_child_node_scoped-v1-0-95c0614b38c8@gmail.com>
+References: <20240927-leds_device_for_each_child_node_scoped-v1-0-95c0614b38c8@gmail.com>
+Subject: Re: [PATCH 00/18] leds: switch to
+ device_for_each_child_node_scoped()
+Message-Id: <172848364679.581850.9636321610214125502.b4-ty@kernel.org>
+Date: Wed, 09 Oct 2024 15:20:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53d929a2-2f54-ac97-3184-861442e8622b@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Mon, Oct 07, 2024 at 12:30:14PM +0530, Sibi Sankar wrote:
+On Fri, 27 Sep 2024 01:20:51 +0200, Javier Carrasco wrote:
+> This series switches from the device_for_each_child_node() macro to its
+> scoped variant, which in general makes the code more robust if new early
+> exits are added to the loops, because there is no need for explicit
+> calls to fwnode_handle_put(). Depending on the complexity of the loop
+> and its error handling, the code gets simplified and it gets easier to
+> follow.
 > 
-> 
-> On 9/4/24 21:00, Cristian Marussi wrote:
-> > On Wed, Sep 04, 2024 at 04:21:49PM +0100, Cristian Marussi wrote:
-> > > On Wed, Sep 04, 2024 at 08:43:24AM +0530, Sibi Sankar wrote:
-> > > > Ensure that the bad duplicates reported by the platform firmware doesn't
-> > > > get added to the opp-tables.
-> > > > 
-> > > 
-> > > Hi Sibi,
-> > > 
-> > > so if the idea is to make the code more robust when FW sends BAD
-> > > duplicates, you necessarily need to properly drop opps in opp_count too.
-> > > 
-> > > One other option would be to just loop with xa_for_each BUT opp_count is
-> > > used in a number of places...so first of all let's try drop count properly.
-> > > 
-> > > Can you try this patch down below, instead of your patch.
-> > > If it solves, I will send a patch (after testing it a bit more :D)
-> > 
-> > Hold on... I sent you a diff that does not apply probably on your tree due
-> > to some uncomitted local work of mine...my bad...let me resend.
-> 
-> Hey Cristian,
-> Thanks for taking time to send out the diff. I thought this would be
-> enough but there will still be a disconnect between opp_count and idx
-> of the opp we populate. Consider a case were we get to have a valid
-> opp just after duplicate opp. The opp_count will still limit us on what
-> levels we are allowed to see.
->
+> [...]
 
-Ah right...indeed... I missed that the opp_count is used also to loop on the
-opps arrays and OPPs are not only accessed by xa_load....
+Applied, thanks!
 
-...anyway the index in the dom->opp arrauy is NOT related to index/level
-indexing, so we just have to have the bad oop dupicates also in the
-array and NOT only in the XArray...
+[01/18] leds: flash: mt6360: fix device_for_each_child_node() refcounting in error paths
+        commit: 73b03b27736e440e3009fe1319cbc82d2cd1290c
+[02/18] leds: flash: mt6370: switch to device_for_each_child_node_scoped()
+        commit: 19d1cc765e7d477070ddda02c9a07a1ebcdf4b2d
+[03/18] leds: flash: leds-qcom-flash: switch to device_for_each_child_node_scoped()
+        commit: f64dd42a4f939fb5acc3f3568ef2118487617996
+[04/18] leds: aw200xx: switch to device_for_each_child_node_scoped()
+        commit: a361af3c1622d4b8ede54493fa88633fb12201d0
+[05/18] leds: cr0014114: switch to device_for_each_child_node_scoped()
+        commit: 65135e2ccf5ad0853c1df0ffeefc372066a62909
+[06/18] leds: el15203000: switch to device_for_each_child_node_scoped()
+        commit: 9e445e28ae0c6fe24369127cf2302cd4f3a1b42b
+[07/18] leds: gpio: switch to device_for_each_child_node_scoped()
+        commit: 42b49671602f9badb14fd2c32e6791a24d8cbf02
+[08/18] leds: lm3532: switch to device_for_each_child_node_scoped()
+        commit: 7bd4b9277b9831d115f14d26000c0ba32c83d109
+[09/18] leds: lm3697: switch to device_for_each_child_node_scoped()
+        commit: 6e2d1d83b70bd736228529fd1cb4f98e0ab77eb8
+[10/18] leds: lp50xx: switch to device_for_each_child_node_scoped()
+        commit: ba35b9a4c1b074218880c47ca09d19a3c69f904d
+[11/18] leds: max77650: switch to device_for_each_child_node_scoped()
+        commit: 4ab3ae432da1706b5e1624ecea3c670faaec39d7
+[12/18] leds: ns2: switch to device_for_each_child_node_scoped()
+        commit: 5b5d936db0d2fb9e81d240ed91d062b8c8f0d224
+[13/18] leds: pca963x: switch to device_for_each_child_node_scoped()
+        commit: dea90acb09324efe640ab69766c12d8d387ee97f
+[14/18] leds: pwm: switch to device_for_each_child_node_scoped()
+        commit: e3456071853597229012622c97b76109c0fa8754
+[15/18] leds: sun50i-a100: switch to device_for_each_child_node_scoped()
+        commit: 8cf103de9a002fb02125491c06d9cd60762d70e5
+[16/18] leds: tca6507: switch to device_for_each_child_node_scoped()
+        commit: 01728d041986a6992d0b2499e88db4569e65a535
+[17/18] leds: rgb: ktd202x: switch to device_for_each_child_node_scoped()
+        commit: 48259638fe5986afe8ed2a49e35f0641d953c311
+[18/18] leds: rgb: mt6370: switch to device_for_each_child_node_scoped()
+        commit: bf3fba727695dcd1ac3f9d17d88845223f56c14f
 
-I am sending you, as a reply to this patch, a new version of my fix
-with just a one-line difference tthat should solve completely the issue
-also in the usecase that you describe.
-
-Thanks,
-Cristian
+--
+Lee Jones [李琼斯]
 
 
