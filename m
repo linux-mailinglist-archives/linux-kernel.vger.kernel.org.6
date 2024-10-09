@@ -1,166 +1,106 @@
-Return-Path: <linux-kernel+bounces-356939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99779996902
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB779968FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 459E91F26017
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B74B1C23377
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1191922FA;
-	Wed,  9 Oct 2024 11:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E38F1922E6;
+	Wed,  9 Oct 2024 11:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsCDDUHG"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIFwWgck"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF476191F89;
-	Wed,  9 Oct 2024 11:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDEA18FDAF;
+	Wed,  9 Oct 2024 11:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474052; cv=none; b=eDsq8IuxLRjQ3Ie7eW/cHSqq+A4mN5WJo8nEY3l+yctCiG123dWd+YCrOMplgaPyreUeiso+0oWGSj/QgYE64CDHxeUQVQGwv8ZWfbSf3hYY/3q2U20x/6ew2S508d3ZLXUGlWHouvzgsptDQwvjtgBiSUu0th4usnQbtfM2OrA=
+	t=1728474038; cv=none; b=HXmOdQnljqY4E5R6ECUKPs9IV9dtxShfxLgwBEWEenBmGglPTO8S33nWqbOnkBB3Ll1Bl2agohRJT7iWbyC/g8xsiocEgorh7oxYN9PIexs+WsDXoEsgoyXp4KFf1baxFR7PRp+cMNZYGydJpFZqcpNihofmhNk9I/LtGq9vefo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474052; c=relaxed/simple;
-	bh=FT2KMG5h53JZOhVzRMt4RSbRREYJm88cj1GsvDfUpTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tl6KZxg1euoE3lF5+ti9CLaYz4uYjBXDcEUaoSoeUXLl6knwL0jtYQ7cBukrppz9xKxTKC1debw7SdeOTd4IoMEl+yTKo5Kg99sf9KwDbHvAr9O9W6Vd+cezHuaZWOuQ/Zaw7u9exxfzsEXsCWbOaUhU0wdWTRb9v3NvIgCTX5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsCDDUHG; arc=none smtp.client-ip=209.85.222.176
+	s=arc-20240116; t=1728474038; c=relaxed/simple;
+	bh=a+57C84rClzBS7ubk6LgHlFunx8dFXsKxDKBsYdCEV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sapXcYMpZuh440ZZnTWYy0zFvsZUahF5K9TtZKV/cNdVF5GBB8ZK21Ff/I9ezQSOP40Fthj3VQ6kZdbO0qgWa7U6GWE/CUbMUocA8g2Uw42dFhXe62oyBTASAxN9ms/PjTVcR13aJlSkmbQbhVuYYZee9IqNlKZUzynWLkme16s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIFwWgck; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b10e800ba9so32891385a.1;
-        Wed, 09 Oct 2024 04:40:50 -0700 (PDT)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db54269325so5531210a12.2;
+        Wed, 09 Oct 2024 04:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728474050; x=1729078850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OythqGlQpGAGT38/tfPAfmPoMpgRaqUCqi1/W2DvSl8=;
-        b=dsCDDUHGPjqD8N5nmZRliXc8461+S76VDH9rPkkWX9J+3m7YTiggPKMOKcfB3ILw6B
-         Fh0pvudke3xb4DNORusubRUZerjS7uoizJAT1A3RE49ZR3DCfvsLVj1mNdpnLqZTin70
-         uTroij6NKukCXJuq9DhuRL9+eyq+ZvEmpYML4AVvBH+XHciT9w1xl6mLSGZyT5KR9G/j
-         aO3ckkpjj3g4skmPiDlMnDwKUVXiDYCtU3oPtUBrh0UQkmkT1DskEJ9990EoRzI9nMMp
-         KOMMpJBDhP8OZnRTMI6BDJiNXdQRISNHKblr3kOmiOsAM+2GQd9jU+yIxc200f6zPwbk
-         pmjA==
+        d=gmail.com; s=20230601; t=1728474037; x=1729078837; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0U8brGX+QXwXhzrsq4Sm++YDJFuC1KzTkr7MoDharJQ=;
+        b=cIFwWgckwTFKzd7D1YgAX31UmOhr9OvdQHJ21STAjHacvGXXTrQEJQt/ccG2iPH9bx
+         hDdCcLFoY40P6jv9B7N6jbcX8zs3+PsCRd74VSfoeuMa/JQzVIa0U05RmRYR+Z8IPj3n
+         nE68B5OKB6FcfhdGt3PH5e6GzZ0+rp6SlR8a4SCZs/Ty0nz4Jn5mb2Xk8nVIsWM23Duq
+         gFrUUNzU02u8ATkE691LwSy25QllZ32mqcHkzbRmBtJDcZD0L9Ne2ANdprCbwni6ZXz7
+         8uEIaume1Q3qSRBJMNiZ5/+kooHVEhJcDNiWuE8rW2WWWgQM/m4bHR/iSR+5uFvNDCQP
+         caHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728474050; x=1729078850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OythqGlQpGAGT38/tfPAfmPoMpgRaqUCqi1/W2DvSl8=;
-        b=jncU/Oufcq2xOJkFFvywxveMHbjwAVVe7UL9ob05sIj+39DBHNMK5a0KHE7pAyNvsc
-         xA0P3viW5Mwq4GMw7p6xwW2ceIyGXqZEkRZElf4EPPQRMXbuDh1J7GkzMQmfgqmHnoWU
-         t2kirsmIA8RzIDL5iXuqMlK2SxuM+SsQHYyK6NXCw/A34NPFewMTD1aiw12q4zGHy/YK
-         Dc+fHS0qXRq2l+rp5cHSzRpDI+ncuepxN8leYZgiXQh42C/wHR2AIqkGR7In7NMibHL2
-         CNRs+01F/9X6iWV/qRO5PxRnE0GNlZRomU8g0EiJjehEnWGXAD+AnCjg/IjC9wrLbty2
-         cd3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4KZTtsAH+qSSSSMNuWsdZYfn444GDRu67ksF/tqBWXEl2oFIyqDsPRzZzw4rXLQC3+I1ZIOPX3EBGtkzc@vger.kernel.org, AJvYcCXmTJxhXG3ZdAiC/U3JhmATY797jKaioLxBRIb8Y32cIptxDUlVTAZx54P5SEwLvOjTpiSShgr+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtXnoxAHr4N/SAbrVhOo7R2wblyLHK//fQWrpJd5x9zeWGe1JN
-	r7uT5MRRkzxm85TbaPO0q279ESrNPSnSBZgJEoBNjrvH6Rkw6BB3jICpU07svBcDvrS+M0B5+hK
-	Q1uI+Eu6OpB2dLlcyVMKDtH7SPOI=
-X-Google-Smtp-Source: AGHT+IGW/RE9FG08aT38nBo9K0MSxdlIbBWYtfLyJdRRkYarzPnOT79nNRhkN/dFnJT3lnlNuu99qI+QqLDF8Tot+U4=
-X-Received: by 2002:a05:6214:3f86:b0:6cb:c832:7f9b with SMTP id
- 6a1803df08f44-6cbc9118e57mr49861276d6.17.1728474049908; Wed, 09 Oct 2024
- 04:40:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728474037; x=1729078837;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0U8brGX+QXwXhzrsq4Sm++YDJFuC1KzTkr7MoDharJQ=;
+        b=BGfUr2wbZVPgIHkB5zspEGvzjWiZzRKJ1xtdD3EStwKZg2Lb6Kx+RrABlJgwtQeh2R
+         T8O6prdzL+B67x6HukKH07ImAIfxW8mbVSnKFOGFlWJNH8JefI/EKNX9awTAQ11bqvHr
+         JWd//ANvI8RgGZpFDwyxuyAYwMVQXtTAJ1Bf22yLmJuIgLfms2ir3zMazSXT7KmhPus8
+         qQhkWNZGAz5sqbVUK9Dl78hV2Xjq0UAtUig0s+Dkzx9Kb/2+u/zCKcLJTNug7zMalmda
+         S4g3zR459wuADL8tpXc3qexETb8hfKbd3j0hkdRlrUrTMi30Up/DwiMI+xQ5/Tuy0IWd
+         klHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/i1HXSR6udqtiyr/hJ0JCvVMl/YjXrCVWxohFaFlktMnTO2g5sVmaPxRYSLiNJqCUpT3p7MMO1XgCfVRt@vger.kernel.org, AJvYcCXlym+zxjGm+EX/itcrJfC5q1AwoYAXdLZDzp9WZGVQ9dds1Uu4oc+dh5xSCIuME5IjXu0j9oKKicd66g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynNnwAmDuO23GDC/QGwMmxsXDA2j3uFXSJ3htpNo/iubu1NRvd
+	MLvSzIY4QqHPzY6D61vAuJMHoIbIYyEjORgsjFl2ULBR7R51YMpf
+X-Google-Smtp-Source: AGHT+IHNCrNFUCi+dkI/CAAMqHJEaK/iEAEaXD0WwXQ2PiC0daDYO65uRP2ztK1slhpuqp5ZHtqYeQ==
+X-Received: by 2002:a05:6a21:31c7:b0:1cf:21c7:2aff with SMTP id adf61e73a8af0-1d8a3c30b74mr2933538637.23.1728474036778;
+        Wed, 09 Oct 2024 04:40:36 -0700 (PDT)
+Received: from ?IPV6:2409:40c0:1048:4b3c:cd38:b59:a263:1c9a? ([2409:40c0:1048:4b3c:cd38:b59:a263:1c9a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f681f0cfsm8324278a12.27.2024.10.09.04.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 04:40:36 -0700 (PDT)
+Message-ID: <47216282-a3b4-4b85-a5d1-dadbf6814d76@gmail.com>
+Date: Wed, 9 Oct 2024 17:10:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008061951.3980-1-laoar.shao@gmail.com> <20241008061951.3980-5-laoar.shao@gmail.com>
- <20241008142129.GB6937@cmpxchg.org>
-In-Reply-To: <20241008142129.GB6937@cmpxchg.org>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 9 Oct 2024 19:40:13 +0800
-Message-ID: <CALOAHbCg08ARz4-8=4+28gb+DnHxQFdxiJTLSoD6xAoea5E_FQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] sched: Fix cgroup irq accounting for CONFIG_IRQ_TIME_ACCOUNTING
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, surenb@google.com, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] block: Fix uninitialized symbol 'bio' in
+ blk_rq_prep_clone
+To: Christoph Hellwig <hch@infradead.org>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+ <20241008175215.23975-1-surajsonawane0215@gmail.com>
+ <ZwYxA1sfQdaj0Hy3@infradead.org>
+ <6e290cc3-0be1-4ee9-8e13-351f8cd9f658@gmail.com>
+ <ZwZq5hIJSmQW1Sxa@infradead.org>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <ZwZq5hIJSmQW1Sxa@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 8, 2024 at 10:23=E2=80=AFPM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
->
-> On Tue, Oct 08, 2024 at 02:19:51PM +0800, Yafang Shao wrote:
-> > @@ -5587,7 +5587,24 @@ void sched_tick(void)
-> >       rq_lock(rq, &rf);
-> >
-> >       curr =3D rq->curr;
-> > -     psi_account_irqtime(rq, curr, NULL);
-> > +
-> > +#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-> > +     if (static_branch_likely(&sched_clock_irqtime)) {
-> > +             u64 now, irq;
-> > +             s64 delta;
-> > +
-> > +             now =3D cpu_clock(cpu);
-> > +             irq =3D irq_time_read(cpu);
-> > +             delta =3D (s64)(irq - rq->psi_irq_time);
-> > +             if (delta > 0) {
-> > +                     rq->psi_irq_time =3D irq;
-> > +                     psi_account_irqtime(rq, curr, NULL, now, delta);
-> > +                     cgroup_account_cputime(curr, delta);
-> > +                     /* We account both softirq and irq into softirq *=
-/
-> > +                     cgroup_account_cputime_field(curr, CPUTIME_SOFTIR=
-Q, delta);
-> > +             }
-> > +     }
-> > +#endif
-> >
-> >       update_rq_clock(rq);
-> >       hw_pressure =3D arch_scale_hw_pressure(cpu_of(rq));
-> > @@ -6667,7 +6684,25 @@ static void __sched notrace __schedule(int sched=
-_mode)
-> >               ++*switch_count;
-> >
-> >               migrate_disable_switch(rq, prev);
-> > -             psi_account_irqtime(rq, prev, next);
-> > +
-> > +#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-> > +             if (static_branch_likely(&sched_clock_irqtime)) {
-> > +                     u64 now, irq;
-> > +                     s64 delta;
-> > +
-> > +                     now =3D cpu_clock(cpu);
-> > +                     irq =3D irq_time_read(cpu);
-> > +                     delta =3D (s64)(irq - rq->psi_irq_time);
-> > +                     if (delta > 0) {
-> > +                             rq->psi_irq_time =3D irq;
-> > +                             psi_account_irqtime(rq, prev, next, now, =
-delta);
-> > +                             cgroup_account_cputime(prev, delta);
-> > +                             /* We account both softirq and irq into s=
-oftirq */
-> > +                             cgroup_account_cputime_field(prev, CPUTIM=
-E_SOFTIRQ, delta);
-> > +                     }
-> > +             }
-> > +#endif
->
-> This should be inside its own function - to avoid duplication of
-> course, but also the ifdefs and overly detailed accounting code in the
-> middle of core scheduling logic.
->
-> #ifdef CONFIG_IRQ_TIME_ACCOUNTING
-> static void account_irqtime(struct rq *rq, ...)
-> {
->         ...
-> }
-> #else
-> static inline void account_irqtime(...) {}
-> #endif
+On 09/10/24 17:07, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2024 at 04:30:56PM +0530, Suraj Sonawane wrote:
+>> Should I submit a new version with the added empty line and explanation
+>> about the tool and function issues?
+> 
+> Let's wait for Jens if he wants a resend or not.  In the meantime
+> just tell us what tool you are using.
+> 
+Okay sure!
+I found this error using the Smatch tool.
 
-Good suggestion. Will do it in the next version.
-
---=20
-Regards
-Yafang
+Best,
+Suraj Sonawane
 
