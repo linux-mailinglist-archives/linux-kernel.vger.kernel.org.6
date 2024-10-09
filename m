@@ -1,92 +1,122 @@
-Return-Path: <linux-kernel+bounces-357445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AABF997149
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:26:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CB4997152
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 054BAB267EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E64A1F29519
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87AB5A7AA;
-	Wed,  9 Oct 2024 16:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADB01E5700;
+	Wed,  9 Oct 2024 16:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="IWWB/aia"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Y+cRSKzo"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A0C1E25EE;
-	Wed,  9 Oct 2024 16:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34A81A070D;
+	Wed,  9 Oct 2024 16:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490549; cv=none; b=fpebZXDlOSpnwZSBUEft2oHIDsHRwN1+OEx8ZnNJ6gg5ztlltOiq2WJw/QAgjNcDAoLJQ1aupfz9QBY6IJpd703icEoJAo1LNa11Y/QO00vBAKotMVvxJvlYDgAVdgv46KduOntR503HoQ0rmgngTxUKu4jgWh1HU0PSvz4Lrus=
+	t=1728490665; cv=none; b=WFTMKqrNLqdJCHnVpyrtAAfLkvI/KEuUhPIUvLwwdubTm8/MS6aBwsXX2YE+9pGbon+kYZ5RRYc/VFe+H0xOsUzZbhYjTYTpxJ6HLpdRWpB84ndnBZrjBSvQZwgDdkpruqGwlDaixdLhcKYWUJnVZxhDo6zKFsw6EMVgpdtDMyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490549; c=relaxed/simple;
-	bh=M/ITb2FVzNNNzUQiWSg2FGDAKOER5kCds7nowSGQ/zU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Wo7Wqvp6VaAx4LPM8KR5RdXpqbfEnRE/FifUYqptO0wWx0kduXUOs+WF0jyelD76T1Ayhz9ld+Yjk9cjNiBkHCn3NIeCuBdNvt2g2x2aA3FaMInunyg1/GxcVegxAAwP6QjlQISrA/mOv/XgFnyW9lMwUJrAaahaaMdBR4Ku2NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=IWWB/aia; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C30D942BFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728490545; bh=NjqhBZRochyW4BAgB0vKuGodznxzOKCcr9igmm+TVhM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=IWWB/aiaGlTDm8lOAYxgYtBBXuq+PRH2tO0zfJbEX3zheyUtL1MqFjRKynOo9NSKz
-	 U6+ixqLgXsEn17QP1drpFzgAkb2zNhpdrsnOcHjcdUMF2h9CoohFJjU4rS8lgVeVDt
-	 AlN7XQw+z/XLicQl3gKiVwNr39XGXNuyR7izkQYtHtmk39KwHduaduqcnhg5tydd8J
-	 aSm7/yLXr+HKOClrr8ThD1P4C2n4gHJzAhD1R8QSSB5WeDv4rYZYTBY+ecQGpaa436
-	 YU5A4F5zQzlGKr1DlMNw4aWtEGGP+ae+AYBSkLJWG8ymIoybdYgHRpbub4oG/28OAQ
-	 Z9+d3iLib/QJQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id C30D942BFE;
-	Wed,  9 Oct 2024 16:15:45 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: jiang.kun2@zte.com.cn, alexs@kernel.org, siyanteng@loongson.cn,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- mudongliangabcd@gmail.com, seakeel@gmail.com
-Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, xu.xin16@zte.com.cn,
- he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn,
- zhang.yunkai@zte.com.cn
-Subject: Re: [PATCH v4 RESEND] Docs/zh_CN: Translate physical_memory.rst to
- Simplified Chinese
-In-Reply-To: <20241009094607377dUpMqBUFFrp0LP303_o5H@zte.com.cn>
-References: <20241009094607377dUpMqBUFFrp0LP303_o5H@zte.com.cn>
-Date: Wed, 09 Oct 2024 10:15:45 -0600
-Message-ID: <87ldyxb6by.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728490665; c=relaxed/simple;
+	bh=FvFvcMzxneL3O/8lgM11J4wFha3kLFiFZvn7amvbH+w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZhkJzUWo6F209KANmbdF5FLpSkk1MZwkT1awkXF8U1r2KCsAhHY90Z5y7Nsi8beTNBQBfWNznMBSqSmSYmy6t+FEx5BNRmCiTrr04fZTjPZQ6s4B3Ryshg+CFVG+kF7LZ3OGQLxaeTuhKKLFvQtdv85zjNfRofb/is/uilI8u7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Y+cRSKzo; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499E6MDB005053;
+	Wed, 9 Oct 2024 18:17:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=qJUiUHmWLUtzihvXk8d46f
+	me/yOPE6VGUx1rsJMri60=; b=Y+cRSKzoOrOCLIA9ZT2HglYnCNh1nFBZX+kZkJ
+	9BszGM8BdRB3PKMb6CaPFs/Mj2glyqKe7CfEMjmwtfb2wbyvfUhOOSTEs4rFmkFX
+	I7sG6z+ROw+ZVYFrLZ6S0Kka3pGIJuVxXB+4Jt0nPjzrvETtnBkAA677vQIGkeQB
+	l+mbHUQkkfVquZnrAIlDqVmLKNZ0LOp9UIV8kfvH5tHEIZangTWi/Viivam7IFG/
+	egGufHn5g24VUQOe98YNlYGmXpNLvHqXW/4DSZ+7pIocCC3seCzJXO74VIAyJgZ8
+	v1bWrBNf5w9fKfl7R7QcVvrk5HxgAeYEAQw2j7GjWFOaYsWQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425q97t0uw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 18:17:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DEB4240044;
+	Wed,  9 Oct 2024 18:16:28 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9284726AF2B;
+	Wed,  9 Oct 2024 18:15:58 +0200 (CEST)
+Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 9 Oct
+ 2024 18:15:58 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+Date: Wed, 9 Oct 2024 18:15:52 +0200
+Subject: [PATCH] spi: stm32: fix missing device mode capability in
+ stm32mp25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241009-spi-mp25-device-fix-v1-1-8e5ca7db7838@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIADesBmcC/x2MSwqAMAwFryJZG4jxg3oVcSE1ahbW0oIIxbsbX
+ M5j3mRIElUSjEWGKLcmvbxBVRbgjsXvgroaAxM3FdGAKSiegVtczXaCmz4oVDfUcU+OGOwZotj
+ 8V6f5fT+gnhfSZQAAAA==
+X-Change-ID: 20241009-spi-mp25-device-fix-e03406280c02
+To: Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Valentin Caron <valentin.caron@foss.st.com>
+CC: <linux-spi@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Alain Volmat <alain.volmat@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-<jiang.kun2@zte.com.cn> writes:
+The STM32MP25 SOC has capability to behave in device mode however
+missing .has_device_mode within its stm32mp25_spi_cfg structure leads
+to not being able to enable the device mode.
 
-> From: Yaxin Wang <wang.yaxin@zte.com.cn>
->
-> This patch translates the "physical_memory.rst" document into
-> Simplified Chinese to improve accessibility for Chinese-speaking
-> developers and users.
->
-> The translation was done with attention to technical accuracy
-> and readability, ensuring that the document remains informative
-> and useful in its translated form.
->
-> Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
+Fixes: a4e7908abf0c ("spi: stm32: add st,stm32mp25-spi compatible supporting STM32MP25 soc")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+---
+ drivers/spi/spi-stm32.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-So that is not you.  If you are passing on a patch written by somebody
-else, you need to add your own Signed-off-by tag as well.
+diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+index f2dd8ab12df831d54758d21ec1a68ffc40e2f0a6..da3517d7102dce5f830cdf0dbdee3e19184f69c5 100644
+--- a/drivers/spi/spi-stm32.c
++++ b/drivers/spi/spi-stm32.c
+@@ -2044,6 +2044,7 @@ static const struct stm32_spi_cfg stm32mp25_spi_cfg = {
+ 	.baud_rate_div_max = STM32H7_SPI_MBR_DIV_MAX,
+ 	.has_fifo = true,
+ 	.prevent_dma_burst = true,
++	.has_device_mode = true,
+ };
+ 
+ static const struct of_device_id stm32_spi_of_match[] = {
 
-I would love it if somebody could review this...
+---
+base-commit: c2a59c892f20379a3e48124a83491a12374cd7e0
+change-id: 20241009-spi-mp25-device-fix-e03406280c02
 
-Thanks,
+Best regards,
+-- 
+Alain Volmat <alain.volmat@foss.st.com>
 
-jon
 
