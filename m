@@ -1,83 +1,92 @@
-Return-Path: <linux-kernel+bounces-356984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E419969E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C709969E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B05284A25
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:23:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3E8284C4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58D9192D91;
-	Wed,  9 Oct 2024 12:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UNrue08+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B2019307F;
+	Wed,  9 Oct 2024 12:24:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A408C19149F;
-	Wed,  9 Oct 2024 12:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1AA1922E5;
+	Wed,  9 Oct 2024 12:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728476603; cv=none; b=IgXAFQJP6E7o6d+ekaR8ZA4R1c9j9iqOQUsU0ZhQ38Lp0M9ALEAi+HKy9aAb0uK1EHMMjAduoUqP2clS0FD2h7wNCsBCpREe5pGsFttqiBTXEP20EOrYvZBEaW8TCGxbjMjPoSb58V+qCs+1diolrqY3EPfy7k3RYI2aho+r1iI=
+	t=1728476652; cv=none; b=pYcYPqm2u7i9D++yVoWqWxghVBb8All4ubzdVW7Oxzdc8XdFFWiE+PQxlNfhGXVo4pLMjTBgibjY0Y4TmwvvVypTkJ9att3Wr6EKHhP8CNfnI0+HNnoBKmSJd9f+szakhWUjmMOkJ2QubzTcShZyAHHOQiNVab5NfZU2pjon7jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728476603; c=relaxed/simple;
-	bh=xnWivR6fcBquYslR7NRqmfuc9xvRUA4PTFWiLdEpnfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jr7+qylFotOEDJ+8YkaKCzU1ZFFixMYVU0KuKj4YS1g3HMEIy0+91M+NchkpMQPPZhKbq6WMkROPqpPbn+qamlLs0QyrEgYVCJ/sJUjrVayUiJ/rK/XYYQhoBslXN3ePPFkIiU7AhNARcV/AMJQXE1TQw+j+6wktOOWjKpX6fTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UNrue08+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gVi8LwdnV8xpyyxW1DNsL6wEgg2JRlgKhN4PKMnARNA=; b=UNrue08+6PTroR13z8mTw8CNCM
-	/gfkprZTO6N7C2LCcDn7K83dfMcakY+kPth8ujKBzp7oWP3um/UUPcInLcU2vrOzAndkXLZ2LSCJk
-	8JlLk4jRe/LO0GsnPk1tbNzqC2PjDUgDbKH6RAI4TTnyhsqt46jv8v36qaZBnfdNkaqU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1syVii-009Uh3-Q1; Wed, 09 Oct 2024 14:23:12 +0200
-Date: Wed, 9 Oct 2024 14:23:12 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Stephen Boyd <sboyd@kernel.org>, lvc-project@linuxtesting.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [lvc-project] [PATCH v3] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Message-ID: <b2489acc-d997-43e7-aeaf-c662b6fd3253@lunn.ch>
-References: <20240917132201.17513-1-adiupina@astralinux.ru>
- <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
- <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
- <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
- <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
- <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
+	s=arc-20240116; t=1728476652; c=relaxed/simple;
+	bh=hhocxfvtHIadllzM1IXK9MVEK8WE49Q8Sup5vkSk3nw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RfmA9+FU724PtGsKJB02/I9JKqFaY/hLZkYysMzJ8zSKOTxCyKAolDlTFB6s8kHNaYKuJ2Gxr2x/SfR3lRwGywGKPrGPODQo+haIN2eDX7EpnUUmX8aWckjCYSLN58YXnT9GtP7CryJjWZN75BeAPNvV+ELmLTePb3lH437OovU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNsV10GDzz6K71T;
+	Wed,  9 Oct 2024 20:22:49 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5B0E140A90;
+	Wed,  9 Oct 2024 20:24:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Oct
+ 2024 14:24:04 +0200
+Date: Wed, 9 Oct 2024 13:24:02 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v4 01/28] test printk: Add very basic struct resource
+ tests
+Message-ID: <20241009132402.000029b2@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-> > I would say, let is divide by 0, so there is an obvious kernel stack
-> > trace and hopefully a report of the issue. It can then be investigated
-> > in a way we can then find out what the hardware actually is doing.
+On Mon, 07 Oct 2024 18:16:07 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
+
+> The printk tests for struct resource were stubbed out.  struct range
+> printing will leverage the struct resource implementation.
 > 
-> Is it worth adding some kind of WARN assertions? Or actually just leave it
-> for now as is?
-
-What actually happens on a / 0 on ARM? I assume it triggers an
-exception, which will give a stack trace? If so a WARN adds no value.
-
-	Andrew
+> To prevent regression add some basic sanity tests for struct resource.
+> 
+> To: Petr Mladek <pmladek@suse.com>
+> To: Steven Rostedt <rostedt@goodmis.org>
+> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> To: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Cc: linux-doc@vger.kernel.org
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+Looks sane to me.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
