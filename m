@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-356371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7188999601E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BE9996036
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52253B23E11
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:49:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6421F2344C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7802217A596;
-	Wed,  9 Oct 2024 06:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C554D178383;
+	Wed,  9 Oct 2024 06:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFUm3XkH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mna9FteA"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F04416B391;
-	Wed,  9 Oct 2024 06:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1A422EEF;
+	Wed,  9 Oct 2024 06:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728456573; cv=none; b=p6Bn+zXfAdIgANVqZ3pyAUDFY1xQJ0+/VMUgjLYM/RGfLw/gOLqAQkuG+BopJRdz49ahg/dE7Zo+pehuHwx+xNoAAJwqV1IAuIAuasV+dOOiP0msbGx9ZZzAUVD5zrfOK+3dlrpKh6Qi0JLYAjVbEqzowM8RPkrTchYK7dn3/pc=
+	t=1728457068; cv=none; b=NSNgv8VL95h426z8OROVwfE9EMPyHy3+6i2V9b8CqKfjbXY770SdmDSeWmWh35jQvE0wL1vbBj6Zvyq6f6RULIsE9loEIIV3ZfUWnjQwnV3gWtcxSV3nIJCIbxnk/UaR0rH/secirSeOjToLZSxzV9nvQua2642ID4vtmPokOfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728456573; c=relaxed/simple;
-	bh=6fouhGGy4NBsOkx2jHsrlP91crtoTEei8M/ZW1+vE9E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=echU1i76PH4VbNyqG+yoVGLtOVkTpYVoHhnLVLgwW5cZLhYTkmVcC0efLv/o9/+yvvOG0vjyMiXhzPwdmXdvtoHa6nmX/D371UvFvA2ccF7sWJo5mYL4M0oX+HP0G8g7kXoU/ZXMVP4Aiz+/zJROp4frMKH1YLEkW0A3J+rAAJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFUm3XkH; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728456573; x=1759992573;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6fouhGGy4NBsOkx2jHsrlP91crtoTEei8M/ZW1+vE9E=;
-  b=oFUm3XkHrpw6LS92K+HfdlmkM7Z5f2mwcypxmuG8p2Bz/uHje3IsAxy/
-   igysEKbu75cjCjBYcK8ylozgluX1Z2wJRbPvA5qhi3ZbT0mKh2kcpp+aA
-   il4t5prJmzqGQsdUebAUcDnb7FKCldWgjUimz5UIZosVJzvwFy3uGdjM4
-   fyQsWickwjE8po8HnISgQ54UN9TMmWlmK8ZFj/bPvHgW8m8t7kMpaatD/
-   AxjcqVuPTZO2bs+0K8JSXkjd7Ns+rFNO/Y436PUqvkspqD/hV2Lqujyi7
-   F/qSDxHIAbyi7GK6x7iCKxVv2L/UuwYYymwz9BYGTvMoQJxKBeV7W6Jks
-   A==;
-X-CSE-ConnectionGUID: m+yGFyNwRlSk0+FDChgQiQ==
-X-CSE-MsgGUID: mEXLN3/gRI2t6vtaJDUlSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27857634"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="27857634"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 23:49:32 -0700
-X-CSE-ConnectionGUID: lHZJ+GqASaSN/Bnqa2i/2w==
-X-CSE-MsgGUID: XrNPf8kgSqabU4wB0TY/sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="76966752"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 23:49:29 -0700
-Message-ID: <368f430b-3242-4d23-a737-3b13c30f6206@intel.com>
-Date: Wed, 9 Oct 2024 14:49:26 +0800
+	s=arc-20240116; t=1728457068; c=relaxed/simple;
+	bh=nHU0jGiPuPgRDYsaGg0oFrwSVt1YzYUXAZSJtxyrrIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZzeyYRPcA8qNbH+MQfLQXCEWIhp7SaUW6e+5q594OvsQxBZEtX3x8j9tIvmZ5XYBd+sTbx8/ASdK11n1/rZJk8bxZFxnfguJn6nNMMKn3i3s8wjLzr73y9fZogpi+ylZM9uYlp56cGdZjzvX3mM4Sc6ss9kfegL4zs2UzncVqsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mna9FteA; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9944c4d5d4so439467666b.0;
+        Tue, 08 Oct 2024 23:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728457065; x=1729061865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GPvYSPUlyNo11D60Rn7xn72ZEXb5uv2wt4zjMOlQ4WE=;
+        b=mna9FteACp6IAgss1gourNSdrHuchwaxSMtlm5cDCXHAbSO/pA4j6X/H6a/1e8VULp
+         9S3RKUr+KYKONwhokYz/RH3xCzZNRWr3gSn9KIqq3d0A69seLFYKU2ZzhTEckuDC+M0t
+         GmXRTW5jk/tz4oG6Ec2P7PQituX3OdAkyJS2vgbRPVUE4ZcpIOv4rl9K72Ks0UQKkP5c
+         a70SgzYrPLUeoLqgYAjBysNJ01vbqg92jol/GtBBMYC09B4lwmqUO17jnxqTZQUZCUhm
+         myEuGnIdId6NPws061I9P/AJDG5ZfkfdO/jhC7M5sJysmm9aon3nTO1p9xDcasT5QzQu
+         qghw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728457065; x=1729061865;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GPvYSPUlyNo11D60Rn7xn72ZEXb5uv2wt4zjMOlQ4WE=;
+        b=gw6uIw2yDoQLGD6glhcYY1YnMuCicrv8jcyjGHzt6EyUF7QmPZ83sFct9lhW6CiTTq
+         ISz5685AO/MmtE5X9hamTvf8VttKDOqd6JaGjhCRyPeTd0R9P2Jjk+FBATUJaEYTGx2q
+         26rwzEo+mf5Fon3WdJ1Sy91ggTHI9a1Xqphe/FfD03RnHU7r4UNwouCBWkX/cre3Uz1f
+         HXG8QY4UNF6GvlHXH0nKxXytSLdGhndY42vcpuOoMRSQXaN8TtlqbQTqFL9TM/Z7jwC3
+         aKJl9x63wO5H5f0+6jLSvg20VoYnHVWk8do5IJCe/6yDsGOvy7Sk98na1D4RoPCwqhgd
+         SUvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtvvDMyY4P80PW+mmN7G/mio8c2Wp7OG5MyvkUVvO7Uiuu6J6eP6kmnao4jYr3yIXyEWMtqT7RueGCm/w=@vger.kernel.org, AJvYcCXRsH7sPAejvpIwZVUUKvkYK1ACe544bHz+AjcYVcL9B36HduH2hlqYuNpUHwlCIJVKTwb9FRzJQ1xkOpIKiV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYJ3AaqG1ei7acIioPYXVR/raX9gXntL8dS3zcZRGa2xiGZJ4F
+	mp1+bA3F+bqQL/PlrxoGedPg5IU9JIJWBGg1DxGIKEb32hoGjQfARWweS/rJWw==
+X-Google-Smtp-Source: AGHT+IGzGHI/bUPLoB14IBW6oz/xRDOg6TnvNCvh1TiQvQNTqF6u593L5vc0eIz9x8PT1DHo2OBRLg==
+X-Received: by 2002:a17:907:97c7:b0:a99:4e8c:e5c9 with SMTP id a640c23a62f3a-a998d19831bmr114753866b.20.1728457064793;
+        Tue, 08 Oct 2024 23:57:44 -0700 (PDT)
+Received: from frutis-latitude7490.lan (public-gprs367762.centertel.pl. [37.47.67.211])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a992e5bb275sm622758566b.11.2024.10.08.23.57.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 23:57:44 -0700 (PDT)
+From: =?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>
+To: 
+Cc: =?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] wifi: ath10k: add channel 177 for 5 GHz band
+Date: Wed,  9 Oct 2024 08:49:28 +0200
+Message-ID: <20241009065051.51143-1-frut3k7@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240801202359.794035-1-frut3k7@gmail.com>
+References: <20240801202359.794035-1-frut3k7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] KVM: x86: Use user_exit_on_hypercall() instead of
- opencode
-To: Binbin Wu <binbin.wu@linux.intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, isaku.yamahata@intel.com,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, yuan.yao@linux.intel.com
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
- <20240826022255.361406-3-binbin.wu@linux.intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240826022255.361406-3-binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 8/26/2024 10:22 AM, Binbin Wu wrote:
-> Use user_exit_on_hypercall() instead of opencode.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> Reviewed-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
+Add support for channel 177 (5885 MHz ) for the 5 GHz band.
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Tested-on: qca988x hw2.0 firmware ver 10.2.4-1.0-00047
 
-> ---
->   arch/x86/kvm/svm/sev.c | 4 ++--
->   arch/x86/kvm/x86.c     | 2 +-
->   2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 714c517dd4b7..9b3d55474922 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3637,7 +3637,7 @@ static int snp_begin_psc_msr(struct vcpu_svm *svm, u64 ghcb_msr)
->   		return 1; /* resume guest */
->   	}
->   
-> -	if (!(vcpu->kvm->arch.hypercall_exit_enabled & (1 << KVM_HC_MAP_GPA_RANGE))) {
-> +	if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
->   		set_ghcb_msr(svm, GHCB_MSR_PSC_RESP_ERROR);
->   		return 1; /* resume guest */
->   	}
-> @@ -3720,7 +3720,7 @@ static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
->   	bool huge;
->   	u64 gfn;
->   
-> -	if (!(vcpu->kvm->arch.hypercall_exit_enabled & (1 << KVM_HC_MAP_GPA_RANGE))) {
-> +	if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE)) {
->   		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
->   		return 1;
->   	}
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index e521f14ad2b2..c41ba387cc8c 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -10165,7 +10165,7 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->   		u64 gpa = a0, npages = a1, attrs = a2;
->   
->   		ret = -KVM_ENOSYS;
-> -		if (!(vcpu->kvm->arch.hypercall_exit_enabled & (1 << KVM_HC_MAP_GPA_RANGE)))
-> +		if (!user_exit_on_hypercall(vcpu->kvm, KVM_HC_MAP_GPA_RANGE))
->   			break;
->   
->   		if (!PAGE_ALIGNED(gpa) || !npages ||
+Signed-off-by: Paweł Owoc <frut3k7@gmail.com>
+---
+ drivers/net/wireless/ath/ath10k/core.h | 4 ++--
+ drivers/net/wireless/ath/ath10k/mac.c  | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
+index 446dca74f06a..3dff8c028526 100644
+--- a/drivers/net/wireless/ath/ath10k/core.h
++++ b/drivers/net/wireless/ath/ath10k/core.h
+@@ -39,8 +39,8 @@
+ #define WMI_READY_TIMEOUT (5 * HZ)
+ #define ATH10K_FLUSH_TIMEOUT_HZ (5 * HZ)
+ #define ATH10K_CONNECTION_LOSS_HZ (3 * HZ)
+-#define ATH10K_NUM_CHANS 41
+-#define ATH10K_MAX_5G_CHAN 173
++#define ATH10K_NUM_CHANS 42
++#define ATH10K_MAX_5G_CHAN 177
+ 
+ /* Antenna noise floor */
+ #define ATH10K_DEFAULT_NOISE_FLOOR -95
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 646e1737d4c4..cee6a4d287b5 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -9543,6 +9543,7 @@ static const struct ieee80211_channel ath10k_5ghz_channels[] = {
+ 	CHAN5G(165, 5825, 0),
+ 	CHAN5G(169, 5845, 0),
+ 	CHAN5G(173, 5865, 0),
++	CHAN5G(177, 5885, 0),
+ 	/* If you add more, you may need to change ATH10K_MAX_5G_CHAN */
+ 	/* And you will definitely need to change ATH10K_NUM_CHANS in core.h */
+ };
+-- 
+2.46.0
 
 
