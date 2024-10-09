@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-357362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7745599705E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:04:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BC1996D5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC0E0B217E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:04:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2A2EB20F44
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83361E3DDE;
-	Wed,  9 Oct 2024 15:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712C7199FB5;
+	Wed,  9 Oct 2024 14:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="LJDB7LgX"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B1C1A00C9;
-	Wed,  9 Oct 2024 15:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ledIG4vp"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4261957F8;
+	Wed,  9 Oct 2024 14:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488335; cv=none; b=uyqnmHxwnKn4AGNtrqILeN8PeKVx3vJcE/pHKQ0PSybHzwT5bW1Ek1X2N617a8hlxZ5qTfpatTTb45o8QiDWJjeDkAZkWYbDvy6C7B76Cbne28j25aA4b5esDePfnSeM1s3YIo7bfVXHkBSIDvDcd4XGW1vuWlxcLjxSLnjvNXo=
+	t=1728483195; cv=none; b=Mux22zbc8GTlMwWZ7kIhQOipApH33sqa+KR2hl9xLNhJhZW6dTeuYBlPHnN8xHFRJul1egzErCfaPRNM61vmMLKsJ0Tk8GDkhLRW7PPyIZOfkvnM50faXwt3PcoIQAvSdKrPgjFJHzXTVnrGDhG5VLhJACe9icJAQ710pIxXJ2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488335; c=relaxed/simple;
-	bh=CpHDIofX8IuDq2Rqrc+T1cYEiHetNnbosu7d/9ERJ8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DT6uqYw05kThlXhi6ZF5xwl0cHJna9aYYYQe++UN+LPbI2BGQicZ17mjrast/lG18XM6XxWr2ql0ttK96uBvXHUP9ifmIn8Y75dVrnU5JSFSp5qH3H9S1W97wn6qe5ouYNrhKW09WjMq6wDmDngE7VdrfsQmGUFbNVA55/jP6+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=LJDB7LgX; arc=none smtp.client-ip=220.197.31.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=A/LkJ
-	/OjEIQAsiNGfrhwR/O5Vcm/vxghw0XRfSkCdyE=; b=LJDB7LgXqynT/jXKG4OIP
-	YeDjWMaOiJPNn1A/qeJAu/y1CzVXH3csD0FnseyU/+3jir0xBFzLNo6HK3zCgTIK
-	HNzOw3Go+Pib43tisBTmduq71vJTjZEshf7T8dCiMc9X/vc5x2yD5sfc3C6HLq+9
-	TOsPqbLHdkRGqC090HpMGQ=
-Received: from localhost.localdomain (unknown [1.198.30.91])
-	by gzsmtp4 (Coremail) with SMTP id qCkvCgA31o8+jgZnCNzKAw--.43236S2;
-	Wed, 09 Oct 2024 22:07:59 +0800 (CST)
-From: Zhao Mengmeng <zhaomzhao@126.com>
-To: kent.overstreet@linux.dev,
-	zhaomengmeng@kylinos.cn,
-	lihongbo22@huawei.com
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] bcachefs: Fix shift-out-of-bounds in bch2_stripe_to_text
-Date: Wed,  9 Oct 2024 22:07:55 +0800
-Message-ID: <20241009140755.725629-1-zhaomzhao@126.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728483195; c=relaxed/simple;
+	bh=5VaBpTl8s7O6S75KrCduX+TKh7MjTSYhAeML2n2KwDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SH/cAs6K4lsKIaeyS7IWagHjYmvakxEXBshGLgieADcZZPFtibrhre5v+QzhxaVTv6V9Ob6Q3r92mddn18Y6yMrO8eqvhTGJYPP4gx4C/ys2nK9bP5nYOPXmfd6HMYfuUi36CL7YO/bc21lE7A8ZWlA5kHSc1pI9LzPavh14TfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ledIG4vp; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c593d6b1cso17595925ad.0;
+        Wed, 09 Oct 2024 07:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728483194; x=1729087994; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1mJ9IhXj+vc15TnvWcnrarKm7uwlQx+nJ+OtHHPpLTU=;
+        b=ledIG4vpju6SCxUlmSZheUsoz4rE1ILGPkGNNj2rvvF+dTMsXDD31ANA5zHUfZXG6F
+         Om1SdfVhc9lWAzaxXVXn9huypqEXrpHhtf2CY/Thi+UAmSvHqGW7x1Oc9SkxLbkoQLNm
+         TwVNLjzZiuezO2tet0JtnYqJeJRaz9o9pavibyItxjXapeRDEU1IVWjwHb+QoYexcynu
+         hX5kjDgJtV6bLHtQkLMnUh1Qo3YYu4lyJfXQRIdimrhwy3XYyaJfbbY11j8ebE1obOef
+         2xYz949wHL2612hULrfCzgbV5lhzc9S5DjSmPE3x0g/uhElB/nhtsvUFhDy5HPgLDJ/x
+         MliA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728483194; x=1729087994;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1mJ9IhXj+vc15TnvWcnrarKm7uwlQx+nJ+OtHHPpLTU=;
+        b=o94Svu1CQyyAe1E0+V4uSnVp+wmEca8C8gDSG/NkqgVOFPmcQCgcWj6NA5/WxHES+L
+         IaDunc2EzpN7kdcjinS5iu30hzKL9DfRhYglh9S+x4HbzAzcNQAFqIAn2zI/giwXdVQM
+         gK6zwJXp3Og2LwRdhPjz5RavBbsKPxG3l4dK6mbVRQ9hDx0mRUeVUm5EqkWl+t/4AfgD
+         NPemTXdK/nP5JPyzVjeX3tLnMvt+hvlPZkDrD8JNIRozeWEhk+2Z6pcOzCdJ+PAUgSoH
+         8YI+RIifD2WRWOEgrZbhXIocak3c0gcX01bNt5VtX7ai8Uixru2ATXR7BdK/ZI+N0k1i
+         mUYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUumR+cXu/JNpf5FkS0etlxG/RmNWbLlzFyDidlQL/69JyMC4ZE84DCom3qfOlcYDb3Hh8hbitoONutHr+6@vger.kernel.org, AJvYcCW5kMme11o5M8iyrbdnBSej64CdKQQGYg/FklSSldCnfQn6lcLfQDRBXpMdWOaodQK/MW3v1sDj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYybRumS9viIaJpGghNKwbHtBZGTkH93Fue0j4Cubi0k4XiK9o
+	vXfOZN3c3JHISiyh8nnm3YLsyL9i6vPFaNLr6nEGD+3p+Ekry0Dh
+X-Google-Smtp-Source: AGHT+IFqQ1MJsErEHXe+a7P65I5Oe96H2ckzg2/xkoxKufQtn1j7d0DyvE/1jQp4DovOObK56Hiz7Q==
+X-Received: by 2002:a17:903:187:b0:20b:b0ab:4fc3 with SMTP id d9443c01a7336-20c6378d269mr39498365ad.49.1728483193796;
+        Wed, 09 Oct 2024 07:13:13 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c76a2202fsm6202445ad.115.2024.10.09.07.13.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 07:13:13 -0700 (PDT)
+Date: Wed, 9 Oct 2024 22:13:09 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: xavier_qy@163.com, longman@redhat.com, lizefan.x@bytedance.com,
+	tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
+	akpm@linux-foundation.org, jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Enhance union-find with KUnit tests and
+ optimization improvements
+Message-ID: <ZwaPdSOMWQzuoPWU@visitorckw-System-Product-Name>
+References: <20241007152833.2282199-1-visitorckw@gmail.com>
+ <ZwZIXxQLyJUL_nOW@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qCkvCgA31o8+jgZnCNzKAw--.43236S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AFy3Wr13CF48Cw1kGr1kuFg_yoW8ur43p3
-	yfKF4fGFZ5uw42vry0kw17X348J345KrZxCw4aq3W5ZFZI93y7Jr17tF95XFW0yrW8tay5
-	Zr1Skr15XFn8ua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UFtCcUUUUU=
-X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbiEBRzd2cGgACUFQAAsg
+In-Reply-To: <ZwZIXxQLyJUL_nOW@infradead.org>
 
-From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+On Wed, Oct 09, 2024 at 02:09:51AM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 07, 2024 at 11:28:27PM +0800, Kuan-Wei Chiu wrote:
+> > This patch series adds KUnit tests for the union-find implementation
+> > and optimizes the path compression in the uf_find() function to achieve
+> > a lower tree height and improved efficiency. Additionally, it modifies
+> > uf_union() to return a boolean value indicating whether a merge
+> > occurred, enhancing the process of calculating the number of groups in
+> > the cgroup cpuset.
+> 
+> Given that this fairly special union find code is obly used in the
+> cpuset code, please move the code there rather adding more exports.
+> Even as-is it is bloating every kernel build even without cgroups
+> for no good reason.
+>
+I noticed that it was Michal who originally suggested putting the
+union-find code to lib/ in an earlier email thread [1]. Before I send a v3
+patch moving it to cpuset, I'd like to hear Michal, Tejun, and Waiman’s
+thoughts on this change.
 
-syzbot report a shift-out-of-bounds issue:
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
-shift exponent 108 is too large for 32-bit type 'unsigned int'
-----
-Here s.csum_granularity_bits = 108, so shift is impossible for unsigned
-int. To fix, add a check in bch2_stripe_validate() to bail out, it has
-same checking logic with ec_stripe_key_init().
+[1]: https://lore.kernel.org/lkml/wu4m2m5igc752s5vrmtsnd7ekaq6opeqdtrzegs7oxlwgypdcx@qhcnow5txxiv/
 
-Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
-Suggested-by: Hongbo Li <lihongbo22@huawei.com>
-Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
----
- fs/bcachefs/ec.c      | 6 ++++++
- fs/bcachefs/errcode.h | 4 +++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
-index 564841e5a24b..f6a02123144d 100644
---- a/fs/bcachefs/ec.c
-+++ b/fs/bcachefs/ec.c
-@@ -114,6 +114,12 @@ int bch2_stripe_validate(struct bch_fs *c, struct bkey_s_c k,
- 	const struct bch_stripe *s = bkey_s_c_to_stripe(k).v;
- 	int ret = 0;
- 
-+	if (s->csum_granularity_bits >= ilog2(le16_to_cpu(s->sectors))) {
-+		bch_err_ratelimited(c, "stripe csum gran bits %u too big",
-+				    s->csum_granularity_bits);
-+		return -BCH_ERR_stripe_csum_granularity_bits_too_big;
-+	}
-+
- 	bkey_fsck_err_on(bkey_eq(k.k->p, POS_MIN) ||
- 			 bpos_gt(k.k->p, POS(0, U32_MAX)),
- 			 c, stripe_pos_bad,
-diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
-index 26990ad584d5..83659cdb93c8 100644
---- a/fs/bcachefs/errcode.h
-+++ b/fs/bcachefs/errcode.h
-@@ -270,7 +270,9 @@
- 	x(BCH_ERR_nopromote,		nopromote_enomem)			\
- 	x(0,				invalid_snapshot_node)			\
- 	x(0,				option_needs_open_fs)			\
--	x(0,				remove_disk_accounting_entry)
-+	x(0,				remove_disk_accounting_entry)		\
-+	x(EINVAL,			stripe_csum_granularity_bits_too_big)
-+
- 
- enum bch_errcode {
- 	BCH_ERR_START		= 2048,
--- 
-2.43.0
-
+Regards,
+Kuan-Wei
 
