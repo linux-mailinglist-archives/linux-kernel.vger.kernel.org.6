@@ -1,115 +1,89 @@
-Return-Path: <linux-kernel+bounces-356998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32132996A14
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:32:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B62996A1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF4E1F2430F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3976D1C21D88
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1143194ACA;
-	Wed,  9 Oct 2024 12:32:40 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A59194C7A;
+	Wed,  9 Oct 2024 12:33:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F57192B95;
-	Wed,  9 Oct 2024 12:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B3B192580;
+	Wed,  9 Oct 2024 12:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728477160; cv=none; b=q0s9R23GZoWBCUFwn3iwrBnXsWm1mncDRU7qRY2uQOO5W/p2C45HBeqfP73NUgxlR0GYcbsijEiZkoCr2hpbMLY+Tr9QDi0ksMwSs59BH7X2tGSM4LQsEmtzr5Io/vfPJ5x6/ggAXLSFb9+3QIkWz06uvx2Y47MrD896eOVpVRo=
+	t=1728477206; cv=none; b=jYbXtQX/T0uuqy335dRpBIadnMUBZYRyzhZngjN2jigGfeN0h7U872yTh93fAJLeDQ/+MdUVNnB2kqR5Jh6S8yOSYu5QN7lHwY/MavrKlkOzBVItzPpGYVs1DQih+Ch0o48TKqUn9wzQuj/33iPF4D93WA/ONZC9VJFlIunT0XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728477160; c=relaxed/simple;
-	bh=JxPeNyGf6R6l8PYvNsvYdX2dUSjUcmnQS7P8Nbd7M4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqs5B0TRsXiwOwmvJ5pixn7NDqHkTpScmw5nqzEcxyLWAz+8thTW62vAXrRKZEi1zLlIgGXsTcSb765Hep98MRN+Xl6+aMACY9/qRtkxJ4HH5GJQpPRo2Z0vd1/2WuOUynPV5drYyCbu9PYomXcE1CNugcWozgv2u3Q3SWF8nAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syVrd-000000006Mn-1FZa;
-	Wed, 09 Oct 2024 12:32:25 +0000
-Date: Wed, 9 Oct 2024 13:32:20 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
-Message-ID: <ZwZ31IkwY-bum7T0@makrotopia.org>
-References: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
- <bc9e4e95-8896-4087-8649-0d8ec6e2cb69@lunn.ch>
+	s=arc-20240116; t=1728477206; c=relaxed/simple;
+	bh=b65hF2U+3sNGVgnLKjRrxIPVfKhcLDPXgHg5Z42m/Pw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pYr9e8k8sOR/8s/dIKBsRBOWYJ2soanv23qB/CED3uP78mrECtx0kjmB8LGy7gQYXwo59WGsxxiJCfvC6cod44p1e1RCpQAycAetII8GMa2wBuUSjWHb2h+Tej06YItcZMEy9rbvvMVg+zzn/feLe/s3YVewo3KVrqPNglYqjU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNshj1QFJz6K63T;
+	Wed,  9 Oct 2024 20:32:05 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D2386140A90;
+	Wed,  9 Oct 2024 20:33:22 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Oct
+ 2024 14:33:21 +0200
+Date: Wed, 9 Oct 2024 13:33:20 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v4 03/28] cxl/cdat: Use %pra for dpa range outputs
+Message-ID: <20241009133320.00006a69@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-3-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-3-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc9e4e95-8896-4087-8649-0d8ec6e2cb69@lunn.ch>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Oct 09, 2024 at 02:16:29PM +0200, Andrew Lunn wrote:
-> > +static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
-> > +				      unsigned long modes)
-> > +{
-> > +	bool active_low = false;
-> > +	u32 mode;
-> > +
-> > +	if (index >= XWAY_GPHY_MAX_LEDS)
-> > +		return -EINVAL;
-> > +
-> > +	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
-> > +		switch (mode) {
-> > +		case PHY_LED_ACTIVE_LOW:
-> > +			active_low = true;
-> > +			break;
-> > +		case PHY_LED_ACTIVE_HIGH:
-> > +			break;
-> > +		default:
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-> > +
-> > +	return phy_modify(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index),
-> > +			  active_low ? XWAY_GPHY_LED_INV(index) : 0);
+On Mon, 07 Oct 2024 18:16:09 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
+
+> Now that there is a printk specifier for struct range use it in
+> debug output of CDAT data.
 > 
-> This does not appear to implement the 'leave it alone' option.
-
-The framework already implements that. The function is never called with
-modes == 0.
-See commit 7ae215ee7bb8 net: phy: add support for PHY LEDs polarity modes:
-
-       if (of_property_read_bool(led, "active-low"))
-               set_bit(PHY_LED_ACTIVE_LOW, &modes);
-       if (of_property_read_bool(led, "inactive-high-impedance"))
-               set_bit(PHY_LED_INACTIVE_HIGH_IMPEDANCE, &modes);
-
-       if (modes) {
-               /* Return error if asked to set polarity modes but not supported */
-               if (!phydev->drv->led_polarity_set)
-                       return -EINVAL;
-
-               err = phydev->drv->led_polarity_set(phydev, index, modes);
-               if (err)
-                       return err;
-       }
-
-So in case none of the LED polarity properties are set in DT, modes is 0
-and hence led_polarity_set() isn't called.
-
-I considered to change that with my suggested patch
-https://patchwork.kernel.org/project/netdevbpf/patch/473d62f268f2a317fd81d0f38f15d2f2f98e2451.1728056697.git.daniel@makrotopia.org/
-
-But it was rightously critizised for breaking existing DT which assume
-LED polarity not being touched if none of the polarity properties are
-present.
+> To: Petr Mladek <pmladek@suse.com>
+> To: Steven Rostedt <rostedt@goodmis.org>
+> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> To: Sergey Senozhatsky <senozhatsky@chromium.org>
+> To: Jonathan Corbet <corbet@lwn.net> (maintainer:DOCUMENTATION)
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org (open list)
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
