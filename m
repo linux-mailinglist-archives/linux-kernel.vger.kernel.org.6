@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-357162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C85996CB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:52:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF57996CCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724CF1F21D0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8AE28094E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BEE199937;
-	Wed,  9 Oct 2024 13:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541971993AE;
+	Wed,  9 Oct 2024 13:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijMnoR0I"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="SG17PTYf";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="M1wTx2Sc"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275A0198E7B;
-	Wed,  9 Oct 2024 13:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EBB38DE5;
+	Wed,  9 Oct 2024 13:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481909; cv=none; b=O37+QJNvIeRCjuge/+d0n/baTjVPlHVMuxqh7XsMxQRIftfztWf68AAe0iNrd5KWGor3Hdo3koUWo28VhdAFczqdLtx6rmGFe1Bov+CHsDex3+TE+f98bBvBpOFBuAga65CqKUV9Y2CSneDviWOa7hpJ72nak/vJ99iqzGJ2yxo=
+	t=1728482031; cv=none; b=A+xHGW+2gopcWkq4LeWiRukBK/If7OKWaQAFr4vGD2rxI7Gvt83ZtzNm38OvMwAaMVx+0k9onKNWgvNxIoB21Vx+bBYO+jR+6+24DGe48ZjNHmLSjdvDltrivFHLdFHShrpNjFx1Mr3TO7B9qOSYiEpsVF/Ffy2sSrj20RpIWik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481909; c=relaxed/simple;
-	bh=jYgb7BwLs38wtXSfN1wpIvBf5tLjsHOZeuzvh4Bgntk=;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=a6iPfpwW+BYikBf3y6Zv0STUH2NldL9eCT4a/H4eVrahtTtk69l6YFUYYjbrzM9LJK65/8v/J/h5VLX3yDdz3TXtP7J4LIFw6t1h/zwM0IvRjv/7AR3ZS/yHZYU63zXkZsDjN2XTj5xlhGMieKwAFej9CJgTv7GVu4AKru6lg6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijMnoR0I; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbd550b648so2179896d6.0;
-        Wed, 09 Oct 2024 06:51:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728481907; x=1729086707; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tUc34dZTHKciGaII3zabz1ZKWWaMos36cbYH1GBxAp8=;
-        b=ijMnoR0It9zDof8YnOZuP6DexnR7PztZyVvGOby6q8ll5BB764L0oQGG2IYioJCWAl
-         XUIpeAzlhrAYhE9bUVUt73YBJgzJdB6nZlKrPzJE9M6WyFqFXC+S4wC45/PxTGaNfMxO
-         NrRQiHU4GGe6yA6PccURE/6s5y1ZMbNkc8V6iursFvNO9FLvdHAMstEn0GwlCNtMlw+T
-         RrA3XTsVssHz6EiEvzwNsMjUuxEa6D+1o6+bfpjKZWIASTx17q89xlrhionqOI9biDYH
-         wlyT3Ln++S6UFIISQP3kCIcFvixi43ivhcxy2VS/7lfin1gGetmTtyuqZy5/2OBoCxXO
-         ZSLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728481907; x=1729086707;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tUc34dZTHKciGaII3zabz1ZKWWaMos36cbYH1GBxAp8=;
-        b=W2MIm+BXPu4P4sVqc8RpfxhxuxD5ADYF0mV5edGnb2kuMF2iGijRmJqFrANcob6EPo
-         q3qeh4S04kOhsXkac84oN+jVVOKLmUzgemzqsAcN8wgHtJbop6ksHqWX9Kz0fEtRf/6n
-         I9wBhVSgqomgnlqFJQXUZV7wh4m1Yutl7iZKud4WKA9iEYLt1VXNbEXfnndcJ28p+wNx
-         LsMLy2fGLtl6mfm1qjRxIRQ6PjY3337mlYhWjV9XgUaSbGvCdTIlR5HAl5MRgO/9O8D3
-         qKAMqbxSU1gJhf9M6HYaxp6miU6PeeL2a7/zqgm0qz60sxUCMcf6+qzQjzrDEcC90RPQ
-         o3QA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8OXqIQt/6OoEM0anjfyKXa43wIJhJy8oxd37O2gt9U0yMXuXNaiY9s3m6uxS34iQLKOM=@vger.kernel.org, AJvYcCUOcx2y1W3TZphZwZ1Z7Emb5OK4DdAq+31aeI/93N9VZEiBs3Bie/eknQ4pSK8wNjcuvW/851Zdk/o2zg60MjuJ@vger.kernel.org, AJvYcCVTU9kFJKjSf91vdtzNiSC/F0E8mj/ooq7LMFIBvf/2aDrYe5umeTmJOuQl1+9GFNawchXIRmOW@vger.kernel.org, AJvYcCWS9NS9mEqCgQY1/Oin6NK5Wifl4t0rvVVeBQKDGcnkVx5SN2DpC/mssQdN16d65TApOM/TJk2i4N9s@vger.kernel.org, AJvYcCXSx6IIzS6lVAmro9XbhqLmECGJO69Zs5B6EYZLEl0dP6yNAQjqhwtIZhalOp+XCajjatYLTI8vummNa6fH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0Yq4vYyv+aSyl/7dpz54d3sgPz2VWszKl/ByO8bTaRShYyJo2
-	lBHp38+JETZo3N7udL1u7vwd4RimS26IiorsClBsZ9rzAQt9pL3k
-X-Google-Smtp-Source: AGHT+IGkew5/j69otxM8iwfX7gFjP4eK+FksUEv8jew+/bnfYJy9/Nhw1Lw41t2weOaHSSLA4zni5w==
-X-Received: by 2002:a05:6214:5d83:b0:6cb:3cc8:5d7a with SMTP id 6a1803df08f44-6cbc955e801mr51908116d6.35.1728481907058;
-        Wed, 09 Oct 2024 06:51:47 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba4751294sm46132086d6.93.2024.10.09.06.51.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 06:51:46 -0700 (PDT)
-Date: Wed, 09 Oct 2024 09:51:46 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Wang <jasowang@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- "Michael S. Tsirkin" <mst@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- Shuah Khan <shuah@kernel.org>, 
- linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, 
- kvm@vger.kernel.org, 
- virtualization@lists.linux-foundation.org, 
- linux-kselftest@vger.kernel.org, 
- Yuri Benditovich <yuri.benditovich@daynix.com>, 
- Andrew Melnychenko <andrew@daynix.com>, 
- Stephen Hemminger <stephen@networkplumber.org>, 
- gur.stavi@huawei.com, 
- Akihiko Odaki <akihiko.odaki@daynix.com>
-Message-ID: <67068a7261d8c_1cca3129414@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20241008-rss-v5-1-f3cf68df005d@daynix.com>
-References: <20241008-rss-v5-0-f3cf68df005d@daynix.com>
- <20241008-rss-v5-1-f3cf68df005d@daynix.com>
-Subject: Re: [PATCH RFC v5 01/10] virtio_net: Add functions for hashing
+	s=arc-20240116; t=1728482031; c=relaxed/simple;
+	bh=5XpzL+C41ruwKeHQeQXScxtkrBTKWe8j/b804iT3pfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J8oWXZnCUXmErrPoX2QghwbNeFYOsTqDYdKvE+JqgvqKeAtwjXtw3F6iadrCS2NK2HoRT9O21tVcieBy1ePzHfGhRM6bkQsOZE0BizoU3E9W+u50jvN1ET9ElTPpFJYVYXxEmN4hAOG/H+8x+d7MgN5LxKoCmIm/NNf23qd2OHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=SG17PTYf; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=M1wTx2Sc; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1728481940; bh=y3vCb8lJ1Emv2BjETJYSa0m
+	f3wOwiCfAIlM3SGQVcTU=; b=SG17PTYfsJLrf+a9nco/vi8u78T2X/Us3sBVLRhbu4IIcfUY5H
+	yUkt7o3D5dLXXt27SvzEnc97pk3iUzfxfn1kkGnf9zmvcHijMw1y7Ss5XO3O5J8FwkcO/6M9rcx
+	t4wqkyPi/cgKJ6eOcJaY2JGRSEDwcugdNKeaQHIIb8Iqd2i3jrwjZyKG8XmmqFf4tcjB/3H0fxY
+	LCcL1hW0Ordt/a5wfbKfmFpbz/JCsJ2wrH+yMzjz1o9mmjATA7tcF8PH3MGfcU4UkMXtQ/pPCiT
+	qHjEppVY6e8A98DRLfJID8o6BGrPP3Aar7cXy7LBbdbK2NwUBkXUopIIFjTI5oJ0UTg==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1728481940; bh=y3vCb8lJ1Emv2BjETJYSa0m
+	f3wOwiCfAIlM3SGQVcTU=; b=M1wTx2ScrOP5wwUz4o7ImRLQ7lmcSGBc/71hYvs1Xz499ga30L
+	0ZY5s7SPIMlOilFB4Cq0LwdubBT5Z4L5w5CA==;
+Message-ID: <dc319be0-af47-4053-bdd2-8a4d53ec4679@damsy.net>
+Date: Wed, 9 Oct 2024 15:52:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amdgpu: prevent BO_HANDLES error from being
+ overwritten
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Mohammed Anees <pvmohammedanees2003@gmail.com>, alexander.deucher@amd.com,
+ Xinhui.Pan@amd.com, airlied@gmail.com, simona@ffwll.ch,
+ srinivasan.shanmugam@amd.com, David.Wu3@amd.com, felix.kuehling@amd.com,
+ YuanShang.Mao@amd.com, pierre-eric.pelloux-prayer@amd.com
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241009122831.109809-1-pvmohammedanees2003@gmail.com>
+ <6426b779-bd4d-4c85-b99d-4ddedf75d837@amd.com>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <6426b779-bd4d-4c85-b99d-4ddedf75d837@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Akihiko Odaki wrote:
-> They are useful to implement VIRTIO_NET_F_RSS and
-> VIRTIO_NET_F_HASH_REPORT.
+Thanks for the updated patch, looks good to me.
+
+Le 09/10/2024 à 14:31, Christian König a écrit :
+> Am 09.10.24 um 14:28 schrieb Mohammed Anees:
+>> Before this patch, if multiple BO_HANDLES chunks were submitted,
+>> the error -EINVAL would be correctly set but could be overwritten
+>> by the return value from amdgpu_cs_p1_bo_handles(). This patch
+>> ensures that if there are multiple BO_HANDLES, we stop.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: fec5f8e8c6bc ("drm/amdgpu: disallow multiple BO_HANDLES chunks in one submit")
+>> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 > 
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> ---
->  include/linux/virtio_net.h | 188 +++++++++++++++++++++++++++++++++++++++++++++
+> Reviewed-by: Christian König <christian.koenig@amd.com>
+> 
+> @Pierre-Eric can you pick that one up and push to amd-staging-drm-next?
+> 
+> Alex is currently on XDC and I'm a bit busy as well.
 
-No need for these to be in header files
+Sure, will do.
+
+Pierre-Eric
+
+> 
+> Thanks,
+> Christian.
+> 
+>> ---
+>> v2:
+>> - Switched to goto free_partial_kdata for error handling, following the existing pattern.
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+>> index 1e475eb01417..d891ab779ca7 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+>> @@ -265,7 +265,7 @@ static int amdgpu_cs_pass1(struct amdgpu_cs_parser *p,
+>>               /* Only a single BO list is allowed to simplify handling. */
+>>               if (p->bo_list)
+>> -                ret = -EINVAL;
+>> +                goto free_partial_kdata;
+>>               ret = amdgpu_cs_p1_bo_handles(p, p->chunks[i].kdata);
+>>               if (ret)
+
 
