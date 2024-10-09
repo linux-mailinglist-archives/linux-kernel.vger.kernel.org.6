@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-357477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D959971B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:35:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E5F9971B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3496228118C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:35:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3583F1F2A699
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD341E0DD2;
-	Wed,  9 Oct 2024 16:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EF61E1A08;
+	Wed,  9 Oct 2024 16:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="z24tBS9L"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYpjPk0p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D2119925F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5015919C563;
+	Wed,  9 Oct 2024 16:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491360; cv=none; b=HTETFWSGPK99wQimloM2LXomgZniB6y//sW6RQw7PmxzCasfmyrXKSivhJVc/VZYeRoK7Gx4ZvESHSTJcBca3xhYjAEVFSSYMyWBqPURt5T8NkYeDxdpqUKq7UBfbXipa5sdzQwJvmkd9hw3AHN0ICPxAvvzXW36hHx2OJANQuY=
+	t=1728491372; cv=none; b=UBiSylZn2iUhuiyvFMztWbJ9bXHCbrJUuPMmYVZicTKUsqX57BGYsG6xx5raB4r/Dht8vDajMqvzzfdbbxv4JTZ4vQ3cNc/J79MzNp6DLA0vpVxNbLYHzxkL+egYImFdXXeGHCVcEvmATAgiFQkZD/Ku+OmlM5k2SdmtZ22hAU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491360; c=relaxed/simple;
-	bh=lW+0TCd8BxDsBBfUnaLJjsVu76qI0seb1e22Stamx08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mi1KGOjV2rB2rkZDt98fUHDgABrqHlvWhp2GE0qzEI0ROm924hs/zlf9Pf+YfvMlwcNK2Lpl4RRSmzJTr4aglEBE9ipvqEW4GWJRtBZPhBwHNZpMSXLLTfnPveYGqFMt4k/SPUQa255of3em8v0lu/pxXRJfN43rbruYh78uCnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=z24tBS9L; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so66479685e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:29:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728491355; x=1729096155; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OI78aSVS2Ev2nfIrl1yxq/QxZLHj12ZW0R68G4VF6o=;
-        b=z24tBS9Lw/GFwR4m3cfddfFJCPSz4zbiJESqdLucYzSPVJuphbdPkik4IxxqWrpumo
-         XVdIaiMM9RQ22vp4DudfwxLtjxCvd32FoAztGewToIQqnrpOp4MmeO2QNrpIijFukQat
-         41v1TXindA0Ku3ILqwOwcOKBDVLZiGZEuT7kPUqS5mDkctehAVI7gLfcHmZX8ZH8SGoc
-         nHxPaCqlO9kERKydQVYOebR3AErGoEkkWE+733ibRIO0iOXFs27Gz/AZaBvh4Q+lES/S
-         +1V0PD1VrYyisIB412Minhfo982zpDFn3fw+QlbC5ko/4TJx2Duc0kciCsr2pc03h0m1
-         s8Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728491355; x=1729096155;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3OI78aSVS2Ev2nfIrl1yxq/QxZLHj12ZW0R68G4VF6o=;
-        b=xTxzNK5JWJ7kT+kUwPgcIHozpcjOf8Xu/b7rh2Omwm1H950PqlNKvxs2ttPHz3Gjcy
-         9NjqS2cjH7IqABTFboCepOG+F4NfKmqV8K6P6SqsU3Bvlp5qzf8JseKvVvwvSNl7pYzL
-         3GciBJpNlrXVhgHura+y7WekoABDGpZW8N3MN+sFl+yVKgRyWYWcrG0wD0ziDoQlvgEJ
-         z8tCFPnZjTOjUF6IWFVTZ4+3Q2I0wBsMk9Jy1fKhUq/yVsQIJlx6RC/bRwsVbX0WZC+I
-         Tl52I3BfHUyexBm2uLc+1bJHfeq7HcUL56xWUkR753J330DvxGfLo8GkxDO/RpTFtNCf
-         jN5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdK/VGb6UflNB/iHw6CbeRETfWwYG9B2XCoYGVn4xNqNzKWjqcFiquVW0uUBFJTIA7iLsxn2IeiSR2pVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK8eej+bVu+b6H4lwqNbi0r7a8J2X1i8rNYhZcC18ziTXt8Fql
-	at1lJej7Qi7XZFS5+06DjwKBG7wfmb2CkRE2LgFSmmu84O7Aql0vdOMrwKIa1htxZ89/G23Pglo
-	j
-X-Google-Smtp-Source: AGHT+IEuDllRWX3jS65oK8Zgnzeg42AiQ2261+Andt562SYs634kUVn3fhxFzLQd2znhLCCIz4tKLQ==
-X-Received: by 2002:a05:600c:512a:b0:42c:b950:680a with SMTP id 5b1f17b1804b1-430ccf46d68mr23997625e9.20.1728491355331;
-        Wed, 09 Oct 2024 09:29:15 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ff96:3068:2ae4:3fe0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf45df4sm24795475e9.13.2024.10.09.09.29.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 09:29:14 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 2/2] gpio: mpc8xxx: use generic device_is_compatible()
-Date: Wed,  9 Oct 2024 18:29:10 +0200
-Message-ID: <20241009162910.33477-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241009162910.33477-1-brgl@bgdev.pl>
-References: <20241009162910.33477-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1728491372; c=relaxed/simple;
+	bh=WpKDaxI/W+NgcFtv51vOUNwp4op6/pUKdULfxWhhdvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkUE3zLmUyW3oxONrboIThNjMyvKpiAesokQujjbN2eFXsyc8j+r3SYMr4TQF9eFlVydaNI6guwJFNR/eisqmBC6pH49B1AgUeeDCJTQPjeAFAM3YmWyjM8Y2dMYmJG1Oj4YqSj9TiJFebv4VIY6UcvcMmgiU4sR3PlClPb8Deo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYpjPk0p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA94C4CECE;
+	Wed,  9 Oct 2024 16:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728491371;
+	bh=WpKDaxI/W+NgcFtv51vOUNwp4op6/pUKdULfxWhhdvQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JYpjPk0pqIGNTD3ujE4Z/aMlU3dLX7DpVkbtdJCHTW2ff+r8vISInbPTpbzIQVw0b
+	 n8pvIg8BtbsXlVSxqW9Pn2Ceym/nK3O15mB7o+RkIO/j3k2e9mfXkiooLJNJzwiavk
+	 9PGEcj+Sd+6/pwvoB9lr/48uJuswyAJpJN9G8zlwCKLF3kuvG85cTF4SlLi5BSPZzp
+	 eMJErYmjbY2hTXJjc9c1XXPjMD/bsEZwYt/NfxyZZwoJqvEAgfSCmH8zR6dpl47v8W
+	 zqWcn7jXqaFYiecD3ycUFH/Uwn6kFQlTwRvc9wqxE/3vhAS6aIXGdpEpZmN4ZhTlad
+	 tiSc6+s8RW5HA==
+Date: Wed, 9 Oct 2024 17:29:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alain Volmat <alain.volmat@foss.st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Valentin Caron <valentin.caron@foss.st.com>,
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] spi: stm32: fix missing device mode capability in
+ stm32mp25
+Message-ID: <ZwavaP0QHQCyDbtB@finisterre.sirena.org.uk>
+References: <20241009-spi-mp25-device-fix-v1-1-8e5ca7db7838@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nhlvC0ehYU1eXsqp"
+Content-Disposition: inline
+In-Reply-To: <20241009-spi-mp25-device-fix-v1-1-8e5ca7db7838@foss.st.com>
+X-Cookie: Editing is a rewording activity.
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This driver doesn't need to include of.h and use OF-specific interfaces.
-Use generic property helpers instead.
+--nhlvC0ehYU1eXsqp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-mpc8xxx.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+On Wed, Oct 09, 2024 at 06:15:52PM +0200, Alain Volmat wrote:
 
-diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
-index 30f36f94ba1b..2f66e24127f4 100644
---- a/drivers/gpio/gpio-mpc8xxx.c
-+++ b/drivers/gpio/gpio-mpc8xxx.c
-@@ -15,7 +15,6 @@
- #include <linux/irq.h>
- #include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
-@@ -301,7 +300,6 @@ static const struct of_device_id mpc8xxx_gpio_ids[] = {
- static int mpc8xxx_probe(struct platform_device *pdev)
- {
- 	const struct mpc8xxx_gpio_devtype *devtype = NULL;
--	struct device_node *np = pdev->dev.of_node;
- 	struct mpc8xxx_gpio_chip *mpc8xxx_gc;
- 	struct device *dev = &pdev->dev;
- 	struct fwnode_handle *fwnode;
-@@ -368,9 +366,9 @@ static int mpc8xxx_probe(struct platform_device *pdev)
- 	 * the port value to the GPIO Data Register.
- 	 */
- 	fwnode = dev_fwnode(dev);
--	if (of_device_is_compatible(np, "fsl,qoriq-gpio") ||
--	    of_device_is_compatible(np, "fsl,ls1028a-gpio") ||
--	    of_device_is_compatible(np, "fsl,ls1088a-gpio") ||
-+	if (device_is_compatible(dev, "fsl,qoriq-gpio") ||
-+	    device_is_compatible(dev, "fsl,ls1028a-gpio") ||
-+	    device_is_compatible(dev, "fsl,ls1088a-gpio") ||
- 	    is_acpi_node(fwnode)) {
- 		gc->write_reg(mpc8xxx_gc->regs + GPIO_IBE, 0xffffffff);
- 		/* Also, latch state of GPIOs configured as output by bootloader. */
--- 
-2.43.0
+> Fixes: a4e7908abf0c ("spi: stm32: add st,stm32mp25-spi compatible supporting STM32MP25 soc")
+> Cc: stable@vger.kernel.org
 
+That SHA1 doesn't exist...
+
+--nhlvC0ehYU1eXsqp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGr2cACgkQJNaLcl1U
+h9BQYwf8DJmILKbY03TZr3Z+bBleGn5Ey9cfwTqSEWz24LYOMrmDUe8h4EhJpwrv
+/E3XpZC10q9Cj8nEJiTBOX8PW+sFKFZdKj8ej9DcufTn9ihaVrq4i6TzdX19cUFq
+BBkbxj/6jyBJD3Hjk+c7jFoQHGPBkdV/6+/KbjpExWnSLZvv5yBRuVvVMusiFUmj
+yfILJeZSYjAt3pHqeie+RMEiyw+5+ga+ZwKy13S5v56JG9HEEnre+9GPN7SW0cIm
+B2ksBiCORK8O/BDdmfZAT4iFz0QivhByfRIGLLlL6OpfvK5oXXW9DO+qvt+r7g99
+P9bWBZSNrbaIqlDvQEgvip+vdiLqMg==
+=UQzM
+-----END PGP SIGNATURE-----
+
+--nhlvC0ehYU1eXsqp--
 
