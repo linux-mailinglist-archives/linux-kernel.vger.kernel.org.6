@@ -1,145 +1,118 @@
-Return-Path: <linux-kernel+bounces-357147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC97996C79
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE20996C80
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735911F22B02
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B302855E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0C1990DC;
-	Wed,  9 Oct 2024 13:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD2F19924D;
+	Wed,  9 Oct 2024 13:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PJzm/qMW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UptuULJ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73011922F4
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189D7199921;
+	Wed,  9 Oct 2024 13:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481416; cv=none; b=mZ42Oly3+McjyjsWw5PmP7uycAzyFwHlztMNbfQun63MXDZnSqvQ31O6pH135p1Lx+LQp0wGoKpD0mq2REO6DO/nWIscSzZF0s3/fBkKC/TLjl7kZpS4zNeczQqfyMdNek3pOvOj5BV0w/w5OfPK4F+wcZ4zawExiIzXGKYjO8Q=
+	t=1728481425; cv=none; b=fx0tdFuH13aUomMOL8bUuTmL/TS35KBW7o6qYUJdvpIWxl9ZauUDmhMf0GccO6DyNXNiYZhAavSrWd79XLiX+HbdUNEfn2/mt56UH+T0YY9Oepg+yU0vdoE+WtH1bMBCleOvYuZ1ziNbc0d5wzi1BXlQaccCFLonqoJXuIZGfaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481416; c=relaxed/simple;
-	bh=BmZuKYMkRJ8L4w1vaVjp3jgciXYLxJjGTkK4HfuIKHE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gq3osaJCcc3NyPUZeD4Y9pgwOhVEu8I0l9MeZL4Du3wtWbRyxTJm9zi+WCESnHvrWPPaGhC4dOXaxsBBViDWOcXObh3/ECclvIN9SE4IpdQ8jtsEbZXt9fAy4QhOfyRAl5WoSdMTJK+hN2xBUWO8eTbqYNegQlL29zm1SY1rqOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PJzm/qMW; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728481415; x=1760017415;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=BmZuKYMkRJ8L4w1vaVjp3jgciXYLxJjGTkK4HfuIKHE=;
-  b=PJzm/qMWsX8QcyB4IkbhzyiyGfqhskSYJB1xyn0QR8neyv00098YBItj
-   ZEB+QutTuUBkygVysPIgKEid33IrRQ/dYvM8OfIQ+X7zKBoNBQOuy95UH
-   r0GnuKuJaNWv5gDYC0AVQKTFIR/gSeN6gHxBKjXh1TkNaEY3qte4kQ740
-   DADANJ+Pfh531fxWYHFK4j0s5zvfLeaYpdjdTurPZ53QEVD3oolWO+WIv
-   Vet/6MhR+lK/8NL0fbr6tQ6XebYs/uRmfNfYrNwtbWdualILa4cmDo7mc
-   SvizWcG+sq+SjIH3XT6n5vCJPfQvjCCQcMpM02R28TigCcswTO53VBI7T
-   Q==;
-X-CSE-ConnectionGUID: 62fdH0cBSbKABUDcX3nydA==
-X-CSE-MsgGUID: QkkwJnanR56h7/h6qj5NCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39142952"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="39142952"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 06:43:34 -0700
-X-CSE-ConnectionGUID: bPpCYgWzR1W8nDTQLGhBjg==
-X-CSE-MsgGUID: HeHDlAiMQNyfm4UODcHrCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="75855340"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.245.243]) ([10.245.245.243])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 06:43:32 -0700
-Message-ID: <c5e8899f4bcba24a787cd0f4c92c3fc4d7ef3130.camel@linux.intel.com>
-Subject: Re: [PATCH v2] locking/ww_mutex: Adjust to lockdep nest_lock
- requirements
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: intel-xe@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>, Will
- Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng
- <boqun.feng@gmail.com>, Maarten Lankhorst <maarten@lankhorst.se>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org
-Date: Wed, 09 Oct 2024 15:43:29 +0200
-In-Reply-To: <20241009131015.GP17263@noisy.programming.kicks-ass.net>
-References: <20241009092031.6356-1-thomas.hellstrom@linux.intel.com>
-	 <20241009131015.GP17263@noisy.programming.kicks-ass.net>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1728481425; c=relaxed/simple;
+	bh=SkGQGwz41me2KDx1e7eudI1y5Dfn9Ort4t3pk5/4X2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpGoel95lXyIylj10ynHANlL98/rfxpoUW9MDKVG9CyWnWOzan8R5Lf31oiLotkldItF2Lb7QmcuqG0jc6l8cWwj3cxctnBqWtjBxsBpsOYdrKvKKwxtWXa9N6/1woQamB+gFcaUivyxz1WNT2vUnxZgxpkagZ7puuPisuAaQTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UptuULJ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2611C4CEC5;
+	Wed,  9 Oct 2024 13:43:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728481424;
+	bh=SkGQGwz41me2KDx1e7eudI1y5Dfn9Ort4t3pk5/4X2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UptuULJ2OWWvYaBsfhT14SxtJBc3M4BwSr4+JlYqyyNmoobqO4kAomYNIfEM7khdc
+	 tJ1ZDCpFWFzX+xWHnWJreAuZ2XKvmqcSQWaE8MKQTg4TYFPv+DR9bNNrjInaa/OYtu
+	 KpARALZUXXjAnchtpsEN36xFPhIzN/ylGRppXGgmabk0MplICkWcNzW9sdHfiqk0af
+	 KxhtBa454eASlcIspF6GgKIkj9T+NT5WVNXPcPEwqB3wqadGNdnCRlvxnS1QHIAYHw
+	 ysISk4IOBa1vuPFnWVTbsiJfN2tBfvji5ySfbJ4gvcEnwPGghUTHWE7iAsX3iprOqA
+	 nOutjUn+m4WRg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syWyh-000000003ES-3FZF;
+	Wed, 09 Oct 2024 15:43:47 +0200
+Date: Wed, 9 Oct 2024 15:43:47 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, stable@vger.kernel.org,
+	Aniket Randive <quic_arandive@quicinc.com>
+Subject: Re: [PATCH v2 1/7] serial: qcom-geni: fix premature receiver enable
+Message-ID: <ZwaIk5MlqL3AL_qQ@hovoldconsulting.com>
+References: <20241001125033.10625-1-johan+linaro@kernel.org>
+ <20241001125033.10625-2-johan+linaro@kernel.org>
+ <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
 
-On Wed, 2024-10-09 at 15:10 +0200, Peter Zijlstra wrote:
-> On Wed, Oct 09, 2024 at 11:20:31AM +0200, Thomas Hellstr=C3=B6m wrote:
-> > When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
-> > the
-> > number of acquired lockdep_maps of mutexes of the same class, and
-> > also
-> > keeps a pointer to the first acquired lockdep_map of a class. That
-> > pointer
-> > is then used for various comparison-, printing- and checking
-> > purposes,
-> > but there is no mechanism to actively ensure that lockdep_map stays
-> > in
-> > memory. Instead, a warning is printed if the lockdep_map is freed
-> > and
-> > there are still held locks of the same lock class, even if the
-> > lockdep_map
-> > itself has been released.
-> >=20
-> > In the context of WW/WD transactions that means that if a user
-> > unlocks
-> > and frees a ww_mutex from within an ongoing ww transaction, and
-> > that
-> > mutex happens to be the first ww_mutex grabbed in the transaction,
-> > such a warning is printed and there might be a risk of a UAF.
-> >=20
-> > Note that this is only problem when lockdep is enabled and affects
-> > only
-> > dereferences of struct lockdep_map.
-> >=20
-> > Adjust to this by adding a fake lockdep_map to the acquired context
-> > and
-> > make sure it is the first acquired lockdep map of the associated
-> > ww_mutex class. Then hold it for the duration of the WW/WD
-> > transaction.
-> >=20
-> > This has the side effect that trying to lock a ww mutex *without* a
-> > ww_acquire_context but where a such context has been acquire, we'd
-> > see
-> > a lockdep splat. The test-ww_mutex.c selftest attempts to do that,
-> > so
-> > modify that particular test to not acquire a ww_acquire_context if
-> > it
-> > is not going to be used.
-> >=20
-> > v2:
-> > - Lower the number of locks in the test-ww_mutex
-> > =C2=A0 stress(STRESS_ALL) test to accommodate the dummy lock
-> > =C2=A0 introduced in this patch without overflowing lockdep held lock
-> > =C2=A0 references.
->=20
-> Thanks, I rebased tip/locking/core, which should now have this patch.
+On Tue, Oct 01, 2024 at 07:20:36PM +0530, Mukesh Kumar Savaliya wrote:
+> Thanks Johan for the fixes.
 
-Thanks.
-It takes some time for that failing CI test to run, though so, and
-since I can't repro the failure locally I'll keep a watch out.
+Thanks for taking a look.
 
-/Thomas
+> On 10/1/2024 6:20 PM, Johan Hovold wrote:
+> > The receiver should not be enabled until the port is opened so drop the
+> > bogus call to start rx from the setup code which is shared with the
+> > console implementation.
+> > 
+> > This was added for some confused implementation of hibernation support,
+> > but the receiver must not be started unconditionally as the port may not
+> > have been open when hibernating the system.
+> > 
+> > Fixes: 35781d8356a2 ("tty: serial: qcom-geni-serial: Add support for Hibernation feature")
+> > Cc:stable@vger.kernel.org	# 6.2
+> > Cc: Aniket Randive<quic_arandive@quicinc.com>
+> > Signed-off-by: Johan Hovold<johan+linaro@kernel.org>
 
+> > @@ -1152,7 +1152,6 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+> >   			       false, true, true);
+> >   	geni_se_init(&port->se, UART_RX_WM, port->rx_fifo_depth - 2);
+> >   	geni_se_select_mode(&port->se, port->dev_data->mode);
+> > -	qcom_geni_serial_start_rx(uport);
+
+> Does it mean hibernation will break now ? Not sure if its tested with 
+> hibernation. I can see this call was added to port_setup specifically 
+> for hibernation but now after removing it, where is it getting fixed ?
+> I think RX will not be initialized after hibernation.
+
+Correct. As I alluded to in the commit message this "hibernation
+support" is quite broken already, but I was trying to avoid spending
+more time on this driver than I already have and just look the other way
+for the time being.
+
+Note that rx is enabled by the serial core resume code, but then this
+hibernation hack added a call to the setup the port after resuming it,
+which would disable rx again were it not for this random call to
+start rx, which should never have been added here in the first place.
+
+But as these platforms do not support hibernation in mainline, and the
+code broken anyway, I'll just rip it all out for v3.
+
+Johan
 
