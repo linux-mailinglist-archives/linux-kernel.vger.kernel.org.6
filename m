@@ -1,115 +1,159 @@
-Return-Path: <linux-kernel+bounces-357195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BC1996D5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:13:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7FB996D60
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2A2EB20F44
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C8D1F257C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712C7199FB5;
-	Wed,  9 Oct 2024 14:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB9D19ABB4;
+	Wed,  9 Oct 2024 14:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ledIG4vp"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4261957F8;
-	Wed,  9 Oct 2024 14:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="I635BCsR"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053DA198A32;
+	Wed,  9 Oct 2024 14:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728483195; cv=none; b=Mux22zbc8GTlMwWZ7kIhQOipApH33sqa+KR2hl9xLNhJhZW6dTeuYBlPHnN8xHFRJul1egzErCfaPRNM61vmMLKsJ0Tk8GDkhLRW7PPyIZOfkvnM50faXwt3PcoIQAvSdKrPgjFJHzXTVnrGDhG5VLhJACe9icJAQ710pIxXJ2Y=
+	t=1728483221; cv=none; b=aa/m54TS32m2FJdZnchvD0vee6nR7uz26sNlltRl+I4ZG0shQipoqAn1dRKS9v2sjFRw7MD+82kJwj6FedyEpoXDkmSIGYIWdgZPSSOqqefjW1tbBaHWigqjDKX3x7WVaFXmReOmA6TIYjXoE/Db5qXoimnD7iomq4gDi2pO49o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728483195; c=relaxed/simple;
-	bh=5VaBpTl8s7O6S75KrCduX+TKh7MjTSYhAeML2n2KwDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SH/cAs6K4lsKIaeyS7IWagHjYmvakxEXBshGLgieADcZZPFtibrhre5v+QzhxaVTv6V9Ob6Q3r92mddn18Y6yMrO8eqvhTGJYPP4gx4C/ys2nK9bP5nYOPXmfd6HMYfuUi36CL7YO/bc21lE7A8ZWlA5kHSc1pI9LzPavh14TfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ledIG4vp; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c593d6b1cso17595925ad.0;
-        Wed, 09 Oct 2024 07:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728483194; x=1729087994; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1mJ9IhXj+vc15TnvWcnrarKm7uwlQx+nJ+OtHHPpLTU=;
-        b=ledIG4vpju6SCxUlmSZheUsoz4rE1ILGPkGNNj2rvvF+dTMsXDD31ANA5zHUfZXG6F
-         Om1SdfVhc9lWAzaxXVXn9huypqEXrpHhtf2CY/Thi+UAmSvHqGW7x1Oc9SkxLbkoQLNm
-         TwVNLjzZiuezO2tet0JtnYqJeJRaz9o9pavibyItxjXapeRDEU1IVWjwHb+QoYexcynu
-         hX5kjDgJtV6bLHtQkLMnUh1Qo3YYu4lyJfXQRIdimrhwy3XYyaJfbbY11j8ebE1obOef
-         2xYz949wHL2612hULrfCzgbV5lhzc9S5DjSmPE3x0g/uhElB/nhtsvUFhDy5HPgLDJ/x
-         MliA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728483194; x=1729087994;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mJ9IhXj+vc15TnvWcnrarKm7uwlQx+nJ+OtHHPpLTU=;
-        b=o94Svu1CQyyAe1E0+V4uSnVp+wmEca8C8gDSG/NkqgVOFPmcQCgcWj6NA5/WxHES+L
-         IaDunc2EzpN7kdcjinS5iu30hzKL9DfRhYglh9S+x4HbzAzcNQAFqIAn2zI/giwXdVQM
-         gK6zwJXp3Og2LwRdhPjz5RavBbsKPxG3l4dK6mbVRQ9hDx0mRUeVUm5EqkWl+t/4AfgD
-         NPemTXdK/nP5JPyzVjeX3tLnMvt+hvlPZkDrD8JNIRozeWEhk+2Z6pcOzCdJ+PAUgSoH
-         8YI+RIifD2WRWOEgrZbhXIocak3c0gcX01bNt5VtX7ai8Uixru2ATXR7BdK/ZI+N0k1i
-         mUYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUumR+cXu/JNpf5FkS0etlxG/RmNWbLlzFyDidlQL/69JyMC4ZE84DCom3qfOlcYDb3Hh8hbitoONutHr+6@vger.kernel.org, AJvYcCW5kMme11o5M8iyrbdnBSej64CdKQQGYg/FklSSldCnfQn6lcLfQDRBXpMdWOaodQK/MW3v1sDj@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYybRumS9viIaJpGghNKwbHtBZGTkH93Fue0j4Cubi0k4XiK9o
-	vXfOZN3c3JHISiyh8nnm3YLsyL9i6vPFaNLr6nEGD+3p+Ekry0Dh
-X-Google-Smtp-Source: AGHT+IFqQ1MJsErEHXe+a7P65I5Oe96H2ckzg2/xkoxKufQtn1j7d0DyvE/1jQp4DovOObK56Hiz7Q==
-X-Received: by 2002:a17:903:187:b0:20b:b0ab:4fc3 with SMTP id d9443c01a7336-20c6378d269mr39498365ad.49.1728483193796;
-        Wed, 09 Oct 2024 07:13:13 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c76a2202fsm6202445ad.115.2024.10.09.07.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 07:13:13 -0700 (PDT)
-Date: Wed, 9 Oct 2024 22:13:09 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: xavier_qy@163.com, longman@redhat.com, lizefan.x@bytedance.com,
-	tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
-	akpm@linux-foundation.org, jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Enhance union-find with KUnit tests and
- optimization improvements
-Message-ID: <ZwaPdSOMWQzuoPWU@visitorckw-System-Product-Name>
-References: <20241007152833.2282199-1-visitorckw@gmail.com>
- <ZwZIXxQLyJUL_nOW@infradead.org>
+	s=arc-20240116; t=1728483221; c=relaxed/simple;
+	bh=ZGV4OkMYzwMYUiMF1vIbqfSwx1Sle7VLdz9HhEdj/BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=okV+K3hJhx2CPDvQR3qDyw9qoalQitUjn7NytzWFWehnoqHyXlTqNABlwjejGVznQaCZ+v4ILevRuH5CsturleHcBE76mfFzXcHm03aIhVdLVyHwIwoSyIrqhPR8Pai0GtwhVATi7/yGnAtW+OFDusgkiK1htRpzQ9vqr/mxWpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=I635BCsR; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=a1Wwn7npiqzFsNRpMJ+6JXVmBOnB+HGGdwRrmxJ/sSY=;
+	b=I635BCsRTmWDExrNajMHEJ3psS4NiQA4ENHv2ueGw567psgb/+8E6KkuCSSl23
+	rUTuWxvyCuHdz3j7q4e5bEBaQm1ozb6bq+8kIarJP5c8oLegVHSBngsw7MPQk2tG
+	14WaIClUxcq+FQsMpJZnNjDsQku23Kq5GW+wt0byewcS4=
+Received: from [192.168.3.4] (unknown [123.121.183.169])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3X195jwZnNM1gAA--.10119S2;
+	Wed, 09 Oct 2024 22:13:14 +0800 (CST)
+Message-ID: <67b556bc-2d48-4e7b-a00a-6b38512c8e8f@163.com>
+Date: Wed, 9 Oct 2024 22:13:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-next v8 1/6] RDMA/rxe: Make MR functions accessible
+ from other rxe source code
+To: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>,
+ linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
+ zyjzyj2000@gmail.com
+Cc: linux-kernel@vger.kernel.org, rpearsonhpe@gmail.com, lizhijian@fujitsu.com
+References: <20241009015903.801987-1-matsuda-daisuke@fujitsu.com>
+ <20241009015903.801987-2-matsuda-daisuke@fujitsu.com>
+From: Zhu Yanjun <mounter625@163.com>
+In-Reply-To: <20241009015903.801987-2-matsuda-daisuke@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwZIXxQLyJUL_nOW@infradead.org>
+X-CM-TRANSID:_____wD3X195jwZnNM1gAA--.10119S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCry5Cw48KrWrtr45tFy8AFb_yoWrGF4fpF
+	18tw15Ars3Xr4UuF4IyFWDZF4akwsxK3srG3sxt34YvFya9w43XFs29Fy2vas5AFWDua1f
+	KF1xJrnrCw45GFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UsvttUUUUU=
+X-CM-SenderInfo: hprx03thuwjki6rwjhhfrp/1tbiLxJzOGcGgtzZ8QABsg
 
-On Wed, Oct 09, 2024 at 02:09:51AM -0700, Christoph Hellwig wrote:
-> On Mon, Oct 07, 2024 at 11:28:27PM +0800, Kuan-Wei Chiu wrote:
-> > This patch series adds KUnit tests for the union-find implementation
-> > and optimizes the path compression in the uf_find() function to achieve
-> > a lower tree height and improved efficiency. Additionally, it modifies
-> > uf_union() to return a boolean value indicating whether a merge
-> > occurred, enhancing the process of calculating the number of groups in
-> > the cgroup cpuset.
-> 
-> Given that this fairly special union find code is obly used in the
-> cpuset code, please move the code there rather adding more exports.
-> Even as-is it is bloating every kernel build even without cgroups
-> for no good reason.
+
+在 2024/10/9 9:58, Daisuke Matsuda 写道:
+> Some functions in rxe_mr.c are going to be used in rxe_odp.c, which is to
+> be created in the subsequent patch. List the declarations of the functions
+> in rxe_loc.h.
 >
-I noticed that it was Michal who originally suggested putting the
-union-find code to lib/ in an earlier email thread [1]. Before I send a v3
-patch moving it to cpuset, I'd like to hear Michal, Tejun, and Waiman’s
-thoughts on this change.
+> Signed-off-by: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
+> ---
+>   drivers/infiniband/sw/rxe/rxe_loc.h |  8 ++++++++
+>   drivers/infiniband/sw/rxe/rxe_mr.c  | 11 +++--------
+>   2 files changed, 11 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/infiniband/sw/rxe/rxe_loc.h b/drivers/infiniband/sw/rxe/rxe_loc.h
+> index ded46119151b..866c36533b53 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_loc.h
+> +++ b/drivers/infiniband/sw/rxe/rxe_loc.h
+> @@ -58,6 +58,7 @@ int rxe_mmap(struct ib_ucontext *context, struct vm_area_struct *vma);
+>   
+>   /* rxe_mr.c */
+>   u8 rxe_get_next_key(u32 last_key);
+> +void rxe_mr_init(int access, struct rxe_mr *mr);
+>   void rxe_mr_init_dma(int access, struct rxe_mr *mr);
+>   int rxe_mr_init_user(struct rxe_dev *rxe, u64 start, u64 length,
+>   		     int access, struct rxe_mr *mr);
+> @@ -69,6 +70,8 @@ int copy_data(struct rxe_pd *pd, int access, struct rxe_dma_info *dma,
+>   	      void *addr, int length, enum rxe_mr_copy_dir dir);
+>   int rxe_map_mr_sg(struct ib_mr *ibmr, struct scatterlist *sg,
+>   		  int sg_nents, unsigned int *sg_offset);
+> +int rxe_mr_copy_xarray(struct rxe_mr *mr, u64 iova, void *addr,
+> +		       unsigned int length, enum rxe_mr_copy_dir dir);
+>   int rxe_mr_do_atomic_op(struct rxe_mr *mr, u64 iova, int opcode,
+>   			u64 compare, u64 swap_add, u64 *orig_val);
+>   int rxe_mr_do_atomic_write(struct rxe_mr *mr, u64 iova, u64 value);
+> @@ -80,6 +83,11 @@ int rxe_invalidate_mr(struct rxe_qp *qp, u32 key);
+>   int rxe_reg_fast_mr(struct rxe_qp *qp, struct rxe_send_wqe *wqe);
+>   void rxe_mr_cleanup(struct rxe_pool_elem *elem);
+>   
+> +static inline unsigned long rxe_mr_iova_to_index(struct rxe_mr *mr, u64 iova)
+> +{
+> +	return (iova >> mr->page_shift) - (mr->ibmr.iova >> mr->page_shift);
+> +}
 
-[1]: https://lore.kernel.org/lkml/wu4m2m5igc752s5vrmtsnd7ekaq6opeqdtrzegs7oxlwgypdcx@qhcnow5txxiv/
+The type of the function rxe_mr_iova_to_index is "unsigned long". In 
+some 32 architecture, unsigned long is 32 bit.
 
-Regards,
-Kuan-Wei
+The type of iova is u64. So it had better use u64 instead of "unsigned 
+long".
+
+Zhu Yanjun
+
+> +
+>   /* rxe_mw.c */
+>   int rxe_alloc_mw(struct ib_mw *ibmw, struct ib_udata *udata);
+>   int rxe_dealloc_mw(struct ib_mw *ibmw);
+> diff --git a/drivers/infiniband/sw/rxe/rxe_mr.c b/drivers/infiniband/sw/rxe/rxe_mr.c
+> index da3dee520876..1f7b8cf93adc 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_mr.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_mr.c
+> @@ -45,7 +45,7 @@ int mr_check_range(struct rxe_mr *mr, u64 iova, size_t length)
+>   	}
+>   }
+>   
+> -static void rxe_mr_init(int access, struct rxe_mr *mr)
+> +void rxe_mr_init(int access, struct rxe_mr *mr)
+>   {
+>   	u32 key = mr->elem.index << 8 | rxe_get_next_key(-1);
+>   
+> @@ -72,11 +72,6 @@ void rxe_mr_init_dma(int access, struct rxe_mr *mr)
+>   	mr->ibmr.type = IB_MR_TYPE_DMA;
+>   }
+>   
+> -static unsigned long rxe_mr_iova_to_index(struct rxe_mr *mr, u64 iova)
+> -{
+> -	return (iova >> mr->page_shift) - (mr->ibmr.iova >> mr->page_shift);
+> -}
+> -
+>   static unsigned long rxe_mr_iova_to_page_offset(struct rxe_mr *mr, u64 iova)
+>   {
+>   	return iova & (mr_page_size(mr) - 1);
+> @@ -242,8 +237,8 @@ int rxe_map_mr_sg(struct ib_mr *ibmr, struct scatterlist *sgl,
+>   	return ib_sg_to_pages(ibmr, sgl, sg_nents, sg_offset, rxe_set_page);
+>   }
+>   
+> -static int rxe_mr_copy_xarray(struct rxe_mr *mr, u64 iova, void *addr,
+> -			      unsigned int length, enum rxe_mr_copy_dir dir)
+> +int rxe_mr_copy_xarray(struct rxe_mr *mr, u64 iova, void *addr,
+> +		       unsigned int length, enum rxe_mr_copy_dir dir)
+>   {
+>   	unsigned int page_offset = rxe_mr_iova_to_page_offset(mr, iova);
+>   	unsigned long index = rxe_mr_iova_to_index(mr, iova);
+
 
