@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-357732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FC69974E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B529974E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F67E2829BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CFD1F23076
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EF11DFDAB;
-	Wed,  9 Oct 2024 18:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85631E049A;
+	Wed,  9 Oct 2024 18:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siINcN6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhlMcnPk"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE101922EA;
-	Wed,  9 Oct 2024 18:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D151DE4CE;
+	Wed,  9 Oct 2024 18:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728498432; cv=none; b=EKo6Y5/99LSfHzjjoIhVe68FBhsdbTT+7xnUsC436FmNlLiWzLCArfnI2Y7JxcH2xKsbCNveyCoAtH2ZGV4AadKZs0zng3LwBSPpW06IaoazKlDuz+jDTU/C9HeRfa6gbDD2UknZYBz+eHFHylqUBc8LQxFyx4CKg4D7tfmivbY=
+	t=1728498450; cv=none; b=GlAgtvyAUHEwlaCVvHRnOz+nm58bQhMC8ZIqsMbHof9JwvSiOh0L2tM1Jg/U0uVbjZy17lTsfQWw48UFnCIppbqP4clT1WNBe0HnSpTWaLeLbYHmQnX6r5x9mzDaAqWB5qitgQmy5LiJttz9S86iRoD9b2J7uJBOTfLUIN0IwkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728498432; c=relaxed/simple;
-	bh=jhZwgy0s6PYh0bkEsa00DYSgW/ye/7lPeDLBcIHBAcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9MH1UitRWx+TLMM6pDJaClyMSTkFGrKreFqjMDFKgtBTWdm7f/O1ExXesbA3DEf4BQEbOsBGnAhdEzbnXxjTfUnnKGXxiJ3gmTs4prlopKkLVS/TKWvIdU5VWgc7S4S/yXcUw0B8uTd+6LDFuoQ4kDR766LSw8zeyUjM+Yxmw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siINcN6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5D0C4CEC3;
-	Wed,  9 Oct 2024 18:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728498431;
-	bh=jhZwgy0s6PYh0bkEsa00DYSgW/ye/7lPeDLBcIHBAcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=siINcN6C3vE7ciZFy936DdBHm9bzuDl0gQkUqevFy0SKNyNt3TFUwNQyiTt6NpAAz
-	 1sYQ79TQHwwWQfKoeUT8H9AEP2bEYRg5v5iJ8S2rxjGfGaV8ebZ9mquqM6azvQfe8b
-	 UIPgjpsXQYD3lzUAfL8+3HuIrEIdE1Kczsebpl+DHWOzXH5GuHZy24SUVtze51clQw
-	 573PYTDoSdjSMdvzNyc1a8ZE0oacqmN0ROp79ujWAuu1V/zNz1Q5W10nMsiNva4dVs
-	 3Y/KVl6pKONfcjaQpPbdPhUzWvuYqK62eRmPrsAlEHEulyovNEJQz4JPjOexP1YOGV
-	 jVhHxAmZhlO4A==
-Date: Wed, 9 Oct 2024 11:27:09 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Benno Lossin <benno.lossin@proton.me>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: refactor cc-option-yn, cc-disable-warning,
- rust-option-yn macros
-Message-ID: <20241009182709.GA3274931@thelio-3990X>
-References: <20241009102821.2675718-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1728498450; c=relaxed/simple;
+	bh=icD6oDjk9SU4vvPr7VlMmj5ZCwZfB0LtWsNfm1gram8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e70okoK8aDpAfy7jwN0twr5jZHrvSR9YhJN8lBqklBi/1YJQuUD0s6DB6LsxEm/0ZAIwDvq0fikNxQ84JeyG5thcsoXD1igmxe20stbd352ZBUKY0Ba7UkL7/OgArlITke2QdBO3v/4dBR6CDemDJrTxyXuu0iA36q9Qb/ocC3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhlMcnPk; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso724965e9.2;
+        Wed, 09 Oct 2024 11:27:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728498447; x=1729103247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f2r/bFblN9V4MmjFbmDYE2AhavkhB01rk4LY2aZjy0I=;
+        b=AhlMcnPkblnZhjJErxNPTQNcx60Yw/k3ZO7OKheF04biPJ6seixkp0vzK/SI+acgD0
+         wVFnz8qY7ZRUIrteXuAukU/qLTSEp0VTexyxk3gANCAGGA0X5nWJIPukQa8VqEhDytDH
+         aaAWaDeBcJW5kXgRElBpVcz48Ugc2gxaK8Mtdg7GKl7VfenUxlV8u+usaR5swhed6TrR
+         gTahyD3qr6ocNo6Q3Nw8KY6wxVKSxN8mSyljqP/e3aqkdRd3Trg42vjchZPZZG8DIdJs
+         0Nkrkf7IGxrd+7yyQ/d9Bjfu6uamwlom36pIRBKFm5IfT8mjuSulMJ1ID04XgrQbdmBK
+         U39w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728498447; x=1729103247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f2r/bFblN9V4MmjFbmDYE2AhavkhB01rk4LY2aZjy0I=;
+        b=qRi+kT4u+XcyC3/2IrfnP6/vf7E/uiycUkYwMOCCvidfOj+c8XI+DPxt0UqiA6Ns/D
+         BvLwh89LSl0c2agpuByz6PLn2B/XQZAJQr/+zdwSKXW4oh0oFk39tbf9if9zwR20lGOB
+         H4SZAcaLgMLQhTdEu/G3r47anb6NQuLpkuIx4qPaxU0jRhxnQ3jxkSTX/Zl/2qhJmS9M
+         FczGkkQuKawAdbmozf9mxC0sLViDctZ7pglIQTOSgY+GvlcZCt1yWRiJ3E17fki6/cjv
+         TV7Z4hwsXfKHa/pUauliDt6O1MamoxhkSnBgvf34PTAyMZ9vd93jcsT0i5f3DMJfaTCC
+         1IBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVatfBi4tMLT45iZTZtz16Jhv385dSpN7vGDdJElJHhf++AHE53EoiQXd6mWVdA6j9UgM4=@vger.kernel.org, AJvYcCWFW0zAXq94qn/hkqPgSN0e7JX2ZE3Zn9A0P98AIX1AG76zxW9xzkWQ9uoaIBjiicMrUPd/F/WD82oYWlsT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+sSlkUbXKI3dZj3Bt28kFduJr6gAWYEAzwEXlI/bRxNMhFnF0
+	MCMUsp3vvJTKQ7XNmQIE+6YN7ismRsiNDWGRZI1Oum+U37nknkQbbdtpN2esLALPyJUc0Te5y6E
+	krNsbdFjtVQwHdZ4Cn4v7PYKiAKbULIxF
+X-Google-Smtp-Source: AGHT+IGxNDr8I+CHIy7TM8Mpvkn88RZfcj0cijc4x/3bxuCJG1Tr4Q3LqU7Ai6CT0pQZveCAagiV32/I0EocyANTa/k=
+X-Received: by 2002:a05:6000:12d0:b0:37d:37a6:f4e3 with SMTP id
+ ffacd0b85a97d-37d3aa41f7fmr2754212f8f.23.1728498446749; Wed, 09 Oct 2024
+ 11:27:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009102821.2675718-1-masahiroy@kernel.org>
+References: <20241009180500.87367-1-technoboy85@gmail.com>
+In-Reply-To: <20241009180500.87367-1-technoboy85@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 9 Oct 2024 11:27:15 -0700
+Message-ID: <CAADnVQJGQ8b+E5m09Gd=bZAqQ2bLpHk+1r9vhB0As_PcmCzWpA@mail.gmail.com>
+Subject: Re: [PATCH bpf] bpf: fix argument type in bpf_loop documentation
+To: Matteo Croce <technoboy85@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	LKML <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>, 
+	Matteo Croce <teknoraver@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 07:27:37PM +0900, Masahiro Yamada wrote:
-> cc-option-yn and cc-disable-warning duplicate the compile command seen
-> a few lines above. These can be defined based on cc-option.
-> 
-> I also refactored rustc-option-yn in the same way, although there are
-> currently no users of it.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-
-Neat!
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
+On Wed, Oct 9, 2024 at 11:05=E2=80=AFAM Matteo Croce <technoboy85@gmail.com=
+> wrote:
+>
+> From: Matteo Croce <teknoraver@meta.com>
+>
+> The `index` argument to bpf_loop() is threaded as an u64.
+> This lead in a subtle verifier denial where clang cloned the argument
+> in another register[1].
+>
+> [1] https://github.com/systemd/systemd/pull/34650#issuecomment-2401092895
+>
+> Signed-off-by: Matteo Croce <teknoraver@meta.com>
 > ---
-> 
-> This avoids applying similar fixes to rustc-option and rustc-option-yn.
-> 
->  scripts/Makefile.compiler | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
-> index 057305eae85c..73d611d383b2 100644
-> --- a/scripts/Makefile.compiler
-> +++ b/scripts/Makefile.compiler
-> @@ -53,13 +53,11 @@ cc-option = $(call __cc-option, $(CC),\
->  
->  # cc-option-yn
->  # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
-> -cc-option-yn = $(call try-run,\
-> -	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",y,n)
-> +cc-option-yn = $(if $(call cc-option,$1),y,n)
->  
->  # cc-disable-warning
->  # Usage: cflags-y += $(call cc-disable-warning,unused-but-set-variable)
-> -cc-disable-warning = $(call try-run,\
-> -	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
-> +cc-disable-warning = $(if $(call cc-option,-W$(strip $1)),-Wno-$(strip $1))
->  
->  # gcc-min-version
->  # Usage: cflags-$(call gcc-min-version, 70100) += -foo
-> @@ -85,5 +83,4 @@ rustc-option = $(call __rustc-option, $(RUSTC),\
->  
->  # rustc-option-yn
->  # Usage: flag := $(call rustc-option-yn,-Cinstrument-coverage)
-> -rustc-option-yn = $(call try-run,\
-> -	$(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",y,n)
-> +rustc-option-yn = $(if $(call rustc-option,$1),y,n)
-> -- 
-> 2.43.0
-> 
+>  include/uapi/linux/bpf.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index 8ab4d8184b9d..874af0186fe8 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -5371,7 +5371,7 @@ union bpf_attr {
+>   *             Currently, the **flags** must be 0. Currently, nr_loops i=
+s
+>   *             limited to 1 << 23 (~8 million) loops.
+>   *
+> - *             long (\*callback_fn)(u32 index, void \*ctx);
+> + *             long (\*callback_fn)(u64 index, void \*ctx);
+
+Good catch.
+Please update other places too:
+static int set_loop_callback_state(struct bpf_verifier_env *env,
+                                   struct bpf_func_state *caller,
+                                   struct bpf_func_state *callee,
+                                   int insn_idx)
+{
+        /* bpf_loop(u32 nr_loops, void *callback_fn, void *callback_ctx,
+         *          u64 flags);
+         * callback_fn(u32 index, void *callback_ctx);
+         */
+        callee->regs[BPF_REG_1].type =3D SCALAR_VALUE;
+..
+
+tools/include/uapi/linux/bpf.h
+
+pw-bot: cr
 
