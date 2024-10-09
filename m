@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-356170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1AB995D87
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4283995D8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B3E2898DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 870E628A061
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DBD51C4A;
-	Wed,  9 Oct 2024 01:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Wrw3pHZL"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677D684D02;
+	Wed,  9 Oct 2024 01:57:14 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB127DA67;
-	Wed,  9 Oct 2024 01:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9924C76035;
+	Wed,  9 Oct 2024 01:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728439027; cv=none; b=W0oM12GyhNVvWgWOHCpn+xJqqvA/iuOL8JmL6w3fM4IzvE8C6DCwVm5xrUO28kjPZsLqXdkJjuB8fZKfPU3MZ0dTIuFYND2eq9la47eoB8oK9rTQGFCCtJzP33GfxmshlxYuLQiCongdwIynHlX3o++ykHsPJ1gevLUT2cpr+EE=
+	t=1728439034; cv=none; b=c279D58UAQBhlZv08tm/K8KRi3xq2mtxfM6kQ8ibAEVbrELqJyoIwNOc9g1FMcUWXGInWi1AWzUtxQmUTN9I20db4wkD0V/lh/1jMZk9HFzpqpdguCqvDs+6Lk+mW35SGlnhO2+4hWlt/nV1GraQ0IEfKIwWY96nkgsW1XPoyvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728439027; c=relaxed/simple;
-	bh=0qIf2Ra8Gj4K+mN2QHbUYTSzc881tgucRsibpFVJjHY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=t3tWO0GCjYcRayU9CER3cM3WaRBUQEKpLabO5HG/QrxRghhlY6Efnyou8sO+m50tGN1xZIXeiTfFLIz4EctIyDfXl4HkipAJKXBgPMO96j6xWNfMFlQQL5P7NhmTLi5e2glx5Jkjxg3/eiqA7r528ZlNDfFZX6mN/UNTC7l3ijA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Wrw3pHZL; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1728439024;
-	bh=0qIf2Ra8Gj4K+mN2QHbUYTSzc881tgucRsibpFVJjHY=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=Wrw3pHZLxa/6sZT06tIslv8qoZa2AOEiAy/CO0Gb9yi+rdClr/wzQLXlwxrOqtBNm
-	 dZpM+LB507nlDwPl9LoZbUbJIWw173I39js4qAL4PoXHnWwc7YfaU01iG4xEK1JF3P
-	 extxiTWqNB2+PPi5Ckol25bWJxrVYY228entsvxPJcoKhLg4vklzGF03ZYA1YnsP5E
-	 QGBm1hJzGz4YQe4Jt/yHCKDi5bab6KiOJs69EAeqL5i4xDGM3bwosAzdc8DGhRfvbT
-	 pOHpTaepqqiHiEVcFlIOXLqpt+DuIL36jBDR5O7oR4iATKCexfg5lFMA+yqJFpNv3E
-	 UR7UsRU5k1AXg==
-Received: from [192.168.68.112] (ppp118-210-190-105.adl-adc-lon-bras34.tpg.internode.on.net [118.210.190.105])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 58DCD6497F;
-	Wed,  9 Oct 2024 09:57:02 +0800 (AWST)
-Message-ID: <38c72aa9f4cbd3d4a6dc9f8baac20e9bd87db644.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v7 5/7] gpio: aspeed: Create llops to handle hardware
- access
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org, 
- brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- joel@jms.id.au, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com,
- Peter.Yin@quantatw.com,  Jay_Zhang@wiwynn.com
-Date: Wed, 09 Oct 2024 12:27:01 +1030
-In-Reply-To: <20241008081450.1490955-6-billy_tsai@aspeedtech.com>
-References: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
-	 <20241008081450.1490955-6-billy_tsai@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1728439034; c=relaxed/simple;
+	bh=mbw00cvuCGQSvmtJ08Yq0zuVY0bhWYpIq5OWoanYgyc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bEpxFINZT91Ep75h9eqLIkWUKAQMp2IB0ZnoEUGdPM1rzYTalrs0M6AQsaxXZsHmHaavXaa4Q3kHPd7++y//pkQgFDYa7thQcma9izxMidtJd4mkMTHc7xQP2frzzkOSGozihOh5mRCEbCHKaHd1CCX5A2y39vufHrdhv1Q1qzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syLwr-000000003LB-09eE;
+	Wed, 09 Oct 2024 01:57:09 +0000
+Date: Wed, 9 Oct 2024 02:57:03 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: phy: populate host_interfaces when attaching
+ PHY
+Message-ID: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 2024-10-08 at 16:14 +0800, Billy Tsai wrote:
-> Add low-level operations (llops) to abstract the register access for GPIO
-> registers and the coprocessor request/release. With this abstraction
-> layer, the driver can separate the hardware and software logic, making it
-> easier to extend the driver to support different hardware register
-> layouts.
->=20
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+Use bitmask of interfaces supported by the MAC for the PHY to choose
+from if the declared interface mode is among those using a single pair
+of SerDes lanes.
+This will allow 2500Base-T PHYs to switch to SGMII on most hosts, which
+results in half-duplex being supported in case the MAC supports that.
+Without this change, 2500Base-T PHYs will always operate in 2500Base-X
+mode with rate-matching, which is not only wasteful in terms of energy
+consumption, but also limits the supported interface modes to
+full-duplex only.
 
-Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/phy/phylink.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I've applied the series to here and booted it on a AST2600. I did some
-brief testing with a logic analyzer and gpio{get,set} and didn't see
-anything surprising, so:
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 4309317de3d1..5d043c47a727 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -2111,6 +2111,13 @@ int phylink_fwnode_phy_connect(struct phylink *pl,
+ 		pl->link_config.interface = pl->link_interface;
+ 	}
+ 
++	/* Assume SerDes interface modes share the same lanes and allow
++	 * the PHY to switch between the
++	 */
++	if (test_bit(pl->link_interface, phylink_sfp_interfaces))
++		phy_interface_and(phy_dev->host_interfaces, phylink_sfp_interfaces,
++				  pl->config->supported_interfaces);
++
+ 	if (pl->config->mac_requires_rxc)
+ 		flags |= PHY_F_RXC_ALWAYS_ON;
+ 
+-- 
+2.47.0
 
-Tested-by: Andrew Jeffery <andrew@codeconstruct.com.au> # AST2600
-
-Thanks Billy!
-
-Andrew
 
