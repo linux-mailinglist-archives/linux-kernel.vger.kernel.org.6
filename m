@@ -1,52 +1,54 @@
-Return-Path: <linux-kernel+bounces-356818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC81996725
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD851996716
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D23E28A011
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE72E1C21908
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D11191F89;
-	Wed,  9 Oct 2024 10:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC3518E76F;
+	Wed,  9 Oct 2024 10:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="og5cD5ou"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDrtm9jP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CB118FDDC;
-	Wed,  9 Oct 2024 10:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0B318C939
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728469422; cv=none; b=UwQk3CfLZf5y547CsECHn7HR4PctkJBOqGm6sfu4D8Nh46ibVfLIFP/1xwYyyG8ILf4aawOxnJzHB+UzqK/mTJluxFZdPivA8/URGXS9ufckBwzKHJ6kVRYgLk6ceMaEABKFO7B4/rHdWOaIfAekjED7AMVeg3abexslWsa9m3A=
+	t=1728469418; cv=none; b=ulpBDGPZw3Xj2QgMxf3QYw/oL4V4+qHrv4WE+1CHJdTALe6PdOuAwE1kYPrfcsPnif9EvZjukGkxLyNKQYxq9T+Y4tYlkL1YwEOqiMx/TjJjZnqp3gl8z/kMqRY80BiQlyJgSttFTNrTMaL7si2rqj8HixEz4yYHVZRGz9/jaKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728469422; c=relaxed/simple;
-	bh=Olp5EwdvvkcdWx4Um1FowhF/GtYV24TawE4qMAcHWmY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tbb6sPz6Yc0pXqL6JW9N4c6nHUjVxiRZYmxs2rXtdPafX3XuyTQ36WrWGlbneF/N7Eg4DeZqSDibzKMS8N5HJe/v0GlqRBGy1QfS9y93+MjCMDAso3lBGU9t8LW0qrz2/0hT1rc0fgDFktDRGxwBXJHI9cLPdPEnW2U1RSk6yxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=og5cD5ou; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C1A3EC0005;
-	Wed,  9 Oct 2024 10:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728469413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iESo5G7yB8Huxqo8RT5l/9twIQ+BPxWkXsgQj+Afnmg=;
-	b=og5cD5ouK7G/7e2Jcykmwe5oCh1x150S4iqYjEyXVZ+xFiGWfdjy8qAalE5708/HWta/as
-	9CjAaZ2MuI+A2sEfaJgT9x98Dwocb5KwtmFGN2gmus1k5Bz8LK/R5s9NRRaSqe4On4ZT8k
-	WdWfzZbCg5xIjxI76rY7is/E7LIXki/YO5r47NYRTD/rC4i7q3tDq/QEnrfKIl0g8+yGE3
-	nnanSRuNYARm4rZRCtSCF2y7UazhPyZpsaG28mlUwbWckcGXPxQb3VTE/jOqI0fmXsKeIH
-	X/f1qiPpzhkAuMywOaF6x7b9JjPYE6fXTXEZjwdFlXJy+rzAgyneg/p/6/rFPA==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 09 Oct 2024 12:23:32 +0200
-Subject: [PATCH v2 6/6] i2c: nomadik: support >=1MHz speed modes
+	s=arc-20240116; t=1728469418; c=relaxed/simple;
+	bh=JFcq7Ees0f1A9XHuYLwHZ7ylHhZ60RDjWM9BLLmHbiA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Yqnmj+w2pzaZ0qvSEQHAiTAIcGdXmsCfrsfJ212O684IpQsmFn/iUeylqtq0hrDEdePzCDqrMFd6tfyOGwYsmlR13xL+zzoRgGJ5fdAYqplJ/F80P7tdsToKocwi737z9ygLFeIFC1fgN92u0DQ/FsyCZWuN4+C9ddKTheF001k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDrtm9jP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF3EC4CECC;
+	Wed,  9 Oct 2024 10:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728469418;
+	bh=JFcq7Ees0f1A9XHuYLwHZ7ylHhZ60RDjWM9BLLmHbiA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=vDrtm9jP2OJhm+Ta7mB0SpvJNHHh91XusZyAMoFrw2wFdmjKk0r1FL5qEAxTWYr7+
+	 lpKEAWzF0sndJmw3gMdKRMpC7pC+HQt/C3WUaUF5FruOxKTxXyl6ejWd/ayPziKdVf
+	 wLJxoeViQhQhoNa2Z1KrukEHsQ+y5mHTI23shi7fzofYMLoNn+6LpUEsVbEP6OBdWT
+	 3oZ7bm5IWZcSEedesUt5SS/HJLAlblmDFycDdfQbYgXbK76uKZs01eRfOryc8sBbQ4
+	 kaTFY9jflPwxeSeSkympXhzH0fg9rxd7r27K/aypqwWXgWAlzgnBBmGsU+i2tCf6Vz
+	 tRrW4LvDXQiwg==
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20240924-mfd-bd96801-maple-v1-1-04fe33e1f009@kernel.org>
+References: <20240924-mfd-bd96801-maple-v1-1-04fe33e1f009@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: bd96801: Use maple tree register cache
+Message-Id: <172846941709.482065.1633992845676529368.b4-ty@kernel.org>
+Date: Wed, 09 Oct 2024 11:23:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,122 +57,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241009-mbly-i2c-v2-6-ac9230a8dac5@bootlin.com>
-References: <20241009-mbly-i2c-v2-0-ac9230a8dac5@bootlin.com>
-In-Reply-To: <20241009-mbly-i2c-v2-0-ac9230a8dac5@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: theo.lebrun@bootlin.com
+X-Mailer: b4 0.13.0
 
- - BRCR value must go into the BRCR1 field when in high-speed mode.
-   It goes into BRCR2 otherwise.
+On Tue, 24 Sep 2024 18:22:04 +0200, Mark Brown wrote:
+> The maple tree register cache uses a more modern data structure than the
+> rbtree cache and makes implementation decisions more suited to modern
+> hardware, switch the bd96801 driver to it to take advantage of this newer
+> code. No functional changes.
+> 
+> 
 
- - Remove fallback to standard mode if priv->sm > I2C_FREQ_MODE_FAST.
+Applied, thanks!
 
- - Set SM properly in probe; previously it only checked STANDARD versus
-   FAST. Now we set STANDARD, FAST, FAST_PLUS or HIGH_SPEED.
+[1/1] mfd: bd96801: Use maple tree register cache
+      commit: f8e7a05154d0fe3e977e1cbfdc43657cebd560ef
 
- - Remove all comment sections saying we only support low-speeds.
-
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- drivers/i2c/busses/i2c-nomadik.c | 40 ++++++++++++++++------------------------
- 1 file changed, 16 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
-index b2b9da0b32ed903c080f4bdc427ea0dd7b031b49..0c1ea6c6d75e16b0336debe92829f33c512aaea0 100644
---- a/drivers/i2c/busses/i2c-nomadik.c
-+++ b/drivers/i2c/busses/i2c-nomadik.c
-@@ -397,7 +397,7 @@ static u32 load_i2c_mcr_reg(struct nmk_i2c_dev *priv, u16 flags)
-  */
- static void setup_i2c_controller(struct nmk_i2c_dev *priv)
- {
--	u32 brcr1, brcr2;
-+	u32 brcr;
- 	u32 i2c_clk, div;
- 	u32 ns;
- 	u16 slsu;
-@@ -444,7 +444,7 @@ static void setup_i2c_controller(struct nmk_i2c_dev *priv)
- 	/*
- 	 * The spec says, in case of std. mode the divider is
- 	 * 2 whereas it is 3 for fast and fastplus mode of
--	 * operation. TODO - high speed support.
-+	 * operation.
- 	 */
- 	div = (priv->clk_freq > I2C_MAX_STANDARD_MODE_FREQ) ? 3 : 2;
- 
-@@ -452,33 +452,22 @@ static void setup_i2c_controller(struct nmk_i2c_dev *priv)
- 	 * generate the mask for baud rate counters. The controller
- 	 * has two baud rate counters. One is used for High speed
- 	 * operation, and the other is for std, fast mode, fast mode
--	 * plus operation. Currently we do not supprt high speed mode
--	 * so set brcr1 to 0.
-+	 * plus operation.
- 	 *
- 	 * BRCR is a clock divider amount. Pick highest value that
- 	 * leads to rate strictly below target.
- 	 */
--	brcr1 = FIELD_PREP(I2C_BRCR_BRCNT1, 0);
--	brcr2 = FIELD_PREP(I2C_BRCR_BRCNT2, i2c_clk / (priv->clk_freq * div) + 1);
-+	brcr = i2c_clk / (priv->clk_freq * div) + 1;
-+
-+	if (priv->sm == I2C_FREQ_MODE_HIGH_SPEED)
-+		brcr = FIELD_PREP(I2C_BRCR_BRCNT1, brcr);
-+	else
-+		brcr = FIELD_PREP(I2C_BRCR_BRCNT2, brcr);
- 
- 	/* set the baud rate counter register */
--	writel((brcr1 | brcr2), priv->virtbase + I2C_BRCR);
-+	writel(brcr, priv->virtbase + I2C_BRCR);
- 
--	/*
--	 * set the speed mode. Currently we support
--	 * only standard and fast mode of operation
--	 * TODO - support for fast mode plus (up to 1Mb/s)
--	 * and high speed (up to 3.4 Mb/s)
--	 */
--	if (priv->sm > I2C_FREQ_MODE_FAST) {
--		dev_err(&priv->adev->dev,
--			"do not support this mode defaulting to std. mode\n");
--		brcr2 = FIELD_PREP(I2C_BRCR_BRCNT2,
--				   i2c_clk / (I2C_MAX_STANDARD_MODE_FREQ * 2));
--		writel((brcr1 | brcr2), priv->virtbase + I2C_BRCR);
--		writel(FIELD_PREP(I2C_CR_SM, I2C_FREQ_MODE_STANDARD),
--		       priv->virtbase + I2C_CR);
--	}
-+	/* set the speed mode */
- 	writel(FIELD_PREP(I2C_CR_SM, priv->sm), priv->virtbase + I2C_CR);
- 
- 	/* set the Tx and Rx FIFO threshold */
-@@ -1019,11 +1008,14 @@ static void nmk_i2c_of_probe(struct device_node *np,
- 	if (of_property_read_u32(np, "clock-frequency", &priv->clk_freq))
- 		priv->clk_freq = I2C_MAX_STANDARD_MODE_FREQ;
- 
--	/* This driver only supports 'standard' and 'fast' modes of operation. */
- 	if (priv->clk_freq <= I2C_MAX_STANDARD_MODE_FREQ)
- 		priv->sm = I2C_FREQ_MODE_STANDARD;
--	else
-+	else if (priv->clk_freq <= I2C_MAX_FAST_MODE_FREQ)
- 		priv->sm = I2C_FREQ_MODE_FAST;
-+	else if (priv->clk_freq <= I2C_MAX_FAST_MODE_PLUS_FREQ)
-+		priv->sm = I2C_FREQ_MODE_FAST_PLUS;
-+	else
-+		priv->sm = I2C_FREQ_MODE_HIGH_SPEED;
- 	priv->tft = 1; /* Tx FIFO threshold */
- 	priv->rft = 8; /* Rx FIFO threshold */
- 
-
--- 
-2.46.2
+--
+Lee Jones [李琼斯]
 
 
