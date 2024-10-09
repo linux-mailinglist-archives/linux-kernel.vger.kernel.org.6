@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-356222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC1F995E2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:32:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA60B995E30
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A366C1C21387
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50514B23840
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234F1145B14;
-	Wed,  9 Oct 2024 03:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ayXIWZJI"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6F7145B2C;
+	Wed,  9 Oct 2024 03:33:22 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D586D2629D;
-	Wed,  9 Oct 2024 03:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB76D27466;
+	Wed,  9 Oct 2024 03:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728444726; cv=none; b=MFJRWpz8RxEzZAVsEZR8XYSg0E7Lnb9Yp1VcWtkg0LZvdtDnZES7vmY0fuSKwo9aAe1uzt2aqaB2314sT2t53KOmsHJLx2Tt9m16uYpXoqh2Y0NgnPFbZp4Ofy8WlF745xeSFk7VY4ra6xQ497MAHImS3TMjAt99zPZnpUpdFBA=
+	t=1728444802; cv=none; b=Tb47o2m1etiG6ckIwX1wzn3nVj/uzMo1uu1uULIbMkTpeO6xK3XaTwD8ERIgjc2LXPNi2nbkO5dEbBLuetM0229WD9cb+Se9aFqjGYhQXLu28G20s9O2qSTDgmFvk2XYdWlCnYpr3WmdGIlhUG396PJA/CxcCF2sksQ9Zi0kHao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728444726; c=relaxed/simple;
-	bh=UKvWrcN6f43QWH0vx0BHKBG4bIzgzz/qaJLB9NnLBLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aW0fcLfHgoq9V+lcIq5pO18Chi6KtZSYlw12YTPiZb2fGCboHXp0VAhwyvvrkTQK5aXeixAboo6VsRswFNlGQbn9fmDW//jU7WxRpHIXive+35PcQ+/BzPiHMaqCzATN1tIqwdPwUQTOzYRmLeSdDDGunRXpSVIvL4JSBGuje0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ayXIWZJI; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728444721; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=jJSUlb11QHSKUmhauCeDGT4NZMMv9jLK3BJgLEkB/1Q=;
-	b=ayXIWZJILlZk3S+yBUjLUTsz9QMxZ0MRm8wNhjq2goavG0P7taJyC1fJSh5O83hKfgFAT8HmjJGUlAoaNeIqr5btKFjhQ23fZK5h5JhBrOkQHwoshKMGwBXz5WiM3bvfd16osJgnDCpCwpJpnlzRh8bIAuodLKGVqhfEt/nKrfc=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGhJfuR_1728444719)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Oct 2024 11:32:00 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>
-Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
-	Chao Yu <chao@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v2 2/2] erofs: use get_tree_bdev_flags() to avoid misleading messages
-Date: Wed,  9 Oct 2024 11:31:51 +0800
-Message-ID: <20241009033151.2334888-2-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
-References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728444802; c=relaxed/simple;
+	bh=8CjK6FSEDY2dFSsO9YF3Kx3tKU6va4cUgPhiLZrBq2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cXTFLHJKyWa72lANz/zTRs2qtXF+H936VrdD1mN39Li98Yz7HJPrjgi8K+VjaCihHCcJyrOwv41UqjjZ/DQ1Arvs8p2vjSKgAOl9TmW0TNKlV54mjT1/aEUo0b7RUejkp0Cn0jSHrmtyrDpvdQo1dsH8uVw64uACLzabu2ivxMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XNdkz3rj2z1ymtl;
+	Wed,  9 Oct 2024 11:33:15 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 283D21A0188;
+	Wed,  9 Oct 2024 11:33:11 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 9 Oct 2024 11:33:10 +0800
+Message-ID: <e420a11f-1c07-4a3f-85b4-b7679b4e50ce@huawei.com>
+Date: Wed, 9 Oct 2024 11:33:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 1/2] page_pool: fix timing for checking and
+ disabling napi_local
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <davem@davemloft.net>, <pabeni@redhat.com>, <liuyonglong@huawei.com>,
+	<fanghaiqing@huawei.com>, <zhangkun09@huawei.com>, Alexander Lobakin
+	<aleksander.lobakin@intel.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Eric Dumazet
+	<edumazet@google.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-2-linyunsheng@huawei.com>
+ <20241008174022.0b6d92b9@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <20241008174022.0b6d92b9@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Users can pass in an arbitrary source path for the proper type of
-a mount then without "Can't lookup blockdev" error message.
+On 2024/10/9 8:40, Jakub Kicinski wrote:
+> On Wed, 25 Sep 2024 15:57:06 +0800 Yunsheng Lin wrote:
+>> Use rcu mechanism to avoid the above concurrent access problem.
+>>
+>> Note, the above was found during code reviewing on how to fix
+>> the problem in [1].
+> 
+> The driver must make sure NAPI cannot be running while
+> page_pool_destroy() is called. There's even an WARN()
+> checking this.. if you know what to look for.
 
-Reported-by: Allison Karlitskaya <allison.karlitskaya@redhat.com>
-Closes: https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-changes since v1:
- - use new get_tree_bdev_flags().
+I am guessing you are referring to the WARN() in
+page_pool_disable_direct_recycling(), right?
+If yes, I am aware of that WARN().
 
- fs/erofs/super.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The problem is that at least from the skb_defer_free_flush()
+case, it is not tied to any specific napi instance. When
+skb_attempt_defer_free() calls kick_defer_list_purge() to
+trigger running of net_rx_action(), skb_defer_free_flush() can
+be called without tieing to any specific napi instance as my
+understanding:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/net/core/dev.c#L6719
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 666873f745da..b89836a8760d 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -705,7 +705,9 @@ static int erofs_fc_get_tree(struct fs_context *fc)
- 	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
- 		return get_tree_nodev(fc, erofs_fc_fill_super);
- 
--	ret = get_tree_bdev(fc, erofs_fc_fill_super);
-+	ret = get_tree_bdev_flags(fc, erofs_fc_fill_super,
-+		IS_ENABLED(CONFIG_EROFS_FS_BACKED_BY_FILE) ?
-+			GET_TREE_BDEV_QUIET_LOOKUP : 0);
- #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
- 	if (ret == -ENOTBLK) {
- 		if (!fc->source)
--- 
-2.43.5
+Or I am missing something obvious here? I even used below diff to
+verify that and it did trigger without any napi in the sd->poll_list:
 
+@@ -6313,6 +6313,9 @@ static void skb_defer_free_flush(struct softnet_data *sd)
+        spin_unlock(&sd->defer_lock);
+
+        while (skb != NULL) {
++               if (list_empty(&sd->poll_list))
++                       pr_err("defer freeing: %px with empty napi list\n", skb);
++
+                next = skb->next;
+                napi_consume_skb(skb, 1);
+                skb = next;
+
+
+> 
+> 
 
