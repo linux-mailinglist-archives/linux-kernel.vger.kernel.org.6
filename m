@@ -1,145 +1,201 @@
-Return-Path: <linux-kernel+bounces-357418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D3E99710D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75917997122
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07731C21A9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:20:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990851C20441
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B741D61B5;
-	Wed,  9 Oct 2024 16:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3D01E32AD;
+	Wed,  9 Oct 2024 16:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMqRLFBH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q8mV3SKL"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3CD1D07A3;
-	Wed,  9 Oct 2024 16:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606DB1E909A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489892; cv=none; b=crseXkJfqflkBqwZfiyT78U7lEeR1jInwaHxgGB6n/0PZMayNhBxvsBkJEvLCaNi/40ebjVZcSZII+v+7WOBfr34HedK5Kp4X5O0aqXw+RAZQ62970pq73ebJkux+xvMTBncV/H0T2ltc/0shgKlm5deJ4Z/HMeMoHl2VZ5LuUk=
+	t=1728490155; cv=none; b=RFFswpAdx+sg6W5Wg5fgECpTpZwWLKCJKFpISzpYVA7aTmeYKUscQeQQcvFDHaPTA3LFimfWkVlU5K9VROJO2GZs1lyEYr51tJGMsN0goTpQMpufeB1Ug7g1U4Da7AFDWwDDeW83EH2wAbT+dyRK1tqkpY7nFEyfw47MPRBt8ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489892; c=relaxed/simple;
-	bh=S7VOLr15MA5IYpxNnw6xgbwUOkXwGf/+Y/OeUbY9oZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISKSZqQ8b4cSoAazUo5ksswysYHY3EpPD1CSQPPNw7UkM/qB/R0RHsJ0OFOnx5ZjCSHVXHNLwuXliyYf3M7acLXoju5HhAh7Jqm2ASxVCeR+Crwzw1SvMwMK0CMTBcSJKcXuhmB0WctUgV2XFWKoIwwt0VcQebjG7c3ZaUdV+4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMqRLFBH; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728489891; x=1760025891;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S7VOLr15MA5IYpxNnw6xgbwUOkXwGf/+Y/OeUbY9oZk=;
-  b=mMqRLFBHn6HXxrsLLJp7yCpLQri273Wd9PIqBqFouek5KW9lJnGqIU8z
-   ilv54wxa3U21A14s97BuQNN8bmyYUpcV2m8UxjnkBJFecoNx+WCLubozF
-   JMAMnYOUXbbNwY55FqXpHEmnfpY7jLidc+hKhpsKlh70qQGnl3ziBPgmN
-   AtWh6UgHbYEMaGmzs0kTVI8mDlTdPntDAnhwVAFdceZgbzgahSUZEvqJj
-   R6xYOpYfeVf1tN9YMYCVew+d4l1nbVRHHpLL0HtYGdIvCsKicd3ZUIddC
-   IBxp07OQUQVIwPLN/p9w3j5lTHW1/AkIfj2fNjpMm11hXKqF9LJooVROU
-   g==;
-X-CSE-ConnectionGUID: MFREpKG5Tfu6oO68frH4vg==
-X-CSE-MsgGUID: Azlxt9QbTq+hp6EzsimnqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39163345"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="39163345"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:04:50 -0700
-X-CSE-ConnectionGUID: sdQLp+9IQuq57QIp38SDtA==
-X-CSE-MsgGUID: N99/WQr4SpWFntETzZXecw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="80805323"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Oct 2024 09:04:45 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 0BDAB50F; Wed, 09 Oct 2024 19:04:43 +0300 (EEST)
-Date: Wed, 9 Oct 2024 19:04:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Sterba <dsterba@suse.cz>
-Cc: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v4 04/28] range: Add range_overlaps()
-Message-ID: <Zwapm97gV0y7Up9H@black.fi.intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-4-c261ee6eeded@intel.com>
- <20241008161032.GB1609@twin.jikos.cz>
- <ZwaW9gXuh_JzqRfh@black.fi.intel.com>
- <20241009153641.GK1609@suse.cz>
+	s=arc-20240116; t=1728490155; c=relaxed/simple;
+	bh=fwh5LXxdisltEp+RjBo75HomKfALPkDu+Kt+4I1wDxo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qeqA8y+0S89XSMYICkwx21eZaflMa7PRmrGBlhNSQMfvsjsC4WDHXT2n+dgMzPw+imsTFfFe6uvS9DYEqrmq71kUe1ARE6jECJqqwgMpeuuEV93VwQKEMkaaq3zf90DYBGyZJ9AHC+dbGhVku6W+Qg7qG4zpyO+DrtE8nt2i7Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q8mV3SKL; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e26046ed465so10046461276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:09:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728490153; x=1729094953; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfTuALibAeUjzZyHnaTNb0n9bb4hHeONDW14sDZ6lQE=;
+        b=Q8mV3SKLOa7OAr/a60BanxS+wLxXdBCbZU7NDBXrIHyCcevM633xUppNvPqGgKRJ1N
+         ADt/zGyT3CvYaMMfN2pHZAZekLMd+PrUOzr2u/ozrpYSS793d1Hyy+CwKJ+GnW2R3q3f
+         z+KjPhzsUxJBc16M/t5E9WvHMDrKrWZBFdlGqoESAgoE5wQFEG+Eziyqa9rrTmugpulx
+         OmfEDDMSo9BK0MBfTQKlU8oxR20SdGXgmN1IfK8fxqN2bmSQE6vCDWreHOnyPp2xPiKm
+         De7Q+/GacVDrER7foYehJxbJz3JvDKreszeq0TjPnxKOnUmEqkQCgGsNczTWEJELMkvP
+         /++w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728490153; x=1729094953;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfTuALibAeUjzZyHnaTNb0n9bb4hHeONDW14sDZ6lQE=;
+        b=Fbvld5fQU9tF3WdmAoeX4G3gMQIJy4iA+GziKoAHngyOUTEcd2SmhyNh0/GYr2QG6q
+         flPeJZf4UhKnoL5UUNhhQU+bib/xLJZzsJDQftUA2iK9Ov9+NOR56QrMlamEiJSvF87S
+         5T/wnxw9M1X8okM66PJXHF/FpPETf0dmlUFOqGmPGEsw5vyg1ltImLR1mGybU0jpjVo6
+         +Q/WBYlGjQuVB6JDrCdY2DgHDJGQmBPX+vdaA4z76wLg28A6rFZogrzMJdminwfBv8Pq
+         b5MSy1o9aYphs2bsJ7RJ3U9LSbBGixyZyE1/U9AOLelIN9b8L8bk5LOkaQV5CEcTRCTJ
+         l3ew==
+X-Gm-Message-State: AOJu0YwCWy02N+gnKhwIoqP1jV0bvyDSitxbV84TtOweY8MFHuZI+Im+
+	xFbvdUB12DEA6dczdgFsqHREjK8TBjbUC47NTWPblguUwdljcM6JEIDf5iRmYfRTus3/GvkVMVM
+	kkEGifr7ViNEnei5Jo3JDhTZtOr306rP6Q8GMWCGW5x7DcsBFR3GXMmpwhIY6B5zJxbAUpnkGFc
+	n3i3X6PxNMNwiSL52Nspp133UfLLWkDQ==
+X-Google-Smtp-Source: AGHT+IGSwzDDwa9vfi8McEdFMoR0PLLZMRY7iqvUgt19TSvNHlS6capqTKRHK6X82aIm2RwCa+IhAMD6
+X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
+ (user=ardb job=sendgmr) by 2002:a25:df09:0:b0:e28:fc1c:eb4d with SMTP id
+ 3f1490d57ef6-e28fe32b721mr58962276.1.1728490153207; Wed, 09 Oct 2024 09:09:13
+ -0700 (PDT)
+Date: Wed,  9 Oct 2024 18:04:43 +0200
+In-Reply-To: <20241009160438.3884381-7-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009153641.GK1609@suse.cz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+References: <20241009160438.3884381-7-ardb+git@google.com>
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4449; i=ardb@kernel.org;
+ h=from:subject; bh=AQt8zs3Emx4CUUaeR6x58jNDJibSKr6ifPlMsbVG+cQ=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ1t5ZwCb7dpkU8nOf9OFdq2+mPT7Qerpm6yWpi6sTF9c
+ YQ2O+P9jlIWBjEOBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjCRHfMZ/vA9beh7s984n3lF
+ nbt8C5vrhH0L+bUzNWZc2rptzvfbi9Yz/C/2LdZQ9yvoyEoxXnp71/ubzTvKvmpbXurczZbm/Dj kCAcA
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+Message-ID: <20241009160438.3884381-11-ardb+git@google.com>
+Subject: [PATCH v3 4/5] x86/xen: Avoid relocatable quantities in Xen ELF notes
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>, Jason Andryuk <jason.andryuk@amd.com>, 
+	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, x86@kernel.org, 
+	xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 09, 2024 at 05:36:42PM +0200, David Sterba wrote:
-> On Wed, Oct 09, 2024 at 05:45:10PM +0300, Andy Shevchenko wrote:
-> > On Tue, Oct 08, 2024 at 06:10:32PM +0200, David Sterba wrote:
-> > > On Mon, Oct 07, 2024 at 06:16:10PM -0500, Ira Weiny wrote:
+From: Ard Biesheuvel <ardb@kernel.org>
 
-...
+Xen puts virtual and physical addresses into ELF notes that are treated
+by the linker as relocatable by default. Doing so is not only pointless,
+given that the ELF notes are only intended for consumption by Xen before
+the kernel boots. It is also a KASLR leak, given that the kernel's ELF
+notes are exposed via the world readable /sys/kernel/notes.
 
-> > > > +static inline bool range_overlaps(struct range *r1, struct range *r2)
-> > > 
-> > > I've noticed only now, you can constify the arguments, but this applise
-> > > to other range_* functions so that can be done later in one go.
-> > 
-> > Frankly you may add the same to each new API being added to the file and
-> > the "one go" will never happen.
-> 
-> Yeah, but it's a minor issue for a 28 patchset, I don't know if there
-> are some other major things still to do so that a v5 is expected.
+So emit these constants in a way that prevents the linker from marking
+them as relocatable. This involves place-relative relocations (which
+subtract their own virtual address from the symbol value) and linker
+provided absolute symbols that add the address of the place to the
+desired value.
 
-At least seems printf() changes have to be amended, so I think v5 is
-warranted anyway.
+Tested-by: Jason Andryuk <jason.andryuk@amd.com>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/kernel/vmlinux.lds.S | 19 +++++++++++++++++++
+ arch/x86/platform/pvh/head.S  |  6 +++---
+ arch/x86/tools/relocs.c       |  1 +
+ arch/x86/xen/xen-head.S       |  6 ++++--
+ 4 files changed, 27 insertions(+), 5 deletions(-)
 
-> If anybody is interested, reviewing APIs and interfaces with focus on
-> some data structure and const is relatively easy, compile test is
-> typically enough.
-
-Except the cases where a const pointer has to be passed thru non-const
-(or integer) field in a data structure. Tons of the existing examples is
-ID tables that wanted to have kernel_ulong_t instead of const void * in
-driver data field.
-
-> The hard part is to find the missing ones. There's no
-> compiler aid thad I'd know of (-Wsuggest-attribute=const is not for
-> parameters), so it's been reading a file top-down for me.
-
-Yeah...
-
-> > So, I support your first part with
-> > constifying, but I think it would be rather done now to start that "one
-> > go" to happen.
-> 
-> Agreed, one patch on top is probably the least intrusive way.
-
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 6726be89b7a6..495f88c9d9f8 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -527,3 +527,22 @@ INIT_PER_CPU(irq_stack_backing_store);
+ #endif
+ 
+ #endif /* CONFIG_X86_64 */
++
++/*
++ * The symbols below are referenced using relative relocations in the
++ * respective ELF notes. This produces build time constants that the
++ * linker will never mark as relocatable. (Using just ABSOLUTE() is not
++ * sufficient for that).
++ */
++#ifdef CONFIG_XEN
++#ifdef CONFIG_XEN_PV
++xen_elfnote_entry_value =
++	ABSOLUTE(xen_elfnote_entry) + ABSOLUTE(startup_xen);
++#endif
++xen_elfnote_hypercall_page_value =
++	ABSOLUTE(xen_elfnote_hypercall_page) + ABSOLUTE(hypercall_page);
++#endif
++#ifdef CONFIG_PVH
++xen_elfnote_phys32_entry_value =
++	ABSOLUTE(xen_elfnote_phys32_entry) + ABSOLUTE(pvh_start_xen - LOAD_OFFSET);
++#endif
+diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
+index 7ca51a4da217..e6f39d77f0b4 100644
+--- a/arch/x86/platform/pvh/head.S
++++ b/arch/x86/platform/pvh/head.S
+@@ -52,7 +52,7 @@
+ #define PVH_CS_SEL		(PVH_GDT_ENTRY_CS * 8)
+ #define PVH_DS_SEL		(PVH_GDT_ENTRY_DS * 8)
+ 
+-SYM_CODE_START_LOCAL(pvh_start_xen)
++SYM_CODE_START(pvh_start_xen)
+ 	UNWIND_HINT_END_OF_STACK
+ 	cld
+ 
+@@ -300,5 +300,5 @@ SYM_DATA_END(pvh_level2_kernel_pgt)
+ 		     .long KERNEL_IMAGE_SIZE - 1)
+ #endif
+ 
+-	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_ENTRY,
+-	             _ASM_PTR (pvh_start_xen - __START_KERNEL_map))
++	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_ENTRY, .global xen_elfnote_phys32_entry;
++		xen_elfnote_phys32_entry: _ASM_PTR xen_elfnote_phys32_entry_value - .)
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index c101bed61940..3ede19ca8432 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -56,6 +56,7 @@ static const char * const	sym_regex_kernel[S_NSYMTYPES] = {
+ 	[S_ABS] =
+ 	"^(xen_irq_disable_direct_reloc$|"
+ 	"xen_save_fl_direct_reloc$|"
++	"xen_elfnote_.+_offset$|"
+ 	"VDSO|"
+ 	"__kcfi_typeid_|"
+ 	"__crc_)",
+diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
+index 758bcd47b72d..7f6c69dbb816 100644
+--- a/arch/x86/xen/xen-head.S
++++ b/arch/x86/xen/xen-head.S
+@@ -94,7 +94,8 @@ SYM_CODE_END(xen_cpu_bringup_again)
+ 	ELFNOTE(Xen, XEN_ELFNOTE_VIRT_BASE,      _ASM_PTR __START_KERNEL_map)
+ 	/* Map the p2m table to a 512GB-aligned user address. */
+ 	ELFNOTE(Xen, XEN_ELFNOTE_INIT_P2M,       .quad (PUD_SIZE * PTRS_PER_PUD))
+-	ELFNOTE(Xen, XEN_ELFNOTE_ENTRY,          _ASM_PTR startup_xen)
++	ELFNOTE(Xen, XEN_ELFNOTE_ENTRY,          .globl xen_elfnote_entry;
++		xen_elfnote_entry: _ASM_PTR xen_elfnote_entry_value - .)
+ 	ELFNOTE(Xen, XEN_ELFNOTE_FEATURES,       .ascii "!writable_page_tables")
+ 	ELFNOTE(Xen, XEN_ELFNOTE_PAE_MODE,       .asciz "yes")
+ 	ELFNOTE(Xen, XEN_ELFNOTE_L1_MFN_VALID,
+@@ -115,7 +116,8 @@ SYM_CODE_END(xen_cpu_bringup_again)
+ #else
+ # define FEATURES_DOM0 0
+ #endif
+-	ELFNOTE(Xen, XEN_ELFNOTE_HYPERCALL_PAGE, _ASM_PTR hypercall_page)
++	ELFNOTE(Xen, XEN_ELFNOTE_HYPERCALL_PAGE, .globl xen_elfnote_hypercall_page;
++		xen_elfnote_hypercall_page: _ASM_PTR xen_elfnote_hypercall_page_value - .)
+ 	ELFNOTE(Xen, XEN_ELFNOTE_SUPPORTED_FEATURES,
+ 		.long FEATURES_PV | FEATURES_PVH | FEATURES_DOM0)
+ 	ELFNOTE(Xen, XEN_ELFNOTE_LOADER,         .asciz "generic")
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.0.rc0.187.ge670bccf7e-goog
 
 
