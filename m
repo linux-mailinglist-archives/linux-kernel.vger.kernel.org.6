@@ -1,115 +1,81 @@
-Return-Path: <linux-kernel+bounces-357235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AAF996E43
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD3996E45
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC091C211F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751821C214D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDA9126C03;
-	Wed,  9 Oct 2024 14:38:07 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51924127E18;
+	Wed,  9 Oct 2024 14:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOnAwFQ4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DF66F307;
-	Wed,  9 Oct 2024 14:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5763BBEB;
+	Wed,  9 Oct 2024 14:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484686; cv=none; b=Yf1P71DeqaQSESjUqt0JY8Pf04E2i435NBp/kpJMZTSEEFRBRt7sPquae4SW1ZUX0LqWH6rG55CdcIxHH2qxXy5FFsm02keHXCyaBJTC1s4O2ep1yc1RVqIqf85yLogzTWcVlGMTjepHR0ZXjniE47ONUKpHNpEqmoLLaMGXlk8=
+	t=1728484748; cv=none; b=SG/TzUuHcYpjPe5ucI3o7b35YjWT5+ImD55FBXmFnb9ynz/3cob1iIF612cl1E6xflLsjPlXDUuK2kjHHNIhR7x4O7E02QLA91V1wwcFCtICkVcwSJGuJvYm/qjlrxyeP5UpPnuZgEwL9l0n5jgMQ+68QleSvIgPYCcJFnScxWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484686; c=relaxed/simple;
-	bh=ur2p4B0Kvh0c7htyE18mhoCQu0JesSX5db+QwZipDxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lpL2egbe0KAy75MUCgyC4glBw5zVJoli1zSemD03N4lVQ5iS2CliJr1HHv62YWrb4A1Upo4xFZZhR8LBae1BHsIx0erJ+d+KijZEM7uMdUw6AuI72bDcCY6yoEIhlast+HpmLuLhdS8utxlbPcML08yfxi2Zwbe+NTyMys/KNAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XNwTw0tTFz9sPd;
-	Wed,  9 Oct 2024 16:37:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id VPYRDQSqjFFY; Wed,  9 Oct 2024 16:37:56 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XNwTw03Cdz9rvV;
-	Wed,  9 Oct 2024 16:37:56 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E33838B77C;
-	Wed,  9 Oct 2024 16:37:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5YCo0KwYOorb; Wed,  9 Oct 2024 16:37:55 +0200 (CEST)
-Received: from [192.168.233.133] (unknown [192.168.233.133])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 33B378B770;
-	Wed,  9 Oct 2024 16:37:54 +0200 (CEST)
-Message-ID: <f9693d48-1018-460f-a1ff-5990bcf92b66@csgroup.eu>
-Date: Wed, 9 Oct 2024 16:37:53 +0200
+	s=arc-20240116; t=1728484748; c=relaxed/simple;
+	bh=x/NP/skFyVirDq7NleZWKTVC4o17L0/jCPs9bvIuCRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHzZugUVgL0pL2l45/jC6I9cP8DuTIoIlUT8FryfRElRzPxb9aToT/Gwj7Ldt+wNziixcvNKkDoXkD4+7SWd47svB+SvQ3yM9Z2vN9yJTFpUQ0nZ59UkkRsEEwRU5BmxGlGOo3A4tCSjUhMBgVPym0vzgQEHB4Q9Gvxd7fhz7os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOnAwFQ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FD6BC4CEC3;
+	Wed,  9 Oct 2024 14:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728484748;
+	bh=x/NP/skFyVirDq7NleZWKTVC4o17L0/jCPs9bvIuCRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oOnAwFQ4DgOh+WKq6fEWT8jH1bGT+gX4Yly02dxpRjec9iyTCYGo2LpbSZHz43Jv1
+	 qBlPh4qVyEK7FwF4QXvS6QDeMyJlDVerbRu2vEQpIiaeOYqajmqtB2AYLlYxr0vC5x
+	 8qmauEb343Z95zN/8nRxp+qj9lNjbTd/iVCtq1R61eU3AbtN/09v2iJn3y6q1Z452P
+	 Ieju1Eg8zFLFPRYNAPYv9V7jk0iLV3ywhVkGxnZtrBrBCwECuW11vBOkFWA2gFIQZb
+	 ERfoHfgMkNMSsWUBpBEgU+jQNAfluB+fKjN/JqTMp7gndg5AXVpzA8K1fVQoa1LjpU
+	 H/GQ/L90Wz/jA==
+Date: Wed, 9 Oct 2024 15:39:03 +0100
+From: Lee Jones <lee@kernel.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: pavel@ucw.cz, aren@peacevolution.org, tzimmermann@suse.de,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jjhiblot@traphandler.com, guanwentao@uniontech.com,
+	zhanjun@uniontech.com
+Subject: Re: [RESEND. PATCH] leds: rgb: leds-group-multicolor: Correct the
+ typo 'acccess'
+Message-ID: <20241009143903.GL276481@google.com>
+References: <DA8E8FA1F45D2F5A+20240929092057.1037448-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] asm-generic: provide generic page_to_phys and
- phys_to_page implementations
-To: Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
- loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-um@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20241009114334.558004-1-hch@lst.de>
- <20241009114334.558004-2-hch@lst.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241009114334.558004-2-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <DA8E8FA1F45D2F5A+20240929092057.1037448-1-wangyuli@uniontech.com>
 
+On Sun, 29 Sep 2024, WangYuli wrote:
 
-
-Le 09/10/2024 à 13:43, Christoph Hellwig a écrit :
-> page_to_phys is duplicated by all architectures, and from some strange
-> reason placed in <asm/io.h> where it doesn't fit at all.
+> There is a spelling mistake of 'acccess' which should be instead of
+> 'access'.
 > 
-> phys_to_page is only provided by a few architectures despite having a lot
-> of open coded users.
-> 
-> Provide generic versions in <asm-generic/memory_model.h> to make these
-> helpers more easily usable.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Link: https://lore.kernel.org/all/0c768bf6-bc19-43de-a30b-ff5e3ddfd0b3@suse.de/
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 > ---
->   arch/alpha/include/asm/io.h         |  1 -
->   arch/arc/include/asm/io.h           |  3 ---
->   arch/arm/include/asm/memory.h       |  6 ------
->   arch/arm64/include/asm/memory.h     |  6 ------
->   arch/csky/include/asm/page.h        |  3 ---
->   arch/hexagon/include/asm/page.h     |  6 ------
->   arch/loongarch/include/asm/page.h   |  3 ---
->   arch/m68k/include/asm/virtconvert.h |  3 ---
->   arch/microblaze/include/asm/page.h  |  1 -
->   arch/mips/include/asm/io.h          |  5 -----
->   arch/nios2/include/asm/io.h         |  3 ---
->   arch/openrisc/include/asm/page.h    |  2 --
->   arch/parisc/include/asm/page.h      |  1 -
->   arch/powerpc/include/asm/io.h       | 12 ------------
+>  drivers/leds/rgb/leds-group-multicolor.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-As far as I understand, this patch silently drops part of commit 
-6bf752daca07 ("powerpc: implement CONFIG_DEBUG_VIRTUAL").
+Already applied.
 
-Can you please clarify ?
-
-Christophe
+-- 
+Lee Jones [李琼斯]
 
