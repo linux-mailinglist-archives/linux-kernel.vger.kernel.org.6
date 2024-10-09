@@ -1,212 +1,186 @@
-Return-Path: <linux-kernel+bounces-357946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E126F99784B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA80899784E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698261F22CB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452F21F23017
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246941E285F;
-	Wed,  9 Oct 2024 22:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E261E32A6;
+	Wed,  9 Oct 2024 22:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqozlMAm"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVMyLgTh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4911E230C;
-	Wed,  9 Oct 2024 22:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015D4192D67
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511897; cv=none; b=TytOauyO6W1FqmCP6EjHAerWihDttGkQ7vHhC4dBhzzm0acl6lK2ZeRQOlqQscGkhZvL1hmBKGJWmbuB26GXV1/QGcogLRENOpVdAGuKf0xsMjZqm9vl2U1WY9EMZxjNvWk7YQmlhOh1eIOMBc4BexgfoAtdm4EFlGCO58YDjGU=
+	t=1728511948; cv=none; b=SsQm8t34Vj5CW3LjfmfKfrEh+wVJc/UiWy6BfW/i9AzDdWN6qZO/j5ULVZXUxjTk8+KMW6BgL5PFe0Wjo6Chq9kejaGpcHqzEN+z3afjRXGectcldw0Kk0I+jJ1JJ8vA3nX8XvRs4yntSWjlvD+gNcFcgGvXuRXXO/uR/gOvR5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728511897; c=relaxed/simple;
-	bh=mU9gcBCEheceOs4IIXU/WEntpbUBKN4IUVmhpqz4zBY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k64e3TbhoLZRA3G+7zJUWXZyy33XBRK960heL/4aSHpTgedq/1f4FfwqN4j4AqzsiJw7TrIWiLvzq2eAw9pG0tbkN30lDq5+Va+aQhevImGlxhR4je0kc5DVMle1M6Hqyoqt+Q5ewqh5hEGqiOTtpldCgYrvVsCq5SlXcI2/Zpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqozlMAm; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so112391f8f.3;
-        Wed, 09 Oct 2024 15:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728511894; x=1729116694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0i77NC6oLQq+IeEr+P4sfxSedK09tyLyxivDjpTqakQ=;
-        b=DqozlMAmBMnr5TO/KiRQu012gzr7E6eYvt3uu0khqFsNf5JAbnoFEWbTytC4FYVZvM
-         WoAQWPSrux072+WAo6hPZEOTw/HOAL0Nj1Ur2gE18cdTH/1J+yV7/jIObMSevRQL/5Oe
-         5NUfBHcdBnEmghNTINEdffrT1pCT+u2rqhp4Co++fUZoN96wyaGig9SGE6N6kjAPbdk3
-         8+vPX7Sf1+qEZTsU4Ofe9ljmMi71MNAM0c/LXbWdjTssqdbmhaA9xMXSBNDsYkFd/sWy
-         MGbeb6QftyPlpr/Th/+cerO6l88cq2b8m3okSYgv2c3jBc7x4buLYyR1IDjPs5CY1hbD
-         /9tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728511894; x=1729116694;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0i77NC6oLQq+IeEr+P4sfxSedK09tyLyxivDjpTqakQ=;
-        b=A26nRwpNHRa5ftZxxfsreqTQBvO39KGQdvPkWts3X8tsnl04hxP5qPkJR9Quhu3bU3
-         iK1dCBWzO5l7PTP1Jx1QfqNwIP4YkT4jwVbLWYcjLx4nUG9vDzpkMBl8CyxvEJ3cjFne
-         agVtWCMXp0HfavdQjCvKwAj4fW4AT3Peay8j8G907witqh764IiCYNMLGd69223GTQei
-         R+qye1XwyxfZgm+ZAFuksQ8lcyu8BPbDFp5BvQz1HFsBj14CvImqXWeGYPdufpg6CqII
-         5B3Q/oo/QXvtf6ca6RRHmp5/m90ee7yVSAqx8tjyGJI1dqC+yYv4SmavT54sg1U6PXJx
-         Sb/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEdVdIUTy7ebMl7QDlNwH5t4WHIYEISK0S9HdzOkUjAL4/0kbkYUhT1ZJzceU6Zv2NRCXQqwEGkUpqPdok@vger.kernel.org, AJvYcCUa3gM4A1GQPD7ANIsJTP5/DiAWsn4yrnIjfDmdApWsg2DQSO3Ys8HcwqTCJxznGHpcUmDPfSDhlYLK@vger.kernel.org, AJvYcCUozdhtl/jPNrZT7IHLyOcl8Q/hfIRuc9gXIBGP01JYPEwPTBkwr8DG4RQ5mzbCvZVlflmEgdI3rzB3ngHx@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe5eMywgrw3RdQTYMiTGf4jSP1x05opzb4SQtRkd/DETyWBFBM
-	koWY2yDwu6Xnfi1i4IP0/H+81wj2ob2VEHiNGNovRntBTujhHZdC
-X-Google-Smtp-Source: AGHT+IHw9cL4v+z9P6U/yiMBej1wyxRUTPzlrVemNRcu+QpJcb9PafME3WdhTwugRboleUKOXk5CCg==
-X-Received: by 2002:a5d:670d:0:b0:37d:476d:2d58 with SMTP id ffacd0b85a97d-37d476d2db1mr964948f8f.45.1728511893739;
-        Wed, 09 Oct 2024 15:11:33 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1696f921sm11356159f8f.91.2024.10.09.15.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 15:11:33 -0700 (PDT)
-Message-ID: <6706ff95.df0a0220.22b580.89e6@mx.google.com>
-X-Google-Original-Message-ID: <Zwb_kucVA3WNpaGf@Ansuel-XPS.>
-Date: Thu, 10 Oct 2024 00:11:30 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Richard van Schagen <vschagen@icloud.com>,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [RFC PATCH 1/2] dt-bindings: crypto: Add Mediatek EIP-93 crypto
- engine
-References: <20241009171223.12695-1-ansuelsmth@gmail.com>
- <20241009212400.GA735586-robh@kernel.org>
+	s=arc-20240116; t=1728511948; c=relaxed/simple;
+	bh=5QcqDvsBCN9fiKvM0LrmTGOvODyzfQ12Bc1oe+wY2a8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YvisPAriTx96VBHyt2j+uIal8GuMLee5ZFLzeUWN/+a9F395nZZgFGXIm9TRrEV6a5gt5p8jxjcIA7rjGVsN1GwHQsns4ogDL9lqYGiqBUjoOPTK3clSybLfg7OUsHjGCY4HTDqOZQvGSSti4z2xMahODwkvO6yy0xk4tngXkM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVMyLgTh; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728511947; x=1760047947;
+  h=date:from:to:cc:subject:message-id;
+  bh=5QcqDvsBCN9fiKvM0LrmTGOvODyzfQ12Bc1oe+wY2a8=;
+  b=TVMyLgThINLSYpOLp/QFaLWfQMNpgfIHbu3gLZ3G6uDYdKdAo7iHrTOJ
+   1fIY3R2TAzAsT88pTF3Cif3ltZzHxjv5CMqgg6GDRNS5VoEwlJSpTEbzy
+   B6G29xeQLGiij7+3k8DDhv6D+Fu1T8aM3g1C1OHPcfC5atSKwzOhD5RN2
+   a/Pp2OH6Ume0Y18NW8b0BXqzXDMeMNHJHGjZ+HSvFxRkNNKD6SY5SCamT
+   a3ybblTVKWVNUzAPSeciAsZDs4tyRYKl8zc+7nTtJAEOpLyVARtEUmjRS
+   11S9Pkf1MfhtpJL+J6ZcXRKoLQqtY8l6RcaWfxzjCg2Em2CAU5Ubyfv/7
+   Q==;
+X-CSE-ConnectionGUID: 2yIC6hEiT/2j7PpNUOQOFQ==
+X-CSE-MsgGUID: WILhysYbQO+uHgvXGNVuqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27289516"
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="27289516"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 15:12:26 -0700
+X-CSE-ConnectionGUID: gly2+RrXR2Sg/6OBcw+LrA==
+X-CSE-MsgGUID: mhPzxHWMQ9GS9uwj8yBsJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="76708046"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 09 Oct 2024 15:12:25 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syeut-0009rm-0J;
+	Wed, 09 Oct 2024 22:12:23 +0000
+Date: Thu, 10 Oct 2024 06:12:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD SUCCESS
+ 7266f0a6d3bb73f42ea06656d3cc48c7d0386f71
+Message-ID: <202410100656.cDBQsbId-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009212400.GA735586-robh@kernel.org>
 
-On Wed, Oct 09, 2024 at 04:24:00PM -0500, Rob Herring wrote:
-> On Wed, Oct 09, 2024 at 07:12:20PM +0200, Christian Marangi wrote:
-> > Add bindings for the Mediatek EIP-93 crypto engine. The same IP is also
-> > present on Airoha SoC.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  .../bindings/crypto/mediatek,mtk-eip93.yaml   | 40 +++++++++++++++++++
-> >  1 file changed, 40 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml b/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
-> > new file mode 100644
-> > index 000000000000..b0173b4da42d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/crypto/mediatek,mtk-eip93.yaml
-> > @@ -0,0 +1,40 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/crypto/mediatek,mtk-eip93.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Mediatek EIP93 crypto engine
-> > +
-> > +maintainers:
-> > +  - Christian Marangi <ansuelsmth@gmail.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - mediatek, mtk-eip93
-> 
-> space?
-> 
-> Why mediatek and mtk? Is eip93 an SoC? 
->
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+branch HEAD: 7266f0a6d3bb73f42ea06656d3cc48c7d0386f71  fs/bcachefs: Fix __wait_on_freeing_inode() definition of waitqueue entry
 
-Hi Rob,
+elapsed time: 777m
 
-totally blind for not noticing this (and not even dt_binding_check
-notice it wow)
+configs tested: 94
+configs skipped: 3
 
-Anyway the naming of this thing is a bit strange and hope you can give
-some hint about what to use.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-This is a crypto block included in various product like Mediatek SoC
-(mt7621), DSP (ADSP-BF70x Blackfin) and in more recent stuff Airoha SoC
-EN7581.
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                                 defconfig    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                                 defconfig    gcc-14.1.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+i386                             allmodconfig    clang-18
+i386                              allnoconfig    clang-18
+i386                             allyesconfig    clang-18
+i386        buildonly-randconfig-001-20241010    clang-18
+i386        buildonly-randconfig-002-20241010    clang-18
+i386        buildonly-randconfig-003-20241010    clang-18
+i386        buildonly-randconfig-004-20241010    clang-18
+i386        buildonly-randconfig-005-20241010    clang-18
+i386        buildonly-randconfig-006-20241010    clang-18
+i386                                defconfig    clang-18
+i386                  randconfig-001-20241010    clang-18
+i386                  randconfig-002-20241010    clang-18
+i386                  randconfig-003-20241010    clang-18
+i386                  randconfig-004-20241010    clang-18
+i386                  randconfig-005-20241010    clang-18
+i386                  randconfig-006-20241010    clang-18
+i386                  randconfig-011-20241010    clang-18
+i386                  randconfig-012-20241010    clang-18
+i386                  randconfig-013-20241010    clang-18
+i386                  randconfig-014-20241010    clang-18
+i386                  randconfig-015-20241010    clang-18
+i386                  randconfig-016-20241010    clang-18
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc64                            defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                                defconfig    gcc-12
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-18
+x86_64                           allyesconfig    clang-18
+x86_64                              defconfig    clang-18
+x86_64                                  kexec    gcc-12
+x86_64                               rhel-8.3    gcc-12
+x86_64                          rhel-8.3-rust    clang-18
+xtensa                            allnoconfig    gcc-14.1.0
 
-In documentation and in GPL source is called in various name... PKTE,
-EIP93, geneirc "Crypto". One common name in drivers is tho EIP93.
-
-Currently upstream it's supported the more recent version of this kind
-of HW Crypto block, EIP197.
-
-There the compatible is
-
-"inside-secure,safexcel-eip197"
-
-So from these info IN THEORY, the real produced of all this stuff is
-inside-secure and the product is safexcel (confirmed also in other
-product)
-
-NOW the real problem.
-
-From what I notice EIP93 HW Crytpo present on the old Mediatek SoC
-(mt7621) have some small difference in some registry so maybe a specific
-compatible will be needed.
-
-Given this situation would it be acceptable to have
-
-- inside-secure,safexcel-eip93
-- inside-secure,safexcel-eip93-mt7621 (or maybe risky but
-    more generic -mediatek ?)
-
-The current driver doesn't fully account for the mediatek variant so it
-would require some later changes. Maybe a better strategy is to just not
-declare mediatek compatible for now? I know it sound stupid to ask a
-question for something not entirely supported now but it's really to
-understand how to move in the future. (just to prevent case where the
-generic compatible is misused and we get mad on handling it in the
-driver)
-
-> > +      - airoha,mtk-eip93
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    crypto@1e004000 {
-> > +      compatible = "airoha,mtk-eip93";
-> > +      reg = <0x1fb70000 0x1000>;
-> > +
-> > +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> > +    };
-> > -- 
-> > 2.45.2
-> > 
-
--- 
-	Ansuel
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
