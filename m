@@ -1,128 +1,145 @@
-Return-Path: <linux-kernel+bounces-357429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F114997121
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:22:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D3E99710D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2987E282395
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07731C21A9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98461EABA2;
-	Wed,  9 Oct 2024 16:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B741D61B5;
+	Wed,  9 Oct 2024 16:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TY62f18l"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMqRLFBH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FE31E32AD
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3CD1D07A3;
+	Wed,  9 Oct 2024 16:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490153; cv=none; b=R+f5hYf914gSGuDeZl/QVdqgp2RsdIzDit+wp8mIVjyvXLAmPE8j2rK3B2f2hkcMb2lbgOXZ2apEmStDob8svPWo1VZ1/D39CVydQK5n/5z/wjjf1Y3MMUPqvhJlRcJ/TBNugTmAb9hBPrwyyp4pQgn7dHsewEoOpuxIa6QXuYg=
+	t=1728489892; cv=none; b=crseXkJfqflkBqwZfiyT78U7lEeR1jInwaHxgGB6n/0PZMayNhBxvsBkJEvLCaNi/40ebjVZcSZII+v+7WOBfr34HedK5Kp4X5O0aqXw+RAZQ62970pq73ebJkux+xvMTBncV/H0T2ltc/0shgKlm5deJ4Z/HMeMoHl2VZ5LuUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490153; c=relaxed/simple;
-	bh=PSXPNvRpGkOAPBFmE9Lw9VEE3YdfkqX94PI8zXrXzjU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gA83d8AAo101WGfI4IoLg+nwaItK6191r/RH8ab6JbOuqNUrHWCgf6mAxVj92aZhnCrOYK3QYrbyBPPMnbIS9nrrdPALESo94no+pIQeLOM4dz4aoOygrGyrx+5QsENNUokx9RiQQdbeFMBs6Z1WG7fV8S2LrG45FAio2GcvMBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TY62f18l; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2e5e376fcso335397b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728490151; x=1729094951; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4+JRDfPTu3i9TGQoGrO88TmpFKth6/64PHl7TNFJEg=;
-        b=TY62f18lYFHqsSi/rvQhJJeowMIxYPxbcp6p64oStl5WKFlYP9lMuZe4xp8exBlKyB
-         YeDnM+1u0e35LJ5rFfrdTEMeGchUKcnFt9GK8SN4FcjIO9JUTh2DIX5Zci/cv+qLwJzm
-         OwALaiw6aIh5531YUOrns1KYVcudaPdmtxFJ1Qurcc503CIKdaBFncrlkESwAxAvf5Va
-         52G0t9pkFc/Q+H82CmXZWgXV2hcejTOX6ysPaHFId4DlyxLW9CLRVkTIoVGXB8P+c+02
-         3sw9jyxonlxg+DB/2DLi/Vw0Pf2jRirIqzdIc7+7T22XjhAoooxCnpstz1BphLnpL4qv
-         t+cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728490151; x=1729094951;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4+JRDfPTu3i9TGQoGrO88TmpFKth6/64PHl7TNFJEg=;
-        b=FD5FHCYyG8hyFu0mNFwBTjwvQqTmXXlFhw/dvIa6w4l6f8B3pT/7r8eiEA2/vzR3EE
-         rcywID5gBut8PnzeJiiPeo+ffIMAJHdAvC6IjhaCzkO0mQ67eLOR/Z0rjvZuTNJRJubQ
-         WNNUvJPcqrWr9TJJePobYHEEP8vkz+Brz7CrUdadqLTnR6HpUNtCCmdX+bOT5O3endXw
-         nOjXzQ8IrNbCr8sZBMvtubFuxMyTZKxBrrULjJc9+bFc6d+pIk3U1qF/tM/sXoSlw/bg
-         Qn70iVOyp03rgc7My6rAdDh0lD0xBiX0XO5Zrqis/pFkYYRPEXrSZf3Uvkc8CAjjYu5E
-         a2dw==
-X-Gm-Message-State: AOJu0Yz9f6CVzodvYTI3w8rX58fvZuAzsSZ6xzmjFhygdVAVUq/toKvr
-	agFnN3hB5G0bQJ55rh72ViYqeApAYYhup3eiRxQaMVFEX1w5OBEavsV+TpRZye2huyMDZR91fUj
-	nx67bWY/NX2Qe3CY2j9o6SKG4q6esC255kaRUj3jSRZgp8VfEYGo3ZFkyb4VTVbO9MHCVJi6nN4
-	+sMSm6K0Mu6vehMbPtq7e27DHwiL58EQ==
-X-Google-Smtp-Source: AGHT+IHh/v1gqKUGM1BBNWYUx+HRB+/b48NbVa7MzzwrUC5bvv7YGG3nH+h3kZviumtVaikoqrrnQUYJ
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a05:690c:6206:b0:6dd:fda3:6568 with SMTP id
- 00721157ae682-6e322466d9cmr656517b3.3.1728490150649; Wed, 09 Oct 2024
- 09:09:10 -0700 (PDT)
-Date: Wed,  9 Oct 2024 18:04:42 +0200
-In-Reply-To: <20241009160438.3884381-7-ardb+git@google.com>
+	s=arc-20240116; t=1728489892; c=relaxed/simple;
+	bh=S7VOLr15MA5IYpxNnw6xgbwUOkXwGf/+Y/OeUbY9oZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISKSZqQ8b4cSoAazUo5ksswysYHY3EpPD1CSQPPNw7UkM/qB/R0RHsJ0OFOnx5ZjCSHVXHNLwuXliyYf3M7acLXoju5HhAh7Jqm2ASxVCeR+Crwzw1SvMwMK0CMTBcSJKcXuhmB0WctUgV2XFWKoIwwt0VcQebjG7c3ZaUdV+4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMqRLFBH; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728489891; x=1760025891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S7VOLr15MA5IYpxNnw6xgbwUOkXwGf/+Y/OeUbY9oZk=;
+  b=mMqRLFBHn6HXxrsLLJp7yCpLQri273Wd9PIqBqFouek5KW9lJnGqIU8z
+   ilv54wxa3U21A14s97BuQNN8bmyYUpcV2m8UxjnkBJFecoNx+WCLubozF
+   JMAMnYOUXbbNwY55FqXpHEmnfpY7jLidc+hKhpsKlh70qQGnl3ziBPgmN
+   AtWh6UgHbYEMaGmzs0kTVI8mDlTdPntDAnhwVAFdceZgbzgahSUZEvqJj
+   R6xYOpYfeVf1tN9YMYCVew+d4l1nbVRHHpLL0HtYGdIvCsKicd3ZUIddC
+   IBxp07OQUQVIwPLN/p9w3j5lTHW1/AkIfj2fNjpMm11hXKqF9LJooVROU
+   g==;
+X-CSE-ConnectionGUID: MFREpKG5Tfu6oO68frH4vg==
+X-CSE-MsgGUID: Azlxt9QbTq+hp6EzsimnqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39163345"
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="39163345"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:04:50 -0700
+X-CSE-ConnectionGUID: sdQLp+9IQuq57QIp38SDtA==
+X-CSE-MsgGUID: N99/WQr4SpWFntETzZXecw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="80805323"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 09 Oct 2024 09:04:45 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0BDAB50F; Wed, 09 Oct 2024 19:04:43 +0300 (EEST)
+Date: Wed, 9 Oct 2024 19:04:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: David Sterba <dsterba@suse.cz>
+Cc: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+	Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v4 04/28] range: Add range_overlaps()
+Message-ID: <Zwapm97gV0y7Up9H@black.fi.intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-4-c261ee6eeded@intel.com>
+ <20241008161032.GB1609@twin.jikos.cz>
+ <ZwaW9gXuh_JzqRfh@black.fi.intel.com>
+ <20241009153641.GK1609@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241009160438.3884381-7-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1010; i=ardb@kernel.org;
- h=from:subject; bh=+Q7W1GiOJkPeWPDKOBo9uqagjD9LHIgeoC2Mxh5XnwY=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ1t5Wzjs1ffPY46eO1bpusehTCZdacXZnoeNXOLyWxmX
- DlH7szhjlIWBjEOBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjCRbdaMDEdb5ytZOn3ZKLTX
- pfp7dSXXttVy8e9+vy+Nfj5V1CyCNYrhv6uByoSdnzjS98bXX9fpSBD+LWc9+VSxb4XCOdMJ2zc 7cQAA
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241009160438.3884381-10-ardb+git@google.com>
-Subject: [PATCH v3 3/5] x86/pvh: Omit needless clearing of phys_base
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Jason Andryuk <jason.andryuk@amd.com>, 
-	Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, x86@kernel.org, 
-	xen-devel@lists.xenproject.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009153641.GK1609@suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Wed, Oct 09, 2024 at 05:36:42PM +0200, David Sterba wrote:
+> On Wed, Oct 09, 2024 at 05:45:10PM +0300, Andy Shevchenko wrote:
+> > On Tue, Oct 08, 2024 at 06:10:32PM +0200, David Sterba wrote:
+> > > On Mon, Oct 07, 2024 at 06:16:10PM -0500, Ira Weiny wrote:
 
-Since commit
+...
 
-  d9ec1158056b ("x86/boot/64: Use RIP_REL_REF() to assign 'phys_base'")
+> > > > +static inline bool range_overlaps(struct range *r1, struct range *r2)
+> > > 
+> > > I've noticed only now, you can constify the arguments, but this applise
+> > > to other range_* functions so that can be done later in one go.
+> > 
+> > Frankly you may add the same to each new API being added to the file and
+> > the "one go" will never happen.
+> 
+> Yeah, but it's a minor issue for a 28 patchset, I don't know if there
+> are some other major things still to do so that a v5 is expected.
 
-phys_base is assigned directly rather than added to, so it is no longer
-necessary to clear it after use.
+At least seems printf() changes have to be amended, so I think v5 is
+warranted anyway.
 
-Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
-Tested-by: Jason Andryuk <jason.andryuk@amd.com>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/platform/pvh/head.S | 7 -------
- 1 file changed, 7 deletions(-)
+> If anybody is interested, reviewing APIs and interfaces with focus on
+> some data structure and const is relatively easy, compile test is
+> typically enough.
 
-diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index 5a196fb3ebd8..7ca51a4da217 100644
---- a/arch/x86/platform/pvh/head.S
-+++ b/arch/x86/platform/pvh/head.S
-@@ -180,13 +180,6 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	ANNOTATE_RETPOLINE_SAFE
- 	call *%rax
- 
--	/*
--	 * Clear phys_base.  __startup_64 will *add* to its value,
--	 * so reset to 0.
--	 */
--	xor  %rbx, %rbx
--	movq %rbx, phys_base(%rip)
--
- 	/* startup_64 expects boot_params in %rsi. */
- 	lea pvh_bootparams(%rip), %rsi
- 	jmp startup_64
+Except the cases where a const pointer has to be passed thru non-const
+(or integer) field in a data structure. Tons of the existing examples is
+ID tables that wanted to have kernel_ulong_t instead of const void * in
+driver data field.
+
+> The hard part is to find the missing ones. There's no
+> compiler aid thad I'd know of (-Wsuggest-attribute=const is not for
+> parameters), so it's been reading a file top-down for me.
+
+Yeah...
+
+> > So, I support your first part with
+> > constifying, but I think it would be rather done now to start that "one
+> > go" to happen.
+> 
+> Agreed, one patch on top is probably the least intrusive way.
+
 -- 
-2.47.0.rc0.187.ge670bccf7e-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
