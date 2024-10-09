@@ -1,271 +1,148 @@
-Return-Path: <linux-kernel+bounces-356497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD889961F4
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDAF9961F5
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872C01F230E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3149280635
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59021885BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D842118870E;
 	Wed,  9 Oct 2024 08:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pTzDL30i"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM6wPfYh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138FC15C13A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375A2184528;
+	Wed,  9 Oct 2024 08:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728461446; cv=none; b=Y2J8oZ4RQKEYlC8Pkc4iIlxnLZtDKrFKQjs4OxbqTreJjX1KsSQZ1vF8LMFL/KA0sLlyImso/pSutP5wU9uL9gmd+Pmg+/uwhgRss94UGob8J9z9kFsYQSaWujg+x2dad0SXZqgUEfbVikQmYK6KGubNdqbA45SgHVLSCBFStzs=
+	t=1728461447; cv=none; b=rY7T3l0TEnlOFxhF8oS9B3YMp+gtvyqvzmT3peow9pHjsfUyonRjLKx/21nA7EJ5azmj1nVago5OCGAJLo3EFTOYvw/opk395eg18MHP9boKS+72AxX5MA6XYEreu8ltf5pmZLLpzXyRgQK6hAavzS/YUY99EHuTby18xcixDU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728461446; c=relaxed/simple;
-	bh=JTALTDfpJwLvZW8krOmlWY7fXxiJm7mB5IXqDHxOnis=;
+	s=arc-20240116; t=1728461447; c=relaxed/simple;
+	bh=o7vzIwux/mRlQjF2CrbH+84suPWkVeoqpQYiU3l8qXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tjn5PvyG9WXDDPA5PpYNcns9+YndwJUbiUwiLgI1hLAQmGT2K20PnRShlzdk5kB/vT0aQn6sCx/iIsKMv4W+EndwfuHMfZ993IIr7iQ24lDm/d+BceHNmUyUv8JrGyrxW0Ubqcj766v9+ZBh664YsHReeQmFJC5IrDmxBe+l8S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pTzDL30i; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d39d9f782so381888f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:10:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728461442; x=1729066242; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnWodi7I3io7lPP1RwAH8LUYr+WZNKZMf06zlJ4yNoo=;
-        b=pTzDL30i4XA6nuvXQiuLfQ4ITZ7VNA1EUZQD5hibztUpgAdYS+nxkqJWq56uEGPKUm
-         6z/wCAcIkGOtxT2zrc2G4xykj0aDHUKysz8zHE4CfY1525m3O8InNQVTkMiJdWhHVwIu
-         AuaUCl7OMM+mnPCNX0UaHYYuCptFJlbCSJ/05Hj3s18QXj/wfqHsIaImwVxhXeczv7uL
-         dbuiYddYgdiM9BXuNorXI2iXMA+qRey8hcpBxjKEaTMacbsz/66uFD9vH7ZYUaIuBTEM
-         xceXARKzHL2u/p8mIDaKXT5spNjELZmjuo5uummUA6HOAIFP/Cfy+m20AV97YQB2k+rJ
-         ZZSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728461442; x=1729066242;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gnWodi7I3io7lPP1RwAH8LUYr+WZNKZMf06zlJ4yNoo=;
-        b=G2XFAV60AvEbx32eGInzw5pLWKFqygM+g6iTU2CyWpImjFKKSG08o0scSIK52bYbWs
-         HfBFhzpjkEys3YnrsorXBLVs0OBjdGUBccpWM+2c6nG8K2z4PXdxBSpm5qKHURdCUQow
-         k4twZMIfxB80k6TmX3pywUnXc8LXxzJoYO0eEGEzjQyJwYVBpBDlJhW6lzPPj1BJuUBF
-         l+aegMmH6pA5nO66kTYtjV4TvOyU7IVgU7UV+8Lerl74jjwF15e2lk++jqrhaiGFVJA0
-         v+GquqoqtUDe+CbpG3hwV36jCB617uR2/t6KLgeAEtoM7L8fE7W5pVyyH/EAlszwDxmW
-         h43Q==
-X-Gm-Message-State: AOJu0YxMta61SeIWXEFt22TvYRuEaoSdga5eOWRgH9xFl7gSC2Btqqqv
-	naWgz+pGMXcxpc/igY1FKFzkpQpwXKG6bcPYg6w31HgF3UagTlBk5JSWFgmXyaQ=
-X-Google-Smtp-Source: AGHT+IGh8K2dUO1w72QQsRRDwWg/X9XbAnFa43Fl/ahd72gRhImUWO/xzGJZhmEAsokUQYN6eBnxCg==
-X-Received: by 2002:a5d:4e51:0:b0:37d:39e8:cb6d with SMTP id ffacd0b85a97d-37d3ab318acmr716234f8f.56.1728461442237;
-        Wed, 09 Oct 2024 01:10:42 -0700 (PDT)
-Received: from localhost (p509151f9.dip0.t-ipconnect.de. [80.145.81.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf1f776sm12305265e9.3.2024.10.09.01.10.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 01:10:41 -0700 (PDT)
-Date: Wed, 9 Oct 2024 10:10:40 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: William Qiu <william.qiu@starfivetech.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Hal Feng <hal.feng@starfivetech.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v15] pwm: opencores: Add PWM driver support
-Message-ID: <na6yfg45w74l3deaoi5gr5wcefxbjslztsltm6737rs4cktpbn@myvsa6ye6xpp>
-References: <20240914095114.31100-1-william.qiu@starfivetech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NzogxYe3NxAj4VQXrdclaC+aF8BT2GaLhm2ZTPx089G4tmWsADe15VgsbhR3h6s+yQ9ie7D8pjQnqhgzvjVjS+e3SdK5hZmmkoa0YZL37id9E1CzA3sLuCGDYMHgWhXIV+GhM1B7BlFsGM57B1dp2VlQa/MQIMg86vkHQogb+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM6wPfYh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E60C4CECE;
+	Wed,  9 Oct 2024 08:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728461446;
+	bh=o7vzIwux/mRlQjF2CrbH+84suPWkVeoqpQYiU3l8qXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gM6wPfYh9DxbCyOU+rMSPoYE0H5iLvnx8csSDvxAejY7jxtIuZ+q6Klhk2L2zCdZW
+	 GhVcAc0yoD0QYuYCcYmKsem0ssgHOjj7L5g5LB/TUJd/namboJUHypwE68mHVkIbAh
+	 iv8UZYF+t5AQE3/BRvMrStMWgzUJ+oXUBAJaEU5D4WnUy8VjHPaIUXLEeBgbktn/pi
+	 PyxmvavZv1v82yPhxAiikotkV32Wm28pb+zysFCz9Sd0wr0BomyIsiS/ikDHPMRLI+
+	 GRfw7Bw3a/FkbCQpCH3rmViW1pgMXduJRQK2HCNR5KtPDWGi4x8XdDxskF8tUS2Oko
+	 5l257JTi3xnJA==
+Date: Wed, 9 Oct 2024 10:10:41 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of
+ waitqueue entry
+Message-ID: <ZwY6gWsZCq_SdDKI@gmail.com>
+References: <20241009144511.5fd62c94@canb.auug.org.au>
+ <172844652013.444407.16580824583469743404@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5ft5dx5frm54rk25"
-Content-Disposition: inline
-In-Reply-To: <20240914095114.31100-1-william.qiu@starfivetech.com>
-
-
---5ft5dx5frm54rk25
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <172844652013.444407.16580824583469743404@noble.neil.brown.name>
 
-Hello William,
 
-On Sat, Sep 14, 2024 at 05:51:14PM +0800, William Qiu wrote:
-> diff --git a/drivers/pwm/pwm-ocores.c b/drivers/pwm/pwm-ocores.c
-> new file mode 100644
-> index 000000000000..d0161b9379d1
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-ocores.c
-> @@ -0,0 +1,241 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * OpenCores PWM Driver
-> + *
-> + * https://opencores.org/projects/ptc
-> + *
-> + * Copyright (C) 2018-2023 StarFive Technology Co., Ltd.
-> + *
-> + * Limitations:
-> + * - The hardware only supports inverted polarity.
-> + * - The hardware minimum period / duty_cycle is (1 / pwm_apb clock frequency).
-> + * - The hardware maximum period / duty_cycle is (U32_MAX / pwm_apb clock frequency).
-> + * - The output is set to a low level immediately when disabled.
+* NeilBrown <neilb@suse.de> wrote:
 
-Huh, that's a 100% relative duty cycle. But fine, that gives the
-opportunity to find bugs in consumer drivers. :-)
+> On Wed, 09 Oct 2024, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > In file included from include/linux/fs.h:6,
+> >                  from include/linux/highmem.h:5,
+> >                  from include/linux/bvec.h:10,
+> >                  from include/linux/blk_types.h:10,
+> >                  from include/linux/bio.h:10,
+> >                  from fs/bcachefs/bcachefs.h:188,
+> >                  from fs/bcachefs/fs.c:4:
+> > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
+> > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *' from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatible-pointer-types]
+> >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
+> 
+> The fix we want is to replace that line with
+>    struct wait_bit_queue_entry wait;
+> I should have checked more carefully - sorry.
+> 
+> I guess we wait for rc3?
+> 
+> Kent: could you please make that change?  The inode_bit_waitqueue() does
+> initialisation equivalent of DEFINE_WAIT_BIT() so you only need the declaration.
 
-> + * - When configuration changes are done, they get active immediately without resetting
-> + *   the counter. This might result in one period affected by both old and new settings.
-> + */
-> +
-> [...]
-> +static inline void ocores_pwm_writel(struct ocores_pwm_device *ddata,
-> +				     unsigned int channel,
-> +				     unsigned int offset, u32 val)
-> [...]
-> +static inline struct ocores_pwm_device *chip_to_ocores(struct pwm_chip *chip)
-> [...]
-> +static void __iomem *starfive_get_ch_base(void __iomem *base,
-> +					  unsigned int channel)
+Since the breakage was introduced via tip:sched/core, I've applied the fix 
+below.
 
-Would be great if all functions had the same prefix. This simplifies
-debugging with tracing, because you can just enable traces for
-"ocores_pwm_*".
+Does this look good to you?
 
-> [...]
-> +static int ocores_pwm_apply(struct pwm_chip *chip,
-> +			    struct pwm_device *pwm,
-> +			    const struct pwm_state *state)
-> +{
-> +	struct ocores_pwm_device *ddata = chip_to_ocores(chip);
-> +	u32 ctrl_data = 0;
-> +	u64 period_data, duty_data;
-> +
-> +	if (state->polarity != PWM_POLARITY_INVERSED)
-> +		return -EINVAL;
-> +
-> +	period_data = mul_u64_u32_div(state->period, ddata->clk_rate, NSEC_PER_SEC);
-> +	if (!period_data)
-> +		return -EINVAL;
-> +
-> +	if (period_data > U32_MAX)
-> +		period_data = U32_MAX;
-> +
-> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_LRC, (u32)period_data);
+Thanks,
 
-The cast isn't needed.
+	Ingo
 
-> +	duty_data = mul_u64_u32_div(state->duty_cycle, ddata->clk_rate, NSEC_PER_SEC);
-> +	if (!duty_data)
-> +		return -EINVAL;
-> +
-> +	if (duty_data > U32_MAX)
-> +		duty_data = U32_MAX;
-> +
-> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_HRC, (u32)duty_data);
+================>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Wed, 9 Oct 2024 10:00:09 +0200
+Subject: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of waitqueue entry
 
-ditto.
+The following recent commit made DEFINE_WAIT_BIT() type requirements stricter:
 
-> +	ctrl_data = ocores_pwm_readl(ddata, pwm->hwpwm, REG_OCPWM_CTRL);
-> +	if (state->enabled)
-> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL,
-> +				  ctrl_data | REG_OCPWM_CNTR_EN | REG_OCPWM_CNTR_OE);
-> +	else
-> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL,
-> +				  ctrl_data & ~(REG_OCPWM_CNTR_EN | REG_OCPWM_CNTR_OE));
+  2382d68d7d43 ("sched: change wake_up_bit() and related function to expect unsigned long *")
 
-If you're clearing REG_OCPWM_CNTR_OE (Output Enable?), does the output
-really go low? Or is that due to an external pull down on your board?
+.. which results in a build failure:
 
-> +
-> +	return 0;
-> +}
-> [...]
-> +static int ocores_pwm_probe(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *id;
-> +	struct device *dev = &pdev->dev;
-> +	struct ocores_pwm_device *ddata;
-> +	struct pwm_chip *chip;
-> +	struct clk *clk;
-> +	struct reset_control *rst;
-> +	int ret;
-> +
-> +	id = of_match_device(ocores_pwm_of_match, dev);
-> +	if (!id)
-> +		return -EINVAL;
+  > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
+  > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *' from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatible-pointer-types]
+  >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
 
-Error message here? Better use device_get_match_data() here. Then you
-don't need the of-specific headers (IIUC).
+Since this code relies on the waitqueue initialization within
+inode_bit_waitqueue() anyway, the DEFINE_WAIT_BIT() initialization
+is unnecessary - we can just declare a waitqueue entry.
 
-> +	chip = devm_pwmchip_alloc(&pdev->dev, 8, sizeof(*ddata));
-> +	if (IS_ERR(chip))
-> +		return -ENOMEM;
-> +
-> +	ddata = chip_to_ocores(chip);
-> +	ddata->data = id->data;
-> +	chip->ops = &ocores_pwm_ops;
-> +
-> +	ddata->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(ddata->regs))
-> +		return dev_err_probe(dev, PTR_ERR(ddata->regs),
-> +				     "Unable to map IO resources\n");
-> +
-> +	clk = devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk),
-> +				     "Unable to get pwm's clock\n");
-> +
-> +	ret = devm_clk_rate_exclusive_get(dev, clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rst = devm_reset_control_get_optional_exclusive(dev, NULL);
-> +	if (IS_ERR(rst))
-> +		return dev_err_probe(dev, PTR_ERR(rst),
-> +				     "Unable to get pwm's reset\n");
-> +
-> +	ret = reset_control_deassert(rst);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(dev, ocores_pwm_reset_control_assert, rst);
-> +	if (ret)
-> +		return ret;
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Suggested-by: NeilBrown <neilb@suse.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ fs/bcachefs/fs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If you respin anyhow, switch to
-devm_reset_control_get_optional_exclusive_deasserted(). Up to now this
-only exists in next, but I'd care to apply this is a way that doesn't
-fail to build then.
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index 5bfc26d58270..c410133541ba 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -183,8 +183,9 @@ static void __wait_on_freeing_inode(struct bch_fs *c,
+ 				    struct bch_inode_info *inode,
+ 				    subvol_inum inum)
+ {
++	struct wait_bit_queue_entry wait;
+ 	wait_queue_head_t *wq;
+-	DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
++
+ 	wq = inode_bit_waitqueue(&wait, &inode->v, __I_NEW);
+ 	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
+ 	spin_unlock(&inode->v.i_lock);
 
-> +	ddata->clk_rate = clk_get_rate(clk);
-> +	if (ddata->clk_rate > NSEC_PER_SEC)
-> +		return -EINVAL;
-> +
-> +	ret = devm_pwmchip_add(dev, chip);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
-> +
-> +	return 0;
-> +}
-
-Best regards
-Uwe
-
---5ft5dx5frm54rk25
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcGOn0ACgkQj4D7WH0S
-/k7nQAf/bNcqXvu5TM3xqi4I4b+vs57zbYGuw+lY9NUbX36V9Jb2oWrOO1Tx+nh2
-RJnM2SCN7UyH4+LHxlMmwBeIiTKRUDJNxmA9b0pUq4EJEGu+xFRaKuMQwKfQIvxI
-WiHmMTOpNykYfyG2tWfSC36Hjkg1oUT1JoYVsOpQsld6oF6MVmeWBVRY7eGA0EV0
-/kLjPJPUTWHAMv6IW679W8HzWJqoSg6b+c8Y5Xi6sYAo6Nu9SX9WR43BFPV3Kj4N
-USlNSw2dUgzd8aTvJhNpX5WIaWwi8X3xUwxP5BtY5540clB68nzkFJHrw65nZKwz
-ERTDsQkQT2C2tZ63uMZGmFUp+PRmXA==
-=9Var
------END PGP SIGNATURE-----
-
---5ft5dx5frm54rk25--
 
