@@ -1,216 +1,112 @@
-Return-Path: <linux-kernel+bounces-356404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352209960B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3048C9960B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FB71C22256
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8511C2335F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C25917DFF1;
-	Wed,  9 Oct 2024 07:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDB217E010;
+	Wed,  9 Oct 2024 07:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iaXVaiMJ"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EgxDKkdW"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142C142070;
-	Wed,  9 Oct 2024 07:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6640A178CC5;
+	Wed,  9 Oct 2024 07:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728458442; cv=none; b=c6bHiNEjAObs46WtaDALAhXZd4I4/q6R41iOKr/H2L48prIzOzks8E8Yt3YfpYA1BmKbwbEv227x/AVJm5NrNTbJAOE/b3mkBdKb8sNNUNiGl56enCdXH8E1n48Tfe/AviJPLSKCvfZPNtVx16cTm6/P+5EP12D8YfhGsVT6Yak=
+	t=1728458472; cv=none; b=hKz3lxjPCjRQFLvGa9+RKOkOabt/NueSa10709GVZvWXQCG4C/YygZJ5Wfz0Jo9if1uDpo89I/kvJ2DwLjWrZZBsbkC6HT76qTJALPtlKDANglNfDTeA3+qL2fx1Qu4pQSK+tN4pLgSVVPPh0j3foM2F/WvubtUv9F6y8JQu5gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728458442; c=relaxed/simple;
-	bh=GWO55Gd4e5VgxufP/dVUCheYB0sGwgf33M4iGitmaLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O5SSU/A+/SOpM32/TaHQe8qDFuBOsa7pgPEHmCJ28lb+Ix8JErHv8Njp2eP7R9JxvcZV84bfjNe2JomdG01DxJeT3sq/hx0kXyseVLn2l87OYYtRaONHET/LHipxt5Ryl7/qq0aMKouBotXI38giMFTA8KuhV9QLQCXAWkM51uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iaXVaiMJ; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728458431; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=938oHQ+wLhZ8Ygyt4B57mX230FiSNZdkP1d8+n5HiQ0=;
-	b=iaXVaiMJzmO+y4JqGTnHdyTDljTnuEV4efjwAc4XG3poKDiSRq48nM9iiVzhWf/5/yVE5qkPESf6J+UCZ/Spx1UtoWU/39U7R0NtpooO5WgBz2LEv98UmDcBmAVqNbUdcZxdgu9ZVdpicWFMlTV48ISm1zTaUxDHiqZqFKYHgO4=
-Received: from 30.221.145.216(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WGhwgeU_1728458429)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Oct 2024 15:20:30 +0800
-Message-ID: <36b455d7-a743-47c7-928c-e62146a12b9c@linux.alibaba.com>
-Date: Wed, 9 Oct 2024 15:20:28 +0800
+	s=arc-20240116; t=1728458472; c=relaxed/simple;
+	bh=XelgteOQmlhm3vlLsvDGsuACRZkgpPlT4YLubA26rrw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VfquMFHzkGeif/lrx/DPqnM/V9Fxq8lKXKBHfLRj51ADpcIkmQJI1AiOV4bGd7I+DHH+e5kzbvLuHnW3z8vUy1ibNeeDT/T3bDsTnnI/bjXKTMoGgt3zBAHltMA9toWxNPokA44S06qqjqUzG42INhC1Q2r3RHjZIQWQsJja4lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EgxDKkdW; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4997KwnV074036;
+	Wed, 9 Oct 2024 02:20:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728458458;
+	bh=nnEc/O1OscdbKaKa4xXCWhizY6Sx8RbpzLP6SeIVCBs=;
+	h=From:To:CC:Subject:Date;
+	b=EgxDKkdWLfoCQ4BgqWt6Aj6MV7PhHVPEYm2cQAZFClELBwNvTdgJnS3Y+QsJHCmey
+	 bPqOt2HwuNfT4JgbwNJZxvKF3uw5OpdzOJPIOxR46HS5UuPUpxoSA5oev8T6WZWDrg
+	 LQ97B9V8aLNBN82itBq9lIkvGUiN4dW2vFsv/KtU=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4997KwiI001703
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 9 Oct 2024 02:20:58 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 9
+ Oct 2024 02:20:57 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 9 Oct 2024 02:20:57 -0500
+Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4997KuSs117426;
+	Wed, 9 Oct 2024 02:20:57 -0500
+From: Bhavya Kapoor <b-kapoor@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <b-kapoor@ti.com>, <u-kumar1@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <vigneshr@ti.com>, <nm@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-j784s4-mcu-wakeup: Configure wkup_uart0 with clock settings
+Date: Wed, 9 Oct 2024 12:50:56 +0530
+Message-ID: <20241009072056.3511346-1-b-kapoor@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] resolve gtp possible deadlock warning
-To: Daniel Yang <danielyangkang@gmail.com>, Eric Dumazet <edumazet@google.com>
-Cc: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
-References: <20241005045411.118720-1-danielyangkang@gmail.com>
- <CANn89iKk8TOvzD4cAanACtD0-x2pciEoSJbk9mF97wxNzxmUCg@mail.gmail.com>
- <CAGiJo8RCXp8MqTPcPY4vyQAJCMhOStSApZzA5RcTq5BJgzXoeQ@mail.gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <CAGiJo8RCXp8MqTPcPY4vyQAJCMhOStSApZzA5RcTq5BJgzXoeQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+This commit adds the assigned-clocks and assigned-clock-parents
+properties for wkup_uart0 in J784S4. Specifically, the assigned-clocks
+property is set to reference the clock identified by
+"wkup_usart_mcupll_bypass_out0", ensuring the UART operates with the
+correct clock source.
 
+The assigned-clock-parents property specifies "wkup_usart_clksel_out0"
+as the parent clock. This configuration is critical for establishing
+the proper clocking hierarchy, enabling the UART device to function
+reliably across different baud rates.
 
-On 10/7/24 2:54 PM, Daniel Yang wrote:
-> On Sat, Oct 5, 2024 at 12:25 AM Eric Dumazet <edumazet@google.com> wrote:
->>
->> On Sat, Oct 5, 2024 at 6:54 AM Daniel Yang <danielyangkang@gmail.com> wrote:
->>>
->>> Fixes deadlock described in this bug:
->>> https://syzkaller.appspot.com/bug?extid=e953a8f3071f5c0a28fd.
->>> Specific crash report here:
->>> https://syzkaller.appspot.com/text?tag=CrashReport&x=14670e07980000.
->>>
->>> This bug is a false positive lockdep warning since gtp and smc use
->>> completely different socket protocols.
->>>
->>> Lockdep thinks that lock_sock() in smc will deadlock with gtp's
->>> lock_sock() acquisition. Adding a function that initializes lockdep
->>> labels for smc socks resolved the false positives in lockdep upon
->>> testing. Since smc uses AF_SMC and SOCKSTREAM, two labels are created to
->>> distinguish between proper smc socks and non smc socks incorrectly
->>> input into the function.
->>>
->>> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
->>> Reported-by: syzbot+e953a8f3071f5c0a28fd@syzkaller.appspotmail.com
->>> ---
->>> v1->v2: Add lockdep annotations instead of changing locking order
->>>   net/smc/af_smc.c | 21 +++++++++++++++++++++
->>>   1 file changed, 21 insertions(+)
->>>
->>> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
->>> index 0316217b7..4de70bfd5 100644
->>> --- a/net/smc/af_smc.c
->>> +++ b/net/smc/af_smc.c
->>> @@ -16,6 +16,8 @@
->>>    *              based on prototype from Frank Blaschka
->>>    */
->>>
->>> +#include "linux/lockdep_types.h"
->>> +#include "linux/socket.h"
->>>   #define KMSG_COMPONENT "smc"
->>>   #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
->>>
->>> @@ -2755,6 +2757,24 @@ int smc_getname(struct socket *sock, struct sockaddr *addr,
->>>          return smc->clcsock->ops->getname(smc->clcsock, addr, peer);
->>>   }
->>>
->>> +static struct lock_class_key smc_slock_key[2];
->>> +static struct lock_class_key smc_key[2];
->>> +
->>> +static inline void smc_sock_lock_init(struct sock *sk)
->>> +{
->>> +       bool is_smc = (sk->sk_family == AF_SMC) && sk_is_tcp(sk);
->>> +
->>> +       sock_lock_init_class_and_name(sk,
->>> +                                     is_smc ?
->>> +                                     "smc_lock-AF_SMC_SOCKSTREAM" :
->>> +                                     "smc_lock-INVALID",
->>> +                                     &smc_slock_key[is_smc],
->>> +                                     is_smc ?
->>> +                                     "smc_sk_lock-AF_SMC_SOCKSTREAM" :
->>> +                                     "smc_sk_lock-INVALID",
->>> +                                     &smc_key[is_smc]);
->>> +}
->>> +
->>>   int smc_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
->>>   {
->>>          struct sock *sk = sock->sk;
->>> @@ -2762,6 +2782,7 @@ int smc_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
->>>          int rc;
->>>
->>>          smc = smc_sk(sk);
->>> +       smc_sock_lock_init(sk);
->>>          lock_sock(sk);
->>>
->>>          /* SMC does not support connect with fastopen */
->>> --
->>> 2.39.2
->>>
->>
->> sock_lock_init_class_and_name() is not meant to be repeatedly called,
->> from sendmsg()
->>
->> Find a way to do this once, perhaps in smc_create_clcsk(), but I will
->> let SMC experts chime in.
-> 
-> So I tried putting the lockdep annotations in smc_create_clcsk() as
-> well as smc_sock_alloc() and they both fail to remove the false
-> positive but putting the annotations in smc_sendmsg() gets rid of
-> them. I put some print statements in the functions to see the
-> addresses of the socks.
-> 
-> [   78.121827][ T8326] smc: smc_create_clcsk clcsk_addr: ffffc90007f0fd20
-> [   78.122436][ T8326] smc: sendmsg sk_addr: ffffc90007f0fa88
-> [   78.126907][ T8326] smc: __smc_create input_param clcsock: 0000000000000000
-> [   78.134395][ T8326] smc: smc_sock_alloc sk_addr: ffffc90007f0fd70
-> [   78.136679][ T8326] smc: smc_create_clcsk clcsk_clcsk: ffffc90007f0fd70
-> 
-> It appears that none of the smc allocation methods are called, so
-> where else exactly could the sock used in sendmsg be created?
+Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+---
 
+Rebased to next-20241008
 
-I think the problem you described can be solved through
-https://lore.kernel.org/netdev/20240912000446.1025844-1-xiyou.wangcong@gmail.com/, but Cong Wang 
-seems to have given up on following up at the moment. If you are interested, you can try take on 
-this problem.
+ arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-Additionally, if you want to make sock_lock_init_class_and_name as a solution, the correct approach 
-might be (But I do not recommend doing so. I still hope to maintain consistency between IPPROTO_SMC 
-and other inet implementations as much as possible.)
-
-
-+static struct lock_class_key smc_slock_keys[2];
-+static struct lock_class_key smc_keys[2];
-+
-  static int smc_inet_init_sock(struct sock *sk)
-  {
-         struct net *net = sock_net(sk);
-+       int rc;
-
-         /* init common smc sock */
-         smc_sk_init(net, sk, IPPROTO_SMC);
-         /* create clcsock */
--       return smc_create_clcsk(net, sk, sk->sk_family);
-+       rc = smc_create_clcsk(net, sk, sk->sk_family);
-+       if (rc)
-+               return rc;
-+
-+       switch (sk->sk_family) {
-+       case AF_INET:
-+               sock_lock_init_class_and_name(sk, "slock-AF_INET-SMC",
-+                                             &smc_slock_keys[0],
-+                                             "sk_lock-AF_INET-SMC",
-+                                             &smc_keys[0]);
-+               break;
-+       case AF_INET6:
-+               sock_lock_init_class_and_name(sk, "slock-AF_INET6-SMC",
-+                                             &smc_slock_keys[1],
-+                                             "sk_lock-AF_INET6-SMC",
-+                                             &smc_keys[1]);
-+               break;
-+       default:
-+               WARN_ON_ONCE(1);
-+       }
-+
-+       return 0;
-  }
-
+diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
+index f603380fc91c..c2aa858c37c2 100644
+--- a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
+@@ -310,6 +310,8 @@ wkup_uart0: serial@42300000 {
+ 		interrupts = <GIC_SPI 897 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&k3_clks 397 0>;
+ 		clock-names = "fclk";
++		assigned-clocks = <&k3_clks 397 0>;
++		assigned-clock-parents = <&k3_clks 397 1>;
+ 		power-domains = <&k3_pds 397 TI_SCI_PD_EXCLUSIVE>;
+ 		status = "disabled";
+ 	};
+-- 
+2.34.1
 
 
