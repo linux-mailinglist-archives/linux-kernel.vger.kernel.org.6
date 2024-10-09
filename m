@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-357409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C2E9970F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:18:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE929970F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29D01C20E4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75D628589C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81211E7C2A;
-	Wed,  9 Oct 2024 15:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A221E8829;
+	Wed,  9 Oct 2024 15:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLs2vOeX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEUEz3Ik"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5563A1E1049
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9204B1E1049;
+	Wed,  9 Oct 2024 15:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489495; cv=none; b=H13AZv2pWUooqcevslBUKA+KYtdXcPC2chukcQO/OvRTdMxtrt555AfuccsYxrQ7VTRzVcQUntectJ+4yD/B5QlU0g7L/wMCJ/SrriRP9Sf5w6O+oP7YmoFucwj3h1CPKDTL/oPO/XR+xj1fydtwjYhC/hkkjOxpfL3ufZddCxg=
+	t=1728489525; cv=none; b=iZvpm4lBKTcFw3J0ps489R/UEF7naPjW3ylJcc7YpEKKa1yAsGyeJgAvOLpapme3DoN1NdNc6UqAScguAQOU4Qn0+SngGqpjju2XMo9EJsCaOiMjwC70MdaTXxxkdhs8YkmbSB7sP6w3P4YDzFxiV7O677KlXse3TA9dQnU1p+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489495; c=relaxed/simple;
-	bh=DQ+UXJ6V9fAJtdAYV5JF+pZvbG+QV1OVa/sMvW/vdW8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XwrC7ImM0Zi/daeIWeT78JDxPR/BfYsDidf9qIajQvIVCUodBET5q9bNz78ki60VYJfROj1Fjoz8l181SzFmEql9Zf3h/LdcCyvQ6Dp3Ardo9lDWLYD+Cb4GkhZJdlxaFfDYTg8fAVvGdpo1i2+PZ//Eg0ERF7jLznImAMQfOps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLs2vOeX; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728489493; x=1760025493;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=DQ+UXJ6V9fAJtdAYV5JF+pZvbG+QV1OVa/sMvW/vdW8=;
-  b=ZLs2vOeXCBmraEroFPGo9Y6D76GxN41MOkAHP9DoNUJuz8BUeU11xugJ
-   gEdKEZ5dq+ovkIYywfqWzV8zOUGD5f3Yy4hkl0B75YwiHh5PI1NBxSLIk
-   rB+KUuR8lyE6cSX2a0IX1JS1MejNCohYkLRcgTX+YGu7ireT8ottsC1Pa
-   7zfyGSLVaSNCkhJzmzYU2FR3ZiReJ1L5vHKMye5doPdN8iJZPGeXiJ+iB
-   e+xCDjMsfRRDwjGazgiycMGeKfaPqNpcYjmVTqOIkydt3HSL4swzHOu5O
-   nKc4iURaI8eIz+yYPDwJUoNelsdiGYE7s7rWEcMFl6MLOaY2YuEPnqVgx
-   A==;
-X-CSE-ConnectionGUID: 0d1Js9z7QlqEu7bAwyn5pQ==
-X-CSE-MsgGUID: +N4B34EOSMSeGkTgjjJXeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38448345"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="38448345"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:58:12 -0700
-X-CSE-ConnectionGUID: StWuh8uQR7yw7xUh157Y4Q==
-X-CSE-MsgGUID: ivsXANsTTq25vy/oUx1Bog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="76193122"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.80])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:58:09 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: R Sundar <prosunofficial@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, R Sundar
- <prosunofficial@gmail.com>
-Subject: Re: [PATCH linux-next] drm: Fix for kernel doc warning
-In-Reply-To: <20241003023806.17537-1-prosunofficial@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241003023806.17537-1-prosunofficial@gmail.com>
-Date: Wed, 09 Oct 2024 18:58:06 +0300
-Message-ID: <87frp58e0h.fsf@intel.com>
+	s=arc-20240116; t=1728489525; c=relaxed/simple;
+	bh=oBAwiLGHSHDOj8mD4XS8encO62UfaTbQ+URhaPIFhYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pt3nb+FGOYcgyZyiTMr9atWTkDr/P5ZAO1lvnRvNwjsSUYTxZPDbkjXhnVr+sf5lOMg4dTEK58OCB8oXIXpotCGVydv5h6DrfXicFJSwxIUXUb7b3o8NPX6tEklO5oMcLs7AnhuYySaJGUs33LkdhiOeEtWvGzcxv5lh+M7IuJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEUEz3Ik; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71df49bbc2fso655974b3a.1;
+        Wed, 09 Oct 2024 08:58:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728489524; x=1729094324; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oBAwiLGHSHDOj8mD4XS8encO62UfaTbQ+URhaPIFhYI=;
+        b=NEUEz3Ik4n3K7xA8PLFw0Mxl/oit20T5DlzWUCki2L4DMBj52mVOQp5ZfMjMPasm90
+         oQtwPqcAkO7TeDctKZejZFKe3HIo1LU5rayTfEq1rNkyVQPtao8ripX8mnIB3rc2+iDS
+         KTD50FjhxnLxJ5tUdS5UL5ST2qPVz76PLN0Lxt6jmOj7aSbvv9R12sz7zOuQkMCbW3OS
+         AfQD18u5+TWlvDF7oNAfyYrrLpIQjiF4zvAyyNn/Zs3oaebiq7T7iZdnKVcT5AE67Wvf
+         qFsErZ8FzIppgeXMykCKNTc/iWL9CAyQ7wHiK9Eql8kfM7rx5Qi+aU1zeF3qxWrsck9I
+         ORuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728489524; x=1729094324;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oBAwiLGHSHDOj8mD4XS8encO62UfaTbQ+URhaPIFhYI=;
+        b=Th+97mc77hGtnL8WLeXgRfvlI63AO2RbQ2nB9BiMonQ1csA4B4CBbu53VCotmbpmKq
+         3dF0tojCY5IB7UZ4pam19y6qLqCrtn0ZNyjOco/ZxjWkMoaVAtNCpKR3KhTEwStUu6jJ
+         tnzU+PB0n2ChDtgni+gMPugnYTt8O+K/Kld3e4n0L9R+T/JlMxKJHBilum0epsA14BuF
+         3gYM+Q+qgXgAip+TpoWK62+lpcLyu53EekVQHkio6gUZkswlEMLDIJ4kbEHpoOGT1fxM
+         Yr/ocR2z2JC1uQtoXjJBAUdMsh4IDFLqTXVi/y6UkDezmed+nduT+cdhHz5InDsVUc0F
+         nSLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaMx+1jO+fo0LTPFNhjasj2rIqZwjFmDnXdVOvqMTEPyvL4SNEspDjkQTlfcX0M6Q2rbEx77sYV2TOl6A=@vger.kernel.org, AJvYcCVpgJ6gLodHIdeLM3DbqQRHmt3FaNEYMM1zQrHfkZo2ntWjWJsZMDsSBf1tg1+j/VoJ4MF0zAccixOJYvKnzbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZwkgiE3sZdAvwlOlO3Z3U2jOc1qjtznRhh5V79B9WgDbgv1SJ
+	SUcfNUt4j5auSq57bGzH9RnSvAkXyqvcqKru2KXA16MIwZiu1mXy4J3wsSYuSutNRYgF3Rz/31B
+	kv7xEzAwQySdzIVfz4aDN8aSHQMs=
+X-Google-Smtp-Source: AGHT+IHH2/cB4g/2MUkUZbMiqMJmjHju8cMBFQXUzMyG4OYKXp1NPuWe1VZngIGtsINbvtnXZqplRrwh0iEB23xRDJY=
+X-Received: by 2002:a05:6a00:1a89:b0:718:e49f:137a with SMTP id
+ d2e1a72fcca58-71e1dbcb854mr2071628b3a.6.1728489523704; Wed, 09 Oct 2024
+ 08:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241009151017.26685-1-tamird@gmail.com> <813594ff-b167-4ae2-8105-e2f958ec2cc7@gmail.com>
+In-Reply-To: <813594ff-b167-4ae2-8105-e2f958ec2cc7@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 9 Oct 2024 17:58:31 +0200
+Message-ID: <CANiq72nUT6cFXCGg4jfN07W7UE-8vma=o9a5DQjsRwtNsKUGbQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: remove unnecessary #includes
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
+	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Dirk Behme <dirk.behme@de.bosch.com>, Filipe Xavier <felipe_life@live.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 03 Oct 2024, R Sundar <prosunofficial@gmail.com> wrote:
-> Added colon in kernel-doc comment to fix the warning.
+On Wed, Oct 9, 2024 at 5:37=E2=80=AFPM Dirk Behme <dirk.behme@gmail.com> wr=
+ote:
 >
-> ./include/drm/drm_drv.h:372: warning: Incorrect use of kernel-doc format:          * @fbdev_probe
-> ./include/drm/drm_drv.h:435: warning: Function parameter or struct member 'fbdev_probe' not described in 'drm_driver'
+> * Theoretically the grammer fix in exports.c could go into an
+> independent patch. But if not it at least should be mentioned in the
+> commit message. Let Miguel decide if he wants an extra patch or not ;)
+
+Indeed, in general, one should not have unstated/unrelated changes.
+
+> * Maybe a
 >
-> Signed-off-by: R Sundar <prosunofficial@gmail.com>
-
-Pushed to drm-misc-next, thanks for the patch.
-
-BR,
-Jani.
-
-> ---
->  include/drm/drm_drv.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixes: e26fa546042a ("rust: kbuild: auto generate helper exports")
 >
-> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-> index 36a606af4ba1..1bbbcb8e2d23 100644
-> --- a/include/drm/drm_drv.h
-> +++ b/include/drm/drm_drv.h
-> @@ -369,7 +369,7 @@ struct drm_driver {
->  			       uint64_t *offset);
->  
->  	/**
-> -	 * @fbdev_probe
-> +	 * @fbdev_probe:
->  	 *
->  	 * Allocates and initialize the fb_info structure for fbdev emulation.
->  	 * Furthermore it also needs to allocate the DRM framebuffer used to
+> tag could be added? Even though Miguel might route it through
+> rust-next as its not urgent for routing through rust-fixes.
 
--- 
-Jani Nikula, Intel
+I think this is a cleanup, i.e. just unnecessary `#include`s being
+present, right? In other words, there is no "bug" apart from not being
+optimal (one could see cleanups as things that should have been done,
+but I guess we should draw the line somewhere).
+
+Andreas: was there a reason to keep those `#include`s, just in case?
+
+Thanks!
+
+Cheers,
+Miguel
 
