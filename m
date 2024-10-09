@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-356341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6315995FC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:27:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1332995FC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A8E1C21553
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA251C21828
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD2E165F1E;
-	Wed,  9 Oct 2024 06:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1C016BE20;
+	Wed,  9 Oct 2024 06:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PD/e9pS6"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJ5YmZG5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A949C28EF;
-	Wed,  9 Oct 2024 06:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5B613AA27;
+	Wed,  9 Oct 2024 06:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728455218; cv=none; b=RJUegecz9GRbKpFNpeMnwpJftAr15/SRvAWXoYABuQpKM1ayk0eLWkL9NZ6s3dCizTjw2/SDoYyPq7OoooNn7TiUN4nKt7bEhX0feirTeRMboEcIPssVRstm3iwrPEwKEqzrm5JdOjl0yFo9WCeWB8f12u2nzefAs+cPj1JJitA=
+	t=1728455249; cv=none; b=TEgwFzLH4BbJk9iZdS50oFdhWGHhnZ2u5v8t25aFTMIMbWY1mVU8UkcYz/fOf+WtMQcVSQiQO7GSQ+16Y4jsiKwILDtZIsXy/KCQO2gbQPmzlIY2rqaAjs/MyoTXgNTy+nvREjp430KvfPVtcB9J8fp6KOIyGdPiNvFaZ/Gxsug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728455218; c=relaxed/simple;
-	bh=ro2Egh61KAB981orrAAg8jlGBOliEq8zm7Hvs2DS/hQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=c+PyzDPRUfFpMbcuHGyYJKJaE8+wdq3/ZgOpWgSZgEmahHnQhfX7gfSQLEXCWS6z4b/Wq1W30T43P715PMN33UIKxggVYEGswuyAqfKKAKHZCUHTKule3tr+bkHGfm2nlB8HxGcTbRmpuMlKDebQc4ui8aoZ3wthYFReF9KFbQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PD/e9pS6; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728455211;
-	bh=7P9XX0NI6swUo/7q0hxI88EQjQYARABt9gplTZyTjmc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PD/e9pS6Pwz5IPZL6WQCETZMsidRPgUOXguQZrhBGJI32d0IHwyNS5S6yN11bfRn8
-	 Kuh3o+QvcNaLmXIVLUagolffKp1RJ8AcYd5uYZqcmL19lFMKZ34246eXWfwghub6Yc
-	 YeDk/bC2dI2aWAIkjT3NSo0QShM0u4/szEYsYsuYE0NXtzYlA3tXOzKgLb5K4s8ZSn
-	 Fo7U/WHssFXu6uRK04QzRyDIAObgRHSRpcFCfPGKpv0gZlPJuA5dhjYrucQq2UPRh2
-	 tb2rlkJ1fYVDtRaSVg4/fbyaRpqXT6lkU6t/VoqrfWGFL6J+Rvr9upLNJX3sbtiPcN
-	 CORNtQI/gxefA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNjbH0bjwz4wc3;
-	Wed,  9 Oct 2024 17:26:50 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 17:26:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Pierre-Eric
- Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the drm-misc tree
-Message-ID: <20241009172650.29169e6f@canb.auug.org.au>
+	s=arc-20240116; t=1728455249; c=relaxed/simple;
+	bh=SmcTTBQFs6IHyJfeTxZFPH0jk1GC9H7FJOa7OF2F5ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDiTRbba5Pk1Gk+kwrspsdzM/XP2Pz/l85tfvjIuGnQnJ/QriKVZgdKcpEfbi5pHuAhdtk16enXURkVSLHZDfRz3KQuL87PrzNOg1vVjO7xxwsUa2QwlNU/Frwr0egfL//RSRoOGTC9hKd4MhngdufccRVj/LYMDS6VHn9bWnmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJ5YmZG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E3FC4CEC5;
+	Wed,  9 Oct 2024 06:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728455249;
+	bh=SmcTTBQFs6IHyJfeTxZFPH0jk1GC9H7FJOa7OF2F5ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vJ5YmZG56PYuz1WmLdyvtRChJjkwyfyRFeni25foP2GKBasnE2aOUUh29iTHOu6+4
+	 mS5JM5W8axoGOi3ddjKSFEH1iarrGd6IOZBJI0MjD24oSI1FeXFRIyhslFZ2wYiE78
+	 Ov1OXKrYvw6DR3jasKSSe9xW8TAuoVqyww49W3ABKTaEdsiokjrMsY/UNu+STZSK2c
+	 WgoVhLUWdmVMowxVUisNVhXC8EcYmFAa5l1/ZWVMDtjnS8KEnxVnu7Wi30h+RM2Gu/
+	 cyDLnjxZKR/CQ8/Zm5iHcH8C+Alo/697CgIrqkb41cvKv81FNVDEN+uxQuM0wfZQEu
+	 Pp2/Nyk2RgITQ==
+Date: Tue, 8 Oct 2024 23:27:26 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	eranian@google.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	santosh.shukla@amd.com, ananth.narayan@amd.com,
+	sandipan.das@amd.com
+Subject: Re: [PATCH 5/8] perf/amd/ibs: Don't allow freq mode event creation
+ through ->config interface
+Message-ID: <ZwYiTvrcVkF4W7O3@google.com>
+References: <20241007034810.754-1-ravi.bangoria@amd.com>
+ <20241007034810.754-6-ravi.bangoria@amd.com>
+ <ZwQ1cRhRuE3kunjK@google.com>
+ <79ccf66b-6bf0-4cc8-b001-aae44f09dde9@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3.yCEScp.iBobUH9X0xGTCu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <79ccf66b-6bf0-4cc8-b001-aae44f09dde9@amd.com>
 
---Sig_/3.yCEScp.iBobUH9X0xGTCu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 08, 2024 at 11:00:37AM +0530, Ravi Bangoria wrote:
+> >> Don't allow freq mode event creation through perf_event_attr->config
+> >> interface.
+> > 
+> > Sounds reasonable.  I agree the freq mode should use the standard
+> > interface using attr->sample_freq.  But I'm not sure if the behaivor is
+> > defined when attr->freq is set and attr->sample_freq is 0.  Maybe this
+> > should be handled in the generic code.
+> 
+> I also could not find any reason to allow {freq=1, sample_freq=0}, but:
+> 
+> 1) perf_event_open() allows it.
+> 2) ioctl(PERF_EVENT_IOC_PERIOD) allows it.
+> 3) all generic code explicitly checks for ->sample_freq != 0 wherever
+>    ->freq == 1.
+> 
+> I will prepare and post a patch to reject such event and see if there
+> are any objections.
 
-Hi all,
+Hmm.. now I think that the kernel won't treat it as a sampling event and
+would ignore the attr.freq value.  Setting IOC_PERIOD to 0 would disable
+sampling then.  Sorry for the noise.
 
-After merging the drm-misc tree, today's linux-next build (htmldocs)
-produced this warning:
+Thanks,
+Namhyung
 
-include/drm/drm_file.h:400: warning: Function parameter or struct member 'c=
-lient_name_lock' not described in 'drm_file'
-include/drm/drm_file.h:400: warning: Excess struct member 'name_lock' descr=
-iption in 'drm_file'
-
-Introduced by commit
-
-  56c594d8df64 ("drm: add DRM_SET_CLIENT_NAME ioctl")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3.yCEScp.iBobUH9X0xGTCu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcGIioACgkQAVBC80lX
-0GxqAAf/WTCPEBONare0NFaBPSwyE3+rbXD3ZBePxOBMbAkhk8vlf7cS48XGu2QY
-pqvfVu+Y5AxpXO+uWI5E6PhCEdb8IhP9mJLNIW9R08ALMhiFGrZMJ//5GAKMMEoI
-45NuSl1QPvCO7yC2VORc91d8e6tMNcv+G3rOT3CW+Ifx8TljHyBjY4q7hSwNMrAp
-BU1mHbBh+FqegE7PuR0Kxi/iISu0nldN5W+sU4/S/JUmt4tLw4SbCitzoPz9BIaf
-lHluzPYQBMX4+Vv+gGXHXDWeezVBEmzmzCbSHgEwWFLlplBpEEILLyKkCSRib/Vx
-6CgT+Z2+EA16Rk96BaWlrHU51P8P0w==
-=lH2n
------END PGP SIGNATURE-----
-
---Sig_/3.yCEScp.iBobUH9X0xGTCu--
 
