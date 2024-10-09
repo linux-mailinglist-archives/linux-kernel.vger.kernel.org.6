@@ -1,98 +1,170 @@
-Return-Path: <linux-kernel+bounces-357951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8095699785D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:17:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7EE899785F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE1C0B22628
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:17:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F80C282F3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC091E32C3;
-	Wed,  9 Oct 2024 22:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwm5Ycp9"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F771E284D;
+	Wed,  9 Oct 2024 22:18:16 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF7F17A584;
-	Wed,  9 Oct 2024 22:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4DF1917C2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728512230; cv=none; b=NKxysIBc3NdvQ4J/bXBCNpzuwObNHTnC7Xpv4bdSSNqPMckVlFOjGTzRK8J6Mh3F117gqeqlWO8tm3FHBar0Bb1m8zvWVwPL282qGvgBZoBGt5aPlLrfmIInlsqIQ6M7WkcsdZ+f0nhQVwhC1QbhRKKdFig3jgXRpIl2fBmh9KI=
+	t=1728512295; cv=none; b=h32uTcfWa6GdFTtRqkMTuOzk1sM1NaG9J3PyeC4gSSw/OltAJ4pB7lENWKOaI8j8QcuPqzZVmHtYySQjJggWcM+FrFTv7dJAmQVw1uLFZH9qtXZpJO9R9LeKgBNeTFoBJnMxWb/cP6mIzqgZEXNLnzw3kBVofLv/cFqV7EYmXUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728512230; c=relaxed/simple;
-	bh=Qz18RXphvenXEN9nRI5napXnTtwj4lI2pWTe5c1vSKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SC3QmclvFoYBKobG9hXZG5ev/3NZ0jgb7v8FzFRJ22EtlW188YdCnk11jw7a70bv7hoQh1ZxJTURILtJVIhkoulGqT/bR1hiIbUXgyrvAJ59NRragFYig2DNY8jmojHxPmFVZ++qTQTCfXKaZ7vC80mAPGya+O39y15qnR+d1VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwm5Ycp9; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fad8337aa4so3137401fa.0;
-        Wed, 09 Oct 2024 15:17:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728512227; x=1729117027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9vJOR5Pe5cnpO/MtL9k0byjEiB3fJceAvrtHENukwyA=;
-        b=cwm5Ycp9Eu4AA3rv/QVfdZWpU4ok6TKZW7aYAcND3CrPKQHe0YmmgMIaOmmjoOeQMQ
-         dXq4NL6BE3TmDFnTItyMp+pPbpDQHCitDEVMCDj3zqzwnDDuWOEJZQjwWeFlzGR/92O7
-         FJuOT5MPHbXKnigrCT8iR5BGHZVdeUc/xwL9OuaIGa0zdIOv7yvfRtFWnFlHvoDWmErx
-         N/454RG5iyOabFNGT3vka67+eX1nCO3ouy0P3mHHGaylMvBqXWdtHhQN9nVKgJZKlh1g
-         edWOydhpPOdM+hf0LG3EZEiM8H8BpWmuVaq2u7Qn3t+8WXXLEb4GLzrXUup4mjUV8n7T
-         3rFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728512227; x=1729117027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9vJOR5Pe5cnpO/MtL9k0byjEiB3fJceAvrtHENukwyA=;
-        b=ADOQHGqbON+bxkCx3SzpzdF8LI2T+CPYsO92UVCy5YxbYesKzvsErnri4jcWrDU73v
-         lxfMcp81BXRbnuruufHzsm7UZCm6NcZa5QdAOU33lFOs+EZw48l4Fh2PLfHh4srE1Hd/
-         ZwW6UEGlavpb5DIRXGySQI6PRZMqBDcW8MGihwJdQEKvLPcZhRxgZHn9KAEou73WZSWA
-         fNVz2AVXAHBmJTM1FzqF6vUrvuHiISW0ggQzm7sjO4N6wuF1gHvb6s9X/DFIclc/1n29
-         nCh3jc3lYFlVpNgsNx3bUcnzZ+SrWl7Ax3Hm60cOleWL2dXt9pJpBRYhB3rPD4mUUu1N
-         eJZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPUNWnA+/GvtyGVg/zLTr6kf0G78dcimRY2wD1t7+HDxPdsDQIylFkCgCSY8EUp+kcrYzUmWWPuXJjwXdiQg==@vger.kernel.org, AJvYcCWS8ffLD2ElVIgmwagPqcl8ycSqXErEMtnO0erNk1bCpV3jyMuPj4GLzxq+vGmzNjPGL17sydpnk/c=@vger.kernel.org, AJvYcCWloOXQ6R/RmLfm5iiz1/RGAO8a8hpvYc5WYLzwdeI/UVNL/F25NpCvaq2b0HiefDzi66vdQrc9eAkUPOhm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh2n9Gm0TuTZsAHkh8NTShV7t9BWgF0l7vM990TNkf64MqwRea
-	hHH5DpvX9whLmr4uGMWPGGIv9pk5CUNTvitG2GWZHQrg6acGiH2nj9+EhZhqrdDn8vWDU0UJSG3
-	gWv5L21iUZraVjVIuQxfrKmH3y9kLMPFe
-X-Google-Smtp-Source: AGHT+IFzQKnqDZgRef9bfo33+6pfeW7KfLapHRRW52/zyYe98ZvvG58H6JkACElKHZrqP0fDYAevwfrbxbh8hmixIA8=
-X-Received: by 2002:a2e:a58b:0:b0:2ef:2555:e52f with SMTP id
- 38308e7fff4ca-2fb187bf0a2mr25469781fa.35.1728512227009; Wed, 09 Oct 2024
- 15:17:07 -0700 (PDT)
+	s=arc-20240116; t=1728512295; c=relaxed/simple;
+	bh=JceVaeyjo8ADvkyu50h3AeAnCcWXA45wRTnq87xS/Qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ViBZFj9utelBC7v9OZSp6mpb6cUsJibCUIxNyZfCgg4f9KHJVK5ZQtx4xkad0reqnbypRgXkB++f/it9XIiD9reGCfV+qji8Z9OfKJf6lbPkmKxKakcBoVd7in2xqjqS/Guc6shl7vjTAbb1R7pfztbifFG6BBpsJc9MUV2nVbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XP6ht1WHrz9sPd;
+	Thu, 10 Oct 2024 00:18:06 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id jJLoL-i4YJs7; Thu, 10 Oct 2024 00:18:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XP6hs40Ztz9rvV;
+	Thu, 10 Oct 2024 00:18:05 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EB7048B77C;
+	Thu, 10 Oct 2024 00:18:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 94kVDWOHpuJ5; Thu, 10 Oct 2024 00:18:04 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.147])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 81DFA8B770;
+	Thu, 10 Oct 2024 00:18:04 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/vdso: Flag VDSO64 entry points as functions
+Date: Thu, 10 Oct 2024 00:17:57 +0200
+Message-ID: <b6ad2f1ee9887af3ca5ecade2a56f4acda517a85.1728512263.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
- <20241009205237.48881-2-tamird@gmail.com> <875xq19bus.fsf@trenco.lwn.net>
-In-Reply-To: <875xq19bus.fsf@trenco.lwn.net>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 9 Oct 2024 18:16:29 -0400
-Message-ID: <CAJ-ks9md9bCrwyCNp3jR=1pF-xpieu8oW4jPqw5w=kCL9bpeBg@mail.gmail.com>
-Subject: Re: [PATCH v2] XArray: minor documentation improvements
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728512278; l=4297; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=JceVaeyjo8ADvkyu50h3AeAnCcWXA45wRTnq87xS/Qg=; b=J1ehy/7JlqM+LBYgice6KX2Sg/ObXLCwRQZaMBq/50ZOHYb+GwNnGxbVy5zBHgqnvRJhd+ceH 4NnuFXYP9yCDSyayU29JNvF3TMh63XGF2c2zy53CQp6+DXATbLKE3rC
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 9, 2024 at 5:59=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> wro=
-te:
->
-> I'm not convinced that this is better.  This is programmer
-> documentation, and "storing NULL" says exactly what is going on.
-> "Erasing" is, IMO, less clear.
+On powerpc64 as shown below by readelf, vDSO functions symbols have
+type NOTYPE.
 
-Both are verbs that appear in function names:
-"storing NULL" is to `xa_store(NULL)` as "erasing" is to `xa_erase()`.
+$ powerpc64-linux-gnu-readelf -a arch/powerpc/kernel/vdso/vdso64.so.dbg
+ELF Header:
+  Magic:   7f 45 4c 46 02 02 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2's complement, big endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              DYN (Shared object file)
+  Machine:                           PowerPC64
+  Version:                           0x1
+...
 
-Cheers.
-Tamir
+Symbol table '.dynsym' contains 12 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+...
+     1: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LINUX_2.6.15
+...
+     4: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
+     5: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LINUX_2.6.15
+
+Symbol table '.symtab' contains 56 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+...
+    45: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
+    46: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __kernel_getcpu
+    47: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __kernel_clock_getres
+
+To overcome that, commit ba83b3239e65 ("selftests: vDSO: fix vDSO
+symbols lookup for powerpc64") was applied to have selftests also
+look for NOTYPE symbols, but the correct fix should be to flag VDSO
+entry points as functions.
+
+The original commit that brought VDSO support into powerpc/64 has the
+following explanation:
+
+    Note that the symbols exposed by the vDSO aren't "normal" function symbols, apps
+    can't be expected to link against them directly, the vDSO's are both seen
+    as if they were linked at 0 and the symbols just contain offsets to the
+    various functions.  This is done on purpose to avoid a relocation step
+    (ppc64 functions normally have descriptors with abs addresses in them).
+    When glibc uses those functions, it's expected to use it's own trampolines
+    that know how to reach them.
+
+The descriptors it's talking about are the OPD function descriptors
+used on ABI v1 (big endian). But it would be more correct for a text
+symbol to have type function, even if there's no function descriptor
+for it.
+
+glibc has a special case already for handling the VDSO symbols which
+creates a fake opd pointing at the kernel symbol. So changing the VDSO
+symbol type to function shouldn't affect that.
+
+For ABI v2, there is no function descriptors and VDSO functions can
+safely have function type.
+
+So lets flag VDSO entry points as functions and revert the
+selftest change.
+
+Link: https://github.com/mpe/linux-fullhistory/commit/5f2dd691b62da9d9cc54b938f8b29c22c93cb805
+Fixes: ba83b3239e65 ("selftests: vDSO: fix vDSO symbols lookup for powerpc64")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/include/asm/vdso.h           | 1 +
+ tools/testing/selftests/vDSO/parse_vdso.c | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/vdso.h b/arch/powerpc/include/asm/vdso.h
+index 7650b6ce14c8..8d972bc98b55 100644
+--- a/arch/powerpc/include/asm/vdso.h
++++ b/arch/powerpc/include/asm/vdso.h
+@@ -25,6 +25,7 @@ int vdso_getcpu_init(void);
+ #ifdef __VDSO64__
+ #define V_FUNCTION_BEGIN(name)		\
+ 	.globl name;			\
++	.type name,@function; 		\
+ 	name:				\
+ 
+ #define V_FUNCTION_END(name)		\
+diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+index 7dd5668ea8a6..28f35620c499 100644
+--- a/tools/testing/selftests/vDSO/parse_vdso.c
++++ b/tools/testing/selftests/vDSO/parse_vdso.c
+@@ -222,8 +222,7 @@ void *vdso_sym(const char *version, const char *name)
+ 		ELF(Sym) *sym = &vdso_info.symtab[chain];
+ 
+ 		/* Check for a defined global or weak function w/ right name. */
+-		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC &&
+-		    ELF64_ST_TYPE(sym->st_info) != STT_NOTYPE)
++		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
+ 			continue;
+ 		if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
+ 		    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
+-- 
+2.44.0
+
 
