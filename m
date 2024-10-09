@@ -1,260 +1,144 @@
-Return-Path: <linux-kernel+bounces-356945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B55996923
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:45:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF0D996920
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D57C1F2616B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:45:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5338B23D0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972C91925A0;
-	Wed,  9 Oct 2024 11:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452D6192583;
+	Wed,  9 Oct 2024 11:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXJwBVSn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="kLDZdA9s"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37BF1922E4;
-	Wed,  9 Oct 2024 11:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A0E191F66;
+	Wed,  9 Oct 2024 11:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728474310; cv=none; b=bkapz1SqW1TFRuxivBau0kbWfp5voNGVBnp9tPZCDsoi6mCn8lWXzBad09VaWNPt6yIPQBA3mTMoYZTlO8BL/cBZ2MNrzJNW5HWhZrlJcO5eifFbBDMh7Wiq7tNG/XHuaWkBY8zt9AGUC2yIznhsNk+tO+FkfZuZKE0dhjloTdk=
+	t=1728474288; cv=none; b=YcSYehrakFQGxyjZH/wyBbf1kpgR/e7eZgO1C51Tk9X2kv6hZoODWpW1s3oHlpYmuqy7Oukxb/wDZlednYPTT9ZrMHS0JMsmDzd3QVL/BqXa3AS+d2ffYxUH87jUsH+JYEN6+jTknEQNymBCaFQSwDz7z2eQYbbG91Sb1LLd1sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728474310; c=relaxed/simple;
-	bh=8r1IFl2P2ya97tepeJZtnrP9PKIoKSadVT66Pgal9qA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nzNtuW/8xz7dlVYSp+CnUAfKmzaKMxN4Ghz0uWj32XpdFo7wHre/qezwioGA94IsVQv6B6hYSrUivMusfCfiZUFwVz52JgNxZM1DF/I6CoFTzg7RYwf+dRYwZfw/btwURyc+9sdzHb819rjXMiBmFZvYgsXJ8E97EnQ/ry5n040=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXJwBVSn; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728474309; x=1760010309;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8r1IFl2P2ya97tepeJZtnrP9PKIoKSadVT66Pgal9qA=;
-  b=aXJwBVSnpLefuuY50t/5qLFnJTmfGjBAC5vkaTEzUMTxEKceWDMoRNJN
-   Lj/j5I3v5aji0J1wEBbALEgPu0Scq8mS+MpmNkku827ad90OFSnBZ7JVv
-   KKmJZceqr9t7gKRSWsSg3AeQ1as7vP6ju5+S/X0IevltGEXYJ1m7dY9IF
-   F0xg6ISDHj+M9qF4WDkfIDp705EwFtFAZrHsHJNSyk9sDwXhIYRKJvtgL
-   HHL7gdCHWq1XvVNgNdWAAJKBFQ0yyhsWXxZ0+iw2rFpOXcdnzSbUBRTRE
-   ma85KslkeaHAIou4M3M1lRePUo9TAcGHfgp/O0mAZ0twaGQsIEBEDs1H5
-   Q==;
-X-CSE-ConnectionGUID: +DdrRX8iSCWBdLp5NNHXDQ==
-X-CSE-MsgGUID: OKLe45EoRQiBx8AyIxxmSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27660761"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="27660761"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 04:45:07 -0700
-X-CSE-ConnectionGUID: bB6u94LKQYqu39rxHsLkFQ==
-X-CSE-MsgGUID: nrz4ZnbPTISoWFIuDDgW+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="76670556"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa007.jf.intel.com with ESMTP; 09 Oct 2024 04:45:03 -0700
-Received: from pkitszel-desk.tendawifi.com (unknown [10.245.246.72])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id CFA392878C;
-	Wed,  9 Oct 2024 12:45:00 +0100 (IST)
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-To: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v2] cleanup: adjust scoped_guard() to avoid potential warning
-Date: Wed,  9 Oct 2024 13:44:17 +0200
-Message-ID: <20241009114446.14873-1-przemyslaw.kitszel@intel.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728474288; c=relaxed/simple;
+	bh=UcKvFO+TsNSbZ5qXvdfNQzdJpe62EFjWfL/jyLbZmqI=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DgQN4AIiF8gjx0MXpgwMrn9NDUL3M32hkkWx0fS1toEOaLlO9YT8jpW9Kko6XV44LJ8+kkyDL6HItuvcoEWa090SvsY/mHL3QTT0/OEFbk6iMPfQj4fexB6QMSxjtv5IFHGUsgFpbc1hGyM7KC8vK+evok+otZzlI1zZg4/nkJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=kLDZdA9s; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1728474288; x=1760010288;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=UcKvFO+TsNSbZ5qXvdfNQzdJpe62EFjWfL/jyLbZmqI=;
+  b=kLDZdA9swz8sK8wQ6UxkVDqfAdPUvVJZvxACAJFtALgj337u7kLw8+fZ
+   oB0PZtt4HGKMHbH9XmRzNH6qhTWWxzSBpyKyjgAjWg/K41kdEcwlUPdSl
+   iZ8Int0um/IoalVEU4xPwMJfKyJXmQX5hu10mnNGx5vnZ5kUpHHxw61R/
+   4=;
+X-IronPort-AV: E=Sophos;i="6.11,189,1725321600"; 
+   d="scan'208";a="765049900"
+Subject: Re: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and ioas
+Thread-Topic: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and ioas
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 11:44:34 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:55271]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.3.68:2525] with esmtp (Farcaster)
+ id 6223964c-61b1-498f-a40a-44a95eba2766; Wed, 9 Oct 2024 11:44:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 6223964c-61b1-498f-a40a-44a95eba2766
+Received: from EX19D004EUC003.ant.amazon.com (10.252.51.249) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 9 Oct 2024 11:44:31 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D004EUC003.ant.amazon.com (10.252.51.249) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 9 Oct 2024 11:44:31 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Wed, 9 Oct 2024 11:44:31 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "jgg@ziepe.ca" <jgg@ziepe.ca>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
+	<rppt@kernel.org>, "kw@linux.com" <kw@linux.com>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "madvenka@linux.microsoft.com"
+	<madvenka@linux.microsoft.com>, "anthony.yznaga@oracle.com"
+	<anthony.yznaga@oracle.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>, "Saenz Julienne, Nicolas"
+	<nsaenz@amazon.es>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>, "dwmw2@infradead.org"
+	<dwmw2@infradead.org>, "steven.sistare@oracle.com"
+	<steven.sistare@oracle.com>, "Graf (AWS), Alexander" <graf@amazon.de>,
+	"will@kernel.org" <will@kernel.org>, "joro@8bytes.org" <joro@8bytes.org>,
+	"maz@kernel.org" <maz@kernel.org>
+Thread-Index: AQHbCCwuWjwUDEQNSEmjPqzUeT3bK7Jz6OkAgAcvr4CAAAJBgIAAAo+AgABl3QCAAu2RAA==
+Date: Wed, 9 Oct 2024 11:44:30 +0000
+Message-ID: <b76aa005c0fb75199cbb1fa0790858b9c808c90a.camel@amazon.com>
+References: <20240916113102.710522-1-jgowans@amazon.com>
+	 <20240916113102.710522-6-jgowans@amazon.com>
+	 <20241002185520.GL1369530@ziepe.ca>
+	 <d6328467adc9b7512f6dd88a6f8f843b8efdc154.camel@amazon.com>
+	 <e458d48a797043b7efc853fc65b9c4d043b12ed4.camel@infradead.org>
+	 <1d331c55a299d414e49ba5eb6f46dccb525bf788.camel@amazon.com>
+	 <20241007150138.GM2456194@ziepe.ca>
+In-Reply-To: <20241007150138.GM2456194@ziepe.ca>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <33562CF835D94F48866753933764304C@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Change scoped_guard() to make reasoning about it easier for static
-analysis tools (smatch, compiler diagnostics), especially to enable them
-to tell if the given scoped_guard() is conditional (interruptible-locks,
-try-locks) or not (like simple mutex_lock()).
-
-Add compile-time error if scoped_cond_guard() is used for non-conditional
-lock class.
-
-Beyond easier tooling and a little shrink reported by bloat-o-meter:
-add/remove: 3/2 grow/shrink: 45/55 up/down: 1573/-2069 (-496)
-this patch enables developer to write code like:
-
-int foo(struct my_drv *adapter)
-{
-	scoped_guard(spinlock, &adapter->some_spinlock)
-		return adapter->spinlock_protected_var;
-}
-
-Current scoped_guard() implementation does not support that,
-due to compiler complaining:
-error: control reaches end of non-void function [-Werror=return-type]
-
-Technical stuff about the change:
-scoped_guard() macro uses common idiom of using "for" statement to declare
-a scoped variable. Unfortunately, current logic is too hard for compiler
-diagnostics to be sure that there is exactly one loop step; fix that.
-
-To make any loop so trivial that there is no above warning, it must not
-depend on any non-const variable to tell if there are more steps. There is
-no obvious solution for that in C, but one could use the compound
-statement expression with "goto" jumping past the "loop", effectively
-leaving only the subscope part of the loop semantics.
-
-More impl details:
-one more level of macro indirection is now needed to avoid duplicating
-label names;
-I didn't spot any other place that is using the
-"for (...; goto label) if (0) label: break;" idiom, so it's not packed
-for reuse, what makes actual macros code cleaner.
-
-There was also a need to introduce const true/false variable per lock
-class, it is used to aid compiler diagnostics reasoning about "exactly
-1 step" loops (note that converting that to function would undo the whole
-benefit).
-
-Big thanks to Andy Shevchenko for help on this patch, both internal and
-public, ranging from whitespace/formatting, through commit message
-clarifications, general improvements, ending with presenting alternative
-approaches - all despite not even liking the idea.
-
-Big thanks to Dmitry Torokhov for the idea of compile-time check for
-scoped_cond_guard(), and general improvements for the patch.
-
-CC: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Andy Shevchenko <andriy.shevchenko@intel.com>
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
----
-PATCH v2:
-drop Andy's NACK,
- (the reasons for NACK were in RFC v1; Peter backed up my idea for this
- patch in PATCH v1 discussion, and Andy withdrawn the NACK);
-whitespace/formatting/style issues - Andy;
-additional code comments - Dmitry.
-
-PATCH v1:
-changes thanks to Dmitry Torokhov:
- better writeup in commit msg;
- "__" prefix added to internal macros;
- reorder "if (0)-else" and "for" to avoid goto jumping back;
- compile-time check for scoped_cond_guard()
-https://lore.kernel.org/netdev/20241003113906.750116-1-przemyslaw.kitszel@intel.com
-
-RFC v2:
-https://lore.kernel.org/netdev/20241001145718.8962-1-przemyslaw.kitszel@intel.com
- remove ", 1" condition, as scoped_guard() could be used also for
- conditional locks (try-lock, irq-lock, etc) - this was pointed out by
- Dmitry Torokhov and Dan Carpenter;
- reorder macros to have them defined prior to use - Markus Elfring.
-
-RFC v1:
-https://lore.kernel.org/netdev/20240926134347.19371-1-przemyslaw.kitszel@intel.com
----
- include/linux/cleanup.h | 37 +++++++++++++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index a3d3e888cf1f..7cb733bc981e 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -149,14 +149,21 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
-  *      similar to scoped_guard(), except it does fail when the lock
-  *      acquire fails.
-  *
-+ *	Only for conditional locks.
-+ *
-  */
- 
-+#define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
-+static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
-+
- #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
-+	__DEFINE_CLASS_IS_CONDITIONAL(_name, false); \
- 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
- 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
- 	{ return *_T; }
- 
- #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
-+	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true); \
- 	EXTEND_CLASS(_name, _ext, \
- 		     ({ void *_t = _T; if (_T && !(_condlock)) _t = NULL; _t; }), \
- 		     class_##_name##_t _T) \
-@@ -167,14 +174,33 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
- 	CLASS(_name, __UNIQUE_ID(guard))
- 
- #define __guard_ptr(_name) class_##_name##_lock_ptr
-+#define __is_cond_ptr(_name) class_##_name##_is_conditional
-+
-+/* helper for the scoped_guard() macro
-+ *
-+ * Note that the "!__is_cond_ptr(_name)" part of the condition ensures
-+ * that compiler would be sure that for unconditional locks the body of
-+ * the loop could not be skipped; it is needed because the other
-+ * part - "__guard_ptr(_name)(&scope)" - is too hard to deduce (even if
-+ * could be proven true for unconditional locks).
-+ */
-+#define __scoped_guard_labeled(_label, _name, args...)			\
-+	for (CLASS(_name, scope)(args);					\
-+	     __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);	\
-+	     ({ goto _label; }))					\
-+		if (0) {						\
-+_label:									\
-+			break;						\
-+		} else
-+
-+#define scoped_guard(_name, args...)	\
-+	__scoped_guard_labeled(__UNIQUE_ID(label), _name, args)
- 
--#define scoped_guard(_name, args...)					\
--	for (CLASS(_name, scope)(args),					\
--	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
- 
- #define scoped_cond_guard(_name, _fail, args...) \
- 	for (CLASS(_name, scope)(args), \
--	     *done = NULL; !done; done = (void *)1) \
-+	     *done = NULL; !done; done = (void *)1 +	\
-+	     BUILD_BUG_ON_ZERO(!__is_cond_ptr(_name)))	\
- 		if (!__guard_ptr(_name)(&scope)) _fail; \
- 		else
- 
-@@ -233,14 +259,17 @@ static inline class_##_name##_t class_##_name##_constructor(void)	\
- }
- 
- #define DEFINE_LOCK_GUARD_1(_name, _type, _lock, _unlock, ...)		\
-+__DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
- __DEFINE_UNLOCK_GUARD(_name, _type, _unlock, __VA_ARGS__)		\
- __DEFINE_LOCK_GUARD_1(_name, _type, _lock)
- 
- #define DEFINE_LOCK_GUARD_0(_name, _lock, _unlock, ...)			\
-+__DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
- __DEFINE_UNLOCK_GUARD(_name, void, _unlock, __VA_ARGS__)		\
- __DEFINE_LOCK_GUARD_0(_name, _lock)
- 
- #define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
-+	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true);		\
- 	EXTEND_CLASS(_name, _ext,					\
- 		     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
- 		        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
-
-base-commit: 44badc908f2c85711cb18e45e13119c10ad3a05f
--- 
-2.46.0
-
+T24gTW9uLCAyMDI0LTEwLTA3IGF0IDEyOjAxIC0wMzAwLCBKYXNvbiBHdW50aG9ycGUgd3JvdGU6
+DQo+IE9uIE1vbiwgT2N0IDA3LCAyMDI0IGF0IDA4OjU3OjA3QU0gKzAwMDAsIEdvd2FucywgSmFt
+ZXMgd3JvdGU6DQo+ID4gV2l0aCB0aGUgQVJNIFNNTVV2MyBmb3IgZXhhbXBsZSBJIHRoaW5rIHRo
+ZXJlIGFyZSBicmVhay1iZWZvcmUtbWFrZQ0KPiA+IHJlcXVpcmVtZW50LCBzbyBpcyBpdCBwb3Nz
+aWJsZSB0byBkbyBhbiBhdG9taWMgc3dpdGNoIG9mIHRoZSBTTU1VdjMgcGFnZQ0KPiA+IHRhYmxl
+IFBHRCBpbiBhIGhpdGxlc3Mgd2F5Pw0KPiANCj4gVGhlIEJCTSBydWxlcyBhcmUgb25seSBhYm91
+dCBjYWNoZWQgdHJhbnNsYXRpb25zLiBJZiBhbGwgeW91ciBJT1BURXMNCj4gcmVzdWx0IGluIHRo
+ZSBzYW1lIHRyYW5zbGF0aW9uICpzaXplKiB0aGVuIHlvdSBhcmUgc2FmZS4gWW91IGNhbg0KPiBj
+aGFuZ2UgdGhlIHJhZGl4IG1lbW9yeSBzdG9yaW5nIHRoZSBJT1BURXMgZnJlZWx5LCBBRkFJSy4N
+Cg0KT2theSwgYnV0IGluIGdlbmVyYWwgdGhpcyBzdGlsbCBtZWFucyB0aGF0IHRoZSBwYWdlIHRh
+YmxlcyBtdXN0IGhhdmUNCmV4YWN0bHkgdGhlIHNhbWUgdHJhbnNsYXRpb25zIGlmIHdlIHRyeSB0
+byBzd2l0Y2ggZnJvbSBvbmUgc2V0IHRvDQphbm90aGVyLiBJZiBpdCBpcyBwb3NzaWJsZSB0byBj
+aGFuZ2UgdHJhbnNsYXRpb25zIHRoZW4gdHJhbnNsYXRpb24gdGFibGUNCmVudHJpZXMgY291bGQg
+YmUgY3JlYXRlZCBhdCBkaWZmZXJlbnQgZ3JhbnVsYXJpdHkgKFBURSwgUE1ELCBQVUQpIGxldmVs
+DQp3aGljaCB3b3VsZCB2aW9sYXRlIHRoaXMgcmVxdWlyZW1lbnQuIA0KDQpJdCdzIGFsc28gcG9z
+c2libGUgZm9yIGRpZmZlcmVudCBJT01NVSBkcml2ZXIgdmVyc2lvbnMgdG8gc2V0IHVwIHRoZSB0
+aGUNCnNhbWUgdHJhbnNsYXRpb25zLCBidXQgYXQgZGlmZmVyZW50IHBhZ2UgdGFibGUgbGV2ZWxz
+LiBQZXJoYXBzIGFuIG9sZGVyDQp2ZXJzaW9uIGRpZCBub3QgY29hbGVzY2UgY29tZSBQVEVzLCBi
+dXQgYSBuZXdlciB2ZXJzaW9uIGRvZXMgY29hbGVzY2UuDQpXb3VsZCB0aGUgc2FtZSB0cmFuc2xh
+dGlvbnMgYnV0IGF0IGEgZGlmZmVyZW50IHNpemUgdmlvbGF0ZSBCQk0/DQoNCklmIHdlIHNheSB0
+aGF0IHRvIGJlIHNhZmUvY29ycmVjdCBpbiB0aGUgZ2VuZXJhbCBjYXNlIHRoZW4gaXQgaXMNCm5l
+Y2Vzc2FyeSBmb3IgdGhlIHRyYW5zbGF0aW9ucyB0byBiZSAqZXhhY3RseSogdGhlIHNhbWUgYmVm
+b3JlIGFuZCBhZnRlcg0Ka2V4ZWMsIGlzIHRoZXJlIGFueSBiZW5lZml0IHRvIGJ1aWxkaW5nIG5l
+dyB0cmFuc2xhdGlvbiB0YWJsZXMgYW5kDQpzd2l0Y2hpbmcgdG8gdGhlbT8gV2UgbWF5IGFzIHdl
+bGwgY29udGludWUgdG8gdXNlIHRoZSBleGFjdCBzYW1lIHBhZ2UNCnRhYmxlcyBhbmQgY29uc3Ry
+dWN0IGlvbW11ZmQgb2JqZWN0cyAoSU9BUywgZXRjKSB0byBtYXRjaC4NCg0KVGhlcmUgaXMgYWxz
+byBhIHBlcmZvcm1hbmNlIGNvbnNpZGVyYXRpb24gaGVyZTogd2hlbiBkb2luZyBsaXZlIHVwZGF0
+ZQ0KZXZlcnkgbWlsbGlzZWNvbmQgb2YgZG93biB0aW1lIG1hdHRlcnMuIEknbSBub3Qgc3VyZSBp
+ZiB0aGlzIGlvbW11ZmQgcmUtDQppbml0aWFsaXNhdGlvbiB3aWxsIGVuZCB1cCBiZWluZyBpbiB0
+aGUgaG90IHBhdGggb2YgdGhpbmdzIHRoYXQgbmVlZCB0bw0KYmUgZG9uZSBiZWZvcmUgdGhlIFZN
+IGNhbiBzdGFydCBydW5uaW5nIGFnYWluLiBJZiBpdCBpbiB0aGUgaG90IHBhdGgNCnRoZW4gaXQg
+d291bGQgYmUgdXNlZnVsIHRvIGF2b2lkIHJlYnVpbGRpbmcgaWRlbnRpY2FsIHRhYmxlcy4gTWF5
+YmUgaXQNCmVuZHMgdXAgYmVpbmcgaW4gdGhlICJ3YXJtIiBwYXRoIC0gdGhlIFZNIGNhbiBzdGFy
+dCBydW5uaW5nIGJ1dCB3aWxsDQpzbGVlcCBpZiB0YWtpbmcgYSBwYWdlIGZhdWx0IGJlZm9yZSBJ
+T01NVUZEIGlzIHJlLWluaXRhbGlzZWQuLi4NCg0KU28gb3ZlcmFsbCBteSBwb2ludCBpcyB0aGF0
+IEkgdGhpbmsgd2UgZW5kIHVwIHdpdGggYSByZXF1aXJlbWVudCB0aGF0DQp0aGUgcGd0YWJsZXMg
+YXJlIGlkZW50aWNhbCBiZWZvcmUgYW5kIGFmdGVyIGtleGVjIHNvIHRoZXJlIGlzIGFueQ0KYmVu
+ZWZpdCBpbiByZWJ1aWxkaW5nIHRoZW0/DQoNCkpHDQo=
 
