@@ -1,111 +1,144 @@
-Return-Path: <linux-kernel+bounces-356630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7766C996459
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:02:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A02996456
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02140B2617A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C0F1F21A6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395D918A959;
-	Wed,  9 Oct 2024 09:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Uhrm+oI+"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D1E188906;
+	Wed,  9 Oct 2024 09:02:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07671166F00;
-	Wed,  9 Oct 2024 09:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6525E17C22B
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464526; cv=none; b=DqGiWdYaWsARClssfP68Zt2g4HxQVXyKRb7AQGf9vqLK8RQahkhUcJVkz5fGEZtdpgZkLsvT+TB8mKOGlZ1ayW+lPDoEt4pgR6qDzXcdF3QH40kvKk8VG6C4lkGwOUZ/3Zj83mQPUDqLYgyWcGymKxiHb4IJUWIBdtnmR524fqM=
+	t=1728464525; cv=none; b=GDd5g6b07acviHCq822Obf92uNORMQuzJdGlLqLz8G4Z+L7tHCYht7xC5teNfphtidxi3IJhPzT7JPxadLNs/QeKZPvmR8ERUSEF5XbdM7Ovt9Tjzd7uOw24P9YPgLkFG5lJP5ykdTKv1YRoDNdwc3Vb8VDp3DS1L4EVglIJHPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464526; c=relaxed/simple;
-	bh=ESDpBhZRaGB14XgN7tzB2HQ8mkUIV3izuk6EsszNpc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ls/7t40Hg/y4txaFVcmgxuJUbp2NVwoPNyux9z5L9wKI83WR4eaT95a3kApEjUUUzHslE9VKmJOpIQe0o27x7wPr+nLgtHTQsYszV8EtQxgKsfW5ZhFpOlnFuv0lDB4Gg4Xn+enNrVhTKFgTIWIMyF67vU9rztZOXsP2XzjIB+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Uhrm+oI+; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc (unknown [10.10.165.14])
-	by mail.ispras.ru (Postfix) with ESMTPSA id F41F440B2786;
-	Wed,  9 Oct 2024 09:01:54 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru F41F440B2786
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1728464515;
-	bh=0tBlbvTpMjEqfjlFsN9StBxwVE8haftHBQAgLVgyA/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uhrm+oI+Y9xZzVZUh7+xdeLE6G2fr5xo3ziwvAT9SJePQNWwM2b1WgS1I95IB6+Yp
-	 9pUT/TbEC+igKD/12/XK08TTI5RK+0TXTL2AyZfi+CkpAVqXX7dplqhELc0cHWn8bG
-	 lMfGEU1mrp51lxkAC4luddzLdLYE8ai5Z1+k5k1E=
-Date: Wed, 9 Oct 2024 12:01:51 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Stephen Boyd <sboyd@kernel.org>, lvc-project@linuxtesting.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [lvc-project] [PATCH v3] clk: mvebu: Prevent division by zero in
- clk_double_div_recalc_rate()
-Message-ID: <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
-References: <20240917132201.17513-1-adiupina@astralinux.ru>
- <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
- <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
- <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
- <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
+	s=arc-20240116; t=1728464525; c=relaxed/simple;
+	bh=oo6VcK2rs3IY1w9JRgHXriWMgStsa4FSPSm1bMovECo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ETbQdvjH40QtvCh81fMdg/a7s17Q5Udjafvoel088OWOl8MidThC3aSeUjdNTeR0Ww1ijvTxfCX2vWo9JsergGpgvLL0KNXshMkBYeuKHIP0pl/Pz4KdZZCEbENp5bEr3PAX6ycgfQNTsR6j8hNmDIesRmvkPxHL+C3LZJIBtdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a348ebb940so69269895ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 02:02:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728464522; x=1729069322;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S1B1q5SrQHb6EVlMxxk3YyNU71Tt+c0BYVGTEt5xjEA=;
+        b=GC1pgGX7hu7s6whIfiSu7yHQz9n9ihxND2IIQkHkPSifbgSQU6eUp5/a+RnkbWwhmL
+         UEAfhkeMvW4Tz+OrYgM5RD8VnzOxeuxJP/980UQgegdLcDdDBjo8WmUGekqdVwZKLoBz
+         A/L9zof8ZeRyUlOMpqDSF9q9Y7l6n0BMWDqYr3CVme2Q4XDIVFflxM2VlLxDOWl7yqns
+         Vt5wXwF5cqQMFxRaq8LZj4T9y90pEF0MygNkLHXsNQJiVhrGCBAqQ/Ps5fbiAJ03YZcn
+         qimR0bIHAFFCKjIjFEBtlWIUwcAcGuhjy/IWOtXQEYmM0g6FlDT/c77ut9/ICe05orsy
+         JnPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvY4vfIEdzDP9JWOzj8wgbVGY8m0L1SBpC2Bl56QZbaRZ2cEWownwOrPK3AaiJGCZySu8GqwQNQWAq4mU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcLoT0FRiuZ7Nbde1fquN5/B5Q4sK1fGqyA0fMNNuPfORsHWoq
+	7iNgZNxTE0LdIzxmSJy/yNfjBladGJA2IPZTalbOhPWhUbycUJ9ih+0keL6GW+cFV8i5bX/6gOF
+	NEEpj1bMrOnBHDpmXbqAo/S70phBwvPyTV8ZOzYgHUiwx1OhIg/L/Oq8=
+X-Google-Smtp-Source: AGHT+IFgK3GaNEbcVvlW9Vo6Wb99Gd/Zp7pPI33DjYS3F9NH37d1CvzdroeqkCfW+TCKMS8yrvTXlI9Yris6gAl7LVlXkCHEly/P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
+X-Received: by 2002:a05:6e02:1a26:b0:3a3:96c4:29bc with SMTP id
+ e9e14a558f8ab-3a397cf14d0mr20026965ab.11.1728464522534; Wed, 09 Oct 2024
+ 02:02:02 -0700 (PDT)
+Date: Wed, 09 Oct 2024 02:02:02 -0700
+In-Reply-To: <tencent_BE79CA6D3C2FA56CF897FCEA4AED62CD6C0A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6706468a.050a0220.22840d.0011.GAE@google.com>
+Subject: Re: [syzbot] [usb?] possible deadlock in chaoskey_open
+From: syzbot <syzbot+5f1ce62e956b7b19610e@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrew,
+Hello,
 
-On Tue, 08. Oct 23:58, Andrew Lunn wrote:
-> On Mon, Oct 07, 2024 at 03:56:29PM -0700, Stephen Boyd wrote:
-> > Quoting Alexandra Diupina (2024-09-24 06:14:44)
-> > > >> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> > > >> index 8701a58a5804..b32c6d4d7ee5 100644
-> > > >> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> > > >> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> > > >> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
-> > > >>          div = get_div(double_div->reg1, double_div->shift1);
-> > > >>          div *= get_div(double_div->reg2, double_div->shift2);
-> > > >>   
-> > > >> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-> > > >> +       if (!div) {
-> > > >> +               pr_err("Can't recalculate the rate of clock %s\n", hw->init->name);
-> > > > hw->init is set to NULL after registration (see clk_register() code). If
-> > > > div is 0 what does the hardware do?
-> > > 
-> > > Thanks for noticing the error. Yes, hw->init is set to zero,
-> > > I will replace that code with clk_hw_get_name(hw).
-> > > If the value of div is 0, should I return 0 as stated in the
-> > > comment for .recalc_rate (in struct clk_ops) or should I
-> > > return parent_rate as in some other similar rate recalculation
-> > > functions (in some other drivers)?
-> > 
-> > It depends on what the hardware does. Does the hardware pass on the
-> > parent rate if the divider is zero? If so, then return parent_rate. Or
-> > does it turn off completely? If so, return zero.
-> 
-> I don't think anybody knows what the hardware does in this
-> condition. I also suspect it has never happened, or if it has, nobody
-> has complained.
-> 
-> I would say, let is divide by 0, so there is an obvious kernel stack
-> trace and hopefully a report of the issue. It can then be investigated
-> in a way we can then find out what the hardware actually is doing.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in chaoskey_release
 
-Is it worth adding some kind of WARN assertions? Or actually just leave it
-for now as is?
+============================================
+WARNING: possible recursive locking detected
+6.12.0-rc1-syzkaller-00027-g4a9fe2a8ac53-dirty #0 Not tainted
+--------------------------------------------
+syz.1.16/6532 is trying to acquire lock:
+ffffffff89b120e8 (chaoskey_list_lock){+.+.}-{3:3}, at: chaoskey_release+0x15d/0x2c0 drivers/usb/misc/chaoskey.c:322
+
+but task is already holding lock:
+ffffffff89b120e8 (chaoskey_list_lock){+.+.}-{3:3}, at: chaoskey_release+0x7f/0x2c0 drivers/usb/misc/chaoskey.c:299
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(chaoskey_list_lock);
+  lock(chaoskey_list_lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+1 lock held by syz.1.16/6532:
+ #0: ffffffff89b120e8 (chaoskey_list_lock){+.+.}-{3:3}, at: chaoskey_release+0x7f/0x2c0 drivers/usb/misc/chaoskey.c:299
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6532 Comm: syz.1.16 Not tainted 6.12.0-rc1-syzkaller-00027-g4a9fe2a8ac53-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_deadlock_bug+0x2e3/0x410 kernel/locking/lockdep.c:3037
+ check_deadlock kernel/locking/lockdep.c:3089 [inline]
+ validate_chain kernel/locking/lockdep.c:3891 [inline]
+ __lock_acquire+0x2185/0x3ce0 kernel/locking/lockdep.c:5202
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ chaoskey_release+0x15d/0x2c0 drivers/usb/misc/chaoskey.c:322
+ __fput+0x3f6/0xb60 fs/file_table.c:431
+ task_work_run+0x14e/0x250 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x24e/0x260 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f35b167dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe690a74c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 000000000001c363 RCX: 00007f35b167dff9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f35b1837a80 R08: 0000000000000001 R09: 00007ffe690a77bf
+R10: 00007f35b14fa000 R11: 0000000000000246 R12: 000000000001cf4f
+R13: 00007ffe690a75d0 R14: 0000000000000bea R15: ffffffffffffffff
+ </TASK>
+
+
+Tested on:
+
+commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b89f9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f1ce62e956b7b19610e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14adf707980000
+
 
