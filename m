@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-357117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C68A996BBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C42996BBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502EB1C23A67
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:22:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1031C24AEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9E019A28D;
-	Wed,  9 Oct 2024 13:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D925E199FB8;
+	Wed,  9 Oct 2024 13:21:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511251990A7
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D578198E69
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480075; cv=none; b=DJJtrNesClhYC3riHGtKGbRlsnZTDCvcy9PhlwNR171NNzW8RpFHPHH3g4AOAqkoX8+41gOBy/qjxmUhfLLPGAky6p+yWkF9Yb00XQTKqBC6W5Vy5GGJumu3tjYweq6YNJHWhtlBLOcCdxYeWpBrO++6ZWhDrxuYEG5nM2/EZuA=
+	t=1728480075; cv=none; b=E6JuL8iJaPhyxa8CgZgIRs2j+Ft1jSgTNRXpD0KMid5ao0RDeyO8on1EGpRI2b+7obA2ftPbp4iJkwDChDOeMbTKevEXQwV9Qs9H8/LfZwNTKACjKGUbwxaqGca5FxOOnGZv59Nt42MEfr2iVnQ+ffq+9i++oPLGFT0zLk1LXTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728480075; c=relaxed/simple;
-	bh=Bcv8LraOix12r5fxgeJoqI0y/02YPBmE2zsUVZYnCDY=;
+	bh=PT2XMQAV2hkgZP1Zs73E2VXp46ND+daiBSO83zepyFU=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=WP2Irisj6+W4W8aq9DvWizPBicJ847KUGPSSW2Ssa/RUqeNTSEEzV/IwRQWuFlQPTiySXWyPjBnXn0VDw0JDRSrdUIfV+Jk+vm6B61VILiOQWapdiZPqEgyxWeamgQIR8LJbk5WLBhDSzWslY5vl7M58KN/P15O9+lMaswuoi8s=
+	 Content-Type; b=PXfhLfuUP2h+RayTvrPv3ShUYkVBoaAnUcz8bMZG6/3KXNzVlgLMXwq1Fg/wOmNWqmPjEEi23nrj+h7rK6RXXZPx/TAbQG3f3vSP4m/iAUNWaIvIm5DUOF4Ba9L283BAQ+aSe42VX+wUWkGfaoBy0UH9/zld9ipwJJ7BIjvu/3Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE63BC4CECE;
-	Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD83C4CEDA;
+	Wed,  9 Oct 2024 13:21:15 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1syWcy-0000000177n-1pPp;
+	id 1syWcy-0000000178H-2UZz;
 	Wed, 09 Oct 2024 09:21:20 -0400
-Message-ID: <20241009132120.300305643@goodmis.org>
+Message-ID: <20241009132120.456794859@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 09 Oct 2024 09:21:09 -0400
+Date: Wed, 09 Oct 2024 09:21:10 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -43,7 +43,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Andrew Morton <akpm@linux-foundation.org>,
  Joel Fernandes <joel@joelfernandes.org>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [for-next][PATCH 5/6] tracing: Remove definition of trace_*_rcuidle()
+Subject: [for-next][PATCH 6/6] tracepoint: Remove SRCU protection
 References: <20241009132104.470687911@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,247 +55,159 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The trace_*_rcuidle() variant of a tracepoint was to handle places where a
-tracepoint was located but RCU was not "watching". All those locations
-have been removed, and RCU should be watching where all tracepoints are
-located. We can now remove the trace_*_rcuidle() variant.
+With the removal of the trace_*_rcuidle() tracepoints, there is no reason
+to protect tracepoints with SRCU. The reason the SRCU protection was
+added, was because it can protect tracepoints when RCU is not "watching".
+Now that tracepoints are only used when RCU is watching, remove the SRCU
+protection. It just made things more complex and confusing anyway.
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Joel Fernandes <joel@joelfernandes.org>
-Link: https://lore.kernel.org/20241003181629.36209057@gandalf.local.home
+Link: https://lore.kernel.org/20241003184220.0dc21d35@gandalf.local.home
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- include/linux/tracepoint.h        | 50 ++-----------------------------
- include/trace/events/preemptirq.h |  8 -----
- kernel/trace/trace_preemptirq.c   | 26 ++++------------
- scripts/tags.sh                   |  2 --
- 4 files changed, 8 insertions(+), 78 deletions(-)
+ include/linux/tracepoint.h |  4 ---
+ kernel/tracepoint.c        | 51 +-------------------------------------
+ 2 files changed, 1 insertion(+), 54 deletions(-)
 
 diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 2a29334bbc02..7e4af7b3633c 100644
+index 7e4af7b3633c..3d33b9872cec 100644
 --- a/include/linux/tracepoint.h
 +++ b/include/linux/tracepoint.h
-@@ -196,67 +196,25 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DO_TRACE_CALL(name, args)	__traceiter_##name(NULL, args)
- #endif /* CONFIG_HAVE_STATIC_CALL */
+@@ -32,8 +32,6 @@ struct trace_eval_map {
  
--/*
-- * ARCH_WANTS_NO_INSTR archs are expected to have sanitized entry and idle
-- * code that disallow any/all tracing/instrumentation when RCU isn't watching.
-- */
--#ifdef CONFIG_ARCH_WANTS_NO_INSTR
--#define RCUIDLE_COND(rcuidle)	(rcuidle)
--#else
--/* srcu can't be used from NMI */
--#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
--#endif
+ #define TRACEPOINT_DEFAULT_PRIO	10
+ 
+-extern struct srcu_struct tracepoint_srcu;
 -
- /*
-  * it_func[0] is never NULL because there is at least one element in the array
-  * when the array itself is non NULL.
-  */
--#define __DO_TRACE(name, args, cond, rcuidle)				\
-+#define __DO_TRACE(name, args, cond)					\
- 	do {								\
- 		int __maybe_unused __idx = 0;				\
- 									\
+ extern int
+ tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+ extern int
+@@ -109,7 +107,6 @@ void for_each_tracepoint_in_module(struct module *mod,
+ #ifdef CONFIG_TRACEPOINTS
+ static inline void tracepoint_synchronize_unregister(void)
+ {
+-	synchronize_srcu(&tracepoint_srcu);
+ 	synchronize_rcu();
+ }
+ #else
+@@ -207,7 +204,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
  		if (!(cond))						\
  			return;						\
  									\
--		if (WARN_ONCE(RCUIDLE_COND(rcuidle),			\
--			      "Bad RCU usage for tracepoint"))		\
--			return;						\
--									\
- 		/* keep srcu and sched-rcu usage consistent */		\
+-		/* keep srcu and sched-rcu usage consistent */		\
  		preempt_disable_notrace();				\
  									\
--		/*							\
--		 * For rcuidle callers, use srcu since sched-rcu	\
--		 * doesn't work from the idle path.			\
--		 */							\
--		if (rcuidle) {						\
--			__idx = srcu_read_lock_notrace(&tracepoint_srcu);\
--			ct_irq_enter_irqson();				\
--		}							\
--									\
  		__DO_TRACE_CALL(name, TP_ARGS(args));			\
- 									\
--		if (rcuidle) {						\
--			ct_irq_exit_irqson();				\
--			srcu_read_unlock_notrace(&tracepoint_srcu, __idx);\
--		}							\
--									\
- 		preempt_enable_notrace();				\
- 	} while (0)
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 1e3de77ea6b3..6474e2cf22c9 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -25,9 +25,6 @@ enum tp_func_state {
+ extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+ extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
  
--#ifndef MODULE
--#define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
--	static inline void trace_##name##_rcuidle(proto)		\
--	{								\
--		if (static_branch_unlikely(&__tracepoint_##name.key))	\
--			__DO_TRACE(name,				\
--				TP_ARGS(args),				\
--				TP_CONDITION(cond), 1);			\
--	}
--#else
--#define __DECLARE_TRACE_RCU(name, proto, args, cond)
--#endif
+-DEFINE_SRCU(tracepoint_srcu);
+-EXPORT_SYMBOL_GPL(tracepoint_srcu);
+-
+ enum tp_transition_sync {
+ 	TP_TRANSITION_SYNC_1_0_1,
+ 	TP_TRANSITION_SYNC_N_2_1,
+@@ -37,7 +34,6 @@ enum tp_transition_sync {
+ 
+ struct tp_transition_snapshot {
+ 	unsigned long rcu;
+-	unsigned long srcu;
+ 	bool ongoing;
+ };
+ 
+@@ -50,7 +46,6 @@ static void tp_rcu_get_state(enum tp_transition_sync sync)
+ 
+ 	/* Keep the latest get_state snapshot. */
+ 	snapshot->rcu = get_state_synchronize_rcu();
+-	snapshot->srcu = start_poll_synchronize_srcu(&tracepoint_srcu);
+ 	snapshot->ongoing = true;
+ }
+ 
+@@ -61,8 +56,6 @@ static void tp_rcu_cond_sync(enum tp_transition_sync sync)
+ 	if (!snapshot->ongoing)
+ 		return;
+ 	cond_synchronize_rcu(snapshot->rcu);
+-	if (!poll_state_synchronize_srcu(&tracepoint_srcu, snapshot->srcu))
+-		synchronize_srcu(&tracepoint_srcu);
+ 	snapshot->ongoing = false;
+ }
+ 
+@@ -85,9 +78,6 @@ static LIST_HEAD(tracepoint_module_list);
+  */
+ static DEFINE_MUTEX(tracepoints_mutex);
+ 
+-static struct rcu_head *early_probes;
+-static bool ok_to_free_tracepoints;
 -
  /*
-  * Make sure the alignment of the structure in the __tracepoints section will
-  * not add unwanted padding between the beginning of the section and the
-@@ -277,14 +235,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
--				TP_CONDITION(cond), 0);			\
-+				TP_CONDITION(cond));			\
- 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
- 			WARN_ONCE(!rcu_is_watching(),			\
- 				  "RCU not watching for tracepoint");	\
- 		}							\
- 	}								\
--	__DECLARE_TRACE_RCU(name, PARAMS(proto), PARAMS(args),		\
--			    PARAMS(cond))				\
- 	static inline int						\
- 	register_trace_##name(void (*probe)(data_proto), void *data)	\
- 	{								\
-@@ -375,8 +331,6 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
- 	static inline void trace_##name(proto)				\
- 	{ }								\
--	static inline void trace_##name##_rcuidle(proto)		\
--	{ }								\
- 	static inline int						\
- 	register_trace_##name(void (*probe)(data_proto),		\
- 			      void *data)				\
-diff --git a/include/trace/events/preemptirq.h b/include/trace/events/preemptirq.h
-index 3f249e150c0c..f99562d2b496 100644
---- a/include/trace/events/preemptirq.h
-+++ b/include/trace/events/preemptirq.h
-@@ -43,8 +43,6 @@ DEFINE_EVENT(preemptirq_template, irq_enable,
- #else
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
--#define trace_irq_enable_rcuidle(...)
--#define trace_irq_disable_rcuidle(...)
- #endif
+  * Note about RCU :
+  * It is used to delay the free of multiple probes array until a quiescent
+@@ -111,56 +101,17 @@ static inline void *allocate_probes(int count)
+ 	return p == NULL ? NULL : p->probes;
+ }
  
- #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
-@@ -58,8 +56,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
- #else
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
--#define trace_preempt_enable_rcuidle(...)
--#define trace_preempt_disable_rcuidle(...)
- #endif
- 
- #endif /* _TRACE_PREEMPTIRQ_H */
-@@ -69,10 +65,6 @@ DEFINE_EVENT(preemptirq_template, preempt_enable,
- #else /* !CONFIG_PREEMPTIRQ_TRACEPOINTS */
- #define trace_irq_enable(...)
- #define trace_irq_disable(...)
--#define trace_irq_enable_rcuidle(...)
--#define trace_irq_disable_rcuidle(...)
- #define trace_preempt_enable(...)
- #define trace_preempt_disable(...)
--#define trace_preempt_enable_rcuidle(...)
--#define trace_preempt_disable_rcuidle(...)
- #endif
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index e37446f7916e..5c03633316a6 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -15,20 +15,6 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/preemptirq.h>
- 
--/*
-- * Use regular trace points on architectures that implement noinstr
-- * tooling: these calls will only happen with RCU enabled, which can
-- * use a regular tracepoint.
-- *
-- * On older architectures, use the rcuidle tracing methods (which
-- * aren't NMI-safe - so exclude NMI contexts):
-- */
--#ifdef CONFIG_ARCH_WANTS_NO_INSTR
--#define trace(point)	trace_##point
--#else
--#define trace(point)	if (!in_nmi()) trace_##point##_rcuidle
--#endif
+-static void srcu_free_old_probes(struct rcu_head *head)
+-{
+-	kfree(container_of(head, struct tp_probes, rcu));
+-}
 -
- #ifdef CONFIG_TRACE_IRQFLAGS
- /* Per-cpu variable to prevent redundant calls when IRQs already off */
- static DEFINE_PER_CPU(int, tracing_irq_cpu);
-@@ -42,7 +28,7 @@ static DEFINE_PER_CPU(int, tracing_irq_cpu);
- void trace_hardirqs_on_prepare(void)
+ static void rcu_free_old_probes(struct rcu_head *head)
  {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -53,7 +39,7 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_prepare);
- void trace_hardirqs_on(void)
- {
- 	if (this_cpu_read(tracing_irq_cpu)) {
--		trace(irq_enable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_enable(CALLER_ADDR0, CALLER_ADDR1);
- 		tracer_hardirqs_on(CALLER_ADDR0, CALLER_ADDR1);
- 		this_cpu_write(tracing_irq_cpu, 0);
- 	}
-@@ -75,7 +61,7 @@ void trace_hardirqs_off_finish(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
- 	}
- 
- }
-@@ -89,7 +75,7 @@ void trace_hardirqs_off(void)
- 	if (!this_cpu_read(tracing_irq_cpu)) {
- 		this_cpu_write(tracing_irq_cpu, 1);
- 		tracer_hardirqs_off(CALLER_ADDR0, CALLER_ADDR1);
--		trace(irq_disable)(CALLER_ADDR0, CALLER_ADDR1);
-+		trace_irq_disable(CALLER_ADDR0, CALLER_ADDR1);
- 	}
- }
- EXPORT_SYMBOL(trace_hardirqs_off);
-@@ -100,13 +86,13 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
- 
- void trace_preempt_on(unsigned long a0, unsigned long a1)
- {
--	trace(preempt_enable)(a0, a1);
-+	trace_preempt_enable(a0, a1);
- 	tracer_preempt_on(a0, a1);
+-	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+-}
+-
+-static __init int release_early_probes(void)
+-{
+-	struct rcu_head *tmp;
+-
+-	ok_to_free_tracepoints = true;
+-
+-	while (early_probes) {
+-		tmp = early_probes;
+-		early_probes = tmp->next;
+-		call_rcu(tmp, rcu_free_old_probes);
+-	}
+-
+-	return 0;
++	kfree(container_of(head, struct tp_probes, rcu));
  }
  
- void trace_preempt_off(unsigned long a0, unsigned long a1)
+-/* SRCU is initialized at core_initcall */
+-postcore_initcall(release_early_probes);
+-
+ static inline void release_probes(struct tracepoint_func *old)
  {
--	trace(preempt_disable)(a0, a1);
-+	trace_preempt_disable(a0, a1);
- 	tracer_preempt_off(a0, a1);
+ 	if (old) {
+ 		struct tp_probes *tp_probes = container_of(old,
+ 			struct tp_probes, probes[0]);
+ 
+-		/*
+-		 * We can't free probes if SRCU is not initialized yet.
+-		 * Postpone the freeing till after SRCU is initialized.
+-		 */
+-		if (unlikely(!ok_to_free_tracepoints)) {
+-			tp_probes->rcu.next = early_probes;
+-			early_probes = &tp_probes->rcu;
+-			return;
+-		}
+-
+-		/*
+-		 * Tracepoint probes are protected by both sched RCU and SRCU,
+-		 * by calling the SRCU callback in the sched RCU callback we
+-		 * cover both cases. So let us chain the SRCU and sched RCU
+-		 * callbacks to wait for both grace periods.
+-		 */
+ 		call_rcu(&tp_probes->rcu, rcu_free_old_probes);
+ 	}
  }
- #endif
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 191e0461d6d5..0d01c1cafb70 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -152,9 +152,7 @@ regex_c=(
- 	'/^BPF_CALL_[0-9]([[:space:]]*\([[:alnum:]_]*\).*/\1/'
- 	'/^COMPAT_SYSCALL_DEFINE[0-9]([[:space:]]*\([[:alnum:]_]*\).*/compat_sys_\1/'
- 	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
--	'/^TRACE_EVENT([[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
- 	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1/'
--	'/^DEFINE_EVENT([^,)]*,[[:space:]]*\([[:alnum:]_]*\).*/trace_\1_rcuidle/'
- 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/get_\1_slot/'
- 	'/^DEFINE_INSN_CACHE_OPS([[:space:]]*\([[:alnum:]_]*\).*/free_\1_slot/'
- 	'/^PAGEFLAG([[:space:]]*\([[:alnum:]_]*\).*/Page\1/'
 -- 
 2.45.2
 
