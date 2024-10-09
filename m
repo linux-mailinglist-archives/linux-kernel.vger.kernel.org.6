@@ -1,127 +1,83 @@
-Return-Path: <linux-kernel+bounces-356983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E389969E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:22:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E419969E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859392850A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:22:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B05284A25
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8E193435;
-	Wed,  9 Oct 2024 12:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58D9192D91;
+	Wed,  9 Oct 2024 12:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ngUaTiSb"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UNrue08+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AFF192D98;
-	Wed,  9 Oct 2024 12:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A408C19149F;
+	Wed,  9 Oct 2024 12:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728476544; cv=none; b=I3tYwtgU8ux5I6tk+T9dJMq8PA5I4pqPkv9v9s4RuEhMZ5R3t5qAe8lYrpy1m4jVCt2CTuIFQTrMfKivySTZyELe7iG34Q4woDI0+UGhxFuDBHaBYKjm1ToUzHPQNUXDtJGWkrjvbUHElPuUC25ITIhiFSACZEhgDaNQX9y+F0o=
+	t=1728476603; cv=none; b=IgXAFQJP6E7o6d+ekaR8ZA4R1c9j9iqOQUsU0ZhQ38Lp0M9ALEAi+HKy9aAb0uK1EHMMjAduoUqP2clS0FD2h7wNCsBCpREe5pGsFttqiBTXEP20EOrYvZBEaW8TCGxbjMjPoSb58V+qCs+1diolrqY3EPfy7k3RYI2aho+r1iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728476544; c=relaxed/simple;
-	bh=wdUq5MDohMublc/kPXtZ9axSNDUJAPcxhxPzm4aYqcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WwRYae8VjiN29gr5+uGxy+E96lKyHQrrnH7glLwToJBKYsaMpkub6fFrJzUuSVwntJo64H6HcsKKWbTsMKD+SuWn1RMZrWPMpoUHe/9HPKR6RnfWmUP0SEYYponzNtXg+6Tje6KOnDUdoTFM+3ZjYhxlDbdmi1iWxx28LS7Tspo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ngUaTiSb; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728476537;
-	bh=O3MKXyKtlhW/Kiyuoa7eHLUbo2P+V6k1ppGeFCZHfFQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ngUaTiSbZL2eZ5sQIH8XPXZvvcrH83BrYqnV9CN2txFEzm4GAeLQhy48wvbCL/k1t
-	 GMlT2U+T6xYmdegKGCF2Wq3QPtMOeRVHHXiKEL8lsr2NFuC1B54W7A/9PmcgRDaEFQ
-	 S6hJpsZIEENsknQonXKn/kyBhm+4PcUW2NzHMB4+y4lgVB5+NEosHx3ojOFpvjivVh
-	 EkNk7k6UZQJVFqYu8W/h3X2kzRTWYLq4AtcS2B2a4m0b/Un7Xakja0n8oINfM8j8GF
-	 +oFmjpgrDZ3QD3ZZdyaiObxpIYqYzdOQVEhBCJVF7f5KE7SkPE/bnLPQpwxtm82p1p
-	 2fyWanLMQq2iA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNsTN28XMz4x8p;
-	Wed,  9 Oct 2024 23:22:16 +1100 (AEDT)
-Date: Wed, 9 Oct 2024 23:22:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Subject: linux-next: simple boot test failure (Was: linux-next: Tree for Oct
- 9)
-Message-ID: <20241009232216.6f0a28e5@canb.auug.org.au>
-In-Reply-To: <20241009182016.61736424@canb.auug.org.au>
-References: <20241009182016.61736424@canb.auug.org.au>
+	s=arc-20240116; t=1728476603; c=relaxed/simple;
+	bh=xnWivR6fcBquYslR7NRqmfuc9xvRUA4PTFWiLdEpnfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jr7+qylFotOEDJ+8YkaKCzU1ZFFixMYVU0KuKj4YS1g3HMEIy0+91M+NchkpMQPPZhKbq6WMkROPqpPbn+qamlLs0QyrEgYVCJ/sJUjrVayUiJ/rK/XYYQhoBslXN3ePPFkIiU7AhNARcV/AMJQXE1TQw+j+6wktOOWjKpX6fTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UNrue08+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=gVi8LwdnV8xpyyxW1DNsL6wEgg2JRlgKhN4PKMnARNA=; b=UNrue08+6PTroR13z8mTw8CNCM
+	/gfkprZTO6N7C2LCcDn7K83dfMcakY+kPth8ujKBzp7oWP3um/UUPcInLcU2vrOzAndkXLZ2LSCJk
+	8JlLk4jRe/LO0GsnPk1tbNzqC2PjDUgDbKH6RAI4TTnyhsqt46jv8v36qaZBnfdNkaqU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syVii-009Uh3-Q1; Wed, 09 Oct 2024 14:23:12 +0200
+Date: Wed, 9 Oct 2024 14:23:12 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Stephen Boyd <sboyd@kernel.org>, lvc-project@linuxtesting.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [lvc-project] [PATCH v3] clk: mvebu: Prevent division by zero in
+ clk_double_div_recalc_rate()
+Message-ID: <b2489acc-d997-43e7-aeaf-c662b6fd3253@lunn.ch>
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+ <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
+ <d05d9ebd-f954-482b-878b-9dcb422821a8@astralinux.ru>
+ <c2250a7cd0e2af5077ade91279567c3b.sboyd@kernel.org>
+ <a79dda0a-258d-4567-b473-44aabe81b649@lunn.ch>
+ <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/57PlGHg5OYSq_.y=OLIgM+8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009-29749473966747300f3d1d3b-pchelkin@ispras.ru>
 
---Sig_/57PlGHg5OYSq_.y=OLIgM+8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> > I would say, let is divide by 0, so there is an obvious kernel stack
+> > trace and hopefully a report of the issue. It can then be investigated
+> > in a way we can then find out what the hardware actually is doing.
+> 
+> Is it worth adding some kind of WARN assertions? Or actually just leave it
+> for now as is?
 
-Hi all,
+What actually happens on a / 0 on ARM? I assume it triggers an
+exception, which will give a stack trace? If so a WARN adds no value.
 
-On Wed, 9 Oct 2024 18:20:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> News: this release fails my very simple qemu boot test.  It looks normal
-> up to user mode and I even get a login prompt, but when I log in I get
-> dumped back to the login prompt - presumably the shell is failing to run.
-
-Bisected to
-
-218a562f273bec7731af4e713df72d2c8c8816e8 is the first bad commit
-commit 218a562f273bec7731af4e713df72d2c8c8816e8
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Mon Oct 7 18:43:57 2024 +0100
-
-    make __set_open_fd() set cloexec state as well
-   =20
-    ->close_on_exec[] state is maintained only for opened descriptors;
-    as the result, anything that marks a descriptor opened has to
-    set its cloexec state explicitly.
-   =20
-    As the result, all calls of __set_open_fd() are followed by
-    __set_close_on_exec(); might as well fold it into __set_open_fd()
-    so that cloexec state is defined as soon as the descriptor is
-    marked opened.
-   =20
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-    Link: https://lore.kernel.org/r/20241007174358.396114-10-viro@zeniv.lin=
-ux.org.uk
-    Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-And reverting that commit from today's linux-next fixes my problem.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/57PlGHg5OYSq_.y=OLIgM+8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcGdXgACgkQAVBC80lX
-0GwJWQf8DSdnxWeAr+efyAuaakOibnuGTVLbzE5BlDgCPWz4SRvh2/d7j0UnJXRX
-+VgdC8AoLntlaF/GxDfW/6GT6DxxwG5QAguGlayOtlf6u/9LqRIqGnBGKH+Xnffv
-W2DKXZ5N37JGaB0p6PbgSHt4FhJuNecGsg8EkkJiMcsmH4BItIO/eYVwGHkW/tpS
-dudAI0zP4vQ3GcrVOSIUe8mmvU+hBHT5k7KVpHxYpL9cMX6rm388aVqJH2hLQo0L
-pb/O9ZJQ3tNehqBQ4quP5+ZD5xyOZwl8qsHbRHDXaYmHP9WEVYWaNObYSwD3Ht34
-ZhjSl3fJWgjbKkbiL0Sts52lsVyA7g==
-=V1ff
------END PGP SIGNATURE-----
-
---Sig_/57PlGHg5OYSq_.y=OLIgM+8--
+	Andrew
 
