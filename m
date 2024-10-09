@@ -1,87 +1,98 @@
-Return-Path: <linux-kernel+bounces-357205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51B4996D8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:22:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC1C996D92
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6E561C22045
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B3F1F22062
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD9819D89D;
-	Wed,  9 Oct 2024 14:22:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E158619D097;
+	Wed,  9 Oct 2024 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vNiavDZ7"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B360219049B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC3D199FDD
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728483725; cv=none; b=B4avaagAd1cdplHPn7erbpI4y3IxHFVqLUC+0xklEmQMB+15QG2EIg1zZxsH5e6V12lt1rDq1xa8MRMV0XBgerGe2cW3jaepOTdL9msCI8TdljU2cXqphJrYBleswsCtp7ZkUL/IErd/547BG411tpoqz9fERsKdASFzO4gIAgU=
+	t=1728483846; cv=none; b=ezundsA0/eIPyNSXUA2YKWTj3UJaoLREIgnrtXoAh4lnH46/2v8oysjNmFIKiuEE3iqTP3FRzYYg9wDEcMGeOi8apNKQhAJUnEENe+kvxHcGZ8N61OLcXuhL3sZ/aGbwKSiyfJrUaqN+Mjypo8XDfWi6sGTanU57jhhWaD7bSSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728483725; c=relaxed/simple;
-	bh=rdTwC9g1YQdn8blr0oOCzASD4APdHtumGoFiz2JLNys=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=n2Zqp5jMH4M8qwSDe/HSj+fXEStWSQRKsge24cATOAqnB5U3mkgaobr7L8MOxer32Z/QK14p8x1jKajbTRifIYJUL9Qw+4lbMtNbskpcYvc98w4zl1Ar1Hw0TT1g77TgX9IVNVm2M3hhb2tpMSWNJoAChBC5W0W49u+Q/BHw1XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a343860e72so71494405ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:22:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728483723; x=1729088523;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nLu7zt5XDQj9lOVwH7s1CPLkEn4z6TB/jyLQtPPFHbw=;
-        b=C8v3Lsc17GamRaoRHipbBG3gEMlMYIu/9kDapAGqHJZ+qSwL9GbvzaGt13hG177NSU
-         nbNlp9BZ8Wec4g0lV2T748EfBMskw8tc1gTMiFVrLq2eKeNQOJyUsmN1xYS+W5e8/OKd
-         J2bWAHqtncpbyr98gXKtkLIXjjQyOMoM5i7bsSVO5wEvkSYTgFzVwUOER41sIQabH2eC
-         oq2+tuixa5jSL5TJKa/QGEc9JGhVa6RXEQzDdPEq9FKV4FszUkVS9l8BW+jKkvmN1X4T
-         G0Dvbz2I9UOWtTNEayqE49lyH8hervAE/eKFtabeEF2QcjeRA6T8HS3Yx+ad/28IyxwD
-         nVxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKJn10/hSf8bXUMWNduJ/e+vYJzYhicsDdfEBnzE0ZsyqC1BGYt6UgYw7B7QLE1wM1gIOr4+2Lm4rLr2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlJ7F1OmfwyAQ4NERGJoGe51/1mQsx8CO2ASr1iw7d2oaDqjbD
-	Y0ZhfxahgLYy3OTK//ej4+gKSWzSxKb0tnuxq0cngcjSPOHMT2PoxuDf9sOdAujFr6pMYmjbv1W
-	AEFmK01CeOdK6zwoDcygbV349TDcamhGcEUC5f1NDEUPPKNrto0vjNhY=
-X-Google-Smtp-Source: AGHT+IEK8FX7NodAq5saVixCi8T7A29A7in8NUOuVOSM3h42A/7ywcjR8wBDNEh7PxQjFVLMogb9rJy8ypFWL5pShX1qx5iwlkW6
+	s=arc-20240116; t=1728483846; c=relaxed/simple;
+	bh=H6xXvQuMHVTtf9QtTh7Oq+emPniY5I1qE+Fp5rmLsRc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X0c2rrZK5n3gm7cNpAyjqZZU7NMgm4wVM2OeXqJbWo+Es3Rh6zMTlEETm1V/wW/9Pg1PqTEDF4MtP75Q6ow1wpH5Q79j+sJzWruSeJMs46wTuJ7yfWZeNl9P8Wv74JWWGfQMyGOWlNVpKqN9KDjZurBAX0YlhXws7Ul+Qg17Wq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vNiavDZ7; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499CndOo018680;
+	Wed, 9 Oct 2024 16:23:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=fdirs8B0Ru7Jst3Sjcp88b
+	8CTT5n584TdaQblKHqoyQ=; b=vNiavDZ76zocScRt2Yv6pMFoKwJYgP5gg6ECMQ
+	CUy3O5XRT5E7licYiFoMBQJCAIMWtOLuz03Kv3IcsN/oT9iLV6GThOl0pjDujYzm
+	vY1RdMIiFQBap0v8YUhCPpBspnVI6kLQfijtBBkk2EEv/S90RNVGQM/+Qz+GBpd5
+	89XA4s7yGO/3wvt6x1acR/KXDISIjwHkyj5L/NV3dJyPYgVHjoKq7+ITE9/VLlv/
+	94ozbv26/nSnzf1M3Ozuw33QP/73dRvtwcBGW4Wkcyxd9QuE9HfWfx15FWzH5I6L
+	oNbBNBO/1Bb2A9DbrXmRBDTKej4Pm5Ul1i8EYwfjDTAfcA9Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423gdmsab6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 16:23:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D50A240045;
+	Wed,  9 Oct 2024 16:23:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 38B382606C6;
+	Wed,  9 Oct 2024 16:22:37 +0200 (CEST)
+Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 9 Oct
+ 2024 16:22:36 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <linux@armlinux.org.uk>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <christian.bruel@foss.st.com>, <alexandre.torgue@foss.st.com>
+Subject: [PATCH 0/1] Fix protection fault during kernel relocation
+Date: Wed, 9 Oct 2024 16:22:21 +0200
+Message-ID: <20241009142222.1489500-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1569:b0:3a0:90c7:f1b with SMTP id
- e9e14a558f8ab-3a397d0cd74mr23240065ab.12.1728483722706; Wed, 09 Oct 2024
- 07:22:02 -0700 (PDT)
-Date: Wed, 09 Oct 2024 07:22:02 -0700
-In-Reply-To: <tencent_49BA6FBB7033A99E361BD24B1D1B94254108@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6706918a.050a0220.1139e6.0002.GAE@google.com>
-Subject: Re: [syzbot] [usb?] possible deadlock in chaoskey_open
-From: syzbot <syzbot+5f1ce62e956b7b19610e@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hello,
+A trusted boot firmware might set the CTLR.WWN bits, preventing execution
+of the relocated code treated as XN permission.
+Another solution to clear the CTLR.WXN and CTLR.UWXN bits but would open a
+security breach.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Best is probably just not to use the Client access domain here.
 
-Reported-by: syzbot+5f1ce62e956b7b19610e@syzkaller.appspotmail.com
-Tested-by: syzbot+5f1ce62e956b7b19610e@syzkaller.appspotmail.com
+thanks,
 
-Tested on:
+Christian Bruel (1):
+  ARM: decompressor: Use Domain Manager Access permissions
 
-commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a49327980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=5f1ce62e956b7b19610e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11f89f9f980000
+ arch/arm/boot/compressed/head.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note: testing is done by a robot and is best-effort only.
+-- 
+2.34.1
+
 
