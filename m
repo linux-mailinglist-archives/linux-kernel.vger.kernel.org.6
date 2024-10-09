@@ -1,170 +1,220 @@
-Return-Path: <linux-kernel+bounces-357561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1B799728C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC6C997298
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BAE71F22F63
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49DE91F22FB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4E21A0B12;
-	Wed,  9 Oct 2024 17:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C301B19D098;
+	Wed,  9 Oct 2024 17:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UwAzWmrj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcLAB44+"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD28198833;
-	Wed,  9 Oct 2024 17:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8521822F8
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728493405; cv=none; b=gCG3Db50dEaTtAktXYpccaKrQKcRY2VsmOrhcwGI6+uROgT7aqWUwjpaQjUj2briKuW8NhddTWWQwmOoOD7LzCEhhQ0QPAMwFwsmeN30/N4Zgr29wAuY2LxLuWPoimE4CWfSBaN+pPMg2GsJbRfLwF6IMctvz/rlqqP267pXjdo=
+	t=1728493455; cv=none; b=iteByBFxdTp9wI5/WQgWoLoBXYFMVfJAf5HQqKqyDfdYYhtVw3cy4lJ2O3MeOOL1QagMZjZemQEkR821ukv318K/UOssb9HyfNHRojk4n4hot4zMVW8nDZcmFtDFxIMxy+fLgxmCWC9clf1xXpleMInJLW6F9Eiz31u1TKieVMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728493405; c=relaxed/simple;
-	bh=ntuMNBGc87hpyIzGL0CndqCvPtKD2kuUUj44xPilJyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZadGhEwK3YaId2CBX05p2ZbPSCuv2/RqG8ySELcNkeJBn2BI6ioTfbL2/ajKP3Xy6tg19V0nImBr4UsP3p3+xFnUYNsxgdMLcjlDeGcM8QvqIfhMLiQs6RI36ML9i7sFEMt6G3P4MZ8rb/lN71GrS1DAds+affNr/o/xGYKDRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UwAzWmrj; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728493404; x=1760029404;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ntuMNBGc87hpyIzGL0CndqCvPtKD2kuUUj44xPilJyM=;
-  b=UwAzWmrjl3+l0DZC4a+iQMzBvOSjYxHiWwajmFnhN6MBVQekMx1xdyv9
-   GG9w5LUV1wVeb+q3sjwk18fxbU5131ETraU41VTsL9mRSZZnC52XrdRww
-   wWdcZaPKBNXk66Rjq6FYy7dhIcUIERC6LzJ21ONBfqmqoJwsfMiwHMtao
-   7Q09jFPmEZte5Vdwa0zQgDnosFAAI3eA9ZOuV93YNfnGn0rE8V128sCVf
-   X7YzfzImlIkF6nYuT2nqUWuM0KC+hYdEFxo+EHzoG+dyJCZiVOPAVKva1
-   0isir9hOftsZ2NdlpIAf1sZE3KuVqhog4uUmwYR/FXubcxA3+1UhkRufc
-   A==;
-X-CSE-ConnectionGUID: PFj4il15SUWm/xGEGy9UHw==
-X-CSE-MsgGUID: m04Eu8EoRJiOavij7e8xPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="15428237"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="15428237"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 10:03:21 -0700
-X-CSE-ConnectionGUID: XhKEioSiQBqfhr/UGL64gg==
-X-CSE-MsgGUID: JElbi6/bR2uk2Zmz/fl0UA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="99648158"
-Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.223.14]) ([10.124.223.14])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 10:03:21 -0700
-Message-ID: <2436d521-aa4c-45ac-9ccc-be9a4b5cb391@intel.com>
-Date: Wed, 9 Oct 2024 10:03:19 -0700
+	s=arc-20240116; t=1728493455; c=relaxed/simple;
+	bh=GpAZrRGB56bFCpj2C99KdaRD//Z7XPl20beSs+QjVfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cKQyAiSp5DbkCMf6jo3/cf8ESFd3NX2BwULRTeRV9CAtkpCdn2ekkjqsDIxgFwGxhC1Ml+O2JxB76bhye0USu3MkYHei3OK7EDg6GGlpA60ikOp0yk+82Au+SrjLTElLRmUhLwg48SVeSO04vHe5DYf7UIgFMWeNBf96hacey1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcLAB44+; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53997328633so9659997e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 10:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728493451; x=1729098251; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bAgrg9p0IyL/cHjq8NFMqrg11vbFoHJhejVSOZpWnuI=;
+        b=IcLAB44+YZUUIA+3DM6JFNukVAxUDnAapXWCxpShkQpRopYIjtAhV5zu2L/ATceGNS
+         15xlWrMnsV7wIDgcNpsLx5UpEmWByZtQ+Yzb9F8OHaC4Nlszr/0o4nAE+374h6XX5yB7
+         XOlqxxv7vGc8dLsUZYnh1uN2u2eCQvCnVUHzm2FboBb1lwbdhFmW9PZ8p4HyWyYt81NQ
+         FOxkdSfZWZW9JE4yld5Uc6E3HwO0w1GxdkQtnc7lGqEgBlg4/OIb8GrIjaK76sR5mIvD
+         Y9GSA4olvPukb5qg57KWAh5N75mLACG3yVZP63EXUqPmSekiJDexDzbqwKBfnzp3iwDT
+         RwMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728493451; x=1729098251;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bAgrg9p0IyL/cHjq8NFMqrg11vbFoHJhejVSOZpWnuI=;
+        b=v8paAAMR/5MXacBsoOyy9wrHMfA0hOCXPDtcZgsa63AotkQlKdI79MZYVclNQVqVUY
+         t6U2BR826k9FAAwe/DVdgN10WdM+tUKrs4GV1i3PViTKQLN5SRhexGS5Urseox1eQaiI
+         puKs3cScb2h3jPZZT6ee2n7f8gVTOx8X6uAdmeOj9bzl4X0cIwdjU1jrMZyTzkwdIbia
+         1lw3n3DUdDiIJrEvkot/h3B+Stv1IpmQu938uKwW+fYEhSWWJCL8R40u/JZ6nPnrO7pa
+         +G4FsAxvkFQWrMIke9G+f/adXddxl2aRAraU0v03vGPHtwnx5SOWzsNYIL3zoVwGU1QN
+         +jlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzRHwJiLPU3PjwPfVwZiVuWpy6tjfhTRZD6Tw7XKL5ORuBDHsmgehjUQiqjm+l/d2lO42yGbUS+IWnqAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv8xgPMhfhgaJcUUEj8v6XRzhIF9FSt31epYB3u20x5vm8ddhV
+	HrqHgeOH0/epxQrABrbKLdyfVsVxtQ9RODy7H55KOfHt6jnExmP/XZ1ZXcmlcPWn+WYGyEbTycr
+	8+uB0pxZm7sWUNTulVBpWlk9jI7A=
+X-Google-Smtp-Source: AGHT+IH/I2srRvV6OFd9jUWGGQC2LsJXZB49Gad0HgloebLrdtnJxijWTQhwoBydGy2Ta8YUkJfwrY1JaK6EnGhfYQY=
+X-Received: by 2002:a05:6512:3da6:b0:539:936c:9845 with SMTP id
+ 2adb3069b0e04-539c4957e39mr3243843e87.37.1728493451037; Wed, 09 Oct 2024
+ 10:04:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
- Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, bp@alien8.de,
- David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
- seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
- <9b943722-c722-4a38-ab17-f07ef6d5c8c6@intel.com>
- <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241007035616.2701-3-linux.amoon@gmail.com> <a86437f6-1f62-4f44-bff1-f1203d04edda@stanley.mountain>
+ <CANAwSgQObCHr19fmwuc2BfQmoiV3ZgDTFumtfCH8PP_9VbQw+w@mail.gmail.com>
+ <20f261b3-5917-4e3e-96be-7dbb993c5a80@stanley.mountain> <CANAwSgTRWmXbyCO0dOeKSu-C_aXAEVGpzGV8SO-BmouFGiaj+g@mail.gmail.com>
+In-Reply-To: <CANAwSgTRWmXbyCO0dOeKSu-C_aXAEVGpzGV8SO-BmouFGiaj+g@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 9 Oct 2024 22:33:51 +0530
+Message-ID: <CANAwSgROrML0zW-G0aPh6qsdCodOv+7pE8hhaSA4ismJP4G=6g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, lkp@intel.com, oe-kbuild-all@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/9/24 09:31, Neeraj Upadhyay wrote:
->> Second, this looks to be allocating a potentially large physically
->> contiguous chunk of memory, then handing it out 4k at a time.  The loop is:
->>
->> 	buf = alloc(NR_CPUS * PAGE_SIZE);
->> 	for (i = 0; i < NR_CPUS; i++)
->> 		foo[i] = buf + i * PAGE_SIZE;
->>
->> but could be:
->>
->> 	for (i = 0; i < NR_CPUS; i++)
->> 		foo[i] = alloc(PAGE_SIZE);
->>
->> right?
-> 
-> Single contiguous allocation is done here to avoid TLB impact due to backing page
-> accesses (e.g. sending ipi requires writing to target CPU's backing page).
-> I can change it to allocation in chunks of size 2M instead of one big allocation.
-> Is that fine? Also, as described in commit message, reserving entire 2M chunk
-> for backing pages also prevents splitting of NPT entries into individual 4K entries.
-> This can happen if part of a 2M page is not allocated for backing pages by guest
-> and page state change (from private to shared) is done for that part.
+Hi Dan,
 
-Ick.
-
-First, this needs to be thoroughly commented, not in the changelogs.
-
-Second, this is premature optimization at its finest.  Just imagine if
-_every_ site that needed 16k or 32k of shared memory decided to allocate
-a 2M chunk for this _and_ used it sparsely.  What's the average number
-of vCPUs in a guest.  4?  8?
-
-The absolute minimum that we can do here is some stupid infrastructure
-that you call for allocating shared pages, or for things that _will_ be
-converted to shared so they get packed.
-
-But hacking uncommented 2M allocations into every site seems like
-insanity to me.
-
-IMNHO, you can either invest the time to put the infrastructure in place
-and get 2M pages, or you can live with the suboptimal performance of 4k.
+On Wed, 9 Oct 2024 at 21:38, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Hi Dan,
+>
+> On Wed, 9 Oct 2024 at 20:19, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > On Wed, Oct 09, 2024 at 07:59:38PM +0530, Anand Moon wrote:
+> > > Hi Dan,
+> > >
+> > > Thanks for the report.
+> > >
+> > > On Wed, 9 Oct 2024 at 17:55, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > > >
+> > > > Hi Anand,
+> > > >
+> > > > kernel test robot noticed the following build warnings:
+> > > >
+> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/phy-rockchip-pcie-Simplify-error-handling-with-dev_err_probe/20241007-115910
+> > > > base:   8f602276d3902642fdc3429b548d73c745446601
+> > > > patch link:    https://lore.kernel.org/r/20241007035616.2701-3-linux.amoon%40gmail.com
+> > > > patch subject: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
+> > > > config: loongarch-randconfig-r071-20241009 (https://download.01.org/0day-ci/archive/20241009/202410092019.vGogfPIO-lkp@intel.com/config)
+> > > > compiler: loongarch64-linux-gcc (GCC) 14.1.0
+> > > >
+> > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > > the same patch/commit), kindly add following tags
+> > > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > > | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > | Closes: https://lore.kernel.org/r/202410092019.vGogfPIO-lkp@intel.com/
+> > > >
+> > > > smatch warnings:
+> > > > drivers/phy/rockchip/phy-rockchip-pcie.c:278 rockchip_pcie_phy_init() warn: missing error code 'err'
+> > > >
+> > >
+> > > All the functions in this file explicitly return 0 instead of err, I
+> > > will fix this.
+> > >
+> > > > vim +/err +278 drivers/phy/rockchip/phy-rockchip-pcie.c
+> > > >
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  269  static int rockchip_pcie_phy_init(struct phy *phy)
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  270  {
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  271      struct phy_pcie_instance *inst = phy_get_drvdata(phy);
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  272      struct rockchip_pcie_phy *rk_phy = to_pcie_phy(inst);
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  273      int err = 0;
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  274
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  275      mutex_lock(&rk_phy->pcie_mutex);
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  276
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  277      if (rk_phy->init_cnt++)
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19 @278              goto err_out;
+> > > >
+> > > > Originally, this path just unlocked at returned zero.
+> > > >
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  279
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  280      err = reset_control_assert(rk_phy->phy_rst);
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  281      if (err) {
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  282              dev_err(&phy->dev, "assert phy_rst err %d\n", err);
+> > > > 3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  283              goto err_out;
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  284      }
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  285
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  286      mutex_unlock(&rk_phy->pcie_mutex);
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  287      return 0;
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  288
+> > > > 3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  289  err_out:
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  290      rk_phy->init_cnt--;
+> > > >
+> > > > Now it decrements the counter so presumably it leads to an underflow/use after
+> > > > free.
+> > >
+> > > I was planning to replace the mutex_lock / mutex_unlock
+> > > with guard(mutex)(&rk_phy->pcie_mutex) in the follow up patch.
+> > > I will add this in the next revision.
+> > >
+> > > >
+> > > > 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  291      mutex_unlock(&rk_phy->pcie_mutex);
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  292      return err;
+> > > > fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  293  }
+> > > >
+> > >
+> >
+> > Thanks!
+> >
+> > > Here are my modified changes on top of my changes for the review process.
+> > > -----8<----------8<----------8<----------8<----------8<----------8<-----
+> > > diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c
+> > > b/drivers/phy/rockchip/phy-rockchip-pcie.c
+> > > index 2c4d6f68f02a..09685dc3fe17 100644
+> > > --- a/drivers/phy/rockchip/phy-rockchip-pcie.c
+> > > +++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
+> > > @@ -248,20 +248,19 @@ static int rockchip_pcie_phy_init(struct phy *phy)
+> > >
+> > >         mutex_lock(&rk_phy->pcie_mutex);
+> > >
+> > > -       if (rk_phy->init_cnt++)
+> > > -               goto err_out;
+> > > +       if (rk_phy->init_cnt++) {
+> > > +               mutex_unlock(&rk_phy->pcie_mutex);
+> > > +               return err;
+> >
+> > Please make this a return 0.  It's faster to not have to look up what a variable
+> > is.
+> >
+> Ok.
+> > > +       }
+> > >
+> > >         err = reset_control_assert(rk_phy->phy_rst);
+> > >         if (err) {
+> > >                 dev_err(&phy->dev, "assert phy_rst err %d\n", err);
+> > > -               goto err_out;
+> > > +               rk_phy->init_cnt--;
+> > > +               mutex_unlock(&rk_phy->pcie_mutex);
+> > > +               return err;
+> > >         }
+> > >
+> > > -       mutex_unlock(&rk_phy->pcie_mutex);
+> > > -       return 0;
+> > > -
+> > > -err_out:
+> > > -       rk_phy->init_cnt--;
+> > >         mutex_unlock(&rk_phy->pcie_mutex);
+> > >         return err;
+> >
+> > return 0; here too.
+The above warning " missing error code 'err'"
+so it's correct to return err. here.
+> >
+> Ok. I will update the patch.
+> > regards,
+> > dan carpenter
+> >
+>
+Thanks
+-Anand
 
