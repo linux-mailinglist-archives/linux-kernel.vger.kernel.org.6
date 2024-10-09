@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-356141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6A3995CF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A298995CF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1E51F241E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:30:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFDF284C6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AA62A1CF;
-	Wed,  9 Oct 2024 01:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FA3364BA;
+	Wed,  9 Oct 2024 01:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W5cD4KTS"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8g/pILb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4252E18C31
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383272B2D7;
+	Wed,  9 Oct 2024 01:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728437411; cv=none; b=IRmCV9h3aOryZmj1g6+82sKF1lQ3zrWfe4GMyuD+8wct1bd26zJ0DWsfyQfnTzzkYH+yLH6G4jiMh1FX1+M0E1X5uRwwjnmIgi/igpW6iHIHLrLdE6OhceAbZIgFOC7kxFr8NkP5NitK5jsr8TUOdm93eYvSEYhQCjBGbY9ZY88=
+	t=1728437424; cv=none; b=Z/qOqVoO1fnGCtnHRB+jusfoVAqb6tcBuwaZUXL3jgRGseaQ+b3D4fFqUJIl9/BP8myb8eGb9nSuOGTQQsYfygVUvBBwGk6O+uKAhLm/Bh98AoE6w3OQLXNmGlT5p1Wqhc2VLqNPvSghwICuhfUwaVmXFMYu9M4/n+cm73DFBao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728437411; c=relaxed/simple;
-	bh=LQvCC2Aw8Y1AyJ+AzFZ3JkaGYFqsWv4imGdBy7295to=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZC3zSMMD7shoaGUnT0v3SNlEuZR0yWgV/F9+B5mmkEK6ovh8aVQWi+c+OK8EP8v7UWsiWWKABcSR+zGQRjXLTSS4Bqj0AlA/llvpteWNCW4bYQNAXDEBDWG805lXux+5JYfn7VFIXX2d9AoBjcehl9TMTw+fgz5jetX4rtrOJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W5cD4KTS; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728437405; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zFLu3EkdVwFP8iOvfcDIDQG9CGsaqaGodoR5z9tQwvw=;
-	b=W5cD4KTSAH9TxutlK4jvrAJKsem0/u3vX6i1gmj8o/Vhu4AoUFHrtAHufbHfAw+2hoTBJfnWiM2rx0+q1Nx/SWJtEaX17Iznqe/i1mH+XsU4V0pADGPpqv0wX1zquzK4af4trDweb0NwaAiIX62U/Fsb//shBRB89HThMMGqan4=
-Received: from 30.246.161.56(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WGgrcPb_1728437404)
-          by smtp.aliyun-inc.com;
-          Wed, 09 Oct 2024 09:30:05 +0800
-Message-ID: <09cf9871-6d6d-416d-99dc-de4bdeed9a67@linux.alibaba.com>
-Date: Wed, 9 Oct 2024 09:30:03 +0800
+	s=arc-20240116; t=1728437424; c=relaxed/simple;
+	bh=10KLiDu7bPn2aGyoXScqazfu+mYTo3nfOXfqhE8rA40=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YZryqBiF3YMunieeLOZrlGE0iL6p6gJO8oho+MUkZsB0MqSpFcJnOQNpxjbQA6lfcrwaVovQymW4wmQQirqRAut+hUOadjsLqWTRpdoWwCV6/RYTXu71vzwH4DpYp1dEUm1dMGSuRZdyg8unR30iuAYf17uI67C3I0Dp5GXIeOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8g/pILb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C411AC4CEC7;
+	Wed,  9 Oct 2024 01:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728437423;
+	bh=10KLiDu7bPn2aGyoXScqazfu+mYTo3nfOXfqhE8rA40=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=t8g/pILbzfAHYULxVcTISvHwWGr/f+3FjQTxbLTVvBsTC9tS/+NHdcXdBNwguBMqV
+	 XqCXwoqFgzdztmpOK/LBowvDMMFovhMl0GRDrUghbQ/TDOsod3/IH2MykGXLRqTd2C
+	 jWqPa46X+Y5rGDjSFpQ1ci+rDtMj2tRHOYPePzW7dwh6xY79CkwgxebR7/uBBtQkIB
+	 +qWNJhXY6DJHAQgdPtdB+gpsKWOc9PzbuzaEGc1sR6/qgX8TJouflw20FBuy1Kg+Iu
+	 /JMPw8MkU4saauCC/gZVjFKHNRuv3n/QCGds/bBGvQLbcheEoYBpPL3FPzHmpPjY51
+	 /rt5YMjCuz2Sw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DDF3A8D14D;
+	Wed,  9 Oct 2024 01:30:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] perf/dwc_pcie: Add support for Ampere SoCs
-To: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Jing Zhang <renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241008231824.5102-1-ilkka@os.amperecomputing.com>
- <20241008231824.5102-2-ilkka@os.amperecomputing.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241008231824.5102-2-ilkka@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: ibm: emac: mal: fix wrong goto
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172843742800.746583.16131100397682063916.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Oct 2024 01:30:28 +0000
+References: <20241007235711.5714-1-rosenp@gmail.com>
+In-Reply-To: <20241007235711.5714-1-rosenp@gmail.com>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, horms@kernel.org,
+ sd@queasysnail.net, chunkeey@gmail.com
 
+Hello:
 
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-在 2024/10/9 07:18, Ilkka Koskinen 写道:
-> Add support for Ampere SoCs by adding Ampere's vendor ID to the
-> vendor list.
+On Mon,  7 Oct 2024 16:57:11 -0700 you wrote:
+> dcr_map is called in the previous if and therefore needs to be unmapped.
 > 
-> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> Fixes: 1ff0fcfcb1a6 ("ibm_newemac: Fix new MAL feature handling")
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 > ---
->   drivers/perf/dwc_pcie_pmu.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> index 4ca50f9b6dfe..3581d916d851 100644
-> --- a/drivers/perf/dwc_pcie_pmu.c
-> +++ b/drivers/perf/dwc_pcie_pmu.c
-> @@ -107,6 +107,7 @@ struct dwc_pcie_vendor_id {
->   
->   static const struct dwc_pcie_vendor_id dwc_pcie_vendor_ids[] = {
->   	{.vendor_id = PCI_VENDOR_ID_ALIBABA },
-> +	{.vendor_id = PCI_VENDOR_ID_AMPERE },
->   	{.vendor_id = PCI_VENDOR_ID_QCOM },
->   	{} /* terminator */
->   };
+>  drivers/net/ethernet/ibm/emac/mal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Look good to me.
+Here is the summary with links:
+  - [net] net: ibm: emac: mal: fix wrong goto
+    https://git.kernel.org/netdev/net/c/08c8acc9d8f3
 
-Thanks.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
--
-Best Regard,
-Shuai
+
 
