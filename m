@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-356207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0888995DE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:39:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280D7995DB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628301F25CDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7F01F25BA7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E32C126BFF;
-	Wed,  9 Oct 2024 02:39:19 +0000 (UTC)
-Received: from wxsgout05.xfusion.com (wxsgout05.xfusion.com [43.157.99.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B262126BED;
+	Wed,  9 Oct 2024 02:23:16 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00E21C6BE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 02:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.157.99.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9477603A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 02:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728441559; cv=none; b=PLHWeLB/RYGKAszUVtMK5cRWLX+JDkm6v1gX7sXCuDigF/e4W2bsxdSWvskhubOsngRb6DzYc8e9WZs8mkZPwY3XC3ycBjRG1qnaE/zjwBvOkATfDtdcblF9Qz/+PgVM9BhwdeKTIW4blIVCkLZGeZPhijwhdpbC65ad5tGWHIM=
+	t=1728440595; cv=none; b=V3ABhzGQTJ4gpUKZak/udPr5St2ffsMaNgSdkIWvuorRA9+7RieeKg/rbSFrXP2BGC9z/clpOWVpVrTfxYJZMMHaoQk9fj5+zIMWo67GB6SezqpTCjTdAtLpHlbk0QMqm+MaE0sGXbfIIm/GmOSHvU4m/zJwT/eCBRwtdnAwySo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728441559; c=relaxed/simple;
-	bh=u/HW4d/FyJTNeElDKVZQeNAu7bqM3kVBrGJeKNH63UM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kpyPJz7wAqJH5BWz7JIMXo1owE4zXC5MdXsFI+jjQDzFHdH1fTbQ0wKoFUNwhnrQH3Ix2zwfl5QmsASuxjYNckPX9JbcgaTVK6M7O/Ic3vnpaIE0ypt7p13wu2S8hhYsN381gsusoVdkIYBA4Xfeh24t5/ncGw09Trd2nrsdQ/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com; spf=pass smtp.mailfrom=xfusion.com; arc=none smtp.client-ip=43.157.99.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xfusion.com
-Received: from wxsgout04.xfusion.com (unknown [172.16.64.126])
-	by wxsgout05.xfusion.com (SkyGuard) with ESMTPS id 4XNc6w4ZFrz9xrDD
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:20:24 +0800 (CST)
-Received: from wuxshcsitd00600.xfusion.com (unknown [10.32.133.213])
-	by wxsgout04.xfusion.com (SkyGuard) with ESMTPS id 4XNc4b50wlzB660j;
-	Wed,  9 Oct 2024 10:18:23 +0800 (CST)
-Received: from wsip-70-182-158-199.br.br.cox.net (10.81.22.2) by
- wuxshcsitd00600.xfusion.com (10.32.133.213) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 9 Oct 2024 10:23:17 +0800
-From: Wang Jinchao <wangjinchao@xfusion.com>
-To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>
-CC: <wangjinchao@xfusion.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] time: fix comment error, change %0 to 0
-Date: Wed, 9 Oct 2024 10:21:35 +0800
-Message-ID: <20241009022135.92400-2-wangjinchao@xfusion.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1728440595; c=relaxed/simple;
+	bh=uosJ9Xg1KQ/Q7IPgKqFK6pDa9QD+ieL8y/y9lQ1DXBU=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XUEQZU4tnVnhBxOyWOCRccctifOEhTfEDNd8g2sUHG57FsZmDGKOzISsdup4rZHeX6MzhqM0jfJsUS5+Tpt6Bnn1akOimgC3RcGI8dkc272uMgYCM66j1cCydXUKqZYguuSnoWm5HfjB7AsWg0/EoQGm+DYjV5k6sinQHHQDCng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XNc810qy0z1T8P4;
+	Wed,  9 Oct 2024 10:21:21 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id F074F140133;
+	Wed,  9 Oct 2024 10:23:03 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 9 Oct 2024 10:23:03 +0800
+Subject: Re: [PATCH 1/1] ubifs: Try to recover from missing znode
+To: Benedikt Spranger <b.spranger@linutronix.de>,
+	<linux-kernel@vger.kernel.org>
+CC: <linux-mtd@lists.infradead.org>, Richard Weinberger <richard@nod.at>
+References: <20241008133342.1937674-1-b.spranger@linutronix.de>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <0840be30-63bc-449d-a9a4-c4e6b54c8885@huawei.com>
+Date: Wed, 9 Oct 2024 10:23:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20241008133342.1937674-1-b.spranger@linutronix.de>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: wuxshcsitd00600.xfusion.com (10.32.133.213) To
- wuxshcsitd00600.xfusion.com (10.32.133.213)
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-Change %0 to 0 in kernel-doc comments.
+ÔÚ 2024/10/8 21:33, Benedikt Spranger Ð´µÀ:
+> After powercut on a system using ubifs mounting failed:
+> 
+> 2024-09-30T12:38:26.880487+02:00 sonja kernel: UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node type (255 but expected 9)
+> 2024-09-30T12:38:26.880506+02:00 sonja kernel: UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node at LEB 103:46920, LEB mapping status 0
+> 2024-09-30T12:38:26.880509+02:00 sonja kernel: Not a node, first 24 bytes:
+> 2024-09-30T12:38:26.880510+02:00 sonja kernel: 00000000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff                          ........................
+> 
+> While traversing over zbranches during the journal replay one zbranch
+> points to a znode, which was not written to the flash and therefore the
+> flash is empty.
 
-Signed-off-by: Wang Jinchao <wangjinchao@xfusion.com>
----
- kernel/time/time.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 642647f5046b..5984d4a5639b 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -866,7 +866,7 @@ struct timespec64 timespec64_add_safe(const struct timespec64 lhs,
-  *
-  * Handles compat or 32-bit modes.
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int get_timespec64(struct timespec64 *ts,
- 		   const struct __kernel_timespec __user *uts)
-@@ -897,7 +897,7 @@ EXPORT_SYMBOL_GPL(get_timespec64);
-  * @ts: input &struct timespec64
-  * @uts: user's &struct __kernel_timespec
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int put_timespec64(const struct timespec64 *ts,
- 		   struct __kernel_timespec __user *uts)
-@@ -944,7 +944,7 @@ static int __put_old_timespec32(const struct timespec64 *ts64,
-  *
-  * Handles X86_X32_ABI compatibility conversion.
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int get_old_timespec32(struct timespec64 *ts, const void __user *uts)
- {
-@@ -963,7 +963,7 @@ EXPORT_SYMBOL_GPL(get_old_timespec32);
-  *
-  * Handles X86_X32_ABI compatibility conversion.
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int put_old_timespec32(const struct timespec64 *ts, void __user *uts)
- {
-@@ -979,7 +979,7 @@ EXPORT_SYMBOL_GPL(put_old_timespec32);
-  * @it: destination &struct itimerspec64
-  * @uit: user's &struct __kernel_itimerspec
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int get_itimerspec64(struct itimerspec64 *it,
- 			const struct __kernel_itimerspec __user *uit)
-@@ -1002,7 +1002,7 @@ EXPORT_SYMBOL_GPL(get_itimerspec64);
-  * @it: input &struct itimerspec64
-  * @uit: user's &struct __kernel_itimerspec
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int put_itimerspec64(const struct itimerspec64 *it,
- 			struct __kernel_itimerspec __user *uit)
-@@ -1024,7 +1024,7 @@ EXPORT_SYMBOL_GPL(put_itimerspec64);
-  * @its: destination &struct itimerspec64
-  * @uits: user's &struct old_itimerspec32
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int get_old_itimerspec32(struct itimerspec64 *its,
- 			const struct old_itimerspec32 __user *uits)
-@@ -1043,7 +1043,7 @@ EXPORT_SYMBOL_GPL(get_old_itimerspec32);
-  * @its: input &struct itimerspec64
-  * @uits: user's &struct old_itimerspec32
-  *
-- * Return: %0 on success or negative errno on error
-+ * Return: 0 on success or negative errno on error
-  */
- int put_old_itimerspec32(const struct itimerspec64 *its,
- 			struct old_itimerspec32 __user *uits)
--- 
-2.45.0
+UBIFS guarantees two things for znodes:
+1) all index nodes(in commit seq N) are written on flash before master 
+nodes(for commit seq N) are written.
+2) all index nodes(in commit seq N) won't be erased from flash before 
+master nodes(for commit seq N+1) are written.
+So, I don't understand that why znodes not exist during journal replaying?
+> 
+> Try to recover from that by inserting an empty znode instead of failing.
+> 
+> Signed-off-by: Benedikt Spranger <b.spranger@linutronix.de>
+> Reviewed-by: John Ogness <john.ogness@linutronix.de>
+> ---
+>   fs/ubifs/io.c       | 16 ++++++++++++++++
+>   fs/ubifs/tnc_misc.c |  6 +++++-
+>   2 files changed, 21 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ubifs/io.c b/fs/ubifs/io.c
+> index 01d8eb170382..0bbb426f9006 100644
+> --- a/fs/ubifs/io.c
+> +++ b/fs/ubifs/io.c
+> @@ -1110,6 +1110,22 @@ int ubifs_read_node(const struct ubifs_info *c, void *buf, int type, int len,
+>   		return err;
+>   
+>   	if (type != ch->node_type) {
+> +		/*
+> +		 * While recovering, we may face lost data i.e. empty flash.
+> +		 * Give callsites a hint by returning -ENODATA.
+> +		 */
+> +		if (c->replaying) {
+> +			u8 *b = buf;
+> +
+> +			for (l = 0; l < len; l++) {
+> +				if (b[l] != 0xff)
+> +					break;
+> +			}
+> +			if (l == len) {
+> +				ubifs_errc(c, "no node, but empty flash");
+> +				return -ENODATA;
+> +			}
+> +		}
+>   		ubifs_errc(c, "bad node type (%d but expected %d)",
+>   			   ch->node_type, type);
+>   		goto out;
+> diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
+> index d3f8a6aa1f49..4d085fc1300f 100644
+> --- a/fs/ubifs/tnc_misc.c
+> +++ b/fs/ubifs/tnc_misc.c
+> @@ -300,7 +300,11 @@ static int read_znode(struct ubifs_info *c, struct ubifs_zbranch *zzbr,
+>   	err = ubifs_read_node(c, idx, UBIFS_IDX_NODE, len, lnum, offs);
+>   	if (err < 0) {
+>   		kfree(idx);
+> -		return err;
+> +		/*
+> +		 * While recovering we may face a non written znode.
+> +		 * Inject an empty znode in this case.
+> +		 */
+> +		return (err == -ENODATA) ? 0 : err;
+>   	}
+>   
+>   	err = ubifs_node_check_hash(c, idx, zzbr->hash);
+> 
 
 
