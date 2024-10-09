@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-356829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FEB996765
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:35:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4B3996767
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8051F21EF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:35:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0360CB23EBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC5918FC67;
-	Wed,  9 Oct 2024 10:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5645418FC67;
+	Wed,  9 Oct 2024 10:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6F2Dor2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0qqQdLW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0BF18E041;
-	Wed,  9 Oct 2024 10:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A8918BC36;
+	Wed,  9 Oct 2024 10:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728470114; cv=none; b=XfjjPlkJRMCmr1O0T08HHizs8Wi3qiuYO0pgVV8VKwKUYGas199Br5JYQZV2Un4UoOTp1Tq5sk2euiapv3Nfc7HHg6Q4jqSRvOEATIfvpd1OUWMGsU7WUTgyjXUY5QEOTswAtp3tbP3lJbMIJMQ7Bee3iO3ZU8JUSpTHP5h95Bc=
+	t=1728470159; cv=none; b=DvNjFyfofuK8zfKFN+C9EFa1Hxt/umn8rm5cq6m0qD7jVd/9aybIYtIoQVTWhnhT8JTc36FduQfjAn7lEa0xTVVJ8cyUTGW19Vfx+2jP5gmzV+uxBirWVPqkc6cQivNPgSVPBxggNNE92OJjIMvRt06uTsD2YaJI2Kx9up+73B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728470114; c=relaxed/simple;
-	bh=m6mJpysXApNGJei9mvRU4aXmO98VPQOAWYiaR6Igb54=;
+	s=arc-20240116; t=1728470159; c=relaxed/simple;
+	bh=dxh0uEpbnl4YUFu8vCE4kg9SVY7NzZOGXbkINTFN82A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aggcPUgbsoqW11En7AmBwfFVO/x3jDPi5ndgpGP/PvPTZSfpwIQBMFv0TR0j/tj8zVd2/zTi7NdRrD25/Dl3fk9fHSgWTHreiPEZUTcffKmCDZGxXCtEm/47NfIW4fF1KW35zPz4U7oG09kv1en/ccg3FGcSdAbr/tObppvZg3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6F2Dor2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B838C4CEC5;
-	Wed,  9 Oct 2024 10:35:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2+O2fZdoEvU+5TlEeXHgo1eCKg/1gU05NakpTbYMEvwpK6IeV1k6wH56ldlwqxr874Y1pJDD1Df1560WKQXhngs43/oF4U/urnaO5go8+Qvs1Q2g164nEq/YQlKbFd3noPMXRiMTvqBTCI3gbzTOVIf8qw04wkbWeuimbXJBPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0qqQdLW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444EBC4CEC5;
+	Wed,  9 Oct 2024 10:35:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728470113;
-	bh=m6mJpysXApNGJei9mvRU4aXmO98VPQOAWYiaR6Igb54=;
+	s=k20201202; t=1728470159;
+	bh=dxh0uEpbnl4YUFu8vCE4kg9SVY7NzZOGXbkINTFN82A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R6F2Dor22DNGOa3IYCUqvbSDMtTMY3lRtrRBRh8iw2dD0lX4DQPAi1HhoG9ZxaSeG
-	 DIMcgUvfPzUPNnw7W2ASWwRpOVlkErtI/FGby2ClBviA0C5owiD5vuy4q1P2UTKl7X
-	 GfE2az73W/TlteimrN5oERQ8Ex3b32NxFYtFBxzPpLGTgR0aEPxzHerjKUv0mDSOyv
-	 MIt/D2Xz2seWThy10ob+DmartceQdQeR1f3fjM/UOF1Ji9zaW6NFUSAjqjnZ7CuG2J
-	 SZp5b7oED3oMm2OAJpJ94WgTC6p0cb75Ju2iWt5Ac4dzoscaGCm/NWi33W3nc2S4SC
-	 lYXlmt5NUswXg==
-Date: Wed, 9 Oct 2024 11:35:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: djakov@kernel.org
-Cc: ruanjinjie@huawei.com, dmitry.baryshkov@linaro.org,
-	dan.carpenter@linaro.org, naresh.kamboju@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linux Kernel Functional Testing <lkft@linaro.org>
-Subject: Re: [PATCH] spi: geni-qcom: Fix boot warning related to pm_runtime
- and devres
-Message-ID: <ZwZcXrfYRXlVQK5M@finisterre.sirena.org.uk>
-References: <20241008231615.430073-1-djakov@kernel.org>
+	b=R0qqQdLWcpznVsXkP11aNhQX2M05ik9AKGWy0E+dOQ4NroPWyzTmb5UNSQPTzNFvh
+	 ukjwLQFCOS4ElwWMFENJvy1JorVya3KUCg7Lg7k1U+k6MPggWQn7vc/L1Wn5m3Efc9
+	 S+aSWf2yV4VaEYArRP1RqQq91TWzxZZlQObH6oy8lU2iTG3n+EjxinABa33RWqdmJg
+	 5Fgv8gpuQdcqxgSxynAjKy67wMxjWsuOQa57MYM7+jqRhyU81ZvMPrcGrB9RJw8Piu
+	 h2YdXc+Jrn9b9eDjo3GIRGxbW3MzMcarmFfJIK97SwlusgU7X4uIu0q/ZJFV7mNC+S
+	 Wc0uP9+8wMYCg==
+Date: Wed, 9 Oct 2024 12:35:52 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, jannh@google.com, 
+	mhocko@kernel.org, vbabka@suse.cz, mingo@kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v2 tip/perf/core 3/5] fs: add back RCU-delayed freeing of
+ FMODE_BACKING file
+Message-ID: <20241009-eisvogel-zugelangt-d211199df267@brauner>
+References: <20241001225207.2215639-1-andrii@kernel.org>
+ <20241001225207.2215639-4-andrii@kernel.org>
+ <20241003-lachs-handel-4f3a9f31403d@brauner>
+ <20241004-holzweg-wahrgemacht-c1429b882127@brauner>
+ <CAEf4BzY5fy1VVykbSdcLbVhaHRuT6pRNYNgpYteaD79vRM7N5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rreyULKR79Pw3vxk"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241008231615.430073-1-djakov@kernel.org>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzY5fy1VVykbSdcLbVhaHRuT6pRNYNgpYteaD79vRM7N5A@mail.gmail.com>
 
+On Fri, Oct 04, 2024 at 12:58:00PM GMT, Andrii Nakryiko wrote:
+> On Fri, Oct 4, 2024 at 1:01 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, Oct 03, 2024 at 11:13:54AM GMT, Christian Brauner wrote:
+> > > On Tue, Oct 01, 2024 at 03:52:05PM GMT, Andrii Nakryiko wrote:
+> > > > 6cf41fcfe099 ("backing file: free directly") switched FMODE_BACKING
+> > > > files to direct freeing as back then there were no use cases requiring
+> > > > RCU protected access to such files.
+> > > >
+> > > > Now, with speculative lockless VMA-to-uprobe lookup logic, we do need to
+> > > > have a guarantee that struct file memory is not going to be freed from
+> > > > under us during speculative check. So add back RCU-delayed freeing
+> > > > logic.
+> > > >
+> > > > We use headless kfree_rcu_mightsleep() variant, as file_free() is only
+> > > > called for FMODE_BACKING files in might_sleep() context.
+> > > >
+> > > > Suggested-by: Suren Baghdasaryan <surenb@google.com>
+> > > > Cc: Christian Brauner <brauner@kernel.org>
+> > > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > >
+> > > Reviewed-by: Christian Brauner <brauner@kernel.org>
+> >
+> > Fwiw, I have another patch series for files that I'm testing that will
+> > require me to switch FMODE_BACKING to a SLAB_TYPSAFE_BY_RCU cache. That
+> > shouldn't matter for your use-case though.
+> 
+> Correct, we assume SLAB_TYPESAFE_BY_RCU semantics for the common case
+> anyways. But hopefully my change won't cause major merge conflicts
+> with your patch set.
 
---rreyULKR79Pw3vxk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please drop this patch and pull the following tag which adds
+SLAB_TYPE_SAFE_BY_RCU protection for FMODE_BACKING files aligning them
+with regular files lifetime (even though not needed). The branch the tag
+is based on is stable and won't change anymore:
 
-On Wed, Oct 09, 2024 at 02:16:15AM +0300, djakov@kernel.org wrote:
-> From: Georgi Djakov <djakov@kernel.org>
->=20
-> During boot, users sometimes observe the following warning:
->=20
-> [7.841431] WARNING: CPU: 4 PID: 492 at
-> drivers/interconnect/core.c:685 __icc_enable
-> (drivers/interconnect/core.c:685 (discriminator 7))
-> [..]
-> [7.841494] CPU: 4 PID: 492 Comm: (udev-worker) Not tainted 6.1.111-rc1 #1
-> [7.841497] Hardware name: Thundercomm Dragonboard 845c (DT)
-> [7.841499] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D=
---)
-> [7.841502] pc : __icc_enable (drivers/interconnect/core.c:685
-
-Please think hard before including complete backtraces in upstream
-reports, they are very large and contain almost no useful information
-relative to their size so often obscure the relevant content in your
-message. If part of the backtrace is usefully illustrative (it often is
-for search engines if nothing else) then it's usually better to pull out
-the relevant sections.
-
---rreyULKR79Pw3vxk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGXF0ACgkQJNaLcl1U
-h9DkdQf+JqijhG2Gjh3D6EZukevRRU5wmFjpoiQof144lTjdE/98EKrbYi38EO39
-1o/V+RfelYvHmi1gLBZRwVX5T5HG42LROwW4MdAAiTgkelwuKnUpIpL88w190tfg
-LXaqPIbnFkfOJt+JZN/Qod4AfkxSm24CgSJQqI5JnKMuKNvKb43scXuaR1fZr7TZ
-VaG9vjsec5SNNJzeUNwOWGU68XrLbsLaFb8iFtpoM9oxc9Qv9LOW7jC8VU6udDIW
-CBIGs5FHQuUoUqREvyhWQR3zqjytMW4gjm4U0DVeVYSc1voJeG2dqhU4Cz5Yg9DN
-UVgHQUngxGfFDPKTeOhDUuNpZcGvsA==
-=o24g
------END PGP SIGNATURE-----
-
---rreyULKR79Pw3vxk--
+git pull -S git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git tags/vfs-6.13.for-bpf.file
 
