@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-356663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297F19964CE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:18:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77939964D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A1C1F26A91
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EB41B21169
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A4718C92A;
-	Wed,  9 Oct 2024 09:16:20 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3757618D64B;
+	Wed,  9 Oct 2024 09:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q1VLBxCy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB831190471;
-	Wed,  9 Oct 2024 09:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3593918A6BC;
+	Wed,  9 Oct 2024 09:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465380; cv=none; b=mdLKpDpfh3UwBFbjZ6gw4cB9v9MQ2SRyqP1xL5vIkYTJcqWVxh2Ddl3sYUDOcU7lybGT5pJR88F4E27kerMZ3pzClxeCa7eS3ZJVDVZ32t60gfMFv1yikVPbJXZ1cAUsCZbn03GwSYHIpUlB+5wYVBqmY4h3uvBMII4J7LEnwBQ=
+	t=1728465476; cv=none; b=so3iXnliuauhFBqL9f0ssjMUAiKgjFNkjX7Rm9y5+vou7baLsgtLK7SXy+wfNe0RLOVzN028N58ZuUiiMAeHsgN1DnXs+bl7zQKf3K0CCe6brx4V81KcEXrssKBZwQYeDWMY+N/MVRLwbGlZ2W93R47aOkgDcFXN7YotN3AcAw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465380; c=relaxed/simple;
-	bh=+n5Z6EHyiC3uE+t8M1UjabpGkO6WhcYJ/7IghC6FbS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MulEFJSuGLsb+9E/XoIjiw1rYXeBLe6KE1KXY+HEI216L8AwHIhXRf814203TleTrEKYESrBRM7Xpek48DI2JBmcAfGvjCLDdJBWRDrcdiO2lYfooKBjNR9EK9cMZyUESIgMydjS8lx2SOXWIpfioxo5P5+yd9WU5KdEJctQCYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 1dda4392861f11efa216b1d71e6e1362-20241009
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:c55efbc2-ea5b-4e40-ba21-321ddd32f6b6,IP:20,
-	URL:0,TC:0,Content:1,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:16
-X-CID-INFO: VERSION:1.1.38,REQID:c55efbc2-ea5b-4e40-ba21-321ddd32f6b6,IP:20,UR
-	L:0,TC:0,Content:1,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:16
-X-CID-META: VersionHash:82c5f88,CLOUDID:e37bfc660498a0c9d1452aabeb14d594,BulkI
-	D:241009171018CVWUJEZ6,BulkQuantity:2,Recheck:0,SF:38|23|17|19|43|74|64|66
-	|102,TC:nil,Content:4|-5,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil
-	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
-X-UUID: 1dda4392861f11efa216b1d71e6e1362-20241009
-X-User: zhaomengmeng@kylinos.cn
-Received: from [192.168.109.86] [(1.198.30.91)] by mailgw.kylinos.cn
-	(envelope-from <zhaomengmeng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 1537307015; Wed, 09 Oct 2024 17:16:07 +0800
-Message-ID: <633662aa-120c-40e0-a836-da5faa7ed312@kylinos.cn>
-Date: Wed, 9 Oct 2024 17:16:03 +0800
+	s=arc-20240116; t=1728465476; c=relaxed/simple;
+	bh=Js9jBckP5Mh1h3ITIeHDzaiGv6P2dXs1sU/ZQUt4Kt0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=brwHeCwhF9CS97n8DVxR6D6Y3VZNbh1gbiNrhacuG4i8q3GpKj0uPgzlZu4IMC/qQenhtRq9PvFnVjoikLQXB4a+9mKrN3cYd+LT4mqdnJ3g5SMZJR1BCBK9PGg7MbsMVUMcXWkmV025KMAijAd9mhnKyJOHAHNgVD3q9atR3PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q1VLBxCy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49965QGZ029556;
+	Wed, 9 Oct 2024 09:17:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Iyg6YvmHfFOAHjDa4JL9yq
+	qYTUYxm1A7VZRhszd+h9w=; b=Q1VLBxCy0po6QPG0Fsb81dr43csCqQewoLhpuK
+	nvFydTpR0Quu/Vw2l6C0ctiT6bubTychlb1q8Xf1UnDA250PfVsclwa+DFHoop5i
+	gfm6LzRb8C5pUmtEb/3TzwhuOWeVGPgQhZd9DjIMPJBtCxOn8m1ISxAABp+DgVpn
+	stMhhTEM8WgMPmVPhfX/h6ndBcIUd6t86ziXU6XrogDaH9ANrZlYtBfoqJzz/ZtU
+	ugf7H5gPP+/xJ5PBuDMTh3j7jreQYv5rnvy/axm0oZv24leJ3RfgkUWDyF96LS2b
+	hGSXZEdssz+fDHyyo9+bLxmni8AsHOE4jZwX+7oFCzdYJaDw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424yj0410y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 09:17:40 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4999Hd7V020618
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 09:17:39 GMT
+Received: from 3b5b8f7e4007.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 02:17:38 -0700
+From: Songwei Chai <quic_songchai@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Songwei Chai <quic_songchai@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2] Coresight: Narrow down the matching range of tpdm
+Date: Wed, 9 Oct 2024 17:17:27 +0800
+Message-ID: <20241009091728.1638-1-quic_songchai@quicinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bcachefs: Fix shift-out-of-bounds in
- bch2_stripe_to_text
-To: Hongbo Li <lihongbo22@huawei.com>, Zhao Mengmeng <zhaomzhao@126.com>,
- kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241009054325.438556-1-zhaomzhao@126.com>
- <b1c2154d-189a-43fa-84ff-a0d96787ff60@huawei.com>
-From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-In-Reply-To: <b1c2154d-189a-43fa-84ff-a0d96787ff60@huawei.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IKrVCpdMqWnm3AQHIjltO6dVMKYBpWyP
+X-Proofpoint-ORIG-GUID: IKrVCpdMqWnm3AQHIjltO6dVMKYBpWyP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ bulkscore=0 mlxlogscore=931 mlxscore=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090061
 
-On 2024/10/9 17:10, Hongbo Li wrote:
-> 
-> 
-> On 2024/10/9 13:43, Zhao Mengmeng wrote:
->> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
->>
->> syzbot report a shift-out-of-bounds issue:
->> ------------[ cut here ]------------
->> UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
->> shift exponent 108 is too large for 32-bit type 'unsigned int'
->> ----
->> Here s.csum_granularity_bits = 108, so shift is impossible for unsigned
->> int. To fix, add a check in bch2_stripe_validate() to bail out, it has
->> same checking logic with ec_stripe_key_init().
->>
->> Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
->> Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
->> Suggested-by: Hongbo Li <lihongbo22@huawei.com>
->> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
->> ---
->>   fs/bcachefs/ec.c      | 6 ++++++
->>   fs/bcachefs/errcode.h | 3 ++-
->>   2 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
->> index 141a4c63142f..bc5ff1331c6f 100644
->> --- a/fs/bcachefs/ec.c
->> +++ b/fs/bcachefs/ec.c
->> @@ -113,6 +113,12 @@ int bch2_stripe_validate(struct bch_fs *c, struct bkey_s_c k,
->>       const struct bch_stripe *s = bkey_s_c_to_stripe(k).v;
->>       int ret = 0;
->>   +    if (s->csum_granularity_bits >= ilog2(le16_to_cpu(s->sectors))) {
-> 
-> csum_granularity_bits should do the left shift.
+The format of tpdm's peripheral id is 1f0exx. To avoid potential
+conflicts in the future, update the .id_table's id to 0x001f0e00.
+This update will narrow down the matching range and prevent incorrect
+matches. For example, another component's peripheral id might be
+f0e00, which would incorrectly match the old id.
 
-If use `1 << s->csum_granularity_bits(108)` to do the check, syzbot will still trigger shift-out-of
-bounds warning. So better check the bits directly.
+Fixes: b3c71626a9333b0b29f9921a39ce ("Coresight: Add coresight TPDM source driver")
+Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+---
+ drivers/hwtracing/coresight/coresight-tpdm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+index b7d99e91ab84..3230d76aed90 100644
+--- a/drivers/hwtracing/coresight/coresight-tpdm.c
++++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+@@ -1308,8 +1308,8 @@ static void tpdm_remove(struct amba_device *adev)
+  */
+ static struct amba_id tpdm_ids[] = {
+ 	{
+-		.id = 0x000f0e00,
+-		.mask = 0x000fff00,
++		.id	= 0x001f0e00,
++		.mask	= 0x00ffff00,
+ 	},
+ 	{ 0, 0, NULL },
+ };
 
 
