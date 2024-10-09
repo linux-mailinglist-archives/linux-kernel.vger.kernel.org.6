@@ -1,95 +1,111 @@
-Return-Path: <linux-kernel+bounces-356626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD77999644D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:00:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9B7996452
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59230B24AF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A451F21D17
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3834E1891A0;
-	Wed,  9 Oct 2024 09:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D4D188920;
+	Wed,  9 Oct 2024 09:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ps0NkZRY"
-Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KbQPJZj9"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3F018785C
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED91EADC;
+	Wed,  9 Oct 2024 09:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464408; cv=none; b=lRpmQQNwwXoWoKyWIZe8H39FZ41CbJfiDa6gwVzJedew1IN4giAWose40LLZnmQN6TqwpEtkShF5uhvasGwukzRlWz2djUM+po/cf7DMiAq/sdzT1gXHIBEtm9dShcLcWFLxCtTQcTwZk1TM7qzMUIibcmbEMTLkJFewIU+6FwQ=
+	t=1728464493; cv=none; b=PjrPVrOWcVh1npIyAWBQldd82rUyPx0brDcrHW7tbRl7kcY/sOf47AfFbaDj6FT1uziS6ulyw3aCjc6AQXAcTLuO+i+B8AR8IH++9/uxlaTUdkbw3bcGKDy7LNSJFRtiuN/5MNW6qDSEE3GTk9fcj0g570QHw5JVauNBkt3+B/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464408; c=relaxed/simple;
-	bh=t0NL+wtrF+U/K3tCq2Z2PJbCMCMyvDmcCTlMzR/Vx1A=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=IbqAAtMTU7duKoqF4gKe5QM/Fr8Xf5ZqMZJhHrzbPq8/s8uVKpWNxjqjWrkH6yMCycnLTuEJlXauqYzBDi3h+q1AGOeChw8tNlMBDKk/2oP26iAGWzlw/YdjuaQvXggIY5aABKbevyCnV6MFxA6es6HsdPWlqV3KgvJ2C2IdA18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ps0NkZRY; arc=none smtp.client-ip=203.205.221.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1728464404; bh=M64ZegpfQ35OAjqFyPNCkYJlWwvtGwUIgoAYZGAzRm4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ps0NkZRY3EltxXofzsMggJR9gMztGLeuahc17/FJRPIywrQxOEM5fdMvWvss5fqA2
-	 fNACKa7UNtnoSViCK2Sz3y2QxOYRbrzZghnwQWIeUDwGZjTtSYQbYbVEFF3Bd7MIzV
-	 UPNd876Vo8fHxSQPLRG/Rgyt4zSUutmhedq8jNwg=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 2A5640; Wed, 09 Oct 2024 17:00:02 +0800
-X-QQ-mid: xmsmtpt1728464402tq51bhyqh
-Message-ID: <tencent_11642C456F589720E8CEEC46CD2879666E0A@qq.com>
-X-QQ-XMAILINFO: MBjwNRQMz5zUyhBIGYYy0YDly4YokW4ebcg4XW+4NFVUjKADWC5xTL2dW9Yhfe
-	 OQZib1EdXvwzTxniiYGsV9JYw7Vf9C3m1+KzDrST5o3MRb+R/AePzChh0afa5iGLE9Bsh7B+FyYu
-	 aa4eCZ6ZuUs9ADrfz8KS286duEQsZq26SFfqmf+Z/+CS/qFk4EKdj09XeM+vjh6bUTStO1kDkh/4
-	 rB9+uvhw0YNFD/DVtHlq+TS3M0zeIkRb+Q1fAsBb4E6M3LVPEPHATW7zgfr+8xziJp26Zhyp1cp+
-	 GrdxAULo5ul2RQbUeUG8z8nTU7iU2fy3AlGJ59f/dQbLpXyy/W9TFm6J9f2fP8K6YY+NvTXwVQTu
-	 lpJ6ur0dnbXXwLoSGU210cnQrylJ11sjvUw54Ot2SxBXMokSBYpnxn/U0MLWsjKPh2JGWI4IIX0t
-	 /ahcWwdx/lIquuO9hPYwA6+nQ02PnThoecivI0oellF3q8YBvTs0yxdj5YY9ZZ+59TWQWrF58ZyX
-	 TwMey2M8S99qbp8jtSinQfx0v2SU5QfZVfNJjLFFkOStIGuTUPket0ZrIBZdIoF0V7irFPkGycsD
-	 L/gaWACPjWvmdCI+s5hMZZtlnwdUUpeZT4JaRQJI43s64axYXMWZddX4U7oQk6GuwWCZdkqwD6ui
-	 zhoFwt8JxMq+FM2lZAhNKD+Bn2p/mqombUemtF1Ld1rXijhyaiaiGKiqMo0Zw8bsokLYZEToYrCs
-	 ODOqF3kAwXdSPnvJfXb0w13xTR1ZCk0Oa77QbC2dCSe2un4pCJWeK/DULtfBkwqryg7tgFlOFegM
-	 /lgg0/tJizgYg6HNWuba86M/bJfPQWjja5hZk++F7km9LJOalxcvAYlFZlWrZfQw3v0dIrHxcXRI
-	 6E1nHDeSVC6feRDAMUFm0QjKIJuPF1xPjy+i0/CDz0/qcuJeYi1MZz6uE0C4iB9KQDDY9XjJRf
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [ocfs2?] kernel BUG in ocfs2_truncate_inline
-Date: Wed,  9 Oct 2024 17:00:03 +0800
-X-OQ-MSGID: <20241009090002.1230579-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <67062030.050a0220.3f80e.0024.GAE@google.com>
-References: <67062030.050a0220.3f80e.0024.GAE@google.com>
+	s=arc-20240116; t=1728464493; c=relaxed/simple;
+	bh=t4XV67XwT9AqpZE1BMpvVqUY/3bEjFjl116GcFX6tw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YveVOSp/ORZckLJW+p76nUwCWY9ZYib6xpJNWDQyE8LCYXCjCh3/fuvPdQ+byL0xp1193EWVsRGTFFFH1V4U+SO7wdGS/BFrHka0tRxxnjswkPb2iFsIYP9R2dSTfzim+Jnf0aBYxQiTwyYjCfpr4CeJ42XuVnISxhFH/EYDEO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KbQPJZj9; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=O0/uxb+Q2DMRDFmKQ9galN4+KgTPVjf1vmB8NeLKKX0=; b=KbQPJZj9/Pma3mpqAb+48jv3eK
+	b3DYw6yBiR89YmqHiuPDhg+TugDN/BaJ6uHCNAMl3P5W1PQrnQlnW5cgj6z0tI7IQnXm3XEav2foY
+	TWh9aD8EruHE2LuVIoYf73lSPIs/YlXN4+OzVNru0DfzeQglcoN6Z9OhPVhDfNkBdUlSXaqy9tLN7
+	GItgUq7u2dqS948aPzXl0H0YrdruWLzO+OSWxRJkbL55+1Lp8AFXtipO4yoZAxLWSvdKxE9AjSsyU
+	yLz0nfttmLLln9v7TBLdUNS6SbvurKLKuIWkV3Am5amyAfdHBOfNkzMXUAmfzKfFJdQAGLPvZ4Xqg
+	7TPe1Gdg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43336)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sySZG-0000EL-1M;
+	Wed, 09 Oct 2024 10:01:14 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sySZB-00069W-2S;
+	Wed, 09 Oct 2024 10:01:09 +0100
+Date: Wed, 9 Oct 2024 10:01:09 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: populate host_interfaces when
+ attaching PHY
+Message-ID: <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
+References: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-offset or offset + len greater than UINT_MAX, if true, it will overflow in ocfs2_truncate_inline
+On Wed, Oct 09, 2024 at 02:57:03AM +0100, Daniel Golle wrote:
+> Use bitmask of interfaces supported by the MAC for the PHY to choose
+> from if the declared interface mode is among those using a single pair
+> of SerDes lanes.
+> This will allow 2500Base-T PHYs to switch to SGMII on most hosts, which
+> results in half-duplex being supported in case the MAC supports that.
+> Without this change, 2500Base-T PHYs will always operate in 2500Base-X
+> mode with rate-matching, which is not only wasteful in terms of energy
+> consumption, but also limits the supported interface modes to
+> full-duplex only.
 
-#syz test
+We've had a similar patch before, and it's been NAK'd. The problem is
+that supplying the host_interfaces for built-in PHYs means that the
+hardware strapping for the PHY interface mode becomes useless, as does
+the DT property specifying it - and thus we may end up selecting a
+mode that both the MAC and PHY support, but the hardware design
+doesn't (e.g. signals aren't connected, signal speed to fast.)
 
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index ad131a2fc58e..ed26ec8ac6b6 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -2117,6 +2117,9 @@ static long ocfs2_fallocate(struct file *file, int mode, loff_t offset,
- 			return ret;
- 	}
- 
-+	if (offset > UINT_MAX || offset + len > UINT_MAX)
-+		return -EFBIG;
-+
- 	if (mode & FALLOC_FL_PUNCH_HOLE)
- 		cmd = OCFS2_IOC_UNRESVSP64;
- 
+For example, take a board designed to use RXAUI and the host supports
+10GBASE-R. The first problem is, RXAUI is not listed in the SFP
+interface list because it's not usable over a SFP cage. So, the
+host_interfaces excludes that, and thus the PHY thinks that's not
+supported. It looks at the mask and sees only 10GBASE-R, and
+decides to use that instead with rate matching. The MAC doesn't have
+support for flow control, and thus can't use rate matching.
 
+Not only have the electrical charateristics been violated by selecting
+a faster interface than the hardware was designed for, but we now have
+rate matching being used when it shouldn't be.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
