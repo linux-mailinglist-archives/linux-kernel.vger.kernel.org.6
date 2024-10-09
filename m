@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-357414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00FE997105
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:19:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3765997108
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9C51C2150E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94627286E8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADE01A3BD5;
-	Wed,  9 Oct 2024 16:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C9D1A0BDC;
+	Wed,  9 Oct 2024 16:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UD980E8A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WKMKmxAx"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C65161313;
-	Wed,  9 Oct 2024 16:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9757E765
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489695; cv=none; b=d6lyyFvMYYsFZDJMIQrBAhgbnEa38gvcxq1r5mgMyoO9RiBrqy6BPrdS4SI2VSVK74ZUToWrmgLVaGWnFH7pMc/U53A/Iad925IeH0XetZsR9WIXySbkh3NC0YO1Y/Gn/Xlfu9Nga0a1/Iw61Z3dx7iFyzW9xry0hj/z3X5sC7o=
+	t=1728489753; cv=none; b=Z9HrM4RFh5cdBymXYt5a3jKWBPwLwonkKHlqFGcJw6t5HRk/SmaNMw3khMR1VK6DPRy6fi0IWiYWilpoo9V23hRF3aKq634z/SHta6sxD+avAgjMYmF/SHtVxMjUHQzzkxLiJNddsWVsCtzN0eOlAnFIuJm4CyL+RlpnYBLBBfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489695; c=relaxed/simple;
-	bh=aPf5UiYG1vsp/Il+DJSTs1K8163OCruXIBTQfDcJnk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sp/g+g2u43ldo8jG8+ICh/YrMUTACP2lSItf5jdny17KkbJz+lR+G5Prj6bz00aIWZ1m6AY/TpUWNWbwnunOepmnBc6ExO8B59iz4Xtpvin6p4mIsv72D2F5LhStqHuEWh1M/Qgd00hMdgqRJsRUhSX1elAucWNnSycO0lLYrh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UD980E8A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D56CC4CEC3;
-	Wed,  9 Oct 2024 16:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728489694;
-	bh=aPf5UiYG1vsp/Il+DJSTs1K8163OCruXIBTQfDcJnk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UD980E8ANwBR8CV6W0r545AsFquNd6VQJLZAhzv03kH/2722yJVUfx2XR5s9jc9Wc
-	 AUV5IbyCzTe3Coa25RIdrCecLNl0dL1/4PhErHS0znpmrtwWfuAMeKgbM+GXln8oI9
-	 wUmpInMKAAcNs4mTA6YGMM9+PyyOM6pz5XyU+lN2uzAffaKOG9V0OvZ3BjUvrIGGPU
-	 3cs3lX6bGTBCIgzzCH/8c+ZJ22OzxMpevAA0YLfuVThtbrF1cAezHQ8WwvwisbXVg/
-	 +7tZqaCl31FNmzpnYGWSPo/4SPE7bDk16U78rzvUaGoglXbgaUj8yNtEcg4w8M05r7
-	 +lwC1rbHYVY2g==
-Date: Wed, 9 Oct 2024 18:01:27 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: manivannan.sadhasivam@linaro.org, aisheng.dong@nxp.com,
-	bhelgaas@google.com, devicetree@vger.kernel.org, festevam@gmail.com,
-	imx@lists.linux.dev, jdmason@kudzu.us, kernel@pengutronix.de,
-	kishon@kernel.org, kw@linux.com,
-	linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	lorenzo.pieralisi@arm.com, lpieralisi@kernel.org, maz@kernel.org,
-	s.hauer@pengutronix.de, shawnguo@kernel.org, tglx@linutronix.de,
-	dlemoal@kernel.org
-Subject: Re: [PATCH v2 0/5] Add RC-to-EP doorbell with platform MSI controller
-Message-ID: <Zwao1x7m3MTT98NT@ryzen.lan>
-References: <20230911220920.1817033-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1728489753; c=relaxed/simple;
+	bh=UqtePFxmQBmzsO5YsdCeQzk39Y53zC74QvUKUFf9xso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QBr7gprvW+US9cWd8A+tFBoOjAcOX++vrQZFClhOQLrg2dLQa+2JkI4Rn5Aq+wiTqVz4nfuGrO3uNSa1MiA64eT2X4SraLBsm6n0pcfZ9FurewTvGN/2ttJbQ2lCcHjNJIMl9hwnRdOPZZMO+UgXoTJrsYV57R+yeZ6nr/vAtNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WKMKmxAx; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso1018756276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728489751; x=1729094551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dOnZ3s7FurB42eYosuD//ONdW4vPSEKiKv4IH0gVfdA=;
+        b=WKMKmxAxQXkonjIEeClSmHmLMh97TE6nPHTBlHHDkylrbeYi4RhGMG8cD/msacg3aJ
+         +pW7sb79uyMnYWJenp2Cx2v8QGu+rynxLYkKhb3RfKZGykbwPiQPt9G9pxF1QE7NY4Xg
+         68/3g38MkRZnkmGAleeiOxgrIc+y64Zo6dX0fLXwCZmikehNLPmMhBhnLmZQIe/Umdff
+         uBHMaCsSRFeC/0y8ZXke2idEk0P07o++iNokbenmSATzRGwMQrayOOtkTqbwOXH2eHYz
+         1/dx6sgGPHoz2sDnBmfvRRE4sZrEvSNxmL+8Sf10OvKCRCqP3PnaIGrADC6j7mX4djUy
+         fahA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728489751; x=1729094551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dOnZ3s7FurB42eYosuD//ONdW4vPSEKiKv4IH0gVfdA=;
+        b=W5p0QXr96SOPNkItRM3w5SDmKVXZdtd5UDTjJxMzcLpRUum6IxmvVimdTrGejzgLzg
+         QX/feG/wkCNB2oD2oiMCOUXOU7DXc2YgnylNa3IWNFOHdW8WYYN7nHDpQjVsIsBeh5i2
+         NxT+hvSIk3FNkxHfFk7bZXWj81tqxNtKZvGnZhoZqLtEF+f2IGvFPEY7wJ9XQVb3cMI0
+         GowjDYUuRMu+BAm1ymyMMV/HEguABD8nAPANf2G8lwgliPgdqs+4Ujnq5pEvmJjPYJSx
+         YHPivHwyioG8/J921QWaghv84dTeGQ5Dp/1SPSIxLN9m/05G2u4LDXIAnmfPF31sv6Cd
+         i0aA==
+X-Gm-Message-State: AOJu0YxCWma7HDKqojP/sGQdPXmc1d8Wx3kmkqrHfslWUjzabyPG9ThO
+	5DQfAF2JJP6Kk9+iRa1bSqPBIXl8yisVNkyOyvsUm3grLwJ5V0uAjO5HwAswsZAjbX73jE8+c2a
+	Z2hjYAlyG/Z23YRlFQCcv8hVPrGR4hUwzI5wCXUh/y57srNd4
+X-Google-Smtp-Source: AGHT+IGwbvhINlaQ69+Ou+iAJ+7gcTu80rat6BegoMljwfg9x3T5XWppUQWyTfekV843Gnm8+DX26ZPueuTQNzjtQvw=
+X-Received: by 2002:a05:6902:2503:b0:e25:dace:d4a4 with SMTP id
+ 3f1490d57ef6-e28fe4e7350mr2488952276.36.1728489750634; Wed, 09 Oct 2024
+ 09:02:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230911220920.1817033-1-Frank.Li@nxp.com>
+References: <20241008161334.483211e9@canb.auug.org.au>
+In-Reply-To: <20241008161334.483211e9@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 9 Oct 2024 18:02:16 +0200
+Message-ID: <CACRpkdbcbnFLb3e57QxxnOqt+xxcYD2LCFORSZ50ozLoVPrwpA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the pinctrl tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 11, 2023 at 06:09:15PM -0400, Frank Li wrote:
-> ┌────────────┐   ┌───────────────────────────────────┐   ┌────────────────┐
-> │            │   │                                   │   │                │
-> │            │   │ PCI Endpoint                      │   │ PCI Host       │
-> │            │   │                                   │   │                │
-> │            │◄──┤ 1.platform_msi_domain_alloc_irqs()│   │                │
-> │            │   │                                   │   │                │
-> │ MSI        ├──►│ 2.write_msi_msg()                 ├──►├─BAR<n>         │
-> │ Controller │   │   update doorbell register address│   │                │
-> │            │   │   for BAR                         │   │                │
-> │            │   │                                   │   │ 3. Write BAR<n>│
-> │            │◄──┼───────────────────────────────────┼───┤                │
-> │            │   │                                   │   │                │
-> │            ├──►│ 4.Irq Handle                      │   │                │
-> │            │   │                                   │   │                │
-> │            │   │                                   │   │                │
-> └────────────┘   └───────────────────────────────────┘   └────────────────┘
-> 
-> This patches based on old https://lore.kernel.org/imx/20221124055036.1630573-1-Frank.Li@nxp.com/
-> 
-> Original patch only target to vntb driver. But actually it is common
-> method.
-> 
-> This patches add new API to pci-epf-core, so any EP driver can use it.
-> 
-> The key point is comments from Thomas Gleixner, who suggest use new
-> PCI/IMS. But arm platform change still not be merged yet.
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git devmsi-v2-arm
-> 
-> So I still use existed method implement RC to EP doorbell.
-> 
-> If Thomas Gleixner want to continue work on devmsi-v2-arm, I can help test
-> and update this patch.
-> 
-> Change from v1 to v2
-> - Add missed patch for endpont/pci-epf-test.c
-> - Move alloc and free to epc driver from epf.
-> - Provide general help function for EPC driver to alloc platform msi irq.
-> - Fixed manivannan's comments.
-> 
-> Frank Li (5):
->   PCI: endpoint: Add RC-to-EP doorbell support using platform MSI
->     controller
->   PCI: dwc: add doorbell support by use MSI controller
->   PCI: endpoint: pci-epf-test: add doorbell test
->   misc: pci_endpoint_test: Add doorbell test case
->   tools: PCI: Add 'B' option for test doorbell
-> 
->  drivers/misc/pci_endpoint_test.c              |  48 +++++
->  .../pci/controller/dwc/pcie-designware-ep.c   |   2 +
->  drivers/pci/endpoint/functions/pci-epf-test.c |  59 +++++-
->  drivers/pci/endpoint/pci-epc-core.c           | 192 ++++++++++++++++++
->  drivers/pci/endpoint/pci-epf-core.c           |  44 ++++
->  include/linux/pci-epc.h                       |   6 +
->  include/linux/pci-epf.h                       |   7 +
->  include/uapi/linux/pcitest.h                  |   1 +
->  tools/pci/pcitest.c                           |  16 +-
->  9 files changed, 373 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+On Tue, Oct 8, 2024 at 7:13=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
 
-Hello Frank,
+> After merging the pinctrl tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/pinctrl/pinctrl-aw9523.c: In function 'aw9523_probe':
+> drivers/pinctrl/pinctrl-aw9523.c:988:17: error: label 'err_disable_vregs'=
+ used but not defined
+>   988 |                 goto err_disable_vregs;
+>       |                 ^~~~
+>
+> Caused by commit
+>
+>   8498e6b2b852 ("Merge branch 'devel' into for-next")
 
-Thank you for your work on this.
-This series is very interesting.
+Okay I fixed it with an "evil merge", I better pull in the next rc
+to get a proper resolution in my tree, I think.
 
-As you probably know, IMS support was ripped out of the kernel a few
-months ago:
-b966b1102871 ("Revert "PCI/MSI: Provide IMS (Interrupt Message Store) support"")
+Thanks Stephen!
 
-So this series seems as relevant as ever.
-
-Are you considering continuing work on this series any time soon?
-
-
-Kind regards,
-Niklas
+Yours,
+Linus Wallej
 
