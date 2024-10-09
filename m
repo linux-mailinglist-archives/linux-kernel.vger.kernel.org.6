@@ -1,162 +1,88 @@
-Return-Path: <linux-kernel+bounces-356348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F735995FD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5769C995FD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A391F2383C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891671C21D97
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BF11741CB;
-	Wed,  9 Oct 2024 06:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OctRa8PT"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED86B55E53
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B28154BE3;
+	Wed,  9 Oct 2024 06:32:27 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562C255E53
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728455531; cv=none; b=rDS8k1N+RkuaTnou65z2i/o05Hglu9duxku4AfMXM7ceE8MGS+9vHe7Lu4BiTSnH32Q5T5Mym4Th6Abbgd/QVdNKzXWN+v9++0PwShCMeL9PVkDWgCRrfnl1pHmvbAe+HotL3MOayehye5PGJkLHkGTDsL39JGgRNbRjzW1ZdXM=
+	t=1728455547; cv=none; b=ABkBBEMFUDJjQDs1eDdx2FYTy5wNTWp/93OicFDOdbX9mBtRYa3o8bDYnMi7z//JZFWAM84eCg9pvZfFOxgewUm+qgZeYTxHZgEFTwSVivfso80mouZwuL8quEcbAswkg6JQnxN8VKLMPwWiqhNL37PV/a+sSG8ChxcLhyrR7Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728455531; c=relaxed/simple;
-	bh=R0gUvxwSv1A4XoB1T5evhfuqxPVo1TkeJSTpTi9sPuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qIO76bA7OQax0jox9ebnKEwMbjCaOBzpXPrXZa5UtCZ5JmVEXdDbxVKsdicX/SQz/tHSHWpbKGfx8tNbkRV43ZV4VkIROcKJdagcLXW9M8c9Y7uOEj6nSvvHL3bV8Z+BLGPfLHtQetW6Zj6rNcbRgwENJqAhJV643fH4jpXy1i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OctRa8PT; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c718bb04a3so8939674a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 23:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728455528; x=1729060328; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xrlBK00E06m+Xyn4M4YQ83K424bss7id65740TmKjwY=;
-        b=OctRa8PTv+N5PrEGsbmRkCoqe/HGQMGRuAWDLrLN/PDHX1dQhgKwSZedLFutRo6Uu0
-         STUiqEcy+UVTtKIK0AGn42OUp4ewtPrWnZt8Z78BSSUZvWeRaWwEGf53Mr8AslnwFgp0
-         kJyU8j9kafVX/uzdMXhkgES25ZCMFM6yXPa1+qlXkfiXFctNQ1IKNT63qyiuZFORI8rp
-         xDNZsAgTXSrRK5UkECmp/38y7QxuBaaAciFtDxtYjyKVnT7Vw+Qgev+Pu2uYTnC8yXwQ
-         JxXf6PIEd6siJ9hvzDv+Nnm5SdVJMDkMOO8NpqZLQS0idhCgZUzZsQdCMdg+yZP9/GfV
-         /r2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728455528; x=1729060328;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrlBK00E06m+Xyn4M4YQ83K424bss7id65740TmKjwY=;
-        b=vc2BYrYiuDabV/R38d8027JcbPO4Y96QJtZA/0WYtpLfqhjuVOsDaKcHPtNZjua5eA
-         /y0SOVKe7CGSuYaoLAfjID1UaEj6tO/9djWfnYeg1ssULUqZF3WXVyKpmrzKhc7BlfR3
-         WtabAKezoyC0IyJ/9FEWBS7O1CaL94LtZqKY8x/8fElt6qq7V9ycLN/8BI3TCM57D1eg
-         TZx+1Md/55TIgUIM5M8jFz1x33I2DbmHIpLrZ38AMaxqGz6UaUtIoVOutrUF9ha63oqs
-         m8kdYw23x6ymfEVNZbF9TmmUSRl6F1V8ms08x5NxY1X0kgV6sJCT7sKGys6hoRxGLeFU
-         vOFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmp658YCuGY0qIquxdL5yvvXckZs6gfzpYmBYAv1fK/hVICouK2UwDV+M4GG5Tg/CwYJlP2TBIgRu90uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7WeR8D8Dxu3sCmiWbE/SK/vn94s/e6MVJR3Ik1fX9TA8ZtvGb
-	W/dAzobx3+0KGnaiIPqblA0lB1TXNUjM5aaIm2ENVOK+5zANpse2m/KgTURe1xw=
-X-Google-Smtp-Source: AGHT+IF1ch/zlHLFvZnA537gd6NerYD1w+UTbuG6UhIr+ue/n1LS9w7GlBYhfU0kWo9/NodgFhvh3g==
-X-Received: by 2002:a17:907:e20c:b0:a99:49b0:e5b2 with SMTP id a640c23a62f3a-a998d117e39mr117766366b.3.1728455528147;
-        Tue, 08 Oct 2024 23:32:08 -0700 (PDT)
-Received: from ?IPV6:2001:a61:2a51:d701:2d49:fdc9:7cfb:5cc8? ([2001:a61:2a51:d701:2d49:fdc9:7cfb:5cc8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9936bc91f4sm578785466b.56.2024.10.08.23.32.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Oct 2024 23:32:07 -0700 (PDT)
-Message-ID: <3b57fcc4-919f-4e50-80a4-04da24f61857@suse.com>
-Date: Wed, 9 Oct 2024 08:32:06 +0200
+	s=arc-20240116; t=1728455547; c=relaxed/simple;
+	bh=6wC3zVEV3ldeLog1VKYhEsAa3M0fukauiH2/kcXB0K0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=imLGlPj+nLfjvk3Diss9c3aQa7b24Buk12yK16+XN8jhOVnMgnRk+imnyN4w9Ny4T2I/wY2gXYyoIozke/kpOOXBCXSzdMoWAbEEiGRL0M6/R2S3Gk/nr0UWtmfFlD1ChXUR68t9yGN/JsmHQ23Bd/gxBD+f55LQoW19Nw+5zaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee2670623746da-206ef;
+	Wed, 09 Oct 2024 14:32:21 +0800 (CST)
+X-RM-TRANSID:2ee2670623746da-206ef
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee267062374d3b-e1efe;
+	Wed, 09 Oct 2024 14:32:21 +0800 (CST)
+X-RM-TRANSID:2ee267062374d3b-e1efe
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: arnd@arndb.de
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] char: applicom: Remove redundant ret variable in ac_read function
+Date: Tue,  8 Oct 2024 23:32:19 -0700
+Message-Id: <20241009063219.6212-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] scsi: qla2xxx: make target send correct LOGO
-To: Anastasia Kovaleva <a.kovaleva@yadro.com>, target-devel@vger.kernel.org
-Cc: njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- bvanassche@acm.org, quinn.tran@cavium.com, nab@linux-iscsi.org,
- himanshu.madhani@cavium.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux@yadro.com
-References: <20241008132402.26164-1-a.kovaleva@yadro.com>
- <20241008132402.26164-3-a.kovaleva@yadro.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.com>
-In-Reply-To: <20241008132402.26164-3-a.kovaleva@yadro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 10/8/24 15:24, Anastasia Kovaleva wrote:
-> Upon removing the ACL from the target, it sends a LOGO command to the
-> initiator to break the connection. But HBA fills port_name and port_id
-> of the LOGO command with all zeroes, which is not valid. The initiator
-> sends a reject for this command, but it is not being processed on the
-> target, since it assumes LOGO can never fail. This leaves a system in a
-> state where the initiator thinks it is still logged in to the target and
-> can send commands to it, but the target ignores all incoming commands
-> from this initiator.
-> 
-> If, in such a situation, the initiator sends some command (e.g. during a
-> scan), after not receiving a response for a timeout duration, it sends
-> ABORT for the command. After a timeout on receiving an ABORT response,
-> the initiator sends LOGO to the target. Only after that, the initiator
-> can successfully relogin to the target and restore the connection. In
-> the end, this whole situation hangs the system for approximately a
-> minute.
-> 
-> By default, the driver sends a LOGO command to HBA filling only port_id,
-> expecting HBA to match port_id with the correct port_name from it's
-> internal table. HBA doesn't do that, instead filling these fields with
-> all zeroes.
-> 
-> This patch makes the driver send a LOGO command to HBA with port_name
-> and port_id in the I/O PARMETER fields. HBA then copies these values to
-> corresponding fields in the LOGO command frame.
-> 
-> Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
-> Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
-> ---
->   drivers/scsi/qla2xxx/qla_iocb.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/scsi/qla2xxx/qla_iocb.c b/drivers/scsi/qla2xxx/qla_iocb.c
-> index 0b41e8a06602..90026fca14dc 100644
-> --- a/drivers/scsi/qla2xxx/qla_iocb.c
-> +++ b/drivers/scsi/qla2xxx/qla_iocb.c
-> @@ -2486,6 +2486,17 @@ qla24xx_logout_iocb(srb_t *sp, struct logio_entry_24xx *logio)
->   	logio->port_id[1] = sp->fcport->d_id.b.area;
->   	logio->port_id[2] = sp->fcport->d_id.b.domain;
->   	logio->vp_index = sp->vha->vp_idx;
-> +	logio->io_parameter[0] = cpu_to_le32(sp->vha->d_id.b.al_pa |
-> +				 sp->vha->d_id.b.area << 8 |
-> +				 sp->vha->d_id.b.domain << 16);
-> +	logio->io_parameter[1] = cpu_to_le32(sp->vha->port_name[3] |
-> +				 sp->vha->port_name[2] << 8 |
-> +				 sp->vha->port_name[1] << 16 |
-> +				 sp->vha->port_name[0] << 24);
-> +	logio->io_parameter[2] = cpu_to_le32(sp->vha->port_name[7] |
-> +				 sp->vha->port_name[6] << 8 |
-> +				 sp->vha->port_name[5] << 16 |
-> +				 sp->vha->port_name[4] << 24);
->   }
->   
->   static void
+Removed the unused variable 'ret' from the ac_read function
 
-Now that looks like serious debugging. Well done.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ drivers/char/applicom.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-
-Cheers,
-
-Hannes
+diff --git a/drivers/char/applicom.c b/drivers/char/applicom.c
+index 9fed9706d9cd..17ff89b15f56 100644
+--- a/drivers/char/applicom.c
++++ b/drivers/char/applicom.c
+@@ -539,7 +539,6 @@ static ssize_t ac_read (struct file *filp, char __user *buf, size_t count, loff_
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	unsigned char tmp;
+-	int ret = 0;
+ 	DECLARE_WAITQUEUE(wait, current);
+ #ifdef DEBUG
+ 	int loopcount=0;
+@@ -570,7 +569,7 @@ static ssize_t ac_read (struct file *filp, char __user *buf, size_t count, loff_
+ 
+ 				/* Got a packet for us */
+ 				memset(&st_loc, 0, sizeof(st_loc));
+-				ret = do_ac_read(i, buf, &st_loc, &mailbox);
++				do_ac_read(i, buf, &st_loc, &mailbox);
+ 				spin_unlock_irqrestore(&apbs[i].mutex, flags);
+ 				set_current_state(TASK_RUNNING);
+ 				remove_wait_queue(&FlagSleepRec, &wait);
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.com                               +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.17.1
+
+
 
 
