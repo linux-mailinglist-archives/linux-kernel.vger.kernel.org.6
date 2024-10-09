@@ -1,150 +1,132 @@
-Return-Path: <linux-kernel+bounces-357587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59314997307
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F0C99730A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108E31F22F1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2300A2827FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464221DFD80;
-	Wed,  9 Oct 2024 17:29:46 +0000 (UTC)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19BA1DFDAB;
+	Wed,  9 Oct 2024 17:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="ezAqI8oR"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE1A1A2630;
-	Wed,  9 Oct 2024 17:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4CE1D356C
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 17:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728494985; cv=none; b=iM7zd44+nQPn0WL82gA8KCtjRjBOf/mNd+KSM277pK4qvc/jhggyuQ8ZZOHUIqvxCxkR7PPrXI4dOrYUjzIXybjF/Wviquv5CRr3Wlk+c6B0ej7DGqwuopfC5AtBveI4lGmHVN8SFUEvbAEjbH3tw4hIwrD39xxQkpOPUKR+s68=
+	t=1728495003; cv=none; b=TE4iLJ99rO8TQzHGqDrDZs78kY6fJCpI/222JPgNIpSowVzJ2VaaYPQbcDT12hlJhH2qIoFYhJ+wRDC0w5mLqpEwfqaLt3PB1GqRVHOs21tmwQB8SsQoeSzBOzIHSLItwwqvk6PxqnxZsdZxuicU1VGB9OOYU9+SnrdLDWG4h2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728494985; c=relaxed/simple;
-	bh=H5Y/vdF9w0zcs3yfYi+U1ozQa6mSZk+BtYQMChsKEPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZNJsKA4QWbO3SpeL2f7uMEOXp4pKwcxfhDWziBfMBt4jPGLXIx4XFPAatgwiR/o8zjknUT425CmkgCwShPqX9qAT2uh028fXAZV/uA2T+Gc+KNv0rcv+LGnVJPORL+4QfFbmvtv7CLCNHIjhP5TVD3Muzg7rXGYr/5u99ELNaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso219025e9.0;
-        Wed, 09 Oct 2024 10:29:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728494982; x=1729099782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1728495003; c=relaxed/simple;
+	bh=PJVwcXcibgiYriey2g8Mw/pptgW5zUsdumgQFIEbIoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b+3GzBiTPwfTF51X7AVBrFXcv1S9pwilw1SjVZ0AdDFHMejTC54FfKAiaL2tfcQLbhOxeldm9rzbR/SDwY5I2cKTywvyS7/kztsLNDAZL8QxoSbkxrTQtW68s7HSsAlByq08ESfQSCC0brCqTNCZ9H/5YkGpLsmEgUFdUQl6Jo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=ezAqI8oR reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99422929c5so8574366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 10:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc.com.np; s=everest; t=1728494995; x=1729099795; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ph4dHmwwGNUtPR7csyoZqdOsKA9zJtXDkHwHqPNDsrU=;
-        b=kUzNqr2z9dcn+/FsgvEAwfpRppdTVBMySvnLhFCfMiAMYWWQ4Mhwdx5xtaz9HfXHGY
-         mMNTfpKa4Qs8hlngkNqlMadResHLoT1hf1QaG5fPrUJ5Z3Kvuz87a7LSG4pE29G4dnF+
-         fwpnLitkbuhLBcxKzwZ4jaiMrdTmFJA/A/jyrILzwvpmYQ7Cm5M0HStem4mNWnJpoHxV
-         Oa8gLML9auEhefQGxTgrXhBas8Ml/I16mC872+rDhT8JT2LCXxv4uPkj2Q9/o21rCuSX
-         oT0zyy7QjpsE5szWfaekc19G/ij2KC5A6z5rHWauzCSIGbjiE1nqZaipWf9uWsaqH+Lw
-         soog==
-X-Forwarded-Encrypted: i=1; AJvYcCV++4H2G3DxVvzEGnyMrlWMox+iWodQmjnI+CXy3pfg2iYPIPT0weXwwbU4C7KIQZ65U3WRFy0l@vger.kernel.org, AJvYcCWkzX9meJ0M2/TwY9+H4FIjyYr8Ua12Q9fNxb2AEUP+D77KmkTCDc1tYYjCU8BFbxB7m6jNryFYZzye9iU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQM5cmzDAcLomZm8duwNglvig9boDXC0gd2kL15sPzNb9N8eG+
-	umYBRMMEQunZhh7tBcPUmWDivsm+wmZeemPx0dIq6r5INABAa3Z1
-X-Google-Smtp-Source: AGHT+IFNQl26Yi9sJ60W1L0+ivvA50jgr/dBp9oX5oLvkywajWxtJLgg0Ahqel0Alu1BiDwdLhJF5Q==
-X-Received: by 2002:a05:600c:2149:b0:431:11e6:d540 with SMTP id 5b1f17b1804b1-43111e6d828mr25137035e9.17.1728494982289;
-        Wed, 09 Oct 2024 10:29:42 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d70b42d8sm26789015e9.31.2024.10.09.10.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 10:29:41 -0700 (PDT)
-Date: Wed, 9 Oct 2024 10:29:39 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pavel Begunkov <asml.silence@gmail.com>, kuba@kernel.org
-Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>, gregkh@linuxfoundation.org,
-	mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
-	kuba@kernel.org, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vschneid@redhat.com, axboe@kernel.dk,
-	Heng Qi <hengqi@linux.alibaba.com>
-Subject: Re: 6.12-rc1: Lockdep regression bissected
- (virtio-net/console/scheduler)
-Message-ID: <20241009-ultramarine-bison-of-abundance-2bfcdd@leitao>
-References: <20241003-savvy-efficient-locust-ae7bbc@leitao>
- <20241003153231.GV5594@noisy.programming.kicks-ass.net>
- <20241003-mahogany-quail-of-reading-eeee7e@leitao>
- <20241004-blazing-rousing-lynx-8c4dc9@leitao>
- <Zv_IR9LAecB2FKNz@pathway.suse.cz>
- <8434l6sjwz.fsf@jogness.linutronix.de>
- <f88adb83-618b-4be3-8357-0aabcf3a2db8@gmail.com>
+        bh=8cp2ioR05MBhm6TSp5/Wwm/z/I4MQsDlfJob4dXYszs=;
+        b=ezAqI8oRdb10issRjccSZ8y+P+stree8FmeTwUlRgCIbEo4PPbtGkj4mpN9YuObm0a
+         mhP7nLpga4ITmxmVy6tA+Im+P/c58UOosLMID5KTvPkrrolt66q/sGDCBbksAF8ATxtV
+         aZiCaLrCqaR/enADTYQeEOwh5IngUO7EyqQO73twwxrlLMzC6cw7MfRzsRurN0kJEO3Q
+         tvsHkAOsXoFBB7HakAmIUP9kMHa9s5NENSXlIkvIRaa6S9e3q9hI9XHxiQhknRDVELXz
+         xZDog59tpk9aR8JBMntHVr8llKvEDT/iNEu/3wNyTmngMEB+KEKZLEqjJNfcfCCY/jsT
+         /aeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728494995; x=1729099795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8cp2ioR05MBhm6TSp5/Wwm/z/I4MQsDlfJob4dXYszs=;
+        b=tWeu1R8ICu+yGFxppvKWWl+kiT1tRw3faqSoekgbHUt5p+GNqwD/2aKRuKVuDIl7dC
+         Mp69sCnPNkdZf5u/SezxzMp4Z9+m2KpjfuXw+v9HdNk6acAYlWQImgWloQDB8wxGxNZf
+         i+vcmCaMil8yoA79SS2RzTIYRHg7W67op+i8lkFD8p6/osHoYY5ucMpHiMa2iG5r05Ke
+         AMBAVzZRwm4bDtRQ/3j0supESQoc42bdL1aSvFu8T6Hyi0Cw5CAY1vt+mte9jkw9Rb9H
+         xNOR+my2HunUc1eyRhrQnq9ySvFLJNyLzHsFok870mOll/zBJ3M9zPYdzCP8TZSfOBNt
+         gZIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPyUXxFlwlimgq9puxszgCOhX6OyMXRneNXIgcHqoREAzjoLAwmS74uHWKyANPadzeH9RS86hnsCoa/UM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAepmqaWE4p0NQx9N9i6EH2VWWPUx69EZAzhxAlB3BCk6I9Rdq
+	0PDls/r1mMvFG19IhBMVOiSy5ZM5lvk5EFjDbkvjJ1Ix/c5xC85sRPimAqRDvi7CYfRpuBya847
+	si2hSR3t+p/utPPtgITdEbiW3SSw0OekJB+qMnw==
+X-Google-Smtp-Source: AGHT+IFlkcPGSSt+FkF/AeZ9ren+91PRcuHIGXxky2tQ3SxKjSYHH1M3nNkivi+T62HmOUXRleWu7WPHCEDV1ks1k1M=
+X-Received: by 2002:a17:907:9706:b0:a99:51dd:9792 with SMTP id
+ a640c23a62f3a-a998d20b4d3mr292257666b.30.1728494995415; Wed, 09 Oct 2024
+ 10:29:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f88adb83-618b-4be3-8357-0aabcf3a2db8@gmail.com>
+References: <20241008071559.18523-1-everestkc@everestkc.com.np> <ZwanGrWs3PI4X7OZ@p14s>
+In-Reply-To: <ZwanGrWs3PI4X7OZ@p14s>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Wed, 9 Oct 2024 11:29:43 -0600
+Message-ID: <CAEO-vhFFHXeHH961e8KMYrwyUHtGCZmPOP9VC7QrhpabH2wP5A@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Fix spelling error in remoteproc.rst
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org, 
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 04:44:24PM +0100, Pavel Begunkov wrote:
-> On 10/8/24 16:18, John Ogness wrote:
-> > On 2024-10-04, Petr Mladek <pmladek@suse.com> wrote:
-> > > On Fri 2024-10-04 02:08:52, Breno Leitao wrote:
-> > > > 	 =====================================================
-> > > > 	 WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
-> > > > 	 6.12.0-rc1-kbuilder-virtme-00033-gd4ac164bde7a #50 Not tainted
-> > > > 	 -----------------------------------------------------
-> > > > 	 swapper/0/1 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-> > > > 	 ff1100010a260518 (_xmit_ETHER#2){+.-.}-{2:2}, at: virtnet_poll_tx (./include/linux/netdevice.h:4361 drivers/net/virtio_net.c:2969)
-> > > > 
-> > > > 	and this task is already holding:
-> > > > 	 ffffffff86f2b5b8 (target_list_lock){....}-{2:2}, at: write_ext_msg (drivers/net/netconsole.c:?)
-> > > > 	 which would create a new lock dependency:
-> > > > 	  (target_list_lock){....}-{2:2} -> (_xmit_ETHER#2){+.-.}-{2:2}
-> > > > 
-> > > > 	but this new dependency connects a HARDIRQ-irq-safe lock:
-> > > > 	  (console_owner){-...}-{0:0}
-> > 
-> > ...
-> > 
-> > > > 	to a HARDIRQ-irq-unsafe lock:
-> > > > 	  (_xmit_ETHER#2){+.-.}-{2:2}
-> > 
-> > ...
-> > 
-> > > > 	other info that might help us debug this:
-> > > > 
-> > > > 	 Chain exists of:
-> > > > 	console_owner --> target_list_lock --> _xmit_ETHER#2
-> > > > 
-> > > > 	  Possible interrupt unsafe locking scenario:
-> > > > 
-> > > > 		CPU0                    CPU1
-> > > > 		----                    ----
-> > > > 	   lock(_xmit_ETHER#2);
-> > > > 					local_irq_disable();
-> > > > 					lock(console_owner);
-> > > > 					lock(target_list_lock);
-> > > > 	   <Interrupt>
-> > > > 	     lock(console_owner);
-> > 
-> > I can trigger this lockdep splat on v6.11 as well.
-> > 
-> > It only requires a printk() call within any interrupt handler, sometime
-> > after the netconsole is initialized and has had at least one run from
-> > softirq context.
-> > 
-> > > My understanding is that the fix is to always take "_xmit_ETHER#2"
-> > > lock with interrupts disabled.
-> > 
-> > That seems to be one possible solution. But maybe there is reasoning why
-> > that should not be done. (??) Right now it is clearly a spinlock that is
-> 
-> It's expensive, and it's a hot path if I understand correctly which
-> lock that is. And, IIRC the driver might spend there some time, it's
-> always nicer to keep irqs enabled if possible.
-
-This also seems a broad network lock, which might have so many other
-impacts beyond performance.
-
-That said, I am running out of ideas on how to get this fixed,
-unfortunately.
-
---breno
+On Wed, Oct 9, 2024 at 9:54=E2=80=AFAM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Good morning,
+>
+> This is a case of old english vs. new english.  Using "implementors" is s=
+till
+> correct.  Moreover, there are 33 instances of the word "implementor" in t=
+he
+> kernel tree.  Unless there is an effor to change all occurences I will no=
+t move
+> forward with this patch.
+I can work on changing all 33 instances of the word "implementor".
+Should I create a patchset for it ?
+> Thanks,
+> Mathieu
+>
+> On Tue, Oct 08, 2024 at 01:15:57AM -0600, Everest K.C. wrote:
+> > Following spelling error reported by codespell
+> > was fixed:
+> >       implementors =3D=3D> implementers
+> >
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> > ---
+> >  Documentation/staging/remoteproc.rst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/staging/remoteproc.rst b/Documentation/stagi=
+ng/remoteproc.rst
+> > index 348ee7e508ac..5c226fa076d6 100644
+> > --- a/Documentation/staging/remoteproc.rst
+> > +++ b/Documentation/staging/remoteproc.rst
+> > @@ -104,7 +104,7 @@ Typical usage
+> >       rproc_shutdown(my_rproc);
+> >    }
+> >
+> > -API for implementors
+> > +API for implementers
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> >  ::
+> > --
+> > 2.43.0
+> >
+Thanks,
+Everest K.C.
 
