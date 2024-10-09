@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-356435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC95996105
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:38:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CAE99610A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F82B1C231CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:38:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE411B2185F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7010B17E01C;
-	Wed,  9 Oct 2024 07:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51407183CC9;
+	Wed,  9 Oct 2024 07:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y68iUmg4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bd8c4SpO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F0B11CA9;
-	Wed,  9 Oct 2024 07:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F72E84E18;
+	Wed,  9 Oct 2024 07:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728459525; cv=none; b=Kdj1Xbm9dMM7RpQrlnXpS1ozHYYOgDk52xX+UBr+Z9SYCJv0Qi5jKM8HasCKrv3wNwcX0FNmuTdtDlKGzgXnIMO09fpUzH0pRVW+2PiWzSrQgc3weqQbGnN4JBeQ9vhf2Dloe79Yu4MbzsnbCWedRjCuruGV1e+5dDt2HCVOS34=
+	t=1728459552; cv=none; b=JW4Ps1yKb81QZCNF8Bp1YMIIeGAqQnvfAP++yU7yN8nXaaJawJCThUh87VcgcJc+8mGL1qcGrbJflwb/4kYutrEqG1RhZHUyFS5U+GBBtRCiacNXKKhvm8Nn32NEuAZ34IprIg3kkhM4yEsFvl82+Nx5Pmjm9Tn624f0DkZCEpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728459525; c=relaxed/simple;
-	bh=2RyF8nwj/cvj+E/yNHIotQjQzUIGEOP30JiIx6mgg60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sl5FKsBAOEBCUxZbKLtGwDjPaj5jt7nhtezp/+6ZEBpC+iOCq739bHqS7ptWaJ5JTxtrXfwsZfplkIRzsWQEhjFeNJpsAQv+zHX0suT9vG7psL/A+iiHvJ2aV5ZQA1eUPcXUfr7lyKdSRyvssNodZeaOhb48DbRazW6eqxTARA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y68iUmg4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522C2C4CED1;
-	Wed,  9 Oct 2024 07:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728459525;
-	bh=2RyF8nwj/cvj+E/yNHIotQjQzUIGEOP30JiIx6mgg60=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y68iUmg4iTAoNbzCOIRIx2DkZgcWD53ucRl+6P7R7YQIBRiWytzrL7ms8GP+wsOV2
-	 Umvowb3hgIeSM4AEKMEdw8V8VxkV5RClShLG8ApzvPueaDCFN/5rAY0sc9jsxgNOaz
-	 jUyeJJDCLn1rnAY9A5RYHW+XhhNdOleQs9Dc3hjvphYV0zgE2+50Y6LX+sEKGhcjOa
-	 jVHI0vWLNIpGJlUrXC3Ada421ZdRDvx9IZYFXWXZGpUFUdAbr66T6Qli4nMXlg7ZiV
-	 QnuSwuUtqhp/nqJBnTYg0n8qy/XcyR+CLg2bNHYyJMnJEG1HT7urY56LZD/5An+u4d
-	 p04k+y94Sht1Q==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5399041167cso10356312e87.0;
-        Wed, 09 Oct 2024 00:38:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUq3ZWR/NP5XTLInZKTxv6ySFc2cMn7nw4mav6vjDw3JJiRL9iGeGIRX+Z+tgUwA3msF/6dAZYf@vger.kernel.org, AJvYcCVvig8rzqUxa2ojf/t6hA3joBIXer2EhlN9E5dS5dQ7ghQ4TgbrTKMSNJTqDXGWJrLb4ddYfakB83eRMo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLT/Ds3P6OrtQylvxAXocwxnl7L9+Sc0hnoduvOmckZ81s1ngd
-	imMWIKd1JP+lqw5J/MXBNuyJ/Bkv9R55tItFebvzjZEh27nMZMVda+G86SwyKRDkefmNXQ6W+WF
-	EsZPLO5F7Rc600IwxJRquY+gWUME=
-X-Google-Smtp-Source: AGHT+IFxOX0737Ws11iCI0Sk/iqlwtLiRNezGiQM/0njq7wd5LtZKlh9lMt9mdRUL9ZhtXZxXaQ5G6n6C3s2PZdsI6o=
-X-Received: by 2002:a05:6512:224b:b0:539:8fbd:5218 with SMTP id
- 2adb3069b0e04-539c4968223mr1196233e87.56.1728459523690; Wed, 09 Oct 2024
- 00:38:43 -0700 (PDT)
+	s=arc-20240116; t=1728459552; c=relaxed/simple;
+	bh=BOTh+SM9Mx8xc69ATKWV5J5h+ivzwBN4pcInFOnwbBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZIE6dRJBsnfcXhpK9GzpQQaHDebbbzFrnIDyAXiz9sdpxLB5RUk8BvJLQZ5jjKodEgV8Sicdq1zEJiNljmder7QMEjB+qbf57WGnGg9ZfTU/tfOyNMQdkkIMHX62nJ7o8OcVdlIEurPu+lG5+YCxRifgk87Cyj9v2EZ4wN9iUHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bd8c4SpO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4995C0hO001017;
+	Wed, 9 Oct 2024 07:38:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	an3ZLA/8YORWgwvKtRb94EOa+uQ0Kp7b3RNblvUzcAg=; b=Bd8c4SpOBxhV6/zm
+	tvGKNKZBTLtbFGnLF+F0Tu6WyDfCXosUHJHwau0XdOrIHdT0dF3+vrQAPIMeM+54
+	n90PmC1zBxpRVO2HaJlwkJYKHgNnTlGhQucYAi8xPLfXCnr563ELlxvYXZd91fke
+	eVdMzy5pRI9nbh5koPYAZafJjO1+UxK6tCptxbRDc5TAzuecYH3T1G5Lw71Np9jS
+	xgnYlSc0twvqNMxkWlDUR5Js9Rk71NlCukXH3FD8wCaqDTAo5jTcLpsHXnKogfVm
+	qMKO9DH1uitYc/45aQpvXXtk/Kbi6jM3h6t3w7x2wtW2/u8FNQ2xWuLA1lKVKCm2
+	l9Agxg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424wgs3xg5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 07:38:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4997cjAL003184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 07:38:45 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
+ 00:38:37 -0700
+Message-ID: <158872a1-abcf-472f-bfa7-3f330d3c56e4@quicinc.com>
+Date: Wed, 9 Oct 2024 13:08:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
-In-Reply-To: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 9 Oct 2024 09:38:31 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFs=z6AYJm=2La5C28snjz5DSq24tApBDReQEbk1eAOhQ@mail.gmail.com>
-Message-ID: <CAMj1kXFs=z6AYJm=2La5C28snjz5DSq24tApBDReQEbk1eAOhQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 7/7] arm64: defconfig: Build NSS Clock Controller
+ driver for IPQ9574
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Devi Priya <quic_devipriy@quicinc.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konrad.dybcio@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <p.zabel@pengutronix.de>,
+        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <m.szyprowski@samsung.com>, <nfraprado@collabora.com>,
+        <u-kumar1@ti.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>, <konraddybico@kernel.org>
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-8-quic_devipriy@quicinc.com>
+ <rlqrgopsormclb7indayxgv54cnb3ukitfoed62rep3r6dn6qh@cllnbscbcidx>
+ <134665ba-8516-4bca-9a56-9a5bbfa71705@quicinc.com>
+ <kfmn6pixbrhaagll56z3ug7bfqrp6f47rd4m6qo6bidu3dfcew@r26q6aabut54>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <kfmn6pixbrhaagll56z3ug7bfqrp6f47rd4m6qo6bidu3dfcew@r26q6aabut54>
 Content-Type: text/plain; charset="UTF-8"
-
-On Sun, 29 Sept 2024 at 16:02, Heinrich Schuchardt
-<heinrich.schuchardt@canonical.com> wrote:
->
-> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
-> EFI binary does not rely on pages that are both executable and
-> writable.
->
-> The flag is used by some distro versions of GRUB to decide if the EFI
-> binary may be executed.
->
-> As the Linux kernel neither has RWX sections nor needs RWX pages for
-> relocation we should set the flag.
->
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AGt1Lo6XjnbRb7phW0j0UD9H90UE21tj
+X-Proofpoint-ORIG-GUID: AGt1Lo6XjnbRb7phW0j0UD9H90UE21tj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=772
+ suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1011 adultscore=0
+ spamscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090049
 
 
-> ---
->  arch/riscv/kernel/efi-header.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi-header.S
-> index 515b2dfbca75..c5f17c2710b5 100644
-> --- a/arch/riscv/kernel/efi-header.S
-> +++ b/arch/riscv/kernel/efi-header.S
-> @@ -64,7 +64,7 @@ extra_header_fields:
->         .long   efi_header_end - _start                 // SizeOfHeaders
->         .long   0                                       // CheckSum
->         .short  IMAGE_SUBSYSTEM_EFI_APPLICATION         // Subsystem
-> -       .short  0                                       // DllCharacteristics
-> +       .short  IMAGE_DLL_CHARACTERISTICS_NX_COMPAT     // DllCharacteristics
->         .quad   0                                       // SizeOfStackReserve
->         .quad   0                                       // SizeOfStackCommit
->         .quad   0                                       // SizeOfHeapReserve
-> --
-> 2.45.2
->
+
+On 10/6/2024 10:13 PM, Dmitry Baryshkov wrote:
+> On Fri, Oct 04, 2024 at 01:26:27PM GMT, Manikanta Mylavarapu wrote:
+>>
+>>
+>> On 6/26/2024 11:44 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Jun 26, 2024 at 08:03:02PM GMT, Devi Priya wrote:
+>>>> NSSCC driver is needed to enable the ethernet interfaces and not
+>>>> necessary for the bootup of the SoC, hence build it as a module.
+>>>
+>>> It is used on this-and-that device.
+>>>
+>>
+>> Hi Dmitry,
+>>
+>> Sorry for the delayed response.
+>>
+>> NSSCC driver is needed to enable the ethernet interfaces present
+>> in RDP433 based on IPQ9574. Since this is not necessary for bootup
+>> enabling it as a module.
+> 
+> Commit message, please.
+> 
+Hi Dmitry,
+
+Okay, sure.
+
+Thanks & Regards,
+Manikanta.
 
