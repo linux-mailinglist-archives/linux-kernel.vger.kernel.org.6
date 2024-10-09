@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-357722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E635C9974BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:18:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B279974BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0C31F21ACF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:18:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E2DB299BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7811E131F;
-	Wed,  9 Oct 2024 18:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DECE1E1A30;
+	Wed,  9 Oct 2024 18:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bRjp8Pvg"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ayEExf5E"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F6B1E0B9A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5BE1E0DFC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497868; cv=none; b=HjvrN62+wOJKN5J+ctDDSJREcghU0W0l7jU7st6F2Maslg0oSZlVnbfyR6ZkmAUFe7Mj8c6CSuNkY4j0twBma7M0dAbwMRurXw5KIBDSTijf75r3vB3lLRn4xMKIumLPZJpSTxhwpxAF+btBOdBS0OBrqRq11rE9N22HICMiJiI=
+	t=1728497869; cv=none; b=TXOk4wYkjduEVzbig/IwlSuc3cpLV5XK8AYuNc84u8/deowXZMUvYuyhD9xLM9MkI41OpFHjY+r0hNdiNtURyHMd9/gY+xDaoZR0kecnCQQdknajV+pmyowMhieU3Om56gTKmRck3wiypvmUuISr8kmiELZeLe7x0cXsglaX0dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728497868; c=relaxed/simple;
-	bh=0zM527JK/paLZTNDe5QFY0koUa6j7yB2QFiZGlD4Z4g=;
+	s=arc-20240116; t=1728497869; c=relaxed/simple;
+	bh=DDLfj0TQYGwpLkFazEuQUvzdkQZmzTYxm2iRMOY43rw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qvzshdHWSToZQAb9SGa9XGa5p2BAAXfU+BXXX/wFxhZ/MayMYItvXnEDf4NIAjMN8QxRmvLhjtNv8zJ4wFn99Umak7N666Y0c6SLsdB7HVvqzbJywgOErqkXVdkihAHox4otH3LNnOzcBlwM++gINKyC90s9EdtT0L40IDq0l20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bRjp8Pvg; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=Wo/uQBV7WHqnNco+axSUmX1iNfIDmlbEmstfW2sPfYOk4HUUrXqnLXNvBdqAxTTiSBHj9n+UkmiHiT1hvWMRmLIi9FR5PrjxZDyH3ZbBnDMTKNFzZNe8Ts9FdCcoDus0lmi7AAYt82N4MUKQ2E3NGGYu5yPG6IQ/SKUaMVfUZd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ayEExf5E; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7e6c40a5795so74188a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 11:17:46 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e1e989aa2so130859b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 11:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728497866; x=1729102666; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728497868; x=1729102668; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=be89kprlJKC4G7WLZof2cKHiOhtzCos3l78DyaXkfv4=;
-        b=bRjp8PvgU5Jvw764HVrDE2TtO2Rp3hWQ2w3nm23XPKqLkGlC33NhSP2dporg4Jd1Ct
-         Pd9gyEQOfoXip1zs2sulKzyE1U0kTnXx7tR5LV++5c/3Cr9RFafKrIGV/dmlWt4MgL6r
-         Wumsvodcurys29Cb3Y+FnY1BOyD9idx4bxaLOfUDFwXEs1G9JjS/jitPPOKOQuJmEpSH
-         5y6bIyPAwZkVmKKwiA+ulID7L/EmZVOw3HXomNdm+8bhDm5mLqyHs3CGgKvPsdpT+IR4
-         galN9O1y7pYiArwdwGpuhQAsf9RenL1t0wo3ffUuQpzP6KUjgOU/NrpRVp2xO2h/mhfK
-         9fFg==
+        bh=2G7TjtKE6sDpC5bp0OSd5cuEOohLepXkfXg2tU0SKoY=;
+        b=ayEExf5E+PPxYZ2EqowrESiE9/vonl9bHhKnQBoxjec3o0VyRLXyaOOsFUwPAZsHYJ
+         b/2jPIX6BYT333jrnU6VkXvgnjd4+SJgNE0RYNhZ7HQ4qnL7O/xk2nsXgBq68Qf6Gkg8
+         WteyoVnOAMvHMUeWQkjvQTngcMwvW641zrHEEokZ9lpGxnlLnS1Kg7AxetmT2LtaqH8a
+         sttL1cx3wu8ECYcv1O+E1f4zF1Qz14+yVv5drGd0BpdFCd4bSiZq/Dkoc/VrC1SJWIMJ
+         2uyHfcpT2msm5FzM+8AxvBPc+SbU+MZ8dRgC1hlidiI9NX/2SqZAweIKdJZxz5vXq7bL
+         9B8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728497866; x=1729102666;
+        d=1e100.net; s=20230601; t=1728497868; x=1729102668;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=be89kprlJKC4G7WLZof2cKHiOhtzCos3l78DyaXkfv4=;
-        b=FihTVAHBoBPVLBXCi1u7ZNOXCxwMLnvT7Qw8kZtXdxTdY+S3YAYGifxjWURiEIyToL
-         9nGpWnxLiLvldewsH5UimWlusiMVwWS9qKGE43X/73Bo6qWPYuLWAuBoy/8Kk5ZawjLp
-         csDqaVHwOQUIreFQmMaPxsEOhJF5FkYGSvncDhEHx1GQCB85g38Z6fZ8F30j3j2ahheN
-         j7eDh3+AtjKudoVMz/ljicxBuXaWeMMkbzGYtq++lRnKBUVIpX0hKFgdyl8hpYP6+fjG
-         BEBR12y/y7TTKF2gFGpOIuKSgl9bXTztDZZaDAGFN8cQ4ddVuw3bPTKs58T+6PrlnzPU
-         vq6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXmzkx5mXAotiZa+JOlk/WbHGhx2alb2cdEhrekTJ0L7yPn/F99hRoYMRmwqwr7YLOPtLgjV9eqRH1dzcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUqxfR+EjjWg4RmwCaDsSLxZPvXYobnzThi9l+UNc9Mh269chE
-	b2XE8Kl7YGmihxys7fioFqttL4zKl51S+JKI9B4Qgt4HfGvjNEG7TKnUaccERcnxpo6K/04Hx1G
-	Meg==
-X-Google-Smtp-Source: AGHT+IH++ydkI6iIiLg5mDcR+PNffx9cTT1AyjXQiz1ktdHe1ZEbIL4uc7d0r3nPPztS+TWADPeejHpXgr0=
+        bh=2G7TjtKE6sDpC5bp0OSd5cuEOohLepXkfXg2tU0SKoY=;
+        b=Q2x0IwW77hANvuoxMNuIHN2RYHmJbQvs5kWtUXhhL3GAfQOkMBQPF77Tym4ZCSIXQs
+         K43T5jJlAlvywjiDLscDcf/yzSTM0kcZNGwklnBbyPC7MQppywRby34HNrAzALmK6gPQ
+         lbFVRQk7E58f6+qVIrlon7KcKU9cTjP6CoCyLiPeSvYFNVDP17a1a2diS/ouvwqkwUJU
+         ti8fMYbBx302ZOpRjt6cXt2PwcuUMXAPdBnb14/9hAwrWXmOr5LqTgKFpKdjvqYFvmm5
+         SDu8zG5fR+MlRCqPCcU4Ajlv9lli9ZknXSVL4RQ2BWlvkAQhyDaBfFV2LJeBC3meRRI9
+         kQaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7C0w9P/EU6oJGGsxHp3Nu8lATjQP62eXaMuEySGOLe8CIWqZmMeUWK78gi5sfxqt+wVep/x0UA/3I1Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWp0jevWRJi23W/emiakL63syV/hRdZ/R6HyIpa/Yv4njqsuWx
+	iLofq1M5kN+vnYBRxfFZ1ejMgVoSIBWd+Bi8Mq+QVmWnMgO9DGn77gOb4PDyjRvxLwAumE8v6CO
+	uDA==
+X-Google-Smtp-Source: AGHT+IEDBDcN5R3goI4UO9P1OG6J750Ofxm36RRfmx857Ihy1BrsZNT8kpRnKzVh5TGPa8Wq9gICpJyQfxA=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:5a46:0:b0:7db:539:893c with SMTP id
- 41be03b00d2f7-7ea320ea266mr3285a12.9.1728497865541; Wed, 09 Oct 2024 11:17:45
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:3e0c:b0:71e:aa:eac9 with SMTP id
+ d2e1a72fcca58-71e1db7352cmr6743b3a.2.1728497867481; Wed, 09 Oct 2024 11:17:47
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  9 Oct 2024 11:17:35 -0700
+Date: Wed,  9 Oct 2024 11:17:36 -0700
 In-Reply-To: <20241009181742.1128779-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,45 +75,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241009181742.1128779-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241009181742.1128779-2-seanjc@google.com>
-Subject: [PATCH 1/7] KVM: x86: Short-circuit all kvm_lapic_set_base() if MSR
- value isn't changing
+Message-ID: <20241009181742.1128779-3-seanjc@google.com>
+Subject: [PATCH 2/7] KVM: x86: Drop superfluous kvm_lapic_set_base() call when
+ setting APIC state
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Do nothing in kvm_lapic_set_base() if the APIC base MSR value is the same
-as the current value.  All flows except the handling of the base address
-explicitly take effect if and only if relevant bits are changing.
+Now that kvm_lapic_set_base() does nothing if the "new" APIC base MSR is
+the same as the current value, drop the kvm_lapic_set_base() call in the
+KVM_SET_LAPIC flow that passes in the current value, as it too does
+nothing.
 
-For the base address, invoking kvm_lapic_set_base() before KVM initializes
-the base to APIC_DEFAULT_PHYS_BASE during vCPU RESET would be a KVM bug,
-i.e. KVM _must_ initialize apic->base_address before exposing the vCPU (to
-userspace or KVM at-large).
+Note, the purpose of invoking kvm_lapic_set_base() was purely to set
+apic->base_address (see commit 5dbc8f3fed0b ("KVM: use kvm_lapic_set_base()
+to change apic_base")).  And there is no evidence that explicitly setting
+apic->base_address in KVM_SET_LAPIC ever had any functional impact; even
+in the original commit 96ad2cc61324 ("KVM: in-kernel LAPIC save and restore
+support"), all flows that set apic_base also set apic->base_address to the
+same address.  E.g. svm_create_vcpu() did open code a write to apic_base,
 
-Note, the inhibit is intended to be set if the base address is _changed_
-from the default, i.e. is also covered by the RESET behavior.
+	svm->vcpu.apic_base = 0xfee00000 | MSR_IA32_APICBASE_ENABLE;
+
+but it also called kvm_create_lapic() when irqchip_in_kernel() is true.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/lapic.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/lapic.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 2098dc689088..ffccd6e7e5c1 100644
+index ffccd6e7e5c1..fe30f465611f 100644
 --- a/arch/x86/kvm/lapic.c
 +++ b/arch/x86/kvm/lapic.c
-@@ -2582,6 +2582,9 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
- 	u64 old_value = vcpu->arch.apic_base;
- 	struct kvm_lapic *apic = vcpu->arch.apic;
+@@ -3072,7 +3072,6 @@ int kvm_apic_set_state(struct kvm_vcpu *vcpu, struct kvm_lapic_state *s)
  
-+	if (old_value == value)
-+		return;
-+
- 	vcpu->arch.apic_base = value;
+ 	kvm_x86_call(apicv_pre_state_restore)(vcpu);
  
- 	if ((old_value ^ value) & MSR_IA32_APICBASE_ENABLE)
+-	kvm_lapic_set_base(vcpu, vcpu->arch.apic_base);
+ 	/* set SPIV separately to get count of SW disabled APICs right */
+ 	apic_set_spiv(apic, *((u32 *)(s->regs + APIC_SPIV)));
+ 
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
