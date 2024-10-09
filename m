@@ -1,190 +1,92 @@
-Return-Path: <linux-kernel+bounces-357938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CB0997828
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:03:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E468099782C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BBFBB2221D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E66C1C2261B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E591E285F;
-	Wed,  9 Oct 2024 22:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68DF1E2842;
+	Wed,  9 Oct 2024 22:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G9kM3YPp"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WV6vF9/2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCE018132A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0621A18CC1E;
+	Wed,  9 Oct 2024 22:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511377; cv=none; b=INDMb7R+ra5RQhks/2vuIdInIuhvKyrlTOubFxgIyE5GwF0v8oduLNKhJ06/kXnGQFcsiKyieg1ssGqrJAkS5OFEy13rkbNmbaMDALQRshi8IrFlgHHHyMWF3S1o4DK6BOEWZplCiDJoESYoIKZ8WWG83Fv9Tm49EPvs/aeMBrc=
+	t=1728511401; cv=none; b=sPJwT+/gPK+sQT2/ofo+KFRbh2mqBZroJI6RhCfdMDlxLjFxHVn5zC57fYf7B29gJQjNxtSXhfo4XOo6H4efZqmiXXtk2iAVMpjuRoN9luoTfKMOcc2Vl5FOVGkAIq3wi5xFvkjD1uE+TUfbMMKOwKZKz2wTTm8UtUaz2tM7fYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728511377; c=relaxed/simple;
-	bh=uZxY76m36ydLtto+ybFprLgpvUQq3up5tcHkr6TI6eY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bl0bA3sFa071R1wS2UiJdhfveyI1n3RVAAsZ+A5QxuZtRFJrL0UFEhu3Seq0l4b1Wuws2zkEfjbe0Kj8fNgMAr80w8r7i6DWtnUUm5JIn4VmENzXo5U9u666/IPHHYzAmCy1+REnWDX2nGCM5VLAJH0BHFLJx1yi8Y0ObGdN124=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G9kM3YPp; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e290bf7adaaso266488276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 15:02:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728511375; x=1729116175; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qALeGv0lrJMi11SU4W4SJLWzuz/xtDH2PNt93jl4Qu0=;
-        b=G9kM3YPp9bL6B52kT7rJeGOWinOt1yjMDHhQRztJguXcw0jHVefIgME54gtjrc5ye6
-         OA6b+ty0PnLoAQvOQmk4DzQqKI+jPadjfU8Jhb9YrCAtc9mX9gahlAN9nf0hW/PFlDzH
-         tFkXluKxDDm2ssCoiKUfUKMz1kFb6j5S6zBwviRsZQ1Cqi5B6E6s9B0F1YOSeKUZgHol
-         QRxiNjP5i2L4CA3NsiOuXSm3T4fDbNlL/tD1Q9GkclUbV2DyfOM+JPO/ikR1NqKUimK6
-         ggllE1I/v6dRZk8GFZFU6TOunreyTJEla7i3jTfU7cd9WqSUUN0K6UY8j25Za7Va9veB
-         Z6oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728511375; x=1729116175;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qALeGv0lrJMi11SU4W4SJLWzuz/xtDH2PNt93jl4Qu0=;
-        b=pRKMe9nB8J1TUdwpgRV72Uo+Jn46TBmHwnkVAqywikAiLE2vwYltxzcflIBM+Bq2+J
-         +hDo5yuWKmcJLqFheEEdfaO61JuFLOlDDdeHa/XdZ+O3IvpyOa7gJmRqMrWqubvFSQoD
-         oSEp2PIJuOyc4T6vHjc557Ljwqeub+vgy4PTeVzmUNNZ1bOyojlqDDUvPI/yL4BpOTJx
-         9qoiYHzIBIgDuHCEJk9wDhth6VVyvZbruIVK12QEFNqMfjd36kfL0NBGYBBTfZuEFvON
-         ugt+ZzKoGsjgNILv5TsyoceUmWkdxRKislhQjZ6Cg28a95hDz6xIqedEqdHYIP6pXZMW
-         JVzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSuXBLR3PrlwWJsSTEKtxxg4itVL3T8VaNwUmxi++cdfzEOJ3232L/kUsFbrx7VhCA5gGDcuysR0aWlKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybnLzLAXfvu/ocrJhbp3nHBkxFTBYXpDeX7YJ6cEXycraMHYt8
-	fOL2CiMRhkl/TZr9RSzrglWXnoiGnpONJI7CkWkG4gw1EuJaJ+0v1JPtEDLF/PpNWdup/ltE2cW
-	zDfyWPD67PjBdJ/jdlWdph+cupv8V2Z8p8yaQ
-X-Google-Smtp-Source: AGHT+IG1hXmGzW6t4TPA1Xvx/ba3I0vLTALPaDTo/4Z8b9Pf7FLaaDUI4r/rqTzCQTCNGBbiARVnORqzWvm00b3PHNQ=
-X-Received: by 2002:a05:690c:5083:b0:6e3:3227:ec64 with SMTP id
- 00721157ae682-6e33227eff0mr792437b3.35.1728511374654; Wed, 09 Oct 2024
- 15:02:54 -0700 (PDT)
+	s=arc-20240116; t=1728511401; c=relaxed/simple;
+	bh=wHu0vL5OYfmu+L39nIZU7+e1wsKSMJA58f6KwHUZgcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NVdmdWkdUm7he+ykE2K4H4G8XxJG7C9CeAK5lCVZO6kvYJ7MOA27R7pepGsqO+QUlDZLU3H6cN5bz5aJQTzQb0CFlY+FrBIlPhzhXLeOcHEt6AKApolMNyDakPR29kU8SuApjpP77jTELPg10x5SIG2Of6GdSOafak9HWVnsHKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WV6vF9/2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D998C4CEC3;
+	Wed,  9 Oct 2024 22:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728511399;
+	bh=wHu0vL5OYfmu+L39nIZU7+e1wsKSMJA58f6KwHUZgcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WV6vF9/2fDQLRiQPFYPkhYe8w4fpee9+NbNJZy0nVD5UsYX/9qnd+VZN5aZqKkPa9
+	 fMNDVQcholTOjszBa+mA2ZH84jZ798H9vTL7erJBZm/O+W1DepFkMNBGeLz52Kwnpj
+	 fS1Gw3kxcO8cgDd5vwwko4bWQr1sHg3dGR6WvnpCUCqRw8mL5EVRy1LH9vBOnq1Oet
+	 mPuSzCByAW6VY9aRwT/feic4jL3wopgxfwXyYXDtoAAGMvEYKk4RFO09ffMIZG6baH
+	 veTgjlvlCFKSy5SMiVgCqdrmaDnB1h1MFQWxikEn+cZato8SeAGvDVcQWyTxiCMAS8
+	 tz8hPaEzluwmw==
+Date: Wed, 9 Oct 2024 18:03:17 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Jan Stancek <jstancek@redhat.com>
+Cc: Cyril Hrubis <chrubis@suse.cz>,
+	Anders Roxell <anders.roxell@linaro.org>, Jan Kara <jack@suse.cz>,
+	lkft-triage@lists.linaro.org, allen.lkml@gmail.com,
+	stable@vger.kernel.org, shuah@kernel.org, f.fainelli@gmail.com,
+	jonathanh@nvidia.com, patches@kernelci.org, linux@roeck-us.net,
+	srw@sladewatkins.net, broonie@kernel.org,
+	LTP List <ltp@lists.linux.it>,
+	Christian Brauner <brauner@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>, rwarsow@gmx.de, pavel@denx.de,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, conor@kernel.org,
+	patches@lists.linux.dev, akpm@linux-foundation.org,
+	torvalds@linux-foundation.org, sudipm.mukherjee@gmail.com
+Subject: Re: [LTP] [PATCH 6.10 000/482] 6.10.14-rc1 review
+Message-ID: <Zwb9pbX7MnPqGPoM@sashalap>
+References: <20241008115648.280954295@linuxfoundation.org>
+ <CA+G9fYv=Ld-YCpWaV2X=ErcyfEQC8DA1jy+cOhmviEHGS9mh-w@mail.gmail.com>
+ <CADYN=9KBXFJA1oU6KVJU66vcEej5p+6NcVYO0=SUrWW1nqJ8jQ@mail.gmail.com>
+ <ZwZuuz2jTW5evZ6v@yuki.lan>
+ <CAASaF6wdvXAZyPNn-H4F8qq6MpHmOOm9R+K+ir9T_sOG-nXpoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009203218.26329-1-richard@nod.at>
-In-Reply-To: <20241009203218.26329-1-richard@nod.at>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 Oct 2024 18:02:44 -0400
-Message-ID: <CAHC9VhSbAM3iWxhO+rgJ0d0qOtrSouw0McrjstuP5xQw3=A35Q@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
-To: Richard Weinberger <richard@nod.at>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, 
-	kuba@kernel.org, edumazet@google.com, davem@davemloft.net, 
-	kadlec@netfilter.org, pablo@netfilter.org, rgb@redhat.com, 
-	upstream+net@sigma-star.at, audit@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAASaF6wdvXAZyPNn-H4F8qq6MpHmOOm9R+K+ir9T_sOG-nXpoA@mail.gmail.com>
 
-On Wed, Oct 9, 2024 at 4:33=E2=80=AFPM Richard Weinberger <richard@nod.at> =
-wrote:
+On Wed, Oct 09, 2024 at 02:03:31PM +0200, Jan Stancek wrote:
+>On Wed, Oct 9, 2024 at 1:56 PM Cyril Hrubis <chrubis@suse.cz> wrote:
+>>
+>> Hi!
+>> Work in progress, see:
+>> https://lists.linux.it/pipermail/ltp/2024-October/040433.html
 >
-> When recording audit events for new outgoing connections,
-> it is helpful to log the user info of the associated socket,
-> if available.
-> Therefore, check if the skb has a socket, and if it does,
-> log the owning fsuid/fsgid.
->
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> ---
->  net/netfilter/xt_AUDIT.c | 27 +++++++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
->
-> diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-> index b6a015aee0cec..d88b5442beaa6 100644
-> --- a/net/netfilter/xt_AUDIT.c
-> +++ b/net/netfilter/xt_AUDIT.c
-> @@ -9,16 +9,19 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->
->  #include <linux/audit.h>
-> +#include <linux/cred.h>
-> +#include <linux/file.h>
-> +#include <linux/if_arp.h>
->  #include <linux/module.h>
->  #include <linux/skbuff.h>
->  #include <linux/tcp.h>
->  #include <linux/udp.h>
-> -#include <linux/if_arp.h>
->  #include <linux/netfilter/x_tables.h>
->  #include <linux/netfilter/xt_AUDIT.h>
->  #include <linux/netfilter_bridge/ebtables.h>
-> -#include <net/ipv6.h>
->  #include <net/ip.h>
-> +#include <net/ipv6.h>
-> +#include <net/sock.h>
->
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Thomas Graf <tgraf@redhat.com>");
-> @@ -66,7 +69,9 @@ static bool audit_ip6(struct audit_buffer *ab, struct s=
-k_buff *skb)
->  static unsigned int
->  audit_tg(struct sk_buff *skb, const struct xt_action_param *par)
->  {
-> +       struct sock *sk =3D skb->sk;
->         struct audit_buffer *ab;
-> +       bool got_uidgid =3D false;
->         int fam =3D -1;
->
->         if (audit_enabled =3D=3D AUDIT_OFF)
-> @@ -99,6 +104,24 @@ audit_tg(struct sk_buff *skb, const struct xt_action_=
-param *par)
->         if (fam =3D=3D -1)
->                 audit_log_format(ab, " saddr=3D? daddr=3D? proto=3D-1");
->
-> +       if (sk && sk_fullsock(sk)) {
-> +               read_lock_bh(&sk->sk_callback_lock);
-> +               if (sk->sk_socket && sk->sk_socket->file) {
-> +                       const struct file *file =3D sk->sk_socket->file;
-> +                       const struct cred *cred =3D file->f_cred;
-> +
-> +                       audit_log_format(ab, " uid=3D%u gid=3D%u",
-> +                                        from_kuid(&init_user_ns, cred->f=
-suid),
-> +                                        from_kgid(&init_user_ns, cred->f=
-sgid));
+>and https://lore.kernel.org/linux-ext4/20241004221556.19222-1-jack@suse.cz/
 
-[CC'ing the audit and LSM lists for obvious reasons]
+I'll drop the offending commit, we can grab it along with the fix once
+it lands in Linus's tree.
 
-If we're logging the subjective credentials of the skb's associated
-socket, we really should also log the socket's LSM secctx similar to
-what we do with audit_log_task() and audit_log_task_context().
-Unfortunately, I don't believe we currently have a LSM interface that
-return the secctx from a sock/socket, although we do have
-security_inode_getsecctx() which *should* yield the same result using
-SOCK_INODE(sk->sk_socket).
-
-I should also mention that I'm currently reviewing a patchset which is
-going to add proper support for multiple LSMs in audit which will
-likely impact this work.
-
-https://lore.kernel.org/linux-security-module/20241009173222.12219-1-casey@=
-schaufler-ca.com/
-
-> +                       got_uidgid =3D true;
-> +               }
-> +               read_unlock_bh(&sk->sk_callback_lock);
-> +       }
-> +
-> +       if (!got_uidgid)
-> +               audit_log_format(ab, " uid=3D? gid=3D?");
-> +
->         audit_log_end(ab);
->
->  errout:
-> --
-> 2.35.3
-
---=20
-paul-moore.com
+-- 
+Thanks,
+Sasha
 
