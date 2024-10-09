@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-357080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49C3996B5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:07:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94D9996B47
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 127E9B24603
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56006281DC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8F8196455;
-	Wed,  9 Oct 2024 13:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTOAPp+V"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF90198E61;
+	Wed,  9 Oct 2024 13:01:18 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EA81EA91;
-	Wed,  9 Oct 2024 13:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057B6194096;
+	Wed,  9 Oct 2024 13:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728478824; cv=none; b=CoaC5LbKY8BsKrEYlR78OkJqSGmRy5wzPVK0s4AeIUKmT5cqAgMyoBZgoQgh2wRRHPbjZy0hLyZnsi0T9WztmxFilNUoY+0yjYBKcL6KPKnikaiW71u7fEbzqeCaf/nbJ5tqgw3TZ952aJ8B25MmJXRiiCg4U4uaJVu79dXuT2E=
+	t=1728478878; cv=none; b=mf4uJCnmrXU/wfOlbLrfgWp4T3i0uz7kZFYz5+7gCkNp5g2WsDBj9Xh44UuDuRBbASeOX+SP0+sSqtJa987v2N9DuYaqHA7loZeC6jFo8GdT2uHgNnqhOtJC5XbSax5fh1mpq72x1kSCJn+PO7pxoxdLnIgCEPeUtjFK6R/rcqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728478824; c=relaxed/simple;
-	bh=KZfd22BMhEgpaN3s2NFsTfKGuLivo1oewb91MjRpynA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QkNWmj6glYwfDCv86I9IHD/m44AcNX4tIbxSs0ZIvObVM18CWbyMHYTWChYlJNqaz4lYDhzAGqt1EYhyeaPOQNfejlWAwGkgShbv+XBS1ZdS8AvgoymaaKpyrPX6pKscFsKhYcQNfiW9zVFQ6msEUtjHmO0KmydsafU0avR75Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTOAPp+V; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71df49bbc2fso629643b3a.1;
-        Wed, 09 Oct 2024 06:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728478823; x=1729083623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZfd22BMhEgpaN3s2NFsTfKGuLivo1oewb91MjRpynA=;
-        b=LTOAPp+Vn6ela6Na9cyHg+e4B9v+heog9MGKhCgD5h6+M8ouZ6kqv07hEOGsqZvV2/
-         3zQEhrqGRadFghRxo/ukLJP+1NQESC63phPDA/FaZCEiqnJbA0LtEWxrQQqy4dTsPFLo
-         bYaMy/7s6I8IjeTtu74xsvuiAD4VOxD44yOwLwrfijG8zeRb56YevioYfZIigGHg9qse
-         4b6A8RRusffR8nOebsR2CeqwMBw4LpeBYF7jieoRFioqdB0+3z4ezE2aDot7MJo6FVcZ
-         FR5puRvHZgJt57MXphAQNVEh27pUkSYL3h500mEUkaM93qhknAx6fPSbjdkzdnaebDgR
-         s/kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728478823; x=1729083623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KZfd22BMhEgpaN3s2NFsTfKGuLivo1oewb91MjRpynA=;
-        b=w/HCMr7uKg4diT+CvUb/ClgVNX53868hJpbt7RwUrBX5zJoTByYuXV3QZlBcvPrPaZ
-         6gig1w85hDXjCSNoC4PmSyeWAIfxSGggNfgnXLa94Tx+UJ4Bimc+IUONGUeakWjc8UCm
-         l0FHFxgOELvtQEHL3we7EcgX+FeWje/8z5rJypZ0iceTg6EwfuyEuwUGfsEkaclzdgqh
-         v0oZafOYryiExMPpOdI+hTabfLFbyHLOwwnHJbXmY/LasxkTtmeQ8RwRRAPxFxfJUhWr
-         /3/pHHIRG77IMSAs1zRyW0NCuYvSG8K8VIRvYGF0cVYi0mFvYHCQjBXp3vng8qd45thX
-         59zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYMjr8l4RoUN65IV7eHNDDaq5CTYWMrk4kPgU2Zo6wqcGP6HIU2o42pnGDQTm9E+Twuahm/8kpj5OiaY3hLRA=@vger.kernel.org, AJvYcCWbZfKTLFS214uxR9kVYQYQdf0t3iwZoD0IgUvricQYlC8oBO2s2pCcm11xoVOj6F6Yr6htrK47+r/dpks=@vger.kernel.org, AJvYcCXHF0HY2eWIWqa6P4Sfkfp/AFOA4H7T3Za/DOZ68ofUcUcc+G3nRvFknFsnLJBtVfcu8v2DmhRuyZJdL0Dm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7jJDhhsO8YqYiL6Mnot/2DSS0e0Q3fZJkaRY/E7bkqX6pk3Fn
-	TGOLhD4y9rWmmxPqMGPbTdcFL2noUJ7r/5Ds2bqQpMdGmHltUln/R+sVhRt3QPgjSUHS81ITTsF
-	FsEae1s/Z4dmfsKYQym2l6oF0meE=
-X-Google-Smtp-Source: AGHT+IFU/0OTzluBQrIEQzKoLpAe1Xa8N0nm93Rhje05HGnRv6g58c1SdQ8ZROoTkpBtLe3Bk0ktFI+CG9vbyd6Fj/0=
-X-Received: by 2002:a05:6a00:1307:b0:71e:c41:ebd6 with SMTP id
- d2e1a72fcca58-71e1db6e721mr1677027b3a.1.1728478820956; Wed, 09 Oct 2024
- 06:00:20 -0700 (PDT)
+	s=arc-20240116; t=1728478878; c=relaxed/simple;
+	bh=ep8XRjvgkPw03MMAOebkoLTfDumCeFSu48pWU+Ub3CI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kuqP21AD6ajrO3oUTDa+auQG0S61EPs1pwmKysa4vJdE+yDHMHuWoGGTjNNkUCy4fwphbNdEz7EkEsUz1cSjzPG9ChLetSTNyLJ3XSdhUOKUlstYcdRMRDt8zPZZ2zVOVtO56nGBN60WcSXbjNi8s3uKa8xYaoqzlAu+8MMl100=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XNtKb2GZ5z20phS;
+	Wed,  9 Oct 2024 21:00:35 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id EB0A814022D;
+	Wed,  9 Oct 2024 21:01:11 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 9 Oct 2024 21:01:11 +0800
+Message-ID: <9ab7ee3d-cf97-47b0-91dd-c5451911b455@huawei.com>
+Date: Wed, 9 Oct 2024 21:01:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-rustc-option-bootstrap-v3-1-5fa0d520efba@google.com>
- <CANiq72nr_X4JY=LUcj14jZfcPV5=Cn3QTucYGmBTz2QdA5=RdA@mail.gmail.com> <CAH5fLgiR552+ETb0HVe1n5KqxB1vXo3LCfsuq68FEbcGrk+FBg@mail.gmail.com>
-In-Reply-To: <CAH5fLgiR552+ETb0HVe1n5KqxB1vXo3LCfsuq68FEbcGrk+FBg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 9 Oct 2024 15:00:08 +0200
-Message-ID: <CANiq72mo2pUHS0a6hY2OgaV6=1V_rT3fSw5WszqjsYzEB_La-g@mail.gmail.com>
-Subject: Re: [PATCH v3] Kbuild: fix issues with rustc-option
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Some boundary error bugfix related to XFS fsmap.
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>, <osandov@fb.com>,
+	<john.g.garry@oracle.com>, <linux-xfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>
+References: <20240826031005.2493150-1-wozizhi@huawei.com>
+ <9337ebda-8e27-4754-bc57-748e44f3b5e0@huawei.com>
+ <20240902190828.GA6224@frogsfrogsfrogs>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <20240902190828.GA6224@frogsfrogsfrogs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On Wed, Oct 9, 2024 at 2:58=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> That all sounds good to me. Feel free to make the suggested rewordings
-> when you apply this. Otherwise I can send a v4 if you prefer.
+Hi!
 
-No worries (but thanks!).
+Here are two patches that address fsmap statistics errors. I sent out
+this version in August, and I hope someone can take some time to review
+them. So friendly ping. Thanks in advance!
 
-Cheers,
-Miguel
+
+在 2024/9/3 3:08, Darrick J. Wong 写道:
+> On Thu, Aug 29, 2024 at 07:24:55PM +0800, Zizhi Wo wrote:
+>> friendly ping
+> 
+> Sorry, I'm not going to get to this until late September.
+> 
+> --D
+> 
+>> 在 2024/8/26 11:10, Zizhi Wo 写道:
+>>> Prior to this, I had already sent out a patchset related to xfs fsmap
+>>> bugfix, which mainly introduced "info->end_daddr" to fix omitted extents[1]
+>>> and Darrick had already sent out a patchbomb for merging into stable[2],
+>>> which included my previous patches.
+>>>
+>>> However, I recently discovered two new fsmap problems...What follows is a
+>>> brief description of them:
+>>>
+>>> Patch 1: In this scenario, fsmap lost one block count. The root cause is
+>>> that during the calculation of highkey, the calculation of start_block is
+>>> missing an increment by one, which leads to the last query missing one
+>>> This problem is resolved by adding a sentinel node.
+>>>
+>>> Patch 2: In this scenario, the fsmap query for realtime deivce may display
+>>> extra intervals. This is due to an extra increase in "end_rtb". The issue
+>>> is resolved by adjusting the relevant calculations. And this patch depends
+>>> on the previous patch that introduced "info->end_daddr".
+>>>
+>>> [1] https://lore.kernel.org/all/20240819005320.304211-1-wozizhi@huawei.com/
+>>> [2] https://lore.kernel.org/all/172437083728.56860.10056307551249098606.stgit@frogsfrogsfrogs/
+>>>
+>>> Zizhi Wo (2):
+>>>     xfs: Fix missing block calculations in xfs datadev fsmap
+>>>     xfs: Fix incorrect parameter calculation in rt fsmap
+>>>
+>>>    fs/xfs/libxfs/xfs_rtbitmap.c |  4 +---
+>>>    fs/xfs/xfs_fsmap.c           | 39 +++++++++++++++++++++++++++++++-----
+>>>    2 files changed, 35 insertions(+), 8 deletions(-)
+>>>
+>>
+> 
 
