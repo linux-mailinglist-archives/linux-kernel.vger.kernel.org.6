@@ -1,124 +1,241 @@
-Return-Path: <linux-kernel+bounces-356513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E693996255
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DA7996259
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B36F1F22C9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:23:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EC271F22C57
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2244B1885BF;
-	Wed,  9 Oct 2024 08:23:09 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F691885B5;
+	Wed,  9 Oct 2024 08:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jftn0cMQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nKi4Pj31";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ssji292W";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CodwJhsG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A782183CA7;
-	Wed,  9 Oct 2024 08:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6988178CC5;
+	Wed,  9 Oct 2024 08:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462188; cv=none; b=sXbycmm/ox4k2TPvxpVafctT7w0V3YKd7OCgWGvO71Ooc9Htqr8CLnxaarUqUwJXwbTsbOljRew7zv8EhSliVfNPx/RpiLXYulvYzuRQfMyQDI2o4eF4jR/xadALl8Bxd16NsqQzHcs+X7FzkiyZnyRgrsIY4dv/1JQWXRab0Go=
+	t=1728462255; cv=none; b=IveACADXLDxn03GZ6a5EEO3oLftvlVaznvUWWqfP1PburjYoG5EwUvBLVtbGSCQGmYFCx1v2FCmpKq72SNE4Dh3KwjD+gT9s72AAcyxSY83d//XipJT/bJzURvVeI7RC741VZc62GsaatQaEhcF2sekt0aTvkR7q04FrcKvEJ6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462188; c=relaxed/simple;
-	bh=OWWHz4CYp9wbQBeMK6ZGclMLjxPNjr3c9tu4Ka7VYL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hBFNgnN0WwR+PFR3cbA0ltpChGfShr332W4viP3kyUxYv6olK7qKRYC/OLmCzOeUK+WOTREVxqUXM+OWUSLdRYv/VUe7kkz/q0CoKzabhwN0JFE2jE8A06hRJzbMzEMNQRikDQ+OxMHryNH8aZ5+VEIe1ID6M6oK92B4YEWLthQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9952ea05c5so463520866b.2;
-        Wed, 09 Oct 2024 01:23:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728462185; x=1729066985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FQTACUhFeFr0g9FiP7m95mpmdKBO100vPkvIghW0C9A=;
-        b=YpAfNWkZ3NElCnrTFU48uwg92nXJeWDIp/D8997+cd+/9NLwWnO9/ZsqTFc6Drj7SX
-         WQ62VA/NyScXzwtx6p4HoS0qNYKxpqxUMhVsC4u/97N7HTxSVideV9lqYFgV0R9RERqV
-         kRsivbWWL5PKcGg3fJ3VKc6uMc06zQ1RTgHiT6ucW3LueLbVQOJfgn2AfCTa0as4XEnX
-         hVWFz4ku6xaA+KbQSfLlTxnZRVMmwSdqpnNSx+odSw8UWWdyCQFE1bqa3rNnZd04tDuD
-         2cI/1iMIRWKhebt4CciItL8seIKSDTIWMVPJhMrjSxDsDgVOl0CAtvB8+OVkdm5NMDnH
-         N1iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlRPwQEODmz9boH/ImomqjFqWPoxYuinN3LQgvA0rPJz7wZNsUxg+f5WfMh1e5Z1wu/2TYDarC25Vd+QQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ8IXDeJTvqOnxqVAsKxwO9vjNH1geVfXsvNbBUx9y52R9XD4B
-	KmlqUXB1J+H1i5PbwE9QC/kxVd2IhxHeMnEM5O5uZyLJsG4oRzzY
-X-Google-Smtp-Source: AGHT+IHPiv3gAPsHrEJebDtaMKefHj3kMSI9yPHBKQpQBb980qL/DVK37VNaKHJcNKW1JAHj8HCSRg==
-X-Received: by 2002:a17:907:2da3:b0:a8c:78a5:8fb7 with SMTP id a640c23a62f3a-a998d314e4dmr134343166b.45.1728462185169;
-        Wed, 09 Oct 2024 01:23:05 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994a1464a1sm474369366b.106.2024.10.09.01.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 01:23:04 -0700 (PDT)
-Date: Wed, 9 Oct 2024 01:23:02 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	David Gibson <david@gibson.dropbear.id.au>,
-	Jeff Garzik <jeff@garzik.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 net] net: ibm: emac: mal: add dcr_unmap to _remove
-Message-ID: <20241009-precise-wasp-from-ganymede-defeeb@leitao>
-References: <20241008233050.9422-1-rosenp@gmail.com>
+	s=arc-20240116; t=1728462255; c=relaxed/simple;
+	bh=FDBpzgyIgvRDtMkbk6f9TPOyszpQmHWB0yHmYLOtb6g=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=cxUZcw8tt67SMgkrPp0B/X4mocnlAGMQq76tQLxPWG5sdQfX7ebrtb+3sOvQSnMZsb8vlCfIStZfO+qFp/9yeFmP6O7nPEzsCFe1VHeGTZagVaH7Qsaii0dqGHklLlTSZk3UxyJSI8rVgQjt3FEJAzn/CqcDnSssAJiHiO67GVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jftn0cMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nKi4Pj31; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ssji292W; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CodwJhsG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CF81D21D02;
+	Wed,  9 Oct 2024 08:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728462252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
+	b=Jftn0cMQ5/EV9IceEPTPotciDO+xsX4gm04IT+c7dsm0uZMnB6zpkXVWuxpeTdlUOnR2jU
+	0hPZK5dxJy9+GLHSOHgv6ViZlbIdbnWW+5K1QjgVGCTL+IIxB1FWuBmFfPLdIa1xEbd29v
+	btL9JzZuyBc/HGzYs0T+G1ykdblUrwI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728462252;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
+	b=nKi4Pj31aRjOUfcEmSIkr+594wvSqSaGAFQ5wwYX5rJUksxUsCKYiufNoKpf0k5i9Vpsi9
+	sx0OndLXKxa5rVDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ssji292W;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CodwJhsG
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728462251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
+	b=ssji292WQVMRMhwa+GLKPIS9dQi1tbOqahYJ2A6UVf15NL3eHrgS2nou0UVM16NngvFvAS
+	/9Ij3WfWFQBG9E8wEs0yeXZK1iCLdtP23Xg3cG6QAw+DQGL6Pa1iJMDMUqlnBu6I0BRIr2
+	H1pFoc+W8XTu3+BsqYSpOea0t0N/3Ko=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728462251;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
+	b=CodwJhsGQCPvuT9XoVDkR0YRY77SMDR899rL7tPOzzOS2zj5fqsHpMXeqPrIQY8tlswjdx
+	zJcqusF3MgE1W8CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAB1B136BA;
+	Wed,  9 Oct 2024 08:24:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WtuqH6g9BmcTTAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 09 Oct 2024 08:24:08 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008233050.9422-1-rosenp@gmail.com>
+From: "NeilBrown" <neilb@suse.de>
+To: "Ingo Molnar" <mingo@kernel.org>
+Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Kent Overstreet" <kent.overstreet@linux.dev>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Next Mailing List" <linux-next@vger.kernel.org>
+Subject: Re: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of
+ waitqueue entry
+In-reply-to: <ZwY6gWsZCq_SdDKI@gmail.com>
+References: <>, <ZwY6gWsZCq_SdDKI@gmail.com>
+Date: Wed, 09 Oct 2024 19:24:01 +1100
+Message-id: <172846224138.444407.2293511819402322368@noble.neil.brown.name>
+X-Rspamd-Queue-Id: CF81D21D02
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email,auug.org.au:email];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Hello Rosen,
+On Wed, 09 Oct 2024, Ingo Molnar wrote:
+> * NeilBrown <neilb@suse.de> wrote:
+>=20
+> > On Wed, 09 Oct 2024, Stephen Rothwell wrote:
+> > > Hi all,
+> > >=20
+> > > After merging the tip tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > > failed like this:
+> > >=20
+> > > In file included from include/linux/fs.h:6,
+> > >                  from include/linux/highmem.h:5,
+> > >                  from include/linux/bvec.h:10,
+> > >                  from include/linux/blk_types.h:10,
+> > >                  from include/linux/bio.h:10,
+> > >                  from fs/bcachefs/bcachefs.h:188,
+> > >                  from fs/bcachefs/fs.c:4:
+> > > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
+> > > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *'=
+ from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatibl=
+e-pointer-types]
+> > >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
+> >=20
+> > The fix we want is to replace that line with
+> >    struct wait_bit_queue_entry wait;
+> > I should have checked more carefully - sorry.
+> >=20
+> > I guess we wait for rc3?
+> >=20
+> > Kent: could you please make that change?  The inode_bit_waitqueue() does
+> > initialisation equivalent of DEFINE_WAIT_BIT() so you only need the decla=
+ration.
+>=20
+> Since the breakage was introduced via tip:sched/core, I've applied the fix =
 
-On Tue, Oct 08, 2024 at 04:30:50PM -0700, Rosen Penev wrote:
-> It's done in probe so it should be done here.
-> 
-> Fixes: 1d3bb996 ("Device tree aware EMAC driver")
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> below.
+>=20
+> Does this look good to you?
+
+Perfect, thanks.
+
+NeilBrown
+
+>=20
+> Thanks,
+>=20
+> 	Ingo
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D>
+> From: Ingo Molnar <mingo@kernel.org>
+> Date: Wed, 9 Oct 2024 10:00:09 +0200
+> Subject: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of w=
+aitqueue entry
+>=20
+> The following recent commit made DEFINE_WAIT_BIT() type requirements strict=
+er:
+>=20
+>   2382d68d7d43 ("sched: change wake_up_bit() and related function to expect=
+ unsigned long *")
+>=20
+> .. which results in a build failure:
+>=20
+>   > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
+>   > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *'=
+ from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatibl=
+e-pointer-types]
+>   >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
+>=20
+> Since this code relies on the waitqueue initialization within
+> inode_bit_waitqueue() anyway, the DEFINE_WAIT_BIT() initialization
+> is unnecessary - we can just declare a waitqueue entry.
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Suggested-by: NeilBrown <neilb@suse.de>
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
 > ---
->  v2: Rebase and add proper fixes line.
->  drivers/net/ethernet/ibm/emac/mal.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
-> index a93423035325..c634534710d9 100644
-> --- a/drivers/net/ethernet/ibm/emac/mal.c
-> +++ b/drivers/net/ethernet/ibm/emac/mal.c
-> @@ -742,6 +742,8 @@ static void mal_remove(struct platform_device *ofdev)
->  
->  	free_netdev(mal->dummy_dev);
->  
-> +	dcr_unmap(mal->dcr_host, 0x100);
+>  fs/bcachefs/fs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 5bfc26d58270..c410133541ba 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -183,8 +183,9 @@ static void __wait_on_freeing_inode(struct bch_fs *c,
+>  				    struct bch_inode_info *inode,
+>  				    subvol_inum inum)
+>  {
+> +	struct wait_bit_queue_entry wait;
+>  	wait_queue_head_t *wq;
+> -	DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
 > +
->  	dma_free_coherent(&ofdev->dev,
->  			  sizeof(struct mal_descriptor) *
->  			  (NUM_TX_BUFF * mal->num_tx_chans +
+>  	wq =3D inode_bit_waitqueue(&wait, &inode->v, __I_NEW);
+>  	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
+>  	spin_unlock(&inode->v.i_lock);
+>=20
+>=20
 
-The fix per see seems correct, but, there are a few things you might
-want to improve:
-
-1) Fixes: format
-Your "Fixes:" line does not follow the expected format, as detected by
-checkpatch. you might want something as:
-
-	Fixes: 1d3bb996481e ("Device tree aware EMAC driver")
-
-
-2) The description can be improved. For instance, you say it is done in
-probe but not in remove. Why should it be done in remove instead of
-removed from probe()? That would help me to review it better, instead of
-going into the code and figure it out.
-
-Once you have fixed it, feel free to add:
-
-Reviewed-by: Breno Leitao <leitao@debian.org>
 
