@@ -1,186 +1,82 @@
-Return-Path: <linux-kernel+bounces-357948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA80899784E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619D099784D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452F21F23017
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919D31C21565
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E261E32A6;
-	Wed,  9 Oct 2024 22:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FDD1E32A4;
+	Wed,  9 Oct 2024 22:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVMyLgTh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ap+DBXU1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015D4192D67
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60665192D67;
+	Wed,  9 Oct 2024 22:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511948; cv=none; b=SsQm8t34Vj5CW3LjfmfKfrEh+wVJc/UiWy6BfW/i9AzDdWN6qZO/j5ULVZXUxjTk8+KMW6BgL5PFe0Wjo6Chq9kejaGpcHqzEN+z3afjRXGectcldw0Kk0I+jJ1JJ8vA3nX8XvRs4yntSWjlvD+gNcFcgGvXuRXXO/uR/gOvR5U=
+	t=1728511928; cv=none; b=soveY/msZm/akYO3FzqvR/MWLEnvzBUoHD5s4aB3JqhBdDgbR9GVyFdzkDjXTYKbDWL/6eIVXG16CUnxsPGreeTGw5Yrmw9tcc5R6aMv/khz94eQYMAO7678UVVJ1yl26UUedrhq9YSNcNhNN2mqmON6zdVpGBKCoZXa5XL6Sm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728511948; c=relaxed/simple;
-	bh=5QcqDvsBCN9fiKvM0LrmTGOvODyzfQ12Bc1oe+wY2a8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=YvisPAriTx96VBHyt2j+uIal8GuMLee5ZFLzeUWN/+a9F395nZZgFGXIm9TRrEV6a5gt5p8jxjcIA7rjGVsN1GwHQsns4ogDL9lqYGiqBUjoOPTK3clSybLfg7OUsHjGCY4HTDqOZQvGSSti4z2xMahODwkvO6yy0xk4tngXkM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVMyLgTh; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728511947; x=1760047947;
-  h=date:from:to:cc:subject:message-id;
-  bh=5QcqDvsBCN9fiKvM0LrmTGOvODyzfQ12Bc1oe+wY2a8=;
-  b=TVMyLgThINLSYpOLp/QFaLWfQMNpgfIHbu3gLZ3G6uDYdKdAo7iHrTOJ
-   1fIY3R2TAzAsT88pTF3Cif3ltZzHxjv5CMqgg6GDRNS5VoEwlJSpTEbzy
-   B6G29xeQLGiij7+3k8DDhv6D+Fu1T8aM3g1C1OHPcfC5atSKwzOhD5RN2
-   a/Pp2OH6Ume0Y18NW8b0BXqzXDMeMNHJHGjZ+HSvFxRkNNKD6SY5SCamT
-   a3ybblTVKWVNUzAPSeciAsZDs4tyRYKl8zc+7nTtJAEOpLyVARtEUmjRS
-   11S9Pkf1MfhtpJL+J6ZcXRKoLQqtY8l6RcaWfxzjCg2Em2CAU5Ubyfv/7
-   Q==;
-X-CSE-ConnectionGUID: 2yIC6hEiT/2j7PpNUOQOFQ==
-X-CSE-MsgGUID: WILhysYbQO+uHgvXGNVuqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27289516"
-X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
-   d="scan'208";a="27289516"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 15:12:26 -0700
-X-CSE-ConnectionGUID: gly2+RrXR2Sg/6OBcw+LrA==
-X-CSE-MsgGUID: mhPzxHWMQ9GS9uwj8yBsJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
-   d="scan'208";a="76708046"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Oct 2024 15:12:25 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1syeut-0009rm-0J;
-	Wed, 09 Oct 2024 22:12:23 +0000
-Date: Thu, 10 Oct 2024 06:12:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- 7266f0a6d3bb73f42ea06656d3cc48c7d0386f71
-Message-ID: <202410100656.cDBQsbId-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1728511928; c=relaxed/simple;
+	bh=mic4kLDFoaAZ7m9cY8h1MJRqUyLn4kBRyWUWJec0Oyc=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=lDdayXzP1FZ9PwpfDAujzhRJmXIEbImhD+cNRtm8Qk8zV40tGhzgH0EpKdrypSfc1zEQ7QiBzNtcWIihiHSpgf/wzGBnrTMpSGhIjy8JkMR9H0nigWVHQrZwFpFYQhjkl/FBXDFJJiF1uaj48EI2QqMrri54uy8ymHaT5Vkbrrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ap+DBXU1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE2AC4CEC3;
+	Wed,  9 Oct 2024 22:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728511927;
+	bh=mic4kLDFoaAZ7m9cY8h1MJRqUyLn4kBRyWUWJec0Oyc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ap+DBXU1kxzMb80p5bu/JCN2p36kjsRudyRzFXlGdRr58VcQRB/n5nUJTLTqDr6xH
+	 dDfWQIQFfZIX4lj8Noy1b/WpODOgAcm7sh6bwLyhgKvRxBb7CINi59wA+gP90myEsa
+	 IRRRZFK/RDsF7biY7upDDNYrcrjly12Nx7ZEsixPrgdT0wUqZjkrtjoHuIsr8F2o7S
+	 7XZiWC+jpVlnjXwwwqcfxyvuGNk8Q1azFCOmFqpegnysVuNunclvbhSYPbj2awheln
+	 cCtbWuEinyFDzJaHNdtu5VOapHfdHOdYkhVtW4Hcolyr7/27SlWuitSbzf6fX5PAa3
+	 GFbqrlaNO6Lag==
+Message-ID: <5a328b39f3f61371badc8d08de3dcab8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241009014950.1979424-1-ruanjinjie@huawei.com>
+References: <20241009014950.1979424-1-ruanjinjie@huawei.com>
+Subject: Re: [PATCH v2] of: Fix unbalanced of node refcount and memory leaks
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: ruanjinjie@huawei.com
+To: Jinjie Ruan <ruanjinjie@huawei.com>, davidgow@google.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, saravanak@google.com
+Date: Wed, 09 Oct 2024 15:12:05 -0700
+User-Agent: alot/0.10
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-branch HEAD: 7266f0a6d3bb73f42ea06656d3cc48c7d0386f71  fs/bcachefs: Fix __wait_on_freeing_inode() definition of waitqueue entry
+Quoting Jinjie Ruan (2024-10-08 18:49:50)
+> diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+> index 19a292cdeee3..e95b1152612c 100644
+> --- a/drivers/of/overlay_test.c
+> +++ b/drivers/of/overlay_test.c
+> @@ -73,12 +73,12 @@ static void of_overlay_apply_kunit_cleanup(struct kun=
+it *test)
+> =20
+>         np =3D of_find_node_by_name(NULL, kunit_node_name);
+>         KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> -       of_node_put_kunit(test, np);
 
-elapsed time: 777m
+Thanks for the patch. This should be
 
-configs tested: 94
-configs skipped: 3
+	of_node_put_kunit(&fake, np);
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+so that the node is put before the overlay is removed.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.1.0
-alpha                            allyesconfig    clang-20
-alpha                               defconfig    gcc-14.1.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.1.0
-arc                              allyesconfig    clang-20
-arc                                 defconfig    gcc-14.1.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.1.0
-arm                              allyesconfig    clang-20
-arm                                 defconfig    gcc-14.1.0
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-arm64                               defconfig    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-csky                                defconfig    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.1.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.1.0
-i386                             allmodconfig    clang-18
-i386                              allnoconfig    clang-18
-i386                             allyesconfig    clang-18
-i386        buildonly-randconfig-001-20241010    clang-18
-i386        buildonly-randconfig-002-20241010    clang-18
-i386        buildonly-randconfig-003-20241010    clang-18
-i386        buildonly-randconfig-004-20241010    clang-18
-i386        buildonly-randconfig-005-20241010    clang-18
-i386        buildonly-randconfig-006-20241010    clang-18
-i386                                defconfig    clang-18
-i386                  randconfig-001-20241010    clang-18
-i386                  randconfig-002-20241010    clang-18
-i386                  randconfig-003-20241010    clang-18
-i386                  randconfig-004-20241010    clang-18
-i386                  randconfig-005-20241010    clang-18
-i386                  randconfig-006-20241010    clang-18
-i386                  randconfig-011-20241010    clang-18
-i386                  randconfig-012-20241010    clang-18
-i386                  randconfig-013-20241010    clang-18
-i386                  randconfig-014-20241010    clang-18
-i386                  randconfig-015-20241010    clang-18
-i386                  randconfig-016-20241010    clang-18
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-loongarch                           defconfig    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-m68k                                defconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-microblaze                          defconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-nios2                               defconfig    gcc-14.1.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.1.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-14.1.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.1.0
-parisc                              defconfig    gcc-12
-parisc64                            defconfig    gcc-14.1.0
-powerpc                          allmodconfig    gcc-14.1.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.1.0
-riscv                            allmodconfig    gcc-14.1.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.1.0
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    gcc-14.1.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-12
-sparc                            allmodconfig    gcc-14.1.0
-sparc64                             defconfig    gcc-12
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64                              defconfig    clang-18
-x86_64                                  kexec    gcc-12
-x86_64                               rhel-8.3    gcc-12
-x86_64                          rhel-8.3-rust    clang-18
-xtensa                            allnoconfig    gcc-14.1.0
+With that done you can add my
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
