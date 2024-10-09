@@ -1,98 +1,100 @@
-Return-Path: <linux-kernel+bounces-356979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5BF9969D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:19:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864479969D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6455B21EDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C81284BFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85D118E75F;
-	Wed,  9 Oct 2024 12:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A66C192D98;
+	Wed,  9 Oct 2024 12:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iBj9CYnf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AA1TyFIv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqgHid9v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAD21922DD
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 12:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6201922E5;
+	Wed,  9 Oct 2024 12:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728476346; cv=none; b=XydSD3KnrR33qFLIN4kzEQhjuO8wSok8Rm2ATGpLUXeXIqvXbfr8RW77zJKzb5aVqo8aGZtQohOR6QDKgHBN8p2LOL5hPy7jM8TzAk0+fV3aP4C7ZVba8oG49+HjyXqCVRDshXcRbPsbFnKlQbEzxO8+2eLqN4IRWCjIs5rLU0I=
+	t=1728476487; cv=none; b=erm2S656Uzx1f6l3xmJXPUWs3pi1n3MUM8wOxI3owuOAj6omikjxQAoansZVVhOfGNALLmYDA4CKAoKK8gr20kX8HDnboFGFaawYWgBkBBtdNRpc6nDrZBPSf6asPvuVTsyGQohjlWc07GQgNqggrb55Q0RbBdHEXg1fSWEh4tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728476346; c=relaxed/simple;
-	bh=vcxrRGus4BZVQIUKiLKYlD4Xpqg9QRvip7kCtIFK3wg=;
+	s=arc-20240116; t=1728476487; c=relaxed/simple;
+	bh=MMKsuUZ7GNsnHwqHzxr4QZeRnXZjW/cLz7nirJtz+nY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k9ZwX5tiA1EskUSNcW3anHHI5sEK+6JmEoJZ3hIIcKNK5lxpEKv1MEsMyGkKZlwZULFlsugKLBHaHUg9T+3P8U+HqB0/ARozBSmyYqidWDqvBs1d8NQnO4IfWKwVOq9GkRbwjvYRdJr/LjMWxIJ8ej1x9sm34zPv0Jc05Aj+zHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iBj9CYnf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AA1TyFIv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 9 Oct 2024 14:18:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728476340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DTBa28+lEUqbsbY3G1CvCa7Rswxn0Qf5kD7J19D3RKk=;
-	b=iBj9CYnfQb+OQo5fPx197zb++m/fWXnhTj2ohQ3BNSrwWTcXfFXWfvEguhj9S/YOPhxQnU
-	bvRqJYzgCQvPBrddpWSEs5N+xGNqunX5g/kWAy1Ev01G2u5ec7u1TDbasLqZy12pFKPy25
-	QlsTnDSlWrX9E6TxgYlGsxk+nFp0XFb7rpp/CRHWNkVlGgRtNmf+W1nxslsdDhbX6sjCic
-	ubQ6U13Q7gVdPw3rX0XN7lr2YVS9MIhps7PAeknv5llMbiSrxxdOIRUyaHRKxPJQe99AOO
-	XiTyOBya9crc/scas8rqy/dcJkHZkuL7T5NX8JPZmDNmDy12iHh96wUZjxtHLg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728476340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DTBa28+lEUqbsbY3G1CvCa7Rswxn0Qf5kD7J19D3RKk=;
-	b=AA1TyFIvy9nitbHp0SIjPpMkN0URAdOHBsOT/V5O+EUbArD/WA3Q0FR1bHolnVOENvSJUe
-	jRiLQemfVjmFcKDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, ankur.a.arora@oracle.com,
-	efault@gmx.de
-Subject: Re: [PATCH 1/5] sched: Add TIF_NEED_RESCHED_LAZY infrastructure
-Message-ID: <20241009121859.C2-B8P4L@linutronix.de>
-References: <20241007074609.447006177@infradead.org>
- <20241007075055.219540785@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLePUL2DY4h9tBJSO5OL06RfSOYhSbkSpR+9VIx2m5b3l7kPvP0Gw7foiXpzSK+Rk8lYBLXZKH/7kyoTcYqbAA/xFfaJt5JnEtOKi4wslcUseInoz2F/YJFNyQGpebD9OIxV3f//ybq8Y1PZOL7xuWtpfCDb91MbEyiw8DZmaSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqgHid9v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA06C4CECF;
+	Wed,  9 Oct 2024 12:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728476486;
+	bh=MMKsuUZ7GNsnHwqHzxr4QZeRnXZjW/cLz7nirJtz+nY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CqgHid9vFd11LunT4zVyTj19L8Bf8At2xOEaIHK5fU7nwdbl8PMj3P/worh+ldaFa
+	 n8RguXmMAstARuQWDGK/MucTUlJYwK+O8dZp0CSFr6AL1XTbzozqogHPZWG6706jpN
+	 PsMKgo/eC0xW4v4Gkl27Rvrtdkg1IpM4mA9ErmKS9YObVV8kzdBC51D+cit+W2zTKO
+	 5Uu+7W/tacoE3hkNIA87yHpAxHRqCw4qsEgkv5aV6ddnKqPGxDB8/vx8p1dFF9lNRI
+	 Y8YQVf0U/nvFFsu8TIIkTUoUMO4r2bqs9AvFqEFEM8uaXECKKa9ylvi9g5xx32rJBL
+	 SlDYgr3gvzqeg==
+Date: Wed, 9 Oct 2024 13:21:22 +0100
+From: Simon Horman <horms@kernel.org>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] netdevsim: print human readable IP address
+Message-ID: <20241009122122.GO99782@kernel.org>
+References: <20241008122134.4343-1-liuhangbin@gmail.com>
+ <20241008122134.4343-2-liuhangbin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007075055.219540785@infradead.org>
+In-Reply-To: <20241008122134.4343-2-liuhangbin@gmail.com>
 
-On 2024-10-07 09:46:10 [+0200], Peter Zijlstra wrote:
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -964,9 +963,9 @@ static bool set_nr_if_polling(struct tas
->  }
->  
->  #else
-> -static inline bool set_nr_and_not_polling(struct task_struct *p)
-> +static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
->  {
-> -	set_tsk_need_resched(p);
-> +	atomic_long_or(1 << tif, (atomic_long_t *)&ti->flags);
+On Tue, Oct 08, 2024 at 12:21:33PM +0000, Hangbin Liu wrote:
+> Currently, IPSec addresses are printed in hexadecimal format, which is
+> not user-friendly. e.g.
+> 
+>   # cat /sys/kernel/debug/netdevsim/netdevsim0/ports/0/ipsec
+>   SA count=2 tx=20
+>   sa[0] rx ipaddr=0x00000000 00000000 00000000 0100a8c0
+>   sa[0]    spi=0x00000101 proto=0x32 salt=0x0adecc3a crypt=1
+>   sa[0]    key=0x3167608a ca4f1397 43565909 941fa627
+>   sa[1] tx ipaddr=0x00000000 00000000 00000000 00000000
+>   sa[1]    spi=0x00000100 proto=0x32 salt=0x0adecc3a crypt=1
+>   sa[1]    key=0x3167608a ca4f1397 43565909 941fa627
+> 
+> This patch updates the code to print the IPSec address in a human-readable
+> format for easier debug. e.g.
+> 
+>  # cat /sys/kernel/debug/netdevsim/netdevsim0/ports/0/ipsec
+>  SA count=4 tx=40
+>  sa[0] tx ipaddr=0.0.0.0
+>  sa[0]    spi=0x00000100 proto=0x32 salt=0x0adecc3a crypt=1
+>  sa[0]    key=0x3167608a ca4f1397 43565909 941fa627
+>  sa[1] rx ipaddr=192.168.0.1
+>  sa[1]    spi=0x00000101 proto=0x32 salt=0x0adecc3a crypt=1
+>  sa[1]    key=0x3167608a ca4f1397 43565909 941fa627
+>  sa[2] tx ipaddr=::
+>  sa[2]    spi=0x00000100 proto=0x32 salt=0x0adecc3a crypt=1
+>  sa[2]    key=0x3167608a ca4f1397 43565909 941fa627
+>  sa[3] rx ipaddr=2000::1
+>  sa[3]    spi=0x00000101 proto=0x32 salt=0x0adecc3a crypt=1
+>  sa[3]    key=0x3167608a ca4f1397 43565909 941fa627
+> 
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 
-	set_ti_thread_flag(ti, tif);
-?
-Not sure if there is a benefit over atomic_long_or() but you could avoid
-the left shift. I know. Performance critical.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
->  	return true;
->  }
->  
-
-Sebastian
 
