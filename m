@@ -1,116 +1,194 @@
-Return-Path: <linux-kernel+bounces-357094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8048A996B6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F9C996BA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42362283BA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504B02857E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBBA193417;
-	Wed,  9 Oct 2024 13:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3218C188008;
+	Wed,  9 Oct 2024 13:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsxU/wJb"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8oor1/v"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701F822EEF;
-	Wed,  9 Oct 2024 13:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6992190072;
+	Wed,  9 Oct 2024 13:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728479590; cv=none; b=I0yA1i1cznHS8vfJotowsL7YwyFo7fQK8cKxL7o7Ese/UMyUN+9/CKD8SZYop1ZexPMzdPpHWAsnPSgBPL8pf206ZdqEH7Qk78cs9ymELbLUz8OT98UsGwDQbgimLDRdwNja9aZJ5S8k7TVG7aANUnlMO7J7R/aXm5K9m6/vo5s=
+	t=1728479845; cv=none; b=PFw8lN7rg7V07Q/BUM/jO5mtsJDg8hxq8cn47tQoOjdOA4zoIytxuzTiF22lN3lHyd93js18dDf7SMTZE6ZgRfvuLzJnsm4GS7Gxuhik//l/XZvYU2hDXiXQhoPrin3C4Urhvt874b/R7H/UVKJQaLzhT/vv3oH4oHyWj3owo1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728479590; c=relaxed/simple;
-	bh=4cRoisIyVrZ2MHSUfv568F/QzLxFhjn90RTnJkA4uis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rzWp3qt3/Q1T0WpiurJdCtEx4OACKILLjkMjwGhYytMSCjW3lsuEWIpBI4YcSu87nPsN675sUAe9OmIGJ5vz5JabjBM7T2p0oc/AHrju4EjfMGu90kENXt/9ZIsfZ3lD8Wu6Wc3JxDePArausAaXOkGWCbBC9Q+Q/eC+adKHrZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsxU/wJb; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1728479845; c=relaxed/simple;
+	bh=QP43FfA7My8gahNc45sWo1rrjbkokkUW9GQV39ezDRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fIX4kcyA+Or/xULR9Xvy6WO46nr1url00T2e3aoGAUes6GVWEohIKf3u7roWRWFskQo6UnaDk2Hf4djKYiZpuLkLKkYaX2pxhEpBhQ3oTJJ/GVKr28nhnsdDz1Yz0FhqaUEd0JuHzRRurAu2mRwn0UZ+DYdfGrtjZJ/A613p26w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8oor1/v; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5398aeceb51so887709e87.0;
-        Wed, 09 Oct 2024 06:13:08 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fad8337aa4so75421061fa.0;
+        Wed, 09 Oct 2024 06:17:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728479586; x=1729084386; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4cRoisIyVrZ2MHSUfv568F/QzLxFhjn90RTnJkA4uis=;
-        b=WsxU/wJbTueO0j2O29eD4Q/EgOZujHL/8v4Av14Afawni10VADlb5MlH3gqTM8cotI
-         urbtLtE4JItDpbfRan+LS2U7CjiMUOB3oZ5DjziWhAFkJjiRjHscyWPn8tcYTXYFi6Qi
-         b97oLz1GghlgvyF/sNU+1zNkyt5deqrRrI/TQzibFAmxGDBeXs7Hey/VP+RGzbGc8aPz
-         bymaHKGvLd5yCSYr+2jCZpr84ckruayBgC3NUa6dNf9oPpukEfdbT5J16bK2eK7iK1E4
-         X08LEE82KkqSr/gbihavK7TrIPAOpPF9RlzNm0G5Wi17SLZJSE8UNbhIAKElJBoszeAz
-         0jTg==
+        d=gmail.com; s=20230601; t=1728479842; x=1729084642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aPVZqKoHAIyYW4ZUYe5ZVOvVWla1BASLvw4osJ0NuE=;
+        b=j8oor1/vnJphJKgqV71GJQHGP+FGIqSbBRNrveTdtBqFRX+vd4+3MU5FHcBt/cxCkv
+         rn0n2G7jbo6YYKKw0xeNUw7YpPNtz5uUDnSbfnQUbhf9d8MpD7XnKkxhqmZ4PNE54m5e
+         Ze7ZPg1PIv/TrbQBcg/LmQuQl0bkURUN+xIfP/Tl8Qtzu3QZo+5yfDiyUTL71MuKd6t7
+         HZQiQCZZ9fUgndz4uDBDZO3vYU8ORmD0jrqkIPAQm6CRuyQWmMbyfiFSJtIobdaSo8B2
+         aZVpZq49+DsTge3UxgSgWGyG8coNs1FC3OdIdCJzT2szbNkBOOuKOh9y2KR/DWpuJLFx
+         UbCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728479586; x=1729084386;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4cRoisIyVrZ2MHSUfv568F/QzLxFhjn90RTnJkA4uis=;
-        b=PLCM+upRDN4WunrGXVVMYGqxUZlL7vbWyW7vkR/lOYVDC0go4TfcQ2Ik6BuuJJolCo
-         alvVIWgb+EEUiJ1YPKptjebcjw3RAUwdIgxhF+jXoVDNyaNnjH0jPrAmSUMR924r+57y
-         19dNfNPPqSFnndaTRfgZbufvqsI/yu1nwYmlrmhsDR+VGDHdy0x9Q7WVyMFKy46DV0Dy
-         VseI+MPsMxUuxGBYzKMhGQwGJoQ2sRx99SK3vi5uQS2E6vbS65oS0g3ivP+d2Ia6QjNZ
-         K2F6Ahc6KpaN2ZwTjSieznEua/Jc5RbtIMhxc8N6YSLLx1d46MkmCgIuit7Ity21J7u5
-         lwSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu2Sj5/OEBHTYvvv07wTR7SU9XaFNF8iBAQTCVwGW7Mey9q6/GA260W42s8XvR3hUxpXVS9X9JbylcQNU=@vger.kernel.org, AJvYcCW5K0nrPHoHbxlCciyPSu6dj07KYzQHVvIWUFAV17KL/NK1IBBtJjbsEnLkuFiI0EUv3DQv8q0YMOTHeiCw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgkrweA/w2jmaVmIEf/a8y27K5tkd6rGQ+eHPM0nOlkw3Wy3Px
-	70FwMXqmSu1GEhJGdFwW2ini7sBwK3hoO+0DjYbqLoj8Je+nro2ZkwsCqx+6/WmQdhyDA0biZRO
-	n/fSsOJDvlKTwsDhaJNOyb9CmWSw=
-X-Google-Smtp-Source: AGHT+IE008zqomblx1tJrrszM+uNlZJGNq7JCKnKppDpabWxQe7qoZuglI68UUMUIG1A+M0SfS7epZUJZfYeDpUQU4E=
-X-Received: by 2002:a05:6512:3c99:b0:52c:def2:d8af with SMTP id
- 2adb3069b0e04-539c48bf093mr397086e87.4.1728479586145; Wed, 09 Oct 2024
- 06:13:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728479842; x=1729084642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+aPVZqKoHAIyYW4ZUYe5ZVOvVWla1BASLvw4osJ0NuE=;
+        b=Q7dZSasUjSq9qG0wLDaqvextMK/0Gb7QkpfQPmRcUgNqgNj4jJ5xxmTKMC4epVhOcq
+         r3FS3GRkfaPErk7llg/BX0kIW/dY3fjrnWTr0i3iaFGQ3AYly3P1OKD+7buaepx/cAeK
+         zbQMxxjACo2YXcQRYsdY+VbuOz7Bc4A1TCk1y3Yw0cSnLcjLYaKyAtEEUzfIwmv6NpoN
+         S4fhq14jbmAZMNnH9+Hz/8yl9dqJBrwkHQdSQpYgmcZPsjCs1eOtEsixcdMAst/3L7Ln
+         z4XN1XXoYxO+FBdLq6vLWP8Tq/zF5nZIlOeOuBXtR0Yw83/VR/vjkl2DJW3LKeHtZn2D
+         lEpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjDGSse111WixAv58yIKr2LHcgjtXLXIz6R7EPIy6ND1SOaeRfVGPKK6/D3ipkYHKfTlycwrszUQy3lbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGBzPdQuC0Lz0hXe9CTIe4TPf3zpW0HjWL6DwqcEIg8tpkl1Rw
+	wR7UldqcAbcX9XoC0CXCCewnEKmPUu4JJwViztGMSvMIhgxSuDPW
+X-Google-Smtp-Source: AGHT+IFi8gXrgp3qSEUKJjN3obp7dTqaJsNxBSiC83wyzLDBc3Lx9ddW7vTT5a689gPE43Ak6IZ6ew==
+X-Received: by 2002:a05:6512:31cf:b0:536:554a:24c2 with SMTP id 2adb3069b0e04-539c48c35d7mr1710763e87.13.1728479841617;
+        Wed, 09 Oct 2024 06:17:21 -0700 (PDT)
+Received: from eichest-laptop.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d59b2c35sm20189955e9.37.2024.10.09.06.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 06:17:21 -0700 (PDT)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: hongxing.zhu@nxp.com,
+	l.stach@pengutronix.de,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	francesco.dolcini@toradex.com,
+	Frank.li@nxp.com
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
+Date: Wed,  9 Oct 2024 15:14:05 +0200
+Message-ID: <20241009131659.29616-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 9 Oct 2024 15:12:51 +0200
-Message-ID: <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 9, 2024 at 2:57=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> What would you have me link to? With this patch applied and using
+From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-I was thinking perhaps the series from Daniel, if that is the latest
-discussion (?), i.e. I would like to understand what is the policy
-around changes like this, what happens if it breaks, etc.
+The suspend/resume support is broken on the i.MX6QDL platform. This
+patch resets the link upon resuming to recover functionality. It shares
+most of the sequences with other i.MX devices but does not touch the
+critical registers, which might break PCIe. This patch addresses the
+same issue as the following downstream commit:
+https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
+In comparison this patch will also reset the device if possible. Without
+this patch suspend/resume will not work if a PCIe device is connected.
+The kernel will hang on resume and print an error:
+ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+8<--- cut here ---
+Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
 
-> https://github.com/bee-headers/homebrew-bee-headers I was able to build a=
- kernel
-> on my apple silicon mac. Relevant config:
+Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+---
+v1 -> v2: Share most code with other i.MX platforms and set suspend
+	  support flag for i.MX6QDL. Version 1 can be found here:
+	  https://lore.kernel.org/all/20240819090428.17349-1-eichest@gmail.com/
 
-That is great.
+ drivers/pci/controller/dwc/pci-imx6.c | 44 +++++++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-Thanks!
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 808d1f1054173..f33bef0aa1071 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -1238,8 +1238,23 @@ static int imx_pcie_suspend_noirq(struct device *dev)
+ 
+ 	imx_pcie_msi_save_restore(imx_pcie, true);
+ 	imx_pcie_pm_turnoff(imx_pcie);
+-	imx_pcie_stop_link(imx_pcie->pci);
+-	imx_pcie_host_exit(pp);
++	/*
++	 * Do not turn off the PCIe controller because of ERR003756, ERR004490, ERR005188,
++	 * they all document issues with LLTSSM and the PCIe controller which
++	 * does not come out of reset properly. Therefore, try to keep the controller enabled
++	 * and only reset the link. However, the reference clock still needs to be turned off,
++	 * else the controller will freeze on resume.
++	 */
++	if (imx_pcie->drvdata->variant == IMX6Q) {
++		/* Reset the PCIe device */
++		gpiod_set_value_cansleep(imx_pcie->reset_gpiod, 1);
++
++		if (imx_pcie->drvdata->enable_ref_clk)
++			imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
++	} else {
++		imx_pcie_stop_link(imx_pcie->pci);
++		imx_pcie_host_exit(pp);
++	}
+ 
+ 	return 0;
+ }
+@@ -1253,6 +1268,28 @@ static int imx_pcie_resume_noirq(struct device *dev)
+ 	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
+ 		return 0;
+ 
++	/*
++	 * Even though the i.MX6Q does not support proper suspend/resume, we
++	 * need to reset the link after resume or the memory mapped PCIe I/O
++	 * space will be inaccessible. This will cause the system to freeze.
++	 */
++	if (imx_pcie->drvdata->variant == IMX6Q) {
++		if (imx_pcie->drvdata->enable_ref_clk)
++			imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
++
++		imx_pcie_deassert_core_reset(imx_pcie);
++
++		/*
++		 * Setup the root complex again and enable msi. Without this PCIe will
++		 * not work in msi mode and drivers will crash if they try to access
++		 * the device memory area
++		 */
++		dw_pcie_setup_rc(&imx_pcie->pci->pp);
++		imx_pcie_msi_save_restore(imx_pcie, false);
++
++		return 0;
++	}
++
+ 	ret = imx_pcie_host_init(pp);
+ 	if (ret)
+ 		return ret;
+@@ -1485,7 +1522,8 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 	[IMX6Q] = {
+ 		.variant = IMX6Q,
+ 		.flags = IMX_PCIE_FLAG_IMX_PHY |
+-			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE,
++			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE |
++			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
+ 		.dbi_length = 0x200,
+ 		.gpr = "fsl,imx6q-iomuxc-gpr",
+ 		.clk_names = imx6q_clks,
+-- 
+2.43.0
 
-Cheers,
-Miguel
 
