@@ -1,56 +1,110 @@
-Return-Path: <linux-kernel+bounces-356432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4119960FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:36:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7C3996100
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 196EFB2532F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F4F285570
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA1C17E473;
-	Wed,  9 Oct 2024 07:36:06 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DF817E473;
+	Wed,  9 Oct 2024 07:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LA2tVKZf"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BA984E18;
-	Wed,  9 Oct 2024 07:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C680C84E18;
+	Wed,  9 Oct 2024 07:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728459366; cv=none; b=sxzG7JHcMf+nJIQMYlUJwNUjGEEXtTA5kmbfexogt0ZMouWjreaRSOzWS3GHIq0PaUyNdBGbiYcQlNrLXoxDYjBDZghBdYe1GLhOvhrRW6iI9dfuIVogSHYOf/L4S4rMEK7nhSC5HtSWyYBkeqAyugjuJ7JZ74eu9SC2nsJg8M8=
+	t=1728459432; cv=none; b=cB30QcHrKCiwgb8f1peNV5pLNtzrAoB49+xqOpYOwVxBxieAw2omppRHGG3q+KJw3271Sej0+gBbZR2a/3VgN74IC6SxtwrKWquh+HJxE9GgdKRMNvKk13yZPGV5fwPA6N/CxLsXsP568IQFjChFG7EKhakoTT2I7J4dzE3uW+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728459366; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgz9W3Of2YHaKYEE7kcq+olH7xKNriDtUJmWPyV9cao2kof71B9P6bTabwPTEbwqqI20Pq3KeOuW3wKlp2rMkqP29UoUycDlkh80fMpU6+xQ7Byn6FhMNU7aREpj9hOUjxbpbaBZDXnnnn1LcxCJBqPsx3alL4hv1CnB/6pdu5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B5860227A8E; Wed,  9 Oct 2024 09:36:00 +0200 (CEST)
-Date: Wed, 9 Oct 2024 09:36:00 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, hch@lst.de, iam@valdikss.org.ru,
-	linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH] md/raid10: fix null ptr dereference in raid10_size()
-Message-ID: <20241009073600.GB15983@lst.de>
-References: <20241009014914.1682037-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1728459432; c=relaxed/simple;
+	bh=XfUZQFMztASPlyPT5UK5gQ+Ig3GZ13AHRgWR7MM5PTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jQXoVqu+9Wmqx/T/OP4WyFdHu3orCNJWKGBAG74pX5i0T6MdTbp/Uo6V0yC9OwKOke51E6W/Qk/Y+tarJS1ueKwFmwHX0K4urAe1Ob8GSb10cx5h7nAPlJCSuL/63HnT+uwzBpyKD51MtnaoNhJlkfjW3FgCIZGbCJI6D5qgTv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LA2tVKZf; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728459426; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=oSl+cGwvm5m4G+tPjkLAH90RmfdMCPQYjH5YWNkUFLo=;
+	b=LA2tVKZfFHa1T88orzn/hdDjxibCIYwedW+SbnmsDjoSUXvyUELyuyAT4Nl0sh3fu57KglVeazBXX5eBjQbk8bsyfS8PmYXjQlJqTHKFOIAuvXLsV8flSgRrNqn7BeXcBc5qzLQEoroafq87eSAlUhd0OLs50DqXvu3QoUDc1X0=
+Received: from 30.221.130.172(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGi.FKl_1728459424)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Oct 2024 15:37:05 +0800
+Message-ID: <8a40d27c-28f1-467b-9a9e-359b36ee5e33@linux.alibaba.com>
+Date: Wed, 9 Oct 2024 15:37:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009014914.1682037-1-yukuai1@huaweicloud.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] erofs: use get_tree_bdev_flags() to avoid
+ misleading messages
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Allison Karlitskaya <allison.karlitskaya@redhat.com>,
+ Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+ <20241009033151.2334888-2-hsiangkao@linux.alibaba.com>
+ <ZwYxVcvyjJR_FM0U@infradead.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <ZwYxVcvyjJR_FM0U@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Looks good:
+Hi Christoph,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+On 2024/10/9 15:31, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2024 at 11:31:51AM +0800, Gao Xiang wrote:
+>> Users can pass in an arbitrary source path for the proper type of
+>> a mount then without "Can't lookup blockdev" error message.
+>>
+>> Reported-by: Allison Karlitskaya <allison.karlitskaya@redhat.com>
+>> Closes: https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
+>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>> ---
+>> changes since v1:
+>>   - use new get_tree_bdev_flags().
+>>
+>>   fs/erofs/super.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+>> index 666873f745da..b89836a8760d 100644
+>> --- a/fs/erofs/super.c
+>> +++ b/fs/erofs/super.c
+>> @@ -705,7 +705,9 @@ static int erofs_fc_get_tree(struct fs_context *fc)
+>>   	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
+>>   		return get_tree_nodev(fc, erofs_fc_fill_super);
+>>   
+>> -	ret = get_tree_bdev(fc, erofs_fc_fill_super);
+>> +	ret = get_tree_bdev_flags(fc, erofs_fc_fill_super,
+>> +		IS_ENABLED(CONFIG_EROFS_FS_BACKED_BY_FILE) ?
+>> +			GET_TREE_BDEV_QUIET_LOOKUP : 0);
+> 
+> Why not pass it unconditionally and provide your own more useful
+> error message at the end of the function if you could not find any
+> source?
+
+My own (potential) concern is that if CONFIG_EROFS_FS_BACKED_BY_FILE
+is off, EROFS should just behave as other pure bdev fses since I'm
+not sure if some userspace program really relies on
+"Can't lookup blockdev" behavior.
+
+.. Yet that is just my own potential worry anyway.
+
+Thanks,
+Gao Xiang
+
 
