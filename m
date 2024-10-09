@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-357149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE20996C80
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E01E2996C82
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B302855E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4ACC284ABB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD2F19924D;
-	Wed,  9 Oct 2024 13:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109E41991B2;
+	Wed,  9 Oct 2024 13:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UptuULJ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikULBheg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189D7199921;
-	Wed,  9 Oct 2024 13:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB191990A7;
+	Wed,  9 Oct 2024 13:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481425; cv=none; b=fx0tdFuH13aUomMOL8bUuTmL/TS35KBW7o6qYUJdvpIWxl9ZauUDmhMf0GccO6DyNXNiYZhAavSrWd79XLiX+HbdUNEfn2/mt56UH+T0YY9Oepg+yU0vdoE+WtH1bMBCleOvYuZ1ziNbc0d5wzi1BXlQaccCFLonqoJXuIZGfaU=
+	t=1728481461; cv=none; b=Mo5BnfQfLF5ZEb3jnazrYiAKX8eDYI4+mu1tCZvfyJonRe+eA1l066c/g9cu3S0aTOSpHdg2HADMu1yn4rBKim0jrwbKJzi6KnPTMFAUUrpq7h611sHwL09vbchx5J2RAmekngcDTJPMKbXnxjiFT9aM2Gx/0HDAapcMa5qJ7a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481425; c=relaxed/simple;
-	bh=SkGQGwz41me2KDx1e7eudI1y5Dfn9Ort4t3pk5/4X2g=;
+	s=arc-20240116; t=1728481461; c=relaxed/simple;
+	bh=4s3Ll570CEXXXOM35CmndjfaF+lPBtnfxA2ujcrrsec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpGoel95lXyIylj10ynHANlL98/rfxpoUW9MDKVG9CyWnWOzan8R5Lf31oiLotkldItF2Lb7QmcuqG0jc6l8cWwj3cxctnBqWtjBxsBpsOYdrKvKKwxtWXa9N6/1woQamB+gFcaUivyxz1WNT2vUnxZgxpkagZ7puuPisuAaQTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UptuULJ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2611C4CEC5;
-	Wed,  9 Oct 2024 13:43:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XEy8iqaQfqVqiJnIalKWhmqbkVtqxR5hlX6EJ1c0/D3Jec5LqtNJPgY1+ETfASh17evztW6xHKUo82uBETXBF8Tdq7LLCzbQZNmO4fkq9RXkHMUab1Ru3Xh8zoQri/J90jOmodj+F2F2J7teJSL99l88G1Xtq2TNLj+eoFeqRd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikULBheg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D9E6C4CEC5;
+	Wed,  9 Oct 2024 13:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728481424;
-	bh=SkGQGwz41me2KDx1e7eudI1y5Dfn9Ort4t3pk5/4X2g=;
+	s=k20201202; t=1728481460;
+	bh=4s3Ll570CEXXXOM35CmndjfaF+lPBtnfxA2ujcrrsec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UptuULJ2OWWvYaBsfhT14SxtJBc3M4BwSr4+JlYqyyNmoobqO4kAomYNIfEM7khdc
-	 tJ1ZDCpFWFzX+xWHnWJreAuZ2XKvmqcSQWaE8MKQTg4TYFPv+DR9bNNrjInaa/OYtu
-	 KpARALZUXXjAnchtpsEN36xFPhIzN/ylGRppXGgmabk0MplICkWcNzW9sdHfiqk0af
-	 KxhtBa454eASlcIspF6GgKIkj9T+NT5WVNXPcPEwqB3wqadGNdnCRlvxnS1QHIAYHw
-	 ysISk4IOBa1vuPFnWVTbsiJfN2tBfvji5ySfbJ4gvcEnwPGghUTHWE7iAsX3iprOqA
-	 nOutjUn+m4WRg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syWyh-000000003ES-3FZF;
-	Wed, 09 Oct 2024 15:43:47 +0200
-Date: Wed, 9 Oct 2024 15:43:47 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, stable@vger.kernel.org,
-	Aniket Randive <quic_arandive@quicinc.com>
-Subject: Re: [PATCH v2 1/7] serial: qcom-geni: fix premature receiver enable
-Message-ID: <ZwaIk5MlqL3AL_qQ@hovoldconsulting.com>
-References: <20241001125033.10625-1-johan+linaro@kernel.org>
- <20241001125033.10625-2-johan+linaro@kernel.org>
- <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
+	b=ikULBheg5mrkdUjA0NV2K5MP8cAcKv2Qf0js3IZ8aV8wRKu2zKNc4k2+gsq/vhTqS
+	 MWP62VtedEWtDo70hGjETHLT953VYZEjZqa41K9wHudEGcrqvc272wiF+xFX2lipTf
+	 CdkySdGSX+rnP/GbO0MkNWg+Sc98REQ/zMABlZF4YSo0yVxCw2QcBL7czHlzIBru2W
+	 pEBKoFMVeuvI+rYz0LS9Ydjs6EwvIqwzmJRsWC0uMOO+WnNw0ILsF6ikQwoYxE/pY0
+	 wLUYFbOpz29woAm8k4NGpkLWA0tCIE14AjwGEtTC1sH4/SSKUE/AcSc2lsquabnnrF
+	 cTTtRjYxO5ikA==
+Date: Wed, 9 Oct 2024 14:44:16 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] mfd: rtc: bd7xxxx Drop IC name from IRQ
+Message-ID: <20241009134416.GJ276481@google.com>
+References: <ZvVNCfk10ih0YFLW@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZvVNCfk10ih0YFLW@fedora>
 
-On Tue, Oct 01, 2024 at 07:20:36PM +0530, Mukesh Kumar Savaliya wrote:
-> Thanks Johan for the fixes.
+On Thu, 26 Sep 2024, Matti Vaittinen wrote:
 
-Thanks for taking a look.
+> A few ROHM PMICs have an RTC block which can be controlled by the
+> rtc-bd70528 driver. The RTC driver needs the alarm interrupt information
+> from the parent MFD driver. The MFD driver provides the interrupt
+> information as a set of named interrupts, where the name is of form:
+> <PMIC model>-rtc-alm-<x>, where x is an alarm block number.
+> 
+> From the RTC driver point of view it is irrelevant what the PMIC name
+> is. It is sufficient to know this is alarm interrupt for a block X. The
+> PMIC model information is carried to RTC via the platform device ID.
+> Hence, having the PMIC model in the interrupt name is only making things
+> more complex because the RTC driver needs to request differently named
+> interrupts on different PMICs, making code unnecessary complicated.
+> 
+> Simplify this slightly by always using the RTC driver name 'bd70528' as
+> the prefix for alarm interrupts, no matter what the exact PMIC model is,
+> and always request the alarm interrupts of same name no matter what the
+> PMIC model is.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+> This contains both the RTC and MFD changes in order to not break the
+> functionality between commits to different subsystems.
 
-> On 10/1/2024 6:20 PM, Johan Hovold wrote:
-> > The receiver should not be enabled until the port is opened so drop the
-> > bogus call to start rx from the setup code which is shared with the
-> > console implementation.
-> > 
-> > This was added for some confused implementation of hibernation support,
-> > but the receiver must not be started unconditionally as the port may not
-> > have been open when hibernating the system.
-> > 
-> > Fixes: 35781d8356a2 ("tty: serial: qcom-geni-serial: Add support for Hibernation feature")
-> > Cc:stable@vger.kernel.org	# 6.2
-> > Cc: Aniket Randive<quic_arandive@quicinc.com>
-> > Signed-off-by: Johan Hovold<johan+linaro@kernel.org>
+I can take it with an RTC Ack and an indication whether an immutable
+branch should be created and shared.
 
-> > @@ -1152,7 +1152,6 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
-> >   			       false, true, true);
-> >   	geni_se_init(&port->se, UART_RX_WM, port->rx_fifo_depth - 2);
-> >   	geni_se_select_mode(&port->se, port->dev_data->mode);
-> > -	qcom_geni_serial_start_rx(uport);
-
-> Does it mean hibernation will break now ? Not sure if its tested with 
-> hibernation. I can see this call was added to port_setup specifically 
-> for hibernation but now after removing it, where is it getting fixed ?
-> I think RX will not be initialized after hibernation.
-
-Correct. As I alluded to in the commit message this "hibernation
-support" is quite broken already, but I was trying to avoid spending
-more time on this driver than I already have and just look the other way
-for the time being.
-
-Note that rx is enabled by the serial core resume code, but then this
-hibernation hack added a call to the setup the port after resuming it,
-which would disable rx again were it not for this random call to
-start rx, which should never have been added here in the first place.
-
-But as these platforms do not support hibernation in mainline, and the
-code broken anyway, I'll just rip it all out for v3.
-
-Johan
+-- 
+Lee Jones [李琼斯]
 
