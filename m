@@ -1,119 +1,217 @@
-Return-Path: <linux-kernel+bounces-357316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E44996F92
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20885996FA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99EE51C21D7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0BF9283518
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBE11DF964;
-	Wed,  9 Oct 2024 15:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfnZhqUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB4A1E0B95;
+	Wed,  9 Oct 2024 15:16:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254941A256B;
-	Wed,  9 Oct 2024 15:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD27199EBB
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486814; cv=none; b=fDomaIcH12j2pbh2wZF9fbCWAGgR9Gs4LcaXnLkkKLphIkw60qPfPDI7yWEU3ngjlUwZHNiTBpR8AfVeCU4imrn7lHTGjDdNOGUc9NvuKvKYC19RWEtuNJsYCiCC9wbWC9/5AAizYgysXAib99FeWVh3GwilR01nBNGnxsjr0A0=
+	t=1728486998; cv=none; b=gt7nF2CLY5UacMt0GqrFusiOGQS3y+eUmNaIQyEDQpGzYyXGXKT5toEo/kcBebwwOFg1nmqfAfgNGTaQja2YblWTJ7w93rJl8L32jF2CxY8jG6MC3LN1zIF9mq0+nYJT7BpPkPTusi5erzfDMkwvTFxCw7e/7DDMYpgarixXveE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486814; c=relaxed/simple;
-	bh=6sqMKBeiE/2i6apxFggtxp0XNmSdo86LFLaq2IGy15E=;
+	s=arc-20240116; t=1728486998; c=relaxed/simple;
+	bh=erbjsBtCILmKJ+nigxio9EUrqkSXvbmuLoXoTa3lE+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZe6msAAw/zniXihW7J1VE3C2QAODXV7dKCMhRrQ+Et1F1jAmdJDugZNgCmhsQUoCw3+qDH+MTWAPPmp8aDXqjeL8LkdAYLqmvywHvK+7aT067lChSMvtgSzR9CCiISKLIw2LJ8mC7mYme+/lGy67XMNjb851eDJub+QvY31r3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfnZhqUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C359C4CEC3;
-	Wed,  9 Oct 2024 15:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728486813;
-	bh=6sqMKBeiE/2i6apxFggtxp0XNmSdo86LFLaq2IGy15E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=LfnZhqUrsiPF7KJscBTNOIAw/IaB0Dx0l82rFOEinvexaNfAp2a5xFoTtxo6ytAZW
-	 AQFwlS/cJ7AwKkjDRzTASu0guzG8rRrZNFiw5UO2w9FRCNyKhqF3r/WajwqY4u6gNV
-	 n0MJyaERzzmCHaZUFN2FsQd88G5A636hW9VaPpgOOORer/Bnydt6Aw5NLkmvDf5qRj
-	 xyE5AeR10dMTvk6jMZm1rOv7NwEX4sEGplxVNWo4D0k73UnWKjPE/mHSQcT5pwTY6n
-	 FczEZvBZfQoUOVt5prnWGjwpxHHBvGRqMnYRta3l9G89ghnEuwI1Zi7vXvW4SoRrUU
-	 A2CH31zn0ap8A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 42A9CCE044C; Wed,  9 Oct 2024 08:13:33 -0700 (PDT)
-Date: Wed, 9 Oct 2024 08:13:33 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rcu: Report callbacks enqueued on offline CPU blind
- spot
-Message-ID: <084a9230-c272-49c8-9c67-6c51b595f6e2@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241002145738.38226-1-frederic@kernel.org>
- <20241002145738.38226-4-frederic@kernel.org>
- <Zv1f8-1tLd-r1cyu@localhost.localdomain>
- <4e81816e-3a4d-4642-a86c-fd9bd49ca163@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZvSLyGISkZRi8CTNG/VhHuDSAb+kSftHYp8UJfbqZNzHihOAlJabnR4k5vDrhrEH37Iy2VXWmqRh/XzNH/9znJXiRsDio/5d5Dludefwo2qZcfq99eMM8i63MuMjW/D1jwDuwdxF6DXgYj/2T34XRwNKQQtsXQhVhSmy9a/q+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syYQK-0000cM-0b; Wed, 09 Oct 2024 17:16:24 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syYQG-000dE4-In; Wed, 09 Oct 2024 17:16:20 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syYQG-002AnD-1Y;
+	Wed, 09 Oct 2024 17:16:20 +0200
+Date: Wed, 9 Oct 2024 17:16:20 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 04/12] net: pse-pd: tps23881: Add support for
+ power limit and measurement features
+Message-ID: <ZwaeRL9z310dBBlh@pengutronix.de>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-4-787054f74ed5@bootlin.com>
+ <ZwYOboTdMppaZVmX@pengutronix.de>
+ <20241009110501.5f776c9b@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e81816e-3a4d-4642-a86c-fd9bd49ca163@paulmck-laptop>
+In-Reply-To: <20241009110501.5f776c9b@kmaincent-XPS-13-7390>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2024 at 07:03:50PM -0700, Paul E. McKenney wrote:
-> On Wed, Oct 02, 2024 at 05:00:03PM +0200, Frederic Weisbecker wrote:
-> > Le Wed, Oct 02, 2024 at 04:57:38PM +0200, Frederic Weisbecker a écrit :
-> > > Callbacks enqueued after rcutree_report_cpu_dead() fall into RCU barrier
-> > > blind spot. Report any potential misuse.
+On Wed, Oct 09, 2024 at 11:05:01AM +0200, Kory Maincent wrote:
+> On Wed, 9 Oct 2024 07:02:38 +0200
+> Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> 
+> > On Wed, Oct 02, 2024 at 06:28:00PM +0200, Kory Maincent wrote:
+> > > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > > > 
-> > > Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > > ---
-> > >  kernel/rcu/tree.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
+> > > Expand PSE callbacks to support the newly introduced
+> > > pi_get/set_current_limit() and pi_get_voltage() functions. These callbacks
+> > > allow for power limit configuration in the TPS23881 controller.
 > > > 
-> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > index a60616e69b66..36070b6bf4a1 100644
-> > > --- a/kernel/rcu/tree.c
-> > > +++ b/kernel/rcu/tree.c
-> > > @@ -3084,8 +3084,11 @@ __call_rcu_common(struct rcu_head *head, rcu_callback_t func, bool lazy_in)
-> > >  	head->func = func;
-> > >  	head->next = NULL;
-> > >  	kasan_record_aux_stack_noalloc(head);
-> > > +
-> > >  	local_irq_save(flags);
-> > >  	rdp = this_cpu_ptr(&rcu_data);
-> > > +	RCU_LOCKDEP_WARN(rcu_rdp_cpu_online(rdp), "Callback enqueued on offline
-> > > CPU!");
+> > > Additionally, the patch includes the detected class, the current power
+> > > delivered and the power limit ranges in the status returned, providing more
+> > > comprehensive PoE status reporting.
+> > > 
+> > > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>  
 > > 
-> > This should be !rcu_rdp_cpu_online(rdp)
+> > > +static int tps23881_pi_get_class(struct tps23881_priv *priv, int id)
+> > > +{  
+> > ....
+> > > +	if (chan < 4)
+> > > +		class = ret >> 4;
+> > > +	else
+> > > +		class = ret >> 12;  
 > > 
-> > Sigh...
-> 
-> I am pulling this in for testing with this change, thank you!
-
-And:
-
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
-
-> 							Thanx, Paul
-> 
+> > ....
+> > > +tps23881_pi_set_2p_pw_limit(struct tps23881_priv *priv, u8 chan, u8 pol)
+> > > +{  
+> > ....
+> > > +	reg = TPS23881_REG_2PAIR_POL1 + (chan % 4);
+> > > +	ret = i2c_smbus_read_word_data(client, reg);
+> > > +	if (ret < 0)
+> > > +		return ret;
 > > > +
-> > >  	lazy = lazy_in && !rcu_async_should_hurry();
-> > >  
-> > >  	/* Add the callback to our list. */
-> > > -- 
-> > > 2.46.0
-> > > 
-> > > 
+> > > +	if (chan < 4)
+> > > +		val = (ret & 0xff00) | pol;
+> > > +	else
+> > > +		val = (ret & 0xff) | (pol << 8);  
+> > 
+> > This is a common pattern in this driver, we read and write two registers
+> > in one run and then calculate bit offset for the channel, can you please
+> > move it in to separate function. This can be done in a separate patch if
+> > you like.
 > 
+> The pattern is common but the operations are always different so I didn't found
+> a clean way of doing it.
+> Here is a listing of it:
+> 	if (chan < 4)
+> 		class = ret >> 4;
+> 	else
+> 		class = ret >> 12;
+> 
+> 	if (chan < 4)
+> 		val = (ret & 0xff00) | pol;
+> 	else
+> 		val = (ret & 0xff) | (pol << 8);  
+> 
+>         if (chan < 4)                                                           
+>                 val = (u16)(ret | BIT(chan));                                   
+>         else                                                                    
+>                 val = (u16)(ret | BIT(chan + 4));
+> 
+> 	if (chan < 4)
+> 		mW = (ret & 0xff) * TPS23881_MW_STEP;
+> 	else
+> 		mW = (ret >> 8) * TPS23881_MW_STEP;
+> 
+> 
+> Any idea?
+> 
+
+something like this:
+
+/*
+ * Helper to extract a value from a u16 register value, which is made of two u8 registers.
+ * The function calculates the bit offset based on the channel and extracts the relevant
+ * bits using a provided field mask.
+ *
+ * @param reg_val: The u16 register value (composed of two u8 registers).
+ * @param chan: The channel number (0-7).
+ * @param field_offset: The base bit offset to apply (e.g., 0 or 4).
+ * @param field_mask: The mask to apply to extract the required bits.
+ * @return: The extracted value for the specific channel.
+ */
+static u16 tps23881_calc_val(u16 reg_val, u8 chan, u8 field_offset, u16 field_mask)
+{
+        u8 bit_offset;
+
+        if (chan < 4) {
+                bit_offset = field_offset;
+        } else {
+                bit_offset = field_offset;
+                reg_val >>= 8;
+        }
+
+        return (reg_val >> bit_offset) & field_mask;
+}
+
+/*
+ * Helper to combine individual channel values into a u16 register value.
+ * The function sets the value for a specific channel in the appropriate position.
+ *
+ * @param reg_val: The current u16 register value.
+ * @param chan: The channel number (0-7).
+ * @param field_offset: The base bit offset to apply (e.g., 0 or 4).
+ * @param field_mask: The mask to apply for the field (e.g., 0x0F).
+ * @param field_val: The value to set for the specific channel (masked by field_mask).
+ * @return: The updated u16 register value with the channel value set.
+ */
+static u16 tps23881_set_val(u16 reg_val, u8 chan, u8 field_offset, u16 field_mask, u16 field_val)
+{
+        u8 bit_offset;
+
+        field_val &= field_mask;
+
+        if (chan < 4) {
+                bit_offset = field_offset;
+                reg_val &= ~(field_mask << bit_offset);
+                reg_val |= (field_val << bit_offset);
+        } else {
+                bit_offset = field_offset;
+                reg_val &= ~(field_mask << (bit_offset + 8));
+                reg_val |= (field_val << (bit_offset + 8));
+        }
+
+        return reg_val;
+}
+ 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
