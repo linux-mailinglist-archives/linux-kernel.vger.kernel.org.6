@@ -1,142 +1,201 @@
-Return-Path: <linux-kernel+bounces-357729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35869974CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:20:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F099974DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4C31F2165D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33ADBB22FAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98F01E0DD6;
-	Wed,  9 Oct 2024 18:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61CE1DEFCE;
+	Wed,  9 Oct 2024 18:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZuuHnP6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Z8tHnRyP"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1130C52F9E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201115CD78
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497915; cv=none; b=s8Hu0dYp4jYSdBj3l+4uIWLLnIUjHYi/YtLi+sRhAhWbvfqqgPkmd71R8AEiXMWim34HK+UAWNZq57TgSj9t02uZecuhXJIKAJFG00vM6UxQBCHq08O+1DxciKl/xBNIa7DqrQYskIKrYVzag78w5+k57EK7t8oh2cE3TTpMkVE=
+	t=1728498210; cv=none; b=IP7i4F0QCW5/srsKx7La5Xr8wguMjEaAGyT2EmypiqDzNzR0WAI7d//ffPAZreK0/kAJi55T5ofbGIsa4MusKXUw93V8rkA+zjBwlQlP5OKnUwCXBCyx1Lrt2gqHgyuUfL81JhIWuBX9OIIlU5iO4GEQLeyji5Fy1AfD7ewNmwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728497915; c=relaxed/simple;
-	bh=ubfgbSmXZnXhZQyJ48GyGMJI0+96vVFdEcci0YqlrKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9D0vMQ96LQ+QneJP5bd82X75aMnaNCO1YPngd3b41zlRYrgTXPZjzUbXeejdjIJQmiVrW0F3mK/HvH4ZOtpwtCye2UoitcWm9gXVvx9C6TZk7uMF1mwfjotUEoS2bitnqdJnh3kxmA6pxcRCUrniJLpw7MteDhLS+X2mXB1BX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZuuHnP6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F828C4CEC3;
-	Wed,  9 Oct 2024 18:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728497914;
-	bh=ubfgbSmXZnXhZQyJ48GyGMJI0+96vVFdEcci0YqlrKw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AZuuHnP6cWW95Pmw7F9zHKQDML1J0zh3AreTPl8H7Eatc/t7t9N/O8fS8Hia653HE
-	 P3bUE7THhe27S+OJ1l2qKZSuRRjBYqZCoweQXvhXYmQ6Zwha3l7wosA/0vDJI98j9g
-	 LlcV+AQ0OMhy+k+ruotCwtXYBjT2yeCsTCxz/JxIPs5lGFoWo8PCjPw2Nzqq3ZqdGj
-	 5dTDYIcmADfZtXgN9HTme+s3dx0wlZqC2iAIGseBOd1AYy9hqbzVE+rD8Zey001Iqo
-	 tPLedUpsyL0gleVAG6fAZyVruWmbLVa6tNi2b6DuZGXhk9ze4aWy5E97Cf4FX+/pII
-	 /zkeQRuT8Zp6A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 1B175CE08E5; Wed,  9 Oct 2024 11:18:34 -0700 (PDT)
-Date: Wed, 9 Oct 2024 11:18:34 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, neeraj.upadhyay@kernel.org,
-	riel@surriel.com, leobras@redhat.com, tglx@linutronix.de,
-	qiyuzhu2@amd.com
-Subject: Re: locking/csd-lock: Switch from sched_clock() to
- ktime_get_mono_fast_ns()
-Message-ID: <663ad810-3318-43af-8607-17ff7fe26e4a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <da9e8bee-71c2-4a59-a865-3dd6c5c9f092@paulmck-laptop>
- <20241009180708.GU17263@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1728498210; c=relaxed/simple;
+	bh=Q2Vx9BF3bF3iGVgQVOHTeL/KxrH9jG/XSZcnQxdpnCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZesnVXYe42DBNbtIuSk3PiNlfcPBLyAIKS/FaUaEgI+zxkFHjjF19jDEZRKFrjLTpmQf5j+pPsOqxxK04FZQn/qfxapFEuvn5vywaEHcd10azvHi9INAlfRis2dJz0Y48xk3HMaY49Ucgq+CkWbmo6M1gy9aokatqW9VmCXjXyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=Z8tHnRyP; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71df2b0a2f7so96271b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 11:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1728498207; x=1729103007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x62U96HJG0zxZRYG4nMRhEPMT04s/45JFblgVOnczYw=;
+        b=Z8tHnRyPE2nmkhdVvsmJRxFcO2WiYGKYSeGh31awzxvp0lpzzrBn3KeNbFTPqQzIcp
+         TYpJYYlZ8cTKIKowxdKlmfOHFKbRKzAoOZC+XiAANiiY/AFsuQu9C+DW+/0HvESP4wvR
+         Rrulhlt4h06iiukX1uWPF4TlKTX1ueHbQFt0E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728498207; x=1729103007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x62U96HJG0zxZRYG4nMRhEPMT04s/45JFblgVOnczYw=;
+        b=AdS5JgNkwrH4P1k+0w9OXaAGTvcrhXQ47uedSrQa+7ySDlJ4m6YuFZbnzLkxOOtk01
+         wSupjHjysKO1Pr2Kezi7QE7QpWaCzJtCtqPeekQftpW2DnW0ZU1QdeH+i1JbZezMMuE/
+         jOo0pwQhOztO90yYVp6F55odh2NwZZrZAX+U19+22xEFqji2xpr1lOVG0iKgmRiEN7Zs
+         fNW3qOtbijvTc+1wQBRTKq6KCY8RyFgM8qpnUFncZWfB5FnEf61Ec96hc4oyCbF44b51
+         Nq6vWNk+NSZJ2AxgA1F1s8ePhGNjpdH6KpvvTHk8SIsMCkhEiY4mo4FkVnvkDHiwHLC4
+         /56g==
+X-Gm-Message-State: AOJu0YzFN7REVS4nDytDkphqDcmR0uNW1/umw3pHVvHBaff7cR4MqPTq
+	01JruVMl4z1m5OxvGeD1sd2Sc4tGBiZ98FBcsDwfCBzdCufq9NxTYFvppYC+/e0F6ggBVe6Mi0O
+	Rqo/vrbv0UZc0kCXvrdFh9Qzp918eS/bYivHicWwPGtE9TbDpeGg=
+X-Google-Smtp-Source: AGHT+IF0g+2XDV7HiwiEZTjsZy0h8SFQQaXvikhKHyX1AuvN5lae+EJK6gzcWvf2k48PhDoVF7TY/a03CyfCl3yCr90=
+X-Received: by 2002:a05:6a00:8d3:b0:71d:fc11:628c with SMTP id
+ d2e1a72fcca58-71e1dbcaadcmr4106155b3a.25.1728498207117; Wed, 09 Oct 2024
+ 11:23:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009180708.GU17263@noisy.programming.kicks-ass.net>
+References: <20241002145738.38226-1-frederic@kernel.org> <20241002145738.38226-3-frederic@kernel.org>
+In-Reply-To: <20241002145738.38226-3-frederic@kernel.org>
+From: Joel Fernandes <joel@joelfernandes.org>
+Date: Wed, 9 Oct 2024 14:23:15 -0400
+Message-ID: <CAEXW_YQSBwGME1+vKHSM8+svtosunk-QO2oMygFKgapPE3b45w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rcu/nocb: Fix rcuog wake-up from offline softirq
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>, 
+	kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 08:07:08PM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 09, 2024 at 10:57:24AM -0700, Paul E. McKenney wrote:
-> > Currently, the CONFIG_CSD_LOCK_WAIT_DEBUG code uses sched_clock()
-> > to check for excessive CSD-lock wait times.  This works, but does not
-> > guarantee monotonic timestamps. 
-> 
-> It does if you provide a sane TSC
+Hi Frederic,
 
-What is this "sane TSC" of which you speak?  ;-)
+On Wed, Oct 2, 2024 at 10:57=E2=80=AFAM Frederic Weisbecker <frederic@kerne=
+l.org> wrote:
+>
+> After a CPU has set itself offline and before it eventually calls
+> rcutree_report_cpu_dead(), there are still opportunities for callbacks
+> to be enqueued, for example from an IRQ. When that happens on NOCB, the
+> rcuog wake-up is deferred through an IPI to an online CPU in order not
+> to call into the scheduler and risk arming the RT-bandwidth after
+> hrtimers have been migrated out and disabled.
+>
+> But performing a synchronized IPI from an IRQ is buggy as reported in
+> the following scenario:
+>
+>         WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_sin=
+gle
+>         Modules linked in: rcutorture torture
+>         CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00=
+012-g9139f93209d1 #1
+>         Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
+>         RIP: 0010:smp_call_function_single
+>         <IRQ>
+>         swake_up_one_online
+>         __call_rcu_nocb_wake
+>         __call_rcu_common
+>         ? rcu_torture_one_read
+>         call_timer_fn
+>         __run_timers
+>         run_timer_softirq
+>         handle_softirqs
+>         irq_exit_rcu
 
-More seriously, the raw reads from the TSC that are carried out by
-sched_clock() are not guaranteed to be monotonic due to potential
-instruction reordering and the like.  This is *not* a theoretical
-statement -- we really do see this on the fleet.  Very rarely for any
-given system, to be sure, but not at all rare across the full set of them.
+This call stack seems a bit confusing with the context of the first
+paragraph. In the beginning of changelog, you had mentioned the issue
+happens from IRQ, but in fact the callstack here is from softirq
+right? The IRQ issue should already be resolved in current code
+AFAICS.
 
-This results in false-positive CSD-lock complaints claiming almost 2^64
-nanoseconds of delay, which are not good complaints to have.
+>         ? tick_handle_periodic
+>         sysvec_apic_timer_interrupt
+>         </IRQ>
+>
+> The periodic tick must be shutdown when the CPU is offline, just like is
+> done for oneshot tick. This must be fixed but this is not enough:
+> softirqs can happen on any hardirq tail and reproduce the above scenario.
+>
+> Fix this with introducing a special deferred rcuog wake up mode when the
+> CPU is offline. This deferred wake up doesn't arm any timer and simply
+> wait for rcu_report_cpu_dead() to be called in order to flush any
+> pending rcuog wake up.
+[...]
+> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> index a9a811d9d7a3..7ed060edd12b 100644
+> --- a/kernel/rcu/tree.h
+> +++ b/kernel/rcu/tree.h
+> @@ -290,6 +290,7 @@ struct rcu_data {
+>  #define RCU_NOCB_WAKE_LAZY     2
+>  #define RCU_NOCB_WAKE          3
+>  #define RCU_NOCB_WAKE_FORCE    4
+> +#define RCU_NOCB_WAKE_OFFLINE   5
+>
+>  #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
+>                                         /* For jiffies_till_first_fqs and=
+ */
+> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> index 2fb803f863da..8648233e1717 100644
+> --- a/kernel/rcu/tree_nocb.h
+> +++ b/kernel/rcu/tree_nocb.h
+> @@ -295,6 +295,8 @@ static void wake_nocb_gp_defer(struct rcu_data *rdp, =
+int waketype,
+>         case RCU_NOCB_WAKE_FORCE:
+>                 if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
+>                         mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
+> +               fallthrough;
+> +       case RCU_NOCB_WAKE_OFFLINE:
+>                 if (rdp_gp->nocb_defer_wakeup < waketype)
+>                         WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
+>                 break;
+> @@ -562,8 +564,16 @@ static void __call_rcu_nocb_wake(struct rcu_data *rd=
+p, bool was_alldone,
+>         lazy_len =3D READ_ONCE(rdp->lazy_len);
+>         if (was_alldone) {
+>                 rdp->qlen_last_fqs_check =3D len;
+> -               // Only lazy CBs in bypass list
+> -               if (lazy_len && bypass_len =3D=3D lazy_len) {
+> +               if (cpu_is_offline(rdp->cpu)) {
+> +                       /*
+> +                        * Offline CPUs can't call swake_up_one_online() =
+from IRQs. Rely
+> +                        * on the final deferred wake-up rcutree_report_c=
+pu_dead()
+> +                        */
+> +                       rcu_nocb_unlock(rdp);
+> +                       wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_OFFLINE,
+> +                                          TPS("WakeEmptyIsDeferredOfflin=
+e"));
+> +               } else if (lazy_len && bypass_len =3D=3D lazy_len) {
 
-> > Therefore, switch from sched_clock()
-> > to ktime_get_mono_fast_ns(), which does guarantee monotonic timestamps,
-> > at least in the absence of calls from NMI handlers, which are not involved
-> > in this code path.
-> 
-> That can end up using HPET in the case of non-sane TSC.
+Since the call stack is when softirqs are disabled,  would an
+alternative fix be (pseudocode):
 
-That is true.  However...
+Change the following in the "if (was_alldone)" block:
 
-> In the good case they're equal, in the bad case you're switching from
-> slightly dodgy time to super expensive time. Is that what you want?
+               if (!irqs_disabled_flags(flags)) {
 
-If TSC is not sane, we don't want to be using the system at all.
-In fact, the super-expensive time will more often than not result in
-the system being automatically taken out of service due to the excessive
-application-level latencies.
+to:
+               if (!irqs_disabled_flags(flags) && !in_softirq())
 
-But in the good case where the TSC is sane, we need successive reads
-from the TSC to be ordered in order to avoid the false-positive
-complaints.  Yes, this does add a bit of overhead, but the CPU isn't
-doing anything useful anyway, so not a problem.  This same lack of
-concern might also apply to HPET reads.
+?
 
-Should I upgrade the commit log?  Or am I missing your point?
+That way perhaps an additional RCU_NOCB flag is not needed.
 
-							Thanx, Paul
+Or does that not work for some reason?
 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-> > Cc: Rik van Riel <riel@surriel.com>
-> > Cc: Leonardo Bras <leobras@redhat.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> > 
-> > diff --git a/kernel/smp.c b/kernel/smp.c
-> > index f25e20617b7eb..27dc31a146a35 100644
-> > --- a/kernel/smp.c
-> > +++ b/kernel/smp.c
-> > @@ -246,7 +246,7 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-> >  		return true;
-> >  	}
-> >  
-> > -	ts2 = sched_clock();
-> > +	ts2 = ktime_get_mono_fast_ns();
-> >  	/* How long since we last checked for a stuck CSD lock.*/
-> >  	ts_delta = ts2 - *ts1;
-> >  	if (likely(ts_delta <= csd_lock_timeout_ns * (*nmessages + 1) *
-> > @@ -321,7 +321,7 @@ static void __csd_lock_wait(call_single_data_t *csd)
-> >  	int bug_id = 0;
-> >  	u64 ts0, ts1;
-> >  
-> > -	ts1 = ts0 = sched_clock();
-> > +	ts1 = ts0 = ktime_get_mono_fast_ns();
-> >  	for (;;) {
-> >  		if (csd_lock_wait_toolong(csd, ts0, &ts1, &bug_id, &nmessages))
-> >  			break;
+thanks,
+
+ - Joel
 
