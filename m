@@ -1,170 +1,120 @@
-Return-Path: <linux-kernel+bounces-356467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 361EF996184
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF6C99618A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A391C219A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:54:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C32E283E08
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F27187843;
-	Wed,  9 Oct 2024 07:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F95186E4A;
+	Wed,  9 Oct 2024 07:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QGzIcRmk"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BZFuJ9JM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9E31865FA
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DCC17BEC5;
+	Wed,  9 Oct 2024 07:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460445; cv=none; b=kGvCukkj8w+tAW18vKExGNXvWhFRSN/R44ExdbOu38UtcG9qiu6/ezRWmSEPQ2A84VfeEHDLCaRHm53RoR7QkP+DEJHIqRhaR/lXrlFEOre6sBLvbLYNoIpTaXzzUjWN6Cvdiqp1dloPCoWIcqRU8Md2RCMzsOnMoeDbTDntyRI=
+	t=1728460539; cv=none; b=liYgizYtCofgWBo6Gaw6hUM0JQ1V3st4vd17JDLCUgrJrolatVI42N4XoY4ea8TRcaAfxTUf+gzLudqArhDYenx4EInOIJ8cdeuXo8zBNe+BDFAj/9GrFspteL4GJEGuXlQ+baDu4kUU61q4jpvWCKvJl5mGiK4osm7cnr6U+2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460445; c=relaxed/simple;
-	bh=efQX1PzXQcu3futeaCHmIAMB+YfEwxKWyFD13EVZx6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H86q+GMpmYIYYr5cFHupJzDC8uDo7QfZ1TL/i0F6wov6ZstW7kWzdSiix30URImnnvjPG90FUECcG7bhw+MCIUnVTft6uyuy8NtrBpFk7CP3TX0zceETro3i8lKkIXaLhqU+/vJryBzI4RRTcQZbyYEcFiX/RWQhGAydxScasM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QGzIcRmk; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9982159d98so161646466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1728460441; x=1729065241; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1perKIzrCtxj4QEbrelDOAMpb+YoICxxvus9omfDMG8=;
-        b=QGzIcRmkvgMMapgz/ni49WUtJ8N6eVB/14mVRXPGFW1Dc802j16OMZdIBUfjdy5zvB
-         7mLVUnng0Ofz4VUi7G9JT59NAb7cfGd2bZShVtaVjAun6yLfoHUJD4QIfFiHptib8ONI
-         szwLStw4AZPMXrr6UH/Ara47Y1ZrYa4Upyo8tiLxmwj5KUtUjmLrKW3euu70areWGkIu
-         wsp99xnqheX5dS7I2B0TiETUHJoaseGvMPgxOylRG+oNBfFGxuz8bPXqrODgg3wfPPsJ
-         2meTOduexyH800EauPrF6wS61Sg9hrCYPbqn08Y5BONFHEe6JPDZ+i1ULtWXBnaJdUJb
-         sBZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728460441; x=1729065241;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1perKIzrCtxj4QEbrelDOAMpb+YoICxxvus9omfDMG8=;
-        b=aGwv94aSnv9JfJVhu64QlRtdwPsGmSxCyAapNCcd+NMw5GdTkD53U+7GJPf8X5vGhy
-         SY8tJVvT5mA4/spH+8UQ+mqiwbotFCvBSy7CrV4cJP6tsgbTttJHPcoH6w1K+Su2ADlB
-         SkbG8ZZ/cgd9bk5l4v9xSDJRYatJErBB+SzkjQjjTlS1IW1C4N9+Om1tFPQ+kdhLm8a0
-         abEZm8IolcSuYnZv7Ky03dVUn2OdltUOEfXLAeOKY0AgHWRgJYz60ppMLEigQ11iLj/w
-         Fm0gw1r7dEszM6z+RIa162UW4IDOlEqebjfNfebgwrT9AeACGA8MhH5DzxY1qiE49qlu
-         q/LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpgK6QS6+UTTFR2D2Hry20LqU4rACWFLmETU2x2dY2V7L5bw7CgJ/QWokn0JzJphlbtgEtoQ0cTK7IKlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGVfXLIeyo3XmMcjAppixU4aonI/RvPvwl5n4No5DAW4hx8EBI
-	aAm/0Zha0gLPL+B67oO1cRLV7ccB75NSyOJw4nGuBZazZfuNF82/12hyg9FP4gM=
-X-Google-Smtp-Source: AGHT+IHCF4myi5HtyfnTlaYGGkktHdwJJjSkFO2+9Jhfz7+HdvkvNwuuOcLmwUig1V/EpN8O4vDaIA==
-X-Received: by 2002:a17:907:e69a:b0:a99:4eac:bba9 with SMTP id a640c23a62f3a-a998d2408admr137648166b.38.1728460441463;
-        Wed, 09 Oct 2024 00:54:01 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.23])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99309aa6afsm610392466b.112.2024.10.09.00.53.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 00:54:00 -0700 (PDT)
-Message-ID: <519e6de9-7ad2-4c6e-aad4-f7cec6ddaf0a@tuxon.dev>
-Date: Wed, 9 Oct 2024 10:53:59 +0300
+	s=arc-20240116; t=1728460539; c=relaxed/simple;
+	bh=oCAOo8Bdc/kr0LgFyMUbMXb2BpaSFaCjRK7n2HuwAko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mon3Gg0oX+WiuQqvT3Re8ep6OGZYPvOvlV82iFn3khr9kEpKBjBVuqO5DGKapHQKUUMS4/H6rfckSi6N5TAt1Xo1AP/nksPcs4GO5mevFmGL2kSqhC+jy4RkTjPqAG7ssZFf6o/mMa0onAFo1xCNKf839wVGH+bAnRzjcI8ZivE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BZFuJ9JM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642BCC4CEC5;
+	Wed,  9 Oct 2024 07:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728460539;
+	bh=oCAOo8Bdc/kr0LgFyMUbMXb2BpaSFaCjRK7n2HuwAko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BZFuJ9JMTj8mUD7SeHthX8fQF227odujYoOWwGg7Q1zYWxuUDM4cYJUqwEhSeaZ45
+	 2m+HA2sNJqbaEO4/1YOzWIXNl02EQEDapyEDdQlQ8iN+k5ii0kcJDYHQgolRayVH6U
+	 vG+Ujlx3rpjgPVlKIL4wc2fAZYsel9nEQYwrzvmI=
+Date: Wed, 9 Oct 2024 09:55:30 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+	linux_oss@crudebyte.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	m.grzeschik@pengutronix.de, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] net/9p/usbg: Fix build error
+Message-ID: <2024100910-distrust-cornhusk-a8bd@gregkh>
+References: <20240930081520.2371424-1-ruanjinjie@huawei.com>
+ <2ff5834d-cb88-39f5-168d-8e179f152757@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] pinctrl: renesas: rzg2l: Add support for
- configuring schmitt-trigger
-Content-Language: en-US
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241004123658.764557-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241004123658.764557-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20241004123658.764557-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ff5834d-cb88-39f5-168d-8e179f152757@huawei.com>
 
-
-
-On 04.10.2024 15:36, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, Oct 09, 2024 at 03:49:22PM +0800, Jinjie Ruan wrote:
+> Ping.
 > 
-> Add support for configuring the multiplexed pins as schmitt-trigger
-> inputs.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On 2024/9/30 16:15, Jinjie Ruan wrote:
+> > When CONFIG_NET_9P_USBG=y but CONFIG_USB_LIBCOMPOSITE=m and
+> > CONFIG_CONFIGFS_FS=m, the following build error occurs:
+> > 
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_free_func':
+> > 	trans_usbg.c:(.text+0x124): undefined reference to `usb_free_all_descriptors'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_rx_complete':
+> > 	trans_usbg.c:(.text+0x2d8): undefined reference to `usb_interface_id'
+> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x2f6): undefined reference to `usb_string_id'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_func_bind':
+> > 	trans_usbg.c:(.text+0x31c): undefined reference to `usb_ep_autoconfig'
+> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x336): undefined reference to `usb_ep_autoconfig'
+> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x378): undefined reference to `usb_assign_descriptors'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `f_usb9pfs_opts_buflen_store':
+> > 	trans_usbg.c:(.text+0x49e): undefined reference to `usb_put_function_instance'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc_instance':
+> > 	trans_usbg.c:(.text+0x5fe): undefined reference to `config_group_init_type_name'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc':
+> > 	trans_usbg.c:(.text+0x7aa): undefined reference to `config_ep_by_speed'
+> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x7ea): undefined reference to `config_ep_by_speed'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_set_alt':
+> > 	trans_usbg.c:(.text+0x828): undefined reference to `alloc_ep_req'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modexit':
+> > 	trans_usbg.c:(.exit.text+0x10): undefined reference to `usb_function_unregister'
+> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modinit':
+> > 	trans_usbg.c:(.init.text+0x1e): undefined reference to `usb_function_register'
+> > 
+> > Select the config for NET_9P_USBG to fix it.
+> > 
+> > Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > ---
+> >  net/9p/Kconfig | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+> > index 63f988f0c9e8..ee967fd25312 100644
+> > --- a/net/9p/Kconfig
+> > +++ b/net/9p/Kconfig
+> > @@ -43,6 +43,8 @@ config NET_9P_XEN
+> >  config NET_9P_USBG
+> >  	bool "9P USB Gadget Transport"
+> >  	depends on USB_GADGET=y || USB_GADGET=NET_9P
+> > +	select CONFIGFS_FS
+> > +	select USB_LIBCOMPOSITE
+> >  	help
+> >  	  This builds support for a transport for 9pfs over
+> >  	  usb gadget.
 
-Same here:
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Ah, I can take this through the USB tree as it fixes a bug that came in
+through there.
 
-> ---
- v1->v2
+thanks,
 
-> - Included RB tag
-> ---
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> index 8d576cc74003..13708c71f938 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -140,6 +140,7 @@
->  #define PUPD(off)		(0x1C00 + (off) * 8)
->  #define ISEL(off)		(0x2C00 + (off) * 8)
->  #define NOD(off)		(0x3000 + (off) * 8)
-> +#define SMT(off)		(0x3400 + (off) * 8)
->  #define SD_CH(off, ch)		((off) + (ch) * 4)
->  #define ETH_POC(off, ch)	((off) + (ch) * 4)
->  #define QSPI			(0x3008)
-> @@ -162,6 +163,7 @@
->  #define SR_MASK			0x01
->  #define PUPD_MASK		0x03
->  #define NOD_MASK		0x01
-> +#define SMT_MASK		0x01
->  
->  #define PM_INPUT		0x1
->  #define PM_OUTPUT		0x2
-> @@ -1351,6 +1353,15 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
->  			return -EINVAL;
->  		break;
->  
-> +	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-> +		if (!(cfg & PIN_CFG_SMT))
-> +			return -EINVAL;
-> +
-> +		arg = rzg2l_read_pin_config(pctrl, SMT(off), bit, SMT_MASK);
-> +		if (!arg)
-> +			return -EINVAL;
-> +		break;
-> +
->  	case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
->  		if (!(cfg & PIN_CFG_IOLH_RZV2H))
->  			return -EINVAL;
-> @@ -1489,6 +1500,13 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
->  					     param == PIN_CONFIG_DRIVE_OPEN_DRAIN ? 1 : 0);
->  			break;
->  
-> +		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-> +			if (!(cfg & PIN_CFG_SMT))
-> +				return -EINVAL;
-> +
-> +			rzg2l_rmw_pin_config(pctrl, SMT(off), bit, SMT_MASK, arg);
-> +			break;
-> +
->  		case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
->  			if (!(cfg & PIN_CFG_IOLH_RZV2H))
->  				return -EINVAL;
+greg k-h
 
