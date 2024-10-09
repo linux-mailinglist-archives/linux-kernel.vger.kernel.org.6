@@ -1,143 +1,121 @@
-Return-Path: <linux-kernel+bounces-356236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C893D995E56
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:50:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1570995E24
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753951F27605
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C78C2849AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD62145B14;
-	Wed,  9 Oct 2024 03:50:20 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234CA44C8F;
-	Wed,  9 Oct 2024 03:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711E613FD99;
+	Wed,  9 Oct 2024 03:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="msjHwymI"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF022119;
+	Wed,  9 Oct 2024 03:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728445820; cv=none; b=kaQogrCLyqtejqLZBgfcKfjaA1VzZkjVFb6hbKEpMaFk19NdX8sF0pzq2Z1i/h4DIaxApeM0ci21BBDSsRyFUVvY+0gSd52Q9ywFsLIM9Y5HhLfugcxgjWWqEjTmtvBlDQj4yF2MGf4NQ6eQ98aTQI2mXX6eJLIygxkr+QK4sZs=
+	t=1728444500; cv=none; b=pvhT6OuUBQhwxe9PkntIbC0LISZNrvJo1NwFoh0NAb0SxjDZBqzeTGiu69pVdE81Ca1kZefs+CqYVXT+dBPhsrpZuZ3bbs85K2KIlfxJ5fA2Xcqo36zZArpvWSYMaFoIy+tQ6MoXsO20CPXrOosV5ih5WCn/oKWmO75MWqTFYF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728445820; c=relaxed/simple;
-	bh=RsLBSffGM2Eu0Txsa+zkfPa3ino/gDkNdPh8ud2n3sg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=IEudWdoEfvw8gw7ZGJ8xDkhVFoMLouBmApXafwQeyodpysqSAG6cwEZ6Se8kZm1Jinj+N0uqeeAFxAQGRnyviANuE1mV9Q/gOKKn9xv8bUSi0aVzdwaRiQoqhqBqn06VQy7si+GZkbhJxtyJfuRW2C9rZhCc/M7G4N0yMajNvAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C8BF200BBB;
-	Wed,  9 Oct 2024 05:50:15 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D2D6200083;
-	Wed,  9 Oct 2024 05:50:15 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 4C448183DC03;
-	Wed,  9 Oct 2024 11:50:13 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	Frank.Li@nxp.com,
-	marcel.ziswiler@toradex.com
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	kernel@pengutronix.de,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] phy: freescale: imx8m-pcie: Do CMN_RST just before PHY PLL lock check
-Date: Wed,  9 Oct 2024 11:25:03 +0800
-Message-Id: <1728444303-32416-1-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1728444500; c=relaxed/simple;
+	bh=NJYeforn/nzTpAxT8hESCKJ5eIg+ydlPeOiIcSSWuzM=;
+	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc:
+	 References:In-Reply-To; b=nSS8ja9FiqIDVxlPEwji8e9oDJT/fXTOy5alk8HTSeLpS8V5QtsEXMu8FA3XUD0eVHD1dlWki0HmD3VRw18zmQtontpt9xDQLFUrnpDeKIkPQUAo7cUmuFE7qwzodrW0uL30fdWVKG+N9WkMONnpBTed5oenA73X1GXPxP3sRs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=msjHwymI; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Content-Type:Message-ID:Date:MIME-Version:From:
+	Subject; bh=NJYeforn/nzTpAxT8hESCKJ5eIg+ydlPeOiIcSSWuzM=; b=msjH
+	wymIQ5jVSzjI45PdFGBmF0o3H9ldEcnSwlB/CXy8xAxppe0BiXgcCcmKuUOcOGRB
+	eBiU4NofrvdTVNS6BIZ15tqjvg+It8RVS2q/zk8WSrhJerJWKErpqBc8ULrTaWZK
+	uzoXFPzt+ziVeINjSeUnHLcuh7HrYaSXegfzwxc=
+Received: from [192.168.109.86] (unknown [1.198.30.91])
+	by gzsmtp5 (Coremail) with SMTP id qSkvCgAHvjoE+AVndsCrAw--.55725S2;
+	Wed, 09 Oct 2024 11:27:01 +0800 (CST)
+Content-Type: multipart/mixed; boundary="------------NhoYU3pvcmbBYB5mVuOO0lVU"
+Message-ID: <4cd7f0c2-a6e8-4bc6-b9fc-4b0edc99f63f@126.com>
+Date: Wed, 9 Oct 2024 11:27:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Zhao Mengmeng <zhaomzhao@126.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
+ bch2_stripe_to_text
+To: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <66f4dcd2.050a0220.211276.003a.GAE@google.com>
+In-Reply-To: <66f4dcd2.050a0220.211276.003a.GAE@google.com>
+X-CM-TRANSID:qSkvCgAHvjoE+AVndsCrAw--.55725S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUoZ2-DUUUU
+X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbimhRzd2cF8emMAAAAs8
 
-When enable initcall_debug together with higher debug level below.
-CONFIG_CONSOLE_LOGLEVEL_DEFAULT=9
-CONFIG_CONSOLE_LOGLEVEL_QUIET=9
-CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
+This is a multi-part message in MIME format.
+--------------NhoYU3pvcmbBYB5mVuOO0lVU
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The initialization of i.MX8MP PCIe PHY might be timeout failed randomly.
-To fix this issue, adjust the sequence of the resets refer to the power
-up sequence listed below.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 1ec6d097897a
+--------------NhoYU3pvcmbBYB5mVuOO0lVU
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-bcachefs-Fix-shift-out-of-bounds-in-bch2_stripe_to_t.patch"
+Content-Disposition: attachment;
+ filename*0="0001-bcachefs-Fix-shift-out-of-bounds-in-bch2_stripe_to_t.pa";
+ filename*1="tch"
+Content-Transfer-Encoding: base64
 
-i.MX8MP PCIe PHY power up sequence:
-                          /---------------------------------------------
-1.8v supply     ---------/
-                    /---------------------------------------------------
-0.8v supply     ---/
+RnJvbSBmZDQ4MTk2NTc3N2Q4YTRmYTY3N2VjODMxOGQyNTYyNzM3YjJkNzQ1IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGFvIE1lbmdtZW5nIDx6aGFvbWVuZ21lbmdAa3ls
+aW5vcy5jbj4KRGF0ZTogV2VkLCA5IE9jdCAyMDI0IDExOjE4OjA0ICswODAwClN1YmplY3Q6
+IFtQQVRDSF0gYmNhY2hlZnM6IEZpeCBzaGlmdC1vdXQtb2YtYm91bmRzIGluIGJjaDJfc3Ry
+aXBlX3RvX3RleHQKCnN5emJvdCByZXBvcnQgYSBzaGlmdC1vdXQtb2YtYm91bmRzIGlzc3Vl
+OgotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KVUJTQU46IHNoaWZ0LW91
+dC1vZi1ib3VuZHMgaW4gZnMvYmNhY2hlZnMvZWMuYzoxNDc6MgpzaGlmdCBleHBvbmVudCAx
+MDggaXMgdG9vIGxhcmdlIGZvciAzMi1iaXQgdHlwZSAndW5zaWduZWQgaW50JwotLS0tCkhl
+cmUgcy5jc3VtX2dyYW51bGFyaXR5X2JpdHMgPSAxMDgsIHNvIHNoaWZ0IGlzIGltcG9zc2li
+bGUgZm9yIHVuc2lnbmVkCmludC4gVG8gZml4LCBhZGQgYSBjaGVjayBpbiBiY2gyX3N0cmlw
+ZV92YWxpZGF0ZSgpIHRvIGJhaWwgb3V0LCBpdCBoYXMKc2FtZSBjaGVja2luZyBsb2dpYyB3
+aXRoIGVjX3N0cmlwZV9rZXlfaW5pdCgpLgoKUmVwb3J0ZWQtYnk6IHN5emJvdCtmOGM5OGE1
+MGMzMjM2MzViZTY1ZEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClRlc3RlZC1ieTogc3l6
+Ym90K2Y4Yzk4YTUwYzMyMzYzNWJlNjVkQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20KQ2xv
+c2VzOiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS9idWc/ZXh0aWQ9ZjhjOThhNTBj
+MzIzNjM1YmU2NWQKU3VnZ2VzdGVkLWJ5OiBIb25nYm8gTGkgPGxpaG9uZ2JvMjJAaHVhd2Vp
+LmNvbT4KU2lnbmVkLW9mZi1ieTogWmhhbyBNZW5nbWVuZyA8emhhb21lbmdtZW5nQGt5bGlu
+b3MuY24+Ci0tLQogZnMvYmNhY2hlZnMvZWMuYyAgICAgIHwgNiArKysrKysKIGZzL2JjYWNo
+ZWZzL2VycmNvZGUuaCB8IDMgKystCiAyIGZpbGVzIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2ZzL2JjYWNoZWZzL2VjLmMgYi9mcy9i
+Y2FjaGVmcy9lYy5jCmluZGV4IDE0MWE0YzYzMTQyZi4uYmM1ZmYxMzMxYzZmIDEwMDY0NAot
+LS0gYS9mcy9iY2FjaGVmcy9lYy5jCisrKyBiL2ZzL2JjYWNoZWZzL2VjLmMKQEAgLTExMyw2
+ICsxMTMsMTIgQEAgaW50IGJjaDJfc3RyaXBlX3ZhbGlkYXRlKHN0cnVjdCBiY2hfZnMgKmMs
+IHN0cnVjdCBia2V5X3NfYyBrLAogCWNvbnN0IHN0cnVjdCBiY2hfc3RyaXBlICpzID0gYmtl
+eV9zX2NfdG9fc3RyaXBlKGspLnY7CiAJaW50IHJldCA9IDA7CiAKKwlpZiAocy0+Y3N1bV9n
+cmFudWxhcml0eV9iaXRzID49IGlsb2cyKGxlMTZfdG9fY3B1KHMtPnNlY3RvcnMpKSkgewor
+CQliY2hfZXJyX3JhdGVsaW1pdGVkKGMsICJzdHJpcGUgY3N1bSBncmFuIGJpdHMgJXUgdG9v
+IGJpZyIsCisJCQkJICAgIHMtPmNzdW1fZ3JhbnVsYXJpdHlfYml0cyk7CisJCXJldHVybiAt
+QkNIX0VSUl9zdHJpcGVfY3N1bV9ncmFudWxhcml0eV9iaXRzX3Rvb19iaWc7CisJfQorCiAJ
+YmtleV9mc2NrX2Vycl9vbihia2V5X2VxKGsuay0+cCwgUE9TX01JTikgfHwKIAkJCSBicG9z
+X2d0KGsuay0+cCwgUE9TKDAsIFUzMl9NQVgpKSwKIAkJCSBjLCBzdHJpcGVfcG9zX2JhZCwK
+ZGlmZiAtLWdpdCBhL2ZzL2JjYWNoZWZzL2VycmNvZGUuaCBiL2ZzL2JjYWNoZWZzL2VycmNv
+ZGUuaAppbmRleCA3NDJkY2RkM2U1ZDcuLjE0YmE2YmM3YTAyOSAxMDA2NDQKLS0tIGEvZnMv
+YmNhY2hlZnMvZXJyY29kZS5oCisrKyBiL2ZzL2JjYWNoZWZzL2VycmNvZGUuaApAQCAtMjU4
+LDcgKzI1OCw4IEBACiAJeChCQ0hfRVJSX25vcHJvbW90ZSwJCW5vcHJvbW90ZV9ub193cml0
+ZXMpCQkJXAogCXgoQkNIX0VSUl9ub3Byb21vdGUsCQlub3Byb21vdGVfZW5vbWVtKQkJCVwK
+IAl4KDAsCQkJCWludmFsaWRfc25hcHNob3Rfbm9kZSkJCQlcCi0JeCgwLAkJCQlvcHRpb25f
+bmVlZHNfb3Blbl9mcykKKwl4KDAsCQkJCW9wdGlvbl9uZWVkc19vcGVuX2ZzKQkJCVwKKwl4
+KEVJTlZBTCwJCQlzdHJpcGVfY3N1bV9ncmFudWxhcml0eV9iaXRzX3Rvb19iaWcpCiAKIGVu
+dW0gYmNoX2VycmNvZGUgewogCUJDSF9FUlJfU1RBUlQJCT0gMjA0OCwKLS0gCjIuNDMuMAoK
 
-                ---\ /--------------------------------------------------
-                    X        REFCLK Valid
-Reference Clock ---/ \--------------------------------------------------
-                             -------------------------------------------
-                             |
-i_init_restn    --------------
-                                    ------------------------------------
-                                    |
-i_cmn_rstn      ---------------------
-                                         -------------------------------
-                                         |
-o_pll_lock_done --------------------------
 
-Logs:
-imx6q-pcie 33800000.pcie: host bridge /soc@0/pcie@33800000 ranges:
-imx6q-pcie 33800000.pcie:       IO 0x001ff80000..0x001ff8ffff -> 0x0000000000
-imx6q-pcie 33800000.pcie:      MEM 0x0018000000..0x001fefffff -> 0x0018000000
-probe of clk_imx8mp_audiomix.reset.0 returned 0 after 1052 usecs
-probe of 30e20000.clock-controller returned 0 after 32971 usecs
-phy phy-32f00000.pcie-phy.4: phy poweron failed --> -110
-probe of 30e10000.dma-controller returned 0 after 10235 usecs
-imx6q-pcie 33800000.pcie: waiting for PHY ready timeout!
-dwhdmi-imx 32fd8000.hdmi: Detected HDMI TX controller v2.13a with HDCP (samsung_dw_hdmi_phy2)
-imx6q-pcie 33800000.pcie: probe with driver imx6q-pcie failed with error -110
-
-Fixes: dce9edff16ee ("phy: freescale: imx8m-pcie: Add i.MX8MP PCIe PHY support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
----
- drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-index 8e7834e84af8c..694a6e6e5eafb 100644
---- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-+++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-@@ -218,11 +218,6 @@ static int imx8_pcie_phy_power_on(struct phy *phy)
- 		       imx8_phy->base + IMX8MP_PCIE_PHY_TRSV_REG206);
- 	}
- 
--	/* Do the PHY common block reset */
--	regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
--			   IMX8MM_GPR_PCIE_CMN_RST,
--			   IMX8MM_GPR_PCIE_CMN_RST);
--
- 	switch (imx8_phy->drvdata->variant) {
- 	case IMX8MP:
- 		reset_control_deassert(imx8_phy->perst);
-@@ -233,6 +228,11 @@ static int imx8_pcie_phy_power_on(struct phy *phy)
- 		break;
- 	}
- 
-+	/* Do the PHY common block reset */
-+	regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
-+			   IMX8MM_GPR_PCIE_CMN_RST,
-+			   IMX8MM_GPR_PCIE_CMN_RST);
-+
- 	/* Polling to check the phy is ready or not. */
- 	ret = readl_poll_timeout(imx8_phy->base + IMX8MM_PCIE_PHY_CMN_REG075,
- 				 val, val == ANA_PLL_DONE, 10, 20000);
--- 
-2.37.1
+--------------NhoYU3pvcmbBYB5mVuOO0lVU--
 
 
