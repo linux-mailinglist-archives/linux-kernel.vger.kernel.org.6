@@ -1,151 +1,173 @@
-Return-Path: <linux-kernel+bounces-356325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E41F995F99
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:18:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17B8995F9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 822891C2163D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBDC285273
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A9170A0C;
-	Wed,  9 Oct 2024 06:18:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8E622EEF;
+	Wed,  9 Oct 2024 06:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Zpyi+sQB"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2070.outbound.protection.outlook.com [40.107.96.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AE813AA27
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728454707; cv=none; b=uBO3eD/25cMQWoBvy7p7U9d+/MSRyTILK6HsqVxhoT7VFnU+BCMEi2hkUUS38iacxfXjG7Fij7mHJVWsAQvcaxOADUm0QuqjUNqLpiUCo2zDcYGSCK3ylKmbZ1SXInHQDtd4wUeDSZZAv74Dl1M7CDObZhMnOsK2N70Y9FbRDY4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728454707; c=relaxed/simple;
-	bh=41YuIWaR+jkaJzB7bu88/r19+4V3ekzIeGNJsNZGfY4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PqUyOneuINT+SvcxOyRJLtsMqO2E4GIaw88Crh+eYEyGFgv3WCjUet6/a7L54+RCsjHssikaqWgIm4IYUvi8Q0V5mieOnE8xFUl9p05PczIJZ0NczOgSeWOiNAAtm4bp7dVG0qXxTKOSrlZinJrUggR6zbXPW4LCHdTygnAXsUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a34ebe595bso78536015ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 23:18:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728454705; x=1729059505;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WN/8+Fk6jFaiq/biP5FQbQslYeX6B8QOQ/ORcMtPRrM=;
-        b=RaYV/huvmeA7XRSuy+h+6RZ5EdWi8B1C/5TsIY1QMHaAV7vujtw2GITSGyDGbQLyfq
-         tBDAkukoe7/AYDkC8BiK3MDKMXMv8whB2qUIuzwb2XFG90b3T2KfWEF+mRIpwuj++8XT
-         C7jNJIazYgqs6hW/nuklW7hWy7EL66e5sgMxJ35NpdNlZKaT/4cOiO+j28L4jBV3Auk2
-         1uN0tXEuAZvZ5u/Ux9JzbsZREDXivTk0hRJEBw2/NvGdUpcTe2DGjZj4ULMjWkFTHaXl
-         6VsOfHyoBSvrDK86WXQ6uHXsEYe0SNN1+6oL+8RnM89egy6+iIiGm4IaOi595TJB4aBN
-         at2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUTMp0RJ5jylJy/xUx3Uil+n8ROZmznY8n5Xs3y7DDYVKf14zd95qRlvVhP5Six0RERWa3BEWQ4KM2vJRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrPLwFhTQlyPk6VPiyfVhpQJsoLDBYHjxfTGubVXgbMffXGT8a
-	n+zT8YWpXpe/SPlde5kDG3PE4AWXGqPLTDH44LFZ2kBTI2AYGpp9khoRJBfs2xVJRGWTcPekbvt
-	bC9DF1JVGU4CVYuWVJCcZY7iVe93pl2anNn13dmF5vpCGM9nIoTIzaTo=
-X-Google-Smtp-Source: AGHT+IEOyWjUpS0eweEh8BTolEpe55xG/E3pr3k1QFw4EUhXMC6cstnG2+9WPEDuUFWX+z2xFeeKvU1buGLC51a0NzsvTZ5aUn1Q
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5080614E2DF
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 06:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728454836; cv=fail; b=QQJNU6Ao1KYJDp8pVgTB4TVy47slGWOASK1UvgZ2Aqxc5nkj3y2y9tOkTa0/zoeEZsYU4mvKAGx8+hfJFvVdgVL71bMsyB56z5rpGdpWCiT5d+nUzXWzkn5GugY5cocj+H5kJdRI4mlB5X0N6V/jqU1kL7+bL9/0r83j1xyUgdw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728454836; c=relaxed/simple;
+	bh=Vz/BPVL98iBFsPgZvQlgffgUQIDkcTf3zcEGaT72EIc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gRBSdNUWyVBM2J8ZeVD/sp9/s8kL4+pNxCVZwgb64PY4E0BqflvYzQkYXnuIigZk1lTX9ZyXkKfWlsg1UJVfkZNAd3+3WXhsAUZqqYI5P41z+Q8ljr3nxoVTu/D5y43mr0KC9CAr7agkmUEPoeS+N2r36hngH9pBy6M4XM8Xcb8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Zpyi+sQB; arc=fail smtp.client-ip=40.107.96.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fKTvV/1dO0m1iPGJx+mNVODBohrDe48UNfC6jk6GyxWQTdn38WJIT/nY1Gol1v0EccsHkk/V3vNZn5oIHDSr8ktpK6Zq71Nv9GNYmk5tsmG9k1r3+d7fci3h9rT1bVUNrajI7ARgL6q60sMAqP2K53ZbGi6mKb3U6+oHDFNkm9bFTiObBLpjv+zAeYcblClivbazCog09nlcxl8CsDewKo9ewD3BYxLwb7qnwUJr3TRn038NOQRJp/1hoGAb2N6abqmreNuspcVXByfNUGsZ8/6PbZ4pSSd2xIOL87YRATc1Lv1hBxAsjIpWyBblJxmkoFwXEU+3DQKKjMZhqzmLXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wbUUwHXSmTEdrAWnt67HmJWp9YZgE7Rew0BueWiYcJI=;
+ b=ckmrLU7ZmuuRygUKVtlu1gr0A07I66GPt5vBkmrkuoW3uPYcJrjKilx98fu2Y2nKt/TrcnxWoKq0Zh/odNkz98hdIsI1cP+k7CTtiixYSP+ZfSzJZMId7RcIcjAOMMj2FI9xxKtoEeJ7G2moBFcV1ywgaR4Q5XWQponuoG/ufIWv2ogxI89VGDWSbTP1eiVY/N1c0hjjp133qmnqPMtLaRoVLdJy9I7AwniEqPV+6L89v90H8MLjtDLokYiGDh7Nu8Q7MeA3UPsYaL6mDKRsir68ELJk3Uyp5ndO8DPBrhBRdq4aEawM29G8IEtrNv+AQOWm0gzeGCY6R9u5hP26wQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wbUUwHXSmTEdrAWnt67HmJWp9YZgE7Rew0BueWiYcJI=;
+ b=Zpyi+sQBX7W8oCK+tYVxWEmYCuOgk2ryY1U+IDixSJ75Sa6C2xe5M0zfVIokNo7+paoCc87W9AD6+TV+B3466AeKlW0BF9Ff6JTA63nvhsqlCKnxFAi/9rI7CLSJdVNjEjrDGBADUdfbQf8GlEln12lEbYjiL5AvAFwDb48THAw=
+Received: from BN0PR04CA0167.namprd04.prod.outlook.com (2603:10b6:408:eb::22)
+ by PH8PR12MB6771.namprd12.prod.outlook.com (2603:10b6:510:1c6::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
+ 2024 06:20:31 +0000
+Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
+ (2603:10b6:408:eb:cafe::b7) by BN0PR04CA0167.outlook.office365.com
+ (2603:10b6:408:eb::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17 via Frontend
+ Transport; Wed, 9 Oct 2024 06:20:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Wed, 9 Oct 2024 06:20:30 +0000
+Received: from cjq-desktop.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
+ 2024 01:20:28 -0500
+From: Jiqian Chen <Jiqian.Chen@amd.com>
+To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>, "Jiqian
+ Chen" <Jiqian.Chen@amd.com>
+Subject: [PATCH] xen: Remove config dependency in XEN_PRIVCMD definition
+Date: Wed, 9 Oct 2024 14:20:14 +0800
+Message-ID: <20241009062014.407310-1-Jiqian.Chen@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d81:b0:3a0:abec:da95 with SMTP id
- e9e14a558f8ab-3a397d19872mr11260245ab.22.1728454704989; Tue, 08 Oct 2024
- 23:18:24 -0700 (PDT)
-Date: Tue, 08 Oct 2024 23:18:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67062030.050a0220.3f80e.0025.GAE@google.com>
-Subject: [syzbot] [wireguard?] WARNING: locking bug in wg_packet_encrypt_worker
- (2)
-From: syzbot <syzbot+58510c37d7d3c2335e35@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|PH8PR12MB6771:EE_
+X-MS-Office365-Filtering-Correlation-Id: cb681f3e-52c7-4b4e-c8e9-08dce82a79a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G4r6HOPec4sxWbfDeksrwjsAY9XvU1onbeqn7Hs3PoqUfG3n3GncUNRisk1C?=
+ =?us-ascii?Q?WekCEMAZZXifxkgO9t+jO1V1Qu4IQcfKQWg1JwKJDo3mQwN0v+9k/Pzhu+q/?=
+ =?us-ascii?Q?7WgwXotG/HNYkGK/NQVVMG3BZAGE8HADwN2+KpwOovbaZyStbIaJyjguY9Ot?=
+ =?us-ascii?Q?y68rFJpL1jXh9hERp41HZlNNofmU6mCLjUJbGHpXv+J/ZEe32zV3L4oZHu5B?=
+ =?us-ascii?Q?K33ERIrc+uE6ZwLdQt/DMebppPL+/ybh4IJDhqmK1caK+MhHBWPJP6zOu3lD?=
+ =?us-ascii?Q?7m+RDA7xSmy28E5gI2EL+qlPQSjMYLqrZyqA1XEQspC/vrIe3iw3HKxzeRdH?=
+ =?us-ascii?Q?hHzU7/2m1GYNaUO+Pib0kPx0Uw1tElQ4Hb+FfW8+5y4XaRorpmojRVGqGqE/?=
+ =?us-ascii?Q?mFsUU/Kw5ge5F2be567vKfPRhuR+k3giRkDZ7kO6jyQc0aUP6tDPg9n3F8Xg?=
+ =?us-ascii?Q?sPQjsAH/SVCoenEshzB9bzyPV0l79+7/27KK6TcPBxKJwL+DyRAmkjtoD5Xa?=
+ =?us-ascii?Q?e1RtNvTvqSbvtkTkaC77dY8bXKbcmFSufAZmPZC9xDCQBltn3m+BMeGUpEak?=
+ =?us-ascii?Q?bCGrFslSD0fziBntlkjo+Q8eV3mOaBc9eVmyP43717Kc27HWaEAqnT1AdHd0?=
+ =?us-ascii?Q?AR17o0tUxGlbsZ/oHukd047/sRh0AmKYO+UyaCirwuS2BLVQNFAdreXU+ufa?=
+ =?us-ascii?Q?DnEwGZCJ9ivS9N8KTIspjARYFdDt8ZuXE2j5O7P2tfixchCFMr3M7eK1pSEW?=
+ =?us-ascii?Q?OCXG7717/3Sg2WNmxtmYRfdBEnJGGHG74vJn0GhuZHyuCvbM7Ky7Kv/Wa/Mp?=
+ =?us-ascii?Q?VjYNwzuaZakaftsCr6jIqAxM6++he8DpWE10oTBdLDSr/gnb0fp9eW3+bmaW?=
+ =?us-ascii?Q?cq4qBX7CuqbLbglSBH98wqq6r/LEgrfff9kf0OYw7THjG3J6x0c55+8Tu/ym?=
+ =?us-ascii?Q?uc6xyVIxFzD3yYhIwPXN08nTUjmSr3ZI4ibxtPx+L9Sp4EQqYFLJP2JOnelM?=
+ =?us-ascii?Q?oFB6uxTGYr4z+9CWaMksZSZZL7hYNRuPkKVp3B/2ZiaVQDGBtWXGQJJBi3lb?=
+ =?us-ascii?Q?d3667PkK3W2n0DbWCBcxduybVs0B3Wv2KOyVrt2bseBySlijZorXcF9EOG/L?=
+ =?us-ascii?Q?AcmlON2l6pvrdxEKpgvfhdW12m7LHVizvD0lpKMP9s6gUTBbQFTkbzvmzTi4?=
+ =?us-ascii?Q?xz8rbEEiPVkyR8uU0n8rruv5J1AyDznE1aPDK9SVq2ib3xhQa6j6FJ7D5EuA?=
+ =?us-ascii?Q?hM4/5UYLKCvDP9RcDTsv9IKJyuY7t08+WkrC4D2gY0pyiT3WAY5n5u0fmug2?=
+ =?us-ascii?Q?JzBV/FABe1bu6BsH1vsXl5Gj/14nDsl4KkeqwbMESQO89zmVAcyDuZ0Csn6T?=
+ =?us-ascii?Q?+4EK7emuxYCQnthtKDeq4xz73KTw?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 06:20:30.6190
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb681f3e-52c7-4b4e-c8e9-08dce82a79a3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B076.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6771
 
-Hello,
+Commit 2fae6bb7be32 ("xen/privcmd: Add new syscall to get gsi from dev")
+adds a weak reverse dependency to the config XEN_PRIVCMD definition, its
+purpose is to pass the combination of compilation that CONFIG_XEN_PRIVCMD=y
+and CONFIG_XEN_PCIDEV_BACKEND=m, because in that combination, xen-pciback
+is compiled as a module but xen-privcmd is built-in, so xen-privcmd can't
+find the implementation of pcistub_get_gsi_from_sbdf.
 
-syzbot found the following issue on:
+But that dependency causes xen-privcmd can't be loaded on domU, because
+dependent xen-pciback is always not be loaded successfully on domU.
 
-HEAD commit:    27cc6fdf7201 Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16829bd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6248f0ab12f33349
-dashboard link: https://syzkaller.appspot.com/bug?extid=58510c37d7d3c2335e35
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+To solve above problem and cover original commit's requirement, just remove
+that dependency, because the code "IS_REACHABLE(CONFIG_XEN_PCIDEV_BACKEND)"
+of original commit is enough to meet the requirement.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6977fdc3f229/disk-27cc6fdf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e3cb80988930/vmlinux-27cc6fdf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/030bdb347b6a/bzImage-27cc6fdf.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+58510c37d7d3c2335e35@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 1 PID: 5276 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 1 PID: 5276 at kernel/locking/lockdep.c:232 hlock_class+0xfa/0x130 kernel/locking/lockdep.c:221
-Modules linked in:
-CPU: 1 UID: 0 PID: 5276 Comm: kworker/1:4 Not tainted 6.12.0-rc1-syzkaller-00306-g27cc6fdf7201 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: wg-crypt-wg2 wg_packet_encrypt_worker
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:hlock_class+0xfa/0x130 kernel/locking/lockdep.c:221
-Code: b6 14 11 38 d0 7c 04 84 d2 75 43 8b 05 73 a9 f5 0e 85 c0 75 19 90 48 c7 c6 40 d5 6c 8b 48 c7 c7 60 cf 6c 8b e8 57 b2 e4 ff 90 <0f> 0b 90 90 90 31 c0 eb 9e e8 78 38 85 00 e9 1c ff ff ff 48 c7 c7
-RSP: 0018:ffffc90004437960 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: 00000000000012ae RCX: ffffffff814e71a9
-RDX: ffff88806302da00 RSI: ffffffff814e71b6 RDI: 0000000000000001
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff88806302e530 R14: 00000000000012ae R15: ffff88806302da00
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020021000 CR3: 000000003167e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- check_wait_context kernel/locking/lockdep.c:4826 [inline]
- __lock_acquire+0x415/0x3ce0 kernel/locking/lockdep.c:5152
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
- __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
- _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
- spin_lock_bh include/linux/spinlock.h:356 [inline]
- ptr_ring_consume_bh include/linux/ptr_ring.h:365 [inline]
- wg_packet_encrypt_worker+0xe4/0xd60 drivers/net/wireguard/send.c:293
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
+Fixes: 2fae6bb7be32 ("xen/privcmd: Add new syscall to get gsi from dev")
+Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/xen/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index 72ddee4c1544..f7d6f47971fd 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -261,7 +261,6 @@ config XEN_SCSI_BACKEND
+ config XEN_PRIVCMD
+ 	tristate "Xen hypercall passthrough driver"
+ 	depends on XEN
+-	imply XEN_PCIDEV_BACKEND
+ 	default m
+ 	help
+ 	  The hypercall passthrough driver allows privileged user programs to
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
