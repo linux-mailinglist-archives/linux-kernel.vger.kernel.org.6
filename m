@@ -1,115 +1,140 @@
-Return-Path: <linux-kernel+bounces-357693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67A6997414
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:07:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33E6997418
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 324DBB23DD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:07:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 105AF1C24440
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FE71A76D5;
-	Wed,  9 Oct 2024 18:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2673A1E1C1C;
+	Wed,  9 Oct 2024 18:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E0jL3L90"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ET1UOC2l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94433C2E0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748501E049A;
+	Wed,  9 Oct 2024 18:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497236; cv=none; b=f8qZASGH3hPamZfmluayn+t5yMplql0gINus9kNSG8S6AK7wiN/sj+OAeK/vhrRpzql3Ab0dqcYbv0Umy8OrFAjRBieyv8e2awf3A2Zly13SDdVex9hhX3gVARepQi+I5DQxffYGWoZNcqEj//jirNeXT0s3k9h224sYvA1d0Mw=
+	t=1728497241; cv=none; b=Q3JT+SU02L7V0NJOIQaZBy1Wz+RNTlFZZe16RltMSMNX/xTvpAav0TSw0AFG02rLjBhKfxREn/j4FE3YUxesoF5uibHyEn3ZEIY0qG10ax5CYTo8quSxMk0wpQg7GdzFiKw/C3ug1awo1EA2bzlKsaJbLxjPHS+aKH5HolT/MMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728497236; c=relaxed/simple;
-	bh=JGOi4LF+hJ5EqFWXdtiYvW9ooWABcBaUPeGZNfSiqx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFSMT39zdmppyvML2vSsbHY4xUZM0+AdeWl5aQK6whvlFAKd92WQzl41e5ObkflMZdz0n1SsWX9o4ddMNITIShpL9pDQWAmzkDyVJ1gWpz4eQ9XhXy6N9Eswmtomy3NcIL8z/0waALEeIlWyQ9dsTndyhTyBkonBkgYsvvr54VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=E0jL3L90; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3Y8yOgrz/Krrblq0KCa+ZHLyD2D2jR9ISCF7ATNqlkE=; b=E0jL3L90LU7lKh0PB96gFL40wV
-	86OP2L1qbkyn6pdOr26tg/KyVbWC9QZQO4zaistJuumQnMjqohRGg9PussDEJPD7U+Vkp2L75Vdfp
-	Dywi7QQ4MtLmYxR2dqomMaXwR6fRtY4cGu7Co6EBm/cAt/xG7beYFxEPi8FqpBgk26NGLQ9uUAUJX
-	aRjPS3q4RPnkbaP0NlHLbuA1w/xvrwpWggiBcB7fI6Cr7/s5rfuHN9mcntfkO3COFq6L8qehKWdbd
-	2mROU28N7fJuX1kndME1qs2vTcmlrVUBIheJCF8Anwt0b9AF5qMzlUSc0z+qrM7w2yox5Q9bU193m
-	KmnhA22w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syb5Y-00000005TMm-1TsG;
-	Wed, 09 Oct 2024 18:07:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 841513004AF; Wed,  9 Oct 2024 20:07:08 +0200 (CEST)
-Date: Wed, 9 Oct 2024 20:07:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, neeraj.upadhyay@kernel.org,
-	riel@surriel.com, leobras@redhat.com, tglx@linutronix.de,
-	qiyuzhu2@amd.com
-Subject: Re: locking/csd-lock: Switch from sched_clock() to
- ktime_get_mono_fast_ns()
-Message-ID: <20241009180708.GU17263@noisy.programming.kicks-ass.net>
-References: <da9e8bee-71c2-4a59-a865-3dd6c5c9f092@paulmck-laptop>
+	s=arc-20240116; t=1728497241; c=relaxed/simple;
+	bh=YtrJn4vc+Mgz9wgw7+EugcgaEZCddJzBtXAuSeGGRxU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Fk0RXcNnr1hf07NQDbapjfUh2o2PgMfQPRIiQDE1fHhC198Ld6qJ9EqOB7QKqjRMzL2gXD0CEtgV1QwONYQq2k5fv3x8R7ZYLapfsgPccBAfRJyLf81kGxUzNvVk+KR8YCpbvl7Lxt88LsjcMmkh4/MHPRiI+qI5nLH2x1aSV7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ET1UOC2l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FBD9C4CEC3;
+	Wed,  9 Oct 2024 18:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728497241;
+	bh=YtrJn4vc+Mgz9wgw7+EugcgaEZCddJzBtXAuSeGGRxU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ET1UOC2lI3v1Dq1UGsIUa/wz6CxnBK0fLf+88jg3nMdROL9RjWii/LfE0MVDpOtsU
+	 8YqrAUdUogXgllkIIZdxN/UNCE8G2VEtWjOxNAw+v5Q++kUrb8xUNcm5U/SoTQPrkv
+	 CfD4SydBPN8otoyPqEPkv4SVHS+6RIGdXa/YMpi92aR4InHtuUSBl8o6b31bRu5CkJ
+	 7Hn2ld5c5JwfM+KfZFnotvxQdOLJwAp2rOH6hqiw4RZVBwBB+2cjQJn20pfUZPY9ql
+	 S6CV6f81tnS/rT9gr02xy1vplk5KRbmUgHOjRSIQwEHgB2Kuwp3QtFOsuCMpmqZMec
+	 ZwbJQz0NrCEpQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0EFF7CE08E5; Wed,  9 Oct 2024 11:07:21 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: frederic@kernel.org,
+	rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	bpf@vger.kernel.org
+Subject: [PATCH rcu 01/12] srcu: Rename srcu_might_be_idle() to srcu_should_expedite()
+Date: Wed,  9 Oct 2024 11:07:08 -0700
+Message-Id: <20241009180719.778285-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
+References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da9e8bee-71c2-4a59-a865-3dd6c5c9f092@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 10:57:24AM -0700, Paul E. McKenney wrote:
-> Currently, the CONFIG_CSD_LOCK_WAIT_DEBUG code uses sched_clock()
-> to check for excessive CSD-lock wait times.  This works, but does not
-> guarantee monotonic timestamps. 
+SRCU auto-expedites grace periods that follow a sufficiently long idle
+period, and the srcu_might_be_idle() function is used to make this
+decision.  However, the upcoming light-weight SRCU readers will not do
+auto-expediting because doing so would cause the grace-period machinery
+to invoke synchronize_rcu_expedited() twice, with IPIs all around.
+However, software-engineering considerations force this determination
+to remain in srcu_might_be_idle().
 
-It does if you provide a sane TSC
+This commit therefore changes the name of srcu_might_be_idle() to
+srcu_should_expedite(), thus moving from what it currently does to why
+it does it, this latter being more future-proof.
 
-> Therefore, switch from sched_clock()
-> to ktime_get_mono_fast_ns(), which does guarantee monotonic timestamps,
-> at least in the absence of calls from NMI handlers, which are not involved
-> in this code path.
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: <bpf@vger.kernel.org>
+---
+ kernel/rcu/srcutree.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-That can end up using HPET in the case of non-sane TSC.
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 31706e3293bce..9ff4ded609ba5 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -1139,7 +1139,8 @@ static void srcu_flip(struct srcu_struct *ssp)
+ }
+ 
+ /*
+- * If SRCU is likely idle, return true, otherwise return false.
++ * If SRCU is likely idle, in other words, the next SRCU grace period
++ * should be expedited, return true, otherwise return false.
+  *
+  * Note that it is OK for several current from-idle requests for a new
+  * grace period from idle to specify expediting because they will all end
+@@ -1159,7 +1160,7 @@ static void srcu_flip(struct srcu_struct *ssp)
+  * negligible when amortized over that time period, and the extra latency
+  * of a needlessly non-expedited grace period is similarly negligible.
+  */
+-static bool srcu_might_be_idle(struct srcu_struct *ssp)
++static bool srcu_should_expedite(struct srcu_struct *ssp)
+ {
+ 	unsigned long curseq;
+ 	unsigned long flags;
+@@ -1469,14 +1470,15 @@ EXPORT_SYMBOL_GPL(synchronize_srcu_expedited);
+  * Implementation of these memory-ordering guarantees is similar to
+  * that of synchronize_rcu().
+  *
+- * If SRCU is likely idle, expedite the first request.  This semantic
+- * was provided by Classic SRCU, and is relied upon by its users, so TREE
+- * SRCU must also provide it.  Note that detecting idleness is heuristic
+- * and subject to both false positives and negatives.
++ * If SRCU is likely idle as determined by srcu_should_expedite(),
++ * expedite the first request.  This semantic was provided by Classic SRCU,
++ * and is relied upon by its users, so TREE SRCU must also provide it.
++ * Note that detecting idleness is heuristic and subject to both false
++ * positives and negatives.
+  */
+ void synchronize_srcu(struct srcu_struct *ssp)
+ {
+-	if (srcu_might_be_idle(ssp) || rcu_gp_is_expedited())
++	if (srcu_should_expedite(ssp) || rcu_gp_is_expedited())
+ 		synchronize_srcu_expedited(ssp);
+ 	else
+ 		__synchronize_srcu(ssp, true);
+-- 
+2.40.1
 
-In the good case they're equal, in the bad case you're switching from
-slightly dodgy time to super expensive time. Is that what you want?
-
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Leonardo Bras <leobras@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index f25e20617b7eb..27dc31a146a35 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -246,7 +246,7 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
->  		return true;
->  	}
->  
-> -	ts2 = sched_clock();
-> +	ts2 = ktime_get_mono_fast_ns();
->  	/* How long since we last checked for a stuck CSD lock.*/
->  	ts_delta = ts2 - *ts1;
->  	if (likely(ts_delta <= csd_lock_timeout_ns * (*nmessages + 1) *
-> @@ -321,7 +321,7 @@ static void __csd_lock_wait(call_single_data_t *csd)
->  	int bug_id = 0;
->  	u64 ts0, ts1;
->  
-> -	ts1 = ts0 = sched_clock();
-> +	ts1 = ts0 = ktime_get_mono_fast_ns();
->  	for (;;) {
->  		if (csd_lock_wait_toolong(csd, ts0, &ts1, &bug_id, &nmessages))
->  			break;
 
