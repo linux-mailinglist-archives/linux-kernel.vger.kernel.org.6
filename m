@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-356835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC49E99677A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:39:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D222996772
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37B73B2455A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:39:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225421F21B08
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F58190665;
-	Wed,  9 Oct 2024 10:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921E319007D;
+	Wed,  9 Oct 2024 10:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JiCgrORU"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiFVNfKZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBE01917D7
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5D219004E;
+	Wed,  9 Oct 2024 10:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728470303; cv=none; b=rWsC7tQ6Ju8XYlrOqRBACy8iEYv6MKaHUERp7HgU7U07fkvFiCT1yPZofs8sUlaLqES7ey/h/FzCohr8v3+7a07G0sOl4IYyMTGsfkTUy/7E/5K/i6Q5g5GoZ0C0n1LSFvmWJ84XmG6kSdKSgkqVjQXkRWQVdZ8r1JXaPXg9LHk=
+	t=1728470274; cv=none; b=EGHu6cKq+pVNc2rLRCJwMQDtk3bvyXa7P9KIz/UfCHQ6eccGMwRUB7GUdDO86vwHqk3zEp4sGSq9zJ155yI0qVm2JN8ilRRIT6H2BneAArB0vbBJ3E+2FGU70QBQ/XeEs6RKTkE9ODCJ8477FyskxS/zv8hxPICAlW9JVlSiiVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728470303; c=relaxed/simple;
-	bh=nB0qJf315S0Z2/pGNasKouhjG0Xme3kreiC0BS2FG1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YWrb2fxL/yqLDfqniL3Nq7Da/zs32s3/XVRuKaoRkaG/elx1moKO5h24WvPf8XxRPONd8w9j6zjPzSdSh/R+hR3aoaUiABQRy9ehAkP3RurBWLaSeZDOOMrdPnrkwyV1xPDVplNaTT2XgCUcRvbvKm7VC673zGSJUexilqp7Sm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JiCgrORU; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e28fc33fd8eso772001276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 03:38:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728470299; x=1729075099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g4S9RR3K6QnDDxjEOls4CSG3KtERGY2SF0IBRo/ZWYE=;
-        b=JiCgrORUJaneIN4tqpe4Bxc+0GDL7IACs6wDS34VQnn5gcYJ0ofb8On+wfA/FvvHFK
-         h5gDUwrKpeUFIy9Ort7NclbEDuGN8x8Ck+qHuGdexN7vMyPVplEbjEhwyMVmhZSvQQEd
-         nNgsXm1Ox2VwNnso4tM7fajE3qjCwo3ukM+82TpUFxqpgWwVyyFIc+pflOEQhmD9M+al
-         CFRL6mnn3AiwehukNDjnypTZ9RByqZFY4YyZblPIpR+VHn3Jg0U+xP0ZWZma/OdMAATe
-         srh/DEQQBkiCC4tQX32t5mupWutZBgwutx3O8vl4Sn2OLhaWfNtjTLBh1OrIjr4WfSPP
-         Ejww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728470299; x=1729075099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g4S9RR3K6QnDDxjEOls4CSG3KtERGY2SF0IBRo/ZWYE=;
-        b=Z1aNDxYeUbxaJOoVbkN7MptF8M7LIgPNho6CHBeFf+dba6CM4AruUiw94cFmPEM64G
-         6gvvZLEum9FSpr+TDd909WQhD8yLuuKsuU1OKPo3M4pOEbJHRi11aHnzdaHUydEffZhs
-         7jObH8PlfZTHW1rBPZoHoDu4/efu0hK2fOZz4h3mSj58XG4PeYTp9Wz7daVw9pULd8Ka
-         i7DSaKvOYE9mUQDVVEqpjLqlQh+aR7grL1qYXYA4FgfIZAbnf+ZmLKn8XbOjpbRvPsh0
-         nwaOESSeGUEkacMYgqSd23n3M3WThYa2NLBGlwXhaH8a16c+0kQ3fbAFDyh/jA8p7hYQ
-         fCFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOOctUy4nvepr0RPtoBRGHY75q2ZoB0s2MtTs8xEl6T9bVKorpSz/PAzsLrGxJKJtCpbTGZCFkFDheZlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLCxB5r/QqW5O96y2bnOr+58nwNo8g4VU60u0ldK/zWZOhatgG
-	HPKTDBViiay0xZ2S7UDngyU1ymBT3y4zNoMA1RIZmvdfvxWzY1oo6Ws3RVjaoqsV7F0fwPwvm01
-	ZEahmxKEkvYdu4KGasrN2OnlaIHXcvIZaAr7WzA==
-X-Google-Smtp-Source: AGHT+IF6wNDrtR2FR+iF3ORNX+EA7mJBmScQFeE/O1idJ5pgxpXmH+PgvKvohSwwMIQTiTd83HO2gsvdOY/p+lw2vhE=
-X-Received: by 2002:a05:6902:1444:b0:e28:f132:3fae with SMTP id
- 3f1490d57ef6-e28fe50c250mr1668617276.48.1728470299271; Wed, 09 Oct 2024
- 03:38:19 -0700 (PDT)
+	s=arc-20240116; t=1728470274; c=relaxed/simple;
+	bh=bIc8VvXZyLnIE4IeFbmtymfSO2Qf0U2SpOHn3wtP1D8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m0HMuFeXHxzl7J+aN5GYA69EfrsjidZC8MNpgcT+Dr/E4eJwKBs8BgduFH7TFYykoj+SKIXI0N8DzATGJE6oGZpS4HWOW2j+Lyr8pPOcgxA0A84bnOjlP/51T6mqvwMzb/N6MTJZ+WB8+0udP2jdNKV7mFZPIKU0/fxexuLgXmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiFVNfKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF789C4CEC5;
+	Wed,  9 Oct 2024 10:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728470273;
+	bh=bIc8VvXZyLnIE4IeFbmtymfSO2Qf0U2SpOHn3wtP1D8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JiFVNfKZVOe38oZcaIn/39E6h79GHIUPjPRd3ro0vuPGJWnV3TKtVk06uao7Owfjs
+	 muFhSmU0M4RZaUqEdEadZXw1abGDFuyQ6e6jqk+iZTbILlTpHLw/En9jZJBqWTPDpo
+	 oHd4fFqZN442BcUBPebqJ53UFItkRQl7PEwHoVqwOqVu7TRbO1RySikoqjkcWfdV3p
+	 paV5lguqLE/I3wujrgST6Hig2Xn35LeUKkk09P2OkpOh2yrJ8KG6nvRVOqmKqOPiyd
+	 HkuEcrULwmEQpipt5RdxJYd7Cxkgnr4ZMxglmgqFePdBLmYBIixj6PRF6+73gdD3Qm
+	 E/OdUSnT2elKw==
+Date: Wed, 9 Oct 2024 11:37:46 +0100
+From: Lee Jones <lee@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, eddie.huang@mediatek.com,
+	sean.wang@mediatek.com, alexandre.belloni@bootlin.com,
+	sen.chu@mediatek.com, macpaul.lin@mediatek.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH v1 1/3] dt-bindings: mfd: mediatek: mt6397: Add
+ start-year property to RTC
+Message-ID: <20241009103746.GE276481@google.com>
+References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
+ <20240923100010.97470-2-angelogioacchino.delregno@collabora.com>
+ <20241009101549.GB276481@google.com>
+ <e0de3810-38b0-40a3-872d-678e9d4f72e5@collabora.com>
+ <20241009103307.GD276481@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008160134.69934-1-brgl@bgdev.pl>
-In-Reply-To: <20241008160134.69934-1-brgl@bgdev.pl>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Oct 2024 12:37:43 +0200
-Message-ID: <CAPDyKFqvpSJCpG00NtDwpuxp51T8t9JGMm6Ssxvzpg4fNGSGBQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: mmc_spi: drop buggy snprintf()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241009103307.GD276481@google.com>
 
-On Tue, 8 Oct 2024 at 18:01, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> GCC 13 complains about the truncated output of snprintf():
->
-> drivers/mmc/host/mmc_spi.c: In function =E2=80=98mmc_spi_response_get=E2=
-=80=99:
-> drivers/mmc/host/mmc_spi.c:227:64: error: =E2=80=98snprintf=E2=80=99 outp=
-ut may be truncated before the last format character [-Werror=3Dformat-trun=
-cation=3D]
->   227 |         snprintf(tag, sizeof(tag), "  ... CMD%d response SPI_%s",
->       |                                                                ^
-> drivers/mmc/host/mmc_spi.c:227:9: note: =E2=80=98snprintf=E2=80=99 output=
- between 26 and 43 bytes into a destination of size 32
->   227 |         snprintf(tag, sizeof(tag), "  ... CMD%d response SPI_%s",
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   228 |                 cmd->opcode, maptype(cmd));
->
-> Drop it and fold the string it generates into the only place where it's
-> emitted - the dev_dbg() call at the end of the function.
->
-> Fixes: 15a0580ced08 ("mmc_spi host driver")
-> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, 09 Oct 2024, Lee Jones wrote:
 
-Applied for next, thanks!
+> On Wed, 09 Oct 2024, AngeloGioacchino Del Regno wrote:
+> 
+> > Il 09/10/24 12:15, Lee Jones ha scritto:
+> > > On Mon, 23 Sep 2024, AngeloGioacchino Del Regno wrote:
+> > > 
+> > > > Enable evaluating the start-year property to allow shifting the
+> > > > RTC's HW range.
+> > > > 
+> > > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > > ---
+> > > >   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 2 ++
+> > > 
+> > > No such file.
+> > > 
+> > 
+> > In the cover letter, I wrote:
+> > 
+> > 
+> > For the bindings commit, this series goes on top of the MT6397 schema
+> > conversion from Macpaul Lin [1].
+> > 
+> > This series was tested on a MT8195 Cherry Tomato Chromebook.
+> > 
+> > [1]: https://lore.kernel.org/all/20240918064955.6518-1-macpaul.lin@mediatek.com/
+> > 
+> > 
+> > So, that's why. :-)
+> 
+> Nope, try again. :)
 
-Kind regards
-Uffe
+I guess you actually mean:
 
+  https://lore.kernel.org/all/20240918064955.6518-2-macpaul.lin@mediatek.com/
 
-> ---
-> - instead of fixing the buffer size, just drop the snprintf() call
->   altogether
->
->  drivers/mmc/host/mmc_spi.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
-> index 8fee7052f2ef..47443fb5eb33 100644
-> --- a/drivers/mmc/host/mmc_spi.c
-> +++ b/drivers/mmc/host/mmc_spi.c
-> @@ -222,10 +222,6 @@ static int mmc_spi_response_get(struct mmc_spi_host =
-*host,
->         u8      leftover =3D 0;
->         unsigned short rotator;
->         int     i;
-> -       char    tag[32];
-> -
-> -       snprintf(tag, sizeof(tag), "  ... CMD%d response SPI_%s",
-> -               cmd->opcode, maptype(cmd));
->
->         /* Except for data block reads, the whole response will already
->          * be stored in the scratch buffer.  It's somewhere after the
-> @@ -378,8 +374,9 @@ static int mmc_spi_response_get(struct mmc_spi_host *=
-host,
->         }
->
->         if (value < 0)
-> -               dev_dbg(&host->spi->dev, "%s: resp %04x %08x\n",
-> -                       tag, cmd->resp[0], cmd->resp[1]);
-> +               dev_dbg(&host->spi->dev,
-> +                       "  ... CMD%d response SPI_%s: resp %04x %08x\n",
-> +                       cmd->opcode, maptype(cmd), cmd->resp[0], cmd->res=
-p[1]);
->
->         /* disable chipselect on errors and some success cases */
->         if (value >=3D 0 && cs_on)
-> --
-> 2.43.0
->
+It's on my list.  I'll place yours behind it and see how we go.
+
+-- 
+Lee Jones [李琼斯]
 
