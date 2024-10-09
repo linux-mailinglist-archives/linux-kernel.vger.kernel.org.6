@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-357427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9C999711F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08ACC997120
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B201F27431
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B423F2812EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FF21E2840;
-	Wed,  9 Oct 2024 16:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36711E282A;
+	Wed,  9 Oct 2024 16:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bqxlR1Ad"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cea2cNNE"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973921E2827
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB4D1E2843
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490149; cv=none; b=X5PyJpFmvTW4Rcajk50pZUqEWDsij9EdSG6GAF2ign87nXbZ2z0BADVlVlqEtzWCIq+4od/c9Y0rnHeOdbqz3I0o08rHO3gYj8knvbW6WPdzvwOEFlQXmyDLlrlbPGRYLRp44p704ax3GwyvGkuG42kV7SA0yZjYESld0CCF55M=
+	t=1728490151; cv=none; b=BP6dVaqAm6mZEN0+F1POJbMmONC7W1b/oZ3nVaJzVzvnVGePAp5LFrUIc5FBKaAJziln1A/2HYWUWTKH33IBHeAakFU90oBrHiheAmuqKYwSEQLw+K5/1H8vQPces4u3DEEOSeDKq521uSQ3X1k+xF5i6Vv9ImEkgS8ujCx1Ajs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490149; c=relaxed/simple;
-	bh=n8f+eWsGmScuFwG5dDubDwigdZfb6CilE2zs5pzESkg=;
+	s=arc-20240116; t=1728490151; c=relaxed/simple;
+	bh=9AwPjYKc1tTHReZqpWWep5mg1gQzX/K7LnvZvyHbqdY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KYoBcAXPIAAs5PuKXfDugO2AdjsYP/QkUoqgx8+tdMPhu9FcleL3lhVtv3HPFhQJcAiCMBS+wxLeHSyChY69Bgmaw4Q5bB8Mny8B9om2RFvPjNWhPVTjSe6CHLssvUJGAc2hFLY0Ajv7YWEHCw1QDDCjy2dMZVTpWuABWylOYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bqxlR1Ad; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=M2oM7a9mLJZFSaVxNAuycp8i5oaYP+MF0fdMCWnsjRcLY5OKSCuRzVed8rSfZHPqvrAO5XkZtwZdmy4VnufUiXEvDmvt5MEBQOyYTv1JsKMtjTdSdViDsVGeutl4cGuAXiklqly8qmUVK4yG0xYctXMfEcyHhUdiAQj/+Az070U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cea2cNNE; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e24a31ad88aso8085729276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:09:07 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6886cd07673so316047b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728490146; x=1729094946; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728490149; x=1729094949; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4os8DmpWomyhdXT3uIE5sI0/fikMzrPBJolJZzSSPQ=;
-        b=bqxlR1Adq1QmrIGrbhG/hIoWMB6bVQt03zRRiEYQRfiV/SkYjzltkBUw0eoCJ2JHQS
-         zLf95Z2G3uiGsIQz34XEJX2jalMlOsy4njxoplguna7HHGoZbokOjxD90g3/b4Ioy3yS
-         4ZrqmetmaYOR+eLlcWPC8wtyl9vizXr8gyEcZbquJPZ79a8acrFYWFyglP2/b+DZNKhe
-         2cjykuQHE+P3ToS1rTX3SYleJIdwPzpnW+JLBQibH7g2YdmU/FyKY999S1GfcC/3kHDw
-         3AIqkUEcOMEUbzpNlE3L1LvkzuREKw+uDTn+Ef91Uc5Ox3HduJ32Qe24MOMYwGWpgA6V
-         Zrog==
+        bh=NGJVSpQBdEJnufx8hCONnOeuil0ovqsMOkm2dztukRI=;
+        b=Cea2cNNESI+KsPNuy0EKjvFV1nZT8DwPXFvl9eaGQPW6xsPWiG4+WCL00zD4ues+BG
+         +LbaegjmPedLyE038RMAtiwgMhjBA6NHLvJdiVUKc2Q1bfGjt6JH33rzR+2ruR60tGfA
+         Cq/weGopehcSZuS0ZmUJj/VRwSlvbQyLnR6tC7L5pFVbV+4wsWEc0EbE8naM10QOiGtl
+         D2BhdcMGfpQWOyf949WiopwvZGag41jU5I5VmlGz26Ba7WPEf8N1E0XD2Oyr8y7perSb
+         1Pniz9ZDLXkMu6jYHeAuSu+c9VfNkVE/FWdvdrLqKHvEZCGs3DfbPsJHhjArO7PdKJEi
+         cvDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728490146; x=1729094946;
+        d=1e100.net; s=20230601; t=1728490149; x=1729094949;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4os8DmpWomyhdXT3uIE5sI0/fikMzrPBJolJZzSSPQ=;
-        b=Zn1rhkS8/HmdfmR8C1dEIFwdpQVM0V4LirzGsuFemwRLgWUbjL6nJV64fxOjHZkF9R
-         gArwceDpJBJGLv6+ZHE6NpDNgt33+AagxJDmBpqvJLLD8uxz0ztg1Jg0WkZtWq3wRiGC
-         uaqwZGOGzSuTWOcQWCchSwG+K+QgAUDlVOrnCNH66UzqDS98CRQDZx+GQ5sakPojG7cY
-         3kpDh9aR/Xk44nTpxJrxh381JSyqMUUOnH0hW6tsJS8GeQxGVMv7bHHIwXskz0pUvbin
-         IkTZlShAI1H2nhHVgSYkVkSu69DJy+5ZsB7vzJFl2KHhE+nXvpz2f3CXL+qRAu8VlmkT
-         2mzw==
-X-Gm-Message-State: AOJu0Ywcnpwvmswz06UR1KnTTqYTA7w4EXbu+MuS7DZiX/cJi0/kBdTr
-	lmUIBtJNxR7asWw4+lWasSIzolr/HJW/tNSgCHChzKgzOiJIP89eXSDJzxklFiiz4izpSFLM4wo
-	JgJoupxFYDAnuSRWTAMC1RB4le/nk/4ywkjxrsZm6pLQ6W8rjIvGgY2IBpy98PTuHK6NN+y1hfk
-	6KNHI0v79v3J4/XDD+ryaq838k+RyEIQ==
-X-Google-Smtp-Source: AGHT+IFT6IBvqDFvd1nh9Nvp19An6mvh9GEkIy5aq6tG0DxKt0GfrpuME+IFqFwS7fy8QSz4NyDyDfDy
+        bh=NGJVSpQBdEJnufx8hCONnOeuil0ovqsMOkm2dztukRI=;
+        b=N+VC1TwirDl4MqiX89EPGmfSsnbRvLGB9rn6extbcxjpfZ7eZeMCZNgLOIkvZq6OT1
+         TqZMCbaJXHSvAgK4Vj7w5/3n26yNKT1jhE4m+CPiiNbtJrILJLib0iWxXTY5kuN3Ryd2
+         SLpiQLmRv9JufkDYQSxpj6LpZI1qUp9z5Rd6Xs5sqZoWtkgjKIaXd8bcoHLqZl3xgYdd
+         V0q+9qPiBdaYX44HM3yzLv5LkU2rf9ic9iTHKos99LGkErXfYbco1rJlAfuee2niBBlG
+         5Dj0ynkVQrEjAMcSLVG4wgI/8sct/a/XnmYTnxjjJL1daNMpjZ0mQR4UUNFja2w9+vVW
+         cf+A==
+X-Gm-Message-State: AOJu0YyWnC1KQihe4NeJJLCyUnRm8FNnuN4LS9fe/aASncg/kcbvShcN
+	neiU0EdUBSWR3Eha3lgAHjgySvLdy0fKS5tmeO2e/TFaEGQJWh+fTUVVIa+w6oMxH5GEgSNNnB3
+	R37e5ep0yEEINGoas6dycdyLI7kQCVVwOIUhjuiQ/6V8lMTORDSJzTL8s3CTU5MYRzRAue2EAWk
+	Suw6dnCZBIn9oZLzuRNrN8Z4LH0ec/Hg==
+X-Google-Smtp-Source: AGHT+IGcrpMuY+JUdG2304e6zDFXCrIjHXd1oEUvOKqh9gm+2UjFx6EJkS5NZtUvSSlBsb3U+IRyhrgW
 X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a25:850d:0:b0:e25:5cb1:77d8 with SMTP id
- 3f1490d57ef6-e28fe4edeb1mr2566276.6.1728490146127; Wed, 09 Oct 2024 09:09:06
+ (user=ardb job=sendgmr) by 2002:a5b:b86:0:b0:e0e:8b26:484e with SMTP id
+ 3f1490d57ef6-e28fe516b5amr2248276.8.1728490148421; Wed, 09 Oct 2024 09:09:08
  -0700 (PDT)
-Date: Wed,  9 Oct 2024 18:04:40 +0200
+Date: Wed,  9 Oct 2024 18:04:41 +0200
 In-Reply-To: <20241009160438.3884381-7-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,14 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241009160438.3884381-7-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1584; i=ardb@kernel.org;
- h=from:subject; bh=iWMVWWds+djQXEXyMG9PXtB+asvAc5L9HBTrJQ9xUI0=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ1t5Qzb+5vWNIRfeP0j+K0038QHKYoJW6Ocbk1xPSMu9
- /ZLNUtyRykLgxgHg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZjIlByGPzxHlDuFHVdUrt/r
- MSct7e16de7eyB6v8DvPj7HsC2gs3MrwT9XpV2I1e25o/5H0axwpbNmz58ruzF5mZerQszMwWMW EFwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=870; i=ardb@kernel.org;
+ h=from:subject; bh=2aGbXNWak6ut+XUg0ikYbMbWC3UWCn0/S+aA/QUouf0=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ1t5azmxVvPswZHXo+eZV99ILxaoHCZkO2ShWG1fzZfj
+ dj+ce7DjlIWBjEOBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjARy+2MDA/ZrgbNPbtsYlDP
+ rOq9G7Q6V597L3Jqq9sCbs3/wpEGh5MYGb78MV6wNolJSO21T0+OoIGEyFzrXQ6zdnhMFmFb/nZ dCgcA
 X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241009160438.3884381-8-ardb+git@google.com>
-Subject: [PATCH v3 1/5] x86/pvh: Call C code via the kernel virtual mapping
+Message-ID: <20241009160438.3884381-9-ardb+git@google.com>
+Subject: [PATCH v3 2/5] x86/pvh: Use correct size value in GDT descriptor
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ard Biesheuvel <ardb@kernel.org>, Jason Andryuk <jason.andryuk@amd.com>, 
@@ -90,45 +90,29 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Calling C code via a different mapping than it was linked at is
-problematic, because the compiler assumes that RIP-relative and absolute
-symbol references are interchangeable. GCC in particular may use
-RIP-relative per-CPU variable references even when not using -fpic.
+The limit field in a GDT descriptor is an inclusive bound, and therefore
+one less than the size of the covered range.
 
-So call xen_prepare_pvh() via its kernel virtual mapping on x86_64, so
-that those RIP-relative references produce the correct values. This
-matches the pre-existing behavior for i386, which also invokes
-xen_prepare_pvh() via the kernel virtual mapping before invoking
-startup_32 with paging disabled again.
-
-Fixes: 7243b93345f7 ("xen/pvh: Bootstrap PVH guest")
-Tested-by: Jason Andryuk <jason.andryuk@amd.com>
 Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
+Tested-by: Jason Andryuk <jason.andryuk@amd.com>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/x86/platform/pvh/head.S | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/x86/platform/pvh/head.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index 64fca49cd88f..ce4fd8d33da4 100644
+index ce4fd8d33da4..5a196fb3ebd8 100644
 --- a/arch/x86/platform/pvh/head.S
 +++ b/arch/x86/platform/pvh/head.S
-@@ -172,7 +172,14 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	movq %rbp, %rbx
- 	subq $_pa(pvh_start_xen), %rbx
- 	movq %rbx, phys_base(%rip)
--	call xen_prepare_pvh
-+
-+	/* Call xen_prepare_pvh() via the kernel virtual mapping */
-+	leaq xen_prepare_pvh(%rip), %rax
-+	subq phys_base(%rip), %rax
-+	addq $__START_KERNEL_map, %rax
-+	ANNOTATE_RETPOLINE_SAFE
-+	call *%rax
-+
- 	/*
- 	 * Clear phys_base.  __startup_64 will *add* to its value,
- 	 * so reset to 0.
+@@ -224,7 +224,7 @@ SYM_CODE_END(pvh_start_xen)
+ 	.section ".init.data","aw"
+ 	.balign 8
+ SYM_DATA_START_LOCAL(gdt)
+-	.word gdt_end - gdt_start
++	.word gdt_end - gdt_start - 1
+ 	.long _pa(gdt_start) /* x86-64 will overwrite if relocated. */
+ 	.word 0
+ SYM_DATA_END(gdt)
 -- 
 2.47.0.rc0.187.ge670bccf7e-goog
 
