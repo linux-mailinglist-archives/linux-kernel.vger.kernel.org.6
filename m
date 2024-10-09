@@ -1,415 +1,256 @@
-Return-Path: <linux-kernel+bounces-356204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4647C995DDB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA8C995DE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A555B24E75
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02B1284E0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1044B2A1C9;
-	Wed,  9 Oct 2024 02:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9XIHB99"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463EF13AA3F;
+	Wed,  9 Oct 2024 02:35:26 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D341A84
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 02:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3863987D;
+	Wed,  9 Oct 2024 02:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728441156; cv=none; b=sm0I6WptgYP1f8Snig+HRHJrlzUEibLotl4RQd7MR9evxF2KUph0sJyROMnRBnmTR0itKuesDIFDBSdVYPMLYrsamRGek9l4Vm/4p+Z1Etl3tf54+v0hsWXFSN2ILu3sI37xFKCWh8PwzWNL+vl2lqegj583o6ArqRvZ6d9g6pk=
+	t=1728441325; cv=none; b=FZmH3vdEibSg2Hv3hW+4iEK9g7zNZLbzr/tTVhR77M+4S5pxbdUnevXjNZZqRLcfU/qQj2tJhVLmMeRIMYo1GGlI3AdYpUiM/HX/ALquQ8ko8for9zFUFUfTgOUvkLQ8SkOSkT2SA7HuI7cQ9Dv9e0reYkF/PqBTtLgrRsdp6j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728441156; c=relaxed/simple;
-	bh=IXQoNicX38coNLWQHjkrNmqSpNRxLZQTT6BkS0TFfgQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WpeFO75TIAXGBGN0BiP8hKTFFyrDbYKfIyeMMWPdF+msDNawnLX1RnSdGFCteo+vV0veWxUBP2Jz6GUmxyWMAEbuC5P6aRx1kLuQ4c2m1WfJKi1iuKYdJ6vWVB6Sbg97yIhfZzXTN5kDhOL7Bw5p5ZJOtTrer1OLs36AWP9Zhdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9XIHB99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C08C4CEC7;
-	Wed,  9 Oct 2024 02:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728441155;
-	bh=IXQoNicX38coNLWQHjkrNmqSpNRxLZQTT6BkS0TFfgQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Y9XIHB99Ba72WLo4UuH1314K3SizB1YNOFXPPmnpMUQ/TthEjCbVa6R5Qqgyd9jIT
-	 80Bv5CR7UWO+pu2kmY0n4umrFUaR7xgEwk6jvxlA7Wou20bxkkGtkuQnkDqp0D/txx
-	 WpDe8a7DJdRNPX0QNmIhliDmFrqpK1SpZtOuQ3FyVZMnkUw4SUE3iJdhjb0MONWbQq
-	 Qgk04vN3biZ2FAsBiWpFMGrpUEa7HjXgAw8TmKtn29Cyl0kA7QS0W5o7hClcPUaPLG
-	 bi6EYWuvjxl2q5tyyAc2/fCB/3UUtkPD80xN9jez0byR0PXuMic24bE6AAIcW6xlz3
-	 yFG6zms5FiOCg==
-Message-ID: <ed77a5ab-d572-42d7-b9db-b5f13717e083@kernel.org>
-Date: Wed, 9 Oct 2024 10:32:32 +0800
+	s=arc-20240116; t=1728441325; c=relaxed/simple;
+	bh=nRRihuPzJq0kR+Rh+ICjC75z6qbxDpDgcLw/iXAzy18=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IZBnslyw67VA97gQ8n+e1n6ExpT+1TdSFbkoTJZ2vua8j1/CYrZjYcIvr9IA6YXnlOoIAd18RsULvixYNGa9VEd9hSR71luGR/gY9nP+1fp2UvN1xXaGlzdSdtp3qaOyZHex17164ySQslxztUw88jyhvWVncRqtcCEQOySB44g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 1d83d6b685e711efa216b1d71e6e1362-20241009
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
+	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI
+	GTI_FG_IT, GTI_RG_INFO, GTI_FG_SER, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:3f2c9a1f-996c-4c0e-adc9-44f6b9e15150,IP:15,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-5
+X-CID-INFO: VERSION:1.1.38,REQID:3f2c9a1f-996c-4c0e-adc9-44f6b9e15150,IP:15,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:e7f1f0ed4e4f17f933995a3b846ba60e,BulkI
+	D:2409062205428B690IWE,BulkQuantity:30,Recheck:0,SF:44|64|66|24|17|19|102,
+	TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_OBB,TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,
+	TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 1d83d6b685e711efa216b1d71e6e1362-20241009
+X-User: duanchenghao@kylinos.cn
+Received: from [172.30.80.21] [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1355323391; Wed, 09 Oct 2024 10:35:15 +0800
+Message-ID: <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
+Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+From: duanchenghao <duanchenghao@kylinos.cn>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Hongyu Xie <xy521521@gmail.com>, gregkh@linuxfoundation.org, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz, 
+ stanley_chang@realtek.com, tj@kernel.org, Hongyu Xie <xiehongyu1@kylinos.cn>
+Date: Wed, 09 Oct 2024 10:35:05 +0800
+In-Reply-To: <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
+References: <20240906030548.845115-1-duanchenghao@kylinos.cn>
+	 <1725931490447646.3.seg@mailgw.kylinos.cn>
+	 <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
+	 <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
+	 <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
+	 <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
+	 <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
+	 <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
+	 <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [PATCH v4] f2fs: introduce device aliasing file
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20241008180515.3198262-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241008180515.3198262-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2024/10/9 2:05, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> F2FS should understand how the device aliasing file works and support
-> deleting the file after use. A device aliasing file can be created by
-> mkfs.f2fs tool and it can map the whole device with an extrent, not
-> using node blocks. The file space should be pinned and normally used for
-> read-only usages.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v4: added file pinning check in sanity check
-> v3: merged Chao's extent cache sanity check.
->      prevented device aliasing support with noextent mount option
-> v2: changed the position of f2fs_destroy_extent_tree() only for device
->      aliasing files
-> ---
->   fs/f2fs/data.c         |  5 +++++
->   fs/f2fs/extent_cache.c | 45 +++++++++++++++++++++++++++++++++++++++++-
->   fs/f2fs/f2fs.h         |  5 +++++
->   fs/f2fs/file.c         | 36 +++++++++++++++++++++++++++++----
->   fs/f2fs/inode.c        | 19 +++++++++++++++++-
->   fs/f2fs/super.c        |  4 ++++
->   fs/f2fs/sysfs.c        |  2 ++
->   7 files changed, 110 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index b94cf6eea2f9..385b46e62ede 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3441,6 +3441,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->   
->   	if (!f2fs_lookup_read_extent_cache_block(inode, index,
->   						 &dn.data_blkaddr)) {
-> +		if (IS_DEVICE_ALIASING(inode)) {
-> +			err = -ENODATA;
-> +			goto out;
-> +		}
-> +
->   		if (locked) {
->   			err = f2fs_reserve_block(&dn, index);
->   			goto out;
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 62ac440d9416..019c1f7b7fa5 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -24,6 +24,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
->   	struct extent_info ei;
-> +	int devi;
->   
->   	get_read_extent_info(&ei, i_ext);
->   
-> @@ -38,7 +39,36 @@ bool sanity_check_extent_cache(struct inode *inode, struct page *ipage)
->   			  ei.blk, ei.fofs, ei.len);
->   		return false;
->   	}
-> -	return true;
-> +
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		return true;
-> +
-> +	for (devi = 0; devi < sbi->s_ndevs; devi++) {
-> +		if (FDEV(devi).start_blk != ei.blk ||
-> +				FDEV(devi).end_blk != ei.blk + ei.len - 1)
-> +			continue;
-> +
-> +		if (devi == 0) {
-> +			f2fs_warn(sbi,
-> +			    "%s: inode (ino=%lx) is an alias of meta device",
-> +			    __func__, inode->i_ino);
-> +			return false;
-> +		}
-> +
-> +		if (bdev_is_zoned(FDEV(devi).bdev)) {
-> +			f2fs_warn(sbi,
-> +			    "%s: device alias inode (ino=%lx)'s extent info "
-> +			    "[%u, %u, %u] maps to zoned block device",
-> +			    __func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
-> +			return false;
-> +		}
-> +		return true;
-> +	}
-> +
-> +	f2fs_warn(sbi, "%s: device alias inode (ino=%lx)'s extent info "
-> +			"[%u, %u, %u] is inconsistent w/ any devices",
-> +			__func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
-> +	return false;
->   }
->   
->   static void __set_extent_info(struct extent_info *ei,
-> @@ -76,6 +106,9 @@ static bool __init_may_extent_tree(struct inode *inode, enum extent_type type)
->   
->   static bool __may_extent_tree(struct inode *inode, enum extent_type type)
->   {
-> +	if (IS_DEVICE_ALIASING(inode) && type == EX_READ)
-> +		return true;
-> +
->   	/*
->   	 * for recovered files during mount do not create extents
->   	 * if shrinker is not registered.
-> @@ -401,6 +434,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
->   	if (atomic_read(&et->node_cnt) || !ei.len)
->   		goto skip;
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		et->largest = ei;
-> +		goto skip;
-> +	}
-> +
->   	en = __attach_extent_node(sbi, et, &ei, NULL,
->   				&et->root.rb_root.rb_node, true);
->   	if (en) {
-> @@ -463,6 +501,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
->   		goto out;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		ret = false;
-> +		goto out;
-> +	}
-> +
->   	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
->   	if (!en)
->   		goto out;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 33f5449dc22d..b6ba22a1da47 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -213,6 +213,7 @@ struct f2fs_mount_info {
->   #define F2FS_FEATURE_CASEFOLD			0x00001000
->   #define F2FS_FEATURE_COMPRESSION		0x00002000
->   #define F2FS_FEATURE_RO				0x00004000
-> +#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
->   
->   #define __F2FS_HAS_FEATURE(raw_super, mask)				\
->   	((raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -3046,6 +3047,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->   #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
->   #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
->   #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
-> +#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
+Hi Alan,
 
-Is there any way to know which inode is device-alias one? maybe
-we can export this flag to userspace via .fileattr_get? or via
-newly introduced ioctl interface?
+These are two patches, each addressing the same issue. The current
+patch is a direct solution to the problem of the interrupt bottom half
+being frozen. The patch you replied with is another, alternative
+solution to the same problem. Please review which solution is more
+suitable, or if there are any other revised proposals.
 
->   
->   #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
->   
-> @@ -3061,6 +3063,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->   /* Flags that are appropriate for non-directories/regular files. */
->   #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
->   
-> +#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
-> +
->   static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
->   {
->   	if (S_ISDIR(mode))
-> @@ -4510,6 +4514,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
->   F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
->   F2FS_FEATURE_FUNCS(compression, COMPRESSION);
->   F2FS_FEATURE_FUNCS(readonly, RO);
-> +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
->   
->   #ifdef CONFIG_BLK_DEV_ZONED
->   static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 99903eafa7fe..f2d2d84d025b 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -725,6 +725,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   
->   	trace_f2fs_truncate_blocks_enter(inode, from);
->   
-> +	if (IS_DEVICE_ALIASING(inode) && from) {
-> +		err = -EINVAL;
-> +		goto out_err;
-> +	}
-> +
->   	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
->   
->   	if (free_from >= max_file_blocks(inode))
-> @@ -739,6 +744,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   		goto out;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
-> +		struct extent_info ei = et->largest;
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < ei.len; i++)
-> +			f2fs_invalidate_blocks(sbi, ei.blk + i);
-> +
-> +		dec_valid_block_count(sbi, inode, ei.len);
-> +		f2fs_update_time(sbi, REQ_TIME);
-> +
-> +		f2fs_put_page(ipage, 1);
-> +		goto out;
-> +	}
-> +
->   	if (f2fs_has_inline_data(inode)) {
->   		f2fs_truncate_inline_inode(inode, ipage, from);
->   		f2fs_put_page(ipage, 1);
-> @@ -774,7 +794,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   	/* lastly zero out the first data page */
->   	if (!err)
->   		err = truncate_partial_data_page(inode, from, truncate_page);
-> -
-> +out_err:
->   	trace_f2fs_truncate_blocks_exit(inode, err);
->   	return err;
->   }
-> @@ -992,7 +1012,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->   		return -EPERM;
->   
->   	if ((attr->ia_valid & ATTR_SIZE)) {
-> -		if (!f2fs_is_compress_backend_ready(inode))
-> +		if (!f2fs_is_compress_backend_ready(inode) ||
-> +				IS_DEVICE_ALIASING(inode))
->   			return -EOPNOTSUPP;
->   		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
->   			!IS_ALIGNED(attr->ia_size,
-> @@ -1860,7 +1881,7 @@ static long f2fs_fallocate(struct file *file, int mode,
->   		return -EIO;
->   	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
->   		return -ENOSPC;
-> -	if (!f2fs_is_compress_backend_ready(inode))
-> +	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
->   		return -EOPNOTSUPP;
->   
->   	/* f2fs only support ->fallocate for regular file */
-> @@ -3296,6 +3317,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
->   	struct f2fs_inode_info *fi = F2FS_I(inode);
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   
-> +	if (IS_DEVICE_ALIASING(inode))
-> +		return -EINVAL;
-> +
->   	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
->   		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
->   			  __func__, inode->i_ino, fi->i_gc_failures);
-> @@ -3326,6 +3350,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->   	if (f2fs_readonly(sbi->sb))
->   		return -EROFS;
->   
-> +	if (!pin && IS_DEVICE_ALIASING(inode))
-> +		return -EOPNOTSUPP;
-> +
->   	ret = mnt_want_write_file(filp);
->   	if (ret)
->   		return ret;
-> @@ -4764,7 +4791,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
->   	else
->   		return 0;
->   
-> -	map.m_may_create = true;
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		map.m_may_create = true;
->   	if (dio) {
->   		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
->   						inode->i_write_hint);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 1ed86df343a5..e2d30fc79644 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -372,6 +372,19 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->   		return false;
->   	}
->   
-> +	if (fi->i_flags & F2FS_DEVICE_ALIAS_FL) {
 
-Trivial cleanup.
+Please review the patch I mentioned:
+https://lore.kernel.org/all/0a4dc46ae767c28dd207ae29511ede747f05539a.camel@=
+kylinos.cn/
 
-IS_DEVICE_ALIASING(inode)
+Duanchenghao
 
-Thanks,
-
-> +		if (!f2fs_sb_has_device_alias(sbi)) {
-> +			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
-> +				  __func__, inode->i_ino);
-> +			return false;
-> +		}
-> +		if (!f2fs_is_pinned_file(inode)) {
-> +			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but is not pinned",
-> +				  __func__, inode->i_ino);
-> +			return false;
-> +		}
-> +	}
-> +
->   	return true;
->   }
->   
-> @@ -823,7 +836,8 @@ void f2fs_evict_inode(struct inode *inode)
->   	f2fs_bug_on(sbi, get_dirty_pages(inode));
->   	f2fs_remove_dirty_inode(inode);
->   
-> -	f2fs_destroy_extent_tree(inode);
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		f2fs_destroy_extent_tree(inode);
->   
->   	if (inode->i_nlink || is_bad_inode(inode))
->   		goto no_delete;
-> @@ -879,6 +893,9 @@ void f2fs_evict_inode(struct inode *inode)
->   		goto retry;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode))
-> +		f2fs_destroy_extent_tree(inode);
-> +
->   	if (err) {
->   		f2fs_update_inode_page(inode);
->   		if (dquot_initialize_needed(inode))
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index fc2c586c7619..95097498b544 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -834,6 +834,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   			set_opt(sbi, READ_EXTENT_CACHE);
->   			break;
->   		case Opt_noextent_cache:
-> +			if (F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_DEVICE_ALIAS)) {
-> +				f2fs_err(sbi, "device aliasing requires extent cache");
-> +				return -EINVAL;
-> +			}
->   			clear_opt(sbi, READ_EXTENT_CACHE);
->   			break;
->   		case Opt_noinline_data:
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index c56e8c873935..e51304bc65ea 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -1313,6 +1313,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
->   F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
->   F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
->   F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
-> +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
->   
->   static struct attribute *f2fs_sb_feat_attrs[] = {
->   	ATTR_LIST(sb_encryption),
-> @@ -1329,6 +1330,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
->   	ATTR_LIST(sb_casefold),
->   	ATTR_LIST(sb_compression),
->   	ATTR_LIST(sb_readonly),
-> +	ATTR_LIST(sb_device_alias),
->   	NULL,
->   };
->   ATTRIBUTE_GROUPS(f2fs_sb_feat);
+=E5=9C=A8 2024-09-24=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 09:38 -0400=EF=BC=
+=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
+> On Mon, Sep 23, 2024 at 04:00:35PM +0800, duanchenghao wrote:
+> > Hi Alan,
+> >=20
+> > Do you think this plan is feasible, or is there any unclear part in
+> > my
+> > description that needs to be supplemented?
+>=20
+> I apologize for not getting back to you earlier -- I've been
+> incredibly=20
+> busy during the last few weeks.
+>=20
+> I still haven't had time to go over this throroughly.=C2=A0 If I don't=
+=20
+> respond by the end of this week, remind me again.
+>=20
+> Alan Stern
+>=20
+> > duanchenghao
+> >=20
+> >=20
+> > =E5=9C=A8 2024-09-14=E6=98=9F=E6=9C=9F=E5=85=AD=E7=9A=84 10:43 +0800=EF=
+=BC=8CHongyu Xie=E5=86=99=E9=81=93=EF=BC=9A
+> > > From: Hongyu Xie <xiehongyu1@kylinos.cn>
+> > >=20
+> > >=20
+> > > Hi Alan,
+> > > On 2024/9/12 23:00, Alan Stern wrote:
+> > > > On Thu, Sep 12, 2024 at 11:21:26AM +0800, duanchenghao wrote:
+> > > > > =E5=9C=A8 2024-09-11=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 10:40 -0=
+400=EF=BC=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
+> > > > > > On Tue, Sep 10, 2024 at 05:36:56PM +0800, duanchenghao
+> > > > > > wrote:
+> > > > > > > S4 wakeup restores the image that was saved before the
+> > > > > > > system
+> > > > > > > entered
+> > > > > > > the S4 sleep state.
+> > > > > > >=20
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 S4 waking up from hibernation
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 kernel initialization
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 |
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 v
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 freeze user task and kernel thread
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 |
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 v
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 load saved image
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 |
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 v
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 freeze the peripheral device and con=
+troller
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0 (Check the HCD_FLAG_WAKEUP_ PENDING =
+flag of the USB.
+> > > > > > > If
+> > > > > > > it is
+> > > > > > > set,
+> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return to EBUSY and do not per=
+form the following
+> > > > > > > restore
+> > > > > > > image.)
+> > > > > >=20
+> > > > > > Why is the flag set at this point?=C2=A0 It should not be; the
+> > > > > > device and
+> > > > > > controller should have been frozen with wakeup disabled.
+> > > > > >=20
+> > > > > This is check point, not set point.
+> > > >=20
+> > > > Yes, I know that.=C2=A0 But when the flag was checked, why did the
+> > > > code
+> > > > find
+> > > > that it was set?=C2=A0 The flag should have been clear.
+> > > Maybe duanchenghao means this,
+> > > freeze_kernel_threads
+> > > load_image_and_restore
+> > > =C2=A0=C2=A0 suspend roothub
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 interrupt occurred
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 usb_hcd_resume_root_hub
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 set
+> > > HCD_FLAG_WAKEUP_PENDING
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 queue_work // freezed
+> > > =C2=A0=C2=A0 suspend pci
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 return -EBUSY=C2=A0 because HCD_FLAG_WAKEUP_=
+PENDING
+> > >=20
+> > > So s4 resume failed.
+> > > >=20
+> > > > > > Is your problem related to the one discussed in this email
+> > > > > > thread?
+> > > > > >=20
+> > > > > > https://lore.kernel.org/linux-usb/d8600868-6e4b-45ab-b328-852b6=
+ac8ecb5@rowland.harvard.edu/
+> > > > > >=20
+> > > > > > Would the suggestion I made there -- i.e., have the xhci-
+> > > > > > hcd
+> > > > > > interrupt handler skip calling usb_hcd_resume_root_hub() if
+> > > > > > the
+> > > > > > root
+> > > > > > hub
+> > > > > > was suspended with wakeup =3D 0 -- fix your problem?
+> > > > >=20
+> > > > > Skipping usb_hcd_resume_root_hub() should generally be
+> > > > > possible,
+> > > > > but
+> > > > > it's important to ensure that normal remote wakeup
+> > > > > functionality
+> > > > > is not
+> > > > > compromised. Is it HUB_SUSPEND that the hub you are referring
+> > > > > to
+> > > > > is in
+> > > > > a suspended state?
+> > > >=20
+> > > > I don't understand this question.=C2=A0 hub_quiesce() gets called
+> > > > with
+> > > > HUB_SUSPEND when the hub enters a suspended state.
+> > > >=20
+> > > > You are correct about the need for normal remote wakeup to work
+> > > > properly.=C2=A0 The interrupt handler should skip calling
+> > > > usb_hcd_resume_root_hub() for port connect or disconnect
+> > > > changes
+> > > > and for
+> > > > port overcurrent changes (when the root hub is suspended with
+> > > > wakeup =3D
+> > > > 0).=C2=A0 But it should _not_ skip calling usb_hcd_resume_root_hub(=
+)
+> > > > for
+> > > > port
+> > > > resume events.
+> > > >=20
+> > > > Alan Stern
+> > > >=20
+> > >=20
+> > > Hongyu Xie
+> >=20
 
 
