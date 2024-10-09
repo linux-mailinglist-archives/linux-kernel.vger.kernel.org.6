@@ -1,191 +1,194 @@
-Return-Path: <linux-kernel+bounces-357859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA3299770F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72801997712
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415261F21536
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33EA7282E6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E52B1E1A14;
-	Wed,  9 Oct 2024 20:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F7A1E25FB;
+	Wed,  9 Oct 2024 20:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hv48pitJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="dNYyzfgE"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753C11C9B99;
-	Wed,  9 Oct 2024 20:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46941E2316;
+	Wed,  9 Oct 2024 20:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507409; cv=none; b=l446kOWZaVBuLsvuJ8JmVydCmZd1EccGdQtEd5cpBMzZlQqyNDwclGj0RcXcL1VoD9VRcZBF5wuCZ2QEjT0ebLte+1I3qYbxbTBK0wL0CznQJ0QwT5I2iwcGVUF3flmRjt6FapyCxcMLimAhtHeBJp1JIEkH/NNdEWLVoBk7Xz8=
+	t=1728507431; cv=none; b=c4MqLAfq0hsYO01y0nmzf+4XDCLs3z++RSGpZRntQ0fk/WrG4tF+aCIJe8xP0cvjP4rSrO1KbiOP4T3/+eisDrs4WKoq0K8AI/hnvLop7QrCR9QqzWaQn/VHSZPqReSO+TlV7le5xHMusdhWgxcAp2+AShNhuppSg/ThcHpez+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507409; c=relaxed/simple;
-	bh=MQn5pIzSNKNxCJ4TyVpTFxXGMIrdzloKUY4LYoTkavM=;
+	s=arc-20240116; t=1728507431; c=relaxed/simple;
+	bh=OhXzzYRz/FznOqT31/spFj8IGR43NqoxMfupYzzSpyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fkOzyCidkMo0umIZ2wsbBBA/1DHCwjN/exo01kUh7w9AvGzzUcolDQ5Qp+VW6Qayjx+b3oa50LAd8bZl0ZDTNbuIEVnUC4pdEv+/FFRRMdX+uQyJEx5TG2nLjwXQPaFsklDicBKU9+SqtTkx8jwkPChF8JbPlQ5mogBCZgBQWWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hv48pitJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC7C8C4CEC3;
-	Wed,  9 Oct 2024 20:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728507409;
-	bh=MQn5pIzSNKNxCJ4TyVpTFxXGMIrdzloKUY4LYoTkavM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hv48pitJTSx3GjCMKb0KzKzJMd10mBWDtGD0BpbOl00bN9oI7iY8I8A1vpG15Q1z3
-	 VL0OKIwqedK5yWpWdK0BEHSnux/X+LleTMZO11lGT5Wmsdxz4tuC/mVAzQFfk5kp8a
-	 qhizYvyIb5Y4wQkSH5woJJpMzp+cA3JQw7Nzf/+9cuprTjukwTlf+TStoSwzhSMlAz
-	 nb0MD9IMbswmWR5eGtj55eocrs/poh6BT4OECVN1au3+lPzCH22oWenlCVlBfFOe4V
-	 kjkS3GHtjVv5iM+Og91tWOMszzKGg7XtRuFT00AXWiDzXZ6VIaB+X6oBGddzgjgDAD
-	 fh038QupYP+4g==
-Date: Wed, 9 Oct 2024 22:56:46 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH 2/3] rcu/nocb: Fix rcuog wake-up from offline softirq
-Message-ID: <ZwbuDj_tjpWzQDhL@pavilion.home>
-References: <20241002145738.38226-1-frederic@kernel.org>
- <20241002145738.38226-3-frederic@kernel.org>
- <CAEXW_YQSBwGME1+vKHSM8+svtosunk-QO2oMygFKgapPE3b45w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ds5C4APxLGEL1vArKk2AJHgQjmJDXojkTUa4mbh5ctInm145VEQauoZ2g5bN/1eZw27b5wDeE2wHTfczQB2v/x07hMOK2pvDOzSEszfK+Kydk7mu+ekuPHCY6AZ6itnsQeyevQkK9f+ClDS3H/JSUe5N83jZiu2EGL7pEB4h/xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=dNYyzfgE; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XP4vP6gznz9tFG;
+	Wed,  9 Oct 2024 22:57:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1728507426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZXtC4ki0Cgt4wUQPkF8ctVO2OLggLPi73aR2RRs0kuQ=;
+	b=dNYyzfgEJYLByOdtBexIuEd06qlE90YKpABTagw/Uiro6Ddaj7wXXla3tIfWXLI18n0Mw0
+	VZNHUC4WFf07QXEXKDA0oApOZsfu7yfFYw2JTxBe4kiCK1UnkWmo1/n+Do4IAsIXoYJVQD
+	9VW/4WKGajmxvnGLNUy1WeoofurrKLTUkIiy1wYFo1z0WM04j0BrLzXGlv/BYbUabymtHY
+	mDrA4+mrWtomfsjFs4Cs+qv/B1jDPoTyjwQKy5NH1D75bbMifC5bzqUQ6nG28dTnlcd5wO
+	iPjABS10QAhcqdwlZJR8/+mGzPEv1jNZmR3hzF/JnWGIidZCRtUFsq3cpnxPdw==
+Date: Thu, 10 Oct 2024 07:56:53 +1100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <87msjd9j7n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d55dcuzddrcqkjin"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEXW_YQSBwGME1+vKHSM8+svtosunk-QO2oMygFKgapPE3b45w@mail.gmail.com>
+In-Reply-To: <87msjd9j7n.fsf@trenco.lwn.net>
 
-Le Wed, Oct 09, 2024 at 02:23:15PM -0400, Joel Fernandes a écrit :
-> Hi Frederic,
-> 
-> On Wed, Oct 2, 2024 at 10:57 AM Frederic Weisbecker <frederic@kernel.org> wrote:
-> >
-> > After a CPU has set itself offline and before it eventually calls
-> > rcutree_report_cpu_dead(), there are still opportunities for callbacks
-> > to be enqueued, for example from an IRQ. When that happens on NOCB, the
-> > rcuog wake-up is deferred through an IPI to an online CPU in order not
-> > to call into the scheduler and risk arming the RT-bandwidth after
-> > hrtimers have been migrated out and disabled.
-> >
-> > But performing a synchronized IPI from an IRQ is buggy as reported in
-> > the following scenario:
-> >
-> >         WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_single
-> >         Modules linked in: rcutorture torture
-> >         CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00012-g9139f93209d1 #1
-> >         Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
-> >         RIP: 0010:smp_call_function_single
-> >         <IRQ>
-> >         swake_up_one_online
-> >         __call_rcu_nocb_wake
-> >         __call_rcu_common
-> >         ? rcu_torture_one_read
-> >         call_timer_fn
-> >         __run_timers
-> >         run_timer_softirq
-> >         handle_softirqs
-> >         irq_exit_rcu
-> 
-> This call stack seems a bit confusing with the context of the first
-> paragraph. In the beginning of changelog, you had mentioned the issue
-> happens from IRQ, but in fact the callstack here is from softirq
-> right? The IRQ issue should already be resolved in current code
-> AFAICS.
 
-Indeed, I need to s/IRQ/softirq for clarity.
+--d55dcuzddrcqkjin
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> >         ? tick_handle_periodic
-> >         sysvec_apic_timer_interrupt
-> >         </IRQ>
-> >
-> > The periodic tick must be shutdown when the CPU is offline, just like is
-> > done for oneshot tick. This must be fixed but this is not enough:
-> > softirqs can happen on any hardirq tail and reproduce the above scenario.
-> >
-> > Fix this with introducing a special deferred rcuog wake up mode when the
-> > CPU is offline. This deferred wake up doesn't arm any timer and simply
-> > wait for rcu_report_cpu_dead() to be called in order to flush any
-> > pending rcuog wake up.
+On 2024-10-09, Jonathan Corbet <corbet@lwn.net> wrote:
+> luca.boccassi@gmail.com writes:
+>=20
+> > As discussed at LPC24, add an ioctl with an extensible struct
+> > so that more parameters can be added later if needed. Start with
+> > returning pid/tgid/ppid and creds unconditionally, and cgroupid
+> > optionally.
+>=20
+> I was looking this over, and a couple of questions came to mind...
+>=20
+> > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+> > ---
+>=20
 > [...]
-> > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> > index a9a811d9d7a3..7ed060edd12b 100644
-> > --- a/kernel/rcu/tree.h
-> > +++ b/kernel/rcu/tree.h
-> > @@ -290,6 +290,7 @@ struct rcu_data {
-> >  #define RCU_NOCB_WAKE_LAZY     2
-> >  #define RCU_NOCB_WAKE          3
-> >  #define RCU_NOCB_WAKE_FORCE    4
-> > +#define RCU_NOCB_WAKE_OFFLINE   5
-> >
-> >  #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
-> >                                         /* For jiffies_till_first_fqs and */
-> > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> > index 2fb803f863da..8648233e1717 100644
-> > --- a/kernel/rcu/tree_nocb.h
-> > +++ b/kernel/rcu/tree_nocb.h
-> > @@ -295,6 +295,8 @@ static void wake_nocb_gp_defer(struct rcu_data *rdp, int waketype,
-> >         case RCU_NOCB_WAKE_FORCE:
-> >                 if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
-> >                         mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
-> > +               fallthrough;
-> > +       case RCU_NOCB_WAKE_OFFLINE:
-> >                 if (rdp_gp->nocb_defer_wakeup < waketype)
-> >                         WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
-> >                 break;
-> > @@ -562,8 +564,16 @@ static void __call_rcu_nocb_wake(struct rcu_data *rdp, bool was_alldone,
-> >         lazy_len = READ_ONCE(rdp->lazy_len);
-> >         if (was_alldone) {
-> >                 rdp->qlen_last_fqs_check = len;
-> > -               // Only lazy CBs in bypass list
-> > -               if (lazy_len && bypass_len == lazy_len) {
-> > +               if (cpu_is_offline(rdp->cpu)) {
-> > +                       /*
-> > +                        * Offline CPUs can't call swake_up_one_online() from IRQs. Rely
-> > +                        * on the final deferred wake-up rcutree_report_cpu_dead()
-> > +                        */
-> > +                       rcu_nocb_unlock(rdp);
-> > +                       wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_OFFLINE,
-> > +                                          TPS("WakeEmptyIsDeferredOffline"));
-> > +               } else if (lazy_len && bypass_len == lazy_len) {
-> 
-> Since the call stack is when softirqs are disabled,  would an
-> alternative fix be (pseudocode):
-> 
-> Change the following in the "if (was_alldone)" block:
-> 
->                if (!irqs_disabled_flags(flags)) {
-> 
-> to:
->                if (!irqs_disabled_flags(flags) && !in_softirq())
-> 
-> ?
-> 
-> That way perhaps an additional RCU_NOCB flag is not needed.
-> 
-> Or does that not work for some reason?
+>=20
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index 80675b6bf884..15cdc7fe4968 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -2,6 +2,7 @@
+> >  #include <linux/anon_inodes.h>
+> >  #include <linux/file.h>
+> >  #include <linux/fs.h>
+> > +#include <linux/cgroup.h>
+> >  #include <linux/magic.h>
+> >  #include <linux/mount.h>
+> >  #include <linux/pid.h>
+> > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, stru=
+ct poll_table_struct *pts)
+> >  	return poll_flags;
+> >  }
+> > =20
+> > +static long pidfd_info(struct task_struct *task, unsigned int cmd, uns=
+igned long arg)
+> > +{
+> > +	struct pidfd_info __user *uinfo =3D (struct pidfd_info __user *)arg;
+> > +	size_t usize =3D _IOC_SIZE(cmd);
+> > +	struct pidfd_info kinfo =3D {};
+> > +	struct user_namespace *user_ns;
+> > +	const struct cred *c;
+> > +	__u64 request_mask;
+> > +
+> > +	if (!uinfo)
+> > +		return -EINVAL;
+> > +	if (usize < sizeof(struct pidfd_info))
+> > +		return -EINVAL; /* First version, no smaller struct possible */
+> > +
+> > +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(reques=
+t_mask)))
+> > +		return -EFAULT;
+>=20
+> You don't check request_mask for unrecognized flags, so user space will
+> not get an error if it puts random gunk there.  That, in turn, can make
+> it harder to add new options in the future.
 
-It works but this forces the wake-up through the timer when a callback is
-enqueued from softirqs. And waking up from the timer is a bit more overhead
-and also added GP delay. It could be this though:
+In fairness, this is how statx works and statx does this to not require
+syscall retries to figure out what flags the current kernel supports and
+instead defers that to stx_mask.
 
-    if (!irqs_disabled_flags(flags) && cpu_online(smp_processor_id()))
+However, I think verifying the value is slightly less fragile -- as long
+as we get a cheap way for userspace to check what flags are supported
+(such as CHECK_FIELDS[1]). It would kind of suck if userspace would have
+to do 50 syscalls to figure out what request_mask values are valid.
 
-Hmm?
+[1]: https://lore.kernel.org/all/20241010-extensible-structs-check_fields-v=
+3-0-d2833dfe6edd@cyphar.com/
 
-Thanks.
-> 
-> thanks,
-> 
->  - Joel
+>=20
+> > +	c =3D get_task_cred(task);
+> > +	if (!c)
+> > +		return -ESRCH;
+>=20
+> [...]
+>=20
+> > +
+> > +	/*
+> > +	 * If userspace and the kernel have the same struct size it can just
+> > +	 * be copied. If userspace provides an older struct, only the bits th=
+at
+> > +	 * userspace knows about will be copied. If userspace provides a new
+> > +	 * struct, only the bits that the kernel knows about will be copied a=
+nd
+> > +	 * the size value will be set to the size the kernel knows about.
+> > +	 */
+> > +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
+> > +		return -EFAULT;
+>=20
+> Which "size value" are you referring to here; I can't see it.
+>=20
+> If user space has a bigger struct, should you perhaps zero-fill the part
+> the kernel doesn't know about?
+>=20
+> > +	return 0;
+> > +}
+>=20
+> Thanks,
+>=20
+> jon
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--d55dcuzddrcqkjin
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZwbuFQAKCRAol/rSt+lE
+b+61AP9z34v88831vNhUGO4J98E8hhrVDOwy/Tb7RXMibZ3xXAEA0s0kMSF5Fhii
+t9QCkSeLpRkv9NQj420kdMg3O+RnUQk=
+=TOuq
+-----END PGP SIGNATURE-----
+
+--d55dcuzddrcqkjin--
 
