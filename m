@@ -1,183 +1,162 @@
-Return-Path: <linux-kernel+bounces-356456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EAF99615D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:47:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACED899615B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B59D1C21E48
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9F82817FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECF8183CD1;
-	Wed,  9 Oct 2024 07:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="o+cdpHiA"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149A3184523;
+	Wed,  9 Oct 2024 07:47:28 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558E4181D00
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3272217C7CA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460060; cv=none; b=PftKz4EEzUhLywuMqv0VEcdfkl+mmIfZzZW4LKz+U8kBfCgro+cC61PET5p0Qn2bGmUcVPBfeueDRsfz5hkwckRg/LmkPP5nRoAGEviKVImd1QPIecwc92SOC3zEtM4hvKI0jo1C2Cujy6ZP9509zDzvz2og6Q/U3+7w//uaJ/8=
+	t=1728460047; cv=none; b=G8nGzRZqvz2ymePonqIlVQebmdkUKW19JuyVqkMAp/gD0O+gcA+EFWSCiDj6EN6i83P421I7WpruQti+VL7+0etuOLQhI9sPJHIT+V3zH6qleuMhaLQnQTxYt1TU1VtNZCVGHuG4pODVFqbn96AtqFiE1IrrTfEj9TTOiOg5zVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460060; c=relaxed/simple;
-	bh=M3yxsY+9PPnN46n9uKc3CclIdd+jGD1Dvn1W9uL3vZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pj676/183SWOf+68jkC+1R6KKmyQA6mT8GFSdl0jSSHH9TYZQJXmzP3EFfOdjEtS2jfAcFUr38thzqjMuPhyCVfyTVSWDHZrrnNLjggZxWJiXFyX0dDY/UqbuGKrqjTZCie1yjvLbnLa4QsH6Pd2xajomHfouqyBpd5ZVhNjGx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=o+cdpHiA; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 73F483F5B5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1728460048;
-	bh=64u7S06vuCARV2d1jETcvXWsb00VtP72rN9+doc72U8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=o+cdpHiAtVvX2YPnHUemaTziKTAM/meku++JoaUO/0+8dpV41bAfwBdcwqBy+9+Ud
-	 0kD1s0Zf2Ndek84RjeJt2udNO/5E1Vxt1uAfwVzcx9iS3YCqqNHRsL1oGGRvW/lA3c
-	 Kv+GKwKlxqSb83MFYuNm/wZxQ6bV/uqFHSYhAufF5ul+2AXc+oCfx9akwusZskdfaH
-	 ZPv+PqDTwp8VijuGsoGo3Zy4MZDjVqppFoJNxz05Bop5acVxqtjkEE3jDS8F+oUalx
-	 0W1zIuSmZaRwS1cjdFPf1okXX/i3Zf57q4uyD6d4w77vMpTc7PSQf6ID+C3U3pLJbG
-	 hXQrS/9nJ/0hQ==
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d2e7860d7so869889f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:47:28 -0700 (PDT)
+	s=arc-20240116; t=1728460047; c=relaxed/simple;
+	bh=UXHinkOY94ThFAFVLGUNMyAmpLG+i0kcbARjnwRivDc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qOCTks/b2djHTogQfzDYJee9SVqqgijsPHif40Ffmtzv93uuT56VXkxqVIfy6SqkSy3daDQd5HN4LCO8B6ECl2qw1uWkV/Mx3RrdTqCpAoy5dwe7qC0NECg3Mc6qNogyzmfzcrWGcapVgC2jqA7Wke1xkg4kdPZ4fzR1JdH1smU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so107952965ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:47:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728460047; x=1729064847;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=64u7S06vuCARV2d1jETcvXWsb00VtP72rN9+doc72U8=;
-        b=Mkjl50Rl9C01vloXOlA4OhilfeC8WHpH/vnB9v9wC9OliA70CgT4Cn+S1KbX7xPLP1
-         pc9CRzYMhfjemyv0nLCeAH3uo8MLD4+UQECDc6wHFCP4jXI8/qEZBbJqfLN/xWMu1jvL
-         3p1qEF4nVHctCICrx3tvxE0bpOgtdBOrx6GPNcJaC/i3aw56weFAt18sSFfQAQYVoJgI
-         khQDGc4smJlNsPIVzpsT5ioPmMrygYJAcjwnzZBsxzR5gBBmmizMLsrlqGPYmbSfgVcX
-         m5XGI64hyUjqz4G+2HbbVidc03Ip9oGEfKasjIthKqMqxaqNwj4wiGNxDwpnxIiVk0xO
-         gqiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnoOD5G7Zf8CfVqrsTL6IooA12h6+UejFOcEB0ePBlNYMkTnbr1SPwHxshIZNThUldnzEEXC02BZyeICw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHswVQzhsbKUx1aPfzWAK+qiCjQqBPCrmY8vO6p1c8s2irnbKk
-	CKSkgXD/OTtjw86qMNjgLRdWdAyPDA/aj2OYnmSlXKyW5SoUzMeZu6q9xN0x3NuCm0oJuxW/WRh
-	qDPowe1OVPEaFq6cHrKq7MkN8x64Ir698KM2hVl91tNgtHoMrTXHNKGGtSrPK9YbFX1rDN4ns6R
-	Twpg==
-X-Received: by 2002:a5d:5e11:0:b0:37d:3bad:a50b with SMTP id ffacd0b85a97d-37d3bada7a8mr652283f8f.45.1728460047169;
-        Wed, 09 Oct 2024 00:47:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjy0iSj86RuRw+Xk9XUJOj0zHUIng80b/tKMspPKiIgG0uuvHQFCiq0VNFpthVXphITx593A==
-X-Received: by 2002:a5d:5e11:0:b0:37d:3bad:a50b with SMTP id ffacd0b85a97d-37d3bada7a8mr652267f8f.45.1728460046709;
-        Wed, 09 Oct 2024 00:47:26 -0700 (PDT)
-Received: from ?IPV6:2a02:3035:6e0:2015:a58c:a3d4:2675:9367? ([2a02:3035:6e0:2015:a58c:a3d4:2675:9367])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf51770sm11658085e9.22.2024.10.09.00.47.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 00:47:26 -0700 (PDT)
-Message-ID: <a3308767-eb30-446b-8c70-32b36a3075e4@canonical.com>
-Date: Wed, 9 Oct 2024 09:47:24 +0200
+        d=1e100.net; s=20230601; t=1728460045; x=1729064845;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z7MVKMrr7sE1cZHiHRDlGfSko2JGv+xv2UHq22/5JtA=;
+        b=stNrDOOksfr+KD5TH6NkYKt6TYBnQdAhqNNcdJmmq8oG8QKG4u7I/OwfpiOZFvN5d9
+         xOWv8uRWs68Tr4VR50Cukqmhx/sGfvBViGtXqRVYX7+nEo7UbmDoEtYbHzB/h8yg+ZZb
+         DLL9GPyki4XKfj+A9MgCxcUTDRDK9LWdm0gtKTrXgOYHgLV6ZKJ3CGSE0Ewc95ApVNgb
+         NaJmc00EhT2i8IcOBr0bHozcVBNN6RKOliK9A++Z55uev9B4YnnENXIydINNgOrITgNj
+         08NKr7mOZPgBtUX1L4d/csQ1/+W9a60l+VByduckEvv6WXHfLXSM03WC3Z694Yrne8GE
+         Gkxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcBUG6P6XAZ3Sbb0hJJjIqeH2wO5MdiJVJIFpOkdHyJTf9hD0Vp475MGp5RonhKRem8I9NYpO9Nyx9rEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP6jVK9IAQENNENJRTFm7ngv4zsH7XFgmbCzulD01Oo3f9Az93
+	e+r1zkmPPIw7uCdcyLBrbg50jNvKCzcTchLyCRJGzHi1y4H126MJBrQwK93t4cue3uT7RSi+3GH
+	mned3QAq6+3gD6w+LvTjf24esWlv4JhkUkwZ7nBeYt+gdATgNlB5yMrU=
+X-Google-Smtp-Source: AGHT+IE/H9HfGa47dTrP4jZRVzNp4L4IUSOVG/DCmz0hKK3xVz99KXfKO0bePVHnvz6HATumgWauwPb6+9A/j6nVzdoHd8HpOBjw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
- <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
- <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
- <2d907c14-5b43-446e-9640-efb0fa0ba385@ghiti.fr>
-Content-Language: en-US
-From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-In-Reply-To: <2d907c14-5b43-446e-9640-efb0fa0ba385@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:154a:b0:3a1:a20f:c09c with SMTP id
+ e9e14a558f8ab-3a397d2c553mr15393175ab.22.1728460045344; Wed, 09 Oct 2024
+ 00:47:25 -0700 (PDT)
+Date: Wed, 09 Oct 2024 00:47:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6706350d.050a0220.840ef.000e.GAE@google.com>
+Subject: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook (7)
+From: syzbot <syzbot+90c2972f9dd6cdcf7b07@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 09.10.24 09:34, Alexandre Ghiti wrote:
-> Hi Heinrich,
-> 
-> On 01/10/2024 17:24, Heinrich Schuchardt wrote:
->> On 01.10.24 15:51, Alexandre Ghiti wrote:
->>> Hi Heinrich,
->>>
->>> On 29/09/2024 16:02, Heinrich Schuchardt wrote:
->>>> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
->>>> EFI binary does not rely on pages that are both executable and
->>>> writable.
->>>>
->>>> The flag is used by some distro versions of GRUB to decide if the EFI
->>>> binary may be executed.
->>>>
->>>> As the Linux kernel neither has RWX sections nor needs RWX pages for
->>>> relocation we should set the flag.
->>>>
->>>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>>> Cc: <stable@vger.kernel.org>
->>>> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
->>>> ---
->>>>   arch/riscv/kernel/efi-header.S | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi- 
->>>> header.S
->>>> index 515b2dfbca75..c5f17c2710b5 100644
->>>> --- a/arch/riscv/kernel/efi-header.S
->>>> +++ b/arch/riscv/kernel/efi-header.S
->>>> @@ -64,7 +64,7 @@ extra_header_fields:
->>>>       .long    efi_header_end - _start            // SizeOfHeaders
->>>>       .long    0                    // CheckSum
->>>>       .short    IMAGE_SUBSYSTEM_EFI_APPLICATION        // Subsystem
->>>> -    .short    0                    // DllCharacteristics
->>>> +    .short    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT    // 
->>>> DllCharacteristics
->>>>       .quad    0                    // SizeOfStackReserve
->>>>       .quad    0                    // SizeOfStackCommit
->>>>       .quad    0                    // SizeOfHeapReserve
->>>
->>>
->>> I don't understand if this fixes something or not: what could go 
->>> wrong if we don't do this?
->>>
->>> Thanks,
->>>
->>> Alex
->>>
->>
->>
->> Hello Alexandre,
->>
->> https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/ 
->> uefi-ca-memory-mitigation-requirements
->> describes Microsoft's effort to improve security by avoiding memory 
->> pages that are both executable and writable.
->>
->> IMAGE_DLL_CHARACTERISTICS_NX_COMPAT is an assertion by the EFI binary 
->> that it does not use RWX pages. It may use the 
->> EFI_MEMORY_ATTRIBUTE_PROTOCOL to set whether a page is writable or 
->> executable (but not both).
->>
->> When using secure boot, compliant firmware will not allow loading a 
->> binary if the flag is not set.
-> 
-> 
-> Great, so that's a necessary fix, it will get merged in the next rc or so:
-> 
-> Fixes: cb7d2dd5612a ("RISC-V: Add PE/COFF header for EFI stub")
+Hello,
 
-Thanks for reviewing.
+syzbot found the following issue on:
 
-At the time of commit cb7d2dd5612a (2020-10-02) the requirement did not 
-exist. I guess a Fixes: tag is not applicable under these circumstances.
+HEAD commit:    9234a2549cb6 net: phy: bcm84881: Fix some error handling p..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=10833bd0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f95955e3f7b5790c
+dashboard link: https://syzkaller.appspot.com/bug?extid=90c2972f9dd6cdcf7b07
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Best regards
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Heinrich
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/05a4f5ae2b6e/disk-9234a254.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/157bcf16a614/vmlinux-9234a254.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1f5a2485a15e/bzImage-9234a254.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+90c2972f9dd6cdcf7b07@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+hook not found, pf 2 num 0
+WARNING: CPU: 0 PID: 11707 at net/netfilter/core.c:517 __nf_unregister_net_hook+0x482/0x800 net/netfilter/core.c:517
+Modules linked in:
+CPU: 0 UID: 0 PID: 11707 Comm: syz.4.1852 Not tainted 6.12.0-rc1-syzkaller-00147-g9234a2549cb6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__nf_unregister_net_hook+0x482/0x800 net/netfilter/core.c:517
+Code: 01 90 48 8b 44 24 10 0f b6 04 28 84 c0 0f 85 6d 03 00 00 48 8b 04 24 8b 10 48 c7 c7 a0 3f 13 8d 8b 74 24 1c e8 5f ff 7b f7 90 <0f> 0b 90 90 e9 39 01 00 00 e8 f0 02 bb f7 e9 5e fc ff ff e8 e6 02
+RSP: 0018:ffffc9000486ef00 EFLAGS: 00010246
+RAX: 789495961ce19900 RBX: ffff888069756a00 RCX: 0000000000040000
+RDX: ffffc9000c6f5000 RSI: 00000000000026ab RDI: 00000000000026ac
+RBP: dffffc0000000000 R08: ffffffff8155daa2 R09: 1ffff110170c519a
+R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff88802715d940
+R13: ffff88802715ea50 R14: 0000000000000004 R15: ffff888067836800
+FS:  00007f3bff1fb6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f3bff1faf98 CR3: 000000007f7ca000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ nf_unregister_net_hook+0x98/0xe0 net/netfilter/core.c:535
+ __nf_tables_unregister_hook net/netfilter/nf_tables_api.c:384 [inline]
+ nf_tables_unregister_hook net/netfilter/nf_tables_api.c:391 [inline]
+ nft_table_disable+0x305/0x3c0 net/netfilter/nf_tables_api.c:1221
+ nf_tables_table_disable net/netfilter/nf_tables_api.c:1253 [inline]
+ nf_tables_commit+0x4e7e/0x91e0 net/netfilter/nf_tables_api.c:10415
+ nfnetlink_rcv_batch net/netfilter/nfnetlink.c:574 [inline]
+ nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
+ nfnetlink_rcv+0xc77/0x2ab0 net/netfilter/nfnetlink.c:665
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2602
+ ___sys_sendmsg net/socket.c:2656 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2685
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3bfe37dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3bff1fb038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f3bfe535f80 RCX: 00007f3bfe37dff9
+RDX: 0000000000040010 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 00007f3bfe3f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f3bfe535f80 R15: 00007fff127040d8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
