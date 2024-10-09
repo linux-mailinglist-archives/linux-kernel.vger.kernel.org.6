@@ -1,166 +1,138 @@
-Return-Path: <linux-kernel+bounces-357465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC8C99718E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1261D997193
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A23F1F27B4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD521C22AE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBB51E9075;
-	Wed,  9 Oct 2024 16:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="07N4W9Xb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f1wtkA4c";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="07N4W9Xb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="f1wtkA4c"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DA01EABA4;
+	Wed,  9 Oct 2024 16:26:01 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43871E32BB;
-	Wed,  9 Oct 2024 16:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B208A1E9077;
+	Wed,  9 Oct 2024 16:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491146; cv=none; b=qQJ4iwlKkOE0My+upEE9sw0+OLkoQ4HEIgodZyb74jqbpt5WE1JRYkkT564kKK4GKNSDsA2DaNWlh+bQsJdg4++6FIh5sueZfxmqAIH6mTvy/5+6CvXJI2WCX593W105dcxdDe6G+jmqkloIoRas25AOfe8h8tHwaJ1E5Il27ks=
+	t=1728491161; cv=none; b=BT09vHid1i96jJm80Jq+D+pZLXef+7OgruGY5Xqx0XsTuU9eF8nqmc1P57NcXEfqxya+MdO+gwJre2ZxnXjCBo2gyvWPoSTdO8uzOh8RoNyLZFImWBZ5cZlxjYxR0TeJUOnwwvzgFUZf4rBeXktVYGHZkHjKaKrbzaePR9murTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491146; c=relaxed/simple;
-	bh=aM/6F/8SY0dkOs6K2UbJqM2M8kDDIyYGUkcBkx+0kRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVBRk204mYgjUifeyFq38x5gS3iAr1IRbHCEfd0ciaCF56D5ZGpSxpLYvx9nPvLm5qnQMP+f+67+gllpURDUqbtIftFRh65nb4UuWX0x1P6wJ1vY5+Jz7eFdscQPzwuBHklYeNClZan3TDD7b3QNvi2a5Es22HCMWNHBlrK7SGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=07N4W9Xb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f1wtkA4c; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=07N4W9Xb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=f1wtkA4c; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CE44721B39;
-	Wed,  9 Oct 2024 16:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728491142;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iwsw3fwa1Gp9dvJmP8uOJz7myWQrZUaE29/MXtiF8Zw=;
-	b=07N4W9XbXWBOjAuQr571w8PokYwtR0B2Gsjlze7wjdAtdDyTKSg3Az2biK1j6IjwsjdO5B
-	EZqUYP6wzTzqMUHiCKEik5Qm7OLcjA9UPI5brT7HDFyk+5sbW9RKZymRhffYQ2nag69Azq
-	881Y6I+Iq3PFqDlJ1ZCLTQ4306NUCc8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728491142;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iwsw3fwa1Gp9dvJmP8uOJz7myWQrZUaE29/MXtiF8Zw=;
-	b=f1wtkA4ceiPpELmd+gz+FdOR38K7g9/PWGN3wHrMmnYUyGxT5fmal3hjj2A0ckRF7fjzoj
-	Zt0ZPrlEaUmIxXDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728491142;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iwsw3fwa1Gp9dvJmP8uOJz7myWQrZUaE29/MXtiF8Zw=;
-	b=07N4W9XbXWBOjAuQr571w8PokYwtR0B2Gsjlze7wjdAtdDyTKSg3Az2biK1j6IjwsjdO5B
-	EZqUYP6wzTzqMUHiCKEik5Qm7OLcjA9UPI5brT7HDFyk+5sbW9RKZymRhffYQ2nag69Azq
-	881Y6I+Iq3PFqDlJ1ZCLTQ4306NUCc8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728491142;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iwsw3fwa1Gp9dvJmP8uOJz7myWQrZUaE29/MXtiF8Zw=;
-	b=f1wtkA4ceiPpELmd+gz+FdOR38K7g9/PWGN3wHrMmnYUyGxT5fmal3hjj2A0ckRF7fjzoj
-	Zt0ZPrlEaUmIxXDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC706136BA;
-	Wed,  9 Oct 2024 16:25:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GNDkKYauBmcbagAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 09 Oct 2024 16:25:42 +0000
-Date: Wed, 9 Oct 2024 18:25:41 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Roi Martin <jroi.martin@gmail.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: fix uninitialized pointer free on add_inode_ref
-Message-ID: <20241009162541.GL1609@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241009080833.1355894-1-jroi.martin@gmail.com>
+	s=arc-20240116; t=1728491161; c=relaxed/simple;
+	bh=h8/ahP4xmd8XMO+JEsxeM006YnQkw2gH0McVP4Kprq0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hUGgCL4q+B98Ai9bv74Z6gCL4ChkGfm59HTBacd2veUZAO0zpZIuEqVh8RYNruzolTWisonpQZrDXXA508wXTlfwqFnGsmrpHCd7soKqC7K7NKQju4jXDGqTiVxp4UPnz2WXT+bkFrL7UqZb8VBYTC+E/ejDarmOrGYbu40hxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XNyRQ1Dt4z9v7HK;
+	Thu, 10 Oct 2024 00:05:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id A3B69140203;
+	Thu, 10 Oct 2024 00:25:55 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDndy+LrgZnl_KFAg--.57862S2;
+	Wed, 09 Oct 2024 17:25:55 +0100 (CET)
+Message-ID: <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
+Subject: Re: [PATCH 1/3] ima: Remove inode lock
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
+ linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
+ ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Wed, 09 Oct 2024 18:25:45 +0200
+In-Reply-To: <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
+	 <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009080833.1355894-1-jroi.martin@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:replyto];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -2.50
-X-Spam-Flag: NO
+X-CM-TRANSID:LxC2BwDndy+LrgZnl_KFAg--.57862S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw47AF1xXF4rZr4DCw1rJFb_yoW8Zw17pa
+	y2g3WYkr1ktry29rWftFZruaySk3yrWFZrX3Z7Jr1kZas7Zr1jqr1fG345uFy5GryxAw1I
+	qF1UWwn8Cw1DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrs
+	qXDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGcF5v4MbwAAsU
 
-On Wed, Oct 09, 2024 at 10:08:33AM +0200, Roi Martin wrote:
-> The "add_inode_ref" function does not initializes the "name" struct
-> when it is declared.  If any of the following calls to
-> "read_one_inode" returns NULL,
-> 
-> 	dir = read_one_inode(root, parent_objectid);
-> 	if (!dir) {
-> 		ret = -ENOENT;
-> 		goto out;
-> 	}
-> 
-> 	inode = read_one_inode(root, inode_objectid);
-> 	if (!inode) {
-> 		ret = -EIO;
-> 		goto out;
-> 	}
-> 
-> then "name.name" would be freed on "out" before being initialized.
-> 
-> out:
-> 	...
-> 	kfree(name.name);
-> 
-> This issue was reported by Coverity with CID 1526744.
-> 
-> Signed-off-by: Roi Martin <jroi.martin@gmail.com>
+On Wed, 2024-10-09 at 11:37 -0400, Paul Moore wrote:
+> On Wed, Oct 9, 2024 at 11:36=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > >=20
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >=20
+> > > Move out the mutex in the ima_iint_cache structure to a new structure
+> > > called ima_iint_cache_lock, so that a lock can be taken regardless of
+> > > whether or not inode integrity metadata are stored in the inode.
+> > >=20
+> > > Introduce ima_inode_security() to simplify accessing the new structur=
+e in
+> > > the inode security blob.
+> > >=20
+> > > Move the mutex initialization and annotation in the new function
+> > > ima_inode_alloc_security() and introduce ima_iint_lock() and
+> > > ima_iint_unlock() to respectively lock and unlock the mutex.
+> > >=20
+> > > Finally, expand the critical region in process_measurement() guarded =
+by
+> > > iint->mutex up to where the inode was locked, use only one iint lock =
+in
+> > > __ima_inode_hash(), since the mutex is now in the inode security blob=
+, and
+> > > replace the inode_lock()/inode_unlock() calls in ima_check_last_write=
+r().
+> > >=20
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  security/integrity/ima/ima.h      | 26 ++++++++---
+> > >  security/integrity/ima/ima_api.c  |  4 +-
+> > >  security/integrity/ima/ima_iint.c | 77 ++++++++++++++++++++++++++---=
+--
+> > >  security/integrity/ima/ima_main.c | 39 +++++++---------
+> > >  4 files changed, 104 insertions(+), 42 deletions(-)
+> >=20
+> > I'm not an IMA expert, but it looks reasonable to me, although
+> > shouldn't this carry a stable CC in the patch metadata?
+> >=20
+> > Reviewed-by: Paul Moore <paul@paul-moore.com>
+>=20
+> Sorry, one more thing ... did you verify this patchset resolves the
+> syzbot problem?  I saw at least one reproducer.
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Uhm, could not reproduce the deadlock with the reproducer. However,
+without the patch I have a lockdep warning, and with I don't.
 
-Added to for-next, thanks.
+I asked syzbot to try the patches. Let's see.
+
+Thanks
+
+Roberto
+
+
 
