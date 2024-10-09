@@ -1,67 +1,55 @@
-Return-Path: <linux-kernel+bounces-357892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38ED2997770
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FEB997774
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4DE2845E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7F928287E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B291E261C;
-	Wed,  9 Oct 2024 21:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816FD1BE869;
+	Wed,  9 Oct 2024 21:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhY37mms"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5/KnvYN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BBC17A583;
-	Wed,  9 Oct 2024 21:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78811885BF;
+	Wed,  9 Oct 2024 21:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509113; cv=none; b=lrvymiT2oWeh6OZ1UEIQo4vKNL4yRG6EM1yaA4B+aovglbueMK5/EMOwCpCnlRT+ic14a5RfI8vWJYy0rAJl11wZ1ddEIzKncCG2bsO7E+vF6zQ99qo7+KzJqyy80ZHlUZhIHulNQDprr7cNz9996ovEuWg2uS1MaWkpTXbnR9U=
+	t=1728509140; cv=none; b=gy1k77N5P/xDZV7xz+Uk9WHSVgxwS8dgYz2I384i1rJH475zLvQqtWqq4BzlNxAlwGr6BNZUOQPnDL+WPvGKs1w+UXGq+eQV//dr9zoGsGkfi3F6eM7TzFIrpFRGexOiJ8cJtaeRx4xyp40sKzU+YmGK06uhZSDPnGRtK6iZiPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509113; c=relaxed/simple;
-	bh=zGQ1oAmmhv3exYJ6k47YJiOIx8k+EBmLwHZjg/sNWW0=;
+	s=arc-20240116; t=1728509140; c=relaxed/simple;
+	bh=oq7it/tBoxVfX5zXymvTWS15B74hVD8eo/0w703epQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lbyiomet1y0uI8piqKgO0bjCYWe1M9sq6NpZsmdBZaREloKFoSzMyDQJtbyZffzAPCSGF4o7lYSIrxQGbGmenKhAxtn9If1vaY1ct/9xAJSHQ9qZa02vCIynTOqVEpNPOyLehCJk91u6XyQkZ0cI+y7hUI9tHJM1j1yUxkvDfSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhY37mms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F389DC4CEC3;
-	Wed,  9 Oct 2024 21:25:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lToTXTM5kNypv7/3EbfTsQ0y3/YwDKPKITiF2c4Dxsr4bjBpcoeY5WUlNXDJT2wQm4XQf8pp4UBV2za2ZsPp3UI3tcW1+Lo/rR/809KN3v4j41bv7MYqSxOqQ/oj8DVU/M3BlTeSJz2sWvqi6taPyVXe4y2gDcLP88hl85hdrRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5/KnvYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5730C4CECC;
+	Wed,  9 Oct 2024 21:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728509113;
-	bh=zGQ1oAmmhv3exYJ6k47YJiOIx8k+EBmLwHZjg/sNWW0=;
+	s=k20201202; t=1728509140;
+	bh=oq7it/tBoxVfX5zXymvTWS15B74hVD8eo/0w703epQE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XhY37mmst/dBgJAUUO4s5o6+W2aE/gjZFJgVHocTjK5OnEXZ0x+rJuOCMULKKiK8H
-	 nLqLQvPFVOvg0uVltbrtZSg9uBbjo8FE/r04aEgYpuAz+aUxLsEDuH8065cUAF34U6
-	 7aMp12hzzOKmUt91c3pOQw3a9syBLNhWNGDCuYgqCvp9hzlmclvz4pMCfuJS6FHJcj
-	 AHoAFfX+RU4Z6SWkvegWsQEYpitJNI2U5wKpIoQc7gaC/su/ShQ37gR6L1mISSpqZS
-	 cT1Oav+QSadSeTehyYDVXFhOspcFRVDGuc+YnS5ro2VP4L6KRwjePaEBkDCSA+KhMa
-	 vDmgRuo1hPPdw==
-Date: Wed, 9 Oct 2024 16:25:11 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	quic_jackp@quicinc.com, linux-phy@lists.infradead.org,
-	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Mantas Pucka <mantas@8devices.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	quic_ppratap@quicinc.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 2/4] dt-bindings: phy: qcom,usb-snps-femto-v2: Add
- bindings for QCS8300
-Message-ID: <172850911122.740165.2459258635220849747.robh@kernel.org>
-References: <20241009195348.2649368-1-quic_kriskura@quicinc.com>
- <20241009195348.2649368-3-quic_kriskura@quicinc.com>
+	b=S5/KnvYNrLg++QlWKethzkwCyccAWlQVNBj+8WIaUQHIwX3JiHVxkkxLe64Svu4Kh
+	 RtIdGDx7Qc6tc9ghtltaN9/kBHk777DBWlxiwIEhzWC9JjLtwWo4+Bbass3N4KbPwv
+	 LSPM+3roeeNF6KYP/bUfzJYAAxWgH1BHYNzZff7iuNqsg/GV5atFDQ+iQ9gWWRYxq3
+	 Z6VWhsDqvDR/6QI6Yf9CnfEwcdMtMEA4SfrtVBmkVnfKs9XL8Xhvp+5C97p5P+fO/B
+	 6xOKkb8XEaM4hgkhNP/kL+6FfKhtVYEZI4AnQOXVGjvJM0MHB1rKMQE0+zDP4KiT5Z
+	 mqGCvgFRLyzqQ==
+Date: Wed, 9 Oct 2024 14:25:40 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] XArray: minor documentation improvements
+Message-ID: <20241009212540.GG21836@frogsfrogsfrogs>
+References: <CAJ-ks9kiAH5MYmMvHxwH9JfBdhLGA_mP+ezmZ8wJOzDY1p7o5w@mail.gmail.com>
+ <20241009205237.48881-2-tamird@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,18 +58,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009195348.2649368-3-quic_kriskura@quicinc.com>
+In-Reply-To: <20241009205237.48881-2-tamird@gmail.com>
 
-
-On Thu, 10 Oct 2024 01:23:46 +0530, Krishna Kurapati wrote:
-> Update dt-bindings to add QCS8300 to USB2 SNPS Femto Phy list.
+On Wed, Oct 09, 2024 at 04:52:38PM -0400, Tamir Duberstein wrote:
+> - Replace "they" with "you" where "you" is used in the preceding
+>   sentence fragment.
+> - Use "erasing" rather than "storing `NULL`" when describing multi-index
+>   entries. Split this into a separate sentence.
+> - Add "call" parentheses on "xa_store" for consistency and
+>   linkification.
 > 
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+
+/me reads about XA_FLAGS_ALLOC and is ok with this now.
+
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
 > ---
->  .../devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml          | 1 +
->  1 file changed, 1 insertion(+)
+> V1 -> V2: s/use/you/ (Darrick J. Wong)
 > 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+>  Documentation/core-api/xarray.rst | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+> index 77e0ece2b1d6..75c83b37e88f 100644
+> --- a/Documentation/core-api/xarray.rst
+> +++ b/Documentation/core-api/xarray.rst
+> @@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+>  to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+>  to retrieve the tag of an entry.  Tagged pointers use the same bits that
+>  are used to distinguish value entries from normal pointers, so you must
+> -decide whether they want to store value entries or tagged pointers in
+> -any particular XArray.
+> +decide whether you want to store value entries or tagged pointers in any
+> +particular XArray.
+>  
+>  The XArray does not support storing IS_ERR() pointers as some
+>  conflict with value entries or internal entries.
+> @@ -52,8 +52,8 @@ An unusual feature of the XArray is the ability to create entries which
+>  occupy a range of indices.  Once stored to, looking up any index in
+>  the range will return the same entry as looking up any other index in
+>  the range.  Storing to any index will store to all of them.  Multi-index
+> -entries can be explicitly split into smaller entries, or storing ``NULL``
+> -into any entry will cause the XArray to forget about the range.
+> +entries can be explicitly split into smaller entries. Erasing any entry
+> +will cause the XArray to forget about the range.
+>  
+>  Normal API
+>  ==========
+> @@ -64,7 +64,7 @@ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+>  pointer at every index.
+>  
+>  You can then set entries using xa_store() and get entries
+> -using xa_load().  xa_store will overwrite any entry with the
+> +using xa_load().  xa_store() will overwrite any entry with the
+>  new entry and return the previous entry stored at that index.  You can
+>  use xa_erase() instead of calling xa_store() with a
+>  ``NULL`` entry.  There is no difference between an entry that has never
+> -- 
+> 2.47.0
+> 
+> 
 
