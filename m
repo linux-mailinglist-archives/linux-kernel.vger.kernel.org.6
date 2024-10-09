@@ -1,96 +1,117 @@
-Return-Path: <linux-kernel+bounces-356481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421B39961AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F719961D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5061FB259F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D719B289DA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D607C17C9A3;
-	Wed,  9 Oct 2024 08:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8118D1885B9;
+	Wed,  9 Oct 2024 08:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZRPjnN7k"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CET+bD2a"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3E92F46
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F4F188586;
+	Wed,  9 Oct 2024 08:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460936; cv=none; b=dVVfODElouwTz9LUIRjrIitggokL+cWaYgfwgkYjKJ4KCUjtGc6fivjHhm5jFaTGuZqdODXvhiiOcc/vlSnPqY4AheLLYFrLxXDZJ+3vxlyflrNygPd+ZV1OxLm7mbZKtVfqFZHDFrAULKaGWom34RJJX2AVLnHrA0m3lLsVw3I=
+	t=1728461096; cv=none; b=KXy3r2re+nmGIydNuB1ls7aaHOaper23B6UvX2HCTZKY8nk8n6i9OXkxcngfgUX4mMUoj/LNh2NMbsdfR1usBKXfWRMcNEymlBULNOsM7Tc2O/qAyYcBVht4XYtFdJxoP2SRWy96vpbsg9gzaNz5DNBgzomMaNJxD+JGjgAOy4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460936; c=relaxed/simple;
-	bh=VrY/Jd7B8sTggqIgdbbkGMjXgg5WpsaLcGgxLej1vLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFjlLwyJXkY+jRrVAmdZPeX+8XmBmpGueM/7gFPam8nkJDf38Tn6Bs75dLT1MpJal0WcCm5aQI8xBnGPySANe6p2KsQts+Hg9AypsbKbKzyLZp5winRREQQYvlIDBnclU4IQRZC/YssBrFv2ah5YwIcLaXYY6gFabNsP+aZsCxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZRPjnN7k; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=UOQOxqKkYyFwPCX2N75mx1OwQ3qrdDd2PVz62iVt3V4=; b=ZRPjnN7kdKoJlLSoczhkh+LVnN
-	3cfwfIqgSiN/u/x78KYy2500kCpG0D9+HlIUl6ps2emIb6qLKZZJN2qHNo8yogANjvOFwQmfqY4gn
-	MLmoMPNDexSDpoNFRIm0MxUwfAQQBB5anM6Mx20kNduWea8w7s3XdwjjdIFt/23NqtAMJTyyjw8jx
-	BVIWxD/uNkfqq+cn6Vmpisl20k0SxLR4kFNgnVL8AA0HYU1HpOpmghrk3ejCDNFrUOaYvsMz6XVMw
-	B1nvs0W1yvpq9RZ7I8IbL2Wm4S/AgRs2Six+WxzsuRubANtP1MjR0zwkFLUvsMQH8C6h5+mQrgHmy
-	Ckn46bCw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syRdy-00000004qUm-3lhM;
-	Wed, 09 Oct 2024 08:02:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7EDEE3004AF; Wed,  9 Oct 2024 10:02:02 +0200 (CEST)
-Date: Wed, 9 Oct 2024 10:02:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, tglx@linutronix.de,
-	mingo@kernel.org, linux-kernel@vger.kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de
-Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
-Message-ID: <20241009080202.GJ17263@noisy.programming.kicks-ass.net>
-References: <20241007074609.447006177@infradead.org>
- <20241008153232.YwZfzF0r@linutronix.de>
- <87wmihdh3u.fsf@oracle.com>
- <20241009062019.1FJYnQL1@linutronix.de>
+	s=arc-20240116; t=1728461096; c=relaxed/simple;
+	bh=PIPJaYVqB/0I9J24VTXd1sy1f8DObF+DnZqOAqQWUuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EkZMsqjO5mF5DxC2neFSm19e/SlHWUgr2TmRUG7H98meYiF/YabmgjGxkvYzJWkFWji25/gKLtE1O7bNb1kqd/3RW/anwKUSi1O/7T2LH6GVjjeSEXCt9tIprhRsaXLmuCnI73GjbGd3OeK2eE4yabwuxOUGHjRoW9bqy20wp4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CET+bD2a; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D55AB240002;
+	Wed,  9 Oct 2024 08:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728461092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4ZqUu2zXtpPIFf6u2ipPatyPzUjw/B5iwIYSh3KUBBk=;
+	b=CET+bD2aQpIFbn83eKT+JAQlvpdrc0gESxRVHARr0UpzskXaayoxehxFYpeqV2I+pGYHf7
+	xSvkBl7b89C/+0Gdk47ezTrP7u6qPBIGR5kwqsIzgc3ZKH3047DghYSSp6FbBjBZvoxqlu
+	j6zm6Afpuenl/O0Lyd9lpC3DzF1Z91xyY1qE//1L7iEPG9apRogWNH7xuYpKJxsEJ0vFR8
+	f7awQRGnelx1xTR53a07BHU3UMyrCGrqIJqTl366jh6Nmmxl0DzFyVPbWQkTKSy/mEAo4/
+	0QUCeD6U6SN9pWklqIOJ4bFozd3MC1LJrrtFwXUpIuM/vk9XRWdRR6ANHh7WTg==
+Date: Wed, 9 Oct 2024 10:04:50 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>
+Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nikita.shubin@maquefel.me, arnd@arndb.de,
+ vkoul@kernel.org, esben@geanix.com, linux-arm-kernel@lists.infradead.org,
+ linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+Message-ID: <20241009100450.362e3556@xps-13>
+In-Reply-To: <02098767-19ce-407e-88be-24c6259c4053@gmail.com>
+References: <20240927020749.46791-1-hpchen0nvt@gmail.com>
+	<20240927020749.46791-3-hpchen0nvt@gmail.com>
+	<20241001215755.5c2f8465@xps-13>
+	<8d5e7755-17fd-4860-bcb0-8c1de04bf0c5@gmail.com>
+	<20241008105230.7fd25438@xps-13>
+	<02098767-19ce-407e-88be-24c6259c4053@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009062019.1FJYnQL1@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Oct 09, 2024 at 08:20:19AM +0200, Sebastian Andrzej Siewior wrote:
-> On 2024-10-08 21:40:05 [-0700], Ankur Arora wrote:
-> > > While comparing this vs what I have:
-> > > - need_resched()
-> > >   It checked both (tif_need_resched_lazy() || tif_need_resched()) while
-> > >   now it only looks at tif_need_resched().
-> > >   Also ensured that raw_irqentry_exit_cond_resched() does not trigger on
-> > >   lazy.
-> > >   I guess you can argue both ways what makes sense, just noting…
-> > 
-> > I think we want need_resched() to be only tif_need_resched(). That way
-> > preemption in lazy mode *only* happens at the user mode boundary.
-> 
-> There are places such as __clear_extent_bit() or select_collect() where
-> need_resched() is checked and if 0 they loop again. For these kind of
-> users it would probably make sense to allow them to preempt themself.
-> We could also add a new function which checks both and audit all users
-> and check what would make sense base on $criteria.
+Hi Hui-Ping,
 
-Do we really need this -- wasn't the idea to have thing 'delay' until
-the actual NEED_RESCHED bit gets set?
+> >>>> +		return 0;
+> >>>> +	}
+> >>>> +
+> >>>> +	ma35_nand_dmac_init(nand);
+> >>>> +
+> >>>> +	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
+> >>>> +
+> >>>> +	/* setup and start DMA using dma_addr */
+> >>>> +	dma_addr =3D dma_map_single(nand->dev, (void *)addr, len, DMA_FROM=
+_DEVICE);
+> >>>> +	ret =3D dma_mapping_error(nand->dev, dma_addr);
+> >>>> +	if (ret) {
+> >>>> +		dev_err(nand->dev, "dma mapping error\n");
+> >>>> +		return -EINVAL;
+> >>>> +	}
+> >>>> +
+> >>>> +	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA); =
+=20
+> >>> Please enforce a dma mask of 32 (even though it might be the fault). =
+=20
+> >> I will change it to dma_addr & 0xffffffff. =20
+> > That's not what I mean, I believe you should use the dma API to ask for
+> > a mapping within the accessible 32-bit address range. The
+> > dma_mapping_error() check should return an error if that's not the
+> > case. Then you can safely write the value. =20
+>=20
+> Here is my misunderstanding: just fill in the dma_addr directly,
+>=20
+> no type conversion is needed. I have already tested it.
 
+FYI, it only works because the default DMA mask for your device is gonna
+be 32 bits. If the reality (what your peripheral DMA can do) was
+different than this, you would have to set a different mask explicitly
+to make sure the dma-mapping step would not provide buffers which are
+out of reach.
+
+Thanks,
+Miqu=C3=A8l
 
