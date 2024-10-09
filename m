@@ -1,199 +1,168 @@
-Return-Path: <linux-kernel+bounces-356844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46128996797
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:47:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9221D9967A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612CD1C237AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11079B233AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AD818E76E;
-	Wed,  9 Oct 2024 10:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A08190072;
+	Wed,  9 Oct 2024 10:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kn7RhGn0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Jt8B/gQ9"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABE945948
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7218E03E;
+	Wed,  9 Oct 2024 10:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728470840; cv=none; b=RIucfT+2eTdVrTC5BINzl0JwLcEhOHRRw/VvaOU0FL0JnvUNh7uCBB+QG1GJ2rDEvKzsiSKha0ui+BQnEvQyDUmEBY6UrtVZLxSJsvYG/riKGYhjo3AMoQgSM9R1hbapRjvaDGy0kuoRaEGhdnq66hZhXpOliY0HjK5B6KUZRbA=
+	t=1728470932; cv=none; b=XLs1nyfA17ZWkUjj1nVdh66FXVw1/f9e5PO2SmNkP4Ag5aSnibBLna6XpO/E2tC2iaJ47iOyP2s5PF7y3Uv460c7NocmZbnPuLTu60m6G1WBYnnkJuUv7q+FxJE87oNySwVkKW9t5yRYaNowl8MLMhaxtHrFHTTL0mSfA035JAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728470840; c=relaxed/simple;
-	bh=pju3iGTyQ0tzIJ+XL/zKUcqmAc3tqyNpMoNv9f4SRLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FrFUHXDSvdDRG/ec+eWReVUbsvp3oCSVK2PKyB+dJmefhgSUidvWVHTqjfMWX4whmzn6jtfLIp/PV/qJk01LXIfxlzKWdFDFIz50a5w2uKK7EfsmXsfEp2U3loS7BgAE9mrJtWiOJMRua1Bm/Sk+QoED9dIJWrFHpQt5qvecGMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kn7RhGn0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728470839; x=1760006839;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pju3iGTyQ0tzIJ+XL/zKUcqmAc3tqyNpMoNv9f4SRLw=;
-  b=kn7RhGn0h/uWZHsXCPa4nR3+Ld0kcb/BAclp0hlyuGZnbDl/pa7mvisB
-   495EG420donm+5nndfNZQYITAs01xR5M7i5rNDiMhDNAokvdu4lRdvXvI
-   ZEAA7Ugt8d2vx5vj828X1BebDxIVvq6aamgDKvbhk6+k4UHWdIhMGTrcm
-   LJGDqjHCD1hs8QNFO4ox9QpIOL5nQ8VFWU4T30X9x3kxt2q3X3nTv2+Ac
-   gkXSfO0E6XQ0mRLRGCjLYfZxyjIOqr+uq7+cX7CKZxeV8d2D79D5euT9Z
-   /mQkrwxKCLs/+kLgAn/x0Y9dhHFjUxWBUJA6hqb22uQBELa3yc/C2Mr7A
-   Q==;
-X-CSE-ConnectionGUID: fY+dKnlrQYaa12fRkCLQnQ==
-X-CSE-MsgGUID: ogvgcyVcTOWm4g0on10Caw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="50297264"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="50297264"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 03:47:17 -0700
-X-CSE-ConnectionGUID: UHVnNWGvQ6eQt6yOLuG2eg==
-X-CSE-MsgGUID: tebn4PytQFCSVEOdBuV/qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="99532499"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO [10.245.244.73]) ([10.245.244.73])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 03:47:14 -0700
-Message-ID: <d9b1f605-9d4a-456c-9f4b-43681f9c1773@linux.intel.com>
-Date: Wed, 9 Oct 2024 12:47:27 +0200
+	s=arc-20240116; t=1728470932; c=relaxed/simple;
+	bh=wqoq0EY38rrHJ3EbOaqBkiPZGV7y8Y8pVN1jG4bIumA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OIFWwMfHuaXPF4EQBsdfgSFJug2ycIG5SoRKThIBbsDEJU9e5jgIJo2kejOhoRc+r1KpSkjQHqjTgp8RVvQTjHKH1rVU/+viJF0bD0cJdFe5R5BLjQZEPvF7ODscX95A3+qaD4+Pg76GfrVKI+tt+91lToY/CdtHAO1qKxf+syQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Jt8B/gQ9; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 0c5c3adc862c11ef88ecadb115cee93b-20241009
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=125oV6D49C4A1z2NuIkQKe4FP+y9yJocFdv6uX2yYjs=;
+	b=Jt8B/gQ9bioKHEhXgp0OSySseHKystPjzQElXXxAXKcO1sNh372gNqsI7IKZYUe1ZUfaHlp/KTxW+KZdhnKJoq8yPziM0HAuRDwxCB2am0yHfVeH563/5L6kYjMaY4m32/1Ze1gMdbry3vq/gT4tWVuzWCAL6ruWdfcz7O80t1k=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:481b5339-5941-477e-bf56-25dd401721e8,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:13450041-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 0c5c3adc862c11ef88ecadb115cee93b-20241009
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2035350135; Wed, 09 Oct 2024 18:48:41 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 9 Oct 2024 18:48:39 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Wed, 9 Oct 2024 18:48:37 +0800
+Message-ID: <9bf35a15-80ce-708d-3a45-08839edf41dc@mediatek.com>
+Date: Wed, 9 Oct 2024 18:48:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] locking/ww_mutex: Adjust to lockdep nest_lock
- requirements
-To: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- intel-xe@lists.freedesktop.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241002125611.361001-1-thomas.hellstrom@linux.intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v1 1/3] dt-bindings: mfd: mediatek: mt6397: Add start-year
+ property to RTC
 Content-Language: en-US
-From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-In-Reply-To: <20241002125611.361001-1-thomas.hellstrom@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
+To: Lee Jones <lee@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <eddie.huang@mediatek.com>,
+	<sean.wang@mediatek.com>, <alexandre.belloni@bootlin.com>,
+	<sen.chu@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
+	<kernel@collabora.com>
+References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
+ <20240923100010.97470-2-angelogioacchino.delregno@collabora.com>
+ <20241009101549.GB276481@google.com>
+ <e0de3810-38b0-40a3-872d-678e9d4f72e5@collabora.com>
+ <20241009103307.GD276481@google.com> <20241009103746.GE276481@google.com>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20241009103746.GE276481@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--14.158500-8.000000
+X-TMASE-MatchedRID: zGP2F0O7j/sOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
+	qIY+/skQkABPgKBt/0rfEt9Ay9zO7g20q/tyc1edx6hrpRSrYiv5bNUY+JJjyA6QlBHhBZuwAr5
+	mokJOphAzNhvZcetROVc3B1k53+RhemzGG4qDPakZXJLztZviXJWr6iSXWtgP+yNYYwngrxaJtv
+	q2ZmkpN/CGbwGH/FjAUvthaNK4TPYYB2fOueQzj4MbH85DUZXyseWplitmp0j6C0ePs7A07cNbT
+	FVOzjU8gwrmQLYen6kXt4N9KJ/nKNbV/0cyXV+n9qL5WV0e01k=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--14.158500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	1153258BB8DA91B7858CF9A1A20F13D2387AE487A4B2C14681D709B82FAE76592000:8
 
-Hey,
 
-I'm pretty sure I've seen this use-after-free in the wild, just never found the root cause since it's so unlikely to trigger on demand.
 
-Acked-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+On 10/9/24 18:37, Lee Jones wrote:
+> 	
+> 
+> External email : Please do not click links or open attachments until you 
+> have verified the sender or the content.
+> 
+> On Wed, 09 Oct 2024, Lee Jones wrote:
+> 
+>> On Wed, 09 Oct 2024, AngeloGioacchino Del Regno wrote:
+>> 
+>> > Il 09/10/24 12:15, Lee Jones ha scritto:
+>> > > On Mon, 23 Sep 2024, AngeloGioacchino Del Regno wrote:
+>> > > 
+>> > > > Enable evaluating the start-year property to allow shifting the
+>> > > > RTC's HW range.
+>> > > > 
+>> > > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> > > > ---
+>> > > >   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 2 ++
+>> > > 
+>> > > No such file.
+>> > > 
+>> > 
+>> > In the cover letter, I wrote:
+>> > 
+>> > 
+>> > For the bindings commit, this series goes on top of the MT6397 schema
+>> > conversion from Macpaul Lin [1].
+>> > 
+>> > This series was tested on a MT8195 Cherry Tomato Chromebook.
+>> > 
+>> > [1]: https://lore.kernel.org/all/20240918064955.6518-1-macpaul.lin@mediatek.com/
+>> > 
+>> > 
+>> > So, that's why. :-)
+>> 
+>> Nope, try again. :)
+> 
+> I guess you actually mean:
+> 
+>    https://lore.kernel.org/all/20240918064955.6518-2-macpaul.lin@mediatek.com/
+> 
+> It's on my list.  I'll place yours behind it and see how we go.
 
-Den 2024-10-02 kl. 14:56, skrev Thomas Hellström:
-> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts the
-> number of acquired lockdep_maps of mutexes of the same class, and also
-> keeps a pointer to the first acquired lockdep_map of a class. That pointer
-> is then used for various comparison-, printing- and checking purposes,
-> but there is no mechanism to actively ensure that lockdep_map stays in
-> memory. Instead, a warning is printed if the lockdep_map is freed and
-> there are still held locks of the same lock class, even if the lockdep_map
-> itself has been released.
-> 
-> In the context of WW/WD transactions that means that if a user unlocks
-> and frees a ww_mutex from within an ongoing ww transaction, and that
-> mutex happens to be the first ww_mutex grabbed in the transaction,
-> such a warning is printed and there might be a risk of a UAF.
-> 
-> Note that this is only problem when lockdep is enabled and affects only
-> dereferences of struct lockdep_map.
-> 
-> Adjust to this by adding a fake lockdep_map to the acquired context and
-> make sure it is the first acquired lockdep map of the associated
-> ww_mutex class. Then hold it for the duration of the WW/WD transaction.
-> 
-> This has the side effect that trying to lock a ww mutex *without* a
-> ww_acquire_context but where a such context has been acquire, we'd see
-> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
-> modify that particular test to not acquire a ww_acquire_context if it
-> is not going to be used.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Maarten Lankhorst <maarten@lankhorst.se>
-> Cc: Christian König <christian.koenig@amd.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-> ---
->  include/linux/ww_mutex.h       | 14 ++++++++++++++
->  kernel/locking/test-ww_mutex.c |  6 ++++--
->  2 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-> index bb763085479a..a401a2f31a77 100644
-> --- a/include/linux/ww_mutex.h
-> +++ b/include/linux/ww_mutex.h
-> @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
->  #endif
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
->  	struct lockdep_map dep_map;
-> +	/**
-> +	 * @first_lock_dep_map: fake lockdep_map for first locked ww_mutex.
-> +	 *
-> +	 * lockdep requires the lockdep_map for the first locked ww_mutex
-> +	 * in a ww transaction to remain in memory until all ww_mutexes of
-> +	 * the transaction have been unlocked. Ensure this by keeping a
-> +	 * fake locked ww_mutex lockdep map between ww_acquire_init() and
-> +	 * ww_acquire_fini().
-> +	 */
-> +	struct lockdep_map first_lock_dep_map;
->  #endif
->  #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
->  	unsigned int deadlock_inject_interval;
-> @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct ww_acquire_ctx *ctx,
->  	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
->  	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
->  			 &ww_class->acquire_key, 0);
-> +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class->mutex_name,
-> +			 &ww_class->mutex_key, 0);
->  	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-> +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx->dep_map, _RET_IP_);
->  #endif
->  #ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
->  	ctx->deadlock_inject_interval = 1;
-> @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct ww_acquire_ctx *ctx)
->  static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
->  {
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
->  	mutex_release(&ctx->dep_map, _THIS_IP_);
->  #endif
->  #ifdef DEBUG_WW_MUTEXES
-> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-> index 10a5736a21c2..4c2b8b567de5 100644
-> --- a/kernel/locking/test-ww_mutex.c
-> +++ b/kernel/locking/test-ww_mutex.c
-> @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
->  	int ret;
->  
->  	ww_mutex_init(&mtx.mutex, &ww_class);
-> -	ww_acquire_init(&ctx, &ww_class);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_init(&ctx, &ww_class);
->  
->  	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
->  	init_completion(&mtx.ready);
-> @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
->  		ret = wait_for_completion_timeout(&mtx.done, TIMEOUT);
->  	}
->  	ww_mutex_unlock(&mtx.mutex);
-> -	ww_acquire_fini(&ctx);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_fini(&ctx);
->  
->  	if (ret) {
->  		pr_err("%s(flags=%x): mutual exclusion failure\n",
+Just a reminder.
+The last reviewed patch set should be 'v8' because of the update for
 
+'Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml'
+
+[1/3] 
+https://lore.kernel.org/all/20241001104145.24054-1-macpaul.lin@mediatek.com/
+
+The [2/3] and [3/3] patches are dependent.
+
+> 
+> -- 
+> Lee Jones [李琼斯]
+> 
+
+Thanks
+Macpaul Lin
 
