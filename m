@@ -1,149 +1,141 @@
-Return-Path: <linux-kernel+bounces-356237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF445995E58
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:51:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7A6995E5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F802834E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4921F275AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4559514A611;
-	Wed,  9 Oct 2024 03:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9251531E8;
+	Wed,  9 Oct 2024 03:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Kcw6IMDh"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Vq14Ska6"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54B910FF;
-	Wed,  9 Oct 2024 03:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9609513BADF
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 03:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728445884; cv=none; b=Ux4wh6UJOMOGtSgI/Loh1cZffxxry0AH0UHQCtuY/zMN4jtX3cPJcLCHx6ijjl/LraRQNpzAXy3UvFtvXiN4EEHewBQbNH9sc3il4SnRuyaoVjFr1M4hdTe1nq8BMKgwQDrX2vsTnk05lVE1an1hVoBCWicr8nKrfnE5z9890/g=
+	t=1728445927; cv=none; b=SP+dwCsUNrVtVkN8EuUW7OyCRui2+sP7SBpsysLLnyNTQC/xLLZ31nJQke6hpGpF+6ZldH3kMNAqayTXuT9hSptUnWfMCgJHu+whhDyMhNoNb4XgVMOVusa1ssX9nK2ofGcZxz0y3B2ZSOWqPDIQeaUmlCUQnma/2/O4lVLJ5Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728445884; c=relaxed/simple;
-	bh=Fz6m3s5wR0Xe7bKylBUoyAUXiZbhWI4E69+DbXptgGU=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=GajoB/BzpYM91vzjiwUbzcv4LnUlOAh2SUzT2qHcBnEOHEn1Y6iaGjHDu1FCOTXfsPtmJQbDo/XjYMqQZnBIQNlaIrxqS1vb8jHzcm/6m3PAPUzKEFwaQAy2b1UnsPTHALY+bzVU7fw6jDC4Mnhdap4mMeD3K+TGWz7LfFN+7lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Kcw6IMDh; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1728445883; x=1759981883;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Fz6m3s5wR0Xe7bKylBUoyAUXiZbhWI4E69+DbXptgGU=;
-  b=Kcw6IMDh+CAWZNPpmwpzpu0AgleuTw6KPrzkTeBh+BcC4ICy6nq0JXQl
-   1EzaMHcxVYrGdCQSVVTwxbEvwkPn5hSWTh1SSkwcsTXLuH5dcJ8Jsh0dB
-   3+sg+PovgioDKfHosHKNOzOPeycMbmpMoASjEuctTVjbXYUOywnSD2oZ1
-   A=;
-X-IronPort-AV: E=Sophos;i="6.11,188,1725321600"; 
-   d="scan'208";a="433642865"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 03:51:19 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:59909]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.53.199:2525] with esmtp (Farcaster)
- id acf9dcc9-ae36-4c0e-a2a8-553270007ea0; Wed, 9 Oct 2024 03:51:18 +0000 (UTC)
-X-Farcaster-Flow-ID: acf9dcc9-ae36-4c0e-a2a8-553270007ea0
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 9 Oct 2024 03:51:18 +0000
-Received: from [192.168.205.151] (10.106.100.42) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 9 Oct 2024 03:51:14 +0000
-Message-ID: <ac337485-f8ab-45a4-b223-eb846e21c762@amazon.com>
-Date: Tue, 8 Oct 2024 20:51:13 -0700
+	s=arc-20240116; t=1728445927; c=relaxed/simple;
+	bh=CNA+IwsxiyK9OFBTXdJn56em+2sA6DE+qY0MP6jbhd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbRonqQDqocIgHAZkFZbYg+Vcg6KJfFwd+HxBvX8gklAYUYdipuHlXv+zvnOHQJappgAZD/pdRtG9c2r8Sf9gWdyHGyKtCyRlH9ls/wYiV6bgIb6IizMNhCoXNFemICBSMh/6V/k2eYVlgySp09O8B9GePgK+weNOjwRFRXzejw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Vq14Ska6; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (c-73-9-28-129.hsd1.il.comcast.net [73.9.28.129])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4993pdiQ026190
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Oct 2024 23:51:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1728445902; bh=hc/4UiI2kJNBSUQuicW9YL2kaR4Xf/C8fzRhntjE+WM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Vq14Ska6VHQMslm1coPtYYuQspE169G6Sv6tSkuYceol5m48jXCBzfJMjOpG8ukEa
+	 SpqdiLM5DuTk2Iaqavt89b0Fog08Zg821cepbtRRrSXQ4KnJklrcBsvmE206Uvtby5
+	 aShbbik+HF4lqbrOSb7KQ2e0DAfSXfVYcW2E4L0O4jDixO17pTC08yvBL3eTB51vxJ
+	 l2SUQ4nqdNr6PG6vEAR+X23LcMNAxxFGcGbTqspMjYekKoeeRJamQKJl5nYo/gMWgw
+	 KB7aYHk1vgPSyBzC8O+VTv15fz6h9xMLDv+7Af1KjjfUrP2/0qol6yOpM0XPQCyhUz
+	 R42RibVDZ+nbw==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 92359340572; Tue, 08 Oct 2024 22:51:39 -0500 (CDT)
+Date: Tue, 8 Oct 2024 22:51:39 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
+Message-ID: <20241009035139.GB167360@mit.edu>
+References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
+ <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
+ <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
+ <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
+ <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
+ <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
+ <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
+ <20241006043002.GE158527@mit.edu>
+ <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <seanjc@google.com>, <andrew.cooper3@citrix.com>,
-	<dave.hansen@linux.intel.com>
-CC: <ackerleytng@google.com>, <ajones@ventanamicro.com>,
-	<anup@brainfault.org>, <bfoster@redhat.com>, <brauner@kernel.org>,
-	<david@redhat.com>, <derekmn@amazon.com>, <erdemaktas@google.com>,
-	<fan.du@intel.com>, <fvdl@google.com>, <haibo1.xu@intel.com>,
-	<isaku.yamahata@intel.com>, <jgg@nvidia.com>, <jgowans@amazon.com>,
-	<jhubbard@nvidia.com>, <jthoughton@google.com>, <jun.miao@intel.com>,
-	<kalyazin@amazon.co.uk>, <kent.overstreet@linux.dev>, <kvm@vger.kernel.org>,
-	<linux-fsdevel@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-mm@kvack.org>,
-	<maciej.wieczor-retman@intel.com>, <mike.kravetz@oracle.com>,
-	<muchun.song@linux.dev>, <oliver.upton@linux.dev>, <pbonzini@redhat.com>,
-	<peterx@redhat.com>, <pgonda@google.com>, <pvorel@suse.cz>,
-	<qperret@google.com>, <quic_eberman@quicinc.com>,
-	<richard.weiyang@gmail.com>, <rientjes@google.com>, <roypat@amazon.co.uk>,
-	<rppt@kernel.org>, <shuah@kernel.org>, <tabba@google.com>,
-	<vannapurve@google.com>, <vkuznets@redhat.com>, <willy@infradead.org>,
-	<zhiquan1.li@intel.com>, <graf@amazon.de>, <mlipp@amazon.at>,
-	<canellac@amazon.at>
-References: <ZwWOfXd9becAm4lH@google.com>
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <ZwWOfXd9becAm4lH@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D045UWA004.ant.amazon.com (10.13.139.91) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
 
-On 2024-10-08 at 19:56+0000 Sean Christopherson wrote:
-> Another (slightly crazy) approach would be use protection keys to provide the
-> security properties that you want, while giving KVM (and userspace) a quick-and-easy
-> override to access guest memory.
->
->  1. mmap() guest_memfd into userpace with RW protections
->  2. Configure PKRU to make guest_memfd memory inaccessible by default
->  3. Swizzle PKRU on-demand when intentionally accessing guest memory
->
-> It's essentially the same idea as SMAP+STAC/CLAC, just applied to guest memory
-> instead of to usersepace memory.
->
-> The benefit of the PKRU approach is that there are no PTE modifications, and thus
-> no TLB flushes, and only the CPU that is access guest memory gains temporary
-> access.  The big downside is that it would be limited to modern hardware, but
-> that might be acceptable, especially if it simplifies KVM's implementation.
+On Sun, Oct 06, 2024 at 12:33:51AM -0400, Kent Overstreet wrote:
+> 
+> Correct me if I'm wrong, but your system isn't available to the
+> community, and I haven't seen a CI or dashboard for kdevops?
 
-Yeah this might be worth it if it simplifies significantly. Jenkins et
-al. showed MPK worked for stopping in-process Spectre V1 [1]. While
-future hardware bugs are always possible, the host kernel would still
-offer better protection overall since discovery of additional Spectre
-approaches and gadgets in the kernel is more likely (I think it's a
-bigger surface area than hardware-specific MPK transient execution
-issues).
+It's up on github for anyone to download, and I've provided pre-built
+test appliance so people don't have to have downloaded xfstests and
+all of its dependencies and build it from scratch.  (That's been
+automated, of course, but the build infrastructure is setup to use a
+Debian build chroot, and with the precompiled test appliances, you can
+use my test runner on pretty much any Linux distribution; it will even
+work on MacOS if you have qemu built from macports, although for now
+you have to build the kernel on Linux distro using Parallels VM[1].)
 
-Patrick, we talked about this a couple weeks ago and ended up focusing
-on within-userspace protection, but I see keys can also be used to stop
-kernel access like Andrew's project he mentioned during Dave's MPK
-session at LPC [2]. Andrew, could you share that here?
+I'll note that IMHO making testing resources available to the
+community isn't really the bottleneck.  Using cloud resources,
+especially if you spin up the VM's only when you need to run the
+tests, and shut them down once the test is complete, which
+gce-xfstests does, is actually quite cheap.  At retail prices, running
+a dozen ext4 file system configurations against xfstests's "auto"
+group will take about 24 hours of VM time, and including the cost of
+the block devices, costs just under two dollars USD.  Because the
+tests are run in parallel, the total wall clock time to run all of the
+tests is about two and a half hours.  Running the "quick" group on a
+single file system configuration costs pennies.  So the $300 of free
+GCE credits will actually get someone pretty far!
 
-It's not clear to me how reliably the kernel prevents its own access to
-such pages. I see a few papers that warrant more investigation:
+No, the bottleneck is having someone knowledgeable enough to interpret
+the test results and then finding the root cause of the failures.
+This is one of the reasons why I haven't stressed all that much about
+dashboards.  Dashboards are only useful if the right person(s) is
+looking at them.  That's why I've been much more interested in making
+it stupidly easy to run tests on someone's local resources, e.g.:
 
-"we found multiple interfaces that Linux, by design, provides for
-accessing process memory that ignore PKU domains on a page." [3]
+     https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
 
-"Though Connor et al. demonstrate that existing MPK protections can be
-bypassed by using the kernel as a confused deputy, compelling recent
-work indicates that MPK operations can be made secure." [4]
+In fact, for most people, the entry point that I envision as being
+most interesting is that they download the kvm-xfstests, and following
+the instructions in the quickstart, so they can run "kvm-xfstests
+smoke" before sending me an ext4 patch.  Running the smoke test only
+takes 15 minutes using qemu, and it's much more convenient for them to
+run that on their local machine than to trigger the test on some
+remote machine, whether it's in the cloud or someone's remote test
+server.
 
-Dave and others, if you're aware of resources clarifying how strong the
-boundaries are, that would be helpful.
+In any case, that's why I haven't been interesting in working with
+your test infrastructure; I have my own, and in my opinion, my
+approach is the better one to make available to the community, and so
+when I have time to improve it, I'd much rather work on
+{kvm,gce,android}-xfstests.
 
-Derek
+Cheers,
+
+						- Ted
 
 
-[1] https://www.cs.dartmouth.edu/~sws/pubs/jas2020.pdf
-[2] https://www.youtube.com/watch?v=gEUeMfrNH94&t=1028s
-[3] https://www.usenix.org/system/files/sec20-connor.pdf
-[4] https://ics.uci.edu/~dabrowsa/kirth-eurosys22-pkru.pdf
+[1] Figuring out how to coerce the MacOS toolchain to build the Linux
+kernel would be cool if anyone ever figures it out.  However, I *have*
+done kernel development using a Macbook Air M2 while on a cruise ship
+with limited internet access, building the kernel using a Parallels VM
+running Debian testing, and then using qemu from MacPorts to avoid the
+double virtualization performance penalty to run xfstests to test the
+freshly-built arm64 kernel, using my xfstests runner -- and all of
+this is available on github for anyone to use.
 
