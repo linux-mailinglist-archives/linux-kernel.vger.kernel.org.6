@@ -1,184 +1,187 @@
-Return-Path: <linux-kernel+bounces-356724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A019965B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7CD996551
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C80B1C24B07
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:41:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFE1B1C20BD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139D018BC1F;
-	Wed,  9 Oct 2024 09:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="STdqtgFV"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013012.outbound.protection.outlook.com [52.101.67.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CAF18B46B;
+	Wed,  9 Oct 2024 09:28:22 +0000 (UTC)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898B918A6C6;
-	Wed,  9 Oct 2024 09:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728466906; cv=fail; b=FELizGvtmgTmDhdcG83FRhAVr1NZrw2QkZjF+r4AQU56qY1FLiJNXHet/Fl4CGgcBCA86BRqxdT1RLxsgONtqIZvU/yJ7GS5wF0tRbR9cmjDatMZ6p6/ElCwg5p8PNglgS3pXqzM8zvxeegGBDBB1eImjbi0h0mb6szHIf4QnXo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728466906; c=relaxed/simple;
-	bh=ivBpcJ2SCZ0haFIfaO0WHqrg5WxHhL2KGehjbDcpqes=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=cuDPBy6RS3iJ/VvNF/NInvY4NN3vtykeyU3cXupefGNTT11v0WlM11TsiSPjHtn79HxG5BlOUb/krGRy0Ve9ouLdrcXo/GXj3y6kPiupeA1/edqq5+tph7rsX72Eog417IRxUC2HHI8oqIJ3yE/fylTUSWqkInbu2rX2t/M7AiM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=STdqtgFV; arc=fail smtp.client-ip=52.101.67.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NmKKUarqEi5D7gq+F8Zm1KlwGL0Qa/DzyzVUTD2yUnDKuINOnQtl8cAOATuM5tXBTdcZDFzcfURFrBXoiy4xDCvg/0gjGtK9IM9Dw2I4EThU+nFsDP2y0eMnxr9z08t/fLqSyIHgblf6nqM8oACvVUcqjLjqUEPYu3RSK+jqUQmVh+qPvaxCyDmCxshlA1s23D6H2kf9fqS9uRe4+Hf+FE8R3iXOdq+6xTchqd9OdNBoJmqX64apjlv3L7PK0ERDKrTgg4o35IWgXQs5if6ztnuz2Yrq598PKToMiu3HDw7hnJdEEr4S9BeASyo+9PXYw3BPTVpE5zyN7eHo+6jGsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cx3seEEpKe34KsMUC8CLUiN3V8WBcwJm17eLUO7vDyI=;
- b=ATpJ4oA2H0BgFr+y122Qpvo+Lel4Cm+2LKiT4d4ot9qLbgTEadtEBDEjT5LaYA2s0dPg9JKpJoimGlTlWneXT2fSnpCAa+dIbXVZZYIu6JwypyFGVSNxc1ZSUNpS9Dk1jwioVtdVxufcgwvS7MJFIb4SewnFsvJ2L8G4FXRkjoUtsM/wcWN6b9CAS6/WP6qA2QLzfYXJlPR+iwCfJ8NJJ/AEYPMyQXtPH+my5LU9mPboAgo8PO9I9NfUDhL42+F0bAXpWTKpuf4KmPhIQOhTkWMHmA/ftl44HZ6YWbFnlyMwi/TQv/H2Wcdfe0LB/xg1/YtGKLyVychbaqSr9aWxwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cx3seEEpKe34KsMUC8CLUiN3V8WBcwJm17eLUO7vDyI=;
- b=STdqtgFVTKbF2CTDDCOFQGQPe0xLDyKiZQdzQij0PyxRgqmhfNGBfzrerxA49spFWDmqXcbdxFKFtUT8bBLZrK6qAvfRsuzR+d7IIru/OrDrU9PnicTnDAZgoMM2/rNE8QbywOi+P20Zoqy36L5BykmTnMi0UhDAu4js5G5RaJQpScl4evwTtN/vfHFrLSRNNwYFky8gkt00hOupNuYGc5VXO/7IigmVQ+ZTypNTUAJRxsNYb4lht1jXt4Ci3H/Vwnysppl6K55hQUufx+mLNG1E5z02VlTG6dTkgdMQaLNvYfT4BjTpuyg3fE9PeBb0USrICXp5GRzxEKEyNfeYVA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by DBAPR04MB7223.eurprd04.prod.outlook.com (2603:10a6:10:1a4::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
- 2024 09:41:41 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8026.019; Wed, 9 Oct 2024
- 09:41:41 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: xiaoning.wang@nxp.com,
-	claudiu.manoil@nxp.com,
-	imx@lists.linux.dev
-Subject: [PATCH] PCI: Add NXP NETC vendor ID and device IDs
-Date: Wed,  9 Oct 2024 17:27:00 +0800
-Message-Id: <20241009092700.146720-1-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2P153CA0009.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::18) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42937189B9D;
+	Wed,  9 Oct 2024 09:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728466102; cv=none; b=ZZdOr/Iq/NcenjkClGjjH8FRmYtD3r63uV2aUvW/A8yNX2vzHq8tSmfmWkqTai8rcyLG+BtrJNrM0a/CGquNOH0fpcqI4CtQMP905YoQWBUYLZD3Pj6AXHBbl2Y5MUkSsyvSSKkon/j3y0TRlTfzfUCv/pVUm6jKM/5wPV6STzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728466102; c=relaxed/simple;
+	bh=3uH0VHQ5FbfEU6U+DIwCrLir1cI06f1Nwd6HjQO06xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VWb+d93DL7KPfsnat6A9MDzoy9eyV/7OZeG2zdljBUFWoSfJtrEEL1C3a7QK0EQKQni0xkqnOOX7k1LUkOWSxyOtdj96S6R03qm1yGGZTpK7V5f7HhhkJEnaucLDNy+1vcvG7afdB80MvATerALetNZVYfB2wxZl8LFOtg2sr38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6dde476d3dfso53403027b3.3;
+        Wed, 09 Oct 2024 02:28:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728466098; x=1729070898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K2aKKIBJN+fcgMd4SG9SyuTgYPFz3/hZQ2vaXaYBN9Y=;
+        b=AusfVUV6i4vaAArcHqJsYBY3mvtB+2+3x+P8zLNVT8TilslC4xS5cC0n2XBV+SFQ2T
+         EdYgD+gSUqtSuZxpG6Kx8SLCK9RLmJ7knezp/iruZNY3D8QBGoEm0MbZGE0hMB9izT1e
+         Hgfa+bEDXnckbPMQiW6VvUsny1GJPwKqWxK8j0e7EWPVsWCkYMBH5FggGUml/d4ltbPm
+         Kpmmo/ISo1ChiH6XtJSBViQxtY0A2DRslX31BxuYebTIB1eah5k9fc6f6pbKp/MvSbKN
+         WRyzIGzcB433lUlx8SLgzyteHb0GpkN5SjXjnMOBktU2FPhBmqWMlAYxljFwEhNoB/wE
+         r2JA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3IMA5JzjA+DnK7XTv46blvBWOzmdBRrqd1MmPUA3F2pxtI9ug+9ByjeVs7NnINi6Adf7tyTcRgp7l@vger.kernel.org, AJvYcCVY3A8M+zI5tVEO/2PQxT3VkdCJDaAPCuEDyLI7uHzz2CUIHC/C4wic3KUpBdkh8JbqCD582TlD17KUXImLcUyeXVM=@vger.kernel.org, AJvYcCXlfMRQHl+aRqnPZiK9TIL+UsXACrycCebOKmXMs9jCVA7lnal/J4cnoO9T84ObVR5dolg99e6IfpQlLCR5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4jkyblgKuTSwsAZlm0oXRAeWXUWyxH7dF+KLCUFrCjXDkPoJx
+	GKp/Pn0m+vqcLj9hqijCrSGXAzCT9msmjexjaFcCG4KleGbulk2XJ1YDfUHm
+X-Google-Smtp-Source: AGHT+IGwIN0KgjdXBRIUnow8+1heDS02mBfKjHKUuLUK/UOv5Zme7olUq6bkJ0wI+qmPgqskmxft5A==
+X-Received: by 2002:a05:690c:399:b0:6e2:71b:150 with SMTP id 00721157ae682-6e3221a1695mr15829927b3.29.1728466098234;
+        Wed, 09 Oct 2024 02:28:18 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e32b55ad9dsm266297b3.98.2024.10.09.02.28.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 02:28:17 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dde476d3dfso53402747b3.3;
+        Wed, 09 Oct 2024 02:28:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWTRq62LQzK82rHDL3z7M7ZXZ5sbLU+KYURtqU0Evh+iOJAu6Dooxjq6r5fcCVI7PrpHYXoLCGVkGOkZY/Va0ely2M=@vger.kernel.org, AJvYcCWoYhm7IbHwSkTrjwuOWb1kHO9LzeJFCxpeRQWMUbbTD2kfGUWTvupQizKHHbaeCS65SIlVV/thZ1m5Ip0e@vger.kernel.org, AJvYcCWs24KcHeMCk2LHo2vr/th014Vbsktt++vlekDwUS+US3QFyiFF6T6Htl42otzu4kD1rlW4KqBM+XVt@vger.kernel.org
+X-Received: by 2002:a05:690c:f06:b0:6e3:1f02:4069 with SMTP id
+ 00721157ae682-6e322133df8mr20738077b3.7.1728466097482; Wed, 09 Oct 2024
+ 02:28:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|DBAPR04MB7223:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0789cbf3-7845-4567-8f72-08dce8469462
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zKbjBHqGYBb/YiE5fngLHhZEzCvlVA4cFwTwZ5mEso/9+vM6dGjxyxe50sGt?=
- =?us-ascii?Q?9So8I/ErhyQxvAi3R4d+ZJtmzMsP8o7wDHZnIIIoBbMAss27kwoTqZjFaDo7?=
- =?us-ascii?Q?ryuTHa8J/eAgLzEvlPXP7aLg7LXrFKSdbVvkrgYYQprdAr5kt5TlNCFXTLj2?=
- =?us-ascii?Q?hvbY6N2dnk6QzhLR0g3k78GTZntF3UjQyDYg4h0WSxsF7QiqxjeXRe+m4AMN?=
- =?us-ascii?Q?KIMBM98300rZZ0UKse1wvl+ttvLrg1itSldGVytniw00672uuofz4nRuUkSr?=
- =?us-ascii?Q?5/iZ1QqzI1lcdTzUeWhsEZeR5JrWDo+fkjkRmr8gCqwuz1g0XLLfBUw8pYDE?=
- =?us-ascii?Q?IXwAjRogS5f6MTF1q/s28EsQ7LN8EEH1Jb5BZbHTbAp/kgYaKdpsNEldRm0r?=
- =?us-ascii?Q?lZSxoK/iy7ebHJSOnRScTNE9PzwijK/6os6xSTdMpXyjc9/EvoYiAEE84RcI?=
- =?us-ascii?Q?EP99ltMXecdzxO3UuPswJVw0L2y3YUdwIhoTqhvmrgOCVk009aYIS+4OOA7e?=
- =?us-ascii?Q?0ryPijdHI2A6dlVkGFLf+p8Pn8n+Rh10vLLCxx4vw3vWN+bK51YeJT7au0pY?=
- =?us-ascii?Q?1VxE9TT5HlTYgBL8esx32PLl3NaLxO9Y8A63O5MV3wJyvUdskhpOYR6ch97m?=
- =?us-ascii?Q?t9z6dW/5dZb5TMDQ/TtPT2HDU9BWXd1PEd0yyz0uHxRi7h/Ym9Uo8fCMZxDd?=
- =?us-ascii?Q?2ZuR90HtKLP0qmF+bXC9GDlREnpUHSsfUiU3swVgGedP21U2D9/o+f/2Q3y3?=
- =?us-ascii?Q?76c9CRXtJgqVVQtIUaFQmIwg3k41g57lUOQ/Zh8BsC7E5/cstsuh02yyPhU4?=
- =?us-ascii?Q?RscWuh29G8H1qnJo1+k+51nrcHBiSrd1Y8VlBpodrw8HrxglZRUUo/kwDIsQ?=
- =?us-ascii?Q?9n/Kcvivf3Dw2rhR+X0RFSuw120j81Lcl/Q93aKb5IwpDelu2jkAzE6aAwwZ?=
- =?us-ascii?Q?fq6DgOUBNVjNQT3ebzZVr6F4UoTVVOVzZ78RnwMkeYFp9ulP0Ir1uFUiHZPd?=
- =?us-ascii?Q?/Xc4XSgT0VuciMSiwUaTSqmfQA/hs1ch7JHZLrgLjo5Q16jg86YTu39JLrfj?=
- =?us-ascii?Q?fTmzglwz6NMBBvPVFxCxq82/xB/uzfaeGb7T909Tb9qZ/MMisVVA5h3dSPNH?=
- =?us-ascii?Q?mfBzKqLXHotktWCyCp/oLHruwbY85amIyzCeAt3TahLFUE9fwanZPM8SOjUG?=
- =?us-ascii?Q?5wnsuCcWmx+IM3a6YQsnx2YGkk20VVenxO/hrf4YVfHTAxhadyJEFTQ+RV8+?=
- =?us-ascii?Q?ydXKzjwbemun9eMWZ2JaLuCrldSykctFCh9Y3Txw6AkxJbUoFGAZvK+ZBgPz?=
- =?us-ascii?Q?5Q0MCSVSELvyp8zmO3nbfhtYbRSNrH3D5aZcFqdjhnuchg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UHa9AZKf5mpLQIXBdo7KVif4iNVUkdA7C/PWVFqORUebuVFvnGbAhAoSkfhH?=
- =?us-ascii?Q?4LMTWhYStd7JLPT5HlfGiF8YxBDt7yxKP3hMDegED8vsvy9P2SahmCMXsAIP?=
- =?us-ascii?Q?x2IIuh1TN7LcJIAmX784mVAT5T4xyKKtcut8nOx2JGM5FnuVqiDuJf0SHjVx?=
- =?us-ascii?Q?4PnnrGjCwDJwb5rOjEPRAd9Jza8fBG6YS9jh6MQ7kA/+2WvtLW1MXyv46ioW?=
- =?us-ascii?Q?5IfJKhEo6X2At+PxRaQZKoJl6Lp8WmN2zyr+cJ/JVji3oMFVJv0rc8QTlkIB?=
- =?us-ascii?Q?WV12Yl17Bxrc/p7ssfauoYoUDQLjec5rj4i57aH8VG8kCQ430396KEvPXmxD?=
- =?us-ascii?Q?2vThMzCU4bSG02Oym9/8Pn9JxJQl6tlbAfaUlPJCXUtGmm6X2K49LectLihk?=
- =?us-ascii?Q?0ZRGubne0x5G7bTV5FX3BWIwJoir+hvlVcA6ROpubK/SKkGBz/eA7JEXwq46?=
- =?us-ascii?Q?JgHAmSPHb1HI8bhMND4B2KrDugzUwoSIhSxfFc27EwPWALbTWz8ZkpofoznR?=
- =?us-ascii?Q?3OZi/+zRFROah65zz48qGfzkJvvt306jEtXFgqrr53nzTHkvqDUaIUO+AOiQ?=
- =?us-ascii?Q?WQR5OOL0WsI1GHc8QloVX+0NKINDG3jaLVaIx3UY9myeNrQVy4FVZnhItO32?=
- =?us-ascii?Q?H08/NS+P05C9/QhfRIbhW7Ci5Pj92JqIrL2fx4DzInNRs5nq6MAwkEN4B26P?=
- =?us-ascii?Q?LYgv571OHKiFdXqm3JuMK/7FBHRAvbm/IL+ji3SaHkOJK7kwwfMxLB2IGWga?=
- =?us-ascii?Q?vdvB6gKg7wMaZ1j0DUqQS74CBxbsYuzd0eyoi6ymzqkMR1ZjUdFG4NiqzfbI?=
- =?us-ascii?Q?SxLSKkWut4o3qzk64a2FsBzSf4lW3J7Bme5OB3syJ4PDVtTau+zoUPnGawpO?=
- =?us-ascii?Q?yw3Ih1y4hS7TTWQA1cpzJUOvPg4QmoM+dI67tYmZRFeu1nV9Nqs1bqwBdM4p?=
- =?us-ascii?Q?XZxM5qO0upbMF6fso/cUB1KNmos8D+dZVe/saszHyBUjYR6s7d5AmD9JNqLS?=
- =?us-ascii?Q?17EwfWCb+vvveOQwEzgihGrzS4f/EupsDGovR/FKbJ6WAD/aE/nApvgpAm5m?=
- =?us-ascii?Q?ZUpQNZPmSmxDJZIV2t+CgjEslOKQwbzs0S3GRkg91gP6SMHI6VBywdOZ481e?=
- =?us-ascii?Q?O4FGIrVLuagUevqEqwpJAjForzGqN9AiK96+SxS1BmXp+vBVLSiS7MfAXqKt?=
- =?us-ascii?Q?BYQ04FZ4i/0pR5Slg+OTxuDjHneiNeQIBRP1NJomszzCJWbTS1zv00G2OKRg?=
- =?us-ascii?Q?KCCBmgoX3WCjNQEOAtg7drCl4FJ3ZgY52HIbFS1EwoQZWGMGEg1fGjnMtrbG?=
- =?us-ascii?Q?9VTBr9bh/H/Mn1As05VDaebmE4gYn98JALKSlWfoeKJFUkAQcFNnPRyOmCLN?=
- =?us-ascii?Q?wD9L0P44B4ziO1n/4l240DC5ZQEFe00D4+1TMwLmkTU7vP4KrXfWeohfMi31?=
- =?us-ascii?Q?73q8AEyv3Oef65iJmklnQTRLhR9nJbD0IAUmsyb3wHnk6fhDelDRlcsXDC0Y?=
- =?us-ascii?Q?qV8TLzyQbSdXAbHbZcPdoJrkM1gfap9Wst1K9RCqW2NLPt/4iA6apWuuxAL/?=
- =?us-ascii?Q?141xJSpe1KnV810+xtucM/7BjvVKu1aQIo2CAcU1?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0789cbf3-7845-4567-8f72-08dce8469462
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 09:41:41.7156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oDJec8/ibD5u6/uKummQn0g8ZAS8S2M4nELJRonfcGrtjXe0vjK7lL89FdI6oGiAOxZzEMxtZTOkYyE/1GijUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7223
+References: <20241008164935.335043-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY3PR01MB11346A1726BCE1687C6AFF519867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB113469ABB6393E0A6451034A4867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8vWpUmq9esgcnjWVcPb-jUaLuKvhJF2VwiWrCx5_nOtww@mail.gmail.com>
+In-Reply-To: <CA+V-a8vWpUmq9esgcnjWVcPb-jUaLuKvhJF2VwiWrCx5_nOtww@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 Oct 2024 11:28:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdULuCWd1V0Az=NWHhSb7voDKbTo9rp3Excntp7qvTbbuQ@mail.gmail.com>
+Message-ID: <CAMuHMdULuCWd1V0Az=NWHhSb7voDKbTo9rp3Excntp7qvTbbuQ@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r9a09g057: Add OPP table
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-NXP NETC is a multi-function PCIe Root Complex Integrated Endpoint
-(RCiEP) and it contains multiple PCIe functions, such as EMDIO,
-PTP Timer, ENETC PF and VF. Therefore, add these device IDs to
-pci_ids.h
+Hi Prabhakar,
 
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
----
- include/linux/pci_ids.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Tue, Oct 8, 2024 at 10:10=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Tue, Oct 8, 2024 at 6:33=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+> > > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add OPP table for RZ/V2H(P) SoC.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v1->v2
+> > > > - Set opp-microvolt to 800000 for frequencies below 1.1GHz
+> > > > ---
+> > > >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 41 ++++++++++++++++++=
+++++
+> > > >  1 file changed, 41 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm6=
+4/boot/dts/renesas/r9a09g057.dtsi
+> > > > index 1ad5a1b6917f..4bbe75b81f54 100644
+> > > > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> > > > @@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
+> > > >             clock-frequency =3D <0>;
+> > > >     };
+> > > >
+> > > > +   /*
+> > > > +    * The default cluster table is based on the assumption that th=
+e PLLCA55 clock
+> > > > +    * frequency is set to 1.7GHz. The PLLCA55 clock frequency can =
+be set to
+> > > > +    * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and add=
+itionally can be
+> > > > +    * clocked to 1.8GHz as well). The table below should be overri=
+dden in the board
+> > > > +    * DTS based on the PLLCA55 clock frequency.
+> > > > +    */
+> > > > +   cluster0_opp: opp-table-0 {
+> > > > +           compatible =3D "operating-points-v2";
+> > > > +
+> > > > +           opp-1700000000 {
+> > > > +                   opp-hz =3D /bits/ 64 <1700000000>;
+> > > > +                   opp-microvolt =3D <900000>;
+> > >
+> > > Not sure CA-55 can change voltage from 800mV to 900mV??
+> > > Based on Power Domain Control, it needs to be in AWO mode for changin=
+g the PD_CA55 voltage.
+> > >
+> > > The manual says OD voltage is 0.9V and ND voltage is 0.8V.
+> > >
+> > > Is 1.7GHZ is ND or OD?
+> >
+> > {1.7,1.6,1.5 GHz} is enabled when VDD09_CA55 is at 0.9 V
+> > and for 1.1 GHz it is 0.8V.
+> >
+> > Maybe when you do /2, /4, /8 using dividers, the voltage may be still
+> > the same??
+> >
+> I think you are right when BOOTPLLCA[1:0] pins are set to 1.7GHz the
+> VDD09_CA55 is at 0.9 V, further dividing the clock shouldnt affect the
+> voltage levels at the PMIC output.
+>
+> Geert, please let me know if my understanding is incorrect.
 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index 4cf6aaed5f35..acd7ae774913 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -1556,6 +1556,13 @@
- #define PCI_DEVICE_ID_PHILIPS_SAA7146	0x7146
- #define PCI_DEVICE_ID_PHILIPS_SAA9730	0x9730
- 
-+/* NXP has two vendor IDs, the other one is 0x1957 */
-+#define PCI_VENDOR_ID_NXP2		PCI_VENDOR_ID_PHILIPS
-+#define PCI_DEVICE_ID_NXP2_ENETC_PF	0xe101
-+#define PCI_DEVICE_ID_NXP2_NETC_EMDIO	0xee00
-+#define PCI_DEVICE_ID_NXP2_NETC_TIMER	0xee02
-+#define PCI_DEVICE_ID_NXP2_ENETC_VF	0xef00
-+
- #define PCI_VENDOR_ID_EICON		0x1133
- #define PCI_DEVICE_ID_EICON_DIVA20	0xe002
- #define PCI_DEVICE_ID_EICON_DIVA20_U	0xe004
--- 
-2.34.1
+The actual VDD09_CA55 voltage is controlled by the external PMIC
+(RAA215300).  It is the responsibility of the system designer to make
+sure VDD09_CA55 is at 0.9V when BOOTPLLCA[1:0] is strapped for OD,
+as CPU core clock rates higher than 1.1 GHz need a higher core voltage.
+I don't think it hurts to supply the higher core voltage while
+running the CPU core at low core frequencies, except for extra power
+consumption.
 
+To control VDD09_CA55 dynamically, the CPU cores should have cpu-supply
+properties pointing to the regulator controlling it (raa215300).
+I haven't checked how Linux behaves when no cpu-supply property is
+present, or when it points to a fixed regulator.
+
+I am also wondering if other opps (1.1/1.5/1.6/1.8 GHz) should be
+added, too?  And probably any opp above 1.1GHz opp should be tagged with
+"turbo-mode"?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
