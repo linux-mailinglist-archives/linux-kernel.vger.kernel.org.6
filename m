@@ -1,369 +1,280 @@
-Return-Path: <linux-kernel+bounces-356731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050D29965DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:49:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FA19965EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A774284431
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29BAD284CB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A2E18D645;
-	Wed,  9 Oct 2024 09:49:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E852E18871D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6907318D640;
+	Wed,  9 Oct 2024 09:50:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA8D18871D;
+	Wed,  9 Oct 2024 09:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467358; cv=none; b=LaWtFIWG0kFiO5N+GcejWzO0dy1GqYDpR5L3ncXkIXFTLDlpOxFNNbwa8pCNou5jMAEz2PwuE346WX/tFrk8Dh4GDDuKly1KUHbFv2xgyZNX+vJnUFclho3i80o7XklHQpUVCgypHybxJGFPofFxbSh3NQM4SzBrqtds6/OKRbo=
+	t=1728467434; cv=none; b=kM5isv4GdbFCd4UEEYIhaAPZUWYcKmdIOQ8oDXzWC0kY1xJDKc6AJNlaCqsmJdKABSLbIo2XG9FzkjApwEJeqIz8xfq9bPmI/GDsnnUG/k9bzGcBAv455j0wLa5i9mQ3UCcb5jdajuRDEWA6QpAbp6r7FRM7B1w+pGSjUVw3xDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467358; c=relaxed/simple;
-	bh=6w//ZbY5ycgZCu6bpJ5NweHU1STFZHe0UMb/HLlDP4U=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UPocMHBsHG+XEttwn4mQuKHAKeI0QxRI8zXEgGjxobFU/uF4L2I49lpix7woV23zBFOVo/e63+zFiO7Tj+9cAkwcEAqY4vPpOh3fv1DWTuVbgk+ECx6h7Il3dom4LruXBbPCuL5l/JYTJQgBBYAKt1OVhllVJPWin0n6xdVWqAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1syTJW-0004cP-U6; Wed, 09 Oct 2024 11:49:02 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1syTJW-000ZhV-Ew; Wed, 09 Oct 2024 11:49:02 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1syTJW-000636-1E;
-	Wed, 09 Oct 2024 11:49:02 +0200
-Message-ID: <c4193d6115773a9bb9cb2616d5833165a64144c3.camel@pengutronix.de>
-Subject: Re: [PATCH v5 2/3] reset: aspeed: register AST2700 reset auxiliary
- bus device
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, dmitry.baryshkov@linaro.org, 
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org,  conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au,  linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org
-Date: Wed, 09 Oct 2024 11:49:02 +0200
-In-Reply-To: <20241009060521.2971168-3-ryan_chen@aspeedtech.com>
-References: <20241009060521.2971168-1-ryan_chen@aspeedtech.com>
-	 <20241009060521.2971168-3-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1728467434; c=relaxed/simple;
+	bh=FJSzfAm3LV03EFSa4ogCZb+9mDS+3lvz3Rd35hjGnI0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q0zx6Re8f3STy6LpeEDWy/chS8Ckz6Ltdlkf1sF3/xeod3WeQGrrQDALonynF+/78qvaJZFC11eyiUYyLkzVArLTS0rFSdAiYtijymzYjdRXxKPYnGeiRxlucXvHuy5mMQmlb8fOyXejQ2YJrRx1hO+CzP8xm3VRaNSFS/iRXNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5655FEC;
+	Wed,  9 Oct 2024 02:51:01 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF44F3F64C;
+	Wed,  9 Oct 2024 02:50:30 -0700 (PDT)
+Message-ID: <43612930-6c17-4c6f-bc4e-954bcfd7977e@arm.com>
+Date: Wed, 9 Oct 2024 10:50:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 RESEND 2/3] coresight: Add support to get static id for
+ system trace sources
+To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240910100127.8948-1-quic_jinlmao@quicinc.com>
+ <20240910100127.8948-3-quic_jinlmao@quicinc.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240910100127.8948-3-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mi, 2024-10-09 at 14:05 +0800, Ryan Chen wrote:
-> The AST2700 reset driver is registered as an auxiliary device
-> due to reset and clock controller share the same register region.
->=20
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+On 10/09/2024 11:01, Mao Jinlong wrote:
+> Dynamic trace id was introduced in coresight subsystem, so trace id is
+> allocated dynamically. However, some hardware ATB source has static trace
+> id and it cannot be changed via software programming. For such source,
+> it can call coresight_get_static_trace_id to get the fixed trace id from
+> device node and pass id to coresight_trace_id_get_static_system_id to
+> reserve the id.
+> 
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+
+This patch is technically doing two different things :
+
+1. Support for reading the static traceid from the firmware. (users of 
+which comes later in Dummy)
+
+2. Support for allocating a "specific" traceid for system sources.
+
+
+Both the names are a bit similar and could be confusing.
+
+For (1), I don't think we need to add a helper like that. See my 
+comments below, and drop all of that from here this patch.
+
+
 > ---
->  drivers/reset/Kconfig        |   7 +
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-aspeed.c | 256 +++++++++++++++++++++++++++++++++++
->  3 files changed, 264 insertions(+)
->  create mode 100644 drivers/reset/reset-aspeed.c
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 67bce340a87e..71a3accea7cb 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -22,6 +22,13 @@ config RESET_A10SR
->  	  This option enables support for the external reset functions for
->  	  peripheral PHYs on the Altera Arria10 System Resource Chip.
-> =20
-> +config RESET_ASPEED
-> +	tristate "ASPEED Reset Driver"
-> +	depends on ARCH_ASPEED || COMPILE_TEST
-> +	select AUXILIARY_BUS
-> +	help
-> +	  This enables the reset controller driver for AST2700.
-> +
->  config RESET_ATH79
->  	bool "AR71xx Reset Driver" if COMPILE_TEST
->  	default ATH79
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 27b0bbdfcc04..97482bb56416 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -5,6 +5,7 @@ obj-y +=3D starfive/
->  obj-y +=3D sti/
->  obj-y +=3D tegra/
->  obj-$(CONFIG_RESET_A10SR) +=3D reset-a10sr.o
-> +obj-$(CONFIG_RESET_ASPEED) +=3D reset-aspeed.o
->  obj-$(CONFIG_RESET_ATH79) +=3D reset-ath79.o
->  obj-$(CONFIG_RESET_AXS10X) +=3D reset-axs10x.o
->  obj-$(CONFIG_RESET_BCM6345) +=3D reset-bcm6345.o
-> diff --git a/drivers/reset/reset-aspeed.c b/drivers/reset/reset-aspeed.c
-> new file mode 100644
-> index 000000000000..8a2a68ac442b
-> --- /dev/null
-> +++ b/drivers/reset/reset-aspeed.c
-> @@ -0,0 +1,256 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
+>   .../hwtracing/coresight/coresight-platform.c  | 26 +++++++++++++
+>   .../hwtracing/coresight/coresight-trace-id.c  | 38 ++++++++++++++-----
+>   .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++
+>   include/linux/coresight.h                     |  1 +
+>   4 files changed, 64 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 64e171eaad82..703abf0fa3f9 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -183,6 +183,18 @@ static int of_coresight_get_cpu(struct device *dev)
+>   	return cpu;
+>   }
+>   
 > +/*
-> + * Copyright (c) 2024 ASPEED Technology Inc.
+> + * of_coresight_get_trace_id: Get the atid of a source device.
+> + *
+> + * Returns 0 on success.
 > + */
-> +
-> +#include <linux/auxiliary_bus.h>
-
-Missing
-
-#include <linux/cleanup.h>
-
-for guard().
-
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#include <dt-bindings/reset/aspeed,ast2700-scu.h>
-> +
-> +#define SCU0_RESET_CTRL1 0x200
-> +#define SCU0_RESET_CTRL2 0x220
-> +#define SCU1_RESET_CTRL1 0x200
-> +#define SCU1_RESET_CTRL2 0x220
-> +#define SCU1_PCIE3_CTRL 0x908
-> +
-> +struct ast2700_reset_signal {
-> +	bool dedicated_clr; /* dedicated reset clr offset */
-> +	u32 offset, bit;
-> +};
-> +
-> +struct aspeed_reset_info {
-> +	unsigned int nr_resets;
-> +	const struct ast2700_reset_signal *signal;
-> +};
-> +
-> +struct aspeed_reset {
-> +	struct reset_controller_dev rcdev;
-> +	struct aspeed_reset_info *info;
-> +	spinlock_t lock; /* Protect read-modify-write cycle */
-> +	void __iomem *base;
-> +};
-> +
-> +static const struct ast2700_reset_signal ast2700_reset0_signals[] =3D {
-> +	[SCU0_RESET_SDRAM] =3D { true, SCU0_RESET_CTRL1, BIT(0) },
-> +	[SCU0_RESET_DDRPHY] =3D { true, SCU0_RESET_CTRL1, BIT(1) },
-> +	[SCU0_RESET_RSA] =3D { true, SCU0_RESET_CTRL1, BIT(2) },
-> +	[SCU0_RESET_SHA3] =3D { true, SCU0_RESET_CTRL1, BIT(3) },
-> +	[SCU0_RESET_HACE] =3D { true, SCU0_RESET_CTRL1, BIT(4) },
-> +	[SCU0_RESET_SOC] =3D { true, SCU0_RESET_CTRL1, BIT(5) },
-> +	[SCU0_RESET_VIDEO] =3D { true, SCU0_RESET_CTRL1, BIT(6) },
-> +	[SCU0_RESET_2D] =3D { true, SCU0_RESET_CTRL1, BIT(7) },
-> +	[SCU0_RESET_PCIS] =3D { true, SCU0_RESET_CTRL1, BIT(8) },
-> +	[SCU0_RESET_RVAS0] =3D { true, SCU0_RESET_CTRL1, BIT(9) },
-> +	[SCU0_RESET_RVAS1] =3D { true, SCU0_RESET_CTRL1, BIT(10) },
-> +	[SCU0_RESET_SM3] =3D { true, SCU0_RESET_CTRL1, BIT(11) },
-> +	[SCU0_RESET_SM4] =3D { true, SCU0_RESET_CTRL1, BIT(12) },
-> +	[SCU0_RESET_CRT0] =3D { true, SCU0_RESET_CTRL1, BIT(13) },
-> +	[SCU0_RESET_ECC] =3D { true, SCU0_RESET_CTRL1, BIT(14) },
-> +	[SCU0_RESET_DP_PCI] =3D { true, SCU0_RESET_CTRL1, BIT(15) },
-> +	[SCU0_RESET_UFS] =3D { true, SCU0_RESET_CTRL1, BIT(16) },
-> +	[SCU0_RESET_EMMC] =3D { true, SCU0_RESET_CTRL1, BIT(17) },
-> +	[SCU0_RESET_PCIE1RST] =3D { true, SCU0_RESET_CTRL1, BIT(18) },
-> +	[SCU0_RESET_PCIE1RSTOE] =3D { true, SCU0_RESET_CTRL1, BIT(19) },
-> +	[SCU0_RESET_PCIE0RST] =3D { true, SCU0_RESET_CTRL1, BIT(20) },
-> +	[SCU0_RESET_PCIE0RSTOE] =3D { true, SCU0_RESET_CTRL1, BIT(21) },
-> +	[SCU0_RESET_JTAG] =3D { true, SCU0_RESET_CTRL1, BIT(22) },
-> +	[SCU0_RESET_MCTP0] =3D { true, SCU0_RESET_CTRL1, BIT(23) },
-> +	[SCU0_RESET_MCTP1] =3D { true, SCU0_RESET_CTRL1, BIT(24) },
-> +	[SCU0_RESET_XDMA0] =3D { true, SCU0_RESET_CTRL1, BIT(25) },
-> +	[SCU0_RESET_XDMA1] =3D { true, SCU0_RESET_CTRL1, BIT(26) },
-> +	[SCU0_RESET_H2X1] =3D { true, SCU0_RESET_CTRL1, BIT(27) },
-> +	[SCU0_RESET_DP] =3D { true, SCU0_RESET_CTRL1, BIT(28) },
-> +	[SCU0_RESET_DP_MCU] =3D { true, SCU0_RESET_CTRL1, BIT(29) },
-> +	[SCU0_RESET_SSP] =3D { true, SCU0_RESET_CTRL1, BIT(30) },
-> +	[SCU0_RESET_H2X0] =3D { true, SCU0_RESET_CTRL1, BIT(31) },
-> +	[SCU0_RESET_PORTA_VHUB] =3D { true, SCU0_RESET_CTRL2, BIT(0) },
-> +	[SCU0_RESET_PORTA_PHY3] =3D { true, SCU0_RESET_CTRL2, BIT(1) },
-> +	[SCU0_RESET_PORTA_XHCI] =3D { true, SCU0_RESET_CTRL2, BIT(2) },
-> +	[SCU0_RESET_PORTB_VHUB] =3D { true, SCU0_RESET_CTRL2, BIT(3) },
-> +	[SCU0_RESET_PORTB_PHY3] =3D { true, SCU0_RESET_CTRL2, BIT(4) },
-> +	[SCU0_RESET_PORTB_XHCI] =3D { true, SCU0_RESET_CTRL2, BIT(5) },
-> +	[SCU0_RESET_PORTA_VHUB_EHCI] =3D { true, SCU0_RESET_CTRL2, BIT(6) },
-> +	[SCU0_RESET_PORTB_VHUB_EHCI] =3D { true, SCU0_RESET_CTRL2, BIT(7) },
-> +	[SCU0_RESET_UHCI] =3D { true, SCU0_RESET_CTRL2, BIT(8) },
-> +	[SCU0_RESET_TSP] =3D { true, SCU0_RESET_CTRL2, BIT(9) },
-> +	[SCU0_RESET_E2M0] =3D { true, SCU0_RESET_CTRL2, BIT(10) },
-> +	[SCU0_RESET_E2M1] =3D { true, SCU0_RESET_CTRL2, BIT(11) },
-> +	[SCU0_RESET_VLINK] =3D { true, SCU0_RESET_CTRL2, BIT(12) },
-> +};
-> +
-> +static const struct ast2700_reset_signal ast2700_reset1_signals[] =3D {
-> +	[SCU1_RESET_LPC0] =3D { true, SCU1_RESET_CTRL1, BIT(0) },
-> +	[SCU1_RESET_LPC1] =3D { true, SCU1_RESET_CTRL1, BIT(1) },
-> +	[SCU1_RESET_MII] =3D { true, SCU1_RESET_CTRL1, BIT(2) },
-> +	[SCU1_RESET_PECI] =3D { true, SCU1_RESET_CTRL1, BIT(3) },
-> +	[SCU1_RESET_PWM] =3D { true, SCU1_RESET_CTRL1, BIT(4) },
-> +	[SCU1_RESET_MAC0] =3D { true, SCU1_RESET_CTRL1, BIT(5) },
-> +	[SCU1_RESET_MAC1] =3D { true, SCU1_RESET_CTRL1, BIT(6) },
-> +	[SCU1_RESET_MAC2] =3D { true, SCU1_RESET_CTRL1, BIT(7) },
-> +	[SCU1_RESET_ADC] =3D { true, SCU1_RESET_CTRL1, BIT(8) },
-> +	[SCU1_RESET_SD] =3D { true, SCU1_RESET_CTRL1, BIT(9) },
-> +	[SCU1_RESET_ESPI0] =3D { true, SCU1_RESET_CTRL1, BIT(10) },
-> +	[SCU1_RESET_ESPI1] =3D { true, SCU1_RESET_CTRL1, BIT(11) },
-> +	[SCU1_RESET_JTAG1] =3D { true, SCU1_RESET_CTRL1, BIT(12) },
-> +	[SCU1_RESET_SPI0] =3D { true, SCU1_RESET_CTRL1, BIT(13) },
-> +	[SCU1_RESET_SPI1] =3D { true, SCU1_RESET_CTRL1, BIT(14) },
-> +	[SCU1_RESET_SPI2] =3D { true, SCU1_RESET_CTRL1, BIT(15) },
-> +	[SCU1_RESET_I3C0] =3D { true, SCU1_RESET_CTRL1, BIT(16) },
-> +	[SCU1_RESET_I3C1] =3D { true, SCU1_RESET_CTRL1, BIT(17) },
-> +	[SCU1_RESET_I3C2] =3D { true, SCU1_RESET_CTRL1, BIT(18) },
-> +	[SCU1_RESET_I3C3] =3D { true, SCU1_RESET_CTRL1, BIT(19) },
-> +	[SCU1_RESET_I3C4] =3D { true, SCU1_RESET_CTRL1, BIT(20) },
-> +	[SCU1_RESET_I3C5] =3D { true, SCU1_RESET_CTRL1, BIT(21) },
-> +	[SCU1_RESET_I3C6] =3D { true, SCU1_RESET_CTRL1, BIT(22) },
-> +	[SCU1_RESET_I3C7] =3D { true, SCU1_RESET_CTRL1, BIT(23) },
-> +	[SCU1_RESET_I3C8] =3D { true, SCU1_RESET_CTRL1, BIT(24) },
-> +	[SCU1_RESET_I3C9] =3D { true, SCU1_RESET_CTRL1, BIT(25) },
-> +	[SCU1_RESET_I3C10] =3D { true, SCU1_RESET_CTRL1, BIT(26) },
-> +	[SCU1_RESET_I3C11] =3D { true, SCU1_RESET_CTRL1, BIT(27) },
-> +	[SCU1_RESET_I3C12] =3D { true, SCU1_RESET_CTRL1, BIT(28) },
-> +	[SCU1_RESET_I3C13] =3D { true, SCU1_RESET_CTRL1, BIT(29) },
-> +	[SCU1_RESET_I3C14] =3D { true, SCU1_RESET_CTRL1, BIT(30) },
-> +	[SCU1_RESET_I3C15] =3D { true, SCU1_RESET_CTRL1, BIT(31) },
-> +	[SCU1_RESET_MCU0] =3D { true, SCU1_RESET_CTRL2, BIT(0) },
-> +	[SCU1_RESET_MCU1] =3D { true, SCU1_RESET_CTRL2, BIT(1) },
-> +	[SCU1_RESET_H2A_SPI1] =3D { true, SCU1_RESET_CTRL2, BIT(2) },
-> +	[SCU1_RESET_H2A_SPI2] =3D { true, SCU1_RESET_CTRL2, BIT(3) },
-> +	[SCU1_RESET_UART0] =3D { true, SCU1_RESET_CTRL2, BIT(4) },
-> +	[SCU1_RESET_UART1] =3D { true, SCU1_RESET_CTRL2, BIT(5) },
-> +	[SCU1_RESET_UART2] =3D { true, SCU1_RESET_CTRL2, BIT(6) },
-> +	[SCU1_RESET_UART3] =3D { true, SCU1_RESET_CTRL2, BIT(7) },
-> +	[SCU1_RESET_I2C_FILTER] =3D { true, SCU1_RESET_CTRL2, BIT(8) },
-> +	[SCU1_RESET_CALIPTRA] =3D { true, SCU1_RESET_CTRL2, BIT(9) },
-> +	[SCU1_RESET_XDMA] =3D { true, SCU1_RESET_CTRL2, BIT(10) },
-> +	[SCU1_RESET_FSI] =3D { true, SCU1_RESET_CTRL2, BIT(12) },
-> +	[SCU1_RESET_CAN] =3D { true, SCU1_RESET_CTRL2, BIT(13) },
-> +	[SCU1_RESET_MCTP] =3D { true, SCU1_RESET_CTRL2, BIT(14) },
-> +	[SCU1_RESET_I2C] =3D { true, SCU1_RESET_CTRL2, BIT(15) },
-> +	[SCU1_RESET_UART6] =3D { true, SCU1_RESET_CTRL2, BIT(16) },
-> +	[SCU1_RESET_UART7] =3D { true, SCU1_RESET_CTRL2, BIT(17) },
-> +	[SCU1_RESET_UART8] =3D { true, SCU1_RESET_CTRL2, BIT(18) },
-> +	[SCU1_RESET_UART9] =3D { true, SCU1_RESET_CTRL2, BIT(19) },
-> +	[SCU1_RESET_LTPI0] =3D { true, SCU1_RESET_CTRL2, BIT(20) },
-> +	[SCU1_RESET_VGAL] =3D { true, SCU1_RESET_CTRL2, BIT(21) },
-> +	[SCU1_RESET_LTPI1] =3D { true, SCU1_RESET_CTRL2, BIT(22) },
-> +	[SCU1_RESET_ACE] =3D { true, SCU1_RESET_CTRL2, BIT(23) },
-> +	[SCU1_RESET_E2M] =3D { true, SCU1_RESET_CTRL2, BIT(24) },
-> +	[SCU1_RESET_UHCI] =3D { true, SCU1_RESET_CTRL2, BIT(25) },
-> +	[SCU1_RESET_PORTC_USB2UART] =3D { true, SCU1_RESET_CTRL2, BIT(26) },
-> +	[SCU1_RESET_PORTC_VHUB_EHCI] =3D { true, SCU1_RESET_CTRL2, BIT(27) },
-> +	[SCU1_RESET_PORTD_USB2UART] =3D { true, SCU1_RESET_CTRL2, BIT(28) },
-> +	[SCU1_RESET_PORTD_VHUB_EHCI] =3D { true, SCU1_RESET_CTRL2, BIT(29) },
-> +	[SCU1_RESET_H2X] =3D { true, SCU1_RESET_CTRL2, BIT(30) },
-> +	[SCU1_RESET_I3CDMA] =3D { true, SCU1_RESET_CTRL2, BIT(31) },
-> +	[SCU1_RESET_PCIE2RST] =3D { false, SCU1_PCIE3_CTRL, BIT(0) },
-> +};
-> +
-> +static inline struct aspeed_reset *to_aspeed_reset(struct reset_controll=
-er_dev *rcdev)
+> +static int of_coresight_get_static_trace_id(struct device *dev, u32 *id)
 > +{
-> +	return container_of(rcdev, struct aspeed_reset, rcdev);
+> +
+> +	return of_property_read_u32(dev->of_node, "arm,static-trace-id", id);
 > +}
 > +
-> +static int aspeed_reset_assert(struct reset_controller_dev *rcdev, unsig=
-ned long id)
+> +
+>   /*
+>    * of_coresight_parse_endpoint : Parse the given output endpoint @ep
+>    * and fill the connection information in @pdata->out_conns
+> @@ -317,6 +329,11 @@ static inline int of_coresight_get_cpu(struct device *dev)
+>   {
+>   	return -ENODEV;
+>   }
+> +
+> +static inline int of_coresight_get_static_trace_id(struct device *dev, u32 *id)
 > +{
-> +	struct aspeed_reset *rc =3D to_aspeed_reset(rcdev);
-> +	void __iomem *reg_offset =3D rc->base + rc->info->signal[id].offset;
-> +
-> +	if (rc->info->signal[id].dedicated_clr) {
-> +		writel(rc->info->signal[id].bit, reg_offset);
-> +	} else {
-> +		guard(spinlock_irqsave)(&rc->lock);
-> +		writel(readl(reg_offset) & ~rc->info->signal[id].bit, reg_offset);
-> +	}
-> +
-> +	return 0;
+> +	return -ENODEV;
 > +}
-> +
-> +static int aspeed_reset_deassert(struct reset_controller_dev *rcdev, uns=
-igned long id)
+>   #endif
+
+
+>   
+>   #ifdef CONFIG_ACPI
+> @@ -796,6 +813,15 @@ int coresight_get_cpu(struct device *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_get_cpu);
+>   
+> +int coresight_get_static_trace_id(struct device *dev, u32 *id)
 > +{
-> +	struct aspeed_reset *rc =3D to_aspeed_reset(rcdev);
-> +	void __iomem *reg_offset =3D rc->base + rc->info->signal[id].offset;
+> +	if (!is_of_node(dev->fwnode))
+> +		return -EINVAL;
 > +
-> +	if (rc->info->signal[id].dedicated_clr) {
-> +		writel(rc->info->signal[id].bit, reg_offset + 0x04);
-> +	} else {
-> +		guard(spinlock_irqsave)(&rc->lock);
-> +		writel(readl(reg_offset) | rc->info->signal[id].bit, reg_offset);
-> +	}
-> +
-> +	return 0;
+> +	return of_coresight_get_static_trace_id(dev, id);
+
+Please could we not directly use :
+
+fwnode_property_read_u32(dev_fwnode(dev), "arm,static-trace-id", 
+&traceid) in the dummy driver ?
+
+The rest looks fine to me.
+
+Suzuki
+
+
 > +}
+> +EXPORT_SYMBOL_GPL(coresight_get_static_trace_id);
 > +
-> +static int aspeed_reset_status(struct reset_controller_dev *rcdev, unsig=
-ned long id)
-> +{
-> +	struct aspeed_reset *rc =3D to_aspeed_reset(rcdev);
-> +	void __iomem *reg_offset =3D rc->base + rc->info->signal[id].offset;
-> +
-> +	return (readl(reg_offset) & rc->info->signal[id].bit) ? 1 : 0;
-> +}
-> +
-> +static const struct reset_control_ops aspeed_reset_ops =3D {
-> +	.assert =3D aspeed_reset_assert,
-> +	.deassert =3D aspeed_reset_deassert,
-> +	.status =3D aspeed_reset_status,
+>   struct coresight_platform_data *
+>   coresight_get_platform_data(struct device *dev)
+>   {
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+> index af5b4ef59cea..ca3c3de4683e 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+> @@ -11,6 +11,12 @@
+>   
+>   #include "coresight-trace-id.h"
+>   
+> +enum trace_id_flags {
+> +	TRACE_ID_ANY = 0x0,
+> +	TRACE_ID_PREFER_ODD = 0x1,
+> +	TRACE_ID_REQ_STATIC = 0x2,
 > +};
 > +
-> +static int aspeed_reset_probe(struct auxiliary_device *adev,
-> +			      const struct auxiliary_device_id *id)
+>   /* Default trace ID map. Used on systems that don't require per sink mappings */
+>   static struct coresight_trace_id_map id_map_default;
+>   
+> @@ -80,16 +86,19 @@ static int coresight_trace_id_find_odd_id(struct coresight_trace_id_map *id_map)
+>    * Otherwise allocate next available ID.
+>    */
+>   static int coresight_trace_id_alloc_new_id(struct coresight_trace_id_map *id_map,
+> -					   int preferred_id, bool prefer_odd_id)
+> +					   int preferred_id, unsigned int flags)
+>   {
+>   	int id = 0;
+>   
+>   	/* for backwards compatibility, cpu IDs may use preferred value */
+> -	if (IS_VALID_CS_TRACE_ID(preferred_id) &&
+> -	    !test_bit(preferred_id, id_map->used_ids)) {
+> -		id = preferred_id;
+> -		goto trace_id_allocated;
+> -	} else if (prefer_odd_id) {
+> +	if (IS_VALID_CS_TRACE_ID(preferred_id)) {
+> +		if (!test_bit(preferred_id, id_map->used_ids)) {
+> +			id = preferred_id;
+> +			goto trace_id_allocated;
+> +		} else if (WARN((flags & TRACE_ID_REQ_STATIC), "Trace ID %d is used.\n",
+> +					preferred_id))
+> +			return -EINVAL;
+> +	} else if (flags & TRACE_ID_PREFER_ODD) {
+>   	/* may use odd ids to avoid preferred legacy cpu IDs */
+>   		id = coresight_trace_id_find_odd_id(id_map);
+>   		if (id)
+> @@ -175,7 +184,7 @@ static int coresight_trace_id_map_get_cpu_id(int cpu, struct coresight_trace_id_
+>   	 */
+>   	id = coresight_trace_id_alloc_new_id(id_map,
+>   					     CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
+> -					     false);
+> +					     TRACE_ID_ANY);
+>   	if (!IS_VALID_CS_TRACE_ID(id))
+>   		goto get_cpu_id_out_unlock;
+>   
+> @@ -222,14 +231,15 @@ static void coresight_trace_id_map_put_cpu_id(int cpu, struct coresight_trace_id
+>   	DUMP_ID_MAP(id_map);
+>   }
+>   
+> -static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map)
+> +static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *id_map,
+> +					int preferred_id, unsigned int traceid_flags)
+>   {
+>   	unsigned long flags;
+>   	int id;
+>   
+>   	spin_lock_irqsave(&id_map_lock, flags);
+>   	/* prefer odd IDs for system components to avoid legacy CPU IDS */
+> -	id = coresight_trace_id_alloc_new_id(id_map, 0, true);
+> +	id = coresight_trace_id_alloc_new_id(id_map, preferred_id, traceid_flags);
+>   	spin_unlock_irqrestore(&id_map_lock, flags);
+>   
+>   	DUMP_ID(id);
+> @@ -271,10 +281,18 @@ EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id);
+>   
+>   int coresight_trace_id_get_system_id(void)
+>   {
+> -	return coresight_trace_id_map_get_system_id(&id_map_default);
+> +	return coresight_trace_id_map_get_system_id(&id_map_default, 0,
+> +			TRACE_ID_PREFER_ODD);
+>   }
+>   EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
+>   
+> +int coresight_trace_id_get_static_system_id(int trace_id)
 > +{
-> +	struct aspeed_reset *reset;
-> +	struct device *dev =3D &adev->dev;
+> +	return coresight_trace_id_map_get_system_id(&id_map_default,
+> +			trace_id, TRACE_ID_REQ_STATIC);
+> +}
+> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_static_system_id);
 > +
-> +	reset =3D devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
-> +	if (!reset)
-> +		return -ENOMEM;
+>   void coresight_trace_id_put_system_id(int id)
+>   {
+>   	coresight_trace_id_map_put_system_id(&id_map_default, id);
+> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
+> index 3797777d367e..ca2fdf31c835 100644
+> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
+> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
+> @@ -122,6 +122,15 @@ int coresight_trace_id_read_cpu_id(int cpu);
+>    */
+>   int coresight_trace_id_get_system_id(void);
+>   
+> +/**
+> + * Allocate a CoreSight static trace ID for a system component.
+> + *
+> + * Used to allocate static IDs for system trace sources such as dummy source.
+> + *
+> + * return: Trace ID or -EINVAL if allocation is impossible.
+> + */
+> +int coresight_trace_id_get_static_system_id(int id);
 > +
-> +	spin_lock_init(&reset->lock);
-> +
-> +	reset->info =3D (struct aspeed_reset_info *)id->driver_data;
-> +	reset->rcdev.owner =3D THIS_MODULE;
-> +	reset->rcdev.nr_resets =3D reset->info->nr_resets;
-> +	reset->rcdev.ops =3D &aspeed_reset_ops;
-> +	reset->rcdev.of_node =3D dev->parent->of_node;
-> +	reset->rcdev.dev =3D dev;
-> +	reset->rcdev.of_reset_n_cells =3D 1;
-> +	reset->base =3D (void __iomem *)adev->dev.platform_data;
-> +
-> +	if (!reset->base)
-> +		return -ENOMEM;
+>   /**
+>    * Release an allocated system trace ID.
+>    *
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index f09ace92176e..2cdc0b1cd536 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -643,6 +643,7 @@ void coresight_relaxed_write64(struct coresight_device *csdev,
+>   void coresight_write64(struct coresight_device *csdev, u64 val, u32 offset);
+>   
+>   extern int coresight_get_cpu(struct device *dev);
+> +extern int coresight_get_static_trace_id(struct device *dev, u32 *id);
+>   
+>   struct coresight_platform_data *coresight_get_platform_data(struct device *dev);
+>   struct coresight_connection *
 
-Looks like this should be -EINVAL to me.
-
-If aspeed_reset_controller_register() is moved into the reset driver,
-like it is done in reset-mpfs, this check could be dropped completely.
-
-With these issues addressed,
-
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-regards
-Philipp
 
