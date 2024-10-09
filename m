@@ -1,130 +1,325 @@
-Return-Path: <linux-kernel+bounces-357898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3C8997787
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66122997789
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D97284982
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98E01F23155
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4911E2305;
-	Wed,  9 Oct 2024 21:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Espne5v8"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342601E2614;
+	Wed,  9 Oct 2024 21:32:06 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF32119;
-	Wed,  9 Oct 2024 21:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EC41E1A36;
+	Wed,  9 Oct 2024 21:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509489; cv=none; b=j/XumFDKH9OEChV8Nh9EKsz5tyqUQ15n5K0lxqewlYytJQ49eb0PjqNRgNFW8RYwZllB4nJhK+7nobxTnuZPjJebYQSrS8VoF/AtH9HeHYbcwx0gDBLuUlAC4lo+48MWbQfxkuR9V/riYgFOWGVokHbXnBocPBoEc2/4fv4/z7E=
+	t=1728509525; cv=none; b=LF7QT5UfWW37p5N2JHP6noLy6BQjnGtoVhGQbYil5udzYuEUgb0GF2PKkx5m+37wGKpiOcGz4Zz36DHECF6mWQGFf37BsIrhIPLgSwnZMPYgVDlr1umFviYhTSoEnd7phR46X+YqIieWhCofhWHy/R7joaKKmNNGTv5qw6JcAAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509489; c=relaxed/simple;
-	bh=//zTy4UpgvpMhiM/XLBdEkqk315aai76inbYAwOg2iA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LM4SR7TJCFwpEM18AQ7zHrC5gr2rekdnSyOwjlNz8re+L+NQ8PnebDg+alPqRy7wCTl8YS3cebHaLcQYNabkO54V/6kQ0T/+mplEseGuXYTRbQDbRjjz9QBNG2qGK78lPHAoPhwKZhXElVosG/0xcN6whZT7qaH7hh1/rkSSeNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Espne5v8; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d325beee2so108166f8f.2;
-        Wed, 09 Oct 2024 14:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728509486; x=1729114286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fH6wGAFhOB6srobU+680PWFL7Rl7n2W1X6InnwCuKD8=;
-        b=Espne5v8NdIypHuxFL+vX23yua3GB7jrcWICZF3I/jX6PlS4rEGpJPjTy03SE6YDuI
-         PXSGEtU+F3UklxBzZz0AY4iNwnr1nWbJCjfCVvET5DiCk7aTyUuHEry28gcbntfp6VXU
-         +T1cYpNxvoUm7c+w6q6K1hnYJQMtOJ70zF7CHnN9sg7TdjqdqH2U8GbMW4CwobqfI4qt
-         fOpSPtFyj0juqhzB26UBntKwW9270k9GIcI+V6LGNS6dwub52Qd61oYGw//tY4/8C/oS
-         ZgfeJ00BZgAGKYH5SvK/OiYPxosg3Ahmn/gVjl344gJF5fZ4EuQiFZ+r0MjHU52DTgCU
-         8q3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728509486; x=1729114286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fH6wGAFhOB6srobU+680PWFL7Rl7n2W1X6InnwCuKD8=;
-        b=Fx0ukR+wBgDvDmcMdKDa0oe6FG+FRemfsW0j3QglndNx9HFdE6xNw4Q5BIPcxsvjxM
-         mA7svvTC940zMtGjs5UJj9+Y+UWxh3/ndcvbRUsOT3KKDZ40xcu/E76KnfoT3xe/eFue
-         w3qnbfQ1H8rMe2Q3oQ1G9D6BSJpgPMZveau+jX3BH6IeEvGQ0ts07zYzMaCD1SwBvh5t
-         qysGtlAd0In7U4aeeTv3pnPHEDZWM3487U7Hbt9VhZ1klAg2XNuy82lNeOIJVEpGw0Hi
-         JQm1xSzLdEeTdgfWkL7Z+awFYrukJIf3TVtuMDSAvqNlcGYxvDhmjL+gDQCBwIRqWU0N
-         dJ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULrzNWDlDH6lwnrE5bPcPCL7KxXGD5r33GfAxHmK/JIT8Ru6QfvIwj8Jbyx7hCuONaMC7X0LRSRd4=@vger.kernel.org, AJvYcCUsyK7ms0WdOziZ3ewpA2dYrxcnaarBPB8FxgJHsIdfxUQY/xchkeHI3FB/ThvG0iDeBo2GyqR01rWbumNf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7vvoTmiSbtbPXTckCJv3InYqAZl37X5ZV9HQV+YDV11sG7psG
-	jdw9TA2scw5LmU2PyYXJgSYtcILdbi36IcFyiPjdSIxsZnhiJ4Kl
-X-Google-Smtp-Source: AGHT+IElj7f1i8wI1OZNrsFktsrjPKw7XmpY1ZsUX2Jm/s1Br/mRzeFkfOJUM+2vjknbLf3K5iJD/w==
-X-Received: by 2002:a5d:564c:0:b0:37d:373c:ed24 with SMTP id ffacd0b85a97d-37d3aa23c8fmr2510699f8f.4.1728509485428;
-        Wed, 09 Oct 2024 14:31:25 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:268e:1448:f66b:a421? (2a02-8389-41cf-e200-268e-1448-f66b-a421.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:268e:1448:f66b:a421])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920cc7sm11367605f8f.61.2024.10.09.14.31.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 14:31:24 -0700 (PDT)
-Message-ID: <f356d311-ea83-4318-8b47-15f39944e913@gmail.com>
-Date: Wed, 9 Oct 2024 23:31:22 +0200
+	s=arc-20240116; t=1728509525; c=relaxed/simple;
+	bh=XgaZ7qOS73B8BHc3azlk1FvBYfTZnPLNJVE6HCRTjBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNj6rweUFV846I/QJ4qosfv0vCGgGKML/iNS0dkbXy1yk6JDChWxYXb0hyWSquGcZKUp91AzjJnNn/uyjjB5dGpWwoxtB9ppTQXpUJVkzYw0thVzgxodH+x4mNA0qFj4uSoTmtzf06edcF87EmLSmUE1caLeLqhHciWY3or/fow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syeHj-000000000BJ-2XpJ;
+	Wed, 09 Oct 2024 21:31:55 +0000
+Date: Wed, 9 Oct 2024 22:31:51 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: populate host_interfaces when
+ attaching PHY
+Message-ID: <Zwb2RzOQXd2Wfd6O@makrotopia.org>
+References: <ae53177a7b68964b2a988934a09f74a4931b862d.1728438951.git.daniel@makrotopia.org>
+ <ZwZGVRL_j62tH9Mp@shell.armlinux.org.uk>
+ <ZwZubYpZ4JAhyavl@makrotopia.org>
+ <Zwa-j1LKB3V2o2r9@shell.armlinux.org.uk>
+ <ZwbQ-thwDxPfqGnW@makrotopia.org>
+ <Zwbjlln3X5RXTt8x@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: ad4695: Add missing Kconfig select
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241009-iio-adc-ad4695-fix-kconfig-v1-1-e2a4dfde8d55@baylibre.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241009-iio-adc-ad4695-fix-kconfig-v1-1-e2a4dfde8d55@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwbjlln3X5RXTt8x@shell.armlinux.org.uk>
 
-On 09/10/2024 23:23, David Lechner wrote:
-> Add select IIO_BUFFER and select IIO_TRIGGERED_BUFFER to the Kconfig for
-> the ad4695 driver.
+On Wed, Oct 09, 2024 at 09:12:06PM +0100, Russell King (Oracle) wrote:
+> On Wed, Oct 09, 2024 at 07:52:42PM +0100, Daniel Golle wrote:
+> > [...]
+> > Imho allowing several available interface modes can still be
+> > advantageous also for built-in PHYs. Measurable power savings (~100mW on
+> > MT7986!) and not needing rate matching are both desireable things.
+> > 
+> > The question is just how would we get there...
 > 
-> Fixes: 6cc7e4bf2e08 ("iio: adc: ad4695: implement triggered buffer")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> I didn't see this one in the recent series with similar changes [1][2],
-> so here is another one.
+> We already do. Let me take an example that I use. Macchiatobin, which
+> you've probably heard lots about.
 > 
-> [1]: https://lore.kernel.org/linux-iio/20241003-ad2s1210-select-v1-0-4019453f8c33@gmail.com/
-> [2]: https://lore.kernel.org/linux-iio/20241003-iio-select-v1-0-67c0385197cd@gmail.com/
-> ---
->  drivers/iio/adc/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
+> The PHY there is the 88x3310, which is configured to run in MAC mode 0
+> by hardware strapping. MAC mode 0 means the 88x3310 will switch between
+> 10GBASE-R, 5GBASE-R, 2500BASE-X and SGMII on its host interface.
 > 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 85b82a708c36..98d441d6cc5c 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -52,6 +52,8 @@ config AD4695
->  	tristate "Analog Device AD4695 ADC Driver"
->  	depends on SPI
->  	select REGMAP_SPI
-> +	select IIO_BUFFER
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  Say yes here to build support for Analog Devices AD4695 and similar
->  	  analog to digital converters (ADC).
+> The MAC is Marvell's PP2, which supports all of those, and being one of
+> the original MACs that phylink was developed against, is coded properly
+> such that it fully works with phylink dynamically changing the interface
+> mode.
 > 
-> ---
-> base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
-> change-id: 20241009-iio-adc-ad4695-fix-kconfig-279c9ef8d9ef
-> 
-> Best regards,
+> The interface mode given in DT is just a "guide" because the 88x3310
+> does no more than verify that the interface mode that it is bound with
+> is one it supports. However, every time the link comes up, providing
+> it is not operating in rate matching mode (which the PP2 doesn't
+> support) it will change its MAC facing interface appropriately.
 
-I guess the kernel I ran when I found the issues did not have triggered
-buffers for the ad4695, which was (more ore less) recently added. Good
-catch!
+Unfortunately, and apparently different from the 88x3310, there is no
+hardware strapping for this to be decided with RealTek's PHYs, but
+using rate-matching or interface-mode-switching is decided by the
+driver.
 
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> 
+> Another board uses the 88x3310 with XAUI, and if I remember correctly,
+> the PHY is strapped for XAUI with rate matching mode. It's connected
+> to an 88e6390x DSA switch port 9, which supports RXAUI, XAUI, SGMII,
+> 1000BASEX, 2500BASEX and maybe other stuff too.
+> 
+> So, what we do is in DT, we specify the maximum mode, and rely on the
+> hardware being correctly strapped on the PHY to configure how the
+> MAC side interface will be used.
+
+Does that mean the realtek.c PHY driver (and maybe others as well) should
+just assume that the MAC must also support SGMII mode in case 2500Base-X
+is supported?
+
+I was under the impression that there might be MAC out there which support
+only 2500Base-X, or maybe 2500Base-X and 1000Base-X, but not SGMII. And on
+those we would always need to use 2500Base-X with rate matching.
+But maybe I'm wrong.
+
+> 
+> Now, the thing with that second board is... if we use your original
+> suggestion, then we end up filling the host_interfaces with just
+> 2500BASEX, 1000BASEX and SGMII. That will lead mv3310_select_mactype()
+> to select MV_V2_33X0_PORT_CTRL_MACTYPE_10GBASER for which the PHY will
+> attempt to use the modes I listed above for Macchiatobin on its MAC
+> interface which is wrong.
+> 
+> Let me repeat the point. phydev->host_interfaces is there to allow a
+> PHY driver to go off and make its own decisions about the interface
+> mode group that it should use _ignoring_ what's being asked of it
+> when the MAC binds to it. It should be empty for built-in setups
+> where this should not be used, and we have precedent on Macchiatobin
+> that interface switching by the PHY is permitted even in that
+> situation.
+
+... because it is decided before Linux even starts, and despite in
+armada-8040-mcbin.dts is stated.
+        phy-mode = "10gbase-r";
+
+The same approach would not work for those RealTek PHYs and boards
+using them. In some cases the bootloader sets up the PHY, and usually
+there rate matching is used -- performance is not the goal there, but
+simplicity. In other cases we rely entirely on the Linux PHY driver
+to set things up. How would the PHY driver know whether it should
+setup rate matching mode or interface switching mode?
+
+The SFP case is clear, it's using host_interfaces. But in the built-in
+case, as of today, it always ends up in fixed interface mode with
+rate matching.
+
+> > > So, aqr107_get_rate_matching() should work out whether rate matching
+> > > will be used for the interface mode by scanning these registers.
+> > > [...]
+> > 
+> > Afaik Aquantia 2.5G PHYs always work only with a fixed interface mode
+> > and perform rate-matching for lower speeds.
+> 
+> They don't _have_ to. To use a SFP with an AQR PHY on it in a clearfog
+> platform (which only supports SGMII, 1000BASE-X and 2500BASE-X, I
+> hacked the aquantia driver to do this:
+> 
+>         phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1, MDIO_CTRL1_LPOWER);
+>         mdelay(10);
+>         phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x31a, 2);
+>         phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_10M,
+>                       VEND1_GLOBAL_CFG_SGMII_AN |
+>                       VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+>         phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_100M,
+>                       VEND1_GLOBAL_CFG_SGMII_AN |
+>                       VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+>         phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_1G,
+>                       VEND1_GLOBAL_CFG_SGMII_AN |
+>                       VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+>         phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_2_5G,
+>                       VEND1_GLOBAL_CFG_SGMII_AN |
+>                       VEND1_GLOBAL_CFG_SERDES_MODE_OCSGMII);
+>         phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1,
+>                            MDIO_CTRL1_LPOWER);
+> 
+> which disables rate matching and causes it to switch interfaces.
+
+That's pretty cool, and when connected to a MAC which support both
+SGMII and 2500Base-X, and a driver which can switch between the two,
+it should be the default imho.
+
+> 
+> Moreover, aqr107_read_status() reads the interface status and sets
+> the MAC interface accordingly, so the driver does support dynamically
+> changing the MAC interface just like 88x3310. If all use cases of
+> this PHY only ever did rate matching, then there would be no point
+> to that code being there!
+
+So, just like for mcbin, the driver here replies on the PHY being
+configured (by strapping or by the bootloader) to either use
+a fixed interface mode with rate matching, or perform interface mode
+switching. What if we had to decide this in the driver (like it is
+the case with RealTek PHYs)?
+
+Let me summarize:
+ - We can't just assume that every MAC which supports 2500Base-X also
+   supports SGMII. It might support only 2500Base-X, or 2500Base-X and
+   1000Base-X, or the driver might not support switching between
+   interface modes.
+ - We can't rely on the PHY being pre-configured by the bootloader to
+   either rate maching or interface-switching mode.
+ - There are no strapping options for this, the only thing which is
+   configured by strapping is the address.
+
+> 
+> > > Now, while phylink restricts RATE_MATCH_PAUSE to being full-duplex only,
+> > > I'm not sure that is correct. I didn't contribute this support, and I
+> > > don't have any platforms that support this, and I don't have any
+> > > experience of it.
+> > 
+> > Afaik enforcing half-duplex via rate-maching with pause-frames is
+> > supported by all the 2.5G PHYs I've seen up to now.
+> 
+> I'm sorry, I don't understand your sentence, because it just flies
+> wildly against everything that's been said.
+> 
+> First, pause-frames require full duplex on the link on which pause
+> frames are to be sent and received. That's fundamental.
+
+I meant pause-frames on the host-side interface of the PHY, which
+are used to perform rate and duplex matching for the remote-side
+interface. I hope that makes more sense now.
+
+> 
+> Second, I'm not sure what "enforcing half-duplex" has to do with
+> rate-matching with pause-frames.
+
+It can be used as a method to preventing the MAC from sending
+to the PHY while receiving.
+
+> 
+> Third, the 88x3310 without MACSEC in rate matching mode requires the
+> MAC to pace itself. No support for pause frames at all - you only
+> get pause frames with the 88x3310P which has MACSEC. This is a 10M
+> to 10G PHY multi-rate PHY.
+> 
+> So... your comment makes no sense to me, sorry.
+
+You misunderstood me. I didn't mean pause frames on the remote-side of
+the PHY. I meant pause frames as in RATE_MATCH_PAUSE.
+
+> 
+> > > What I do have is the data sheet for 88x3310, and that doesn't mention
+> > > any restriction such as "only full duplex is supported in rate matching
+> > > mode".
+> > 
+> > Yep, and I suppose it should work just fine. The same applies for
+> > RealTek and MaxLinear PHYs. I've tested it.
+> > 
+> > > It is true that to use pause frames, the MAC/PCS must be in full-duplex
+> > > mode, but if the PHY supports half-duplex on the media to full-duplex
+> > > on the MAC side link, then why should phylink restrict this to be
+> > > full-duplex only?
+> > 
+> > There is no reason for that imho. phylink.c states
+> > /* Although a duplex-matching phy might exist, we
+> >  * conservatively remove these modes because the MAC
+> >  * will not be aware of the half-duplex nature of the
+> >  * link.
+> >  */
+> > 
+> > Afaik, practially all rate-matching PHYs which do support half-duplex
+> > modes on the TP interface can perform duplex-matching as well.
+> 
+> So we should remove that restriction!
+
+Absolutely. That will solve at least half of the problem. It still
+leaves us with a SerDes clock running 2.5x faster than it would have to,
+PHY and MAC consuming more energy than they would have to and TX
+performance being slightly worse (visible with iperf3 --bidir at least
+with some PHYs). But at least the link would come up.
+
+> 
+> > > I suspect phylink_get_capabilities() handling for RATE_MATCH_PAUSE is
+> > > not correct - or maybe not versatile enough.
+> > 
+> > I agree. Never the less, why use rate matching at all if we don't have
+> > to? It's obviously inefficient and wasteful, having the MAC follow the
+> > PHY speed is preferrable in every case imho.
+> 
+> As I say, I believe this is a matter of how the Aquantia firmware is
+> commissioned - I believe the defaults for all of the VEND1_GLOBAL_CFG*
+> registers come from the firmware that the PHY loads.
+
+I must admit I don't care much about the Aquantia story in the
+picture here. Simply because the rate-matching implementation they
+got seems to work rather well, and there anyway aren't many low-cost
+mass-produced devices having Aquantia 2.5GBit/s PHYs. I know exactly
+one device (Ubiquity UniFi 6 LR v1) which isn't produced in that
+version any more -- later versions replaced the rather costly
+Aquantia PHY with a low-cost RealTek PHY.
+
+There are millions of devices with Intel/MaxLinear GPY211, and
+probably even by magnitudes more with RealTek RTL8221B. Having all
+those devices perform rate-matching and hence running the SerDes
+clock at 3.125 GHz instead of 1.250 GHz is not just a significant
+waste of electricity, but also just means wrose performance, esp. on
+1000 MBit/s links (which happen to still be the most common).
+
+> 
+> So much like the pin strapping of 88x3310 determines its set of MAC
+> modes, which are decided by the board designer, Aquantia firmware
+> determines the PHY behaviour.
+> 
+> The problem here is we need to be mindful of the existing
+> implementations, not only those where the MAC/PHY combination would
+> get stuff wrong, but also of those MACs where multiple different
+> interfaces are supported through hardware strapping which is not
+> software determinable, but are not software configurable (like DSA
+> switches.) Then there's those who hacked phylink into their use
+> without properly implementing it (e.g. where mac_config() is entirely
+> empty, and thus support no reconfiguration of the interface yet
+> support multiple different interfaces at driver initialisation time.)
+> 
+> Yes, some of these situations can be said to be buggy. Feel free to
+> spend a few years hacking on stmmac to try and fix that god almighty
+> mess. I've given up with stmmac now after trying several attempts at
+> cleaning the mess up, and ending up in a very non-productive place
+> with it.
+
+Sounds dreadful. However, just because one driver is a crazy mess it
+should mean that all drivers have to perform worse than they could.
+Can you name a few boards which rely on that particularly smelly
+code? I might get some of those and get a feel of how bad things are,
+and maybe I will spend a few years trying to improve things there.
 
