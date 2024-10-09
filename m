@@ -1,48 +1,50 @@
-Return-Path: <linux-kernel+bounces-357112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E974E996BB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:21:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6FE996BB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68778B23C7B
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27280282A9F
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31261198E71;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33751198E77;
 	Wed,  9 Oct 2024 13:21:15 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C5E194AEB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C111946AA;
+	Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480074; cv=none; b=BNJbB7SR2Z8zWY75mKDzMipqnwVA/9DhmE6PCo+1KigmLXvyn/84RIHiF4UiHnqW0ZxZ0WSR5M+kH/qOUr0CB0gasjIQdEIOhiQBhWg34P0TeqQ0AEN0BE+IE6INX/rVWC9I+m0Wl5YYCVGrQLP35wpixUwXv5taDc8Uvvx7YEs=
+	t=1728480074; cv=none; b=pK9aeOkpYqoUcBWcFHysyUNyzWrl5RWwV5TgE4nFZoFAhDJTO8W8lmks0fIwTLOPO6wGo2MlGgel1Ua1Qizr36zRXK2mvbAIVh9GwBfIVGEZpC+QFcKzsT3+/VUI4fYFLENEX3HQwsfGM/b6ZgY6uNV70l0IlJGdX0vaFdo6ARk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728480074; c=relaxed/simple;
-	bh=ERoXFPVgC1wX2vu2OhU6ijnkpELxgnhoNg6sfXACYw8=;
+	bh=tNZGbEZF4Exmspvj9tewG9lbswuRNTWCnITw4IhQQkA=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Vy3sbXiCyn9VpP4H/TDs/7SY0IlCY1Gd1PFyfGhwYc1h3C8OBXd+Lhjnfgp1WVEo2M9vNdhIjqFsZAL3cz6x1PPb9aKQ647717lBxsPlX8vqWe69JixihNk6n5h5D4jfrvR6wNgXwI8oYjIT3f1VbwxQXwlRgA5naEMqo2S/J4Y=
+	 Content-Type; b=ItUmYfsNTpDmdFiG/5JZAbkCZwHbFHLMXbE7L9mRO2qAOQFHXyUxP1IMsqoeRzWrZP4idKN9XfPx6lCBbeJ47rvAO/tfrO7iA6nYR2LyqwtSjI4UgNS/r6wDQHk1zTu4iYp3AWES8IUpZxfR+ux/oUS0MaxTHD96nLFL0cD59dE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E896C4CECF;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7841AC4CED1;
 	Wed,  9 Oct 2024 13:21:14 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1syWcx-0000000175r-3LVt;
+	id 1syWcx-0000000176L-41mA;
 	Wed, 09 Oct 2024 09:21:19 -0400
-Message-ID: <20241009132119.658356665@goodmis.org>
+Message-ID: <20241009132119.818724987@goodmis.org>
 User-Agent: quilt/0.68
-Date: Wed, 09 Oct 2024 09:21:05 -0400
+Date: Wed, 09 Oct 2024 09:21:06 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Li Chen <chenl311@chinatelecom.cn>
-Subject: [for-next][PATCH 1/6] ftrace: Use this_cpu_ptr() instead of per_cpu_ptr(smp_processor_id())
+ linux-hardening@vger.kernel.org,
+ Kees Cook <kees@kernel.org>,
+ Justin Stitt <justinstitt@google.com>
+Subject: [for-next][PATCH 2/6] tracing/branch-profiler: Replace deprecated strncpy with strscpy
 References: <20241009132104.470687911@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,69 +54,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Li Chen <chenl311@chinatelecom.cn>
+From: Justin Stitt <justinstitt@google.com>
 
-Use this_cpu_ptr() instead of open coding the equivalent in various
-ftrace functions.
+strncpy() is deprecated for use on NUL-terminated destination strings
+[1] and as such we should prefer more robust and less ambiguous string
+interfaces.
 
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Both of these fields want to be NUL-terminated as per their use in
+printk:
+
+    F_printk("%u:%s:%s (%u)%s",
+      __entry->line,
+      __entry->func, __entry->file, __entry->correct,
+      __entry->constant ? " CONSTANT" : "")
+
+Use strscpy() as it NUL-terminates the destination buffer, so it doesn't
+have to be done manually.
+
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+Link: https://github.com/KSPP/linux/issues/90
+Cc: linux-hardening@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Link: https://lore.kernel.org/87y14t6ofi.wl-me@linux.beauty
-Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Kees Cook <kees@kernel.org>
+Link: https://lore.kernel.org/20240826-strncpy-kernel-trace-trace_branch-c-v1-1-b2c14f2e9e84@google.com
+Signed-off-by: Justin Stitt <justinstitt@google.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_functions.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ kernel/trace/trace_branch.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index 3b0cea37e029..65fed0bbc5c2 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -184,7 +184,6 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 	struct trace_array_cpu *data;
- 	unsigned int trace_ctx;
- 	int bit;
--	int cpu;
+diff --git a/kernel/trace/trace_branch.c b/kernel/trace/trace_branch.c
+index e47fdb4c92fb..aa63548873c3 100644
+--- a/kernel/trace/trace_branch.c
++++ b/kernel/trace/trace_branch.c
+@@ -74,10 +74,8 @@ probe_likely_condition(struct ftrace_likely_data *f, int val, int expect)
+ 		p--;
+ 	p++;
  
- 	if (unlikely(!tr->function_enabled))
- 		return;
-@@ -195,8 +194,7 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 
- 	trace_ctx = tracing_gen_ctx();
- 
--	cpu = smp_processor_id();
--	data = per_cpu_ptr(tr->array_buffer.data, cpu);
-+	data = this_cpu_ptr(tr->array_buffer.data);
- 	if (!atomic_read(&data->disabled))
- 		trace_function(tr, ip, parent_ip, trace_ctx);
- 
-@@ -300,7 +298,6 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	unsigned int trace_ctx;
- 	unsigned long flags;
- 	int bit;
--	int cpu;
- 
- 	if (unlikely(!tr->function_enabled))
- 		return;
-@@ -309,8 +306,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
- 
--	cpu = smp_processor_id();
--	data = per_cpu_ptr(tr->array_buffer.data, cpu);
-+	data = this_cpu_ptr(tr->array_buffer.data);
- 	if (atomic_read(&data->disabled))
- 		goto out;
- 
-@@ -321,7 +317,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * TODO: think about a solution that is better than just hoping to be
- 	 * lucky.
- 	 */
--	last_info = per_cpu_ptr(tr->last_func_repeats, cpu);
-+	last_info = this_cpu_ptr(tr->last_func_repeats);
- 	if (is_repeat_check(tr, last_info, ip, parent_ip))
- 		goto out;
- 
+-	strncpy(entry->func, f->data.func, TRACE_FUNC_SIZE);
+-	strncpy(entry->file, p, TRACE_FILE_SIZE);
+-	entry->func[TRACE_FUNC_SIZE] = 0;
+-	entry->file[TRACE_FILE_SIZE] = 0;
++	strscpy(entry->func, f->data.func);
++	strscpy(entry->file, p);
+ 	entry->constant = f->constant;
+ 	entry->line = f->data.line;
+ 	entry->correct = val == expect;
 -- 
 2.45.2
 
