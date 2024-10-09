@@ -1,152 +1,208 @@
-Return-Path: <linux-kernel+bounces-356365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043E7996008
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2610199600E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368331C22FF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F86286064
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF44178389;
-	Wed,  9 Oct 2024 06:45:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870E2175D4F;
+	Wed,  9 Oct 2024 06:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="OB3OKNYZ"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A066B160884;
-	Wed,  9 Oct 2024 06:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44FA1E48A;
+	Wed,  9 Oct 2024 06:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728456353; cv=none; b=u64AFqRwWf/DRhn0+/hX1Px7SSlyvGr6ZQwPFhTGdnuhKzBg3ilWXf1o+zxwyPRQusoYXez2QxF5aq2n05Cg+vdL86hO7RTiKenioneKuImcCifK5vUuYv4FrD9vAUeeH4XKS1aDEH/t60Hf3KbrUUXTmQ+5KK7+5cdtMLlohSk=
+	t=1728456455; cv=none; b=JQwucEJjTzfLKV0f3APg1vhIHzid1fep1fjlQul6DS8kPiqw45gSC3iacysc84zB76ZbDSTTjDB62kCxKbAbdrTqaX0JpxTyMwiVQhpmTS9WM5sWwJ4Deud1Fdg3LRx46M1M/ijsoTgLJ+CTiajE0Co9by22eWpPFYLGsOHhzDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728456353; c=relaxed/simple;
-	bh=y3R/OdfVQw//Toxh5Ba7jVhLdI/mruOtrfsaMXw1ZIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q/lrhwiSTrTxngjgtTiGoPuCBRSvTG2BHBaLDG/E3ZApomt2w9Peww3QSPtNDLjaWJD/1gIucus6+f+w/YeokFBp46nLHVMkKI2WfQ2XysmIk0yjtKFggRs1qLTxLM1QUGcOhB/UW+ABEbkVODWXsau+CLF1OJYPkHgZGRnfN90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 1a110008860a11efa216b1d71e6e1362-20241009
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:2320cfc8-3a9d-4ff3-8c70-5c26baf5c2c7,IP:0,U
-	RL:0,TC:0,Content:2,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:2
-X-CID-META: VersionHash:82c5f88,CLOUDID:9a1f0c2a7dbc2fad7d675b4dfba75ee9,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:nil,UR
-	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 1a110008860a11efa216b1d71e6e1362-20241009
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <luyun@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 536540262; Wed, 09 Oct 2024 14:45:41 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 824D3B8075B2;
-	Wed,  9 Oct 2024 14:45:41 +0800 (CST)
-X-ns-mid: postfix-67062695-44634086
-Received: from [10.42.20.151] (unknown [10.42.20.151])
-	by node2.com.cn (NSMail) with ESMTPA id E03AEB8075B2;
-	Wed,  9 Oct 2024 06:45:40 +0000 (UTC)
-Message-ID: <292ce016-51a9-4e0f-a7e2-f72d025bdb82@kylinos.cn>
-Date: Wed, 9 Oct 2024 14:45:27 +0800
+	s=arc-20240116; t=1728456455; c=relaxed/simple;
+	bh=l1qgJz07xqrXbLYGdSTGdOnNzyjr0DO3mrK8mE4tRDw=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lADw9qu9yJ+lkNN0leM0ezghAbspYZT2UqD2hpv1whiQzMtsCAp8/b2nMJcluH5S1X8smJYfpJdakTlEkHI0eWxNqNBMrdE5bAwMNKycoN7jWuEvCQQs/VssTeiMllersxE0gHsNqbBWJQ314LBD75ttHXdALhH2vkM6W2bnXL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=OB3OKNYZ; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1728456450;
+	bh=vP4ICph0zWuiJj2g+RQhmi046O+uRxzp9Xv2oj6XryM=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=OB3OKNYZwAdiVAe9fJP8EP/vxUmxJRXcUKIhvqnEApal2XtML10N87gC4e2kp3VvL
+	 e2p6IYY1Sm+F0Nxi/QdgqFAz9rP7pMB40xtjKvjCebdFtrpDm+JxStwPCtAYIhqopQ
+	 qrPrxQYluFhT8+Dr/+1A38SDUg+VOTG9AdF5yQceLS3jc+OAMR7K+adlEbxnIjFLBQ
+	 ii2w2fTXvcL8xTN9+9dnSfY3pcqtw5pR3eDGtbEMuQuXmx0zkOBXeFGKH1KUAD9ZCZ
+	 OuhXyEO0N+mMISyVH0MNsDdL3jbKA1PW/J1ckFRCPiKOGrU31Igk++h8sRKGFrE/94
+	 9Pawir4ANCzQQ==
+Received: from [192.168.68.112] (unknown [118.211.89.65])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id EB8FF64A86;
+	Wed,  9 Oct 2024 14:47:27 +0800 (AWST)
+Message-ID: <a0a372bcfd4255cbc5c6c68c3cca428d13c112ef.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v7 7/7] gpio: aspeed: Support G7 Aspeed gpio controller
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, "linus.walleij@linaro.org"
+ <linus.walleij@linaro.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "joel@jms.id.au" <joel@jms.id.au>,  "linux-gpio@vger.kernel.org"
+ <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>, 
+ "Peter.Yin@quantatw.com" <Peter.Yin@quantatw.com>, "Jay_Zhang@wiwynn.com"
+ <Jay_Zhang@wiwynn.com>
+Date: Wed, 09 Oct 2024 17:17:26 +1030
+In-Reply-To: <OSQPR06MB72526C8FE71BF336D8AF50758B7F2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+References: <20241008081450.1490955-1-billy_tsai@aspeedtech.com>
+	 <20241008081450.1490955-8-billy_tsai@aspeedtech.com>
+	 <66e619a9085a2ecb62e3945cd024822de5317f92.camel@codeconstruct.com.au>
+	 <OSQPR06MB72526C8FE71BF336D8AF50758B7F2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: hid: add the missing tests directory
-To: Shuah Khan <skhan@linuxfoundation.org>, jikos@kernel.org,
- bentiss@kernel.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241008093120.3081899-1-luyun@kylinos.cn>
- <e54c70db-a14d-43e6-b221-0c0712893ee7@linuxfoundation.org>
-Content-Language: en-US
-From: luyun <luyun@kylinos.cn>
-In-Reply-To: <e54c70db-a14d-43e6-b221-0c0712893ee7@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
 
+On Wed, 2024-10-09 at 02:28 +0000, Billy Tsai wrote:
+> > > In the 7th generation of the SoC from Aspeed, the control logic
+> > > of the
+> > > GPIO controller has been updated to support per-pin control. Each
+> > > pin now
+> > > has its own 32-bit register, allowing for individual control of
+> > > the pin's
+> > > value, direction, interrupt type, and other settings. The
+> > > permission for
+> > > coprocessor access is supported by the hardware but hasn't been
+> > > implemented in the current patch.
+> > >=20
+> > > Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> > > ---
+> > > =C2=A0drivers/gpio/gpio-aspeed.c | 147
+> > > +++++++++++++++++++++++++++++++++++++
+> > > =C2=A01 file changed, 147 insertions(+)
+> > >=20
+> > > diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-
+> > > aspeed.c
+> > > index 5d583cc9cbc7..208f95fb585e 100644
+> > > --- a/drivers/gpio/gpio-aspeed.c
+> > > +++ b/drivers/gpio/gpio-aspeed.c
+> > > @@ -30,6 +30,27 @@
+> > > =C2=A0#include <linux/gpio/consumer.h>
+> > > =C2=A0#include "gpiolib.h"
+> > >=20
+> > > +/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
+> > > +#define field_get(_mask, _reg)       (((_reg) & (_mask)) >>
+> > > (ffs(_mask) - 1))
+> > > +#define field_prep(_mask, _val)      (((_val) << (ffs(_mask) -
+> > > 1)) & (_mask))
+> > > +
+> > > +#define GPIO_G7_IRQ_STS_BASE 0x100
+> > > +#define GPIO_G7_IRQ_STS_OFFSET(x) (GPIO_G7_IRQ_STS_BASE + (x) *
+> > > 0x4)
+> > > +#define GPIO_G7_CTRL_REG_BASE 0x180
+> > > +#define GPIO_G7_CTRL_REG_OFFSET(x) (GPIO_G7_CTRL_REG_BASE + (x)
+> > > * 0x4)
+> > > +#define GPIO_G7_CTRL_OUT_DATA BIT(0)
+> > > +#define GPIO_G7_CTRL_DIR BIT(1)
+> > > +#define GPIO_G7_CTRL_IRQ_EN BIT(2)
+> > > +#define GPIO_G7_CTRL_IRQ_TYPE0 BIT(3)
+> > > +#define GPIO_G7_CTRL_IRQ_TYPE1 BIT(4)
+> > > +#define GPIO_G7_CTRL_IRQ_TYPE2 BIT(5)
+> > > +#define GPIO_G7_CTRL_RST_TOLERANCE BIT(6)
+> > > +#define GPIO_G7_CTRL_DEBOUNCE_SEL1 BIT(7)
+> > > +#define GPIO_G7_CTRL_DEBOUNCE_SEL2 BIT(8)
+> > > +#define GPIO_G7_CTRL_INPUT_MASK BIT(9)
+> > > +#define GPIO_G7_CTRL_IRQ_STS BIT(12)
+> > > +#define GPIO_G7_CTRL_IN_DATA BIT(13)
+> > > +
+> > > =C2=A0struct aspeed_bank_props {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int bank;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 input;
+> > > @@ -95,6 +116,22 @@ struct aspeed_gpio_bank {
+> > > =C2=A0=C2=A0*/
+> > >=20
+> > > =C2=A0static const int debounce_timers[4] =3D { 0x00, 0x50, 0x54, 0x5=
+8
+> > > };
+> > > +static const int g7_debounce_timers[4] =3D { 0x00, 0x00, 0x04,
+> > > 0x08 };
+> > > +
+> > > +/*
+> > > + * The debounce timers array is used to configure the debounce
+> > > timer settings.Here=E2=80=99s how it works:
+> > > + * Array Value: Indicates the offset for configuring the
+> > > debounce timer.
+> > > + * Array Index: Corresponds to the debounce setting register.
+> > > + * The debounce timers array follows this pattern for
+> > > configuring the debounce setting registers:
+> > > + * Array Index 0: No debounce timer is set;
+> > > + *             Array Value is irrelevant (don=E2=80=99t care).
+> > > + * Array Index 1: Debounce setting #2 is set to 1, and debounce
+> > > setting #1 is set to 0.
+> > > + *             Array Value: offset for configuring debounce
+> > > timer 0 (g4: 0x50, g7: 0x00)
+> > > + * Array Index 2: Debounce setting #2 is set to 0, and debounce
+> > > setting #1 is set to 1.
+> > > + *             Array Value: offset for configuring debounce
+> > > timer 1 (g4: 0x54, g7: 0x04)
+> > > + * Array Index 3: Debounce setting #2 is set to 1, and debounce
+> > > setting #1 is set to 1.
+> > > + *             Array Value: offset for configuring debounce
+> > > timer 2 (g4: 0x58, g7: 0x8)
+> > > + */
+> > >=20
+> > > =C2=A0static const struct aspeed_gpio_copro_ops *copro_ops;
+> > > =C2=A0static void *copro_data;
+> > > @@ -250,6 +287,39 @@ static void __iomem
+> > > *aspeed_gpio_g4_bank_reg(struct aspeed_gpio *gpio,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BUG();
+> > > =C2=A0}
+> > >=20
+> > > +static u32 aspeed_gpio_g7_reg_mask(const enum aspeed_gpio_reg
+> > > reg)
+> > > +{
+> > > +     switch (reg) {
+> > > +     case reg_val:
+> > > +             return GPIO_G7_CTRL_OUT_DATA;
+>=20
+> > I think a problem is that we want this to be GPIO_G7_CTRL_IN_DATA
+> > for
+> > reads, but GPIO_G7_CTRL_OUT_DATA for writes?
+>=20
+> Yes. So in my aspeed_g7_bit_get, I will change the mask to
+> GPIO_G7_CTRL_IN_DATA.
+>=20
+> +static bool aspeed_g7_reg_bit_get(struct aspeed_gpio *gpio, unsigned
+> int offset,
+> +                                 const enum aspeed_gpio_reg reg)
+> +{
+> +       u32 mask =3D aspeed_gpio_g7_reg_mask(reg);
+> +       void __iomem *addr;
+> +
+> +       addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(offset);
+> +       if (reg =3D=3D reg_val)
+> +               mask =3D GPIO_G7_CTRL_IN_DATA;
+> +
+> +       if (mask)
+> +               return field_get(mask, ioread32(addr));
+> +       else
+> +               return 0;
+> +}
+> +
 
-=E5=9C=A8 2024/10/9 03:33, Shuah Khan =E5=86=99=E9=81=93:
-> On 10/8/24 03:31, Yun Lu wrote:
->> Commit 160c826b4dd0 ("selftest: hid: add missing=20
->> run-hid-tools-tests.sh")
->> has added the run-hid-tools-tests.sh script for it to be installed, bu=
-t
->> I forgot to add the tests directory together.
->>
->> In fact, the run-hid-tools-tests.sh script uses the scripts in the tes=
-ts
->> directory to run tests. The tests directory also needs to be added to =
-be
->> installed
-> Include the error you are seeing in here.
+Ah, I see that's already what you have. Thanks.
 
-If running the test case without the tests directory,=C2=A0 the error mes=
-sage=20
-will like this:
+Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 
- =C2=A0=C2=A0=C2=A0 cd $KSFT_INSTALL_PATH
-
- =C2=A0=C2=A0=C2=A0 ./run_kselftest.sh -t hid:hid-core.sh
-
-
-# /usr/lib/python3.11/site-packages/_pytest/config/__init__.py:331:=20
-PluggyTeardownRaisedWarning: A plugin raised an exception during an=20
-old-style hookwrapper teardown.
-# Plugin: helpconfig, Hook: pytest_cmdline_parse
-# UsageError: usage: __main__.py [options] [file_or_dir] [file_or_dir] [.=
-..]
-# __main__.py: error: unrecognized arguments: --udevd
-#=C2=A0=C2=A0 inifile: None
-#=C2=A0=C2=A0 rootdir: /root/linux/kselftest_install/hid
-
-
->
->>
->> Fixes: ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests"=
-)
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->> ---
->> =C2=A0 tools/testing/selftests/hid/Makefile | 1 +
->> =C2=A0 1 file changed, 1 insertion(+)
->>
->> diff --git a/tools/testing/selftests/hid/Makefile=20
->> b/tools/testing/selftests/hid/Makefile
->> index 38ae31bb07b5..662209f5fabc 100644
->> --- a/tools/testing/selftests/hid/Makefile
->> +++ b/tools/testing/selftests/hid/Makefile
->> @@ -18,6 +18,7 @@ TEST_PROGS +=3D hid-usb_crash.sh
->> =C2=A0 TEST_PROGS +=3D hid-wacom.sh
->> =C2=A0 =C2=A0 TEST_FILES :=3D run-hid-tools-tests.sh
->> +TEST_FILES +=3D tests
->
-> What about the files if any under the tests directory?
-> The install rule would handle the case, however, did
-> you verify that those are copied as well?
-
-Yes, the install rule will copy the entire directory (including all=20
-files under the directory),
-
-and I have confirmed it.
-
-
-Thanks and best regards.
-
---Yun Lu
-
->
->> =C2=A0 =C2=A0 CXX ?=3D $(CROSS_COMPILE)g++
->
-> thanks,
-> -- Shuah
->
 
