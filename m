@@ -1,129 +1,96 @@
-Return-Path: <linux-kernel+bounces-356756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075B0996639
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:57:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18A099663B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391211C2061B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:57:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 568AAB253A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C341D18E041;
-	Wed,  9 Oct 2024 09:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6554318FDB9;
+	Wed,  9 Oct 2024 09:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="XozO5Nkd"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jrIfKxWZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A510918E37A;
-	Wed,  9 Oct 2024 09:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCED718FC83;
+	Wed,  9 Oct 2024 09:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467802; cv=none; b=U6SOrPXXtvnbsOOKpmmHpK0/OJPCoEadEAZfqJDD+6NKv7SzeG70G8hnjDJ+Xr96ogTx/K/HzULtj1mJzdSGTW5aUGHFFYZ5jmCW7eX9XsbqetNGe7PWMVjpliNkfdy/P8j8Fri6rYyjC/dAk+JuSMGIBNzgjIiWowp8UZXxvrw=
+	t=1728467809; cv=none; b=pALKL2jQXIBAhzSaN8J4tTZbB8RzF/UkivOClFMkVgySathm861CujIzgDvLYL36+uaHzzrbhEcaDdpZENCQRb8/3MQ+1olNEhZRlIVfOF4TQrIrWwXZS/pW8rAaABlDkUryRyO4JWNgiRI1KPlEyX8UEh4N1AntLVsJzQpm124=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467802; c=relaxed/simple;
-	bh=bVfK+k6Rj9bACFwnQCtvMMSrQblXycclxbPPTsGc69M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iXvNxCrfUQ5u62d/8NMcewbuoQ+mseYjtjdqA9EpNZM4+vBjfNiCB7L+yBp0Qau0AFomFJAtOhvdYPUBHKme9A23xCevU62nKG6K+7U0Jae44QfaIqJaK+HBs3Xqbac+YIPYVK3tXu7yElOoQWTz710iKEexOa5m+tNOoh/Mvlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=XozO5Nkd; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1728467798;
-	bh=rUewkbwyzSI6oMmlCe/UtDapHFjvuIQTH5uGojU1xy4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XozO5NkddKT/Dg6EFafWtG8VsGjkmns5deEZTi1Z7afnmbpTlkJYWH1rJtPj1mg5m
-	 9gAoMX5D+I7Qx/74yced7Q5PIexlkE5pFxCsl/ttGmNT3oOpEWUOSpYPJqUis6IuJp
-	 4pcGwYo/49nbHEUrM/LLZBcVHHybfGMGImY2GlZY=
-Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id 19893A05D4;
-	Wed,  9 Oct 2024 11:56:38 +0200 (CEST)
-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH v2] leds: lp5562: Add multicolor brightness control
-Date: Wed,  9 Oct 2024 11:56:35 +0200
-Message-ID: <20241009095635.2790613-1-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728467809; c=relaxed/simple;
+	bh=j5fmnOTZrI6z6nGVKtHkqEcaFglJeVxTewMiVD15cj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FK5l/BtwmFO09vMq2bgKBvWsM/nbjEasQXbIFjW0KGqqT3Xvdd/TBmhGZssog1CWDowduzIWXXucPgJdYUl6znLLgLAQhXEmhtEVfJ1VDb6eAlfH56TvidORk8qIUIggFAcyNpF0b8fD2OlUfJfW65CFEwI5Eln1g32ClSngtrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jrIfKxWZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C25DDC4CEC5;
+	Wed,  9 Oct 2024 09:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728467809;
+	bh=j5fmnOTZrI6z6nGVKtHkqEcaFglJeVxTewMiVD15cj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jrIfKxWZaA28ltDqdRHz5TLKKVxeB8BHOA4ZPFeZtn6PznvMx9SbA6zsnpfq12Spf
+	 UXrG/rGcOH90F7cqujsRmT5f3S/SasX3uxmYzGAAT5tUfdSJsVXWeGiBonwHFiURxb
+	 5NfI4Hz1IrmMlnPfMF4rRST5B6w7JzAZup2R68bQ=
+Date: Wed, 9 Oct 2024 11:56:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Fabricio Gasperin <fgasperin@lkcamp.dev>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Teddy Wang <teddy.wang@siliconmotion.com>,
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH] staging: sm750: Fix missing config in Kconfig
+Message-ID: <2024100925-lend-aging-2ff3@gregkh>
+References: <20240921180612.57657-1-fgasperin@lkcamp.dev>
+ <20240921180612.57657-2-fgasperin@lkcamp.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240921180612.57657-2-fgasperin@lkcamp.dev>
 
-The framework for multicolor brightness control is already in place
-in the lp55xx-common code but the function to control the multicolor
-brightness for this particular chip is still missing.
+On Sat, Sep 21, 2024 at 03:06:09PM -0300, Fabricio Gasperin wrote:
+> Fixes the following compilation error:
+> 
+> ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> 
+> Signed-off-by: Fabricio Gasperin <fgasperin@lkcamp.dev>
+> ---
+>  drivers/staging/sm750fb/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/staging/sm750fb/Kconfig b/drivers/staging/sm750fb/Kconfig
+> index 08bcccdd0f1c..eca1aa43d725 100644
+> --- a/drivers/staging/sm750fb/Kconfig
+> +++ b/drivers/staging/sm750fb/Kconfig
+> @@ -3,6 +3,7 @@ config FB_SM750
+>  	tristate "Silicon Motion SM750 framebuffer support"
+>  	depends on FB && PCI && HAS_IOPORT
+>  	select FB_MODE_HELPERS
+> +	select FB_IOMEM_FOPS
+>  	select FB_CFB_FILLRECT
+>  	select FB_CFB_COPYAREA
+>  	select FB_CFB_IMAGEBLIT
+> -- 
+> 2.46.1
+> 
+> 
 
-Implement the multicolor_brightness_fn function to allow multicolor
-brightness control of LEDs connected to the LP5562 LED driver.
+What is causing this error?  What commit created the problem, and why
+has no one reported it yet?
 
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
----
-v2:
-- rebase on top of latest linux v6.12-rc
-- use guard API instead of mutex lock/unlock
+confused,
 
-This was tested on the imx6dl-yapp43-pegasus board (in tree) that uses
-this LED driver. There is only an RGB LED on the board so I could not
-test the white channel.
-
- drivers/leds/leds-lp5562.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index b26bcc81d079..14a4af361b26 100644
---- a/drivers/leds/leds-lp5562.c
-+++ b/drivers/leds/leds-lp5562.c
-@@ -161,6 +161,30 @@ static int lp5562_post_init_device(struct lp55xx_chip *chip)
- 	return 0;
- }
- 
-+static int lp5562_multicolor_brightness(struct lp55xx_led *led)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	static const u8 addr[] = {
-+		LP5562_REG_R_PWM,
-+		LP5562_REG_G_PWM,
-+		LP5562_REG_B_PWM,
-+		LP5562_REG_W_PWM,
-+	};
-+	int ret;
-+	int i;
-+
-+	guard(mutex)(&chip->lock);
-+	for (i = 0; i < led->mc_cdev.num_colors; i++) {
-+		ret = lp55xx_write(chip,
-+				   addr[led->mc_cdev.subled_info[i].channel],
-+				   led->mc_cdev.subled_info[i].brightness);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
- static int lp5562_led_brightness(struct lp55xx_led *led)
- {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -364,6 +388,7 @@ static struct lp55xx_device_config lp5562_cfg = {
- 	.post_init_device   = lp5562_post_init_device,
- 	.set_led_current    = lp5562_set_led_current,
- 	.brightness_fn      = lp5562_led_brightness,
-+	.multicolor_brightness_fn = lp5562_multicolor_brightness,
- 	.run_engine         = lp5562_run_engine,
- 	.firmware_cb        = lp55xx_firmware_loaded_cb,
- 	.dev_attr_group     = &lp5562_group,
--- 
-2.43.0
-
+greg k-h
 
