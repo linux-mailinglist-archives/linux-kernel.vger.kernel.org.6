@@ -1,117 +1,767 @@
-Return-Path: <linux-kernel+bounces-356490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F719961D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:05:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA7F9961DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D719B289DA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560181F21CDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8118D1885B9;
-	Wed,  9 Oct 2024 08:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3C518858E;
+	Wed,  9 Oct 2024 08:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CET+bD2a"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LsdmJGeQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F4F188586;
-	Wed,  9 Oct 2024 08:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85908187FEA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728461096; cv=none; b=KXy3r2re+nmGIydNuB1ls7aaHOaper23B6UvX2HCTZKY8nk8n6i9OXkxcngfgUX4mMUoj/LNh2NMbsdfR1usBKXfWRMcNEymlBULNOsM7Tc2O/qAyYcBVht4XYtFdJxoP2SRWy96vpbsg9gzaNz5DNBgzomMaNJxD+JGjgAOy4I=
+	t=1728461160; cv=none; b=NKHZHEd97nVaX1NqYY7NTlHcCDXnnDqYhqZg8+VA2RrCwsZWdOfkDLkTeTU5xP1/2MJJz4Z1TCxp2DnmspKzHootMy9YkF9HFXz0Ip3tkWqcTd/E4hBkGwmueqC3JlplIKZ9z0CU2K6t9ObbkrG4yuKhxxJNNkxG6Ot2mEk52Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728461096; c=relaxed/simple;
-	bh=PIPJaYVqB/0I9J24VTXd1sy1f8DObF+DnZqOAqQWUuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EkZMsqjO5mF5DxC2neFSm19e/SlHWUgr2TmRUG7H98meYiF/YabmgjGxkvYzJWkFWji25/gKLtE1O7bNb1kqd/3RW/anwKUSi1O/7T2LH6GVjjeSEXCt9tIprhRsaXLmuCnI73GjbGd3OeK2eE4yabwuxOUGHjRoW9bqy20wp4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CET+bD2a; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D55AB240002;
-	Wed,  9 Oct 2024 08:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728461092;
+	s=arc-20240116; t=1728461160; c=relaxed/simple;
+	bh=9XcedcnggzsqKhXgXiIzFaQ46ePcc6pD+7VzfPbyzYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lQRHN8p7vtCg2hoXiTY46qU4WuWdVU26h9cqKWWTSsIQa5G80+1sRa52HVjpzv49dYXeR80s2ayTAN6qhumb54AEK2m46+IkEc6JvqKCZPNjsyQqHeJljq907y75JBb0uTyFBkqiN2O8xZ2R6zYBdQ5h8Jlaox/Jr1MrHk9RKhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LsdmJGeQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728461157;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4ZqUu2zXtpPIFf6u2ipPatyPzUjw/B5iwIYSh3KUBBk=;
-	b=CET+bD2aQpIFbn83eKT+JAQlvpdrc0gESxRVHARr0UpzskXaayoxehxFYpeqV2I+pGYHf7
-	xSvkBl7b89C/+0Gdk47ezTrP7u6qPBIGR5kwqsIzgc3ZKH3047DghYSSp6FbBjBZvoxqlu
-	j6zm6Afpuenl/O0Lyd9lpC3DzF1Z91xyY1qE//1L7iEPG9apRogWNH7xuYpKJxsEJ0vFR8
-	f7awQRGnelx1xTR53a07BHU3UMyrCGrqIJqTl366jh6Nmmxl0DzFyVPbWQkTKSy/mEAo4/
-	0QUCeD6U6SN9pWklqIOJ4bFozd3MC1LJrrtFwXUpIuM/vk9XRWdRR6ANHh7WTg==
-Date: Wed, 9 Oct 2024 10:04:50 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>
-Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nikita.shubin@maquefel.me, arnd@arndb.de,
- vkoul@kernel.org, esben@geanix.com, linux-arm-kernel@lists.infradead.org,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] mtd: rawnand: nuvoton: add new driver for the
- Nuvoton MA35 SoC
-Message-ID: <20241009100450.362e3556@xps-13>
-In-Reply-To: <02098767-19ce-407e-88be-24c6259c4053@gmail.com>
-References: <20240927020749.46791-1-hpchen0nvt@gmail.com>
-	<20240927020749.46791-3-hpchen0nvt@gmail.com>
-	<20241001215755.5c2f8465@xps-13>
-	<8d5e7755-17fd-4860-bcb0-8c1de04bf0c5@gmail.com>
-	<20241008105230.7fd25438@xps-13>
-	<02098767-19ce-407e-88be-24c6259c4053@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	bh=n7iozva3yX97aaV/kdom1QBsV86i5P13im7bYVWHNno=;
+	b=LsdmJGeQffAVf6E1wuaE8AGrXp3sKaxWWE8642OYJe3Lx5GrMvpqixeZuq3hMBGtK5L8Lb
+	1eri1AkDBWnXqPasGJZ9QbPCM86yQnJ3dk3HxW8kqA7M38XuQ4nJ2IFiZSeFjPgbdRXda0
+	58PJZv0d+WgVf+hmO29jvcGClG4ytnE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-502-3wnm_kGINdmDRtgAA5NA8w-1; Wed, 09 Oct 2024 04:05:16 -0400
+X-MC-Unique: 3wnm_kGINdmDRtgAA5NA8w-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2e29e8d47e0so738327a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:05:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728461115; x=1729065915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n7iozva3yX97aaV/kdom1QBsV86i5P13im7bYVWHNno=;
+        b=XXHUyIT3IQQAWrtMxW3gMBt9OtnlsHpFKkKFbBQ2C5MdfIDRlfqw6NdJ1m14WSAXGh
+         I7NShJVdstsVSvK9St72p/zn8TT30goDSqsRQdIJUQNYWJSDDtKhfg+6yFLEqh/sNmue
+         LyMtMCPDVe255ayo3IW6HirU8I1wj3A70E8Aakkib4vJQXc0EaUKN5h+bb+y5aYbKGEl
+         n382vlbrnvPYtQ/C9D1uo0Dm+SNZRbLoSyz1ZMw9EhnPNJsiOxFn4ohQcsdaXt8AO2Lu
+         nBP7XruI6E/ExF5U/Te5Fc7YJ7irsOgC3IKdZ8fY0r8NOfwleN7BFTrrjV/VGAt8geUk
+         /vEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrGfBqOVRjaJv6Haksc5G/LlZnS3XPAetcgD9LsgZKodJr/jOftDp6C6bKAnNypSfMaKkPtQGI5knbCXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxDTiI0PQnGvKgqp3ETWsormrzeluDYr9R/Yv7H7suQU0G7CdE
+	WIqKxi9zC/A0//hD0QVEjaTzhBlafwXrzuA4U4hloWscGoHGIx3hHdUi/kRLb5K9FThSiYWva1x
+	ykd5s2t+urg+3C4yKWqxkNe/egmuxfuABmWqaLZuVfWwFAT/BEeQ00FuSbJRCgLSJRqSTBuC48H
+	tMYeZpEYd/8doDtdeDGIm6oqut3K3BQv09Ie4VT7IQnYTkSDtsOQ==
+X-Received: by 2002:a17:90a:8f05:b0:2da:8e9b:f37b with SMTP id 98e67ed59e1d1-2e2a24a1e06mr1782703a91.24.1728461114751;
+        Wed, 09 Oct 2024 01:05:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTqUrpGxCFJzvNXw4GtQHNE85zMwBtDhN5XTaZDwpAF4nEsOWc9Wr1SZNX/IApnlModNi8U38RCvLDq1Z7bKs=
+X-Received: by 2002:a17:90a:8f05:b0:2da:8e9b:f37b with SMTP id
+ 98e67ed59e1d1-2e2a24a1e06mr1782663a91.24.1728461114124; Wed, 09 Oct 2024
+ 01:05:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241008-rss-v5-0-f3cf68df005d@daynix.com> <20241008-rss-v5-6-f3cf68df005d@daynix.com>
+In-Reply-To: <20241008-rss-v5-6-f3cf68df005d@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 9 Oct 2024 16:05:02 +0800
+Message-ID: <CACGkMEtExrXA-fz1pBCoGHE8JoxbXumALd8OXWDNv3NCtzZXsQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v5 06/10] tun: Introduce virtio-net hash reporting feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Hui-Ping,
+On Tue, Oct 8, 2024 at 2:55=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix.=
+com> wrote:
+>
+> Allow the guest to reuse the hash value to make receive steering
+> consistent between the host and guest, and to save hash computation.
+>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 
-> >>>> +		return 0;
-> >>>> +	}
-> >>>> +
-> >>>> +	ma35_nand_dmac_init(nand);
-> >>>> +
-> >>>> +	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
-> >>>> +
-> >>>> +	/* setup and start DMA using dma_addr */
-> >>>> +	dma_addr =3D dma_map_single(nand->dev, (void *)addr, len, DMA_FROM=
-_DEVICE);
-> >>>> +	ret =3D dma_mapping_error(nand->dev, dma_addr);
-> >>>> +	if (ret) {
-> >>>> +		dev_err(nand->dev, "dma mapping error\n");
-> >>>> +		return -EINVAL;
-> >>>> +	}
-> >>>> +
-> >>>> +	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA); =
-=20
-> >>> Please enforce a dma mask of 32 (even though it might be the fault). =
-=20
-> >> I will change it to dma_addr & 0xffffffff. =20
-> > That's not what I mean, I believe you should use the dma API to ask for
-> > a mapping within the accessible 32-bit address range. The
-> > dma_mapping_error() check should return an error if that's not the
-> > case. Then you can safely write the value. =20
->=20
-> Here is my misunderstanding: just fill in the dma_addr directly,
->=20
-> no type conversion is needed. I have already tested it.
+I wonder if this would cause overhead when hash reporting is not enabled?
 
-FYI, it only works because the default DMA mask for your device is gonna
-be 32 bits. If the reality (what your peripheral DMA can do) was
-different than this, you would have to set a different mask explicitly
-to make sure the dma-mapping step would not provide buffers which are
-out of reach.
+> ---
+>  Documentation/networking/tuntap.rst |   7 +++
+>  drivers/net/Kconfig                 |   1 +
+>  drivers/net/tap.c                   |  45 ++++++++++++++--
 
-Thanks,
-Miqu=C3=A8l
+Tile should be for tap as well or is this just for tun?
+
+>  drivers/net/tun.c                   |  46 ++++++++++++----
+>  drivers/net/tun_vnet.h              | 102 ++++++++++++++++++++++++++++++=
++-----
+>  include/linux/if_tap.h              |   2 +
+>  include/uapi/linux/if_tun.h         |  48 +++++++++++++++++
+>  7 files changed, 223 insertions(+), 28 deletions(-)
+>
+> diff --git a/Documentation/networking/tuntap.rst b/Documentation/networki=
+ng/tuntap.rst
+> index 4d7087f727be..86b4ae8caa8a 100644
+> --- a/Documentation/networking/tuntap.rst
+> +++ b/Documentation/networking/tuntap.rst
+> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable it=
+::
+>        return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+>    }
+>
+> +3.4 Reference
+> +-------------
+> +
+> +``linux/if_tun.h`` defines the interface described below:
+> +
+> +.. kernel-doc:: include/uapi/linux/if_tun.h
+> +
+>  Universal TUN/TAP device driver Frequently Asked Question
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index 9920b3a68ed1..e2a7bd703550 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -395,6 +395,7 @@ config TUN
+>         tristate "Universal TUN/TAP device driver support"
+>         depends on INET
+>         select CRC32
+> +       select SKB_EXTENSIONS
+
+Then we need this for macvtap at least as well?
+
+>         help
+>           TUN/TAP provides packet reception and transmission for user spa=
+ce
+>           programs.  It can be viewed as a simple Point-to-Point or Ether=
+net
+> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> index 9a34ceed0c2c..5e2fbe63ca47 100644
+> --- a/drivers/net/tap.c
+> +++ b/drivers/net/tap.c
+> @@ -179,6 +179,16 @@ static void tap_put_queue(struct tap_queue *q)
+>         sock_put(&q->sk);
+>  }
+>
+> +static struct virtio_net_hash *tap_add_hash(struct sk_buff *skb)
+> +{
+> +       return (struct virtio_net_hash *)skb->cb;
+
+Any reason that tap uses skb->cb but not skb extensions? (And is it
+safe to use that without cloning?)
+
+> +}
+> +
+> +static const struct virtio_net_hash *tap_find_hash(const struct sk_buff =
+*skb)
+> +{
+> +       return (const struct virtio_net_hash *)skb->cb;
+> +}
+> +
+>  /*
+>   * Select a queue based on the rxq of the device on which this packet
+>   * arrived. If the incoming device is not mq, calculate a flow hash
+> @@ -189,6 +199,7 @@ static void tap_put_queue(struct tap_queue *q)
+>  static struct tap_queue *tap_get_queue(struct tap_dev *tap,
+>                                        struct sk_buff *skb)
+>  {
+> +       struct flow_keys_basic keys_basic;
+>         struct tap_queue *queue =3D NULL;
+>         /* Access to taps array is protected by rcu, but access to numvta=
+ps
+>          * isn't. Below we use it to lookup a queue, but treat it as a hi=
+nt
+> @@ -198,15 +209,32 @@ static struct tap_queue *tap_get_queue(struct tap_d=
+ev *tap,
+>         int numvtaps =3D READ_ONCE(tap->numvtaps);
+>         __u32 rxq;
+>
+> +       *tap_add_hash(skb) =3D (struct virtio_net_hash) { .report =3D VIR=
+TIO_NET_HASH_REPORT_NONE };
+> +
+>         if (!numvtaps)
+>                 goto out;
+>
+>         if (numvtaps =3D=3D 1)
+>                 goto single;
+>
+> +       if (!skb->l4_hash && !skb->sw_hash) {
+> +               struct flow_keys keys;
+> +
+> +               skb_flow_dissect_flow_keys(skb, &keys, FLOW_DISSECTOR_F_S=
+TOP_AT_FLOW_LABEL);
+> +               rxq =3D flow_hash_from_keys(&keys);
+> +               keys_basic =3D (struct flow_keys_basic) {
+> +                       .control =3D keys.control,
+> +                       .basic =3D keys.basic
+> +               };
+> +       } else {
+> +               skb_flow_dissect_flow_keys_basic(NULL, skb, &keys_basic, =
+NULL, 0, 0, 0,
+> +                                                FLOW_DISSECTOR_F_STOP_AT=
+_FLOW_LABEL);
+> +               rxq =3D skb->hash;
+> +       }
+> +
+>         /* Check if we can use flow to select a queue */
+> -       rxq =3D skb_get_hash(skb);
+>         if (rxq) {
+> +               tun_vnet_hash_report(&tap->vnet_hash, skb, &keys_basic, r=
+xq, tap_add_hash);
+>                 queue =3D rcu_dereference(tap->taps[rxq % numvtaps]);
+>                 goto out;
+>         }
+> @@ -713,15 +741,16 @@ static ssize_t tap_put_user(struct tap_queue *q,
+>         int total;
+>
+>         if (q->flags & IFF_VNET_HDR) {
+> -               struct virtio_net_hdr vnet_hdr;
+> +               struct virtio_net_hdr_v1_hash vnet_hdr;
+>
+>                 vnet_hdr_len =3D READ_ONCE(q->vnet_hdr_sz);
+>
+> -               ret =3D tun_vnet_hdr_from_skb(q->flags, NULL, skb, &vnet_=
+hdr);
+> +               ret =3D tun_vnet_hdr_from_skb(vnet_hdr_len, q->flags, NUL=
+L, skb,
+> +                                           tap_find_hash, &vnet_hdr);
+>                 if (ret < 0)
+>                         goto done;
+>
+> -               ret =3D tun_vnet_hdr_put(vnet_hdr_len, iter, &vnet_hdr);
+> +               ret =3D tun_vnet_hdr_put(vnet_hdr_len, iter, &vnet_hdr, r=
+et);
+>                 if (ret < 0)
+>                         goto done;
+>         }
+> @@ -1025,7 +1054,13 @@ static long tap_ioctl(struct file *file, unsigned =
+int cmd,
+>                 return ret;
+>
+>         default:
+> -               return tun_vnet_ioctl(&q->vnet_hdr_sz, &q->flags, cmd, sp=
+);
+> +               rtnl_lock();
+> +               tap =3D rtnl_dereference(q->tap);
+> +               ret =3D tun_vnet_ioctl(&q->vnet_hdr_sz, &q->flags,
+> +                                    tap ? &tap->vnet_hash : NULL, -EINVA=
+L,
+> +                                    cmd, sp);
+> +               rtnl_unlock();
+> +               return ret;
+>         }
+>  }
+>
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index dd8799d19518..27308417b834 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -209,6 +209,7 @@ struct tun_struct {
+>         struct bpf_prog __rcu *xdp_prog;
+>         struct tun_prog __rcu *steering_prog;
+>         struct tun_prog __rcu *filter_prog;
+> +       struct tun_vnet_hash vnet_hash;
+>         struct ethtool_link_ksettings link_ksettings;
+>         /* init args */
+>         struct file *file;
+> @@ -451,6 +452,16 @@ static inline void tun_flow_save_rps_rxhash(struct t=
+un_flow_entry *e, u32 hash)
+>                 e->rps_rxhash =3D hash;
+>  }
+>
+> +static struct virtio_net_hash *tun_add_hash(struct sk_buff *skb)
+> +{
+> +       return skb_ext_add(skb, SKB_EXT_TUN_VNET_HASH);
+> +}
+> +
+> +static const struct virtio_net_hash *tun_find_hash(const struct sk_buff =
+*skb)
+> +{
+> +       return skb_ext_find(skb, SKB_EXT_TUN_VNET_HASH);
+> +}
+> +
+>  /* We try to identify a flow through its rxhash. The reason that
+>   * we do not check rxq no. is because some cards(e.g 82599), chooses
+>   * the rxq based on the txq where the last packet of the flow comes. As
+> @@ -459,12 +470,17 @@ static inline void tun_flow_save_rps_rxhash(struct =
+tun_flow_entry *e, u32 hash)
+>   */
+>  static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buf=
+f *skb)
+>  {
+> +       struct flow_keys keys;
+> +       struct flow_keys_basic keys_basic;
+>         struct tun_flow_entry *e;
+>         u32 txq, numqueues;
+>
+>         numqueues =3D READ_ONCE(tun->numqueues);
+>
+> -       txq =3D __skb_get_hash_symmetric(skb);
+> +       memset(&keys, 0, sizeof(keys));
+> +       skb_flow_dissect(skb, &flow_keys_dissector_symmetric, &keys, 0);
+> +
+> +       txq =3D flow_hash_from_keys(&keys);
+>         e =3D tun_flow_find(&tun->flows[tun_hashfn(txq)], txq);
+>         if (e) {
+>                 tun_flow_save_rps_rxhash(e, txq);
+> @@ -473,6 +489,13 @@ static u16 tun_automq_select_queue(struct tun_struct=
+ *tun, struct sk_buff *skb)
+>                 txq =3D reciprocal_scale(txq, numqueues);
+>         }
+>
+> +       keys_basic =3D (struct flow_keys_basic) {
+> +               .control =3D keys.control,
+> +               .basic =3D keys.basic
+> +       };
+> +       tun_vnet_hash_report(&tun->vnet_hash, skb, &keys_basic, skb->l4_h=
+ash ? skb->hash : txq,
+> +                            tun_add_hash);
+
+Is using txq required when not l4_hash is required by the virtio-spec?
+
+> +
+>         return txq;
+>  }
+>
+> @@ -1990,10 +2013,8 @@ static ssize_t tun_put_user_xdp(struct tun_struct =
+*tun,
+>         size_t total;
+>
+>         if (tun->flags & IFF_VNET_HDR) {
+> -               struct virtio_net_hdr gso =3D { 0 };
+> -
+>                 vnet_hdr_sz =3D READ_ONCE(tun->vnet_hdr_sz);
+> -               ret =3D tun_vnet_hdr_put(vnet_hdr_sz, iter, &gso);
+> +               ret =3D tun_vnet_hdr_put(vnet_hdr_sz, iter, NULL, 0);
+>                 if (ret < 0)
+>                         return ret;
+>         }
+> @@ -2018,7 +2039,6 @@ static ssize_t tun_put_user(struct tun_struct *tun,
+>         int vlan_offset =3D 0;
+>         int vlan_hlen =3D 0;
+>         int vnet_hdr_sz =3D 0;
+> -       int ret;
+>
+>         if (skb_vlan_tag_present(skb))
+>                 vlan_hlen =3D VLAN_HLEN;
+> @@ -2043,13 +2063,15 @@ static ssize_t tun_put_user(struct tun_struct *tu=
+n,
+>         }
+>
+>         if (vnet_hdr_sz) {
+> -               struct virtio_net_hdr gso;
+> +               struct virtio_net_hdr_v1_hash gso;
+> +               int ret;
+>
+> -               ret =3D tun_vnet_hdr_from_skb(tun->flags, tun->dev, skb, =
+&gso);
+> +               ret =3D tun_vnet_hdr_from_skb(vnet_hdr_sz, tun->flags, tu=
+n->dev, skb,
+> +                                           tun_find_hash, &gso);
+>                 if (ret < 0)
+>                         goto done;
+>
+> -               ret =3D tun_vnet_hdr_put(vnet_hdr_sz, iter, &gso);
+> +               ret =3D tun_vnet_hdr_put(vnet_hdr_sz, iter, &gso, ret);
+>                 if (ret < 0)
+>                         goto done;
+>         }
+> @@ -3055,9 +3077,10 @@ static long __tun_chr_ioctl(struct file *file, uns=
+igned int cmd,
+>                 goto unlock;
+>         }
+>
+> -       ret =3D -EBADFD;
+> -       if (!tun)
+> +       if (!tun) {
+> +               ret =3D tun_vnet_ioctl(NULL, NULL, NULL, -EBADFD, cmd, ar=
+gp);
+
+This seems not elegant (passing three NULL pointers). Any reason we
+can't just modify __tun_chr_ioctl() instead of introducing things like
+tun_vnet_ioctl()?
+
+>                 goto unlock;
+> +       }
+>
+>         netif_info(tun, drv, tun->dev, "tun_chr_ioctl cmd %u\n", cmd);
+>
+> @@ -3256,7 +3279,8 @@ static long __tun_chr_ioctl(struct file *file, unsi=
+gned int cmd,
+>                 break;
+>
+>         default:
+> -               ret =3D tun_vnet_ioctl(&tun->vnet_hdr_sz, &tun->flags, cm=
+d, argp);
+> +               ret =3D tun_vnet_ioctl(&tun->vnet_hdr_sz, &tun->flags,
+> +                                    &tun->vnet_hash, -EINVAL, cmd, argp)=
+;
+>         }
+>
+>         if (do_notify)
+> diff --git a/drivers/net/tun_vnet.h b/drivers/net/tun_vnet.h
+> index c40bde0fdf8c..589a97dd7d02 100644
+> --- a/drivers/net/tun_vnet.h
+> +++ b/drivers/net/tun_vnet.h
+> @@ -6,6 +6,9 @@
+>  #define TUN_VNET_LE 0x80000000
+>  #define TUN_VNET_BE 0x40000000
+>
+> +typedef struct virtio_net_hash *(*tun_vnet_hash_add)(struct sk_buff *);
+> +typedef const struct virtio_net_hash *(*tun_vnet_hash_find)(const struct=
+ sk_buff *);
+> +
+>  static inline bool tun_vnet_legacy_is_little_endian(unsigned int flags)
+>  {
+>         return !(IS_ENABLED(CONFIG_TUN_VNET_CROSS_LE) && (flags & TUN_VNE=
+T_BE)) &&
+> @@ -59,18 +62,31 @@ static inline __virtio16 cpu_to_tun_vnet16(unsigned i=
+nt flags, u16 val)
+>  }
+>
+>  static inline long tun_vnet_ioctl(int *sz, unsigned int *flags,
+> -                                 unsigned int cmd, int __user *sp)
+> +                                 struct tun_vnet_hash *hash, long fallba=
+ck,
+> +                                 unsigned int cmd, void __user *argp)
+>  {
+> +       static const struct tun_vnet_hash cap =3D {
+> +               .flags =3D TUN_VNET_HASH_REPORT,
+> +               .types =3D VIRTIO_NET_SUPPORTED_HASH_TYPES
+> +       };
+
+Let's find a way to reuse virtio-net uAPI instead of introducing new
+stuff to stress the management layer.
+
+> +       struct tun_vnet_hash hash_buf;
+> +       int __user *sp =3D argp;
+>         int s;
+>
+>         switch (cmd) {
+>         case TUNGETVNETHDRSZ:
+> +               if (!sz)
+> +                       return -EBADFD;
+> +
+>                 s =3D *sz;
+>                 if (put_user(s, sp))
+>                         return -EFAULT;
+>                 return 0;
+>
+>         case TUNSETVNETHDRSZ:
+> +               if (!sz)
+> +                       return -EBADFD;
+> +
+>                 if (get_user(s, sp))
+>                         return -EFAULT;
+>                 if (s < (int)sizeof(struct virtio_net_hdr))
+> @@ -80,12 +96,18 @@ static inline long tun_vnet_ioctl(int *sz, unsigned i=
+nt *flags,
+>                 return 0;
+>
+>         case TUNGETVNETLE:
+> +               if (!flags)
+> +                       return -EBADFD;
+> +
+>                 s =3D !!(*flags & TUN_VNET_LE);
+>                 if (put_user(s, sp))
+>                         return -EFAULT;
+>                 return 0;
+>
+>         case TUNSETVNETLE:
+> +               if (!flags)
+> +                       return -EBADFD;
+> +
+>                 if (get_user(s, sp))
+>                         return -EFAULT;
+>                 if (s)
+> @@ -95,16 +117,56 @@ static inline long tun_vnet_ioctl(int *sz, unsigned =
+int *flags,
+>                 return 0;
+>
+>         case TUNGETVNETBE:
+> +               if (!flags)
+> +                       return -EBADFD;
+> +
+>                 return tun_vnet_get_be(*flags, sp);
+>
+>         case TUNSETVNETBE:
+> +               if (!flags)
+> +                       return -EBADFD;
+> +
+>                 return tun_vnet_set_be(flags, sp);
+>
+> +       case TUNGETVNETHASHCAP:
+> +               return copy_to_user(argp, &cap, sizeof(cap)) ? -EFAULT : =
+0;
+> +
+> +       case TUNSETVNETHASH:
+> +               if (!hash)
+> +                       return -EBADFD;
+> +
+> +               if (copy_from_user(&hash_buf, argp, sizeof(hash_buf)))
+> +                       return -EFAULT;
+> +
+> +               *hash =3D hash_buf;
+> +               return 0;
+> +
+>         default:
+> -               return -EINVAL;
+> +               return fallback;
+>         }
+>  }
+>
+> +static inline void tun_vnet_hash_report(const struct tun_vnet_hash *hash=
+,
+> +                                       struct sk_buff *skb,
+> +                                       const struct flow_keys_basic *key=
+s,
+> +                                       u32 value,
+> +                                       tun_vnet_hash_add vnet_hash_add)
+> +{
+> +       struct virtio_net_hash *report;
+> +
+> +       if (!(hash->flags & TUN_VNET_HASH_REPORT))
+> +               return;
+> +
+> +       report =3D vnet_hash_add(skb);
+> +       if (!report)
+> +               return;
+> +
+> +       *report =3D (struct virtio_net_hash) {
+> +               .report =3D virtio_net_hash_report(hash->types, keys),
+> +               .value =3D value
+> +       };
+> +}
+> +
+>  static inline int tun_vnet_hdr_get(int sz, unsigned int flags,
+>                                    struct iov_iter *from,
+>                                    struct virtio_net_hdr *hdr)
+> @@ -130,15 +192,15 @@ static inline int tun_vnet_hdr_get(int sz, unsigned=
+ int flags,
+>  }
+>
+>  static inline int tun_vnet_hdr_put(int sz, struct iov_iter *iter,
+> -                                  const struct virtio_net_hdr *hdr)
+> +                                  const void *hdr, int content_sz)
+>  {
+>         if (iov_iter_count(iter) < sz)
+>                 return -EINVAL;
+>
+> -       if (copy_to_iter(hdr, sizeof(*hdr), iter) !=3D sizeof(*hdr))
+> +       if (copy_to_iter(hdr, content_sz, iter) !=3D content_sz)
+>                 return -EFAULT;
+>
+> -       if (iov_iter_zero(sz - sizeof(*hdr), iter) !=3D sz - sizeof(*hdr)=
+)
+> +       if (iov_iter_zero(sz - content_sz, iter) !=3D sz - content_sz)
+>                 return -EFAULT;
+>
+>         return 0;
+> @@ -151,32 +213,48 @@ static inline int tun_vnet_hdr_to_skb(unsigned int =
+flags,
+>         return virtio_net_hdr_to_skb(skb, hdr, tun_vnet_is_little_endian(=
+flags));
+>  }
+>
+> -static inline int tun_vnet_hdr_from_skb(unsigned int flags,
+> +static inline int tun_vnet_hdr_from_skb(int sz, unsigned int flags,
+>                                         const struct net_device *dev,
+>                                         const struct sk_buff *skb,
+> -                                       struct virtio_net_hdr *hdr)
+> +                                       tun_vnet_hash_find vnet_hash_find=
+,
+> +                                       struct virtio_net_hdr_v1_hash *hd=
+r)
+>  {
+>         int vlan_hlen =3D skb_vlan_tag_present(skb) ? VLAN_HLEN : 0;
+> +       const struct virtio_net_hash *report =3D sz < sizeof(struct virti=
+o_net_hdr_v1_hash) ?
+> +                                              NULL : vnet_hash_find(skb)=
+;
+> +       int content_sz;
+> +
+> +       if (report) {
+> +               content_sz =3D sizeof(struct virtio_net_hdr_v1_hash);
+> +
+> +               *hdr =3D (struct virtio_net_hdr_v1_hash) {
+> +                       .hdr =3D { .num_buffers =3D __cpu_to_virtio16(tru=
+e, 1) },
+> +                       .hash_value =3D cpu_to_le32(report->value),
+> +                       .hash_report =3D cpu_to_le16(report->report)
+> +               };
+> +       } else {
+> +               content_sz =3D sizeof(struct virtio_net_hdr);
+> +       }
+>
+> -       if (virtio_net_hdr_from_skb(skb, hdr,
+> +       if (virtio_net_hdr_from_skb(skb, (struct virtio_net_hdr *)hdr,
+>                                     tun_vnet_is_little_endian(flags), tru=
+e,
+>                                     vlan_hlen)) {
+>                 struct skb_shared_info *sinfo =3D skb_shinfo(skb);
+>
+>                 if (net_ratelimit()) {
+>                         netdev_err(dev, "unexpected GSO type: 0x%x, gso_s=
+ize %d, hdr_len %d\n",
+> -                                  sinfo->gso_type, tun_vnet16_to_cpu(fla=
+gs, hdr->gso_size),
+> -                                  tun_vnet16_to_cpu(flags, hdr->hdr_len)=
+);
+> +                                  sinfo->gso_type, tun_vnet16_to_cpu(fla=
+gs, hdr->hdr.gso_size),
+> +                                  tun_vnet16_to_cpu(flags, hdr->hdr.hdr_=
+len));
+>                         print_hex_dump(KERN_ERR, "tun: ",
+>                                        DUMP_PREFIX_NONE,
+>                                        16, 1, skb->head,
+> -                                      min(tun_vnet16_to_cpu(flags, hdr->=
+hdr_len), 64), true);
+> +                                      min(tun_vnet16_to_cpu(flags, hdr->=
+hdr.hdr_len), 64), true);
+>                 }
+>                 WARN_ON_ONCE(1);
+>                 return -EINVAL;
+>         }
+>
+> -       return 0;
+> +       return content_sz;
+>  }
+>
+>  #endif /* TUN_VNET_H */
+> diff --git a/include/linux/if_tap.h b/include/linux/if_tap.h
+> index 553552fa635c..5bbb343a6dba 100644
+> --- a/include/linux/if_tap.h
+> +++ b/include/linux/if_tap.h
+> @@ -4,6 +4,7 @@
+>
+>  #include <net/sock.h>
+>  #include <linux/skb_array.h>
+> +#include <uapi/linux/if_tun.h>
+>
+>  struct file;
+>  struct socket;
+> @@ -43,6 +44,7 @@ struct tap_dev {
+>         int                     numqueues;
+>         netdev_features_t       tap_features;
+>         int                     minor;
+> +       struct tun_vnet_hash    vnet_hash;
+>
+>         void (*update_features)(struct tap_dev *tap, netdev_features_t fe=
+atures);
+>         void (*count_tx_dropped)(struct tap_dev *tap);
+> diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
+> index 287cdc81c939..d11e79b4e0dc 100644
+> --- a/include/uapi/linux/if_tun.h
+> +++ b/include/uapi/linux/if_tun.h
+> @@ -62,6 +62,34 @@
+>  #define TUNSETCARRIER _IOW('T', 226, int)
+>  #define TUNGETDEVNETNS _IO('T', 227)
+>
+> +/**
+> + * define TUNGETVNETHASHCAP - ioctl to get virtio_net hashing capability=
+.
+> + *
+> + * The argument is a pointer to &struct tun_vnet_hash which will store t=
+he
+> + * maximal virtio_net hashing configuration.
+> + */
+> +#define TUNGETVNETHASHCAP _IOR('T', 228, struct tun_vnet_hash)
+> +
+> +/**
+> + * define TUNSETVNETHASH - ioctl to configure virtio_net hashing
+> + *
+> + * The argument is a pointer to &struct tun_vnet_hash.
+> + *
+> + * The %TUN_VNET_HASH_REPORT flag set with this ioctl will be effective =
+only
+> + * after calling the %TUNSETVNETHDRSZ ioctl with a number greater than o=
+r equal
+> + * to the size of &struct virtio_net_hdr_v1_hash.
+
+I think we don't need & here.
+
+> + *
+> + * The members added to the legacy header by %TUN_VNET_HASH_REPORT flag =
+will
+> + * always be little-endian.
+> + *
+> + * This ioctl results in %EBADFD if the underlying device is deleted. It=
+ affects
+> + * all queues attached to the same device.
+> + *
+> + * This ioctl currently has no effect on XDP packets and packets with
+> + * queue_mapping set by TC.
+
+This needs to be fixed?
+
+> + */
+> +#define TUNSETVNETHASH _IOW('T', 229, struct tun_vnet_hash)
+> +
+>  /* TUNSETIFF ifr flags */
+>  #define IFF_TUN                0x0001
+>  #define IFF_TAP                0x0002
+> @@ -115,4 +143,24 @@ struct tun_filter {
+>         __u8   addr[][ETH_ALEN];
+>  };
+>
+> +/**
+> + * define TUN_VNET_HASH_REPORT - Request virtio_net hash reporting for v=
+host
+> + */
+> +#define TUN_VNET_HASH_REPORT   0x0001
+> +
+> +/**
+> + * struct tun_vnet_hash - virtio_net hashing configuration
+> + * @flags:
+> + *             Bitmask consists of %TUN_VNET_HASH_REPORT and %TUN_VNET_H=
+ASH_RSS
+
+Could we reuse TUNGETIFF by introduce new IFF_XXX stuffs?
+
+> + * @pad:
+> + *             Should be filled with zero before passing to %TUNSETVNETH=
+ASH
+> + * @types:
+> + *             Bitmask of allowed hash types
+
+What are they?
+
+> + */
+> +struct tun_vnet_hash {
+> +       __u16 flags;
+> +       __u8 pad[2];
+> +       __u32 types;
+> +};
+> +
+>  #endif /* _UAPI__IF_TUN_H */
+>
+> --
+> 2.46.2
+>
+
+Thanks
+
 
