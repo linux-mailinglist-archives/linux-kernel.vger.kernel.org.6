@@ -1,164 +1,153 @@
-Return-Path: <linux-kernel+bounces-356683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE37996536
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:25:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC5D996539
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33AB52834D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:25:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69311B24563
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D77518A954;
-	Wed,  9 Oct 2024 09:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D050618CBEE;
+	Wed,  9 Oct 2024 09:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="F8WlZO7v"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jrr9N2Xr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c3MT9GfG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C308188929;
-	Wed,  9 Oct 2024 09:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3003189BA2;
+	Wed,  9 Oct 2024 09:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465684; cv=none; b=N2fFpiwtu+mw71jQtnkLglHzPCUnkExhjxNzpC17A4F3iru6Qz9r6ADRszkEcfjtVfMZ/iBy9A3JjPJO8OPk2gEbPlzYIvbGMGJ6eAFf8pKwZMd+pdj1VhcMZ9bcc1IjfPv7epajhOdNerq0x35taA79viWddkQavOvU/s1grb4=
+	t=1728465714; cv=none; b=B1sRcCZ6pOcrUMLu5TwkhGYWfCNhB5S4B8UgLhBoe3hDPhlx3+4N2D3Gy5vvfwzAT7gKaxHPfs7dYtQsHJQmjCJ+SPImowA40Nsf6SDQIo5+kqtCZ9XGaMPRjyUh2/le2JWRpLxe+3ySsfv3K2f0laIu6EOaFHPks9U1qGsLUxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465684; c=relaxed/simple;
-	bh=5rJacYbHgJtDxtv3PNAGVx97A2TLXEf8FNd4ufMljKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RwF4JWvdrahn9JUM41XfbmJ9jzc3pzMpnd8HVtBPOPhxXW9XvPUF4fsoy1fhTGpbpZGlHUmfoYAkGsVtUyrGTsh1k/xjhLqg/uKFh1tkSwJEs43G41Tq3qjvzPi8AAQVJJKma0aaPRSIgb3ArGmgcjEt6/4GnJwyDfyr5FmL8/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=F8WlZO7v; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d6e3ad88861f11ef8b96093e013ec31c-20241009
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=x/5+Sddg3H+O4oysQuhNA4Lmgxc5WiB96rQ7dFLcGlc=;
-	b=F8WlZO7vFeQpo70sDfkUfQYtNG+x4NobK5oN1NWw0Cr3XJuWaIw3ldBESMCXVPwHdUjQIG3Dcz9Tm9gJcOtAzN5FlXNxyJUpOPz/ThtfpCF4If9zMjYcZ/w5UYuPNSj5OwTqIp04JUoXHFmy2Yjf5zTyUochgRpEyYQMk+1AOxQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:9ccd4a46-aa9d-466c-9708-f35890c5ed6c,IP:0,U
-	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:6dc6a47,CLOUDID:59318826-5902-4533-af4f-d0904aa89b3c,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: d6e3ad88861f11ef8b96093e013ec31c-20241009
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1547505070; Wed, 09 Oct 2024 17:21:17 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 9 Oct 2024 17:21:15 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 9 Oct 2024 17:21:14 +0800
-Message-ID: <314aafed-5903-2478-971f-59870b8ac5fa@mediatek.com>
-Date: Wed, 9 Oct 2024 17:21:13 +0800
+	s=arc-20240116; t=1728465714; c=relaxed/simple;
+	bh=+Eu8FVQhd542cysh/WxOzlybLSHvB5lcDCwYoHePP5M=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NZ3l1+LmxUNKMYKL+4D/yu8H7hKeenUFcQwuo2Kn4Sqa8ganwbdlpYelA1tLtIWRnDXIiVqdWWwCsmhjOWvQntVyqOiWrA2n/+Thl6gF6UZplj8zGK+KCtzx5BoBxSSRbp/h4WOHR7uf6K3zFZPJScuvjIPk5JGN/AMeZsD6JbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jrr9N2Xr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c3MT9GfG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 09 Oct 2024 09:21:49 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728465710;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZDCJxJ3eCN6MJCFUBbljx0WkoRjF5PJfmH47ifNwzE4=;
+	b=jrr9N2Xrj0fpyDwZcRyrs6KS2NEz/tavjK3BO2nsYF38cb2i1FvvSQPcsgpjuRp+WhEp6E
+	348bww1NUa/k2WVy7XllTEOEaNPxR8FUS5Kn8Fpo1cQQPwWrsYF3/HN5O4qlWBNX4lpqoo
+	H1RleJ8MKxxWrb0aHYpwpyKmR3rIayn1mNKuOD39YdStoI3CMLJzCfxNLLU8LkIWPDhFIF
+	WVO//Et85AbzuvHWt2KOCMdmZHT23hcIAltOZl4BrGgZvysLdYB9bPuJQMe+jX88tjOdqL
+	SQ0vEPTPrEG2aEplWS1a59sJtpg7tELnrCQ5I64I+O8CETAYO1uqYnANq0RbnQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728465710;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZDCJxJ3eCN6MJCFUBbljx0WkoRjF5PJfmH47ifNwzE4=;
+	b=c3MT9GfG9qhuUQjsvk+Y4iHKrzv75x5r/k7u2Im96FRxm0Z4txizvXMKFCV3UDfKxJ38Po
+	jstsvdQhcUz/orDA==
+From: "tip-bot2 for Dr. David Alan Gilbert" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: timers/core] clocksource: Remove unused clocksource_change_rating
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241009003032.254348-1-linux@treblig.org>
+References: <20241009003032.254348-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8195: Fix dtbs_check error for
- tphy
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Seiya Wang <seiya.wang@mediatek.com>, Tinghan Shen
-	<tinghan.shen@mediatek.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>, Jian Yang
-	<jian.yang@mediatek.com>, Jianguo Zhang <jianguo.zhang@mediatek.com>, "Jieyy
- Yang" <jieyy.yang@mediatek.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, "Chris-qj
- chen" <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-References: <20241008071540.32607-1-macpaul.lin@mediatek.com>
- <e9277edf-d372-4a8e-881c-49a907f0a883@collabora.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <e9277edf-d372-4a8e-881c-49a907f0a883@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--15.120500-8.000000
-X-TMASE-MatchedRID: VfovoVrt/oYNtKv7cnNXnSa1MaKuob8PofZV/2Xa0cK+UkTh6A/Dwdno
-	quRwHY3BkAluVYknZHpbzVVgo9RtXiA1dgOjatGGXP5rFAucBUHnpmIrKZRxTs/PM4nfEDArIyZ
-	NTlgT7qnRLHyi43Gvn5VYfV6rzvhfRyV3gdKbiKMpa6LJktEjgPaS52LUPfcSUUVrdcYJZJ0sgd
-	kHScxUMWUQAwDxYVxG1S+wyEMlXe8HTXUunEyzWGwbuvhCHs3cfLPKYyLDlAffUZT83lbkEBHxr
-	RblSw8bLPQ+pa7MIVkfZdczzDm/ur9ZdlL8eonaVnRXm1iHN1bEQdG7H66TyH4gKq42LRYkUK59
-	MjR9wrsi5A4ICRHaqPCJJCAkXsc/RHeQpqAFdaB+3BndfXUhXQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--15.120500-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 62E55BFEEA33CD37E8BF54AEA8EB2CAABBF29006B944BE04D6245EF911B536242000:8
+Message-ID: <172846570954.1442.6028241325035117957.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the timers/core branch of tip:
 
+Commit-ID:     5ce9bb4d5af2f5ef38f134e3cb400c873d357de7
+Gitweb:        https://git.kernel.org/tip/5ce9bb4d5af2f5ef38f134e3cb400c873d357de7
+Author:        Dr. David Alan Gilbert <linux@treblig.org>
+AuthorDate:    Wed, 09 Oct 2024 01:30:32 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 09 Oct 2024 11:14:29 +02:00
 
-On 10/8/24 17:09, AngeloGioacchino Del Regno wrote:
-> Il 08/10/24 09:15, Macpaul Lin ha scritto:
->> The u3phy1 node in mt8195.dtsi was triggering a dtbs_check error.
->> The error message was:
->>    t-phy@11e30000: 'power-domains' does not match any of the regexes:
->>      '^(usb|pcie|sata)-phy@[0-9a-f]+$', 'pinctrl-[0-9]+'
->> Fix this issue by dropping 'power-domains' of u3phy1 node.
->>
->> This is because MediaTek tphy dose not need to add mtcmos.  It is not
->> necessary to add 'power-domains'. If the power of the tphy is turned off,
->> it will affect other functions. From the current USB hardware design
->> perspective, even if mtcmos is added to the phy, it is always on.
->>
->> Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and 
->> evaluation board")
->> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> 
-> Reviewed-by: AngeloGioacchino Del Regno 
-> <angelogioacchino.delregno@collabora.com>
+clocksource: Remove unused clocksource_change_rating
 
-Sorry for bothering, it seems MediaTek internal still have some
-discussion about according to Conor's suggestion:
+clocksource_change_rating() has been unused since 2017's commit
+63ed4e0c67df ("Drivers: hv: vmbus: Consolidate all Hyper-V specific
+clocksource code")
 
-[1] 
-https://lore.kernel.org/lkml/20241008-disorder-slacking-d8196ceb68f7@spud/T/#mccf978d76f52cc26970f3f3be6120055e4698fe6
+Remove it.
 
-Please don't to pick this patch until if MediaTek could have some
-conclusions.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: John Stultz <jstultz@google.com>
+Link: https://lore.kernel.org/all/20241009003032.254348-1-linux@treblig.org
+---
+ include/linux/clocksource.h |  1 -
+ kernel/time/clocksource.c   | 21 ---------------------
+ 2 files changed, 22 deletions(-)
 
->> ---
->>   arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> Changes for v2:
->>   - Add detail description of the tphy design for explaining the reason
->>     of this change.
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi 
->> b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> index ade685ed2190..1c6f08dde31c 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
->> @@ -1920,7 +1920,6 @@ u3phy1: t-phy@11e30000 {
->>               #address-cells = <1>;
->>               #size-cells = <1>;
->>               ranges = <0 0 0x11e30000 0xe00>;
->> -            power-domains = <&spm MT8195_POWER_DOMAIN_SSUSB_PCIE_PHY>;
->>               status = "disabled";
->>               u2port1: usb-phy@0 {
-> 
-> 
-
-Thanks!
-Macpaul Lin
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index d35b677..ef1b16d 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -215,7 +215,6 @@ static inline s64 clocksource_cyc2ns(u64 cycles, u32 mult, u32 shift)
+ 
+ extern int clocksource_unregister(struct clocksource*);
+ extern void clocksource_touch_watchdog(void);
+-extern void clocksource_change_rating(struct clocksource *cs, int rating);
+ extern void clocksource_suspend(void);
+ extern void clocksource_resume(void);
+ extern struct clocksource * __init clocksource_default_clock(void);
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 23336ee..e041ba8 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -1262,27 +1262,6 @@ static void __clocksource_change_rating(struct clocksource *cs, int rating)
+ 	clocksource_enqueue(cs);
+ }
+ 
+-/**
+- * clocksource_change_rating - Change the rating of a registered clocksource
+- * @cs:		clocksource to be changed
+- * @rating:	new rating
+- */
+-void clocksource_change_rating(struct clocksource *cs, int rating)
+-{
+-	unsigned long flags;
+-
+-	mutex_lock(&clocksource_mutex);
+-	clocksource_watchdog_lock(&flags);
+-	__clocksource_change_rating(cs, rating);
+-	clocksource_watchdog_unlock(&flags);
+-
+-	clocksource_select();
+-	clocksource_select_watchdog(false);
+-	clocksource_suspend_select(false);
+-	mutex_unlock(&clocksource_mutex);
+-}
+-EXPORT_SYMBOL(clocksource_change_rating);
+-
+ /*
+  * Unbind clocksource @cs. Called with clocksource_mutex held
+  */
 
