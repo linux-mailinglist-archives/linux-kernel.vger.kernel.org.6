@@ -1,127 +1,186 @@
-Return-Path: <linux-kernel+bounces-357090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CAA996B61
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:09:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4143C996B66
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6369B21637
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA4592823EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6694192D6A;
-	Wed,  9 Oct 2024 13:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9685A192D78;
+	Wed,  9 Oct 2024 13:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="XCEDelr/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DH0ipkdn"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfFPoU37"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F0C291E;
-	Wed,  9 Oct 2024 13:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5378291E;
+	Wed,  9 Oct 2024 13:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728479364; cv=none; b=oWIzuu00fQ1UQAptLdm8R1CWdE4gtaRPbV53SOea8U1KeUmSg1n0mYbmBC8vY52Ihg7gOAxY1meSxb6BywMI37yAszupdbntj0HfJMQLoUeqx+4t4kkXK5z0TW/WWeukLz+5tUWywQcOtR/Ldm1D36nPXOFbrKnb3ZCxG6TmV2k=
+	t=1728479417; cv=none; b=P0DBsCHXiDA+IAHbUbW2XHyLuM8Vcmp6qRQqcIGUnaWEzbLIx8HamNrO37nINM2U303hAbSCoEkNuSDP5zN0Ulb2Jb8EENmnivirRKIiIp7Naw+MiyN84gSosfFq8QEePF2ArLPjwK8BWofJ/ilTymJdCR0IZ3sO4vCJh46/n2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728479364; c=relaxed/simple;
-	bh=gFTx8ta/LiIiUJybujz06jcnpe6cybyLzDl+nWBhj7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7bHKrA+0aO2C7yFAY/3Ksv1rOWikDBpUZrvfIk+cpu+gPZUFtm0HHRTXR971PhbEo9ULqjjq9DEkyP3qiFUUX8GaufuYbUXFPA4b5CptNZBpQ+T4X0iVPrnGPX1AOsQrVkoe8KDQp7eB849Jkv1f3/d56RWViwIqLmIm2hts6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=XCEDelr/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DH0ipkdn; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 019A41380295;
-	Wed,  9 Oct 2024 09:09:21 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 09 Oct 2024 09:09:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728479360;
-	 x=1728565760; bh=UuTpuAalgyZbbPSGz9ViqBPTflz/LEC7APiSvX6DIwQ=; b=
-	XCEDelr/hIbLQqrk7YFryLONcjWpb3oo5lMTrfNCJPl48DTQcffaO1sXseAoNzOQ
-	vy5KjEMFtJPGQutNgmOSMCCcN3Sd7FogyO71QRwMLvn8Vr7A5LNvIKuFB2FcmY0/
-	nlHqtJQjDXaBAxjJNec3Fq2fDRPAuXZMQRa4ykveBUrjb+Plq7ZoNMOzgmakQQ8n
-	TbuhiLCGd2bdP2SIwizq271i0Pg/LI91wQ0yb/baiv/A29kI942+p1ZJGme9PFZt
-	1A3v0QtNpC3vpWMn3fxjiAOOqBbjCkQg+nNImnAYDS3tllsk9b/PED2OZYKe4ab6
-	U8546MpIJhyRux4fmEPp+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728479360; x=
-	1728565760; bh=UuTpuAalgyZbbPSGz9ViqBPTflz/LEC7APiSvX6DIwQ=; b=D
-	H0ipkdnUggfKlPyC//c0imkcy3UzneEXbkXsiLrx8cW4oL2xI8kx+tGXR+7s1TAX
-	YK22/7tUgIr8xXCNeEZZ8iGNnbqTnQY/Mc5gO/Pru7kqNf+jqWVRWWnUhrToFFd2
-	euDTUOJjHWTdeL+Dn8C9crRM/CjUUjWW2qP9FF+QmZSG64n+/3gqxDGZ/xEaJ0FL
-	IgUT5jqYpAR2KQwkuHsDYMxQjRGcdKlMUPgMf/tDtv+3W2ZU9Q0cS1lJFZN3g3iG
-	amKBERm+mj8BuEMtr+U9cUfT58fL1zG6Nun/+TCwpRTM/XlCiy5knGS/jYvpdPip
-	PjQVbz7SLyjGuXfwmcgVA==
-X-ME-Sender: <xms:gIAGZ2j15Y-T5wOyjuQ0PKkRJFHFPCHsd3j_aletOQyLmlUAznSn4A>
-    <xme:gIAGZ3AJO5MKvv2HY-kedq54US1efCgLab4-sTsZm3zjp3IONJaXudRfGq9nHPq4n
-    mUWdSj9ZfzPgpF95Zk>
-X-ME-Received: <xmr:gIAGZ-H8PYUitnOb9dqZhgWirOeyV8DADJk-c-0EL_qvMKKTUQ412Up5k0DnCvuUraHoCNNnx2yuEcFkfg5gU-Z2BNPr2Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeforghtihgrshcuuehjpphrlhhinhhguceomhessghjohhrlhhinhhgrd
-    hmvgeqnecuggftrfgrthhtvghrnhepkeefieeutddvteeguedthedvudfggfevgeevkeeg
-    geefkeeufffffeelleevgefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepmhessghjohhrlhhinhhgrdhmvgdpnhgspghrtghpthhtohepkedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpth
-    htohepkhgsuhhstghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegulhgvmhhorghl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtrghsshgvlheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqnhhvmhgvsehlihhsthhsrdhinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqsghlohgtkhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehmrghtihgrshdrsghjohhrlhhinhhgseifuggtrdgtoh
-    hm
-X-ME-Proxy: <xmx:gIAGZ_Q95u54YL5zUMZG9dntRV0LfAjlltz-YuG3SiR2AZ_xaI1P6w>
-    <xmx:gIAGZzxd5YSQhD33PU0lGulNs7ppYVTzUl5NIUqZYHFWgOnU4wb5Yw>
-    <xmx:gIAGZ942oyMa4Bo9mm0B5ZnmwRZsrx_YAISs_0GkYkdZhOSGOZbeDQ>
-    <xmx:gIAGZwxiD1v61cCD-mDVxDxu2GMfiq3QMlw000-56wzAWtm22LMtkw>
-    <xmx:gIAGZ6nfWX7rWCXINgTrD8yef7XRt9CnEMLQuAFxrpldHCe_zl4DyASP>
-Feedback-ID: if4314918:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 9 Oct 2024 09:09:19 -0400 (EDT)
-Message-ID: <3191de59-16bb-4c54-87c3-110a0285ac13@bjorling.me>
-Date: Wed, 9 Oct 2024 15:09:18 +0200
+	s=arc-20240116; t=1728479417; c=relaxed/simple;
+	bh=3rSk0qpMy3mRiaF8HFu8PwiCPAK8Cf3r5DxZutgdUBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldnns2wacm/Pvxk2qv3vUv00EYrJ+JetIt3xBDsrqZUPnMDUygHN8FsLPJRnnU2eyq4cVYsuDGV4iob1iXO647yB6amGCNinD4lwFC6D3KkgWGgXZtvMGOQGVMT9jSMnoE6dHRW3no416NDystqsZW3g0n3rwusKuF6gDk5LbuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dfFPoU37; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99636C4CEC5;
+	Wed,  9 Oct 2024 13:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728479416;
+	bh=3rSk0qpMy3mRiaF8HFu8PwiCPAK8Cf3r5DxZutgdUBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dfFPoU37rt3pJvQ42mzAS+9f4v18U+dqeeaV9a4URYhutlLffKuInN0zqt+3Jsxpb
+	 Qjvcr5iqzzwC2PLKNUpvkve7KhykeKSTFQRvUceuQS34e2vaQQ92uj1tQSy1sXR4A0
+	 v7pRy9PD6lPq61d1JLkVZHEZE1I3hcFmF39bMwx3ycVnH/gOX+bWBV2tP6FQ/fXWoy
+	 y3F0l5swnwgmtQFnQwO/XwulXBsOnZCnvIiFJDJnHuvg3+3GwOkKej5oSzF7zlCYcX
+	 sQvoVyIEGs17g21lNOgBoUKiEXs7cXhs2vCClkWB19p83dKZt37BO/YNgB/aOwLlOk
+	 R3QqAJfGpJwCA==
+Date: Wed, 9 Oct 2024 15:10:11 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Zheng Zengkai <zhengzengkai@huawei.com>, guohanjun@huawei.com,
+	sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org,
+	lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ACPI: GTDT: simplify acpi_gtdt_init() implementation
+Message-ID: <ZwaAsyQnI0a0gTtL@lpieralisi>
+References: <20241008082429.33646-1-zhengzengkai@huawei.com>
+ <86v7y355zr.wl-maz@kernel.org>
+ <57e9adb8-a34a-6d63-24b8-4ad0abb74bf9@huawei.com>
+ <86r08p5x4g.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] nvme: add rotational support
-To: Christoph Hellwig <hch@lst.de>
-Cc: kbusch@kernel.org, dlemoal@kernel.org, cassel@kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Matias_Bj=C3=B8rling?=
- <matias.bjorling@wdc.com>
-References: <20241008145503.987195-1-m@bjorling.me>
- <20241008145503.987195-3-m@bjorling.me> <20241009074805.GC16181@lst.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-In-Reply-To: <20241009074805.GC16181@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <86r08p5x4g.wl-maz@kernel.org>
 
-On 09-10-2024 09:48, Christoph Hellwig wrote:
-> On Tue, Oct 08, 2024 at 04:55:03PM +0200, Matias Bjørling wrote:
->> +	if (info->is_rotational)
->> +		lim.features |= BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM;
+On Wed, Oct 09, 2024 at 12:33:35PM +0100, Marc Zyngier wrote:
+> On Tue, 08 Oct 2024 15:04:52 +0100,
+> Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+> > 
+> > 
+> > 在 2024/10/8 16:55, Marc Zyngier 写道:
+> > > On Tue, 08 Oct 2024 09:24:29 +0100,
+> > > Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+> > >> According to GTDT Table Structure of ACPI specification, the result of
+> > >> expression '(void *)gtdt + gtdt->platform_timer_offset' will be same
+> > >> with the expression '(void *)table + sizeof(struct acpi_table_gtdt)'
+> > > There is no such language in the spec. It simply says "Offset to the
+> > > Platform Timer Structure[] array from the start of this table".
+> > OK, I mean that in current code, the condition of this check is redundant.
 > 
-> Entropy from block devices is pretty useless.  The only reason we still
-> keep it for SCSI is because of retro-computing platforms without a proper
-> platform hardware RNG.  NVMe HDDs reall should not show up in those kinds
-> of environments.  Also without a add_disk_randomness in the nvme I/O
-> completion handler this won't actually do anything.
+> That's not my reading if it. Where do you see another validity check
+> that makes this one superfluous?
 > 
+> > >> in function acpi_gtdt_init(), so the condition of the "invalid timer
+> > >> data" check will never be true, remove the EINVAL error check branch
+> > >> and change to void return type for acpi_gtdt_init() to simplify the
+> > >> function implementation and error handling by callers.
+> > > And ACPI tables are well known to be always correct, right?
+> > Not always, check is needed, but should be changed.
+> 
+> You are not changing it, you are getting rid of it, and I don't see
+> you replacing it with anything else.
+> 
+> > >> Besides, after commit c2743a36765d ("clocksource: arm_arch_timer: add
+> > >> GTDT support for memory-mapped timer"), acpi_gtdt_init() currently will
+> > >> not be called with parameter platform_timer_count set to NULL and we
+> > >> can explicitly initialize the integer variable which is used for storing
+> > >> the number of platform timers by caller to zero, so there is no need to
+> > >> do null pointer check for platform_timer_count in acpi_gtdt_init(),
+> > >> remove it to make code a bit more concise.
+> > >> 
+> > >> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> > >> ---
+> > >> Changes in v2:
+> > >> - initialize 'ret' in gtdt_sbsa_gwdt_init() to silence build warning
+> > >> 
+> > >> v1: https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+> > >> ---
+> > >>   drivers/acpi/arm64/gtdt.c            | 31 +++++++---------------------
+> > >>   drivers/clocksource/arm_arch_timer.c |  6 ++----
+> > >>   include/linux/acpi.h                 |  2 +-
+> > >>   3 files changed, 11 insertions(+), 28 deletions(-)
+> > >> 
+> > >> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> > >> index c0e77c1c8e09..7fe27c0edde7 100644
+> > >> --- a/drivers/acpi/arm64/gtdt.c
+> > >> +++ b/drivers/acpi/arm64/gtdt.c
+> > >> @@ -147,45 +147,30 @@ bool __init acpi_gtdt_c3stop(int type)
+> > >>    * @table:			The pointer to GTDT table.
+> > >>    * @platform_timer_count:	It points to a integer variable which is used
+> > >>    *				for storing the number of platform timers.
+> > >> - *				This pointer could be NULL, if the caller
+> > >> - *				doesn't need this info.
+> > >> - *
+> > >> - * Return: 0 if success, -EINVAL if error.
+> > >>    */
+> > >> -int __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >> +void __init acpi_gtdt_init(struct acpi_table_header *table,
+> > >>   			  int *platform_timer_count)
+> > >>   {
+> > >> -	void *platform_timer;
+> > >>   	struct acpi_table_gtdt *gtdt;
+> > >>     	gtdt = container_of(table, struct acpi_table_gtdt, header);
+> > >>   	acpi_gtdt_desc.gtdt = gtdt;
+> > >>   	acpi_gtdt_desc.gtdt_end = (void *)table + table->length;
+> > >>   	acpi_gtdt_desc.platform_timer = NULL;
+> > >> -	if (platform_timer_count)
+> > >> -		*platform_timer_count = 0;
+> > >>     	if (table->revision < 2) {
+> > >>   		pr_warn("Revision:%d doesn't support Platform Timers.\n",
+> > >>   			table->revision);
+> > >> -		return 0;
+> > >> +		return;
+> > >>   	}
+> > >>     	if (!gtdt->platform_timer_count) {
+> > >>   		pr_debug("No Platform Timer.\n");
+> > >> -		return 0;
+> > >> +		return;
+> > >>   	}
+> > >>   -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> > >> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> > >> -		pr_err(FW_BUG "invalid timer data.\n");
+> > >> -		return -EINVAL;
+> > >> -	}
+> > >> -	acpi_gtdt_desc.platform_timer = platform_timer;
+> > >> -	if (platform_timer_count)
+> > >> -		*platform_timer_count = gtdt->platform_timer_count;
+> > >> -
+> > >> -	return 0;
+> > >> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> > > And now you are trusting something that potentially points to some
+> > > unexpected location, blindly using it. It is bad enough that the
+> > > current checks are pretty poor (no check against the end of the
+> > > table for the first timer entry), but you are making it worse.
+> > > 
+> > > 	M.
+> > 
+> > Can I use the second and third bytes (the length) of platform timer
+> > structure to check against the end of the table ?
+> 
+> That's how it is supposed to be done indeed.
 
-Thanks for the details. I'll remove it in the next revision.
+AFAICS I think first we need to check whether the platform_timer pointer
+is within gtdt bounds (< gtdt_end) before de-referencing what it points
+at to detect the (first) GT entry length and check that it is within
+gtdt_end too. We do that only in next_platform_timer() for subsequent
+GT blocks.
+
+I agree with Marc, current check is fine, we should add to it, not
+remove it.
+
+Thanks,
+Lorenzo
 
