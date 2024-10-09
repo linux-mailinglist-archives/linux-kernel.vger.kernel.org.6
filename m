@@ -1,239 +1,144 @@
-Return-Path: <linux-kernel+bounces-357312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE5E996F87
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:21:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5733B996F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28385B23317
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890C41C2168F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3141E47A5;
-	Wed,  9 Oct 2024 15:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828B51A2631;
+	Wed,  9 Oct 2024 15:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QC6kRl8s"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEjTCNDy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D186B1991B6;
-	Wed,  9 Oct 2024 15:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486695; cv=fail; b=LanhOtlFlKUwzmioXrpt9SKV/ZxIH+/4PJkJJllG0o1O682cOpmh7Sw3jXuh5g62/D/TXAbn0ccv0tW/ySgb5pBi+GY9erVDC6QSUp3VnzF0crycvvCg87nVyJ3VkB9RKaBClxVvu370MOPY3PUF7uZKOfUkB5TnUpaLLXT9FzY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486695; c=relaxed/simple;
-	bh=B0bfRFgZ8n9bbqtaVZigvRrQ8nBVAfqv+rZiS6eGbl0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=F3vMqQ4g8Oiz9w1YejjOAku7/2KxGhZR1JjlczhidP5XZJrmwf14TwtppMsBj99knevBPoqww9874KcHCoBQ/lsKl2sqkDLdOPiZJ/IBAAoBDmP322sF+694vqg80KHQ2J5QHsPNTemlDkGn2GtHvslr5FqwB/AxztHFnqTiPUs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QC6kRl8s; arc=fail smtp.client-ip=40.107.237.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qA5LkUgfKjlIekL6fJ5qo9wg3mQ6OOZQBoKa6TCzcq/01O5EGvMQtc3INhlvXdRHFgf/tgfNY8RclMLFmL09rPbAtEZpkYw24xD/ubS0ZYXyT2dOp8mw7Wsy5hF2u0ry2hglekeQtJ60EVXvKcL2Frg+EZnFCIuX+dzyANQzuZmAYPrJvLqg54KHyN8a9m75sIInsYpxAyKYrxTsQrbM6/oebbQPLhlbEUGz/wGH6/um67T5lkonSz5QWwQEbDEBNK3/RnUqbCXjiOO44HGr5q31gJMUiH4wf6EfAMiEOuEZAL3Pg6akwmsc4xood1lRUx0jnPZEuGJBRHkq9h3ayA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fm0r2Uy/S2Kb3L/LBDFJ6VsCf9ZjtryweaCo95ww1vg=;
- b=dH/2CAXwlyw6Npj+E9tRJaH7Zgm1DIwyzeuZU2aAJ8f2K5WH22Encg/MKW4henTtK8DSmTyIhRpa1rcf5Mi3kDKBkZXhTVXSDFoNfDuirkNteONi8XcLg4SOPiWC/p72fONixZUUswqdZNnv/RTFvYhhVb+l1Dbr5YZtAwbFEb7hLTNUoPdQOcmP0pKWKCM0z9O3IK8QfqzO9sMZvY/IzF7WzMvLF1nYWTy/ecIYIPwK9cWWVvbvB64jEKnwscEN5ncIqhbE8DKsiQPBJojNtsXoS7OHEUt3VPU7pIkEF0fjA3vwu2ESts1ag6hI9JMo62n3fzzJGQhGNsvhLvlMug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fm0r2Uy/S2Kb3L/LBDFJ6VsCf9ZjtryweaCo95ww1vg=;
- b=QC6kRl8s1cIXWreOeGyMEOT8upgLSupAh8A5AQDqQYhyi4C/RmwPxL7sIjB5exFaCJbq6X2hPaVbY7JVTWWoM1TeE31XGtCTUkOznirsTACXnLa5hWcCNmmVKLGEAk+7fm+d+vMDQO5ALa4Px6NzysIxU8guCXDs529zeXwPrK4SnavmnLfKTqbo3dldBlf8qKVW1awoGKnn1bJlQlUcAQMQLcMorB6F9SIrkONW405MxJDlNjG7+e3VQo5jARvPDgeziekGuGQIPkUk1grcGJFDE6p0nxvWZxPaCWbMpIKP7iarqlCTPmQbUbAUVeh97xg4uHnDuDs8A6hyVtsBug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CY5PR12MB6573.namprd12.prod.outlook.com (2603:10b6:930:43::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
- 2024 15:11:26 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
- 15:11:26 +0000
-Message-ID: <b222ca24-0d69-4893-b669-02a071e529bf@nvidia.com>
-Date: Wed, 9 Oct 2024 16:11:19 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.11 000/558] 6.11.3-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- linux-tegra@vger.kernel.org, stable@vger.kernel.org
-References: <20241008115702.214071228@linuxfoundation.org>
- <526e573e-c352-484b-9b24-1f83abc93f8b@rnnvmail202.nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <526e573e-c352-484b-9b24-1f83abc93f8b@rnnvmail202.nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0231.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a6::20) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29C72AD1C;
+	Wed,  9 Oct 2024 15:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728486746; cv=none; b=PrxaJ7q0TZZhhCvPa18CnFDojYBGj0MR+q+5h/MhXVtzF0cqQwq2B0/3BH+ybPVobIOm0E7XdpL0AXjpMlGp6zdao+MtSmvkbBAcq7aZn0JM5bmXbGlorSf00YJMbX/8Z21u3OmsIwk+rSI/sp5SPW4V/iMcvoGKG2RIXQj/SaQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728486746; c=relaxed/simple;
+	bh=Nm+qU5w3dxZgTOqL/lq95V9u3ynP5UfvFPdgv/Ekz+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hI/YpWm5iEhg6dvHzwXNXoUlKap1QbP6XkiJtAsEKgl0Zg53CBVVwKpRHveVvjB0VWsqd+n8VZJVQOi/YaWlUmXes+aqDIvO/xq5tYixE7NMGd9YHa+mxn8lI7B5JJOieCkY4rNGbcXMFalsl5FGkcy3aqXK+z4/6iHoe7dJAWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEjTCNDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33AC2C4CEC3;
+	Wed,  9 Oct 2024 15:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728486745;
+	bh=Nm+qU5w3dxZgTOqL/lq95V9u3ynP5UfvFPdgv/Ekz+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QEjTCNDylhVEyIt4djWXFTall6q8pE6U3D3idS7nQeL+nKUZhZLqlyXUXuMLxaeHc
+	 O+dBMvk9iIjzXVcR5p+FTMx0ydzvjXnRRxDL/KFALcLm2LsxsDn0hPVGzl4XqML15D
+	 T2pan7yiSkN9gUSQmbx9wtZ41/XG5w63RpambP84NCRR/SoAJIB0jhoddeYluB78Dg
+	 U8J0KjkgPQ1LW20ZUI9xBsBsesE2V5eYSjMvm1g9vC52o9uAvVPqECtwjFxk+EhJ1W
+	 9S38zVNF5v+vZQTyEAmHkkTMP1OGb9n5nLbGQ7Won5ZxgilwqCAGCJmD7GXLfLSIRC
+	 zlv6L+Bi8LYww==
+Date: Wed, 9 Oct 2024 10:12:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andrew@lunn.ch, f.fainelli@gmail.com, hkallweit1@gmail.com,
+	andrei.botila@oss.nxp.com, linux@armlinux.org.uk,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v2 net-next 1/2] dt-bindings: net: tja11xx: add
+ "nxp,rmii-refclk-out" property
+Message-ID: <20241009151223.GA522364-robh@kernel.org>
+References: <20241008070708.1985805-1-wei.fang@nxp.com>
+ <20241008070708.1985805-2-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CY5PR12MB6573:EE_
-X-MS-Office365-Filtering-Correlation-Id: ffcfeefb-60b4-488d-efa9-08dce874a509
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3VSS3ZRZnRreUtOV0FGSVJ1dFhjN2NxQzdub2dkaCtvZDNZaHhWWW9iRXJ0?=
- =?utf-8?B?c3NKdzJpeWV5ckpBK0s1eTZ6R1laMHh0UW5lVGxmZzNYNHFSMmJpczRRRHBE?=
- =?utf-8?B?a1lGK3B3TDJPSGl0OEEySWlpd0oyQlh2TGZPWnRnVVNjTGlyTGhxSFhpdkV1?=
- =?utf-8?B?WDVlZi9VZy9MbHRuQit0c3NnY2dpbFdoSHQzbE40SlBaWHVtS3pjVFVQZkdj?=
- =?utf-8?B?clExY3B2a0J4N1JDUmphSDNITUdkWEpDaEdhcm1BdEpSQVV2ZlQxOTAwcEht?=
- =?utf-8?B?VER3Yi93dzBmL2hjTFR2dm42SXZmWThoM1BXS3J1eE5mdmROTERzMUg0Z2pL?=
- =?utf-8?B?YXkyYnJ6eVVHNm5HRVNiRkxwMXhIc0pYdWtzaWlGSUpMaXBnanVoeEtOQnhn?=
- =?utf-8?B?Y3VSeU5JVFNqYmlvWDhZcFNQTGZEU3JVZm1Edjh1VURQSkQ1QUFOT0dvZGpn?=
- =?utf-8?B?SmZlMHZYeGt1T0N3MmdHVEtHSS9oWGR2b1hVOC90UVNJNjRJcmtVb3dLcUNQ?=
- =?utf-8?B?cVdwMktxWnJvQ1hTQnUvRWZEVTl4K1ZHN29UOFZtb0tyc1p1VnA3UVNqMDJk?=
- =?utf-8?B?a3JmUWV5ZWtIdHNZVnJ4czE2UHhDMFlVdXZWTnkwMW5xNU5xSGlTV2xBMzFu?=
- =?utf-8?B?QWo3ellEdUFHbk4wSytkeERDUUd1MmpiVUc1ZTZ5MHExZW9sd1htQkZTVHVO?=
- =?utf-8?B?MnA4cHBmNG00cHRiN0lUV1V3QjNVekNhL0N0bk42ckg1aUVOUGhJbEhqc2t0?=
- =?utf-8?B?M0NKOWhXcnMvajM3eEdXSmM0NkNoeGxmYkYzRkxpMlNoNlVSREk2bER6dFdu?=
- =?utf-8?B?dmcraVJxYThmUDBCaU1lUWx1V0F5dUZ6M3RuQmJlUy9VbUl0cHJtdVNORUp0?=
- =?utf-8?B?V0tjeVpuN0VJbDYrL1hXd2RzNmJRNTZ0MVNPcUdnQ3RMcGNTdytNa3FMZ25R?=
- =?utf-8?B?UHpHZ280RDdORDdyU2dNL3ZEZENHMXZjTXBhZGZobnJ5dUZrKy9IaEMyZWdx?=
- =?utf-8?B?RXJXanc2dWE3Y3ZaNU56WU1XUVV2cUFWUDZCNnNianpOT1A0Y3B4Y2Z3Z2Ev?=
- =?utf-8?B?Wkw5Tk1CMFpXRm1mTDAzbytXaXJseXM1TXFsc3R6YXNueUExeHRDK0NRNTcw?=
- =?utf-8?B?SVlBVWpBb2s5aXRXY3JUMjRubUVsZGY0YjdFMXRxSWp5TE9vQWk0STcwRFlE?=
- =?utf-8?B?dm4xRkxueXVnY0pCU1NQc0loUXFQSkp4SWg5TFFlRmxBb0tUaUt0OS91eFFX?=
- =?utf-8?B?bzlDME5EeEFTT0o5cjFSK2FxbnYzZE9jN3RQZExoYVpMa2RGcjBHaTlhb29y?=
- =?utf-8?B?QkxacVZaZ3Q0OS9VaVpjTFF1L1JqQlFtWWhRcjNsVXVmUUJCRW55SGN4UUh1?=
- =?utf-8?B?NXp4Q24xRUlod01JMHcyTmdqdHJ1VG9tRUpGWkJCNHJRMmlPOXhXalgwZ3Bi?=
- =?utf-8?B?ckVvVTRvT0dWWEVQVDRFRng0Qnk0TFFTelhSdGUvUE4zL2xlMHpMbTRLQ3Ur?=
- =?utf-8?B?aTFRbkhvRzV0YVlNb3RzdURnMFZQUHN0TDFhcEsrL3BGbVhpa3ExdXQwc2hu?=
- =?utf-8?B?SG1YRXl3bUliV01aNC9iV01lMVBMNzJ3cU1ETis1L0xaNU1FOTNiM2ZZTFVJ?=
- =?utf-8?B?SVhhd0hJYzR4TjBSdHNkU2ZwdEt6M3U2YjZNL0twUTMzZ3VINzVySVJaRkY0?=
- =?utf-8?B?V3pLdDV6WUZjVWppeEhsNjc1ZXJQR3VRRzJIdWdBcTRBNkZhaWdXRjFRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dEl5TW5JQkVJdU5uMERVUnJDRUlIN3NYWjlWSmIzL3hiT0dSTnNsUlZic3dK?=
- =?utf-8?B?SXJ0MXRlczgzb3RPSGJXVkhYRFUraDlqUk1aWmhqb1U5d3lnZ2s1YzUzcDZ2?=
- =?utf-8?B?bTd3cW1lc1NzWW4zQUFjc1FMRE9WZm9COTF1bURMVjVlcUtXeUVBelljNStE?=
- =?utf-8?B?dlpKM3VFRzU1R3c2MDYzVkJtUkRZQkxsc1Rpd3JWQ1huUlBtK1FqSjh1UDRo?=
- =?utf-8?B?b2g1WkU4c3VSWm9RUWlWUzhwWDQwK2x1Z3AzUThOU1ZxMi9WMGhZc21wMUVq?=
- =?utf-8?B?RzFnRUt5TGVyQjJEc0lPdjhhNmYveTFIbStzQ2UxOXBTajlzVlFtTjBseTEz?=
- =?utf-8?B?cVFHN3VEM2JUcXMrZUgyWnpRRjZvMzFTZWRONHNWaHVJcFpIK254cFNOREth?=
- =?utf-8?B?S0RWZmR4RExUYzZ4WktxMU5PaVBrdUMzL05Cc1JmLzFDUTNwVE5uVE1WdE5U?=
- =?utf-8?B?SUFXdUpPTGx4MnNBT3RsVnZTSFRzdWwwUkRSN2VxNy9rMlNvenRjQU5VSkRq?=
- =?utf-8?B?QnlQWDV5eFhZaDd6QlNQY1F6aW1nbk9xNmJXTTRGQ3dBbzFnVjEzZ2toRWQ1?=
- =?utf-8?B?dGFWalU3ZEFxUUwvc1gzdk12TE5TbHcwTTB6WVo1K0xISmpLbEZTNUF0ZFpY?=
- =?utf-8?B?bHYzSVBlUkptY2N5SFh2VDBtazBSSXladHhmbEk3dWNmMUQ0Y1FjRk4zemhZ?=
- =?utf-8?B?TTlPQmxCOG9Mb0g1RGoxdlNQc3k5QW53SHVWMDJLOGYvdDJWRmthWFNPai9C?=
- =?utf-8?B?R2picWRoTVd3S3YrbmxrMGZGNktMdzJ1WXdEZWlpVDZqRUZRUkRsckgrcEc3?=
- =?utf-8?B?ZDR3L0FNUTlsYmJHaHMvYUJXVEJDMHVhYU1hUHhQU2RIWkxHSjEyRXlaK0Vs?=
- =?utf-8?B?WUtaYlhmMW1pVXlSYmRzUkxDbVloNlg3VlRJTmZQcVZiRE5DWUROSzUrZ3Zj?=
- =?utf-8?B?YkxQRWRwWkc3aXVJM1NJU2ZhSWJMUU90UVZ3WVdVOU1ndUQxNzZlWHRuamwy?=
- =?utf-8?B?UWJ2cHJCbTVTbFZVbkxiQlFvNmlVSHNHZjFUREtoZ2ZjSU5XdnE3bmpGQkQw?=
- =?utf-8?B?Y2g1TDFoQmVxTXVVUGpDZ1VvMkwwVDNMUXk3Y0w2YSsxY25nOEtLMjRSa2Jw?=
- =?utf-8?B?bzNZTkZGUUhCNEt5SzRVcnYzMEdKZERHMG9laS96bmIzTy9OTkNuUnhUNkVU?=
- =?utf-8?B?ZmpGRXpld2NBcW5BN1pzajN0Z3BOTEI1Qkx5WUJ0azh4K0RyUVFSbG1ONWpR?=
- =?utf-8?B?a0tXS1ZNQXZDQ21adTNzYURKQjJyS2FoWEdMTCs0VnlNa1QwQWRyQWo3bVQ2?=
- =?utf-8?B?a0UwNjJCL09JV2R6blFMSENMbHRMUEdMU2FkaWFKaUdJeUplb2x3T2pHUStL?=
- =?utf-8?B?SVBUNlpOZkxuckthRkozalpOM2hLNnBDQ3UrVDNtRHlSVytxKzhEMkMvcmxT?=
- =?utf-8?B?NjZQS2Fqc0FUUlV5Umk4WUNFemJiWVFKc0hVeGNZRU16SndtZmFBOWVzQ1hw?=
- =?utf-8?B?dkVWa1JVNERQckxCcER0K1UzQkh0cVVXc3d0UmlWbDZGQndqdFA5Z2JWc1hS?=
- =?utf-8?B?cFMyYTR0MWRaTzM3Uzk4eEQ1Q2hHQ0xSeDM4Ynk2b2tvb3hKdmtHaHV4WlRa?=
- =?utf-8?B?SnAyVExaNEg5dnhCd1dLV01xNUd1K2paYi9CdVZpZnBYRzZ2UVlFekhqdEhw?=
- =?utf-8?B?VDBteU5sVUtSV2xLWGJkRHllYmNDK1RjUjVmK2JGNFFpaGRaZ2ZNSndtY1Zs?=
- =?utf-8?B?WHRLV3FJRUQrd3owejEzUnBISmRWdi9aRkNxTkEyaTVDU2Vyc1E2UWN0dlBv?=
- =?utf-8?B?YlFqenVPMGlkUThJOE96blBnR1B1aEJTYlFwL3ZOazJSZUVzSHRlemZJK0Rm?=
- =?utf-8?B?OEdRL2l2ajRUaCtwSCtGUHRIOFFxVXcrYmZmbjRZSzZHbTdIRDBVL2w1bjBO?=
- =?utf-8?B?K0U4SWdCejVPQ1Mvc0xlakIxN3ZSRWhXM0NsemFXNDJqT040TGwzUGMxWXk1?=
- =?utf-8?B?ZHdEclJ3b3l0NDdLUGpuYWJYQlhpczNiTnRjdHFNdFZZeTk0QUI3bzIwZjFT?=
- =?utf-8?B?bWczMDRxb2RDVVUzZitvb2NNSDVFL0pBK052ZUVNbGs5MkJ3aHlwcHpjWFo4?=
- =?utf-8?B?SkZ0bldwazJaR1RnOHdibU01M2I4RTNFd1NVcDlkZXhPU0RkaXRXdWUrN2Fa?=
- =?utf-8?Q?AZtrNAEoUyJ2io3C50KeJnrrqnDMMc8kGme8W4uIpDrZ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffcfeefb-60b4-488d-efa9-08dce874a509
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 15:11:26.5003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ovHnsAMhCCPY8pUNA3VCVhKz5RcRjhGwTvJ3u2zfnI29qnUJt7+pNHoeSJ2XPYF2OZZiF7RBF5CfwS5YoR040A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6573
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008070708.1985805-2-wei.fang@nxp.com>
 
-Hi Greg,
-
-On 09/10/2024 15:59, Jon Hunter wrote:
-> On Tue, 08 Oct 2024 14:00:30 +0200, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 6.11.3 release.
->> There are 558 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.3-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
->> and the diffstat can be found below.
->>
->> thanks,
->>
->> greg k-h
+On Tue, Oct 08, 2024 at 03:07:07PM +0800, Wei Fang wrote:
+> Per the RMII specification, the REF_CLK is sourced from MAC to PHY
+> or from an external source. But for TJA11xx PHYs, they support to
+> output a 50MHz RMII reference clock on REF_CLK pin. Previously the
+> "nxp,rmii-refclk-in" was added to indicate that in RMII mode, if
+> this property is present, REF_CLK is input to the PHY, otherwise
+> it is output. This seems inappropriate now. Because according to
+> the RMII specification, the REF_CLK is originally input, so there
+> is no need to add an additional "nxp,rmii-refclk-in" property to
+> declare that REF_CLK is input.
 > 
-> Failures detected for Tegra ...
+> Unfortunately, because the "nxp,rmii-refclk-in" property has been
+> added for a while, and we cannot confirm which DTS use the TJA1100
+> and TJA1101 PHYs, changing it to switch polarity will cause an ABI
+> break. But fortunately, this property is only valid for TJA1100 and
+> TJA1101. For TJA1103/TJA1104/TJA1120/TJA1121 PHYs, this property is
+> invalid because they use the nxp-c45-tja11xx driver, which is a
+> different driver from TJA1100/TJA1101. Therefore, for PHYs using
+> nxp-c45-tja11xx driver, add "nxp,rmii-refclk-out" property to
+> support outputting RMII reference clock on REF_CLK pin.
 > 
-> Test results for stable-v6.11:
->      10 builds:	10 pass, 0 fail
->      26 boots:	26 pass, 0 fail
->      116 tests:	115 pass, 1 fail
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+> V2 changes:
+> 1. Change the property name from "nxp,reverse-mode" to
+> "nxp,phy-output-refclk".
+> 2. Simplify the description of the property.
+> 3. Modify the subject and commit message.
+> V3 changes:
+> 1. Keep the "nxp,rmii-refclk-in" property for TJA1100 and TJA1101.
+> 2. Rephrase the commit message and subject.
+> V3 changes:
+> 1. Change the property name from "nxp,phy-output-refclk" to
+> "nxp,rmii-refclk-out", which means the opposite of "nxp,rmii-refclk-in".
+> 2. Refactor the patch after fixing the original issue with this YAML.
+> ---
+>  .../devicetree/bindings/net/nxp,tja11xx.yaml   | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 > 
-> Linux version:	6.11.3-rc1-gdd3578144a91
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->                  tegra20-ventana, tegra210-p2371-2180,
->                  tegra210-p3450-0000, tegra30-cardhu-a04
+> diff --git a/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml b/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
+> index a754a61adc2d..1e688c7a497d 100644
+> --- a/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
+> +++ b/Documentation/devicetree/bindings/net/nxp,tja11xx.yaml
+> @@ -62,6 +62,24 @@ allOf:
+>              reference clock output when RMII mode enabled.
+>              Only supported on TJA1100 and TJA1101.
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - ethernet-phy-id001b.b010
+> +              - ethernet-phy-id001b.b013
+> +              - ethernet-phy-id001b.b030
+> +              - ethernet-phy-id001b.b031
+> +
+> +    then:
+> +      properties:
+> +        nxp,rmii-refclk-out:
+> +          type: boolean
+> +          description: |
+
+Don't need '|' if no formatting.
+
+> +            Enable 50MHz RMII reference clock output on REF_CLK pin. This
+> +            property is only applicable to nxp-c45-tja11xx driver.
+
+Reword this to not be about some driver.
+
+> +
+>  patternProperties:
+>    "^ethernet-phy@[0-9a-f]+$":
+>      type: object
+> -- 
+> 2.34.1
 > 
-> Test failures:	tegra194-p2972-0000: boot.py
-
-
-The above is a new kernel warning introduced by ...
-
-Michal Koutný <mkoutny@suse.com>
-     cgroup: Disallow mounting v1 hierarchies without controller implementation
-
-
-Interestingly the commit message for the above actually states ...
-
-"Wrap implementation into a helper function, leverage legacy_files to
-  detect compiled out controllers. The effect is that mounts on v1 would
-  fail and produce a message like:
-    [ 1543.999081] cgroup: Unknown subsys name 'memory'"
-
-The above is the exact warning we see ...
-
-boot: logs: [       8.673272] ERR KERN cgroup: Unknown subsys name 'memory'
-
-
-So although this appears deliberate, I don't see this on mainline/next.
-
-Jon
-
--- 
-nvpublic
 
