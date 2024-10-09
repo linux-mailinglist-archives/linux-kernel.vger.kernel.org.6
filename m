@@ -1,339 +1,112 @@
-Return-Path: <linux-kernel+bounces-356660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1BE9964C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297F19964CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 453E01C23539
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:17:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A1C1F26A91
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CE418FC67;
-	Wed,  9 Oct 2024 09:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lU3ysoGs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A4718C92A;
+	Wed,  9 Oct 2024 09:16:20 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA3B18F2C5;
-	Wed,  9 Oct 2024 09:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB831190471;
+	Wed,  9 Oct 2024 09:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465368; cv=none; b=lptqyTVJz9+TgSnNytAKiRQo0mf5KeZAjeg8pIrWOLwh9zQXcXmk6z45wmIjGfOrnzAv67MUQ/aZ5D38pmAOyK8k9sAkwFCAltVGXvhFJPmsF6S7JeZzlmkg0mN8bNMhI0Xgr/auE4PPCWvNO6VEZTRjM0LJ1a96r1vtBxG7r/Q=
+	t=1728465380; cv=none; b=mdLKpDpfh3UwBFbjZ6gw4cB9v9MQ2SRyqP1xL5vIkYTJcqWVxh2Ddl3sYUDOcU7lybGT5pJR88F4E27kerMZ3pzClxeCa7eS3ZJVDVZ32t60gfMFv1yikVPbJXZ1cAUsCZbn03GwSYHIpUlB+5wYVBqmY4h3uvBMII4J7LEnwBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465368; c=relaxed/simple;
-	bh=eBFW8CfQ3gEDPL7ZftKPyZ/FKbZzXRdT+yLK3E1jol0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cJ6R9CbTbn9mp6znGt8CiMgm04cWd2UVi7v1EHPoElLlHHIeSQJOcduqoIU8BLowHoRPl10n5f3hFpPsifCLdiQLf2MSVljC3mEj1eXPf/ynJHXYItOHd0oaeYKrkPoInvzmwuQBssKuYj6t6ftIGBZ+hZzXTeF9WdmkZHPRj8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lU3ysoGs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4998sZKG001747;
-	Wed, 9 Oct 2024 09:15:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ksjmpu+gP6F
-	6t3NW+fwH7MutOFcoJ/x3YG3lGuhFixw=; b=lU3ysoGsF6k+oi6SsY40CODx8Ft
-	zCJ3lA0DIBI9K7z2aFwO0IPON3t4cjtvNGR2gdMs1VrxqwFsRBUUVy8Ax5cbCt5E
-	+F3gdFciddDqY/DqVHAiB2LTROs+6CKc3nSwNR4Gs/wvT8pfhHnHq3Yq7ETckKgH
-	upI2Qb5r+shkZ3lDDStmN/f7Iif261Jn9c5+73+tLeYL3ITo/XEKgsaX/ll7gyAX
-	8NdJ0g7drapM9KMC10DLTlqR+d4Gpr4AvzUpl2/yBFfpNDOBm0hQs7+pntz+WbRm
-	mOMuqwAXAcT3LVZwOX+j8Bin7U+Rm2VM2rmePpOxpYwAq6h1qmIg3IWwRyg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42513u3nwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 09:15:51 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 499903WT020905;
-	Wed, 9 Oct 2024 09:15:50 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 425fv1utj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 09:15:50 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49990PPj021832;
-	Wed, 9 Oct 2024 09:15:50 GMT
-Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 4999Fo0K002624
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 09:15:50 +0000
-Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
-	id 15B5C656; Wed,  9 Oct 2024 02:15:50 -0700 (PDT)
-From: Qiang Yu <quic_qianyu@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-        robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-        quic_devipriy@quicinc.com
-Cc: dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-        neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
-Subject: [PATCH v5 7/7] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-Date: Wed,  9 Oct 2024 02:15:40 -0700
-Message-Id: <20241009091540.1446-8-quic_qianyu@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241009091540.1446-1-quic_qianyu@quicinc.com>
-References: <20241009091540.1446-1-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1728465380; c=relaxed/simple;
+	bh=+n5Z6EHyiC3uE+t8M1UjabpGkO6WhcYJ/7IghC6FbS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MulEFJSuGLsb+9E/XoIjiw1rYXeBLe6KE1KXY+HEI216L8AwHIhXRf814203TleTrEKYESrBRM7Xpek48DI2JBmcAfGvjCLDdJBWRDrcdiO2lYfooKBjNR9EK9cMZyUESIgMydjS8lx2SOXWIpfioxo5P5+yd9WU5KdEJctQCYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 1dda4392861f11efa216b1d71e6e1362-20241009
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:c55efbc2-ea5b-4e40-ba21-321ddd32f6b6,IP:20,
+	URL:0,TC:0,Content:1,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:16
+X-CID-INFO: VERSION:1.1.38,REQID:c55efbc2-ea5b-4e40-ba21-321ddd32f6b6,IP:20,UR
+	L:0,TC:0,Content:1,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:16
+X-CID-META: VersionHash:82c5f88,CLOUDID:e37bfc660498a0c9d1452aabeb14d594,BulkI
+	D:241009171018CVWUJEZ6,BulkQuantity:2,Recheck:0,SF:38|23|17|19|43|74|64|66
+	|102,TC:nil,Content:4|-5,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil
+	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-UUID: 1dda4392861f11efa216b1d71e6e1362-20241009
+X-User: zhaomengmeng@kylinos.cn
+Received: from [192.168.109.86] [(1.198.30.91)] by mailgw.kylinos.cn
+	(envelope-from <zhaomengmeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 1537307015; Wed, 09 Oct 2024 17:16:07 +0800
+Message-ID: <633662aa-120c-40e0-a836-da5faa7ed312@kylinos.cn>
+Date: Wed, 9 Oct 2024 17:16:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] bcachefs: Fix shift-out-of-bounds in
+ bch2_stripe_to_text
+To: Hongbo Li <lihongbo22@huawei.com>, Zhao Mengmeng <zhaomzhao@126.com>,
+ kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241009054325.438556-1-zhaomzhao@126.com>
+ <b1c2154d-189a-43fa-84ff-a0d96787ff60@huawei.com>
+From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+In-Reply-To: <b1c2154d-189a-43fa-84ff-a0d96787ff60@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bnWTbxowXOG_K0NVL0gYhHDRu1KDQ4nm
-X-Proofpoint-GUID: bnWTbxowXOG_K0NVL0gYhHDRu1KDQ4nm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
- priorityscore=1501 impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410090060
 
-Describe PCIe3 controller and PHY. Also add required system resources like
-regulators, clocks, interrupts and registers configuration for PCIe3.
+On 2024/10/9 17:10, Hongbo Li wrote:
+> 
+> 
+> On 2024/10/9 13:43, Zhao Mengmeng wrote:
+>> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>>
+>> syzbot report a shift-out-of-bounds issue:
+>> ------------[ cut here ]------------
+>> UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
+>> shift exponent 108 is too large for 32-bit type 'unsigned int'
+>> ----
+>> Here s.csum_granularity_bits = 108, so shift is impossible for unsigned
+>> int. To fix, add a check in bch2_stripe_validate() to bail out, it has
+>> same checking logic with ec_stripe_key_init().
+>>
+>> Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+>> Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+>> Suggested-by: Hongbo Li <lihongbo22@huawei.com>
+>> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>> ---
+>>   fs/bcachefs/ec.c      | 6 ++++++
+>>   fs/bcachefs/errcode.h | 3 ++-
+>>   2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
+>> index 141a4c63142f..bc5ff1331c6f 100644
+>> --- a/fs/bcachefs/ec.c
+>> +++ b/fs/bcachefs/ec.c
+>> @@ -113,6 +113,12 @@ int bch2_stripe_validate(struct bch_fs *c, struct bkey_s_c k,
+>>       const struct bch_stripe *s = bkey_s_c_to_stripe(k).v;
+>>       int ret = 0;
+>>   +    if (s->csum_granularity_bits >= ilog2(le16_to_cpu(s->sectors))) {
+> 
+> csum_granularity_bits should do the left shift.
 
-Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 204 ++++++++++++++++++++++++-
- 1 file changed, 203 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index a36076e3c56b..c615c930cf0c 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -744,7 +744,7 @@ gcc: clock-controller@100000 {
- 
- 			clocks = <&bi_tcxo_div2>,
- 				 <&sleep_clk>,
--				 <0>,
-+				 <&pcie3_phy>,
- 				 <&pcie4_phy>,
- 				 <&pcie5_phy>,
- 				 <&pcie6a_phy>,
-@@ -2907,6 +2907,208 @@ mmss_noc: interconnect@1780000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		pcie3: pcie@1bd0000 {
-+			device_type = "pci";
-+			compatible = "qcom,pcie-x1e80100";
-+			reg = <0x0 0x01bd0000 0x0 0x3000>,
-+			      <0x0 0x78000000 0x0 0xf1d>,
-+			      <0x0 0x78000f40 0x0 0xa8>,
-+			      <0x0 0x78001000 0x0 0x1000>,
-+			      <0x0 0x78100000 0x0 0x100000>,
-+			      <0x0 0x01bd3000 0x0 0x1000>;
-+			reg-names = "parf",
-+				    "dbi",
-+				    "elbi",
-+				    "atu",
-+				    "config",
-+				    "mhi";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
-+				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
-+				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
-+			bus-range = <0x00 0xff>;
-+
-+			dma-coherent;
-+
-+			linux,pci-domain = <3>;
-+			num-lanes = <8>;
-+
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi0",
-+					  "msi1",
-+					  "msi2",
-+					  "msi3",
-+					  "msi4",
-+					  "msi5",
-+					  "msi6",
-+					  "msi7",
-+					  "global";
-+
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &intc 0 0 GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &intc 0 0 GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &intc 0 0 GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
-+				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
-+				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
-+				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
-+			clock-names = "aux",
-+				      "cfg",
-+				      "bus_master",
-+				      "bus_slave",
-+				      "slave_q2a",
-+				      "noc_aggr",
-+				      "cnoc_sf_axi";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
-+			assigned-clock-rates = <19200000>;
-+
-+			interconnects = <&pcie_south_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
-+			interconnect-names = "pcie-mem",
-+					     "cpu-pcie";
-+
-+			resets = <&gcc GCC_PCIE_3_BCR>,
-+				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
-+			reset-names = "pci",
-+				      "link_down";
-+
-+			power-domains = <&gcc GCC_PCIE_3_GDSC>;
-+
-+			phys = <&pcie3_phy>;
-+			phy-names = "pciephy";
-+
-+			operating-points-v2 = <&pcie3_opp_table>;
-+
-+			status = "disabled";
-+
-+			pcie3_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				/* GEN 1 x1 */
-+				opp-2500000 {
-+					opp-hz = /bits/ 64 <2500000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <250000 1>;
-+				};
-+
-+				/* GEN 1 x2 and GEN 2 x1 */
-+				opp-5000000 {
-+					opp-hz = /bits/ 64 <5000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <500000 1>;
-+				};
-+
-+				/* GEN 1 x4 and GEN 2 x2 */
-+				opp-10000000 {
-+					opp-hz = /bits/ 64 <10000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <1000000 1>;
-+				};
-+
-+				/* GEN 1 x8 and GEN 2 x4 */
-+				opp-20000000 {
-+					opp-hz = /bits/ 64 <20000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <2000000 1>;
-+				};
-+
-+				/* GEN 2 x8 */
-+				opp-40000000 {
-+					opp-hz = /bits/ 64 <40000000>;
-+					required-opps = <&rpmhpd_opp_low_svs>;
-+					opp-peak-kBps = <4000000 1>;
-+				};
-+
-+				/* GEN 3 x1 */
-+				opp-8000000 {
-+					opp-hz = /bits/ 64 <8000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <984500 1>;
-+				};
-+
-+				/* GEN 3 x2 and GEN 4 x1 */
-+				opp-16000000 {
-+					opp-hz = /bits/ 64 <16000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <1969000 1>;
-+				};
-+
-+				/* GEN 3 x4 and GEN 4 x2 */
-+				opp-32000000 {
-+					opp-hz = /bits/ 64 <32000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <3938000 1>;
-+				};
-+
-+				/* GEN 3 x8 and GEN 4 x4 */
-+				opp-64000000 {
-+					opp-hz = /bits/ 64 <64000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <7876000 1>;
-+				};
-+
-+				/* GEN 4 x8 */
-+				opp-128000000 {
-+					opp-hz = /bits/ 64 <128000000>;
-+					required-opps = <&rpmhpd_opp_svs>;
-+					opp-peak-kBps = <15753000 1>;
-+				};
-+			};
-+		};
-+
-+		pcie3_phy: phy@1be0000 {
-+			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
-+			reg = <0 0x01be0000 0 0x10000>;
-+
-+			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
-+				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
-+				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
-+				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPE_CLK>,
-+				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
-+			clock-names = "aux",
-+				      "cfg_ahb",
-+				      "ref",
-+				      "rchng",
-+				      "pipe",
-+				      "pipediv2";
-+
-+			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
-+				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
-+			reset-names = "phy",
-+				      "phy_nocsr";
-+
-+			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
-+			assigned-clock-rates = <100000000>;
-+
-+			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "pcie3_pipe_clk";
-+
-+			#phy-cells = <0>;
-+
-+			status = "disabled";
-+		};
-+
- 		pcie6a: pci@1bf8000 {
- 			device_type = "pci";
- 			compatible = "qcom,pcie-x1e80100";
--- 
-2.34.1
+If use `1 << s->csum_granularity_bits(108)` to do the check, syzbot will still trigger shift-out-of
+bounds warning. So better check the bits directly.
 
 
