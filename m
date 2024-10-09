@@ -1,187 +1,130 @@
-Return-Path: <linux-kernel+bounces-357039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766B3996ABD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:52:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C88996AC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D782283A6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464DC28B212
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305FA1A3020;
-	Wed,  9 Oct 2024 12:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lobR1fVz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gQM10Th5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ImXhjl7x";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="khPux883"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1231991CA;
+	Wed,  9 Oct 2024 12:49:44 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D337A1990AD;
-	Wed,  9 Oct 2024 12:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B75194C76;
+	Wed,  9 Oct 2024 12:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728478122; cv=none; b=kGD5uPgHNWnlOE3BbyA64D2v80Cd1klMj66Ox/TOMsvveLpa+yDHfKaRpjTa32PD7d3VIYFueSqRVC1/zLBbeL9RbZIyZtmFEsrvZ22y+svyKEmBYM8w/ymFu4UQuodkHm5T213zXTTTVuzkGVb27KxXbNMiES7VvMPv7vQ3pbY=
+	t=1728478183; cv=none; b=YzNvdiya+4EGGjBWqyfq1KF6hH96sh+PRFvqdOzVCTmROqP7VcJu+ewPcKR4pIyPUYjZ1L8NYgrgdyZhsU84vuJ3p7pCAef7UPAH1XKFHKPKxPPNTyscGVzXBi2n6FNUjydT5ZtfDnMhB7DJJU2REhaqViKy795K8rFPs2jswCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728478122; c=relaxed/simple;
-	bh=276w1taUYiND0ce+xeuQyEmjc89J+wryV8F5KKnvxuw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u5LprCWN8cNTBvPgdTYDyr5dbjv9PgsjgUtLwEumw9AUNwYdypiUFZ88MkH8o7pGG0Tj9vph6zPoOc7JN+M3S03x95MLxDQ9TQyiwgUzO6VmlqUVtPo2uQDOfXPVWVRP45psVwRs6cCjpOKMSy9VwerOd4XR8WT21d7BoZJdkeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lobR1fVz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gQM10Th5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ImXhjl7x; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=khPux883; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E749E21F73;
-	Wed,  9 Oct 2024 12:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728478119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkFbe7VJqv8no7zDISVSnAPmBelGOfpZ3/Qn7YdotWM=;
-	b=lobR1fVzzZ3Gcnei+yYcgLZ4bR5iTWY2ylci+qymjSIz53eTBH2tFypJ2jZQDPqCt7dH+y
-	qwXg60X35YeD72D6U+vvAfkouqtvZtWlPCYjMUvkYylIFSA9pckDDRme9fKl3v7ZaSj6Ty
-	USMSM3/zhd/jZi5+U6v8kPHSCxIBJ/c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728478119;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkFbe7VJqv8no7zDISVSnAPmBelGOfpZ3/Qn7YdotWM=;
-	b=gQM10Th5GpwgNUUU+Ir84KJf5JrPboyTnkKwaBskWF1ntwjYPAAyjCtubToRVtPDcRi5+2
-	BO7SCuzOUpJBGUAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ImXhjl7x;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=khPux883
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728478118; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkFbe7VJqv8no7zDISVSnAPmBelGOfpZ3/Qn7YdotWM=;
-	b=ImXhjl7xC4tkQ7OGgoYUq/m9gsqo8pDIu1Us0LqVFQtjVaZosS/CVzdHx1kO1ocz4sXxSR
-	YFxjSIGHUuzRdPaWMybta2R8tCMh563rUCoWBlEfOth12wXeZ1ET31dm932s1QX0C/FJ1e
-	+m/nu09adug1vJxW+vlslVMC+u3S6S4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728478118;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkFbe7VJqv8no7zDISVSnAPmBelGOfpZ3/Qn7YdotWM=;
-	b=khPux883tZTkN1561HAbPDonf0bGt+6EWolDRkwNS73fjyXJ19+BdiZi7G2FFwSpN/wb90
-	GxHp47DyrZhvLOBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ADD44136BA;
-	Wed,  9 Oct 2024 12:48:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9AI6KaZ7Bme3IgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 09 Oct 2024 12:48:38 +0000
-Date: Wed, 09 Oct 2024 14:49:34 +0200
-Message-ID: <87plo9tp9d.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Vasiliy Kovalev <kovalev@altlinux.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bo liu <bo.liu@senarytech.com>
-Subject: Re: [PATCH] ALSA: hda/conexant - Fix audio routing for HP EliteOne 1000 G2
-In-Reply-To: <b585fdc8-cc45-30e5-9f32-bc04d6df0244@basealt.ru>
-References: <20241009111207.655842-1-kovalev@altlinux.org>
-	<87v7y1tr3n.wl-tiwai@suse.de>
-	<b585fdc8-cc45-30e5-9f32-bc04d6df0244@basealt.ru>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1728478183; c=relaxed/simple;
+	bh=BaVk3s2KAvoqDvsifoqUDpefeIGff22P2TiuTCvppqk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H16KZ7ut3ss0uf2HGGtq4j99o/gLAcg+l24Uj9kIvK7JNswfiaDFLP+R4Y/Ip+Dw+INVZ+HZzwGqsjTeyTkE8Puw/aGad0dpVGUvKKcv8D8ywbg764PHYxx/iaPtTidvixwkuk16sGGZKpbVLEH+rkJT09nIXR2s6LNJwoNeXLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNt4f1v2bz6GD69;
+	Wed,  9 Oct 2024 20:49:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0B01A140133;
+	Wed,  9 Oct 2024 20:49:40 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Oct
+ 2024 14:49:38 +0200
+Date: Wed, 9 Oct 2024 13:49:36 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, "Li, Ming" <ming4.li@intel.com>
+Subject: Re: [PATCH v4 08/28] cxl/mem: Read dynamic capacity configuration
+ from the device
+Message-ID: <20241009134936.00003e0e@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-8-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-8-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: E749E21F73
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 09 Oct 2024 14:28:47 +0200,
-Vasiliy Kovalev wrote:
+On Mon, 07 Oct 2024 18:16:14 -0500
+ira.weiny@intel.com wrote:
+
+> From: Navneet Singh <navneet.singh@intel.com>
 > 
-> Hi,
+> Devices which optionally support Dynamic Capacity (DC) are configured
+> via mailbox commands.  CXL 3.1 requires the host to issue the Get DC
+> Configuration command in order to properly configure DCDs.  Without the
+> Get DC Configuration command DCD can't be supported.
 > 
-> 09.10.2024 15:09, Takashi Iwai wrote:
-> > On Wed, 09 Oct 2024 13:12:07 +0200,
-> > Vasiliy Kovalev wrote:
-> >> 
-> >> There is a problem with simultaneous audio output to headphones and
-> >> speakers, and when headphones are turned off, the speakers also turn
-> >> off and do not turn them on.
-> >> 
-> >> However, it was found that if you boot linux immediately after windows,
-> >> there are no such problems. When comparing alsa-info, the only difference
-> >> is the different configuration of Node 0x1d:
-> >> 
-> >> working conf. (windows): Pin-ctls: 0x80: HP
-> >> not working     (linux): Pin-ctls: 0xc0: OUT HP
-> >> 
-> >> This patch disable the AC_PINCTL_OUT_EN bit of Node 0x1d and fixes the
-> >> described problem.
-> >> 
-> >> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
-> > 
-> > Interesting, is this pin not used by any routes, but it has to be set
-> > up? 
+> Implement the DC mailbox commands as specified in CXL 3.1 section
+> 8.2.9.9.9 (opcodes 48XXh) to read and store the DCD configuration
+> information.  Disable DCD if DCD is not supported.  Leverage the Get DC
+> Configuration command supported bit to indicate if DCD support.
 > 
-> Yes, I tried configuring this 0x1d address in hdajackretask for
-> headphones and speakers, but to no avail. I also tried various hints,
-> for example, inv_jack_detect=yes turned on the speakers, but at the
-> same time the headphones stopped working and the system showed inverse
-> detection. That is, changing this patch is the only way so far.
+> Linux has no use for the trailing fields of the Get Dynamic Capacity
+> Configuration Output Payload (Total number of supported extents, number
+> of available extents, total number of supported tags, and number of
+> available tags). Avoid defining those fields to use the more useful
+> dynamic C array.
 > 
-> I have attached two logs to the message:
-> alsa-info.ERR.txt - the first linux boot
-> alsa-info.OK.txt  - booting linux after windows
+> Cc: "Li, Ming" <ming4.li@intel.com>
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-OK, then could you add more comments to the quirk function and
-resubmit?  I guess we don't have to read the original value but just
-use the fixed value for snd_hda_set_pin_ctl() for simplicity, too.
+Looks fine to me.  Trivial comment inline
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 
-thanks,
 
-Takashi
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index e8907c403edb..0690b917b1e0 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+...
+
+> +/* See CXL 3.1 Table 8-164 get dynamic capacity config Output Payload */
+> +struct cxl_mbox_get_dc_config_out {
+> +	u8 avail_region_count;
+> +	u8 regions_returned;
+> +	u8 rsvd[6];
+> +	/* See CXL 3.1 Table 8-165 */
+> +	struct cxl_dc_region_config {
+> +		__le64 region_base;
+> +		__le64 region_decode_length;
+> +		__le64 region_length;
+> +		__le64 region_block_size;
+> +		__le32 region_dsmad_handle;
+> +		u8 flags;
+> +		u8 rsvd[3];
+> +	} __packed region[];
+
+Could throw in a __counted_by I think?
+
+> +	/* Trailing fields unused */
+> +} __packed;
+> +#define CXL_DYNAMIC_CAPACITY_SANITIZE_ON_RELEASE_FLAG BIT(0)
+> +#define CXL_DCD_BLOCK_LINE_SIZE 0x40
 
