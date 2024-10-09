@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-357408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADDE9970EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:17:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C2E9970F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D5D1F22612
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29D01C20E4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF161E6310;
-	Wed,  9 Oct 2024 15:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81211E7C2A;
+	Wed,  9 Oct 2024 15:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEh1XN+d"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLs2vOeX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246D21E5729
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5563A1E1049
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489332; cv=none; b=QnGaKSj+IdoSdp522MIYvZNULZ6vdWHMvBUadL5xeOIP81hQcENLbQoGXx2+Fw3tREo5F0KGY6f/98KWFlGPSRcF4EcQYgAWrkjAWv5SQrKertp3qMQrnffs06fjNYDjXoj1eOCaxIrGfeynBYyeb57W5dWefinBNjZ8dBYjYF8=
+	t=1728489495; cv=none; b=H13AZv2pWUooqcevslBUKA+KYtdXcPC2chukcQO/OvRTdMxtrt555AfuccsYxrQ7VTRzVcQUntectJ+4yD/B5QlU0g7L/wMCJ/SrriRP9Sf5w6O+oP7YmoFucwj3h1CPKDTL/oPO/XR+xj1fydtwjYhC/hkkjOxpfL3ufZddCxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489332; c=relaxed/simple;
-	bh=9IyxbRxcXn3W/ovlgPhTagWUE9DYLB2d0t3NLu1GTEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dc22eQgRjymLe3GfXTAFpPhSB+1FqVz1iiN57Pg/65VBaXvQ0AaszWZdOYJnGIsSvKQ3v4Ihf0fSH3LGajNjWAfE/Dig6zqZcO0WbazBa6lKxfMOHrRA5gAFxTOdn0sl4Twks5k9RoscuO3JjdoTCxZTVd6bse+VfG75G3Amh50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mEh1XN+d; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e29047bec8fso510265276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728489330; x=1729094130; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PL9hRQRfd6A1OkAh+5JXcnzv2ciGXqoLre3DkSp5z4s=;
-        b=mEh1XN+dut+tJeZiI+F8yL2JB7TX6+Hjpcb76sZMjsqI+SyWRnsOlaaAzKV5wBrQgs
-         MOCCSuOm58I99hLeuZRlnZMX3pMngqTDsmhlHrWoM8eBWYZ36zfkcGki6Ao6pStOgolh
-         BEilJDpEs5E4UmOor0mN74rWGBocqoRaSHoWn9x4gjBIWWjcBz+Dy91YUugv6zPLbYmI
-         zE7HeUAn/Qe8+nJPchw4lVjWDmJvlcGtkkpigfI4KFM7h6Ev/A3tTeIRnZtSTPnf91Cb
-         KO1Jp1sp7x4vJmySQ5VelBb0wbxCaKs9RPMEOp1GBdjI8hsLPpdZzDpTNhYI91gwcvtX
-         J9Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728489330; x=1729094130;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PL9hRQRfd6A1OkAh+5JXcnzv2ciGXqoLre3DkSp5z4s=;
-        b=Us+g5PT1JlUX48TQouaoc88n1K6FIVmsMB88IQw5+g04Er/O8KfURcb9jOmAoDjYHS
-         oN2jvJbmrynvu2CYobZLrTKC1yczFS8jWNubWoKdV7B7QCWLed/1Zmh/QRgSdS4sY5Ta
-         dkq2Yz4MElz2Ay241B/DpDUhpapFHi9y5htebvHzmZZe+bJSB0pZPzZepKE4fvdG4mli
-         tqzDkZIf02L2gKYEzHlMMM1Jk3w1eLzECr4so4jyMgv4lBh9zZHHOgCx0wIw48MviRk1
-         PHsbtzvJH6aW8rydib2+ktE5rQQyTa4ZpP3yUaOa8OqT+q/epFd2t2y6CfVQnvuoO9Cx
-         mq8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWaikjHaL2K0X7J07CLz3aryZQMKYGnBRZiwEJOyWWN8mxYxeJ9OoMJ6bFA+W/PQcAdRNrcfuQVnJbHMJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwwUIZo57UVjMYXwaJ84eMlQMIw45eaofj3e8+oiVHjgjxBA1E
-	UoHuahnvwQ/P9YJ3oOKqT8MbijannXJIdbGbjCNEX7PdZwWtwUOWJ3iXnulQtDbQn1B7BMc8e71
-	6DCl2CY8g2fcg6IaHTEQvUmlnRBbvJ5XZdUpJ8g==
-X-Google-Smtp-Source: AGHT+IGr4JUYzFp39IBCDliI2NU/uIXqk9gKPXFzdTH3f5egjT/5+Vhap/s8Mz6XqzPyfQOagIBhPrN+2Q7yfWV9SU0=
-X-Received: by 2002:a25:fc28:0:b0:e1a:90ef:3b6d with SMTP id
- 3f1490d57ef6-e290b5ddff5mr83158276.7.1728489329967; Wed, 09 Oct 2024 08:55:29
- -0700 (PDT)
+	s=arc-20240116; t=1728489495; c=relaxed/simple;
+	bh=DQ+UXJ6V9fAJtdAYV5JF+pZvbG+QV1OVa/sMvW/vdW8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XwrC7ImM0Zi/daeIWeT78JDxPR/BfYsDidf9qIajQvIVCUodBET5q9bNz78ki60VYJfROj1Fjoz8l181SzFmEql9Zf3h/LdcCyvQ6Dp3Ardo9lDWLYD+Cb4GkhZJdlxaFfDYTg8fAVvGdpo1i2+PZ//Eg0ERF7jLznImAMQfOps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLs2vOeX; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728489493; x=1760025493;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=DQ+UXJ6V9fAJtdAYV5JF+pZvbG+QV1OVa/sMvW/vdW8=;
+  b=ZLs2vOeXCBmraEroFPGo9Y6D76GxN41MOkAHP9DoNUJuz8BUeU11xugJ
+   gEdKEZ5dq+ovkIYywfqWzV8zOUGD5f3Yy4hkl0B75YwiHh5PI1NBxSLIk
+   rB+KUuR8lyE6cSX2a0IX1JS1MejNCohYkLRcgTX+YGu7ireT8ottsC1Pa
+   7zfyGSLVaSNCkhJzmzYU2FR3ZiReJ1L5vHKMye5doPdN8iJZPGeXiJ+iB
+   e+xCDjMsfRRDwjGazgiycMGeKfaPqNpcYjmVTqOIkydt3HSL4swzHOu5O
+   nKc4iURaI8eIz+yYPDwJUoNelsdiGYE7s7rWEcMFl6MLOaY2YuEPnqVgx
+   A==;
+X-CSE-ConnectionGUID: 0d1Js9z7QlqEu7bAwyn5pQ==
+X-CSE-MsgGUID: +N4B34EOSMSeGkTgjjJXeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38448345"
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="38448345"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:58:12 -0700
+X-CSE-ConnectionGUID: StWuh8uQR7yw7xUh157Y4Q==
+X-CSE-MsgGUID: ivsXANsTTq25vy/oUx1Bog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="76193122"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.80])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:58:09 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: R Sundar <prosunofficial@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, R Sundar
+ <prosunofficial@gmail.com>
+Subject: Re: [PATCH linux-next] drm: Fix for kernel doc warning
+In-Reply-To: <20241003023806.17537-1-prosunofficial@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241003023806.17537-1-prosunofficial@gmail.com>
+Date: Wed, 09 Oct 2024 18:58:06 +0300
+Message-ID: <87frp58e0h.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002122232.194245-1-ulf.hansson@linaro.org>
- <20241002122232.194245-4-ulf.hansson@linaro.org> <20241003071411.vvhqb6bxxnrbkaw7@vireshk-i7>
- <CAPDyKFodrKnmFNjqLWfv2AExqkfRo9DRrf7wqB4ht=XwjZDhtw@mail.gmail.com> <20241009154807.4i5qse7utnqbsoib@vireshk-i7>
-In-Reply-To: <20241009154807.4i5qse7utnqbsoib@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Oct 2024 17:54:53 +0200
-Message-ID: <CAPDyKFoL5ZB45s6sgxDusjXk6PhUCA6U-n73XGZGHbvwCtVrLg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/11] OPP: Rework _set_required_devs() to manage a
- single device per call
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
-	Vedang Nagar <quic_vnagar@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <quic_kdybcio@quicinc.com>, Nikunj Kela <nkela@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Stephan Gerhold <stephan@gerhold.net>, Ilia Lin <ilia.lin@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Wed, 9 Oct 2024 at 17:48, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Thu, 03 Oct 2024, R Sundar <prosunofficial@gmail.com> wrote:
+> Added colon in kernel-doc comment to fix the warning.
 >
-> On 09-10-24, 15:55, Ulf Hansson wrote:
-> > On Thu, 3 Oct 2024 at 09:14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > On 02-10-24, 14:22, Ulf Hansson wrote:
-> > > >  /**
-> > > >   * struct opp_config_data - data for set config operations
-> > > >   * @opp_table: OPP table
-> > > >   * @flags: OPP config flags
-> > > > + * @index: The position in the array of required_devs
-> > > >   *
-> > > >   * This structure stores the OPP config information for each OPP table
-> > > >   * configuration by the callers.
-> > > > @@ -48,6 +49,7 @@ extern struct list_head opp_tables;
-> > > >  struct opp_config_data {
-> > > >       struct opp_table *opp_table;
-> > > >       unsigned int flags;
-> > > > +     unsigned int index;
-> > >
-> > > Maybe name this required_dev_index as well ?
-> >
-> > Sure!
-> >
-> > Did you manage to get some time to look at the other patches in the series yet?
+> ./include/drm/drm_drv.h:372: warning: Incorrect use of kernel-doc format:          * @fbdev_probe
+> ./include/drm/drm_drv.h:435: warning: Function parameter or struct member 'fbdev_probe' not described in 'drm_driver'
 >
-> Ahh, they looked okay and most of them were already Acked by me I guess :)
+> Signed-off-by: R Sundar <prosunofficial@gmail.com>
 
-Right, it was mostly patch 3 and patch4 that I would appreciate an
-ack/reviewed-by tag from you.
+Pushed to drm-misc-next, thanks for the patch.
 
-If I make the rename to "required_dev_index" according to your
-suggestion above, it sounds like I could add the acks from you?
+BR,
+Jani.
 
+> ---
+>  include/drm/drm_drv.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Sorry for the confusion.
+> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+> index 36a606af4ba1..1bbbcb8e2d23 100644
+> --- a/include/drm/drm_drv.h
+> +++ b/include/drm/drm_drv.h
+> @@ -369,7 +369,7 @@ struct drm_driver {
+>  			       uint64_t *offset);
+>  
+>  	/**
+> -	 * @fbdev_probe
+> +	 * @fbdev_probe:
+>  	 *
+>  	 * Allocates and initialize the fb_info structure for fbdev emulation.
+>  	 * Furthermore it also needs to allocate the DRM framebuffer used to
 
-No worries!
-
-Kind regards
-Uffe
+-- 
+Jani Nikula, Intel
 
