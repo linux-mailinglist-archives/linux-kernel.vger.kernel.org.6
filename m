@@ -1,129 +1,95 @@
-Return-Path: <linux-kernel+bounces-356847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6219967B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2C19967D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6708B1F24138
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1FA283D27
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00436190074;
-	Wed,  9 Oct 2024 10:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1002190671;
+	Wed,  9 Oct 2024 10:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFYWg7wm"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xmlcLvkV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KNnoJu19"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ABB189F20
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C734F1C6BE;
+	Wed,  9 Oct 2024 10:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728471082; cv=none; b=ahT3wt0oE9wuTOu6iuJrcMweCR5iPC0PHIovW9Cr0gnoGfsl7kZLzzGjuxyNn9XEk0mQS39xMay+LHbJ0zx4AcyKu9gq69mp3LAiJ+4KvAWgzvSHOYsWdsEfmLiVOOu1HAAQX1ivowf22ldpOLkvIdzgfKqBbwAgppK/MEvOzGc=
+	t=1728471441; cv=none; b=oMAIVTLOLC72xSaZu1M/lwhgAuIZ5lWGr0Et8hF+tWQeszpzBHpiC448OSqjNKT0aUyv6bBw9L6wzy4SURomFfw3gUp85IaAHytZaJW3hyCZfwUAt1rFc3OlCeHK7wRwu8jhqKGv/PnWLT6a0eXviGKSga6QXWXvakfgoL8182E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728471082; c=relaxed/simple;
-	bh=+yvFAbQ7s0rgRQQpPZtq6CE0U2hIXEf6wBenPgPDXqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mJwB9XQ+irXg8iRD1RWjEMPSA4WFQhpEKVYSLQdJXmcPfVzSC5qQDsUVQSB27/PBGq1Yc4yteUKUBPQo7+kq29pDK+aNziCvMeAWBxn9suWwuyz35DkQMPg4uXlTwHoi1wr1OdVrz/YF2FAdwJ51FBucVimKEaM6zVsdlRqB0iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFYWg7wm; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e25d6342837so5805920276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 03:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728471080; x=1729075880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iXqRckUcaLEwb08tvELxqUUlJj2ycSVSO8hNl/Y5Qqk=;
-        b=RFYWg7wmjtYrOUlytTJiJqrCRtpYn7ES7P2+DJeRVjhoggdTpTrirU/WwTyJLi4n1J
-         6J4JbfCY8GDCptnAd+VKqffpoCYHkO2HMmK6g4l7haMhNiCzczxecmhe5bCl+atTBwKQ
-         EnQZR9vRjsYBWtAY5g9Mldo6FnifQJghNuFTafD9PUPSJK4ND37/RtjGg4BqsF4tLBfU
-         HGggfvXY1SbM/4aMF4GBpPpAIhAmWyhQF0ZDETyd4vROc3wYs7yTvR94aPyiBMVGXjaG
-         caz9fUCGvWf/sE09709bAss9dFSCIbR74X//Y2Dgr5nz8LJVEpxeD/xww/23ZqEjn62E
-         ZTHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728471080; x=1729075880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iXqRckUcaLEwb08tvELxqUUlJj2ycSVSO8hNl/Y5Qqk=;
-        b=kzrm8zZw85vgIlwy43x9mpSwecbW+GrfrSXksLlpgOTG4TWUzQxaUUUU1oiEtmDkXo
-         AyREB6anXcHmxYhz01KR/zZ4hSwkNUAxiM9xBF0OsOgC71+YQ71f+w0tKeFy8x+h5F+2
-         LF01UARfKqcIU5MQw527o2OluXeEcT6VXvhWhgRmtTg3dQSb2V6zfOb38EzFgHD9QvAl
-         lguCEXo/emfCmvyyqtgzZ/xKwggF72cbeTCtZBpwSzlN6ZMulTBEC788QFlsYJyb97lO
-         uvykhpDv+oh2enpTWkr9yzud9zgRBAIN/77Z8PYBaE1+GZ2OoeZJYgfr3NUzGgDMIenI
-         yMiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXkOFxwSUIBuOMILN3ccwZwZjRAlwHxZiBrpksKT9bT/H9NR//Vn7KMKmVvkmcrNbZrs2R3Epi0/0LhVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK9P9XPy01/MHuwjCRUzsoUjmZKryXDch8aNJEBt9fL4vSgSq1
-	dJf1Uh3s9ALlmZgWOUW5rpyMj7UiVAUoQkBGff59DNfb0AE24lVJCcxUXhMWFZ6snRYdTDfVmQD
-	fEbTALxB4w7hi4WU/qgzH456+9Ulq5/sWFNB2Pw==
-X-Google-Smtp-Source: AGHT+IFMmaCoYqELojZrx455Xf9B0d6jXNtv4wk+RYx3eU7mtusx7xzvsECrueDK/C+TiR4avlTI+nzU55aqnY0+2rQ=
-X-Received: by 2002:a05:6902:e0c:b0:e28:f3e7:d92b with SMTP id
- 3f1490d57ef6-e28fe36916dmr1640596276.24.1728471079940; Wed, 09 Oct 2024
- 03:51:19 -0700 (PDT)
+	s=arc-20240116; t=1728471441; c=relaxed/simple;
+	bh=032ziiroQTiNKVawf3Wn8Zdl0dIKkOZPqEzlfNUst9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcgz2gjoiumYkUSrv+B4Pyj0ctgV8AIK3Iv+gdPriPN/XiuplfjqywGabH9Wl49h/8nMaGgMyyCbLI+wz6p+ST9lOjCKXBc4FJ6YGTPnWFeFk5xWiTxY7BfLh9iAqVGrSfR8KqKKD+DqVCjsLFz2XCeeX4nPbhD7aBk4n0prfLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xmlcLvkV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KNnoJu19; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728471437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Vkl75nSoihF4r5UGBNtRtcHj1AUP5VT9Ah3G70neEFs=;
+	b=xmlcLvkVj/n+hn5pJRvkgi5ESkA88PLftWrnTW2J69OS63cyJ1AUc0CmrjszlEh9zfpRUV
+	LlA6GkGcqwDBcL4/ZORiPahfIqXOowLoy2BkX1jP+5PfCGZiaMGUBxVUm1qyWnGV7zjfzJ
+	iWdvPT+/QzeL8iexRAboBP4kijRk0xXamGlz3B8UzYJ9YTcMthMXO9LcSSP31pY/SmzTEz
+	67dlTT7wggItgwU8O9RE9U91Ik1z2SeJR7c+CTo0G11dKD4J1t8FUMoowjP38fhcvN3gMy
+	+XsqidnP3zL4GVDEB8hDIjG7Sh9fOVIaXyJmiCQOtQDj3yGCs/nJTmHvb5A1Wg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728471437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Vkl75nSoihF4r5UGBNtRtcHj1AUP5VT9Ah3G70neEFs=;
+	b=KNnoJu19Nv00iejIUriVVffmSwyMtzgj9WaBesY/sCsOHI4hjvMU54yRZkAoBoRGdka0S/
+	bx6aj/iEztaPtuAQ==
+To: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	tglx@linutronix.de,
+	mingo@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	ankur.a.arora@oracle.com,
+	efault@gmx.de,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [PATCH 0/3] Lazy preemption leftovers
+Date: Wed,  9 Oct 2024 12:50:54 +0200
+Message-ID: <20241009105709.887510-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-8250-omap-no-console-suspend-v1-0-e7f0365c02f0@bootlin.com>
- <20241008-8250-omap-no-console-suspend-v1-2-e7f0365c02f0@bootlin.com>
-In-Reply-To: <20241008-8250-omap-no-console-suspend-v1-2-e7f0365c02f0@bootlin.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Oct 2024 12:50:43 +0200
-Message-ID: <CAPDyKFpnsV-c4F7SNPQmLBSM1sUknr-3sTyiXMDt9n43UBQkNg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] serial: 8250_omap: mark the serial as on the wakeup
- path if no_console_suspend
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, u-kumar1@ti.com, tony@atomide.com, 
-	khilman@kernel.org, gregory.clement@bootlin.com, thomas.petazzoni@bootlin.com, 
-	theo.lebrun@bootlin.com, richard.genoud@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Oct 2024 at 11:34, Thomas Richard <thomas.richard@bootlin.com> wr=
-ote:
->
-> If the console suspend is disabled, mark the serial as on the wakeup path
-> to keep its PM domain powered on.
->
-> Suggested-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
->  drivers/tty/serial/8250/8250_omap.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/825=
-0/8250_omap.c
-> index 88b58f44e4e9..6764fe2f9cad 100644
-> --- a/drivers/tty/serial/8250/8250_omap.c
-> +++ b/drivers/tty/serial/8250/8250_omap.c
-> @@ -1660,8 +1660,12 @@ static int omap8250_suspend(struct device *dev)
->         if (!device_may_wakeup(dev))
->                 priv->wer =3D 0;
->         serial_out(up, UART_OMAP_WER, priv->wer);
-> -       if (uart_console(&up->port) && console_suspend_enabled)
-> -               err =3D pm_runtime_force_suspend(dev);
-> +       if (uart_console(&up->port)) {
-> +               if (console_suspend_enabled)
-> +                       err =3D pm_runtime_force_suspend(dev);
-> +               else
-> +                       device_set_wakeup_path(dev);
-> +       }
+This is a followup to PeterZ'
+	https://lore.kernel.org/20241007074609.447006177@infradead.org
 
-Isn't this already managed by the serial core? See commit a47cf07f60dc
-("serial: core: Call device_set_awake_path() for console port")
+in PREEMPT_RT we had initially "LAZY preempt" this then morphed into
+PREEMPT_AUTO and is becoming "Lazy preemption".=20
+These are the tracing bits from that time that were used up to
+PREEMPT_AUTO. With RT's RiscV support, they also contributed
+PREEMPT_AUTO support which I just updated to current edition.
 
-[...]
+I used to have ARM* and POWERPC*, too support for the "LAZY preempt" but
+this relied on assembly support and I dropped this during the switch to
+PREEMPT_AUTO.
 
-Kind regards
-Uffe
+Sebastian
+
 
