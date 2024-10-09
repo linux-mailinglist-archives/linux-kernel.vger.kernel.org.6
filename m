@@ -1,98 +1,77 @@
-Return-Path: <linux-kernel+bounces-357422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F18997118
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82981997119
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205101C21E15
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47212286A66
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BB5197A77;
-	Wed,  9 Oct 2024 16:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727351DFD84;
+	Wed,  9 Oct 2024 16:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKW6Ou+W"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fl7mVLJ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A331D31B2
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA29F1E04AA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490011; cv=none; b=pd3ZwdgndBCIpSZwW93I7FFv9HpgvYTyHezMO3s5w3UGCBOSODsl+wHBe5GppG7CFdvCr2G5y+ZuA+KAkNxEF7+OP39K4DNY4Ncl8Jg38YWW75MVBH1pxy4iOXNH05TUVVeQEAU/0/uo/SKca6d+ZF4kuyrCQco1PSLmzuX9p24=
+	t=1728490043; cv=none; b=PMSEn0iX2lezDZAJbEUFb0uJMJVBBFY0LDIGuzWS5O1yGwRJfS3JIn9Z7LYtv9xk2ZI9gF0VPTWtiAD1r7YD5S7ytsx60Qssc0g+l1JqVH2khgKwuRWpS4hUGOkT/+X92DfyGWevat+SC2XhB17GuxwwVX7VCuHRB+6cvZhURQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490011; c=relaxed/simple;
-	bh=nkfcKspWQ8hexMjCW+X8wh5gyfzaCeAToCi4rgQ7REw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CD9qyE6IC3xGzDsHbbBBgQ2DjDHh52N7m5IEoRTFUNYijgqSQhHkNCL0FQWo0NPt56Xg/6MSRBUxCrASQ9ABgRowUFZv88PUXuGnMOKuCDF6EMeiYCzYci/dtDByivFaw79y0/0abeNuWGNFwHWX3J5LIIJUz7duYt//mAUFiIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VKW6Ou+W; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e23aa29408so10468967b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728490008; x=1729094808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nkfcKspWQ8hexMjCW+X8wh5gyfzaCeAToCi4rgQ7REw=;
-        b=VKW6Ou+WFI6CYLkbWHCWM50aVe77PG3KQEyt7XEV88psUHzfK4smhXKMLRfyvx0Vv4
-         FO8gUno2MoyDAT0p5NqE+Il/RHEfSSZRDIqFJAxLRjeEEea3sxC2Tot2FoLTsay++34h
-         /FNTNWoUu2lNR1TY+d3CgDhreupc3NbWoqQTtUdAiPMjHLGz7manVa2Hlluzc8X+TCWZ
-         Kbcd6Jmqp7SLz2s8ePMxjip9aI0UIDyA3AlEU7OxP716YkQbFwPj1Jz2J+LLqrE6Rhnp
-         ViCtzrIw2L81FMMuQsu6wHgfp6m55erNcq6G/Cw268SSlBul3uktkr7HO0oWBRFKq7yf
-         Sdeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728490008; x=1729094808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nkfcKspWQ8hexMjCW+X8wh5gyfzaCeAToCi4rgQ7REw=;
-        b=v3K4qMLUpDoIVbNePfVUuMzHZrVBXZtaoL1jcBaREBDBsD6aurLLNWGNfTBk+hVoVC
-         AGn8lFwy07zk0KXKG0AIQUbkyrO3swlz7vj0GBhekgNowZ4zm5ZWKZe7axK2qHIj4Rrx
-         QEZGxnRpaoG4q8f4lhCdjK/z0/TDtYGfa/OlEYbIifc1HeSfx65cF6JdVlDRLXECAYmE
-         WySPcATA7GX5ndP9p4EH93RDMRS8Jn0xKzJYSxN/tAihfoBrLIaIslSEzSAPV8pXXn0T
-         +KWpUBmOH+djColdtc4D8ULm+PDwpBcUfG79+bhgDalyz39RsncFnWZevLT2H0yZIS9p
-         Kmew==
-X-Forwarded-Encrypted: i=1; AJvYcCVrd1RXylE0D4zpOqI3tAGZhDGXpR3Iu4p4IEsGKgXB//KLU2k/IpWR7E7hMo1ehABvgdrPHvS+otI51Po=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3p6R68kodWIIPJqp/zbwRh9U163BQPp3J12aSQgIZ/37t6oQh
-	MazuUL677vt1uVsH0ijFcFGG8ZdDWi+mhE6hFz74CojvvrcNwmL2LxQSELGEBwZM1NYbMajRObM
-	o4ydRJrT69N7WVAF55qPvtnXRe6PbCdlr0GKngA==
-X-Google-Smtp-Source: AGHT+IEB7615ehnAAzSlp9QeY7Exo9QxBnJB+eLgmqzfktq+2EhfQ1a1O+UY0RdpmmKJABEdhGOUsHTE88vgiT+tHak=
-X-Received: by 2002:a05:690c:f93:b0:6dd:ddf6:90aa with SMTP id
- 00721157ae682-6e32f134e85mr1925237b3.5.1728490008640; Wed, 09 Oct 2024
- 09:06:48 -0700 (PDT)
+	s=arc-20240116; t=1728490043; c=relaxed/simple;
+	bh=mjLy1BpseUfZ/WjYhSF9y2K7scOJI2maFCdB5EyzQ4g=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=U+MdaG8x0wfqfkuRcX8HxDhUsZ5S6v6uywjnhJ5D9aEM6LaVvke1jXnwLnOtZ4cm0X5+Mw04tQbPzogFEKF8OfV16pOpHqNSPA7Nm1VizyqihWqb3YaeKRpl7E/p1oBzAhRdCZZAxkk1Q29KzbRglvCDpGKlcgOe61d0ZNh70Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fl7mVLJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99260C4CEC3;
+	Wed,  9 Oct 2024 16:07:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728490043;
+	bh=mjLy1BpseUfZ/WjYhSF9y2K7scOJI2maFCdB5EyzQ4g=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=Fl7mVLJ+T1kxTmEIewtxoETgyH2wG7sZWaodm1frZXk1IwWJRJlSCC4kCQa7fHT/p
+	 RRjDVnQFZAa6pIXEjCuhcI2LQaORGihj6H+1fJPoTYY/t/OJaTc/BGw6mxMBhgBL5r
+	 xBnMG5BVyjgDJuOttCe7jOcbyPVW7pmQn++RZ3sMiuCBktYMuIA+Uz9Jy+qoXlhybZ
+	 pJSEoAr+Ccof2DgcehB3Ul0nSUGHPOzHEWZcs3/ad+vMmH64ohdp2zQqLB9MsDAMoA
+	 gqYzexiITgD+ZvamIwBPxTbwRLpsfPckn90AHxM+bMWVMjDm0KGhNABRvxwq6AgH5v
+	 zPRPW0sRM0uGg==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+ Masahiro Yamada <masahiroy@kernel.org>
+In-Reply-To: <20241002151539.43762-1-masahiroy@kernel.org>
+References: <20241002151539.43762-1-masahiroy@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: wcd934x: replace MODULE_ALIAS() with
+ MODULE_DEVICE_TABLE()
+Message-Id: <172849004231.661391.3358849014171986534.b4-ty@kernel.org>
+Date: Wed, 09 Oct 2024 17:07:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241005-power-supply-battery-const-v1-0-c1f721927048@weissschuh.net>
-In-Reply-To: <20241005-power-supply-battery-const-v1-0-c1f721927048@weissschuh.net>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 9 Oct 2024 18:06:34 +0200
-Message-ID: <CACRpkdZtUHAaF1cqmyJcthp=6-w4quYAF=PMdknU4iQZ3_E-Tw@mail.gmail.com>
-Subject: Re: [PATCH 0/7] power: supply: constify ocv and resistance tables
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Sebastian Reichel <sre@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Sat, Oct 5, 2024 at 12:04=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
+On Thu, 03 Oct 2024 00:15:32 +0900, Masahiro Yamada wrote:
+> Since commit b4b818305578 ("slimbus: generate MODULE_ALIAS() from
+> MODULE_DEVICE_TABLE()"), modpost automatically generates MODULE_ALIAS()
+> from MODULE_DEVICE_TABLE(slim, ).
+> 
+> 
 
-> These tables are nevery modified. Reflect this in the API and constify
-> the table definitions.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+Applied, thanks!
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+[1/1] mfd: wcd934x: replace MODULE_ALIAS() with MODULE_DEVICE_TABLE()
+      commit: d64e5e0cda561d627bd0f2a1a4c7de9d842159d7
 
-Yours,
-Linus Walleij
+--
+Lee Jones [李琼斯]
+
 
