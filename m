@@ -1,120 +1,174 @@
-Return-Path: <linux-kernel+bounces-357677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EABD9973F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E669973F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314241F24504
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CEE11F2648F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE1B1E0481;
-	Wed,  9 Oct 2024 18:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA881E1A37;
+	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VqQ1t0Wz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxB+ZOsU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7097A1E132F
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D2A1E1330;
+	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728496974; cv=none; b=GUQtJPJyJixJfT3HWZojUi3VyC8obKfpzPba8kw2yFIyEBMt1P1+ZOsZ6ng+lCW4RRlhtxBFWufDwIMPmuygjoLo3vqkEJTqZxLnOOi6X2qP+hNwZwxlAeG+Q+4HVFoM5VlGslHhQoStfpceI/TJAUfjoV9Iv5fEuCr9z5gchFw=
+	t=1728496976; cv=none; b=tFZfeiPTN5/vor2e9JSgJWuojFRakjepZGetSufC28B4Rw5QF9ulddbTnl5By+bAGNoaI+HoZS45+unfc4+py9GX/mXk89KtQXA0E4arkQ4cSfld1arngOZisnykfMKjqrSg4ggpGCVd+0SQQVvnemQkvzGrC1bhqrasWtuhS9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728496974; c=relaxed/simple;
-	bh=tKTMoOuajLWdXL878ngPL+Xkt0x2VzlntbO4SRCQJ9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwo+x7tV+mwQW0YzqeQqBbCib3DcVXkq7fo3QiBoaoSbCzjjiDCQHaFSwIAvGo6n05ANGoW9t6+vAJnZSPLBJU7kkHBb3xCdiuVMEb4VLmnEeB9CVPUQ9Fe0yb9UzWEkoVZrEHdlPm0CEO0FwewoSqoH7o3obAWcfCOki2q8eZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VqQ1t0Wz; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728496972; x=1760032972;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tKTMoOuajLWdXL878ngPL+Xkt0x2VzlntbO4SRCQJ9o=;
-  b=VqQ1t0WzAK9vdxv2nzU/JW8dh0OKrmkto0cqxQQvVxxWwlWvd93N4Scp
-   kf6eVM8RuRcLdzbMG/s0jlA8nhOVGCoH9eznNy16thwwxubuAPrGR6KFh
-   RXUyOU2XQWQ2EW7+IS/QsVhprf3MgIOHR1NAY/LfU/O7VbDHnB1W0n6su
-   rac2eXuXw7dwTdp4cCx32dVoQdBLXolhMqsOccAVmPpQ7gXBXEjRKfe8U
-   /BFxpbiLopGEGzaB2+lYiNvZDp7/+S7ileWVqM0owli2Vvb8X7p51bwc5
-   E/tcdYpmrMAepcmblPgxPmzd1VMdR5R6iDNVfNNE8ReF9LH+2v7JdZZBm
-   w==;
-X-CSE-ConnectionGUID: Ofh1jDJZSDmSntXvm1FykA==
-X-CSE-MsgGUID: DNYZ+5iiSmqiO4O9TuRONw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31519027"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="31519027"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 11:02:52 -0700
-X-CSE-ConnectionGUID: ufqKTkf4SLiAD8gwwvX0/A==
-X-CSE-MsgGUID: WSUALnXtTbWwwFdVuosd/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="77166920"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 11:02:51 -0700
-Date: Wed, 9 Oct 2024 11:02:50 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: James Morse <james.morse@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: Re: [PATCH v5 07/40] x86/resctrl: Add max_bw to struct resctrl_membw
-Message-ID: <ZwbFSorNKhURT5Xe@agluck-desk3.sc.intel.com>
-References: <20241004180347.19985-1-james.morse@arm.com>
- <20241004180347.19985-8-james.morse@arm.com>
+	s=arc-20240116; t=1728496976; c=relaxed/simple;
+	bh=hlVg4FxJvZjim3cclQmUFm9AlIKDKpHkyjXaet4fHak=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OHb/AZ05oHa/581uIjo0mt8ttZX6NLLr0NXgYPsBJjFCZmyeXzawUf83h7BTmhk6H6lfirwNTop/LWFKa2lvqVimmTElepFf3sYSCI4Y8Hvt9mOefy+TyAnc4ACf3rYhK6AkvW8Z3ajs04R9+n9Uxw1tjmKPkNA5rc7AdAxX0Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxB+ZOsU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BA8C4CED3;
+	Wed,  9 Oct 2024 18:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728496976;
+	bh=hlVg4FxJvZjim3cclQmUFm9AlIKDKpHkyjXaet4fHak=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MxB+ZOsUeIBNIEItVwZ6Q8RH+xmkzldz/yfwUaEGSwgCHfI/Tgxnz7C3Ce1WCASvp
+	 jAdeJIz/K1dzPaUpjmedqC7cxIFXrxFTYN2XoiNE/TLqG3dQSmXOqjeSa39iNVwBTL
+	 pPdcKxCuX5yTZ59kK5dhekImu+daBXMwD9RZUHzNT+8o4p/R+FKahrZc0NrPR5pbNk
+	 oIn2OQbS2y2ztJyRz/2NXE0DXgJlgv7LDZsHM/N1WxMZTQz0R7GBhhFPXn97ZIj7Z2
+	 64OOA9Aid/ih3wlIVM1SUsq0YsBpoH7ZpXLn+p6q6LZGZEDzqCs867wU9TY1xIF0XS
+	 4PMqbP4n5rcpw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C7993CE0B68; Wed,  9 Oct 2024 11:02:55 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: frederic@kernel.org,
+	rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 2/5] torture: Add --no-affinity parameter to kvm.sh
+Date: Wed,  9 Oct 2024 11:02:50 -0700
+Message-Id: <20241009180253.777965-2-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
+References: <51cccc37-5139-497c-92e3-6a20e17939a1@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004180347.19985-8-james.morse@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 04, 2024 at 06:03:14PM +0000, James Morse wrote:
-> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> index 8d1bdfe89692..56c41bfd07e4 100644
-> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> @@ -57,10 +57,10 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
->  		return false;
->  	}
->  
-> -	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
-> +	if ((bw < r->membw.min_bw || bw > r->membw.max_bw) &&
->  	    !is_mba_sc(r)) {
->  		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
-> -				    r->membw.min_bw, r->default_ctrl);
-> +				    r->membw.min_bw, r->membw.max_bw);
->  		return false;
->  	}
->  
+In performance tests, it can be counter-productive to spread torture-test
+guest OSes across sockets.  Plus the experimenter might have ideas about
+what CPUs individual guest OSes are to run on.  This commit therefore
+adds a --no-affinity parameter to kvm.sh to prevent it from running
+taskset on its guest OSes.
 
-Heads up. There is a patch to this function in the TIP x86/urgent
-branch. So will likely go into v6.12-rc3. So this patch will need
-to refactor on top of:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ .../rcutorture/bin/kvm-test-1-run-batch.sh    | 43 ++++++++++---------
+ tools/testing/selftests/rcutorture/bin/kvm.sh |  6 +++
+ 2 files changed, 29 insertions(+), 20 deletions(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/urgent&id=2b5648416e47933939dc310c4ea1e29404f35630
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh
+index c3808c490d92d..f87046b702d88 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run-batch.sh
+@@ -56,27 +56,30 @@ do
+ 	echo > $i/kvm-test-1-run-qemu.sh.out
+ 	export TORTURE_AFFINITY=
+ 	kvm-get-cpus-script.sh $T/cpuarray.awk $T/cpubatches.awk $T/cpustate
+-	cat << '	___EOF___' >> $T/cpubatches.awk
+-	END {
+-		affinitylist = "";
+-		if (!gotcpus()) {
+-			print "echo No CPU-affinity information, so no taskset command.";
+-		} else if (cpu_count !~ /^[0-9][0-9]*$/) {
+-			print "echo " scenario ": Bogus number of CPUs (old qemu-cmd?), so no taskset command.";
+-		} else {
+-			affinitylist = nextcpus(cpu_count);
+-			if (!(affinitylist ~ /^[0-9,-][0-9,-]*$/))
+-				print "echo " scenario ": Bogus CPU-affinity information, so no taskset command.";
+-			else if (!dumpcpustate())
+-				print "echo " scenario ": Could not dump state, so no taskset command.";
+-			else
+-				print "export TORTURE_AFFINITY=" affinitylist;
++	if test -z "${TORTURE_NO_AFFINITY}"
++	then
++		cat << '		___EOF___' >> $T/cpubatches.awk
++		END {
++			affinitylist = "";
++			if (!gotcpus()) {
++				print "echo No CPU-affinity information, so no taskset command.";
++			} else if (cpu_count !~ /^[0-9][0-9]*$/) {
++				print "echo " scenario ": Bogus number of CPUs (old qemu-cmd?), so no taskset command.";
++			} else {
++				affinitylist = nextcpus(cpu_count);
++				if (!(affinitylist ~ /^[0-9,-][0-9,-]*$/))
++					print "echo " scenario ": Bogus CPU-affinity information, so no taskset command.";
++				else if (!dumpcpustate())
++					print "echo " scenario ": Could not dump state, so no taskset command.";
++				else
++					print "export TORTURE_AFFINITY=" affinitylist;
++			}
+ 		}
+-	}
+-	___EOF___
+-	cpu_count="`grep '# TORTURE_CPU_COUNT=' $i/qemu-cmd | sed -e 's/^.*=//'`"
+-	affinity_export="`awk -f $T/cpubatches.awk -v cpu_count="$cpu_count" -v scenario=$i < /dev/null`"
+-	$affinity_export
++		___EOF___
++		cpu_count="`grep '# TORTURE_CPU_COUNT=' $i/qemu-cmd | sed -e 's/^.*=//'`"
++		affinity_export="`awk -f $T/cpubatches.awk -v cpu_count="$cpu_count" -v scenario=$i < /dev/null`"
++		$affinity_export
++	fi
+ 	kvm-test-1-run-qemu.sh $i >> $i/kvm-test-1-run-qemu.sh.out 2>&1 &
+ done
+ for i in $runfiles
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
+index 7af73ddc148d1..42e5e8597a1a6 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
+@@ -42,6 +42,7 @@ TORTURE_JITTER_STOP=""
+ TORTURE_KCONFIG_KASAN_ARG=""
+ TORTURE_KCONFIG_KCSAN_ARG=""
+ TORTURE_KMAKE_ARG=""
++TORTURE_NO_AFFINITY=""
+ TORTURE_QEMU_MEM=512
+ torture_qemu_mem_default=1
+ TORTURE_REMOTE=
+@@ -82,6 +83,7 @@ usage () {
+ 	echo "       --kmake-arg kernel-make-arguments"
+ 	echo "       --mac nn:nn:nn:nn:nn:nn"
+ 	echo "       --memory megabytes|nnnG"
++	echo "       --no-affinity"
+ 	echo "       --no-initrd"
+ 	echo "       --qemu-args qemu-arguments"
+ 	echo "       --qemu-cmd qemu-system-..."
+@@ -220,6 +222,9 @@ do
+ 		torture_qemu_mem_default=
+ 		shift
+ 		;;
++	--no-affinity)
++		TORTURE_NO_AFFINITY="no-affinity"
++		;;
+ 	--no-initrd)
+ 		TORTURE_INITRD=""; export TORTURE_INITRD
+ 		;;
+@@ -417,6 +422,7 @@ TORTURE_KCONFIG_KASAN_ARG="$TORTURE_KCONFIG_KASAN_ARG"; export TORTURE_KCONFIG_K
+ TORTURE_KCONFIG_KCSAN_ARG="$TORTURE_KCONFIG_KCSAN_ARG"; export TORTURE_KCONFIG_KCSAN_ARG
+ TORTURE_KMAKE_ARG="$TORTURE_KMAKE_ARG"; export TORTURE_KMAKE_ARG
+ TORTURE_MOD="$TORTURE_MOD"; export TORTURE_MOD
++TORTURE_NO_AFFINITY="$TORTURE_NO_AFFINITY"; export TORTURE_NO_AFFINITY
+ TORTURE_QEMU_CMD="$TORTURE_QEMU_CMD"; export TORTURE_QEMU_CMD
+ TORTURE_QEMU_INTERACTIVE="$TORTURE_QEMU_INTERACTIVE"; export TORTURE_QEMU_INTERACTIVE
+ TORTURE_QEMU_MAC="$TORTURE_QEMU_MAC"; export TORTURE_QEMU_MAC
+-- 
+2.40.1
 
--Tony
 
