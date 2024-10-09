@@ -1,148 +1,179 @@
-Return-Path: <linux-kernel+bounces-356266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B854E995ECD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:09:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6619995ED3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35D11C2172E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2971F23AD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBD9155316;
-	Wed,  9 Oct 2024 05:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KXXjcqWW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5864154BF0;
+	Wed,  9 Oct 2024 05:12:26 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E195D14D280;
-	Wed,  9 Oct 2024 05:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5F13F43A
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 05:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728450575; cv=none; b=uH7YL2qf2FJI021hYGmYWOYl5vOqGuWYjtMdlb1XwNe2YxnKraIiMthzNJcycviSq6Nxl7M/BRhlfXBIurjDTme+7x1Lq87HR7VWIQKLT+SLGtsM25uU0moBm+Hq3VC8+Cjffa2SABnETLwQkLJMdsH2GNM2pzJSmNVSJWR/dUw=
+	t=1728450746; cv=none; b=Os07DXv2wVXixQPb+2W2dSuJ+OX2OLlKNxwC0w15wVhNZxgZSxuwcoe6goGklsfD1PwVZ5jvx+zcWzm4syoZi9nNczoGJdBI6E1Wmd9MA0kfZ+GJaow0/3R/AKkuT3pb9+Kq1kzVolZAYEyvDzVE9lKhoLrUVxjOfw1Ts/aqj5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728450575; c=relaxed/simple;
-	bh=+/lG6d/2yiL1coqVhRfclbMCgDsoHozt5HlulUhP8jQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxFTkHs77FVQ3e34M1uGdNuG5ovC9grgq8BfJGTyw/jd8xjhD3Cu4q9ak0CRIm+oWEfZZ1OhDAVe3ZvvU2h88GMvr3sf8DqZaRjsHeFY7w5DREaqsUNZ9dauNjLO0scwiRaFCMoZzuwZPq+59bGnzjfvTUPrRuuFnzzIrzoD3uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KXXjcqWW; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728450573; x=1759986573;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+/lG6d/2yiL1coqVhRfclbMCgDsoHozt5HlulUhP8jQ=;
-  b=KXXjcqWWeEt06Pxu1tm4y7kB03Vpay/Q8CydyCkh6wVAW6OUvs03AoEu
-   lyhNCcA65vrhe+i8Nr8YXZW/TjroYa4/E4BBhojNweIibnggddwg/sBAo
-   9szFVm/FvsHCt4839nXsupemXWcgzIEd9CARv44/laOhtvllqXxxYdZmK
-   RfDoPJeSXJCLzcZPsX4PC5KSM9m7K7JAWFVzrwRRjS94D4i0p72K27I6y
-   rb0o0M6hvYv1OBp2lLASobZo/jYSnkwCg7x1MP7QTL7nplbaTlhr68SXJ
-   Tb7SbjGLcFKfwjifDmg0qB769hdoUqiHj2VkYufHz7W/yvTfe2VjBEf+h
-   g==;
-X-CSE-ConnectionGUID: PzfHB7rURk2E+TPWxU7eCQ==
-X-CSE-MsgGUID: 1yPT0X9kSSmZDmK1ZOttVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31425379"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="31425379"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 22:09:32 -0700
-X-CSE-ConnectionGUID: HgE7S8OtTvum40XWD/P7BQ==
-X-CSE-MsgGUID: YcVLafYwToq0mu9eCJWT4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="75995876"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 08 Oct 2024 22:09:28 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1syOww-0008lM-0w;
-	Wed, 09 Oct 2024 05:09:26 +0000
-Date: Wed, 9 Oct 2024 13:09:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: ed.tsai@mediatek.com, peter.wang@mediatek.com,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Stanley Jhu <chu.stanley@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, wsd_upstream@mediatek.com,
-	chun-hung.wu@mediatek.com, Ed Tsai <ed.tsai@mediatek.com>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] scsi: ufs: ufs-mediatek: configure individual LU queue
- flags
-Message-ID: <202410091257.SE04cckD-lkp@intel.com>
-References: <20241008065950.23431-1-ed.tsai@mediatek.com>
+	s=arc-20240116; t=1728450746; c=relaxed/simple;
+	bh=7WTn9XEairr5J5mf2GodM9sUaNrqxM4Dlbe+8MGhhIw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IWsZVFthiV4mAq5dM07w1NjW3XjZq64nNtuv97ftRwuhFnzq3k+QhguRbgGSVwKxtIiiRvTWNzk82Eg3XK5XFjf0WO7cFxAdfifGYbhEJfjnb2Xxp2gLCPutBKzexnEtu1iAndftRVNf06VW6IW4vA/L7c7h99mDK4FFRQ+Rifg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a36a8fa836so43148695ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 22:12:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728450744; x=1729055544;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9B2xga9VYJ2YPNvVTsksZaRz3GiKA9SnvAWY0ThC3vE=;
+        b=xHcJevJNLPzdfzzkiKE7kLEBxKpAF/B1G28iqZMdioHIopl4o7dUyrR5SO4FEDH1gQ
+         n0Esc+z+YtVIHp8sIxZKonHC0aSCHgimZLR08iGWyoRYw1I9/cnkGH1jYUGjw0QZ+RUj
+         DxGoR15yCRRBg2xkWi80NdLmPK6csA9w2ixwd3Ey3D7VZT7qe/xEC0Y4DklbmOgHkhA9
+         /pEIqyNG7YS1DV2tLuCMHctnE2l4d2F03bwTVNtnQ32gmOHSI6Ynz2UtQXuEewiHTU0l
+         00fFhnnxn1FRe19dUSLbFx9DEmLBTsuWXpnoMnI8MTDYY6A8Yv34p33C62c8H/MVfKke
+         nuEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyu1rwfi0XKPvOs7awjW5nubS2f9923GrqZixB8VQRVu+OxTbUfkqVHeds0xvgaGsGCzPcadFDyxsbABY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbiSZT/Gse32IBFKCRxnojCvfPX+Oui7F4W/eVtua/OdF3p3Al
+	XJjGRFhp4N7zAgX75texT/Hx0BDe7Vu6OL6zWp5zFGSm1fmimIc7qyzAlN7MJQ+vuVkQJtsYObA
+	42rjVmUYi2SwgzhKyjP029QvoyAmRy96frm/zfcE4j0zapgXOwMG0GNQ=
+X-Google-Smtp-Source: AGHT+IFvmGbFFcmNTETDDtH9cpf5HoAmSWOED7xwdt13G21V3SOkcutg2DLIi+iSZVDZAlsvB9RwroX8Yb+PCIhqzRejiLX1UXoS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008065950.23431-1-ed.tsai@mediatek.com>
+X-Received: by 2002:a05:6e02:1ca1:b0:3a0:4a91:224f with SMTP id
+ e9e14a558f8ab-3a397ce85b3mr10545185ab.1.1728450743994; Tue, 08 Oct 2024
+ 22:12:23 -0700 (PDT)
+Date: Tue, 08 Oct 2024 22:12:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670610b7.050a0220.22840d.000e.GAE@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_buffered_write_iomap_end
+From: syzbot <syzbot+3d96bb110d05e208ae9e@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on mkp-scsi/for-next]
-[also build test ERROR on jejb-scsi/for-next linus/master v6.12-rc2 next-20241008]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    c02d24a5af66 Add linux-next specific files for 20241003
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=126f5307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94f9caf16c0af42d
+dashboard link: https://syzkaller.appspot.com/bug?extid=3d96bb110d05e208ae9e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-url:    https://github.com/intel-lab-lkp/linux/commits/ed-tsai-mediatek-com/scsi-ufs-ufs-mediatek-configure-individual-LU-queue-flags/20241008-153700
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20241008065950.23431-1-ed.tsai%40mediatek.com
-patch subject: [PATCH] scsi: ufs: ufs-mediatek: configure individual LU queue flags
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20241009/202410091257.SE04cckD-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241009/202410091257.SE04cckD-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410091257.SE04cckD-lkp@intel.com/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/641e642c9432/disk-c02d24a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/98aaf20c29e0/vmlinux-c02d24a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c23099f2d86b/bzImage-c02d24a5.xz
 
-All errors (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3d96bb110d05e208ae9e@syzkaller.appspotmail.com
 
-   drivers/ufs/host/ufs-mediatek.c: In function 'ufs_mtk_config_scsi_dev':
->> drivers/ufs/host/ufs-mediatek.c:1789:65: error: 'struct scsi_device' has no member named 'reqeust_queue'; did you mean 'request_queue'?
-    1789 |                 blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, sdev->reqeust_queue);
-         |                                                                 ^~~~~~~~~~~~~
-         |                                                                 request_queue
+loop0: detected capacity change from 32768 to 0
+syz.0.409: attempt to access beyond end of device
+loop0: rw=2048, sector=18728, nr_sectors = 4 limit=0
+============================================
+WARNING: possible recursive locking detected
+6.12.0-rc1-next-20241003-syzkaller #0 Not tainted
+--------------------------------------------
+syz.0.409/9596 is trying to acquire lock:
+ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: filemap_invalidate_lock include/linux/fs.h:860 [inline]
+ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: xfs_buffered_write_iomap_end+0x20c/0x490 fs/xfs/xfs_iomap.c:1246
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+but task is already holding lock:
+ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: xfs_ilock+0x193/0x3d0 fs/xfs/xfs_inode.c:156
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(mapping.invalidate_lock#6);
+  lock(mapping.invalidate_lock#6);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+3 locks held by syz.0.409/9596:
+ #0: ffff888077bc0420 (sb_writers#19){++++}-{0:0}, at: file_start_write include/linux/fs.h:2950 [inline]
+ #0: ffff888077bc0420 (sb_writers#19){++++}-{0:0}, at: vfs_fallocate+0x4fe/0x6e0 fs/open.c:332
+ #1: ffff88805e4b0af0 (&sb->s_type->i_mutex_key#27){++++}-{3:3}, at: xfs_ilock+0x102/0x3d0 fs/xfs/xfs_inode.c:148
+ #2: ffff88805e4b0c90 (mapping.invalidate_lock#6){++++}-{3:3}, at: xfs_ilock+0x193/0x3d0 fs/xfs/xfs_inode.c:156
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 9596 Comm: syz.0.409 Not tainted 6.12.0-rc1-next-20241003-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
+ check_deadlock kernel/locking/lockdep.c:3089 [inline]
+ validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+ filemap_invalidate_lock include/linux/fs.h:860 [inline]
+ xfs_buffered_write_iomap_end+0x20c/0x490 fs/xfs/xfs_iomap.c:1246
+ iomap_iter+0x220/0xf60 fs/iomap/iter.c:79
+ iomap_file_unshare+0x380/0x6d0 fs/iomap/buffered-io.c:1343
+ xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
+ xfs_falloc_unshare_range+0x164/0x390 fs/xfs/xfs_file.c:1033
+ xfs_file_fallocate+0x289/0x3d0 fs/xfs/xfs_file.c:1125
+ vfs_fallocate+0x569/0x6e0 fs/open.c:333
+ ksys_fallocate fs/open.c:356 [inline]
+ __do_sys_fallocate fs/open.c:364 [inline]
+ __se_sys_fallocate fs/open.c:362 [inline]
+ __x64_sys_fallocate+0xbd/0x110 fs/open.c:362
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3f1df7dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3f1ee0b038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f3f1e135f80 RCX: 00007f3f1df7dff9
+RDX: 000000000000000a RSI: 0000000000000040 RDI: 0000000000000004
+RBP: 00007f3f1dff0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000005 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f3f1e135f80 R15: 00007fffd33b9598
+ </TASK>
 
 
-vim +1789 drivers/ufs/host/ufs-mediatek.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-  1782	
-  1783	static void ufs_mtk_config_scsi_dev(struct scsi_device *sdev)
-  1784	{
-  1785		struct ufs_hba *hba = shost_priv(sdev->host);
-  1786	
-  1787		dev_dbg(hba->dev, "lu %llu scsi device configured", sdev->lun);
-  1788		if (sdev->lun == 2)
-> 1789			blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, sdev->reqeust_queue);
-  1790	}
-  1791	
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
