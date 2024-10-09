@@ -1,241 +1,112 @@
-Return-Path: <linux-kernel+bounces-356514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DA7996259
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:24:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700F499625A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EC271F22C57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8858B1C219E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F691885B5;
-	Wed,  9 Oct 2024 08:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE8C183CA7;
+	Wed,  9 Oct 2024 08:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Jftn0cMQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nKi4Pj31";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ssji292W";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CodwJhsG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nt4mRQlY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6988178CC5;
-	Wed,  9 Oct 2024 08:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1AC185923
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462255; cv=none; b=IveACADXLDxn03GZ6a5EEO3oLftvlVaznvUWWqfP1PburjYoG5EwUvBLVtbGSCQGmYFCx1v2FCmpKq72SNE4Dh3KwjD+gT9s72AAcyxSY83d//XipJT/bJzURvVeI7RC741VZc62GsaatQaEhcF2sekt0aTvkR7q04FrcKvEJ6M=
+	t=1728462295; cv=none; b=Id+Th4WRR5SCdlnVB7bWfvzb9Bcfvz5KvjfLcvrd3x2S7wh8MREut3D4j4LsYjRr/Vm//LBfYrbZJjmBjqi8+Hu21pEbjrhJXWHuLjgxeksv+YCdheXMx9gdg6AqrnXYRK7NRdYFt4suOMLaXxxoUYK6oa7DGxhTqDX0oc4PPkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462255; c=relaxed/simple;
-	bh=FDBpzgyIgvRDtMkbk6f9TPOyszpQmHWB0yHmYLOtb6g=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=cxUZcw8tt67SMgkrPp0B/X4mocnlAGMQq76tQLxPWG5sdQfX7ebrtb+3sOvQSnMZsb8vlCfIStZfO+qFp/9yeFmP6O7nPEzsCFe1VHeGTZagVaH7Qsaii0dqGHklLlTSZk3UxyJSI8rVgQjt3FEJAzn/CqcDnSssAJiHiO67GVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Jftn0cMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nKi4Pj31; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ssji292W; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CodwJhsG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CF81D21D02;
-	Wed,  9 Oct 2024 08:24:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728462252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
-	b=Jftn0cMQ5/EV9IceEPTPotciDO+xsX4gm04IT+c7dsm0uZMnB6zpkXVWuxpeTdlUOnR2jU
-	0hPZK5dxJy9+GLHSOHgv6ViZlbIdbnWW+5K1QjgVGCTL+IIxB1FWuBmFfPLdIa1xEbd29v
-	btL9JzZuyBc/HGzYs0T+G1ykdblUrwI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728462252;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
-	b=nKi4Pj31aRjOUfcEmSIkr+594wvSqSaGAFQ5wwYX5rJUksxUsCKYiufNoKpf0k5i9Vpsi9
-	sx0OndLXKxa5rVDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ssji292W;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CodwJhsG
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728462251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
-	b=ssji292WQVMRMhwa+GLKPIS9dQi1tbOqahYJ2A6UVf15NL3eHrgS2nou0UVM16NngvFvAS
-	/9Ij3WfWFQBG9E8wEs0yeXZK1iCLdtP23Xg3cG6QAw+DQGL6Pa1iJMDMUqlnBu6I0BRIr2
-	H1pFoc+W8XTu3+BsqYSpOea0t0N/3Ko=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728462251;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zS64yBY5Rmp3ERwjtxhTvL5L38yGTO94XRd/B6dj5fw=;
-	b=CodwJhsGQCPvuT9XoVDkR0YRY77SMDR899rL7tPOzzOS2zj5fqsHpMXeqPrIQY8tlswjdx
-	zJcqusF3MgE1W8CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAB1B136BA;
-	Wed,  9 Oct 2024 08:24:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WtuqH6g9BmcTTAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 09 Oct 2024 08:24:08 +0000
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728462295; c=relaxed/simple;
+	bh=AMqeygrDRnZkLZfYdb04EQ9i5yeRMyIrwByGC8Glue8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XPK9S4l/jLFYjnV/O579s4wKoNXHnrKLfcdRTBv5LsUFQXmwOuG1ybnJs5m/JqL5y2V3xcVp3Qp+570898+Dfi6Y5Wzz3s8UCoH79WjPcaEiWahukyq17XXDmYwUfjQ0lHE006hK6SoB49+LO9DmBskY2Der5I814O1jrSm/VM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nt4mRQlY; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728462294; x=1759998294;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=AMqeygrDRnZkLZfYdb04EQ9i5yeRMyIrwByGC8Glue8=;
+  b=Nt4mRQlY6uFmpmsbJTkNSaGsPo0kC+O5tmGBBZwedjmpcfdATxyrwY9o
+   uB2mWn0z+0Fsl+V99BRAnS6ibYMvsZwxeodPVrkHM5b2yrCqFWLpphalZ
+   1VHBq8P0RWMCWnNIz08G5QFcG+4OFhPHQCkPhtmUuPfUBmxCpepeDJUFh
+   rSwXOs1PuiO8lz28b1gxc/P4aoVUGjERTU/3T4p+H6ohuS4e7yjHv1Oke
+   ty0JEPo3oLLm4YGaebVfA4T1uc/4CEBXUohAS/RyRA3F4zoZHpMdsEv8H
+   WmQfuuQykF9zYyPKQYhI4HxSgynpbn4dnC6BrNdmOZAJdmlZHUQtv04Ss
+   w==;
+X-CSE-ConnectionGUID: nGPd87aaSi6aslYvXJYPvg==
+X-CSE-MsgGUID: Zy79GCrtSIWMgbe6/KrCMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38334120"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="38334120"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:24:50 -0700
+X-CSE-ConnectionGUID: LfoKvX/CRRGMoOyFu8Vr6w==
+X-CSE-MsgGUID: Mfs71pT1T/6Al5E1oGikIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="106932801"
+Received: from mklonows-mobl1.ger.corp.intel.com ([10.245.246.66])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:24:49 -0700
+Message-ID: <accb9ceb501197b71259d8d3996c461dcef1e7d6.camel@linux.intel.com>
+Subject: Re: [PATCH 1/1] nvme-pci: Add CPU latency pm-qos handling
+From: Tero Kristo <tero.kristo@linux.intel.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org, axboe@kernel.dk, 
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, kbusch@kernel.org
+Date: Wed, 09 Oct 2024 11:24:45 +0300
+In-Reply-To: <20241009080052.GA16711@lst.de>
+References: <20241004101014.3716006-1-tero.kristo@linux.intel.com>
+	 <20241004101014.3716006-2-tero.kristo@linux.intel.com>
+	 <20241007061926.GA800@lst.de>
+	 <913b063d0638614bc95d92969879d2096ffc0722.camel@linux.intel.com>
+	 <20241009080052.GA16711@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Ingo Molnar" <mingo@kernel.org>
-Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra" <peterz@infradead.org>,
- "Kent Overstreet" <kent.overstreet@linux.dev>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linux Next Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of
- waitqueue entry
-In-reply-to: <ZwY6gWsZCq_SdDKI@gmail.com>
-References: <>, <ZwY6gWsZCq_SdDKI@gmail.com>
-Date: Wed, 09 Oct 2024 19:24:01 +1100
-Message-id: <172846224138.444407.2293511819402322368@noble.neil.brown.name>
-X-Rspamd-Queue-Id: CF81D21D02
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email,auug.org.au:email];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
 
-On Wed, 09 Oct 2024, Ingo Molnar wrote:
-> * NeilBrown <neilb@suse.de> wrote:
+On Wed, 2024-10-09 at 10:00 +0200, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2024 at 09:45:07AM +0300, Tero Kristo wrote:
+> > Initially, I posted the patch against block layer, but there the
+> > recommendation was to move this closer to the HW; i.e. NVMe driver
+> > level.
 >=20
-> > On Wed, 09 Oct 2024, Stephen Rothwell wrote:
-> > > Hi all,
-> > >=20
-> > > After merging the tip tree, today's linux-next build (x86_64 allmodconf=
-ig)
-> > > failed like this:
-> > >=20
-> > > In file included from include/linux/fs.h:6,
-> > >                  from include/linux/highmem.h:5,
-> > >                  from include/linux/bvec.h:10,
-> > >                  from include/linux/blk_types.h:10,
-> > >                  from include/linux/bio.h:10,
-> > >                  from fs/bcachefs/bcachefs.h:188,
-> > >                  from fs/bcachefs/fs.c:4:
-> > > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
-> > > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *'=
- from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatibl=
-e-pointer-types]
-> > >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
-> >=20
-> > The fix we want is to replace that line with
-> >    struct wait_bit_queue_entry wait;
-> > I should have checked more carefully - sorry.
-> >=20
-> > I guess we wait for rc3?
-> >=20
-> > Kent: could you please make that change?  The inode_bit_waitqueue() does
-> > initialisation equivalent of DEFINE_WAIT_BIT() so you only need the decla=
-ration.
+> Even if it is called from NVMe, at lot of the code is not nvme
+> specific.
+> Some of it appears block specific and other pats are entirely
+> generic.
 >=20
-> Since the breakage was introduced via tip:sched/core, I've applied the fix =
+> But I still don't see how walking cpumasks and updating paramters in
+> far away (in terms of cache lines and pointer dereferences) for every
+> single I/O could work without having a huge performance impact.
+>=20
 
-> below.
->=20
-> Does this look good to you?
+Generally, the cpumask only has a couple of CPUs on it; yes its true on
+certain setups every CPU of the system may end up on it, but then the
+user has the option to not enable this feature at all. In my testing
+system, there is a separate NVME irq for each CPU, so the affinity mask
+only contains one bit.
 
-Perfect, thanks.
+Also, the code tries to avoid calling the heavy PM QoS stuff, by
+checking if the request is already active, and updating the values in a
+workqueue later on. Generally the heavy-ish parameter update only
+happens on the first activity of a burst of NVMe accesses.
 
-NeilBrown
-
->=20
-> Thanks,
->=20
-> 	Ingo
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D>
-> From: Ingo Molnar <mingo@kernel.org>
-> Date: Wed, 9 Oct 2024 10:00:09 +0200
-> Subject: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of w=
-aitqueue entry
->=20
-> The following recent commit made DEFINE_WAIT_BIT() type requirements strict=
-er:
->=20
->   2382d68d7d43 ("sched: change wake_up_bit() and related function to expect=
- unsigned long *")
->=20
-> .. which results in a build failure:
->=20
->   > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
->   > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *'=
- from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatibl=
-e-pointer-types]
->   >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
->=20
-> Since this code relies on the waitqueue initialization within
-> inode_bit_waitqueue() anyway, the DEFINE_WAIT_BIT() initialization
-> is unnecessary - we can just declare a waitqueue entry.
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Suggested-by: NeilBrown <neilb@suse.de>
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  fs/bcachefs/fs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index 5bfc26d58270..c410133541ba 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -183,8 +183,9 @@ static void __wait_on_freeing_inode(struct bch_fs *c,
->  				    struct bch_inode_info *inode,
->  				    subvol_inum inum)
->  {
-> +	struct wait_bit_queue_entry wait;
->  	wait_queue_head_t *wq;
-> -	DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
-> +
->  	wq =3D inode_bit_waitqueue(&wait, &inode->v, __I_NEW);
->  	prepare_to_wait(wq, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
->  	spin_unlock(&inode->v.i_lock);
->=20
->=20
+-Tero
 
 
