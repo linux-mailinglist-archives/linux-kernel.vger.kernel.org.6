@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-357854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62DB9976FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 330B299770C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6551FB23278
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:54:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0189B22443
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1DD191473;
-	Wed,  9 Oct 2024 20:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1831E25F5;
+	Wed,  9 Oct 2024 20:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RGdLAoHq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="dbMHHWHq"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DD41E261C;
-	Wed,  9 Oct 2024 20:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73E6188926;
+	Wed,  9 Oct 2024 20:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507215; cv=none; b=RSX/Ag+zUOX61Wv2+iLri5NvNiuH4E4SNJvzGIUQiOw9sVILBI70HFZ8fuj54kUMlWdvN+VnVE0CDRM+2nt2sutYhutw4Co8t36hbhgIzoFpIUN9NefJc8FO6G07vG8ZX/UwWmQ3LMjVuzhAG/y9o1V1trBz7RdsYmazYqoWJFo=
+	t=1728507399; cv=none; b=IUHBeapP5vTgtu3HUhYaJlzU+jmXkWwTkSrZM0r1K1w3iOCYNaf2MjrqfC+lnmaJtAA1XT5G9nsosO0BMTKENPOuhFTXtcH3z7BbAwmGTPtAJ5/8whZ5I9+ksYgzAQnfcgTqcJcLxhxRPoQGzCu0j8UZIlOF0qffLKysV/P0iPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507215; c=relaxed/simple;
-	bh=FcJRErXKWZeyLJXsOZFTRdu9dQaNgwhiRsBx9Yx1msw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iozhX8U413859+ykRDnU6uaUZ3B9/IAAHn9cmj3KzNCuzITbrSHNwvA5cRI4CtL3r/oT9AyPrmKX1lnNDmZvAmlLQ3VLld4KzvtF1cZWpYfgYXaZ4H8M6vgJHJ90BUQeV+rG223fs2kfMlGVJ+VvdbgRIzkAErWVCnerhbtvuI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RGdLAoHq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CEFC4CEC3;
-	Wed,  9 Oct 2024 20:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728507215;
-	bh=FcJRErXKWZeyLJXsOZFTRdu9dQaNgwhiRsBx9Yx1msw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RGdLAoHqDhMPhThS6WboV0n8T0pbrH2j5Ccj7HZxLCbGXgIaPwUxsjisE08oYVC+Y
-	 qahBh2nuv8HxDP+HP3o/jKtufyEey8tPUCsfR2hnsR59JobBzNgA3k4s1gahzXrAce
-	 JDWUme9qd72FY8x/f542eVq2Wmz/kfYrBCwL/lpA=
-Date: Wed, 9 Oct 2024 16:53:33 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, Daolong Zhu <jg_daolongzhu@mediatek.corp-partner.google.com>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the mediatek tree
-Message-ID: <20241009-prudent-pompous-sheep-40ed20@lemur>
-References: <20241009071543.5230cf79@canb.auug.org.au>
- <c97da0be-6924-48de-9cf3-0ba9d5e6a73e@kernel.org>
+	s=arc-20240116; t=1728507399; c=relaxed/simple;
+	bh=uHecwGZTeAdJYv1+uRlHFdDx0vUd1P+3XExydJncsoU=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Il4SHu3cE2A3HQmPYV9pve7hXKUoRxoVMPBWBz134W3IXnR6Blhxj38DrgTpCWU1rvQIol3VexNAtiqE1PR70krtaxOXgALphqf2gqA/kLA/PC+vsCj2lJJCzay6UEJNdgfpDepC9+SnYFpyR1eadGkWKhNeXUeqZSaSwwpWhqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=dbMHHWHq; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=pcw8S7IZiwFrBBm3SN24yyQYyUIOE4d4lAS5k1CzpUg=; b=dbMHHWHqAZU0hcHHkIX+LRJS1y
+	WgIZF/nZFK+CLATPf0ZxBjtBoUg7YN3y3Ieee2SAB7uvObxcFl7MJ5hsM65RlyXvmifXRbfJsdaD8
+	hwpNCkSZHzEXIOOzoACcoRm/+5enSoiHLYFtSp6I0zAVEWAGV6VfSf71YYKtbrRQFRMCMN2amqrYy
+	obB6maNn464AlbC+nS/uvyx4B+Q8oo0FatVykKuWkk5RnN/Z0ovnx1zoxJs3OK9Cs603mvZwxL7/9
+	vm4mAQiQgFGBQS3UbRyY+o8cF+EQGZ6mQicZ4SildBA2HQJMTZ3APJ3N6MBvi7q43kh1kDWqfx/FK
+	xKl6XGzA==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Tony Lindgren <tony@atomide.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	linux-omap@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	devicetree@vger.kernel.org,
+	Andreas Kemnade <andreas@kemnade.info>,
+	linux-clk@vger.kernel.org,
+	Tero Kristo <kristo@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 0/2] dt-bindings: clock: ti: convert to yaml
+Date: Wed,  9 Oct 2024 22:56:17 +0200
+Message-Id: <20241009205619.16250-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c97da0be-6924-48de-9cf3-0ba9d5e6a73e@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 09:52:14AM GMT, AngeloGioacchino Del Regno wrote:
-> >    65b99309a9c1 ("arm64: dts: mt8183: Damu: add i2c2's i2c-scl-internal-delay-ns")
-> >    025869564bf8 ("arm64: dts: mt8183: cozmo: add i2c2's i2c-scl-internal-delay-ns")
-> >    3d3bc7cb46e8 ("arm64: dts: mt8183: burnet: add i2c2's i2c-scl-internal-delay-ns")
-> >    5bbddfd0470f ("arm64: dts: mt8183: fennel: add i2c2's i2c-scl-internal-delay-ns")
-> > (The above also has an empty Reviewed-by tag)
-> >    ca80f75083f6 ("arm64: dts: mt8183: set DMIC one-wire mode on Damu")
-> > 
-> > are missing a Signed-off-by from their authors.
-> > 
-> 
-> The empty R-b happened because b4 didn't interpret "<email>2" correctly
-> and dropped the email entirely. We should probably report that to the authors.
+Convert some clock schemas to yaml. These are one of the most used non-yaml
+compatibles.
 
-Consider it reported. :) However, I'm not sure I understand what the situation
-is. When I pull that series with ``b4 -slH shazam``, all the trailers are
-properly preserved as far as I can tell:
+All can appear under a ti,clksel or without a ti,clksel
 
-    arm64: dts: mt8183: Damu: add i2c2's i2c-scl-internal-delay-ns
+Reason for being RFC. In the comments for the first version, it was said that
+everything which can be below a ti,clksel should be converted at the same
+time. But I want to know whether I am on the right track.
+I plan to convert the clock things from time to time.
+So enforcing certain compatibles below ti,clksel i not there yet.
 
-    Add i2c2's i2c-scl-internal-delay-ns.
+Open question: I set license to GPL-2 only because the .txt bindings the
+yaml binding was derived from were
+GPL-2. I personally have no problem with dual-licensing the binding.
+No idea about the legal side wether that is possible or who must agree.
 
-    Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
-    Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-    Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-    Signed-off-by: Daolong Zhu <jg_daolongzhu@mediatek.corp-partner.google.com>
-    Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-    Link: https://lore.kernel.org/r/20241009-i2c-delay-v1-4-6cf59721c1d1@chromium.org
-    Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Changes in v2:
+- added conversion of divider
+- require reg now, makes sense after
+  https://lore.kernel.org/linux-omap/20240213105730.5287-1-tony@atomide.com/
+- clean up of examples
+- improvement of documentation
 
--K
+v1 is at https://lore.kernel.org/linux-omap/20231127202359.145778-1-andreas@kemnade.info/
+
+Andreas Kemnade (2):
+  dt-bindings: clock: ti: Convert interface.txt to json-schema
+  dt-bindings: clock: ti: Convert divider.txt to json-schema
+
+ .../devicetree/bindings/clock/ti/divider.txt  | 115 ------------
+ .../bindings/clock/ti/interface.txt           |  55 ------
+ .../bindings/clock/ti/ti,divider-clock.yaml   | 175 ++++++++++++++++++
+ .../bindings/clock/ti/ti,interface-clock.yaml |  70 +++++++
+ 4 files changed, 245 insertions(+), 170 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/divider.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/interface.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+
+-- 
+2.39.5
+
 
