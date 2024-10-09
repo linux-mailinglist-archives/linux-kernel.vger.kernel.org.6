@@ -1,150 +1,73 @@
-Return-Path: <linux-kernel+bounces-356135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162D4995CE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:22:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE4F995CEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C7F281E57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED43E283EB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B77208AD;
-	Wed,  9 Oct 2024 01:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C8126AEC;
+	Wed,  9 Oct 2024 01:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="A76D2eMy"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyX8NKAi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2808A1D69E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73111D69E;
+	Wed,  9 Oct 2024 01:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728436949; cv=none; b=u5n/9wwjwPCJ/lYpQMiVPB/4dLLcwp88rsfPYCRaBxLykXVYCmS4s5SkgKJR4vTyYjovTZVOOXBU6MjZnYvDO0locQhmp5uUXUZ0IfuVM9UbIbZUsdm88KVvcQc8r8UgQYJgnZ85tV9qOI5d42EUd0vvPq8d8EcpFndx+K7PAYA=
+	t=1728437000; cv=none; b=Ng/qXHdmOR7Il2ZjPyfciLct6Xyiq3XD0At3ZMc0+69+8Y0FR9Ks5LpNpVClfHGEXN3tNVFCgIrQvRRNQKMx9/ZG5xtrZnhLpLoTXm36NoocS1hBtuhy/dUUndJLhWRwLOcpl1npibMLNo4kqwWI8F2M2dAOerNycqB2c0xF8Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728436949; c=relaxed/simple;
-	bh=2/gdytTm58c00coHdu01bJZpd8u4AcBhkNSGLII9zr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VRShtJiGe/xm/UjLT6A/Jbs0hEYJuDlabsCmL+Xf5j3rBoRIHICGTzgQyfPpTj30CPfJmMcZyraLKpXdCzTPXadMJiIGPenZtPUPQFFzjVQuoLh0O3fAL4G/af4hHHihbIExoLt4D5TvXZIevTjow0BfqJpSGm3K0E0YcoaGfGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=A76D2eMy; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tJyW4ZN60tbTpTzD51j4XITsXQiDYeHOsfRuqSqgZW8=; b=A76D2eMyQ1LtPGJR9OvJ5lR6Dt
-	LOK6AyPVyiuVRbXNcCADWDS6g/WLFPAS+2oV6ykpmlYCsZD9lzoVUqkpb2yuy+mdj1uQhM3uMp0aU
-	sTQrFSLG4W9nmB70S5l+qJpT9raKdMnaOKywi708qWFMxTCpKbR33y6ZGC8LWW2g2nnH0um6obEVw
-	LauHvieW5e6O0V+fy0no5dNcRzSJA62W/+Qh305PEI1bvIeY19nDWD3pYo6WB0iwpY0NL1CVd84Pn
-	AEF2wAIXB3Y+Fpxi6P8ySNGV0wODnGiaFQb2/Sxj0LNF60y+2k8Ulm/tLHhZTP9HbE3MEq4j2zHIg
-	Bkxj7QRA==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1syLOy-006m2V-Mv; Wed, 09 Oct 2024 03:22:09 +0200
-Message-ID: <63aec47f-03e7-40aa-b542-f851c9b64036@igalia.com>
-Date: Tue, 8 Oct 2024 22:22:00 -0300
+	s=arc-20240116; t=1728437000; c=relaxed/simple;
+	bh=wTCYdKXrgiQ4lcB+fld8z2feFjjA0DF0+kpsDIKbrD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T2FjXc8/51E778e1NtEmYuFn8zd32bCqqtdUzogEkkxoTMHqRLiRGM0oInkirL6j15cSh3BuVRE1tbHw2jrlwGExpEMd+d4VKI+HUm0XaAgSOVsY0F2CYEuEilpc4VgRWhgkPEy0vKOLVQOCYrrs3rgqf5qEN6CX3ZsDzL4dAaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyX8NKAi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D7EC4CEC7;
+	Wed,  9 Oct 2024 01:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728437000;
+	bh=wTCYdKXrgiQ4lcB+fld8z2feFjjA0DF0+kpsDIKbrD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gyX8NKAifQyJI/fQbBRliIl7CI8rjLJgM2ba06M+lUToiTCeDOgbAFSqwkop74sP0
+	 odZjCIjb7JhJ3H6iaMJfZn2gctiPWXV66DntlQakHuoPC1ptcFtcw3+vkV5jMpjNUk
+	 H58oyH/tWaU4EEYt8XRut8lZAvIfYFz6uvTGzqdisC+59Tc1cGQMMMPKkoR0jgoDaB
+	 CyTL4+28sitHf7kvbH8qRAElzj/OLHsCoERXIw4+y91x71IuduPRBLD3wu09GQz0pH
+	 jJy6Uh1cq1OZ5DcpwhgKLnrJj1GqvgBUhofH0bQNH3G4l/TkVKAQWaQMabH66Ua+Dw
+	 A2hcLykvZzGbQ==
+Date: Tue, 8 Oct 2024 18:23:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Artem Chernyshev <artem.chernyshev@red-soft.ru>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH net] pktgen: Avoid out-of-range in get_imix_entries
+Message-ID: <20241008182319.0a6fe8ad@kernel.org>
+In-Reply-To: <20241006221221.3744995-1-artem.chernyshev@red-soft.ru>
+References: <20241006221221.3744995-1-artem.chernyshev@red-soft.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/vc4: Match drm_dev_enter and exit calls in
- vc4_hvs_lut_load
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maxime Ripard <mripard@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241008-drm-vc4-fixes-v1-0-9d0396ca9f42@raspberrypi.com>
- <20241008-drm-vc4-fixes-v1-1-9d0396ca9f42@raspberrypi.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <20241008-drm-vc4-fixes-v1-1-9d0396ca9f42@raspberrypi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dave,
+On Mon,  7 Oct 2024 01:12:20 +0300 Artem Chernyshev wrote:
+> In get_imit_enries() pkt_dev->n_imix_entries = MAX_IMIX_ENTRIES 
+> leads to oob for pkt_dev->imix_entries array.
 
-On 10/8/24 13:44, Dave Stevenson wrote:
-> Commit 52efe364d196 ("drm/vc4: hvs: Don't write gamma luts on 2711")
-> added a return path to vc4_hvs_lut_load that had called
-> drm_dev_enter, but not drm_dev_exit.
-> 
-> Ensure we call drm_dev_exit.
-> 
-> Fixes: 52efe364d196 ("drm/vc4: hvs: Don't write gamma luts on 2711")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/dri-devel/37051126-3921-4afe-a936-5f828bff5752@samsung.com/
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->   drivers/gpu/drm/vc4/vc4_hvs.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index 2a366a607fcc..546ee11016b2 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -225,7 +225,7 @@ static void vc4_hvs_lut_load(struct vc4_hvs *hvs,
->   		return;
->   
->   	if (hvs->vc4->gen == VC4_GEN_4)
-> -		return;
-> +		goto exit;
+I don't think so, at least not exactly. It's legal to fill the array
+completely. It's not legal to try to _add_ to an already full array.
 
-As exit only has one function, I'd probably switch `return;` to
-`return drm_dev_exit(idx);` as `drm_dev_exit()` returns void.
-
-But this isn't critical, so:
-
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
-
-Best Regards,
-- Maíra
-
->   
->   	/* The LUT memory is laid out with each HVS channel in order,
->   	 * each of which takes 256 writes for R, 256 for G, then 256
-> @@ -242,6 +242,7 @@ static void vc4_hvs_lut_load(struct vc4_hvs *hvs,
->   	for (i = 0; i < crtc->gamma_size; i++)
->   		HVS_WRITE(SCALER_GAMDATA, vc4_crtc->lut_b[i]);
->   
-> +exit:
->   	drm_dev_exit(idx);
->   }
->   
-> 
+AFAICT the fix needs more work.
+-- 
+pw-bot: cr
 
