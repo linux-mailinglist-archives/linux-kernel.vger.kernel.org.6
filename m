@@ -1,250 +1,130 @@
-Return-Path: <linux-kernel+bounces-358028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364DC997964
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:55:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8743997966
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E523F282147
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA09E1C224F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0C11E501C;
-	Wed,  9 Oct 2024 23:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E211E47BE;
+	Wed,  9 Oct 2024 23:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ds3vIpNC"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wmPbI0HK"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201E91E491B;
-	Wed,  9 Oct 2024 23:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4FC149C4F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 23:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728518083; cv=none; b=fay9e5MV39IjOF7e9IpnJPDA6wAJ0Dx6qMx8UeIdFkxdvMf6bxKyY8bXuksRKoQTz8Oj/2PFI8+HX+q+mO22aRZA9TIWMnbyf1O9Jm5ek9iwnEatXl86bWoxu/emysCP4oEMDXfr1TxFW41Mi5gMIQHvxHXBMH1XkZSgJrlc8WU=
+	t=1728518132; cv=none; b=uAu7Bo5UxSG9APB/6ILqtMuryXrs0yfKL7/5y47RhMDSjyb96rRCLvb7KD7/iUyumxPgt0HpPhAs+deprpdACOXscDfk9It20nVXUYn/+SzjYB5FX8+UVfEjt6agqnq25doKYIn7N7FH8ZxaFxccUOf3wk6cMfWLqKuhMYe5O2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728518083; c=relaxed/simple;
-	bh=C4RxgxGD8npyQ5TKaAsfJ3EgvIXM0eWN4rL7hE/n5TI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUxNF734SA2nmDNw+gCN7WYqdCnpJ8YUqd8K7+lILfFIfUv8wozqzh2mxjCjBvpPwZYqBRVCdADR/wyKo+zGJsmET+BFLH+h176mQ41F8QxDmsOOAQDWHhxvDIGLY73Q56c7uzZfK5/dsWuHYFgzQkCU9eKl1pe2QC3hQ4z33sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ds3vIpNC; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a83562f9be9so43045966b.0;
-        Wed, 09 Oct 2024 16:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728518079; x=1729122879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v4xmhm/VtsFlv3tQGHKk9vIOcQkMuUm999BkbL9givE=;
-        b=ds3vIpNCiWkAVqw9bxq/x7ERzn9USl5K00HwWeTBtBsWwftRstHsKP5cfa7n+BMMhr
-         7W1TQwMuXOyCE2FCFYl/VMceYl6buB9dlosvq/sMmxlCenNcjGYPdZtHnYk9ZCOi+7cm
-         urL557ZnvM6p5CteZJmaa/2G+3Smsitumfc91R8et0PGSR6Bi0M1P8UaJHnAEIu+5RON
-         t7N+46n2gC2+D+LpOjJ45LhjixOVX5f/mXq22pOhM166Hqt/kAiCN28GcnqGbunyi6ax
-         dGlovFyfZ8sVpr2VmnWIEBmt/xxW/xljKg0XURPvb57bET2pEOFF+SBetGQeadOpkWLg
-         UPug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728518079; x=1729122879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v4xmhm/VtsFlv3tQGHKk9vIOcQkMuUm999BkbL9givE=;
-        b=eS8hzTPEBvo4BnQcgKLVNeqI0jCvr18e6aN8FmtGPwewGMVHsIMYMBwNuPmD82OUoB
-         f9gIQ089wc+wukLcIBJXMnoSkCilDbHLSJUDX+/1Iraypj6D4eAU0vHkg15li/7fTc93
-         +JXd++muuKJOjEIGvM1jhkeI4Og0Pex7qH5mutp2hlBtIjNwpBQYV9PgKmelcTT5FITP
-         npIh0OtX/sFfTCWo0ozaS97gqWPpn7/4K9+b9xIETqnnJyicWecS4WPNVtHpxe8IfSzo
-         oQR/UN+91gZjOEiW80c4vuyVdqwge+0l+PKiptTD2paVNelHdC/Of3KzV1jCDxTbNLrD
-         GBYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP/Q58qLOp6HoZD+rNx6m+yadMssEM3ZbrZ3HiHNycjKRl1qyNO6ukSKyEiqYD6DcIsDE=@vger.kernel.org, AJvYcCVRYMyeK4BfnBU4nxuysBdZMdLDyp5q/oyjyQHfAhHfhNZcU6mb/MbUMqeMCuDkhzz0QpLvEO1krNyo51q0@vger.kernel.org, AJvYcCVfzO3p4+y55NMwmbZ/Y1bQS/TLioMIOJcb4o35NIGxf3UIQ7LMzCCcLkrKIfP8ienJbWi61+4igKEJC/mLtKQwbvrg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsQoUQnXhoVZ1Fx4WYLd9+mZSbTm+zw0YmlOD6JRKbvxBEN07E
-	0aIrOf1/UAWRbSFjjl7rLijlTariMwMID9LFNinpRdm2+GhFb0XsvQDt6WRfKVqnXM2nsoSSMNX
-	iZ1r+J6eYKms9htRFKl5LRlmIW/Y=
-X-Google-Smtp-Source: AGHT+IG64IU/+X3l3Z/u7NsnGMUvAfPglJCyCiBPGKYHJdUDIIi3RIJBO9KDuSsIy9TgEyssEKuYG83JfyLN8zj/eU4=
-X-Received: by 2002:a17:907:e2d9:b0:a93:c1dd:7952 with SMTP id
- a640c23a62f3a-a998d32ef7bmr373405966b.56.1728518079334; Wed, 09 Oct 2024
- 16:54:39 -0700 (PDT)
+	s=arc-20240116; t=1728518132; c=relaxed/simple;
+	bh=qHOExL+m94eWa2cgVA8y4g+ufofYJ5Zq8B3r5x5ZKOo=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=UQmOg8PPn+JUlbhse20nPN9LPU7xbkFMQwsaM/5qseRCdyKZVyd/jt2WF4/DtJE5WFiw0r7f/Szc5L2ZYmbBFEmCeXP/54b3JALttryHUxrH3WEU8B8YpU4RrtHJXS9MbJ9dg67HwI/hcfqfnNA/TgiFHwtfO59txlj3X6gZS60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wmPbI0HK; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
+	by cmsmtp with ESMTPS
+	id yARFsmJ3niA19ygWasp6KY; Wed, 09 Oct 2024 23:55:24 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id ygWZsvK0VGNqBygWasKg30; Wed, 09 Oct 2024 23:55:24 +0000
+X-Authority-Analysis: v=2.4 cv=cqidkU4i c=1 sm=1 tr=0 ts=670717ec
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qz3nJ7VPPRrQ3fo9WI3Ql+6KHu0dzpOhd13Cpiv2E6Y=; b=wmPbI0HKMsBgv50f3/OIdGK500
+	h4aiw1EkGQQPUuubzpnRG43qsylHFpSDnxREXGHUnid97BKjquBrt61JutCoY1mowoLLY1GMW7sbb
+	ERdw/OQtds5+2c7QnOPA0OvzhpA7qW69FtFr2VgULxoG+v4x/97sh7V/S5iXaa95KNYUcshXHUTKH
+	/eakGIgpbFdyibYIRlnaDPUGfBP7P4Uo23+3esj+I0AT4uy94ttUe59F0JbNxnAz2PdgURtn2H0V5
+	uliVo1zXWCnyHxV4L0wDSKczyOo8aNnHOLsR2TLVa82lfewDWqZW8dGPZSlG09wZRqbQq1Vpvj7DZ
+	SNkzNsOA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46218 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sygWX-002jTP-1q;
+	Wed, 09 Oct 2024 17:55:21 -0600
+Subject: Re: [PATCH 6.11 000/558] 6.11.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241008115702.214071228@linuxfoundation.org>
+In-Reply-To: <20241008115702.214071228@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <20cc7325-c036-fddd-0324-7b5244a43e63@w6rz.net>
+Date: Wed, 9 Oct 2024 16:55:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909071114.1150053-1-liaochang1@huawei.com>
-In-Reply-To: <20240909071114.1150053-1-liaochang1@huawei.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 9 Oct 2024 16:54:25 -0700
-Message-ID: <CAEf4BzZVUPZHyuyt6zGZVTQ3sB8u64Wxfuks9BGq-HXGM1yp3A@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: insn: Simulate nop instruction for better
- uprobe performance
-To: Liao Chang <liaochang1@huawei.com>, will@kernel.org, mark.rutland@arm.com
-Cc: catalin.marinas@arm.com, ast@kernel.org, puranjay@kernel.org, 
-	andrii@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sygWX-002jTP-1q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:46218
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfI5vonbw6ygdh3lN383ZU1kSsgIHsCSlQ3QzSeiTKZX4ZBNx9QAGRVPdqhHRBihsQEfs64Ezs3cmgU+Y+9/av988uuE6xKQGH8O6KfZcYSlMj8tESJX+
+ bkItDWPskM2aHRBQuM6Sy2AZ13B/rj1MiqF6+MS1ENuteG0eyrPc8gFn1mHbQCpCKHNqAfHuovbROk8KCym35fpofbUI/tgGe88=
 
-On Mon, Sep 9, 2024 at 12:21=E2=80=AFAM Liao Chang <liaochang1@huawei.com> =
-wrote:
+On 10/8/24 5:00 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.3 release.
+> There are 558 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> v2->v1:
-> 1. Remove the simuation of STP and the related bits.
-> 2. Use arm64_skip_faulting_instruction for single-stepping or FEAT_BTI
->    scenario.
+> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+> Anything received after that time might be too late.
 >
-> As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
-> counterintuitive result that nop and push variants are much slower than
-> ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
-> which excludes 'nop' and 'stp' from the emulatable instructions list.
-> This force the kernel returns to userspace and execute them out-of-line,
-> then trapping back to kernel for running uprobe callback functions. This
-> leads to a significant performance overhead compared to 'ret' variant,
-> which is already emulated.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.3-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
 >
-> Typicall uprobe is installed on 'nop' for USDT and on function entry
-> which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
-> and fp into stack regardless kernel or userspace binary. In order to
-> improve the performance of handling uprobe for common usecases. This
-> patch supports the emulation of Arm64 equvialents instructions of 'nop'
-> and 'push'. The benchmark results below indicates the performance gain
-> of emulation is obvious.
+> thanks,
 >
-> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
->
-> xol (1 cpus)
-> ------------
-> uprobe-nop:  0.916 =C2=B1 0.001M/s (0.916M/prod)
-> uprobe-push: 0.908 =C2=B1 0.001M/s (0.908M/prod)
-> uprobe-ret:  1.855 =C2=B1 0.000M/s (1.855M/prod)
-> uretprobe-nop:  0.640 =C2=B1 0.000M/s (0.640M/prod)
-> uretprobe-push: 0.633 =C2=B1 0.001M/s (0.633M/prod)
-> uretprobe-ret:  0.978 =C2=B1 0.003M/s (0.978M/prod)
->
-> emulation (1 cpus)
-> -------------------
-> uprobe-nop:  1.862 =C2=B1 0.002M/s  (1.862M/prod)
-> uprobe-push: 1.743 =C2=B1 0.006M/s  (1.743M/prod)
-> uprobe-ret:  1.840 =C2=B1 0.001M/s  (1.840M/prod)
-> uretprobe-nop:  0.964 =C2=B1 0.004M/s  (0.964M/prod)
-> uretprobe-push: 0.936 =C2=B1 0.004M/s  (0.936M/prod)
-> uretprobe-ret:  0.940 =C2=B1 0.001M/s  (0.940M/prod)
->
-> As shown above, the performance gap between 'nop/push' and 'ret'
-> variants has been significantly reduced. Due to the emulation of 'push'
-> instruction needs to access userspace memory, it spent more cycles than
-> the other.
->
-> As Mark suggested [1], it is painful to emulate the correct atomicity
-> and ordering properties of STP, especially when it interacts with MTE,
-> POE, etc. So this patch just focus on the simuation of 'nop'. The
-> simluation of STP and related changes will be addressed in a separate
-> patch.
->
-> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02e=
-zZ5YruVuQw@mail.gmail.com/
-> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
->
-> CC: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Liao Chang <liaochang1@huawei.com>
-> ---
->  arch/arm64/include/asm/insn.h            |  6 ++++++
->  arch/arm64/kernel/probes/decode-insn.c   |  9 +++++++++
->  arch/arm64/kernel/probes/simulate-insn.c | 11 +++++++++++
->  arch/arm64/kernel/probes/simulate-insn.h |  1 +
->  4 files changed, 27 insertions(+)
->
+> greg k-h
 
-I'm curious what's the status of this patch? It received no comments
-so far in the last month. Can someone on the ARM64 side of things
-please take a look? (or maybe it was applied to some tree and there
-was just no notification?)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-This is a very useful performance optimization for uprobe tracing on
-ARM64, so would be nice to get it in during current release cycle.
-Thank you!
+Tested-by: Ron Economos <re@w6rz.net>
 
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.=
-h
-> index 8c0a36f72d6f..dd530d5c3d67 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -549,6 +549,12 @@ static __always_inline bool aarch64_insn_uses_litera=
-l(u32 insn)
->                aarch64_insn_is_prfm_lit(insn);
->  }
->
-> +static __always_inline bool aarch64_insn_is_nop(u32 insn)
-> +{
-> +       return aarch64_insn_is_hint(insn) &&
-> +              ((insn & 0xFE0) =3D=3D AARCH64_INSN_HINT_NOP);
-> +}
-> +
->  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
->  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 i=
-nsn);
->  u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
-> diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/p=
-robes/decode-insn.c
-> index 968d5fffe233..be54539e309e 100644
-> --- a/arch/arm64/kernel/probes/decode-insn.c
-> +++ b/arch/arm64/kernel/probes/decode-insn.c
-> @@ -75,6 +75,15 @@ static bool __kprobes aarch64_insn_is_steppable(u32 in=
-sn)
->  enum probe_insn __kprobes
->  arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api)
->  {
-> +       /*
-> +        * While 'nop' instruction can execute in the out-of-line slot,
-> +        * simulating them in breakpoint handling offers better performan=
-ce.
-> +        */
-> +       if (aarch64_insn_is_nop(insn)) {
-> +               api->handler =3D simulate_nop;
-> +               return INSN_GOOD_NO_SLOT;
-> +       }
-> +
->         /*
->          * Instructions reading or modifying the PC won't work from the X=
-OL
->          * slot.
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel=
-/probes/simulate-insn.c
-> index 22d0b3252476..5e4f887a074c 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.c
-> +++ b/arch/arm64/kernel/probes/simulate-insn.c
-> @@ -200,3 +200,14 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct=
- pt_regs *regs)
->
->         instruction_pointer_set(regs, instruction_pointer(regs) + 4);
->  }
-> +
-> +void __kprobes
-> +simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
-> +{
-> +       /*
-> +        * Compared to instruction_pointer_set(), it offers better
-> +        * compatibility with single-stepping and execution in target
-> +        * guarded memory.
-> +        */
-> +       arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-> +}
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel=
-/probes/simulate-insn.h
-> index e065dc92218e..efb2803ec943 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.h
-> +++ b/arch/arm64/kernel/probes/simulate-insn.h
-> @@ -16,5 +16,6 @@ void simulate_cbz_cbnz(u32 opcode, long addr, struct pt=
-_regs *regs);
->  void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
->  void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
->  void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)=
-;
-> +void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
->
->  #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
-> --
-> 2.34.1
->
 
