@@ -1,592 +1,152 @@
-Return-Path: <linux-kernel+bounces-357163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD30996CBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:52:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9EDA996CAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CC981C234C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:52:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A53284BC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB62199243;
-	Wed,  9 Oct 2024 13:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911C519925F;
+	Wed,  9 Oct 2024 13:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="OvOueHnJ"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eLJWPUsl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD98192D6E
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326F3192D6E;
+	Wed,  9 Oct 2024 13:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481935; cv=none; b=MkS+hVkOnnznNBNSHpO6IJHvnfmEfZJR5SdS5Nv96X8LmDfsAZ7OQpaRzXessScSAVEqY//whBJpFy1fGcu0Mnq/w8O52VOBa1aZEoizmHQfwLGd+H1Kn2pPhiClsrw1RpJCgNrMOFYTUzOdqUkiyB0LREwSr94Zm++mot4DOAE=
+	t=1728481853; cv=none; b=rbzwkVmVPe6hmm7fwWMOfwHJuCWS+ar3P4i3Fi4AIhyOih8Rdv7/fMMnPbXnyBU3JmJ24wJ70rp4fRbDt3pBZVEu7/gvVG9OwmG46uBtE0ySwCjkvylox4O9f9h5IN9WDWPTCP7zTNa7sB+5VBZP4bNpp5TIoB0lzijRMRyDFhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481935; c=relaxed/simple;
-	bh=hywkUnzW1pNheeJF6UYhRcwJdNVdUYjGcprhhPrAhsI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z+OimSu6b0svcihs9grdGTjzRL1s9wpTA/NVbb3xxepxiQpWKRDuw3rjRl1fXj56Xdk2Dd54wjHN33vv+1ky1ZMygURLTR9wi2Fpkh4pGA3rmM/gL5GfIDLMvAhBLs9w7FucIsKutdEjNdBovvRnKHS6WiK1aQV3i0aMyirYfLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=OvOueHnJ; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728481931;
-	bh=hywkUnzW1pNheeJF6UYhRcwJdNVdUYjGcprhhPrAhsI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OvOueHnJIotvf3E3gtgs3q7+jbe3E1lMPgJJOO4bWi56B2Mm4A35fPmX/gN0agqB9
-	 GpXJqXLn3Ug+s1O5SmU6UcJUpiEi7K8EZoXUlI5EHWsvu+rlosngT+XXIhbEEujNHw
-	 4CrLmwK61mWBsUJQablyREGlAF0sZeI+/6hWZ2ZYkdwE66Cshz/nijG7sUgaYBH6fH
-	 HiWMADxj7OSR82tx0FXcO1ulacoFMuJLzfgotu1meFGwIxbExQaWlW62dOl4yXZuPR
-	 A+L/U/QMzWBLoPzZppbvYpuxIhZU18n9Gxxc/kzKvf3spl70XpLpl8IGCk31LRxVwR
-	 V+rrmoXUode5w==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNvT71XczzZFR;
-	Wed,  9 Oct 2024 09:52:11 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Marco Elver <elver@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 1/1] sched: Improve cache locality of RSEQ concurrency IDs for intermittent workloads
-Date: Wed,  9 Oct 2024 09:50:07 -0400
-Message-Id: <20241009135007.2084357-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1728481853; c=relaxed/simple;
+	bh=X4TnJTxurWziK3v3Zy4Trv0kJnJ555qg9MbV8sv+F3k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jt+D/uDpKm2zqaDiJXYJfo4HhXe99GqnRohcN8wsR2Wavwte23cm4JYOQn5/xz+zRTadoyw5sv/Vlq86EHzqLV3lEezEkiR4pfF4DR0CSPPLrTta/Nan+LW2hgGPIdLYf6djtp+3KGihYt/gYP4rqZmzZznlVr8rJ1IP4jcCE5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eLJWPUsl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4999eghH018007;
+	Wed, 9 Oct 2024 13:50:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ID8IcFr7c2RC5aq4yF6GSz9+xbNb2bvDWiborrw7cI8=; b=eLJWPUslPRQX0alg
+	2A6AYfHcjIaeUM8mhB2yZHA83Dk7yeZC22TrHXxO72m6j/HE+zipxkncNKN4o8Vd
+	UFG429Uvqimn/7LLx2g2EZP7BDcVAEBvbZ/exKgV8+HMRnoKVFFlIkuOjQC89mS+
+	yM1QnFu6awSlU5i0WJCYvmv3znP/TC8pUcVL5GZIPmHP2cFJwU3AWS8TJfWQbyNY
+	nRuHtuapNqzIO5+NxiklJPRPl6pRmRR9QAUQSqomq8txJFoNGsFWgdEixztRVX/R
+	ZDXtMTr2qlbdd12Rg4Disa2+qFm4OnCCIMtG5jYxe/WqiKfDQla+38FqCGB7ZBH+
+	+ZdFGA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425c8qtgsg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 13:50:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499Doj18004436
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 13:50:45 GMT
+Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 06:50:41 -0700
+Date: Wed, 9 Oct 2024 19:20:37 +0530
+From: Shiraz Hashim <quic_shashim@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Mukesh Ojha <quic_mojha@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
+Message-ID: <20241009135037.GG1421305@hu-shashim-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ehSCrUS4Kdc-uj4lTyzCEbgCBpqjt1a3
+X-Proofpoint-ORIG-GUID: ehSCrUS4Kdc-uj4lTyzCEbgCBpqjt1a3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 clxscore=1011
+ bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410090086
 
-commit 223baf9d17f25 ("sched: Fix performance regression introduced by mm_cid")
-introduced a per-mm/cpu current concurrency id (mm_cid), which keeps
-a reference to the concurrency id allocated for each CPU. This reference
-expires shortly after a 100ms delay.
+On Sun, Oct 06, 2024 at 10:34:19PM +0300, Dmitry Baryshkov wrote:
+> On Sat, Oct 05, 2024 at 02:53:53AM GMT, Mukesh Ojha wrote:
+> > Qualcomm is looking to enable remote processors on the SA8775p SoC
+> > running KVM Linux host and is currently trying to figure out an
+> > upstream-compatible solution for the IOMMU translation scheme problem it
+> > is facing when SoCs running with KVM. This issue arises due to
+> > differences in how IOMMU translation is currently handled on SoCs
+> > running Qualcomm EL2 hypervisor(QHEE) where IOMMU translation for any
+> > device is completely owned by it and the other issue is that remote
+> > processors firmware does not contain resource table where these IOMMU
+> > configuration setting will be present.
+> > 
+> > Qualcomm SoCs running with the QHEE(EL2) have been utilizing the
+> > Peripheral Authentication Service (PAS) from its TrustZone (TZ) firmware
+> > to securely authenticate and reset via a single SMC call
+> > _auth_and_reset_.  This call first gets trapped to QHEE, which then
+> > makes a call to TZ for authentication. Once it is done, the call returns
+> > to QHEE, which sets up the IOMMU translation scheme for these remote
+> > processors and later brings them out of reset. The design of the
+> > Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+> > is not allowed to set up IOMMU translation for remote processors,
+> > and only a single stage is being configured for them.
+> > 
+> > To make the remote processors’ bring-up (PAS) sequence
+> > hypervisor-independent, the auth_and_reset SMC call is now entirely
+> > handled by TZ. However, the problem of IOMMU handling still remains with
+> > the KVM host, which has no knowledge of the remote processors’ IOMMU
+> > configuration.
+> > 
+> > We have looked up one approach where SoC remoteproc device tree could
+> > contain resources like iommus for remoteproc carveout and qcom,devmem
+> > specific binding for device memory needed for remoteproc and these
+> > properties are optional and will only be overlaid by the firmware if it
+> > is running with non-QHEE based hypervisor like KVM.
+> 
+> Can you follow the approach that has been implemented for existing
+> systems (ChromeOS) not using QHEE? See drivers/remoteproc/qcom_q6v5_adsp.c
+> If this approach can not be used, please describe why.
+> 
 
-These per-CPU references keep the per-mm-cid data cache-local in
-situations where threads are running at least once on each CPU within
-each 100ms window, thus keeping the per-cpu reference alive.
+The intent is to reuse same PAS based remoteproc implementation
+assisted by TZ with or without QHEE while qcom_q6v5_adsp.c caters to
+independent control at Linux.
+So it better suites to support it from qcom_q6v5_pas.c .
 
-However, intermittent workloads behaving in bursts spaced by more than
-100ms on each CPU exhibit bad cache locality and degraded performance
-compared to purely per-cpu data indexing, because concurrency IDs are
-allocated over various CPUs and cores, therefore losing cache locality
-of the associated data.
-
-Introduce the following changes to improve per-mm-cid cache locality:
-
-- Add a "recent_cid" field to the per-mm/cpu mm_cid structure to keep
-  track of which mm_cid value was last used, and use it as a hint to
-  attempt re-allocating the same concurrency ID the next time this
-  mm/cpu needs to allocate a concurrency ID,
-
-- Add a per-mm CPUs allowed mask, which keeps track of the union of
-  CPUs allowed for all threads belonging to this mm. This cpumask is
-  only set during the lifetime of the mm, never cleared, so it
-  represents the union of all the CPUs allowed since the beginning of
-  the mm lifetime (note that the mm_cpumask() is really arch-specific
-  and tailored to the TLB flush needs, and is thus _not_ a viable
-  approach for this),
-
-- Add a per-mm nr_cpus_allowed to keep track of the weight of the
-  per-mm CPUs allowed mask (for fast access),
-
-- Add a per-mm max_nr_cid to keep track of the highest number of
-  concurrency IDs allocated for the mm. This is used for expanding the
-  concurrency ID allocation within the upper bound defined by:
-
-    min(mm->nr_cpus_allowed, mm->mm_users)
-
-  When the next unused CID value reaches this threshold, stop trying
-  to expand the cid allocation and use the first available cid value
-  instead.
-
-  Spreading allocation to use all the cid values within the range
-
-    [ 0, min(mm->nr_cpus_allowed, mm->mm_users) - 1 ]
-
-  improves cache locality while preserving mm_cid compactness within the
-  expected user limits,
-
-- In __mm_cid_try_get, only return cid values within the range
-  [ 0, mm->nr_cpus_allowed ] rather than [ 0, nr_cpu_ids ]. This
-  prevents allocating cids above the number of allowed cpus in
-  rare scenarios where cid allocation races with a concurrent
-  remote-clear of the per-mm/cpu cid. This improvement is made
-  possible by the addition of the per-mm CPUs allowed mask,
-
-- In sched_mm_cid_migrate_to, use mm->nr_cpus_allowed rather than
-  t->nr_cpus_allowed. This criterion was really meant to compare
-  the number of mm->mm_users to the number of CPUs allowed for the
-  entire mm. Therefore, the prior comparison worked fine when all
-  threads shared the same CPUs allowed mask, but not so much in
-  scenarios where those threads have different masks (e.g. each
-  thread pinned to a single CPU). This improvement is made
-  possible by the addition of the per-mm CPUs allowed mask.
-
-* Benchmarks
-
-Each thread increments 16kB worth of 8-bit integers in bursts, with
-a configurable delay between each thread's execution. Each thread run
-one after the other (no threads run concurrently). The order of
-thread execution in the sequence is random. The thread execution
-sequence begins again after all threads have executed. The 16kB areas
-are allocated with rseq_mempool and indexed by either cpu_id, mm_cid
-(not cache-local), or cache-local mm_cid. Each thread is pinned to its
-own core.
-
-Testing configurations:
-
-8-core/1-L3:        Use 8 cores within a single L3
-24-core/24-L3:      Use 24 cores, 1 core per L3
-192-core/24-L3:     Use 192 cores (all cores in the system)
-384-thread/24-L3:   Use 384 HW threads (all HW threads in the system)
-
-Intermittent workload delays between threads: 200ms, 10ms.
-
-Hardware:
-
-CPU(s):                   384
-  On-line CPU(s) list:    0-383
-Vendor ID:                AuthenticAMD
-  Model name:             AMD EPYC 9654 96-Core Processor
-    Thread(s) per core:   2
-    Core(s) per socket:   96
-    Socket(s):            2
-Caches (sum of all):
-  L1d:                    6 MiB (192 instances)
-  L1i:                    6 MiB (192 instances)
-  L2:                     192 MiB (192 instances)
-  L3:                     768 MiB (24 instances)
-
-Each result is an average of 5 test runs. The cache-local speedup
-is calculated as: (cache-local mm_cid) / (mm_cid).
-
-Intermittent workload delay: 200ms
-
-                     per-cpu     mm_cid    cache-local mm_cid    cache-local speedup
-                         (ns)      (ns)                  (ns)
-8-core/1-L3             1374      19289                  1336            14.4x
-24-core/24-L3           2423      26721                  1594            16.7x
-192-core/24-L3          2291      15826                  2153             7.3x
-384-thread/24-L3        1874      13234                  1907             6.9x
-
-Intermittent workload delay: 10ms
-
-                     per-cpu     mm_cid    cache-local mm_cid    cache-local speedup
-                         (ns)      (ns)                  (ns)
-8-core/1-L3               662       756                   686             1.1x
-24-core/24-L3            1378      3648                  1035             3.5x
-192-core/24-L3           1439     10833                  1482             7.3x
-384-thread/24-L3         1503     10570                  1556             6.8x
-
-[ This deprecates the prior "sched: NUMA-aware per-memory-map concurrency IDs"
-  patch series with a simpler and more general approach. ]
-
-[ This patch applies on top of v6.12-rc1. ]
-
-Link: https://lore.kernel.org/lkml/20240823185946.418340-1-mathieu.desnoyers@efficios.com/
-Acked-by: Marco Elver <elver@google.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Marco Elver <elver@google.com>
-Cc: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Changes since v1:
-- Take care of feedback from Peter Zijlstra.
----
- fs/exec.c                |  2 +-
- include/linux/mm_types.h | 72 +++++++++++++++++++++++++++++++++++-----
- kernel/fork.c            |  2 +-
- kernel/sched/core.c      | 22 +++++++-----
- kernel/sched/sched.h     | 48 +++++++++++++++++++--------
- 5 files changed, 112 insertions(+), 34 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 6c53920795c2..aaa605529a75 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -990,7 +990,7 @@ static int exec_mmap(struct mm_struct *mm)
- 	active_mm = tsk->active_mm;
- 	tsk->active_mm = mm;
- 	tsk->mm = mm;
--	mm_init_cid(mm);
-+	mm_init_cid(mm, tsk);
- 	/*
- 	 * This prevents preemption while active_mm is being loaded and
- 	 * it and mm are being updated, which could cause problems for
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 6e3bdf8e38bc..381d22eba088 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -782,6 +782,7 @@ struct vm_area_struct {
- struct mm_cid {
- 	u64 time;
- 	int cid;
-+	int recent_cid;
- };
- #endif
- 
-@@ -852,6 +853,27 @@ struct mm_struct {
- 		 * When the next mm_cid scan is due (in jiffies).
- 		 */
- 		unsigned long mm_cid_next_scan;
-+		/**
-+		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
-+		 *
-+		 * Number of CPUs allowed in the union of all mm's
-+		 * threads allowed CPUs.
-+		 */
-+		unsigned int nr_cpus_allowed;
-+		/**
-+		 * @max_nr_cid: Maximum number of concurrency IDs allocated.
-+		 *
-+		 * Track the highest number of concurrency IDs allocated for the
-+		 * mm.
-+		 */
-+		atomic_t max_nr_cid;
-+		/**
-+		 * @cpus_allowed_lock: Lock protecting mm cpus_allowed.
-+		 *
-+		 * Provide mutual exclusion for mm cpus_allowed and
-+		 * mm nr_cpus_allowed updates.
-+		 */
-+		raw_spinlock_t cpus_allowed_lock;
- #endif
- #ifdef CONFIG_MMU
- 		atomic_long_t pgtables_bytes;	/* size of all page tables */
-@@ -1170,18 +1192,30 @@ static inline int mm_cid_clear_lazy_put(int cid)
- 	return cid & ~MM_CID_LAZY_PUT;
- }
- 
-+/*
-+ * mm_cpus_allowed: Union of all mm's threads allowed CPUs.
-+ */
-+static inline cpumask_t *mm_cpus_allowed(struct mm_struct *mm)
-+{
-+	unsigned long bitmap = (unsigned long)mm;
-+
-+	bitmap += offsetof(struct mm_struct, cpu_bitmap);
-+	/* Skip cpu_bitmap */
-+	bitmap += cpumask_size();
-+	return (struct cpumask *)bitmap;
-+}
-+
- /* Accessor for struct mm_struct's cidmask. */
- static inline cpumask_t *mm_cidmask(struct mm_struct *mm)
- {
--	unsigned long cid_bitmap = (unsigned long)mm;
-+	unsigned long cid_bitmap = (unsigned long)mm_cpus_allowed(mm);
- 
--	cid_bitmap += offsetof(struct mm_struct, cpu_bitmap);
--	/* Skip cpu_bitmap */
-+	/* Skip mm_cpus_allowed */
- 	cid_bitmap += cpumask_size();
- 	return (struct cpumask *)cid_bitmap;
- }
- 
--static inline void mm_init_cid(struct mm_struct *mm)
-+static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
- {
- 	int i;
- 
-@@ -1189,17 +1223,22 @@ static inline void mm_init_cid(struct mm_struct *mm)
- 		struct mm_cid *pcpu_cid = per_cpu_ptr(mm->pcpu_cid, i);
- 
- 		pcpu_cid->cid = MM_CID_UNSET;
-+		pcpu_cid->recent_cid = MM_CID_UNSET;
- 		pcpu_cid->time = 0;
- 	}
-+	mm->nr_cpus_allowed = p->nr_cpus_allowed;
-+	atomic_set(&mm->max_nr_cid, 0);
-+	raw_spin_lock_init(&mm->cpus_allowed_lock);
-+	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
- 	cpumask_clear(mm_cidmask(mm));
- }
- 
--static inline int mm_alloc_cid_noprof(struct mm_struct *mm)
-+static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
- {
- 	mm->pcpu_cid = alloc_percpu_noprof(struct mm_cid);
- 	if (!mm->pcpu_cid)
- 		return -ENOMEM;
--	mm_init_cid(mm);
-+	mm_init_cid(mm, p);
- 	return 0;
- }
- #define mm_alloc_cid(...)	alloc_hooks(mm_alloc_cid_noprof(__VA_ARGS__))
-@@ -1212,16 +1251,31 @@ static inline void mm_destroy_cid(struct mm_struct *mm)
- 
- static inline unsigned int mm_cid_size(void)
- {
--	return cpumask_size();
-+	return 2 * cpumask_size();	/* mm_cpus_allowed(), mm_cidmask(). */
-+}
-+
-+static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask)
-+{
-+	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
-+
-+	if (!mm)
-+		return;
-+	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
-+	raw_spin_lock(&mm->cpus_allowed_lock);
-+	cpumask_or(mm_allowed, mm_allowed, cpumask);
-+	WRITE_ONCE(mm->nr_cpus_allowed, cpumask_weight(mm_allowed));
-+	raw_spin_unlock(&mm->cpus_allowed_lock);
- }
- #else /* CONFIG_SCHED_MM_CID */
--static inline void mm_init_cid(struct mm_struct *mm) { }
--static inline int mm_alloc_cid(struct mm_struct *mm) { return 0; }
-+static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p) { }
-+static inline int mm_alloc_cid(struct mm_struct *mm, struct task_struct *p) { return 0; }
- static inline void mm_destroy_cid(struct mm_struct *mm) { }
-+
- static inline unsigned int mm_cid_size(void)
- {
- 	return 0;
- }
-+static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask) { }
- #endif /* CONFIG_SCHED_MM_CID */
- 
- struct mmu_gather;
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 60c0b4868fd4..18bf37ae73a5 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1298,7 +1298,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	if (init_new_context(p, mm))
- 		goto fail_nocontext;
- 
--	if (mm_alloc_cid(mm))
-+	if (mm_alloc_cid(mm, p))
- 		goto fail_cid;
- 
- 	if (percpu_counter_init_many(mm->rss_stat, 0, GFP_KERNEL_ACCOUNT,
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 43e453ab7e20..6133240abffa 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2691,6 +2691,7 @@ __do_set_cpus_allowed(struct task_struct *p, struct affinity_context *ctx)
- 		put_prev_task(rq, p);
- 
- 	p->sched_class->set_cpus_allowed(p, ctx);
-+	mm_set_cpus_allowed(p->mm, ctx->new_mask);
- 
- 	if (queued)
- 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
-@@ -10228,6 +10229,7 @@ int __sched_mm_cid_migrate_from_try_steal_cid(struct rq *src_rq,
- 	 */
- 	if (!try_cmpxchg(&src_pcpu_cid->cid, &lazy_cid, MM_CID_UNSET))
- 		return -1;
-+	WRITE_ONCE(src_pcpu_cid->recent_cid, MM_CID_UNSET);
- 	return src_cid;
- }
- 
-@@ -10240,7 +10242,8 @@ void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t)
- {
- 	struct mm_cid *src_pcpu_cid, *dst_pcpu_cid;
- 	struct mm_struct *mm = t->mm;
--	int src_cid, dst_cid, src_cpu;
-+	int src_cid, src_cpu;
-+	bool dst_cid_is_set;
- 	struct rq *src_rq;
- 
- 	lockdep_assert_rq_held(dst_rq);
-@@ -10257,9 +10260,9 @@ void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t)
- 	 * allocation closest to 0 in cases where few threads migrate around
- 	 * many CPUs.
- 	 *
--	 * If destination cid is already set, we may have to just clear
--	 * the src cid to ensure compactness in frequent migrations
--	 * scenarios.
-+	 * If destination cid or recent cid is already set, we may have
-+	 * to just clear the src cid to ensure compactness in frequent
-+	 * migrations scenarios.
- 	 *
- 	 * It is not useful to clear the src cid when the number of threads is
- 	 * greater or equal to the number of allowed CPUs, because user-space
-@@ -10267,9 +10270,9 @@ void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t)
- 	 * allowed CPUs.
- 	 */
- 	dst_pcpu_cid = per_cpu_ptr(mm->pcpu_cid, cpu_of(dst_rq));
--	dst_cid = READ_ONCE(dst_pcpu_cid->cid);
--	if (!mm_cid_is_unset(dst_cid) &&
--	    atomic_read(&mm->mm_users) >= t->nr_cpus_allowed)
-+	dst_cid_is_set = !mm_cid_is_unset(READ_ONCE(dst_pcpu_cid->cid)) ||
-+			 !mm_cid_is_unset(READ_ONCE(dst_pcpu_cid->recent_cid));
-+	if (dst_cid_is_set && atomic_read(&mm->mm_users) >= READ_ONCE(mm->nr_cpus_allowed))
- 		return;
- 	src_pcpu_cid = per_cpu_ptr(mm->pcpu_cid, src_cpu);
- 	src_rq = cpu_rq(src_cpu);
-@@ -10280,13 +10283,14 @@ void sched_mm_cid_migrate_to(struct rq *dst_rq, struct task_struct *t)
- 							    src_cid);
- 	if (src_cid == -1)
- 		return;
--	if (!mm_cid_is_unset(dst_cid)) {
-+	if (dst_cid_is_set) {
- 		__mm_cid_put(mm, src_cid);
- 		return;
- 	}
- 	/* Move src_cid to dst cpu. */
- 	mm_cid_snapshot_time(dst_rq, mm);
- 	WRITE_ONCE(dst_pcpu_cid->cid, src_cid);
-+	WRITE_ONCE(dst_pcpu_cid->recent_cid, src_cid);
- }
- 
- static void sched_mm_cid_remote_clear(struct mm_struct *mm, struct mm_cid *pcpu_cid,
-@@ -10523,7 +10527,7 @@ void sched_mm_cid_after_execve(struct task_struct *t)
- 		 * Matches barrier in sched_mm_cid_remote_clear_old().
- 		 */
- 		smp_mb();
--		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, mm);
-+		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, t, mm);
- 	}
- 	rseq_set_notify_resume(t);
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b1c3588a8f00..8e23f1299081 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3596,24 +3596,41 @@ static inline void mm_cid_put(struct mm_struct *mm)
- 	__mm_cid_put(mm, mm_cid_clear_lazy_put(cid));
- }
- 
--static inline int __mm_cid_try_get(struct mm_struct *mm)
-+static inline int __mm_cid_try_get(struct task_struct *t, struct mm_struct *mm)
- {
--	struct cpumask *cpumask;
--	int cid;
-+	struct cpumask *cidmask = mm_cidmask(mm);
-+	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
-+	int cid = __this_cpu_read(pcpu_cid->recent_cid);
- 
--	cpumask = mm_cidmask(mm);
-+	/* Try to re-use recent cid. This improves cache locality. */
-+	if (!mm_cid_is_unset(cid) && !cpumask_test_and_set_cpu(cid, cidmask))
-+		return cid;
-+	/*
-+	 * Expand cid allocation if the maximum number of concurrency
-+	 * IDs allocated (max_nr_cid) is below the number cpus allowed
-+	 * and number of threads. Expanding cid allocation as much as
-+	 * possible improves cache locality.
-+	 */
-+	cid = atomic_read(&mm->max_nr_cid);
-+	while (cid < READ_ONCE(mm->nr_cpus_allowed) && cid < atomic_read(&mm->mm_users)) {
-+		if (!atomic_try_cmpxchg(&mm->max_nr_cid, &cid, cid + 1))
-+			continue;
-+		if (!cpumask_test_and_set_cpu(cid, cidmask))
-+			return cid;
-+	}
- 	/*
-+	 * Find the first available concurrency id.
- 	 * Retry finding first zero bit if the mask is temporarily
- 	 * filled. This only happens during concurrent remote-clear
- 	 * which owns a cid without holding a rq lock.
- 	 */
- 	for (;;) {
--		cid = cpumask_first_zero(cpumask);
--		if (cid < nr_cpu_ids)
-+		cid = cpumask_first_zero(cidmask);
-+		if (cid < READ_ONCE(mm->nr_cpus_allowed))
- 			break;
- 		cpu_relax();
- 	}
--	if (cpumask_test_and_set_cpu(cid, cpumask))
-+	if (cpumask_test_and_set_cpu(cid, cidmask))
- 		return -1;
- 
- 	return cid;
-@@ -3631,7 +3648,8 @@ static inline void mm_cid_snapshot_time(struct rq *rq, struct mm_struct *mm)
- 	WRITE_ONCE(pcpu_cid->time, rq->clock);
- }
- 
--static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
-+static inline int __mm_cid_get(struct rq *rq, struct task_struct *t,
-+			       struct mm_struct *mm)
- {
- 	int cid;
- 
-@@ -3641,13 +3659,13 @@ static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 	 * guarantee forward progress.
- 	 */
- 	if (!READ_ONCE(use_cid_lock)) {
--		cid = __mm_cid_try_get(mm);
-+		cid = __mm_cid_try_get(t, mm);
- 		if (cid >= 0)
- 			goto end;
- 		raw_spin_lock(&cid_lock);
- 	} else {
- 		raw_spin_lock(&cid_lock);
--		cid = __mm_cid_try_get(mm);
-+		cid = __mm_cid_try_get(t, mm);
- 		if (cid >= 0)
- 			goto unlock;
- 	}
-@@ -3667,7 +3685,7 @@ static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 	 * all newcoming allocations observe the use_cid_lock flag set.
- 	 */
- 	do {
--		cid = __mm_cid_try_get(mm);
-+		cid = __mm_cid_try_get(t, mm);
- 		cpu_relax();
- 	} while (cid < 0);
- 	/*
-@@ -3684,7 +3702,8 @@ static inline int __mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 	return cid;
- }
- 
--static inline int mm_cid_get(struct rq *rq, struct mm_struct *mm)
-+static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
-+			     struct mm_struct *mm)
- {
- 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
- 	struct cpumask *cpumask;
-@@ -3701,8 +3720,9 @@ static inline int mm_cid_get(struct rq *rq, struct mm_struct *mm)
- 		if (try_cmpxchg(&this_cpu_ptr(pcpu_cid)->cid, &cid, MM_CID_UNSET))
- 			__mm_cid_put(mm, mm_cid_clear_lazy_put(cid));
- 	}
--	cid = __mm_cid_get(rq, mm);
-+	cid = __mm_cid_get(rq, t, mm);
- 	__this_cpu_write(pcpu_cid->cid, cid);
-+	__this_cpu_write(pcpu_cid->recent_cid, cid);
- 
- 	return cid;
- }
-@@ -3755,7 +3775,7 @@ static inline void switch_mm_cid(struct rq *rq,
- 		prev->mm_cid = -1;
- 	}
- 	if (next->mm_cid_active)
--		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next->mm);
-+		next->last_mm_cid = next->mm_cid = mm_cid_get(rq, next, next->mm);
- }
- 
- #else /* !CONFIG_SCHED_MM_CID: */
--- 
-2.39.2
-
+regards
+Shiraz
 
