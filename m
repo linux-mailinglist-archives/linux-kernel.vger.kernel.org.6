@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-356929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837139968DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:32:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B2B9968DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1654EB223CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37D541C21FF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182E618FDDB;
-	Wed,  9 Oct 2024 11:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A740F1922D5;
+	Wed,  9 Oct 2024 11:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="aVQ/ypzO"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DCJIag5X"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E43D18E35D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DF318E35D
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728473561; cv=none; b=soUBrkMnb6QkmUrVxEeMUybGxgyhAqjTGIIOWQOmkiPxDFzoQ+2tLgHKsQ/dgunRLmK61fSDY7FyAn9dUPqvKfJOUGugiXwML4QerYHoRi5KYK251B6oytOEGnyGG2xpJfYI1eIQLQ3tUnX4HDmEX7t/I82SPHQGkpuh2JKDz3s=
+	t=1728473575; cv=none; b=ojkxedd6p2822E6kUR7yEpQruz5XoaKRdrwUfRRKH7iyVRGBoY0u301L7PakuUQcpxO37nx8cESJj8LhycP688zxUSjTcxAqT4kgnjkudJ8yhwVTr8i5PJxgstfKgr97BzXtylmT7tBSU6Eum7nNND9zOd42Bp0nT9081mYJAEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728473561; c=relaxed/simple;
-	bh=on684W/2XEMM2jB2AX61bV2vO2lXG2k4HF88M7BdBZg=;
+	s=arc-20240116; t=1728473575; c=relaxed/simple;
+	bh=u2nkpeNDCCtr+RDR1GIBlfqM1CcT4OISAJQIvFmPPH8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qSGjtW+fo3jc4/iW82N3ZEYPlfX9mfKsDlz6m8QhNomzTgUjcqLZiCHIw/vX0XhwhyrtCxSdRLsvOnNV0axSGvfrh4Sdya9rUpaSAMUmbC3MvecGLXd70PRp7d1TsCmi+lw+tvzaamApCOtrTCLm0fr8XJAOPyP0o8UWhGV81iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=aVQ/ypzO; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e25d6342837so5835165276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:32:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=MR28FoAmYHRgehZvUnc4/u6rMtWQ4c+VhOa+PsLjF+ngbXNtiDaduvboBdJgNrIz3t8LBmcwtDomwIJmAK1t/Gssw+QvMNAzQjog1JfMwNQr8TNiR0ttPty/ufPX/NnOBcS8Hwub3YihNqAbpr2OeMPYoY5a3f4W7cABBIiGvWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DCJIag5X; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ce9644daaso4270538f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 04:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1728473558; x=1729078358; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728473572; x=1729078372; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=008a6k3ZxIHkOV0CVfLapnrZh0drWKWmGkJbRnXXaRQ=;
-        b=aVQ/ypzOitBw9gglkY0TnadS8EluejQ7/+ju0pqWvEdLB+2gc5XMirNR+a1DryM8/H
-         5N3r97yNbA9VKAOA/nD6X2YF718YyaxYM7J1OMGnsquUWKd6pmpiCQokQ7nbaVX3/Sct
-         MUTm4q6K2EHHuNg2LJ/Vn0NQrNUOD3YQKNNoa12pKEekryJeHxT9pAsNf+G3gBanCXqX
-         tK20YK+mGwpvKYMqcpY4eOtmObhKXHuTNaIfP/8J9sSsDHcCrkqt1Ghps5es69/Iitsh
-         liG7E9izQnp8ImhkoRli08MPcJtzuMLMgOE8TBF7eutNK+ZHkvEKakXU1J7sRGzlDPgD
-         nVKA==
+        bh=lHfdMVCdMqw7XiUFeDg6OwkwsDzXxFWVFFZsqEM0H+A=;
+        b=DCJIag5XxPbi9OC37ORGwovatj+Tu99IFvtSNDWS8+2jYlVlg20cTWWxpVbAHhh/os
+         MLDUXsmiaIi5aPSJsQQwFoAxj0eg5h7z46eWpVjn5JK+0uOaXwdMo7VhqL4KJJ1h1ibE
+         1EdfjOeQb+FKVVrMOPX7ws7n4SPc7FQVEgUbBdbnQm7S5I62ybmNvsw3xY6kfh4Znp78
+         la+MeVEfi170wcJAqxbTngwvRcv2XAAsrgTKjhTbj62qHMzIihppGExRYYfwJBfCKDvU
+         NdEBiv0zYpQfDPMz5MwNDrGqs+tjEecDPEo2NTS8P8zIF6UTXBoW/fD0TOG814DRCtid
+         UjjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728473558; x=1729078358;
+        d=1e100.net; s=20230601; t=1728473572; x=1729078372;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=008a6k3ZxIHkOV0CVfLapnrZh0drWKWmGkJbRnXXaRQ=;
-        b=RdXIACRETbS2oF4xejbLMqUHEAlzJN1TnoGTjla+D7UDKPXMwBV4alL/adKBXlwWm+
-         pmQPDVm3qKmOWmaIjFXPkU7ZeMTeL4iKtw2FYAsVJa3Zrd8F5ayjF2z3tnrrP7D08Xef
-         UsIiv7da4tSy+b4Tm2fDhsFtfhFZnLAX/EdYk9rnEFyQWbTQLtyjuRR7iG4T3oJb2Ry6
-         Xx10R6LY3zn9GaqB4ILSEaKx2GNPfZL37cbDKtyWqiAuCJ3AbQuNdEpD7zpbyz4SYJkY
-         Yo9EB3KKILBdqM1oSDI2QMPpVyKMeaSWjohDYQ8saxTl97Db88J/wyfaPqRDw88k9+kE
-         +M6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVbtQD+IHoj6N/U8jsni4uH5zGYdILNPBvwC5yomkkuc+RGynLJVFH/XYxBTur0nSC0KaHX1jhUoJKWUYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPCNYb7Dt3No3TZ+3viwV2FqMj+ahJY8DOjYv8KBWYPy0fdnWW
-	lVEqZiASnHF07TWnr0sfPSp3qhjSYlDv+rHoy6scX13ziqhGp0MQ7pZWKgCSeVoVKDSEIvUZSE7
-	cvkYrlSyqIkeqLi87aCbcgqt3FjC17/Ne4Y9yKw==
-X-Google-Smtp-Source: AGHT+IGF6K2rkk5aK8OxRzvwgQwEZfKkBm8BbIv2Dv+dz+zXDULDbCRgjuRxw3SCMfT8bzTBK44ZnD9sD3fVbMuBX7w=
-X-Received: by 2002:a05:6902:2b89:b0:e11:6348:5d95 with SMTP id
- 3f1490d57ef6-e28fe32e09amr1681374276.7.1728473558552; Wed, 09 Oct 2024
- 04:32:38 -0700 (PDT)
+        bh=lHfdMVCdMqw7XiUFeDg6OwkwsDzXxFWVFFZsqEM0H+A=;
+        b=M0E9RwXyEE/ZWoXJ5UH20IWlciQf2pnhMWu1L+tKp8HMxRt1NElYBghdkStrI4CwMB
+         1H5rAyCrDl400X4FKN2aJMcpLdhdJ5RSJh7u+foI9vOXoxGti9kWD1DWKjw2Hyg7DRqv
+         7REgpKhvAqHSdq8zg84OG+Nv3kmj66Bikpf9x2Wb41IJe5f1z62M7eeQ/8rWH6QWTX+t
+         FzLuQ6NiLGSO6rV/ZDGxXZcIqtn5j/7Sw5wpNAj1gIWiJbV64DYJOykAa+ljXwUtvNQR
+         wkBX83jI3hvH8Nus/czVW0n05RcyNWdct3fOc38GKeTN21owvykgBGRXrYtuwJy2cXwP
+         P6kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvdQP/VuhdpBgDwxTbW3f65nEugl77GsmXQVca9E+le4eD/zYmWJelo7JMDMdvVw3uu1wnBNxMOFYN5CU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztP8n2F7uCqtjLMDwtKGcN/7QFEkFRvNeCD2qrrNXavuuJESL1
+	knBRM0gXL8J5Twhhxp3x8UbaYK+IUMOIVnYnrZpez4kijYlZYMbjLXfcfTtLNO8jfZvFRorF3GE
+	RdxT/l6m/aw0tATcLG6j8MjnjiWYdbY6/JBKD
+X-Google-Smtp-Source: AGHT+IF6zuOiLd59PhgXMw7DIzWOXXJgSyWEMApRca5NNJBgSiWPw2nrOVmoTfB+YfDfuvrwx/fLLRPvbmafo2m8vg4=
+X-Received: by 2002:adf:fc88:0:b0:37d:374f:b0a7 with SMTP id
+ ffacd0b85a97d-37d3aa4613dmr1323925f8f.34.1728473571568; Wed, 09 Oct 2024
+ 04:32:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-drm-vc4-fixes-v1-0-9d0396ca9f42@raspberrypi.com>
- <20241008-drm-vc4-fixes-v1-3-9d0396ca9f42@raspberrypi.com> <a0922d76-0dc0-46a5-8408-a8eda3a07f26@igalia.com>
-In-Reply-To: <a0922d76-0dc0-46a5-8408-a8eda3a07f26@igalia.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 9 Oct 2024 12:32:21 +0100
-Message-ID: <CAPY8ntDTY-ybd8vViTP4vGuxT8DQsssTY_KJ2EQ6xhk2sV98UA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/vc4: Correct generation check in vc4_hvs_lut_load
-To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Cc: Maxime Ripard <mripard@kernel.org>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
+ <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com>
+ <CAH5fLgiZ5awKAm-CHc8qgsQUYtNMWdSEeKC2wuDFh2NUhVmsAA@mail.gmail.com> <CAK7LNAS_22jQzsWDswChAMaE3GhT-1eqE9ngj61NeFz40SNxGw@mail.gmail.com>
+In-Reply-To: <CAK7LNAS_22jQzsWDswChAMaE3GhT-1eqE9ngj61NeFz40SNxGw@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 9 Oct 2024 13:32:38 +0200
+Message-ID: <CAH5fLgh9t7=1sTwWWJHLtDxaaZYZAjLC8h_jVvC809hpqJz07g@mail.gmail.com>
+Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Maira
-
-Thanks for the review
-
-On Wed, 9 Oct 2024 at 02:30, Ma=C3=ADra Canal <mcanal@igalia.com> wrote:
+On Wed, Oct 9, 2024 at 12:32=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
 >
-> Hi Dave,
+> On Wed, Oct 9, 2024 at 4:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> >
+> > On Tue, Oct 8, 2024 at 9:00=E2=80=AFPM Masahiro Yamada <masahiroy@kerne=
+l.org> wrote:
+> > >
+> > > On Wed, Oct 9, 2024 at 2:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
+om> wrote:
+> > > > diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> > > > index 057305eae85c..08d5b7177ea8 100644
+> > > > --- a/scripts/Makefile.compiler
+> > > > +++ b/scripts/Makefile.compiler
+> > > > @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KB=
+UILD_EXTMOD))/).tmp_$$$$
+> > > >  # automatically cleaned up.
+> > > >  try-run =3D $(shell set -e;              \
+> > > >         TMP=3D$(TMPOUT)/tmp;              \
+> > > > +       export RUSTC_BOOTSTRAP=3D1;       \
+> > >
+> > >
+> > > try-run is not Rust-specific.
+> > >
+> > > Is there any reason why you did not add it
+> > > to __rustc-option?
+> > >
+> > >
+> > > __rustc-option =3D $(call try-run,\
+> > >        RUSTC_BOOTSTRAP=3D1 $(1) $(2) $(3) --crate-type=3Drlib
+> > > $(srctree)/rust/probe.rs --out-dir=3D$$TMP,$(3),$(4))
+> >
+> > I had an explanation for this in the commit message, but it looks like
+> > it got lost when I rewrote it for v2. Anyway, the reason is that I'd
+> > have to modify both __rustc-option and rustc-option-yn to do that, and
+> > putting it here seemed more future-proof against making the same
+> > mistake in any rustc-* commands added in the future.
 >
-> On 10/8/24 13:44, Dave Stevenson wrote:
-> > Commit 24c5ed3ddf27 ("drm/vc4: Introduce generation number enum")
-> > incorrectly swapped a check of hvs->vc4->is_vc5 to
-> > hvs->vc4->gen =3D=3D VC4_GEN_4 in vc4_hvs_lut_load, hence breaking
-> > loading the gamma look up table on Pi0-3.
-> >
-> > Correct that conditional.
-> >
-> > Fixes: 24c5ed3ddf27 ("drm/vc4: Introduce generation number enum")
-> > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > ---
-> >   drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hv=
-s.c
-> > index c5ebc317188a..1edf6e3fa7e6 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> > +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> > @@ -224,7 +224,7 @@ static void vc4_hvs_lut_load(struct vc4_hvs *hvs,
-> >       if (!drm_dev_enter(drm, &idx))
-> >               return;
-> >
-> > -     if (hvs->vc4->gen =3D=3D VC4_GEN_4)
-> > +     if (hvs->vc4->gen !=3D VC4_GEN_4)
 >
-> Again, another nit: I believe `hvs->vc4->gen > VC4_GEN_4` is more
-> semantic and it's the standard I usually see around the driver.
+> One solution is to delete rustc-option-yn since there are no users of it.
+>
+> Another solution is to refactor the code.
+>
+> Either way, there is no good reason for code duplication.
+>
+>
+> If you keep rustc-option-yn, you can rebased v3 on top of this patch:
+> https://lore.kernel.org/lkml/20241009102821.2675718-1-masahiroy@kernel.or=
+g/T/#u
 
-With 24c5ed3ddf27 which this is fixing, all instances in vc4_hvs.c
-were changed to =3D=3D VC4_GEN_4 or =3D=3D VC4_GEN_5. So I guess =3D=3D VC4=
-_GEN_5
-would have been the better option here.
+I'll rebase on top of that. If we choose to delete rustc-option-yn
+then I think we should first merge the refactor and then delete it in
+a follow-up. That way, when someone does need it, they will find the
+refactored implementation in the git history.
 
-Yes downstream we now have GEN_6 (which I'm nearly at a point to send
-to the list), and I'll need to update this conditional when that's
-added.
-I'll leave it as is for now, and ensure I've done an audit of all of
-them before pushing GEN_6.
-
-Thanks
-  Dave
-
-> But this isn't critical, so:
->
-> Reviewed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
->
-> Best Regards,
-> - Ma=C3=ADra
->
-> >               goto exit;
-> >
-> >       /* The LUT memory is laid out with each HVS channel in order,
-> >
+Alice
 
