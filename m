@@ -1,244 +1,164 @@
-Return-Path: <linux-kernel+bounces-356824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F20A996752
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:29:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4BB99675A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95290284B35
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5351C22BFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6BF18EFD6;
-	Wed,  9 Oct 2024 10:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2199318EFE6;
+	Wed,  9 Oct 2024 10:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R/IUZLiG"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ou7NPQvy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1419E18EFE0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FF933CD2;
+	Wed,  9 Oct 2024 10:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728469707; cv=none; b=EY3J16LSQXnSZciyOcAH1m+00K1pNEfruoFxfilngWqftXRbH1kF6TGrhQDRv2CTRpVeKXSXTGtTkmqTpAWM5UPyJ7BAh0YcN0Y1WHvq+2MM7W8t5U9BXC5uW9KztQKw07bzIRE4qI1YRZyC35G9+DZaooYDkAxACiXxzmGhUzc=
+	t=1728469975; cv=none; b=gxf9ejbB+6VRdGXVPRyoTNNzKrn3MsQv+mW7jo+z6a9m+OYH7V5NJjz25o1x2NmPHBGvni8ah7DQ7jZ1IxqwvVUFMBSTZQMktUbwDxRII+PWiRDVw7HYy/QDNVEQzKWMYhCAF1xYMT7erAr1E3HC4I6hoeWyr7brGryZvPjLxWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728469707; c=relaxed/simple;
-	bh=/fIjIpUdHAzWUFceihGJMz4qHHzjyT7pvRboVHLIXt8=;
+	s=arc-20240116; t=1728469975; c=relaxed/simple;
+	bh=OIrN8Kx87vTz4GuQLWnjR7F4ybWENMB1KU2VVq0/hn4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IRh0UBG88Scv+SwafzgW5HWUz3U5In4DPrl6E+4ue6Kqw9IfUlGMC6nvWSRAHuCly+UgV2aX+IUW38/HacrxrHZUz5Xa86GPR6/O49n18i/otno1hh42YQUT2XLpqTRUUF469eZ5SouO0ElcdfuUZaka42zdlA/W3UgfyOmcwmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R/IUZLiG; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so381689276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 03:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728469702; x=1729074502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/fIjIpUdHAzWUFceihGJMz4qHHzjyT7pvRboVHLIXt8=;
-        b=R/IUZLiGTVMjm+vz/itDZc9wmAPVMljxmRitpZEJud1G0u3w5i1YUFXS5nVV3WYoz8
-         ubvhh9K122Gjzldf8MIilxZWJIq+pHQJNBlZFum0GVuFc1MEaHETL5T008QXAFwPq1ot
-         kitLFU3/SkC2aWezlO4OguLTOZSf+tA1tyYrfik4ykoNQkvXAj6c52HeG1Ysmw2AI238
-         HsY2f3tX4OKHncsdhEvf1LEfHqNJ6jQgUxWv1stM9PG3qos2FQm71ynZckctR1C4pJwx
-         vtDImDcHsDnvehucXFysFeu2BI8sfq7nFQW1sE+ns0FrP0/6loH6Z+NZH4YNYSRSMgNb
-         7/VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728469702; x=1729074502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/fIjIpUdHAzWUFceihGJMz4qHHzjyT7pvRboVHLIXt8=;
-        b=Knv22zfXn3XxfgtpccHkwy/pvMDhVxoTmUe0vykenxy+Ch0Bc3QBoJxyy8YG/T81Eg
-         bdo0hFe/VnHwPI6jZerazJuy2FIT0NHJ5ntS2k7QpHBOq6s51LsV5needJn9PoOCC5sB
-         lUbrKUG4NMsVxU1xHxTgLMgiXVQCJWCr+kFdsBRkCeG1dQKSLk6vEpdCif3bbjbsgx6n
-         a+uM3uHTWIJaEBMGted8Y5xJYJWOdg7X6qFKNwJ/6Qia85bA68at1YBVaLTx8ZuEwBk2
-         3x06p5xVOVaNXVc35EXO4EDAyVbfmVx3Z1C122jbvOsgS+GxRV1EMjofFwwc+TurH9Vx
-         fI3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXspO6bjUXtCYaKwYKthyjLucK7OvFzZRHDych0bjeCaQWZJjiVJodsTBakeJsECtH68wThx0XC/phX3So=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztgYswBViCCXo2/ypqmYyPdfwj/NrMO8papDW/35HEntEC5EXq
-	ms394xx9/X4QNzK/ZbaIgUTn4isBVOlpQ7J8S35JF9UMqHZdu8OOmjW61pr88CNEbHa4nEk9HjN
-	sttNglN1PqgsMdSGeY5kNHAXxWtaKzVAQGM/ozA==
-X-Google-Smtp-Source: AGHT+IHNaU3Z3+DDKTWwqyhccdWy6KGvX0jRFFJtFda2WTvGLlJcpHA53hhWZp12VBznxD4kUpVSZMoh/Lgesk7avnk=
-X-Received: by 2002:a25:eb02:0:b0:e25:96a4:1706 with SMTP id
- 3f1490d57ef6-e28fe43f3d1mr1744852276.19.1728469701975; Wed, 09 Oct 2024
- 03:28:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=e9W5dC/Fk7WxOraNLjcrBkrSTQyBRpdrRvs+4ZDyfb8sQYcChqwSSfR1plp9/tsMHcog+tXDad+pXSF45KpOkoQcpsV1JDy5wGE4n20m0o1r7qZo9xuqY3EVe/skTpWODpelGSLSamVleyoEsGCz5R6YwMl1xfvZ4n0pZUQLRHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ou7NPQvy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 500F4C4AF09;
+	Wed,  9 Oct 2024 10:32:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728469975;
+	bh=OIrN8Kx87vTz4GuQLWnjR7F4ybWENMB1KU2VVq0/hn4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ou7NPQvy/7/EvmwvsqepI72a4jL/vwRPcJHafJiruENF7ClxN0v8ZQMrzhMZcjmyZ
+	 Iyvlxe9oqSYQGMgK3PjH0FEZ30Td1jyAGwVtvI44hUu2+H8Fc3xrsaAhWqaZtx0Ept
+	 tCgpZhjhMeV1jInuo3pSU691RuathukC2XzHCAIPcsW4bftCL7bFuBdkEgfZ6flZeS
+	 fukGVumfg6e1IBhU6n4dfyA4erEO6qcA8R0wB1gZddSaxFPM20mylIiRkosSqqvjcI
+	 UxPr0JguG0LVDfINyC6/SBJnJtqOHcmWfwqk6fpxZa7HUh+kxtGabW3wbCPrEG8ZQs
+	 lLmsny+hpgJSA==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso93482501fa.1;
+        Wed, 09 Oct 2024 03:32:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVqh/k5PNLi6Qvq+zZ0O6ubay7EcDPy80Vt7hGpZoz9keLVWQSH7lpy/k/qUHqn1XnJEhE8iMP4Wfdi94P+xfs=@vger.kernel.org, AJvYcCWhVkoMu/XFdwKTEOQ4FYNwoevCAPgUkbTgVNNhF6EJXMz9nTyTRN5eXsdQrdc3wVzDPlbUj+VmXzRtmkw=@vger.kernel.org, AJvYcCWoXXSX0uwkpdP+Me06OHCn8JatxXe9LEL92ljp1jzBmnNQ1r/jHLD9Cs9KuzmYRvnIs3NI/rifR4abY3GN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCLoO4tMw0ZMQClIFQr3nV4z2GDfB3kExe314T5M4XZ+H4eIAK
+	SwQyyLT5duCiiZHJznpQ5nGec5P8RwDzU2iStT2+ZFsj9iH80KLPHThhm+vQN7Fl1j0FGCfnl6/
+	/DsEPdaMDEaioC4oBaLs0JXchKF4=
+X-Google-Smtp-Source: AGHT+IFfzTwZej1mi4Oc9Clazlv/HLVQdAr/ychfDkUy9UXuU7dztsfhmxAgkmwTeU3MZxUBJ4z77rRSwBjOYhkQqp8=
+X-Received: by 2002:a2e:be88:0:b0:2f3:eca4:7c32 with SMTP id
+ 38308e7fff4ca-2fb187f36a0mr18940681fa.38.1728469973942; Wed, 09 Oct 2024
+ 03:32:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
- <CAPDyKFp0N6UJhnHS164Tdf=xkWB0jzq65L9TdvYazeBQ-6WjeQ@mail.gmail.com>
- <20241007184924.GH14766@pendragon.ideasonboard.com> <CAPDyKFpQVnF7eQv3dup8k-3EijnMjuveCG9sZ=Rpey1Y6MBJEg@mail.gmail.com>
- <20241007222502.GG30699@pendragon.ideasonboard.com> <CAPDyKFrGNwna6Y2pqSRaBbRYHKRaD2ayqQHLtoqLPOu9Et7qTg@mail.gmail.com>
- <CAJZ5v0jvJyS7D5-wURi2kyWN-rmNa+YqupeQJ000pQRVd9VBcQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jvJyS7D5-wURi2kyWN-rmNa+YqupeQJ000pQRVd9VBcQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 9 Oct 2024 12:27:45 +0200
-Message-ID: <CAPDyKFqh_BS=6eN4tQzZ20sWCHL3kdnrY=1Mgd7B9gfBamm8bw@mail.gmail.com>
-Subject: Re: [PATCH 00/51] treewide: Switch to __pm_runtime_put_autosuspend()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org, 
-	linux-input@vger.kernel.org, patches@opensource.cirrus.com, 
-	iommu@lists.linux.dev, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-serial@vger.kernel.org, greybus-dev@lists.linaro.org, 
-	asahi@lists.linux.dev, Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
+ <CAK7LNAQ2EY8Uf1APvhZT9XpZ6=8FhAitqePLiCP1S6mBgnXSKQ@mail.gmail.com> <CAH5fLgiZ5awKAm-CHc8qgsQUYtNMWdSEeKC2wuDFh2NUhVmsAA@mail.gmail.com>
+In-Reply-To: <CAH5fLgiZ5awKAm-CHc8qgsQUYtNMWdSEeKC2wuDFh2NUhVmsAA@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 9 Oct 2024 19:32:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS_22jQzsWDswChAMaE3GhT-1eqE9ngj61NeFz40SNxGw@mail.gmail.com>
+Message-ID: <CAK7LNAS_22jQzsWDswChAMaE3GhT-1eqE9ngj61NeFz40SNxGw@mail.gmail.com>
+Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Oct 2024 at 20:25, Rafael J. Wysocki <rafael@kernel.org> wrote:
+On Wed, Oct 9, 2024 at 4:42=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
 >
-> On Tue, Oct 8, 2024 at 12:35=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
+> On Tue, Oct 8, 2024 at 9:00=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
 > >
-> > On Tue, 8 Oct 2024 at 00:25, Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> > >
-> > > Hi Ulf,
-> > >
-> > > On Tue, Oct 08, 2024 at 12:08:24AM +0200, Ulf Hansson wrote:
-> > > > On Mon, 7 Oct 2024 at 20:49, Laurent Pinchart wrote:
-> > > > > On Fri, Oct 04, 2024 at 04:38:36PM +0200, Ulf Hansson wrote:
-> > > > > > On Fri, 4 Oct 2024 at 11:41, Sakari Ailus wrote:
-> > > > > > >
-> > > > > > > Hello everyone,
-> > > > > > >
-> > > > > > > This set will switch the users of pm_runtime_put_autosuspend(=
-) to
-> > > > > > > __pm_runtime_put_autosuspend() while the former will soon be =
-re-purposed
-> > > > > > > to include a call to pm_runtime_mark_last_busy(). The two are=
- almost
-> > > > > > > always used together, apart from bugs which are likely common=
-. Going
-> > > > > > > forward, most new users should be using pm_runtime_put_autosu=
-spend().
-> > > > > > >
-> > > > > > > Once this conversion is done and pm_runtime_put_autosuspend()=
- re-purposed,
-> > > > > > > I'll post another set to merge the calls to __pm_runtime_put_=
-autosuspend()
-> > > > > > > and pm_runtime_mark_last_busy().
-> > > > > >
-> > > > > > That sounds like it could cause a lot of churns.
-> > > > > >
-> > > > > > Why not add a new helper function that does the
-> > > > > > pm_runtime_put_autosuspend() and the pm_runtime_mark_last_busy(=
-)
-> > > > > > things? Then we can start moving users over to this new interfa=
-ce,
-> > > > > > rather than having this intermediate step?
-> > > > >
-> > > > > I think the API would be nicer if we used the shortest and simple=
-st
-> > > > > function names for the most common use cases. Following
-> > > > > pm_runtime_put_autosuspend() with pm_runtime_mark_last_busy() is =
-that
-> > > > > most common use case. That's why I like Sakari's approach of repu=
-rposing
-> > > > > pm_runtime_put_autosuspend(), and introducing
-> > > > > __pm_runtime_put_autosuspend() for the odd cases where
-> > > > > pm_runtime_mark_last_busy() shouldn't be called.
-> > > >
-> > > > Okay, so the reason for this approach is because we couldn't find a
-> > > > short and descriptive name that could be used in favor of
-> > > > pm_runtime_put_autosuspend(). Let me throw some ideas at it and may=
-be
-> > > > you like it - or not. :-)
-> > >
-> > > I like the idea at least :-)
-> > >
-> > > > I don't know what options you guys discussed, but to me the entire
-> > > > "autosuspend"-suffix isn't really that necessary in my opinion. The=
-re
-> > > > are more ways than calling pm_runtime_put_autosuspend() that trigge=
-rs
-> > > > us to use the RPM_AUTO flag for rpm_suspend(). For example, just
-> > > > calling pm_runtime_put() has the similar effect.
-> > >
-> > > To be honest, I'm lost there. pm_runtime_put() calls
-> > > __pm_runtime_idle(RPM_GET_PUT | RPM_ASYNC), while
-> > > pm_runtime_put_autosuspend() calls __pm_runtime_suspend(RPM_GET_PUT |
-> > > RPM_ASYNC | RPM_AUTO).
+> > On Wed, Oct 9, 2024 at 2:32=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> > > diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> > > index 057305eae85c..08d5b7177ea8 100644
+> > > --- a/scripts/Makefile.compiler
+> > > +++ b/scripts/Makefile.compiler
+> > > @@ -21,6 +21,7 @@ TMPOUT =3D $(if $(KBUILD_EXTMOD),$(firstword $(KBUI=
+LD_EXTMOD))/).tmp_$$$$
+> > >  # automatically cleaned up.
+> > >  try-run =3D $(shell set -e;              \
+> > >         TMP=3D$(TMPOUT)/tmp;              \
+> > > +       export RUSTC_BOOTSTRAP=3D1;       \
 > >
-> > __pm_runtime_idle() ends up calling rpm_idle(), which may call
-> > rpm_suspend() - if it succeeds to idle the device. In that case, it
-> > tags on the RPM_AUTO flag in the call to rpm_suspend(). Quite similar
-> > to what is happening when calling pm_runtime_put_autosuspend().
->
-> Right.
->
-> For almost everybody, except for a small bunch of drivers that
-> actually have a .runtime_idle() callback, pm_runtime_put() is
-> literally equivalent to pm_runtime_put_autosuspend().
->
-> So really the question is why anyone who doesn't provide a
-> .runtime_idle() callback bothers with using this special
-> pm_runtime_put_autosuspend() thing, which really means "do a
-> runtime_put(), but skip my .runtime_idle() callback".
-
-My guess is that it's in most cases a legacy pattern that is being
-followed. Also note that rpm_idle() didn't "always" tag on the
-RPM_AUTO flag, even if it's quite a while ago (2013) since we added
-it.
-
-Unless there is some actual optimization involved, as it also allows
-us to skip calling rpm_idle() and go directly for rpm_suspend().
-
->
-> > >
-> > > >
-> > > > Moreover, it's similar for pm_runtime_mark_last_busy(), it's called
-> > > > during rpm_resume() too, for example. So why bother about having
-> > > > "mark_last_busy" in the new name too.
-> > > >
-> > > > That said, my suggestion is simply "pm_runtime_put_suspend".
-> > >
-> > > Can we do even better, and make pm_runtime_put() to handle autosuspen=
-d
-> > > automatically when autosuspend is enabled ?
 > >
-> > As stated above, this is already the case.
+> > try-run is not Rust-specific.
+> >
+> > Is there any reason why you did not add it
+> > to __rustc-option?
+> >
+> >
+> > __rustc-option =3D $(call try-run,\
+> >        RUSTC_BOOTSTRAP=3D1 $(1) $(2) $(3) --crate-type=3Drlib
+> > $(srctree)/rust/probe.rs --out-dir=3D$$TMP,$(3),$(4))
 >
-> What really is needed appears to be a combination of
-> pm_runtime_mark_last_busy() with pm_runtime_put().
+> I had an explanation for this in the commit message, but it looks like
+> it got lost when I rewrote it for v2. Anyway, the reason is that I'd
+> have to modify both __rustc-option and rustc-option-yn to do that, and
+> putting it here seemed more future-proof against making the same
+> mistake in any rustc-* commands added in the future.
 
-This makes sense to me too, but I don't think we should limit it to this.
 
-Making pm_runtime_put_autosuspend (or if the name
-"pm_runtime_put_suspend" is better?) to do the similar thing, is
-probably a good idea too. At least in my opinion.
+One solution is to delete rustc-option-yn since there are no users of it.
+
+Another solution is to refactor the code.
+
+Either way, there is no good reason for code duplication.
+
+
+If you keep rustc-option-yn, you can rebased v3 on top of this patch:
+https://lore.kernel.org/lkml/20241009102821.2675718-1-masahiroy@kernel.org/=
+T/#u
+
+
+
 
 >
-> Granted, pm_runtime_put() could do the pm_runtime_mark_last_busy()
-> thing automatically if autosuspend is enabled and the only consequence
-> of it might be delaying a suspend of the device until its autosuspend
-> timer expires, which should not be a problem in the vast majority of
-> cases.
+> But I realize that it's not clear-cut. I'm happy to move it if you prefer=
+,
+> or perhaps add a try-run-rust. Let me know what you think.
+>
+> > I guess it is still suspicious because the top-level Makefile
+> > exports RUCTC_BOOTSTRAP.
+>
+> Moving the declaration of RUSTC_BOOTSTRAP to the top of the Makefile
+> seems to fix it. I guess moving it is probably a better solution than
+> adding it in scripts/Makefile.compiler.
 
-Right.
 
-I guess we should expect the *sync* variants to be used, if the timer
-really needs to be overridden.
 
-Kind regards
-Uffe
+I prefer to keep RUSTC_BOOTSTRAP close to other compiler flags.
+
+
+>
+> Not that I really understand why that is. The existing invocations are
+> in scripts/Makefile.kasan which is invoked after RUSTC_BOOTSTRAP is
+> declared.
+
+
+Miguel gave perfect explanation.
+https://lore.kernel.org/linux-kbuild/CAK7LNARDkS6uAHcdyZatc2SB7A66TWGfKZWNk=
+YOoa7i3jo3QqA@mail.gmail.com/T/#m899bc321ae80d9c4a904680709c9a53f09e51b9e
+
+
+>
+>
+> Alice
+>
+--
+Best Regards
+Masahiro Yamada
 
