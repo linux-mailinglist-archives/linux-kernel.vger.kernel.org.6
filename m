@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-357298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF829996F54
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:12:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3317996F56
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E38283E19
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04F4283DAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590301DF759;
-	Wed,  9 Oct 2024 15:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87E01E0DAE;
+	Wed,  9 Oct 2024 15:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRzJwMuW"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TGgDgmb7"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC561DD86A
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0B11DFD84
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486303; cv=none; b=h6MlI9raLhj6VU7FwJWXCeeD4nPSI27n7an9ANVrIO3ZbPxTp6X6dfSExraP4a5WmZ2HzK8eT7XefjhJllrDLImwBOGxKA9Uz/pv3102RJ42vNPQrhWzkBYtwh3URqwgeVuRCoGQ50CcbMlkrBwI9ihYr7HnsXlLyG0d6HCcQjM=
+	t=1728486306; cv=none; b=exJuKGExaFuyEhHRKz7rHjgr6gam1edHg00cHlOaGp970p8xvac6ZWQ81X5eufBbDdaMT2N1hASpuD86DinyS2dlk5IH2dGQwLGvlmSY+g9fRyBi0/wHIUkKkVKIfhxcJNj+TswhNjFbMHdbi5UalwqwvMqqwyA5xS9UolHRaV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486303; c=relaxed/simple;
-	bh=joP1gyCPe+hwOJUfhGfPr0n9jMYIyiFIDeC9OZBymQg=;
+	s=arc-20240116; t=1728486306; c=relaxed/simple;
+	bh=UUOuALX/8jUEKOE5MK93z/TIwR6ptoN4Q45Bp2t7r80=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aVgOXADKvPH8doxsH/yXCrOX6ZoTNPRpZlwQWmubA544wHICQbHBsMWOGOfiHG1ivuTmcDdkIi0bmIkIQVvYY/yO4i4Hlm2frR774mnI61KQsC5U2I0CH5Zg+x1z2BdePqWQbGt2cz77EZyXD+HhGpk0oQD5V4HW23GfqroFPtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CRzJwMuW; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=r0p04UXrhHx5WBMUjZi6dKXJg4DPZp6BhEeJAMHt2i0CssldSn9Eu7yFeAr4alHB/eg+avs2/fB0Ukoe1Y5LMti+ATBNDLoq7nWrk23r9aDyDgf4MyjN6/QbLSBW0NbKLoxpkihSVEy8rqvfgm4k9T38Fr+1meDKLFgIOQv6rh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TGgDgmb7; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7e6cc094c2fso808652a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:05:02 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e23ee3110fso128334157b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728486302; x=1729091102; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728486303; x=1729091103; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=/RsDegA7EWZeVtL+/24jQ2r/aKoJnN7q7/C9Z+6EiSU=;
-        b=CRzJwMuWtc3wpumgCbjGwmOtbdA7MjeQKSed4nO7Zh63YFFx6csYGczkzuUmGgpKI2
-         YqhteQ9cjLDe4auqI9I8enpQCpyW45brCSydLpwsQIAa+KMFR6WxJajFH6NFXIDGfywL
-         H1rvLb+7+RLO1cDwkpLJHWvJFtT9SDE7kWJsRshhQSoHNOZSg20ejzwgNUmPMeDwvp0C
-         B1pVXUFfQdnMxFhLNJJg78MjqX5+O///+a9rJblkrgJryFOnY8pQfaJktgwv95FRt1BY
-         4Dn/Jz2Gua8pDIr6z51OxTTKsrLrDwwo3y3wW8I6nX7i9jVgjPBXsomMA50NMNUYPuHX
-         ov+Q==
+        bh=5SrGD6ntAFoOH+8A+yPE5xRGZ7AhTh5r8ioRJwoyvss=;
+        b=TGgDgmb7U4/+O8I6VcHU5l+lNX8QJ3BOyKQJQzXZ5+KIainT0W0kcJcZ92lXRPmAv6
+         ew33grIfQl7wTGIgJ8z7RXF4FrMWmW1qF2XX+/Bps4RPAyM3C3T63ynEI+jauCeWCLPH
+         MDudM0l6sf1Wtr1fOBVbhJfnebNaUkdqWD6V8+jj1CYu5OYzSz5PmM1ODOQjn3aq6BwV
+         Pb/oMvBRaYPLLpkHoPg27+CI9sQYdgbcgTNdw4HIHZwPtWpl3SzCvYe3Z9W5ka1RhJZz
+         vbikjorCUyAz5tmYN1TGSNdu6F3OQF5sEN48aA3cEki27gLCB5sfis+jC/JOWl4VUQ6f
+         bPMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728486302; x=1729091102;
+        d=1e100.net; s=20230601; t=1728486303; x=1729091103;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/RsDegA7EWZeVtL+/24jQ2r/aKoJnN7q7/C9Z+6EiSU=;
-        b=rg1t/O2hFINb20VAN2Csee13o5Lqw6y3PWMRIpd0Ubx6s3A44+bmWuQEhk2+3qGgns
-         mOjjPFD8+X3EVVlw0dINigt/rILNQi9Gpju/IfSMMGCYlHdp2rZcX/vtZk+6emapBOec
-         wrvKSkNIOIHV70b7VWlSG1Iq9ZKVlA5uCYCcS7FC5fn/VoRF5inBK5eWnIzBY3VUZbKE
-         apDOyWkMsVpeNX6H6eRUmUjKonkheyzKzC3iI6rEknI2c5qC8d4GG3EaerT40VPyReeo
-         sy1tJ/2uTSkPIY3diPTAnOI5hxaHrDVhn8zfntcsW2QyjBo7MvOyGE+dsUybxJAtWmFY
-         a1cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSJC2FESLuapm6AcDXjEddDW1nsG0lJIIL5CzzgCtTnHNyoVRsHhXGc5ejQj9wdwLfrPt8NbG/pFqOlQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyHBWzstkhiBWvPy6WJ+KNGrgirhngBo0g2D7dLhIYAZg0wSob
-	DYa3oswkEDGzs25LRShqMdH0tH8a70hj8SESPIj6UOeT6uuJ1RfrhbkjsSrqs6mkhftbyZrxh3M
-	TOg==
-X-Google-Smtp-Source: AGHT+IGXEo6jBIzb0et6Z+0Bgl35nZ3qw5fx0ehgX+u+72GQ6GGS5KT3St9rZ3gVnOUrSzXWlGjg9Rucm8E=
+        bh=5SrGD6ntAFoOH+8A+yPE5xRGZ7AhTh5r8ioRJwoyvss=;
+        b=CdOt1tvo3zcL5sMRu8rDDP/dB+tdo8fXD4mDjVUEBGM+wIomYnBB+pNX3TZtHtDsDk
+         NeA+r5OQYnF4VKVW/k2KqRmbJqTO+WzX14x8AzP1ACqSuNa7JteZnl8X0Pi5QYFqEPxb
+         EPZbZZD01yg8m/oV53QcA1oWxo0vjQqUZKK0wUisaoxHhJ228FxrhExOEtc5wWrukb11
+         ylsURH87f6rU9tgAxmRgerH2/QzliNA5MR2OfbnhZiVYFIQ5oroFDU61eR7Ga0nUoHdu
+         AqRDbHL4LaPHsHoYIIkyoDrE0lSeE+Ya6ESaplPCtMF7YGaqc4M6Nky5UsXAjtuYIle2
+         iGmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJJGzRcGJ0b1APElthL2/M31y81n3dl2eXZlMvd3FGVVA3F35rTMXKPJGbSKXeVdV7dB1Z9y6sfmME18E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Uc1DLtCa47qXN9yHUx8WjAZJT6IjUsZSrsrhr9DE1iMOQa4J
+	GwxvXMwnbvZFhuf3PQUB+2t1iFiEHtKFkxEkwYF2nTFM/w7RVvNBdu0tXA1CFVyNYGw0EVQYjo8
+	swA==
+X-Google-Smtp-Source: AGHT+IFedXDgPxwolm1IOTnRjA9oTcL70vgsBXdT7cV8n0QPoljgzOxfYmHoJ/QpWjSoaCiWMtRKhm2aykA=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90a:bd93:b0:2e2:8f4d:457 with SMTP id
- 98e67ed59e1d1-2e28f4d04cdmr10803a91.2.1728486301403; Wed, 09 Oct 2024
- 08:05:01 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:690c:3382:b0:6e2:4b3:ee22 with SMTP id
+ 00721157ae682-6e32216166cmr582417b3.6.1728486303499; Wed, 09 Oct 2024
+ 08:05:03 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed,  9 Oct 2024 08:04:51 -0700
+Date: Wed,  9 Oct 2024 08:04:52 -0700
 In-Reply-To: <20241009150455.1057573-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241009150455.1057573-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241009150455.1057573-3-seanjc@google.com>
-Subject: [PATCH 2/6] KVM: Verify there's at least one online vCPU when
- iterating over all vCPUs
+Message-ID: <20241009150455.1057573-4-seanjc@google.com>
+Subject: [PATCH 3/6] KVM: Grab vcpu->mutex across installing the vCPU's fd and
+ bumping online_vcpus
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -86,45 +86,109 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Oliver Upton <oliver.upton@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 
-Explicitly check that there is at least online vCPU before iterating over
-all vCPUs.  Because the max index is an unsigned long, passing "0 - 1" in
-the online_vcpus==0 case results in xa_for_each_range() using an unlimited
-max, i.e. allows it to access vCPU0 when it shouldn't.  This will allow
-KVM to safely _erase_ from vcpu_array if the last stages of vCPU creation
-fail, i.e. without generating a use-after-free if a different task happens
-to be concurrently iterating over all vCPUs.
+During vCPU creation, acquire vcpu->mutex prior to exposing the vCPU to
+userspace, and hold the mutex until online_vcpus is bumped, i.e. until the
+vCPU is fully online from KVM's perspective.
 
-Note, because xa_for_each_range() is a macro, kvm_for_each_vcpu() subtly
-reloads online_vcpus after each iteration, i.e. adding an extra load
-doesn't meaningfully impact the total cost of iterating over all vCPUs.
-And because online_vcpus is never decremented, there is no risk of a
-reload triggering a walk of the entire xarray.
+To ensure asynchronous vCPU ioctls also wait for the vCPU to come online,
+explicitly check online_vcpus at the start of kvm_vcpu_ioctl(), and take
+the vCPU's mutex to wait if necessary (having to wait for any ioctl should
+be exceedingly rare, i.e. not worth optimizing).
 
-Cc: Will Deacon <will@kernel.org>
-Cc: Michal Luczaj <mhal@rbox.co>
+Reported-by: Will Deacon <will@kernel.org>
+Reported-by: Michal Luczaj <mhal@rbox.co>
+Link: https://lore.kernel.org/all/20240730155646.1687-1-will@kernel.org
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- include/linux/kvm_host.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ virt/kvm/kvm_main.c | 47 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 450dd0444a92..5fe3b0c28fb3 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -985,9 +985,10 @@ static inline struct kvm_vcpu *kvm_get_vcpu(struct kvm *kvm, int i)
- 	return xa_load(&kvm->vcpu_array, i);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 05cbb2548d99..fca9f74e9544 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4287,7 +4287,14 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 	if (r)
+ 		goto unlock_vcpu_destroy;
+ 
+-	/* Now it's all set up, let userspace reach it */
++	/*
++	 * Now it's all set up, let userspace reach it.  Grab the vCPU's mutex
++	 * so that userspace can't invoke vCPU ioctl()s until the vCPU is fully
++	 * visible (per online_vcpus), e.g. so that KVM doesn't get tricked
++	 * into a NULL-pointer dereference because KVM thinks the _current_
++	 * vCPU doesn't exist.
++	 */
++	mutex_lock(&vcpu->mutex);
+ 	kvm_get_kvm(kvm);
+ 	r = create_vcpu_fd(vcpu);
+ 	if (r < 0)
+@@ -4304,6 +4311,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 	 */
+ 	smp_wmb();
+ 	atomic_inc(&kvm->online_vcpus);
++	mutex_unlock(&vcpu->mutex);
+ 
+ 	mutex_unlock(&kvm->lock);
+ 	kvm_arch_vcpu_postcreate(vcpu);
+@@ -4311,6 +4319,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 	return r;
+ 
+ kvm_put_xa_release:
++	mutex_unlock(&vcpu->mutex);
+ 	kvm_put_kvm_no_destroy(kvm);
+ 	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+ unlock_vcpu_destroy:
+@@ -4437,6 +4446,33 @@ static int kvm_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
  }
+ #endif
  
--#define kvm_for_each_vcpu(idx, vcpup, kvm)		   \
--	xa_for_each_range(&kvm->vcpu_array, idx, vcpup, 0, \
--			  (atomic_read(&kvm->online_vcpus) - 1))
-+#define kvm_for_each_vcpu(idx, vcpup, kvm)				\
-+	if (atomic_read(&kvm->online_vcpus))				\
-+		xa_for_each_range(&kvm->vcpu_array, idx, vcpup, 0,	\
-+				  (atomic_read(&kvm->online_vcpus) - 1))
- 
- static inline struct kvm_vcpu *kvm_get_vcpu_by_id(struct kvm *kvm, int id)
++static int kvm_wait_for_vcpu_online(struct kvm_vcpu *vcpu)
++{
++	struct kvm *kvm = vcpu->kvm;
++
++	/*
++	 * In practice, this happy path will always be taken, as a well-behaved
++	 * VMM will never invoke a vCPU ioctl() before KVM_CREATE_VCPU returns.
++	 */
++	if (likely(vcpu->vcpu_idx < atomic_read(&kvm->online_vcpus)))
++		return 0;
++
++	/*
++	 * Acquire and release the vCPU's mutex to wait for vCPU creation to
++	 * complete (kvm_vm_ioctl_create_vcpu() holds the mutex until the vCPU
++	 * is fully online).
++	 */
++	if (mutex_lock_killable(&vcpu->mutex))
++		return -EINTR;
++
++	mutex_unlock(&vcpu->mutex);
++
++	if (WARN_ON_ONCE(!kvm_get_vcpu(kvm, vcpu->vcpu_idx)))
++		return -EIO;
++
++	return 0;
++}
++
+ static long kvm_vcpu_ioctl(struct file *filp,
+ 			   unsigned int ioctl, unsigned long arg)
  {
+@@ -4452,6 +4488,15 @@ static long kvm_vcpu_ioctl(struct file *filp,
+ 	if (unlikely(_IOC_TYPE(ioctl) != KVMIO))
+ 		return -EINVAL;
+ 
++	/*
++	 * Wait for the vCPU to be online before handling the ioctl(), as KVM
++	 * assumes the vCPU is reachable via vcpu_array, i.e. may dereference
++	 * a NULL pointer if userspace invokes an ioctl() before KVM is ready.
++	 */
++	r = kvm_wait_for_vcpu_online(vcpu);
++	if (r)
++		return r;
++
+ 	/*
+ 	 * Some architectures have vcpu ioctls that are asynchronous to vcpu
+ 	 * execution; mutex_lock() would break them.
 -- 
 2.47.0.rc0.187.ge670bccf7e-goog
 
