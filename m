@@ -1,128 +1,93 @@
-Return-Path: <linux-kernel+bounces-356973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346ED9969BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:16:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5989969C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED57B283F2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:16:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC756B21E61
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881691922CC;
-	Wed,  9 Oct 2024 12:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61F0192D82;
+	Wed,  9 Oct 2024 12:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="XSLsj/W6"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5BUzL+Jt"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7657B18C34B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 12:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592B518C024;
+	Wed,  9 Oct 2024 12:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728476167; cv=none; b=j4fNvefwjoX9pY23jKba2oTG/Hr8OQSajtf4Z6Ab8UpQwWot7lzITxZYDT3tk+/mFhaQlj9D2eKlFJ8DngIp0meKwS/pefD686R2RT3suKcpgxMgJ8wPvYT8ZpPJw5IeTKziLCP5USfXgYCNFcWkKSAaVkEBlw4s41GPqFM/ZyI=
+	t=1728476207; cv=none; b=EodJD0J5h6ukavYkH4wsAofu6P/t2Tip9ogRi9/aijmTzzNnnFe1LS7/QqBIlIGzmS2Yn9lYEAK2yFvl4PumUMB81E+/e8kcKuxzbdVh3kDzBxTZZBydFQyKZlMSEBi6YhLtMyeo7RSEV+MNz+mloBSRaVthjdczfKY3msOU2lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728476167; c=relaxed/simple;
-	bh=fL5BMKCHZvhNvqU2KckoC1NE08e6VHPsdX1SKOuB0tc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pc3y9mTgrAjBb2cp9FRJwRF3q5QsmtXFLQDwPdoMAoTbbzXneP9Nmwv9qnmeoFDcx3CwuBG5syEIcRtj9l/nIX1C2f22oBnOk6062GjylUKILCQA2WP3oygNhL65RcsM7us+IpCZ5c6WTgJRHzy8u3lk5GKi5DmxiuFYTbqk1EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=XSLsj/W6; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e28fc33fd8eso844870276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 05:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1728476164; x=1729080964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SP3TO6PzMnYHnnQsF3wSVvNFppGWS7tXRNkouPbefzM=;
-        b=XSLsj/W6v7KaEUfucGaNDajT9GZoTsy8D+LhQtXZFDUsHwUGQ9w/k4+Pc3Qy7IhdqH
-         jNJ8TwG0oTIiElxanFQAIGjn74RMO94cTFtfQSbxsBfx3WBk5CUaCcao+6KTvIEbmPS0
-         M/NkqkAzkcEBispg4myPc/qFjr4mfa245K5cP1BTfkC6qEmuU6WfcFmSuPCU830FSElb
-         zzCQbd8Ch2T+D78hbkM97COERev7xJVYHGbJjGkcxSlfeLnnJ17k1s4cn+j7FKTAta3h
-         M1tbi0BvmHIqkHx0LlT8qJPJb0CI6FmrXQTYcHOKA/em8V9ODvDXg8yeY96lfK1o58tV
-         JTCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728476164; x=1729080964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SP3TO6PzMnYHnnQsF3wSVvNFppGWS7tXRNkouPbefzM=;
-        b=fcJUv56/WxIrhJe4TvTjbVUxtmgPT8PcK8upjoyAwOSJFCwMSEB5yHWuPjDVswtHco
-         DvqrlyXZNPHkIR7vk6E00Tcm4kdCobS7nr7AxSYK0E7mZVaAZK7c2OPpWUZWSkUOqbw3
-         y6g1aaYTk3nNeZqOV3rFoElg21umUwgOtPVzAkwuASGJ3LjHu0raGmZcFLWe+rZ/hRG4
-         JOitwB2giZ18vVLxw/iQLtXkFnjVWcLEGlsM8ChyXNPzWRzJ2HLFac5FdTgXxAqKyvBD
-         rVf+eEzk2hM6jrY1xoMCQLYnigKQKVj3/DB0ePFiwQ6swkvkk0zt/foJfqvgDSXiuS/D
-         FORw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRV5YUkQMvGduxNaiomrGIVBqoRtMpmtVcYKp5nQoXxCChiXwsdyts8J8BrDQbIme8PmK/I5aKJHIUcvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOK6Heu/01w4huVlJBvzo6aA1psVdIfY/Jro5/0NjgcfdPaUvn
-	1oAZLSyHUJPHmSFzZ6GQ0dRWx4iOHUkoWes5FRrhB6Joxfx/AaWvqFByGzPTXNjmp4h4KtNNR0x
-	IlPT4oV/QJ3rfaaqXccqYkyYlvo4JmeYDqZaxfA==
-X-Google-Smtp-Source: AGHT+IEjqph+QOBkdC2wgmaMeMXSihsDIdEYasz72e+xVwTC+AQjHciiKXf6ktHHAe3sCryvIdzDZehqTofRN1fBwpc=
-X-Received: by 2002:a25:94d:0:b0:e20:291e:7fe1 with SMTP id
- 3f1490d57ef6-e28fe45cf09mr1822059276.25.1728476164318; Wed, 09 Oct 2024
- 05:16:04 -0700 (PDT)
+	s=arc-20240116; t=1728476207; c=relaxed/simple;
+	bh=Ekd22GoxVswK4+YZ5R6XAgJuoq2Y0V4ErL88lP9FQcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IoUDwi88BBtQHQwQ5kzMKI7oWESu8zFgWnrk0gJL3OHEEIpS1sTb8aybyUfGqFsYZYzy0+jNQf6P1XVOP44vSC5L8ax65iSkA8756cAFV+Vf07bIKcU00GEd5ui+Pjob6eBTs3PAimSKfm4o6aQ64ty0sq3KqZeSDVxOdgQ94kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5BUzL+Jt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=34kWFpg00FJJRDKeTtvdBzFE+0mODfI3Gmdv1o72FJU=; b=5BUzL+JtekbRt18vrglN1wrnkI
+	wqZ0P1QO+0KrQNqZ6G5BdQfJvQ56Evyt3TvNExZT2YCtdExPE0RH4nIRxM9HS/SCG5IhXKeqJj4P9
+	sG8T8As5yB+Tenbm6Ncf4mjUY0pEwOT8K2Lh88EKADlFwxeTV3o8/3nuYzPWeGkSe8Xw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syVcD-009UbJ-Us; Wed, 09 Oct 2024 14:16:29 +0200
+Date: Wed, 9 Oct 2024 14:16:29 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
+Message-ID: <bc9e4e95-8896-4087-8649-0d8ec6e2cb69@lunn.ch>
+References: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-vc4_fbdev_fix-v1-0-8737bd11b147@raspberrypi.com>
- <20241002-vc4_fbdev_fix-v1-1-8737bd11b147@raspberrypi.com> <b1d76661-41b9-4841-80f4-452654d9cd6b@igalia.com>
-In-Reply-To: <b1d76661-41b9-4841-80f4-452654d9cd6b@igalia.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 9 Oct 2024 13:15:48 +0100
-Message-ID: <CAPY8ntDgkyQ6ijdgB2Qmd45ArtXqYFwfmpvYgQhobnw=bUnd-Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/vc4: Run default client setup for all variants.
-To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Cc: Maxime Ripard <mripard@kernel.org>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Javier Martinez Canillas <javierm@redhat.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
 
-On Wed, 9 Oct 2024 at 12:02, Ma=C3=ADra Canal <mcanal@igalia.com> wrote:
->
-> Hi Dave,
->
-> On 10/2/24 12:06, Dave Stevenson wrote:
-> > Commit 45903624e9fc ("drm/vc4: Run DRM default client setup")
-> > only added DRM_FBDEV_DMA_DRIVER_OPS for the vc4 (Pi0-3) driver
-> > definition, which caused an issue on vc5 (Pi4) as there was no
-> > fbdev_probe function defined.
-> >
-> > Fixes: 45903624e9fc ("drm/vc4: Run DRM default client setup")
-> > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> Reviewed-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+> +static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
+> +				      unsigned long modes)
+> +{
+> +	bool active_low = false;
+> +	u32 mode;
+> +
+> +	if (index >= XWAY_GPHY_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+> +		switch (mode) {
+> +		case PHY_LED_ACTIVE_LOW:
+> +			active_low = true;
+> +			break;
+> +		case PHY_LED_ACTIVE_HIGH:
+> +			break;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return phy_modify(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index),
+> +			  active_low ? XWAY_GPHY_LED_INV(index) : 0);
 
-Applied to drm-misc-next.
+This does not appear to implement the 'leave it alone' option.
 
-> Best Regards,
-> - Ma=C3=ADra
->
-> > ---
-> >   drivers/gpu/drm/vc4/vc4_drv.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_dr=
-v.c
-> > index 13a1ecddbca3..a238f76a6073 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_drv.c
-> > +++ b/drivers/gpu/drm/vc4/vc4_drv.c
-> > @@ -238,6 +238,7 @@ const struct drm_driver vc5_drm_driver =3D {
-> >   #endif
-> >
-> >       DRM_GEM_DMA_DRIVER_OPS_WITH_DUMB_CREATE(vc5_dumb_create),
-> > +     DRM_FBDEV_DMA_DRIVER_OPS,
-> >
-> >       .fops =3D &vc4_drm_fops,
-> >
-> >
+	Andrew
 
