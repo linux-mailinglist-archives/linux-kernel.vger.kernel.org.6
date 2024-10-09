@@ -1,147 +1,159 @@
-Return-Path: <linux-kernel+bounces-356249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401EC995E81
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FFF995E8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 06:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D85F12891C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A68B28A1A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996EA14E2D6;
-	Wed,  9 Oct 2024 04:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057DA1547D7;
+	Wed,  9 Oct 2024 04:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ePqjztGC"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vVXcZ4pj"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA54A38DC0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 04:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5784CB36
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 04:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728447470; cv=none; b=XXzJXxErvLKnhXRO3uyr2jsjb+63qQroIyHSmq0F30dbs0vnHhDl/KGdeA9/XuMIJr/6P7CertFPl2mkHbaaOmE/6KkbB/19b4Ouhgt2YbW+JIPi/7FO1ohWAMGMRlxOL3G6P+enqRsNCTjhTQxCvKJSpzuXQ7AnN+/EBFDYnu0=
+	t=1728447683; cv=none; b=qXtmtPOwRz6D+rG4b6FFcnvHFszpNV8Eecfh7CipNBEfaVYyOSFIqLHXgMKxXw1pCkmCgYSo8tT2CwE3zcmpQo8+5gwIRDSIyXKNJ8PYkf03okZE8a5WULwkLLdIGA4M3Y9qblLaAA3mZBGd6Lv00rIbo/wL5lFnIwCAJQinheo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728447470; c=relaxed/simple;
-	bh=RrXe6DklimFgZhHmkQOPQtwb2z7G/EVgyyPTR9aeyDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWCtqGFFux03OckNh0tvJLF4Rs2dgslZh72gj7pB52WaAFIaSiEngGsoUAwloMz+W3/5XZVgL9GNa7MiF1eQrei8Y0Gjaqu98KS4PmcQ8km0vWWITT3CRPlLXxiMmMoOCTUdJShVEdgFfYox+UwwY2SWANA00yfcU/iFr9N6knE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ePqjztGC; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 9 Oct 2024 00:17:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728447461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GmUha6NmBXATpud6bD8r/lO+t7OtcRYkqayYgW/HEsM=;
-	b=ePqjztGCI/E6efxQ3EOWD3Gnme9CmKvHxUfeziBVce9iaz7yyICXlthWJ6DUCEUGCbdm2F
-	LggmfVIW0O/zxMIOUmM+n3sVMqMA0vvyA7ldTo+q6J/j0dCMjxbDvkQaNudD1Op9ReuGec
-	hGB6pRTthFrdiyGSciNhNWVPzydhUaE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <kxi6m3gi7xqv52bupvb7iskyk6e3spq6bbhq4il5pmfieacfmf@5iwcnsfkmfq4>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <20241006043002.GE158527@mit.edu>
- <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
- <20241009035139.GB167360@mit.edu>
+	s=arc-20240116; t=1728447683; c=relaxed/simple;
+	bh=rh3W5GxyUVsL2C7NuFhv7Fd1kdw81A/bO2SCyGv5klI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=CIdob2Rf7pg9wf/4M/UR3PinQCLZR7Jdae/HOr5fWvAVvCRlaajR+jsDlaVGqcf6L3nIFvJnbSM8e6aa8EXR1t8gyi8K5RBp3F3UGSyCVFwmouFox40MWERHmlvdUzNt1AfzcxMTKdxzgKepop3BfPxSzu0yCmNQ+3J9BSSTdrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vVXcZ4pj; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241009042119epoutp03d0f23884d657aabb0dab420e43b2c830~8rgGkdSet3236832368epoutp03g
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 04:21:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241009042119epoutp03d0f23884d657aabb0dab420e43b2c830~8rgGkdSet3236832368epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728447679;
+	bh=Q8VU4gs+jWyP2uYl9CO9ruACP5N7ZVnt3XESNiQ3oNg=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=vVXcZ4pj52zAGlYaZnhYE3gAaiWO5vHAicNB+0TXP2lsAE85K6l+bgjzSvFqF7Gvy
+	 gVT5aH7W4A6QPdhs2YX3w60EQNLJmhnOkcajvY/z9FLvviodnkMrF/Y/ISNdkh+8TG
+	 E2yXFah6hJgUQv8r4V4bmF5ajNv89nsaUWZu6qIs=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20241009042118epcas2p2f1bfbe3a75efadba6292a7adacf79902~8rgGBGPB-2939729397epcas2p2R;
+	Wed,  9 Oct 2024 04:21:18 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XNfpQ1BS9z4x9Pv; Wed,  9 Oct
+	2024 04:21:18 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3B.90.08559.DB406076; Wed,  9 Oct 2024 13:21:18 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20241009042117epcas2p48f0273ccdaf17daf76eb0be6f7183d1e~8rgFIhD7I0752207522epcas2p4L;
+	Wed,  9 Oct 2024 04:21:17 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241009042117epsmtrp1bb358a60849ad9977299bfd1ab3252a1~8rgFHxuMJ1171011710epsmtrp1B;
+	Wed,  9 Oct 2024 04:21:17 +0000 (GMT)
+X-AuditID: b6c32a43-7b1b87000000216f-ad-670604bd8bc1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	16.F8.07371.DB406076; Wed,  9 Oct 2024 13:21:17 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241009042117epsmtip20157bea1d48a7a236bd0067e196425f8~8rgE11sLn3166031660epsmtip2R;
+	Wed,  9 Oct 2024 04:21:17 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH v3 0/3] add clocks support for exynosauto v920 SoC
+Date: Wed,  9 Oct 2024 13:21:07 +0900
+Message-ID: <20241009042110.2379903-1-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009035139.GB167360@mit.edu>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmqe4+FrZ0g54JzBYP5m1js1iz9xyT
+	xfUvz1kt5h85x2px/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVq8X/PDnaLw2/aWS3+
+	XdvIYtG0bD2TA5/H+xut7B6bVnWyeWxeUu/Rt2UVo8fnTXIBrFHZNhmpiSmpRQqpecn5KZl5
+	6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAdyoplCXmlAKFAhKLi5X07WyK8ktL
+	UhUy8otLbJVSC1JyCswL9IoTc4tL89L18lJLrAwNDIxMgQoTsjNuzDrMVvCItWJp2y62BsaD
+	LF2MnBwSAiYST3eeZepi5OIQEtjBKLFo+jco5xOjxNIbv9ggnG+MEg3PZ7PDtMx9fJYRIrGX
+	UeLW5B1QLR8ZJTpfPgVyODjYBHQl/vxzAImLCOxhkthyfglYEbPAWUaJu3MWgI0SFnCSWPew
+	C+wSFgFViQU7e8HivAL2Ev2TX7JCrJOXuP74KBNEXFDi5MwnYPXMQPHmrbOZQYZKCLRySLQ3
+	rWaCaHCR2N64ihHCFpZ4dXwL1N1SEi/726DsfInJ198yQTQ3MEpc+9fNDJGwl1h05ic7yAvM
+	ApoS63fpg5gSAsoSR25B7eWT6Dj8lx0izCvR0SYE0agm8enKZaghMhLHTjyDsj0k3n54CLZV
+	SCBWYkXrdsYJjPKzkHwzC8k3sxD2LmBkXsUollpQnJuemmxUYAiP1uT83E2M4MSq5byD8cr8
+	f3qHGJk4GA8xSnAwK4nw6i5kTRfiTUmsrEotyo8vKs1JLT7EaAoM34nMUqLJ+cDUnlcSb2hi
+	aWBiZmZobmRqYK4kznuvdW6KkEB6YklqdmpqQWoRTB8TB6dUA1PA2oi1S8UdTPeve3rSp21a
+	tMHJAkV3Po/W3qnWj6IcK51m+8k8uqrUwR3sZD5tv2HABuuSSemvPxWy3EpksXF9mPnxZ2v2
+	plip4ORTr+Kv5t6uuDTxdHr/Vo6yWrNtE4Pe7a3UO5tjpyT+Nar5zM4exYjni+wuB7tvMC4S
+	mBWduGZCTYb/I+26r7/ZZhr/auqw++7+/ttl3imaWqsq/aa1P34/e+LUhe+zrx5pelDL3O9Q
+	+W37tEjpVxzbvnY3alcLWwdKz2bO1Hi8aNblr+1fkh45um241X3eUyVxMqfGnNsr/kckNnEf
+	W+m0z1lPqu//mcb4S5/N48tfbFvbaVF4svF/y9W5ElPWXdkdtFyJpTgj0VCLuag4EQA/v3Fn
+	NQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSvO5eFrZ0g+O3JS0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mm7M
+	OsxW8Ii1YmnbLrYGxoMsXYycHBICJhJzH59l7GLk4hAS2M0o8fX/J3aIhIzExob/ULawxP2W
+	I6wQRe8ZJRYumATUwcHBJqAr8eefA0hcROAQk8TEz09ZQBxmgcuMEsfuTmYG6RYWcJJY97AL
+	bB2LgKrEgp29YFN5Bewl+ie/ZIXYIC9x/fFRJoi4oMTJmU/A6pmB4s1bZzNPYOSbhSQ1C0lq
+	ASPTKkbJ1ILi3PTcZMMCw7zUcr3ixNzi0rx0veT83E2M4FDX0tjBeG/+P71DjEwcjIcYJTiY
+	lUR4dReypgvxpiRWVqUW5ccXleakFh9ilOZgURLnNZwxO0VIID2xJDU7NbUgtQgmy8TBKdXA
+	tOXxr5Tbrp3HNst/n62+4f7P11fet3b4FFrc4Xn7ZMtb27f/Y5qklhY+2BgYaV8a9393+mI/
+	x8o7S4P3R8kvULvz4HOU7Mx6hdtPHVa8U/noa6J3xXTZNqOrGiVXyyc/FL9g+ZVZc8evs6su
+	GDqV8xzrS13AP7fik+0ZriOPNH8rbz65+PACt9zeOPUrnMcKirfM90yeFf126tT9ohOqwzbJ
+	7Ug/3mazasPdC/cnvDqmteTzwjajhduseUwbGLmDq/kUN3ldffY/+Wj162dWhxfYiogt84ia
+	Lh5yRXxP6LfZYs0R3hsWBfFxeG0x+zHxUq1Dat/WItavZpf3ZKtEXVn942/Z/Qd3qgq3FCTL
+	6yorsRRnJBpqMRcVJwIAfSCIh+QCAAA=
+X-CMS-MailID: 20241009042117epcas2p48f0273ccdaf17daf76eb0be6f7183d1e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241009042117epcas2p48f0273ccdaf17daf76eb0be6f7183d1e
+References: <CGME20241009042117epcas2p48f0273ccdaf17daf76eb0be6f7183d1e@epcas2p4.samsung.com>
 
-On Tue, Oct 08, 2024 at 10:51:39PM GMT, Theodore Ts'o wrote:
-> On Sun, Oct 06, 2024 at 12:33:51AM -0400, Kent Overstreet wrote:
-> > 
-> > Correct me if I'm wrong, but your system isn't available to the
-> > community, and I haven't seen a CI or dashboard for kdevops?
-> 
-> It's up on github for anyone to download, and I've provided pre-built
-> test appliance so people don't have to have downloaded xfstests and
-> all of its dependencies and build it from scratch.  (That's been
-> automated, of course, but the build infrastructure is setup to use a
-> Debian build chroot, and with the precompiled test appliances, you can
-> use my test runner on pretty much any Linux distribution; it will even
-> work on MacOS if you have qemu built from macports, although for now
-> you have to build the kernel on Linux distro using Parallels VM[1].)
+This patchset adds the CMU block below to support exynosauto v920 SoC.
+- CMU_PERIC1
+- CMU_MISC
+- CMU_HSI0/1
 
-How many steps are required, start to finish, to test a git branch and
-get the results?
+Changes in v2:
+ - Rebase the patch to reflect the latest fixes
 
-Compare that to my setup, where I give you an account, we set up the
-config file that lists tests to run and git branches to test, and then
-results show up in the dashboard.
+Changes in v3:
+ - Remove duplicate sentinels
 
-> I'll note that IMHO making testing resources available to the
-> community isn't really the bottleneck.  Using cloud resources,
-> especially if you spin up the VM's only when you need to run the
-> tests, and shut them down once the test is complete, which
-> gce-xfstests does, is actually quite cheap.  At retail prices, running
-> a dozen ext4 file system configurations against xfstests's "auto"
-> group will take about 24 hours of VM time, and including the cost of
-> the block devices, costs just under two dollars USD.  Because the
-> tests are run in parallel, the total wall clock time to run all of the
-> tests is about two and a half hours.  Running the "quick" group on a
-> single file system configuration costs pennies.  So the $300 of free
-> GCE credits will actually get someone pretty far!
+Sunyeal Hong (3):
+  dt-bindings: clock: exynosautov920: add peric1, misc and hsi0/1 clock
+    definitions
+  clk: samsung: exynosautov920: add peric1, misc and hsi0/1 clock
+    support
+  arm64: dts: exynosautov920: add peric1, misc and hsi0/1 clock DT nodes
 
-That's the same argument that I've been making - machine resources are
-cheap these days.
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  50 +++
+ drivers/clk/samsung/clk-exynosautov920.c      | 289 ++++++++++++++++++
+ .../clock/samsung,exynosautov920.h            |  47 +++
+ 3 files changed, 386 insertions(+)
 
-And using bare metal machines significantly simplifies the backend
-(watchdogs, catching full kernel and test output, etc.).
+-- 
+2.46.0
 
-> No, the bottleneck is having someone knowledgeable enough to interpret
-> the test results and then finding the root cause of the failures.
-> This is one of the reasons why I haven't stressed all that much about
-> dashboards.  Dashboards are only useful if the right person(s) is
-> looking at them.  That's why I've been much more interested in making
-> it stupidly easy to run tests on someone's local resources, e.g.:
-> 
->      https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
-
-Yes, it needs to be trivial to run the same test locally that gets run
-by the automated infrastructure, I've got that as well.
-
-But dashboards are important, as well. And the git log based dashboard
-I've got drastically reduces time spent manually bisecting.
-
-> In fact, for most people, the entry point that I envision as being
-> most interesting is that they download the kvm-xfstests, and following
-> the instructions in the quickstart, so they can run "kvm-xfstests
-> smoke" before sending me an ext4 patch.  Running the smoke test only
-> takes 15 minutes using qemu, and it's much more convenient for them to
-> run that on their local machine than to trigger the test on some
-> remote machine, whether it's in the cloud or someone's remote test
-> server.
-> 
-> In any case, that's why I haven't been interesting in working with
-> your test infrastructure; I have my own, and in my opinion, my
-> approach is the better one to make available to the community, and so
-> when I have time to improve it, I'd much rather work on
-> {kvm,gce,android}-xfstests.
-
-Well, my setup also isn't tied to xfstests, and it's fairly trivial to
-wrap all of our other (mm, block) tests.
-
-But like I said before, I don't particularly care which one wins, as
-long as we're pushing forward with something.
 
