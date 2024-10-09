@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-356160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BFE995D67
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:49:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACF3995D6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58931F235A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664B31C22785
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3463941A84;
-	Wed,  9 Oct 2024 01:49:12 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64DA41C65;
+	Wed,  9 Oct 2024 01:51:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D803D9E;
-	Wed,  9 Oct 2024 01:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE23B2C190;
+	Wed,  9 Oct 2024 01:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728438551; cv=none; b=kjIlo8VjQ7uCxBGccxKWwwKr4+ytxJLwZF9j5eu0FkUGMi5VmAFN0rCdRJ/ce2ywrm/5Eb6j/tuSLnRja/acS90iiyRhhAw5m7ZFU83SElhWm+xJdBLh/LUn+Akhcpwe2QWD5661YaFirfV+F1FL+SVpy1g0R02bHKQPQIWsUpo=
+	t=1728438676; cv=none; b=CrIZSBXc1wO/1d8bJwAfcqqTFnQcET9VGZynKtKIzt485OZ70tsyX0uC5B98Mdc3Vx+MN4CrFjsFOhtE7ZjrimmDlXxQTOZkllFilbS4EqSQBaXRosGjvPGc0+30vpXH3/JG1G1A3DuMluSJ9I5CkHEgzr1EGiAQwWWD0x20/9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728438551; c=relaxed/simple;
-	bh=DF3BtXDY7BYUmkarQzPNrfXC1j8i0Vi38SkvjVBGCZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWozI5D78GsGHVfU4uDNOxIUEAypSHK8f6xfNh7HrjIhKS+KQfQT/8XSIlcFnWVyZHpBLcgpBOA0/GCpwjEid1K8OXDxIDb/e93aSVYWfBF0uPqcFfmhpxAoyV5XpGMM2MO4/rXZXdrMMnsD4ar77BVRNBg5fQAnE7OMOh/ua/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syLov-000000003B1-3nWX;
-	Wed, 09 Oct 2024 01:48:58 +0000
-Date: Wed, 9 Oct 2024 02:48:52 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next 0/9] net: phy: mediatek: Introduce mtk-phy-lib
- which integrates common part of MediaTek's internal ethernet PHYs
-Message-ID: <ZwXhBG9-SpfyJjmL@makrotopia.org>
-References: <20241004102413.5838-1-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1728438676; c=relaxed/simple;
+	bh=icir9CpjD0mwSG+HWRzC1ozhoX2Q9hwhWZtaW0WJgAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F8UWoioS/sBaW1w18+V1lZ0wfZxS+2maJkxqlShpflMd81vwd0Wkbt3uOT7tk4wvXBIU605E1v96gpwBOjjZWUg5QjRfYlyp+5P6PgHGSkaagHjU6TdY+AH6opUm+9cu9f7+eY5vbSIMM6ZjpJW0I3LNBoJ9nxBE6PGsp7WQSrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XNbSl00Bkz4f3jHw;
+	Wed,  9 Oct 2024 09:50:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8D91C1A018D;
+	Wed,  9 Oct 2024 09:51:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgD3KseE4QVnhF1KDg--.60869S4;
+	Wed, 09 Oct 2024 09:51:02 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	hch@lst.de
+Cc: iam@valdikss.org.ru,
+	linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] md/raid10: fix null ptr dereference in raid10_size()
+Date: Wed,  9 Oct 2024 09:49:14 +0800
+Message-Id: <20241009014914.1682037-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004102413.5838-1-SkyLake.Huang@mediatek.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3KseE4QVnhF1KDg--.60869S4
+X-Coremail-Antispam: 1UD129KBjvJXoWrKry5Cw1UWr1fWF17KF17ZFb_yoW8JrW3p3
+	9F9ryYvr10k3y7Ja4DJr1UZa45Ka4UK3y2kryxAw4rZF13XFZrWa1fXrWjgrs7XrWrGa4r
+	AF4UKFWDuF1jg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Sky,
+From: Yu Kuai <yukuai3@huawei.com>
 
-On Fri, Oct 04, 2024 at 06:24:04PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
-> 
-> This patchset is derived from patch[01/13]-patch[9/13] of Message ID:
-> 20240701105417.19941-1-SkyLake.Huang@mediatek.com. This integrates
-> MediaTek's built-in Ethernet PHY helper functions into mtk-phy-lib
-> and add more functions into it.
+In raid10_run() if raid10_set_queue_limits() succeed, the return value
+is set to zero, and if following procedures failed raid10_run() will
+return zero while mddev->private is still NULL, causing null ptr
+dereference in raid10_size().
 
-I've imported the series to OpenWrt and have heavily tested it on
-various boards by now. Hence for the whole series:
+Fix the problem by only overwrite the return value if
+raid10_set_queue_limits() failed.
 
-Tested-by: Daniel Golle <daniel@makrotopia.org>
+Fixes: 3d8466ba68d4 ("md/raid10: use the atomic queue limit update APIs")
+Reported-and-tested-by: ValdikSS <iam@valdikss.org.ru>
+Closes: https://lore.kernel.org/all/0dd96820-fe52-4841-bc58-dbf14d6bfcc8@valdikss.org.ru/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/md/raid10.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-As already discussed off-list I've noticed that
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index f3bf1116794a..862b1fb71d86 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4061,9 +4061,12 @@ static int raid10_run(struct mddev *mddev)
+ 	}
+ 
+ 	if (!mddev_is_dm(conf->mddev)) {
+-		ret = raid10_set_queue_limits(mddev);
+-		if (ret)
++		int err = raid10_set_queue_limits(mddev);
++
++		if (err) {
++			ret = err;
+ 			goto out_free_conf;
++		}
+ 	}
+ 
+ 	/* need to check that every block has at least one working mirror */
+-- 
+2.39.2
 
-[PATCH 6/9] Hook LED helper functions in mtk-ge.c
-
-does NOT work as expected as it seems to be impossible to control the
-PHY LEDs of the MT7531 switch individually -- all changes to *any* of the
-MMD registers always affects *all* PHYs.
-
-Hence, if you repost the series, I would recommend to drop 6/9 for now
-until a solution for this has been found (such as controlling LEDs
-switch-wide using the built-in GPIO controller, or somehow de-coupling
-them and allow access to the individual LED registers like on MT7988)
-
-After taking care of the minor corrections which have already been
-pointed out by Andrew Lunn you may add
-
-Acked-by: Daniel Golle <daniel@makrotopia.org>
-
-to all patches except for 6/9.
-
-
-Cheers
-
-
-Daniel
 
