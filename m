@@ -1,117 +1,527 @@
-Return-Path: <linux-kernel+bounces-356473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228DE996199
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:57:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD9B99619D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53741F22137
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE3D1C20A22
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1333518950A;
-	Wed,  9 Oct 2024 07:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433C6187861;
+	Wed,  9 Oct 2024 07:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xUzYTU1S"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FvNSWsJ7"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7B5188734
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54793187561
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460566; cv=none; b=Px3+HYEqP8biySJjEAKtJJvE5ezbjmRH9cCzbHxK0NVMchBaIfKuIERcIxgeGcs7PWO7HOJD0JoBNHJ8DB5IcQIPf3aO3toaGlx2a/OvVEGNjgg43JB1l+L0JUgQ8jEc5lw4gjlxQhwPPhvkSd5zat+MXTT2MHxboTjuEAaNVuI=
+	t=1728460625; cv=none; b=Vwrt6Rarkhid3NdBnGtAfrTnLmDOc1Sfxheg4gPLM2obYomYLzomt4Ex/XCI9wPRVSC7jm7s3PEPud0Kj7DKMZweek7VEBph7hK9Lcv8xOR61ABP8U42A8aDtFArZNn3Mj6A0Ti5QoKoxd+FL9EtSmxCrqLfsqPDHDEveXFwj9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460566; c=relaxed/simple;
-	bh=zyQXw4W+dACj8pIpi4uJhjlBxNwkyzSfLPJYrZ67arc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d/olkebPh6sKE5ov9W9OCaJOya56oXJI+tjSC84rfne2oXuGEhnQdPJwMZy2AQd8Ze0iU0A/FiD/6lYMZ2vYi0yMqkVVdr0tpEeBjgSGUad3Q/sWDu5NgqFktvsap4riE6zSTyGf5aUHYc5Dh5rsBbCIhEPx57Owpa9hJO9MdBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xUzYTU1S; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1728460625; c=relaxed/simple;
+	bh=cIqwIPrOFCkKslU1DRDqnRMO7giiAG4cjgxCyxyTpgI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=I1Kq8CaAJXBfyomwONmY/Bw+Xta0HegFabWu0IefHsYiTb+91nWf0V4YdBe4QnYJfIoqovlLl8M8F6dthge7/B/9tyR9uBmT/xk46vv5Ko78VY71vmaYv1fpc2jRTg2S4K2JZV5whygi4btHOG6QhYXca/toyF1sCb2Nl+RCs2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FvNSWsJ7; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37ccd50faafso4231075f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:56:04 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43058268d91so7725115e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:57:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728460563; x=1729065363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0kmMlDXGibAdqKrNC/s4tQOqEsl9CbNvY/ixtgVngYk=;
-        b=xUzYTU1SKg0L6MZ74eRYVUXjk/s9Y7HoEyvtMdtK/mB4868YdSdyGSaQZRRCrHf6I2
-         RYNOajwoIgz4mXxhIaccyvPt2g1o1u0/TVMHs8KGQLR4Z4jll0CnhtV2kH3bZ9Vjpr8X
-         CNraHR9vWADhWj2CG3CR2DNr8zYgxQfqiJCsfIRQmEUvQKm/M+jGbSo818tqtk7k4CYA
-         ZEW8Sk+6qeB2jqD9raOHExW/3KvWc5SO7Jd5LKwrikJ/1kw9ROgiABYm0AQx59PYzGxd
-         bUkGLpRokbRj1W0w1sTPK7M6P/IWvTjtaoMlSn3MtJPT7ITfC8PiukQ+4k4z5UuTyME1
-         nD8g==
+        d=linaro.org; s=google; t=1728460622; x=1729065422; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GGCjdCOE+DgON7Dek53nCoPWGTqEcDS/VtSCG/nHJoc=;
+        b=FvNSWsJ7dugtIv9FaFPvVUdvnvymmUq67iCutxkNkmvOcHznuv4DgEjajOvZGpmXKH
+         cmR6bP2DC9vOTl2DnyDh4qJBghIFZGwEqwaCVCsUQa0p4XKVBjQIt/3a2KeO8NP5u0r5
+         AHnMs+LwiZ3LCWAADN997Vt+BanHplkgfm8otCWKLIUboFv4qK8EtBV1UiFpIg/C8rI/
+         ODE5zCB/OS0u3c9z+MkqFmdQZrDcH1rzoE08SU9cyWev3X7md/5y1gtT78ySluKuzpZn
+         XGefVTcdvnke+UUkW5WDFHOm1OpdLRnOTKejJO+StaqfDfcP4Pq0mCyN6FZ0kZcqX80q
+         PLXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728460563; x=1729065363;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0kmMlDXGibAdqKrNC/s4tQOqEsl9CbNvY/ixtgVngYk=;
-        b=dKO9Hj3nxaA5cS9Fl4wIq9c9a2xQj8ErFEgEyzGSvACIJoXxuDJTn5JwJY/HX1icjT
-         rXa17P6Vx2LbJ5Py4PxBU5Uj+df//Egk6OCIvEpGftvprZOsbW/ST+wHRibZkzU+zcoY
-         ed9Z9O2oHfEDEoLlb/1AVStmpoqRUoXB/stuasLqciSvwkxchdJc6Dw2piw43ZRWCWLN
-         zuhR1K3V8770vaKoKnF1PepA3PMCmLVu0DPPkUJNNCR1o3ofisr1SpKGUK2+iHaExQnN
-         Jn+6/QXhwaROXBs+A/q1Rs/JSnmkQn+DYiZq9Mc9IemebPE0jYaJLGcXaAl+H9Z4Vmk6
-         /zIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWScrxIB0+jxcNkTGH90m2ZCdWdP9D6aX+X25OQrq1XwwMWadgWtK4rU+KLOCHIEzx0O1HxDwfYMh/ZnWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQtZELK6s/01lwXM86xiEeC4yyx9/WaWcwvLevO9T0G3Eo2U4w
-	P4sv+uqSYMgcjhcwRHGPMZLFmNB6tuhqS0u4DYNa6fABDC2EgsLNVhTtRw9llw0=
-X-Google-Smtp-Source: AGHT+IGVnsvhJt5/bGGQd1j33k6EUf41BaTJwb8mSb1jF2UGlQuMTXhFJYasWIvOI9vvkkF34p+yOA==
-X-Received: by 2002:a5d:6990:0:b0:37c:cc60:2c68 with SMTP id ffacd0b85a97d-37d3a9b532dmr846334f8f.5.1728460563207;
-        Wed, 09 Oct 2024 00:56:03 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16972fd9sm9660342f8f.104.2024.10.09.00.56.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 00:56:02 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com, 
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- Danila Tikhonov <danila@jiaxyga.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, adrian@travitia.xyz, degdagmohamed@gmail.com, 
- linux@mainlining.org
-In-Reply-To: <20240930202448.188051-1-danila@jiaxyga.com>
-References: <20240930202448.188051-1-danila@jiaxyga.com>
-Subject: Re: [PATCH v3 0/2] Add Samsung AMS639RQ08 panel support
-Message-Id: <172846056170.3028267.4886940070722840412.b4-ty@linaro.org>
-Date: Wed, 09 Oct 2024 09:56:01 +0200
+        d=1e100.net; s=20230601; t=1728460622; x=1729065422;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GGCjdCOE+DgON7Dek53nCoPWGTqEcDS/VtSCG/nHJoc=;
+        b=LsvOofM5q7YAWUy6xUp2OmC3JpSWdvURwqUVvMQod0FbvNkkYWKgDiU0qGVPHJhRG8
+         lqH/js9ncrF/8WhlW+p9Jp1qczPb60lVDJACGjt9X45FASXE38MKkV1CKR8NwgjigRrm
+         Wgh/hcU+yfqyC/2JOcVPSD3dLz710gQ02U9MZ4BOo1gayvZAVP8Lr1UBcELzufTfzjko
+         Xb8Bqak6smkELjgcjwfbylw4WnbCrOCsl4RQBpTbh7DP+w3hMqdESXCHy4cbLwcgPkxh
+         /n2/cH34/og36hkn+/XkwO7mW5cf9GenPAipGTf9uYT4+Wa7r16WLCXTQydR8LikTa6e
+         QhTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWT3YrJyxdsRHLxHLOA8kJVhuXzw0UZ63/acCs89dP1PsHonGIGijbf7/NuY4DHl3/s+5j5JjDKLhHcsAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcF/bjJVybb41ZGp44V+4/QRh2qJ3RubRP3O47OBkjb1ejB6UW
+	th5fRd9xtVWt9mZUXWJfFH1w/gQgwS0rabq73xcWSUt0M/LKEFDivFu8HTwvH1M=
+X-Google-Smtp-Source: AGHT+IGmPwpherqH/DdT+xX8ctQy/Srcs3o67MuWIxKms+nvaHX8za08GDDV5cF7VIC0W1zxUi8CeA==
+X-Received: by 2002:a05:600c:4fc6:b0:42c:b52b:4335 with SMTP id 5b1f17b1804b1-430ccf28421mr9993205e9.10.1728460621696;
+        Wed, 09 Oct 2024 00:57:01 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:767b:a30:4bcb:fcaf? ([2a01:e0a:982:cbb0:767b:a30:4bcb:fcaf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf31b8dsm11995255e9.5.2024.10.09.00.57.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 00:57:01 -0700 (PDT)
+Message-ID: <cd286689-4c0f-4fe2-835b-d8c12b3bcd1c@linaro.org>
+Date: Wed, 9 Oct 2024 09:57:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: amlogic: Add Amlogic C3 PWM
+To: kelvin.zhang@amlogic.com, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+References: <20240914-c3-pwm-v2-0-ac1f34c68ac2@amlogic.com>
+ <20240914-c3-pwm-v2-2-ac1f34c68ac2@amlogic.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240914-c3-pwm-v2-2-ac1f34c68ac2@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
-Hi,
-
-On Mon, 30 Sep 2024 23:24:46 +0300, Danila Tikhonov wrote:
-> This series adds Samsung AMS639RQ08 panel support used in:
-> - Xiaomi Mi 9 Lite / CC9 (sdm710-xiaomi-pyxis)
-> - Xiaomi Mi 9T / Redmi K20 (sm7150-xiaomi-davinci)
-> - Xiaomi Mi 9T Pro / Redmi K20 Pro (sm8150-xiaomi-raphael)
+On 14/09/2024 07:48, Kelvin Zhang via B4 Relay wrote:
+> From: Kelvin Zhang <kelvin.zhang@amlogic.com>
 > 
-> Was tested on sm7150-xiaomi-davinci and sm8150-xiaomi-raphael. Based on my
-> analysis of the downstream DTS, this driver should be fully compatible with
-> the sdm710-xiaomi-pyxis (unfortunately not tested) without requiring any
-> modifications.
+> Add device nodes for PWM_AB, PWM_CD, PWM_EF, PWM_GH, PWM_IJ, PWM_KL
+> and PWM_MN, along with the GPIO pin configurations for each channel.
 > 
-> [...]
+> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+> ---
+>   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 364 ++++++++++++++++++++++++++++
+>   1 file changed, 364 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> index d0cda759c25d..fd0e557eba06 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> @@ -410,6 +410,300 @@ mux {
+>   						drive-strength-microamp = <4000>;
+>   					};
+>   				};
+> +
+> +				pwm_a_pins1: pwm-a-pins1 {
+> +					mux {
+> +						groups = "pwm_a";
+> +						function = "pwm_a";
+> +					};
+> +				};
+> +
+> +				pwm_b_pins1: pwm-b-pins1 {
+> +					mux {
+> +						groups = "pwm_b";
+> +						function = "pwm_b";
+> +					};
+> +				};
+> +
+> +				pwm_c_pins1: pwm-c-pins1 {
+> +					mux {
+> +						groups = "pwm_c";
+> +						function = "pwm_c";
+> +					};
+> +				};
+> +
+> +				pwm_d_pins1: pwm-d-pins1 {
+> +					mux {
+> +						groups = "pwm_d";
+> +						function = "pwm_d";
+> +					};
+> +				};
+> +
+> +				pwm_e_pins1: pwm-e-pins1 {
+> +					mux {
+> +						groups = "pwm_e";
+> +						function = "pwm_e";
+> +					};
+> +				};
+> +
+> +				pwm_f_pins1: pwm-f-pins1 {
+> +					mux {
+> +						groups = "pwm_f";
+> +						function = "pwm_f";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins1: pwm-g-pins1 {
+> +					mux {
+> +						groups = "pwm_g_b";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins2: pwm-g-pins2 {
+> +					mux {
+> +						groups = "pwm_g_c";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins3: pwm-g-pins3 {
+> +					mux {
+> +						groups = "pwm_g_d";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins4: pwm-g-pins4 {
+> +					mux {
+> +						groups = "pwm_g_x0";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_g_pins5: pwm-g-pins5 {
+> +					mux {
+> +						groups = "pwm_g_x8";
+> +						function = "pwm_g";
+> +					};
+> +				};
+> +
+> +				pwm_h_pins1: pwm-h-pins1 {
+> +					mux {
+> +						groups = "pwm_h_b";
+> +						function = "pwm_h";
+> +					};
+> +				};
+> +
+> +				pwm_h_pins2: pwm-h-pins2 {
+> +					mux {
+> +						groups = "pwm_h_c";
+> +						function = "pwm_h";
+> +					};
+> +				};
+> +
+> +				pwm_h_pins3: pwm-h-pins3 {
+> +					mux {
+> +						groups = "pwm_h_d";
+> +						function = "pwm_h";
+> +					};
+> +				};
+> +
+> +				pwm_h_pins4: pwm-h-pins4 {
+> +					mux {
+> +						groups = "pwm_h_x1";
+> +						function = "pwm_h";
+> +					};
+> +				};
+> +
+> +				pwm_h_pins5: pwm-h-pins5 {
+> +					mux {
+> +						groups = "pwm_h_x9";
+> +						function = "pwm_h";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins1: pwm-i-pins1 {
+> +					mux {
+> +						groups = "pwm_i_b";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins2: pwm-i-pins2 {
+> +					mux {
+> +						groups = "pwm_i_c";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins3: pwm-i-pins3 {
+> +					mux {
+> +						groups = "pwm_i_d";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins4: pwm-i-pins4 {
+> +					mux {
+> +						groups = "pwm_i_x2";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_i_pins5: pwm-i-pins5 {
+> +					mux {
+> +						groups = "pwm_i_x10";
+> +						function = "pwm_i";
+> +					};
+> +				};
+> +
+> +				pwm_j_pins1: pwm-j-pins1 {
+> +					mux {
+> +						groups = "pwm_j_c";
+> +						function = "pwm_j";
+> +					};
+> +				};
+> +
+> +				pwm_j_pins2: pwm-j-pins2 {
+> +					mux {
+> +						groups = "pwm_j_d";
+> +						function = "pwm_j";
+> +					};
+> +				};
+> +
+> +				pwm_j_pins3: pwm-j-pins3 {
+> +					mux {
+> +						groups = "pwm_j_b";
+> +						function = "pwm_j";
+> +					};
+> +				};
+> +
+> +				pwm_j_pins4: pwm-j-pins4 {
+> +					mux {
+> +						groups = "pwm_j_x3";
+> +						function = "pwm_j";
+> +					};
+> +				};
+> +
+> +				pwm_j_pins5: pwm-j-pins5 {
+> +					mux {
+> +						groups = "pwm_j_x12";
+> +						function = "pwm_j";
+> +					};
+> +				};
+> +
+> +				pwm_k_pins1: pwm-k-pins1 {
+> +					mux {
+> +						groups = "pwm_k_c";
+> +						function = "pwm_k";
+> +					};
+> +				};
+> +
+> +				pwm_k_pins2: pwm-k-pins2 {
+> +					mux {
+> +						groups = "pwm_k_d";
+> +						function = "pwm_k";
+> +					};
+> +				};
+> +
+> +				pwm_k_pins3: pwm-k-pins3 {
+> +					mux {
+> +						groups = "pwm_k_b";
+> +						function = "pwm_k";
+> +					};
+> +				};
+> +
+> +				pwm_k_pins4: pwm-k-pins4 {
+> +					mux {
+> +						groups = "pwm_k_x4";
+> +						function = "pwm_k";
+> +					};
+> +				};
+> +
+> +				pwm_k_pins5: pwm-k-pins5 {
+> +					mux {
+> +						groups = "pwm_k_x13";
+> +						function = "pwm_k";
+> +					};
+> +				};
+> +
+> +				pwm_l_pins1: pwm-l-pins1 {
+> +					mux {
+> +						groups = "pwm_l_c";
+> +						function = "pwm_l";
+> +					};
+> +				};
+> +
+> +				pwm_l_pins2: pwm-l-pins2 {
+> +					mux {
+> +						groups = "pwm_l_x";
+> +						function = "pwm_l";
+> +					};
+> +				};
+> +
+> +				pwm_l_pins3: pwm-l-pins3 {
+> +					mux {
+> +						groups = "pwm_l_b";
+> +						function = "pwm_l";
+> +					};
+> +				};
+> +
+> +				pwm_l_pins4: pwm-l-pins4 {
+> +					mux {
+> +						groups = "pwm_l_a";
+> +						function = "pwm_l";
+> +					};
+> +				};
+> +
+> +				pwm_m_pins1: pwm-m-pins1 {
+> +					mux {
+> +						groups = "pwm_m_c";
+> +						function = "pwm_m";
+> +					};
+> +				};
+> +
+> +				pwm_m_pins2: pwm-m-pins2 {
+> +					mux {
+> +						groups = "pwm_m_x";
+> +						function = "pwm_m";
+> +					};
+> +				};
+> +
+> +				pwm_m_pins3: pwm-m-pins3 {
+> +					mux {
+> +						groups = "pwm_m_a";
+> +						function = "pwm_m";
+> +					};
+> +				};
+> +
+> +				pwm_m_pins4: pwm-m-pins4 {
+> +					mux {
+> +						groups = "pwm_m_b";
+> +						function = "pwm_m";
+> +					};
+> +				};
+> +
+> +				pwm_n_pins1: pwm-n-pins1 {
+> +					mux {
+> +						groups = "pwm_n_x";
+> +						function = "pwm_n";
+> +					};
+> +				};
+> +
+> +				pwm_n_pins2: pwm-n-pins2 {
+> +					mux {
+> +						groups = "pwm_n_a";
+> +						function = "pwm_n";
+> +					};
+> +				};
+> +
+> +				pwm_n_pins3: pwm-n-pins3 {
+> +					mux {
+> +						groups = "pwm_n_b";
+> +						function = "pwm_n";
+> +					};
+> +				};
+>   			};
+>   
+>   			gpio_intc: interrupt-controller@4080 {
+> @@ -490,6 +784,16 @@ spicc1: spi@52000 {
+>   				status = "disabled";
+>   			};
+>   
+> +			pwm_mn: pwm@54000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 54000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_M>,
+> +					 <&clkc_periphs CLKID_PWM_N>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+>   			spifc: spi@56000 {
+>   				compatible = "amlogic,a1-spifc";
+>   				reg = <0x0 0x56000 0x0 0x290>;
+> @@ -499,6 +803,66 @@ spifc: spi@56000 {
+>   				status = "disabled";
+>   			};
+>   
+> +			pwm_ab: pwm@58000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x58000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_A>,
+> +					 <&clkc_periphs CLKID_PWM_B>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_cd: pwm@5a000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x5a000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_C>,
+> +					 <&clkc_periphs CLKID_PWM_D>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_ef: pwm@5c000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x5c000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_E>,
+> +					 <&clkc_periphs CLKID_PWM_F>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_gh: pwm@5e000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x5e000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_G>,
+> +					 <&clkc_periphs CLKID_PWM_H>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_ij: pwm@60000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x60000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_I>,
+> +					 <&clkc_periphs CLKID_PWM_J>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			pwm_kl: pwm@62000 {
+> +				compatible = "amlogic,c3-pwm",
+> +					     "amlogic,meson-s4-pwm";
+> +				reg = <0x0 0x62000 0x0 0x24>;
+> +				clocks = <&clkc_periphs CLKID_PWM_K>,
+> +					 <&clkc_periphs CLKID_PWM_L>;
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+>   			i2c0: i2c@66000 {
+>   				compatible = "amlogic,meson-axg-i2c";
+>   				reg = <0x0 0x66000 0x0 0x24>;
+> 
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
-
-[1/2] dt-bindings: display: panel: Add Samsung AMS639RQ08
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/a62528aa539a405f76cc3478f6fd3f842e7c6a4e
-[2/2] drm/panel: Add Samsung AMS639RQ08 panel driver
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/bd07dbb929f6c5bbda60d52a0003246e53f48c29
-
--- 
-Neil
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
