@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-357372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB2C99707B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:06:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB42699707F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ECD61C22D56
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4AE282501
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35191925B7;
-	Wed,  9 Oct 2024 15:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="l9aua0Z1"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101B21E0E16;
+	Wed,  9 Oct 2024 15:43:45 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC90D1DF275
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE28A1E04BC;
+	Wed,  9 Oct 2024 15:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488509; cv=none; b=XbMKnXsT6k3SR4GhdThu7Yi/3igEtFcgjEGVpTk/VaMGz1MNMGmOcO1yIcy8GPmFHqBYexac8/UsdI7Tto9Lh3/YoN+sxTjpFibB4/EOPxGqMl6r0hh7C/95CpL1bKZ6/tq9r6Pb+NdQVOHQcLMiOJzI1nWX0z7QttfJn84t/kI=
+	t=1728488624; cv=none; b=u/WLD+8V1SSprcpGESOd7TDhT/U+pKxVexDLJCm9tVbJ9wRNkbhXIZAlDHkxxWs8nKktfqoAujwFvXmGyNerVpRojRgpp+VPVAlSjbifSLRxdhwNPzKn1xSwC960m58Xe37iGvhJvoQjjFVxmKBMKwqVXyU+r39sLjeolZLT9c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488509; c=relaxed/simple;
-	bh=mv1rqLSiLOHCZU0q+61i6vEQA6V5lDbT2Ykwn/MSTnM=;
-	h=From:References:In-Reply-To:MIME-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=phQkCtItQpeLSEJJEKazhMq6Y3HQFyUsTQ16lo4hcCZMF2q/9449QahBD5uRMl6LsvjWeG/8OGRz8CtWNlGSnX/l3cmS3MZUZqgtcRUZBkLt7xCn8tmWm3T+TUbZLH45XTHPdCUksx85m/Ce9oPxFQJRTGaVvhSMDvZ8LMriR2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=l9aua0Z1; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e4d649cbc8so170507b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:41:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728488506; x=1729093306; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
-         :user-agent:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Gd0Hd1MakjxQ8aCm1xPSRU0H3xeGSc63YXhhZpX4cc=;
-        b=l9aua0Z17OfgOREv//Zmb7jjzBV+DZOg0abPjFY9/A6q2+SkT/dhQJSghw+JdM+e6E
-         I9za6MlHLEmnzkR33QBwBDV/1AOkUlGRDaUd/5BqghL/z+Yim6sd4FkF/0P1kknW2qF6
-         hXqECRymSVYR/dW8MIAFd9YM9mfhaLc1SKIhBOmMB4nhCMgZeo947uCNE68++0JwhiY3
-         uLVc3t8lJ5mJRZsw4ub/pjS/OJqSv+IJ36up72ghIPaPRhvPypd3DpBQ8adchchL0aCF
-         ugsRhU808gkg2xPl1WMGGBzdAEqrdxnvOa1EUqxdU22hSjG04Za6XjsMqB5naSjOf5qq
-         gZxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728488506; x=1729093306;
-        h=cc:to:subject:message-id:date:mime-version:in-reply-to:references
-         :user-agent:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Gd0Hd1MakjxQ8aCm1xPSRU0H3xeGSc63YXhhZpX4cc=;
-        b=csSsrovKidcH4zix9Z2ZEo7K4UQ5O47B4awI7u6OCp9SaGD0G/xGx/G1DQqnAO4Zp2
-         AfVs3FMUi9L2RuTSZdZ+d39fuA6e0xjZg1tui48RoqJvyvKYBx6JdMeW7DOAOv1rlZ+r
-         8eZC0xu8FIplrxviCc1lmbviMYNXPncGphEbRVLzFH9R/jYthAMTKFYTsohW2SG0I2b/
-         47lvAsN+pGZ31tBXyDBEOu1ywFzisoAzJofzDdrQ/VVn/CPA1URj5cmRl5CbYmOsWSvd
-         u++UJ6C/qvv26HRUgBbTRFV88wXcH6Tsu7CSwcUZGzGUEJuO/GEgLtD1t4gbkQKFWJjN
-         u+fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuu7G/TB2YsKM+G0fxuPIydjEtFYuvyCok2J30WtNpGRyUOfJtQR46KpogdCkIN50ulFnu8zzwOM+U+0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp7FPwOOT2WhDVPwEr4pr82YvVpJ9JreLeYaWICga21/djD8ST
-	4oywVxY4nO8/S7m8fKmGP8U+a65g+M226Wz2maoblTfjzeB95v+OQVT6zfEObAGsClD7xgfUOIu
-	7Vp/zIDOv6oeaJs4rNXNb2QSigvBIyBVkx2dtzw==
-X-Google-Smtp-Source: AGHT+IGSAbf5K8peyNanI54kI2R8bIyKMUOuELhCM3eQhZJMBHU1uq8bm5qKHyh5KBHiKy63ie1sfKPMxntzRYNSqt4=
-X-Received: by 2002:a05:6871:7505:b0:288:2b44:5577 with SMTP id
- 586e51a60fabf-28834458deemr1908641fac.18.1728488506041; Wed, 09 Oct 2024
- 08:41:46 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 9 Oct 2024 08:41:45 -0700
-From: Guillaume Ranquet <granquet@baylibre.com>
-User-Agent: meli 0.8.7
-References: <20240927153305.27642-1-liankun.yang@mediatek.com>
-In-Reply-To: <20240927153305.27642-1-liankun.yang@mediatek.com>
+	s=arc-20240116; t=1728488624; c=relaxed/simple;
+	bh=T6nSVu7xD4TeDzmBtg2Zjb6z+8tFfEDQAmFE9kob5+4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G11j21z+Lo2grjI+DhB7NjZeSlGZhdtR0hNmUY31H4NDCyKJceYHVENhPZduEn76g7lO+vm7A9WfRUtaeeyB+RDJeXFhILscHA5x98ZJJIGIs5Q9FVg2V01KFUWaZxREuzilj6VRjs9kSBUkWxS3x7rcQc7xYjDMU6O69BFVyAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XNxVT1Fjfz9v7JS;
+	Wed,  9 Oct 2024 23:23:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 9B4291400CA;
+	Wed,  9 Oct 2024 23:43:30 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwA35saapAZnBzaLAg--.4531S2;
+	Wed, 09 Oct 2024 16:43:30 +0100 (CET)
+Message-ID: <69ed92fde951b20a9b976d48803fe9b5daaa9eea.camel@huaweicloud.com>
+Subject: Re: [PATCH 2/3] ima: Ensure lock is held when setting iint pointer
+ in inode security blob
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
+ linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
+ ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Wed, 09 Oct 2024 17:43:20 +0200
+In-Reply-To: <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+	 <20241008165732.2603647-2-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 9 Oct 2024 08:41:45 -0700
-Message-ID: <CABnWg9uGR1yn9EsRaMjihksL76dwUv9vEi9eF=OCpzLfTvyYLg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] drm/mediatek: Fix potential KP on 0 bytes nvmem
- cell read
-To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org, 
-	p.zabel@pengutronix.de, airlied@gmail.com, simona@ffwll.ch, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	rex-bc.chen@mediatek.com, msp@baylibre.com, ck.hu@mediatek.com, 
-	jitao.shi@mediatek.com, mac.shen@mediatek.com, peng.liu@mediatek.com
-Cc: Project_Global_Chrome_Upstream_Group@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-CM-TRANSID:GxC2BwA35saapAZnBzaLAg--.4531S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy7ZF13XryxWw43AFykuFg_yoW8ZryfpF
+	Wqga4UJ34UXFW7uF43tF9xZFWSg3ySgFW8Gw45Jw1qyFyDZr1jqr48tr17ury5Cr40y3WI
+	vw1ag3Z8uw1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
+	MKDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBGcF5ngMAgAAs8
 
-On Fri, 27 Sep 2024 11:03, Liankun Yang <liankun.yang@mediatek.com> wrote:
->If the len is 0, kernel crash will occur when performing operations.
->Add the len check conditions to prevent kernel crash.
->
->Fixes: f70ac097a2cf ("drm/mediatek: Add MT8195 Embedded DisplayPort driver")
->Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
->---
->Changes in V2:
->- Fix the commit title.
->- Remove blank line between the Fixes and Signe-off-by.
->- Modify the judgment writing method.
->Per suggestion from the previous thread:
->https://patchwork.kernel.org/project/linux-mediatek/patch/20240925084116.28848-1-liankun.yang@mediatek.com/
->---
-> drivers/gpu/drm/mediatek/mtk_dp.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
->index d8796a904eca..9ecdf62398ee 100644
->--- a/drivers/gpu/drm/mediatek/mtk_dp.c
->+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
->@@ -1082,7 +1082,7 @@ static void mtk_dp_get_calibration_data(struct mtk_dp *mtk_dp)
-> 	buf = (u32 *)nvmem_cell_read(cell, &len);
-> 	nvmem_cell_put(cell);
->
->-	if (IS_ERR(buf) || ((len / sizeof(u32)) != 4)) {
->+	if (IS_ERR(buf) || !len || ((len / sizeof(u32)) != 4)) {
-> 		dev_warn(dev, "Failed to read nvmem_cell_read\n");
+On Wed, 2024-10-09 at 11:41 -0400, Paul Moore wrote:
+> On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> >=20
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > IMA stores a pointer of the ima_iint_cache structure, containing integr=
+ity
+> > metadata, in the inode security blob. However, check and assignment of =
+this
+> > pointer is not atomic, and it might happen that two tasks both see that=
+ the
+> > iint pointer is NULL and try to set it, causing a memory leak.
+> >=20
+> > Ensure that the iint check and assignment is guarded, by adding a lockd=
+ep
+> > assertion in ima_inode_get().
+> >=20
+> > Consequently, guard the remaining ima_inode_get() calls, in
+> > ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the lockd=
+ep
+> > warnings.
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/ima/ima_iint.c |  5 +++++
+> >  security/integrity/ima/ima_main.c | 14 ++++++++++++--
+> >  2 files changed, 17 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima=
+/ima_iint.c
+> > index c176fd0faae7..fe676ccec32f 100644
+> > --- a/security/integrity/ima/ima_iint.c
+> > +++ b/security/integrity/ima/ima_iint.c
+> > @@ -87,8 +87,13 @@ static void ima_iint_free(struct ima_iint_cache *iin=
+t)
+> >   */
+> >  struct ima_iint_cache *ima_inode_get(struct inode *inode)
+> >  {
+> > +       struct ima_iint_cache_lock *iint_lock;
+> >         struct ima_iint_cache *iint;
+> >=20
+> > +       iint_lock =3D ima_inode_security(inode->i_security);
+> > +       if (iint_lock)
+> > +               lockdep_assert_held(&iint_lock->mutex);
+> > +
+> >         iint =3D ima_iint_find(inode);
+> >         if (iint)
+> >                 return iint;
+>=20
+> Can you avoid the ima_iint_find() call here and just do the following?
+>=20
+>   /* not sure if you need to check !iint_lock or not? */
+>   if (!iint_lock)
+>     return NULL;
+>   iint =3D iint_lock->iint;
+>   if (!iint)
+>     return NULL;
 
-Hello Liankun,
-Would you be able to describe the crash with more details?
+Yes, I also like it much more.
 
-I'm afraid I don't understand the fix?
+Thanks
 
-if len is 0, dividing 0 by sizeof(u32) is 0 and thus != 4
-So to me, checking for len != 0 is redundant?
+Roberto
 
-Thx,
-Guillaume.
->
-> 		if (!IS_ERR(buf))
->--
->2.45.2
+
 
