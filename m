@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-356402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030579960AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:19:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D429960B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61F1282F02
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:19:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61C37B2493E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930E117C9B9;
-	Wed,  9 Oct 2024 07:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1D918132A;
+	Wed,  9 Oct 2024 07:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Ligpe25Z"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GC4dEgtn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D02178CC5;
-	Wed,  9 Oct 2024 07:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E7817E472;
+	Wed,  9 Oct 2024 07:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728458389; cv=none; b=jo6sBAF48zP/zQfE5wBogiOGtWYlqk++D90L830cEWHtv081fDJtGbcZOHlWjeAYcGEKCH44hfJOChxyzJerkRFn6Q5uqEB7Wp7FpMSNE/XQxFvjS+rkomdySROMR31pQs4TGUNQ/8Bu7aWRiW3hW7HhvDpM5ANi6LzUSLqccwU=
+	t=1728458446; cv=none; b=CELZ8pCOcV8PjXSBVX6GM63CEKi5/L6KYrZPX1OgYrb/EcTBNtZCjpe1qQSQLWhuuTMrYl9IFvktYolH4cdrwM2Q/T5ayIHYuiHFC/+wKPPgelnNvTHJKtEOttY51FZtcS/bMQGwsgZZCSX+xd9XrAxlxSxqkRefczjCSClbacU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728458389; c=relaxed/simple;
-	bh=JBn4BEiZQHJtGcyOanMYeBuNbZA6TpUh9xbUs240bYI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XXx4RHd+ke8rSbkGwxZDSwN7ZWn/Nf3xRQb8gRQsEgggoGoqFiRw71XU/lz3nrcOcTxLL0R2WZEVU5a68IYnaWCkPZsm/NUK0M6QZlx8IPTcJT+nstTtcHyJC2bsQx6GhoU45O3dIBOEPh4MBm3AYriDqkqVRlsyucJid+s/YaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Ligpe25Z; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=JBn4BEiZQHJtGcyOanMYeBuNbZA6TpUh9xbUs240bYI=;
-	t=1728458387; x=1729667987; b=Ligpe25ZoS+609nwOtJpAmQ3TI6ZDu4SESIbdNQeNTNQfVW
-	T/fs9c9V4xKwK3yISodG10MjuMwV1Zrmm3gsJDp/lHP3tpe7XojH9EhE/8GZTxFa1pOp3iY0YPGkE
-	WlKCu/jQifDfnMd/gljgjTvWWJmnM2mwQmPKn7PDBSVWTZDvM5NG4llMOk84DA5MjjS/tRoVdZgHj
-	h86W5IDq3yJxmYoZeJjuClyWpcYLmx34u6lEWZWVu+cujsBixmSugcPSY/iBimOBoH4G60aIpfDFV
-	DzTGl7vubkzX5HJtSshq3/iaIOo4Khqc9PkQijL4Ubgse8dw4wg0vmkYg2rHZ/aQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1syQyz-000000051K0-38Hs;
-	Wed, 09 Oct 2024 09:19:42 +0200
-Message-ID: <e572bee3a1c2600b09cb2fd5d09a2e95b4e0faa0.camel@sipsolutions.net>
-Subject: Re: linux-next: manual merge of the wireless-next tree with Linus'
- tree
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@kernel.org>, 
- Al Viro <viro@zeniv.linux.org.uk>, Wireless
- <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tree Davies <tdavies@darkphysics.net>
-Date: Wed, 09 Oct 2024 09:19:40 +0200
-In-Reply-To: <2024100917-footsie-anatomist-fd06@gregkh>
-References: <20241009114455.52db31ad@canb.auug.org.au>
-	 <2024100945-engross-appraisal-d1f0@gregkh>
-	 <317aeb02110105be1483d13c204bfb48d4d19c61.camel@sipsolutions.net>
-	 <2024100917-footsie-anatomist-fd06@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728458446; c=relaxed/simple;
+	bh=YBfWibQiqVBu4MOLsbYd+xmlanrOBi8rPl49d/uOn9Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JhD2WiKjeRVq1mJobUa0+stE7JBbkfjr+tg8/MEXSjC12JtyiC3VxW3Qtxn1FROXdUvkz5D21sMZOqguZFfUxlrQl8FTRf3GiRy6AVu60nJHJN7Zty6pwLstjlYlFQ/BoEe/s4m/tE0AByb5xkezE4HOa1T7FJxs2j/rL0UHZUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GC4dEgtn; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728458444; x=1759994444;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YBfWibQiqVBu4MOLsbYd+xmlanrOBi8rPl49d/uOn9Y=;
+  b=GC4dEgtnuHLVy127UemN4dlmgdw+afPT9/8fe56rC2f/TDFoZ7ZdPpi2
+   GtJ2fOPI4QOzVlkKhRx7dXYXYaK+1nbSefBun4d7NVYNSQ9vpewedj/DJ
+   R80HXXo8QuvXmLPYRh+xzLJuDHSNlfvo38iehAhjP5ouRdPhFsQHSBsiA
+   H/2QxN6pn5bzRa0dt7FpRfN0ivCiUmh9RL4kwzHDKlhnYIGpiIJ6fSdG3
+   /iF8zJxbxf9NBAo7P5rjfGv+gK+ZIqwsTJ/nRIJ0uGE+AmyqTGYTRCP+e
+   fNd/iXxFr9a8tSniQxpWgozSDKyn+dykcBZC/4Ld8bthX8og9PfqbIyg5
+   A==;
+X-CSE-ConnectionGUID: OLP/zl0yS2+eFwkhrMxfIA==
+X-CSE-MsgGUID: 9MhfriK2Sz2i+kqQzBWl5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="31630185"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="31630185"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 00:20:43 -0700
+X-CSE-ConnectionGUID: XX8vDn1wQd6SSHAfNVw+1g==
+X-CSE-MsgGUID: CHv5mVwCRJS9Na/X+T0FCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="80665010"
+Received: from unknown (HELO rzhang1-mobl7.ccr.corp.intel.com) ([10.245.243.187])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 00:20:38 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	rafael.j.wysocki@intel.com,
+	x86@kernel.org,
+	linux-pm@vger.kernel.org
+Cc: hpa@zytor.com,
+	peterz@infradead.org,
+	thorsten.blum@toblux.com,
+	yuntao.wang@linux.dev,
+	tony.luck@intel.com,
+	len.brown@intel.com,
+	srinivas.pandruvada@intel.com,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic timer shutdown
+Date: Wed,  9 Oct 2024 15:20:01 +0800
+Message-Id: <20241009072001.509508-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-10-09 at 09:13 +0200, Greg Kroah-Hartman wrote:
+This 12-year-old bug prevents some modern processors from achieving
+maximum power savings during suspend. For example, Lunar Lake systems
+gets 0% package C-states during suspend to idle and this causes energy
+star compliance tests to fail.
 
-> > But if the conflict is to Linus's tree, is that even going to help?
-> > Seems like I should pull in -rc2 and solve this one and the ks7010 one
-> > that way? Just need to check with net-next?
->=20
-> I'm not worried about the conflict with Linus's tree, sorry, I now see
-> that that's what was being reported here also.
+According to Intel SDM, for the local APIC timer,
+1. "The initial-count register is a read-write register. A write of 0 to
+   the initial-count register effectively stops the local APIC timer, in
+   both one-shot and periodic mode."
+2. "In TSC deadline mode, writes to the initial-count register are
+   ignored; and current-count register always reads 0. Instead, timer
+   behavior is controlled using the IA32_TSC_DEADLINE MSR."
+   "In TSC-deadline mode, writing 0 to the IA32_TSC_DEADLINE MSR disarms
+   the local-APIC timer."
 
-Ah OK. But I checked, and I can just pull in net-next to resolve this
-and two other conflicts (where one appears to be due to git getting
-confused between moving a file and deleting another copy of it in
-staging), so I'll probably just do that, just need to sync with Kalle.
+Stop the TSC Deadline timer in lapic_timer_shutdown() by writing 0 to
+MSR_IA32_TSC_DEADLINE.
 
-> I just want to get your
-> staging driver changes, so I'll pull in up to commit 4991d2e7ad38, which
-> is all I really care about :)
+Cc: stable@vger.kernel.org
+Fixes: 279f1461432c ("x86: apic: Use tsc deadline for oneshot when available")
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+---
+Changes since V1
+- improve changelog
+---
+ arch/x86/kernel/apic/apic.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Oh OK, so that's mostly unrelated then. Sure, you can pull that in so
-you have the staging changes I've made in case other staging patches
-want to touch the files.
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 6513c53c9459..d1006531729a 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -441,6 +441,10 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
+ 	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+ 	apic_write(APIC_LVTT, v);
+ 	apic_write(APIC_TMICT, 0);
++
++	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
++		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
 
-
-Although ... maybe wait with that too. If you merge that now you'll have
-to resolve (some of) the conflicts, and if I'm merging net-next now as
-well we'll have two conflict resolutions for the same thing? That seems
-a bit strange, even if the resolutions are almost certainly going to be
-identical.
-
-I can push out the net-next merge (& revert) soon, and then it'll all be
-cleaner?
-
-johannes
 
