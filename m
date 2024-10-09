@@ -1,132 +1,121 @@
-Return-Path: <linux-kernel+bounces-357124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56645996BD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:28:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BC1996BD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D25FCB2653A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F91281C49
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC3D198A25;
-	Wed,  9 Oct 2024 13:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A4F1990CD;
+	Wed,  9 Oct 2024 13:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="wsPmPxs0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="olThgFVl"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQFVHPT4"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ADD1917E7;
-	Wed,  9 Oct 2024 13:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C3C195390;
+	Wed,  9 Oct 2024 13:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728480509; cv=none; b=KU7BUgO+c058lSxSaXBn43ImaPOltwAtQu0XtKts2l3RFLiOvbrIsX+8BTefbnJZmynyNgXlFw+pJCtjZ3asFvbFEq7AMPAxJ0PUe8HFvp/9XXDJp3QaS1dagIvuv871ojrQAdqZjLFH+nl2CutSlPmU1fKEMTP30+V9m82TIPc=
+	t=1728480556; cv=none; b=O1Yp+LjX1WaU/0oMeRHYN02DcC7Axq5FLTYHN+15onXWmsNYQuZGlfk+Byp2hH6PO89qg+oZ1PQ2U4XiEJbPw3BFoOBYPvnHf0kzpewKE1rlBjK1s+FoFgP5235zpqsa/umq/GKx3Vc+mSH94TX20zwQw8oIBJNENIIyodkgbEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728480509; c=relaxed/simple;
-	bh=6J+dwhRH4H4+hyB8vozo7d8DXwiis+PBfA8eN9YRoaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxpFBD6q77ENCTOpyuhRHK21/DdRUdOJHBnmSsQ+vPj2x62YzkvGq+LaP1Oz3uaI6goU8cc2vBlye/NA/vX0wHZztcXnUnTBDfH0yjVAK7Fghe8vHsHSLMQhC3oZL++toWae1yIVD0RkNZ9wMT5nWbFrdizItEt/7bfcpZOZ/Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=wsPmPxs0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=olThgFVl; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CD74E114019F;
-	Wed,  9 Oct 2024 09:28:25 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Wed, 09 Oct 2024 09:28:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728480505;
-	 x=1728566905; bh=DEfoN8Vn3gmKHWlf0jh4UtY6eytWKRkiu28dZUV0LI0=; b=
-	wsPmPxs0s6gTPHrlXfQc1eQeI4BrR/8uGFItw4DIw3VqnIkjr9XIYQbO1Hks6dMh
-	wItValAlhayMnjPT/FNsP0KCSaxugGmgIoSpNyZUxNHAtbAClR/b3jb2KZQFNuev
-	0yg4rZCBSLXPoKpRahnewIBk7oxZhW+qbg7L6855Jbdii04jsdsZeylFuMODUeNW
-	wSU43qWIQ2uN5jhKxHAXnozWyKfhvH39uZiz5H/OTnYJqNTn7iQxoqzdKEDQbyG7
-	e+WkoAWk3xUxIH157xzM3RiL64tmKiF/ccpetIxmA6HlRpV6XAnxjJUT8pwNkC+o
-	PfBJUUSS2KizFfwMs2cS/w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728480505; x=
-	1728566905; bh=DEfoN8Vn3gmKHWlf0jh4UtY6eytWKRkiu28dZUV0LI0=; b=o
-	lThgFVld3jvKdHZY9P9MoSIC1ygT2EEaczAeT1MMOHuK7LZsq2bk8IG4i87dSScE
-	rr3tJQQX9rnmAR79uKQ9SaETE5Mhe/k1qAmV1ItmAwdTrH8a+emZtaZuUkPM+2hC
-	5pFT5KaxpjvTqNvh6cXsJ+9iVIRlnsErLVppU23kLScqWMt5w7du3dJGw7jY6KqW
-	8jyxV+qvnW0zay4b8uIFGgq7AucWJmY8GbX0GMgnLRDIec8d7qJxE/ooO/Rx7sJ0
-	xeq5XzLTu4fKwXBo60Q+mP/ntJEHOOAnRbkUcMP0WnOO4hWF4gRH5BV3L8tdMB1O
-	9Jj/idStEyb1Kn0MzPwZA==
-X-ME-Sender: <xms:-YQGZ3ITmXcXRdtzzB5I4VKvV4etPw-7_r2glJogLHg6J5VmOTtaQA>
-    <xme:-YQGZ7LPs4TFIphLqyAry5QLrkZ7Q8e4iYjPIbpcsFv2-orm6BRtl143ZdZQyQZ-8
-    K4yJa7b-Rsv10GDTzs>
-X-ME-Received: <xmr:-YQGZ_uyodg_3YvfXy2hD-j9Poq2voqTps1deTywDMADxUIeLfP7RiB3OtcPGNaNAt8757yb-UayGTBJ64Ph-3nZC23mug>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgieejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeforghtihgrshcuuehjpphrlhhinhhguceomhessghjohhrlhhinhhgrd
-    hmvgeqnecuggftrfgrthhtvghrnhepkeefieeutddvteeguedthedvudfggfevgeevkeeg
-    geefkeeufffffeelleevgefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepmhessghjohhrlhhinhhgrdhmvgdpnhgspghrtghpthhtohepledp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpth
-    htohepkhgsuhhstghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegulhgvmhhorghl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtrghsshgvlheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqnhhvmhgvsehlihhsthhsrdhinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqsghlohgtkhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehmrghtihgrshdrsghjohhrlhhinhhgseifuggtrdgtoh
-    hmpdhrtghpthhtohepfigrnhhghihughhuihesvgduiedqthgvtghhrdgtohhm
-X-ME-Proxy: <xmx:-YQGZwYj7nGupr9G0G8JVWdMfl07SzgAtu2vbv6r9Lxs5W8GbPMSYg>
-    <xmx:-YQGZ-YRqC92MmW1vo5ZQ196lZCaPgcXYToO3VqRZkiCiK0x--r_Ug>
-    <xmx:-YQGZ0Dfkr85R9YTygdWV6j7RNU7u2HSUo52zqewQngr0Ub-6tUecw>
-    <xmx:-YQGZ8Yfukd98v_cdpN8KphHB4oHKvVLB6yMoBOGS7S6yMKy50XAhg>
-    <xmx:-YQGZ0kRigUFIhSJAyohh2qeNwYINoIdsGWCxX6oftCxUf-IVBrZL-cH>
-Feedback-ID: if4314918:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 9 Oct 2024 09:28:04 -0400 (EDT)
-Message-ID: <c6e03246-57aa-41c5-90b9-261c6d6a14d1@bjorling.me>
-Date: Wed, 9 Oct 2024 15:27:57 +0200
+	s=arc-20240116; t=1728480556; c=relaxed/simple;
+	bh=1k5Z6P4xLrJ1uUuXsTql97RdplxvApmoHIaD0t5c50o=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=W+J8V68yHZlnWNssVL5BrCF4M+hglCxNdGNi4to2uxiwOog0X3vdUpHg76vceup+M7vef1EFyqkYtjKdv09FWsRa0AyLcQXXnSCcxV6HbWAfkqyuXUZJi5xVUlB8r4JFyMdFlPKPK0hSjQ/6eP0dURYbRuQykFTLQlz51lf+oq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQFVHPT4; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e0cd1f3b6so2172347b3a.0;
+        Wed, 09 Oct 2024 06:29:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728480554; x=1729085354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+BT2pvzVWlUY5HlQGpJ61u66kO+PlnsR6y06HdfcaLM=;
+        b=UQFVHPT4QkgXbUrTCrlcxgL2cSFpGivBH6oL0KdY1nx9ITIzK9+Nx0aW/hvWkZw9v/
+         OmUM8Efgr2K8eSUpAZVJPL3qlNoKsQ7c/MkdjwEa5lmwJV8uw3mQBXbvR3wOtmz7yPwk
+         6J6BHrYToSvfQg2+S5H/M17EcVdq8MbnyOD47/DHRXFyk1OZ9nxRP1wiKGglLo346IhC
+         W4KkFtWbs/ldOVDWbcR6FRHJ4qBXY6SPj8fGujqsDtkgvylXp+Da9UdVkohYJWeVbIqC
+         aR4givbwiVODDmtnR2THNdGvbopFCmFk6d5XwbA+vul3uHAShqcYdAPQI6YrigChvBad
+         YmHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728480554; x=1729085354;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+BT2pvzVWlUY5HlQGpJ61u66kO+PlnsR6y06HdfcaLM=;
+        b=BmfShfQJbnrdPVjIQjqVlcTofXcJKj3W9zPXwdu3cb7a9ypAf30f4aquiDcvtHeWDG
+         3sY8QVWZtO8PdJYVBgtTYPas0JrE8hI5j2HRtHYRogGgkBo7WbAuwxkOtx1EZ2GHg6s1
+         KIHnPiUYriWqPEOXFc2EIrXrlr6f3hjaaIeffj8NBHDjNGpH4k12HIZX8dnYlLq1ul0C
+         1bf2ALd7dCOkU+nK5oiFkaa9ySmW6eOHfC8Gjn1OcUb+Diwt7bPBFhi61JWJ1sjtpNTW
+         ZtdNmelGXa++6d1bcw49/UHoNOVSnC3w7aWQsA7GlVH7JQ/E7rvVOUvAf/Q6pBvLnTfF
+         9/Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP9RCKoeCq35DxuD4iqi5KCxEi6LqaZCzf/6pwJdL9BQOCN8e4cUM6r5TSdXx1WyNBdXaTk4FF4v+fQxk=@vger.kernel.org, AJvYcCWiw5w1bCHpEU3X/4eNPNtv8pTgbtvbZtMZNDvsgmeVvYnG1P/6e4MZayum9IbfRTME/kYf4KZuhbqyXywLB90=@vger.kernel.org, AJvYcCX0LC3vtHVHcl87wlnWtyyfziywiM3So7xwt2Qyfn5BnN7mZL/b0JIiZKTP3IwsPdX3KUoKTzQv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQP9Fa1/xMWUD1HLcrexH/k2a5abWq9twkkRbqgc3c6B6RlfB9
+	X5nJPC4PDOPKXjoOXj4GYxwFCwHZVv7VKKQxEpcIK0ryBU8En0qx
+X-Google-Smtp-Source: AGHT+IFkO1nr0stApKsPfqd6wtGEH9NDp4F0QqRs2k+1iFAiYLwP9nloCRJk+2dFE7R1fTva8WXpKQ==
+X-Received: by 2002:a05:6a00:2ea9:b0:71d:fd28:709a with SMTP id d2e1a72fcca58-71e1dbc7bcamr4265810b3a.23.1728480554009;
+        Wed, 09 Oct 2024 06:29:14 -0700 (PDT)
+Received: from localhost (p4468007-ipxg23001hodogaya.kanagawa.ocn.ne.jp. [153.204.200.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d477d4sm7764244b3a.134.2024.10.09.06.29.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 06:29:13 -0700 (PDT)
+Date: Wed, 09 Oct 2024 22:28:59 +0900 (JST)
+Message-Id: <20241009.222859.1405378592312581525.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com
+Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, anna-maria@linutronix.de, frederic@kernel.org,
+ tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 4/6] rust: time: add wrapper for fsleep
+ function
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <CAH5fLgjTifsDKrxZTUTo74HR34X1zusO_7h0ftWWH-iZR_NXNA@mail.gmail.com>
+References: <20241005122531.20298-1-fujita.tomonori@gmail.com>
+	<20241005122531.20298-5-fujita.tomonori@gmail.com>
+	<CAH5fLgjTifsDKrxZTUTo74HR34X1zusO_7h0ftWWH-iZR_NXNA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] nvme: add rotational support
-To: Christoph Hellwig <hch@lst.de>
-Cc: kbusch@kernel.org, dlemoal@kernel.org, cassel@kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Matias_Bj=C3=B8rling?=
- <matias.bjorling@wdc.com>, Wang Yugui <wangyugui@e16-tech.com>
-References: <20241008145503.987195-1-m@bjorling.me>
- <20241009074355.GA16181@lst.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-In-Reply-To: <20241009074355.GA16181@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On 09-10-2024 09:43, Christoph Hellwig wrote:
-> On Tue, Oct 08, 2024 at 04:55:01PM +0200, Matias Bjørling wrote:
->> From: Matias Bjørling <matias.bjorling@wdc.com>
->>
->> Enable support for NVMe devices that identifies as rotational.
->>
->> Thanks to Keith, Damien, and Niklas for their feedback on the patchset.
+On Mon, 7 Oct 2024 14:24:03 +0200
+Alice Ryhl <aliceryhl@google.com> wrote:
+
+>> +/// Sleeps for a given duration.
+>> +///
+>> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
+>> +/// which automatically chooses the best sleep method based on a duration.
+>> +///
+>> +/// `Delta` must be longer than one microsecond.
+>> +///
+>> +/// This function can only be used in a nonatomic context.
+>> +pub fn fsleep(delta: Delta) {
+>> +    // SAFETY: FFI call.
+>> +    unsafe { bindings::fsleep(delta.as_micros() as c_ulong) }
+>> +}
 > 
-> Hmm, the only previous version I've seen was the the RFCs from
-> Wang Yugui, last seen in August.
-> 
-> What the improvement over that version?  Note that it also came
-> with basic nvmet support which is kinda nice.
+> This rounds down. Should this round it up to the nearest microsecond
+> instead? It's generally said that fsleep should sleep for at least the
+> provided duration, but that it may sleep for longer under some
+> circumstances. By rounding up, you preserve that guarantee.
 
-Ah, I made the patches without awareness of the earlier efforts.
+I'll round up in the next version.
 
-This version, together with Keith's nvmet patch, does not rely on 
-setting/checking the CRIMS flag.
+> Also, the note about always sleeping for "at least" the duration may
+> be a good fit for the docs here as well.
+
+I see, will add it.
 
