@@ -1,125 +1,191 @@
-Return-Path: <linux-kernel+bounces-357186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34901996D21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:03:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E810996D30
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98CC287BB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513BB1C21964
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE55819EED6;
-	Wed,  9 Oct 2024 14:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71D6199FDE;
+	Wed,  9 Oct 2024 14:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBio+YSL"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y789wuzr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8C7199FAD;
-	Wed,  9 Oct 2024 14:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76199197558;
+	Wed,  9 Oct 2024 14:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728482533; cv=none; b=lDCJVFBSFdQLWWrCU76LgIHlybHvEtkeJue7NTHNANy9w4SuDkWBQEzO+4AicTJrUNYteieoS+4sE75ZkxZT0KOTKO911dohA7W7NgaTd9M7TP2LWIC295rsJpEBNUDUdhYf5MKt5BaSjDl+hYuD5PfgxcN9sG1emDUWPDiqc5E=
+	t=1728482674; cv=none; b=rb2owjwDTWkCi8Zytg3CYfy81tG9Uc1R8Hu+ZfyAeAvpPD54rWh/CiZER5aBtyDvLAhX9dmXMb5nSbz3YrRpgjzvBKnu+y+yiYLlwupbhLVNWcb9trSYuOW4EFDJJawaSB7e45bLQLQ2+7iReNeCJotSdpc1UKCMWOxHX/vYPKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728482533; c=relaxed/simple;
-	bh=h3m4z6CvMibfnLPKSuhUW4y2ERcRckWqfbUIGewtTgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gko3qFIA7ySIKrtnRhTQDL3Nc7WfLuLU47kx2Wa3L38e8+FJmS3BEfkI2TQfn8S5MnoYQy3O9cCcFdTzSjz0BdLeyl1WSVpzr2jeGe1JyOL+VUiSa7ErTY35XCj+kvmrEwjUGmQ7whAsu8484YJL20j2/mLsyDh5fMlyhpclqT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBio+YSL; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso97352331fa.1;
-        Wed, 09 Oct 2024 07:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728482529; x=1729087329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fux8O+IPEy0HaEPq1LQWkC9rakbrNGkKReW143DXdkk=;
-        b=jBio+YSLvW/v9ZcCaqGifActK68OxkMMWpOV97blu4joO2YwljZWEGHqVYgMqsjeIC
-         MEQHdkKUIaGAhn9ZRGcPnUjeyQ2qQZt1wMjH8IZj1zNeQ/IOmzytsOIkEhk3Kzuqq7b/
-         naLSpjCu/4C9+kDeJnFqscAJoaxF+BGDKFxgEDr+fTFEXMaimQAO4LVUZouaKN2hc+wM
-         lPc7eqlu65lskFk/oPytT5NB91D4sff1w4TAolOPlCjCmbK9eEwUXtD+Sibe0CRFhalO
-         JGCiatpB+D30GjbtyHb/vChmmYWQ/3esVjcrOy89dlPxg7IqYVWh4/W04atcRRJKQLti
-         NyPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728482529; x=1729087329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fux8O+IPEy0HaEPq1LQWkC9rakbrNGkKReW143DXdkk=;
-        b=BHxCPIMYRJepqe2XKZs7b73CqN0al1Bu2lFNItAEW5tL0kUyUlWBpwIhEpreCgCyHl
-         /oa0SgQLPFGBUx9O7Ig6l8qm8zphQghSuky26OCtajE2EKBaanavFXK0axV4cpdOYh31
-         ofINPcAcnPiZuqxLYjHjdzx3rS7Vxip9E2Rq00EiXG8AYm3LJ+dTACImMLJ7T6OGwg/Y
-         AHc8hy8Ve9AgIn5t+3N3Xc09fGInq8JCJrGJP0hQWqPvstxs8e40u1sQK5Epx2009KOX
-         u6dZ2cIYero3zD2nOv/LkkwsUJyQLuqqX0GBBCr6ItW8RahNrYwdl41GC/sIsnFw1z0A
-         /6SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHDbLxQT20S0l4Wq1IPSnIL/9WnZGsHYoQ4YIGK7ecF1ALIiXViUgWCOXwlrlM4vYl2bxXBNJJ1Sf+NW9OXndRdDJB@vger.kernel.org, AJvYcCWe5pMydatn9l1tcR402bp9nXsZngPQtW0j0bOKvW8iaW7sDfuvshSqFJi0r/34VXcFVw5Fpi3twvbeCCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/pI0UPYRxY3G/K7GBnyhN936IBzpyIkXnYB0q1pcj6WtdB07u
-	J9pv4KhwrSZtK4u+n8mOINjg/m40AtfQJNyW1Xis2+bJ9aSQLBUtT4g+zpaFsEpMYqfOn725JUj
-	wCpPtpXhPdOlK6J86NynqjKj1oX0=
-X-Google-Smtp-Source: AGHT+IE2xJSoWcX/hyk+DBnCLkBl9b9V1fw1iJ7KcvOaLL+XUUaJziclV1ZQIqm1bRikHL11f0vIzGOn/47eie7GFP8=
-X-Received: by 2002:a05:651c:547:b0:2f7:6653:8053 with SMTP id
- 38308e7fff4ca-2fb1873d455mr23071641fa.18.1728482527487; Wed, 09 Oct 2024
- 07:02:07 -0700 (PDT)
+	s=arc-20240116; t=1728482674; c=relaxed/simple;
+	bh=cn/+7rAN0waeqJO+OoEtoic+ow7ulLW4bNF7zTzwvVo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TriHbNzMHeIoHv61kJAABHz+1l+LuwXTztbcy9mSEMysLQUId202W1Td/MiypYy1ZoioTnEeSOdYZ0HmW5lyUmQFDXIcer+fQdJ/99633KtzyuJpWiibxj9eORnvgp4a2wb5Ge+cpGVuQ0MgPftYigEQMjrO5NfXL+kObILWh9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y789wuzr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49985i6Y025745;
+	Wed, 9 Oct 2024 14:04:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UKcdbQJ2jFrott/aEJlFWBdOxp7YlD/KOtBfPS0ut9E=; b=Y789wuzrYh83XvEX
+	toyCbwFZhfNk3NIR3cfh+tMV+QnOAoNKkK5zxXKJHCxNG7YuV0U9C12sIlXiuEd4
+	OBA7CJv3/5LfMGwMk5jpyh2GbFtPLxCmFXdP/9WRj8Ape2npFC3eNUXNvOBDfLEG
+	CzF1SnW4vQmLGakiEns+CxEefDr1z3SCxGxhAPgCSmhl4N6dC8RDwW0zv3kYn3jq
+	9wolQtx8F8CcqbwUr4w2FxMKdZiclRrmLpwKds65bwwRXXNm2yrbz9FuGJi/So5I
+	iPkdSDWEhsDHD2qiQ+JekrWqAbrsT3qO2cfpL5wi5If8+WP2K+ldEMjsM6hL1P7a
+	hfn05A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4258psu2y5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 09 Oct 2024 14:04:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499E4RP1002607
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 9 Oct 2024 14:04:27 GMT
+Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 07:04:23 -0700
+Date: Wed, 9 Oct 2024 19:34:19 +0530
+From: Shiraz Hashim <quic_shashim@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Mukesh Ojha <quic_mojha@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: remoteproc: qcom,pas-common: Introduce
+ iommus and qcom,devmem property
+Message-ID: <20241009140419.GH1421305@hu-shashim-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-2-quic_mojha@quicinc.com>
+ <pt5x7miszg3vrqjimhdfesxghnpdsu4zzdr37vcmuze7yccmkn@twjeb5cfdqph>
+ <ZwP/tA06k6we7uUh@hu-mojha-hyd.qualcomm.com>
+ <CAA8EJpqay7Nryb5HwwHE1+iiMXKUvqi-djmCsYN8fxigt-s-tQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009030340.16400-1-dolinux.peng@gmail.com> <20241009093727.4e99c1e2@gandalf.local.home>
-In-Reply-To: <20241009093727.4e99c1e2@gandalf.local.home>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Wed, 9 Oct 2024 22:01:51 +0800
-Message-ID: <CAErzpms1mGeBw364qsX1YV_4=4sPhMhTRsWsjHZmH8Ro5xWoyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND] function_graph: Support recording and printing
- the function return address
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA8EJpqay7Nryb5HwwHE1+iiMXKUvqi-djmCsYN8fxigt-s-tQ@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: u0lbiqUf52cxtVxBbSL0ivwUZBCQqs3E
+X-Proofpoint-ORIG-GUID: u0lbiqUf52cxtVxBbSL0ivwUZBCQqs3E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 mlxscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 adultscore=0
+ mlxlogscore=790 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410090087
 
-On Wed, Oct 9, 2024 at 9:37=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
->
-> On Wed,  9 Oct 2024 11:03:40 +0800
-> Donglin Peng <dolinux.peng@gmail.com> wrote:
->
-> > From: Donglin Peng <pengdonglin@xiaomi.com>
+On Mon, Oct 07, 2024 at 06:25:01PM +0200, Dmitry Baryshkov wrote:
+> On Mon, 7 Oct 2024 at 17:35, Mukesh Ojha <quic_mojha@quicinc.com> wrote:
 > >
-> > When using function_graph tracer to analyze the flow of kernel function
-> > execution, it is often necessary to quickly locate the exact line of co=
-de
-> > where the call occurs. While this may be easy at times, it can be more
-> > time-consuming when some functions are inlined or the flow is too long.
+> > On Sun, Oct 06, 2024 at 10:38:01PM +0300, Dmitry Baryshkov wrote:
+> > > On Sat, Oct 05, 2024 at 02:53:54AM GMT, Mukesh Ojha wrote:
+> > > > From: Shiraz Hashim <quic_shashim@quicinc.com>
+> > > >
+> > > > Qualcomm’s PAS implementation for remote processors only supports a
+> > > > single stage of IOMMU translation and is presently managed by the
+> > > > Qualcomm EL2 hypervisor (QHEE) if it is present. In the absence of QHEE,
+> > > > such as with a KVM hypervisor, IOMMU translations need to be set up by
+> > > > the KVM host. Remoteproc needs carveout memory region and its resource
+> > > > (device memory) permissions to be set before it comes up, and this
+> > > > information is presently available statically with QHEE.
+> > > >
+> > > > In the absence of QHEE, the boot firmware needs to overlay this
+> > > > information based on SoCs running with either QHEE or a KVM hypervisor
+> > > > (CPUs booted in EL2).
+> > > >
+> > > > The qcom,devmem property provides IOMMU devmem translation information
+> > > > intended for non-QHEE based systems.
+> > > >
+> > > > Signed-off-by: Shiraz Hashim <quic_shashim@quicinc.com>
+> > > > Co-Developed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > ---
+> > > >  .../bindings/remoteproc/qcom,pas-common.yaml  | 42 +++++++++++++++++++
+> > > >  .../bindings/remoteproc/qcom,sa8775p-pas.yaml | 20 +++++++++
+> > > >  2 files changed, 62 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > > > index 63a82e7a8bf8..068e177ad934 100644
+> > > > --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > > > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > > > @@ -52,6 +52,48 @@ properties:
+> > > >      minItems: 1
+> > > >      maxItems: 3
+> > > >
+> > > > +  iommus:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  qcom,devmem:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> > > > +    description:
+> > > > +      Qualcomm’s PAS implementation for remote processors only supports a
+> > > > +      single stage of IOMMU translation and is presently managed by the
+> > > > +      Qualcomm EL2 hypervisor (QHEE) if it is present. In the absence of QHEE,
+> > > > +      such as with a KVM hypervisor, IOMMU translations need to be set up by
+> > > > +      the KVM host. Remoteproc might need some device resources and related
+> > > > +      access permissions to be set before it comes up, and this information is
+> > > > +      presently available statically with QHEE.
+> > > > +
+> > > > +      In the absence of QHEE, the boot firmware needs to overlay this
+> > > > +      information based on SoCs running with either QHEE or a KVM hypervisor
+> > > > +      (CPUs booted in EL2).
+> > > > +
+> > > > +      The qcom,devmem property provides IOMMU devmem translation information
+> > > > +      intended for non-QHEE based systems. It is an array of u32 values
+> > > > +      describing the device memory regions for which IOMMU translations need to
+> > > > +      be set up before bringing up Remoteproc. This array consists of 4-tuples
+> > > > +      defining the device address, physical address, size, and attribute flags
+> > > > +      with which it has to be mapped.
+> > >
+> > > I'd expect that this kind of information is hardware-dependent. As such
+> > > it can go to the driver itself, rather than the device tree. The driver
+> > > can use compatible string to select the correct table.
+> > >
 > >
-> > This feature aims to simplify the process by recording the return addre=
-ss
-> > of traced funcions and printing it when outputing trace logs.
-> >
-> > To enhance human readability, the prefix 'ret=3D' is used for the kerne=
-l return
-> > value, while '<-' serves as the prefix for the return address in trace =
-logs to
-> > make it look more like the function tracer.
-> >
-> > A new trace option named 'funcgraph-retaddr' has been introduced, and t=
-he
-> > existing option 'sym-addr' can be used to control the format of the ret=
-urn
-> > address.
-> >
->
-> Is there a reason for the resend? I already have it in my for-next branch=
-.
+> > IIUC, are you saying that to move this into driver file and override the
+> > compatible string via overlay ?
+> 
+> Ideally we should live without compat overrides. On the other hand,
+> sc7180 and sc7280 provide an example of doing exactly that.
 
-I'm sorry and I did not notice it.
+I am not sure if there can arise a case where updated adsp firmware
+for particular board(s) may require additional access.
 
->
-> -- Steve
+Having it in device tree adds a convenience to deal with such
+variance. 
+
+regards
+Shiraz
 
