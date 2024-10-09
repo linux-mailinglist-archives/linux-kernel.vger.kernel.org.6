@@ -1,410 +1,156 @@
-Return-Path: <linux-kernel+bounces-357642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985059973AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:49:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E2C9973BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4CC2873E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4131F23866
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507741E0DFA;
-	Wed,  9 Oct 2024 17:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481681E1C0B;
+	Wed,  9 Oct 2024 17:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Q81nwb1L"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010060.outbound.protection.outlook.com [52.101.228.60])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UYvYnS/Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF291A0BFF;
-	Wed,  9 Oct 2024 17:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728495885; cv=fail; b=e7WxO/hbtpIFXdma3wzT2v/lLtnxttUlqUab0ZDXgTPBpMR62IRTKAnDpXDK1CbJE1DcmYJt+1mOiNAIl3udJS65/Fb74XP31EakXVAiGXwRVD4Noiu4OwIEuFN18mtIsZbSoxPaWlbL3arveaB5HAKBj51p/dLbSWp92Zj7I40=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728495885; c=relaxed/simple;
-	bh=u/u2YKBK+RZEUSsJLZigenKyZunEzfTea/R5QD7l71U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=W0WSpkonHZzzNwSMz15C+XujDrdoM08l2QGnbRdI//Vr22L/T2nQS6JNspr8XJAcw99KzWtDmAJ0teyOD6+ONOlvDP/Y+3xv/Sa3wLpD92LUshSFuxcGGRnVihv1DF/OzY13OOnLkHhra4ULG1j0crYnjdt60BPsofWaJdhgZsg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=Q81nwb1L; arc=fail smtp.client-ip=52.101.228.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PMSUIlsuBHrn3C+SaSxAxI0fzFATVswPo1SJlgBY77zcBsbTGEbGIoVHvKZGvhXWfkB2Dm7UVmdIUHjh2jtHpc2TH57+lks3xCfqNLuJIYQcJx4CJ1NR/Np93zHbT6wSszqXK33lZxlPGUJgDRsgQmVj4cUNvpPYagukH5ZZMJTTDLTi0GJ0Enqf3ZlC19yp8qz1TtCeRnmlNAMzKM267dJ//g2MLLFOXmO/wMJiKTEMYNUA9mmXK24Qf4TI/bbe/M3AkUEOKbtWD+MCl5lf25srX8WHlbdM4ZwlZLbA6UucyKD50h8JdZyVoEK4DsUHMHEGsUd5iuqeN57wokVdpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3QI5tBHUnNXMWni6eh+EkGMBn18Lx38sa9nqdTxIi4U=;
- b=A2iO4cO9ZEDm3xJdg4GnPeWI8w/9TsxInvxNEVs6eCerF4i/cfjmpKo5n29XNWhcFXVSnJAqbX1CB2MqzgktlvW8BjPcDSMDi59g08IPw0RjGOCEABnaYqVwAxz1lMUoyp5lWTh2CIeAO5QzQ0tTNJTD93bfrrXkg053q35XEL1h4URTtJoddDIylY8YYT8YMrU0Bo+bfx6gpzwq8ZXXRdT0VX53Y003Xtj5lC/rzZlbAs3sCxnipxa0OHYqdG5JMpdQEinjnUE1N/wy1XSE6kSTzMZYGLWWaPls165FWsu4SyeOjyKhwoi6VSE4gCaqZbuxZ7N5R/byYbRnosl7iA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3QI5tBHUnNXMWni6eh+EkGMBn18Lx38sa9nqdTxIi4U=;
- b=Q81nwb1LXgTipN/KyD77WZMGoXpJvOQgkVh6B9NdZvsA3qYt51jaOwgovViGVIFhE4pqc4jn5mqLggKmzIxdh7LhaSDBw24aCgiac0rYc39BxWJ2B8Dj8QZ7j/ffI1vaMsQcj/DSA9Srx7QLjfCuwNIR0ZFNpt/opGSH7shwL6M=
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
- by TYWPR01MB8726.jpnprd01.prod.outlook.com (2603:1096:400:168::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
- 2024 17:44:38 +0000
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430%5]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
- 17:44:37 +0000
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>
-CC: Magnus Damm <magnus.damm@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, Chris Paterson
-	<Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU)
- driver
-Thread-Topic: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU)
- driver
-Thread-Index: AQHbCSe8jfn/yqHRAUKBhaMTHEgkdbJzX8CAgAtxG+A=
-Date: Wed, 9 Oct 2024 17:44:37 +0000
-Message-ID:
- <TYCPR01MB1209390E575CD0D39B2AC8B9AC27F2@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <20240917173249.158920-1-fabrizio.castro.jz@renesas.com>
- <20240917173249.158920-6-fabrizio.castro.jz@renesas.com>
- <87bk02ydzk.ffs@tglx>
-In-Reply-To: <87bk02ydzk.ffs@tglx>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|TYWPR01MB8726:EE_
-x-ms-office365-filtering-correlation-id: 8da8ce2f-d13f-45f4-767f-08dce88a0bab
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?51OkdVkUy+GHNCPk0OS3hWh2cseLrMHAl83LLtG7GObmx3kr4o8rEpmZskZ7?=
- =?us-ascii?Q?UzYRC0dVDvfZ1eJv32Qunkc9lo6RDK7fVC1e1JIjNzmpSaHRBoGDxTGoZLNw?=
- =?us-ascii?Q?aAQ2UFi7sjZNOracDtg/bQrqvTFm6FMbz6T0xd4CZDPeAKl7iHNs6uR/BaTi?=
- =?us-ascii?Q?x7mthZlM0VlEvAeT/wqsP/8mAGbcyQtpG/5HCtU1oi/7FX01TUVJmOLQNm4B?=
- =?us-ascii?Q?Vi3qobatgSwn6CjXAgJAdAXPyLx3fymbyNwV+kvVtGPsszyNMur+KnCEYxDv?=
- =?us-ascii?Q?8oIe3DpxS9nzs2VX5LebtfXioWlNJ23kuif04uJCLwM2pM3m24JD4EkHAkbn?=
- =?us-ascii?Q?C8f/mkrED9J2VQZtNiNno8q5DaAAJ0y2dWVZcGOlMQg58kzlzdW2Dg5MrOrU?=
- =?us-ascii?Q?ibTUPkfZFSfCn+6H4wFhERpNeTMtExcXD41sD/mfeJRp8ZzuCpZNrd8YDyfd?=
- =?us-ascii?Q?6n/FY/QLt1bLlzuRpn+Z38PKYTOSAIODLHBSxXjRPgQCgLPq5UGN4uac3UBF?=
- =?us-ascii?Q?WsPEsn3xx6Og6e3gD4rZsBGFXSdzcX7UN4Bke8CoVDReb0vAxtidKXRRR9rO?=
- =?us-ascii?Q?s2KVOJUCywiU3jweGj8AAM2KEJ4IWwd5Ze5u49kLoyvff0JwR9ZRm+rfy/TL?=
- =?us-ascii?Q?ue2/iZv731S/eingUF/35tigDOulQPUW+zSCliHqNyD1dn8KKScUdtikRgBX?=
- =?us-ascii?Q?YVLgFlOQ2caK6Hi0EhxpZVqhiPmFzh9hHTS4KVafwCVZ8T6uNiUqwy3qy9oP?=
- =?us-ascii?Q?EAZ2nZZir3ULIg7h2XwRBH7MMgqcoSP5aPqiUe8ttokBikmvnV29m4fF9K7d?=
- =?us-ascii?Q?JdYlaD7JLPKFsM56APXUMax6NqBsQOq6g3Hsj1wRPOrunHImwR9MMJ6EA0bh?=
- =?us-ascii?Q?zWV9xNig7i2XWdtzSdGC4wTGGGm44DLwTqA2UyKlgNrvscJXxl4rovQXEl//?=
- =?us-ascii?Q?y4uUMMwHgYM2oVPtg8Sj7Sb5qbu6tKW6O4alQMWfoYGjOeLHQ72LNvQ7Boez?=
- =?us-ascii?Q?3Aa4IfWDpHAmgFMlY52CmI9EDBlNN51dGtAd0I1bgv9QiGW4ASwlWk+8CR+a?=
- =?us-ascii?Q?H0dqICj4fDqb8UvPW/TuJ/gOu/JeFaxh1Mz6aCGZ6tcNCuHUL52zgff3kD9z?=
- =?us-ascii?Q?/HroJfcP1STKhKp/zykGZi/eCEn/TmX6JpTMkeNh/BNBLQyrXW6DYGj+oute?=
- =?us-ascii?Q?1KAGsGcChucItAuMH6hOQTPoCsTVJN7pSikeZkrKsihAc48FHZQZCk2VqygA?=
- =?us-ascii?Q?r5NpS44ynzqrsAP56JzIQYdG50e+ysu335V333EpDewweWLUo1MlyyM6ZCiB?=
- =?us-ascii?Q?eLrBgbv77Hk2y5y5FnhcWukZugjztdICmvGBnlnDH8DThQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?QUuTiGVDS00QoTQrz6DJ5yEXHARkgRNeeE/ByxARtPwv2VjSayT9KnP2DMOs?=
- =?us-ascii?Q?HCjX4+WL5ieT5T8OD9x44XPxqsBnF8C+BBfZSjMON0zJM3fA4lpTe862zsto?=
- =?us-ascii?Q?a1VLmC+WOTHnNBE0p/7JjAvWZ+kxOcJdzPnGFyr6W9a8CuS4tudOQUjK5VTf?=
- =?us-ascii?Q?vmBTWTIA0zxf+E8DQEW3Nopi3yT4EUiyvHAukRNlkiVpIE3ayH15wxY/VnfE?=
- =?us-ascii?Q?UbkzfnNdXHtFVgjhaM9dgwHOZBTC5e7Mr6WiOR222cX5NkZMbTvZYul31hzK?=
- =?us-ascii?Q?DgpvAVbxIIkn/TQsQifwGGFKVFU4TTAjFsHkKywRzbXhGBeR+B1UGoJ5Rwu6?=
- =?us-ascii?Q?P5KAe0Ej1NwHroF8lxAUrvyZFW6qSAm8eq+vA0NVG72jBp2DCgsbqTDr4iVI?=
- =?us-ascii?Q?oAvQynRZMDs4piFwdt353RQZao19lMTEOaM2Jq97MDdrCwO4U+DU2K+lPGyU?=
- =?us-ascii?Q?TlE6GvRCMSKRxi9un92vUasEdBsRFfWm7ArYwTwdALCHJ+X8MvYxJMhWIgsg?=
- =?us-ascii?Q?LDlVZeVCne+W2DcN3cL8U9dKkLDlw8SL+dHW3t/JwKn/HRfiqA/e94NHRIF0?=
- =?us-ascii?Q?NBhHlQrUlCArThvdVk1Q6eOQEwuG5Yujmc+2pjJlwYMkQpEtu+hXyO5pz1QH?=
- =?us-ascii?Q?GBEx+6HuO8Jptz9PHpUbFQsHiyW3+Ybk0wp5XrQ8DST62wa87B4F0AY8GfmA?=
- =?us-ascii?Q?dzFHuxsL+hfdGHOw/zSaZajPVEKMuqBiD0yXk7MfxI/e0vWLQE1LpFTBCVfE?=
- =?us-ascii?Q?sK9BwZzBUppjXq1YS/5odnOvnYiR2NNuV12uZ3WKzCn6GeJC3+6XkCohF7tb?=
- =?us-ascii?Q?NWHNrPO3DQkay/zMQRt8Qaz2g4HuvBZvGKJVrsOu2DsKn1pSEFi0nQ2QxrDb?=
- =?us-ascii?Q?OUDIW0x9dRSYkHnxCH5t/M5V14ERPaQADgxCj2g086d9A9J1EyGVQDd2dffA?=
- =?us-ascii?Q?oPyH30YtCsjg3IiiKXvWwBI9YfG4/LTnjh+qzCVUWyZVd1W/fxbuOTdsqeo/?=
- =?us-ascii?Q?xcbD0nml4tPdwrbxgr+TzgGfrGuzi8yOzFU2QcZiu+9Cqwqazj62EpsBSclt?=
- =?us-ascii?Q?qlOXRbhLrqNvr7oL/jM5RGpdSLXi5DmeshqVUngfL2oMzZJiC/rTdM6P5pjM?=
- =?us-ascii?Q?uttuQ7DnWYrMfM9uLKmIwd98tbnWMUcBouQ/8HVUmCckEeDoL4/3nd85GaDy?=
- =?us-ascii?Q?HkTwHFsbhWRpXdD9gnP4cf1wAGTMJ+K9IkVDrdubrvwJf/pf7cHw9/9Iwvbd?=
- =?us-ascii?Q?1+ktNATGDBZsHNOxdrCldtZgzYO1FShEj3iUksUpMG99tFvoW+nT7pTSebGj?=
- =?us-ascii?Q?syfarEOUTn2WzySjlXWU2bEZOQsUF2mESxsZQIfYWlOBNZpi9+NFhAtyvrEN?=
- =?us-ascii?Q?dVTs9GKuWlClvH2LOn/JhePdmqQBM25Qj7Y7wilRAQ7d6x3gMsBVfIUrGJcq?=
- =?us-ascii?Q?oFrEI47r/SuxMCZsECsbhht9X8N6fZZrcpw3Bd3JepAFdPMQwDppbC9OxmAz?=
- =?us-ascii?Q?6nDQpRb3cgwPcN5Q3HC5UpzfbIZc5PZOjqWLZn2/uOXOZ6S5kHF5HqXU9F3X?=
- =?us-ascii?Q?zlO0iWClMX26yjCJVOzLqeMdPhm9S0CSsd5piX6Xw59ijbrrXpOjeK04BulS?=
- =?us-ascii?Q?Ew=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37611D318A;
+	Wed,  9 Oct 2024 17:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728496054; cv=none; b=b39vsXxgvJYAXHV0EP0Oy4eftYMTKNzNIzgvvd8achtzHPhfOdv7NHsGTPNrxQ/DfpP2pDQHPKYunjIjmih7qeRLZiV4KnR0zbsyrsFJjthC+wEsYCjGsqcCNNT/qZnNO/2zE3kLp5rXjSXFkqN9GevA1/11Xj5gSBMaS27rY6E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728496054; c=relaxed/simple;
+	bh=5owhw/5zc7/FmgXaGEaLIGRnrnC/DN+HTBTsPQucvWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TmTCVupbXfegy+CsQXhO2khBCVitBkpqaWkapzqto7IEl0bOpMgwmn/JaqgviYDQEZcBmzdry2H38IOHXihJHb+5BB0C3S60E0fiADcj78tfuQNv1y8bFKJaWUoKDY4OV3vvS4Myh/JnoSRxwquvDJBjODhd15NfpAlOxRLOyPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UYvYnS/Z; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728496053; x=1760032053;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5owhw/5zc7/FmgXaGEaLIGRnrnC/DN+HTBTsPQucvWU=;
+  b=UYvYnS/Z1rP62ZT8FQsK6o6+dvV511mIHw1521xWKgbjRCdgZW2fsjHd
+   6xPN3KQ6zJKGYE/yq+TpPbrl9x1MRVmSO23S9BDQSBt4rkic8d24NzDqx
+   py69gvnY3cP/lo0te0f9XKcEhka0NbxhkokeVPSYiYUHa7UfuM6npTsEz
+   0O7IT/sMChK07HUIwCFlQzRzBsHVHa8ekxnRX8uZNExXhsPUL6QE3H/CL
+   DKnkoJZeWkRBoAag1EqeVGytn6r8Fqhqj/SPmEgmNM1rb6kdk0b7QQvQ0
+   RbmZ/ET47fzbv0zYlPBXQybkjXVDqdli0T6TlaIcwOUzrEpL5Am4jd0Rc
+   w==;
+X-CSE-ConnectionGUID: sWQ/eF9UQVC2aTSYGz1XLw==
+X-CSE-MsgGUID: MrFl5L8ETM60gwscNFX07Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38942712"
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="38942712"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 10:47:24 -0700
+X-CSE-ConnectionGUID: bTHO+195SemDrWLFww8K9A==
+X-CSE-MsgGUID: D2O/ikGbRaqmcNTYRpFIAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
+   d="scan'208";a="80889213"
+Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.223.14]) ([10.124.223.14])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 10:47:21 -0700
+Message-ID: <f568dbbc-ac60-4c25-80d1-87e424bd649c@intel.com>
+Date: Wed, 9 Oct 2024 10:47:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8da8ce2f-d13f-45f4-767f-08dce88a0bab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2024 17:44:37.8097
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ABms63Vauz82cAxbl1KmPIFyDLwZNhd9RU6/duiWHGoQaJ18sxKy2L9wHkG/lEzzaTbPCSlFh5YRVzm0EbYdXlYhWSu0tpxiTX20sx2s1q8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8726
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
+ timer shutdown
+To: Zhang Rui <rui.zhang@intel.com>, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
+ x86@kernel.org, linux-pm@vger.kernel.org
+Cc: hpa@zytor.com, peterz@infradead.org, thorsten.blum@toblux.com,
+ yuntao.wang@linux.dev, tony.luck@intel.com, len.brown@intel.com,
+ srinivas.pandruvada@intel.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241009072001.509508-1-rui.zhang@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241009072001.509508-1-rui.zhang@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Thomas,
+On 10/9/24 00:20, Zhang Rui wrote:
+> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> index 6513c53c9459..d1006531729a 100644
+> --- a/arch/x86/kernel/apic/apic.c
+> +++ b/arch/x86/kernel/apic/apic.c
+> @@ -441,6 +441,10 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
+>  	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+>  	apic_write(APIC_LVTT, v);
+>  	apic_write(APIC_TMICT, 0);
+> +
+> +	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
+> +		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
 
-thanks for your feedback!
+One last thing, and this is a super nit.  We presumably have the actual
+APIC_LVTT value (v) sitting in a register already.  Is there any
+difference logically between a X86_FEATURE_TSC_DEADLINE_TIMER check and
+an APIC_LVTT check for APIC_LVT_TIMER_TSCDEADLINE?
 
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Sent: Wednesday, October 2, 2024 11:51 AM
-> Subject: Re: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (I=
-CU) driver
->=20
-> On Tue, Sep 17 2024 at 18:32, Fabrizio Castro wrote:
-> > +
-> > +/* DT "interrupts" indexes */
-> > +#define ICU_IRQ_START				1
-> > +#define ICU_IRQ_COUNT				16
-> > +#define ICU_TINT_START				(ICU_IRQ_START + ICU_IRQ_COUNT)
-> > +#define ICU_TINT_COUNT				32
-> > +#define ICU_NUM_IRQ				(ICU_TINT_START + ICU_TINT_COUNT)
-> > +
-> > +/* Registers */
-> > +#define ICU_NSCNT				0x00
-> > +#define ICU_NSCLR				0x04
-> > +#define ICU_NITSR				0x08
-> > +#define ICU_ISCTR				0x10
-> > +#define ICU_ISCLR				0x14
-> > +#define ICU_IITSR				0x18
-> > +#define ICU_TSCTR				0x20
-> > +#define ICU_TSCLR				0x24
-> > +#define ICU_TITSR(k)				(0x28 + (k) * 4)
-> > +#define ICU_TSSR(k)				(0x30 + (k) * 4)
-> > +
-> > +/* NMI */
-> > +#define ICU_NMI_EDGE_FALLING			0
-> > +#define ICU_NMI_EDGE_RISING			1
-> > +
-> > +#define ICU_NSCNT_NSTAT				BIT(0)
-> > +#define ICU_NSCNT_NSTAT_DETECTED		1
-> > +
-> > +#define ICU_NSCLR_NCLR				BIT(0)
-> > +
-> > +/* IRQ */
-> > +#define ICU_IRQ_LEVEL_LOW			0
-> > +#define ICU_IRQ_EDGE_FALLING			1
-> > +#define ICU_IRQ_EDGE_RISING			2
-> > +#define ICU_IRQ_EDGE_BOTH			3
-> > +
-> > +#define ICU_IITSR_IITSEL_PREP(iitsel, n)	((iitsel) << ((n) * 2))
-> > +#define ICU_IITSR_IITSEL_GET(iitsr, n)		(((iitsr) >> ((n) * 2)) & 0x03=
-)
-> > +#define ICU_IITSR_IITSEL_MASK(n)		ICU_IITSR_IITSEL_PREP(0x03, n)
-> > +
-> > +/* TINT */
-> > +#define ICU_TINT_EDGE_RISING			0
-> > +#define ICU_TINT_EDGE_FALLING			1
-> > +#define ICU_TINT_LEVEL_HIGH			2
-> > +#define ICU_TINT_LEVEL_LOW			3
-> > +
-> > +#define ICU_TSSR_K(tint_nr)			((tint_nr) / 4)
-> > +#define ICU_TSSR_TSSEL_N(tint_nr)		((tint_nr) % 4)
-> > +#define ICU_TSSR_TSSEL_PREP(tssel, n)		((tssel) << ((n) * 8))
-> > +#define ICU_TSSR_TSSEL_MASK(n)			ICU_TSSR_TSSEL_PREP(0x7F, n)
-> > +#define ICU_TSSR_TIEN(n)			(BIT(7) << ((n) * 8))
-> > +
-> > +#define ICU_TITSR_K(tint_nr)			((tint_nr) / 16)
-> > +#define ICU_TITSR_TITSEL_N(tint_nr)		((tint_nr) % 16)
-> > +#define ICU_TITSR_TITSEL_PREP(titsel, n)	ICU_IITSR_IITSEL_PREP(titsel,=
- n)
-> > +#define ICU_TITSR_TITSEL_MASK(n)		ICU_IITSR_IITSEL_MASK(n)
-> > +#define ICU_TITSR_TITSEL_GET(titsr, n)		ICU_IITSR_IITSEL_GET(titsr, n)
-> > +
-> > +#define ICU_TINT_EXTRACT_HWIRQ(x)		FIELD_GET(GENMASK(15, 0), (x))
-> > +#define ICU_TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
-> > +#define ICU_PB5_TINT				0x55
-> > +
-> > +/**
-> > + * struct rzv2h_icu_priv - Interrupt Control Unit controller private d=
-ata
-> > + * structure.
->=20
-> If you need a line break, then please format it so:
->=20
->  * struct rzv2h_icu_priv - Interrupt Control Unit controller private data
->  *			   structure.
+I suspect this will generate more compact code:
 
-Since I have 100 chars, I'll just get rid of this line break.
+	if (v & APIC_LVT_TIMER_TSCDEADLINE)
+		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
 
->=20
-> This makes it readable.
->=20
-> > +static void rzv2h_clear_nmi_int(struct rzv2h_icu_priv *priv)
-> > +{
-> > +	u32 nscnt =3D readl_relaxed(priv->base + ICU_NSCNT);
-> > +
-> > +	if ((nscnt & ICU_NSCNT_NSTAT) =3D=3D ICU_NSCNT_NSTAT_DETECTED)
-> > +		writel_relaxed(ICU_NSCLR_NCLR, priv->base + ICU_NSCLR);
-> > +}
-> > +
-> > +static void rzv2h_clear_irq_int(struct rzv2h_icu_priv *priv, unsigned =
-int hwirq)
-> > +{
-> > +	unsigned int irq_nr =3D hwirq - ICU_IRQ_START;
-> > +	u32 isctr, iitsr, iitsel;
-> > +	u32 bit =3D BIT(irq_nr);
-> > +
-> > +	isctr =3D readl_relaxed(priv->base + ICU_ISCTR);
-> > +	iitsr =3D readl_relaxed(priv->base + ICU_IITSR);
-> > +	iitsel =3D ICU_IITSR_IITSEL_GET(iitsr, irq_nr);
->=20
-> Not that I care about the performance of your device, but why do you
-> need to read back the type configuration. It's known and cached in
-> irq_data, no?
->=20
-> Also this is invoked from eoi(), so why would the bit not be set when
-> the interrupt is type edge and has fired? It should be set which means
-> the ISCTR read is pointless too. Unless I'm missing something,
+Does it have any downsides?
 
-Both rzv2h_clear_irq_int and rzv2h_clear_tint_int are also called from
-the irq_set_type path, that's why all the checks.
-
-As you pointed out, no need for all those checks from within the eoi
-path, therefore I'll implement whatever is required straight in
-rzv2h_icu_eoi, to improve on performance.
-
->=20
-> > +static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv,
-> > +				 unsigned int hwirq)
->=20
-> No line break required.
-
-Agreed.
-
->=20
-> > +{
-> > +	unsigned int tint_nr =3D hwirq - ICU_TINT_START;
-> > +	int titsel_n =3D ICU_TITSR_TITSEL_N(tint_nr);
-> > +	u32 tsctr, titsr, titsel;
-> > +	u32 bit =3D BIT(tint_nr);
-> > +	int k =3D tint_nr / 16;
-> > +
-> > +	tsctr =3D readl_relaxed(priv->base + ICU_TSCTR);
-> > +	titsr =3D readl_relaxed(priv->base + ICU_TITSR(k));
-> > +	titsel =3D ICU_TITSR_TITSEL_GET(titsr, titsel_n);
->=20
-> Same comment.
-
-Agreed.
-
->=20
-> > +static void rzv2h_icu_eoi(struct irq_data *d)
-> > +{
-> > +	struct rzv2h_icu_priv *priv =3D irq_data_to_priv(d);
-> > +	unsigned int hw_irq =3D irqd_to_hwirq(d);
-> > +
-> > +	raw_spin_lock(&priv->lock);
->=20
->   scoped_guard(raw_spinlock, ....) {
-
-Good point!
-
->=20
-> > +	if (hw_irq >=3D ICU_TINT_START)
-> > +		rzv2h_clear_tint_int(priv, hw_irq);
-> > +	else if (hw_irq >=3D ICU_IRQ_START)
-> > +		rzv2h_clear_irq_int(priv, hw_irq);
-> > +	else
-> > +		rzv2h_clear_nmi_int(priv);
->=20
-> Huch. Is NMI a real NMI or just some unmaskable regular interrupt?
->=20
-> If it's a real NMI, then you _cannot_ take the spinlock here.
-
-It's not a real NMI, as it's mapped to SPI 0.
-
->=20
->=20
-> > +	raw_spin_unlock(&priv->lock);
-> > +
-> > +	irq_chip_eoi_parent(d);
-> > +}
-> > +
-> > +static void rzv2h_tint_irq_endisable(struct irq_data *d, bool enable)
-> > +{
-> > +	struct rzv2h_icu_priv *priv =3D irq_data_to_priv(d);
-> > +	unsigned int hw_irq =3D irqd_to_hwirq(d);
-> > +	u32 tint_nr, tssel_n, k, tssr;
-> > +
-> > +	if (hw_irq < ICU_TINT_START)
-> > +		return;
-> > +
-> > +	tint_nr =3D hw_irq - ICU_TINT_START;
-> > +	k =3D ICU_TSSR_K(tint_nr);
-> > +	tssel_n =3D ICU_TSSR_TSSEL_N(tint_nr);
-> > +
-> > +	raw_spin_lock(&priv->lock);
->=20
-> guard()
-
-Agreed.
-
->=20
-> > +	tssr =3D readl_relaxed(priv->base + ICU_TSSR(k));
-> > +	if (enable)
-> > +		tssr |=3D ICU_TSSR_TIEN(tssel_n);
-> > +	else
-> > +		tssr &=3D ~ICU_TSSR_TIEN(tssel_n);
-> > +	writel_relaxed(tssr, priv->base + ICU_TSSR(k));
-> > +	raw_spin_unlock(&priv->lock);
-> > +}
->=20
-> > +	raw_spin_lock(&priv->lock);
->=20
-> guard()
-
-Agreed.
-
->=20
-> > +static const struct irq_domain_ops rzv2h_icu_domain_ops =3D {
-> > +	.alloc =3D rzv2h_icu_alloc,
-> > +	.free =3D irq_domain_free_irqs_common,
-> > +	.translate =3D irq_domain_translate_twocell,
->=20
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct=
--declarations-and-initializers
-
-Will fix.
-
->=20
-> > +};
-> > +
-> > +static int rzv2h_icu_parse_interrupts(struct rzv2h_icu_priv *priv,
-> > +				       struct device_node *np)
->=20
-> Please get rid of the line breaks. You have 100 characters.
-
-Thanks for pointing this out, I'll go through the whole file adjust accordi=
-ngly.
-
-I'll send a new version soon.
-
-Thanks,
-Fab
-
->=20
-> Thanks,
->=20
->         tglx
+Oh, and how hot is this path?  Is this wrmsr() going to matter?  I
+presume it's pretty cheap because it's one of the special
+architecturally non-serializing WRMSRs.
 
