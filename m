@@ -1,86 +1,130 @@
-Return-Path: <linux-kernel+bounces-357897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4B7997785
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:31:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3C8997787
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784351F22AFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:31:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D97284982
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A349C1E261A;
-	Wed,  9 Oct 2024 21:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4911E2305;
+	Wed,  9 Oct 2024 21:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKX0jZfw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Espne5v8"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F247317A583;
-	Wed,  9 Oct 2024 21:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF32119;
+	Wed,  9 Oct 2024 21:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728509478; cv=none; b=VPAKmrkWVkefwFPzId7KhBkDEL7yzhS+EbnYoKpJA5DXnKKSsuqiP0P5eeJcoO0zGw1RQEmphSHw4jCXdk11rWIFf84Zj1E+6HH2LLvlI7p+7NqQ3HXsLRDzfe7+MH1rXO6picCtZrNjlt7UJ+wno1YiLbZjR2xxk9udIhYc/yY=
+	t=1728509489; cv=none; b=j/XumFDKH9OEChV8Nh9EKsz5tyqUQ15n5K0lxqewlYytJQ49eb0PjqNRgNFW8RYwZllB4nJhK+7nobxTnuZPjJebYQSrS8VoF/AtH9HeHYbcwx0gDBLuUlAC4lo+48MWbQfxkuR9V/riYgFOWGVokHbXnBocPBoEc2/4fv4/z7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728509478; c=relaxed/simple;
-	bh=CDmpHt4cVnqH2CMq/UZ5gellTMhqUaoAikzncUK3EyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jH8Cl0GCRbq+YYfd1c625iNRKaXvwYq+qAntQJWJ/KACIovJl7YDG2/D3z/H+7Hp+FXBmoPngodvglAorTFZ32Jw+Jjrlq+hkg7YTHnVqnlQBsjqBe40tB/S+y4g1U+ijRtWUrcUYFE78nTTd0yMZQ5HfXzqks4Lglo713eA9Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKX0jZfw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66189C4CECE;
-	Wed,  9 Oct 2024 21:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728509477;
-	bh=CDmpHt4cVnqH2CMq/UZ5gellTMhqUaoAikzncUK3EyI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fKX0jZfwvEI6+/cfTuvHWPCQAu78JEr7r5kIJ4yyqhLTQ7LaaFd9jUJXNkNrHOA4k
-	 SyGb7YOqnaNCSY+RLxmLt8aCxiRLPfqIQOg96gZgw3zfTRhiS+Docl21mdJ5i/+vHN
-	 j5sMy+WJlODGqoaQnrHmjzkLbTgMGUCiDraZ2L56wm+Rbu9HMALs1iC2PXVIJRwP8Z
-	 dXFOnBwVrUgiQbalOfaurxuGZeM2ms7C5ZbKolb7JMj4+Wc13YBKUw48Ts7pNBZPKD
-	 8ttlmj52TAKy9EERvJ7K8AKpWAZoUSeH+L6NIiDbxmzdFRP/vz5GSMhxixpJHA+/tu
-	 6B4r5v11Tf70w==
-Date: Wed, 9 Oct 2024 16:31:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mantas Pucka <mantas@8devices.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-phy@lists.infradead.org, quic_ppratap@quicinc.com,
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH 1/4] dt-bindings: usb: qcom,dwc3: Add QCS8300 to USB DWC3
- bindings
-Message-ID: <20241009213116.GA740340-robh@kernel.org>
-References: <20241009195348.2649368-1-quic_kriskura@quicinc.com>
- <20241009195348.2649368-2-quic_kriskura@quicinc.com>
+	s=arc-20240116; t=1728509489; c=relaxed/simple;
+	bh=//zTy4UpgvpMhiM/XLBdEkqk315aai76inbYAwOg2iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LM4SR7TJCFwpEM18AQ7zHrC5gr2rekdnSyOwjlNz8re+L+NQ8PnebDg+alPqRy7wCTl8YS3cebHaLcQYNabkO54V/6kQ0T/+mplEseGuXYTRbQDbRjjz9QBNG2qGK78lPHAoPhwKZhXElVosG/0xcN6whZT7qaH7hh1/rkSSeNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Espne5v8; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d325beee2so108166f8f.2;
+        Wed, 09 Oct 2024 14:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728509486; x=1729114286; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fH6wGAFhOB6srobU+680PWFL7Rl7n2W1X6InnwCuKD8=;
+        b=Espne5v8NdIypHuxFL+vX23yua3GB7jrcWICZF3I/jX6PlS4rEGpJPjTy03SE6YDuI
+         PXSGEtU+F3UklxBzZz0AY4iNwnr1nWbJCjfCVvET5DiCk7aTyUuHEry28gcbntfp6VXU
+         +T1cYpNxvoUm7c+w6q6K1hnYJQMtOJ70zF7CHnN9sg7TdjqdqH2U8GbMW4CwobqfI4qt
+         fOpSPtFyj0juqhzB26UBntKwW9270k9GIcI+V6LGNS6dwub52Qd61oYGw//tY4/8C/oS
+         ZgfeJ00BZgAGKYH5SvK/OiYPxosg3Ahmn/gVjl344gJF5fZ4EuQiFZ+r0MjHU52DTgCU
+         8q3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728509486; x=1729114286;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fH6wGAFhOB6srobU+680PWFL7Rl7n2W1X6InnwCuKD8=;
+        b=Fx0ukR+wBgDvDmcMdKDa0oe6FG+FRemfsW0j3QglndNx9HFdE6xNw4Q5BIPcxsvjxM
+         mA7svvTC940zMtGjs5UJj9+Y+UWxh3/ndcvbRUsOT3KKDZ40xcu/E76KnfoT3xe/eFue
+         w3qnbfQ1H8rMe2Q3oQ1G9D6BSJpgPMZveau+jX3BH6IeEvGQ0ts07zYzMaCD1SwBvh5t
+         qysGtlAd0In7U4aeeTv3pnPHEDZWM3487U7Hbt9VhZ1klAg2XNuy82lNeOIJVEpGw0Hi
+         JQm1xSzLdEeTdgfWkL7Z+awFYrukJIf3TVtuMDSAvqNlcGYxvDhmjL+gDQCBwIRqWU0N
+         dJ2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULrzNWDlDH6lwnrE5bPcPCL7KxXGD5r33GfAxHmK/JIT8Ru6QfvIwj8Jbyx7hCuONaMC7X0LRSRd4=@vger.kernel.org, AJvYcCUsyK7ms0WdOziZ3ewpA2dYrxcnaarBPB8FxgJHsIdfxUQY/xchkeHI3FB/ThvG0iDeBo2GyqR01rWbumNf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7vvoTmiSbtbPXTckCJv3InYqAZl37X5ZV9HQV+YDV11sG7psG
+	jdw9TA2scw5LmU2PyYXJgSYtcILdbi36IcFyiPjdSIxsZnhiJ4Kl
+X-Google-Smtp-Source: AGHT+IElj7f1i8wI1OZNrsFktsrjPKw7XmpY1ZsUX2Jm/s1Br/mRzeFkfOJUM+2vjknbLf3K5iJD/w==
+X-Received: by 2002:a5d:564c:0:b0:37d:373c:ed24 with SMTP id ffacd0b85a97d-37d3aa23c8fmr2510699f8f.4.1728509485428;
+        Wed, 09 Oct 2024 14:31:25 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:268e:1448:f66b:a421? (2a02-8389-41cf-e200-268e-1448-f66b-a421.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:268e:1448:f66b:a421])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920cc7sm11367605f8f.61.2024.10.09.14.31.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 14:31:24 -0700 (PDT)
+Message-ID: <f356d311-ea83-4318-8b47-15f39944e913@gmail.com>
+Date: Wed, 9 Oct 2024 23:31:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009195348.2649368-2-quic_kriskura@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: adc: ad4695: Add missing Kconfig select
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>
+Cc: Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241009-iio-adc-ad4695-fix-kconfig-v1-1-e2a4dfde8d55@baylibre.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20241009-iio-adc-ad4695-fix-kconfig-v1-1-e2a4dfde8d55@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 01:23:45AM +0530, Krishna Kurapati wrote:
-> Update dt-bindings to add QCS8300 to USB DWC3 controller list.
-> The second controller of QCS8300 is High speed only capable and
-> doesn't have ss_phy_irq.
+On 09/10/2024 23:23, David Lechner wrote:
+> Add select IIO_BUFFER and select IIO_TRIGGERED_BUFFER to the Kconfig for
+> the ad4695 driver.
 > 
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> Fixes: 6cc7e4bf2e08 ("iio: adc: ad4695: implement triggered buffer")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 > ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+> I didn't see this one in the recent series with similar changes [1][2],
+> so here is another one.
+> 
+> [1]: https://lore.kernel.org/linux-iio/20241003-ad2s1210-select-v1-0-4019453f8c33@gmail.com/
+> [2]: https://lore.kernel.org/linux-iio/20241003-iio-select-v1-0-67c0385197cd@gmail.com/
+> ---
+>  drivers/iio/adc/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 85b82a708c36..98d441d6cc5c 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -52,6 +52,8 @@ config AD4695
+>  	tristate "Analog Device AD4695 ADC Driver"
+>  	depends on SPI
+>  	select REGMAP_SPI
+> +	select IIO_BUFFER
+> +	select IIO_TRIGGERED_BUFFER
+>  	help
+>  	  Say yes here to build support for Analog Devices AD4695 and similar
+>  	  analog to digital converters (ADC).
+> 
+> ---
+> base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+> change-id: 20241009-iio-adc-ad4695-fix-kconfig-279c9ef8d9ef
+> 
+> Best regards,
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+I guess the kernel I ran when I found the issues did not have triggered
+buffers for the ad4695, which was (more ore less) recently added. Good
+catch!
+
+Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
