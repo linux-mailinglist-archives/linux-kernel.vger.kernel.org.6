@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-356865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39159967EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:01:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8301F9967EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C0C287CC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD641F2218A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E294191484;
-	Wed,  9 Oct 2024 11:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0E91891A8;
+	Wed,  9 Oct 2024 11:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9aCpzmZ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YrhmPYl/"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF1241C6A;
-	Wed,  9 Oct 2024 11:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5841C68F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728471664; cv=none; b=BxVN84V4co5RdapAL12sYwe21KrfxrD93V7ZWlmiF73abrRtFd2TNJZmoXSEc6YqQjbt9c/VuHTiySJCgKzDtB5sqcdXa3OcL2i7gnsyKomaWmuzMrkU1Sp18Bjt0OMPka7Ul+qQYk21xCjyq9w2qW0oXNoOTWryWYPMIdbKHVw=
+	t=1728471744; cv=none; b=j3bLgEiUh0wsYZ4Oh/dVuLJMH1E0G+dEmBq8k0ONLBBB9/H5TxQo0h8BaAW1rHKh846Xa2bIU20unphrzTXpZ5ya4lTOdyySXSdU81PEoPrpcuAsq+797aprSYo3oxfe/IDj2+/wSnZhOsV0JnvlyDY3K7fjP31V6NL8TcDEoBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728471664; c=relaxed/simple;
-	bh=JKxhyQ9BOgWSYDC5gllA6FYyekxp6zW4aJDHnbf0qRw=;
+	s=arc-20240116; t=1728471744; c=relaxed/simple;
+	bh=kl8vItieMg5smo8NDHk+0crueDrthRxpjhs9FiG68PU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4f50UhgRMb0bZyRQ8/HeeKpo2lPKNMiPJlpF4X4EcDDP3RvOdSzBSKLNNIcgnGusOTa+r44+uL9m/xftKqnx7UT7pCEE+e8qqFvmLnC9Q8SvGM5ow70Z68OnF88MX+1zRpyJqD5zUP9elsFXZ2gjStei+E4GQkHaVlN8NtqrEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9aCpzmZ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20bb610be6aso73182735ad.1;
-        Wed, 09 Oct 2024 04:01:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728471662; x=1729076462; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8OiY6CpBEzHsjraTshq69qQz+AGO9HWUOSPdHLM5wrI=;
-        b=j9aCpzmZyoyq7YC9qp8z6eQ+PhsImBLFO0raAzP6eYIHhCZ4cY+HOQIDW3xgXaH2O4
-         +aa9nNC6Z5O0o1vkkeWl6IslfJ5QLUSUgew/p887siFdsPCsNHnKIxV241wlwsJCtpeq
-         +dSaVmWj15Qo/UxPTkAvzxlM9EwRTe4kCOtfHrjAwsPGRx8Y+STX0OQ/qrtqEPAxWyiW
-         XGzIwsEej7TEbGq159K4yxUCcNiecAEYw2te1spVFzeuTuONGzqV1UHkUa8GIXB5I6v8
-         DxCpTU3L12FrLnJiIMPqmCGLjUSbonMiMSn/mbezKmFVW5qkEJzTSMQTagb7yRJs6Hmd
-         8FGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728471662; x=1729076462;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8OiY6CpBEzHsjraTshq69qQz+AGO9HWUOSPdHLM5wrI=;
-        b=inMunfkVIPFbeVrRnzWnwuw8e2pJ/M+pt8gm1+2V8XeNbXi/cOHBqcWrWX7aG6POGh
-         pspNUjlXPr9qjtc2YK38zGterNZLSX8PqQg2OggJsapmQm9e9bxjbQykXCx6xh/ofPwG
-         5igZ5FbBonQaoN01F3ywfX7WdCIa5wNbDYRBNqbGPCs67XwkhvPAzWUlBqQq+RI3BuV1
-         tEmNLLMCopOxQL+VuJkIp0Elb7EBUs+JBC8aJNLRfAK9XDH9wrUun46CNd5fvzhoWijI
-         9p2fAVTSBXKIBkR+7YNLlTS9texgXoqzpVpVqCfnistbe4Rc8hPEai0bQ19y5pVn1s5X
-         Us5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUlVY+gMQ23URgv/0ZuMQGzlTZ/WaZTlL16TQlaE9xkoZubYP7cLwgmyz9Kk/VZi42m3SKbRoKMd3ePzpor@vger.kernel.org, AJvYcCXlQ+1pG4C/64zCHtZol/+UB4px3nmI/1YKC/8351s9pobKS4ZKUr0bECwONCA2j1YPIjiFcw/DZpnA2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB4Zz8mYtmWN9S8Gm+N3fl8JGvST7esIQmCOS/3p0DN4Z12HGL
-	AaszXsjHSuLdKHYwCNpWrGsB7+PpEhD51degQj8EECdFuUO8fw8DvxF8hA==
-X-Google-Smtp-Source: AGHT+IF07LOXv7qo1PT0ouEnajyTQ5JOdx3xpv5X/Ep9k2ZNrxULBFiCmymWI7fNe5z6CLixrrnzSQ==
-X-Received: by 2002:a17:903:2302:b0:20c:6098:473d with SMTP id d9443c01a7336-20c637a4411mr24401435ad.60.1728471662264;
-        Wed, 09 Oct 2024 04:01:02 -0700 (PDT)
-Received: from ?IPV6:2409:40c0:1048:4b3c:cd38:b59:a263:1c9a? ([2409:40c0:1048:4b3c:cd38:b59:a263:1c9a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138cff51sm69020185ad.87.2024.10.09.04.00.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 04:01:01 -0700 (PDT)
-Message-ID: <6e290cc3-0be1-4ee9-8e13-351f8cd9f658@gmail.com>
-Date: Wed, 9 Oct 2024 16:30:56 +0530
+	 In-Reply-To:Content-Type; b=psIg74GZLt+DeLo0Gwsac5eZ/UVURGu85hwqx5N2C7ZT0/SZ13YaIS0sSV68+EB5eTtRB/pgvQ0TGO4C+urmk/xls0Pe9VN0a8C4qXfvhjAa/SAh82VkPwy+j1FJ6fbIOjvndhbMS7kigrlPne9i2UX/DvwsFosD9KNELl6dkZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YrhmPYl/; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3PVCNHYJlb7GBI9J0fbaBNdjV24sYsfqiyDp2eG0xBQ=; b=YrhmPYl/qrXV94UAirrw7F00me
+	CTkUlx5weY0Y9doFOpHNvtR/89SubnXP7aLsf9troYqblKRYkH6L71rsz2lTqm5i8ced91/r6dZhU
+	SVFD23T+bhMK5NJ+JFYWDhOf+PKPqr4q8lB0p/4M0o2g3MjyiEPsiiHK/jZU4/eNz8gZ2Nm6yGl07
+	fWBY3NAQgs9ex68wP1C6XdW490d9xcplM5l+PJ6bHqbakUwzRjCDCOz/LerSbSrp46qTVfx+fLEYZ
+	ntN6dOVR+9kRzIIri7ZRM9tmWT31mZ2PyWY7k0FDPe/Ag4yurLPOyTPtP5hRl10k2lf93rnPtXldX
+	l/y/UQeA==;
+Received: from [187.36.213.55] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1syUSH-006ufT-HB; Wed, 09 Oct 2024 13:02:09 +0200
+Message-ID: <b1d76661-41b9-4841-80f4-452654d9cd6b@igalia.com>
+Date: Wed, 9 Oct 2024 08:02:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,40 +55,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] block: Fix uninitialized symbol 'bio' in
- blk_rq_prep_clone
-To: Christoph Hellwig <hch@infradead.org>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
- <20241008175215.23975-1-surajsonawane0215@gmail.com>
- <ZwYxA1sfQdaj0Hy3@infradead.org>
+Subject: Re: [PATCH 1/2] drm/vc4: Run default client setup for all variants.
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241002-vc4_fbdev_fix-v1-0-8737bd11b147@raspberrypi.com>
+ <20241002-vc4_fbdev_fix-v1-1-8737bd11b147@raspberrypi.com>
 Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <ZwYxA1sfQdaj0Hy3@infradead.org>
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
+ /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
+ gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
+ SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
+ G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
+ AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
+ dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
+ P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
+ O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
+ GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
+ 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
+ FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
+ TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
+ Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
+ 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
+ LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
+ T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
+ wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
+ zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
+ it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
+ Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
+ uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
+ raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
+In-Reply-To: <20241002-vc4_fbdev_fix-v1-1-8737bd11b147@raspberrypi.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/10/24 13:00, Christoph Hellwig wrote:
-> The patch itself looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> On Tue, Oct 08, 2024 at 11:22:15PM +0530, SurajSonawane2415 wrote:
->> Fix the uninitialized symbol 'bio' in the function blk_rq_prep_clone
->> to resolve the following error:
->> block/blk-mq.c:3199 blk_rq_prep_clone() error: uninitialized symbol 'bio'.
-> 
-> To make this more readable I'd usually keep and empty line before
-> the actual error message.  But more importantly it would be useful
-> to explain what tool generated said error message, and maybe also add
-> a summary of the discussion why this function was in many ways
-> pretty horrible code.
-> 
-Thank you for the review and suggestions.
+Hi Dave,
 
-Should I submit a new version with the added empty line and explanation 
-about the tool and function issues?
+On 10/2/24 12:06, Dave Stevenson wrote:
+> Commit 45903624e9fc ("drm/vc4: Run DRM default client setup")
+> only added DRM_FBDEV_DMA_DRIVER_OPS for the vc4 (Pi0-3) driver
+> definition, which caused an issue on vc5 (Pi4) as there was no
+> fbdev_probe function defined.
+> 
+> Fixes: 45903624e9fc ("drm/vc4: Run DRM default client setup")
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-Best regards,
-Suraj Sonawane
+Reviewed-by: Maíra Canal <mcanal@igalia.com>
+
+Best Regards,
+- Maíra
+
+> ---
+>   drivers/gpu/drm/vc4/vc4_drv.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+> index 13a1ecddbca3..a238f76a6073 100644
+> --- a/drivers/gpu/drm/vc4/vc4_drv.c
+> +++ b/drivers/gpu/drm/vc4/vc4_drv.c
+> @@ -238,6 +238,7 @@ const struct drm_driver vc5_drm_driver = {
+>   #endif
+>   
+>   	DRM_GEM_DMA_DRIVER_OPS_WITH_DUMB_CREATE(vc5_dumb_create),
+> +	DRM_FBDEV_DMA_DRIVER_OPS,
+>   
+>   	.fops = &vc4_drm_fops,
+>   
+> 
 
