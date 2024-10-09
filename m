@@ -1,152 +1,242 @@
-Return-Path: <linux-kernel+bounces-357159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EDA996CAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:51:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5F5996CB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A53284BC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:51:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027AA1F219E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911C519925F;
-	Wed,  9 Oct 2024 13:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632CF199937;
+	Wed,  9 Oct 2024 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eLJWPUsl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Xv+cLqdq"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2065.outbound.protection.outlook.com [40.107.93.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326F3192D6E;
-	Wed,  9 Oct 2024 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481853; cv=none; b=rbzwkVmVPe6hmm7fwWMOfwHJuCWS+ar3P4i3Fi4AIhyOih8Rdv7/fMMnPbXnyBU3JmJ24wJ70rp4fRbDt3pBZVEu7/gvVG9OwmG46uBtE0ySwCjkvylox4O9f9h5IN9WDWPTCP7zTNa7sB+5VBZP4bNpp5TIoB0lzijRMRyDFhM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481853; c=relaxed/simple;
-	bh=X4TnJTxurWziK3v3Zy4Trv0kJnJ555qg9MbV8sv+F3k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jt+D/uDpKm2zqaDiJXYJfo4HhXe99GqnRohcN8wsR2Wavwte23cm4JYOQn5/xz+zRTadoyw5sv/Vlq86EHzqLV3lEezEkiR4pfF4DR0CSPPLrTta/Nan+LW2hgGPIdLYf6djtp+3KGihYt/gYP4rqZmzZznlVr8rJ1IP4jcCE5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eLJWPUsl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4999eghH018007;
-	Wed, 9 Oct 2024 13:50:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ID8IcFr7c2RC5aq4yF6GSz9+xbNb2bvDWiborrw7cI8=; b=eLJWPUslPRQX0alg
-	2A6AYfHcjIaeUM8mhB2yZHA83Dk7yeZC22TrHXxO72m6j/HE+zipxkncNKN4o8Vd
-	UFG429Uvqimn/7LLx2g2EZP7BDcVAEBvbZ/exKgV8+HMRnoKVFFlIkuOjQC89mS+
-	yM1QnFu6awSlU5i0WJCYvmv3znP/TC8pUcVL5GZIPmHP2cFJwU3AWS8TJfWQbyNY
-	nRuHtuapNqzIO5+NxiklJPRPl6pRmRR9QAUQSqomq8txJFoNGsFWgdEixztRVX/R
-	ZDXtMTr2qlbdd12Rg4Disa2+qFm4OnCCIMtG5jYxe/WqiKfDQla+38FqCGB7ZBH+
-	+ZdFGA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425c8qtgsg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 13:50:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499Doj18004436
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 13:50:45 GMT
-Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 06:50:41 -0700
-Date: Wed, 9 Oct 2024 19:20:37 +0530
-From: Shiraz Hashim <quic_shashim@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Mukesh Ojha <quic_mojha@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] Peripheral Image Loader support for Qualcomm SoCs
-Message-ID: <20241009135037.GG1421305@hu-shashim-hyd.qualcomm.com>
-References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
- <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6CA192D6E;
+	Wed,  9 Oct 2024 13:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728481871; cv=fail; b=jE6/Sg8hmkKyyebzdfdJ1jnyqQL1MpQ2+C6ei58Riko/YE+dzQlBjunOYdkZOcxESceZztbRoEYtWaBMSxbILdy9PPDI0BgVxCDsVu1vD+bAmNm2T9zi8+RV4f5xDKOi8ld0S5iD1ekw45mKGp+zDmrevy75OmcZDJIgYX1sTuQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728481871; c=relaxed/simple;
+	bh=NqyTzwseF3aGsogWja5mPDwSmfoFV3T8w8xHftg+00M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JgYbJ08xyQa2zL3dnofXVFp5ozdu9l3xSfCoNrCpt6FSV+JQME5PdsqgjmPTcu9pyxuPmZGPNqGbplTRdX/Q5mIKO4YU3eUAxp3/M6x72na+8nbOdUC5quS/0PKB6I+b/e/lcnM/dbB17KXrCN7v45NIe8rrPi/m8F5+pXL1CE0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Xv+cLqdq; arc=fail smtp.client-ip=40.107.93.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V64IRzd+lweI+0jQDfdQ8IqLMSNtcvWbhtCNr894adZUhkc3XE4SXj3207UIlg/j36j7CuPf/pkJbEJ2p2jhSs3F432n6/CkGKK0jYTHHKnd09h+Ji/K3aT0KNzqeyOblwCq0g/OSc4gJsnWJgxd3ASx6BgkWl9JJWTgEsL1OioqRLE7ML5JIjpYFipXIkFnxfiUwOePxs9wzIDLbILzLr8pjkzz3V7PrpY2MJ/HWxocFs1fdDexAqvoWZNGbSkUNPw4Lmwk7S84KEzwVTs3LlESs6vwo0kM8S6pW09vXWV9DbsD1JUD0nQMgBcRUUdRbbLAJvP72ukPd3nvNEE6nA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vQN9W7b5jKavfWCv7xZse1kt7X2Vmop4m6j6tNGz+4U=;
+ b=XHDYivgVzx4y3iPb07PDsdK+Nf6ewwNEl0W0gkYrp1lPqk1i8WsaAuyk1zlBXP/2O0F/JgAm+kcUqiSGLd5PHpr+RwFxXLVjvyZSsReuVOFtr6uZaUhn8qtUwTfApW0rBU8oP7NyWI7jWZy4W9MbzayBCm2lKbcsDJfPLPUPTi9EhMju3HLsozo7g45SOeVFQK3Y36b7xijibWYI4QkGOOKE9uC5mZv35LHpoqemf9P5dGn3C0Aokf2PBF4EO84kDJshIGVpsGsLf3t/JirPBQ05EM+aK8Vt7UNDAUs+p74t6/0PIjcNxLeJDnedCwrKzK7L05TrxUnRRq+ZZtYnRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vQN9W7b5jKavfWCv7xZse1kt7X2Vmop4m6j6tNGz+4U=;
+ b=Xv+cLqdqLH3VZwAu26gbfU89WHP5+pHwDUqALU6RJKY6Q1QUjyRPg91YxzDEyqlQAbpY+QA6xawMoAPMZXfGuehzgaTw2+jxHtc0r0/vlqzjNMQ/L7zdAJuEUH31X4pjK/84Trj/4EC0IfOo7I5tLrmMY/WxtOk1+Qp+l5GCTS8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ SN7PR12MB7251.namprd12.prod.outlook.com (2603:10b6:806:2ab::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Wed, 9 Oct
+ 2024 13:51:06 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%3]) with mapi id 15.20.8026.024; Wed, 9 Oct 2024
+ 13:51:06 +0000
+Message-ID: <d35bd29e-d00a-4da9-9ab3-1273ed1bf6c2@amd.com>
+Date: Wed, 9 Oct 2024 19:20:54 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
+Content-Language: en-US
+To: Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
+ <20241008191556.GNZwWE7EsxceGh4HM4@fat_crate.local>
+ <8d0f9d2c-0ae4-442c-9ee4-288fd014599f@amd.com>
+ <20241009052336.GAZwYTWDLWfSPtZe5b@fat_crate.local>
+ <a1b2eba5-243c-4c7c-9ebd-3fce6cd4c973@amd.com>
+ <1f57da63-cf29-c75d-af06-c2cd795f0b04@amd.com>
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <1f57da63-cf29-c75d-af06-c2cd795f0b04@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0130.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:bf::19) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <r4zkfioctmlatxkb4lqmfc7vk7cdenenihoicq2k37wvxeihss@gtkzxr26p6ei>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ehSCrUS4Kdc-uj4lTyzCEbgCBpqjt1a3
-X-Proofpoint-ORIG-GUID: ehSCrUS4Kdc-uj4lTyzCEbgCBpqjt1a3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 clxscore=1011
- bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410090086
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|SN7PR12MB7251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 38f8701f-d774-4223-07c0-08dce8696c18
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZnQySXZWZGI0YkRzMktCKzhyeG1lWk9hRDNDRFJSNXFadWlXYVp6RmtIZzNt?=
+ =?utf-8?B?MDBOM2VZRFY2a2dwanlTbXREb1hUaHBrS2dxaHUxOHVxZEZ6L1RQOUwyNmcr?=
+ =?utf-8?B?RlV3SytWUGhXNWYveTNTM25GSnNDUXhiUXZicnZlVER3WE1naloxTmJYcllx?=
+ =?utf-8?B?eTJmSSs0aGs0amk4cVNSdityalF6WjRTQmRyb1pNUDB6NTlpVWJiRm5OK0dy?=
+ =?utf-8?B?ZzJyc0xoSDR0c3hvcGRlSmNIUUllVk5ad3RpK2pLUU4wT2QzdUVoR21VMUx0?=
+ =?utf-8?B?MUFpRTBINlF1UWVtdE1RYkVrOFhrZk1jek5xNExGSjI2R2RTSGl1SzhVTlVk?=
+ =?utf-8?B?SmhPTm5nN2NoMnRGSmhlSHd4NUlHZzBpRFU2dlRybFFXRm1KdEtmZmJGZFd5?=
+ =?utf-8?B?TzI3UDJjdEllWFdUUkx0N2g1NytHWUlWb0NjR0JPRnRXalgyZlpVN3FWOENr?=
+ =?utf-8?B?QW5kT0IySFJCTHo1MVUzWit4bE51RUptL1hrRnJKdEVrRGk4NWcwZUMvOGVa?=
+ =?utf-8?B?WU51dmlBeFRPbU9EcWE3WU1lOSsrd3FCUkh6MHgxbGladHBFMjN4dHBZRmdk?=
+ =?utf-8?B?clFtZGFkTmpPVHV2Q3NmVldKN1hOaUlDLzJLOFdPZmg5WGJmN291cUtMSEwr?=
+ =?utf-8?B?U2tmVDRVTUt2TXd5Y1BJd3V6VzNWb0dMUVY2UnRXd2dZM3loUGFNLzE4WEs3?=
+ =?utf-8?B?MW1PTHJLVlJBaC85elprMndGLzlvQTBOVFdPZ3c1emRzSmhrVVZEa1d2aTgv?=
+ =?utf-8?B?UXJXTXh6Z1psUk1MbS90aE1CZGxHWWxYNW1zdGhLMFBTL21FQ1NRYVk0NmRG?=
+ =?utf-8?B?VlZUK2s5R1JxS2lwamVXVnJaajlNeDNTeVFWcWxSeFJPK25VTVJsN21FdElS?=
+ =?utf-8?B?cUlkOVFSMmRQS2ExTUdSZzREZ3crWXc4cndEUUZIaHJNTDNVUHQ4bmVDQ1hh?=
+ =?utf-8?B?SlVaeDJtak9iV1dhaWpRK0l0QlFaRjByMnBaR3FSemJKY1hwV2JKS05lbE9u?=
+ =?utf-8?B?UnczZnBWazZYbzdsNzhGSTlQZDNLd202VXhadk1ROE1Na0lWOTVPZVBXK1hn?=
+ =?utf-8?B?cnNLN1EwZFJlR2ZLdEdWMGVjODdpcTVUZk1JR1F0d2ZFUXhvWDdBTFR6L2cr?=
+ =?utf-8?B?ZTBuQ0kyMm95ckpVV3kyWFB3SXloMFVSZ1dVUUtXYksxRHlZNUFyaWhwd2ZT?=
+ =?utf-8?B?bFhmb2lHQUFKbUszd1VyWXVZdTFzSmV0MlhFQWdKdVVzTnpjblVCSmJxQnV6?=
+ =?utf-8?B?N1VGREVPTndTbU4zTUJyKy9aT29MdXpZVTlXQ2pMZjlOT1BBZFgyemVEdGlZ?=
+ =?utf-8?B?NGlWWnc1d1B0dWJGbE53TzlpOSsvY2V0dFJLYXlRd2FQZm05dWtTN1RRZWQ2?=
+ =?utf-8?B?Sk1hcWRYVjFvRW1qTVVuenpuNjF6blFQdnpQeGJaQ0NGTFBmVVZvN0FqWG9K?=
+ =?utf-8?B?QUh1eHJTY01yY0dXRnBWQ29HRXBibHllTS81cnptR0R1WksyS0RWKzUzcmNj?=
+ =?utf-8?B?UitRQ01RSGVlTVNqUzZJazdwdkcyZHRHOEl4d0liOTJIaG9DWjZNQnNFeXFy?=
+ =?utf-8?B?L0dFbHIwUkRVUTBEWmR6UXhYL1IzY0ZVSVNhZUNZR2EwQmNGbDgydW50UFZX?=
+ =?utf-8?B?WHkvYjZZeXhUbXhnRFRlb3VLTVhuSEw5NGZKazJYTTVJaXBwVVBzS3hWSCtE?=
+ =?utf-8?B?MnBwRmJQUkN4eGp5bERMKzJkOWZjZGIyc0JGbHBxaFVSR1FOdnlBTk9RPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OS93TDNObmJlcHNOWHZ2dUlkL3ozUEt5eldZd1pyalNOUHRYYnVoNWgvQ0Iv?=
+ =?utf-8?B?aWl2d0tYQ1dacWI4NHNxWUF3WFFyUXNTTkNCZXZ2Qk9mVGs1Nys1cmF2Q3ZC?=
+ =?utf-8?B?UmdKVVJFRS9yTW55RHhLVHFUenlXQWIvN0ZxVUdEZzNhVUxuaXdDdEkwUVp5?=
+ =?utf-8?B?a3FMQ1RIZU5VRFhGNFpSYzArd0dGRVFjUjNsNStBMy91ZXhqblN2bzhwRGhK?=
+ =?utf-8?B?UzMxcEpKTFplblJBY3p3UTRjTnRUN0prWVVWNFBkaEY4UXUwR3FsWTBxQ0lF?=
+ =?utf-8?B?MkJZUkR2QVR6anFPbFVsaEg1T0ZUS1IrdTR2VVZCNy8rem4yZVhHMFRYNktq?=
+ =?utf-8?B?Z0o1NzBQYW9Ec2xBN0xQL0tqR05RUFVOTHRETjBhamhXNGpsRTFJR29HTEs3?=
+ =?utf-8?B?UTYxd3ZoaktmZSs0bUZ4U3ZsdHBvU2dNKzRzdTZYUUFONWlFaFVScUF0aVFp?=
+ =?utf-8?B?SGxZQlRLekh5Q2M4alE2Y2ZwUGJXQSs2R0dnYk51amtrdUs4RmxKdGVMNUIw?=
+ =?utf-8?B?Mzdsd1Nia09XR3ZEdEhlbi9yZXh1MnpFVWF4NFVRVVZKSTVXWVRubGRMbW9N?=
+ =?utf-8?B?K2tsRHVucFlOazVKTTNXQ203eTlaSEhLTDJGZXdZYlYvT3NsRFY5Wkhzbkwx?=
+ =?utf-8?B?RitSSXBHMXRYMDNQWFEzMDh6Nmh4T0VyNVUyOUpybTBCMkQ5STJ3Sml2MnVl?=
+ =?utf-8?B?bEpsMmN4aXBldTVsMVlWMVFvaXpwVHlTaFUzK1dtVjBGVGJrU2VqWTdRWlpk?=
+ =?utf-8?B?aHhWdHpjcDVzQjJZWU0xejFVTlVrbEMwR2FWZmJ5RE4rSHM2em1nbm9qcHNp?=
+ =?utf-8?B?Q003VlNxeDVaWlN0Tmd1RkdQM2pzSTgrRHlkMTVpQnFQK2duWkcxaXM0aFJS?=
+ =?utf-8?B?dHl5TW9iRlRKb2hncDVzTkFSWEpibSs3VTZkYnJYcm53bDRzV1FlTWxRak4w?=
+ =?utf-8?B?a2wrZnJJUjNHYkJHVTVZTW9JTUxtbUlML3VPY0NtUERob2JCTC90SXFhVkwx?=
+ =?utf-8?B?NFZ0cTMwTlBsWFkxSHM5WjZyNFpQdE9ueG5NVzVmMFRzdVVZenRrK0FoZW5w?=
+ =?utf-8?B?L2x0cERwQUovUStHMmExTUNnNTZyRlYvRkZCOWFOR3JjajNMc25FWEdXbUZv?=
+ =?utf-8?B?USs5V1h0VnVmem0wMWprMHhJOUxvZk0vU1VHOHk0eGlSUHpZanlSWjhkalZW?=
+ =?utf-8?B?YWdOaDRRWHNVK1YvQTZJZnBOelZ6Qittb25RZ2E1SW40Z0s4SDB1RzN3RFB5?=
+ =?utf-8?B?cmlFMnZqVUxHSjkwMW1UK05wRDlrTUswZGhpaDZGVjJ1S2JRZktnajN0RWdJ?=
+ =?utf-8?B?RGk4V1ZXUTdmZ3MzeEVVZXovODNHMFRreHlqTzBCV2NDTUoydmNNTXZISkM4?=
+ =?utf-8?B?eEovUGxzcEIwNUpTUFY5L3VOVHRnU3pST0VsaVBiNlUxRmliN21kRnNMSnRI?=
+ =?utf-8?B?a3dHNm15Q3llN283aXJpem9LcXIrcFp3d0VwZ2lJR2tQbGEzODZjM2FIaUc4?=
+ =?utf-8?B?dkk0WVFjZFYrYXFqKzBXQlZVdEMvQWYyTWNzeDB2bWt4blFYZDk5U0hvb0Q1?=
+ =?utf-8?B?YnRDNDNNdHp1K1FJa3YvNi9PRFZ3cXJtb3JLblp5dEw1andaVzlEODBxYVl5?=
+ =?utf-8?B?N29WOWNnSTZLYS9kcmlkaFM3dndORlhCdWl6YXdrdUgrUlk4NUMyRFVBZ1JM?=
+ =?utf-8?B?Y1VXV3RoN0ovd1MzQTUrQmdSN1VOczdiSzNvblF0VWtYTU1NSzJVY25BYnh0?=
+ =?utf-8?B?amdlVU5EdlIyUC9ZOWVIS2ozZytSSVZKMXNEclZQRTVYRFNvTU1rR3pGQUI4?=
+ =?utf-8?B?aExFcTVxYzhoTmo3QWRNVVU5bUJzK3BvSFRDVllvV2owbStFVjJmK2JDY3NJ?=
+ =?utf-8?B?aHFBdkFBVXJiWGlOazJoNTF1NURHNmhsalFjVEpYSTZXNUl4c1M5dnJyZkdt?=
+ =?utf-8?B?MXpQN2VpQVZZR0taSnhhZzQxTUsvQzFmWUxvL2pvaGlwdkVvUExPcGhYalRC?=
+ =?utf-8?B?dnRVQldZaGtXSi82TVBJbTJ0MG1HeEh4OXhITWlhVjUyL0o5enhidnJhUHZm?=
+ =?utf-8?B?U1hUdXVlRmQvUk1IbHZpdDRKTjA2cHU3SkxCenRHTDhvQ2FZRHUvdEw5cGZF?=
+ =?utf-8?Q?sJ9jmbpkaOzcjuK9qBEigBRCs?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38f8701f-d774-4223-07c0-08dce8696c18
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 13:51:06.6230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AFRwJfkjvQk/ujMPwvcgesBS+tKdTY6FtcXcjSqOHp/6iJDuUN0ktwbUFXF53Jj55K4QjAgifmyWsZbFdNU3zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7251
 
-On Sun, Oct 06, 2024 at 10:34:19PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Oct 05, 2024 at 02:53:53AM GMT, Mukesh Ojha wrote:
-> > Qualcomm is looking to enable remote processors on the SA8775p SoC
-> > running KVM Linux host and is currently trying to figure out an
-> > upstream-compatible solution for the IOMMU translation scheme problem it
-> > is facing when SoCs running with KVM. This issue arises due to
-> > differences in how IOMMU translation is currently handled on SoCs
-> > running Qualcomm EL2 hypervisor(QHEE) where IOMMU translation for any
-> > device is completely owned by it and the other issue is that remote
-> > processors firmware does not contain resource table where these IOMMU
-> > configuration setting will be present.
-> > 
-> > Qualcomm SoCs running with the QHEE(EL2) have been utilizing the
-> > Peripheral Authentication Service (PAS) from its TrustZone (TZ) firmware
-> > to securely authenticate and reset via a single SMC call
-> > _auth_and_reset_.  This call first gets trapped to QHEE, which then
-> > makes a call to TZ for authentication. Once it is done, the call returns
-> > to QHEE, which sets up the IOMMU translation scheme for these remote
-> > processors and later brings them out of reset. The design of the
-> > Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
-> > is not allowed to set up IOMMU translation for remote processors,
-> > and only a single stage is being configured for them.
-> > 
-> > To make the remote processors’ bring-up (PAS) sequence
-> > hypervisor-independent, the auth_and_reset SMC call is now entirely
-> > handled by TZ. However, the problem of IOMMU handling still remains with
-> > the KVM host, which has no knowledge of the remote processors’ IOMMU
-> > configuration.
-> > 
-> > We have looked up one approach where SoC remoteproc device tree could
-> > contain resources like iommus for remoteproc carveout and qcom,devmem
-> > specific binding for device memory needed for remoteproc and these
-> > properties are optional and will only be overlaid by the firmware if it
-> > is running with non-QHEE based hypervisor like KVM.
+
+
+On 10/9/2024 6:45 PM, Tom Lendacky wrote:
+> On 10/9/24 01:01, Neeraj Upadhyay wrote:
+>>
+>>
+>> On 10/9/2024 10:53 AM, Borislav Petkov wrote:
+>>> On Wed, Oct 09, 2024 at 07:26:55AM +0530, Neeraj Upadhyay wrote:
+>>>> As SECURE_AVIC feature is not supported (as reported by snp_get_unsupported_features())
+>>>> by guest at this patch in the series, it is added to SNP_FEATURES_IMPL_REQ here. The bit
+>>>> value within SNP_FEATURES_IMPL_REQ hasn't changed with this change as the same bit pos
+>>>> was part of MSR_AMD64_SNP_RESERVED_MASK before this patch. In patch 14 SECURE_AVIC guest
+>>>> support is indicated by guest.
+>>>
+>>> So what's the point of adding it to SNP_FEATURES_IMPL_REQ here? What does that
+>>> do at all in this patch alone? Why is this change needed in here?
+>>>
+>>
+>> Before this patch, if hypervisor enables Secure AVIC  (reported in sev_status), guest would
+>> terminate in snp_check_features(). The reason for this is, SNP_FEATURES_IMPL_REQ had the Secure
+>> AVIC bit set before this patch, as that bit was part of MSR_AMD64_SNP_RESERVED_MASK 
+>> GENMASK_ULL(63, 18).
+>>
+>> #define SNP_FEATURES_IMPL_REQ	(MSR_AMD64_SNP_VTOM |			\
+>> 				 ...
+>> 				 MSR_AMD64_SNP_RESERVED_MASK)
+>>
+>>
+>>
+>> Adding MSR_AMD64_SNP_SECURE_AVIC_BIT (bit 18) to SNP_FEATURES_IMPL_REQ in this patch
+>> keeps that behavior intact as now with this change MSR_AMD64_SNP_RESERVED_MASK becomes
+>> GENMASK_ULL(63, 19).
+>>
+>>
+>>> IOW, why don't you do all the feature bit handling in the last patch, where it
+>>> all belongs logically?
+>>>
+>>
+>> If we do that, then hypervisor could have enabled Secure AVIC support and the guest
+>> code at this patch won't catch the missing guest-support early and it can result in some
+>> unknown failures at later point during guest boot.
 > 
-> Can you follow the approach that has been implemented for existing
-> systems (ChromeOS) not using QHEE? See drivers/remoteproc/qcom_q6v5_adsp.c
-> If this approach can not be used, please describe why.
+> Won't the SNP_RESERVED_MASK catch it? You are just renaming the bit
+> position value, right? It was a 1 before and is still a 1. So the guest
+> will terminate if the hypervisor sets the Secure AVIC bit both before
+> and after this patch, right?
 > 
 
-The intent is to reuse same PAS based remoteproc implementation
-assisted by TZ with or without QHEE while qcom_q6v5_adsp.c caters to
-independent control at Linux.
-So it better suites to support it from qcom_q6v5_pas.c .
+Yes that is right. SNP_RESERVED_MASK catches it before this patch. My reply to Boris
+above was for the case if we move setting of MSR_AMD64_SNP_SECURE_AVIC_ENABLED in
+SNP_FEATURES_IMPL_REQ  from this patch to patch 14.
 
-regards
-Shiraz
+
+- Neeraj
+
+> Thanks,
+> Tom
+> 
+>>
+>>
+>> - Neeraj
+>>
+>>> In the last patch you can start *testing* for
+>>> MSR_AMD64_SNP_SECURE_AVIC_ENABLED *and* enforce it with SNP_FEATURES_PRESENT.
+>>>
 
