@@ -1,69 +1,70 @@
-Return-Path: <linux-kernel+bounces-357241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF2A996E57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:41:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072E7996E5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1497B21A25
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:41:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3915D1C20FB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAACD192B7A;
-	Wed,  9 Oct 2024 14:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE22A1A0B06;
+	Wed,  9 Oct 2024 14:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="MR0ulu1t"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="Y6orSiGL"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4073127E18
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37680198833
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484899; cv=none; b=Y6OwXi0R2+GR2ipFBZYJYiIKj+ChL+kVSW4RZ+ilPnpwGE40NEDQb9ZGgZ9tGrfQSxLu/oBpOqpOcxpY0Ka6cf4VUOYVL2u6pEgEtNm/lT4OKVGoSa2h0h12kF+CXCjTwZLAw4ytv9LMrEQdBbHg4U987+Iz7/NkZ85+YEN4Jk0=
+	t=1728484902; cv=none; b=d1bMLwUGaxbLDa6m4VAemwUhWQlURgvh5+Wz9PygB5Bw8EwifwSorXaVEHNiqQu48Qk+BK4qitGLhayvEhASNdSJcaXZdc7XrD9Nq9tVzgisQiNOBUWZOj1CWsuQXl3VVEr0yAU/ldj40gOvfwZ3sQB7ogbMkNNCRH12wQWp6NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484899; c=relaxed/simple;
-	bh=32vFmCSc5ZEMb4AhzJtfcV3h3hUM5xDYrKqyzkNbPEU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XDp386clAd0LhB86xWoytj+0HHOi/tjHwQMYjjcS4hSmsCi3VJH+oBOUwczi4hs45XQOD6FCQExBbkaqfnGWDYHPCD6cXOL8q9G9E6CYYr4Mc8nNCKeCzfYAzQ1X4xCK620JdsMr3bpUHnWYfTvm5shnl3L6QZd8V4nwSst39nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=MR0ulu1t; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1728484902; c=relaxed/simple;
+	bh=ZkMXaGXK3vOYJa0SvIWW1dfqffTI0W6YThAuMAv9htE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kSuspMPEcuIS7E+GzkP5DVarjI+w0aqnQ9B0RpuVr+eoAeYRGzHYIGSkbclAEcaofi8RCM/P6PMewxGfkS66lkZ+v8pO1IKYI/1Bv5berokylHvLpHxU78pS6pvsq2pqZvVkYlv4Fa2ebfsP/wcH3O/90cF1N8yRN+JimTcgspI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=Y6orSiGL; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e10ae746aso1845983b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:41:37 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea06275ef2so2385422a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1728484897; x=1729089697; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2qHFKwQFtdhqDpsvNepQo/3TMbFBjVSDDfwKOH3x4ow=;
-        b=MR0ulu1tvKEemN2nXI8gEoQ5ldOKxAVMcyb8voWt39FxJe5+oJhaSK1YamHig3084e
-         3yXV0fzBLzshPhiGWuC9alzTJkMkL7CR7wA3GqtpYIjkhDVt22QYmoowN329GKw+pQol
-         xnpVRE7WgAY0hXWJX07hJVVb41vu/OJo59LlehwU6JjEq2oG9KpF5xCp8/02GpWPsFqK
-         YME0nSP2nfcThIWqkGO4/FCZ5irzkz5uuVtr1exdA8/I0XCDJXqLrNiyjV9iEMPiqhKH
-         4WVYtCtRGM91saZMh14S/eiGceviMRkFeYjmOWca0PmORaiJJPV0bTae6ZlZB6QVY2Yl
-         tcDw==
+        d=shopee.com; s=shopee.com; t=1728484899; x=1729089699; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VIiaKwpes0nmcRx/K3u+SN5+YvMoD90XzWrUKk6r3qs=;
+        b=Y6orSiGLd/BlwnPnhKtKJcmg06qSANR5CGxijQTMHgMMMCHkniGq/DQTBTpGc3oBFg
+         VOYmh48+RvkhOEAlXCs1hkvAnvCO1KJaOrCQIPGwX5AIH0VM+XOcOe8vjkvgxcqbCF/a
+         aKTMt4/6/yu/FHOY+UeOBQ/erdBERoStcZwYhAs5RDo6UiIu5bL408P+aQVi1v5I2u8N
+         sbzD6osvAD/GgcU4yZMrJlijfDiQDoJH8ag6z8unSMKhkqSzWPIWEw6+MkpjV7cpEpyG
+         CcD8fTevU8xBXl6Ue38HVhCN7u0b2uTWg8Ecvr5+YxIJZ2hhC2LhUBaZ9z6WAErD4TRM
+         PdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728484897; x=1729089697;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2qHFKwQFtdhqDpsvNepQo/3TMbFBjVSDDfwKOH3x4ow=;
-        b=iUJITf0O+y6CrkhtjRKD7l8N5PRmi1zkjMS4ojW9sB2zuyhyUMfwvW7Ahi66iDTJoR
-         zjsIbkLOHeK57CI1kdond33qnnmkkW/FBBt3I/3SlwfOFfYqMEu8PzT6KO1Z64dQtpvo
-         fOvNky1AduFUeMjHLncj9kgIMFPa1GV614MwGBdfpQynlOxPs6FHThqSfHQ13cU+p+ju
-         c/CfABYSCnuJY4vo8oMJXDP+smYPztkN45TnXijVzL1LI7YhSYet8XGXjbDO2zgdhCJX
-         Qc4ZkQwW6x9StHngZgYQlJBce6EOgAc/HjGqS6AULuQvIU3FvbkECI34R5NC8nJUdfT9
-         8S5A==
-X-Gm-Message-State: AOJu0YxNSZ5Tw4JWHrS6WiFyV2rC+eEPb7Z0vAwqU7/A0kBokKsyWoSa
-	f85WXckjcpPHMiKRl+1f3SXQaFK+BTu0wJeKqby97UkLeFck0WmSB3Jae7vrXCLLe/UCqh4NAqg
-	h
-X-Google-Smtp-Source: AGHT+IFpmvUjs98ZpK9INq/XOOz7Y1o2mXU9E+TcGA1VnD0NJIUMPP6zP7j/gYPu1kScqkViOogk+w==
-X-Received: by 2002:a05:6a20:9f8d:b0:1d8:a354:1acd with SMTP id adf61e73a8af0-1d8a3c1def1mr4460478637.25.1728484897223;
-        Wed, 09 Oct 2024 07:41:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728484899; x=1729089699;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VIiaKwpes0nmcRx/K3u+SN5+YvMoD90XzWrUKk6r3qs=;
+        b=kZ66W7O5eUigMkK2otKZ9AyBiAXL2u8gLpyh/l9MlYvH+avrD69uhE5s/Fz8MhwPbM
+         c+nho2fW5IOHNEFXdh3ZU2JFz5GgmfkjVcsfrO1i9o0sZZoRuZdawzt5CTuQ6ojC0QCP
+         DxnUVU4g+ona/EUacdO6v/ql1Lpb+ya1T1qMV4i71Q+g46u2WA5NfUR8+LkYIbQTMBxh
+         9oObjq+MfEXlbapfeHeimnY3sIMicHWxDPHEWx1yvG0Wdh9L/9X203HD587vOtQThuYu
+         j7S50F4VBoOh3GQU9CZ/g8CEx6+RArO4Q54T4a4SZS14e547l4+UdMvZQZts9aeZou8q
+         EIrA==
+X-Gm-Message-State: AOJu0YwS0v1p9mtOGTcwd5IS8/+95/zTOXa9jjW30AV/bAXfbf/iaRm8
+	eAqqTxbav3lYahOVNa0dzIQx92atLRtW6GqxBObIvPAHeAS1PsPM/lK14z1XmxY=
+X-Google-Smtp-Source: AGHT+IEaZ/prco7C4oF5lCWqhRZLR0ygJ+Go+pa+KiOBjSGAm0bDYgzb9+GyjYftuCC7qtA8vT67yw==
+X-Received: by 2002:a05:6a20:c791:b0:1d2:e94d:45a6 with SMTP id adf61e73a8af0-1d8a3bfec45mr5025125637.14.1728484899516;
+        Wed, 09 Oct 2024 07:41:39 -0700 (PDT)
 Received: from localhost.localdomain ([143.92.64.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0ccdb64sm7852764b3a.48.2024.10.09.07.41.34
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0ccdb64sm7852764b3a.48.2024.10.09.07.41.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 07:41:36 -0700 (PDT)
+        Wed, 09 Oct 2024 07:41:39 -0700 (PDT)
 From: Tang Yizhou <yizhou.tang@shopee.com>
 X-Google-Original-From: Tang Yizhou
 To: jack@suse.cz,
@@ -73,10 +74,12 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org,
 	Tang Yizhou <yizhou.tang@shopee.com>
-Subject: [PATCH v3 0/2] Cleanup some writeback codes
-Date: Wed,  9 Oct 2024 23:17:26 +0800
-Message-Id: <20241009151728.300477-1-yizhou.tang@shopee.com>
+Subject: [PATCH v3 1/2] mm/page-writeback.c: Update comment for BANDWIDTH_INTERVAL
+Date: Wed,  9 Oct 2024 23:17:27 +0800
+Message-Id: <20241009151728.300477-2-yizhou.tang@shopee.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241009151728.300477-1-yizhou.tang@shopee.com>
+References: <20241009151728.300477-1-yizhou.tang@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,19 +90,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Tang Yizhou <yizhou.tang@shopee.com>
 
-v3:
-PATCH #1: We haven't found an ideal name for BANDWIDTH_INTERVAL, so update
-the comment only.
+The name of the BANDWIDTH_INTERVAL macro is misleading, as it is not
+only used in the bandwidth update functions wb_update_bandwidth() and
+__wb_update_bandwidth(), but also in the dirty limit update function
+domain_update_dirty_limit().
 
-Remove PATCH #3 about XFS.
+Currently, we haven't found an ideal name, so update the comment only.
 
-Tang Yizhou (2):
-  mm/page-writeback.c: Update comment for BANDWIDTH_INTERVAL
-  mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
+Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+---
+ mm/page-writeback.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- mm/page-writeback.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index fcd4c1439cb9..c7c6b58a8461 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -54,7 +54,7 @@
+ #define DIRTY_POLL_THRESH	(128 >> (PAGE_SHIFT - 10))
+ 
+ /*
+- * Estimate write bandwidth at 200ms intervals.
++ * Estimate write bandwidth or update dirty limit at 200ms intervals.
+  */
+ #define BANDWIDTH_INTERVAL	max(HZ/5, 1)
+ 
 -- 
 2.25.1
 
