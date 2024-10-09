@@ -1,149 +1,162 @@
-Return-Path: <linux-kernel+bounces-356987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E3F9969ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:26:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D80B9969F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27402863DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:26:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2220B2185F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BD8193086;
-	Wed,  9 Oct 2024 12:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494EC193403;
+	Wed,  9 Oct 2024 12:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xFaOLeo+"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSY4ugFb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDB2192D98
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 12:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0175191489;
+	Wed,  9 Oct 2024 12:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728476759; cv=none; b=bj8BcwGefBr84GC4ja1or6iokjAo+i5TsliP2/1+ogsk9UCxyc21nuB5Uc94b3ITjQM80tP+3xdi+gIDXp7RZFdw2dr6NtV7HgfCnaod8TGL+w2ZflgGAQFijK+h2ZCsRIKrQCXCAVRj4y95kzYRC/AiNNBdvkalosVg8oGYtlk=
+	t=1728476841; cv=none; b=aLk9w1PV58Q7YWbj+JmLLY1Te2lYzQwxVpbH0pJy4meGvyW9qtWeZ29ur7PxOb5Oayutr8BzaJJpMaAoXYACY8SqZ7iQXyOC4ehRcT6iA2Z7vdUZk5Lu9qVwcDJl1QpNyl5VTW3JDwwSvA9Uxw56iPVE4+XkbkUKoYZUZ7yGH18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728476759; c=relaxed/simple;
-	bh=+t9Uloyrid/u3FJ7PlbaraJ52Vmwo8pF4VINJn9kRRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YhFTlBNdIRCuIteg4OU6F41leTPXPXjN6/Jqx3+rHQs7DXUeHvTcEEKN+DzytE9IC4WkPO2UtIckTQDLu0oFKbatHFHlTuyZZ+dKKNM/47EFQs1u0WldVcy6Za2WJRB10NJaWrEpZXb+BiwLZlOVhOKeTmniLN2AbIW9mYZ4VKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xFaOLeo+; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d375ecc5eso989605f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 05:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728476756; x=1729081556; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Kn3RexbTHWZORR721iQDI9yrjKbhGn3OwSkq7dbe4o=;
-        b=xFaOLeo+c+i0CVFZ2j7HyCFcJGG6PtIu9I//x7c3rXZjj6ixLY483GPEBMGHnJVfCs
-         gyta2PyIkdGH2ii9zpsF6fhiYIqhHuLZKG3JmIs+/NOm+YFBtETdJ0jHSM8K9mtVYMQf
-         1SjRH2ln4c3ORqd4SmS3icdH0To0ueZLDBRlbbLGI6Pa4BxsTCIP047jmFK9OG7G8LFV
-         qDVnSFjlRI1VKjF7mCfGEwUHf3UT8JfydytC+sObKmQIG/jss5dj4bNOfy8gG64XxZ88
-         SlQ3kt0Z2MOBSnlnqdemF+97wfnT1b0E4ddMMjM/BTYdo9Qz53Kj/8CthqEwX+ZMvujH
-         hzWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728476756; x=1729081556;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Kn3RexbTHWZORR721iQDI9yrjKbhGn3OwSkq7dbe4o=;
-        b=meqGfwZFI5uscsWqJ9EwTO/yz869dTLcLRiY6g/oAQGW0zXWWCxCSpF+nEefpAX5k1
-         yg9k14Yug3RE7bh/kMVGTDX1HwiRnZT0YoBLcCmsJ8TjsygOJH2i+BhKgxFFoFMtBcPo
-         kgU5bdvHyJ5OETM2FS2N+4XpzVbzcvTQps0/qUqKEuKcx5/1tDrza0+bARCBqWuoQAbj
-         KwKNCOVOC8iI5YLhvjO5UZIqyAwKIw9i56X77z9NL4JiE1B9MFY7TD1tWxdZpR7hHjvm
-         C/snTEnFxTla4nhSlYXN8CtoM24rVk3DF/QMEStj415UMMBSGEBQ5dxr+lPlkzUqLGVX
-         wNaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkA+ymjxsEq6j1d3h7Sdte9zEKEduW3VP5zGWt1hNv+iXT9l25Ho8XxHmui5HVJoZOReaNFI/gzRZyo60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzJVqiCS0r96mBrHNvagUk3mVPx4mV/2TTo1BxwisA5N5t5Lyx
-	PgU0+QIemBciRKvGOm376FHj01liA3nj0OdjKSEI3h1CB0LzRDWRlnlB+Ir2I90=
-X-Google-Smtp-Source: AGHT+IHDiC6I5FOoS2rlTqjxejlNi2b5hT/fIMkG7hdUwoamSyv/7Lr0j3VYOoDcaIsuG3Dy2/fVVA==
-X-Received: by 2002:adf:efc5:0:b0:366:eade:bfbb with SMTP id ffacd0b85a97d-37d3aa8edb9mr1307716f8f.46.1728476756214;
-        Wed, 09 Oct 2024 05:25:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1690f0b2sm10367584f8f.9.2024.10.09.05.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 05:25:55 -0700 (PDT)
-Date: Wed, 9 Oct 2024 15:25:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Anand Moon <linux.amoon@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled()
- helper
-Message-ID: <a86437f6-1f62-4f44-bff1-f1203d04edda@stanley.mountain>
+	s=arc-20240116; t=1728476841; c=relaxed/simple;
+	bh=gGlKI2Ghw8RXjO7e8Jn+hmXiV5nmCS+aULlMA6zfZNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iVD7HNnOqXbXZTN+7UgSkRDUW1y7oNwpv6x5aNQ+eo7GTAocLFaRqdc4rzRA3E246dI5Bs2Qp284dk4eRVDd/Wy1GrxRjCxf4gkuWyhiQGgWu3AhXUGsBmH+iGxG7r+uqqQ4S5GyygAcYXGR5AVxi3pSsVj4n5oyCnSEiAilD/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSY4ugFb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BE14C4CECD;
+	Wed,  9 Oct 2024 12:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728476841;
+	bh=gGlKI2Ghw8RXjO7e8Jn+hmXiV5nmCS+aULlMA6zfZNE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rSY4ugFbSKEHum4I8CRjqug0ZpFg8/qEtXGqyoZcmxtV4rQWP+MQJLYbtWG0rGaSz
+	 QY2HEEawystRAMeDzYtp60zd1buykZD4IKKH+nx+a3ZOOrmOrgw0gDrbF1qZFIybUn
+	 zjMctKhf3Di9ye56x0OCbawUzfyPLed3KUl2zcVHjABs6fZUTipasx0KAogN9kCulX
+	 LGbKzG+4RFPco8pWKypYmEwbfjP30hvVAD4eLCTvOADm5bCuu8wjW/yXIEgMMwiLZ2
+	 Z4CQTlMxYTuyBTJ0qWNienG/nH7TJtKBNDBwkbGmWhuP/iAh7C/VIxQI9kc4DPatVP
+	 SvHYlbJufQ6Vw==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fad6de2590so102893901fa.0;
+        Wed, 09 Oct 2024 05:27:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVHbCodjAOQE3QvJhCqsiOgSCoNZ+j17tH/3UD99et3EAPbDPUYUQur9cqNnbvZqiWXGBYZmXhx3FZ290Q=@vger.kernel.org, AJvYcCVSBUkEQbRkH7AFbS/t4ubVPMNziPc8ApYPP8GM34Vm9EgOmIjZuFNOYtJBN49eLTnENHJuo0ld@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ5k3TlFacpIr5raI1/gtLsaVOnuXPMeOhZVUyExo8HuHuWG3E
+	bo3Lbx7GPUYDu3FjWmyHIKFiC4axkfcaZblRCA3NIgPt9Tiky4Vl5XiUD8WPmX6NZNjm5jzyd5m
+	1EH9VytWcdz0WuEa14i3RebDJ6Y8=
+X-Google-Smtp-Source: AGHT+IH0dPG2wqVuMOnNoSFxcnaCV4CzYdY+iU0F0bRiSknP5S7czXVhTnsoAdNx7/Jcv7he9JunULlVxDPEU5rbbps=
+X-Received: by 2002:a05:6512:b19:b0:536:542e:ce1f with SMTP id
+ 2adb3069b0e04-539c48997d5mr2181997e87.18.1728476829120; Wed, 09 Oct 2024
+ 05:27:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007035616.2701-3-linux.amoon@gmail.com>
+References: <20241002092534.3163838-2-ardb+git@google.com> <CAMj1kXGDmkuwSROhnFkX_jYbWyAL738KmHbk5qYnThL6JWHapg@mail.gmail.com>
+ <CAMzpN2i-EyGjkb9S6fWBXmZoj6GUEQNjSZ0-MviPJy-GiRxnPw@mail.gmail.com>
+In-Reply-To: <CAMzpN2i-EyGjkb9S6fWBXmZoj6GUEQNjSZ0-MviPJy-GiRxnPw@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 9 Oct 2024 14:26:56 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEVSqy=Gd9-aUeix6J6i3Tt7MhrC4TmZqVvObWP+Z42vg@mail.gmail.com>
+Message-ID: <CAMj1kXEVSqy=Gd9-aUeix6J6i3Tt7MhrC4TmZqVvObWP+Z42vg@mail.gmail.com>
+Subject: Re: [PATCH] x86/stackprotector: Work around strict Clang TLS symbol requirements
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, x86@kernel.org, llvm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Fangrui Song <i@maskray.me>, Uros Bizjak <ubizjak@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Anand,
+On Sat, 5 Oct 2024 at 17:48, Brian Gerst <brgerst@gmail.com> wrote:
+>
+> On Wed, Oct 2, 2024 at 7:04=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+> >
+> > On Wed, 2 Oct 2024 at 11:25, Ard Biesheuvel <ardb+git@google.com> wrote=
+:
+> > >
+> > > From: Ard Biesheuvel <ardb@kernel.org>
+> > >
+> > > GCC and Clang both implement stack protector support based on Thread
+> > > Local Storage (TLS) variables, and this is used in the kernel to
+> > > implement per-task stack cookies, by copying a task's stack cookie in=
+to
+> > > a per-CPU variable every time it is scheduled in.
+> > >
+> > > Both now also implement -mstack-protector-guard-symbol=3D, which perm=
+its
+> > > the TLS variable to be specified directly. This is useful because it
+> > > will allow us to move away from using a fixed offset of 40 bytes into
+> > > the per-CPU area on x86_64, which requires a lot of special handling =
+in
+> > > the per-CPU code and the runtime relocation code.
+> > >
+> > > However, while GCC is rather lax in its implementation of this comman=
+d
+> > > line option, Clang actually requires that the provided symbol name
+> > > refers to a TLS variable (i.e., one declared with __thread), although=
+ it
+> > > also permits the variable to be undeclared entirely, in which case it
+> > > will use an implicit declaration of the right type.
+> > >
+> > > The upshot of this is that Clang will emit the correct references to =
+the
+> > > stack cookie variable in most cases, e.g.,
+> > >
+> > >    10d:       64 a1 00 00 00 00       mov    %fs:0x0,%eax
+> > >                       10f: R_386_32   __stack_chk_guard
+> > >
+> > > However, if a non-TLS definition of the symbol in question is visible=
+ in
+> > > the same compilation unit (which amounts to the whole of vmlinux if L=
+TO
+> > > is enabled), it will drop the per-CPU prefix and emit a load from a
+> > > bogus address.
+> > >
+> > > Work around this by using a symbol name that never occurs in C code, =
+and
+> > > emit it as an alias in the linker script.
+> > >
+> > > Fixes: 3fb0fdb3bbe7 ("x86/stackprotector/32: Make the canary into a r=
+egular percpu variable")
+> > > Cc: <stable@vger.kernel.org>
+> > > Cc: Fangrui Song <i@maskray.me>
+> > > Cc: Brian Gerst <brgerst@gmail.com>
+> > > Cc: Uros Bizjak <ubizjak@gmail.com>
+> > > Cc: Nathan Chancellor <nathan@kernel.org>
+> > > Cc: Andy Lutomirski <luto@kernel.org>
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/1854
+> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > > ---
+> > >  arch/x86/Makefile             |  5 +++--
+> > >  arch/x86/entry/entry.S        | 16 ++++++++++++++++
+> > >  arch/x86/kernel/cpu/common.c  |  2 ++
+> > >  arch/x86/kernel/vmlinux.lds.S |  3 +++
+> > >  4 files changed, 24 insertions(+), 2 deletions(-)
+> > >
+> >
+> > This needs the hunk below applied on top for CONFIG_MODVERSIONS:
+> >
+> > --- a/arch/x86/include/asm/asm-prototypes.h
+> > +++ b/arch/x86/include/asm/asm-prototypes.h
+> > @@ -20,3 +20,6 @@
+> >  extern void cmpxchg8b_emu(void);
+> >  #endif
+> >
+> > +#ifdef CONFIG_STACKPROTECTOR
+> > +extern unsigned long __ref_stack_chk_guard;
+> > +#endif
+>
+> Shouldn't this also be guarded by __GENKSYMS__, since the whole point
+> of this is to hide the declaration from the compiler?
+>
 
-kernel test robot noticed the following build warnings:
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/phy-rockchip-pcie-Simplify-error-handling-with-dev_err_probe/20241007-115910
-base:   8f602276d3902642fdc3429b548d73c745446601
-patch link:    https://lore.kernel.org/r/20241007035616.2701-3-linux.amoon%40gmail.com
-patch subject: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
-config: loongarch-randconfig-r071-20241009 (https://download.01.org/0day-ci/archive/20241009/202410092019.vGogfPIO-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202410092019.vGogfPIO-lkp@intel.com/
-
-smatch warnings:
-drivers/phy/rockchip/phy-rockchip-pcie.c:278 rockchip_pcie_phy_init() warn: missing error code 'err'
-
-vim +/err +278 drivers/phy/rockchip/phy-rockchip-pcie.c
-
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  269  static int rockchip_pcie_phy_init(struct phy *phy)
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  270  {
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  271  	struct phy_pcie_instance *inst = phy_get_drvdata(phy);
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  272  	struct rockchip_pcie_phy *rk_phy = to_pcie_phy(inst);
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  273  	int err = 0;
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  274  
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  275  	mutex_lock(&rk_phy->pcie_mutex);
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  276  
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  277  	if (rk_phy->init_cnt++)
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19 @278  		goto err_out;
-
-Originally, this path just unlocked at returned zero.
-
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  279  
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  280  	err = reset_control_assert(rk_phy->phy_rst);
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  281  	if (err) {
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  282  		dev_err(&phy->dev, "assert phy_rst err %d\n", err);
-3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  283  		goto err_out;
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  284  	}
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  285  
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  286  	mutex_unlock(&rk_phy->pcie_mutex);
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  287  	return 0;
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  288  
-3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  289  err_out:
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  290  	rk_phy->init_cnt--;
-
-Now it decrements the counter so presumably it leads to an underflow/use after
-free.
-
-90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  291  	mutex_unlock(&rk_phy->pcie_mutex);
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  292  	return err;
-fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  293  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Yes, good point. Even though it does not matter in practice (the issue
+is tickled only by a visible *definition*, not by a declaration), this
+file is included into C code, which should be avoided.
 
