@@ -1,88 +1,142 @@
-Return-Path: <linux-kernel+bounces-357886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A397A99775C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:17:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED6E99775E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EC401F23333
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 327FDB215FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C052D1E231E;
-	Wed,  9 Oct 2024 21:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcHnxDZ6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A7A2119;
+	Wed,  9 Oct 2024 21:19:21 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209F019C563;
-	Wed,  9 Oct 2024 21:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AE619C563
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728508661; cv=none; b=lm9R3VThPAmIktM6DJhMEf3ETYfOC+Td8MotGA3XgwWExEHWi9/gUeQ2D+xkSeI/eiOmmrhmMv1VYWde1ouIu+sAO7+uTfAipn9tyvmVXnL2c0E4WUiw9PV17jq1qN0pLzhOpTExa7v8m5rnHFM5wa0DVvKpnLA/OIE+vEYo5OU=
+	t=1728508760; cv=none; b=GjUD3FoeIqbXQ3mEHEFIchbPxMWtkh9fpCwMm6qaWZTNsPHTpwadfVtXHjWuGMJCM58ddpyy4Cb8RZqgcneqDe8InPwWo5yY/z14I8s9j6K+uj519Vpv9p+vFgMSYO7pGvEHKS0C9Z35wEFM33KZ0IqwLDCAWk85TrbWJBFbmas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728508661; c=relaxed/simple;
-	bh=PeGgpuw2h6B6d511IkUAztNTH5VoRqnb1sCSe1yg7II=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pmPX7ep0l1AKjTc+dhaE0a02FJqRHE2IjRE+NKU7cHsztto1Pz5lPHbLmbNMEar3Sdag7N2GqEqLevRKNmJVewEs9kFoJN0p+qOZYHaewj7+LY6whVD3RifkclHElZJIXOgJZbUxJiBi4un8E8uEMAdODVprT+bWlyJTC01RHHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcHnxDZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBE11C4CEC3;
-	Wed,  9 Oct 2024 21:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728508661;
-	bh=PeGgpuw2h6B6d511IkUAztNTH5VoRqnb1sCSe1yg7II=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rcHnxDZ6AchLwju2OZlF2O6JJ6z+34uayHJpJWMt0wYuFduAkaAVDXq8yM/ttujwX
-	 pKHS/qFT9tqo3eJs5h8Zcv9pHpsBSmiyJoo1Igpriiyrm8Fh0aVx3Nrd8FXxDQlUqH
-	 u8pEQ6wSbikWHKUT/hUcjWtbxxAkF8Kx8kPgpmLYDWF3Avh29VFmVHxFmppPeOq4xA
-	 aYO7c26aE45V9aB0f8H+4v3BWGJnUGHcFw6gCGZZdfF8srDwHEbohxJwMyDTSfGsK1
-	 ISxvMeLRd6Ti8NiWSVZbiQQ+eFGaWLgWg1AAqLQUgUw1KKFzVFQU3TSXi0vnJt11x/
-	 q0cTTkj+LZkUg==
-Date: Wed, 9 Oct 2024 16:17:39 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: =?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	linux-i2c@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v3 2/6] dt-bindings: i2c: nomadik: support 400kHz <
- clock-frequency <= 3.4MHz
-Message-ID: <172850865946.731856.7512114270634333579.robh@kernel.org>
-References: <20241009-mbly-i2c-v3-0-e7fd13bcf1c4@bootlin.com>
- <20241009-mbly-i2c-v3-2-e7fd13bcf1c4@bootlin.com>
+	s=arc-20240116; t=1728508760; c=relaxed/simple;
+	bh=il0jwC+o7ON6KsudDg+iThkTAoZHy6yfGFoRj0x/HRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K+ReMhtXd/iSNKGDOzb0wBErLbDe+LoFx/vNgKMeezDqbRitzQJKJPMkPMbV2GP6OLV8SyqTJc/dCYJA+gqNx+SlWlTvz0Do4gTldqB2xIXFAKj9oNIFn/nougFaPy1OkaYEXfe2YvXDSEqCFAi1dhyMolWgDCnoWSHz9kroXCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD15DC4CEC3;
+	Wed,  9 Oct 2024 21:19:17 +0000 (UTC)
+Date: Wed, 9 Oct 2024 17:19:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Ankur Arora <ankur.a.arora@oracle.com>,
+ mingo@kernel.org, linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, efault@gmx.de
+Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
+Message-ID: <20241009171923.78813d22@gandalf.local.home>
+In-Reply-To: <87ed4pq953.ffs@tglx>
+References: <20241007074609.447006177@infradead.org>
+	<20241008153232.YwZfzF0r@linutronix.de>
+	<87wmihdh3u.fsf@oracle.com>
+	<20241009062019.1FJYnQL1@linutronix.de>
+	<20241009080202.GJ17263@noisy.programming.kicks-ass.net>
+	<20241009100133.2569e2a7@gandalf.local.home>
+	<87h69lqbk0.ffs@tglx>
+	<20241009164355.1ca1d3d3@gandalf.local.home>
+	<87ed4pq953.ffs@tglx>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009-mbly-i2c-v3-2-e7fd13bcf1c4@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 09 Oct 2024 23:06:00 +0200
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-On Wed, 09 Oct 2024 16:01:08 +0200, Théo Lebrun wrote:
-> Hardware is not limited to 400kHz, its documentation does mention how to
-> configure it for high-speed (a specific Speed-Mode enum value and
-> a different bus rate clock divider register to be used).
+> > Perhaps these cond_resched() is proper? That is, the need_resched() /
+> > cond_resched() is not something that is being done for PREEMPT_NONE, but
+> > for preempt/voluntary kernels too. Maybe these cond_resched() should stay?
+> > If we spin in the loop for one more tick, that is actually changing the
+> > behavior of PREEMPT_NONE and PREEMPT_VOLUNTARY, as the need_resched()/cond_resched()
+> > helps with latency. If we just wait for the next tick, these loops (and
+> > there's a lot of them) will all now run for one tick longer than if
+> > PREEMPT_NONE or PREEMPT_VOLUNTARY were set today.  
 > 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/i2c/st,nomadik-i2c.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> You are looking at it from the wrong perspective. You are trying to
+> preserve the status quo. I know that's the path of least effort but it's
+> the fundamentally wrong approach.
 > 
+>     spin_lock(L);
+>     while ($cond) {
+>           do_stuff();
+>           if (need_resched()) {
+>           	spin_unlock(L);
+>                 resched();
+>                 spin_lock(L);
+>           }
+>     }
+>     spin_unlock(L);
+> 
+> is the bogus pattern which was introduced to deal with the NONE
+> shortcomings. That's what we want to get rid of and not proliferate.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+So this is actually a different issue that you are trying to address. But I
+don't see how it had to deal with NONE, as even PREEMPT would suffer from
+that loop, right? As the you can't preempt while holding the spinlock.
 
+> 
+> For the transition phase we obviously need to do:
+> 
+>     while ($cond) {
+>           spin_lock(L);
+>           do_stuff();
+>           spin_unlock(L);
+>           cond_resched();
+>     }
+
+But if $cond needs to be protected by spin_lock(), what then?
+
+	spin_lock();
+	while ($cond) {
+		do_stuff();
+		spin_unlock();
+		spin_lock();
+	}
+	spin_unlock();
+
+?
+
+> 
+> And once all the problems with LAZY are sorted then this cond_resched()
+> line just goes away and the loop looks like this:
+> 
+>     while ($cond) {
+>           spin_lock(L);
+>           do_stuff();
+>           spin_unlock(L);
+>     }
+> 
+> There is absolutely no argument that the spinlock held section needs to
+> spawn the loop. We fixed up several of these constructs over the years
+> and none of them caused a performance regression. Quite the contrary
+> quite some of them improved performance because dropping the lock lets
+> other CPUs interleave.
+> 
+> Seriously, this crap preserving mindset has to stop. If we go new ways
+> then we go them all the way.
+
+It's not about "crap preserving" but more of taking smaller steps. Then we
+can see where a regression happened if one does come up. Kind of like how
+you did the x86 64bit/32bit merge. Do steps that keep things as close to
+what they were at the start and slowly move toward your goals.
+
+-- Steve
 
