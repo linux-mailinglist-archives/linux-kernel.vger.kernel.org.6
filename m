@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-357731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32379974DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FC69974E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE324B240ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F67E2829BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400E11DEFCE;
-	Wed,  9 Oct 2024 18:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EF11DFDAB;
+	Wed,  9 Oct 2024 18:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwTH/aZy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="siINcN6C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184F1A704B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE101922EA;
+	Wed,  9 Oct 2024 18:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728498250; cv=none; b=ib7kA4wMndNF5wpRoNMftxvU40GIV45//NAW0/G+xEPUcGBTQHnp9k386pQFARYv9F7vrZl61rnEGIoUJtdPs5yWHvt5GyjEO3MLK9W7lc+kmw877bpDETkQsV9I7L8SBKQ89rPUhDtfT4QApTyQYFEfQLsOUPFp21ACDF4/tuI=
+	t=1728498432; cv=none; b=EKo6Y5/99LSfHzjjoIhVe68FBhsdbTT+7xnUsC436FmNlLiWzLCArfnI2Y7JxcH2xKsbCNveyCoAtH2ZGV4AadKZs0zng3LwBSPpW06IaoazKlDuz+jDTU/C9HeRfa6gbDD2UknZYBz+eHFHylqUBc8LQxFyx4CKg4D7tfmivbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728498250; c=relaxed/simple;
-	bh=J77gWoDnBw7nZFSHP2X+C92SgL/C4jZE+LJf/Z8Gpi4=;
+	s=arc-20240116; t=1728498432; c=relaxed/simple;
+	bh=jhZwgy0s6PYh0bkEsa00DYSgW/ye/7lPeDLBcIHBAcU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaeEsrlQKsML9MVgGx78vjOw+5rYaO7Xh9kL7qcbpPrtsmNnfpUq3V+t5wBgum4cYzn+chocF4d6+d8QkC0GayDOa092dAgHkCuYxzWf44YmNBB7ZWL1DtD7jrralOSJz3RPItO7FsOo/ApEOybcn5Mlrfkz84NSJuYlKHDm9UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwTH/aZy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DF81C4CEC3;
-	Wed,  9 Oct 2024 18:24:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9MH1UitRWx+TLMM6pDJaClyMSTkFGrKreFqjMDFKgtBTWdm7f/O1ExXesbA3DEf4BQEbOsBGnAhdEzbnXxjTfUnnKGXxiJ3gmTs4prlopKkLVS/TKWvIdU5VWgc7S4S/yXcUw0B8uTd+6LDFuoQ4kDR766LSw8zeyUjM+Yxmw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=siINcN6C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5D0C4CEC3;
+	Wed,  9 Oct 2024 18:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728498250;
-	bh=J77gWoDnBw7nZFSHP2X+C92SgL/C4jZE+LJf/Z8Gpi4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=jwTH/aZyRd1yiDM5jR6sJwrv3TSApuCRq0xmr8sFhxkwGTi1gVIG9vEiyPH42shtL
-	 BM/B79/b4E5zOMeNJlCYvSAiAKy7ebJ84GnvFFvjsUqZC3hMQhGQ12vcM5RR4mdI2y
-	 AAb5lbRF1umHiLqQuEFw4Ne5rPGO6wuhz+IcwnUk2kp21BxZCjglGposb6SUJt/dg/
-	 RiwT24uM/NSVxfOrnCHbPYf9aKw9nxBy0vXuHYCIg/P6n8grRcTdtRSjPtcak2uEox
-	 5IwzQXo/5JZOBk87a4ucNLEKadhAOELeqn+8NEvSx7IKk/bWUpkA+oZXSG4pUgRuQ0
-	 ySOS9nX8OCjgg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id BA80DCE08E5; Wed,  9 Oct 2024 11:24:09 -0700 (PDT)
-Date: Wed, 9 Oct 2024 11:24:09 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <37af80bd-a54f-4ee4-9175-6f0f27b685a0@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
- <20241009165411.3426937-3-ankur.a.arora@oracle.com>
- <20241009180117.GS17263@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1728498431;
+	bh=jhZwgy0s6PYh0bkEsa00DYSgW/ye/7lPeDLBcIHBAcU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=siINcN6C3vE7ciZFy936DdBHm9bzuDl0gQkUqevFy0SKNyNt3TFUwNQyiTt6NpAAz
+	 1sYQ79TQHwwWQfKoeUT8H9AEP2bEYRg5v5iJ8S2rxjGfGaV8ebZ9mquqM6azvQfe8b
+	 UIPgjpsXQYD3lzUAfL8+3HuIrEIdE1Kczsebpl+DHWOzXH5GuHZy24SUVtze51clQw
+	 573PYTDoSdjSMdvzNyc1a8ZE0oacqmN0ROp79ujWAuu1V/zNz1Q5W10nMsiNva4dVs
+	 3Y/KVl6pKONfcjaQpPbdPhUzWvuYqK62eRmPrsAlEHEulyovNEJQz4JPjOexP1YOGV
+	 jVhHxAmZhlO4A==
+Date: Wed, 9 Oct 2024 11:27:09 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: refactor cc-option-yn, cc-disable-warning,
+ rust-option-yn macros
+Message-ID: <20241009182709.GA3274931@thelio-3990X>
+References: <20241009102821.2675718-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,62 +65,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009180117.GS17263@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241009102821.2675718-1-masahiroy@kernel.org>
 
-On Wed, Oct 09, 2024 at 08:01:17PM +0200, Peter Zijlstra wrote:
-> On Wed, Oct 09, 2024 at 09:54:06AM -0700, Ankur Arora wrote:
-> > PREEMPT_LAZY can be enabled stand-alone or alongside PREEMPT_DYNAMIC
-> > which allows for dynamic switching of preemption models.
-> > 
-> > The choice of preemptible RCU or not, however, is fixed at compile
-> > time. Given the trade-offs made to have a preemptible RCU, some
-> > configurations which have limited preemption might prefer the
-> > stronger forward-progress guarantees of PREEMPT_RCU=n.
-> > 
-> > Accordingly, explicitly limit PREEMPT_RCU=y to PREEMPT_DYNAMIC,
-> > PREEMPT, PREEMPT_RT.
-> > 
-> > This means that (PREEMPT_LAZY=y, PREEMPT_DYNAMIC=n), which selects
-> > PREEMPTION will run with PREEMPT_RCU=n. The combination (PREEMPT_LAZY=y,
-> > PREEMPT_DYNAMIC=y), will run with PREEMPT_RCU=y.
+On Wed, Oct 09, 2024 at 07:27:37PM +0900, Masahiro Yamada wrote:
+> cc-option-yn and cc-disable-warning duplicate the compile command seen
+> a few lines above. These can be defined based on cc-option.
 > 
-> I am completely confused by this. Why do we want this?
+> I also refactored rustc-option-yn in the same way, although there are
+> currently no users of it.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-In order to support systems that currently run CONFIG_PREEMPT=n that
-are adequately but not overly endowed with memory.  If we allow all
-RCU readers to be preempted, we increase grace-period latency, and also
-increase OOM incidence.  Which we would like to avoid.
+Neat!
 
-But we do want lazy preemption otherwise, for but one thing to reduce
-tail latencies and to reduce the need for preemption points.  Thus, we
-want a way to allow lazy preemption in general, but to continue with
-non-preemptible RCU read-side critical sections.
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Or am I once again missing your point?
-
-							Thanx, Paul
-
-> > Cc: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> > ---
-> >  kernel/rcu/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-> > index 3e079de0f5b4..1bfe7016724f 100644
-> > --- a/kernel/rcu/Kconfig
-> > +++ b/kernel/rcu/Kconfig
-> > @@ -18,7 +18,7 @@ config TREE_RCU
-> >  
-> >  config PREEMPT_RCU
-> >  	bool
-> > -	default y if PREEMPTION
-> > +	default y if (PREEMPT || PREEMPT_RT || PREEMPT_DYNAMIC)
-> >  	select TREE_RCU
-> >  	help
-> >  	  This option selects the RCU implementation that is
-> > -- 
-> > 2.43.5
-> > 
+> ---
+> 
+> This avoids applying similar fixes to rustc-option and rustc-option-yn.
+> 
+>  scripts/Makefile.compiler | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+> index 057305eae85c..73d611d383b2 100644
+> --- a/scripts/Makefile.compiler
+> +++ b/scripts/Makefile.compiler
+> @@ -53,13 +53,11 @@ cc-option = $(call __cc-option, $(CC),\
+>  
+>  # cc-option-yn
+>  # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
+> -cc-option-yn = $(call try-run,\
+> -	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",y,n)
+> +cc-option-yn = $(if $(call cc-option,$1),y,n)
+>  
+>  # cc-disable-warning
+>  # Usage: cflags-y += $(call cc-disable-warning,unused-but-set-variable)
+> -cc-disable-warning = $(call try-run,\
+> -	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
+> +cc-disable-warning = $(if $(call cc-option,-W$(strip $1)),-Wno-$(strip $1))
+>  
+>  # gcc-min-version
+>  # Usage: cflags-$(call gcc-min-version, 70100) += -foo
+> @@ -85,5 +83,4 @@ rustc-option = $(call __rustc-option, $(RUSTC),\
+>  
+>  # rustc-option-yn
+>  # Usage: flag := $(call rustc-option-yn,-Cinstrument-coverage)
+> -rustc-option-yn = $(call try-run,\
+> -	$(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=rlib /dev/null --out-dir=$$TMPOUT -o "$$TMP",y,n)
+> +rustc-option-yn = $(if $(call rustc-option,$1),y,n)
+> -- 
+> 2.43.0
+> 
 
