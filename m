@@ -1,247 +1,368 @@
-Return-Path: <linux-kernel+bounces-356210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217FC995DEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:50:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF758995DEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 04:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7579CB2389D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9A01C224AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4527413B59B;
-	Wed,  9 Oct 2024 02:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E7B13B58D;
+	Wed,  9 Oct 2024 02:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fP0sF44u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qdMdsxeD"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2053.outbound.protection.outlook.com [40.107.92.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417EB20B0F;
-	Wed,  9 Oct 2024 02:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E303E20B0F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 02:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728442199; cv=fail; b=IKkYZ4oThsUGxvub/XgCVeskyOrHt6/y8toiDAqlr9rZZXzyo0CxOOiutJB3AGuXcNvw0Hwu/M1hig8RYk4LEODjTxfVtZnMoYBzALclnxOoi5FLT+i6Z2SlAOFE+QK8V+ott1oZkCM67ctYZ/jlFsvV4yRt991rGVdck2E/IZo=
+	t=1728442236; cv=fail; b=uQ5l/uJUKWw58GoRarOdj8RdLlWzPBgq77MuheDO6Lv4JGxxcaljiiH9KKLIEX29/qjkOeNIM2FCahx/4A/JFqv3NLGgm0puxJrhyfKbJhI0lCto3kZtASLGeN0Ipp395M/Hoowij0DBrZL17xwU7dUk/NGWZL/g1CysiQT2WAU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728442199; c=relaxed/simple;
-	bh=Pj0VLvNDMCRf79LjMOXdzYhcazh8fQisNZdvNd7QSJo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=S9Cai8Gb/n/yTMHsw55/FtiYaeTSjUTLvLX5bKPhPP9pG72FBMQRekaCLeCjpjoKE7Mbu8dwMt6WVDlmohtHRKmwA6MlnwIYvPh9Z7B5JvVJ9zwClN9Hxbko/GXDLXCd28o3AjiOf0QpLFmOKk8rYAabwYrEwHF0D7DsIg29tIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fP0sF44u; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728442197; x=1759978197;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Pj0VLvNDMCRf79LjMOXdzYhcazh8fQisNZdvNd7QSJo=;
-  b=fP0sF44uyybg05Ath73FUW5yedlxIELcJxl2SzlySo0f1mRTfI6AGCrI
-   TNhsfLksTeYz4WAp+L3awIvsnIGLcXOj7j7o/7aBcmH+ND1AYK7ju/3Z8
-   k2zMmObnq0gvzg+JsvC52Cr+yv8DSQlErd6eQiL2Yl+BJQLrkOXqknsW3
-   oRbcbss7/HeLjRYar6Kn0HrABwaJ2UQT96HfCf1aeFxatI/valeR0+Jy0
-   znpeizq8HpyuR+XRmVSPA1AySgtx9eckawkPcJNQJxrA0KER1jgK3trgm
-   f2kVPcXhzrb2aUaoh0BhLt38+tj8nbqxys16DLUu+oOH86Zosy4+pAJ+8
-   g==;
-X-CSE-ConnectionGUID: s3FEQpOJTAiVruBClEhaLQ==
-X-CSE-MsgGUID: /+Jexa0ySiGXyp+hjxPfTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38280940"
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="38280940"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 19:49:56 -0700
-X-CSE-ConnectionGUID: dnmOx3qiQ5me8o+yWtVwjQ==
-X-CSE-MsgGUID: DRfqF8SEQGSa8gya8sxE/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,188,1725346800"; 
-   d="scan'208";a="76207153"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Oct 2024 19:49:56 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 8 Oct 2024 19:49:55 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 8 Oct 2024 19:49:55 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 8 Oct 2024 19:49:55 -0700
+	s=arc-20240116; t=1728442236; c=relaxed/simple;
+	bh=MesPHBy9AMXgIcyiGrYaqecd6vc6s2Eu1D+Hs7lcXtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fxcA/owaPqsJySi5lUk14jAhcZakGwsQoykuQaTQR2NdJ5uHHmgFW5o9cYkh5M4P3crToZCXjrZKsnAMF36xXnMfo7OeAanWugWKlIUXt+rYGKSiF9sOSQG6PLDIyjDhp3hEEvh4hNalV1mBsYdSWPGMCU1Wo48igcjJyyx2rL4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qdMdsxeD; arc=fail smtp.client-ip=40.107.92.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n3p/DLJVvY+2aSsWf50qsKZQcvRIDoNoEmjHIyOAjjmyq2rqFMGMD2srwDrmIGDPqUkssMVJcGFTGz2MTzXeu/iU+9xLDN9sNr5Q63mfAUr57FZuhfkO3UkALW5bS9kpM9o8t791p00m54UhaE0zOHKC4gmycrFEE2DjpHMPSp0QqTxTMKvIghgbmNgtpX8tkRS6/7lLoUziDrLjF+I8Bth9TVeP9kYRUStizM7lGP8+FP2CbKdNUFgJnMFrUY/nps1ATa/Bf3NkjPyUBW5pVyOWG60msTUzzjLeV5rzVrbBa0whklWdNbj7lzAz6KNx4I6JI5bv8z9WeY6TlQoHJw==
+ b=klY0Tqkh/QofPeWfGGLl9Hhe1CW68C2cXeSzhK0KZ7RcWrkodIXchIUqp+XQoHrZUvu36Fsigj74T5T9g+DlV9ap2ngtCcAncxC4YOMUKQc7qTk75WKPZW7WrwSX3kIwg1BNY/fK10DKbLW0hm8STu0jDAg2I58V0TcIIOBavDD45T2VlXwuMQeR8mue1uw3/fcHBXim1ngsyLZ2R+yWRZ0rprfqO75yGFpyQQsikzrzJomJW2qMf3LYq5m+3DFkyTSzGcf5mgh8aiTlqUrknqQymtwoH5Ot1Oet/mA90PalC+isOgLmT0Ya7eHtyQqeR4iKqaGI8LWlXZG2YegcLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jc5MF/jVokHlEHh8fVZHMFT27rWfBUAT8DsSnZcbhRA=;
- b=WmfNjq19czfZp2auKZqfth3y3FFBtLumZNJSBCqpQKFlA+Lt1M8ehUsKK6cMS1ZuWVCbfPETu9YojEF5yQ9J/TiKrt4CgazfoGcX0gYk2tiy/SOz1ChjZA6sQ/Gai0ZNv28uDiqXK1jJLVFS854YpsSZ2TbI9JzQjDz9BALlkVS3DaRVal+M35a50ZpcDG5EE03QZ0o36Ra5RVAq/V54FdRdhCWAOyAe6iTl1gOkNMuaSpKEWU5L/elcMWqPv6wuxS3keIbvGBFM096O040YDfdq3o3MDc43z1AACdHUg9MTni2Ss6Yl9ZfeETZvtUOvEiPOpF1s8mW2K6Snk6TUzA==
+ bh=o9MCI123r/ELpJADf3nyJWnD0jeMU/uGAQJxG9X3K90=;
+ b=RzCR4Fgn62NnPO9OApIqtjFFr2W8/s/h38yZyZ/EB6s6UgDjZT/YvUwv6YFLhwcLZTicdzF3tJeXf1usz4UMv8o52egA+aBCfbxGrdvG/EnTu0QDTojv0NHJkMRlwgfoxm9VjPUOZ/u4H/8HqS5dtY4KJxRQLmqxg/Xe638WlOeA/jzG+zWuqQpazqRWn0FMh2qGDOUTbhAtjwWCUMuJzOsf744nfYYYMuhsjH62BPCd3NP360lOzZIPLCif6KTPTGjNRiGR6aPW+8ev9gg/XzW+TppBwkJvSlKzGZBycn3DfIZvdUDjybiAgJW41COMGB2HGP0BornuOcLLHxb0Lg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MW4PR11MB6984.namprd11.prod.outlook.com (2603:10b6:303:22e::22)
- by SA1PR11MB8319.namprd11.prod.outlook.com (2603:10b6:806:38c::16) with
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o9MCI123r/ELpJADf3nyJWnD0jeMU/uGAQJxG9X3K90=;
+ b=qdMdsxeDR8RECilYXmqZlBGt2UmwLwYJ0WFLX9wkL1WEKlvI+NGy0WSb8SySA+YCSlFDgx7ExLjiPJC0xp+fnnrXlxLXYI5kYbBH85nqcOkDGXu4FGm3wBLNocuEEcAaPv/OJD9Q2J9iiGjAs17hTQfMKKXk3RGXWbE1Zo1WfAWYzfqBmOM/W38LzpcfTlwn4MN5ouDVFMCvDSPfGl/FKO4XuTFPg4VwbPX+2a8xKAHFB0f0BnHcA/Zn/7zvKJ+MNDzfU4C8IvP8A2Hm6NtSBa/D5XS0SAs/Q4UkL2X/T3p8Hbg+x/zAJoGQW1KJHy86GNq157S//EsPCgtJZ6znsw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ0PR12MB5469.namprd12.prod.outlook.com (2603:10b6:a03:37f::16)
+ by CY8PR12MB7121.namprd12.prod.outlook.com (2603:10b6:930:62::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Wed, 9 Oct
- 2024 02:49:53 +0000
-Received: from MW4PR11MB6984.namprd11.prod.outlook.com
- ([fe80::91f:4bc5:f5c9:ec7a]) by MW4PR11MB6984.namprd11.prod.outlook.com
- ([fe80::91f:4bc5:f5c9:ec7a%4]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
- 02:49:45 +0000
-From: "Hall, Christopher S" <christopher.s.hall@intel.com>
-To: Rodolfo Giometti <giometti@enneenne.com>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>,
-	"corbet@lwn.net" <corbet@lwn.net>, "Mohan, Subramanian"
-	<subramanian.mohan@intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"Dong, Eddie" <eddie.dong@intel.com>, "N, Pandith" <pandith.n@intel.com>, "T
- R, Thejesh Reddy" <thejesh.reddy.t.r@intel.com>, "Zage, David"
-	<david.zage@intel.com>, "Chinnadurai, Srinivasan"
-	<srinivasan.chinnadurai@intel.com>
-Subject: RE: [RFC 1/3] drivers pps: add PPS generators support
-Thread-Topic: [RFC 1/3] drivers pps: add PPS generators support
-Thread-Index: AQHbGYkYbfgrSGS2QUSKNsWd9GaqerJ9mUuQ
-Date: Wed, 9 Oct 2024 02:49:45 +0000
-Message-ID: <MW4PR11MB698415531AEF2041384989FBC27F2@MW4PR11MB6984.namprd11.prod.outlook.com>
-References: <20241008135033.3171915-1-giometti@enneenne.com>
- <20241008135033.3171915-2-giometti@enneenne.com>
-In-Reply-To: <20241008135033.3171915-2-giometti@enneenne.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW4PR11MB6984:EE_|SA1PR11MB8319:EE_
-x-ms-office365-filtering-correlation-id: f101ed5d-176f-456f-06bb-08dce80d0877
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?7KwHuynxH1nAarGDIKyhSMoo8pAfl9rnuFeZo4zHwf/URdCm1intKOF7HcZk?=
- =?us-ascii?Q?X+uMcjhIZjMBvlalTKjIgRTmhVwng2c/eybOZJEqOP+D5r5nkyc93J8pctgY?=
- =?us-ascii?Q?2g29lwl2jop8MWG5Ob76pJ9MlBPKR4vvrKkQK3gB2WD9ENJCEfa95BqkNd8K?=
- =?us-ascii?Q?7jzPiylRVdfk1xSoxE4DRh4nchK1PjYUPmf+C1JZtjyvp44NV6YSw8IAOcma?=
- =?us-ascii?Q?/ZIQ2KLauL/Nq4bbi+4I1lVEojXYhfCebrdiSwCSgNZ0U9OUrGSAgGSKTn0X?=
- =?us-ascii?Q?K8saV5C/RNLrK7ktQrmSEaGCmboe1kFRp9CJMkWrie/5ERKPi1VAMoMtQkGw?=
- =?us-ascii?Q?I7dizCYmrYiZk4TSyDcORM83n/cCX8GwxKUcoIuRg4/TaoKGd78jwpG/TJ9s?=
- =?us-ascii?Q?I5jDtLCQh9Y1eBhpJFQX1BQuJLySYzZuptt25pWyZUl3C7XKO0x2APiyRcoX?=
- =?us-ascii?Q?OKVA4vDkHY3V6I04ood0WCF20udVTuhJY+YRMh6vvlsQ6bZIn4eOkVvqN/cf?=
- =?us-ascii?Q?Hvwo55vWveIbvYGlPW4iiSlNQvKoxhjcKO8gtXmZNcad+ZgqV3oB40ec5g6Y?=
- =?us-ascii?Q?zxgl2+/xI3z/NiFOO0LuHxfnHTRrmiAofkU20WGwmRhb5Qot+XzRI+v5F/XM?=
- =?us-ascii?Q?aMSk9Ev9SOLZ1M7vIId/L+VrbI0LbBP1kd16NFJIyDTqvbsgYmSrUwBznu8F?=
- =?us-ascii?Q?h2VrDqpqlPLbFrZxq4vJt6Q+goIWuWovkJzLVeXpM0ZYkDNqadrYtPXml1iq?=
- =?us-ascii?Q?9f6sJ5F5F4Iz467NDL/9/KvmmqirZHy9EME2Gn3M0fQB2MrdBH5TyrohLAOd?=
- =?us-ascii?Q?leYqRkZA5WKt7uoZLHcdkIT14BIJtWW4oNhdhV04jFmnOkYS13HT43/hiGWm?=
- =?us-ascii?Q?H+luDKvwiqdb5qHu6IZwdLloZVXvCyMC505E3SOawMLPSnW+doxMeJFq6KPl?=
- =?us-ascii?Q?WztnopKBUguNdXV4SAV06mRfzh8PNk0WPGLK90YM5vpSt47IqHSWEUdqEMWa?=
- =?us-ascii?Q?EIjvCMd7n+beSk7Y4Iidgc4AQGe2a0NC5vwQuvQvLs6m6ZS4Rw1oHUCLWjrQ?=
- =?us-ascii?Q?xJl8OU/HIy4kpL1SlAJVJBefuQ1FsPgPBClp1UgoEkAp7gZJApe9NEYJAAM/?=
- =?us-ascii?Q?qLkl4BxId3gYY4ZIx9yJzOFTbO9nctmy2dtVqIgAdMyPrlOCu1gwZ37LujJ4?=
- =?us-ascii?Q?psuXNT09Xulv/ZbnqAXTFvYHZ//eSR9MJThn71V6xshFd03BSlF4vWyBldAl?=
- =?us-ascii?Q?o1dYAtQ/LTdOMam64oSzTnqrlWKjkzk3ApnDonmYw+U+HMetoG9mvcg2CDB0?=
- =?us-ascii?Q?G3IOYTp8jidNHuFdyH38IJJpIaeqanLYXrIXfkXCQld0nQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB6984.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?IscCYARg9jaK/qz/d9a1AHZgWuAq/JwggHKpMu2G5Ed8XKg+APQ4neRgrWW8?=
- =?us-ascii?Q?h77/kLpbNuz0wLcyip6WK3p3Bm8jZlER/56H9JD+uc0cGWppX2vngLDohSBq?=
- =?us-ascii?Q?jFv15PnkHxaknI2QR+ccGrU0GIOexK8mE4G3S4wV76to8/WGyZWENmRJSI6c?=
- =?us-ascii?Q?zXqblKsJc3hJ2BZLfEICWzUvYA4wawy558jv56UthLaUh6qAAv0w3iZrYNEq?=
- =?us-ascii?Q?WpctR83p5XD8swl+X8ToTKrMJnA9pPS+yGEMkzY4xAtem5dwY93PEUYE0L1i?=
- =?us-ascii?Q?xBPCxPyufy2ZfULBX6/u8lHhxUYjAJDIwY9oV1D/NMsxD6oY/gi6+bJpBSp1?=
- =?us-ascii?Q?0S6dQ9k3iYL34iae/jOHRBhTCys+lC1EnY8WTn38lWLiG4XXFyEmToTbQ/sw?=
- =?us-ascii?Q?qrnNXEZlVIX+E7i3P1pfrf4bSKgLy3uVzS/SF+uHnKwXlBE1VsxtAaVP2PkH?=
- =?us-ascii?Q?fTknk5gpUKVQzgMFRNSBYAJWxhd3m21IQGOA1GFUz+EyZCp8COd7Zfk73/8X?=
- =?us-ascii?Q?yGk+fkBMekFUVOBWOwT01os+aONDoc0VZLhBIkaU6KkIhFWRcKwH5W9abKKJ?=
- =?us-ascii?Q?myWcpBWEY1ax+5MSWO8WNpzQeCl8V5zY7L3i132UFPF23MeppcEkugOTIPyR?=
- =?us-ascii?Q?2ABSpZiB3iGhcdmS9iiNGN6hvx63qcMv4CzpwlxRdqK+W3N54h0tqQe/4jjk?=
- =?us-ascii?Q?QcEogJOjBblstCIJlTWCTXqqZ/hDYW4NgyAOP+U2LLeOYzXM5/nVRvXSRQLQ?=
- =?us-ascii?Q?6WE99BehEAX8WxEBb5K9do10aTjfcc+RHukfj1t+TvtpC8qksCEvEfeoohUp?=
- =?us-ascii?Q?LcjxzZ3QDWNjsg44BWg+j8IwU8XN0yuZvD5Z7VZODzPwSnUmy69AbTLtFhXj?=
- =?us-ascii?Q?vkvPqp9FXW9J2yWf2Huhk16pNvXr8uWNHISOYA31mgoQl6pAK1tRBBuW5heR?=
- =?us-ascii?Q?MuT3HhioH0n12Vhh3VqG/Gp0c5899FxBGNEBERw+dqMrkI3glolFNdP5hLzm?=
- =?us-ascii?Q?eXjQGP/z4gGl6Z3UiFVxdffrLlgnHkCna4GeTLF9tOjJJgOqYc2mRtLqZP7n?=
- =?us-ascii?Q?aIcaJ+RKhJV/nSckqZvXTqBVPiJFkrDU1JvZxSohyDdn37HWkbyBFBMuxjsq?=
- =?us-ascii?Q?PpWDxNBLumNFV66NHHUMDuVFn0Js1YuTfJTxm7CHWPWS+/8uVVFGyvyPnRqD?=
- =?us-ascii?Q?T5nCYQ7U4babnDCNWbMU5OCgpc5ec3oZ7C+jXXguHFt0fcT+sE6IttjZxlXJ?=
- =?us-ascii?Q?dANa26fFNIOSJMeClIik38aFCtGgKULOPzDBMQ7QoABxh4xIqIq7xibdb/wX?=
- =?us-ascii?Q?0ndgJEtuXmT8OsZIHnnkdIEgWWzp+Zs8z3RnBXHzkf35HNwQkcVa+HmKDbO1?=
- =?us-ascii?Q?Xs1nKRLAnxiB6tRrZEc84tcube7D6aSsEWH+Bvj5TeTyc9y+erNnRy1tR3+o?=
- =?us-ascii?Q?NyipgTFJ0C5nuoCKQ29M+FkErW80QEL7p/8BSq0tLEXTqk0Pfi0t9fVHAN3u?=
- =?us-ascii?Q?GrNqUflbj82O5HMDvhnlWwr0mnh5qtIuoV06eluia0j5lLQBs2SN5fWAMS5s?=
- =?us-ascii?Q?uQ5gYMcfTwe5C7BCQf7eFVg0hL4/7WhpUaMpv8UkLLaH64z4g8jmyXaDtXhq?=
- =?us-ascii?Q?sw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 2024 02:50:28 +0000
+Received: from SJ0PR12MB5469.namprd12.prod.outlook.com
+ ([fe80::ff21:d180:55f2:d0c0]) by SJ0PR12MB5469.namprd12.prod.outlook.com
+ ([fe80::ff21:d180:55f2:d0c0%6]) with mapi id 15.20.8026.020; Wed, 9 Oct 2024
+ 02:50:28 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	David Hildenbrand <david@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Alistair Popple <apopple@nvidia.com>,
+	Jordan Niethe <jniethe@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org,
+	linux-mm@kvack.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH] kaslr: rename physmem_end and PHYSMEM_END to direct_map_physmem_end
+Date: Tue,  8 Oct 2024 19:50:24 -0700
+Message-ID: <20241009025024.89813-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.47.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0371.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::16) To SJ0PR12MB5469.namprd12.prod.outlook.com
+ (2603:10b6:a03:37f::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR12MB5469:EE_|CY8PR12MB7121:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97d53673-ecc7-4bf6-99e3-08dce80d222f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Z81KeJV4uzocaARxve1qvMp8i0Yfj8Zx6B0E5k/tFWlFpU/GGD6Lnvu/EgeL?=
+ =?us-ascii?Q?wuqfaXqM2xOjbOKvHxxlHPuHqmFdQlpK2GH7mqVVUSARXqIo5XxndINYr9q5?=
+ =?us-ascii?Q?xfmJbtutNCdE/uyEvl/SB0zCsEwvPX1CAiZegZtZETk4h4Oems9GoJ5aPJhL?=
+ =?us-ascii?Q?G0blKwVzkqcYSzSqMXLfZpfZEIS772y4Y9KwppLTYU5W/c3uAAPwMqL3bHxo?=
+ =?us-ascii?Q?MwS77Pk2H/rZSGYiIddUtyS3kyMskzFLy2MHOnvTWQIce+aGx/6qm3kmDp0P?=
+ =?us-ascii?Q?+Pbkc4yMEO9t7bJLSfU5/+lOpxIncq0AZm7S31+ooY3exNhoh7JqmJyE0mQ7?=
+ =?us-ascii?Q?ngfGUVBWyfGbRNFOOdJieBGGfHigaXhAWpyq0nqEMpSfoBKvbFKUmT7eRDrP?=
+ =?us-ascii?Q?GuMoCP4XxlSkWEGXfPFqSLGjEx0rpdtbKnho2gBmpFoit283LlcW3alIPtZ8?=
+ =?us-ascii?Q?3TUQC5gBvhgS7dAY76OL9+DzJopSv2E/sHYB4Wjvr/T3t7xxOJVD98Dtx53G?=
+ =?us-ascii?Q?sofXzT+yCVomnWubg9FtxEJkYWRRO1ubgRCt0FXbEG+s/drKvCaNGHTY7d+B?=
+ =?us-ascii?Q?mnQl74MxUFeNHpIYdsNigWHjQmLwpdoMkXNCXpWSFu3RXxrD9V+5mbCI5uAS?=
+ =?us-ascii?Q?LMgNFjeFF6AMeDY0mjs1ZgOnyS1zTRZv8hBO+pEqrmd2GJHMkrmp+kjhXmjt?=
+ =?us-ascii?Q?nIHPsGr9kqs9pOJu9z/ZRpy5aGWIP5erYqcl4cDXVmfgN6Zu7pvdrT6HIvsG?=
+ =?us-ascii?Q?NjUDrb7S/3hyHe+7xj5ADvkJd2xoyD+jqn77bkjqzwUR6RYjzTjCP/2EU9AU?=
+ =?us-ascii?Q?HP+aOnWA2RCkiui7suoz8//IK54AnZAAwLTVrHy0qtDHJL/qewD1mvpf1hpN?=
+ =?us-ascii?Q?C/4jPmBiOj5x5uwWNc3LVEb/OtDy99W7z5WmqUGJU2ZMNrxUYDrFDKKvEJix?=
+ =?us-ascii?Q?OYzbora5rmEfN2w7ae7fi4QP8j3+rbfvqSw7IqA4FwNA2N1PSfoZoxahYS4u?=
+ =?us-ascii?Q?7Q2eSMh7QRsPvRvU3va+6oAzsPdEfCg5hCJSFdNLfEgwLa7+A97mkwqsQgpL?=
+ =?us-ascii?Q?ZOhlGiFG2KsqWBzX9WRLqObm6+l3uvNz1uFqTmiyEOxXDKzD+/NfWrSLVSTK?=
+ =?us-ascii?Q?T/iFPFgxMiHJFWM09XnNVho8DmT5f9NDNY8bY4KMm3khRYh5R9zmnBT7TQv1?=
+ =?us-ascii?Q?8LpW1JGWbHom7daJYsfeaFNSNXdz5+cehak0VaROOFdNJYGARHuO5m2JoEGT?=
+ =?us-ascii?Q?/lQ/PN/EDYJWYEgitGG1B+2rmmpF/7gCR/NB5lGg8g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5469.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Jh5LVzpuPDM/7lLtpqfJxneAJ0uKhktlVX7NliLb+AmIn5cu4VIs6yntks5w?=
+ =?us-ascii?Q?z/rpxwj0FeoxfZjb75lwiZ3OVtIzV0m7aqDzVBdMP8TGoni9n03htGMmdUAK?=
+ =?us-ascii?Q?WfLQtl43RtR/BfTmoySRjuybW8PHRY2miJo3isa3EM4kapp4ch6v0Jps7pSm?=
+ =?us-ascii?Q?SmeQWmZD4wIgl85gYzYAT/c6Xdl/jyxBYMz6ywcijcX7V4WddcGwk6m3JDG5?=
+ =?us-ascii?Q?GIuH2oHmmR9tbSVLKvU1rn323DpmDD/sZtOUHYOVA6jecpMVrgImNB0JY6yE?=
+ =?us-ascii?Q?Xk8jxoP/X0NYB7ytC3qIBaIyiEip8CnHiRNrq/uP4SPmQqpEwQGsxE/beoBs?=
+ =?us-ascii?Q?BSA8w+p9wWplB0R41XkeUmyfo0hqxMDWQpUBl6QDBmcFz5GPzNVzq/06ekpY?=
+ =?us-ascii?Q?hTu/v9ON8H1bjpoQf9+6LNxXJWHJT1ZE2sYY2i5vd/8nKOtOXevU4pCt6ubY?=
+ =?us-ascii?Q?UXePn8YCfAvkeEa6kr7V5VEh9NQbHeLp1EHNbr9PZ18CJMlCeEyB3q2TQfah?=
+ =?us-ascii?Q?/KewKrRSgPPq5NHetLNS/NCECiLO5nifx0EbIWtbTaGtpcEYwDXuHMlQvjw+?=
+ =?us-ascii?Q?qND8jULFfLRaWb2W6q/ZmqjE3zVP5JIFe2E9WVVgqRVQaeIo/AimpgEGuT84?=
+ =?us-ascii?Q?UD2WrlzYqqrBpuOD0KnStvVSzBLr3Gpn3Ee+N4jqG9HzRIwHtBaiF8d8mIvf?=
+ =?us-ascii?Q?LWPBdrWDR9QDXSHJMEqAXg9dofdko3K3xte8FxKm9UL7t/u19eE1Edee6jed?=
+ =?us-ascii?Q?fcpZYzklS5ZxeZhO6E+lUUgY3XP2HvWMJMy2+zK0iiA1ennWvzy5T62uQVhw?=
+ =?us-ascii?Q?cr0xI6UmkWcZs0uc0ibSY797FxDiNbQPuDzUIx8YwBu0ykCfHGeutELUSwWw?=
+ =?us-ascii?Q?uRxwN2p4qbgBGbhZfkPlrtpgKjoJ4hxmdfgSekufa+3VRU6e7rb0CLPB2VZW?=
+ =?us-ascii?Q?HSG8a3AcxYlpWy8GXhg7ru+Kv/H+PmOnwWrP058Utv/W5eF68qZa0OOl4HUX?=
+ =?us-ascii?Q?aBsZvVuCWXpom2zN+NUTXGBtSXSfG0DPv+JI2sos8x5DDXVlTG/OyD7fK77A?=
+ =?us-ascii?Q?oGVtgXpbz99kgNLbHd/AFN/fAwvilhmkTahnV09AlMYUVGUq1FSgXaRkypdN?=
+ =?us-ascii?Q?H8wfVbkzmi5236lAqJjU6bPdnKJzan1Bo2eY3QINXcYFGEJQNotNvz01G8jO?=
+ =?us-ascii?Q?A4MRdrg7gITfzrxv2dCqiNc4nPgMJ4FojSZC1RBVHajWMy7yXllMogjzl+3T?=
+ =?us-ascii?Q?dkf/yUWJnY3AlbNNxTxDPcBgv3AuNBWp8iryR9X78p2PEkPj43Uu6OVqgjxL?=
+ =?us-ascii?Q?pbvM1Sj5vq2UTlgFmqGiOTtP60ABco2urWjlKKzpPckkOZajynps/5XNwmyi?=
+ =?us-ascii?Q?CT8b8+PRx7a2fMmLeoS6FLuNc9a6PsKwJeNSc3PcBmo3/GXDGkBIL15tLtNq?=
+ =?us-ascii?Q?TqAYaK6fPg/Wi+Wmntwfc1fydqIi/CGJ4iifVfXmf4z7vGQhkKy3buyZJrXa?=
+ =?us-ascii?Q?OoNf0/nkfRsdaeVxySTxFsyouFk8Bd8r17t4M4040xv/QMZtWV8GjWqxNdpt?=
+ =?us-ascii?Q?S5ec/reNvom06Y+2aUtxYGjiYtuy2dcNZArkyeuo?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97d53673-ecc7-4bf6-99e3-08dce80d222f
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5469.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB6984.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f101ed5d-176f-456f-06bb-08dce80d0877
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2024 02:49:45.3960
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 02:50:28.6449
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: J1Lz4WLYnSAVVwQdAFqNaD9VXRRm/itO+3efVDaIr+EtRvvvGvxXg1xkq0jhR6BxTNdgOv3NP/jbsiESNu/q75WUGUkNN1ahPQgrL8DQ3Uw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8319
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VXKEyM0G/VHjKpI9AmmXQJ1k5qrvLMMVr25jPlfKWlmJXJHWEFzp5sVwW4dlznuvaJUpUlnfg3zFXo43BaqThg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7121
 
-Hi Rudolfo,
+For clarity. It's increasingly hard to reason about the code, when KASLR
+is moving around the boundaries. In this case where KASLR is randomizing
+the location of the kernel image within physical memory, the maximum
+number of address bits for physical memory has not changed.
 
-> -----Original Message-----
-> From: Rodolfo Giometti <giometti@enneenne.com>
-> Sent: Tuesday, October 08, 2024 6:51 AM
-> To: linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org
+What has changed is the ending address of memory that is allowed to be
+directly mapped by the kernel.
 
-> Sometimes one needs to be able not only to catch PPS signals but to
-> produce them also. For example, running a distributed simulation,
-> which requires computers' clock to be synchronized very tightly.
->=20
-> This patch adds PPS generators class in order to have a well-defined
-> interface for these devices.
->=20
-> Signed-off-by: Rodolfo Giometti <giometti@enneenne.com>
-> ---
->  drivers/pps/Makefile                   |   3 +-
->  drivers/pps/generators/Kconfig         |  19 +-
->  drivers/pps/generators/Makefile        |   4 +
->  drivers/pps/generators/pps_gen-dummy.c |  83 ++++++++
->  drivers/pps/generators/pps_gen.c       | 283 +++++++++++++++++++++++++
->  drivers/pps/generators/sysfs.c         |  89 ++++++++
->  include/linux/pps_gen_kernel.h         |  57 +++++
->  include/uapi/linux/pps_gen.h           |  35 +++
->  8 files changed, 571 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/pps/generators/pps_gen-dummy.c
->  create mode 100644 drivers/pps/generators/pps_gen.c
->  create mode 100644 drivers/pps/generators/sysfs.c
->  create mode 100644 include/linux/pps_gen_kernel.h
->  create mode 100644 include/uapi/linux/pps_gen.h
+Let's name the variable, and the associated macro accordingly.
 
-This looks pretty good to me. I would like to see an alarm callback. We are=
- able
-to detect a missed event and rather than stopping inexplicably or writing t=
-o the
-system log, it would be better to be able to notify an application directly=
-.
+Also, enhance the comment above the direct_map_physmem_end definition,
+to further clarify how this all works.
 
-Off the top of my head, something like:
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Jordan Niethe <jniethe@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
 
-void pps_gen_alarm(pps_gen_device *pps_gen) {
-	pps_gen->alarm =3D 1;
-	sysfs_notify(pps_gen->dev->kobj, NULL, "alarm");
-}
+David Hildenbrand, I recall you had an unanswered question in this
+vicinity [1] when tglx's recent kaslr fix was being reviewed. Maybe this
+will help with that.
 
-The device is reset by disabling/enabling and this resets the alarm flag.
 
-Could we add something like this?
+[1] https://lore.kernel.org/linux-mm/ee205448-5fdd-495e-9d7c-c8a2b59f9c9e@roeck-us.net/T/#mdf442f077c9023590e144dbed2b04a109793484d
 
-Thanks,
-Chris
+thanks,
+John Hubbard
+
+
+ arch/arm64/include/asm/memory.h         |  2 +-
+ arch/x86/include/asm/page_64.h          |  2 +-
+ arch/x86/include/asm/pgtable_64_types.h |  2 +-
+ arch/x86/mm/init_64.c                   |  2 +-
+ arch/x86/mm/kaslr.c                     | 14 +++++++++-----
+ include/linux/mm.h                      |  6 +++---
+ kernel/resource.c                       |  4 ++--
+ mm/memory_hotplug.c                     |  2 +-
+ mm/sparse.c                             |  2 +-
+ 9 files changed, 20 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 0480c61dbb4f..73eaa8c2536a 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -110,7 +110,7 @@
+ #define PAGE_END		(_PAGE_END(VA_BITS_MIN))
+ #endif /* CONFIG_KASAN */
+ 
+-#define PHYSMEM_END		__pa(PAGE_END - 1)
++#define DIRECT_MAP_PHYSMEM_END	__pa(PAGE_END - 1)
+ 
+ #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
+ 
+diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
+index f3d257c45225..d63576608ce7 100644
+--- a/arch/x86/include/asm/page_64.h
++++ b/arch/x86/include/asm/page_64.h
+@@ -17,7 +17,7 @@ extern unsigned long phys_base;
+ extern unsigned long page_offset_base;
+ extern unsigned long vmalloc_base;
+ extern unsigned long vmemmap_base;
+-extern unsigned long physmem_end;
++extern unsigned long direct_map_physmem_end;
+ 
+ static __always_inline unsigned long __phys_addr_nodebug(unsigned long x)
+ {
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index a98e53491a4e..ec68f8369bdc 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -141,7 +141,7 @@ extern unsigned int ptrs_per_p4d;
+ #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+ 
+ #ifdef CONFIG_RANDOMIZE_MEMORY
+-# define PHYSMEM_END		physmem_end
++# define DIRECT_MAP_PHYSMEM_END	direct_map_physmem_end
+ #endif
+ 
+ /*
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index ff253648706f..5a564130b9d0 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -961,7 +961,7 @@ int add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
+ 	unsigned long end = ((start_pfn + nr_pages) << PAGE_SHIFT) - 1;
+ 	int ret;
+ 
+-	if (WARN_ON_ONCE(end > PHYSMEM_END))
++	if (WARN_ON_ONCE(end > DIRECT_MAP_PHYSMEM_END))
+ 		return -ERANGE;
+ 
+ 	ret = __add_pages(nid, start_pfn, nr_pages, params);
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index 230f1dee4f09..70d3353c92fa 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -52,7 +52,7 @@ static __initdata struct kaslr_memory_region {
+ } kaslr_regions[] = {
+ 	{
+ 		.base	= &page_offset_base,
+-		.end	= &physmem_end,
++		.end	= &direct_map_physmem_end,
+ 	},
+ 	{
+ 		.base	= &vmalloc_base,
+@@ -62,8 +62,12 @@ static __initdata struct kaslr_memory_region {
+ 	},
+ };
+ 
+-/* The end of the possible address space for physical memory */
+-unsigned long physmem_end __ro_after_init;
++/*
++ * The end of the physical address space that can be mapped directly by the
++ * kernel. This starts out at (1<<MAX_PHYSMEM_BITS) - 1), but KASLR may reduce
++ * that in order to increase the available entropy for mapping other regions.
++ */
++unsigned long direct_map_physmem_end __ro_after_init;
+ 
+ /* Get size in bytes used by the memory region */
+ static inline unsigned long get_padding(struct kaslr_memory_region *region)
+@@ -94,7 +98,7 @@ void __init kernel_randomize_memory(void)
+ 	BUILD_BUG_ON(vaddr_end > __START_KERNEL_map);
+ 
+ 	/* Preset the end of the possible address space for physical memory */
+-	physmem_end = ((1ULL << MAX_PHYSMEM_BITS) - 1);
++	direct_map_physmem_end = ((1ULL << MAX_PHYSMEM_BITS) - 1);
+ 	if (!kaslr_memory_enabled())
+ 		return;
+ 
+@@ -145,7 +149,7 @@ void __init kernel_randomize_memory(void)
+ 		vaddr += get_padding(&kaslr_regions[i]);
+ 		/*
+ 		 * KASLR trims the maximum possible size of the
+-		 * direct-map. Update the physmem_end boundary.
++		 * direct-map. Update the direct_map_physmem_end boundary.
+ 		 * No rounding required as the region starts
+ 		 * PUD aligned and size is in units of TB.
+ 		 */
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..92c35fb60d18 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -97,11 +97,11 @@ extern const int mmap_rnd_compat_bits_max;
+ extern int mmap_rnd_compat_bits __read_mostly;
+ #endif
+ 
+-#ifndef PHYSMEM_END
++#ifndef DIRECT_MAP_PHYSMEM_END
+ # ifdef MAX_PHYSMEM_BITS
+-# define PHYSMEM_END	((1ULL << MAX_PHYSMEM_BITS) - 1)
++# define DIRECT_MAP_PHYSMEM_END	((1ULL << MAX_PHYSMEM_BITS) - 1)
+ # else
+-# define PHYSMEM_END	(((phys_addr_t)-1)&~(1ULL<<63))
++# define DIRECT_MAP_PHYSMEM_END	(((phys_addr_t)-1)&~(1ULL<<63))
+ # endif
+ #endif
+ 
+diff --git a/kernel/resource.c b/kernel/resource.c
+index b730bd28b422..afa3ad09b834 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1871,7 +1871,7 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
+ 	if (flags & GFR_DESCENDING) {
+ 		resource_size_t end;
+ 
+-		end = min_t(resource_size_t, base->end, PHYSMEM_END);
++		end = min_t(resource_size_t, base->end, DIRECT_MAP_PHYSMEM_END);
+ 		return end - size + 1;
+ 	}
+ 
+@@ -1888,7 +1888,7 @@ static bool gfr_continue(struct resource *base, resource_size_t addr,
+ 	 * @size did not wrap 0.
+ 	 */
+ 	return addr > addr - size &&
+-	       addr <= min_t(resource_size_t, base->end, PHYSMEM_END);
++	       addr <= min_t(resource_size_t, base->end, DIRECT_MAP_PHYSMEM_END);
+ }
+ 
+ static resource_size_t gfr_next(resource_size_t addr, resource_size_t size,
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 621ae1015106..c43b4e7fb298 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1681,7 +1681,7 @@ struct range __weak arch_get_mappable_range(void)
+ 
+ struct range mhp_get_pluggable_range(bool need_mapping)
+ {
+-	const u64 max_phys = PHYSMEM_END;
++	const u64 max_phys = DIRECT_MAP_PHYSMEM_END;
+ 	struct range mhp_range;
+ 
+ 	if (need_mapping) {
+diff --git a/mm/sparse.c b/mm/sparse.c
+index dc38539f8560..4cb9793f0b52 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -129,7 +129,7 @@ static inline int sparse_early_nid(struct mem_section *section)
+ static void __meminit mminit_validate_memmodel_limits(unsigned long *start_pfn,
+ 						unsigned long *end_pfn)
+ {
+-	unsigned long max_sparsemem_pfn = (PHYSMEM_END + 1) >> PAGE_SHIFT;
++	unsigned long max_sparsemem_pfn = (DIRECT_MAP_PHYSMEM_END + 1) >> PAGE_SHIFT;
+ 
+ 	/*
+ 	 * Sanity checks - do not allow an architecture to pass
+-- 
+2.47.0
+
 
