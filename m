@@ -1,219 +1,187 @@
-Return-Path: <linux-kernel+bounces-356804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4753996700
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:21:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B387A9966EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ABB4B25AE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:21:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD7BB24467
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3FA190661;
-	Wed,  9 Oct 2024 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sypaa8E4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA0018E754;
+	Wed,  9 Oct 2024 10:20:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC02518F2EA;
-	Wed,  9 Oct 2024 10:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD19215382F
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728469230; cv=none; b=En8kxkFTI1iN4fMB2IWKZtR53jXGMJUjF6VDggxbfh9PZO7ZLESvtKzVHF/wbhRh0JXkqsqDvKG4NHLY6HuGi2TIqRRPbv/wqmF3/vYLz+kxoDzRKl5C44dsIJis3S34z40LaOQYK+HDEnHwNldEg1rxQ88uGdi4s07xsd3V130=
+	t=1728469225; cv=none; b=ieBD9a+KtEbsF9jiCkjRH4pAhwNTWK3SLvzrzcz6gIyIcoDMgQ4ctSWK61o1xqwNO9Lr11N+L5AtX8m1II4GLJXWf/eXvJo++khWGNMbfbucoT3QomHdncrPNloWTygF80fMAFvU+S2T1TPQE8ZNiY2R3j/Obm/YZouEEH3o6fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728469230; c=relaxed/simple;
-	bh=ImAK0CpUwm+JPbTzbW7azTUBVNfLGbvl7aS7sfbdp0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFU4Eg0EVpfIPO32qoWIZJJiYtqmAbbq5v8BUboN4WK4Eh0I5SR4RjkU3G4wKbmh6MRr+L2zQBvcPzN0OOKD7tkdLbfAOyyiQ+wPoNLcIgdtP7o64QXcGMdo/S4kErcaA8qgPLEeeNIiwO8rTCrzi1p2WcZKu30z5IKI9uOhYPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sypaa8E4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D816C4CED5;
-	Wed,  9 Oct 2024 10:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728469229;
-	bh=ImAK0CpUwm+JPbTzbW7azTUBVNfLGbvl7aS7sfbdp0E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Sypaa8E4XTR2h+6vO973S9djHACjIXek0KLq783ADF8tNtOe1bMZrJFf0zlt8+zSs
-	 OLRAtppFEIb5Ic0mWDNDYNRaI6e9/Z7vBQGyOQ8guZklNp3J6lYVvOJPY0Nte+XhtF
-	 xT1b91GGI33rYAt7gxwLcB1d3y1SBKs6bb4MxTTF1y6tGBweQi8zO12oDVI1/KpONI
-	 bOJQtQv0XV690wHla57wDR2aHvoM6Up16kaIYdw6AVyfMWDvtpnERh2dLqJ6WBvkYw
-	 EhkKXnH7yqObLqkMathJ5jYncRSwZXMHxI2dTYJuZPN1g66Yyks/L1YgZFWJ7ipDTo
-	 JPDgtbBAM36Bg==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5e5d0a80db4so3555289eaf.3;
-        Wed, 09 Oct 2024 03:20:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7z+7jIIjC2P1U0jY1OGCX8+52+FZTOCeeDTZNMmoAY3h4n928OdSmCrC5aDF5xKtuEfbpzftJh1QELJLcCaU=@vger.kernel.org, AJvYcCU8FbU8leUEnj022ykj0ZJaI3x461l+mWVwkX91+D++0TlkjLj2X7WXN9VOvyqnoGEo6J2nIfboYVSi@vger.kernel.org, AJvYcCUFVzm7V+C/Z2wSNGBm2S7yFIrEKci5qFXJ74V7VvZrHIs40oEmmpA62Fid35+RKGjnRYEYniDNjhahhf6/@vger.kernel.org, AJvYcCUHkDTQSCsIevhis5JW7CtlUW/zSE8GUFzgQV8wgUkcj7R1dGC850kApuYWMap2qK9pkKdjDqd85npi@vger.kernel.org, AJvYcCUjipJwam9lVqW71OhF9ej/sFfsxKaDCcqX2yRJ12nen4tyZ1ylp8EkwVT2IkYHQ2yXubsnRUQADHo6@vger.kernel.org, AJvYcCUp1QUsl/llHp9Ud9boh8PVzlIzPEovDn6qsX2tj5cnhe5ejTspBgpmFA6QswLaWJUEitT0RBdDH6qnBRY=@vger.kernel.org, AJvYcCUz1nO7xw83bSHa2WHLdL190FWS4/lZhUivQqcT6WPr1TeztHSKURzx4boWh9zTFdRcA075MBHLlbtS@vger.kernel.org, AJvYcCV8K4bhWy20QNldimSqcIdlv+Z7uEsvWNbuS8qPJMJc0AlpLEMRn4BMMTIKAS7wAAqPGXSKKY1Ch80m@vger.kernel.org, AJvYcCVKbDbNlbCvq8f0d+SkA3r9bSKuRxLWgH38IaHbP2x7tR23/GT1y13SgxX4CO3yU31TS/mjKXraXGlwnNlY@vger.kernel.org, AJvYcCVWj0XSWFMzZAgH0b8PtTvwutQ0
- JquorXUhjwLOLkxX25FcIQS0vLm6v+V4I5lZDCUI9bwrmRt10RTW2A==@vger.kernel.org, AJvYcCVb5Xfd8I1wHNySBxd4ISZJHauEqZKNHqtL3alZ9MsSRoNiaCrgT8GvhoZg6T/JIvqzD5EcTaLtLdi6@vger.kernel.org, AJvYcCVlvSujGGmMVPSMGxuROjTXqi5k/dBNPZ+dppj4+Bv7E7yUecAVJYPyu/dOc3pQJOciMbVi3EcdEogQ@vger.kernel.org, AJvYcCWKFQeoEmjqbAOYjHpLG3t3SVXyhEATWl2KOIrGF/ZvSqOsbbC3bTM1CNnycGXZmw0et/M75BZhR+RMjvS2@vger.kernel.org, AJvYcCWPwk/6y0Rtp78PWIdFytLoq6bqb9z641B4psA+7cT67sNS3kcAUQJHCJlxG1rvqaTXzIzZy2lE9ys=@vger.kernel.org, AJvYcCWVGb5O/51e1C2pDl0FlYealE8S8mXXcYJ6swTSzz/IHAALH6YhAdHAxKyf1OoQLgTRTbt3hRPGCKerT74=@vger.kernel.org, AJvYcCWk4P26oKArraNo66o+ELkqBOeXRORrnUSYKaDjO+f7T+3WKZtv2sEOAA3LMth7S9emWrlF+Dvh@vger.kernel.org, AJvYcCWt8Onq29KmSvnAZR6jobjdVavcYrkGNIdioXxuTbxigWK3WGIyOgpUT42xXoRyXdCwlLH+mlc6FaNcnfhvP5TfEQ==@vger.kernel.org, AJvYcCWuTi/EGEOQdGj7HrqM1EaX1Ktwi4KECFYb61NcoeAIFgO1rYWfj/xV3KN5wUQm043pFaT5A26p+wSH@vger.kernel.org, AJvYcCXi2BIQFD6ExeE55giEfIgb/YEg8T5HaID11SO9vzydHSj3oFku8fBERyEtFgkQkRes3lf2xdIEkRXApbNptgV
- h@vger.kernel.org, AJvYcCXipGIO4LNa4qTjapDFOw/1tWG0euUmbwpm2bQLe2FI/xp6C1hy4+VjqY+/NF0Sox/8uzhVElGb+6Qjrzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUbrkwaL51zZQK6WHOki32c8LpB3QVpB6nuZ6zFxZaG5w652B6
-	2ob98S9sUoN7bUPBaMWN1CA5LChdYNCq7sQF8tPZVgbsy3RPL5+hXBLZPsa8w6s5/bf8zdhkdEK
-	2tIC/E6zieSkniDmlY7fXaBbTzjY=
-X-Google-Smtp-Source: AGHT+IF28e1A9mtOEy4wCWwLUrfMAFq/4+DT8Vi41Eljnp8AjlauSlJofg4NJprxAH2sFsPScvE36aWo6OHCPjXQ49c=
-X-Received: by 2002:a05:6820:270f:b0:5e7:c925:b05 with SMTP id
- 006d021491bc7-5e987aadf58mr1212364eaf.2.1728469228716; Wed, 09 Oct 2024
- 03:20:28 -0700 (PDT)
+	s=arc-20240116; t=1728469225; c=relaxed/simple;
+	bh=qK4KQaIt3lrNwLlYXxWRnQeo7+2COMKtaUQGshtOGZg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WNKgNgdOxY4b92ovOI5sLX+yyKO4jFi/69l+j3rZvFqLgi9Z3YPUIkZIHdPZTLXc/AEoBhl/5zHs96Dty+PsAqfm1LzACAZyWymO1duksjrknt7iBqWCn1HNGarVn7x2bxFjLbkjhUoTor622q7d3ziX6G/H8pxfBUTiwE36Po4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce7e621aso59966405ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 03:20:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728469223; x=1729074023;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=msJj4GiB8/jRjpLDDXAICgBBp9XCST7mD/0ou7XdrLU=;
+        b=vwzx7NOKQyrHh9zvhrLJr+czou7gzTYABm12Bk4Sy3Cl0sZ3DZ8PCb7+CUXbXxO+J0
+         DA8UJ6Ayqb0wrt9Ypb23dtxRLE4TKoSP6yHX8/TH0EWVh+UwIJuGTi/mf4usAFTujbAl
+         zrmCLhdB2u7ac2sXR/ngJM+y3WYeY9G4M/Xr+pP/REVPnaHhNJuivAmd+g/k9enecXkD
+         n+2C/wmCJ3LyqpCv/9gP918iHJLZ6DRuZfuK34WsH2YkzWlVzZtRTFsb8SthJHqP8RBa
+         VLUUul7qhE1VMc3HSzdPv6fyXvs0C3rU7uWB+gJW6bqfwc+FVMZ5J/R86+4cTU9F0HUc
+         VATQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJHYJdxxxuaUrLzZ1spa0ISWT9YAZucOMJ5LV9Q7iGD3FRId5ZE41aOjNamL34vuDHZG/5pGi3Wo6ELPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8TzeTMAVwSZPbtKROIETHzdXCl8x+2YcmlFm5qrjOlsOskf6e
+	W+NanB2fWtn0ys8FEulEGsQldDAmVd03o6nWBTjxlXs3rSX81p4KSpw5bPe/Jx6AqeS/g0GtzOe
+	B3dJ0nDpUQIONMDq84I0n6yHGXFWt9RwXIqGrqZe+QOGjvmVYwNrb2Ok=
+X-Google-Smtp-Source: AGHT+IHzuK32eKNDgGIe5IK0Pc7jlPryOsh91ka5RJTr7nA7zaFq5OmjVp1xf3Jbyg2dod17W8Ca6DzvkMidbEzMcsDAFd9Gb9fU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004094101.113349-1-sakari.ailus@linux.intel.com>
- <CAPDyKFp0N6UJhnHS164Tdf=xkWB0jzq65L9TdvYazeBQ-6WjeQ@mail.gmail.com>
- <20241007184924.GH14766@pendragon.ideasonboard.com> <CAPDyKFpQVnF7eQv3dup8k-3EijnMjuveCG9sZ=Rpey1Y6MBJEg@mail.gmail.com>
- <20241007222502.GG30699@pendragon.ideasonboard.com> <CAPDyKFrGNwna6Y2pqSRaBbRYHKRaD2ayqQHLtoqLPOu9Et7qTg@mail.gmail.com>
- <CAJZ5v0jvJyS7D5-wURi2kyWN-rmNa+YqupeQJ000pQRVd9VBcQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jvJyS7D5-wURi2kyWN-rmNa+YqupeQJ000pQRVd9VBcQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 Oct 2024 12:20:16 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0htLbrFeby43Ycqpaihqd4x56MokC9sTVRBmTTQSX7vmQ@mail.gmail.com>
-Message-ID: <CAJZ5v0htLbrFeby43Ycqpaihqd4x56MokC9sTVRBmTTQSX7vmQ@mail.gmail.com>
-Subject: Re: [PATCH 00/51] treewide: Switch to __pm_runtime_put_autosuspend()
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-i3c@lists.infradead.org, linux-iio@vger.kernel.org, 
-	linux-input@vger.kernel.org, patches@opensource.cirrus.com, 
-	iommu@lists.linux.dev, imx@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-serial@vger.kernel.org, greybus-dev@lists.linaro.org, 
-	asahi@lists.linux.dev, Andy Shevchenko <andy.shevchenko@gmail.com>
+X-Received: by 2002:a05:6e02:1561:b0:3a0:9244:191d with SMTP id
+ e9e14a558f8ab-3a397d10ce2mr16425715ab.16.1728469223017; Wed, 09 Oct 2024
+ 03:20:23 -0700 (PDT)
+Date: Wed, 09 Oct 2024 03:20:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670658e6.050a0220.22840d.0012.GAE@google.com>
+Subject: [syzbot] [kernfs?] INFO: task hung in fdget_pos
+From: syzbot <syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com>
+To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 8:24=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> On Tue, Oct 8, 2024 at 12:35=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Tue, 8 Oct 2024 at 00:25, Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> > >
-> > > Hi Ulf,
-> > >
-> > > On Tue, Oct 08, 2024 at 12:08:24AM +0200, Ulf Hansson wrote:
-> > > > On Mon, 7 Oct 2024 at 20:49, Laurent Pinchart wrote:
-> > > > > On Fri, Oct 04, 2024 at 04:38:36PM +0200, Ulf Hansson wrote:
-> > > > > > On Fri, 4 Oct 2024 at 11:41, Sakari Ailus wrote:
-> > > > > > >
-> > > > > > > Hello everyone,
-> > > > > > >
-> > > > > > > This set will switch the users of pm_runtime_put_autosuspend(=
-) to
-> > > > > > > __pm_runtime_put_autosuspend() while the former will soon be =
-re-purposed
-> > > > > > > to include a call to pm_runtime_mark_last_busy(). The two are=
- almost
-> > > > > > > always used together, apart from bugs which are likely common=
-. Going
-> > > > > > > forward, most new users should be using pm_runtime_put_autosu=
-spend().
-> > > > > > >
-> > > > > > > Once this conversion is done and pm_runtime_put_autosuspend()=
- re-purposed,
-> > > > > > > I'll post another set to merge the calls to __pm_runtime_put_=
-autosuspend()
-> > > > > > > and pm_runtime_mark_last_busy().
-> > > > > >
-> > > > > > That sounds like it could cause a lot of churns.
-> > > > > >
-> > > > > > Why not add a new helper function that does the
-> > > > > > pm_runtime_put_autosuspend() and the pm_runtime_mark_last_busy(=
-)
-> > > > > > things? Then we can start moving users over to this new interfa=
-ce,
-> > > > > > rather than having this intermediate step?
-> > > > >
-> > > > > I think the API would be nicer if we used the shortest and simple=
-st
-> > > > > function names for the most common use cases. Following
-> > > > > pm_runtime_put_autosuspend() with pm_runtime_mark_last_busy() is =
-that
-> > > > > most common use case. That's why I like Sakari's approach of repu=
-rposing
-> > > > > pm_runtime_put_autosuspend(), and introducing
-> > > > > __pm_runtime_put_autosuspend() for the odd cases where
-> > > > > pm_runtime_mark_last_busy() shouldn't be called.
-> > > >
-> > > > Okay, so the reason for this approach is because we couldn't find a
-> > > > short and descriptive name that could be used in favor of
-> > > > pm_runtime_put_autosuspend(). Let me throw some ideas at it and may=
-be
-> > > > you like it - or not. :-)
-> > >
-> > > I like the idea at least :-)
-> > >
-> > > > I don't know what options you guys discussed, but to me the entire
-> > > > "autosuspend"-suffix isn't really that necessary in my opinion. The=
-re
-> > > > are more ways than calling pm_runtime_put_autosuspend() that trigge=
-rs
-> > > > us to use the RPM_AUTO flag for rpm_suspend(). For example, just
-> > > > calling pm_runtime_put() has the similar effect.
-> > >
-> > > To be honest, I'm lost there. pm_runtime_put() calls
-> > > __pm_runtime_idle(RPM_GET_PUT | RPM_ASYNC), while
-> > > pm_runtime_put_autosuspend() calls __pm_runtime_suspend(RPM_GET_PUT |
-> > > RPM_ASYNC | RPM_AUTO).
-> >
-> > __pm_runtime_idle() ends up calling rpm_idle(), which may call
-> > rpm_suspend() - if it succeeds to idle the device. In that case, it
-> > tags on the RPM_AUTO flag in the call to rpm_suspend(). Quite similar
-> > to what is happening when calling pm_runtime_put_autosuspend().
->
-> Right.
->
-> For almost everybody, except for a small bunch of drivers that
-> actually have a .runtime_idle() callback, pm_runtime_put() is
-> literally equivalent to pm_runtime_put_autosuspend().
->
-> So really the question is why anyone who doesn't provide a
-> .runtime_idle() callback bothers with using this special
-> pm_runtime_put_autosuspend() thing, which really means "do a
-> runtime_put(), but skip my .runtime_idle() callback".
->
-> > >
-> > > >
-> > > > Moreover, it's similar for pm_runtime_mark_last_busy(), it's called
-> > > > during rpm_resume() too, for example. So why bother about having
-> > > > "mark_last_busy" in the new name too.
-> > > >
-> > > > That said, my suggestion is simply "pm_runtime_put_suspend".
-> > >
-> > > Can we do even better, and make pm_runtime_put() to handle autosuspen=
-d
-> > > automatically when autosuspend is enabled ?
-> >
-> > As stated above, this is already the case.
->
-> What really is needed appears to be a combination of
-> pm_runtime_mark_last_busy() with pm_runtime_put().
->
-> Granted, pm_runtime_put() could do the pm_runtime_mark_last_busy()
-> thing automatically if autosuspend is enabled and the only consequence
-> of it might be delaying a suspend of the device until its autosuspend
-> timer expires, which should not be a problem in the vast majority of
-> cases.
+Hello,
 
-That said, it is likely better to avoid surprising the current users
-of pm_runtime_put() and define something like
+syzbot found the following issue on:
 
-static inline void pm_runtime_touch_and_put(struct device *dev)
-{
-        pm_runtime_mark_last_busy(dev);
-        pm_runtime_put(dev);
-}
+HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110fb307980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9775e9a1af839423
+dashboard link: https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0a79f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/64ef5d6cfda3/disk-fc20a3e5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/42c0ee676795/vmlinux-fc20a3e5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a3072d6383ea/bzImage-fc20a3e5.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a8f928c45431/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com
+
+INFO: task syz.2.17:5434 blocked for more than 159 seconds.
+      Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.2.17        state:D stack:27424 pid:5434  tgid:5432  ppid:5316   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ fdget_pos+0x24e/0x320 fs/file.c:1160
+ ksys_read+0x7e/0x2b0 fs/read_write.c:703
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f993c77dff9
+RSP: 002b:00007f993d54e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f993c936058 RCX: 00007f993c77dff9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f993c7f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f993c936058 R15: 00007fffb8436518
+ </TASK>
+INFO: task syz.3.18:5439 blocked for more than 167 seconds.
+      Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.18        state:D stack:27424 pid:5439  tgid:5436  ppid:5317   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ fdget_pos+0x24e/0x320 fs/file.c:1160
+ ksys_read+0x7e/0x2b0 fs/read_write.c:703
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1134d7dff9
+RSP: 002b:00007f1135adc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f1134f36058 RCX: 00007f1134d7dff9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f1134df0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f1134f36058 R15: 00007ffe6e122188
+ </TASK>
+INFO: task syz.4.19:5441 blocked for more than 168 seconds.
+      Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.4.19        state:D stack:27424 pid:5441  tgid:5438  ppid:5327   flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6767
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ fdget_pos+0x24e/0x320 fs/file.c:1160
+ ksys_read+0x7e/0x2b0 fs/read_write.c:703
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4c9ad7dff9
+RSP: 002b:00007f4c9bc43038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
