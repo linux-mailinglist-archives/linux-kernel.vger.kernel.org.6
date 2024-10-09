@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-357404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF40F9970E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:16:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0963F9970E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66068286AB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:16:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DF3FB23565
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61979206E9C;
-	Wed,  9 Oct 2024 15:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFB01E571A;
+	Wed,  9 Oct 2024 15:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUETBDjs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0vNgKjn"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7EF1E5720;
-	Wed,  9 Oct 2024 15:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B291E3797
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489222; cv=none; b=gbXBfq+tad0Qdc9TZndIKESX4r1QwzJnpl4E16OejiZSybu7hlMUga9Ovp6AUZUnsFVbHgM76uXbhOgdbyDOnoAsASpOZPP/eVyONsyI6rJE9AnKnvdNStWDK1zXHxWf4onabCDKmzZ2MWoJrkpb1ObtIDnIn8gsAbXydSLCO0M=
+	t=1728489238; cv=none; b=AvXCYisFomVfVPuZGl++cjHyjpKhd/3AVZq9NYZ9BkggWFJ7TeMiAVAluGEiCGcD0w80r5MEQHmCeelChJw8WaXFa2uPWJAHvEuY7/jXjvQnTTJ/romGLAtzxQd5voUf94VrKkYnF1TFvDoWY47THCu4SEc8keKHtJDTOrowfZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489222; c=relaxed/simple;
-	bh=hkK5Jrqrdm/FF4dGenxODFf3qC3kWUYM29Uxerw9Kas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FqOfdJq2zC/1BbZCyJ7pJy4hAi/kzULgDKvzp5Op8EzDe/T/VP6h8dmpAoXGVYlWvqZujzky10x2sOVbQz6T4MdFm5hLjbazq/SDexzrUOplIDd1LEebaMwZXX66yr7lzsDIzgtKTiq6cYTkYkL67cdZpesVn9i1DP2hnQ0q61o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUETBDjs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8218C4CEC3;
-	Wed,  9 Oct 2024 15:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728489222;
-	bh=hkK5Jrqrdm/FF4dGenxODFf3qC3kWUYM29Uxerw9Kas=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eUETBDjs3lURnCvaymWMfD1f6IyTvPZ+Zd2I3Cz95mP+xd0N7eE4keZWVVR3bK/zK
-	 1TH3ILB/eRNcpmjzdTkqo/dMclMQzIVOjC+0XErbsfRtTWr5oE5PRpKroiMP95uu0/
-	 1gWN2FPlQpXueDusYtqZkQzr20ZZhlSaz4c/suxN7hBI5/YRBDZ5tTJOiqiKfSnWKE
-	 LnumpSx79x5ZgQkWQTlaOtJnJW04fObyPFJIgqZtcA6RbqK/Uvd2yCqpvdSfLVmKV8
-	 eGRQavwHOhFBEFtOTkYaBCw+VExhW26M7yfdmranc5QZKdQe1Y+cZ3VzQngjqCEVyI
-	 Ir3jkjx8SlW0A==
-Date: Wed, 9 Oct 2024 17:53:38 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: "Gerecke, Jason" <killertofu@gmail.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, Jiri Kosina <jikos@kernel.org>, Ping Cheng <pinglinux@gmail.com>, 
-	"Tobita, Tatsunosuke" <tatsunosuke.tobita@wacom.com>, Jason Gerecke <jason.gerecke@wacom.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] HID: wacom: Hardcode (non-inverted) AES pens as
- BTN_TOOL_PEN
-Message-ID: <a34eifvhiqy7nu65pxcunjkvpreau57oizykk4mnzehkstox4r@h45cyy6f3b3l>
-References: <20241009001332.23353-1-jason.gerecke@wacom.com>
+	s=arc-20240116; t=1728489238; c=relaxed/simple;
+	bh=NJ3E7SiyoRumtSue3+YxGg4JRiaY7WIm5XxcTZL8d9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dI4nHDD/H1j1aM1Z02fRwYWWlNyrJhgFInM1puLNCXvAs5ncA1/gavDb7WjjyqM3W1zuAIuYd4YScCBHHTlflnTRRNJeYnlXdhhC1DdoqMAZ4nISooB4Q695oSooZTMt73zwKCiO00Pc07xuG5SznmyKmiKYPlCLBiWYjqVGcik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j0vNgKjn; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so78022751fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:53:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728489235; x=1729094035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJ3E7SiyoRumtSue3+YxGg4JRiaY7WIm5XxcTZL8d9E=;
+        b=j0vNgKjndvWXO1+ogWjyD3d9GmvQUiaMjN4S7Y32pT3teHh9as0KD5JIUafAE06btM
+         mnPFPs3tNewx4ndnzw2lTovdavg4k8CSHE9KW7iRHN5tjhyadnSDqrfWa5yh6gbNk852
+         cyg8R8ARiC8mjoKVNMQK3dQ2W/Bi4teXNrNvC3A8N6Hz+YB/9mk6bFg6jdgoH4YUGHvY
+         s6lPNlf9FXiui+IUeByhvyX1E7foqt6wq0O7DKlChe7yx0Dt6485UDRcTJESeitpRbr3
+         FR/+3U5pN5cZoTgfN+T0mtxzu0W96Xa87bCT74OjN3MPYMUjMWeAd8LmGrwG241Ij2bJ
+         8Sew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728489235; x=1729094035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NJ3E7SiyoRumtSue3+YxGg4JRiaY7WIm5XxcTZL8d9E=;
+        b=EaJprDZAJjdTnSexDvE5vHTtBs9gzd7tnV3d43gtb318rBOKti7pEr72QtJYJ4pTU/
+         GA92WYSISqRzNbdkeu7dFu4lEV+cyYwFVVhM3Ho6fk7Rn1ZrXF5BwypX15IJoNiXbf6E
+         6ykVh16T7DI/IF79QhkwN0zXJoo9tzukmWw3kSa17L7QFEiW1fACYTqtlCsH3TsBxBjD
+         Rlx9UB4Tb37IIE7DaXR9xnefU1GMMkWHHrOocuA4ef8B/YBKdyIr+/i5QDCbGlZxla+7
+         4zW1ELH/BGBY+XMY5CDzeFbusz2eAteipj09CI1/dvI1UZOhd+E4nMh1sHn4VBxTIVT1
+         W2wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrC2TtqdcttyaNBJpWVbDFMivZwfqGHunP5CmwH8nPCkGaC0/h75YuJZyAoYj9Tv5ILSKkG4uVCa+flwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6kEI92I9wWAy88GbtpfWEzVXhcLpKiaaMzqaxDxoPUahAaPdX
+	wHZQWCXMiu/pOa8IAcTfPPQhDKJjda0GS38KDixmd0cTrc9axGTfu3+02Z9+DPP9Ms1UobUuR30
+	D7DtuUUEwoXxRUi2eKthIg/JOnmvT4FchjoiKtw==
+X-Google-Smtp-Source: AGHT+IF1Lv/76V+RyjJ3lzcXIdhaFKwqua1nbpbFn/1KRFIOa6rU81jScDSr5dJe6IpSIdWWq5KQKVGGqaDkj0Vt1Dc=
+X-Received: by 2002:a2e:5152:0:b0:2f7:6519:9a01 with SMTP id
+ 38308e7fff4ca-2fb1873ea07mr15960721fa.24.1728489234904; Wed, 09 Oct 2024
+ 08:53:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009001332.23353-1-jason.gerecke@wacom.com>
+References: <20241009144135.12453-1-zpenya1314@gmail.com>
+In-Reply-To: <20241009144135.12453-1-zpenya1314@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 9 Oct 2024 17:53:43 +0200
+Message-ID: <CACRpkdbVOOvrXiZQ2pSQn7ar5S8j824pu9gnnrN_+7+YHTUwiQ@mail.gmail.com>
+Subject: Re: [PATCH v2] Docs/mm: Fix a mistake for pfn in page_tables.rst
+To: Pengyu Zhang <zpenya1314@gmail.com>
+Cc: corbet@lwn.net, rppt@kernel.org, fmdefrancesco@gmail.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yaxin_wang_uestc@163.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Oct 08 2024, Gerecke, Jason wrote:
-> From: Jason Gerecke <jason.gerecke@wacom.com>
-> 
-> Unlike EMR tools which encode type information in their tool ID, tools
-> for AES sensors are all "generic pens". It is inappropriate to make use
-> of the wacom_intuos_get_tool_type function when dealing with these kinds
-> of devices. Instead, we should only ever report BTN_TOOL_PEN or
-> BTN_TOOL_RUBBER, as depending on the state of the Eraser and Invert
-> bits.
-> 
-> Fixes: 9c2913b962da ("HID: wacom: more appropriate tool type categorization")
-> Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-> Cc: stable@vger.kernel.org
+On Wed, Oct 9, 2024 at 4:41=E2=80=AFPM Pengyu Zhang <zpenya1314@gmail.com> =
+wrote:
 
-Thanks for the quick fix Jason.
+> The documentation incorrectly calculate the pfn value as 0x3fffff,
+> which should be 0x3ffff instead. It is obtained by right-shifting
+> 0xffffc000 by 14 bits.
+>
+> This patch corrects the value to prevent any potential confusion
+> for developers referencing this document.
+>
+> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
 
-You are however missing a few links/reported-by:
+Thanks, I love attention to detail yet make mistakes all the
+time!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reported-by: Daniel Jutz <daniel@djutz.com>
-Closes: https://lore.kernel.org/linux-input/3cd82004-c5b8-4f2a-9a3b-d88d855c65e4@heusel.eu/
-Bisected-by: Christian Heusel <christian@heusel.eu>
-Link: https://gitlab.freedesktop.org/libinput/libinput/-/issues/1041
-Link: https://github.com/linuxwacom/input-wacom/issues/440
-Acked-by: Benjamin Tissoires <bentiss@kernel.org>
-
-Hopefully with the above b4 would pick those out without having to send
-a v2.
-
-Cheers,
-Benjamin
-
-> ---
->  drivers/hid/wacom_wac.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/hid/wacom_wac.c b/drivers/hid/wacom_wac.c
-> index 59a13ad9371cd..413606bdf476d 100644
-> --- a/drivers/hid/wacom_wac.c
-> +++ b/drivers/hid/wacom_wac.c
-> @@ -2567,6 +2567,8 @@ static void wacom_wac_pen_report(struct hid_device *hdev,
->  		/* Going into range select tool */
->  		if (wacom_wac->hid_data.invert_state)
->  			wacom_wac->tool[0] = BTN_TOOL_RUBBER;
-> +		else if (wacom_wac->features.quirks & WACOM_QUIRK_AESPEN)
-> +			wacom_wac->tool[0] = BTN_TOOL_PEN;
->  		else if (wacom_wac->id[0])
->  			wacom_wac->tool[0] = wacom_intuos_get_tool_type(wacom_wac->id[0]);
->  		else
-> -- 
-> 2.46.2
-> 
+Yours,
+Linus Walleij
 
