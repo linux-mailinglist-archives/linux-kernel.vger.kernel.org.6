@@ -1,121 +1,162 @@
-Return-Path: <linux-kernel+bounces-356221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1570995E24
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B559D995E2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C78C2849AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE8F1F25E03
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711E613FD99;
-	Wed,  9 Oct 2024 03:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C57152E1C;
+	Wed,  9 Oct 2024 03:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="msjHwymI"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF022119;
-	Wed,  9 Oct 2024 03:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HYtxHtfk"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BE713D8A0;
+	Wed,  9 Oct 2024 03:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728444500; cv=none; b=pvhT6OuUBQhwxe9PkntIbC0LISZNrvJo1NwFoh0NAb0SxjDZBqzeTGiu69pVdE81Ca1kZefs+CqYVXT+dBPhsrpZuZ3bbs85K2KIlfxJ5fA2Xcqo36zZArpvWSYMaFoIy+tQ6MoXsO20CPXrOosV5ih5WCn/oKWmO75MWqTFYF4=
+	t=1728444730; cv=none; b=TieZ53D+QYrqu6jPmYRZsTtC8l6QWYF1sD82xUeDVesr5QmasTOkd/zQwedg5HdKoGoajLq5uwlLss1pq7yCYjnCjj+dh1EXzrx6Pjfri6CHkovUMmmkhgFwBa6iAA3kFLcUNV3wMg1mtvRWdPk22syy0Wqm74NwL4d4kkvkDXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728444500; c=relaxed/simple;
-	bh=NJYeforn/nzTpAxT8hESCKJ5eIg+ydlPeOiIcSSWuzM=;
-	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc:
-	 References:In-Reply-To; b=nSS8ja9FiqIDVxlPEwji8e9oDJT/fXTOy5alk8HTSeLpS8V5QtsEXMu8FA3XUD0eVHD1dlWki0HmD3VRw18zmQtontpt9xDQLFUrnpDeKIkPQUAo7cUmuFE7qwzodrW0uL30fdWVKG+N9WkMONnpBTed5oenA73X1GXPxP3sRs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=msjHwymI; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Content-Type:Message-ID:Date:MIME-Version:From:
-	Subject; bh=NJYeforn/nzTpAxT8hESCKJ5eIg+ydlPeOiIcSSWuzM=; b=msjH
-	wymIQ5jVSzjI45PdFGBmF0o3H9ldEcnSwlB/CXy8xAxppe0BiXgcCcmKuUOcOGRB
-	eBiU4NofrvdTVNS6BIZ15tqjvg+It8RVS2q/zk8WSrhJerJWKErpqBc8ULrTaWZK
-	uzoXFPzt+ziVeINjSeUnHLcuh7HrYaSXegfzwxc=
-Received: from [192.168.109.86] (unknown [1.198.30.91])
-	by gzsmtp5 (Coremail) with SMTP id qSkvCgAHvjoE+AVndsCrAw--.55725S2;
-	Wed, 09 Oct 2024 11:27:01 +0800 (CST)
-Content-Type: multipart/mixed; boundary="------------NhoYU3pvcmbBYB5mVuOO0lVU"
-Message-ID: <4cd7f0c2-a6e8-4bc6-b9fc-4b0edc99f63f@126.com>
-Date: Wed, 9 Oct 2024 11:27:00 +0800
+	s=arc-20240116; t=1728444730; c=relaxed/simple;
+	bh=sCny+DWly5RJeyZY1Z3J5f7VbVnjrMGYmuGDWl04clc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h4q60hkSdRvD+vpbKCgsb2BRz8vAgjq2PiS7iuQeB+BA21kUDF5T/MRJK2wnHxnEO0FOkrAm+Wq2ka1ymsZ/E4PQyNn5qifvikYcxrHH60CaArd2TzY3VOBZE85A+Aj59ypfDyyEmq49CDlN/99JFcqBuScXGm6LZbVEcSt7G5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HYtxHtfk; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728444719; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=Q3VvV8dzU7fDz1bTrlR+T03pQEuaXvrJZsIVuE0YJXE=;
+	b=HYtxHtfkDOAIksdAA2twf4tE7yjBqD01IdNJduzSXaTXPL6uVl62h/TbKh/5Kqg4hr97lLTw6e0PjhVVWZnCXn7yKCFxEBTwAToKfiGNwTPA5LMY5cfyLr8bVzs/nH8lkxlXveDgMI7MO1fNNxV5OtBQxe1dcvYGkRdnH3cDm+s=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGhJfrz_1728444712)
+          by smtp.aliyun-inc.com;
+          Wed, 09 Oct 2024 11:31:58 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>
+Cc: Allison Karlitskaya <allison.karlitskaya@redhat.com>,
+	Chao Yu <chao@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
+Date: Wed,  9 Oct 2024 11:31:50 +0800
+Message-ID: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Zhao Mengmeng <zhaomzhao@126.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
- bch2_stripe_to_text
-To: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <66f4dcd2.050a0220.211276.003a.GAE@google.com>
-In-Reply-To: <66f4dcd2.050a0220.211276.003a.GAE@google.com>
-X-CM-TRANSID:qSkvCgAHvjoE+AVndsCrAw--.55725S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUoZ2-DUUUU
-X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbimhRzd2cF8emMAAAAs8
+Content-Transfer-Encoding: 8bit
 
-This is a multi-part message in MIME format.
---------------NhoYU3pvcmbBYB5mVuOO0lVU
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+As Allison reported [1], currently get_tree_bdev() will store
+"Can't lookup blockdev" error message.  Although it makes sense for
+pure bdev-based fses, this message may mislead users who try to use
+EROFS file-backed mounts since get_tree_nodev() is used as a fallback
+then.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 1ec6d097897a
---------------NhoYU3pvcmbBYB5mVuOO0lVU
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-bcachefs-Fix-shift-out-of-bounds-in-bch2_stripe_to_t.patch"
-Content-Disposition: attachment;
- filename*0="0001-bcachefs-Fix-shift-out-of-bounds-in-bch2_stripe_to_t.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
+Add get_tree_bdev_flags() to specify extensible flags [2] and
+GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
+since it's misleading to EROFS file-backed mounts now.
 
-RnJvbSBmZDQ4MTk2NTc3N2Q4YTRmYTY3N2VjODMxOGQyNTYyNzM3YjJkNzQ1IE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGFvIE1lbmdtZW5nIDx6aGFvbWVuZ21lbmdAa3ls
-aW5vcy5jbj4KRGF0ZTogV2VkLCA5IE9jdCAyMDI0IDExOjE4OjA0ICswODAwClN1YmplY3Q6
-IFtQQVRDSF0gYmNhY2hlZnM6IEZpeCBzaGlmdC1vdXQtb2YtYm91bmRzIGluIGJjaDJfc3Ry
-aXBlX3RvX3RleHQKCnN5emJvdCByZXBvcnQgYSBzaGlmdC1vdXQtb2YtYm91bmRzIGlzc3Vl
-OgotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KVUJTQU46IHNoaWZ0LW91
-dC1vZi1ib3VuZHMgaW4gZnMvYmNhY2hlZnMvZWMuYzoxNDc6MgpzaGlmdCBleHBvbmVudCAx
-MDggaXMgdG9vIGxhcmdlIGZvciAzMi1iaXQgdHlwZSAndW5zaWduZWQgaW50JwotLS0tCkhl
-cmUgcy5jc3VtX2dyYW51bGFyaXR5X2JpdHMgPSAxMDgsIHNvIHNoaWZ0IGlzIGltcG9zc2li
-bGUgZm9yIHVuc2lnbmVkCmludC4gVG8gZml4LCBhZGQgYSBjaGVjayBpbiBiY2gyX3N0cmlw
-ZV92YWxpZGF0ZSgpIHRvIGJhaWwgb3V0LCBpdCBoYXMKc2FtZSBjaGVja2luZyBsb2dpYyB3
-aXRoIGVjX3N0cmlwZV9rZXlfaW5pdCgpLgoKUmVwb3J0ZWQtYnk6IHN5emJvdCtmOGM5OGE1
-MGMzMjM2MzViZTY1ZEBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tClRlc3RlZC1ieTogc3l6
-Ym90K2Y4Yzk4YTUwYzMyMzYzNWJlNjVkQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20KQ2xv
-c2VzOiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS9idWc/ZXh0aWQ9ZjhjOThhNTBj
-MzIzNjM1YmU2NWQKU3VnZ2VzdGVkLWJ5OiBIb25nYm8gTGkgPGxpaG9uZ2JvMjJAaHVhd2Vp
-LmNvbT4KU2lnbmVkLW9mZi1ieTogWmhhbyBNZW5nbWVuZyA8emhhb21lbmdtZW5nQGt5bGlu
-b3MuY24+Ci0tLQogZnMvYmNhY2hlZnMvZWMuYyAgICAgIHwgNiArKysrKysKIGZzL2JjYWNo
-ZWZzL2VycmNvZGUuaCB8IDMgKystCiAyIGZpbGVzIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2ZzL2JjYWNoZWZzL2VjLmMgYi9mcy9i
-Y2FjaGVmcy9lYy5jCmluZGV4IDE0MWE0YzYzMTQyZi4uYmM1ZmYxMzMxYzZmIDEwMDY0NAot
-LS0gYS9mcy9iY2FjaGVmcy9lYy5jCisrKyBiL2ZzL2JjYWNoZWZzL2VjLmMKQEAgLTExMyw2
-ICsxMTMsMTIgQEAgaW50IGJjaDJfc3RyaXBlX3ZhbGlkYXRlKHN0cnVjdCBiY2hfZnMgKmMs
-IHN0cnVjdCBia2V5X3NfYyBrLAogCWNvbnN0IHN0cnVjdCBiY2hfc3RyaXBlICpzID0gYmtl
-eV9zX2NfdG9fc3RyaXBlKGspLnY7CiAJaW50IHJldCA9IDA7CiAKKwlpZiAocy0+Y3N1bV9n
-cmFudWxhcml0eV9iaXRzID49IGlsb2cyKGxlMTZfdG9fY3B1KHMtPnNlY3RvcnMpKSkgewor
-CQliY2hfZXJyX3JhdGVsaW1pdGVkKGMsICJzdHJpcGUgY3N1bSBncmFuIGJpdHMgJXUgdG9v
-IGJpZyIsCisJCQkJICAgIHMtPmNzdW1fZ3JhbnVsYXJpdHlfYml0cyk7CisJCXJldHVybiAt
-QkNIX0VSUl9zdHJpcGVfY3N1bV9ncmFudWxhcml0eV9iaXRzX3Rvb19iaWc7CisJfQorCiAJ
-YmtleV9mc2NrX2Vycl9vbihia2V5X2VxKGsuay0+cCwgUE9TX01JTikgfHwKIAkJCSBicG9z
-X2d0KGsuay0+cCwgUE9TKDAsIFUzMl9NQVgpKSwKIAkJCSBjLCBzdHJpcGVfcG9zX2JhZCwK
-ZGlmZiAtLWdpdCBhL2ZzL2JjYWNoZWZzL2VycmNvZGUuaCBiL2ZzL2JjYWNoZWZzL2VycmNv
-ZGUuaAppbmRleCA3NDJkY2RkM2U1ZDcuLjE0YmE2YmM3YTAyOSAxMDA2NDQKLS0tIGEvZnMv
-YmNhY2hlZnMvZXJyY29kZS5oCisrKyBiL2ZzL2JjYWNoZWZzL2VycmNvZGUuaApAQCAtMjU4
-LDcgKzI1OCw4IEBACiAJeChCQ0hfRVJSX25vcHJvbW90ZSwJCW5vcHJvbW90ZV9ub193cml0
-ZXMpCQkJXAogCXgoQkNIX0VSUl9ub3Byb21vdGUsCQlub3Byb21vdGVfZW5vbWVtKQkJCVwK
-IAl4KDAsCQkJCWludmFsaWRfc25hcHNob3Rfbm9kZSkJCQlcCi0JeCgwLAkJCQlvcHRpb25f
-bmVlZHNfb3Blbl9mcykKKwl4KDAsCQkJCW9wdGlvbl9uZWVkc19vcGVuX2ZzKQkJCVwKKwl4
-KEVJTlZBTCwJCQlzdHJpcGVfY3N1bV9ncmFudWxhcml0eV9iaXRzX3Rvb19iaWcpCiAKIGVu
-dW0gYmNoX2VycmNvZGUgewogCUJDSF9FUlJfU1RBUlQJCT0gMjA0OCwKLS0gCjIuNDMuMAoK
+[1] https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
+[2] https://lore.kernel.org/r/ZwUkJEtwIpUA4qMz@infradead.org
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+v1: https://lore.kernel.org/r/20241008095606.990466-1-hsiangkao@linux.alibaba.com
+change since v1:
+ - add get_tree_bdev_flags() suggested by Christoph.
 
+ fs/super.c                 | 26 ++++++++++++++++++++------
+ include/linux/fs_context.h |  6 ++++++
+ 2 files changed, 26 insertions(+), 6 deletions(-)
 
---------------NhoYU3pvcmbBYB5mVuOO0lVU--
+diff --git a/fs/super.c b/fs/super.c
+index 1db230432960..c9c7223bc2a2 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1596,13 +1596,14 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ EXPORT_SYMBOL_GPL(setup_bdev_super);
+ 
+ /**
+- * get_tree_bdev - Get a superblock based on a single block device
++ * get_tree_bdev_flags - Get a superblock based on a single block device
+  * @fc: The filesystem context holding the parameters
+  * @fill_super: Helper to initialise a new superblock
++ * @flags: GET_TREE_BDEV_* flags
+  */
+-int get_tree_bdev(struct fs_context *fc,
+-		int (*fill_super)(struct super_block *,
+-				  struct fs_context *))
++int get_tree_bdev_flags(struct fs_context *fc,
++		int (*fill_super)(struct super_block *sb,
++				  struct fs_context *fc), unsigned int flags)
+ {
+ 	struct super_block *s;
+ 	int error = 0;
+@@ -1613,10 +1614,10 @@ int get_tree_bdev(struct fs_context *fc,
+ 
+ 	error = lookup_bdev(fc->source, &dev);
+ 	if (error) {
+-		errorf(fc, "%s: Can't lookup blockdev", fc->source);
++		if (!(flags & GET_TREE_BDEV_QUIET_LOOKUP))
++			errorf(fc, "%s: Can't lookup blockdev", fc->source);
+ 		return error;
+ 	}
+-
+ 	fc->sb_flags |= SB_NOSEC;
+ 	s = sget_dev(fc, dev);
+ 	if (IS_ERR(s))
+@@ -1644,6 +1645,19 @@ int get_tree_bdev(struct fs_context *fc,
+ 	fc->root = dget(s->s_root);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(get_tree_bdev_flags);
++
++/**
++ * get_tree_bdev - Get a superblock based on a single block device
++ * @fc: The filesystem context holding the parameters
++ * @fill_super: Helper to initialise a new superblock
++ */
++int get_tree_bdev(struct fs_context *fc,
++		int (*fill_super)(struct super_block *,
++				  struct fs_context *))
++{
++	return get_tree_bdev_flags(fc, fill_super, 0);
++}
+ EXPORT_SYMBOL(get_tree_bdev);
+ 
+ static int test_bdev_super(struct super_block *s, void *data)
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index c13e99cbbf81..4b4bfef6f053 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -160,6 +160,12 @@ extern int get_tree_keyed(struct fs_context *fc,
+ 
+ int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 		struct fs_context *fc);
++
++#define GET_TREE_BDEV_QUIET_LOOKUP		0x0001
++int get_tree_bdev_flags(struct fs_context *fc,
++		int (*fill_super)(struct super_block *sb,
++				  struct fs_context *fc), unsigned int flags);
++
+ extern int get_tree_bdev(struct fs_context *fc,
+ 			       int (*fill_super)(struct super_block *sb,
+ 						 struct fs_context *fc));
+-- 
+2.43.5
 
 
