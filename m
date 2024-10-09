@@ -1,180 +1,135 @@
-Return-Path: <linux-kernel+bounces-356677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C72C996523
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AF599652F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96FA21F25E72
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:22:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8211B281F5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94272191F95;
-	Wed,  9 Oct 2024 09:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50764192D97;
+	Wed,  9 Oct 2024 09:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PxCxKnGs"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AUB20Dct"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9389B18DF9B
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0939189520;
+	Wed,  9 Oct 2024 09:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465595; cv=none; b=GokAMSTQjulKhVdLLZKKCckF10QlRWUroEGSH4JrV8pqLBqVWtVzz9GT/SzIhaM+G1R2wdf+R0N7Y56A3fSCm8gt61ZnOPXcSkjVGFRjBmQSkH5e4orDJJzd6wr6Iyo0Zcu0BlQjaS+6oUQNb0Hk7g9geAZEfTCTJEeroKjrM8s=
+	t=1728465614; cv=none; b=MRl1FiDGONufcdvo6Ci/PMv7ZyVjVaTA+4ScYoIaiJmKViaR1oWZGTntH05/Wr/ywz6KkNMFPnjUk+ypE7sYwAX0/Ft5XeJJwgc44gmnAXPJUBum21Tfv97h9H3652FbSHbofpLLYQm4CVR6kU2edFvgIuFuirQIafAanOj8KxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465595; c=relaxed/simple;
-	bh=uuGWxYey7yHQCI4vU9zbNCU9qHQf1LbNNRlr2LUqzxo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kJDqg06s9Z+8BSlpA7JV+FqsqueLjKxCfAJsBD8GqNWm98jUNM/Ql6kHwxCrAdj/E1dWINYIiaBuOnUd6LtVMn5XP4Gz1XPwoex+Iqbn4xxMwurb2TzbF+T9Bmno5zLMqsoEW8JNeOZdwXTAVryulNk3yKyOlPU6CgCVl6jMCUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PxCxKnGs; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb806623eso62305265e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 02:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728465590; x=1729070390; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ioyVQRlmSykkPScNPBSOZR4crBNY+9Ixx2TFHYTli/k=;
-        b=PxCxKnGsGsyNr767qsbwxOovJN1orJUeIv4FY/kmUGQXkWMfLWR0m/kNddTsB+WFta
-         SJHMTrKqOXmEELYSk/tFneYw2tZwHLXVensxxJENrgI1O4Lory99DYm+icV27ofZTuzw
-         XosrPezouJrBdKJig2YWO7UIEp84qn5Y1Rc9hufNTImfFqZb0L6UUzOOy5CKXd5WGtY8
-         3S0lNh36FjFieTfg+u3q1jAMRAt50Y5R9P4fWuS419sXHnNqR30uBjGAFyT1j21fOS04
-         DuKzbwEZeickLw66HVHI8N3c5OfC56YqhPHKxS1nK8PIUqR2CvX6wxhCkZCfvjLs0Zud
-         L2RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728465590; x=1729070390;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ioyVQRlmSykkPScNPBSOZR4crBNY+9Ixx2TFHYTli/k=;
-        b=YzWDYzYqCtRv7nVBVYdboPEjfBnSpggxhHZ/khuh7ftDwZ1Cnz931in255fSmiV1bM
-         XGOAL6dQ/Hrf1dwwq7cV6QJyU6nf09M4eDoo7sWtk+7sTWSCAbQUMtUo6weTCxP75k7g
-         +en8c8k7X89wDW2QrK2TqOPMIjTFTyBZPgbDRoqpljgFvI68LxKb0OHZaUwu8bXRQMq4
-         oUNRdOnWmMNTcA34zpgmBlE5xdvvYXrUP1ytsWZAGBsvsfLB89SQNA+kW+VpAowJKvAq
-         to/LFGSwKKjhsg0nAWbMkpPqdp7F39PQZEC/WPKZChbLZMe8DqodbK7SwOQuP928kPsn
-         hTCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsGQXpFjwyIWR40T/iyv8NtA6vURDLFZCmFwgkSvSaoCEnY1w4J/0rCpoCbaydViQmadEKxsDMBGOb1bU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE42RKaqRZC5kjoSKTpBWwSCAfO0f2be5A6SrxPJcLz0szRP1S
-	csx6H8XdXanzNhK4B/z3VLqXaz6zCXjvcuPFkb5WnCoJqsvMenMa23f7vIixje0=
-X-Google-Smtp-Source: AGHT+IFzDIk1E+M5DMdcof+CZ5T2iitzbZ1ELPmRkmV0B9ZeNrzjpuKdiAku59JhRvy8QaHla4A/Dw==
-X-Received: by 2002:a05:600c:45d1:b0:42c:bfd6:9d4d with SMTP id 5b1f17b1804b1-430ccef5ff5mr13596205e9.2.1728465589561;
-        Wed, 09 Oct 2024 02:19:49 -0700 (PDT)
-Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d59b1207sm13892765e9.31.2024.10.09.02.19.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 02:19:49 -0700 (PDT)
-From: Guillaume Stols <gstols@baylibre.com>
-Date: Wed, 09 Oct 2024 09:19:39 +0000
-Subject: [PATCH v4 8/8] iio: adc: ad7606: Disable PWM usage for non backend
- version
+	s=arc-20240116; t=1728465614; c=relaxed/simple;
+	bh=bAMqCfrwaXqFtyx4AvFX7ZFSSTTt4lqyv0dvCuSH7Tc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAU4M22QIm6Uo8nrpm5Un/lRBUYUakA5hUZkjeNBBlx2j0lTA1nYfNOpCssvy+rgZCwt3TgAW6ZRNqwGjneRfc/J+Ag1DmLcmtvNUrfBiJa+RPEGjBBpFTyKrAyVWUoVCKaaEWQK8tDiC48o373YCfQ9DF4jKMuegVsc86eHT0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=AUB20Dct; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=H2DwZUbEHckuGa0hfYPz82REyIpT7y3SCXZ306JtGkc=; b=AUB20DcteP860IY8sIhZEjo0kT
+	2SpZuG6aF/WvAMB9+18aLTw1/5nTptJoqzrUHYFtam9uqW3ybNRCxd098Li3wp2vE+FwiJfc+WeJu
+	dfNJso8EKnE1OoJhLIDFxUb7Nh26UeSOHJEI2xP7JGMGmWfEk0glgDdz8PaOTKt5aKHupzzGwIW3o
+	Y+HLfMYAZGWbBGsupVnW9BavfdOku/FE6cb9kM8Z/A+LioK9smPtaaa8Tk5A/1XyEPeWi3o2VfLgn
+	CXjeoXlZJm41Je/rgkE62zUtF/a/1v9Dqv/DenlgaRTiOS7mBWgLDfvj74tAiwEqQ3ZNl9axBo/oa
+	kzp9Dwaw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49396)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sySrO-0000Gf-09;
+	Wed, 09 Oct 2024 10:19:57 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sySrK-0006Ar-34;
+	Wed, 09 Oct 2024 10:19:55 +0100
+Date: Wed, 9 Oct 2024 10:19:54 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	git@amd.com
+Subject: Re: [RFC PATCH net-next 4/5] net: macb: Configure High Speed Mac for
+ given speed.
+Message-ID: <ZwZKumS3IEy54Jsk@shell.armlinux.org.uk>
+References: <20241009053946.3198805-1-vineeth.karumanchi@amd.com>
+ <20241009053946.3198805-5-vineeth.karumanchi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241009-ad7606_add_iio_backend_support-v4-8-6971a8c0f1d5@baylibre.com>
-References: <20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
-In-Reply-To: <20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
- aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Guillaume Stols <gstols@baylibre.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728465581; l=2292;
- i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=uuGWxYey7yHQCI4vU9zbNCU9qHQf1LbNNRlr2LUqzxo=;
- b=XVLRBxAuTkn7joKpnvjCLRf6ITZ/+5ljsYb4AA/VxTsiKxFajOG4ywCjBEqxuqc7N5Gj84iTV
- CILkNPzUc7wC3qLzFwcRQMmXbUilFKxPRUp+MLmez4at9Rdbv+KX5sW
-X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
- pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009053946.3198805-5-vineeth.karumanchi@amd.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Since the pwm was introduced before backend, there was a mock use, with
-a GPIO emulation. Now that iio backend is introduced, the mock use can
-be removed.
+On Wed, Oct 09, 2024 at 11:09:45AM +0530, Vineeth Karumanchi wrote:
+> HS Mac configuration steps:
+> - Configure speed and serdes rate bits of USX_CONTROL register from
+>   user specified speed in the device-tree.
+> - Enable HS Mac for 5G and 10G speeds.
+> - Reset RX receive path to achieve USX block lock for the
+>   configured serdes rate.
+> - Wait for USX block lock synchronization.
+> 
+> Move the initialization instances to macb_usx_pcs_link_up().
 
-Signed-off-by: Guillaume Stols <gstols@baylibre.com>
----
- drivers/iio/adc/ad7606.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+It only partly moves stuff there, creating what I can only call a mess
+which probably doesn't work correctly.
 
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 1313b5cbb0aa..a117206e5256 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -473,8 +473,6 @@ static int ad7606_pwm_set_high(struct ad7606_state *st)
- 	cnvst_pwm_state.duty_cycle = cnvst_pwm_state.period;
- 
- 	ret = pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
--	/* sleep 2 µS to let finish the current pulse */
--	fsleep(2);
- 
- 	return ret;
- }
-@@ -492,8 +490,6 @@ static int ad7606_pwm_set_low(struct ad7606_state *st)
- 	cnvst_pwm_state.duty_cycle = 0;
- 
- 	ret = pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
--	/* sleep 2 µS to let finish the current pulse */
--	fsleep(2);
- 
- 	return ret;
- }
-@@ -576,7 +572,6 @@ static irqreturn_t ad7606_trigger_handler(int irq, void *p)
- 	iio_trigger_notify_done(indio_dev->trig);
- 	/* The rising edge of the CONVST signal starts a new conversion. */
- 	gpiod_set_value(st->gpio_convst, 1);
--	ad7606_pwm_set_high(st);
- 
- 	return IRQ_HANDLED;
- }
-@@ -899,7 +894,6 @@ static int ad7606_buffer_postenable(struct iio_dev *indio_dev)
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 
- 	gpiod_set_value(st->gpio_convst, 1);
--	ad7606_pwm_set_high(st);
- 
- 	return 0;
- }
-@@ -909,7 +903,6 @@ static int ad7606_buffer_predisable(struct iio_dev *indio_dev)
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 
- 	gpiod_set_value(st->gpio_convst, 0);
--	ad7606_pwm_set_low(st);
- 
- 	return 0;
- }
-@@ -1204,6 +1197,12 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 
- 		indio_dev->setup_ops = &ad7606_pwm_buffer_ops;
- 	} else {
-+
-+		/* Reserve the PWM use only for backend (force gpio_convst definition) */
-+		if (!st->gpio_convst)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "No backend, connect convst to a GPIO");
-+
- 		init_completion(&st->completion);
- 		st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
- 						  indio_dev->name,
+Please consider the MAC and PCS as two separate boxes - register
+settings controlled in one box should not be touched by the other box.
+
+For example, macb_mac_config() now does this:
+
+        old_ncr = ncr = macb_or_gem_readl(bp, NCR);
+...
+        } else if (macb_is_gem(bp)) {
+...
+                ncr &= ~GEM_BIT(ENABLE_HS_MAC);
+...
+        if (old_ncr ^ ncr)
+                macb_or_gem_writel(bp, NCR, ncr);
+
+meanwhile:
+
+> @@ -564,14 +565,59 @@ static void macb_usx_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
+>  				 int duplex)
+>  {
+>  	struct macb *bp = container_of(pcs, struct macb, phylink_usx_pcs);
+...
+> +	/* Enable HS MAC for high speeds */
+> +	if (hs_mac) {
+> +		config = macb_or_gem_readl(bp, NCR);
+> +		config |= GEM_BIT(ENABLE_HS_MAC);
+> +		macb_or_gem_writel(bp, NCR, config);
+> +	}
+
+Arguably, the time that this would happen is when the interface mode
+changes which would cause a full reconfiguration and thus both of
+these functions will be called, but it's not easy to follow that's
+what is going on here.
+
+It also looks like you're messing with MAC registers in the PCS code,
+setting the MAC speed there. Are the PCS and MAC so integrated together
+that abstracting the PCS into its own separate code block leads to
+problems?
 
 -- 
-2.34.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
