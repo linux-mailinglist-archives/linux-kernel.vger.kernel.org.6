@@ -1,81 +1,126 @@
-Return-Path: <linux-kernel+bounces-356641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331DA99647A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:10:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13D399647B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4562826B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:10:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDFE1C249E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73230189F55;
-	Wed,  9 Oct 2024 09:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="boitkIsU"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DC7189F55;
+	Wed,  9 Oct 2024 09:10:20 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A1D137C2A;
-	Wed,  9 Oct 2024 09:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDDE189915;
+	Wed,  9 Oct 2024 09:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464999; cv=none; b=a3mWVbduqIiThQ4E1LPaPq/gkL2gQGAQMPHhRlxsx2abRuzaVOLBVYk/OezbZ3QsjMVurmhbNEX/dLkj/9WaR61tjjnCp+XfZAJWC6XgH7Wtsfwr0dh23BMvxNBnHNCxZWR1nVEvVD/e7teVySBiucY8qVnnFH6pYJo0LFdFc80=
+	t=1728465020; cv=none; b=rc0AiT9biaVsSpiIFMofrL8rNHSXsWaL7E+k8qFQ7qDo7KIdK9JzczprwREJLXppuMC1gNBduAwpeuz+PMx4FJHoie4BTio7Six1Brac309ek2coq+7w6HFVu/WzdLpcCytywtXWbVz7WuaoYnurRMdpPFAIc5XyfqMO7sad7Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464999; c=relaxed/simple;
-	bh=UYYX84jQ+gv/2uzA96eLKpa+x32MLyAZ5N+5Ip7be8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+QPRV1ci1AS7ip/IMPUD5K5VB2MCFk7SWiNj22nfzMeUjdg6rS1uR6smLh4DZb0icuAnFbJEDtJq4QAXDPVGxJA5A6tsSfxicFHybAJfqJYzl8uBiiqEbu0OuXwhkwQASH5TErwpW+mldY+Jq18Y8C08JqObyCQAw+WR9GU6bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=boitkIsU; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UYYX84jQ+gv/2uzA96eLKpa+x32MLyAZ5N+5Ip7be8A=; b=boitkIsUkMJz/rUPnC/ys1JRQx
-	PZlTqMxHMb0B56NDC1et5dMlkBOEPzw6bYoWCrvk1vNA53HW+O27sHSrE131cMyzw4/UWtkmQp4GM
-	0X2vf09y2omwzS6roEefLTZGa9gDRTKKovzolAj144KRQ/QkL01VuKLGmAd0x+5Pbmw9qJ80DY4YO
-	+42+XU89CjQF0tgSyh2fs2crRLc6xESjUPqhSRkdqQT9ybqhmLGWoe02Lv0f+6/EL9MkTV2zJbQr2
-	D/NR/8lUb9rqAV5C5aHzLKacFAjhi/+ab4bOGspfn4f2n8TzIKsjV1esBfzVTwswGZI3AI9eqNYBG
-	XwwlKsqg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1syShb-00000008bs3-137p;
-	Wed, 09 Oct 2024 09:09:51 +0000
-Date: Wed, 9 Oct 2024 02:09:51 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: xavier_qy@163.com, longman@redhat.com, lizefan.x@bytedance.com,
-	tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
-	akpm@linux-foundation.org, jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Enhance union-find with KUnit tests and
- optimization improvements
-Message-ID: <ZwZIXxQLyJUL_nOW@infradead.org>
-References: <20241007152833.2282199-1-visitorckw@gmail.com>
+	s=arc-20240116; t=1728465020; c=relaxed/simple;
+	bh=wCZMxThgPc7BMUbNg3JDEIFgaUekalFxdmN0JEp/f5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XAJaHU9k3DCvyJFztIwlr72SEBFMqYoTDZ9BjLcflu881a9mq0KhIOcqkny8ne6tr/yYN0aFmflQ1p36mvVtYZg1Twr07PEHq1zzc7xFpGxT6IXBVNDJWBiMWiSrqCIFpx700KWUad0bRcJFsJsd1t/1q8cq3QdLIxNg2d7e1Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XNn740HC3z1HKbr;
+	Wed,  9 Oct 2024 17:06:08 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id AE58E1A0188;
+	Wed,  9 Oct 2024 17:10:13 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 9 Oct 2024 17:10:13 +0800
+Message-ID: <b1c2154d-189a-43fa-84ff-a0d96787ff60@huawei.com>
+Date: Wed, 9 Oct 2024 17:10:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007152833.2282199-1-visitorckw@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] bcachefs: Fix shift-out-of-bounds in
+ bch2_stripe_to_text
+To: Zhao Mengmeng <zhaomzhao@126.com>, <kent.overstreet@linux.dev>,
+	<zhaomengmeng@kylinos.cn>
+CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241009054325.438556-1-zhaomzhao@126.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20241009054325.438556-1-zhaomzhao@126.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Mon, Oct 07, 2024 at 11:28:27PM +0800, Kuan-Wei Chiu wrote:
-> This patch series adds KUnit tests for the union-find implementation
-> and optimizes the path compression in the uf_find() function to achieve
-> a lower tree height and improved efficiency. Additionally, it modifies
-> uf_union() to return a boolean value indicating whether a merge
-> occurred, enhancing the process of calculating the number of groups in
-> the cgroup cpuset.
 
-Given that this fairly special union find code is obly used in the
-cpuset code, please move the code there rather adding more exports.
-Even as-is it is bloating every kernel build even without cgroups
-for no good reason.
 
+On 2024/10/9 13:43, Zhao Mengmeng wrote:
+> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+> 
+> syzbot report a shift-out-of-bounds issue:
+> ------------[ cut here ]------------
+> UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
+> shift exponent 108 is too large for 32-bit type 'unsigned int'
+> ----
+> Here s.csum_granularity_bits = 108, so shift is impossible for unsigned
+> int. To fix, add a check in bch2_stripe_validate() to bail out, it has
+> same checking logic with ec_stripe_key_init().
+> 
+> Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+> Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+> Suggested-by: Hongbo Li <lihongbo22@huawei.com>
+> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+> ---
+>   fs/bcachefs/ec.c      | 6 ++++++
+>   fs/bcachefs/errcode.h | 3 ++-
+>   2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
+> index 141a4c63142f..bc5ff1331c6f 100644
+> --- a/fs/bcachefs/ec.c
+> +++ b/fs/bcachefs/ec.c
+> @@ -113,6 +113,12 @@ int bch2_stripe_validate(struct bch_fs *c, struct bkey_s_c k,
+>   	const struct bch_stripe *s = bkey_s_c_to_stripe(k).v;
+>   	int ret = 0;
+>   
+> +	if (s->csum_granularity_bits >= ilog2(le16_to_cpu(s->sectors))) {
+
+csum_granularity_bits should do the left shift.
+
+> +		bch_err_ratelimited(c, "stripe csum gran bits %u too big",
+> +				    s->csum_granularity_bits);
+> +		return -BCH_ERR_stripe_csum_granularity_bits_too_big;
+> +	}
+> +
+>   	bkey_fsck_err_on(bkey_eq(k.k->p, POS_MIN) ||
+>   			 bpos_gt(k.k->p, POS(0, U32_MAX)),
+>   			 c, stripe_pos_bad,
+> diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
+> index 742dcdd3e5d7..14ba6bc7a029 100644
+> --- a/fs/bcachefs/errcode.h
+> +++ b/fs/bcachefs/errcode.h
+> @@ -258,7 +258,8 @@
+>   	x(BCH_ERR_nopromote,		nopromote_no_writes)			\
+>   	x(BCH_ERR_nopromote,		nopromote_enomem)			\
+>   	x(0,				invalid_snapshot_node)			\
+> -	x(0,				option_needs_open_fs)
+> +	x(0,				option_needs_open_fs)			\
+There are some changes, this should rebase on the latest tree.
+
+Thanks,
+Hongbo
+> +	x(EINVAL,			stripe_csum_granularity_bits_too_big)
+>   
+>   enum bch_errcode {
+>   	BCH_ERR_START		= 2048,
 
