@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-357926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7FD9977E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:51:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C479977EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6DE4B23430
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228301C226D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5E41E2842;
-	Wed,  9 Oct 2024 21:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1464F1E32D3;
+	Wed,  9 Oct 2024 21:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZKN6tGL"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duRES0Ng"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7096178CCA;
-	Wed,  9 Oct 2024 21:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13778193092;
+	Wed,  9 Oct 2024 21:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510671; cv=none; b=HCvjwafYO/LZk2nJ/M7fp0Lm3TfRSTM9aE3ihLbyZrL+OiD2yCLNe82ItGSQzhA1HQtfyhVn9Xaxn+ujWzIuI00N3ZMmILN3SVcJVEnzUmy45+MyJmNxkQJQI06FdnD9/SDnYZneQx6Fuq+P4Zi/ldXen/LjLo1ujCM9uLtrKqI=
+	t=1728510672; cv=none; b=bjraNklBhNLu//LP0LKqzY4pJEAxT5KDccBWnuJZyazaAuYAmsxpSscjN/u2HWNJ9VnCWPjREGssLcmRufsNOGLB5XlOaYzUaJ09J47EE0rUJrdSXJ4vvQKikROOnsTnYU+KUv1S3pzOvIw9w5wnn45AUDEEQRomfB/tIuGUl0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510671; c=relaxed/simple;
-	bh=Algu2qaw1YIGO5BHSn8dvR4eoY6Acvkmc3OtMZbqGBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bDwh7SR3xYyv1EzujUWVsvM7hfynojhere6CeE1FblTi7WBhdROX5Ugkk7Q1fPq4fh4HzHnalaF3Ed7T2FbEpPeLq61LPMRe0zPaUpyYgiz2pduG8F3aFYmuzZXU3IILENU9IxIQNyRu/LHqG95NSLQ3AMoErhdceQzf2gGNc+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZKN6tGL; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1728510672; c=relaxed/simple;
+	bh=B6je7jiASQma6mnF5MKfSYj3VVukHkDMhDLnpofeCsg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ae2iG3WNOBHpcY/XoOVbOpcpLNVjxggcbYAGJ+xScBlEcgfhxu8uzMMFdM+bXheh5NyTMd3R0jldqt3C4dik1ot7HtKlZqU+QsGiHXF7r0eQckKtkeurchdZnhbUGlO9KGCaVhx5Ye7kOFQsK4rHUDsw1HG8mdOL6kDLczS0Mi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duRES0Ng; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db238d07b3so204621a12.2;
-        Wed, 09 Oct 2024 14:51:09 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e15fe56c9so239737b3a.3;
+        Wed, 09 Oct 2024 14:51:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728510669; x=1729115469; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xq7cT7iOuSPhHk28fKsdjOBJPWkivslMrpeiMk+Tm5U=;
-        b=RZKN6tGLNM5JKTQOQw0TAUWSlKkeeJYCyuQV+vsuWEdbHZImKxeoZjTgBXZpverbcs
-         eL49fjl56SHgzoLjybJB8PEr5U1LlIN1aLUjfUJ9+3JuXI3TDVql0ASC/f3xHfbKgukL
-         cFlBM8MhCaisxkQLHGssADR3VC9pDVLF3pqNH7pEacS5JXzumcUM9GGm2IkLLoswZ0sq
-         /8asnY8qgDbPF+FrizjUFCapfNwTECCQu3GH/U2j11MCsLVnTgBCpxwY6JWM23kciAGH
-         J0EAIKuDmZVWt6nR7aF2l8J5Gz0SBtK6i2OoNpnVr/2FMsEfvpHNmURdx4JJKldmIH/U
-         qe9g==
+        d=gmail.com; s=20230601; t=1728510670; x=1729115470; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ytdNCpY3ywuE2VnDeLP5mnfyE1FOZ+8OMXSn6PncjqA=;
+        b=duRES0Ng3euFfrubIL4fjQmxdtZmH0tXLg2zXT/HrAQLmhlRR3C2LPSsiSYesM2bfW
+         j+0oNyTreQ1O1+gOfkSWE2sX+tPSblZo9VG1icv3GzVjiVLL+E37GlOVWSWQ7kZinlRW
+         H4HnTQuCFaKNa6lO7nRVTCU2OTZOrVaGr9zGtTq1Lxe5Ks+us0ImsVl+NMchsjYob0XQ
+         C6iBJ9r7Ud58AyITtTgInC3CGoU7DTXDwqbR78E0ax+pIHDq+FFMXc5Yl0/cJ1j+HoX/
+         BLHZJEMz+p1AehXQZt6fQXw2BQdd3Ccb5lOeUbbyQAQkgLCAHgRSZE+IkWXOJngklkuS
+         q94w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510669; x=1729115469;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xq7cT7iOuSPhHk28fKsdjOBJPWkivslMrpeiMk+Tm5U=;
-        b=fWx3le4HpgL5VlSFj8COimytL8JsAt/2z1/efb9mFe0NEq8/3wuK2EnrcCZWbigHHg
-         F2WsJSdik+4+oH6rR6mYvTDKohpgl6NmnRTzn8LuR3nnb7Q26Ua1kfN/PkEw3AYUVtCS
-         5CDAYS4nHoOifhfS8rr23ejtte3vp9GUoNTLZMgzw0o+CPMvhxF+/reVjJKK71nGTpN1
-         Q0DtDiOfBmIoTQoUbWWtcCOLQwb8kgL2dHLDdLpMIhGdgqjl+04pcy1/jvLzpr+OzQ/A
-         1ZWYZDy3aneYYySdVW4CEjlohFalk3/WM/VAN+VlMMUc9sYSszcdV+HGFxBedRo0UUV1
-         BQAg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/GWMtkhN3xuFsdRcAoC9y0A+i6qmEgZ/tt6isAY1NG/2yTXee2OVgNW8AEhGzzJZAg0VzVvrisV/T@vger.kernel.org, AJvYcCX2pOS20zSahizJtbwalJcBSTcodXsFToGJWCd9tIDCLQcV73dO0oW/0zOn2ucmve+scvw4JGLE8RQVIKhh@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUh3hfT5M3LQC4ADitLpZzG2BE5o0vQGBl591tpaolRCwf45Xe
-	FmNgpMyzAorxwZsZT0XdeRyf2FOjiHkEouv0TrMIkt5TvZQKhnh4C9fSoSqCyzk=
-X-Google-Smtp-Source: AGHT+IGOd4+7Ydh13M6mwUI8U2txnoUWdoFVcnuB03ILxF9pWQHrX1mSLua7NbnryjYw7cmWaWYl8w==
-X-Received: by 2002:a05:6a21:2d0b:b0:1d4:e638:d066 with SMTP id adf61e73a8af0-1d8a3be1410mr7349577637.6.1728510668910;
-        Wed, 09 Oct 2024 14:51:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728510670; x=1729115470;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ytdNCpY3ywuE2VnDeLP5mnfyE1FOZ+8OMXSn6PncjqA=;
+        b=obPOGyySwMgca6CYvR/yw2DUWEAc/foj8y/a7KdQ8OqYWWA7oiBOxFu0SkYev5p8iZ
+         gkRBOMmwa4ugj69c1udkmKJ7GZjVrddYpAjtJDHJR0kWbgFZMj7mAV3CVdRre0tv7xUa
+         nVrUsZan1vNU4cFBXWXqx3y09o70I2fSBuvsWnv/SAluzeRVJm5OOibXE1lXUbloR5p6
+         kaolO2e3zFg8rnHvVffHPpw6AiW6xjLZL62vchWeCbPu+QKoyGZl4XIklfGdj1IwBlnN
+         7W7xsbiDxrOJw2Snvf7dOWh5z8jORF+6QxqgWq4xMUHte9rToNHJpnSHVfIppFCHCAzD
+         kJDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMVy1g1jpCw46ZegJQLUwJhCmoOUsdIN5seUMPdQuCQARYLj5nSRvVQJBwjbWkKMd2SWWYHvz6WwED@vger.kernel.org, AJvYcCWaeZkBNDaUstjFAANs0xUpwC2EzoNPSUxG27LPyt9BcsEQWGFJtrCFyvf1hmypFyosL2j2dTjY3WAGv+eu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydd9j9Xen0tI80LBvd/f9PARETQWwttV+rYaW4aDY6rTNgeGg9
+	GQIKSvkmRN/xuvWLib6his3WFCtMUrYvEoeY2g+z3eIT6b97agpX
+X-Google-Smtp-Source: AGHT+IGAb8YE10SWaJg6VOPcMZnsWnq/ERhnLIaiMtgIwviert0u7YtGlBsmxO3ymE0702ihsbZdrQ==
+X-Received: by 2002:a05:6a21:6b0a:b0:1cf:359b:1a3e with SMTP id adf61e73a8af0-1d8ad83cd67mr2252199637.32.1728510670257;
+        Wed, 09 Oct 2024 14:51:10 -0700 (PDT)
 Received: from luna.turtle.lan ([2601:1c2:c184:dc00::315])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833a95sm7651847a12.52.2024.10.09.14.51.07
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833a95sm7651847a12.52.2024.10.09.14.51.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:51:08 -0700 (PDT)
+        Wed, 09 Oct 2024 14:51:09 -0700 (PDT)
 From: Sam Edwards <cfsworks@gmail.com>
 X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -79,10 +81,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH 0/3] Resolve BCMBCA DT validation errors
-Date: Wed,  9 Oct 2024 14:50:43 -0700
-Message-ID: <20241009215046.1449389-1-CFSworks@gmail.com>
+Subject: [PATCH 1/3] dt-bindings: mtd: Relax BCM4908 partition schema
+Date: Wed,  9 Oct 2024 14:50:44 -0700
+Message-ID: <20241009215046.1449389-2-CFSworks@gmail.com>
 X-Mailer: git-send-email 2.44.2
+In-Reply-To: <20241009215046.1449389-1-CFSworks@gmail.com>
+References: <20241009215046.1449389-1-CFSworks@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,38 +95,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Greetings DT schema folks,
+The BCM4908 partition "parser" is really just a fixed partitions table,
+with a special partition compatible (`brcm,bcm4908-firmware`) that
+automatically labels the partition as "firmware" or "backup" depending
+on what CFE is communicating as the selected active partition.
 
-This is a small changeset to resolve DT validation errors in some files located
-within arm64/*/broadcom/bcmbca/. It consists of a relaxation of the BCM4908
-partitioning schema, followed by two fixes to board-level DTs in order to pass
-validation fully.
+The bcm4908-partitions schema is currently too restrictive, requiring
+that all child nodes use this special compatible or none at all. This
+not only contracits what is allowed by the "parser" but also causes
+warnings for an existing file ("bcm4908-asus-gt-ac5300.dts").
 
-The motivation for this changeset was to resolve validation errors flagged by
-Rob's bot when I tried to introduce a new DT to this directory [1].
+Modify the schema to be strict only for child partitions that use the
+-firmware compatible. Also update the child name regex to agree with
+fixed-partitions, so that these differences apply consistently.
 
-Happy spooky month,
-Sam
-
-[1]: https://lore.kernel.org/linux-devicetree/172808887840.121596.11205114990341820307.robh@kernel.org/
-
-COMMITTER NOTE: Email being what it is, the capitalization of my email address
-is apparently getting discarded. If it is important that the author email
-address have identical capitalization to the Signed-off-by, please explain why
-so I can investigate why this is happening and/or get these patches to you in a
-desired format.
-
-Sam Edwards (3):
-  dt-bindings: mtd: Relax BCM4908 partition schema
-  arm64: dts: broadcom: bcmbca: bcm4908: Fix Asus GT-AC5300's cferom
-    partition
-  arm64: dts: broadcom: bcmbca: bcm4908: Fix Netgear R8000P partitioning
-
+Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+---
  .../mtd/partitions/brcm,bcm4908-partitions.yaml | 17 +++++++++++------
- .../broadcom/bcmbca/bcm4906-netgear-r8000p.dts  |  4 +---
- .../broadcom/bcmbca/bcm4908-asus-gt-ac5300.dts  | 12 +++++-------
- 3 files changed, 17 insertions(+), 16 deletions(-)
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml
+index 94f0742b375c..aed37922a5fc 100644
+--- a/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml
++++ b/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml
+@@ -30,12 +30,17 @@ properties:
+     enum: [ 1, 2 ]
+ 
+ patternProperties:
+-  "^partition@[0-9a-f]+$":
+-    $ref: partition.yaml#
+-    properties:
+-      compatible:
+-        const: brcm,bcm4908-firmware
+-    unevaluatedProperties: false
++  "^partition(-.+|@[0-9a-f]+)$":
++    type: object
++    if:
++      properties:
++        compatible:
++          const: brcm,bcm4908-firmware
++    then:
++      $ref: partition.yaml#
++      properties:
++        compatible: true
++      unevaluatedProperties: false
+ 
+ required:
+   - "#address-cells"
 -- 
 2.44.2
 
