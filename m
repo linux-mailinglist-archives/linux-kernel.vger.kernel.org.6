@@ -1,125 +1,227 @@
-Return-Path: <linux-kernel+bounces-356752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497F2996629
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:56:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEA9996628
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55491F270EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19797289F84
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9A8190045;
-	Wed,  9 Oct 2024 09:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="RhIZ9UYB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OOivAaDK"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F4F18C329
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75E418E030;
+	Wed,  9 Oct 2024 09:54:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5177218BB9E;
+	Wed,  9 Oct 2024 09:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467696; cv=none; b=NMJK7z+qzkYqNidHeQ880NGUz0a4vkqsrsIKY62WHuH+5lGZ8YeekUj5ovGut0iZB3vxjSdUdf/UA4UGrE0C6K0fO3jfc7y1quyvlFMTAHcl0Onbunutc+EVxUY0+cntPAzXt+o3D3H6eCpFQvykLXYCUUSgjmF/l+toClei/Zk=
+	t=1728467694; cv=none; b=aVNFz1eR9OvSGUKEutgMvobDA9cDW4fPDP5HBoMG+xi/jo3ahhXFHRkgB9pjAokVrk6/IUkaO+Y1MWOvXLiQmcomFdvDfdhhD0Wms+c06/4N1x2r7o4s/IUUiGaCOMJvvv6XcbY7pccEhmJGKo8Gsrqxfbbpc1R7/UC7FQo/92I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467696; c=relaxed/simple;
-	bh=eKsgermwDrQGhVumFgyUIe7QcPRxeN37V7XvT71396g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFceoPoCD5JLskKHcoXyxZjLi8zmc7FA4rWj3+jxdZahZu1r9eg0tTWnC33nxguw7doi1dlGshOM2g88qAuD8lzPdg3J5hiarDAFrDEnaWJaQ9LWLEdV/tuVSFstqdxlOT7QHsfMQuVKyB9TwgjqkdGF83GsneTZWb+QY97BvXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=RhIZ9UYB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OOivAaDK; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id E853F138027C;
-	Wed,  9 Oct 2024 05:54:52 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 09 Oct 2024 05:54:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1728467692; x=
-	1728554092; bh=/zLzRuSs1YnET6OT3LUnDQJVQHIXJWvli8llGfyJ3fg=; b=R
-	hIZ9UYBW4hOE0sycWqzG7xLjwCOINNXT4nv96wgjxXXMc1JnrRi0P29DTV2DO6Rf
-	Cuw6eQ95XotIj7VXpG9h9rVLiuNNVtqecks4YmsO6fXNTKf7GX+0rjgEx2ICgj+G
-	FRoBoIHkNi+zcF/UhfI0xZK8rpXhGvcf4tmQVNDBgmtZzSaoCQicIfqLx+VIgyXU
-	rfJytDsigeiGLhmyZCUU+pjKH7q7aD9by4WtoK5WcVOETS+HXt0pKy1P0lR43IlM
-	JMFjcdiypi75931LnXzSkQYJOrz0WcgQbNgTsYicPplH6fiZZjmuAskeya6O4wZ8
-	PQz95arBr+JhcANaPkv0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728467692; x=1728554092; bh=/zLzRuSs1YnET6OT3LUnDQJVQHIX
-	JWvli8llGfyJ3fg=; b=OOivAaDKf2L3Zqo72PDwiUf2/lM8kWrR/4bSSsPemyzi
-	T+z1ZktZjtaS4YAGHIFQONFY4guLm6PFp8x8xB6SUnW/VMyUuBgkqUfAqOUCxmD2
-	VUaG+aUW8kVtaKsHB3VS88w6vErVr3UDHKDPz4OMdoydyBp5daKZeqTqFIM+m452
-	yaB71s4qw3WLSluYW46Ci98Rss59IczQu1sEStEMk+0cptFoO31j6LV/YvlsG7wU
-	avgoP9gGA6U/rjdEXpKicNd42EKMAL9U7C2ZerV+h0Qsiw5ScNzP+Kwz/uumOiFJ
-	rwuKV5aarkFOcakzuu74WLmRqNJbOTPkcD0A8izfDA==
-X-ME-Sender: <xms:61IGZ_inVgeiQruKxxytE_dCImlx1fRZE0DBZtTF9GA65GxJfR-eLA>
-    <xme:61IGZ8BwZCunBien5U0XxFi4n-lszDPs1v-JMWXIYIlwjROCqzFGPDhCItGuP6DCk
-    AkwLZGhNXA2WjxNVMc>
-X-ME-Received: <xmr:61IGZ_HZcB96aEMWCX3h9bj5A07KGn52KxG4S2AD2JQ3s7bgcBlxvfzbLWugUnlkHjccNA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmhes
-    khhvrggtkhdrohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthht
-    ohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhirhhilhhlrdhshh
-    huthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegurghvihgu
-    sehrvgguhhgrthdrtghomhdprhgtphhtthhopeihrghnghesohhsrdgrmhhpvghrvggtoh
-    hmphhuthhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhmihgrohhhvgeshhhurgifvghi
-    rdgtohhm
-X-ME-Proxy: <xmx:7FIGZ8S96vM6lBXeBXJcQ7Ww5Khm3v3-QvwEbgEYYjZG2kMdWRaVWw>
-    <xmx:7FIGZ8yoZObn4CZSdmgxj2lFMSspVrwvzr4_ofh3F7MWq2UN0C83Dw>
-    <xmx:7FIGZy7DeY39BWwXKOOc0mE4EaxLYYBwXOHJNU_cqN6HNRG_iJOj7Q>
-    <xmx:7FIGZxwAOedPYZXtZgZ8d82MrTp1KiWy3oqvi66K3JrTMG4Lth1OVA>
-    <xmx:7FIGZ4gerf5ULefTfz5B1vvk6wFBZOdAT1_Sjobmh7wX8diTSXRp0fey>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 9 Oct 2024 05:54:47 -0400 (EDT)
-Date: Wed, 9 Oct 2024 12:54:42 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/1] Buddy allocator like folio split
-Message-ID: <omwjkm2iealxsdxtaxkxjpet2zqz22x7ryvbzmhaxf5gp5k4se@7p5a5vznnsnq>
-References: <20241008223748.555845-1-ziy@nvidia.com>
+	s=arc-20240116; t=1728467694; c=relaxed/simple;
+	bh=HcBWktRVj7yOa0Q3x+sfHF6i79Q77mvz/xLNMXrAngk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MS7bD+/Ej9Ntlu1ZKxEzHKUkt0ooEU/FxVJxalrquasCOLwTdiQTQMMuo/0ieEU+eeN7BwrWTCps3lj9g3l9zJAiKKg4hW/k9HBH6JXq4z3nU3og8n4qs+vlYQ+QoBuaMYQ6veRhwM9VgDAhODhom44DFvfLqypsGIlwlyNEvuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 320A8FEC;
+	Wed,  9 Oct 2024 02:55:21 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C36353F64C;
+	Wed,  9 Oct 2024 02:54:49 -0700 (PDT)
+Message-ID: <bc94a937-0b61-4f96-87e4-80af544d6453@arm.com>
+Date: Wed, 9 Oct 2024 10:54:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008223748.555845-1-ziy@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 RESEND 3/3] coresight: dummy: Add static trace id
+ support for dummy source
+To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240910100127.8948-1-quic_jinlmao@quicinc.com>
+ <20240910100127.8948-4-quic_jinlmao@quicinc.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240910100127.8948-4-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 08, 2024 at 06:37:47PM -0400, Zi Yan wrote:
->  mm/huge_memory.c | 648 ++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 647 insertions(+), 1 deletion(-)
+On 10/09/2024 11:01, Mao Jinlong wrote:
+> Some dummy source has static trace id configured in HW and it cannot
+> be changed via software programming. Configure the trace id in device
+> tree and reserve the id when device probe.
+> 
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>   .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
+>   drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
+>   2 files changed, 70 insertions(+), 4 deletions(-)
+>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+> new file mode 100644
+> index 000000000000..db770bc972d9
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+> @@ -0,0 +1,15 @@
+> +What:		/sys/bus/coresight/devices/dummy_source<N>/enable_source
+> +Date:		July 2024
 
-The idea is sane, but I think it would require a lot more ground work
-before getting it upstream. I don't think we can afford two parallel split
-implementations. folio_split() and split_huge_page*() should share the same
-implementation internally. Otherwise it is going to be pain to maintain
-them in-sync.
+Update the date please
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> +KernelVersion:	6.9
+
+6.13
+
+Similarly for the ones below.
+
+
+> +Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
+> +Description:	(RW) Enable/disable tracing of dummy source. A sink should be activated
+> +		before enabling the source. The path of coresight components linking
+> +		the source to the sink is configured and managed automatically by the
+> +		coresight framework.
+> +
+> +What:		/sys/bus/coresight/devices/dummy_source<N>/traceid
+> +Date:		July 2024
+> +KernelVersion:	6.9
+> +Contact:	Mao Jinlong <quic_jinlmao@quicinc.com>
+> +Description:	(R) Show the trace ID that will appear in the trace stream
+> +		coming from this trace entity.
+> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
+> index ac70c0b491be..3bf5437cbfb1 100644
+> --- a/drivers/hwtracing/coresight/coresight-dummy.c
+> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
+> @@ -11,10 +11,12 @@
+>   #include <linux/pm_runtime.h>
+>   
+>   #include "coresight-priv.h"
+> +#include "coresight-trace-id.h"
+>   
+>   struct dummy_drvdata {
+>   	struct device			*dev;
+>   	struct coresight_device		*csdev;
+> +	u8				traceid;
+>   };
+>   
+>   DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
+> @@ -67,6 +69,32 @@ static const struct coresight_ops dummy_sink_cs_ops = {
+>   	.sink_ops = &dummy_sink_ops,
+>   };
+>   
+> +/* User can get the trace id of dummy source from this node. */
+> +static ssize_t traceid_show(struct device *dev,
+> +			    struct device_attribute *attr, char *buf)
+> +{
+> +	unsigned long val;
+> +	struct dummy_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +
+> +	val = drvdata->traceid;
+> +	return scnprintf(buf, PAGE_SIZE, "%#lx\n", val);
+> +}
+> +static DEVICE_ATTR_RO(traceid);
+> +
+> +static struct attribute *coresight_dummy_attrs[] = {
+> +	&dev_attr_traceid.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group coresight_dummy_group = {
+> +	.attrs = coresight_dummy_attrs,
+> +};
+> +
+> +static const struct attribute_group *coresight_dummy_groups[] = {
+> +	&coresight_dummy_group,
+> +	NULL,
+> +};
+> +
+>   static int dummy_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -74,6 +102,11 @@ static int dummy_probe(struct platform_device *pdev)
+>   	struct coresight_platform_data *pdata;
+>   	struct dummy_drvdata *drvdata;
+>   	struct coresight_desc desc = { 0 };
+> +	int ret, trace_id;
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata)
+> +		return -ENOMEM;
+>   
+>   	if (of_device_is_compatible(node, "arm,coresight-dummy-source")) {
+>   
+> @@ -85,6 +118,25 @@ static int dummy_probe(struct platform_device *pdev)
+>   		desc.subtype.source_subtype =
+>   					CORESIGHT_DEV_SUBTYPE_SOURCE_OTHERS;
+>   		desc.ops = &dummy_source_cs_ops;
+> +		desc.groups = coresight_dummy_groups;
+> +
+> +		ret = coresight_get_static_trace_id(dev, &trace_id);
+> +		if (!ret) {
+> +			/* Get the static id if id is set in device tree. */
+> +			ret = coresight_trace_id_get_static_system_id(trace_id);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +		} else {
+> +			/* Get next available id if id is not set in device tree. */
+> +			trace_id = coresight_trace_id_get_system_id();
+> +			if (trace_id < 0) {
+> +				ret = trace_id;
+> +				return ret;
+> +			}
+> +		}
+> +		drvdata->traceid = (u8)trace_id;
+> +
+>   	} else if (of_device_is_compatible(node, "arm,coresight-dummy-sink")) {
+>   		desc.name = coresight_alloc_device_name(&sink_devs, dev);
+>   		if (!desc.name)
+> @@ -103,10 +155,6 @@ static int dummy_probe(struct platform_device *pdev)
+>   		return PTR_ERR(pdata);
+>   	pdev->dev.platform_data = pdata;
+>   
+> -	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> -	if (!drvdata)
+> -		return -ENOMEM;
+> -
+>   	drvdata->dev = &pdev->dev;
+>   	platform_set_drvdata(pdev, drvdata);
+>   
+> @@ -126,7 +174,10 @@ static void dummy_remove(struct platform_device *pdev)
+>   {
+>   	struct dummy_drvdata *drvdata = platform_get_drvdata(pdev);
+>   	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+>   
+> +	if (of_device_is_compatible(node, "arm,coresight-dummy-source"))
+
+	if (drvdata->traceid) ?
+
+Or even
+
+	if (IS_VALID_CS_TRACE_ID(drvdata->traceid))
+
+> +		coresight_trace_id_put_system_id(drvdata->traceid);
+>   	pm_runtime_disable(dev);
+>   	coresight_unregister(drvdata->csdev);
+>   }
+
+
+
+Rest looks fine.
+
+Suzuki
 
