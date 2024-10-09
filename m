@@ -1,400 +1,193 @@
-Return-Path: <linux-kernel+bounces-357216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DEA996DC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E217996DCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A4E91F209A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FD41F219FD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2F519DFA4;
-	Wed,  9 Oct 2024 14:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3DE19CC28;
+	Wed,  9 Oct 2024 14:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYegVRLP"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnLHcQlu"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA53190671;
-	Wed,  9 Oct 2024 14:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D41A2562
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484183; cv=none; b=Vs7XXyIIf56ef/+3VJuvAzUcUmTJ89f1AnzIhWtMr3uvDvll8cYOPx4sDD1gfYBwojEZBBs9dP3rKurfx8tvRXw15urrRkZoM+5i2gpyndmGN6jWxv9LeW2kaT3c2JpX3vCCuLFdtlJUuRwkUKaLvlSS6z/ORxTu91uhuSa7k4Y=
+	t=1728484197; cv=none; b=WV4QVe2oxI1mraQcylBZY7wPFyqypIWZbMww+n4+aHAvpGohlLpbu1qFB16Hcr7Pdr6CmWIDajujN8sGHz/STLyM8tf6UYbmS8bhzvrHtQdHLMRXM9VbzIuOVunscGbS6bOSCGvLTXCQVdRF26L2UY3A/OfaD0NRLiTCRQksjko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484183; c=relaxed/simple;
-	bh=E5l7XLUph4CroFoG9mgsfyCmACzVRqqisf8fJBYUGFg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z/ckAwlgcWIVicQdK2RoGHgNvp9BqAee6VJlAP0pJtvyOkdT1n2LO9hU7mSjePdY1ELk3VSEe09aNf6aRoG991JfDn5YIwkiED44SzBae5NEbaycoDzc2SRTJJlG7DZHhoC+1iFrrqjCz3pUnxXu6C4D67EJoE5yu4NdX6OLV9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYegVRLP; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1728484197; c=relaxed/simple;
+	bh=6rg8fudV2HDi1NEoULsMUGCnazkZy5kFAgN4WeYPYbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cUwndNOfUwn7Mslmf/DVhtEQ8bFZPZSQQL4sVkp20Bjy4amjTaf7YbNBD9vkfGYqBJzh5uRrk5Sf404jul3Ag21wJnKnrHe9ZHPdiqlbfJ6Ozm2g7i9g0it4QDPqRsPVhw0EqlP/VYvzIunY5vE8RsGIcSmP8kxzuHJI1rYi0Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnLHcQlu; arc=none smtp.client-ip=209.85.161.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53997328633so9365706e87.3;
-        Wed, 09 Oct 2024 07:29:37 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5e800d4e47dso769699eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:29:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728484176; x=1729088976; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=x1exwFMCtjID6DoZpDSkqCzWTlshQQhxAhHFrjRH1NA=;
-        b=DYegVRLPMOUWFNc5e9bJVPrdCZHicA2qVQ6OPwafLliK1XS4pYZfccjX4hNxXeHX9l
-         HTFSmkuuooshHtxOMSwAfOFZ7/fbCis6EIoXZOejs5lS9f1JlDMagJfmI7ioEPAn2ja5
-         7xZiTpbOS10SZEwDEDDgUEp7rkDZygnrZzqt5/hopHbncLGXFs57Rpi04dJvcxNagjgA
-         uIhHTFSW3YYGI8+L2WW709AzRox3o8dq0IyF2wwCojYwFDK//6tDsmObEao2gppOCyH+
-         eZ4ShYs1Ufm1oM9aIBQPO2RhHrcTBluWCsKQCHCVaD6u4ATT2yTYawN0iUCfXg/z6sdc
-         wczQ==
+        d=gmail.com; s=20230601; t=1728484195; x=1729088995; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1HJ5l2YJxm3O72neDz3rx650xEJBhAU/4equGAO1fYw=;
+        b=VnLHcQluLuEC1YhygaVznuCTqL7K4Q534f8mhX+hptUqmojq59x4MjfVO3IpQX9m93
+         opg93Hr31fhvyjbjPI/FtWXBjyZofFsqjeZyhfvfmokfZqTh7ZklLBVQaTcIFasxCJOW
+         ItlYw43ojYbbRpcg4xVoCLboEly7nwsnus6B/4LB6SD/McA/g0GV95+VXLKsYxA5R1aX
+         uQKl9l0QF+pVeEtDXoBsjU1BphOjEKU5ZY9jNARF1gfPCDHQqroAHYbSDqps7KzCpjlI
+         krFW2T5jQA38TdWWok7lyvV1MeBjBdlHdzuegwPPm2r6nt2UQmATrBHG5y/EFTUhuLuU
+         SG5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728484176; x=1729088976;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x1exwFMCtjID6DoZpDSkqCzWTlshQQhxAhHFrjRH1NA=;
-        b=fm0rG5BWTCEiZGfwiTMccheCUoNM2d/HxjWZ/lzkd0rAnLWR3yozKlMw0Oxb0yo0KU
-         ARZXxdsYeWeatYIjCpOKSCpHR8NNBqLsce8l66Q+FrdDWT092s0yNoofcUsamX2xnRsD
-         m/my/DmOKXSpDkseAAnwE0AX3cm0VC1UoUgpxX1iWrm5c4CoX8j96xduJXydUGiwUfgK
-         0kgtfNyzDJC5aO/ewMXcJrhOzSclwCm3Ft0G5zzANZXfYdRG9QA3Hx742q+6MAbZXGDJ
-         ++A8DYL94a4qKo02jIFgtQWJWehltqDRT+mSTphmvsggTyEe+V93CpVloJ3QxNQ7rKyu
-         rnxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG+FKKe3rCEgsgtsH4pP5kFK0A13PfbXrtBtIYAWcshXHiYimW/uEwHxOF2Tk6jFvG+XjKsVyB/0Ki@vger.kernel.org, AJvYcCVSWTciFWL0gf7GZS4SRvXcWTzuNUM0Ijn8RnCw7wQvsbsiGtEFVoALVEa/qNrdVoUb8dXYcTD0Ya8v@vger.kernel.org, AJvYcCX1//2YmP6NInH4R/e/OENZamXaH6Tmo/xI5DBTQyrH0Ie/cYnqZo+VagHiepwuCdu2UIZnK+fiEyqJgvMK@vger.kernel.org, AJvYcCXpuExWdzlRiZ20V4uoibLyYwHcbMDf4O27EVJF4HAQj5G6dcJa9Q5aDfnMI9Yqf21Z7BLLM9DWqk57VAc=@vger.kernel.org, AJvYcCXqMMNHJgWRRa6wxCI19POGLV7AjIHr2Ws2l84n7k/vG9DhaQJOq9ltHw2bkw/mbOZ8Ef9gxndy8hII@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIIU7iF0H4yHRY148cjZu88wQszR5HPibz9pijG9Pf2NqwTk49
-	96TJYPZNce8MvNo46g9VOGM1dyBDPbxITVgOWccyqhuk/Qwupewq
-X-Google-Smtp-Source: AGHT+IHypRgzpda4UOn7tUpkG6oM5G0fDPn+ptPE33yjZYSablG58wP1fcey4fCgQzqtBNml3VEhew==
-X-Received: by 2002:a05:6512:3a91:b0:52c:9ae0:beed with SMTP id 2adb3069b0e04-539c4967fd4mr2586186e87.52.1728484175915;
-        Wed, 09 Oct 2024 07:29:35 -0700 (PDT)
-Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9963760779sm298304366b.204.2024.10.09.07.29.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 07:29:34 -0700 (PDT)
-Message-ID: <5860310e0413038ac477b9e191c3d15029487628.camel@gmail.com>
-Subject: Re: [PATCH v4 4/8] iio: adc: ad7606: Add PWM support for conversion
- trigger
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Guillaume Stols <gstols@baylibre.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com,  dlechner@baylibre.com, jstephan@baylibre.com,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Date: Wed, 09 Oct 2024 16:29:33 +0200
-In-Reply-To: <20241009-ad7606_add_iio_backend_support-v4-4-6971a8c0f1d5@baylibre.com>
-References: 
-	<20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
-	 <20241009-ad7606_add_iio_backend_support-v4-4-6971a8c0f1d5@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1728484195; x=1729088995;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1HJ5l2YJxm3O72neDz3rx650xEJBhAU/4equGAO1fYw=;
+        b=SVeb4gthEtpoDs9PgvEFWoGXsIhZERDERN5uOeIwOTL/wji5jWbMCSRkp1ZhRX5Hzb
+         AKWsWME1OXHIJBGSExw7xLfUujV3nDuoXUKzT8IJeHUsbbKQ9eLKFI36WfiiNfdhpDhA
+         czW+WIlX/IJFlysBN5lyTmndqMvkoM7x2jd+AOI6ciYY/ufBqH+cFahAQZFCpaK7XGb1
+         HCS6BP1BFoODBxKY8Ivi8gDXEaOZXKfryO+x2tj4uUd5GjvvREjE6MXG6GEdM0/by4ZW
+         AHRUJNFLiY6B4mliFMQ26POxfavy4M3Tign6O0u+qYvxABOiN8Dr6qLkdDsn4MVJbmS0
+         c2Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHpbmkJgIGEPsa19ojiVa8JmcJiXOj+5CDK9ig5qI5xKqapWWe+mj9XYoVuJEE+J9S+TWuv//uLk2gYTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNOHVcKtU7Xd78Q8ne5LbxHBSbiyVZATywXth5YlVXMsq7evxp
+	sACgoYph/SBwpuTBvhJ0OC3H47qwz0vFVnoSYVv6rpaAtPUB2cAmmcA79fZlJ8uDfKpltvnnsZA
+	x5f9Rsz+Ri/e1f5Y2gjSbrCvNkfM=
+X-Google-Smtp-Source: AGHT+IHOrvLRQI0/DuijimlqP0nw80CW8kMD/I1XWLU6FBTX4UZBqAZ7fjEFo17vF1pCXjI4KLjeFyqN7tzpy6H2yAQ=
+X-Received: by 2002:a05:6820:308c:b0:5e8:4dd:46cb with SMTP id
+ 006d021491bc7-5e987b8b2c2mr1453420eaf.8.1728484195021; Wed, 09 Oct 2024
+ 07:29:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241007035616.2701-3-linux.amoon@gmail.com> <a86437f6-1f62-4f44-bff1-f1203d04edda@stanley.mountain>
+In-Reply-To: <a86437f6-1f62-4f44-bff1-f1203d04edda@stanley.mountain>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 9 Oct 2024 19:59:38 +0530
+Message-ID: <CANAwSgQObCHr19fmwuc2BfQmoiV3ZgDTFumtfCH8PP_9VbQw+w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, lkp@intel.com, oe-kbuild-all@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-10-09 at 09:19 +0000, Guillaume Stols wrote:
-> Until now, the conversion were triggered by setting high the GPIO
-> connected to the convst pin. This commit gives the possibility to
-> connect the convst pin to a PWM.
-> Connecting a PWM allows to have a better control on the samplerate,
-> but it must be handled with care, as it is completely decorrelated of
-> the driver's busy pin handling.
-> Hence it is not recommended to be used "as is" but must be exploited
-> in conjunction with IIO backend, and for now only a mock functionality
-> is enabled, i.e PWM never swings, but is used as a GPIO, i.e duty_cycle
-> =3D=3D period equals high state, duty_cycle =3D=3D 0 equals low state.
->=20
-> This mock functionality will be disabled after the IIO backend usecase
-> is introduced.
->=20
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
+Hi Dan,
 
-Hi Guillaume,
+Thanks for the report.
 
-Looks overall good, just some minor stuff
+On Wed, 9 Oct 2024 at 17:55, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Hi Anand,
+>
+> kernel test robot noticed the following build warnings:
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/phy-rockchip-pcie-Simplify-error-handling-with-dev_err_probe/20241007-115910
+> base:   8f602276d3902642fdc3429b548d73c745446601
+> patch link:    https://lore.kernel.org/r/20241007035616.2701-3-linux.amoon%40gmail.com
+> patch subject: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
+> config: loongarch-randconfig-r071-20241009 (https://download.01.org/0day-ci/archive/20241009/202410092019.vGogfPIO-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.1.0
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202410092019.vGogfPIO-lkp@intel.com/
+>
+> smatch warnings:
+> drivers/phy/rockchip/phy-rockchip-pcie.c:278 rockchip_pcie_phy_init() warn: missing error code 'err'
+>
 
-> =C2=A0drivers/iio/adc/ad7606.c | 143 ++++++++++++++++++++++++++++++++++++=
-+++++++----
-> =C2=A0drivers/iio/adc/ad7606.h |=C2=A0=C2=A0 2 +
-> =C2=A02 files changed, 135 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index 71362eafe838..5b276d087ec3 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -13,10 +13,12 @@
-> =C2=A0#include <linux/kernel.h>
-> =C2=A0#include <linux/module.h>
-> =C2=A0#include <linux/property.h>
-> +#include <linux/pwm.h>
-> =C2=A0#include <linux/regulator/consumer.h>
-> =C2=A0#include <linux/sched.h>
-> =C2=A0#include <linux/slab.h>
-> =C2=A0#include <linux/sysfs.h>
-> +#include <linux/units.h>
-> =C2=A0#include <linux/util_macros.h>
-> =C2=A0
-> =C2=A0#include <linux/iio/buffer.h>
-> @@ -299,6 +301,82 @@ static int ad7606_reg_access(struct iio_dev *indio_d=
-ev,
-> =C2=A0	}
-> =C2=A0}
-> =C2=A0
-> +static int ad7606_pwm_set_high(struct ad7606_state *st)
-> +{
-> +	struct pwm_state cnvst_pwm_state;
-> +	int ret;
-> +
-> +	if (!st->cnvst_pwm)
-> +		return -EINVAL;
-> +
+All the functions in this file explicitly return 0 instead of err, I
+will fix this.
 
-Maybe consider doing the check before calling the API (for the cases that n=
-eed it)?
-It seems at least that in a couple of cases you actually already know that =
-the PWM
-must be here (since you check for the gpio presence)...
+> vim +/err +278 drivers/phy/rockchip/phy-rockchip-pcie.c
+>
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  269  static int rockchip_pcie_phy_init(struct phy *phy)
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  270  {
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  271      struct phy_pcie_instance *inst = phy_get_drvdata(phy);
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  272      struct rockchip_pcie_phy *rk_phy = to_pcie_phy(inst);
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  273      int err = 0;
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  274
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  275      mutex_lock(&rk_phy->pcie_mutex);
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  276
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  277      if (rk_phy->init_cnt++)
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19 @278              goto err_out;
+>
+> Originally, this path just unlocked at returned zero.
+>
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  279
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  280      err = reset_control_assert(rk_phy->phy_rst);
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  281      if (err) {
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  282              dev_err(&phy->dev, "assert phy_rst err %d\n", err);
+> 3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  283              goto err_out;
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  284      }
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  285
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  286      mutex_unlock(&rk_phy->pcie_mutex);
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  287      return 0;
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  288
+> 3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  289  err_out:
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  290      rk_phy->init_cnt--;
+>
+> Now it decrements the counter so presumably it leads to an underflow/use after
+> free.
 
-> +	pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
-> +	cnvst_pwm_state.enabled =3D true;
-> +	cnvst_pwm_state.duty_cycle =3D cnvst_pwm_state.period;
-> +
-> +	ret =3D pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
-> +	/* sleep 2 =C2=B5S to let finish the current pulse */
-> +	fsleep(2);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7606_pwm_set_low(struct ad7606_state *st)
-> +{
-> +	struct pwm_state cnvst_pwm_state;
-> +	int ret;
-> +
-> +	if (!st->cnvst_pwm)
-> +		return -EINVAL;
-> +
+I was planning to replace the mutex_lock / mutex_unlock
+with guard(mutex)(&rk_phy->pcie_mutex) in the follow up patch.
+I will add this in the next revision.
 
-Same deal...
+>
+> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  291      mutex_unlock(&rk_phy->pcie_mutex);
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  292      return err;
+> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  293  }
+>
 
-> +	pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
-> +	cnvst_pwm_state.enabled =3D true;
-> +	cnvst_pwm_state.duty_cycle =3D 0;
-> +
-> +	ret =3D pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
-> +	/* sleep 2 =C2=B5S to let finish the current pulse */
-> +	fsleep(2);
-> +
-> +	return ret;
-> +}
-> +
-> +static bool ad7606_pwm_is_swinging(struct ad7606_state *st)
-> +{
-> +	struct pwm_state cnvst_pwm_state;
-> +
-> +	if (!st->cnvst_pwm)
-> +		return false;
-> +
+Here are my modified changes on top of my changes for the review process.
+-----8<----------8<----------8<----------8<----------8<----------8<-----
+diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c
+b/drivers/phy/rockchip/phy-rockchip-pcie.c
+index 2c4d6f68f02a..09685dc3fe17 100644
+--- a/drivers/phy/rockchip/phy-rockchip-pcie.c
++++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
+@@ -248,20 +248,19 @@ static int rockchip_pcie_phy_init(struct phy *phy)
 
-This one also seems to be redundant? ad7606_set_sampling_freq() should be o=
-nly called
-from a context where the PWM exists right?
+        mutex_lock(&rk_phy->pcie_mutex);
 
-> +	pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
-> +
-> +	return cnvst_pwm_state.duty_cycle !=3D cnvst_pwm_state.period &&
-> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cnvst_pwm_state.duty_cycle !=3D 0;
-> +}
-> +
-> +static int ad7606_set_sampling_freq(struct ad7606_state *st, unsigned lo=
-ng freq)
-> +{
-> +	struct pwm_state cnvst_pwm_state;
-> +	bool is_swinging =3D ad7606_pwm_is_swinging(st);
-> +	bool is_high;
-> +
-> +	if (freq =3D=3D 0)
-> +		return -EINVAL;
-> +
-> +	/* Retrieve the previous state. */
-> +	pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
-> +	is_high =3D cnvst_pwm_state.duty_cycle =3D=3D cnvst_pwm_state.period;
-> +
-> +	cnvst_pwm_state.period =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
-> +	cnvst_pwm_state.polarity =3D PWM_POLARITY_NORMAL;
-> +	if (is_high)
-> +		cnvst_pwm_state.duty_cycle =3D cnvst_pwm_state.period;
-> +	else if (is_swinging)
-> +		cnvst_pwm_state.duty_cycle =3D cnvst_pwm_state.period / 2;
-> +	else
-> +		cnvst_pwm_state.duty_cycle =3D 0;
-> +
-> +	return pwm_apply_might_sleep(st->cnvst_pwm, &cnvst_pwm_state);
-> +}
-> +
-> =C2=A0static int ad7606_read_samples(struct ad7606_state *st)
-> =C2=A0{
-> =C2=A0	unsigned int num =3D st->chip_info->num_channels - 1;
-> @@ -325,6 +403,7 @@ static irqreturn_t ad7606_trigger_handler(int irq, vo=
-id *p)
-> =C2=A0	iio_trigger_notify_done(indio_dev->trig);
-> =C2=A0	/* The rising edge of the CONVST signal starts a new conversion. *=
-/
-> =C2=A0	gpiod_set_value(st->gpio_convst, 1);
-> +	ad7606_pwm_set_high(st);
-> =C2=A0
-> =C2=A0	return IRQ_HANDLED;
-> =C2=A0}
-> @@ -337,7 +416,13 @@ static int ad7606_scan_direct(struct iio_dev *indio_=
-dev,
-> unsigned int ch,
-> =C2=A0	const struct iio_chan_spec *chan;
-> =C2=A0	int ret;
-> =C2=A0
-> -	gpiod_set_value(st->gpio_convst, 1);
-> +	if (st->gpio_convst) {
-> +		gpiod_set_value(st->gpio_convst, 1);
-> +	} else {
-> +		ret =3D ad7606_pwm_set_high(st);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> =C2=A0	ret =3D wait_for_completion_timeout(&st->completion,
-> =C2=A0					=C2=A0 msecs_to_jiffies(1000));
-> =C2=A0	if (!ret) {
-> @@ -363,6 +448,11 @@ static int ad7606_scan_direct(struct iio_dev *indio_=
-dev,
-> unsigned int ch,
-> =C2=A0	}
-> =C2=A0
-> =C2=A0error_ret:
-> +	if (!st->gpio_convst) {
-> +		ret =3D ad7606_pwm_set_low(st);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> =C2=A0	gpiod_set_value(st->gpio_convst, 0);
-> =C2=A0
-> =C2=A0	return ret;
-> @@ -662,8 +752,9 @@ static int ad7606_request_gpios(struct ad7606_state *=
-st)
-> =C2=A0{
-> =C2=A0	struct device *dev =3D st->dev;
-> =C2=A0
-> -	st->gpio_convst =3D devm_gpiod_get(dev, "adi,conversion-start",
-> -					 GPIOD_OUT_LOW);
-> +	st->gpio_convst =3D devm_gpiod_get_optional(dev, "adi,conversion-start"=
-,
-> +						=C2=A0 GPIOD_OUT_LOW);
-> +
-> =C2=A0	if (IS_ERR(st->gpio_convst))
-> =C2=A0		return PTR_ERR(st->gpio_convst);
-> =C2=A0
-> @@ -708,6 +799,7 @@ static irqreturn_t ad7606_interrupt(int irq, void *de=
-v_id)
-> =C2=A0
-> =C2=A0	if (iio_buffer_enabled(indio_dev)) {
-> =C2=A0		gpiod_set_value(st->gpio_convst, 0);
-> +		ad7606_pwm_set_low(st);
-> =C2=A0		iio_trigger_poll_nested(st->trig);
-> =C2=A0	} else {
-> =C2=A0		complete(&st->completion);
-> @@ -732,6 +824,7 @@ static int ad7606_buffer_postenable(struct iio_dev *i=
-ndio_dev)
-> =C2=A0	struct ad7606_state *st =3D iio_priv(indio_dev);
-> =C2=A0
-> =C2=A0	gpiod_set_value(st->gpio_convst, 1);
-> +	ad7606_pwm_set_high(st);
+-       if (rk_phy->init_cnt++)
+-               goto err_out;
++       if (rk_phy->init_cnt++) {
++               mutex_unlock(&rk_phy->pcie_mutex);
++               return err;
++       }
 
-error handling?
-> =C2=A0
-> =C2=A0	return 0;
-> =C2=A0}
-> @@ -741,6 +834,7 @@ static int ad7606_buffer_predisable(struct iio_dev *i=
-ndio_dev)
-> =C2=A0	struct ad7606_state *st =3D iio_priv(indio_dev);
-> =C2=A0
-> =C2=A0	gpiod_set_value(st->gpio_convst, 0);
-> +	ad7606_pwm_set_low(st);
->=20
+        err = reset_control_assert(rk_phy->phy_rst);
+        if (err) {
+                dev_err(&phy->dev, "assert phy_rst err %d\n", err);
+-               goto err_out;
++               rk_phy->init_cnt--;
++               mutex_unlock(&rk_phy->pcie_mutex);
++               return err;
+        }
 
-error handling?
+-       mutex_unlock(&rk_phy->pcie_mutex);
+-       return 0;
+-
+-err_out:
+-       rk_phy->init_cnt--;
+        mutex_unlock(&rk_phy->pcie_mutex);
+        return err;
+ }
 
-> =C2=A0	return 0;
-> =C2=A0}
-> @@ -874,6 +968,11 @@ static int ad7606_chan_scales_setup(struct iio_dev *=
-indio_dev)
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> +static void ad7606_pwm_disable(void *data)
-> +{
-> +	pwm_disable(data);
-> +}
-> +
-> =C2=A0int ad7606_probe(struct device *dev, int irq, void __iomem *base_ad=
-dress,
-> =C2=A0		 const char *name, unsigned int id,
-> =C2=A0		 const struct ad7606_bus_ops *bops)
-> @@ -950,6 +1049,31 @@ int ad7606_probe(struct device *dev, int irq, void =
-__iomem
-> *base_address,
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
-> +	/* If convst pin is not defined, setup PWM. */
-> +	if (!st->gpio_convst) {
-> +		st->cnvst_pwm =3D devm_pwm_get(dev, NULL);
-> +		if (IS_ERR(st->cnvst_pwm))
-> +			return PTR_ERR(st->cnvst_pwm);
-> +
-> +		/* The PWM is initialized at 1MHz to have a fast enough GPIO
-> emulation. */
-> +		ret =3D ad7606_set_sampling_freq(st, 1 * MEGA);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret =3D ad7606_pwm_set_low(st);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/*
-> +		 * PWM is not disabled when sampling stops, but instead its duty
-> cycle is set
-> +		 * to 0% to be sure we have a "low" state. After we unload the
-> driver, let's
-> +		 * disable the PWM.
-> +		 */
-> +		ret =3D devm_add_action_or_reset(dev, ad7606_pwm_disable,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st->cnvst_pwm);
-> +		if (ret)
-> +			return ret;
-> +	}
-> =C2=A0	st->trig =3D devm_iio_trigger_alloc(dev, "%s-dev%d",
-> =C2=A0					=C2=A0 indio_dev->name,
-> =C2=A0					=C2=A0 iio_device_id(indio_dev));
-> @@ -963,6 +1087,12 @@ int ad7606_probe(struct device *dev, int irq, void =
-__iomem
-> *base_address,
-> =C2=A0		return ret;
-> =C2=A0
-> =C2=A0	indio_dev->trig =3D iio_trigger_get(st->trig);
-> +	ret =3D devm_iio_triggered_buffer_setup(dev, indio_dev,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &iio_pollfunc_store_time,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ad7606_trigger_handler,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ad7606_buffer_ops);
-> +	if (ret)
-> +		return ret;
->=20
-
-The above change seems unrelated?
-
-- Nuno S=C3=A1
-
+Thanks
+-Anand
 
