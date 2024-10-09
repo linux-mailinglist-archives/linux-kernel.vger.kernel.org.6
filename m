@@ -1,173 +1,133 @@
-Return-Path: <linux-kernel+bounces-356097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE7C995C6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0675C995C73
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EA01C22016
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:49:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297E91C220C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C76F9E6;
-	Wed,  9 Oct 2024 00:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B64BA53;
+	Wed,  9 Oct 2024 00:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bx3FeZnd"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQhpULs6"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014064C69
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 00:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD221345
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 00:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728434945; cv=none; b=OM1L1Qg0j7TvPA8lPqg8Xw69cFOPESDA1MzFKknb/DKc2OQvpmEQl0+ES8PRs/5XaZsBSKg0pfkVYpkkMm6MD4d35g0jdMS3gzBHVWMdJzLFB6Yc6Ule+WegNucZwnewln5EQF1OTKHpo4UbmOrctb1pbGwaD2R5W3HLTz/itYE=
+	t=1728435007; cv=none; b=EyPTTk6dHA1PYefk5OeJdz4O9E+vpqrp56xKAAaRNOVr9Ssr3aGpcn8EhGlHuYxRA06eQE9rJdpFzcxjreJD3k4qXk2M/I+XXP2dsuvn75eJRpljNIOLKakvYWTaBuTANMnFMxX2zoPMiVY7Z/AyCeZf8Cpj3SoEwQ21dWOnREw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728434945; c=relaxed/simple;
-	bh=Cpx7rXkTSx8ps5kFdq5cHdGaqq6HdXgYYm9h5SAMX88=;
+	s=arc-20240116; t=1728435007; c=relaxed/simple;
+	bh=P5xBkJBsHSVqAt+axJMzODbqA3UYAyFBsJSa47B8HB4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l/wBf05omBx7QHrLhm2SHQBclVdahdJmNZIKalffsmCH8RCIt6rIeNpbmPzE3HqByTa4Xej/GMOEO7uMxnptNoMZ7Rqe73HMJlN1mwq1uObasoBr0BlfHb/QTnFMyUqmE0ZTm7h0d+eGTbQutfOS+6h6msllEv/lXXfswJAuQig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bx3FeZnd; arc=none smtp.client-ip=209.85.214.178
+	 To:Cc:Content-Type; b=reDXx69jPH/LzyVUQcbJiJLPcTtsFg9kdqvcteaixI/6NMWZ2EEWrtVlmYeLCJfaz1xfeVN/3fA9iHJdH0EceWWcdJeJ2GLkKUNbR+1VogeE2JYVZ6hwHxy237fVEb8CZExhmzYWLdqu//nWD/t5EdrCJqCePdyrIcxm6GrEsIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQhpULs6; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c5b628b7cso79135ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 17:49:03 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43111d23e29so8455e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 17:50:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728434943; x=1729039743; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728435005; x=1729039805; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DWn47q1YdrUk3zjrW3LLzHqPpTNHpFHGg0Pnci7sCN0=;
-        b=bx3FeZnd6FbVD84wfCluFoJXzxhh/c7r4Dy8QyLsdESc9/ZOXZGMgpxNRZ8Kn6SFPG
-         sz3x8nNxad6WLhv7BbLfIqopJf55/qRAa8AWpRuIzw8Ib/01FleJAr5A2v5QxlXkZ+/0
-         O4ElJ2tzrHjBO1dE3cvGd99JJYPsoh852UAva65cQtbb1xT4oExGWZ3IvtResCxHJWpS
-         PhG6zHdG3yc0ndUJeolpy6DZBBPgwE4UO0italYSBdK3WH4fg2wqH38mqYqEXjmVwIZ9
-         sbbDDmSTPaRL1Uzwo+WxX1o73xmkZjVtUfC2mBpRFSfo6fmBmKiSOXjOWP9a0YXYFNJN
-         L1aw==
+        bh=P5xBkJBsHSVqAt+axJMzODbqA3UYAyFBsJSa47B8HB4=;
+        b=wQhpULs6eJ3jSG2L+e4vjJ44HB5pmfIDFhHYLIvtGtycGlk072JDV2rO78H1awo/Bl
+         9CYQvG492yAoth9YColDI5pOCNQ/QkXNfD9xdnoUInBl5BZlF/LDuWd7Sq3IBdhsaWoj
+         KaE2mHf8Ceya7kd6xtdpaTLC6MVHs3UGfJsbhbuIvPHWJ3UvWBMQjNBO9HuC9/tvLtxH
+         PFK1iUcKcInGBWa1TtqClkFZ2+hrrbGLlWIN55CGGxl37i5pAhXR7lr3FSjBjDB3DkVT
+         8L1i2PVM54SHQDraaBpnaVk5vAWyU18c+3OshkuXSXbNOLWuiPJliZg/sGz/pc/z8otj
+         QbBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728434943; x=1729039743;
+        d=1e100.net; s=20230601; t=1728435005; x=1729039805;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DWn47q1YdrUk3zjrW3LLzHqPpTNHpFHGg0Pnci7sCN0=;
-        b=Yl/0yrU+2NcqYg2snPMYEzwl/VcoNz/FKkUsVT0ARTKhlRoudB5kfoRvov3t+jL3NB
-         6DcodrB8qmbCtlCUODmxHq1m/a44RIncpkZDMjSQnxhkpuVsEY3Z89am/x12HumYU3as
-         1/QwwHkPKWfZvAiskSxchgk/u6Phf1FuqXHfAdI7xw1SiGaY4hUgCjjijjIkRXVjNbc+
-         DHvZAo8J9KT8iELQXHyul7BC7SOZiPVYz7xn8FkiZi2orlyO9YmKE36UzF7eybT8v6kR
-         kNtq2/VPAatGcRWBJrlWog0E6pY+yJJw4wNkBqAuitU0qjXlCOWBl1ubG+ZSGwRy52cY
-         OARQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdKBsscsEjPVK+UrGFuSKJuYtQV6kHhm0py/ngrh+qcqCuGa9yG5tBUmhRNTzHsn86/QbbbU1Xx4aNVlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+hAsPbcWLvzxIs56z8d/fPE9ax0sb+TJCxoj+zGx6ZO2xxGJZ
-	ix/YjhC/OBJeMfSyJzD45QNIetPRyy3sLcwDaM8JB6eHpksWZqOVWgo27zJrQoij5jK7rXdoFxi
-	vxiwe7PVxs2AxyVt7if5ZkCtltGF6vbmdLV/H
-X-Google-Smtp-Source: AGHT+IGfkP1c7PwtfYyG1Mr3DQyh9f2R69qD+cgCgsoIan/75MTWGHIzdiSEzFhxx0fR3MEzmxETjFf/tHN9LfiuL0g=
-X-Received: by 2002:a17:902:e552:b0:1f7:34e4:ebc1 with SMTP id
- d9443c01a7336-20c64b74322mr713885ad.5.1728434942876; Tue, 08 Oct 2024
- 17:49:02 -0700 (PDT)
+        bh=P5xBkJBsHSVqAt+axJMzODbqA3UYAyFBsJSa47B8HB4=;
+        b=PI9Fbylacgil12dCo8oD4/xzON6BsGxWbEwZdEcInI9VdiIxsbey5sXypvzur5/B07
+         GF8uC7/HzQmnBWROEbzxUNuIivwkafwkIz2i0DDjOUCL/31GdCCdNOavMWEpRH8mga4K
+         FNEmcaOqhBOW4iXFUyDlDhOGKsARF98tnV8cPps+rdBvCoJG9kAwWNOU+970CEIxISnI
+         CxKJO8pjKLDfcHFI1/1ds595vtiouvuQ730wQ1g0GFKJumQOnh4VNqBCp8eXLhh8YXYx
+         DVKZQytUdyuYSs6du15KqUZ8/6xvmW8vvL9NUlyq5A43luWzmwpiBr9fVU04FtJrgdsr
+         4+zA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/ghajN1cn6H5w0T7pLx8TMfAVXwFJT2EQ/nKkvh342txaFCRtAtpN0diKQ7lR6LheQxCJItaysXiPSw0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsyUlsdccazKA6Pk3f2RgFUn7L6atAyyLQHGQkDcgiC+OZ8CGv
+	tmeUuntVCiU6egu2JYZLLmG13Psj3W5JMgkUAwzA7LCpjzWAdu1clqPnPTf4kqfknoPfOz1Hnun
+	FhbrbCcQpBV0t2RuOoHVhrq8rglUnE93U83wf
+X-Google-Smtp-Source: AGHT+IE8i1WoerH4tKasIfRlN/mHeEmDePbStRVFDY5RZAcV3AkdGjoAzKlazO6sInZgo+PAJdXEmCaNDOM+Ho3MuYA=
+X-Received: by 2002:a05:600c:cc3:b0:42c:9e35:cde6 with SMTP id
+ 5b1f17b1804b1-43058cee8e2mr2199905e9.2.1728435004265; Tue, 08 Oct 2024
+ 17:50:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009003938.254936-1-linux@treblig.org>
-In-Reply-To: <20241009003938.254936-1-linux@treblig.org>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 8 Oct 2024 17:48:49 -0700
-Message-ID: <CAP-5=fVNcMq7xjPHFE-f=LddSDz4G2cWxUGDjSuFtafVAtY6bg@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: Remove unused color_fwrite_lines
-To: linux@treblig.org
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241007-move_normal_pmd-vs-collapse-fix-2-v1-1-5ead9631f2ea@google.com>
+ <CAEXW_YSxcPJG8SrsrgXGQVOYOMwHRHMrEcB7Rp2ya0Zsn9ED1g@mail.gmail.com>
+In-Reply-To: <CAEXW_YSxcPJG8SrsrgXGQVOYOMwHRHMrEcB7Rp2ya0Zsn9ED1g@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 9 Oct 2024 02:49:26 +0200
+Message-ID: <CAG48ez1ZMo0K0JU321vs0ovXXF2giMvVo14AxNDPzgpGMGZpDA@mail.gmail.com>
+Subject: Re: [PATCH] mm/mremap: Fix move_normal_pmd/retract_page_tables race
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org, 
+	willy@infradead.org, hughd@google.com, lorenzo.stoakes@oracle.com, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 5:39=E2=80=AFPM <linux@treblig.org> wrote:
+On Wed, Oct 9, 2024 at 1:58=E2=80=AFAM Joel Fernandes <joel@joelfernandes.o=
+rg> wrote:
+> On Mon, Oct 7, 2024 at 5:42=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
+:
+> Not to overthink it, but do you have any insight into why copy_vma()
+> only requires the rmap lock under this condition?
 >
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> *need_rmap_locks =3D (new_vma->vm_pgoff <=3D vma->vm_pgoff);
 >
-> color_fwrite_lines() was added by 2009's commit
-> 8fc0321f1ad0 ("perf_counter tools: Add color terminal output support")
->
-> but has never been used.
->
-> Remove it.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Could a collapse still occur when need_rmap_locks is false,
+> potentially triggering the bug you described? My assumption is no, but
+> I wanted to double-check.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+Ah, that code is a bit confusing. There are actually two circumstances
+under which we take rmap locks, and that condition only captures (part
+of) the first one:
 
-Thanks,
-Ian
+1. when we might move PTEs against rmap traversal order (we need the
+lock so that concurrent rmap traversal can't miss the PTEs)
+2. when we move page tables (otherwise concurrent rmap traversal could
+race with page table changes)
 
-> ---
->  tools/perf/util/color.c | 28 ----------------------------
->  tools/perf/util/color.h |  1 -
->  2 files changed, 29 deletions(-)
->
-> diff --git a/tools/perf/util/color.c b/tools/perf/util/color.c
-> index bffbdd216a6a..e51f0a676a22 100644
-> --- a/tools/perf/util/color.c
-> +++ b/tools/perf/util/color.c
-> @@ -93,34 +93,6 @@ int color_fprintf(FILE *fp, const char *color, const c=
-har *fmt, ...)
->         return r;
->  }
->
-> -/*
-> - * This function splits the buffer by newlines and colors the lines indi=
-vidually.
-> - *
-> - * Returns 0 on success.
-> - */
-> -int color_fwrite_lines(FILE *fp, const char *color,
-> -               size_t count, const char *buf)
-> -{
-> -       if (!*color)
-> -               return fwrite(buf, count, 1, fp) !=3D 1;
-> -
-> -       while (count) {
-> -               char *p =3D memchr(buf, '\n', count);
-> -
-> -               if (p !=3D buf && (fputs(color, fp) < 0 ||
-> -                               fwrite(buf, p ? (size_t)(p - buf) : count=
-, 1, fp) !=3D 1 ||
-> -                               fputs(PERF_COLOR_RESET, fp) < 0))
-> -                       return -1;
-> -               if (!p)
-> -                       return 0;
-> -               if (fputc('\n', fp) < 0)
-> -                       return -1;
-> -               count -=3D p + 1 - buf;
-> -               buf =3D p + 1;
-> -       }
-> -       return 0;
-> -}
-> -
->  const char *get_percent_color(double percent)
->  {
->         const char *color =3D PERF_COLOR_NORMAL;
-> diff --git a/tools/perf/util/color.h b/tools/perf/util/color.h
-> index 01f7bed21c9b..aecf56dae73f 100644
-> --- a/tools/perf/util/color.h
-> +++ b/tools/perf/util/color.h
-> @@ -39,7 +39,6 @@ int color_vsnprintf(char *bf, size_t size, const char *=
-color,
->  int color_vfprintf(FILE *fp, const char *color, const char *fmt, va_list=
- args);
->  int color_fprintf(FILE *fp, const char *color, const char *fmt, ...);
->  int color_snprintf(char *bf, size_t size, const char *color, const char =
-*fmt, ...);
-> -int color_fwrite_lines(FILE *fp, const char *color, size_t count, const =
-char *buf);
->  int value_color_snprintf(char *bf, size_t size, const char *fmt, double =
-value);
->  int percent_color_snprintf(char *bf, size_t size, const char *fmt, ...);
->  int percent_color_len_snprintf(char *bf, size_t size, const char *fmt, .=
-..);
-> --
-> 2.46.2
->
+If you look at the four callsites of move_pgt_entry(), you can see
+that its parameter "need_rmap_locks" sometimes comes from the caller's
+"need_rmap_locks" variable (in the HPAGE_PUD and HPAGE_PMD cases), but
+other times it is just hardcoded to true (in the NORMAL_PUD and
+NORMAL_PMD cases).
+So move_normal_pmd() always holds rmap locks.
+(This code would probably be a bit clearer if we moved the rmap
+locking into the helpers move_{normal,huge}_{pmd,pud} and got rid of
+the helper move_pgt_entry()...)
+
+(Also, note that when undoing the PTE moves with the second
+move_page_tables() call, the "need_rmap_locks" parameter to
+move_page_tables() is hardcoded to true.)
+
+> The patch looks good to me overall. I was also curious if
+> move_normal_pud() would require a similar change, though I=E2=80=99m incl=
+ined
+> to think that path doesn't lead to a bug.
+
+Yeah, there is no path that would remove PUD entries pointing to page
+tables through the rmap, that's a special PMD entry thing. (Well, at
+least not in non-hugetlb code, I haven't looked at hugetlb in a long
+time - but hugetlb has an entirely separate codepath for moving page
+tables, move_hugetlb_page_tables().)
 
