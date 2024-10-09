@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-357931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11ED39977F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:56:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C479977F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9221F22D7E
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A7E282BEA
 	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F811E2836;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04341E283D;
 	Wed,  9 Oct 2024 21:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BluAuM5s"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcFQXMjZ"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71AF16BE3A;
-	Wed,  9 Oct 2024 21:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D62183CD9;
+	Wed,  9 Oct 2024 21:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728511007; cv=none; b=fEvp0MQy3D5qnCJP4cbFWbxH2EIUZJYursMLhJCK2z8aHIuDu4RnOACbwCAnerlHolHQMBxBQ/7gOpyIJwQ9G+pFPQEVU1o6bOaABtuKF7IhG3gtFxfveFmy13OF2gHwM3gqlIFSwhwhUfKhWfbAWMsYXcOhBd7rgMw3N4ZA1VY=
+	t=1728511007; cv=none; b=CoFz/o/eXaJLgKJaKZXoDN3D0XHg0Oj0T+8eMEhzkCkHAxYz4XhAjYCDKsVrcDKBgsuUO37p/0wcxDb01oDkWqDK4wgfd56Y22U/U7VWKZVPMjV3OfwUisaz+D5CstOieXm/D+mkPZgHpdD440ldnE6705lSjvlX6bMW1XgGtds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728511007; c=relaxed/simple;
-	bh=b5mhwgPGC56jQ2dsa1l1tlL4g2k1Q8atpALjh2UsDwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MX+qfwejypzjFz2nn55g3B43Gaw5iGKzgEbZm5Tb87p+El5x2E0d6HSXWlP82VyZjLFMYAKh8855gnt0gWVHqbyEdJeRsvbpPzHKdjzIBvgkhh6NQRT46uLpQGAZENXDJyZbzsarwy+LWYTxAxd4Jqmp/eC5QaZX0Hao3HWidEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BluAuM5s; arc=none smtp.client-ip=209.85.215.180
+	bh=hKBvF7aVl369N1LMdWPFSaqSEPC42/B7x29k/guZb4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K4wi1t/bObl683CcrKaVtkAjPPjt1pTbI19N9EG/+Tfzrve+FXD6FRCK9DUdqgHUdW8J5SGGDNFU+3d5gBpYDAgjeikpw2y1yBP0l2SrFb9tPDPitUoih98qxRxdWmu1nzfDEi2zQJgFsKGEsMDmmZbkLl8oMu5YJoFUn5T8azc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcFQXMjZ; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso174480a12.3;
-        Wed, 09 Oct 2024 14:56:44 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e0c3e85c5so253237b3a.2;
+        Wed, 09 Oct 2024 14:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728511004; x=1729115804; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K8mRHP1iHo4icZwmG9+ljTCxE1/nJeCh2StmxML6Ayo=;
-        b=BluAuM5sJezs0SS5Yv1EQJvdRS0Hm6FtTodUnKeZViZ9gKRch/sohJcsYjlnH4U4+4
-         z8lbnLMM7DIuV3vc2zQN8EUglu0967E4JQOUzlo30n0VQe5WbnBVk/iOqh01ARF8F919
-         WzIZZ/nD3EhcrHwuB5knzUwknsJWWQGpOZ/C1I3xntncgs8ZQI8Mn8LWxamJhdKnup0S
-         U4BicV+vYlXLOPygxyL2sAhybsgIYrIzd8ogdu3gX/Oh1Jczavm+dQtIp0ygmNE93cFo
-         ZXedpI/QBL8OLJhz/TzyFwCyWW1WeSgU6F8Chr2V4NqqoDIxI+uEhuM+4CpXqNK+DTVz
-         y5zQ==
+        d=gmail.com; s=20230601; t=1728511005; x=1729115805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5SGAxTreCbsGFlOTTE3BOCBJp/69hyZC6sLc49Fka8o=;
+        b=DcFQXMjZcQpoi7BBM6Vin4FXH5Od5y0mlJJcfr9vfTaSm53gjFwHaKJzyjv5drNvr7
+         E3BZw47jeQyvC+5FzTtE5VIek0pA/zwG9ANuvWbNpqYgNEW2y7P7b1WQZIWbT+wTIDoA
+         rQnml1Ulwm/A44KDuH4mbW5GbpMBr9SQl2D1SXHMbFO5XqCb3uNKoOy85YW06gxHAcBk
+         XI1686SBtisx+NYwzjbVYY9gOlUiCfkqpm8O7+Wgsgo5FOIDiG4MWGdozPcUNYZrgObq
+         M1jLyFxqtxKY2duSoIm127RGUYsmN4S4aL7kJVXvAp3xNtXCfTpUbjwSOAGjbB9DJq+s
+         c1AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728511004; x=1729115804;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K8mRHP1iHo4icZwmG9+ljTCxE1/nJeCh2StmxML6Ayo=;
-        b=NFgjHCzrTxSaCTh5fDRzrJjB7Q+mZOlR8CzSLw7pL9GDH9lhGMcd38mqo3kMwBeaHr
-         wKsF+KLnjuhgsJuTFbIaMRSKF5lfm4xIWWhJ+YSNcFXmySfBwz434Pgd6O1W1a9hXIDq
-         la97hCxdtfv5bh6U/Ild+XfGhDfvcyP3zPgXYv08q2wxKMJsmP0AqXh+NOxyUFFyQieR
-         0u1nK17yyk8Alc0qhzoZZyNDzj9+o7eZoKvaFilG8EQ2DXaFMXcwuYuhxbM2GWzj3akM
-         o/fCLY4WSLq6/DiRr2BQPmb8q/lmDV86pSUM0gHFObUNJwB3IVkUxt5fceNXlPlKfCJf
-         +g5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Dh+08AhBDyhovysLiN/iItpitkSdAIMQjnPzF5h3SeOuLoRpnCbE2tlBpdU+E3Z1U3MswlgrMwoJArK4@vger.kernel.org, AJvYcCX6ET/BYYmidhCWEFIz6aMbOBUNZahty7vq3XWxxHmaWV6cYnc0f9+31D+qCWgEbAHI7AL49Jd3KIzc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSq6k13UUwfUrJraDuTSXi2FZs6JjnjTX0SPX9k4Kkh3qcnhl1
-	ogzdtUugSJwUWfFtXxnDEosRyhJ/uoyvahpEogFa88EIP8jkcMaS
-X-Google-Smtp-Source: AGHT+IF/rCzFhDfS0zvlOCvu7wIjXmk/xlgUGFHWlO0RMIupuLNkSOr/R9rBXc/FAWwxvbujsp8jug==
-X-Received: by 2002:a05:6a21:6b0a:b0:1cf:359b:1a3e with SMTP id adf61e73a8af0-1d8ad83cd67mr2270218637.32.1728511004017;
-        Wed, 09 Oct 2024 14:56:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728511005; x=1729115805;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5SGAxTreCbsGFlOTTE3BOCBJp/69hyZC6sLc49Fka8o=;
+        b=rDUnT4BDa3LMr+CNGIT1GxQQkDJ3FxeHXswbUBsMuF0K2yffTemcXZRy7d0r7rhqGx
+         G6FfuK8Z0ERMpF+Rl1oGxwlUyyEwLMLb39gp1DFOi9dO5/ebqqfYgcvRIR4Ly4TkMuz3
+         hvGf3p4UHXkBFKIbrdnxV4kZMSxtc7PbD6VfDFFHcF0q9E/M7hTWcuulVZE83OjgfplY
+         gGJrkbNx0QxoSp8Q+9NgDtA87awuSpCCzjOU0O0mqyuKOsNVDIHJfMJa7q40Eg2ZRITL
+         amLdMWVYzz1krc5bpGL7f7NY7Jm7rmTX3LmKEM/ApwBUi/E/c7yuSNOD2VPK3W6Hll/8
+         myiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Q1zKzEb/iq0DG94SykLD28y1YCpW8hIGEmmmfDgBHVeZCse1RgIuFDsgJG+l5AKFAGd/54W6vfHY@vger.kernel.org, AJvYcCXy6qRPjdeMF3UH3uICj98GUCSF/m9+jMmhx4Lkkq2Uvb5q5E1pAYHEA2+QkraiszL5ngAO96fspV+75Eyj@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOR9SgHKsCKhxGLPXXMojne4gBdzSmEaU7lnIGARiz1KxrWPss
+	HB7RBvgXbmS5o2TV2eg3OYl9DVpGAIe9H6GojK0siIP75YfewEOw
+X-Google-Smtp-Source: AGHT+IFd7QS07/9s9F8MqCkhV+goz1SkBt+8EtolQ6YwafT/zh65S+z5PhJOcRHIzw7EIROIr/qVMg==
+X-Received: by 2002:a05:6a00:4fc1:b0:71e:ed6:1cb2 with SMTP id d2e1a72fcca58-71e1dbb54c6mr5773236b3a.20.1728511005180;
+        Wed, 09 Oct 2024 14:56:45 -0700 (PDT)
 Received: from luna.turtle.lan ([2601:1c2:c184:dc00::315])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833ce7sm7726646a12.48.2024.10.09.14.56.42
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833ce7sm7726646a12.48.2024.10.09.14.56.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:56:43 -0700 (PDT)
+        Wed, 09 Oct 2024 14:56:44 -0700 (PDT)
 From: Sam Edwards <cfsworks@gmail.com>
 X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -78,11 +80,14 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH v2 0/2] Add support for Zyxel EX3510-B
-Date: Wed,  9 Oct 2024 14:54:52 -0700
-Message-ID: <20241009215454.1449508-1-CFSworks@gmail.com>
+	Sam Edwards <CFSworks@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based on BCM4906
+Date: Wed,  9 Oct 2024 14:54:53 -0700
+Message-ID: <20241009215454.1449508-2-CFSworks@gmail.com>
 X-Mailer: git-send-email 2.44.2
+In-Reply-To: <20241009215454.1449508-1-CFSworks@gmail.com>
+References: <20241009215454.1449508-1-CFSworks@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,41 +96,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello BCMBCA maintainers,
+This is a series (EX3510-B0 and EX3510-B1) of residential gateways based
+on BCM4906, a stripped-down version of the BCM4908 SoC. Although Zyxel's
+marketing materials call this a "series," the EX3510-B1 appears to be a
+very minor revision of the EX3510-B0, with only changes that are
+transparent to software. As far as Linux is concerned, this "series"
+effectively represents a single model.
 
-This is a second, very minor revision of my previous series for introducing
-support for the Zyxel EX3510-B "series," largely motivated by my earlier
-patchset [1] that resolves validation errors in the BCMBCA DTs. If checking the
-DT, please apply that other patchset first. These changes do not depend on the
-other patchset to build correctly or apply cleanly; only to pass validation.
+Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/bcm/brcm,bcmbca.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Happy spooky month,
-Sam
-
-[1]: https://lore.kernel.org/linux-devicetree/20241009215046.1449389-1-CFSworks@gmail.com/T/
-
-Changes v1->v2:
-- Rolled-in commit tags from previous version
-- Stylistic change to memory: s/0/0x0
-- Delete `range` property from the `nvmem-cells` node, in order to pass DT
-  checks.
-
-COMMITTER NOTE: Email being what it is, the capitalization of my email address
-is apparently getting discarded. If it is important that the author email
-address have identical capitalization to the Signed-off-by, please explain why
-so I can investigate why this is happening and/or get these patches to you in a
-desired format.
-
-Sam Edwards (2):
-  dt-bindings: arm64: bcmbca: Add Zyxel EX3510-B based on BCM4906
-  arm64: dts: broadcom: bcmbca: bcm4908: Add DT for Zyxel EX3510-B
-
- .../bindings/arm/bcm/brcm,bcmbca.yaml         |   1 +
- arch/arm64/boot/dts/broadcom/bcmbca/Makefile  |   1 +
- .../broadcom/bcmbca/bcm4906-zyxel-ex3510b.dts | 196 ++++++++++++++++++
- 3 files changed, 198 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-zyxel-ex3510b.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcmbca.yaml b/Documentation/devicetree/bindings/arm/bcm/brcm,bcmbca.yaml
+index 07892cbdd23c..4999568225f1 100644
+--- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcmbca.yaml
++++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcmbca.yaml
+@@ -34,6 +34,7 @@ properties:
+           - enum:
+               - netgear,r8000p
+               - tplink,archer-c2300-v1
++              - zyxel,ex3510b
+           - const: brcm,bcm4906
+           - const: brcm,bcm4908
+           - const: brcm,bcmbca
 -- 
 2.44.2
 
