@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-357686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91EE997407
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:05:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E1E997409
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B11DC282F9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64FD71C24124
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7C1E1A0B;
-	Wed,  9 Oct 2024 18:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8CA1E2007;
+	Wed,  9 Oct 2024 18:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="gmZM5BQM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mRnslZt8"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ThhSi1Kb"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B05A198848;
-	Wed,  9 Oct 2024 18:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230D61E131D;
+	Wed,  9 Oct 2024 18:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497111; cv=none; b=Eb62BDmjT6QZ2XZV6v1YcxIX+hxy5YXInxjse+NoIQio5q+NLo+fcSOLbaAFpewhx9u0MGR4Bvy5O1KyO7y8x9lomApcBul7PIDDELKS2gkcbSlmcOMYOr+1tewslfHqak2ojUnNbAvxVUB4wNVNhupjPLeQ2rlAxKXXU33ogrs=
+	t=1728497113; cv=none; b=q0i4ms0Guyy0YZmatVcR1yJWg/rgIpOjUPebpKfPL8zWvXKri4xVf+6Knjpqq0AugkquTpjKHgVQcesbFZR6ApxQhX7LH3nG3Yi8kO3YhOCJjYeeITjJ3VAtqpxc4ARY+fqyfNWTnBZo6vvYoH9JgeZRX3lY2JsocMT+2O2DoJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728497111; c=relaxed/simple;
-	bh=Nz1DfZ3EqiTXqVUpq7YpEtRPgPHvy33lI4+yNFgaEzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B5Hf7LSviM362TkRQs75sWfpwpvuDoUBsf19oS/skDCUU7qJYe9JcYCONtfTdAuGNeN+Ma643hjF77+VbBnuTNl+rRrJYSq6dIcYBeE6FeipcurdD1qxJAzOnirqGkh6sssuqN1jEs0wpF9ajTdog1/prvRB9svADHgCnUkWgwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=gmZM5BQM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mRnslZt8; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2866F11400C3;
-	Wed,  9 Oct 2024 14:05:06 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Wed, 09 Oct 2024 14:05:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728497106;
-	 x=1728583506; bh=vht2RCtldo/N+YmYbXQHbMDhqc0PeROYXC3Tc/mu2ss=; b=
-	gmZM5BQMZbUu6XVymNw+GVEP3tZ4ttJJEOOB0GRdvO/6fca+tpNhFwExqPozPHfu
-	LyaLrp0hVEsY8G1oeGRsZQSKcOga9+S2bR0XSNy+AGLItU4OouvHHR6uIDheUT+l
-	0MOO7J0r21voZnQMka2t0cwlXm36S/apMQxyitYGhkLMRLteH+fzm4KNTMTO7mSC
-	cuPrWf/ixCzDha0nzxMjTcw/1IpUMSQQqmTfmAmc+ftk+qjTT2jYRvwNxx0Y9Z9F
-	ZVP1JBpdGv4Qjg3DKbaL3eBUTVy3kMLwcZtMYm0ysI8YUXzgxATOKXNm0n6rmqJe
-	K87HU7GDvtew3Xn9xZi0hg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728497106; x=
-	1728583506; bh=vht2RCtldo/N+YmYbXQHbMDhqc0PeROYXC3Tc/mu2ss=; b=m
-	RnslZt8ZiNQ6Ye6HB92LzI+9y3b9p5smQ6q0O9Y/TGlKNgNOYSbBYSdLMhjRaSdH
-	Trrnf234lODGMCSEf2Ai2KBNrnuKC1HMvN6nH5njbNm6e2EvX4heJXW9AdlQ7/Bt
-	IwWKJd/srP42R1nDNDvzoyvFFkJwgaXxffhVk9VhQm6+PHbqkueAOPkEBUwyCLfh
-	YopMeQ2jSRm3CdyklONgvVh/lQxFeOxFTQZ/G1k0M49MG8NN3b+kCh1cbsLbD9ee
-	8gosnvjhVNophIaVMehHKDW13L2zT9VcFznqN00+bqZEobRTvr/HxzvmZ1D5FJmj
-	TtupipBssuRQ295bz1lHA==
-X-ME-Sender: <xms:0cUGZwKnKrmy1kSLjuK2FuTo1nwc7LcdNDp4zStPc44YJymARe3BTA>
-    <xme:0cUGZwIEAyMxX3IeyQyb_IWayszvIowTFjlUHf8wBGM2gdq_xacwr43IAhMw9l3e0
-    usfIXTFUZPyy0HABG4>
-X-ME-Received: <xmr:0cUGZwvZGgMKRBITnrtVjr_B-xJJ0gMsRsjoxDnK4Lpl2oak7pewpYY0foprhSYUBsaACkzgt7CKNcg8Yz9eK6YNHpPVFw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedguddvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
-    jeenucfhrhhomhepofgrthhirghsuceujhpprhhlihhnghcuoehmsegsjhhorhhlihhngh
-    drmhgvqeenucggtffrrghtthgvrhhnpeekfeeiuedtvdetgeeutdehvddugffgveegveek
-    geegfeekueffffefleelveeggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehmsegsjhhorhhlihhnghdrmhgvpdhnsggprhgtphhtthhopeel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehksghushgthheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpthhtohepfigrnhhghihu
-    ghhuihesvgduiedqthgvtghhrdgtohhmpdhrtghpthhtohepughlvghmohgrlheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheptggrshhsvghlsehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhnvhhmvgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdgslhhotghksehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepmhgrthhirghsrdgsjhhorhhlihhnghesfigutgdrtghomh
-X-ME-Proxy: <xmx:0cUGZ9a3dVYooglZuYfmU9Kj2hR_zWL3t0f2h_5qDdxnw3BLde_1Yg>
-    <xmx:0cUGZ3ZO1dy4ik5nRJ7CKxTej3QwAfurNycbnbWZYblsljaE3F6lbw>
-    <xmx:0cUGZ5AI_9RkowdtJX4Yn_a0KFTDJMC5tAxEcfcNpdqfc3YSkdwXHA>
-    <xmx:0cUGZ9aWpQkMNWTgH4ixg5gxYXjE_WTZAf6HG5nCYtguS-Lh00iVaw>
-    <xmx:0sUGZxl6YIl9OZYMlgmceaW9WczSnPqK9pkM3Dk5UIVC-5rWLXHqpODG>
-Feedback-ID: if4314918:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 9 Oct 2024 14:04:49 -0400 (EDT)
-Message-ID: <3d817578-41ef-45e9-ac65-a9ba45e2e637@bjorling.me>
-Date: Wed, 9 Oct 2024 20:04:36 +0200
+	s=arc-20240116; t=1728497113; c=relaxed/simple;
+	bh=dTst3TzcEyw3tRqilTUktgkbQoYxklC5Ta/NvbE8BKw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JsacD37Qd7nsMv7PieaiVI2I4cHzzJ6yiUUI+s7Z3e7XI7eNONEiwCbks9jEdWsNm8bZWajD8rsrG8yncWDF57L5zVzPwlhAw4+EtLeMJP1c51Z3RRdD3ShRdCTskrfQA4zJFQ6TMCtGaaKhsbM+d2WmIIMM5PXozZAlaiklZAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ThhSi1Kb; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398fb1a871so9316e87.3;
+        Wed, 09 Oct 2024 11:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728497110; x=1729101910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cg5cj1gCluVnGdiYqSgBY4zdUcGWuMAkq5T51OVrPiA=;
+        b=ThhSi1KbJXXFB8A7Kaq47AW4O1LQ7vRFyKqq4RXLL804H8EcBr9aljKeTJ7Xg37NdP
+         5H+3pdMLhjTuX35Lk2N5YFlZOT+95brybkiDceonKZ/058tAUniGyw0DH8hKh5qduPyT
+         0umJ4oUrHIBiGk1pR268pa/n2YMDcUrOB8Nxwg8DwgBPynOWyQhlifdEU6unyqxLYj21
+         8fhiFvgJMpUkV7Wi/JZ2ADbih3rHBvsuFrgRSaYmgS3MaRcqRAVf+xbfVaOlnGMqrz73
+         c/76t2FDtkWMIGDp9hKRfjqaN4k5Q2k9W/qlj3TnYhXbmH1Bm/qkbUbVtm+1AkshjjJ6
+         DXCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728497110; x=1729101910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cg5cj1gCluVnGdiYqSgBY4zdUcGWuMAkq5T51OVrPiA=;
+        b=OoJHjzFTlSImX4mX0KB4GnXAiNKyYWiQisRGqI67riatmKmuTNPSM0x36LYI5xD7ER
+         18ZtRtpHC/k58epkG0c0KnX3aRSzGj2izDtIJ8cHNrjwUVHyY9NcvAI/BTuJRtJRZKp/
+         9IAQ2gaoxizSaeLgVVijEP6AZMQ+JCSsALGEIeLPf9B0yHf67j+le8Teb3ckvaPW/OE6
+         N6YKmbOcoGErQDlx7rwJcffPX7hpdvH5S/uVBuu1gO3NoKAROihP5zymFa92N0vgMxFl
+         A2P2a6LcKLXGQWD0U+bD++fHhKSuMAvbl7sYdGLprYNAHtOPpZkpfpq7qzCXciCmv3tA
+         SBEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxgdqwr7W5QznZaTKXMJ0ToO2CIoN6jz54OBvaQvCO+AFbV+3Gr8Yxw8aEyrgOqEx4JcY=@vger.kernel.org, AJvYcCWrLg3xkWHCEddC+eq5EdybpIGbLDIpW7lZwX+mzuuDxV31e+ZpgxYgY0WuX74lRq3bQTAeeB9drvV6Ikuh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7RiFJrRyPJ1IvDbwv9sh7HkpKA4ZqM4yL7IPnNgA6iaG55UGo
+	oa7IqCOUyiNSkdv3Abm++tzD6SZSa2GlundCUB0P31BWq5Q/BOT4
+X-Google-Smtp-Source: AGHT+IEjRBA8jNMnfVfMn7a9XGrUXb9Bhm9Z7vnut0to/79rWfwo+X0c7kx8GI6nz487wAaM691i2w==
+X-Received: by 2002:a05:6512:3e25:b0:52c:e17c:3741 with SMTP id 2adb3069b0e04-539c4892c13mr2452171e87.5.1728497109987;
+        Wed, 09 Oct 2024 11:05:09 -0700 (PDT)
+Received: from teknoraver-mbp.access.network ([89.101.6.116])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1697024fsm10972801f8f.95.2024.10.09.11.05.08
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Oct 2024 11:05:08 -0700 (PDT)
+From: Matteo Croce <technoboy85@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Matteo Croce <teknoraver@meta.com>
+Subject: [PATCH bpf] bpf: fix argument type in bpf_loop documentation
+Date: Wed,  9 Oct 2024 19:05:00 +0100
+Message-ID: <20241009180500.87367-1-technoboy85@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] nvme: add rotational support
-To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Wang Yugui <wangyugui@e16-tech.com>
-Cc: dlemoal@kernel.org, cassel@kernel.org, linux-nvme@lists.infradead.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>
-References: <20241008145503.987195-1-m@bjorling.me>
- <20241009074355.GA16181@lst.de> <ZwajykF81QLOkObY@kbusch-mbp>
-Content-Language: en-US
-From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-In-Reply-To: <ZwajykF81QLOkObY@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 09-10-2024 17:39, Keith Busch wrote:
-> On Wed, Oct 09, 2024 at 09:43:55AM +0200, Christoph Hellwig wrote:
->> On Tue, Oct 08, 2024 at 04:55:01PM +0200, Matias Bjørling wrote:
->>> From: Matias Bjørling <matias.bjorling@wdc.com>
->>>
->>> Enable support for NVMe devices that identifies as rotational.
->>>
->>> Thanks to Keith, Damien, and Niklas for their feedback on the patchset.
->>
->> Hmm, the only previous version I've seen was the the RFCs from
->> Wang Yugui, last seen in August.
-> 
-> Oops, that slipped by me as well. I think the right thing to do is bring
-> that one forward and retain the original credit. I agree with Matias
-> that we ought to be able to query the independent identification without
-> relying on CRWMS, though.
+From: Matteo Croce <teknoraver@meta.com>
 
-Works for me. Yugui, are you okay with me posting the updated patch 
-serie with your patch?
+The `index` argument to bpf_loop() is threaded as an u64.
+This lead in a subtle verifier denial where clang cloned the argument
+in another register[1].
+
+[1] https://github.com/systemd/systemd/pull/34650#issuecomment-2401092895
+
+Signed-off-by: Matteo Croce <teknoraver@meta.com>
+---
+ include/uapi/linux/bpf.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 8ab4d8184b9d..874af0186fe8 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -5371,7 +5371,7 @@ union bpf_attr {
+  *		Currently, the **flags** must be 0. Currently, nr_loops is
+  *		limited to 1 << 23 (~8 million) loops.
+  *
+- *		long (\*callback_fn)(u32 index, void \*ctx);
++ *		long (\*callback_fn)(u64 index, void \*ctx);
+  *
+  *		where **index** is the current index in the loop. The index
+  *		is zero-indexed.
+-- 
+2.46.0
+
 
