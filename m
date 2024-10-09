@@ -1,88 +1,149 @@
-Return-Path: <linux-kernel+bounces-356235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11135995E54
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF445995E58
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40BD283BA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:50:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F802834E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F201428E0;
-	Wed,  9 Oct 2024 03:50:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4559514A611;
+	Wed,  9 Oct 2024 03:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Kcw6IMDh"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5F110FF
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 03:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54B910FF;
+	Wed,  9 Oct 2024 03:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728445806; cv=none; b=OV5GXSpMJpMT6x7EKl/pnMjXB6fNBiuJxdSUjwI4ojhtp0/rZzB8Gt6Tl55+iJoJZ9pdNrVwoo41LhdPdCHjJBZfMVObfJGc0Wazn36vqYyuO8VnTw0t3Or4ajMHFnZg+fVL5USxp9eW42qKMfcCTW0jjytLi/bM0ICD+ZLs+yo=
+	t=1728445884; cv=none; b=Ux4wh6UJOMOGtSgI/Loh1cZffxxry0AH0UHQCtuY/zMN4jtX3cPJcLCHx6ijjl/LraRQNpzAXy3UvFtvXiN4EEHewBQbNH9sc3il4SnRuyaoVjFr1M4hdTe1nq8BMKgwQDrX2vsTnk05lVE1an1hVoBCWicr8nKrfnE5z9890/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728445806; c=relaxed/simple;
-	bh=2pzntAbDepUFPLzEgBid8WcHpvGzHwCjJYl+mmrHnDo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mtVxj2pLedHNKQ1e5uNhl8TRfgUpJPQdUsdxq9tzTkpU7Cae4eM9ot/4b+JwxJstblira/KEGRiy9VCiysb98LxqKziUmwMXgXs7c8dYol5Ce7n+uujJ42irjBwW97TmdTMF0xzt+gvd4v6xT1GOxW8Tf/Zrac/msalTO54MIew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a348ebb940so66709895ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 20:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728445803; x=1729050603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rw7rJSCiCXfgr4IOyT+sg+vA80oPk9jU0sR6X02fBho=;
-        b=eF9cRmyQ+C6PwGTJdlMou2eqduzjnyypMGdkE3sRk/lLmz6+a23sODa7H2iwtx/f6M
-         +SB1ytiDtVb5CyD/kz4vuUwzhwTpsbadvRDxESZG6SlA34suh9u0C+DGp9JaCM6O/dO/
-         pOjLFbWFXntXzrUzmHVmVeq5cH0n+MA6iAiSdJrBbaEYL4DIw6tCTi8jX6v+oszLgkw1
-         XxutnK8U9x1p4df/wMcb4todQ6QPSosDGgmHGqMXtB4jV+wgEiQHZVbl2o1fr2qDoHcF
-         B7j1BHjojKhkYXEiwdk2cbOUEs4cCtuQBbOx9bscZvlHBF80KRol8tihJTZnD1TpZQrd
-         WyTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJpAY4fdUeMIkQhSq9L0tf5RHz4wbxyk9FkHgS2k1svHf7Jqew5AUQvfSQakYuNqyOm4rfW66k5Oy8nV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2ApNLZ/AxKNTjWbwaIbjSDTQShWW47x0rAryApyTY4VnwoPW3
-	A/82F/KRPoOdFH4RoAMwItIXh9NZe9NmBrnzjPqc3tL7xBdtYW1D5sR2GNj1aVUE/qUEHNqdoPO
-	bG+N/KXPmFlQIZmfXs1r9DrFwuBP06SID4FegONLRRHNiBIa9G5De8sY=
-X-Google-Smtp-Source: AGHT+IFsZsK2mw6jBIY0lJMvI3/T+aTtTJV7pSr8Hw2SWDC9T3wqDKnfiMRj4ewbUZ31aLtZYi2xzaYbm/17MuYJvMuG8Q9+2rRo
+	s=arc-20240116; t=1728445884; c=relaxed/simple;
+	bh=Fz6m3s5wR0Xe7bKylBUoyAUXiZbhWI4E69+DbXptgGU=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GajoB/BzpYM91vzjiwUbzcv4LnUlOAh2SUzT2qHcBnEOHEn1Y6iaGjHDu1FCOTXfsPtmJQbDo/XjYMqQZnBIQNlaIrxqS1vb8jHzcm/6m3PAPUzKEFwaQAy2b1UnsPTHALY+bzVU7fw6jDC4Mnhdap4mMeD3K+TGWz7LfFN+7lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Kcw6IMDh; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1728445883; x=1759981883;
+  h=message-id:date:mime-version:to:cc:references:subject:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Fz6m3s5wR0Xe7bKylBUoyAUXiZbhWI4E69+DbXptgGU=;
+  b=Kcw6IMDh+CAWZNPpmwpzpu0AgleuTw6KPrzkTeBh+BcC4ICy6nq0JXQl
+   1EzaMHcxVYrGdCQSVVTwxbEvwkPn5hSWTh1SSkwcsTXLuH5dcJ8Jsh0dB
+   3+sg+PovgioDKfHosHKNOzOPeycMbmpMoASjEuctTVjbXYUOywnSD2oZ1
+   A=;
+X-IronPort-AV: E=Sophos;i="6.11,188,1725321600"; 
+   d="scan'208";a="433642865"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 03:51:19 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:59909]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.53.199:2525] with esmtp (Farcaster)
+ id acf9dcc9-ae36-4c0e-a2a8-553270007ea0; Wed, 9 Oct 2024 03:51:18 +0000 (UTC)
+X-Farcaster-Flow-ID: acf9dcc9-ae36-4c0e-a2a8-553270007ea0
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 9 Oct 2024 03:51:18 +0000
+Received: from [192.168.205.151] (10.106.100.42) by
+ EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 9 Oct 2024 03:51:14 +0000
+Message-ID: <ac337485-f8ab-45a4-b223-eb846e21c762@amazon.com>
+Date: Tue, 8 Oct 2024 20:51:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:3a3:4175:79d2 with SMTP id
- e9e14a558f8ab-3a397cf240bmr12259775ab.14.1728445803106; Tue, 08 Oct 2024
- 20:50:03 -0700 (PDT)
-Date: Tue, 08 Oct 2024 20:50:03 -0700
-In-Reply-To: <4cd7f0c2-a6e8-4bc6-b9fc-4b0edc99f63f@126.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6705fd6b.050a0220.3f80e.0023.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_stripe_to_text
-From: syzbot <syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zhaomzhao@126.com
+User-Agent: Mozilla Thunderbird
+To: <seanjc@google.com>, <andrew.cooper3@citrix.com>,
+	<dave.hansen@linux.intel.com>
+CC: <ackerleytng@google.com>, <ajones@ventanamicro.com>,
+	<anup@brainfault.org>, <bfoster@redhat.com>, <brauner@kernel.org>,
+	<david@redhat.com>, <derekmn@amazon.com>, <erdemaktas@google.com>,
+	<fan.du@intel.com>, <fvdl@google.com>, <haibo1.xu@intel.com>,
+	<isaku.yamahata@intel.com>, <jgg@nvidia.com>, <jgowans@amazon.com>,
+	<jhubbard@nvidia.com>, <jthoughton@google.com>, <jun.miao@intel.com>,
+	<kalyazin@amazon.co.uk>, <kent.overstreet@linux.dev>, <kvm@vger.kernel.org>,
+	<linux-fsdevel@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-mm@kvack.org>,
+	<maciej.wieczor-retman@intel.com>, <mike.kravetz@oracle.com>,
+	<muchun.song@linux.dev>, <oliver.upton@linux.dev>, <pbonzini@redhat.com>,
+	<peterx@redhat.com>, <pgonda@google.com>, <pvorel@suse.cz>,
+	<qperret@google.com>, <quic_eberman@quicinc.com>,
+	<richard.weiyang@gmail.com>, <rientjes@google.com>, <roypat@amazon.co.uk>,
+	<rppt@kernel.org>, <shuah@kernel.org>, <tabba@google.com>,
+	<vannapurve@google.com>, <vkuznets@redhat.com>, <willy@infradead.org>,
+	<zhiquan1.li@intel.com>, <graf@amazon.de>, <mlipp@amazon.at>,
+	<canellac@amazon.at>
+References: <ZwWOfXd9becAm4lH@google.com>
+Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
+ guest_memfd mmap
+Content-Language: en-US
+From: "Manwaring, Derek" <derekmn@amazon.com>
+In-Reply-To: <ZwWOfXd9becAm4lH@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D045UWA004.ant.amazon.com (10.13.139.91) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-Hello,
+On 2024-10-08 at 19:56+0000 Sean Christopherson wrote:
+> Another (slightly crazy) approach would be use protection keys to provide the
+> security properties that you want, while giving KVM (and userspace) a quick-and-easy
+> override to access guest memory.
+>
+>  1. mmap() guest_memfd into userpace with RW protections
+>  2. Configure PKRU to make guest_memfd memory inaccessible by default
+>  3. Swizzle PKRU on-demand when intentionally accessing guest memory
+>
+> It's essentially the same idea as SMAP+STAC/CLAC, just applied to guest memory
+> instead of to usersepace memory.
+>
+> The benefit of the PKRU approach is that there are no PTE modifications, and thus
+> no TLB flushes, and only the CPU that is access guest memory gains temporary
+> access.  The big downside is that it would be limited to modern hardware, but
+> that might be acceptable, especially if it simplifies KVM's implementation.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Yeah this might be worth it if it simplifies significantly. Jenkins et
+al. showed MPK worked for stopping in-process Spectre V1 [1]. While
+future hardware bugs are always possible, the host kernel would still
+offer better protection overall since discovery of additional Spectre
+approaches and gadgets in the kernel is more likely (I think it's a
+bigger surface area than hardware-specific MPK transient execution
+issues).
 
-Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+Patrick, we talked about this a couple weeks ago and ended up focusing
+on within-userspace protection, but I see keys can also be used to stop
+kernel access like Andrew's project he mentioned during Dave's MPK
+session at LPC [2]. Andrew, could you share that here?
 
-Tested on:
+It's not clear to me how reliably the kernel prevents its own access to
+such pages. I see a few papers that warrant more investigation:
 
-commit:         1ec6d097 Merge tag 's390-6.12-1' of git://git.kernel.o..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1144f707980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
-dashboard link: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1087e327980000
+"we found multiple interfaces that Linux, by design, provides for
+accessing process memory that ignore PKU domains on a page." [3]
 
-Note: testing is done by a robot and is best-effort only.
+"Though Connor et al. demonstrate that existing MPK protections can be
+bypassed by using the kernel as a confused deputy, compelling recent
+work indicates that MPK operations can be made secure." [4]
+
+Dave and others, if you're aware of resources clarifying how strong the
+boundaries are, that would be helpful.
+
+Derek
+
+
+[1] https://www.cs.dartmouth.edu/~sws/pubs/jas2020.pdf
+[2] https://www.youtube.com/watch?v=gEUeMfrNH94&t=1028s
+[3] https://www.usenix.org/system/files/sec20-connor.pdf
+[4] https://ics.uci.edu/~dabrowsa/kirth-eurosys22-pkru.pdf
 
