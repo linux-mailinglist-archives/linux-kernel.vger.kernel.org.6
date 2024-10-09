@@ -1,140 +1,103 @@
-Return-Path: <linux-kernel+bounces-357151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9858996C86
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD1C996C90
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D977B23092
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2811F1C218DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4891991A1;
-	Wed,  9 Oct 2024 13:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="qdNUZd/n";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="hB4hSmKR"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54001991CC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CDD199236;
+	Wed,  9 Oct 2024 13:46:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF50538DE5;
+	Wed,  9 Oct 2024 13:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481506; cv=none; b=KHcstHyOJHZxOKzly1kNAgdeeVqjDSzGcNsMlIXvVsEFm8SiudtHLHkqWzAxl2DtNvphc9kQ2pE+3C5gF9iEMXqVDcv66VoPE122jUOWreQTa1Y6ZS1l/YwyJIPxwVp5yjxGWB35ZcfHxPypShXlH91DAED+ufdrEaZSBwVdrQ4=
+	t=1728481609; cv=none; b=SPq7gkpujA3eROVdWy9n3U6WoDBdDrQjh9QMx2XCmObdaIIRHk0UCXb1MgEVvqyFP+KNzGIN3XoYt219gBW/TyyawMd6D+c8xRpBOzmy4W/ESCmFtmwQtFuBfxOwGLfxYmuAehLiLICmvBxa3A0A/szIZkaIOe9uQ5DBRjCOTEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481506; c=relaxed/simple;
-	bh=5r+GMHSj63RYi/J4H0h7uqDa4DrIu6yTU3ihuErU0pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AFPfLzTGiPlM9MrFLbSZebIthTRU+p5bXrJYXr7ygW8rsfzYcjEj6IRLK670kg4FMocd8biBk4WPAaK4OfsZjqw0zrQ7qvhpJnKiBmQzuxFnxbA3+xGkcUvjNhhGNLOno/8EH8KwiH221O7+pGOf//qv3IzzPzj0NnQevw/AHSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=qdNUZd/n; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=hB4hSmKR; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=qdNUZd/nVEljgYp/f1vPbtQdck4IsprrIYzmCPogI7HPF8YJB3Ox/1Pzf4NtNOqTFsjB2GuGHxRuUchJK3h5Q2mGRJg8UyrIZTbKU5dDap/1PkGkwQCs1lFcGVfnxehbODlCd4E3nKXzfO14Q/xCsAEUv/1V12Bw+JX9V4T/DBE8yUHubZwvXFJFLKWcoo+QEMJAfq/BoTK7AcgQzDU6qtq7QdJ1mihYTSEVYrUhkB5UJJaPhKzQcsEYCmRx42Q/9DEtgbk0Ci03QW3h6pR9tdLd+xxeydhBS1jlSv2M9Hja3YFOcrsY+5GkXXc2QTjcL6T1ytfVjr0xuTpbG4iJVw==; s=purelymail3; d=lkcamp.dev; v=1; bh=5r+GMHSj63RYi/J4H0h7uqDa4DrIu6yTU3ihuErU0pg=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=hB4hSmKRysELw5XqyuU07J/N0tgIHTlecw0aZ2JllPh3cmBXzxDWTdORnlsNdx75sv0/wjGRN2G9kuQsAujHw2JGGvNioQbJ94ULyRDYGtIfPuY/gkY5yJ1WKXOhezWF0EqmrDVM3kuSthFV7vhQ+5hrH2pm+1uU/F35X9NGsawSY4zNtYcM3k0zfy/rryLNLFqH2e4LZFyRqJiYddAbbfsgf1lANsKgEhiixl5jGblx7nJLKbytAhQFQpohibM+1zbNRIs5F9UFoDVEw8sIEiZMyGRrXS0nSNY/opJmJvMphArpaFisvr+slszhGPXx4FZqG0yGk6ZSDAtdIyDG1w==; s=purelymail3; d=purelymail.com; v=1; bh=5r+GMHSj63RYi/J4H0h7uqDa4DrIu6yTU3ihuErU0pg=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 40580:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 875396785;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Wed, 09 Oct 2024 13:44:41 +0000 (UTC)
-Message-ID: <b8c3c51e-375f-4139-8336-76b6df56e8ea@lkcamp.dev>
-Date: Wed, 9 Oct 2024 10:44:38 -0300
+	s=arc-20240116; t=1728481609; c=relaxed/simple;
+	bh=bLKZ5gZUn7I4XAOhOy9/2kjUpjXZpY9A0U/l2hd18XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBcmLWAG3Qn/rYPPBW/fX6uG9oXFGSDcFPhbIxrWgaWemRNgUayweLzfWL0Muwig/BZ1dTWn+02oe6zqJ0hAooQeSLV3m58CK3Fpk1K755T5EBUEmCtzWGZg7tED5AKwl9HGvz6hINq5N+dnQxM2xQjZJ4tDH5kKzCx0s7Dk6jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6E92FEC;
+	Wed,  9 Oct 2024 06:47:15 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.77])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F65F3F58B;
+	Wed,  9 Oct 2024 06:46:44 -0700 (PDT)
+Date: Wed, 9 Oct 2024 14:46:42 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: <cristian.marussi@arm.com>, <ulf.hansson@linaro.org>,
+	<jassisinghbrar@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-arm-msm@vger.kernel.org>, <johan@kernel.org>,
+	<konradybcio@kernel.org>, <linux-pm@vger.kernel.org>,
+	<tstrudel@google.com>, <rafael@kernel.org>,
+	"Johan Hovold" <johan+linaro@kernel.org>
+Subject: Re: [PATCH V3 1/4] firmware: arm_scmi: Ensure that the message-id
+ supports fastchannel
+Message-ID: <ZwaJQmO4a7cM7MFY@bogus>
+References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+ <20241007060642.1978049-2-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: sm750: Fix missing config in Kconfig
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Fabricio Gasperin <fgasperin@lkcamp.dev>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
- Teddy Wang <teddy.wang@siliconmotion.com>, linux-fbdev@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- ~lkcamp/patches@lists.sr.ht
-References: <20240921180612.57657-1-fgasperin@lkcamp.dev>
- <20240921180612.57657-2-fgasperin@lkcamp.dev>
- <2024100925-lend-aging-2ff3@gregkh>
-Content-Language: en-US
-From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-In-Reply-To: <2024100925-lend-aging-2ff3@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007060642.1978049-2-quic_sibis@quicinc.com>
 
-Hi Greg,
+On Mon, Oct 07, 2024 at 11:36:39AM +0530, Sibi Sankar wrote:
+> Currently the perf and powercap protocol relies on the protocol domain
+> attributes, which just ensures that one fastchannel per domain, before
+> instantiating fastchannels for all possible message-ids. Fix this by
+> ensuring that each message-id supports fastchannel before initialization.
+>
 
-On 10/9/24 06:56, Greg Kroah-Hartman wrote:
-> On Sat, Sep 21, 2024 at 03:06:09PM -0300, Fabricio Gasperin wrote:
->> Fixes the following compilation error:
->>
->> ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
->> ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] undefined!
->> ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
->>
->> Signed-off-by: Fabricio Gasperin <fgasperin@lkcamp.dev>
->> ---
->>   drivers/staging/sm750fb/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/staging/sm750fb/Kconfig b/drivers/staging/sm750fb/Kconfig
->> index 08bcccdd0f1c..eca1aa43d725 100644
->> --- a/drivers/staging/sm750fb/Kconfig
->> +++ b/drivers/staging/sm750fb/Kconfig
->> @@ -3,6 +3,7 @@ config FB_SM750
->>   	tristate "Silicon Motion SM750 framebuffer support"
->>   	depends on FB && PCI && HAS_IOPORT
->>   	select FB_MODE_HELPERS
->> +	select FB_IOMEM_FOPS
->>   	select FB_CFB_FILLRECT
->>   	select FB_CFB_COPYAREA
->>   	select FB_CFB_IMAGEBLIT
->> -- 
->> 2.46.1
->>
->>
-> 
-> What is causing this error? What commit created the problem, and why
-> has no one reported it yet?
+Looks good to me. With the minor nit below addressed,
 
-This happens because drivers/staging/sm750fb/sm750.c, defines an fb_ops 
-structure:
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-static const struct fb_ops lynxfb_ops = {
-	.owner = THIS_MODULE,
-	FB_DEFAULT_IOMEM_OPS,
-	...
-};
+(assuming you will take this all via pmdomain or qcom soc tree)
 
-FB_DEFAULT_IOMEM_OPS expands to the fb_io_* helpers declared in 
-include/linux/fb.h and defined in drivers/video/fbdev/core/fb_io_fops.c; 
-however, the latter is gated by FB_IOMEM_FOPS, so when compiling a 
-kernel with CONFIG_STAGING=y + CONFIG_FB=m + CONFIG_FB_SM750=m, you get 
-the following error:
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>  drivers/firmware/arm_scmi/driver.c    | 9 +++++++++
+>  drivers/firmware/arm_scmi/protocols.h | 2 ++
+>  2 files changed, 11 insertions(+)
+>
+> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> index 88c5c4ff4bb6..80a9a615672a 100644
+> --- a/drivers/firmware/arm_scmi/driver.c
+> +++ b/drivers/firmware/arm_scmi/driver.c
+> @@ -56,6 +56,9 @@ static atomic_t transfer_last_id;
+>
+>  static struct dentry *scmi_top_dentry;
+>
+> +static int scmi_protocol_msg_check(const struct scmi_protocol_handle *ph,
+> +				   u32 message_id, u32 *attributes);
+>
 
-ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] 
-undefined!
-ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+I prefer to just move the function above if possible to avoid this extra
+declaration just keep keep it consistent with other such internal/static
+function calls within this file. No hard opinion, just preference to avoid
+me thinking(or scratching my head) why only this is done different few
+months down the line.
 
-So in order to solve it we select FB_IOMEM_FOPS, much like the other 
-FB_* drivers do in drivers/video/fbdev/Kconfig.
-
-Not entirely sure why this wasn't caught before, but the commit that 
-broke the build for sm750fb is 6b180f66c0dd ("fbdev: Provide I/O-memory 
-helpers as module"), which made the fb_io_* helpers be built as a 
-separate module instead of being bundled in fb.o (which is what sm750fb 
-was relying on). I think Fabricio can add a "Fixes:" tag in v2.
-
-Thanks,
-Vinicius
-
-> 
-> confused,
-> 
-> greg k-h
-
+--
+Regards,
+Sudeep
 
