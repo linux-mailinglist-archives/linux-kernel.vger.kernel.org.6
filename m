@@ -1,173 +1,99 @@
-Return-Path: <linux-kernel+bounces-357291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE9A996F1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD54996F24
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC110B27D6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBB42836FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30FC1A0AFA;
-	Wed,  9 Oct 2024 15:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9870C126C18;
+	Wed,  9 Oct 2024 15:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SPtoK/NM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOM32IBO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713EC1A00D2;
-	Wed,  9 Oct 2024 15:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1D64084D;
+	Wed,  9 Oct 2024 15:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486092; cv=none; b=XLFLEuXZhGdLGVyRD4PpdRs8hRptVCCCR8UakHTWYbtvVi/DlI8zuSNW8hbJXzpWcct4AucORzjP9QhDjmEjLvoLMSWdSxNve20NDC8VxDzt/tzhw8m0dNWuSAgaB34U3XfhQcxcObvZjzfgVFEEQ+jaMhyAz9Ebc8FiZMaOQ54=
+	t=1728486151; cv=none; b=MRf7KkvFVdMnIsKQ7Q21Y8Yff9OZOpPqQh2tFWYwa7nXpyo6z3iTqPym6aMn5ENki6zq3fQn5z+9IqgI9j20Q7qyZaY4XLisFhG/v3luSxXOwOb8aQASmly5+ooNhvyOXyrXl1aBwrlnRXazFpIYt2KnDaKJsgkdA+8lAXgsoiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486092; c=relaxed/simple;
-	bh=fVRTwtcaoT0WmKjrFpk1DDIfYhMFQjs89fQ0qX3twgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lXQ4bPvO8LuJW7xIrdLlLHeHWelsqLf9pEs/3eGOJyVqrk6ICp7tQe+sMNqjDuAyEwpsLQNF2GQvFQod0T46bp6V7gXwt5z6fvSpFbDUBl46sA5OWantnIuiDWF6TyeZqWBZSCwbBE+xM7WJjP3Rn0BC6ael6w9mT4CH9DbL5Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SPtoK/NM; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728486091; x=1760022091;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fVRTwtcaoT0WmKjrFpk1DDIfYhMFQjs89fQ0qX3twgY=;
-  b=SPtoK/NMn//+oNsyOxMG2mxlq+qcm/F/CbaIOFNJun219dNq9Ln2ZVJl
-   qzqka2KQpefRkFAwPmIRFO/cfPGQT8V5C8nKiOOQHHcjxf7k/RvJvNlFu
-   DUY2dTr1O1eLqR6dDXWPAhWAWl9UsU8hTkOt8XIb9BQSI+NeQQXjucEie
-   sKJBX4NSUGLJMU8slfFbfN4Fy3EVfKJ7SmCeiOnR1ZRYkgkzluv6HDxL3
-   lxntuDsQ1MKiduGdEKkY0ogYGEfwN4WPD8ce0FvlSmTY64/CcBi7rHO7f
-   xbIHAc7R63kOJ43wPwmqLJryfd+uBF2VSL2wIugq/8vgUAC0kXgUW+VUW
-   g==;
-X-CSE-ConnectionGUID: lAl/6/KGSxOhTYmB6kv0ZA==
-X-CSE-MsgGUID: thc+uxylSjWR94dy78v2WQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27740355"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="27740355"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:01:30 -0700
-X-CSE-ConnectionGUID: vlgJ5M3jTiOZj4mbfcBUhw==
-X-CSE-MsgGUID: 9mYwFaXSTPav/TcJ9Syvdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="81297872"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 08:01:26 -0700
-Message-ID: <1a200cd3-ad73-4a53-bc48-661f7d022ac0@intel.com>
-Date: Wed, 9 Oct 2024 18:01:19 +0300
+	s=arc-20240116; t=1728486151; c=relaxed/simple;
+	bh=YijPQnFRilQWRtLvvdo5y8s95IoL47EEoI6aPDUbRg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7RcxjsotHMQxPMeMUCGBaVz7xBG8A56TTG4+3Zm48rHL7lq7ClAiYi7vOUkUubO1lTaZlQa/7cO19Tc5S7tIWt2d5hSxl4JxChQimd/9ErtKRzf7jN1Ldb6H7fVVGxM/qXRK5vrWs1nwA3fNIU83WiM/B9dBVudQ9rrfv1WmYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOM32IBO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F2AC4CEC3;
+	Wed,  9 Oct 2024 15:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728486150;
+	bh=YijPQnFRilQWRtLvvdo5y8s95IoL47EEoI6aPDUbRg8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oOM32IBOekQCh583Xv7JBTXXjGSGt2wiWSi5G5Vm0PCPDbsJolFYePCS0OVH04/Ni
+	 ftaxp2RWcWQ/fUzPu5bG2JHkteD4AmFOv07W9KmW5z2aUcWgZKqKvlYJcDXMlrCOsH
+	 hgc7i291Q3Eev3H2ywjGqVu2JrFRHOsyggEqwp3rOu7LQ69CRg5AZvGHam08EGbbHM
+	 UTtOVbLFRE0ZQF0XRYj6XsgW1q+5a+7+duAyfl6UjcCUqa87iUc8xGXEVZ8oaDUHT9
+	 1AdY46RGoiD4S08D4n6SA6O8LCxnjkSc/Af91uZuqzwPJmeFl+i3c9LT6Pj7LCn/sj
+	 jdwilatPoP4WQ==
+Date: Wed, 9 Oct 2024 10:02:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH 0/5] dt-bindings: mfd: convert zii,rave-sp.txt and child
+ txt to yaml format
+Message-ID: <20241009150228.GB465237-robh@kernel.org>
+References: <20241008-zii_yaml-v1-0-d06ba7e26225@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/25] KVM: TDX: Do TDX specific vcpu initialization
-To: Yuan Yao <yuan.yao@linux.intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
- kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
- linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>,
- Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-19-rick.p.edgecombe@intel.com>
- <20240813080009.zowu3woyffwlyazu@yy-desk-7060>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240813080009.zowu3woyffwlyazu@yy-desk-7060>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008-zii_yaml-v1-0-d06ba7e26225@nxp.com>
 
-On 13/08/24 11:00, Yuan Yao wrote:
-> On Mon, Aug 12, 2024 at 03:48:13PM -0700, Rick Edgecombe wrote:
->> From: Isaku Yamahata <isaku.yamahata@intel.com>
->>
->> TD guest vcpu needs TDX specific initialization before running.  Repurpose
->> KVM_MEMORY_ENCRYPT_OP to vcpu-scope, add a new sub-command
->> KVM_TDX_INIT_VCPU, and implement the callback for it.
->>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
->> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->> ---
-
-<SNIP>
-
->> @@ -884,6 +930,149 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
->>  	return r;
->>  }
->>
->> +/* VMM can pass one 64bit auxiliary data to vcpu via RCX for guest BIOS. */
->> +static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64 vcpu_rcx)
->> +{
-
-<SNIP>
-
->> +	if (modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM)
->> +		err = tdh_vp_init_apicid(tdx, vcpu_rcx, vcpu->vcpu_id);
->> +	else
->> +		err = tdh_vp_init(tdx, vcpu_rcx);
+On Tue, Oct 08, 2024 at 06:00:56PM -0400, Frank Li wrote:
+> Fixed below warnings:
 > 
-> This can cause incorrect topology information to guest
-> silently:
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu: failed to match any schema with compatible: ['zii,rave-sp-rdu2']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/watchdog: failed to match any schema with compatible: ['zii,rave-sp-watchdog']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/backlight: failed to match any schema with compatible: ['zii,rave-sp-backlight']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/pwrbutton: failed to match any schema with compatible: ['zii,rave-sp-pwrbutton']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a3: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a4: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu: failed to match any schema with compatible: ['zii,rave-sp-rdu2']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/watchdog: failed to match any schema with compatible: ['zii,rave-sp-watchdog']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/backlight: failed to match any schema with compatible: ['zii,rave-sp-backlight']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/pwrbutton: failed to match any schema with compatible: ['zii,rave-sp-pwrbutton']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a3: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a4: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
 > 
-> A user space VMM uses "-smp 8,threads=4,cores=2" but doesn't
-> pass any 0x1f leaf data to KVM, means no 0x1f value to TDX
-> module for this TD. The topology TD guest observed is:
-> 
-> Thread(s) per core:                 2
-> Core(s) per socket:                 4
-> 
-> I suggest to use tdh_vp_init_apicid() only when 0x1f is
-> valid. This will disable the 0x1f/0xb topology feature per
-> the spec, but leaf 0x1/0x4 still are available to present
-> right topology in this example. It presents correct topology
-> information to guest if user space VMM doesn't use 0x1f for
-> simple topology and run on TDX module w/ FEATURES0_TOPOLOGY.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Frank Li (5):
+>       dt-bindings: input: convert zii,rave-sp-pwrbutton.txt to yaml
+>       dt-bindings: backlight: convert zii,rave-sp-backlight.txt to yaml
+>       dt-bindings: nvmem: convert zii,rave-sp-eeprom.txt to yaml format
+>       dt-bindings: watchdog: convert zii,rave-sp-wdt.txt to yaml format
+>       dt-bindings: mfd: convert zii,rave-sp.txt to yaml format
 
-tdh_vp_init_apicid() passes x2APIC ID to TDH.VP.INIT which
-is one of the steps for the TDX Module to support topology
-information for the guest i.e. CPUID leaf 0xB and CPUID leaf 0x1F.
+All looks fine except for the maintainers.
 
-If the host VMM does not provide CPUID leaf 0x1F values
-(i.e. the values are 0), then the TDX Module will use native
-values for both CPUID leaf 0x1F and CPUID leaf 0xB.
-
-To get 0x1F/0xB the guest must also opt-in by setting
-TDCS.TD_CTLS.ENUM_TOPOLOGY to 1.  AFAICT currently Linux
-does not do that.
-
-In the tdh_vp_init() case, topology information will not be
-supported.
-
-If topology information is not supported CPUID leaf 0xB and
-CPUID leaf 0x1F will #VE, and a Linux guest will return zeros.
-
-So, yes, it seems like tdh_vp_init_apicid() should only
-be called if there is non-zero CPUID leaf 0x1F values provided
-by host VMM. e.g. add a helper function
-
-bool tdx_td_enum_topology(struct kvm_cpuid2 *cpuid)
-{
-	const struct tdx_sys_info_features *modinfo = &tdx_sysinfo->features;
-	const struct kvm_cpuid_entry2 *entry;
-
-	if (!(modinfo->tdx_features0 & MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM))
-		return false;
-
-	entry = kvm_find_cpuid_entry2(cpuid->entries, cpuid->nent, 0x1f, 0);
-	if (!entry)
-		return false;
-
-	return entry->eax || entry->ebx || entry->ecx || entry->edx;
-}
-
-
+Rob
 
