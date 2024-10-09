@@ -1,50 +1,91 @@
-Return-Path: <linux-kernel+bounces-356164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBF2995D72
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D3A995D75
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0491F25892
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F606288046
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9465E43AB0;
-	Wed,  9 Oct 2024 01:53:11 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664E15103F;
+	Wed,  9 Oct 2024 01:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Q4hmK7U2"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBF8383;
-	Wed,  9 Oct 2024 01:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9881BC49
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728438791; cv=none; b=TI3aHNYspTPmeVUYq3djoDzLd3w89YgIZ7YU+jB0tKjSXgfHOlb/QhBZbMJ5OBJ6qf+7PAxIFKtjDOqf6tQwWZpA9YV282mSZSe+Pd6H/Oaar7G/TBQ8Hj8ycbPsPfmsvPKSUzVVxHfMjKVGOJtRPdaMRu4nHg6YbprAEbsQyKk=
+	t=1728438861; cv=none; b=GKME3kHq69FieQTGdpqRfo3aOxwAjZ56sumb9uvkg+tRXhSQPOMX1NMCj3C1IaFfmLIsCT2O0RoKNqQxeCNtvBCZc+YBAR3Qz4LrY64z7OudYGESS55onJJYxJAPOeqL4zYaVEZvDGS78QoTcTNuZQDYMkl4O+/v7Yz/zOa/E2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728438791; c=relaxed/simple;
-	bh=rzONIBT2xHW7ECDdWtokFD/Xfd59nQLmQrZC7TpWLAc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qeML9XmWzXYgZ2W/WO0OsJdMhuNaClMbGZiL9nXDbpzBGWMxhSM2t4OQN/QmMfI0FAY6SXAO/MJ4X8FAcAXwd8VCP7dEa3VljEyeRKDkceQapE10oyc84I9pg9idukDU9xLVJ/cxswjZjR/S1OtgeZh5kBt3C9ef1bi6ivsgTlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syLsw-000000003El-1eZh;
-	Wed, 09 Oct 2024 01:53:06 +0000
-Date: Wed, 9 Oct 2024 02:53:03 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 1/3] net: phy: realtek: read duplex and gbit master
- from PHYSR register
-Message-ID: <66d82d3f04623e9c096e12c10ca51141c345ee84.1728438615.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1728438861; c=relaxed/simple;
+	bh=Uq0lml03fULgHRE27fxPp3bBnli/o2yLkTWNxaOfTTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pi+HdRhdM7YEDa8FVxQIFrE/p13bl0a6FnwSUzSzwnkPbNtpPJKm4PX5Z7M8VWF2WFfShPE0BrVbEJ9CS888VVP3rFkfkhccK6vdSEKUUnFmsZAtOd5jB09SoZPseA1s5oID33fptIlCcgRABBJsPTvGsxgwqgYTeSUnyyY44f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Q4hmK7U2; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a99e4417c3so516952785a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 18:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1728438858; x=1729043658; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Nqblj2vfGcWTCDBqYSGMN3UjaETKINHlT0Ae75jcL4=;
+        b=Q4hmK7U229FY6RCijlFGyE+4BkGkEUH2cF3do60g9Csim13DeDPIUCPg7zPr5YeH1U
+         AWm/3UAHoX77XRh6C9lsWSf4qruBjRqW/jBOMaYWOirh1B3TydH/h0RsTMGIl7OhHubi
+         cl3NvSHqZw4iuTeCyvyg82xbxzuixd4F6F4kHutzTgh607pkb2m11AvYQo+yaiAsVQSz
+         8DWTJgS/byCSNRVdymtIYJUoG2lVT0Nc44TROsoMfjDPzhBNi3mUl+nScRnq8XEfuaAs
+         ZNj6ybUlQqKJdPg1LrU82dhN+mLFHNY7jL8J3BGuqi/QNrPIFZ4xUuPId/f0DK0pZsyu
+         CheA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728438858; x=1729043658;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Nqblj2vfGcWTCDBqYSGMN3UjaETKINHlT0Ae75jcL4=;
+        b=e7XeIXTONc1/wvUEbPKQ9V0IW1P5cXDGVVmeSIhR1NTbmkGhqiWr6JhayXtF+ndhR8
+         /XTmsvCq8b+/o5Bt/XOydFfyAUFieQh74QH7r0UTT6xSj0n2dyk2ZieppfaFFGWfYqBr
+         mmiBnEaDiVSLWtA6sWF1KzfblIxtEQd4fMFQOEC/71jDrPXzrCz7z8XEnCjRUAkyrz8J
+         OZikVhoeW/USaxFmR/EXS+AXYn/tQMlG203xhgl0AT9zsBEh0Fi8zRu4oaQWZa07sW9r
+         LKznGtilhB6Dv3a9NSbDAQjHr108sitlxfvZcTp/VLATeg1mR34m9F5Uj5W4aSA2HLeB
+         xD8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU46VkOrkwBiGfFvp5Tlw7MxvOrvmKO+/355aUP5CY9NpfSL4Zl82PbMtZiFUGgM5AC/g1PEXTBQvE4fE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDZmd6g71oxqeP/rq4fIEy1nneRHmvqyQMp9uuxLD20Xx0s7S6
+	Lh7j72bJvkbd9NNWWPqg85Q7IOEmLOiU0xA7iyKOIaHodmRc8iH89WLsFs9jeg==
+X-Google-Smtp-Source: AGHT+IFMOAo/1I1cTdtK9SnWuFLYYRGtuH+Hv9k33WAPCEqzyYT8Pnv1I79nCa4g7DDoFJDtrRroFg==
+X-Received: by 2002:a05:620a:4152:b0:7a9:a744:f989 with SMTP id af79cd13be357-7b0874a9aeemr119959485a.46.1728438858259;
+        Tue, 08 Oct 2024 18:54:18 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::31c2])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae7576497fsm412117185a.116.2024.10.08.18.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 18:54:17 -0700 (PDT)
+Date: Tue, 8 Oct 2024 21:54:14 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: duanchenghao <duanchenghao@kylinos.cn>
+Cc: Hongyu Xie <xy521521@gmail.com>, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz,
+	stanley_chang@realtek.com, tj@kernel.org,
+	Hongyu Xie <xiehongyu1@kylinos.cn>
+Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+Message-ID: <c0bda920-2241-4f50-8a6a-531ee9da4d69@rowland.harvard.edu>
+References: <1725931490447646.3.seg@mailgw.kylinos.cn>
+ <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
+ <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
+ <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
+ <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
+ <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
+ <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
+ <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
+ <4b27a54007cbc50424662eba6b92cb22a7a528f7.camel@kylinos.cn>
+ <0a4dc46ae767c28dd207ae29511ede747f05539a.camel@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,114 +94,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <0a4dc46ae767c28dd207ae29511ede747f05539a.camel@kylinos.cn>
 
-The PHYSR MMD register is present and defined equally for all RTL82xx
-Ethernet PHYs.
-Read duplex and Gbit master bits from rtlgen_decode_speed() and rename
-it to rtlgen_decode_physr().
+On Wed, Oct 09, 2024 at 09:19:39AM +0800, duanchenghao wrote:
+> Hi Alan,
+> 
+> I haven't received a reply from you since my last email. Could you
+> please confirm if you have received this one?
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/net/phy/realtek.c | 48 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 40 insertions(+), 8 deletions(-)
+I have.
 
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index c15d2f66ef0d..717284a71667 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -80,15 +80,19 @@
- 
- #define RTL822X_VND2_GANLPAR				0xa414
- 
--#define RTL822X_VND2_PHYSR				0xa434
--
- #define RTL8366RB_POWER_SAVE			0x15
- #define RTL8366RB_POWER_SAVE_ON			BIT(12)
- 
- #define RTL9000A_GINMR				0x14
- #define RTL9000A_GINMR_LINK_STATUS		BIT(4)
- 
--#define RTLGEN_SPEED_MASK			0x0630
-+#define RTL_VND2_PHYSR				0xa434
-+#define RTL_VND2_PHYSR_LINK			BIT(2)
-+#define RTL_VND2_PHYSR_DUPLEX			BIT(3)
-+#define RTL_VND2_PHYSR_SPEEDL			GENMASK(5, 4)
-+#define RTL_VND2_PHYSR_SPEEDH			GENMASK(10, 9)
-+#define RTL_VND2_PHYSR_MASTER			BIT(11)
-+#define RTL_VND2_PHYSR_SPEED_MASK		(RTL_VND2_PHYSR_SPEEDL | RTL_VND2_PHYSR_SPEEDH)
- 
- #define RTL_GENERIC_PHYID			0x001cc800
- #define RTL_8211FVD_PHYID			0x001cc878
-@@ -660,9 +664,24 @@ static int rtl8366rb_config_init(struct phy_device *phydev)
- }
- 
- /* get actual speed to cover the downshift case */
--static void rtlgen_decode_speed(struct phy_device *phydev, int val)
-+static void rtlgen_decode_physr(struct phy_device *phydev, int val)
- {
--	switch (val & RTLGEN_SPEED_MASK) {
-+	/* bit 2
-+	 * 0: Link not OK
-+	 * 1: Link OK
-+	 */
-+	phydev->link = !!(val & RTL_VND2_PHYSR_LINK);
-+
-+	/* bit 3
-+	 * 0: Half Duplex
-+	 * 1: Full Duplex
-+	 */
-+	if (val & RTL_VND2_PHYSR_DUPLEX)
-+		phydev->duplex = DUPLEX_FULL;
-+	else
-+		phydev->duplex = DUPLEX_HALF;
-+
-+	switch (val & RTL_VND2_PHYSR_SPEED_MASK) {
- 	case 0x0000:
- 		phydev->speed = SPEED_10;
- 		break;
-@@ -684,6 +703,19 @@ static void rtlgen_decode_speed(struct phy_device *phydev, int val)
- 	default:
- 		break;
- 	}
-+
-+	/* bit 11
-+	 * 0: Slave Mode
-+	 * 1: Master Mode
-+	 */
-+	if (phydev->speed >= 1000) {
-+		if (val & RTL_VND2_PHYSR_MASTER)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_MASTER;
-+		else
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_SLAVE;
-+	} else {
-+		phydev->master_slave_state = MASTER_SLAVE_STATE_UNSUPPORTED;
-+	}
- }
- 
- static int rtlgen_read_status(struct phy_device *phydev)
-@@ -701,7 +733,7 @@ static int rtlgen_read_status(struct phy_device *phydev)
- 	if (val < 0)
- 		return val;
- 
--	rtlgen_decode_speed(phydev, val);
-+	rtlgen_decode_physr(phydev, val);
- 
- 	return 0;
- }
-@@ -1007,11 +1039,11 @@ static int rtl822x_c45_read_status(struct phy_device *phydev)
- 		return 0;
- 
- 	/* Read actual speed from vendor register. */
--	val = phy_read_mmd(phydev, MDIO_MMD_VEND2, RTL822X_VND2_PHYSR);
-+	val = phy_read_mmd(phydev, MDIO_MMD_VEND2, RTL_VND2_PHYSR);
- 	if (val < 0)
- 		return val;
- 
--	rtlgen_decode_speed(phydev, val);
-+	rtlgen_decode_physr(phydev, val);
- 
- 	return 0;
- }
--- 
-2.47.0
+> I'm worried that there might be an issue with the email system and you
+> might not be receiving them.
+
+I sent a message 9 days ago.  See
+
+https://lore.kernel.org/all/85105e45-3553-4a8c-b132-3875c4657c4b@rowland.harvard.edu/
+
+You were CC'ed on that message; maybe you didn't receive it.
+
+Maybe the topic of that thread isn't exactly the same as the topic of 
+your thread; I tend to get the two of them confused.
+
+Alan Stern
 
