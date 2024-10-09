@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-356580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687C59963A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:49:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BDE9963A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02D6DB256F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:48:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A1E4B26B4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7721190462;
-	Wed,  9 Oct 2024 08:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D431917D2;
+	Wed,  9 Oct 2024 08:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZgE1VxV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="D753RUIG"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AD918E032;
-	Wed,  9 Oct 2024 08:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF2E18E354
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728463446; cv=none; b=X8HHJTNhejQ7F8v3k6bN6bREUTV6BRbsFRaaMSII8QQndA8cOr9ajBffxEvuQiCifnDUlTSHOZjwGcF9lOVwC6yM7/SVrri3Ody4Piw/SAEiYp8+Bk1xqVi55VtFaSLachZzVhOeaqGbAXSJg8xGSrEDugI0nU6HZDsdkyO8Rl8=
+	t=1728463484; cv=none; b=rV8Tl8Z6B0d981l2TgfcjLU0GYVcU6ZUGo9ucjIuq6ADPZKpMZk2Vm8A2Ykmtk/WEneN23mHDrGXfdySl54n1bVmhEieiYS0En4cQ7nvpiiU3CRaFq8YX3PZYBFVcLqdZ4Iwp/1v8nbgjDF/frUpj4oV4z0AZesjijqMrCQp2JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728463446; c=relaxed/simple;
-	bh=ceMij/yfbKLvJo6J2VHlzeDQMeXfsggIscfz1kWVik4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPJoPcf5IPTthcylSN+zxhuHqL/cAQkT3ENkt2Py9O77o6GZ4pQpHQR6Dk9Ij0Rz6ZbsYgUUZefNBn18eD6+bM7qvxq8rTTFlo9zxL6E51O3wq25kFSVP02HUT+A5Yfs8sxItZuEWnwsU5KnrTmUbzBpH8kUPorN9fUJy1JUCkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZgE1VxV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF4FC4CECF;
-	Wed,  9 Oct 2024 08:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728463445;
-	bh=ceMij/yfbKLvJo6J2VHlzeDQMeXfsggIscfz1kWVik4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sZgE1VxVx2v/62JJUVZHh+KqF+47rw+KtEoQHosRPAEMQCrgihLVD4FLPln22/PlO
-	 Qw5UOCA9BGcPzWm60t8LKGAlwIx5x53bZfNkEQFG6Z/nfwtSDXKy9/wqR2Hax5bkol
-	 HC5xNucZL1KdzEYPCFk+xqNit6YLzELIffu6Lh4sCSesoTxJR4Aj3iU1YzAR4bjxh+
-	 fveoxVGtGM825lS5LJn7PVrKJ4xOJeZKtrGhhE+vkyEh2uVY9IpG9v6hKTBWXsNurh
-	 FVHjaAAgqa6XZ0TfH74v2IrV20Dd8TC8F9aoIMxIqlyvsmgOwd/e8zV5aUfIVm0a5c
-	 TGZ8zzAQBNiyw==
-Date: Wed, 9 Oct 2024 09:43:56 +0100
-From: Simon Horman <horms@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH RFC net 1/2] MAINTAINERS: consistently exclude wireless
- files from NETWORKING [GENERAL]
-Message-ID: <20241009084356.GH99782@kernel.org>
-References: <20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org>
- <20241004-maint-net-hdrs-v1-1-41fd555aacc5@kernel.org>
- <87setb7us5.fsf@kernel.org>
- <20241007141305.GD32733@kernel.org>
- <87ed4r4xqn.fsf@kernel.org>
- <a36f0fec7c007031f55e220a0ca585b48630f205.camel@sipsolutions.net>
+	s=arc-20240116; t=1728463484; c=relaxed/simple;
+	bh=dvnsPxMliHeqbRIQiioXG8o912SFDQg2gZbzOnOIUoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u8DnwmtXbQCshRQfXsoG5vvmNEvP4KTt0McI+SC39CyJi25gW204HvVUan4EmpMaQYr/XqOLiGI0zZHm3oBHih3sr5xtAQSMu5dlKV0r2UTSxR5u4l7wnAXEIcgiP0xE0ryQJevuUA4PziU17PZZZG/oX6TzrDINDgq/wbbeQaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=D753RUIG; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id yAaas5hUbumtXySJBshsnV; Wed, 09 Oct 2024 08:44:37 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id ySJ8sLecb827nySJAsei9r; Wed, 09 Oct 2024 08:44:37 +0000
+X-Authority-Analysis: v=2.4 cv=GeTcnhXL c=1 sm=1 tr=0 ts=67064275
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
+ a=L2ZAzL5Tc2YXbkthkrQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kjer777veAS4MsonIO7ZNfH7bB3CmtYfsy4XksivrrU=; b=D753RUIG2S8fD8Ru8o2mx55yae
+	3fJdjxM1T8dU6bdAMMYpi2K3noLZ20hXFebknCjNlyB4/zpfbTYGS24Qh0LbmFzzyiFEdVwpDENwD
+	CyJtohV6Les7xWAtw2AswcfooQd0N5WFK4hJejeAld9LhnDQWhODzdcAx4pg7c0iDxYE0Krx3ly4E
+	hdvLDTTQluEKjqEpNt9a4MYI33gR5P0IW4M+nUIH0u/Xy//nTRM0R4Sq1lFEQW8QJ+TqtdL1nBCs5
+	8mbjyGOuUztafcR/HO+9wDzpKHqO08+089fWXt+buLaVwF5KmBULkswmIYbyBERGor4EZYqIdk+hu
+	9VDxWzxQ==;
+Received: from [122.165.245.213] (port=35160 helo=[192.168.1.106])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <karthikeyan@linumiz.com>)
+	id 1sySJ2-00125N-1R;
+	Wed, 09 Oct 2024 14:14:28 +0530
+Message-ID: <1562366d-34eb-4698-a722-d9e2d400397f@linumiz.com>
+Date: Wed, 9 Oct 2024 14:14:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a36f0fec7c007031f55e220a0ca585b48630f205.camel@sipsolutions.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] dt-bindings: watchdog: rockchip: Add
+ rockchip,rv1126-wdt string
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com,
+ wim@linux-watchdog.org, linux@roeck-us.net
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20240912142451.2952633-1-karthikeyan@linumiz.com>
+ <ddca4051-0e83-4d39-8654-12210ffa5685@linumiz.com>
+ <37e26b46-2f6a-4db4-b003-59088ef1dcc1@linumiz.com> <1988046.PYKUYFuaPT@diego>
+Content-Language: en-US
+From: karthikeyan <karthikeyan@linumiz.com>
+In-Reply-To: <1988046.PYKUYFuaPT@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1sySJ2-00125N-1R
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.106]) [122.165.245.213]:35160
+X-Source-Auth: karthikeyan@linumiz.com
+X-Email-Count: 3
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFrlCDQvchBM8iMRgRFFYa2yihip4m3OV92LgaeUCcDQONM/EOwSAEJJPqQTughKYv1bbaO9aNb/0V6CXYZwIX5Mw5eUKnGA0y0rPDSiv+yUYYDOM3NY
+ +hfJVp+X5sCz9lfOPpJlC3nL5FvzI8K4ulILPZu5TiVja26D0Fly5ps3UL7zsefx7SETMlyYf1/NMQc5UESTLEd8avjteoMiE0Ez5E3ZxmTwseNaTO7D8Up9
 
-On Mon, Oct 07, 2024 at 08:03:22PM +0200, Johannes Berg wrote:
-> On Mon, 2024-10-07 at 20:41 +0300, Kalle Valo wrote:
-> > Simon Horman <horms@kernel.org> writes:
-> > 
-> > > On Fri, Oct 04, 2024 at 06:27:38PM +0300, Kalle Valo wrote:
-> > > 
-> > > > Simon Horman <horms@kernel.org> writes:
-> > > > 
-> > > > > We already exclude wireless drivers from the netdev@ traffic, to
-> > > > > delegate it to linux-wireless@, and avoid overwhelming netdev@.
-> > > > > 
-> > > > > Many of the following wireless-related sections MAINTAINERS
-> > > > > are already not included in the NETWORKING [GENERAL] section.
-> > > > > For consistency, exclude those that are.
-> > > > > 
-> > > > > * 802.11 (including CFG80211/NL80211)
-> > > > > * MAC80211
-> > > > > * RFKILL
-> > > > > 
-> > > > > Signed-off-by: Simon Horman <horms@kernel.org>
-> > > > > ---
-> > > > >  MAINTAINERS | 11 +++++++++++
-> > > > >  1 file changed, 11 insertions(+)
-> > > > > 
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > index c27f3190737f..ea3ea2c0d3fa 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -16197,8 +16197,19 @@ F:	lib/random32.c
-> > > > >  F:	net/
-> > > > >  F:	tools/net/
-> > > > >  F:	tools/testing/selftests/net/
-> > > > > +X:	Documentation/networking/mac80211-injection.rst
-> > > > > +X:	Documentation/networking/mac80211_hwsim/
-> > > > > +X:	Documentation/networking/regulatory.rst
-> > > > > +X:	include/net/cfg80211.h
-> > > > > +X:	include/net/ieee80211_radiotap.h
-> > > > > +X:	include/net/iw_handler.h
-> > > > > +X:	include/net/mac80211.h
-> > > > > +X:	include/net/wext.h
-> > > > 
-> > > > Should we add also lib80211.h?
-> > > 
-> > > Thanks, I missed that one. Perhaps it should have:
-> > > 
-> > > * An F: entry in the MAC80211
-> > > * An X: entry in the NETWORKING [GENERAL]
-> > > 
-> > > If so, perhaps I can just add that to a v2 of this patch.
-> > > Let me know what you think.
-> > 
-> > Like Johannes said, the cfg80211 entry is more approriate but otherwise
-> > sounds like a good plan, thanks!
+
+
+On 10/9/24 00:56, Heiko Stübner wrote:
+> Hi,
 > 
-> Actually scratch that, please just ignore it. I'm going to remove that
-> header file entirely and move the functionality into libipw in the
-> ipw2x00 drivers.
+> Am Montag, 7. Oktober 2024, 15:56:58 CEST schrieb karthikeyan:
+>>
+>> On 9/18/24 12:59, karthikeyan wrote:
+>>>
+>>>
+>>> On 9/18/24 04:46, Heiko Stuebner wrote:
+>>>> Hey,
+>>>>
+>>>> Am Donnerstag, 12. September 2024, 16:24:46 CEST schrieb Karthikeyan
+>>>> Krishnasamy:
+>>>>> Add rockchip,rv1126-wdt compatible string.
+>>>>>
+>>>>> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+>>>>
+>>>> I think this patch misses some recipients because neither
+>>>> the watchdog maintainers nor the watchdog list is included.
+>>>>
+>>>> We'll need for them to at least Ack this patch, so they'll
+>>>> need to be included. Please check your scripts/get_maintainer.pl
+>>>> call
+>>>>
+>>>>
+>>>> Thanks
+>>>> Heiko
+>>>>
+>>> Apologies for missing them. Adding them in this reply mail.
+> 
+> I don't think that will have worked.
+> 
+> Ideally can you include Conor's Ack and resend only the watchdog binding
+> patch to the watchdog maintainers (and lists and me too please) .
+> 
+> Because just adding more people to a reply probably won't tell them
+> that some action is expected.
+> 
+> Heiko
+> 
+> 
 
-Thanks,
+Thanks for your info. It's my mistake. I will resend the watchdog patch 
+alone.
 
-In that case I'll post a v2 without any code changes.
-Rather, bumping it to non-RFC and accumulating tags.
+Best regards,
+Karthikeyan
 
