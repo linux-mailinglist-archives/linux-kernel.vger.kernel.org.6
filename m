@@ -1,113 +1,123 @@
-Return-Path: <linux-kernel+bounces-357419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A1F99710F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:20:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F498997111
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E279A285956
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16D091F260DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E0F1DEFF0;
-	Wed,  9 Oct 2024 16:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F581E230E;
+	Wed,  9 Oct 2024 16:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dt6SZ5mQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aw+Mse5c"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842971D07A3
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C441E2302;
+	Wed,  9 Oct 2024 16:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489908; cv=none; b=MXxuN1MyMFsyNp9EDPhUJYOYDjr5WEiSjx+zYOoCvY+jhakSdDZagx4JXak5o2uR/UZHJQVkqpzicifmFwhvAkP4QYQasIm+K60gcibpF3bR5acNGDZrPOPp1yulHq2UIvUT5l9Dhqr3nPmYFrscHkb5E8PpM303m5pVOVIqdEU=
+	t=1728489916; cv=none; b=aL95RU7f6RItgIoajdwTGgBOiaS9SIAcZTgS0XcyI2OnyZjF7MaTCqhyajKUJD+fMN1bFQl5IdPfaZqZQAJqxHw8Rq32WLAHV9kmx2KvoSStaZC+PzZ3r5x46oJWB5BwSOqqcY7KMDg/eP5j2nyg/jvCpN4YsdW7crda25WMyR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489908; c=relaxed/simple;
-	bh=Aa/YkaSPkAQ9LmxK/psfEBmzO+jOivxxfO7edhW0+Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hM3LpAJq79CYJOyTkQSxPteBSJ8MGr4HyR1fKA3goByupvBKhX3Txq3Rw9u2TBBqplAsJErkHl7ElbK4WVVEjhaPCK0BzLBgaRuvNBHbu9rzpLIM3uegGCDAM5hEVlu4cDm0vCQAqB185/vunnv9g5dV9o78+nGCoS10O0UWtc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dt6SZ5mQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728489906; x=1760025906;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Aa/YkaSPkAQ9LmxK/psfEBmzO+jOivxxfO7edhW0+Ds=;
-  b=Dt6SZ5mQ+rPZOZJ9sr1Jsm0ojpLYgBFO/1c09Y8wVuKWZ2ruNMdeYmse
-   Oep570Dcojl03kT22mtr3uTZ3hHTZMJ56HPmfocsOffmbNkemwKTPbxhp
-   dz2mmRYMyCQ1VaOUuzhCb0A+RWxMckDHed91LFVUKaZTlcfn362ZAhcXo
-   WBggNCDrcoPyp/TOoDHzDOrUnaQC1z5aDe2oJPiWvD/aJXISxNtGN6X4R
-   mYYPyBvpZnTc0eK+RTC6hllGVR4kFaQwRgUvFVb5pt9wevsirNHtb87JW
-   k6WXyIdIWDszGxva8LMqor5GLR6tTGAjale2p5JBpYqy0aiTo/jBlM28x
-   A==;
-X-CSE-ConnectionGUID: 7iVj/ssiTGSVvUw+Rmoy8Q==
-X-CSE-MsgGUID: ESkMYqFIS06MQAqtRPT4rw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38388470"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="38388470"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:05:05 -0700
-X-CSE-ConnectionGUID: mwAphqa+TEST01XD5+cjVw==
-X-CSE-MsgGUID: cNZRg4HSQ8iVjY4Mf/CpHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="76612716"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Oct 2024 09:05:04 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1syZBN-0009SD-2R;
-	Wed, 09 Oct 2024 16:05:01 +0000
-Date: Thu, 10 Oct 2024 00:04:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Boris Burkov <boris@bur.io>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Sterba <dsterba@suse.com>
-Subject: fs/btrfs/send.c:6877:5-8: Unneeded variable: "ret". Return "0" on
- line 6883
-Message-ID: <202410092305.WbyqspH8-lkp@intel.com>
+	s=arc-20240116; t=1728489916; c=relaxed/simple;
+	bh=lG+fHK2MinwMYosaibHFebeA2lfmTZOvRzS/e5kBX48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DpvGxrQ90nki3uGAGRI8Jjq1dQavE46YjPaknNFi8y+TN3u7oiz/P26JHl0OXdyv0dii/rX5yYnnpLbjNNMl9TxqwDt23USUIG88Q6Tqb/KIeUpVi16sU3d6Qf48WgYweib8tHrN1YsYx47/gjFerb40YyfBKjzskWlgMZpe+tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aw+Mse5c; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fac3f20f1dso77035421fa.3;
+        Wed, 09 Oct 2024 09:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728489913; x=1729094713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IIa5sZ1sQN4F9/EAh7jCAPDk1gS2+mafy4s61EUtTUw=;
+        b=Aw+Mse5ceP6KDi59UaahG9QJuXawevoi2alr/vBtvvXarY2hyi3kk0vQ2F+lyKXPPx
+         geb0iurX/WFxceGlAkcDO5iVzWDqb3Lp5Qs2FI0PaeNfd5BAv2B197W/t4fUlGg/BDSH
+         qY/bo7TqKjOLuki2FWJCE5Ap4Xrkz4YeMfwBI9jFMH5EDckr/5AHtIbAfa2M96hfRgen
+         SiS3eWhaqJMKZl0PvyBU5DLSxnPyLu1gXmvkZIupQ000EPA7R5Op0WlWZ9mNPWKupP4r
+         g3uaSMitzCgRFHz4TDjeD4ek95Q3Igfg0mgvvK+R2NsFVXonj7FCCFds1Il25P+lj4ob
+         BIwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728489913; x=1729094713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IIa5sZ1sQN4F9/EAh7jCAPDk1gS2+mafy4s61EUtTUw=;
+        b=PDAFPntueK2xYOMFEYQJb4USrqPb6jI9/M4rA43kS+NbN6g4h59TeNvW5f/BvOAa3/
+         85+9But9AuTULkNaNflEQzWMrtLcHB/zejUdY64af0eS9rpiOLbo31IQdXhcdfNmRgsH
+         STV1nQH3i51uxzuChijW+Qb3NncUKxea/6Gom9kPga0qmMrd3e6QsnCwtdcp1rNtC7uo
+         2rh4CaJNSQrZgY+B/fydnWsXgRgoL8cZ9BFWNm5VFuYB9xUoMbojSP0t1pLUv2Ncmc2k
+         1nS6PjJIhZZJOf+S58+pZsYO31rY/JzQr4w7KIYuRoitw3xdG+iBM2TSONWCW7wEcy63
+         r4xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAGYx2es6Sy5gsJkojiHgtTaGjX9/rqUAc2RoZDp1F5YBw1fkeB8FO6hCNt3Kf949UXzSf+XvcWHUetSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfUQ1uqcQbwXoBOZ41MgR17BOSu/HLYj6Pj5YKW5EWtlPk3ABu
+	VQwQ5y10FJncGahMDEXcvqHPFxhKZsWTEjmZHnBrgQs5zPRp/9uN
+X-Google-Smtp-Source: AGHT+IHIlkFtmtsRJ++tKxL+GXbAqdTfJNdHb/CKldkqVa2DzJdvODeH4o865Vxvc5KYCgRQ2o8PaA==
+X-Received: by 2002:a2e:8e6f:0:b0:2fa:bb5d:db67 with SMTP id 38308e7fff4ca-2fb187aeb2emr16410001fa.32.1728489912522;
+        Wed, 09 Oct 2024 09:05:12 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e0598947sm5582859a12.11.2024.10.09.09.05.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 09:05:11 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Julia Filipchuk <julia.filipchuk@intel.com>,
+	John Harrison <John.C.Harrison@Intel.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/xe/guc: Fix inverted logic on snapshot->copy check
+Date: Wed,  9 Oct 2024 17:05:10 +0100
+Message-Id: <20241009160510.372195-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   75b607fab38d149f232f01eae5e6392b394dd659
-commit: 38622010a6de3a62cc72688348548854ed82dcf5 btrfs: send: add support for fs-verity
-date:   2 years ago
-config: i386-randconfig-052-20241009 (https://download.01.org/0day-ci/archive/20241009/202410092305.WbyqspH8-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+Currently the check to see if snapshot->copy has been allocated is
+inverted and ends up dereferencing snapshot->copy when free'ing
+objects in the array when it is null or not free'ing the objects
+when snapshot->copy is allocated. Fix this by using the correct
+non-null pointer check logic.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410092305.WbyqspH8-lkp@intel.com/
+Fixes: d8ce1a977226 ("drm/xe/guc: Use a two stage dump for GuC logs and add more info")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-cocci warnings: (new ones prefixed by >>)
->> fs/btrfs/send.c:6877:5-8: Unneeded variable: "ret". Return "0" on line 6883
-
-vim +6877 fs/btrfs/send.c
-
-  6874	
-  6875	static int changed_verity(struct send_ctx *sctx, enum btrfs_compare_tree_result result)
-  6876	{
-> 6877		int ret = 0;
-  6878	
-  6879		if (!sctx->cur_inode_new_gen && !sctx->cur_inode_deleted) {
-  6880			if (result == BTRFS_COMPARE_TREE_NEW)
-  6881				sctx->cur_inode_needs_verity = true;
-  6882		}
-> 6883		return ret;
-  6884	}
-  6885	
-
+diff --git a/drivers/gpu/drm/xe/xe_guc_log.c b/drivers/gpu/drm/xe/xe_guc_log.c
+index 93921f04153f..cc70f448d879 100644
+--- a/drivers/gpu/drm/xe/xe_guc_log.c
++++ b/drivers/gpu/drm/xe/xe_guc_log.c
+@@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct xe_guc_log_snapshot *snapshot)
+ 	if (!snapshot)
+ 		return;
+ 
+-	if (!snapshot->copy) {
++	if (snapshot->copy) {
+ 		for (i = 0; i < snapshot->num_chunks; i++)
+ 			kfree(snapshot->copy[i]);
+ 		kfree(snapshot->copy);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
