@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-356832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D222996772
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF6A99677B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225421F21B08
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3FC1C242A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921E319007D;
-	Wed,  9 Oct 2024 10:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549F18E751;
+	Wed,  9 Oct 2024 10:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiFVNfKZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gUmMrRtD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5D219004E;
-	Wed,  9 Oct 2024 10:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3763518E779;
+	Wed,  9 Oct 2024 10:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728470274; cv=none; b=EGHu6cKq+pVNc2rLRCJwMQDtk3bvyXa7P9KIz/UfCHQ6eccGMwRUB7GUdDO86vwHqk3zEp4sGSq9zJ155yI0qVm2JN8ilRRIT6H2BneAArB0vbBJ3E+2FGU70QBQ/XeEs6RKTkE9ODCJ8477FyskxS/zv8hxPICAlW9JVlSiiVY=
+	t=1728470333; cv=none; b=MVCwNagy3kbUYkVYIyon775+sP8RzXJ2pixHbWA5F3w4ZbUjiHySu5EKhn0Qj4amy4TjHuF9fXZRbHjMFY784MfXIE6ednNMPzgYODeyq1GYyM1wRsg1iJyNJb7cOaU1qlLj4uShKnjHkdaJiK6iwwZOTxdp4fLJfB9PRR69fxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728470274; c=relaxed/simple;
-	bh=bIc8VvXZyLnIE4IeFbmtymfSO2Qf0U2SpOHn3wtP1D8=;
+	s=arc-20240116; t=1728470333; c=relaxed/simple;
+	bh=wxMFvAdDX0uHWtMZrgpWuEE2pLlU4FTWe4P2KTWWAV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m0HMuFeXHxzl7J+aN5GYA69EfrsjidZC8MNpgcT+Dr/E4eJwKBs8BgduFH7TFYykoj+SKIXI0N8DzATGJE6oGZpS4HWOW2j+Lyr8pPOcgxA0A84bnOjlP/51T6mqvwMzb/N6MTJZ+WB8+0udP2jdNKV7mFZPIKU0/fxexuLgXmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiFVNfKZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF789C4CEC5;
-	Wed,  9 Oct 2024 10:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728470273;
-	bh=bIc8VvXZyLnIE4IeFbmtymfSO2Qf0U2SpOHn3wtP1D8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZBQEmq1Q7gQ41HcjCZMuHOTNjlX+p1jM4OqbbJiRYkI+6ikKOO4kkJqqgvfloaO6y1dKuy65cyuBVZ24yCIxBk3RZ+2CnDzh/ZepLJRszgRRujYHD72aaWgkfbCGQ2hS03KrOwZU8EopzW5W6JFqh3slS92dZgbHdbn6+9zPYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gUmMrRtD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 02A8740E0163;
+	Wed,  9 Oct 2024 10:38:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ygVfspruDksy; Wed,  9 Oct 2024 10:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1728470325; bh=1AOv5qV0vwnw07PJQNH+GRr3t33WnsXNEi9bcra/9wE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JiFVNfKZVOe38oZcaIn/39E6h79GHIUPjPRd3ro0vuPGJWnV3TKtVk06uao7Owfjs
-	 muFhSmU0M4RZaUqEdEadZXw1abGDFuyQ6e6jqk+iZTbILlTpHLw/En9jZJBqWTPDpo
-	 oHd4fFqZN442BcUBPebqJ53UFItkRQl7PEwHoVqwOqVu7TRbO1RySikoqjkcWfdV3p
-	 paV5lguqLE/I3wujrgST6Hig2Xn35LeUKkk09P2OkpOh2yrJ8KG6nvRVOqmKqOPiyd
-	 HkuEcrULwmEQpipt5RdxJYd7Cxkgnr4ZMxglmgqFePdBLmYBIixj6PRF6+73gdD3Qm
-	 E/OdUSnT2elKw==
-Date: Wed, 9 Oct 2024 11:37:46 +0100
-From: Lee Jones <lee@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, eddie.huang@mediatek.com,
-	sean.wang@mediatek.com, alexandre.belloni@bootlin.com,
-	sen.chu@mediatek.com, macpaul.lin@mediatek.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v1 1/3] dt-bindings: mfd: mediatek: mt6397: Add
- start-year property to RTC
-Message-ID: <20241009103746.GE276481@google.com>
-References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
- <20240923100010.97470-2-angelogioacchino.delregno@collabora.com>
- <20241009101549.GB276481@google.com>
- <e0de3810-38b0-40a3-872d-678e9d4f72e5@collabora.com>
- <20241009103307.GD276481@google.com>
+	b=gUmMrRtDWbXvFRsxWpLUVrbormKMscY2hBDLWN1wqygXt6jmOzIujaf1V4FjkiQhF
+	 vhk9tl/3BmIb81dcPEVtJ3NvzoqQrOAxEMquEMMg6m3ROheoKvOa9ryEWeP7Ptdi7p
+	 95Jz1/4SilH1zGydAfJt6JaJdvORKvu1FRaF69Pantw9kYGxreR62UTu7yCfj489Sq
+	 fqjicyUEOUFSh/wjnlty3vfs16xjruRBencflYYgKGaWb2GSIZ+k0EeMkMtcAiehgw
+	 6hc9CfYhSJr/Reld7jd5uJzZf8TYwCQTs88FzZSGjPHeCZYxtpucLOGAe7Uw7s81+3
+	 Wb2f/r4ReD3kNWXESXO3XfPcISMbPw+yPSK/Oj54LBH1CNPT2Njn9GMen9FBYAVeSY
+	 LARjvPD/CQwWTg2p1CP0NsEsBWnnlJaKUpsFtQ2hH93VFg6YWTxP4lG7h2jTBGKrww
+	 HuMhcPcZHLjpZIFt9l2tT6l8qvOlm0nfSB3ORGmwQHyO6lQeQMBnXdORoxPEugkdFn
+	 AJFAcK93jHs9mwhI2kLVwiBh1DhSbCG1DC60c1DNPn63cWVDStApis/1QinCb9gf+o
+	 JcIOsM8HhRNWZnQ5tvY1O5juPCE4RELQ+oRq4CS5BqLYSzoA9Em3cpQ999KpzykdLl
+	 jAITZMdMs6x1AcIzmVoRh2X0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E045A40E0263;
+	Wed,  9 Oct 2024 10:38:27 +0000 (UTC)
+Date: Wed, 9 Oct 2024 12:38:21 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
+Message-ID: <20241009103821.GEZwZdHeZlUjBjKQZ5@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
+ <20241008191556.GNZwWE7EsxceGh4HM4@fat_crate.local>
+ <8d0f9d2c-0ae4-442c-9ee4-288fd014599f@amd.com>
+ <20241009052336.GAZwYTWDLWfSPtZe5b@fat_crate.local>
+ <a1b2eba5-243c-4c7c-9ebd-3fce6cd4c973@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,47 +84,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009103307.GD276481@google.com>
+In-Reply-To: <a1b2eba5-243c-4c7c-9ebd-3fce6cd4c973@amd.com>
 
-On Wed, 09 Oct 2024, Lee Jones wrote:
+On Wed, Oct 09, 2024 at 11:31:07AM +0530, Neeraj Upadhyay wrote:
+> Before this patch, if hypervisor enables Secure AVIC  (reported in sev_status), guest would
+> terminate in snp_check_features().
 
-> On Wed, 09 Oct 2024, AngeloGioacchino Del Regno wrote:
-> 
-> > Il 09/10/24 12:15, Lee Jones ha scritto:
-> > > On Mon, 23 Sep 2024, AngeloGioacchino Del Regno wrote:
-> > > 
-> > > > Enable evaluating the start-year property to allow shifting the
-> > > > RTC's HW range.
-> > > > 
-> > > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > > > ---
-> > > >   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 2 ++
-> > > 
-> > > No such file.
-> > > 
-> > 
-> > In the cover letter, I wrote:
-> > 
-> > 
-> > For the bindings commit, this series goes on top of the MT6397 schema
-> > conversion from Macpaul Lin [1].
-> > 
-> > This series was tested on a MT8195 Cherry Tomato Chromebook.
-> > 
-> > [1]: https://lore.kernel.org/all/20240918064955.6518-1-macpaul.lin@mediatek.com/
-> > 
-> > 
-> > So, that's why. :-)
-> 
-> Nope, try again. :)
+We want the guest to terminate at this patch too.
 
-I guess you actually mean:
-
-  https://lore.kernel.org/all/20240918064955.6518-2-macpaul.lin@mediatek.com/
-
-It's on my list.  I'll place yours behind it and see how we go.
+The only case where the guest should not terminate is when the *full* sAVIC
+support is in. I.e., at patch 14.
 
 -- 
-Lee Jones [李琼斯]
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
