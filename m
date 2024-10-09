@@ -1,161 +1,214 @@
-Return-Path: <linux-kernel+bounces-356287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841D2995F03
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D21995F01
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6872874CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F0E1F24844
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2127115FD01;
-	Wed,  9 Oct 2024 05:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387EE15F3F9;
+	Wed,  9 Oct 2024 05:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="T6ODwcsS"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuJAVyMh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB41B1547DE;
-	Wed,  9 Oct 2024 05:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6C915FD01;
+	Wed,  9 Oct 2024 05:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728452376; cv=none; b=ScVw6l8AtJdNEwRX+ZYHMD8B+lOplQ091BYSkZ9lTehTbr2x9zj5+d0CJ1Th/wkjFA3+vB3xdqgZqX06sFqSVKavUAixynxs4tGr2E1gB/nesugHgr7vC3rIBsjHMj4NbsMD7lILfCJ1yDystkuZq+iW/0hFseohg9Y1HEtaCdw=
+	t=1728452330; cv=none; b=JpizkYvrV/3oSXwQksQ6tYCEy9o/F8KMqo7cvvlQPTYBMpVe5a2YpNr0wGvI8I2Vm+lejvovv0LYeo1Xc67/2xRVurFHXW5Q385Rj9G3/ZgAlo5hYz0PDdaKCXmp8yvuD05xeC0fEdap3i0OMZ+1zlSM97DmckGlyhBoJIPNbOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728452376; c=relaxed/simple;
-	bh=+CLsbmfZs/12mfP7CeP+jAK+LtDxN/YXFdeTn8cwWi4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PxaDAagY02+4k1k4+N8qXPJsgC+iMjEBLSfN9rgh7xW2pgkOoscLIITEgpife+922IeoAQfnABCbir8Tq9QPqNTewKBNqNXBdPnU9TpfSfC8t3Up+tT/jpfdIC4HxvyXCpQij7n3EtfcYgPmt1PM09T56XGNT8cZtpFT6gZxtxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=T6ODwcsS; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d544b1a8860011ef88ecadb115cee93b-20241009
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=I3QlM+wHwYxdZQsYINnxa9RWbc46mBL74mYp99QPueo=;
-	b=T6ODwcsSUZKhBSZE2QScEcqJAmAasR9rh1cZYk74EIJfVMK70TMceXkJURI/48+8LXk/n3N3e7hECuMfR7RjNE325x48yHeOfTJY++OSny8jRqpFT3PhSV7KsmlriZhiutTASf1Kotg29FUER3cDluWTj0jnbkZy+4tBJ7T/t9M=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:6a5e692d-b50a-4c3f-b2e6-11bc4d97459f,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6dc6a47,CLOUDID:28f3f864-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d544b1a8860011ef88ecadb115cee93b-20241009
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <ed.tsai@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 263593157; Wed, 09 Oct 2024 13:39:20 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 8 Oct 2024 22:39:19 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 9 Oct 2024 13:39:19 +0800
-From: <ed.tsai@mediatek.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Peter Wang <peter.wang@mediatek.com>, Stanley
- Jhu <chu.stanley@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <wsd_upstream@mediatek.com>, <chun-hung.wu@mediatek.com>, Ed Tsai
-	<ed.tsai@mediatek.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2] scsi: ufs: ufs-mediatek: configure individual LU queue flags
-Date: Wed, 9 Oct 2024 13:38:47 +0800
-Message-ID: <20241009053854.15353-1-ed.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1728452330; c=relaxed/simple;
+	bh=AodUmJbjAEyzv85xinf1CRD33stakirAqexHC332BW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqwnNpbspBZa3XG+Cgyfx/sqb/j/pKz3NlfkYygDcKrENsMaBKLulkvj/045VWCr55cIQ+xhrx2cT1FiufKpoqtSMAH//8DuS/UoCDXFomWNlOQmjtgYx+eGYId5oJ287D4Rjo7PAT3kOI3r8nyW9sJzEvN84NXNY4AAyaLb+8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuJAVyMh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A11CC4CEC5;
+	Wed,  9 Oct 2024 05:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728452329;
+	bh=AodUmJbjAEyzv85xinf1CRD33stakirAqexHC332BW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZuJAVyMhLKziVFJZ07qBbe/keCjj6eJkozA2uJHINXQlGIVCVuYUsBtbJoQI9p30y
+	 xrB93ocsRQ0y561Q7KqPWb0XN6hIJHvC2jPrPpBTdzEx1BCmdeUc9usKllVY9BbM/I
+	 Tu3Kn/qJeTJiT7X5O1dpql+0NtZatCr0LumrXllt8xXavwestlhpIO1ONw82hK7Mb7
+	 LoubJ7qD9mzcOChIwqg1as4MnG6AUr484+a5vBpEKPi3TbRwGpsrZntpExh+Hhe8tM
+	 foUNGAfnNge/cXGmra4b003q/5MEQKBIuU6xBgb5JjOuDGSc/49MTklTSaYZxPQcG9
+	 pWqsxCRF/eMzw==
+Date: Tue, 8 Oct 2024 22:38:47 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Leo Yan <leo.yan@linux.dev>, Howard Chu <howardchu95@gmail.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
+Message-ID: <ZwYW54gKOfnUboeZ@google.com>
+References: <20241001171950.233723-1-irogers@google.com>
+ <CAP-5=fWExR7ae=dgiAG8BCtDN0XDwnzy9=SBbE0cy5S1Luw-4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWExR7ae=dgiAG8BCtDN0XDwnzy9=SBbE0cy5S1Luw-4A@mail.gmail.com>
 
-From: Ed Tsai <ed.tsai@mediatek.com>
+On Tue, Oct 08, 2024 at 11:55:29AM -0700, Ian Rogers wrote:
+> On Tue, Oct 1, 2024 at 10:19 AM Ian Rogers <irogers@google.com> wrote:
+> >
+> > The path detection for "Setup struct perf_event_attr" test is brittle
+> > and leads to the test frequently not running. Running shell tests is
+> > reasonably robust, so make the test a shell test. Move the test files
+> > to reflect this.
+> 
+> Ping.
+> 
+> I think this is worthwhile cleanup for the attributes test. It should
+> avoid problems like:
+> https://lore.kernel.org/lkml/ZroNTkdA8XDFaDks@x1/
 
-Previously, ufs vops config_scsi_dev was removed because there were no
-users. ufs-mediatek needs it to configure the queue flags for each LU
-individually. Therefore, bring it back and customize the queue flag as
-we required.
+Sorry, it's not clear to me what was the problem.  Can you please say it
+again briefly?
 
-In addition, because the SCSI probe_type = PROBE_PREFFER_ASYNCHRONOUS,
-sd_probe() is completed by another thread, causing the sd index to be
-obtained asynchronously. Directly setting the queue through sysfs is
-cumbersome. We do not need to change the queue settings at runtime, so
-a simpler and more intuitive approach is to set its flag once the SCSI
-device is confirmed to be ready.
+Thanks,
+Namhyung
 
-Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
----
- drivers/ufs/core/ufshcd.c       |  3 +++
- drivers/ufs/host/ufs-mediatek.c | 10 ++++++++++
- include/ufs/ufshcd.h            |  1 +
- 3 files changed, 14 insertions(+)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 7cab103112e1..be50b86269bf 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -5253,6 +5253,9 @@ static int ufshcd_device_configure(struct scsi_device *sdev,
- 	 */
- 	sdev->silence_suspend = 1;
- 
-+	if (hba->vops && hba->vops->config_scsi_dev)
-+		hba->vops->config_scsi_dev(sdev);
-+
- 	ufshcd_crypto_register(hba, q);
- 
- 	return 0;
-diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
-index 9a5919434c4e..0b57623edca5 100644
---- a/drivers/ufs/host/ufs-mediatek.c
-+++ b/drivers/ufs/host/ufs-mediatek.c
-@@ -1780,6 +1780,15 @@ static int ufs_mtk_config_esi(struct ufs_hba *hba)
- 	return ufs_mtk_config_mcq(hba, true);
- }
- 
-+static void ufs_mtk_config_scsi_dev(struct scsi_device *sdev)
-+{
-+	struct ufs_hba *hba = shost_priv(sdev->host);
-+
-+	dev_dbg(hba->dev, "lu %llu scsi device configured", sdev->lun);
-+	if (sdev->lun == 2)
-+		blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, sdev->request_queue);
-+}
-+
- /*
-  * struct ufs_hba_mtk_vops - UFS MTK specific variant operations
-  *
-@@ -1809,6 +1818,7 @@ static const struct ufs_hba_variant_ops ufs_hba_mtk_vops = {
- 	.op_runtime_config   = ufs_mtk_op_runtime_config,
- 	.mcq_config_resource = ufs_mtk_mcq_config_resource,
- 	.config_esi          = ufs_mtk_config_esi,
-+	.config_scsi_dev     = ufs_mtk_config_scsi_dev,
- };
- 
- /**
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index a95282b9f743..800d79dc91fc 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -383,6 +383,7 @@ struct ufs_hba_variant_ops {
- 	int	(*get_outstanding_cqs)(struct ufs_hba *hba,
- 				       unsigned long *ocqs);
- 	int	(*config_esi)(struct ufs_hba *hba);
-+	void	(*config_scsi_dev)(struct scsi_device *sdev);
- };
- 
- /* clock gating state  */
--- 
-2.45.2
-
+> 
+> > Ian Rogers (3):
+> >   perf test: Add a shell wrapper for "Setup struct perf_event_attr"
+> >   perf test: Remove C test wrapper for attr.py
+> >   perf test: Move attr files into shell directory where they are used
+> >
+> >  tools/perf/Makefile.perf                      |   5 +-
+> >  tools/perf/perf.c                             |   2 -
+> >  tools/perf/tests/Build                        |   1 -
+> >  tools/perf/tests/attr.c                       | 218 ------------------
+> >  tools/perf/tests/builtin-test.c               |   1 -
+> >  tools/perf/tests/shell/attr.sh                |  22 ++
+> >  tools/perf/tests/{ => shell}/attr/README      |   0
+> >  tools/perf/tests/{ => shell}/attr/base-record |   0
+> >  .../tests/{ => shell}/attr/base-record-spe    |   0
+> >  tools/perf/tests/{ => shell}/attr/base-stat   |   0
+> >  .../tests/{ => shell}/attr/system-wide-dummy  |   0
+> >  .../tests/{ => shell}/attr/test-record-C0     |   0
+> >  .../tests/{ => shell}/attr/test-record-basic  |   0
+> >  .../{ => shell}/attr/test-record-branch-any   |   0
+> >  .../attr/test-record-branch-filter-any        |   0
+> >  .../attr/test-record-branch-filter-any_call   |   0
+> >  .../attr/test-record-branch-filter-any_ret    |   0
+> >  .../attr/test-record-branch-filter-hv         |   0
+> >  .../attr/test-record-branch-filter-ind_call   |   0
+> >  .../attr/test-record-branch-filter-k          |   0
+> >  .../attr/test-record-branch-filter-u          |   0
+> >  .../tests/{ => shell}/attr/test-record-count  |   0
+> >  .../tests/{ => shell}/attr/test-record-data   |   0
+> >  .../{ => shell}/attr/test-record-dummy-C0     |   0
+> >  .../tests/{ => shell}/attr/test-record-freq   |   0
+> >  .../attr/test-record-graph-default            |   0
+> >  .../attr/test-record-graph-default-aarch64    |   0
+> >  .../{ => shell}/attr/test-record-graph-dwarf  |   0
+> >  .../{ => shell}/attr/test-record-graph-fp     |   0
+> >  .../attr/test-record-graph-fp-aarch64         |   0
+> >  .../attr/test-record-group-sampling           |   0
+> >  .../tests/{ => shell}/attr/test-record-group1 |   0
+> >  .../tests/{ => shell}/attr/test-record-group2 |   0
+> >  .../{ => shell}/attr/test-record-no-buffering |   0
+> >  .../{ => shell}/attr/test-record-no-inherit   |   0
+> >  .../{ => shell}/attr/test-record-no-samples   |   0
+> >  .../tests/{ => shell}/attr/test-record-period |   0
+> >  .../{ => shell}/attr/test-record-pfm-period   |   0
+> >  .../tests/{ => shell}/attr/test-record-raw    |   0
+> >  .../{ => shell}/attr/test-record-spe-period   |   0
+> >  .../attr/test-record-spe-period-term          |   0
+> >  .../attr/test-record-spe-physical-address     |   0
+> >  .../attr/test-record-user-regs-no-sve-aarch64 |   0
+> >  .../test-record-user-regs-old-sve-aarch64     |   0
+> >  .../attr/test-record-user-regs-sve-aarch64    |   0
+> >  .../perf/tests/{ => shell}/attr/test-stat-C0  |   0
+> >  .../tests/{ => shell}/attr/test-stat-basic    |   0
+> >  .../tests/{ => shell}/attr/test-stat-default  |   0
+> >  .../{ => shell}/attr/test-stat-detailed-1     |   0
+> >  .../{ => shell}/attr/test-stat-detailed-2     |   0
+> >  .../{ => shell}/attr/test-stat-detailed-3     |   0
+> >  .../tests/{ => shell}/attr/test-stat-group1   |   0
+> >  .../{ => shell}/attr/test-stat-no-inherit     |   0
+> >  tools/perf/tests/{ => shell/lib}/attr.py      |   0
+> >  tools/perf/tests/tests.h                      |   1 -
+> >  tools/perf/util/evsel.c                       | 122 +++++++++-
+> >  tools/perf/util/util.h                        |   7 -
+> >  57 files changed, 142 insertions(+), 237 deletions(-)
+> >  delete mode 100644 tools/perf/tests/attr.c
+> >  create mode 100755 tools/perf/tests/shell/attr.sh
+> >  rename tools/perf/tests/{ => shell}/attr/README (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/base-record (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/base-record-spe (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/base-stat (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/system-wide-dummy (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-C0 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-basic (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-any (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_call (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_ret (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-hv (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-ind_call (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-k (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-u (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-count (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-data (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-dummy-C0 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-freq (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-default (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-default-aarch64 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-dwarf (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp-aarch64 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-group1 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-group2 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-no-buffering (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-no-inherit (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-no-samples (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-period (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-pfm-period (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-raw (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-period (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-period-term (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-physical-address (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-no-sve-aarch64 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-old-sve-aarch64 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-sve-aarch64 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-C0 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-basic (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-default (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-1 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-2 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-3 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-group1 (100%)
+> >  rename tools/perf/tests/{ => shell}/attr/test-stat-no-inherit (100%)
+> >  rename tools/perf/tests/{ => shell/lib}/attr.py (100%)
+> >
+> > --
+> > 2.46.1.824.gd892dcdcdd-goog
+> >
 
