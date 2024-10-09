@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-356868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29529967F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:03:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602C19967F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B82AB24B55
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195421F231AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3643D1917C9;
-	Wed,  9 Oct 2024 11:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D35191496;
+	Wed,  9 Oct 2024 11:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLepzEsh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="SyrxhV8W";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MbosoE6u"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F861C68F;
-	Wed,  9 Oct 2024 11:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7D1C68F;
+	Wed,  9 Oct 2024 11:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728471816; cv=none; b=fWDXJo471xbLcPfbgFzhiJZ4GrGwGHgbl5Mfatl5V7pQsPm6X4t7IFCk7z/hrkBZfoU2hEjTTtpdduvh4IvjLoMXlg/MEIQCJniZzNId4JMCRVEY3VkuZZ3I8qmws3xaSWhRxPKlwiub5m80NDqsla0GL2nppjoCLzwEP8KtvkM=
+	t=1728471842; cv=none; b=XW+QcMDt3BZCdx1MrhZLlus8Vh2VIiEyE+QnFg5ZGCruRqKRG9Kz7dpBwFIt3ZnBX7IIGHldZqH/JP5a38gCiNWKtaCXJ+nvZbnaztevagaAbCpZJDotkJv7gDBnLAZki1wVpTRDrTr4kH809aZbhoBO5rs22dZdOUULxWFRtV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728471816; c=relaxed/simple;
-	bh=f/EoNW04y2Nr6yAWUDCYj/76s4oDbPK3TY0FW8YOVV4=;
+	s=arc-20240116; t=1728471842; c=relaxed/simple;
+	bh=46KSu3I7HPDFM5TysvcbzMjnE/OsD7wd/6EaPKMDOjg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsDGa01oEtVOzFVkqh7mKe4WIBmZviuOz5pE5p2gVmYAykxjo87sU/cSfmt/0kHtI/QGcl/uYBxhnaixUzBVHl80f2eFUv110gnJKp8gRyGk3KOWOlMhQBKtkvhCRG69VvYls1RQ+xU6enDeOPzqW+5IhBPVsWu0e9xlPYN/W7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLepzEsh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F023C4CEC5;
-	Wed,  9 Oct 2024 11:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728471816;
-	bh=f/EoNW04y2Nr6yAWUDCYj/76s4oDbPK3TY0FW8YOVV4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DLepzEshP/4mXQsl2XJpjT73NbBGz9G2agwEEd6tQYz9lO+eqYxMzaMcj24H4GW81
-	 Le1KkXnjJBC8MW7FflTwf5k8u62yR275mQzbLM2Xnkksng7BBXCCu3I2IsilKKuh9C
-	 tn5I9gMoOPl9IR/07Z7LrDEOfMozP8crg0Ejm1/cMpecXWaC7fqbOpYoml4pkqT6KZ
-	 8ErbCjP7yR0hITlFP8nBM9WRgd/ZKkYKCpiRE0HjmkZfh/VszZtHEOhp3fV+YeRcul
-	 Wbp42jCJn48Au8WODEcR3T6WeTkaJD6W4x+KhVfOQYXHADlrjbnU7K+GGkOQQF13Wm
-	 yEtogMwRguJXA==
-Date: Wed, 9 Oct 2024 12:03:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v6 18/33] prctl: arch-agnostic prctl for indirect branch
- tracking
-Message-ID: <ZwZjBO_7d2-Qq8bF@finisterre.sirena.org.uk>
-References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
- <20241008-v5_user_cfi_series-v6-18-60d9fe073f37@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fy5oj863BtYy8xTnJ8yJOCKWwG1fOxNdSDLfYvVr0vrmqr+/eioLjOpyzQnEDhnnyPrIw54t1m0LRewj71jhYnVULUnTneboyXtujCZupZGPNUOydnCKLekIUlFTf1jfWpDV1/cdWmYPutqD7mj5sx8FWxd3QK1nJBCT9HI8Me0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=SyrxhV8W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MbosoE6u; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id BDC1E11402B9;
+	Wed,  9 Oct 2024 07:03:59 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 09 Oct 2024 07:03:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1728471839; x=
+	1728558239; bh=6OKyW496BkbkGgcATIsbd85ETsMnr154XgFBJtz+ll0=; b=S
+	yrxhV8WyktoITF/JrvkZUKdya6uFV5EOlOXNLDjYuznHMD9sOanBxWmtTtFHVHvR
+	HqhYIn2fTeLQAa2GNaqKAxLfMDpCWZiacI6bNgv3LaQxNUQi+TD1DummmUBM9t5p
+	PlGH4GAvw1kZPidokjeRlr0SZJxVeOIvGERC4PmVdSVLRf4nkYDlEc5Fqri2HfDd
+	yA6fFyU3lnsbQXUXDVz9EcIlZfK4vD7YYvceA1lPHmHf+Efl9icKHIvvOrFrRjek
+	Y/iO4cmi10ybItM2YTnNzSmBboS/7F6oa/tYzV0YTIjCIgvTcaKHh9ciH7dCJVm5
+	rOe7zlmFBXYiA5zeApniQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728471839; x=1728558239; bh=6OKyW496BkbkGgcATIsbd85ETsMn
+	r154XgFBJtz+ll0=; b=MbosoE6uVQMYVwpXVngkyo/yx1E6X6G11IIRZfNSdnj2
+	aCQ+OsTj1lheiptWAyoBAq7H7ugeJB85zsWEOAIo/DMB2S87x+U3BJcMVFi6m16L
+	KvQPbR4cJo8TZSxR+mre0/RuqMj6i5ly4sfDM/iX8cwZyKQ9qtF7NhGnrhGt3dMi
+	qVqU2HKPmX4WMxzaFsqr7UanMY7yzdSdc2XR5vJWK0aasC2Nl1lezeB15vhnffOK
+	aHAvKVAxS33BFJ8Lj/JeRH1dbPGi5VoGggxTWLUmVHnngZ6GGsFBuYeThIySlKmL
+	4Fo3U6ubyP6AQljCzgYJIY4VCAjeAOOQs+Q2hzpezA==
+X-ME-Sender: <xms:H2MGZz4YL8uMLm8jG5sdpMqUL6-OIkje12ykmGDnu3Y3o5-cG-aQFQ>
+    <xme:H2MGZ44i8zcuRC9vSoPD_kMLPWmpKVoQ1UT84JSV02_cOXA-9FCkIOPOp3uChod2u
+    N0jEw2hzBTTg0HdBcg>
+X-ME-Received: <xmr:H2MGZ6ei2TnUegPRApjar93SJY3oEKzjpSVhv3KQyWHdu_McG7zhEXyiMxbQWCe2Dquldw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehnvggvrhgrjhdruhhprggu
+    hhihrgihsegrmhgurdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhi
+    gidruggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
+    epuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthho
+    pehthhhomhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghpthhtohepnhhikh
+    hunhhjsegrmhgurdgtohhmpdhrtghpthhtohepshgrnhhtohhshhdrshhhuhhklhgrsegr
+    mhgurdgtohhm
+X-ME-Proxy: <xmx:H2MGZ0K3ozJZBusu0m-d9mvVI4uaIATE06Mesr9RafFHvIj7DNDCOQ>
+    <xmx:H2MGZ3IXdg88DuasyPU1PIfhSAMSCzYHXYlgKtHLERIW5F1tB5o6Kw>
+    <xmx:H2MGZ9wDV6jAxMDU9PHIgWWtlF_a3G0nFRgQX0_Sf1IHBOXXrWzAhQ>
+    <xmx:H2MGZzLe8aPQqb3OK1pop4jd14G5QpHcsZjACaUaZK5Sqm4KvaaeVw>
+    <xmx:H2MGZ8BjaRWAwGK1-iem-Uri5mjQ30CdYx7dTzxHtaBNz8wCzpobuLTI>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Oct 2024 07:03:53 -0400 (EDT)
+Date: Wed, 9 Oct 2024 14:03:48 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, 
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com, 
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, 
+	x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com, 
+	pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
+Message-ID: <7vgwuvktoqzt5ue3zmnjssjqccqahr75osn4lrdnoxrhmqp5f6@p5cy6ypkchdv>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
+ <sng54pb3ck25773jnajmnci3buczq4tnvuofht6rnqbfqpu77s@vucyk6py2wyf>
+ <20241009104234.GFZwZeGsJA-VoHSkxj@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FXfO/TwhQ+C7Uak4"
-Content-Disposition: inline
-In-Reply-To: <20241008-v5_user_cfi_series-v6-18-60d9fe073f37@rivosinc.com>
-X-Cookie: Editing is a rewording activity.
-
-
---FXfO/TwhQ+C7Uak4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241009104234.GFZwZeGsJA-VoHSkxj@fat_crate.local>
 
-On Tue, Oct 08, 2024 at 03:37:00PM -0700, Deepak Gupta wrote:
-> Three architectures (x86, aarch64, riscv) have support for indirect branch
-> tracking feature in a very similar fashion. On a very high level, indirect
-> branch tracking is a CPU feature where CPU tracks branches which uses
-> memory operand to perform control transfer in program. As part of this
-> tracking on indirect branches, CPU goes in a state where it expects a
-> landing pad instr on target and if not found then CPU raises some fault
-> (architecture dependent)
+On Wed, Oct 09, 2024 at 12:42:34PM +0200, Borislav Petkov wrote:
+> Do you have a better idea which is cleaner than what we do now?
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+I would rather convert these three attributes to synthetic X86_FEATUREs
+next to X86_FEATURE_TDX_GUEST. I suggested it once.
 
---FXfO/TwhQ+C7Uak4
-Content-Type: application/pgp-signature; name="signature.asc"
+> Yes yes, cc_platform reports aspects of the coco platform to generic code but
+> nothing stops the x86 code from calling those interfaces too, for simplicity
+> reasons.
 
------BEGIN PGP SIGNATURE-----
+I don't see why it is any simpler than having a synthetic X86_FEATURE.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGYwQACgkQJNaLcl1U
-h9AHsQf9H04XFe+wNJxLZrv59pAwdvHe6MP+LVVOFndbjBmbHFTN6qmAISZyqktF
-SRfj1/m4yG/TwuwLWuBmwzNCYhtdu6T7NxMLpAffd830l1MTkdrF7wQ9gl7ZGRAW
-hwjTCOjqQG+RiCf8msgkCaHpmTaxQyaaXKijwQLlpjse8yXFagVbB7KFfLnU3SdH
-EU1KXwsGKBILqKMesYtkE6OZOORH7YEXvvPcvZD2E/I/6ZVodlxghrEiw+L2z358
-AVd82hg9g4z+W4RfgoHAuzE0DM7w1omjJCy8JvknSzesQFWBmnyDm/chs8uVbfBH
-GWu/B4b4XqB14HIbfiwUtTrT1OMnCw==
-=cHVw
------END PGP SIGNATURE-----
-
---FXfO/TwhQ+C7Uak4--
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
