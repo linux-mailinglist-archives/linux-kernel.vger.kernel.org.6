@@ -1,142 +1,153 @@
-Return-Path: <linux-kernel+bounces-356397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A60996074
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:15:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB35F99607C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D4D82856DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B481F23F17
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E088C17E003;
-	Wed,  9 Oct 2024 07:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9j2YbiH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE83517A924;
+	Wed,  9 Oct 2024 07:17:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD1A17CA09;
-	Wed,  9 Oct 2024 07:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA64936AEC
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728458081; cv=none; b=aET0e9wTEfkROzufGUqiOL/8VZXDklameXx4Jl+YzpNpCX1NQEfTqtuQNu+dgLH8q6MqbxU7SrO/QLLxFCFzPxyB54DDJLn1lPpXFnbfhkV2/a6CZ/+By61Rsx0xKZCoW5WNdwqUGYAh3SjzcFtK8pnSa+AyZIqHp6hZyoxlUdc=
+	t=1728458224; cv=none; b=ZZXab2H39dWKyVVDzNv0y+/+sZQCedK1+C7LMpQraFSCrG73lLrzCldGoBUvvBiexzHP1oxUamVVQ/rhOzUNRJHX+A5FkrsdfbHb87NNew8BaXejKM9pF39IK/u3emXyCES16xl6qA35R7dSDCOoZU+lwZiLIDfFDg1YzApa0U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728458081; c=relaxed/simple;
-	bh=CyqdWzPrkB0dFXNWvRNB5w1mYjYxOS+k9dp5IAy4x0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eS0tjs3ja+b16TzGiGWGBidhcW6oOaB6eIxcX37sZK3DxzCPSlns+u0stC24oyLd/6D7wT1Aev9aoBtIpAdACGNicWQFRuuHUGQ33cEY6HnweEF72XcqU7QPDtrgjYwexPrSz63VIGLhpnnxQ8EZ0auBADhbEp/B3eBMq5chhkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9j2YbiH; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728458079; x=1759994079;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CyqdWzPrkB0dFXNWvRNB5w1mYjYxOS+k9dp5IAy4x0Y=;
-  b=f9j2YbiHen+pe9IJAdVM8Rbf7PSYZi/sgcZPu6oBrN3aYY+CleYiwIMB
-   iZxjZdJ9gCab2Hdsr2Bu/YxddKFcklSVCwf55+vgvkkWQHO0yjDBr/MjV
-   WolPSJM2oKBeswh5lSlC/XY+nyG/FGcieqPueH+cLPywZaf3fTA91Y2jS
-   LHoP1wNUO75XVTsInE45HzBSZHCEmuHpLSkmsYpy7G8GgV9QE5BuvBB07
-   BA4gErmT2qbcvInwZkG8EXYyq+kdq8TOngl+/KvwPm0vCthTQVhkwfeQZ
-   iV168Y/aNmGntUJNgRuRvZ7jbwlviVJR/MdY8d3My+yQrEHUIaDlLdzdy
-   A==;
-X-CSE-ConnectionGUID: kfPiCW8QR1iRQNtYLo8DwQ==
-X-CSE-MsgGUID: Pt/ugWM2QTaYKfh7HENrOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="30614648"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="30614648"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 00:14:38 -0700
-X-CSE-ConnectionGUID: aa/m5ifNTpGTEA0KW3TXyA==
-X-CSE-MsgGUID: CS+l9GoJRUO0Bf+zx2LF2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="80732847"
-Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.82.157])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 00:14:36 -0700
-Date: Wed, 9 Oct 2024 09:14:32 +0200
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mariusz.tkaczyk@intel.com, song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-Subject: Re: [PATCH md-6.12 0/7] md: enhance faulty chekcing for blocked
- handling
-Message-ID: <20241009091432.00001c26@linux.intel.com>
-In-Reply-To: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
-References: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728458224; c=relaxed/simple;
+	bh=np+BwCZZY3k0G+CBznbfSMezUMPRfGaDPUyW4ghdgiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MwuUbDTeDYs0mhDlvcmYTd4YryUtDNkAf72uKmvOVyi1SaMvfthE14fRE5DSHNQ37QnUxA6T2nLEbR7fokgPpD7xCuuuC3I16sBB6szzkyuxuN0oDjFGRAbLPfb76SGVRP/RbTMFBevxKUu0Rx92jq2GudVFlXjb5sleGVHrfgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syQvy-0002Hf-RC; Wed, 09 Oct 2024 09:16:34 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syQvx-000YH4-By; Wed, 09 Oct 2024 09:16:33 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syQvx-0022qQ-0o;
+	Wed, 09 Oct 2024 09:16:33 +0200
+Date: Wed, 9 Oct 2024 09:16:33 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 08/12] net: pse-pd: pd692x0: Add support for PSE
+ PI priority feature
+Message-ID: <ZwYt0WT-tdOM0Abj@pengutronix.de>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-8-787054f74ed5@bootlin.com>
+ <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
+ <ZwU6QuGSbWF36hhF@pengutronix.de>
+ <9c77d97e-6494-4f86-9510-498d93156788@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9c77d97e-6494-4f86-9510-498d93156788@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 30 Aug 2024 15:27:14 +0800
-Yu Kuai <yukuai1@huaweicloud.com> wrote:
+Hi Andrew,
 
-> From: Yu Kuai <yukuai3@huawei.com>
+On Tue, Oct 08, 2024 at 06:50:25PM +0200, Andrew Lunn wrote:
+> On Tue, Oct 08, 2024 at 03:57:22PM +0200, Oleksij Rempel wrote:
+> > On Thu, Oct 03, 2024 at 01:41:02AM +0200, Andrew Lunn wrote:
+> > > > +	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
+> > > > +	msg.sub[2] = id;
+> > > > +	/* Controller priority from 1 to 3 */
+> > > > +	msg.data[4] = prio + 1;
+> > > 
+> > > Does 0 have a meaning? It just seems an odd design if it does not.
+> > 
+> > 0 is not documented. But there are sub-priority which are not directly
+> > configured by user, but affect the system behavior.
+> > 
+> > Priority#: Critical – 1; high – 2; low – 3
+> >  For ports with the same priority, the PoE Controller sets the
+> >  sub-priority according to the logic port number. (Lower number gets
+> >  higher priority).
 > 
-> The lifetime of badblocks:
+> With less priorities than ports, there is always going to be something
+> like this.
 > 
-> - IO error, and decide to record badblocks, and record sb_flags;
-> - write IO found rdev has badblocks and not yet acknowledged, then this
-> IO is blocked;
-> - daemon found sb_flags is set, update superblock and flush badblocks;
-> - write IO continue;
+> > 
+> > Port priority affects:
+> > 1. Power-up order: After a reset, the ports are powered up according to
+> >  their priority, highest to lowest, highest priority will power up first.
+> > 2. Shutdown order: When exceeding the power budget, lowest priority
+> >  ports will turn off first.
+> > 
+> > Should we return sub priorities on the prio get request?
 > 
-> Main idea is that badblocks will be set in memory fist, before badblocks
-> are acknowledged, new write request must be blocked to prevent reading
-> old data after power failure, and this behaviour is not necessary if rdev
-> is faulty in the first place.
-> 
-> Yu Kuai (7):
->   md: add a new helper rdev_blocked()
->   md: don't wait faulty rdev in md_wait_for_blocked_rdev()
->   md: don't record new badblocks for faulty rdev
->   md/raid1: factor out helper to handle blocked rdev from
->     raid1_write_request()
->   md/raid1: don't wait for Faulty rdev in wait_blocked_rdev()
->   md/raid10: don't wait for Faulty rdev in wait_blocked_rdev()
->   md/raid5: don't set Faulty rdev for blocked_rdev
-> 
->  drivers/md/md.c     |  8 +++--
->  drivers/md/md.h     | 24 +++++++++++++++
->  drivers/md/raid1.c  | 75 +++++++++++++++++++++++----------------------
->  drivers/md/raid10.c | 40 +++++++++++-------------
->  drivers/md/raid5.c  | 13 ++++----
->  5 files changed, 92 insertions(+), 68 deletions(-)
-> 
+> I should be optional, since we might not actually know what a
+> particular device is doing. It could pick at random, it could pick a
+> port which is consuming just enough to cover the shortfall if it was
+> turned off, it could pick the highest consumer of the lowest priority
+> etc. Some of these conditions are not going to be easy to describe
+> even if we do know it.
 
+After reviewing the manuals for LTC4266 and TPS2388x, I realized that these
+controllers expose interfaces, but they don't implement prioritization concepts
+themselves.
 
-Hi,
-We tested this patchset.
+The LTC4266 and TPS2388x controllers provide only interfaces that allow the
+kernel to manage shutdown and prioritization policies. For TPS2388x, fast
+shutdown is implemented as a port bitmask with only two priorities, handled via
+the OSS pin. Fast shutdown is triggered by the kernel on request by toggling
+the corresponding pin, and the policy - when and why this pin is toggled - is
+defined by the kernel or user space. Slow shutdown, on the other hand, is
+managed via the I2C bus and allows for more refined control, enabling a wider
+range of priorities and more granular policies.
 
-mdmon rework:
-https://github.com/md-raid-utilities/mdadm/pull/66 
+I'll tend to hope we can reuse the proposed ETHTOOL_A_C33_PSE_PRIO interface
+across different PSE controllers. However, it is already being mapped to
+different shutdown concepts: PD692x0 firmware seems to rely on a slow shutdown
+backed by internal policies, while TPS2388x maps it to fast shutdown with
+driver specific policy. This inconsistency could force us to either break the
+UAPI or introduce a new, inconsistent one once we realize TPS2388x fast
+shutdown isn't what we actually need.
 
-Kernel build torvalds/linux.git master:
-commit e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-
-I applied this patchset on top of that.
-
-My tests proved that:
-- If only mdmon PR is applied - hangs are reproducible.
-- If only this patchset is applied - hangs are reproducible.
-- If both kernel patchset and mdmon rework are applied- hangs are not
-  reproducible (at least until now).
-
-It was tricky topic (I needed to deal with weird issues related to shared
-descriptors in mdmon).
-
-What the most important- there is no regression detected.
-
-Thanks,
-Mariusz
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
