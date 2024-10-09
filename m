@@ -1,188 +1,125 @@
-Return-Path: <linux-kernel+bounces-356517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E258899627B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:27:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2FF99627D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52FC0283F30
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:27:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA520B261F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4598188CA1;
-	Wed,  9 Oct 2024 08:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B24618A6DD;
+	Wed,  9 Oct 2024 08:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UxfbsvLN"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ai3OAyPy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8203E178CC5
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2712E1885B2
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 08:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728462384; cv=none; b=OeG/GNJJMsXAraRuL68YE8pc7Xo9zl28tG7+ZBse7Cd5VS53gd2vX4fEeBab4ILlpK9RzhnyA01y36/Le6AKoVKFpcsf3bKqOKuxeQJ7vH6rtsEJM57yr2BJA8jimtflALaQeL8vf7CzrdxtVT2l82KWKPBDzatkC68bxWzCre8=
+	t=1728462415; cv=none; b=uHjRPwpQIxE78DIAtxvk+1dPPmwvuSVLMeZrciVUVGhCllFOpvLE3FA8NVOEqW/DaDNZeDFSWR3HyTnPJcNaCCGon/e40AwSgkqxDGv1FAT2pHFDvyDqYgZUTDrmllfRjxNqpbp240Oq7JdNjcm1SnC9UPSthMWIxjRaGQu26+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728462384; c=relaxed/simple;
-	bh=9fL0jA5UZuEXaoQ8UrTPNdxf5TidIiox19GEPWNOBhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tncxVPJsHnf9xuetNT2eX+2jTvc7UNt5vjsKUcp6unB6YDwSB/Vc3IOmdByBwxWOgCc7Mpwh9+/CiQYOiEMtSDJEXDpMbSrKj3YfO6Hu6ejmSNJlNBGYAZb86xvqJCGfr5P09fFis3kj20BJ5LISSPbMX4+Zkb6gTgGFCd7ZtL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UxfbsvLN; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53997328633so8767216e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1728462380; x=1729067180; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TLhzHB7jiqaUdp6L8vmJycmlbC4To6/gc8QcXQMUb/E=;
-        b=UxfbsvLN53EnuN1lHceImQubd9+Tk4JPDo/eJnU49lonO3YyQz1LCOYQ01IEVWSzdz
-         uSLJ12zZExfbAM7txOgAxRdjMsHvXfujkmsuLXLhxAvtCzjF9gwj+/QZAxSgHyK0nWL5
-         dZCgmFEyl7ZdxMDIuQJFZGcjoNbdKOH3HeGPkI0dzExpdAKCuva4t7+nsYAJRhuuKDaX
-         K5q/QIaEGKX6uTGMpc7HBRaB29RE7CuRPMXbm80mx7r6cIx2XLevC2vgXAniivsTJm09
-         /UP8YHM8b6I8JgyNygqIl+lFoPrw2scrOF7BltN5QfO/42EYIJITNXoirZrFhNdPmHsC
-         bjtQ==
+	s=arc-20240116; t=1728462415; c=relaxed/simple;
+	bh=obXngFnmMN/LZAb7R2o+/YAqXsiJoWW3fvcJSOyXWBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OP6q3/aFl+sSPlMGi59WjxpjYRewdHpiJwa0OUDMBSOlWcx/SHJUbzPgZlHy3tnX3uQH+WOXMSkzVBFQN4XdpMUCshbN/aB6ZteJ9QyaC+9S4lF2KtGHlItkXlP8hxEvre9VFIiAhi34/Y1bQt1j1d6DQfPx3DEoWJUu3tBDaqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ai3OAyPy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728462413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cIFHNk7sZNxShh3bVR5zotS0Iveno/DHrmVz7gVszT8=;
+	b=Ai3OAyPy4qf35KtSns2p0l7uTEEd2/wUyN8Yp8fV88zIsOIHqetDzGQCLKSXHcuRhh/VPp
+	RQgO/3Kzz3plTF/3ML2ARwayoNKW1s7Y0N9ZvXoWGLVSVWrYXOvQabFh/7wXtCsR9fFB94
+	UmvAwiY3S1BWsnzcUaqIbdsyhP2Yi7I=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-563-Yb9mewglMqyVIy0mrcqjAg-1; Wed, 09 Oct 2024 04:26:52 -0400
+X-MC-Unique: Yb9mewglMqyVIy0mrcqjAg-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbc4ade39bso26495646d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 01:26:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728462380; x=1729067180;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728462411; x=1729067211;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLhzHB7jiqaUdp6L8vmJycmlbC4To6/gc8QcXQMUb/E=;
-        b=K3+dWS9LGbR39aETI9JY9r+juKhW7Q5bxs44sj3zRDonwL07xZVN9HXfrfmgzqsV1y
-         euY/ciqNis7Cmf6J14kQhd3sxidxg9zdKQTLl46pw1DZb8ARH8H5d8uCi8E8wfT+DPMn
-         YjM+ssaJdKkM9WPw+pC2AnjNJrFqbTbtomvooBs7jw6ovWQbPefrsP8gMqXeIUAyEQA2
-         ZbmkxOahLBkPtGTOAWpMREVw8VOtTrLkx0k1+3x/uahpMdGZA8GhkVLzf1dQ4qVD4xFR
-         AsD/ZntDO0tUSu+7MTa5HNVYy5vKNzfN0PVUE2iSNNvtXQlMuUIv5GVqwGgBWTHxV+hP
-         fnKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfkZWvQDookHsTRI0DoIb0QOQpwM6+MTQTs3Y4PjqdpubJ9cQr9eJzPshIaiuqDZLyzx6b3wGoXG+PVjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLCpQ+alEtqsJb3PLC15OTBrsmeRsn0Gj5Ea99dkJbg9iG1rS9
-	FMMVABTfkCfHmHTgmSSW8NAys0DvqrKRkvleifTfCW8zKy8c/+cmIx4/fI6G8EA=
-X-Google-Smtp-Source: AGHT+IECwquztc5SDa5khaaQXBkSkMjoGXF+/YXZtyWMOkWs1onDNY2dNBzakxpW7WCrmqB0Ej/WGQ==
-X-Received: by 2002:a05:6512:3d22:b0:52e:936e:a237 with SMTP id 2adb3069b0e04-539c4899783mr1251682e87.16.1728462379592;
-        Wed, 09 Oct 2024 01:26:19 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.23])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9960ba14cfsm285051066b.187.2024.10.09.01.26.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 01:26:19 -0700 (PDT)
-Message-ID: <61842083-32c1-49d7-a1f5-de1fff0c9655@tuxon.dev>
-Date: Wed, 9 Oct 2024 11:26:17 +0300
+        bh=cIFHNk7sZNxShh3bVR5zotS0Iveno/DHrmVz7gVszT8=;
+        b=jqyny9ZH/AGW5JJ/2wNIcrE2oNOXMSV+YXuWQeNPSbX2VOhicotV+EW9FBAUqlkV8t
+         Ast7MGG4lzmTJ2BQ2yfKxEARoTk/NSHr8JY9/0axl72TDSlvhFPefPm1/UzZ+pCAs/CC
+         nI+wOJ1xbrwItWv2nSi0j5qUYPbAJnwDIE6e1esPp3aiLh4efBHn+0gD8Z3mZ5gX1q3O
+         kQFs9JlMRSqGy7t077wN8pLPgbk51dQJaifxl1tt4Un64WhacOLGbf7VcPFsx1WZUt0U
+         cWEwwQ9TkoNofI5vbL4iG3DR5Qg6an2QaRpGNrqObnEIXe8MIrXX2lL3S0ilIN4h/o8b
+         kVtw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2/bbmVnhQTh6VFxS9CKYmBqg1YqN5UwcLcUWflvPfp2bcVeQWW5qOZDXtKovRcRY8bsSEMkFWS/SGNKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt9fwv4QMB76M3KANqMUkQgJ5OyVkfmpLQbDYmXtjb992/vka5
+	NQ1EoOGfVZ7ICssON9Ol71FH4nuvsp4QHNsbsOgrB5MU1siZAxV/hxTqAD0oHMADpXoLIiM57d/
+	CfbDU0p2IdAlD4mo3XNjhkmuhesHXkegjqQ7wEDQKof2Hr7AY/4RqxE23krg6cA==
+X-Received: by 2002:a05:6214:4a8c:b0:6cb:9bc9:e24b with SMTP id 6a1803df08f44-6cbc95801c9mr25654626d6.43.1728462411402;
+        Wed, 09 Oct 2024 01:26:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlYycaHbhuzGbICFJjwxzEB8gUP2gOuEMOI5StZwaakXq3gML2hlgDxFr6JTHiGWZ9wt2kSg==
+X-Received: by 2002:a05:6214:4a8c:b0:6cb:9bc9:e24b with SMTP id 6a1803df08f44-6cbc95801c9mr25654486d6.43.1728462411081;
+        Wed, 09 Oct 2024 01:26:51 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-206.as13285.net. [80.47.4.206])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba4752828sm43626336d6.95.2024.10.09.01.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 01:26:50 -0700 (PDT)
+Date: Wed, 9 Oct 2024 09:26:45 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: Futex hash_bucket lock can break isolation and cause priority
+ inversion on RT
+Message-ID: <ZwY-RZ51-1fD_9mr@jlelli-thinkpadt14gen4.remote.csb>
+References: <ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb>
+ <20241008173859.GE17263@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/16] soc: renesas: sysc: Move RZ/G3S SoC detection on
- SYSC driver
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
- gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
- ulf.hansson@linaro.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-6-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdU_kyPb9VAosStrwmQg9vOMgyogQu==u1XQEBWFQLbSdQ@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdU_kyPb9VAosStrwmQg9vOMgyogQu==u1XQEBWFQLbSdQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241008173859.GE17263@noisy.programming.kicks-ass.net>
 
-Hi, Geert,
+Hi Peter,
 
-On 08.10.2024 16:23, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+On 08/10/24 19:38, Peter Zijlstra wrote:
+> On Tue, Oct 08, 2024 at 04:22:26PM +0100, Juri Lelli wrote:
+> > Does this report make any sense? If it does, has this issue ever been
+> > reported and possibly discussed? I guess it’s kind of a corner case, but
+> > I wonder if anybody has suggestions already on how to possibly try to
+> > tackle it from a kernel perspective.
 > 
-> On Thu, Aug 22, 2024 at 5:28 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Now that we have a driver for SYSC driver for RZ/G3S move the SoC detection
->> for RZ/G3S in SYSC driver.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/soc/renesas/rzg3s-sysc.c
->> +++ b/drivers/soc/renesas/rzg3s-sysc.c
->> @@ -85,6 +97,39 @@ static int rzg3s_sysc_probe(struct platform_device *pdev)
->>         sysc->dev = dev;
->>         spin_lock_init(&sysc->lock);
->>
->> +       compatible = of_get_property(dev->of_node, "compatible", NULL);
->> +       if (!compatible)
->> +               return -ENODEV;
-> 
-> Please use of_match_device() and of_device_id.compatible instead.
+> Any shared lock can cause such havoc. Futex hash buckets is just one of
+> a number of very popular ones that's relatively easy to hit.
 
-OK.
+Ah yes indeed. Just thought that if we have ideas on how to possibly
+make this better it might still be worthwhile, even if it won't fix all
+issues.
 
-> 
->> +
->> +       soc_id_start = strchr(compatible, ',') + 1;
->> +       soc_id_end = strchr(compatible, '-');
->> +       size = soc_id_end - soc_id_start;
->> +       if (size > 32)
->> +               size = 32;
->> +       strscpy(soc_id, soc_id_start, size);
->> +
->> +       soc_dev_attr = devm_kzalloc(dev, sizeof(*soc_dev_attr), GFP_KERNEL);
->> +       if (!soc_dev_attr)
->> +               return -ENOMEM;
->> +
->> +       soc_dev_attr->family = "RZ/G3S";
->> +       soc_dev_attr->soc_id = devm_kstrdup(dev, soc_id, GFP_KERNEL);
->> +       if (!soc_dev_attr->soc_id)
->> +               return -ENOMEM;
->> +
->> +       devid = readl(sysc->base + RZG3S_SYS_LSI_DEVID);
->> +       revision = FIELD_GET(RZG3S_SYS_LSI_DEVID_REV, devid);
->> +       soc_dev_attr->revision = devm_kasprintf(dev, GFP_KERNEL, "%u", revision);
->> +       if (!soc_dev_attr->revision)
->> +               return -ENOMEM;
->> +
->> +       dev_info(dev, "Detected Renesas %s %s Rev %s\n", soc_dev_attr->family,
->> +                soc_dev_attr->soc_id, soc_dev_attr->revision);
->> +
->> +       soc_dev = soc_device_register(soc_dev_attr);
->> +       if (IS_ERR(soc_dev))
->> +               return PTR_ERR(soc_dev);
->> +
->>         return rzg3s_sysc_reset_probe(sysc, "reset", 0);
->>  }
-> 
-> My first thought was "oh no, now this is handled/duplicated in two
-> places", but if you later migrate the chip identification support for
-> the rest of RZ/G2L devices to here, it may start to look better ;-)
+> I do have some futex-numa patches still pending, but they won't
+> magically sure this either. Userspace needs help at the very least.
 
-Yes, this is how I see it going forward.
+Thanks!
+Juri
 
-> 
-> One caveat is that soc_device_match() can be called quite early in
-> the boot process, hence renesas_soc_init() is an early_initcall().
-> So registering the soc_device from a platform_driver might be too late,
-> especially since fw_devlinks won't help you in this particular case.
-> However, I think all real early calls to soc_device_match() are gone
-> since the removal of the support for R-Car H3 ES1.x, and all remaining
-> calls impact only R-Car and RZ/Gx (not G2L) SoCs.
-
-That is good to know. I get that we should be safe going forward with this
-approach.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
 
