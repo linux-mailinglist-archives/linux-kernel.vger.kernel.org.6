@@ -1,178 +1,184 @@
-Return-Path: <linux-kernel+bounces-356282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A727F995EFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 029F0995EFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665242865DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5E70287281
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F1815EFB9;
-	Wed,  9 Oct 2024 05:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DC115EFB9;
+	Wed,  9 Oct 2024 05:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FIlUGqCy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tia7IjaJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203E7149C50;
-	Wed,  9 Oct 2024 05:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A6F149C50;
+	Wed,  9 Oct 2024 05:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728451833; cv=none; b=aLafuEEii6cPByQ7Y8DEpz06puO8ZmztDMps9bPQMbmJm3KJtgikFZrTAUjk4i/j5G1LUrNh9/TzX8/M7oZPtE/H7SxLBkMuiCXb9rq1oKPjjhH5S7TSWOmr0GEWFE5XNujD69OfjemYXcXtUGGkKkUt+gU2cF9A6vmcgdl1LT0=
+	t=1728451851; cv=none; b=kWN9+ylpeb0xoMEjf1f68n3lC44iP6lAv97dPYtZhXFNGrLSqhrjzo+kwkrhX+1Uj+GTOyFXaIVB6DYoRpOVW1JngC15p+IGuWNdTcnE9pKeJC6LgQJ8+xZ1oMHhoaUQskz58/twN83/gutgUPOj77gk5gVUmfuzVgvSV4HfGCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728451833; c=relaxed/simple;
-	bh=VSUYUmtY8quANbEQtNDYVtgnqU7DGn2JR+gtgjQdhfI=;
+	s=arc-20240116; t=1728451851; c=relaxed/simple;
+	bh=QHulExaFOuxw8+6LaqnNQ6LnWBqWhPfCVcT9XPDlQmk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlA74TxRteWlnFDX0ogTbayiLWYOMGqp9fEtw0jQqfZs8rGlK6Ar3ZrsyzDP/lXNEFkNjd+YIBhIFL3Ju3nvRtDw2lhqlDIA+yEEfMuAD90r4Sdzxv1PgZvAXw3plwXzEe0z/3fJgXzcI9E8u29Qf34qXUKiMwOLVJaZf2mM9cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FIlUGqCy; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728451832; x=1759987832;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VSUYUmtY8quANbEQtNDYVtgnqU7DGn2JR+gtgjQdhfI=;
-  b=FIlUGqCyd0VEay7VtYh2FdAQDqUm50w++TexV5C/s0Z+GOxJ065Ww52x
-   1f1j74e5w3eOM7urb6PuCswmaoRU4pfH+LA4SKcXoupv+JUi3PHlEcGuB
-   DgbfeNCqsh4IiKGasSPXKXnBOSAmvmatHWCZjaFHorMtR90cjW8/afPKV
-   ZLBKhJ1I5iJ9IeFIs7NhiNE90U2n21r8Tctryh6+1ixqXKdRbwJ9CAXQ8
-   uITn9DChOTIm9m4kxiFrMWaDVBA7IM7n1k/sYymjelXDr2zNEA62GxujS
-   H4ULk94oDQmpuccyUpT0HLn8e6sFlvqjjyZ8YiyNEgXKD8Y/WtgVjZFmk
-   g==;
-X-CSE-ConnectionGUID: iX47WNbKSqO9DWqLJzxppw==
-X-CSE-MsgGUID: f2oDss9QTM6VY3e9zhcXYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="38315937"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="38315937"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 22:30:32 -0700
-X-CSE-ConnectionGUID: G0K6UK4bRL2KJG2uRRWW1Q==
-X-CSE-MsgGUID: 9nJqYqatTDq4Ckt1kyH8rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="106891950"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 08 Oct 2024 22:30:29 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1syPHH-0008my-0a;
-	Wed, 09 Oct 2024 05:30:27 +0000
-Date: Wed, 9 Oct 2024 13:29:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Zhang <yidong.zhang@amd.com>, linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org, mdf@kernel.org, hao.wu@intel.com,
-	yilun.xu@intel.com
-Cc: oe-kbuild-all@lists.linux.dev, Yidong Zhang <yidong.zhang@amd.com>,
-	lizhi.hou@amd.com, Nishad Saraf <nishads@amd.com>,
-	Prapul Krishnamurthy <prapulk@amd.com>
-Subject: Re: [PATCH V1 2/3] drivers/fpga/amd: Add communication with firmware
-Message-ID: <202410091338.c38eM1Hd-lkp@intel.com>
-References: <20241007220128.3023169-2-yidong.zhang@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7Ci7sCEw+RTKXfns8csg370Rl+GqNID6k6ZbRt8DDjSIzGRGmqwOo1UbqY5HVZ8hYcKu+k3w+520kAZeDlwsupHTJib6ZnsZ+03RD7QfS6ymxYBfzzatDxroRAQV02QzBQxqRehtw05V6CRwDK99yTW+Afa3tT8ycO5ex6YbVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tia7IjaJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE067C4CEC5;
+	Wed,  9 Oct 2024 05:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728451851;
+	bh=QHulExaFOuxw8+6LaqnNQ6LnWBqWhPfCVcT9XPDlQmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tia7IjaJFREUgH9EA63f+4O8v141LmlZbaavXqT+3CDo2LZ9H8uKV02D9VoTlB2bB
+	 jgmXpOTNcfwnIjVfd3n2eiS21vuqHtmXwo8d20P4PKVZ2aNEOUOGullTElXy1YIGbf
+	 yF7LpFCxZBCOK+Nh/lXDP/IWW6Dl+vzEGii0MMrGx7kfCYP06LINoW7lydLW+H0maX
+	 lG6WqnE40A4oy7f8zrcAr7yu+Sl+TVnItp54KCijyPxcCnAXowF9PIUzQbjPKlB/qj
+	 sYojpYJmfVHF5Lzb5fOUBHvw4bKvtciVgkR15zOuu9z++qxkKXwC7umnxj7WQ7stb4
+	 JpPtFn6//oZtA==
+Date: Tue, 8 Oct 2024 22:30:49 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: linux@treblig.org, kan.liang@linux.intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf callchain: Remove unused callchain_branch_counts
+Message-ID: <ZwYVCTsf8p3v22HQ@google.com>
+References: <20241006012204.373803-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241007220128.3023169-2-yidong.zhang@amd.com>
+In-Reply-To: <20241006012204.373803-1-linux@treblig.org>
 
-Hi David,
+On Sun, Oct 06, 2024 at 02:22:04AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> callchain_branch_counts() was added in 2016 by commit
+> 3dd029ef9401 ("perf report: Calculate and return the branch flag counting")
+> but unused.
+> 
+> Remove it and it's helpers.
 
-kernel test robot noticed the following build warnings:
+Kan, are you ok with this?
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.12-rc2 next-20241008]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks,
+Namhyung
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Zhang/drivers-fpga-amd-Add-communication-with-firmware/20241008-060253
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241007220128.3023169-2-yidong.zhang%40amd.com
-patch subject: [PATCH V1 2/3] drivers/fpga/amd: Add communication with firmware
-config: i386-randconfig-054-20241009 (https://download.01.org/0day-ci/archive/20241009/202410091338.c38eM1Hd-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410091338.c38eM1Hd-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/fpga/amd/vmgmt-rm.c:183:2-3: Unneeded semicolon
---
->> drivers/fpga/amd/vmgmt-rm.c:498:10-17: WARNING: vzalloc should be used for buffer, instead of vmalloc/memset
-
-vim +183 drivers/fpga/amd/vmgmt-rm.c
-
-   146	
-   147	int rm_queue_create_cmd(struct rm_device *rdev, enum rm_queue_opcode opcode,
-   148				struct rm_cmd **cmd_ptr)
-   149	{
-   150		struct rm_cmd *cmd = NULL;
-   151		int ret, id;
-   152		u16 size;
-   153	
-   154		if (rdev->firewall_tripped)
-   155			return -ENODEV;
-   156	
-   157		cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
-   158		if (!cmd)
-   159			return -ENOMEM;
-   160		cmd->rdev = rdev;
-   161	
-   162		switch (opcode) {
-   163		case RM_QUEUE_OP_LOAD_XCLBIN:
-   164			fallthrough;
-   165		case RM_QUEUE_OP_LOAD_FW:
-   166			fallthrough;
-   167		case RM_QUEUE_OP_LOAD_APU_FW:
-   168			size = sizeof(struct rm_cmd_sq_bin);
-   169			break;
-   170		case RM_QUEUE_OP_GET_LOG_PAGE:
-   171			size = sizeof(struct rm_cmd_sq_log_page);
-   172			break;
-   173		case RM_QUEUE_OP_IDENTIFY:
-   174			size = 0;
-   175			break;
-   176		case RM_QUEUE_OP_VMR_CONTROL:
-   177			size = sizeof(struct rm_cmd_sq_ctrl);
-   178			break;
-   179		default:
-   180			vmgmt_err(rdev->vdev, "Invalid cmd opcode %d", opcode);
-   181			ret = -EINVAL;
-   182			goto error;
- > 183		};
-   184	
-   185		cmd->opcode = opcode;
-   186		cmd->sq_msg.hdr.opcode = FIELD_PREP(RM_CMD_SQ_HDR_OPS_MSK, opcode);
-   187		cmd->sq_msg.hdr.msg_size = FIELD_PREP(RM_CMD_SQ_HDR_SIZE_MSK, size);
-   188	
-   189		id = ida_alloc_range(&rm_cmd_ids, RM_CMD_ID_MIN, RM_CMD_ID_MAX, GFP_KERNEL);
-   190		if (id < 0) {
-   191			vmgmt_err(rdev->vdev, "Failed to alloc cmd ID: %d", id);
-   192			ret = id;
-   193			goto error;
-   194		}
-   195		cmd->sq_msg.hdr.id = id;
-   196	
-   197		init_completion(&cmd->executed);
-   198	
-   199		*cmd_ptr = cmd;
-   200		return 0;
-   201	error:
-   202		kfree(cmd);
-   203		return ret;
-   204	}
-   205	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  tools/perf/util/callchain.c | 71 -------------------------------------
+>  tools/perf/util/callchain.h |  4 ---
+>  2 files changed, 75 deletions(-)
+> 
+> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+> index 0c7564747a14..11435b72afbe 100644
+> --- a/tools/perf/util/callchain.c
+> +++ b/tools/perf/util/callchain.c
+> @@ -1266,77 +1266,6 @@ int callchain_node__fprintf_value(struct callchain_node *node,
+>  	return 0;
+>  }
+>  
+> -static void callchain_counts_value(struct callchain_node *node,
+> -				   u64 *branch_count, u64 *predicted_count,
+> -				   u64 *abort_count, u64 *cycles_count)
+> -{
+> -	struct callchain_list *clist;
+> -
+> -	list_for_each_entry(clist, &node->val, list) {
+> -		if (branch_count)
+> -			*branch_count += clist->branch_count;
+> -
+> -		if (predicted_count)
+> -			*predicted_count += clist->predicted_count;
+> -
+> -		if (abort_count)
+> -			*abort_count += clist->abort_count;
+> -
+> -		if (cycles_count)
+> -			*cycles_count += clist->cycles_count;
+> -	}
+> -}
+> -
+> -static int callchain_node_branch_counts_cumul(struct callchain_node *node,
+> -					      u64 *branch_count,
+> -					      u64 *predicted_count,
+> -					      u64 *abort_count,
+> -					      u64 *cycles_count)
+> -{
+> -	struct callchain_node *child;
+> -	struct rb_node *n;
+> -
+> -	n = rb_first(&node->rb_root_in);
+> -	while (n) {
+> -		child = rb_entry(n, struct callchain_node, rb_node_in);
+> -		n = rb_next(n);
+> -
+> -		callchain_node_branch_counts_cumul(child, branch_count,
+> -						   predicted_count,
+> -						   abort_count,
+> -						   cycles_count);
+> -
+> -		callchain_counts_value(child, branch_count,
+> -				       predicted_count, abort_count,
+> -				       cycles_count);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -int callchain_branch_counts(struct callchain_root *root,
+> -			    u64 *branch_count, u64 *predicted_count,
+> -			    u64 *abort_count, u64 *cycles_count)
+> -{
+> -	if (branch_count)
+> -		*branch_count = 0;
+> -
+> -	if (predicted_count)
+> -		*predicted_count = 0;
+> -
+> -	if (abort_count)
+> -		*abort_count = 0;
+> -
+> -	if (cycles_count)
+> -		*cycles_count = 0;
+> -
+> -	return callchain_node_branch_counts_cumul(&root->node,
+> -						  branch_count,
+> -						  predicted_count,
+> -						  abort_count,
+> -						  cycles_count);
+> -}
+> -
+>  static int count_pri64_printf(int idx, const char *str, u64 value, char *bf, int bfsize)
+>  {
+>  	return scnprintf(bf, bfsize, "%s%s:%" PRId64 "", (idx) ? " " : " (", str, value);
+> diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+> index 86ed9e4d04f9..d7741fa9e9de 100644
+> --- a/tools/perf/util/callchain.h
+> +++ b/tools/perf/util/callchain.h
+> @@ -298,10 +298,6 @@ void free_callchain(struct callchain_root *root);
+>  void decay_callchain(struct callchain_root *root);
+>  int callchain_node__make_parent_list(struct callchain_node *node);
+>  
+> -int callchain_branch_counts(struct callchain_root *root,
+> -			    u64 *branch_count, u64 *predicted_count,
+> -			    u64 *abort_count, u64 *cycles_count);
+> -
+>  void callchain_param_setup(u64 sample_type, const char *arch);
+>  
+>  bool callchain_cnode_matched(struct callchain_node *base_cnode,
+> -- 
+> 2.46.2
+> 
 
