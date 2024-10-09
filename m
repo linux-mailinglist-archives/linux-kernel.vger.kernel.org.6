@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-357750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68CD997559
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 456C499755D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004F01C22764
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EF8F1C2274A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB541E133D;
-	Wed,  9 Oct 2024 19:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4A51E200E;
+	Wed,  9 Oct 2024 19:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpbaLkvK"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zU+55hIO"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2400A1E5704;
-	Wed,  9 Oct 2024 19:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176341E1C16
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728500459; cv=none; b=SL273m87/8ubucogNvw51p5AwDk9k8uJJlyTZWCvyJgovK3LcrjZKo+u59Tpjjxk502+jYhDJbihB/HQLsIlFYLruljTG3ZpRX2RoQAbyTamUMFHpg7fOjAIdHcAB4WatKP8ogXRq9LJKuBXVxvtf5vDP9EIfeBxxp0V+IwIlIY=
+	t=1728500529; cv=none; b=mD0pG+rjY+Au7d1lA2DR/UXBHDEyEj2LnxhIsztcxpvMYYvbsBmYtFY3AHMK+8bRQoajiUUiWI/rooOPG1nDxfcJbLuoZwsgxDvY642TLao25whLB55THEqJVq39jpRkHuFl9bP1/fYeaAxzDyHMIXKerRFLzYYphUjRGVqf8KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728500459; c=relaxed/simple;
-	bh=xfVX20iq/fvCNNDymhtyhei4CPO+G7cClG0ZFUmkiMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ea/ZFbFbZiyEo+H9xwpmkpg+HUzggnJzhLhRWwCn3gR2CyZORTmpWnZ9lxykpIFZr8ch98pe048KFr0zm6NM/6K5bvv90rd30aRVCWfTbjYVUWbMlYg8NqQxuNrQVotwkRjtKzoK0uDhCf2ADazRbHyf9oHDoj51g7nk5siZ1iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpbaLkvK; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cbb08a1a5so743905e9.3;
-        Wed, 09 Oct 2024 12:00:47 -0700 (PDT)
+	s=arc-20240116; t=1728500529; c=relaxed/simple;
+	bh=Y9AhP4Ij9yYbpvP42cTvVt9kdtqB5fM50/MgwEp4SyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amuvgHllesqRNvNu6R0Wbu8IRMeHG0UKGnPOKz3YhhxiFyYov0tMY6NML4KoD+Nef13e2tj1T/72bAQ689oug6ZqCYbp83NgVLtOUo9nVILOfVoFP9GC7Eb+tpqp643BkBexK8grofHhTLUZWDlu9xoXLBlOd8iFPwg1NszGhGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zU+55hIO; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398a26b64fso55441e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 12:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728500446; x=1729105246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5N8/fjlE0efDR6dBiW5OBlDtiY5DqAblDupUGfXzs0I=;
-        b=JpbaLkvKIHzUJ2IT2WIAEuRBlVSE1qSs1CvZHBCRA+mh+glE7jZtg2hJQcXOtOTgjE
-         gvD5TAv5SE5KeYeySrf65YjB7lI6ln14pCwNKVZ7oS1pdfNtf7XVkH3pz7rOx2HJxke2
-         BdIsnuZFfV393yS4Tf06R6t7kMQis6WPyiuEWinMsOCBOZN4293h6idkSFTJS5Ma9uC7
-         Sx2DIkz/OX045SZnbl2FjgnWP6LzMcbdV1xoAF9nfBRby5gBkHWqe5Ev9JuTO7vCKo6S
-         rklHZQKRlrRbv1e5+nT6SPNdAOAI3yHCrhE30LJwwvJFepBqwVrlwxHwsvyzXPsyn7dh
-         137Q==
+        d=linaro.org; s=google; t=1728500525; x=1729105325; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQ5+ACbZx+UOJv09QvSfDOymcofkqLkZcQ+uGiaQiAI=;
+        b=zU+55hIONCx7BtqzCi6BofLui7OcuQnSWKJmK3EJY1hRFC2OOX+YNxpwoKvULCEjrV
+         CA7S2bcMyzpXgWkfAHPIS/cOcUPW+q5FjHKOH8NULbimnUGDbY1mUs9t6rt2lpEY+3Q/
+         iIEJy8/VGYTWRwEh8rXKvlhfEQXKkHj8JtvsIVT+LYSqpxLtXRaMmojp2YBpVjXGm4+5
+         heA5XJhtmH+gxj1BpKxblyZR6CeTM95MjOXY34/onPMGk91NM/di/tE1SUyFQQT/G1QR
+         jLiJfee+Hy/VLTKnM2ewuzvqbJWXzhxcGYhO43eZIvSzoVIv4Kw14tIkJ/PnKfCJ3/56
+         wCsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728500446; x=1729105246;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5N8/fjlE0efDR6dBiW5OBlDtiY5DqAblDupUGfXzs0I=;
-        b=M1I8G45zI8jsWaHppd0ZQ/8yjgZl9LQKCHIAEoQgVvrcsQ/49aa6gBmBoYxZpS01IP
-         F/yOYhwOo6Nlf1IMRpU6GpZsm0wmNR0B0nhQbTVFwlDDeBEIEBk9vCTZQJChllX+GDr5
-         wXHrL70wIooO149TgzJMUfObCmMGo6zBlI5VZJC+0xPSS6ErBn9PmRl0CK8KOe/N0Sad
-         RCmtb75SV8dY6y5weIMArtyab7Vi26FsFDZM7RcB1YyuaWmBE0pJjUze2vKCnhwbRSD1
-         PSUvdpCs8sPfZuGMsf4nBTdcS+PVHbTwaxPB9M0OCVMqJe78LvzqfPXDa9cf3Y5qs4RM
-         7A6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjCyHDp/ImVsTghPsdgiWYZK9yP5fOA0Yf7BfRny99qEo/tWkvLpBvvR9zpmNKzTLK/Ag0xN+kqJGvt9c=@vger.kernel.org, AJvYcCWOKmbjAdB1G+6mEISKSJ7E9931jfCoOf4+0OdDCLiLzidlYX6rNod5AbXq/PpaHCexZvP0c8uR@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg4ar9VFHHkboyE3Lra2JvJZjxcA2AgBP53J0gqLe/ee5ZT39z
-	XZ70hYd9WAvlVpTJMPzv74rdCGy2k3OpyIsHCw3ZZHAHL4WIt1Iq
-X-Google-Smtp-Source: AGHT+IEGCCHp3D/6Dt9OSOkQA2nDN2D7cRs2CWGmw2cTfgoWx0J7ELUF5pZXGr2nQ7WK/SpT/WIvbw==
-X-Received: by 2002:a05:6000:b82:b0:371:8f32:557e with SMTP id ffacd0b85a97d-37d3aa8f54amr2418657f8f.39.1728500446339;
-        Wed, 09 Oct 2024 12:00:46 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:268e:1448:f66b:a421? (2a02-8389-41cf-e200-268e-1448-f66b-a421.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:268e:1448:f66b:a421])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d443cb76dsm1612731f8f.67.2024.10.09.12.00.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 12:00:45 -0700 (PDT)
-Message-ID: <7767afd2-0ada-4cca-8861-ccdc874d555b@gmail.com>
-Date: Wed, 9 Oct 2024 21:00:41 +0200
+        d=1e100.net; s=20230601; t=1728500525; x=1729105325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQ5+ACbZx+UOJv09QvSfDOymcofkqLkZcQ+uGiaQiAI=;
+        b=Dm6Kphro+W8KBvmhK3oOAyXWxMSSayteKSfNom4DWTFi/qo8obCToPgI2+34HbpvCu
+         ZRecLk7SeKrxuwNzch7hGkz4PnJobKCjSkCvwNFkiBLqz+LPe/xvURMEMNdFusOpotRx
+         C8VvUSMIjTKKwBKWI+WgNgLVfz8pyUCeDaUQgjYik71+34gOV9f2ErNPrm51jJULs534
+         GGDX0IK52ghzRQbYeRID0kHlhsWaXookQl5zQACNmCCAkqWEGAMijopti2QYes7wPrVf
+         B10TOiaE8UUf/sc0SI48LodtKucDWMtljCbOT77XacUbq1lQHWz2o0mCmPylzX+KW1tG
+         +JoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV77fcXzlaphvGydbUC/hkWybtS96g7uVgP5X0HLILG1LZiSoaHhapJfr6rqZT56PT+/oQSNo7mDzLFxtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwrYpsdRVHgUrNNGzpodXp2BI7fb1/wsmoZ/HzAKngMg3hfuqJ
+	KYc8yYfPKDdwYafq2x/XWEeoPekuXtNW88dZDS83/xraFzQhmU1t3AP47lmmM/I=
+X-Google-Smtp-Source: AGHT+IEekgkxN0FoqtvPj+djHpCzoAdpqcQVG0lO0MMFyXD4siMsEcttXGyf6xKYoA9aRSDcmj33Jg==
+X-Received: by 2002:a05:6512:3ca7:b0:538:9e40:94b with SMTP id 2adb3069b0e04-539c489754fmr2427993e87.19.1728500525147;
+        Wed, 09 Oct 2024 12:02:05 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539aff28034sm1594268e87.250.2024.10.09.12.02.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 12:02:03 -0700 (PDT)
+Date: Wed, 9 Oct 2024 22:02:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: robdclark@gmail.com, will@kernel.org, robin.murphy@arm.com, 
+	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v16 4/5] iommu/arm-smmu: introduction of ACTLR for custom
+ prefetcher settings
+Message-ID: <qfglrrksmb5674fxwtnqs7osku4wqri7nxrymju6fa4ey6zrto@e7ww725n3cfc>
+References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
+ <20241008125410.3422512-5-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/chrome: cross_ec_type: fix missing fwnode
- reference decrement
-To: Prashant Malani <pmalani@chromium.org>, Benson Leung
- <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Enric Balletbo i Serra <eballetbo@kernel.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241009-cross_ec_typec_fwnode_handle_put-v1-1-f17bdb48d780@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241009-cross_ec_typec_fwnode_handle_put-v1-1-f17bdb48d780@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008125410.3422512-5-quic_bibekkum@quicinc.com>
 
-On 09/10/2024 20:55, Javier Carrasco wrote:
-> The device_for_each_child_node() macro requires explicit calls to
-> fwnode_handle_put() upon early exits (return, break, goto) to decrement
-> the fwnode's refcount, and avoid levaing a node reference behind.
+On Tue, Oct 08, 2024 at 06:24:09PM GMT, Bibek Kumar Patro wrote:
+> Currently in Qualcomm  SoCs the default prefetch is set to 1 which allows
+> the TLB to fetch just the next page table. MMU-500 features ACTLR
+> register which is implementation defined and is used for Qualcomm SoCs
+> to have a custom prefetch setting enabling TLB to prefetch the next set
+> of page tables accordingly allowing for faster translations.
 > 
-> Add the missing fwnode_handle_put() after the common label for all error
-> paths.
+> ACTLR value is unique for each SMR (Stream matching register) and stored
+> in a pre-populated table. This value is set to the register during
+> context bank initialisation.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: fdc6b21e2444 ("platform/chrome: Add Type C connector class driver")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
 > ---
-> I usually switch to the scoped variant of the macro to fix such issues,
-> but given that the fix is relevant for stable kernels, I have provided
-> the "classical" approach by adding the missing fwnode_handle_put().
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 26 ++++++++++++++++++++++
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h |  1 +
+>  2 files changed, 27 insertions(+)
 > 
-> If switching to the scoped variant is desired, please let me know.
-> This driver and cross_typec_switch could be easily converted.
-> 
-> By the way, I wonder why all error paths are redirected to the same
-> label to unregister ports, even before registering them (which seems to
-> be harmless because unregistered ports are ignored, but still). With this
-> fix, that jump to the label is definitely required, but if the scoped
-> variant is used, maybe some simple returns would be enough.
-> ---
->  drivers/platform/chrome/cros_ec_typec.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-> index c7781aea0b88..f1324466efac 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -409,6 +409,7 @@ static int cros_typec_init_ports(struct cros_typec_data *typec)
->  	return 0;
->  
->  unregister_ports:
-> +	fwnode_handle_put(fwnode);
->  	cros_unregister_ports(typec);
->  	return ret;
->  }
-> 
-> ---
-> base-commit: b6270c3bca987530eafc6a15f9d54ecd0033e0e3
-> change-id: 20241009-cross_ec_typec_fwnode_handle_put-9f13b4bd467f
-> 
-> Best regards,
 
-Small typo in the description, should be cross_ec_typec (last c is
-missing). I will fix that for v2, but I will wait for feedback and
-reviews to this first version.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Best regards,
-Javier Carrasco
+-- 
+With best wishes
+Dmitry
 
