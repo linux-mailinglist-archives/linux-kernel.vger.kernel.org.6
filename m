@@ -1,157 +1,88 @@
-Return-Path: <linux-kernel+bounces-356635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F7D996468
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:05:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D4499646C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EC81F211FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5681C24056
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB98618950A;
-	Wed,  9 Oct 2024 09:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88C189B8D;
+	Wed,  9 Oct 2024 09:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZvZK7DEL"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rFCKqrWi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jw5ag972"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB4C2A1D1;
-	Wed,  9 Oct 2024 09:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC541898EA
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728464708; cv=none; b=ShXpBUyFabsQiQWww4UBzcLUHmf5apRmdoQkTTPUOOY7xCkg+T1jdL6AqRfXO1a10nhTaRjUkHtzZGdYeFlJiRzlCxzUHHHr+22WUODP/ZSU4vLn1ke21qMWNUlPJ7LTQwxZ/+WGkkwetBWVj360+siM5IaWbxy1WFfOvM0nVG4=
+	t=1728464832; cv=none; b=ivBzvUfQJw+Y9RVhWO/uWuZC0UKUuVuysFCb/JUsc91QyUoGEaOIVLhKCAhrZE/+vhUnOCOaBw+OCYAX+jAuFJZnFX57Pu5rAWcDqhpjXWLZKAUroW+jZLKwDvKgbEJxjxYZGHUEyKwDqHXFdR9feGwlsIM9Kx+X1XGj3VHEXGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728464708; c=relaxed/simple;
-	bh=0eOIYAOLH8QgSYdiDgrU0MiiypvsMs/xVA9ijk4mDVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uuwQfqbedAxvg7Ll+Vrfh9Lf2csPPTZBlJyL72ppMF2U26/ZBMyPPIsVTBvJHghn+S+zfcxXZzYF4s30yJDRmx2vDz0pRnNEE+ojfzIWXQvKOsYT2Q1n/WWAPUuMCNY8ZSeNT4br1PLFv4/6DDhKQVk79dyEt1q8j+mUIa0JWU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZvZK7DEL; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AA7744000C;
-	Wed,  9 Oct 2024 09:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728464703;
+	s=arc-20240116; t=1728464832; c=relaxed/simple;
+	bh=jOeSm0q51RNOoVF/d7UvmUtwoy632DU4CFObhbeogAM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=afQirXD7XNDyGOPGZj4jTxFETy1wO4WWRXm6dtG0QyxRIHhqvBczFu3LTjxaKltR6TbZNVuO5UXLlxrVOu1CZ7kOomyjlp/gKGAkdjpOY/RQpNcWOS/WNqJuCbkIA5o3kmIM4dXWwNIdUNZJmELqkme70A7yzSHWWMji1VE168M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rFCKqrWi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jw5ag972; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728464829;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XEp0yzzHfdaZIi2D1X1iqjCNbnFmC6EDt/wxUJK6RWc=;
-	b=ZvZK7DELMmQErgSt+P5O08EfRtDGRj3Wv7N4jPTjg+LsljgQQ5hw5xIyWx6ExHKWjuvkiU
-	bwkDFgfaWY+DkCDZn/R3Qbsz++eScDScjqPwFaytYAV6WZ3wOAXuBh9QcxKNXFkxdXdmA6
-	e5cVzGMO7qiKPGYEPEUDOxzkz1GPH+PStRh6d46GMR4ZfiTqHCC0tFiQkJpjfKznKie2Bp
-	35sUK8/gPF3WmFMXGUUpFkfjyYiCTQkOZ0b9kHZdAcohJpdOOQLJLMb24VSpfet+AuZeZo
-	6MpN8BOEv5YqdwDxU/bTOAjE3Qcf9APCsaG/7aI/SsOjTTzDaUD+kXxZx6RLXA==
-Date: Wed, 9 Oct 2024 11:05:01 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next 04/12] net: pse-pd: tps23881: Add support for
- power limit and measurement features
-Message-ID: <20241009110501.5f776c9b@kmaincent-XPS-13-7390>
-In-Reply-To: <ZwYOboTdMppaZVmX@pengutronix.de>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<20241002-feature_poe_port_prio-v1-4-787054f74ed5@bootlin.com>
-	<ZwYOboTdMppaZVmX@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	bh=2xL73I3GcYaobKuOkzn020NkLG8YnUxl7u7/0V/Xf8g=;
+	b=rFCKqrWiA95IfRmS26qn6E4B64vu9pQEN/5VsKdiMkSYiqXrZJRNwgghdIJI4rZa8ab91O
+	iHITGiX2eUUdrtZ03fJoXdfMzWoZE9VkiQe/hOqxzQNvLkw5B3y1B+6Y8uXHZJSTPcSeYk
+	RYrxMNUuY9GTPtc5VQ/LdgV0kv3W9iKS/cukyj8Vh5q4magX3Y6vHqUVIZnKpW5+HbDr36
+	Ax+eLuP9psMk/GNDsHbs8h5wlqaIEt3cnOcsNx+/29XPHsmIqcgzCWBH0bLNyf3BZEbDc0
+	qC0FQXMSlxInGzt1takz7Ei38nTry7LU0REEKX0G594GcGL3bvpcCA/WiB8nSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728464829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2xL73I3GcYaobKuOkzn020NkLG8YnUxl7u7/0V/Xf8g=;
+	b=jw5ag972d1+u4l1nK4xH7oXAWXkhAW0+Pwuxs7ct/RoXGINhFZR9UMBeHcLCQR4VFUz/ld
+	HoZ2WHcBP0u5l2DA==
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
+ <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, Bart Van Assche
+ <bvanassche@acm.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2 06/22] x86/acpi: Switch to irq_get_nr_irqs() and
+ irq_set_nr_irqs()
+In-Reply-To: <20241008202601.3737326-7-bvanassche@acm.org>
+References: <20241008202601.3737326-1-bvanassche@acm.org>
+ <20241008202601.3737326-7-bvanassche@acm.org>
+Date: Wed, 09 Oct 2024 11:07:09 +0200
+Message-ID: <87zfndr6f6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain
 
-On Wed, 9 Oct 2024 07:02:38 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+On Tue, Oct 08 2024 at 13:25, Bart Van Assche wrote:
+> Use the irq_get_nr_irqs() and irq_set_nr_irqs() functions instead of the
+> global variable 'nr_irqs'. This patch prepares for changing 'nr_irqs' from
+> an exported global variable into a variable with file scope.
 
-> On Wed, Oct 02, 2024 at 06:28:00PM +0200, Kory Maincent wrote:
-> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> >=20
-> > Expand PSE callbacks to support the newly introduced
-> > pi_get/set_current_limit() and pi_get_voltage() functions. These callba=
-cks
-> > allow for power limit configuration in the TPS23881 controller.
-> >=20
-> > Additionally, the patch includes the detected class, the current power
-> > delivered and the power limit ranges in the status returned, providing =
-more
-> > comprehensive PoE status reporting.
-> >=20
-> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com> =20
->=20
-> > +static int tps23881_pi_get_class(struct tps23881_priv *priv, int id)
-> > +{ =20
-> ....
-> > +	if (chan < 4)
-> > +		class =3D ret >> 4;
-> > +	else
-> > +		class =3D ret >> 12; =20
->=20
-> ....
-> > +tps23881_pi_set_2p_pw_limit(struct tps23881_priv *priv, u8 chan, u8 po=
-l)
-> > +{ =20
-> ....
-> > +	reg =3D TPS23881_REG_2PAIR_POL1 + (chan % 4);
-> > +	ret =3D i2c_smbus_read_word_data(client, reg);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	if (chan < 4)
-> > +		val =3D (ret & 0xff00) | pol;
-> > +	else
-> > +		val =3D (ret & 0xff) | (pol << 8); =20
->=20
-> This is a common pattern in this driver, we read and write two registers
-> in one run and then calculate bit offset for the channel, can you please
-> move it in to separate function. This can be done in a separate patch if
-> you like.
+I asked you this before:
 
-The pattern is common but the operations are always different so I didn't f=
-ound
-a clean way of doing it.
-Here is a listing of it:
-	if (chan < 4)
-		class =3D ret >> 4;
-	else
-		class =3D ret >> 12;
+ git grep 'This patch' Documentation/process/
 
-	if (chan < 4)
-		val =3D (ret & 0xff00) | pol;
-	else
-		val =3D (ret & 0xff) | (pol << 8); =20
+Please fix this up all over the place.
 
-        if (chan < 4)                                                      =
-    =20
-                val =3D (u16)(ret | BIT(chan));                            =
-      =20
-        else                                                               =
-    =20
-                val =3D (u16)(ret | BIT(chan + 4));
+Thanks,
 
-	if (chan < 4)
-		mW =3D (ret & 0xff) * TPS23881_MW_STEP;
-	else
-		mW =3D (ret >> 8) * TPS23881_MW_STEP;
-
-
-Any idea?
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+        tglx
 
