@@ -1,144 +1,266 @@
-Return-Path: <linux-kernel+bounces-356137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321BA995CEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83535995CEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94DE1F2421B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:26:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC101F25C5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7B9210FB;
-	Wed,  9 Oct 2024 01:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9E42837B;
+	Wed,  9 Oct 2024 01:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="pbKqVmAn"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="aaaTxY6c"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE153AC
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3775C1F947;
+	Wed,  9 Oct 2024 01:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728437196; cv=none; b=SfNbq6tz2H+6QgbUmGO++GIMVQoQMWlUj0DDry/+SLR7+JvjN1YUbu729A3cwPYwAOteB8m9S3AY7fk59geQANMRPMELr1eAqWHVPdoFIzmF/z015yJAV4r89PiHIKyzL4SfSf983W9IiPSv0zz2YiC3mvBZHg13MTcGpSZYufI=
+	t=1728437241; cv=none; b=Ah9uBFtbt982tSNqWkEPGj0xLgp+a2PytDULVhPIMUvV0UB04940N1PZFbcIuB+hS0sELogDuwYyh6gMvZaC7B0GKNQivm4j2iuwwF7w4u+EWYqS4p0DYANRmosnrVsUUuXf8xT/TtMKIWKONdC20vlIdZFU8NDsfQKA3HeHwvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728437196; c=relaxed/simple;
-	bh=BbvtfkcV45V6WR8XoFEKX6xXRGoPcqEbijqUhr5K5kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBxOz+QR8XdBeVaB32TAC0RttUOGskqtl/S0rtwkiCpgDcREJpQgj2A3pZGl7MCBNFUwGX5PzagZuLaOzpHVAMX++rODrXSmey1IQvpsgO5qfOrcp1lcLM657Eryu9jQvnSVXiS6kofOByy/Z5Os1OJvsoY4jcaAVCcqGvgtK7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=pbKqVmAn; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JAFp916kxOdbCqgaPKFuFD6qIvTJHO6XWM83DvknjCc=; b=pbKqVmAnNfs0aA+HpFlUdWOyhW
-	MOpSKo8XGRViIsUpOELcc41IFxIuYuU91nVabFEot4/Ua2LV0U2RnyyUHtYX7vLmo04J+6Pr+jvr3
-	eE0KBdo+388dikzilt+fUoUvbnSfnpBnao+7Bt0T1l48tnkOCSsDkvGGVcPc0NWgB9vbjhWQWlG0P
-	B0/18lpOYOvEXBdJJdNQdFRseXBpxpBhqg3wAqNp8GQwsZItXymxyHdfGkpwV/9SRACfhplhzyMsK
-	XiJYI0Qae+a6XmoCjuXhG6XdiXz3QhHVv8h9uNbkWw5pJ3iBDsAjvowoPwjPJ+ymZg12FY2sk2UK7
-	vRgTCguQ==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1syLT7-006m5g-Am; Wed, 09 Oct 2024 03:26:25 +0200
-Message-ID: <6a78ccff-915b-4fc6-b677-1301e3d6993f@igalia.com>
-Date: Tue, 8 Oct 2024 22:26:20 -0300
+	s=arc-20240116; t=1728437241; c=relaxed/simple;
+	bh=cKuMDLKNX81P6yJL4MIQeJ1Gln7JePGUYfzaUPWhzQc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ovnYdFSp6mrRcXEQSqdHNHK3k9xMRkQWeBLwJG5wtBQz2Zld+FR+9Xyxr4j9mXTdH40FtgyJLrSSgisJ5Fsm05d5bhd0qUSQn8VnFMxFdjMzpMy6SIQ1Ht6UUnYpQcxhhoBJ52GZ0gpcYmg+Ak0bstzuCd/jGiMAKnxI6oTakc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=aaaTxY6c; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1728437230;
+	bh=wkuRk6jxUw0jV4GEtxreQLO/W5UhOPn3u8EdvBkuGrQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=aaaTxY6cKqWtOy7+Q1CiGUbKTXyFhXrrThL0niVbY11enCVcWRroxKOmb8dzqHlMI
+	 SAyAMbN2GqkvEft5kpBjbwQdA+VN8xCvBxeL+TFFCJzJLehP/o1dMbqqnZlU4+Li8T
+	 BAo4xL6Jb9TlGDhAjSIWyMVko3TvcVRZ3bGrnmAvPe1uqzRrxvL2FpqXkv6AWg/rdw
+	 GM38KdbiLnJuex5b/gtsmDcHTDAtJHRVVUjr6XFSvqoZQDFInECI18K69BXuXjZy9F
+	 KARASxpcESwb7KXBqBaodm9wxNsWfYLOVNHqcIK3KKUuU5Gcad1zMQDq0WywsZ3Fhc
+	 B4ZFGSqtKrukA==
+Received: from [192.168.68.112] (ppp118-210-190-105.adl-adc-lon-bras34.tpg.internode.on.net [118.210.190.105])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 1293F6497F;
+	Wed,  9 Oct 2024 09:27:08 +0800 (AWST)
+Message-ID: <e4dd331944168257bfd2f4239d24317424da7b9c.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 2/2] ARM: dts: aspeed: sbp1: IBM sbp1 BMC board
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Naresh Solanki <naresh.solanki@9elements.com>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>
+Date: Wed, 09 Oct 2024 11:57:07 +1030
+In-Reply-To: <20241008111924.1865857-2-naresh.solanki@9elements.com>
+References: <20241008111924.1865857-1-naresh.solanki@9elements.com>
+	 <20241008111924.1865857-2-naresh.solanki@9elements.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/vc4: Match drm_dev_enter and exit calls in
- vc4_hvs_atomic_flush
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Maxime Ripard <mripard@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241008-drm-vc4-fixes-v1-0-9d0396ca9f42@raspberrypi.com>
- <20241008-drm-vc4-fixes-v1-2-9d0396ca9f42@raspberrypi.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xsBNBGcCwywBCADgTji02Sv9zjHo26LXKdCaumcSWglfnJ93rwOCNkHfPIBll85LL9G0J7H8
- /PmEL9y0LPo9/B3fhIpbD8VhSy9Sqz8qVl1oeqSe/rh3M+GceZbFUPpMSk5pNY9wr5raZ63d
- gJc1cs8XBhuj1EzeE8qbP6JAmsL+NMEmtkkNPfjhX14yqzHDVSqmAFEsh4Vmw6oaTMXvwQ40
- SkFjtl3sr20y07cJMDe++tFet2fsfKqQNxwiGBZJsjEMO2T+mW7DuV2pKHr9aifWjABY5EPw
- G7qbrh+hXgfT+njAVg5+BcLz7w9Ju/7iwDMiIY1hx64Ogrpwykj9bXav35GKobicCAwHABEB
- AAHNIE1hw61yYSBDYW5hbCA8bWNhbmFsQGlnYWxpYS5jb20+wsCRBBMBCAA7FiEE+ORdfQEW
- dwcppnfRP/MOinaI+qoFAmcCwywCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQ
- P/MOinaI+qoUBQgAqz2gzUP7K3EBI24+a5FwFlruQGtim85GAJZXToBtzsfGLLVUSCL3aF/5
- O335Bh6ViSBgxmowIwVJlS/e+L95CkTGzIIMHgyUZfNefR2L3aZA6cgc9z8cfow62Wu8eXnq
- GM/+WWvrFQb/dBKKuohfBlpThqDWXxhozazCcJYYHradIuOM8zyMtCLDYwPW7Vqmewa+w994
- 7Lo4CgOhUXVI2jJSBq3sgHEPxiUBOGxvOt1YBg7H9C37BeZYZxFmU8vh7fbOsvhx7Aqu5xV7
- FG+1ZMfDkv+PixCuGtR5yPPaqU2XdjDC/9mlRWWQTPzg74RLEw5sz/tIHQPPm6ROCACFls7A
- TQRnAsMsAQgAxTU8dnqzK6vgODTCW2A6SAzcvKztxae4YjRwN1SuGhJR2isJgQHoOH6oCItW
- Xc1CGAWnci6doh1DJvbbB7uvkQlbeNxeIz0OzHSiB+pb1ssuT31Hz6QZFbX4q+crregPIhr+
- 0xeDi6Mtu+paYprI7USGFFjDUvJUf36kK0yuF2XUOBlF0beCQ7Jhc+UoI9Akmvl4sHUrZJzX
- LMeajARnSBXTcig6h6/NFVkr1mi1uuZfIRNCkxCE8QRYebZLSWxBVr3h7dtOUkq2CzL2kRCK
- T2rKkmYrvBJTqSvfK3Ba7QrDg3szEe+fENpL3gHtH6h/XQF92EOulm5S5o0I+ceREwARAQAB
- wsB2BBgBCAAgFiEE+ORdfQEWdwcppnfRP/MOinaI+qoFAmcCwywCGwwACgkQP/MOinaI+qpI
- zQf+NAcNDBXWHGA3lgvYvOU31+ik9bb30xZ7IqK9MIi6TpZqL7cxNwZ+FAK2GbUWhy+/gPkX
- it2gCAJsjo/QEKJi7Zh8IgHN+jfim942QZOkU+p/YEcvqBvXa0zqW0sYfyAxkrf/OZfTnNNE
- Tr+uBKNaQGO2vkn5AX5l8zMl9LCH3/Ieaboni35qEhoD/aM0Kpf93PhCvJGbD4n1DnRhrxm1
- uEdQ6HUjWghEjC+Jh9xUvJco2tUTepw4OwuPxOvtuPTUa1kgixYyG1Jck/67reJzMigeuYFt
- raV3P8t/6cmtawVjurhnCDuURyhUrjpRhgFp+lW8OGr6pepHol/WFIOQEg==
-In-Reply-To: <20241008-drm-vc4-fixes-v1-2-9d0396ca9f42@raspberrypi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi Dave,
+Hi Naresh,
 
-On 10/8/24 13:44, Dave Stevenson wrote:
-> Commit 92c17d16476c ("drm/vc4: hvs: Ignore atomic_flush if we're disabled")
-> added a path which returned early without having called drm_dev_exit.
-> 
-> Ensure all paths call drm_dev_exit.
-> 
-> Fixes: 92c17d16476c ("drm/vc4: hvs: Ignore atomic_flush if we're disabled")
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-
-With the same comment as PATCH 1/3,
-
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
-
-Best Regards,
-- Maíra
-
+On Tue, 2024-10-08 at 16:49 +0530, Naresh Solanki wrote:
+> From: Patrick Rudolph <patrick.rudolph@9elements.com>
+>=20
+> Add a device tree for IBM sbp1 BMC board which is based on AST2600 SOC.
+>=20
+> sbp1 baseboard has:
+> - support for up to four Sapphire Rapids sockets having 16 DIMMS each.
+>   - 240 core/480 threads at maximum
+> - 32x CPU PCIe slots
+> - 2x M.2 PCH PCIe slots
+> - Dual 200Gbit/s NIC
+> - SPI TPM
+>=20
+> Added the following:
+> - Indication LEDs
+> - I2C mux & GPIO controller, pin assignments,
+> - Thermister,
+> - Voltage regulator
+> - EEPROM/VPD
+>=20
+> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
+>=20
 > ---
->   drivers/gpu/drm/vc4/vc4_hvs.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index 546ee11016b2..c5ebc317188a 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -603,7 +603,7 @@ void vc4_hvs_atomic_flush(struct drm_crtc *crtc,
->   	}
->   
->   	if (vc4_state->assigned_channel == VC4_HVS_CHANNEL_DISABLED)
-> -		return;
-> +		goto exit;
->   
->   	if (debug_dump_regs) {
->   		DRM_INFO("CRTC %d HVS before:\n", drm_crtc_index(crtc));
-> @@ -686,6 +686,7 @@ void vc4_hvs_atomic_flush(struct drm_crtc *crtc,
->   		vc4_hvs_dump_state(hvs);
->   	}
->   
-> +exit:
->   	drm_dev_exit(idx);
->   }
->   
-> 
+> Changes in V4:
+> - Move reset related entried under mdio to phy.
+> - Removed reserved gpio range.
+> Changes in V3:
+> Drop unused regulator entries which are not used by drivers.
+> Decouple p12v_a
+> Update pincfg for U62120
+> ---
+>  arch/arm/boot/dts/aspeed/Makefile             |    1 +
+>  .../boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts   | 6128 +++++++++++++++++
+>  2 files changed, 6129 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed=
+/Makefile
+> index c4f064e4b073..577cc6754c45 100644
+> --- a/arch/arm/boot/dts/aspeed/Makefile
+> +++ b/arch/arm/boot/dts/aspeed/Makefile
+> @@ -41,6 +41,7 @@ dtb-$(CONFIG_ARCH_ASPEED) +=3D \
+>  	aspeed-bmc-ibm-rainier-1s4u.dtb \
+>  	aspeed-bmc-ibm-rainier-4u.dtb \
+>  	aspeed-bmc-ibm-system1.dtb \
+> +	aspeed-bmc-ibm-sbp1.dtb \
+
+Please keep this list sorted alphabetically.
+
+>  	aspeed-bmc-intel-s2600wf.dtb \
+>  	aspeed-bmc-inspur-fp5280g2.dtb \
+>  	aspeed-bmc-inspur-nf5280m6.dtb \
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts b/arch/arm/=
+boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts
+> new file mode 100644
+> index 000000000000..6036a9ca3840
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts
+>=20
+> +
+> +&i2c1 {
+> +	status =3D "okay";
+> +
+> +	bmc_mux_nic: mux@77 {
+> +		compatible =3D "maxim,max7357";
+> +		reg =3D <0x77>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +		reset-gpios =3D <&gpio0 ASPEED_GPIO(R, 3) (GPIO_ACTIVE_LOW | GPIO_OPEN=
+_DRAIN)>;
+> +		vdd-supply =3D <&p3v3_aux>;
+> +
+> +		i2c@0 {
+> +			reg =3D <0>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			smb_pex_nic: pinctrl@20 {
+>=20
+...
+> +			};
+> +		};
+> +
+> +		i2c@1 {
+> +			reg =3D <1>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +		};
+> +
+> +		i2c@2 {
+> +			reg =3D <2>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			ir38263-pvcore-nic2@40 {
+> +				compatible =3D "infineon,ir38263";
+> +				reg =3D <0x40>;
+> +
+> +				regulators {
+> +					pvcore_nic2: vout {
+> +						regulator-name =3D "pvcore_nic2";
+> +						regulator-enable-ramp-delay =3D <2000>;
+> +						vin-supply =3D <&p12v>;
+> +					};
+> +				};
+> +			};
+
+This doesn't match my understanding of the infineon,ir38263 and
+regulator bindings. Certainly `make CHECK_DTBS=3Dy ...` complains about
+it.
+
+This is untested, but from my understanding, it should rather be
+something like:
+
+   pvcore_nic2: regulator@40 {
+       compatible =3D "infineon,ir38263";
+       reg =3D <0x40>;
+  =20
+       regulator-name =3D "pvcore_nic2";
+       regulator-enable-ramp-delay =3D <2000>;
+       vin-supply =3D <&p12v>;
+   };
+
+Note that this is _not_ the same as the maxim,max5978 binding, which
+_does_ specify the regulators subnode.
+
+Please fix all infineon,ir38263 nodes in the dts.
+
+...
+
+> +
+> +		i2c-protocol;
+> +	};
+> +};
+> +
+> +&i2c5 {
+> +	status =3D "okay";
+> +
+> +	i2cmux2: mux@77 {
+> +		compatible =3D "maxim,max7357";
+> +		reg =3D <0x77>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		reset-gpios =3D <&gpio0 ASPEED_GPIO(Z, 2) (GPIO_ACTIVE_LOW | GPIO_OPEN=
+_DRAIN)>;
+> +		vdd-supply =3D <&p3v3_aux>;
+> +
+> +		i2c@1 {
+> +			reg =3D <1>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			r38263-p1v05-pch-aux@40 {
+> +				compatible =3D "infineon,ir38263";
+> +				reg =3D <0x40>;
+> +
+> +				interrupt-parent =3D <&smb_pex_vr_ctrl>;
+> +				interrupts =3D <9 IRQ_TYPE_LEVEL_LOW>;
+
+Aside from the regulators subnode issue, the infineon,ir38263 binding
+doensn't specify interrupt properties. Does it need to be updated?
+
+Otherwise, we have the following warning:
+
+   r38263-p1v05-pch-aux@40: Unevaluated properties are not allowed ('interr=
+upt-parent', 'interrupts', 'regulators' were unexpected)
+
+> +
+> +				regulators {
+> +					p1v05_pch_aux: vout {
+> +						regulator-name =3D "p1v05_pch_aux";
+> +						regulator-enable-ramp-delay =3D <2000>;
+> +						vin-supply =3D <&p12v>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		i2c@2 {
+> +			reg =3D <2>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			ir38060-p1v8-pch-aux@40 {
+> +				compatible =3D "infineon,ir38060";
+> +				reg =3D <0x40>;
+> +
+> +				interrupt-parent =3D <&smb_pex_vr_ctrl>;
+> +				interrupts =3D <32 IRQ_TYPE_LEVEL_LOW>;
+
+As above.
+
+Andrew
 
