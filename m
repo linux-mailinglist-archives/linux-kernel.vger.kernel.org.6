@@ -1,138 +1,177 @@
-Return-Path: <linux-kernel+bounces-357425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BCD99711C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D51997127
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025031C22115
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39ABF1C212D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB401E25EA;
-	Wed,  9 Oct 2024 16:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE65C1E32DB;
+	Wed,  9 Oct 2024 16:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5tQ9ePV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kRtTpEhy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811AE1E1025;
-	Wed,  9 Oct 2024 16:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6836E1E32CE;
+	Wed,  9 Oct 2024 16:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728490117; cv=none; b=qCPnEC/eQi0JxxGOsLV/W3/tekrjnKsELZb0JE25VSJBB9zeFwILw/kX860TvoV8KeKGknk42S6FtQHdPsxeVNrzh6Jst4kpB5O24G8MLv6uPoGYrHK41DYp6l/L+mJaI47ef5cIiEj1+Zh7BoARhXWA1oZbiqhishn1U90jecg=
+	t=1728490185; cv=none; b=cxXhUNdgw1WQdEcfyn29iEH88WbUe9SIq8TqebAajvlGzWwYrD8A7+0kx4h7ImvgfB9M5Lil7g9kG+9dZyHqoiPQm+gRvXs8uUpM6RMmpY2GRTWHFwtLP2vkzVsL2m1x8rnHar4MaXYGTgxg4KbwFQ4lYgAxO+miNmpmUWEoWXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728490117; c=relaxed/simple;
-	bh=FdEOiunSrYYvmQQSakwC6TD8Ffo1JjndEzi45GBRiiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OK5p356TJ31aI70cACuQCT14pKF/NgIRfIgMzbOME9TfkOXq0xPyGDKcSSJRhfqWa4S3cKA60ZIUWuu/Zgf+/WH12Q/YVrprPOLUWbYG/W4oiy9X8Lrs3m4Az3GeaQoW7o1QOqWJNRMFhb7IrVFHzT+LMSA0b7hYQnUxye6sNJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5tQ9ePV; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728490116; x=1760026116;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FdEOiunSrYYvmQQSakwC6TD8Ffo1JjndEzi45GBRiiI=;
-  b=e5tQ9ePVeHzm9QoAeR1kaxTvNJ/3Z5VBFmaYGhaknuxzMNdOJghvWuaK
-   0tDS2A5Y9FLB2aY1ltzjdAmCwJNsqs4lVwkE8/FdOB7pIEpLDoQ6phcqN
-   hJqcPolvvAYGJzYx1w3Z19Jr94q40oxulbRhgd5/FQsijuVDj6inTsZtx
-   ENjPKuYNbhy1CMYR7l77W4npvOpPw4lM3TilTBOj1Vv/gzLrH5jj/nniA
-   sl4pvbnPO80b5nLqexUGO/CIF6wVI36eWi1nSym43RYk/EYMP+aQgt0kG
-   dq1gNhEWpmES/YQsrZJaac+7mpEmGUEWGyT/6nx44g4LRmJJYGQqD3qkg
-   w==;
-X-CSE-ConnectionGUID: efXj+ef6SSeX4qkdrJQv6A==
-X-CSE-MsgGUID: HLh4JHUCTZaRsLYCjnAF4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="50340141"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="50340141"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:08:23 -0700
-X-CSE-ConnectionGUID: X9ZoyUv0Sy+UoH1Lf4T7bg==
-X-CSE-MsgGUID: 0a/zbY/TSSaRtTb0gBaz7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="80285985"
-Received: from uaeoff-desk2.amr.corp.intel.com (HELO [10.124.223.14]) ([10.124.223.14])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:08:22 -0700
-Message-ID: <52279d55-11bf-490f-b3c7-69e6fe246c9d@intel.com>
-Date: Wed, 9 Oct 2024 09:08:21 -0700
+	s=arc-20240116; t=1728490185; c=relaxed/simple;
+	bh=zHFZh0+NMiMWYYJ4ABAZdyr64m8aYnHfZn/F21PIQ/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbMbHW4ir5e7j9kOgQBXdTghSq/UzrsKeiuHTuxAvlgitIDTFZrcgVnfqQqXdYFidNaLjJM2VQIn/yKyakovM6H9e002O3S6Pzm5UpYIj4N7A5oQ4p3Mu6qPAaqQnvoulNAceHLP+cz0maZ9WuB/HwGUjRxBspiLE5Qg7YmzoIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kRtTpEhy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=ACLnXv8vy+mXWC64mZBSTow4VmehlxdQjUKWeB/19WQ=; b=kR
+	tTpEhyogUX5xwRBQHGmMMvaheMFjOaB8YYklRjpplD3+QS1hf62S7tkAnmYb/tKkH79N8aYgs0ZG3
+	qnYCzF3K8sJwTGOLm8wiu91sK8P0LxnzrY/qi34FAnPFtU2sFEwx5S6ojj9W4PXe2vyCirIGz+80f
+	37i/nE/HNFHG55U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syZFk-009W8n-9w; Wed, 09 Oct 2024 18:09:32 +0200
+Date: Wed, 9 Oct 2024 18:09:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next 08/12] net: pse-pd: pd692x0: Add support for PSE
+ PI priority feature
+Message-ID: <9e58bfec-c915-4c30-9d75-979a309e3f69@lunn.ch>
+References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
+ <20241002-feature_poe_port_prio-v1-8-787054f74ed5@bootlin.com>
+ <1e9cdab6-f15e-4569-9c71-eb540e94b2fe@lunn.ch>
+ <ZwU6QuGSbWF36hhF@pengutronix.de>
+ <9c77d97e-6494-4f86-9510-498d93156788@lunn.ch>
+ <ZwYt0WT-tdOM0Abj@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 00/19] Add Secure TSC support for SNP guests
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241009092850.197575-1-nikunj@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241009092850.197575-1-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZwYt0WT-tdOM0Abj@pengutronix.de>
 
-On 10/9/24 02:28, Nikunj A Dadhania wrote:
-> Secure TSC allows guests to securely use RDTSC/RDTSCP instructions as the
-> parameters being used cannot be changed by hypervisor once the guest is
-> launched. More details in the AMD64 APM Vol 2, Section "Secure TSC".
+On Wed, Oct 09, 2024 at 09:16:33AM +0200, Oleksij Rempel wrote:
+> Hi Andrew,
 > 
-> In order to enable secure TSC, SEV-SNP guests need to send a TSC_INFO guest
-> message before the APs are booted.
+> On Tue, Oct 08, 2024 at 06:50:25PM +0200, Andrew Lunn wrote:
+> > On Tue, Oct 08, 2024 at 03:57:22PM +0200, Oleksij Rempel wrote:
+> > > On Thu, Oct 03, 2024 at 01:41:02AM +0200, Andrew Lunn wrote:
+> > > > > +	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
+> > > > > +	msg.sub[2] = id;
+> > > > > +	/* Controller priority from 1 to 3 */
+> > > > > +	msg.data[4] = prio + 1;
+> > > > 
+> > > > Does 0 have a meaning? It just seems an odd design if it does not.
+> > > 
+> > > 0 is not documented. But there are sub-priority which are not directly
+> > > configured by user, but affect the system behavior.
+> > > 
+> > > Priority#: Critical – 1; high – 2; low – 3
+> > >  For ports with the same priority, the PoE Controller sets the
+> > >  sub-priority according to the logic port number. (Lower number gets
+> > >  higher priority).
+> > 
+> > With less priorities than ports, there is always going to be something
+> > like this.
+> > 
+> > > 
+> > > Port priority affects:
+> > > 1. Power-up order: After a reset, the ports are powered up according to
+> > >  their priority, highest to lowest, highest priority will power up first.
+> > > 2. Shutdown order: When exceeding the power budget, lowest priority
+> > >  ports will turn off first.
+> > > 
+> > > Should we return sub priorities on the prio get request?
+> > 
+> > I should be optional, since we might not actually know what a
+> > particular device is doing. It could pick at random, it could pick a
+> > port which is consuming just enough to cover the shortfall if it was
+> > turned off, it could pick the highest consumer of the lowest priority
+> > etc. Some of these conditions are not going to be easy to describe
+> > even if we do know it.
+> 
+> After reviewing the manuals for LTC4266 and TPS2388x, I realized that these
+> controllers expose interfaces, but they don't implement prioritization concepts
+> themselves.
+> 
+> The LTC4266 and TPS2388x controllers provide only interfaces that allow the
+> kernel to manage shutdown and prioritization policies. For TPS2388x, fast
+> shutdown is implemented as a port bitmask with only two priorities, handled via
+> the OSS pin. Fast shutdown is triggered by the kernel on request by toggling
+> the corresponding pin, and the policy - when and why this pin is toggled - is
+> defined by the kernel or user space. Slow shutdown, on the other hand, is
+> managed via the I2C bus and allows for more refined control, enabling a wider
+> range of priorities and more granular policies.
+> 
+> I'll tend to hope we can reuse the proposed ETHTOOL_A_C33_PSE_PRIO interface
+> across different PSE controllers. However, it is already being mapped to
+> different shutdown concepts: PD692x0 firmware seems to rely on a slow shutdown
+> backed by internal policies, while TPS2388x maps it to fast shutdown with
+> driver specific policy. This inconsistency could force us to either break the
+> UAPI or introduce a new, inconsistent one once we realize TPS2388x fast
+> shutdown isn't what we actually need.
 
-Superficially, this seems kinda silly.  If you ask someone, do you want
-more security or less, they usually say "more".
+We should try to avoid fragmentation of the API, but given there is no
+standardisation here, vendors are free to do whatever they want, this
+may be difficult. Still, we should try to avoid it.
 
-Why do guests need to turn this on instead of just always having a
-secure TSC?  There must be _some_ compromise, either backward
-compatibility or performance or...
+Maybe we want to consider a generic simple prioritization in the
+kernel, plus export a generic model of PSE to user space to allow a
+user space manager? This is really policy, and ideally we don't want
+policy in the kernel. The in kernel implementation can use the
+hardware prioritisation if it supports it, otherwise provide a library
+of code which a driver can use to implement simple software
+prioritisation?
+
+For a user space manager, we already talked about an event to signal
+that we are entering overload. I guess we additionally need an API to
+get the current runtime state, what each consumer is actually
+consuming, and a management API to shutdown or enable a port due to
+overload, which is separate to the administrative state of a port.
+
+The hardware/firmware might provide lots of options and capabilities,
+but sometimes it is better it ignore them. Export a basic set which we
+expect most PSE controllers can offer, and do the rest in our software
+which we have full insight into, and debug and share, unlike firmware
+which is a broken black box.
+
+If we decide this is the way we want to go, we should not need to
+extend the API for LTC4266 and TPS2388x, you just implement a basic
+prioritisation in the driver. If it turns out to be not ideal, it does
+not matter so much, so long as we have the understanding that
+eventually we can have something better in userspace.
+
+We can maybe do a rough sketch of what the kAPI looks like for a user
+space manager, but we can kick the implementation down the road while
+the in kernel prioritization is good enough.
+
+	Andrew
+
+
 
