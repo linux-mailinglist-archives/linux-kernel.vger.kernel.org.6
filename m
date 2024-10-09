@@ -1,220 +1,243 @@
-Return-Path: <linux-kernel+bounces-357294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDEF7996F2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:07:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE45E996F46
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 17:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6893F1F215E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DBD9283DA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4009C1A0BF2;
-	Wed,  9 Oct 2024 15:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F761A3049;
+	Wed,  9 Oct 2024 15:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Wr1SNHRW"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNWd22v4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="l2EyHGqb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LNWd22v4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="l2EyHGqb"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3DE1A070D;
-	Wed,  9 Oct 2024 15:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3401A2643;
+	Wed,  9 Oct 2024 15:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728486253; cv=none; b=tbLIKbMjZkTJuoIvVMLZJIBtCihXmf06AcD0F/5ZNtgnNoJ6zlvwu78jyom2OtLTRXHr7Kay3A2261MGoetNqqyL/cmHimQ3lnM0jS7dbrSrDE7UvBfio4ZOtPchKyhx52iCkzHJCEOvLgLafZWWAkumJeSVr8vCq6Z+xUdTiyo=
+	t=1728486272; cv=none; b=YcA8GdX3xlfwJPuekN3XN1DhvlT6oIEGJrEJkY7XI4MUrH0RRScpUCatXLWK8HI3wo3pb9wp+ffVUf3pqMNZTiwbskZdKh7P7iqNQkBVUkQtLYnBhA+XxPmZuozwwZOoTfEW70PQne0s9mREgl5CmN0mTeQhfcEgmqmyhq+7Qcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728486253; c=relaxed/simple;
-	bh=bKIcvQUy8WMdIAm6C6WJ61OnDfoqPH27UagpXtPpork=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iXx3AIYWN7M7OL+a69Ft8c2mj6EPQAlwNhxuPJ8P2FSAqLvzsHMKqXuJRFKwsvi3ftkrP5w15DvjPt7mevnRoRC4OT2g8Yw95i7R2mTLgb2CWb+FkylHqXq/8lXCWHGck+ganzlc0OYJa/8tG4qD+7bTRxjapGF/CCqAruElTSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Wr1SNHRW; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B083240004;
-	Wed,  9 Oct 2024 15:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728486242;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1728486272; c=relaxed/simple;
+	bh=Ym4Ggfuv7F6hLfOe7KUxwstzA2cWlD55d4NA/zJTleQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=er5X4uPSkyhAtfWu1xivR6hNaSATX6QbsHXkW5KNK8IwBv2BPS655m/eouaihZpAIfsFvjDzW2d5pNYWuLwyZWRtf7PvbmzW8bBeftFthFfZBSfztjYvKt+vGz8sjDK/qgnAXRYI6vKaYv9mj+cnDxr8i2rWeIGgVVms62bpT2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNWd22v4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=l2EyHGqb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LNWd22v4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=l2EyHGqb; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5045E1F896;
+	Wed,  9 Oct 2024 15:04:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728486261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ie2PgRzn8m1kOriOpNVQSt76EWBuZBIfrODwjPlTR7o=;
-	b=Wr1SNHRWnaI7oacMbDz6+CBg0aLbBVCd28XSmkn7kUzWC0IvelZQg8J2GxHxwa7y6Irv+p
-	6hCJJNUEpTW2StF/bFOzrtKxdDgQv92MT5ROpAs3oRWbT/Zmrpb04CpmQpZ7uNEYSah/wP
-	K52jQW7uf7FrZyyukhSX4r9/GMip+gl79r63h+yu0HICQ7GsqVW8sa/BirdAv4j1KZpbNA
-	OGhs25lAf6Ga22+7MDcgctyNyyTg2gABkZwfXJmwrD+h+MwSSrpaqB/xXA/7L97CpnbV7V
-	fpazSR+mS1duWfyn65tig/oHdxOK3yzMtJ5SHIwBw6757cwz0smOKKa/ttCnug==
-Date: Wed, 9 Oct 2024 17:04:00 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Kyle Swenson <kyle.swenson@est.tech>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, Dent Project
- <dentproject@linuxfoundation.org>, "kernel@pengutronix.de"
- <kernel@pengutronix.de>
-Subject: Re: [PATCH net-next 00/12] Add support for PSE port priority
-Message-ID: <20241009170400.3988b2ac@kmaincent-XPS-13-7390>
-In-Reply-To: <ZwaLDW6sKcytVhYX@p620.local.tld>
-References: <20241002-feature_poe_port_prio-v1-0-787054f74ed5@bootlin.com>
-	<ZwaLDW6sKcytVhYX@p620.local.tld>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
+	b=LNWd22v4/oUdMQ3TXQa19FIA7ecl3NXAqfwRCF3ebyT/BQ7x3U08S4ERkMoihGN0SuzorU
+	Nn8NgSqYrTa41WriQ1rNBgrV5HYPuDauZ1sN1Vr65bP5CCnQZ6VpxySarW6CibH0QDioVb
+	ncZndUEGJJt0ZHBCzRVWfHR+dutUtz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728486261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
+	b=l2EyHGqbKKU7MRPmRvyxwIcFVD64T+QFc5iCl4Be7MaAkQad6sQZwJI1lo0Citp+9QJkam
+	a2T0z3iFsB0DzRCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728486261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
+	b=LNWd22v4/oUdMQ3TXQa19FIA7ecl3NXAqfwRCF3ebyT/BQ7x3U08S4ERkMoihGN0SuzorU
+	Nn8NgSqYrTa41WriQ1rNBgrV5HYPuDauZ1sN1Vr65bP5CCnQZ6VpxySarW6CibH0QDioVb
+	ncZndUEGJJt0ZHBCzRVWfHR+dutUtz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728486261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGcpaV4qNzq+lgUWq35jWZvKxbgGv0AnFKORHfiNLxA=;
+	b=l2EyHGqbKKU7MRPmRvyxwIcFVD64T+QFc5iCl4Be7MaAkQad6sQZwJI1lo0Citp+9QJkam
+	a2T0z3iFsB0DzRCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4232C136BA;
+	Wed,  9 Oct 2024 15:04:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id J8YmEHWbBmdRUAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 15:04:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EBBFFA0896; Wed,  9 Oct 2024 17:04:20 +0200 (CEST)
+Date: Wed, 9 Oct 2024 17:04:20 +0200
+From: Jan Kara <jack@suse.cz>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Allison Karlitskaya <allison.karlitskaya@redhat.com>,
+	Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/2] fs/super.c: introduce get_tree_bdev_flags()
+Message-ID: <20241009150420.wan5f7pucgse7j2n@quack3>
+References: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009033151.2334888-1-hsiangkao@linux.alibaba.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Hello Kyle,
+On Wed 09-10-24 11:31:50, Gao Xiang wrote:
+> As Allison reported [1], currently get_tree_bdev() will store
+> "Can't lookup blockdev" error message.  Although it makes sense for
+> pure bdev-based fses, this message may mislead users who try to use
+> EROFS file-backed mounts since get_tree_nodev() is used as a fallback
+> then.
+> 
+> Add get_tree_bdev_flags() to specify extensible flags [2] and
+> GET_TREE_BDEV_QUIET_LOOKUP to silence "Can't lookup blockdev" message
+> since it's misleading to EROFS file-backed mounts now.
+> 
+> [1] https://lore.kernel.org/r/CAOYeF9VQ8jKVmpy5Zy9DNhO6xmWSKMB-DO8yvBB0XvBE7=3Ugg@mail.gmail.com
+> [2] https://lore.kernel.org/r/ZwUkJEtwIpUA4qMz@infradead.org
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-On Wed, 9 Oct 2024 13:54:51 +0000
-Kyle Swenson <kyle.swenson@est.tech> wrote:
+Looks good. Feel free to add:
 
-> Hello Kory,
->=20
-> On Wed, Oct 02, 2024 at 06:27:56PM +0200, Kory Maincent wrote:
-> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> >=20
-> > This series brings support for port priority in the PSE subsystem.
-> > PSE controllers can set priorities to decide which ports should be
-> > turned off in case of special events like over-current. =20
->=20
-> First off, great work here.  I've read through the patches in the series =
-and
-> have a pretty good idea of what you're trying to achieve- use the PSE
-> controller's idea of "port priority" and expose this to userspace via eth=
-tool.
->=20
-> I think this is probably sufficient but I wanted to share my experience
-> supporting a system level PSE power budget with PSE port priorities across
-> different PSE controllers through the same userspace interface such that
-> userspace doesn't know or care about the underlying PSE controller.
->=20
-> Out of the three PSE controllers I'm aware of (Microchip's PD692x0, TI's
-> TPS2388x, and LTC's LT4266), the PD692x0 definitely has the most advanced
-> configuration, supporting concepts like a system (well, manager) level bu=
-dget
-> and powering off lower priority ports in the event that the port power
-> consumption is greater than the system budget.
->=20
-> When we experimented with this feature in our routers, we found it to be =
-using
-> the dynamic power consumed by a particular port- literally, the summation=
- of
-> port current * port voltage across all the ports.  While this behavior
-> technically saves the system from resetting or worse, it causes a bit of a
-> problem with lower priority ports getting powered off depending on the
-> behavior (power consumption) of unrelated devices. =20
->=20
-> As an example, let's say we've got 4 devices, all powered, and we're clos=
-e to
-> the power budget.  One of the devices starts consuming more power (perhaps
-> it's modem just powered on), but not more than it's class limit.  Say this
-> device consumes enough power to exceed the configured power budget, causi=
-ng
-> the lowest priority device to be powered off.  This is the documented and
-> intended behavior of the PD692x0 chipset, but causes an unpleasant user
-> experience because it's not really clear why some device was powered down=
- all
-> the sudden. Was it because someone unplugged it? Or because the modem on =
-the
-> high priority device turned on?  Or maybe that device had an overcurrent?
-> It'd be impossible to tell, and even worse, by the time someone is able to
-> physically look at the switch, the low priority device might be back onli=
-ne
-> (perhaps the modem on the high priority device powered off).
->=20
-> This behavior is unique to the PD692x0- I'm much less familiar with the
-> TPS2388x's idea of port priority but it is very different from the PD692x=
-0.
-> Frankly the behavior of the OSS pin is confusing and since we don't use t=
-he
-> PSE controllers' idea of port priority, it was safe to ignore it. Finally=
-, the
-> LTC4266 has a "masked shutdown" ability where a predetermined set of port=
-s are
-> shutdown when a specific pin (MSD) is driven low.  Like the TPS2388x's OSS
-> pin, We ignore this feature on the LTC4266.
->=20
-> If the end-goal here is to have a device-independent idea of "port priori=
-ty" I
-> think we need to add a level of indirection between the port priority con=
-cept
-> and the actual PSE hardware.  The indirection would enable a system with
-> multiple (possibly heterogeneous even) PSE chips to have a unified idea of
-> port priority.  The way we've implemented this in our routers is by putti=
-ng
-> the PSE controllers in "semi-auto" mode, where they continually detect and
-> classify PDs (powered device), but do not power them until instructed to =
-do
-> so.  The mechanism that decides to power a particular port or not (for la=
-ck
-> of a better term, "budgeting logic") uses the available system power budg=
-et
-> (configured from userspace), the relative port priorities (also configured
-> from userspace) and the class of a detected PD.  The classification resul=
-t is
-> used to determine the _maximum_ power a particular PD might draw, and tha=
-t is
-> the value that is subtracted from the power budget.
->=20
-> Using the PD's classification and then allocating it the maximum power for
-> that class enables a non-technical installer to plug in all the PDs at the
-> switch, and observe if all the PDs are powered (or not).  But the importa=
-nt
-> part is (unless the port priorities or power budget are changed from
-> userspace) the devices that are powered won't change due to dynamic power
-> consumption of the other devices.
->=20
-> I'm not sure what the right path is for the kernel, and I'm not sure how =
-this
-> would look with the regulator integration, nor am I sure what the userspa=
-ce
-> API should look like (we used sysfs, but that's probably not ideal for
-> upstream). It's also not clear how much of the budgeting logic should be =
-in
-> the kernel, if any. Despite that, hopefully sharing our experience is
-> insightful and/or helpful.  If not, feel free to ignore it.  In any case,
-> you've got my
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks for your review and for sharing your PSE experience.
-It indeed is insightful for further development and update of this series.
+								Honza
 
-So you are saying that from a use experience the port priority feature is n=
-ot
-user-friendly as we don't know why a port has been shutdown.
-Even if we can report the over-current event of which port caused it, you s=
-till
-thinks it is not useful?
-
-We could have several cases for over power budget event:
-- The power limit exceeded is the one configured for the ports.
-  We should shutdown only that port without taking care about priority.
-  TPS23881 has this behavior when power exceed Pcut.
-  I think the PD692x0 does the same. Need to verify.
-- The power limit exceeded is the global (or manager PD69208M) power budget.
-  Here port priority is interesting.
-  Is there a way to know which port create this global power limit excess?
-  Should we turn off this port even if he don't exceed his own power limit =
-or
-  should we turn off low priority ports?
-  I can't find global power budget concept for the TPS23881.=20
-  I could't test this case because I don't have enough load. In fact, maybe=
- by
-  setting the PD692x0 power bank limit low it could work.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+> ---
+> v1: https://lore.kernel.org/r/20241008095606.990466-1-hsiangkao@linux.alibaba.com
+> change since v1:
+>  - add get_tree_bdev_flags() suggested by Christoph.
+> 
+>  fs/super.c                 | 26 ++++++++++++++++++++------
+>  include/linux/fs_context.h |  6 ++++++
+>  2 files changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 1db230432960..c9c7223bc2a2 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1596,13 +1596,14 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
+>  EXPORT_SYMBOL_GPL(setup_bdev_super);
+>  
+>  /**
+> - * get_tree_bdev - Get a superblock based on a single block device
+> + * get_tree_bdev_flags - Get a superblock based on a single block device
+>   * @fc: The filesystem context holding the parameters
+>   * @fill_super: Helper to initialise a new superblock
+> + * @flags: GET_TREE_BDEV_* flags
+>   */
+> -int get_tree_bdev(struct fs_context *fc,
+> -		int (*fill_super)(struct super_block *,
+> -				  struct fs_context *))
+> +int get_tree_bdev_flags(struct fs_context *fc,
+> +		int (*fill_super)(struct super_block *sb,
+> +				  struct fs_context *fc), unsigned int flags)
+>  {
+>  	struct super_block *s;
+>  	int error = 0;
+> @@ -1613,10 +1614,10 @@ int get_tree_bdev(struct fs_context *fc,
+>  
+>  	error = lookup_bdev(fc->source, &dev);
+>  	if (error) {
+> -		errorf(fc, "%s: Can't lookup blockdev", fc->source);
+> +		if (!(flags & GET_TREE_BDEV_QUIET_LOOKUP))
+> +			errorf(fc, "%s: Can't lookup blockdev", fc->source);
+>  		return error;
+>  	}
+> -
+>  	fc->sb_flags |= SB_NOSEC;
+>  	s = sget_dev(fc, dev);
+>  	if (IS_ERR(s))
+> @@ -1644,6 +1645,19 @@ int get_tree_bdev(struct fs_context *fc,
+>  	fc->root = dget(s->s_root);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(get_tree_bdev_flags);
+> +
+> +/**
+> + * get_tree_bdev - Get a superblock based on a single block device
+> + * @fc: The filesystem context holding the parameters
+> + * @fill_super: Helper to initialise a new superblock
+> + */
+> +int get_tree_bdev(struct fs_context *fc,
+> +		int (*fill_super)(struct super_block *,
+> +				  struct fs_context *))
+> +{
+> +	return get_tree_bdev_flags(fc, fill_super, 0);
+> +}
+>  EXPORT_SYMBOL(get_tree_bdev);
+>  
+>  static int test_bdev_super(struct super_block *s, void *data)
+> diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+> index c13e99cbbf81..4b4bfef6f053 100644
+> --- a/include/linux/fs_context.h
+> +++ b/include/linux/fs_context.h
+> @@ -160,6 +160,12 @@ extern int get_tree_keyed(struct fs_context *fc,
+>  
+>  int setup_bdev_super(struct super_block *sb, int sb_flags,
+>  		struct fs_context *fc);
+> +
+> +#define GET_TREE_BDEV_QUIET_LOOKUP		0x0001
+> +int get_tree_bdev_flags(struct fs_context *fc,
+> +		int (*fill_super)(struct super_block *sb,
+> +				  struct fs_context *fc), unsigned int flags);
+> +
+>  extern int get_tree_bdev(struct fs_context *fc,
+>  			       int (*fill_super)(struct super_block *sb,
+>  						 struct fs_context *fc));
+> -- 
+> 2.43.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
