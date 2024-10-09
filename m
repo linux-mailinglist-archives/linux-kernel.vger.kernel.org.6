@@ -1,92 +1,79 @@
-Return-Path: <linux-kernel+bounces-358000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72736997912
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:23:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7401C997915
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9D91F23725
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CC0283D8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811021E32A6;
-	Wed,  9 Oct 2024 23:23:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2DF1E3DFC;
+	Wed,  9 Oct 2024 23:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glHVVIm+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD914169397
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 23:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE8169397;
+	Wed,  9 Oct 2024 23:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728516185; cv=none; b=Lxyv4a6/i/8Ei6JzOzA1tJ11vdyYQhNS/F85r50bwx7VafnEQm+vHlvmNH/oeOuzQktq7ZL2CC3O8weyLwApUls7QIZpDB6w3nxkXRMO6Ha9v8Z22xTLARh1xpALmTU1/VhzBqCqpxPPOW2W2DXu4p7sfTOiDGFiW997xK9KlRQ=
+	t=1728516189; cv=none; b=TSOTOHff1MgSzl8pfMZCtHl/LV5cM+wLgkIV+B+hTY9cscXzWFrbC4Z7Uc2ey4OvMalhjCFehEP4a25hvdOVUUVgS0BCo4L56bdsh6L/E1tfDN0FxbTwKJIthesCcDyKud+PIf8l/jyTSwV9aRLtDl7VNmBvE1W5wB0sGa4KC0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728516185; c=relaxed/simple;
-	bh=eo4Ymx/StZp5RW6GC+CgoSyMj82eS6wutLVMkcP9wOA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nOQNJZ/QVoQs8CvWQGBDjGcXihqR5fW0s2wFAn0OKPM8DvAwYDt7ORqkhQ8AKzaDykjPlHh1T1A4+8VGvwkqkdDYniyqGahuqNQdkrsWpC/AqX+1PVQa9uFTKrthvTBLg5h94M6jlSzXQdIzYTLtdMa9QnoPGg8wLIC1UQxqcrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a34eef9ec9so3921645ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 16:23:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728516183; x=1729120983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AUC8UPunWg8uHAeVxmpOOlMXguSRHS39bG0R/9ufmTc=;
-        b=Ttxe4k8Bz0RrUOqfIXMsoVuLaFTzXNwL5tez0NvuUf30BNffAIBvkDX//Hf5JaCfWi
-         EAlrCNIxCcC0JWOf/Fva47CM9Mhd+8jJGCUBGteC0VwMms47q4lhrG3q8Qk/m9vJutkF
-         fhOhc8kDuLYN/P0ZEbKE+D/fU35AxIfYT2VGI9Kim38T7sNA/1/GV5hHkXKlD+pGT2rI
-         fEB8bWGXx+fSBosOVhpKvDeEhf8Mk7jukgtSWAIzv/OiHqHbhNckvt8icnFE1S8zmrEM
-         aKasDP1EDPYFhqfDdtToKfHJBy/pLgwISM0sM4mmcrQ7pgzbF3yCvxKIX3u57vyz9gpM
-         0i2g==
-X-Gm-Message-State: AOJu0YyL8ZOBlMK7yCuoecZ/C3BCrdmaVE18iCQWHwpEgAdvcWzpuZ+F
-	ZMbQs7A9A5RzsgVM/ZWnxOPs6ENAMOUIjpVSfyXGpW6epw7lCTKap4n7l1XheajNNJ0eFZnNqkt
-	sYY+x4HhXg1qF9O+fxb3gRZjJuWowMMDjrC/zQMDIkSjMSHrZ3KP2ttE=
-X-Google-Smtp-Source: AGHT+IH51j1hZKiurrugW/rvtajJ8Yvk9MCM7SAwnXLi5Hj07KxaR9DZjNSPmsMN3+AJMA1WwSZ/Oi3QV64VdQfqio2B6eaG99rz
+	s=arc-20240116; t=1728516189; c=relaxed/simple;
+	bh=60OTD2MYzHbySQtVtLI9W8x5SUpoFaHcLB1gvcDRzsI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=U6ChtMO0s9HCD+HImHhOWqJOVNhgIQgLu62DI58trwE+3aHw79ETI+sEoZX7e0Au9A/uTfWVGgh8BvDjRUIqfPjLIJK/8irJUoZhSbV+Vu+ObCgKPC5pwQpOgRJrpdsFCTbWPYfG/FhyjDHH3eZeFYU+Qc8MbImD1cBd773QXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glHVVIm+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5D3C4CEC3;
+	Wed,  9 Oct 2024 23:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728516188;
+	bh=60OTD2MYzHbySQtVtLI9W8x5SUpoFaHcLB1gvcDRzsI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=glHVVIm+v5m1Mo48+bDF583js/Yh11lgt/F3vjMAhGAdUExGqhHslSe4HoCoqDd3K
+	 O4OZDd8bHshGgG+HdBvmHsDo23Q7NffX2FNkrH0l3/Q12nZnQwGBJk5X+H22AzUl2n
+	 p12cQNAp53ZUL5ABDG7toWNyyeSfNYQa+FbSeengoRFIVvsDeaWk2H6+DDEnU4e5JL
+	 f0sXW9NLonyh0VKGprfNZ9LeIdniKAQSjkS5/z6SsKADGXLdTYaRCuENzPVHtwBc8p
+	 q6Q68Nz9ZimcebK1oM6gTRjAw8NBqm30EKS+OMMf2zOKwQrYBJ1oLjjwbPqggARnAI
+	 LAKJe18SNn/8A==
+Message-ID: <1b9e1d9fb4f803dcbed9abb75e56a0dd.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219d:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a397cee009mr40778675ab.15.1728516182896; Wed, 09 Oct 2024
- 16:23:02 -0700 (PDT)
-Date: Wed, 09 Oct 2024 16:23:02 -0700
-In-Reply-To: <65233b0c-cf11-4ef6-957c-e0434742d6e8@sandeen.net>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67071056.050a0220.67064.0056.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] possible deadlock in hfsplus_file_extend
-From: syzbot <syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, sandeen@sandeen.net, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+References: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] clk: mediatek: drop two dead config options
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Lukas Bulwahn <lbulwahn@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Wed, 09 Oct 2024 16:23:06 -0700
+User-Agent: alot/0.10
 
-Hello,
+Quoting Lukas Bulwahn (2024-09-27 02:22:32)
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
+> module build") adds a number of new COMMON_CLK_MT8195_* config options.
+> Among those, the config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
+> used in the Makefile to include a specific file.
+>=20
+> Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC.
+>=20
+> Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow=
+ module build")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
-
-2024/10/09 23:22:11 ignoring optional flag "type"="gce"
-2024/10/09 23:22:11 parsed 1 programs
-2024/10/09 23:22:11 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
- (errno 16: Device or resource busy)
-
-
-Tested on:
-
-commit:         ffcd06b6 hfs: convert hfs to use the new mount api
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b18f07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8420a89323bff217
-dashboard link: https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+Applied to clk-next
 
