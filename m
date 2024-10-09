@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-356077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49674995C21
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:13:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD72995C29
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E219DB23FA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF407283748
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE97ECC;
-	Wed,  9 Oct 2024 00:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227A31877;
+	Wed,  9 Oct 2024 00:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z98Tdieh"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="divIMHKw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B0236D;
-	Wed,  9 Oct 2024 00:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EADA383;
+	Wed,  9 Oct 2024 00:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728432819; cv=none; b=TdfUzDVNkGJdYFcy15gwkpfDLNJEcnhxafB2sTuL8U7tjIzE/J0VVkGwQUdpjmOjup9B7GberdOJCqbPbrENGtO2VBjoB/syny+sw+8JXc/nteAKamYRh9RIuV3lqNDJKdSVynDp03HDFOHJGZI4Wr2Cel9o5h7I4azg66L5S64=
+	t=1728432844; cv=none; b=QkhQB819eWPEzG2x9IfJJVQ1phuKX/b/aBP/6E8D58E37AxO1ODf1vdH/snQujm7ToZGkQAFumCdeJxQYsR3amQNRwIdxpHWMx5oPqK+rmFLseWvJBU3bkeTtHKW/Zg2hKJGrOfQHE6dtuANXtWMRT/mbo9djYotk/ponC+rHhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728432819; c=relaxed/simple;
-	bh=vXzqY+YmGl+wu9XK3ngPJRVROGgLtUdeSl89qbBhxVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GrXDfNnykW/lCgo0VFf2fWpkkA8VYfjXoge3n+h5aC0vRLAjKjMCaunkGx1+SoLNZofOkqCXp2l5122psjBelZs/o2Ax5bZd5WFzRJeCYoO2U2XSgOnnWVvG1jjs/hRf0elfmfC4ctrRitr9zFPHLK8Ou/5KPSNlvgEnBA2aVMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z98Tdieh; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e29f671dcbso226251a91.0;
-        Tue, 08 Oct 2024 17:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728432817; x=1729037617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4zc/nDZMEoMGVJDHVfAq6hyQML2MOQDaBTZK68tFnU=;
-        b=Z98TdiehJbNdJazVaCprHTZ5UhsBJ3fGIcULoyN+mDnnpgwXaKX2M8nrV1xAY0Ffl3
-         uWaqtBwLkUdHi+ffwiig93f+PV5kjHR3Qetr/vBDt6SgqkWaT2KBt1RRnrWKtOIzBuUq
-         nC5oqa8O17dhowmUTtDyZ3+aFLCFcQGgTrtF6wC5E9wMx5PEDwHbEfXPUxrTWkED2QWd
-         ++HKTdIdKTtiPBk8ImYiF6q/re4qXm3aHbwRLIb3OexPdCaaGYsYRgfwmoM8ITdS+BbS
-         PV6qw9KPEdELGKIy+h0DMIvIWE0/T5Ykpetmr6uiYwF0VMZjwW1VefCpld3e1T7sOjd2
-         OtwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728432817; x=1729037617;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E4zc/nDZMEoMGVJDHVfAq6hyQML2MOQDaBTZK68tFnU=;
-        b=BIHXba/dseT72wXlk2jPuOutW9QwEj6G+79Nuo0vkfNNk/giaZvac2f4bazgNZGdeD
-         zER8cs9YDhBXP7PPy2p/AGig9qM6LkHO09JOtVqtqaxBF+QHtQkk3W81kox5yguMIVh5
-         wyCVBQXGG+afeJuDB6xLn4DxojDdUVS1vkYRYF+z7J99SIslY36lpNykwBVs2hcR8TCZ
-         HK6sCEr/NG9WxIh+cybNgTnvswN5Piyv4XDiXo4e7VgLm+Cd8oIvzWe6oIMEjlY3laAN
-         5hKkXNPORpYX344cpfeDr6Wuc0vLK8S7Zoye+s73I106RJ+8weiEpXwKpUABUMK0Kqge
-         o92g==
-X-Forwarded-Encrypted: i=1; AJvYcCVzOAFA42uDwbrW8WczQ7n6edFtOJxNO0vUwIIsEs1fJSOc3qT3gFimVaCcY3HQSCi6LVXZWYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRZ0LM7eipJKqMWcSDPinYSnDUbGai38UgDOQPsMmo6Af2jVnp
-	V5yncXV7cgCxZQRFzacS85YC5H6jVTaCEFvjGeYk0V36TRHEMJbmRCmgBA==
-X-Google-Smtp-Source: AGHT+IGicfGCKBle1q/Q/g89yOKHo+zwmrRvrBKXc/eAq2cEcKbDufyz4I6unfGKRP18sSWhjNX/3Q==
-X-Received: by 2002:a17:90a:e657:b0:2e0:89f2:f60c with SMTP id 98e67ed59e1d1-2e2a07a3e7fmr1194288a91.11.1728432817110;
-        Tue, 08 Oct 2024 17:13:37 -0700 (PDT)
-Received: from localhost.localdomain (75-164-192-68.ptld.qwest.net. [75.164.192.68])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a57078f1sm200321a91.19.2024.10.08.17.13.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 17:13:36 -0700 (PDT)
-From: "Gerecke, Jason" <killertofu@gmail.com>
-X-Google-Original-From: "Gerecke, Jason" <jason.gerecke@wacom.com>
-To: linux-kernel@vger.kernel.org,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Jiri Kosina <jikos@kernel.org>
-Cc: Ping Cheng <pinglinux@gmail.com>,
-	"Tobita, Tatsunosuke" <tatsunosuke.tobita@wacom.com>,
-	Jason Gerecke <jason.gerecke@wacom.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] HID: wacom: Hardcode (non-inverted) AES pens as BTN_TOOL_PEN
-Date: Tue,  8 Oct 2024 17:13:32 -0700
-Message-ID: <20241009001332.23353-1-jason.gerecke@wacom.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728432844; c=relaxed/simple;
+	bh=ISowwB8V/w5gps6MY3LRCF12ElijfALxRi3ED/Ocfr0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=DmSk2aomuDFbxoPtnp8QQN2lqSUbh43TFQLkiL1tvwiYxfuru72qxMt9tLEzFuaojDpd/TcjA67/xQ9ciNegxvnEvXm5ocpsoUqqdJYZO/ms5gAKYqGcZ/Ywf6flPDDl4BgPdeKN7wGJvHN0UirDVsBy1d0oL6HHL+v+x2havNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=divIMHKw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE58C4CEC7;
+	Wed,  9 Oct 2024 00:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728432843;
+	bh=ISowwB8V/w5gps6MY3LRCF12ElijfALxRi3ED/Ocfr0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=divIMHKwDCrk7iS1Bfp1xg/nYyUHq54TSX9moiIzilL8RNe6r2dcqf43qbm8MR/gQ
+	 KGQKaGaVUtP8o+QQ5yxQu7+pPVrTQ8WLnvtV0bMZ58na4GgH9kaWvImxPsOiS6xJNG
+	 M/nGcOgTdgQhnu/IuwzL28lijd52QrYKjs9wxctXAepXi6fPdALxIbGIlsTZN6DKsY
+	 y084+ESg1lY1FXrKTURm2q8D9Ci6X/JTeHdWTLVLGClAcEnRU3VCgG3QPkZXahsSS1
+	 tti5gffBklKZMMY8/QufSWCY8jpGGmaoZj3p9Zana36AbI+O4ARh4wtm4OLmd3tKVE
+	 Ktb3h4Byd8sOA==
+Date: Tue, 08 Oct 2024 19:14:03 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Daniel Thompson <daniel.thompson@linaro.org>, Pavel Machek <pavel@ucw.cz>, 
+ linux-leds@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ Jingoo Han <jingoohan1@gmail.com>, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ devicetree@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <20241008-zii_yaml-v1-1-d06ba7e26225@nxp.com>
+References: <20241008-zii_yaml-v1-0-d06ba7e26225@nxp.com>
+ <20241008-zii_yaml-v1-1-d06ba7e26225@nxp.com>
+Message-Id: <172843284049.2657665.7415620328802530234.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: input: convert
+ zii,rave-sp-pwrbutton.txt to yaml
 
-From: Jason Gerecke <jason.gerecke@wacom.com>
 
-Unlike EMR tools which encode type information in their tool ID, tools
-for AES sensors are all "generic pens". It is inappropriate to make use
-of the wacom_intuos_get_tool_type function when dealing with these kinds
-of devices. Instead, we should only ever report BTN_TOOL_PEN or
-BTN_TOOL_RUBBER, as depending on the state of the Eraser and Invert
-bits.
+On Tue, 08 Oct 2024 18:00:57 -0400, Frank Li wrote:
+> Convert device tree binding doc zii,rave-sp-pwrbutton.txt to yaml format.
+> Additional changes:
+> - add ref to input.yaml.
+> - remove mfd node in example.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/input/zii,rave-sp-pwrbutton.txt       | 22 -------------
+>  .../bindings/input/zii,rave-sp-pwrbutton.yaml      | 36 ++++++++++++++++++++++
+>  2 files changed, 36 insertions(+), 22 deletions(-)
+> 
 
-Fixes: 9c2913b962da ("HID: wacom: more appropriate tool type categorization")
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Cc: stable@vger.kernel.org
----
- drivers/hid/wacom_wac.c | 2 ++
- 1 file changed, 2 insertions(+)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/drivers/hid/wacom_wac.c b/drivers/hid/wacom_wac.c
-index 59a13ad9371cd..413606bdf476d 100644
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -2567,6 +2567,8 @@ static void wacom_wac_pen_report(struct hid_device *hdev,
- 		/* Going into range select tool */
- 		if (wacom_wac->hid_data.invert_state)
- 			wacom_wac->tool[0] = BTN_TOOL_RUBBER;
-+		else if (wacom_wac->features.quirks & WACOM_QUIRK_AESPEN)
-+			wacom_wac->tool[0] = BTN_TOOL_PEN;
- 		else if (wacom_wac->id[0])
- 			wacom_wac->tool[0] = wacom_intuos_get_tool_type(wacom_wac->id[0]);
- 		else
--- 
-2.46.2
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
+Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.yaml: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241008-zii_yaml-v1-1-d06ba7e26225@nxp.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
