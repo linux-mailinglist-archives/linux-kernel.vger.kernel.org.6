@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-357889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F00997765
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:23:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C19899776B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E937E1F2319F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:23:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45D17B2274D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B861E22F9;
-	Wed,  9 Oct 2024 21:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A251DF734;
+	Wed,  9 Oct 2024 21:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sVIe4Vla"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="TukQrfPB"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DD82119
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DDC17A583
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728508989; cv=none; b=bXv033Zb/ejOIUEofYPyU6R4tHl5nsqAOmpxBspX/SYTw18HpFZXe5Jdib83eNXYRO0hkvT4VBCTuINNOMWSur1At6l5rBH2AkXJzpxLbQhroZldm145yLMJ18OT0RusXOrKhwhIy4nqD6D7YgPN0A5nViqcyfIMJ+0mUatxdRY=
+	t=1728509088; cv=none; b=XNlGbMJ3rRC+4ItGN5z/PZogb19+1+gSgFFif6p9gff5UJytGaxUKqngZjfFqKvG3CN1EL9YqZuMBMQsF9jf40WUZ66cgw55cdLGbhzB8Hm3Ttg+odUgTRMFjqgMvOL3/y2MemIrA4ua5NHzoqpi9VCBm5V9/CmKRbthlsQNHJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728508989; c=relaxed/simple;
-	bh=tRSw1k/0sr85ExbmOl0gPeC5STZqIEB0X87MsW8wciY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d9URTRMqFt3XS0WFM4K7MIvfSylYUhJ8sIzmq6lBoRj3zcgHIMShMkO5OgjBnbCJkCv1tnOeksWFzo/EVivwC8IaEqNvnklV9Zu+JRqfTNqPn05fiUeivRBKgBnDW9PKwPdEwJekhQickUoxKJosEWWESnOB/0xruuoZBib7K3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sVIe4Vla; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-710daaadd9bso156411a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728508986; x=1729113786; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O+Esmh61ONH9tsyHUh8tyGRx4VPfWSAFGr8/A3GrspY=;
-        b=sVIe4VlayEp98Dn8Kbu0nDU+IVKjTe+gxDzsbjvCW2/gEn6RRT+VcAQXU+ipCuIcai
-         bFoVAooTmmHHllakE3KbrOujtU/1iBnmpkyn2CoUbAt9s2z3U/52KmMxWi9IISBurADG
-         dPMFZtwXnw+wcMF3wcKBP1x3narYqyFmwPXo6pg8SEHx6CkhE+3Fd3I/rgwr2YmU0Ae8
-         VB6FbqoHNgFHc5kAWkWmvwHZAqnGRJZEAgxb+uke7+ap1qIC7WB2gw8FGTU50ZJY94DG
-         qMe7uEicyQ/qTesyuuPUAS/ttp9BhXXzt4WjZYqTc2GfwKjtFGDR9euG1sINj4HwclN5
-         /VAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728508986; x=1729113786;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O+Esmh61ONH9tsyHUh8tyGRx4VPfWSAFGr8/A3GrspY=;
-        b=TSE4QEUqcyciXVL8xAth9mdlyyect4fsfFhCoEmUwufchiIRXaaklsaaflHBWDgkHI
-         //4R0ySbhRGFAoy57K7EF1wKx2smMtlwKQw0KdiQ0Vmqtsp7jdaw/zJzuuc5tRZtuC5W
-         RcgZQsHVPRk9ELH5wxxJElbWpYk1aTjc0LxuFRXx7NzfVUUeYqDuJ3PGcc3Nxb/GkBl7
-         MmoNKp2qlWG7pSQLdUVJEkoTsDHx6fP+R6grpx4zDf1VhqrjUQVxpBNYrcT8hi2QPoPI
-         fBBfMv4Ce2Vwn2iIT39WQUiFCx8pW8lwFr8WEyA8UEcNjzpQdIhHcWMJhwlYo62maU7m
-         Lw/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ0436XpsKjkeQtADyAYxt+v4TJuvCyfALQ7xuJJwHlCtITHeC2dQlj3PPN7jIuKYgAey1RJ41solecUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw51u0MucOhSLnCEjczcuisduAAa1u8YcIBLl4vBgIBHt8dqICP
-	yVnHbUrSYeTWg+HNyxVQdvRkrMWK7BVvzwvYjp5y8t//cW65X414esRlKy0KJFI=
-X-Google-Smtp-Source: AGHT+IEaJCQb724C+qYxz/hI785RHLentJJFmeUnrLCgmN26JLfX2nQhw7w/BXLmgRfbvojb1I2YWQ==
-X-Received: by 2002:a05:6830:3108:b0:70d:e5aa:38af with SMTP id 46e09a7af769-716a9f62f50mr1971315a34.11.1728508985727;
-        Wed, 09 Oct 2024 14:23:05 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-716aa70aea2sm140015a34.37.2024.10.09.14.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:23:05 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 09 Oct 2024 16:23:04 -0500
-Subject: [PATCH] iio: adc: ad4695: Add missing Kconfig select
+	s=arc-20240116; t=1728509088; c=relaxed/simple;
+	bh=XkHTIL5ybZufqNUnm8IrxZ7npMRbQ/hDL0sjfcRz70o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jmxHybAvn6DGdihbqX43NisFXR6EUPDrsGB7H0wO9DeMZEme4bIGIqbjeqAwir938ASq40LSfkaIRQoTkflKgFPBmeNmoFmBHtmYEVqAqI9iLnjFx6224vn9JiLASVsjdDwdp+0qKXaKADlwLxsX8t+6OAepTcIf/a42nLlVrI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=TukQrfPB; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8DB862C011D;
+	Thu, 10 Oct 2024 10:24:37 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1728509077;
+	bh=a9DXvHVrOAXnUtvjBlxwLT7e72jk38nPPA7GGqjeS98=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TukQrfPBQlLFwizFZA/1XVtyavcxoZSGqVwIt1b1TxmLP5iaWKOYAMlFxHd15lclm
+	 vYps7ONsDoTBMVRas/XJx+yluLwtfXYPVEo+98HMAPtVZK860q3+hQSMNoi1sdJuLb
+	 RhXNiISTZ3mF6xZrXpgP21/A3x5/sWCdyK/8XOb3ZlxVkODThe8AITrE800aIT8PZq
+	 dcam3poP6NeJZhyPOZpQhR/lbyUi8CMQdJTLSdiVjrniFBNN+zYcZTV2Xx9ypEQ0jl
+	 aLORveE0C0NRAsPau3a42qjtD1RsSlJ5ZuLxC4G3k7HlYkR2t7gJ+l9c2oWBmB/mxO
+	 XKNnnrbbeBG7g==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6706f4950000>; Thu, 10 Oct 2024 10:24:37 +1300
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id 4BB9013ED7B;
+	Thu, 10 Oct 2024 10:24:37 +1300 (NZDT)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id 476672A0BF8; Thu, 10 Oct 2024 10:24:37 +1300 (NZDT)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v0] net: dsa: mv88e6xxx: Fix uninitialised err value
+Date: Thu, 10 Oct 2024 10:23:19 +1300
+Message-ID: <20241009212319.1045176-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241009-iio-adc-ad4695-fix-kconfig-v1-1-e2a4dfde8d55@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADf0BmcC/x2MywqAIBBFfyVm3YBJL/uVaBE62hBoKEQQ/ntDi
- 3vhcOC8UCgzFViaFzLdXDhFga5twB57DITshEEr3XdKGWROuDsr60czoOcHT5ui54B6MtaQn50
- cSODKJPqPr1utH/IC4tZsAAAA
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=6706f495 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=1RBs_uGY3QX_kSjkThsA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Add select IIO_BUFFER and select IIO_TRIGGERED_BUFFER to the Kconfig for
-the ad4695 driver.
+The err value in mv88e6xxx_region_atu_snapshot is now potentially
+uninitialised on return. Initialise err as 0.
 
-Fixes: 6cc7e4bf2e08 ("iio: adc: ad4695: implement triggered buffer")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+Fixes: ada5c3229b32 ("net: dsa: mv88e6xxx: Add FID map cache")
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
 ---
-I didn't see this one in the recent series with similar changes [1][2],
-so here is another one.
+ drivers/net/dsa/mv88e6xxx/devlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1]: https://lore.kernel.org/linux-iio/20241003-ad2s1210-select-v1-0-4019453f8c33@gmail.com/
-[2]: https://lore.kernel.org/linux-iio/20241003-iio-select-v1-0-67c0385197cd@gmail.com/
----
- drivers/iio/adc/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 85b82a708c36..98d441d6cc5c 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -52,6 +52,8 @@ config AD4695
- 	tristate "Analog Device AD4695 ADC Driver"
- 	depends on SPI
- 	select REGMAP_SPI
-+	select IIO_BUFFER
-+	select IIO_TRIGGERED_BUFFER
- 	help
- 	  Say yes here to build support for Analog Devices AD4695 and similar
- 	  analog to digital converters (ADC).
-
----
-base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
-change-id: 20241009-iio-adc-ad4695-fix-kconfig-279c9ef8d9ef
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+diff --git a/drivers/net/dsa/mv88e6xxx/devlink.c b/drivers/net/dsa/mv88e6=
+xxx/devlink.c
+index ef3643bc43db..795c8df7b6a7 100644
+--- a/drivers/net/dsa/mv88e6xxx/devlink.c
++++ b/drivers/net/dsa/mv88e6xxx/devlink.c
+@@ -376,7 +376,7 @@ static int mv88e6xxx_region_atu_snapshot(struct devli=
+nk *dl,
+ 	struct dsa_switch *ds =3D dsa_devlink_to_ds(dl);
+ 	struct mv88e6xxx_devlink_atu_entry *table;
+ 	struct mv88e6xxx_chip *chip =3D ds->priv;
+-	int fid =3D -1, count, err;
++	int fid =3D -1, err =3D 0, count;
+=20
+ 	table =3D kmalloc_array(mv88e6xxx_num_databases(chip),
+ 			      sizeof(struct mv88e6xxx_devlink_atu_entry),
+--=20
+2.46.0
 
 
