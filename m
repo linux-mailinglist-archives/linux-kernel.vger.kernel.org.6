@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-357987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0375A9978CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:01:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FAC9978CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8697283E73
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:01:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649CEB2107F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC5E1917C0;
-	Wed,  9 Oct 2024 23:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3077190063;
+	Wed,  9 Oct 2024 23:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCbGk142"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9j1wj/I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABA828F5;
-	Wed,  9 Oct 2024 23:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C31928F5;
+	Wed,  9 Oct 2024 23:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728514907; cv=none; b=uGLqLuVukoBcOc1YN1iuOl89AA3LGy54hyPn6uRraRLjx6x5SXzAa0P7RlyPnJVpxhPLmWCwxOPcnYPIv6N8fxFsvBZa49vHcsByHFgGZCDwiHf24RyVWDkozJthE7TgMap2tRriUfF2IODEOF/TmGtR3gNWi9mo69iIecOGGrw=
+	t=1728514954; cv=none; b=QImBci37CDwpjHRww7Adqx2qynSLsyTCcFsBvaDZwGLl0CWpp1idfK5Z6y7nlxy5u9H1KU0QliGw8eYEvacTh98/3OZydB+Ltt47JTl0p3qezV6AuiCCXWg31Tigj1q5VuFb8RKHcVr8Zh3MgUwZb0Qu25Fxdi6pMHm8wsBf3QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728514907; c=relaxed/simple;
-	bh=vmw6SJWQe8SICYrRf6J/NKeTEhnmkp9sXHM+NZbJeCw=;
+	s=arc-20240116; t=1728514954; c=relaxed/simple;
+	bh=7BhRtVer07YSmf3uJk8dkE+ru60nI1c5gbZWmRKLx4U=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=LJfnQQK+jSSE0aCLG1g+CA3QgCuu28GCXVCk0t8cR4zh1jkpy96G75cvGdctK5VPIMEIGyuRLW53D8hg3Q9VAxFGvPbLh8frL23Yqf3SchMPPEldDmlkipnGA3i0hfFGvXfRpjXSNFan7QCo3zode1FlsNKH+2VjQ7JjQzDaRrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCbGk142; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A944C4CECE;
-	Wed,  9 Oct 2024 23:01:47 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=hnnJ1sIAv3vkB+Q4fCOEm7Be/iztDC7YRce3bMKd0t8cXwk96jWZiEgCRpwEbBNzoemO1nqPQdIr3I6ZlZzWMkjY1LmJqObS+67SQzJK9hGhxazPWFV4g+R3Ztikxzlbd3fwZN4w76WqXXJ1AaXIRUXQgrVplSzoo27b5jf0K1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9j1wj/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4211C4CECE;
+	Wed,  9 Oct 2024 23:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728514907;
-	bh=vmw6SJWQe8SICYrRf6J/NKeTEhnmkp9sXHM+NZbJeCw=;
+	s=k20201202; t=1728514953;
+	bh=7BhRtVer07YSmf3uJk8dkE+ru60nI1c5gbZWmRKLx4U=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=CCbGk142gr0+izaVFRXP/QZEs8GTqTbZ4+nmpLAL7CFCLye4rovCfQMjmFy0G7Mh+
-	 xKN+WxjJyLk2Iq9LI3KR5cH2R6PV73V6WRsxJXR9K/5gKFuh074PSIJziJJxVwZ4Ml
-	 tHSzkxeRwZv3BimvhiToiBqM1hhjDt4QwnSQaXXD6Uk7zeaMHlJbV4g/N6FpdsWdA2
-	 dlSriQAgOlkXxAt3zYINlrwAHSS1AMaca6d2mxY3cx8iCzQw8T1Zcn6AyQxbPKoZmC
-	 Il4Poqo0TCI1nHEXvl5uUIBGrp8g8SUMkpDN5dx/HEHwsZs/fImNR0zqN3wAzvi2yr
-	 lWZQd551MZzaQ==
-Message-ID: <b8f0036b3775c49ec10c949c1ddb3ceb.sboyd@kernel.org>
+	b=E9j1wj/IK8+zWVsw3GDXc32fzQBV56e6s919r8ISQ7Gxx8Zi29WFJOzG+XEIlfNje
+	 gYQbj1E0ZSi3Nk+UOCSGiIdJ2NEwGzL9gfq4p57K9Df1xEPhIHwCLOopfFIVahkuBX
+	 9BNTMujE04hylORPvpd8l18Ska1agjNl0mGPYMHy/E8lySPIXjH3inWgLRD/uBNAe5
+	 jsH+ZOVPrR7v2vAGPyibHz7BRiN5OKV2yevpdkQickYBoPRKShj1pj+X5eMveFfOFj
+	 2+kPOjYJ+Zc/mH9K50VV/mAgr3OZei6nZj1QkaJ0bogpzj4atf3UCtIcgE8skqIxrI
+	 FJclfe/LR2xVA==
+Message-ID: <6421c16edc9f5f7e7a2d24a17309a69d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,25 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240918123150.1540161-9-u.kleine-koenig@baylibre.com>
-References: <20240918123150.1540161-9-u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH] clk: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+In-Reply-To: <5815159.DvuYhMxLoT@diego>
+References: <20240912133204.29089-2-ziyao@disroot.org> <5815159.DvuYhMxLoT@diego>
+Subject: Re: [PATCH] clk: rockchip: fix finding of maximum clock ID
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Max Filippov <jcmvbkbc@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Date: Wed, 09 Oct 2024 16:01:45 -0700
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Yao Zi <ziyao@disroot.org>
+To: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>, Sebastian Reichel <sebastian.reichel@collabora.com>, Yao Zi <ziyao@disroot.org>
+Date: Wed, 09 Oct 2024 16:02:30 -0700
 User-Agent: alot/0.10
 
-Quoting Uwe Kleine-K=C3=B6nig (2024-09-18 05:31:51)
-> These drivers don't use the driver_data member of struct i2c_device_id,
-> so don't explicitly initialize this member.
+Quoting Heiko St=C3=BCbner (2024-09-14 02:57:35)
+> Am Donnerstag, 12. September 2024, 15:32:05 CEST schrieb Yao Zi:
+> > If an ID of a branch's child is greater than current maximum, we should
+> > set new maximum to the child's ID, instead of its parent's.
+> >=20
+> > Fixes: 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
 >=20
-> This prepares putting driver_data in an anonymous union which requires
-> either no initialization or named designators. But it's also a nice
-> cleanup on its own.
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 >=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
+> @Stephen: can you put that on top of the other Rockchip changes for 6.12
+> please?
+>=20
 
-Applied to clk-next
+Sorry I missed this one. I'll put it on clk-fixes.
 
