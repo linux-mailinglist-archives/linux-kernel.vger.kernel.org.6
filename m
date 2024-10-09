@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-357928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B4B9977EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:51:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94199977EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF0C282EA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC211F25282
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233861E3DDE;
-	Wed,  9 Oct 2024 21:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C101E47B3;
+	Wed,  9 Oct 2024 21:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apiDZ00b"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJF1U9WD"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331901E32B6;
-	Wed,  9 Oct 2024 21:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AB01E3DC0;
+	Wed,  9 Oct 2024 21:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510673; cv=none; b=lzmipT9qEws11S2NY9kHi4tlK+Zmjz32viaj+pNUNrFYbHPFp5L7284C+nVHiXSGlK7Zyc4ecMqYydo+vBakoZscTwIXcVgelF3JQgfZrkDjG6rmH2w7/81lcXgjQ3vgyfbyuk/hMMhCtPmbp72ETvTgEpS4penTatUFweAVMOU=
+	t=1728510675; cv=none; b=ftmj1qJAI4CyVy5shYLEdoVQTKhZ4FCV+q3EU6gRN8odlTcsWy97feVT6r3zRkristgJceG218TdPGHrdOfxUuSj/ZE+5sUyLBHqnsV0s2F9H/BTbLyi6QDw7qTA2PDDYWkVE8cOgQ7Gr4xeJNtaC1RI5B82Ww3c4EwEyPDRM+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510673; c=relaxed/simple;
-	bh=ONBNSlAlXIlnWIDU8T+Xm05D9sszY9YcES1lOpBMQWg=;
+	s=arc-20240116; t=1728510675; c=relaxed/simple;
+	bh=rriGjK0Qsui0z8FOUhESLDFrd94RUi02X72fhkyWP8Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SN2LcD6UYmmG701MUUO4hKUemTW9uSxuTwngiiAamyr4DgKGezNHkFU9Oa4YBY9BneygA3TKwhB8tFsco5kE68qJmnscov1pWiqNrFjA7Zj9DHCZyXbxhjdLarP30OgrYnzIhP/p6fNWr135Gi7/yVpeEAIY/dlirs1aPhFNPPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apiDZ00b; arc=none smtp.client-ip=209.85.215.178
+	 MIME-Version; b=oMwWIXCXiUzqoc9n3XGZK4Odv+S9DUmwg9gEPXZVna4FZF+Juoe83BxF5hTARMBRyWLswQravG0V7QPXH8czDPZYA+Dc2PitIQX2XqCZfCLiZWCQ0tmHqF9PzkCLN2vC6/pG8YqPAIKjdbMSDFlagSoqKrW5xhD60ZS3h/PTeGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJF1U9WD; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db908c9c83so164087a12.2;
-        Wed, 09 Oct 2024 14:51:12 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7163489149eso194331a12.1;
+        Wed, 09 Oct 2024 14:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728510671; x=1729115471; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728510673; x=1729115473; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w/C0CgZTEJhSuNYzvbdQeNWumuAuuIpwzCV8FmhMBfQ=;
-        b=apiDZ00bitHwV9d2TwzHM1J3hqJxjPHLu4OV8pb0/56bXOyJyuxgMIgBUh08UOLxf5
-         llwUOdKcTX78glpq6+rUvdlumcuwRBYb0mhReOPnNsXH6TBPrVrMSYrsGyAbVZsz9+rn
-         +xB4my5MIb7lUWifEbSWPXV5ttf60AgfDqfqtw/u41mmQfg0Masi+zxox4YWZvCc3AGH
-         kdoEb137DkjYkJIDSva4HtqKsNTA6FCrH0bJV4d/CQbBpix2xiEApcO9oc+0V386lcDH
-         EgzfbKmoMCro2+Yt6XNkwGGivh3h6uPu13WqkcHPVuKg5Fhp5+bDggdZ+sVVYA9a1rJV
-         Wmcg==
+        bh=sol3W8UFrRCovXlLUgHlM7OspHqVODPsgRHoBONpm0U=;
+        b=FJF1U9WDifsBFMcPHV45Wx2yroXGlx9I/GUrRx4okCxCLCKpexw88q9Z+tNNjflizi
+         yVzqy5B6br+kHfTWhYG+z2Lvic3LDDchWfl24PhXVWPDmrPi4AIpEGpzOi3u2blv1uYE
+         h3s7dXxM+KrwuPBtD1HX948qIgI9QJNn5TXewdutKf+1YltR7klt0togmFdvrlQQ8iUf
+         p+G8+dkvBWi5t4JojsV8CJIcXX6/eXyLli2SL2YZ2l4Y0G6UKslm71248GKoHdq/QvLZ
+         jpOaTKNyK0qujerFNi5IkKs0ELBJs56/TGMMA+iWmnvJAfEe2ArPG9Te6AcRfnaSx51N
+         uIBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510671; x=1729115471;
+        d=1e100.net; s=20230601; t=1728510673; x=1729115473;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w/C0CgZTEJhSuNYzvbdQeNWumuAuuIpwzCV8FmhMBfQ=;
-        b=W/Prmm8ejRnVaOZUwmST6CdNJOCU0/jMhExq1anr5rhDsgZaXOeRTRJwDU2kg8XKqh
-         UWHweaGf9j0b4OiYJK5nXwjWPwk56afGSIuoJKqsk60WU0OsxRS74Bw7itleOBjlKm6z
-         PYdxkJy64ob+dpJC1O/TXvcPA4PSQkWuvYv5dfOsKytpcg/Wq3pPI/wa7TCvv+sSXzlV
-         zIk9CU+5N6GHUGQV+0BHHAKYFll2MeSCu2WIHb+V/83biRos/GAQRfMXe4O9mMp6evZL
-         VS88kzMONOhiAXd9NwL8MrOtYnXMfZIOL3zdQO827I7s8mPnQquefzmBa3VTHa8wu/6F
-         5QDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaER0SHcCVxkYKMT9OJ9bNegKveqdY1mA89yBB/zZ3kNz9DY5R3tonwngINcuIDQUwJis5xtbsktuwc75Q@vger.kernel.org, AJvYcCXvH8ethLZQyNY1N8VIiIZiLBMVI5ds9etVEkllkeUzx70T5lYp28vg5+zK0Pt7OfI8uT9JCIoDQ5Dv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZHEh2pyQbPMTAfud6gVmvsLyK8C8taproALvLzCsWijBj0Au2
-	eRXf2u9s1mJpf61ZmMz1lSiCr8Z00wm5nRDb0qQLlRdPLRXY3suK
-X-Google-Smtp-Source: AGHT+IGtMH2k2lnk7wn24iMUNlbma/K9cYS39ZHsGCNlcQSd2U8eAqCmfGJhbRyIjqI6KfMytGDfQw==
-X-Received: by 2002:a05:6a21:6b0a:b0:1d8:ae90:c651 with SMTP id adf61e73a8af0-1d8ae90cc40mr1302204637.47.1728510671574;
-        Wed, 09 Oct 2024 14:51:11 -0700 (PDT)
+        bh=sol3W8UFrRCovXlLUgHlM7OspHqVODPsgRHoBONpm0U=;
+        b=nvG1SuQ9BpolSbobJHmA+Vi6ltQD+RWomqXs4Nlhg/BP973weJMP7DNvmGxAFJVoi5
+         Df4eTNqOoUkHcGCAhLFcF67K5bc+m2l1gyoYftP5gW+L0Xxs49b921B3CSYECLqmABI2
+         btdxYxONzSMKCGIoOOpZ8J0Bwic3JPUGvoO9PI/rAhKh1xhS+KzeK32IZGKB74vnxO39
+         emJ/dOXpFivwx7xUpMcd/kh3vE/tkeDZWlYSAUuTdD/0NztS5yJps7LUsc6dxRAn/yMO
+         BUd5b+/7LvSadN/9Jwu83r1gy0/igmvjVGBO629sNrit2f1nBZ6ckctLThl1UIrEZw8v
+         +tlg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+CMYbd9ZkajB34BNSvmpvwDtugVy6f2/D1yHEBxXXsygHye0yVRrRmWK5pe18BR5XFOxwGA+L8JPdQob@vger.kernel.org, AJvYcCVDOMMglurXtQ+/nkOldHAPPWyJm5ZFg+vy+62UsDtMjWhna/DOzdkQstFP0zHflcA7/vXVS6V4PMI4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg/z4Muk+T6TlAadScXK9XUsrmYY32EVs+6/xSxJxGx0XRyUYe
+	kCOwzfSjqxgSt4xEluomo9AJ5avcyiNz9W7LVgLMs9srCDKUt4oi
+X-Google-Smtp-Source: AGHT+IFCMFQjQCs5Mduv7g2DFaLrTlXLCKgUXJHSGmeSMjL4kNtOPHyYzgo94KQARP/OLNeiSkbv8w==
+X-Received: by 2002:a05:6a21:a4c1:b0:1d2:ea38:39bc with SMTP id adf61e73a8af0-1d8a3bffb85mr7834663637.11.1728510672732;
+        Wed, 09 Oct 2024 14:51:12 -0700 (PDT)
 Received: from luna.turtle.lan ([2601:1c2:c184:dc00::315])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833a95sm7651847a12.52.2024.10.09.14.51.10
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833a95sm7651847a12.52.2024.10.09.14.51.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:51:10 -0700 (PDT)
+        Wed, 09 Oct 2024 14:51:12 -0700 (PDT)
 From: Sam Edwards <cfsworks@gmail.com>
 X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -81,9 +81,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH 2/3] arm64: dts: broadcom: bcmbca: bcm4908: Fix Asus GT-AC5300's cferom partition
-Date: Wed,  9 Oct 2024 14:50:45 -0700
-Message-ID: <20241009215046.1449389-3-CFSworks@gmail.com>
+Subject: [PATCH 3/3] arm64: dts: broadcom: bcmbca: bcm4908: Fix Netgear R8000P partitioning
+Date: Wed,  9 Oct 2024 14:50:46 -0700
+Message-ID: <20241009215046.1449389-4-CFSworks@gmail.com>
 X-Mailer: git-send-email 2.44.2
 In-Reply-To: <20241009215046.1449389-1-CFSworks@gmail.com>
 References: <20241009215046.1449389-1-CFSworks@gmail.com>
@@ -95,43 +95,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since the previous patch relaxed the BCM4908 partition DT rules, it is
-now possible to have `nvmem-cells` directly under a BCM4908-partitioned
-MTD. Make use of this in order to refer to the nvmem MAC address the
-"correct" way, and pass the DTB check, for Asus GT-AC5300.
+As we have just modified the DT schema for BCM4908 partitioning in order
+to accommodate `nvmem-cells` partitions, the workaround of using
+`fixed-partitions` is no longer necessary to pass the DT check. Promote
+this partition table to full-blown BCM4908 active-partition detection
+and remove an inappropriate `ranges` property, thus fully complying with
+the schema.
 
 Signed-off-by: Sam Edwards <CFSworks@gmail.com>
 ---
- .../dts/broadcom/bcmbca/bcm4908-asus-gt-ac5300.dts   | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ .../arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908-asus-gt-ac5300.dts b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908-asus-gt-ac5300.dts
-index 2a0d4ee3bd79..e4687176cffb 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908-asus-gt-ac5300.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4908-asus-gt-ac5300.dts
-@@ -185,17 +185,15 @@ partitions {
+diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
+index 999d93730240..23adcfd52843 100644
+--- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
++++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
+@@ -139,7 +139,7 @@ &nandcs {
+ 	#size-cells = <0>;
+ 
+ 	partitions {
+-		compatible = "fixed-partitions";
++		compatible = "brcm,bcm4908-partitions";
+ 		#address-cells = <1>;
  		#size-cells = <1>;
  
- 		partition@0 {
-+			compatible = "nvmem-cells";
- 			label = "cferom";
- 			reg = <0x0 0x100000>;
+@@ -150,7 +150,6 @@ partition@0 {
  
--			nvmem-layout {
--				compatible = "fixed-layout";
--				#address-cells = <1>;
--				#size-cells = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			ranges = <0 0x0 0x100000>;
  
--				base_mac_addr: mac@106a0 {
--					reg = <0x106a0 0x6>;
--				};
-+			base_mac_addr: mac@106a0 {
-+				reg = <0x106a0 0x6>;
- 			};
+ 			base_mac_addr: mac@106a0 {
+ 				reg = <0x106a0 0x6>;
+@@ -159,7 +158,6 @@ base_mac_addr: mac@106a0 {
+ 
+ 		partition@100000 {
+ 			compatible = "brcm,bcm4908-firmware";
+-			label = "firmware";
+ 			reg = <0x100000 0x4400000>;
  		};
- 
+ 	};
 -- 
 2.44.2
 
