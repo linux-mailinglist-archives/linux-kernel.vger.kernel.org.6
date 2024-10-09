@@ -1,120 +1,161 @@
-Return-Path: <linux-kernel+bounces-356285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFAF995EFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:37:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841D2995F03
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39B03B23AC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6872874CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B777115FA7B;
-	Wed,  9 Oct 2024 05:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2127115FD01;
+	Wed,  9 Oct 2024 05:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PSmulrKz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="T6ODwcsS"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90FC42AAF;
-	Wed,  9 Oct 2024 05:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB41B1547DE;
+	Wed,  9 Oct 2024 05:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728452242; cv=none; b=mCj7n0B+gOBuPdHcZ8xK1CwssO5hg/8ZTOpwhjzm8eSatqmOe1dbMOg8vZ9lS7EQnowFViEpUacM3VtLc1KNbBvaqb+HKUVS8JANfKnOc7VFerAHErQNelVEo7FRvEGjCQhEBQD/ZsPuR90GcuwRgQCkqJDTvdQfZ4pEtqTXv+M=
+	t=1728452376; cv=none; b=ScVw6l8AtJdNEwRX+ZYHMD8B+lOplQ091BYSkZ9lTehTbr2x9zj5+d0CJ1Th/wkjFA3+vB3xdqgZqX06sFqSVKavUAixynxs4tGr2E1gB/nesugHgr7vC3rIBsjHMj4NbsMD7lILfCJ1yDystkuZq+iW/0hFseohg9Y1HEtaCdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728452242; c=relaxed/simple;
-	bh=fVO/BFZDXzjJ6ZI3+lHMKCMSrYr6wvKKzkyPRsJIDHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TyOA7U5Se3WmacBel11FbZsVny/fZCjsMGN7317s3BA4Z2jgb5Lmj+rsHZNilUOEzEX5cmlUwTn0WXMibl5ozXZ8jzXFHPXHmy7Ni+1wwslgJk8ItHyrGc5ROJJAIHpIfL58iNwN1k63bGvD5e9LWw3ABSQ0/RoaYHrQGkj08j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PSmulrKz; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728452241; x=1759988241;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fVO/BFZDXzjJ6ZI3+lHMKCMSrYr6wvKKzkyPRsJIDHc=;
-  b=PSmulrKzvQC2+GKWWLgyBSxuGmUXIrWnpJHjnNHO9DxdcbPprEVj3cIJ
-   tm4y3xY3ygdKV5RePZLSBkJ3F4KFmo3aNDrNVJcZ6H/rdIaCzodSeDaTg
-   Nxv+VswwtEuB8cLTWn6yyzTNfl78uFnhp2eP7hWxuH/aefNXBcdloKAK0
-   0yeg7mf11z1hjmWtQPKoEJniAq2XwlPF4+2QRhkj5AXNotg4lmM+82da+
-   Bmxt6s4jGcyI/gns79NitjWy9ZtICsFxGRLZF3ggERlSLg90y6QZa9HaM
-   ciw7sgZ8BDqrbtdj4n4MWYDktUfkmQL0I64vWqDeCQGAbmgfuKd0O+mDm
-   A==;
-X-CSE-ConnectionGUID: eOnjGW9gSjmvTBs5HwZ7LA==
-X-CSE-MsgGUID: 2vSyGQgVQ2m5uUPdrrXnPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27857070"
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="27857070"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 22:37:20 -0700
-X-CSE-ConnectionGUID: AsxG5UkVRwy0V3IEQ9pSEA==
-X-CSE-MsgGUID: /2T/s/5gQza1V9hYFf21Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
-   d="scan'208";a="80964297"
-Received: from unknown (HELO [10.238.9.213]) ([10.238.9.213])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2024 22:37:18 -0700
-Message-ID: <9626cbef-03c9-4b83-889c-6a5de4e95791@linux.intel.com>
-Date: Wed, 9 Oct 2024 13:37:15 +0800
+	s=arc-20240116; t=1728452376; c=relaxed/simple;
+	bh=+CLsbmfZs/12mfP7CeP+jAK+LtDxN/YXFdeTn8cwWi4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PxaDAagY02+4k1k4+N8qXPJsgC+iMjEBLSfN9rgh7xW2pgkOoscLIITEgpife+922IeoAQfnABCbir8Tq9QPqNTewKBNqNXBdPnU9TpfSfC8t3Up+tT/jpfdIC4HxvyXCpQij7n3EtfcYgPmt1PM09T56XGNT8cZtpFT6gZxtxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=T6ODwcsS; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d544b1a8860011ef88ecadb115cee93b-20241009
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=I3QlM+wHwYxdZQsYINnxa9RWbc46mBL74mYp99QPueo=;
+	b=T6ODwcsSUZKhBSZE2QScEcqJAmAasR9rh1cZYk74EIJfVMK70TMceXkJURI/48+8LXk/n3N3e7hECuMfR7RjNE325x48yHeOfTJY++OSny8jRqpFT3PhSV7KsmlriZhiutTASf1Kotg29FUER3cDluWTj0jnbkZy+4tBJ7T/t9M=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:6a5e692d-b50a-4c3f-b2e6-11bc4d97459f,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6dc6a47,CLOUDID:28f3f864-444a-4b47-a99a-591ade3b04b2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: d544b1a8860011ef88ecadb115cee93b-20241009
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <ed.tsai@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 263593157; Wed, 09 Oct 2024 13:39:20 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 8 Oct 2024 22:39:19 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 9 Oct 2024 13:39:19 +0800
+From: <ed.tsai@mediatek.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, Peter Wang <peter.wang@mediatek.com>, Stanley
+ Jhu <chu.stanley@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <wsd_upstream@mediatek.com>, <chun-hung.wu@mediatek.com>, Ed Tsai
+	<ed.tsai@mediatek.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2] scsi: ufs: ufs-mediatek: configure individual LU queue flags
+Date: Wed, 9 Oct 2024 13:38:47 +0800
+Message-ID: <20241009053854.15353-1-ed.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] KVM: x86: Check hypercall's exit to userspace
- generically
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, seanjc@google.com,
- pbonzini@redhat.com
-Cc: isaku.yamahata@intel.com, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, yuan.yao@linux.intel.com, xiaoyao.li@intel.com
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20240826022255.361406-1-binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK: N
 
-Gentle ping...
+From: Ed Tsai <ed.tsai@mediatek.com>
 
+Previously, ufs vops config_scsi_dev was removed because there were no
+users. ufs-mediatek needs it to configure the queue flags for each LU
+individually. Therefore, bring it back and customize the queue flag as
+we required.
 
-On 8/26/2024 10:22 AM, Binbin Wu wrote:
-> Currently in kvm_emulate_hypercall, KVM_HC_MAP_GPA_RANGE is checked
-> specifically to decide whether a KVM hypercall needs to exit to userspace
-> or not.  Do the check based on the hypercall_exit_enabled field of
-> struct kvm_arch.
->
-> Also use the API user_exit_on_hypercall() to replace the opencode.
->
-> ---
-> v3:
-> - Rename is_kvm_hc_exit_enabled() to user_exit_on_hypercall(). (Sean)
-> - Remove the WARN_ON_ONCE(). (Isaku, Sean)
-> - Use BIT(hc_nr) instead of (1 << nr) (Yuan)
-> - Added a comment to explain why check the !ret first. (Kai)
-> - Add Kai and Isaku's Reviewed-by.
->
-> v2:
-> - Check the return value of __kvm_emulate_hypercall() before checking
->    hypercall_exit_enabled to avoid an invalid KVM hypercall nr.
->    https://lore.kernel.org/kvm/184d90a8-14a0-494a-9112-365417245911@linux.intel.com/
-> - Add a warning if a hypercall nr out of the range of hypercall_exit_enabled
->    can express.
->
-> Binbin Wu (2):
->    KVM: x86: Check hypercall's exit to userspace generically
->    KVM: x86: Use user_exit_on_hypercall() instead of opencode
->
->   arch/x86/kvm/svm/sev.c | 4 ++--
->   arch/x86/kvm/x86.c     | 7 ++++---
->   arch/x86/kvm/x86.h     | 4 ++++
->   3 files changed, 10 insertions(+), 5 deletions(-)
->
->
-> base-commit: a1206bc992c3cd3f758a9b46117dfc7e59e8c10f
+In addition, because the SCSI probe_type = PROBE_PREFFER_ASYNCHRONOUS,
+sd_probe() is completed by another thread, causing the sd index to be
+obtained asynchronously. Directly setting the queue through sysfs is
+cumbersome. We do not need to change the queue settings at runtime, so
+a simpler and more intuitive approach is to set its flag once the SCSI
+device is confirmed to be ready.
+
+Signed-off-by: Ed Tsai <ed.tsai@mediatek.com>
+---
+ drivers/ufs/core/ufshcd.c       |  3 +++
+ drivers/ufs/host/ufs-mediatek.c | 10 ++++++++++
+ include/ufs/ufshcd.h            |  1 +
+ 3 files changed, 14 insertions(+)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 7cab103112e1..be50b86269bf 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -5253,6 +5253,9 @@ static int ufshcd_device_configure(struct scsi_device *sdev,
+ 	 */
+ 	sdev->silence_suspend = 1;
+ 
++	if (hba->vops && hba->vops->config_scsi_dev)
++		hba->vops->config_scsi_dev(sdev);
++
+ 	ufshcd_crypto_register(hba, q);
+ 
+ 	return 0;
+diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
+index 9a5919434c4e..0b57623edca5 100644
+--- a/drivers/ufs/host/ufs-mediatek.c
++++ b/drivers/ufs/host/ufs-mediatek.c
+@@ -1780,6 +1780,15 @@ static int ufs_mtk_config_esi(struct ufs_hba *hba)
+ 	return ufs_mtk_config_mcq(hba, true);
+ }
+ 
++static void ufs_mtk_config_scsi_dev(struct scsi_device *sdev)
++{
++	struct ufs_hba *hba = shost_priv(sdev->host);
++
++	dev_dbg(hba->dev, "lu %llu scsi device configured", sdev->lun);
++	if (sdev->lun == 2)
++		blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, sdev->request_queue);
++}
++
+ /*
+  * struct ufs_hba_mtk_vops - UFS MTK specific variant operations
+  *
+@@ -1809,6 +1818,7 @@ static const struct ufs_hba_variant_ops ufs_hba_mtk_vops = {
+ 	.op_runtime_config   = ufs_mtk_op_runtime_config,
+ 	.mcq_config_resource = ufs_mtk_mcq_config_resource,
+ 	.config_esi          = ufs_mtk_config_esi,
++	.config_scsi_dev     = ufs_mtk_config_scsi_dev,
+ };
+ 
+ /**
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index a95282b9f743..800d79dc91fc 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -383,6 +383,7 @@ struct ufs_hba_variant_ops {
+ 	int	(*get_outstanding_cqs)(struct ufs_hba *hba,
+ 				       unsigned long *ocqs);
+ 	int	(*config_esi)(struct ufs_hba *hba);
++	void	(*config_scsi_dev)(struct scsi_device *sdev);
+ };
+ 
+ /* clock gating state  */
+-- 
+2.45.2
 
 
