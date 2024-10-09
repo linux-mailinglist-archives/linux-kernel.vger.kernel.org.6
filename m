@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-356750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC588996625
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497F2996629
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:56:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77003289D64
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55491F270EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98A818FDD0;
-	Wed,  9 Oct 2024 09:54:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC6D18FC93;
-	Wed,  9 Oct 2024 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9A8190045;
+	Wed,  9 Oct 2024 09:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="RhIZ9UYB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OOivAaDK"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F4F18C329
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 09:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467668; cv=none; b=MozJbKU3/Wa+mFOZfFfUPvCRtBcaWhY6Hp+51BHqcpWU9g+DSwxDlRxv/clqk/jUnIONiQanQKPVDrIt+AsCJjDL/YpwrPokzvPURedFVQhF0aQCU9VmPnLkfdPpZBgQwPpokVaqWdSeTUFEwLfb9YsL71ReDA3Yfm29ip/qxm0=
+	t=1728467696; cv=none; b=NMJK7z+qzkYqNidHeQ880NGUz0a4vkqsrsIKY62WHuH+5lGZ8YeekUj5ovGut0iZB3vxjSdUdf/UA4UGrE0C6K0fO3jfc7y1quyvlFMTAHcl0Onbunutc+EVxUY0+cntPAzXt+o3D3H6eCpFQvykLXYCUUSgjmF/l+toClei/Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467668; c=relaxed/simple;
-	bh=VBotJtPDGGEmR2CyFHFYZxMHWD41xoURujuuBIez2GI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oz0VsCvRq71W5DCEr98oF6wnjeNl84a2ng9XN5YonnIlRfwfDC9KKVFAsdkwlHwh3FTnrLGapQHUaP8Ji7gDe2Gab5LwFBJSFfd6IaAwSi68JpWseJh78FKXQ+zu+nSYaAkxxiblpNEQd6ox7tt4sPVmcnZNJ7ArH5hnbSzusxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83E14FEC;
-	Wed,  9 Oct 2024 02:54:55 -0700 (PDT)
-Received: from [10.1.30.40] (e127648.arm.com [10.1.30.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A79E3F64C;
-	Wed,  9 Oct 2024 02:54:21 -0700 (PDT)
-Message-ID: <c53236ad-b94e-4508-8f3a-7229e32f62bc@arm.com>
-Date: Wed, 9 Oct 2024 10:54:18 +0100
+	s=arc-20240116; t=1728467696; c=relaxed/simple;
+	bh=eKsgermwDrQGhVumFgyUIe7QcPRxeN37V7XvT71396g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFceoPoCD5JLskKHcoXyxZjLi8zmc7FA4rWj3+jxdZahZu1r9eg0tTWnC33nxguw7doi1dlGshOM2g88qAuD8lzPdg3J5hiarDAFrDEnaWJaQ9LWLEdV/tuVSFstqdxlOT7QHsfMQuVKyB9TwgjqkdGF83GsneTZWb+QY97BvXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=RhIZ9UYB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OOivAaDK; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id E853F138027C;
+	Wed,  9 Oct 2024 05:54:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 09 Oct 2024 05:54:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1728467692; x=
+	1728554092; bh=/zLzRuSs1YnET6OT3LUnDQJVQHIXJWvli8llGfyJ3fg=; b=R
+	hIZ9UYBW4hOE0sycWqzG7xLjwCOINNXT4nv96wgjxXXMc1JnrRi0P29DTV2DO6Rf
+	Cuw6eQ95XotIj7VXpG9h9rVLiuNNVtqecks4YmsO6fXNTKf7GX+0rjgEx2ICgj+G
+	FRoBoIHkNi+zcF/UhfI0xZK8rpXhGvcf4tmQVNDBgmtZzSaoCQicIfqLx+VIgyXU
+	rfJytDsigeiGLhmyZCUU+pjKH7q7aD9by4WtoK5WcVOETS+HXt0pKy1P0lR43IlM
+	JMFjcdiypi75931LnXzSkQYJOrz0WcgQbNgTsYicPplH6fiZZjmuAskeya6O4wZ8
+	PQz95arBr+JhcANaPkv0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728467692; x=1728554092; bh=/zLzRuSs1YnET6OT3LUnDQJVQHIX
+	JWvli8llGfyJ3fg=; b=OOivAaDKf2L3Zqo72PDwiUf2/lM8kWrR/4bSSsPemyzi
+	T+z1ZktZjtaS4YAGHIFQONFY4guLm6PFp8x8xB6SUnW/VMyUuBgkqUfAqOUCxmD2
+	VUaG+aUW8kVtaKsHB3VS88w6vErVr3UDHKDPz4OMdoydyBp5daKZeqTqFIM+m452
+	yaB71s4qw3WLSluYW46Ci98Rss59IczQu1sEStEMk+0cptFoO31j6LV/YvlsG7wU
+	avgoP9gGA6U/rjdEXpKicNd42EKMAL9U7C2ZerV+h0Qsiw5ScNzP+Kwz/uumOiFJ
+	rwuKV5aarkFOcakzuu74WLmRqNJbOTPkcD0A8izfDA==
+X-ME-Sender: <xms:61IGZ_inVgeiQruKxxytE_dCImlx1fRZE0DBZtTF9GA65GxJfR-eLA>
+    <xme:61IGZ8BwZCunBien5U0XxFi4n-lszDPs1v-JMWXIYIlwjROCqzFGPDhCItGuP6DCk
+    AkwLZGhNXA2WjxNVMc>
+X-ME-Received: <xmr:61IGZ_HZcB96aEMWCX3h9bj5A07KGn52KxG4S2AD2JQ3s7bgcBlxvfzbLWugUnlkHjccNA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopeiiihihsehnvhhiughirgdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmhes
+    khhvrggtkhdrohhrghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorh
+    hgpdhrtghpthhtoheprhihrghnrdhrohgsvghrthhssegrrhhmrdgtohhmpdhrtghpthht
+    ohephhhughhhugesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhirhhilhhlrdhshh
+    huthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopegurghvihgu
+    sehrvgguhhgrthdrtghomhdprhgtphhtthhopeihrghnghesohhsrdgrmhhpvghrvggtoh
+    hmphhuthhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhmihgrohhhvgeshhhurgifvghi
+    rdgtohhm
+X-ME-Proxy: <xmx:7FIGZ8S96vM6lBXeBXJcQ7Ww5Khm3v3-QvwEbgEYYjZG2kMdWRaVWw>
+    <xmx:7FIGZ8yoZObn4CZSdmgxj2lFMSspVrwvzr4_ofh3F7MWq2UN0C83Dw>
+    <xmx:7FIGZy7DeY39BWwXKOOc0mE4EaxLYYBwXOHJNU_cqN6HNRG_iJOj7Q>
+    <xmx:7FIGZxwAOedPYZXtZgZ8d82MrTp1KiWy3oqvi66K3JrTMG4Lth1OVA>
+    <xmx:7FIGZ4gerf5ULefTfz5B1vvk6wFBZOdAT1_Sjobmh7wX8diTSXRp0fey>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Oct 2024 05:54:47 -0400 (EDT)
+Date: Wed, 9 Oct 2024 12:54:42 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, David Hildenbrand <david@redhat.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/1] Buddy allocator like folio split
+Message-ID: <omwjkm2iealxsdxtaxkxjpet2zqz22x7ryvbzmhaxf5gp5k4se@7p5a5vznnsnq>
+References: <20241008223748.555845-1-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/8] cpufreq/schedutil: Remove iowait boost
-To: Andres Freund <andres@anarazel.de>
-Cc: Quentin Perret <qperret@google.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
- dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
- Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
- bvanassche@acm.org, asml.silence@gmail.com, linux-block@vger.kernel.org,
- io-uring@vger.kernel.org, qyousef@layalina.io, dsmythies@telus.net,
- axboe@kernel.dk
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-6-christian.loehle@arm.com>
- <CAJZ5v0hJWwsErT193i394bHOczvCQwU_5AVVTJ1oKDe7kTW82g@mail.gmail.com>
- <Zv5oTvxPsiTWCJIo@google.com> <6e21e8f1-e3b4-4915-87cc-6ce77f54cc8a@arm.com>
- <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <io3xcj5vpqbkojoktbp3fuuj77gqqkf2v3gg62i4aep4ps36dc@we2zwwp5hsyt>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008223748.555845-1-ziy@nvidia.com>
 
-On 10/5/24 01:39, Andres Freund wrote:
-> Hi,
-> 
-> 
-> A caveat: I'm a userspace developer that occasionally strays into kernel land
-> (see e.g. the io_uring iowait thing). So I'm likely to get some kernel side
-> things wrong.
+On Tue, Oct 08, 2024 at 06:37:47PM -0400, Zi Yan wrote:
+>  mm/huge_memory.c | 648 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 647 insertions(+), 1 deletion(-)
 
-Thank you for your input!
+The idea is sane, but I think it would require a lot more ground work
+before getting it upstream. I don't think we can afford two parallel split
+implementations. folio_split() and split_huge_page*() should share the same
+implementation internally. Otherwise it is going to be pain to maintain
+them in-sync.
 
-> 
-> On 2024-10-03 11:30:52 +0100, Christian Loehle wrote:
->> These are the main issues with transforming the existing mechanism into
->> a per-task attribute.
->> Almost unsolvable is: Does reducing "iowait pressure" (be it per-task or per-rq)
->> actually improve throughput even (assuming for now that this throughput is
->> something we care about, I'm sure you know that isn't always the case, e.g.
->> background tasks). With MCQ devices and some reasonable IO workload that is
->> IO-bound our iowait boosting is often just boosting CPU frequency (which uses
->> power obviously) to queue in yet another request for a device which has essentially
->> endless pending requests. If pending request N+1 arrives x usecs earlier or
->> later at the device then makes no difference in IO throughput.
-> 
-> That's sometimes true, but definitely not all the time? There are plenty
-> workloads with low-queue-depth style IO. Which often are also rather latency
-> sensitive.
-> 
-> E.g. the device a database journal resides on will typically have a low queue
-> depth. It's extremely common in OLTPish workloads to be bound by the latency
-> of journal flushes. If, after the journal flush completes, the CPU is clocked
-> low and takes a while to wake up, you'll see substantially worse performance.
-
-Yeah absolutely and if we knew what a latency-sensitive journal flush is tuning
-cpuidle and cpufreq to it would probably be reasonable.
-I did test mmtests filebench-oltp that looked fine, do you have any other
-benchmarks you would like to see?
-
->> If boosting would improve e.g. IOPS (of that device) is something the block layer
->> (with a lot of added infrastructure, but at least in theory it would know what
->> device we're iowaiting on, unlike the scheduler) could tell us about. If that is
->> actually useful for user experience (i.e. worth the power) only userspace can decide
->> (and then we're back at uclamp_min anyway).
-> 
-> I think there are many cases where userspace won't realistically be able to do
-> anything about that.
-> 
-> For one, just because, for some workload, a too deep idle state is bad during
-> IO, doesn't mean userspace won't ever want to clock down. And it's probably
-> going to be too expensive to change any attributes around idle states for
-> individual IOs.
-
-So the kernel currently applies these to all of them essentially.
-
-> 
-> Are there actually any non-privileged APIs around this that userspace *could*
-> even change? I'd not consider moving to busy-polling based APIs a realistic
-> alternative.
-
-No and I'm not sure an actual non-privileged API would be a good idea, would
-it? It is essentially changing hardware behavior.
-So does busy-polling of course, but the kernel can at least curb that and
-maintain fairness and so forth.
-
-> 
-> For many workloads cpuidle is way too aggressive dropping into lower states
-> *despite* iowait. But just disabling all lower idle states obviously has
-> undesirable energy usage implications. It surely is the answer for some
-> workloads, but I don't think it'd be good to promote it as the sole solution.
-
-Right, but we (cpuidle) don't know how to distinguish the two, we just do it
-for all of them. Whether kernel or userspace applies the same (awful) heuristic
-doesn't make that much of a difference in practice.
-
-> 
-> It's easy to under-estimate the real-world impact of a change like this. When
-> benchmarking we tend to see what kind of throughput we can get, by having N
-> clients hammering the server as fast as they can. But in the real world that's
-> pretty rare for anything latency sensitive to go full blast - rather there's a
-> rate of requests incoming and that the clients are sensitive to requests being
-> processed more slowly.
-
-Agreed, this series is posted as RFT and I'm happy to take a look at any
-regressions for both the cpufreq and cpuidle parts of it.
-
-> 
-> 
-> That's not to say that the current situation can't be improved - I've seen way
-> too many workloads where the only ways to get decent performance were one of:
-> 
-> - disable most idle states (via sysfs or /dev/cpu_dma_latency)
-> - just have busy loops when idling - doesn't work when doing synchronous
->   syscalls that block though
-> - have some lower priority tasks scheduled that just burns CPU
-> 
-> I'm just worried that removing iowait will make this worse.
-
-I just need to mention again that almost all of what you replied does refer to
-cpuidle, not cpufreq (which this particular patch was about), not to create more
-confusion.
-
-Regards,
-Christian
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
