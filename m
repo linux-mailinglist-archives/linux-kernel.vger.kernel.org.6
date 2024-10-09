@@ -1,111 +1,99 @@
-Return-Path: <linux-kernel+bounces-356585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478D09963B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AE19963BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3CE1B28495
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000F51C208E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 08:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91C018E75F;
-	Wed,  9 Oct 2024 08:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6975818A93A;
+	Wed,  9 Oct 2024 08:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed50BljF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULCsfG5p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBCA18E05C;
-	Wed,  9 Oct 2024 08:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EB61898FC;
+	Wed,  9 Oct 2024 08:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728463567; cv=none; b=dcxPEVnYgEbHSvM7ihWdFoYGyiJDOerpcZuOjUwJ/JsLGFZ77lCpNRFaR5HqOv3jIwIR0SrkSWEsAfW6FnlPntuUFOqxhN2l4oN4R40HhJyocRzkVV2vc8JjcP17KABVAtKtqnfVN7Qejv8YKeqjqYEDn5Gcpu2x/X5QKohiWNE=
+	t=1728463663; cv=none; b=RgbqGZeIIC0CxBrEPIGzGvzLZ1YhEo4hRnPqsCyvDsIMe/MO195XLcplLSnBBfakF5ph+7zde7l66LojrtYCEgv+H//9Xq2ysoXVtobSoMtB7ZvY30sFNtb5fK1sMEdVB/wxVFzP2uzqJa1oYtHvhTJF+rCi4SClxa/MC5Dqm0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728463567; c=relaxed/simple;
-	bh=ZijqrjhFN0LXySL/+druOJOfsofJU7TTWVUT/y1qpaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QQE6RHzNORAHG8WKzg1owjIhK2q3oLt41HLmVmW6fxow9hF7DN7YdBOZQQPD+CFQHv8iK1b1N6/Lxe/2y3geQNH7ICGL3JW0WSmJDk74Pz8P56ukY6DY2LOSL98KUWlcHG5bxUx24ysszqkdJRgKVufrBjZzIxlOkhCMp14qubI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed50BljF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B43AC4CECE;
-	Wed,  9 Oct 2024 08:46:04 +0000 (UTC)
+	s=arc-20240116; t=1728463663; c=relaxed/simple;
+	bh=31+/Gr5Hh872ec0kd5KrNPTPKQ7X2rRUENhvrK5beSU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aUtp32s9IwqlMdR3+p7329Zu6oTmv1E6c754HWZTVLn4YXhARovB5fNZSv+ygCaAM2U0r1jSoI5G3ywfaPrh8qCAK/tS3TLT0AsJCmgIce/x4u7yNaTDnN5tYN3h9uCG0V/9PSJehJNKQV4bCBqx1cUmmsWmcsX9+1h97k9J7Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULCsfG5p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF936C4CEC5;
+	Wed,  9 Oct 2024 08:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728463566;
-	bh=ZijqrjhFN0LXySL/+druOJOfsofJU7TTWVUT/y1qpaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ed50BljFsmlPMx68ZWCA50+MRtbDFg4ESjeTWO09nbtIyO6CfPt7ZL4pxGIsOwHmb
-	 jJIasY9inuhqKzQJBL7Up/Hu6DnaxJR7AIddT/aaj2/RoL50OECv9Kpr/2xlBB7tpN
-	 z7MIicWQptlqWXdSIKaC+/zJwP1xNv9JhA9JIquItDQ4MzQJfakfvZvyYI4jR7i+j4
-	 KgtrZcSxjOsLSt7NL63Pdm2cWM8HZYaQLL1ysqLG7RVnKZtbPmC4RfTr0CcTPjpBgp
-	 Ha5xZmfXhTXXA2J1ZX93rKmHb18ecP4kkDiP6c2zzrHNLY96hHqDto6MSbQ47PIjFX
-	 IMOxvIiXvvz9Q==
-Date: Wed, 9 Oct 2024 10:46:01 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: [PATCH] fs/bcachefs: Fix __wait_on_freeing_inode() definition of
- waitqueue entry
-Message-ID: <ZwZCyTx_HbPWZ8zJ@gmail.com>
-References: <>
- <ZwY6gWsZCq_SdDKI@gmail.com>
- <172846224138.444407.2293511819402322368@noble.neil.brown.name>
+	s=k20201202; t=1728463663;
+	bh=31+/Gr5Hh872ec0kd5KrNPTPKQ7X2rRUENhvrK5beSU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ULCsfG5pmD+57N1jwdOhX/wAYT2OaINiooDlkzykm76qEWFfE6rXFHNtYTE/40Mjn
+	 Ssr6RhptNv3yS+3OHwWvE8EY6lkzCrEyBQ+n89fOcQi6MTuu+YUyR8UN9w5mD780TE
+	 BHG3dL+NDSx6+TS56V36+1GPOj15gxDkARC0mCx7McAoD3kBt4WOTrIvrB3ptDSbHj
+	 ZoaviXhwRjihNksZfsi7DChyNnbaPed+Fav949zQlMyiDD2LQH95MzJ0sHyBcCLiOe
+	 8rd5/kGesIqCWlk4GtDenU+lnOsAXRo34y6PrDNc6FydYHs7cp+NmIBSxzJwg0lwXH
+	 kr83PJ4MbE5Zg==
+From: Simon Horman <horms@kernel.org>
+Subject: [PATCH net v2 0/2] MAINTAINERS: Networking file coverage updates
+Date: Wed, 09 Oct 2024 09:47:21 +0100
+Message-Id: <20241009-maint-net-hdrs-v2-0-f2c86e7309c8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172846224138.444407.2293511819402322368@noble.neil.brown.name>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABlDBmcC/3WNTQ6CMBCFr0Jm7ZgWqAFX3sOwqO0AE7WQaUM0p
+ He3Ye/y/X1vh0jCFOFa7SC0ceQlFFGfKnCzDRMh+6KhVnWrlWrxbTkkDJRw9hJx7EznH5eemr6
+ BMlqFRv4cwDuUFgzFnDmmRb7HyaaP6B9v06iw1aM3xljrnLk9SQK9zotMMOScf5uGkg+yAAAA
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ netdev@vger.kernel.org, Willem de Bruijn <willemb@google.com>
+X-Mailer: b4 0.14.0
 
+Hi,
 
-* NeilBrown <neilb@suse.de> wrote:
+The aim of this proposal is to make the handling of some files,
+related to Networking and Wireless, more consistently. It does so by:
 
-> On Wed, 09 Oct 2024, Ingo Molnar wrote:
-> > * NeilBrown <neilb@suse.de> wrote:
-> > 
-> > > On Wed, 09 Oct 2024, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> > > > failed like this:
-> > > > 
-> > > > In file included from include/linux/fs.h:6,
-> > > >                  from include/linux/highmem.h:5,
-> > > >                  from include/linux/bvec.h:10,
-> > > >                  from include/linux/blk_types.h:10,
-> > > >                  from include/linux/bio.h:10,
-> > > >                  from fs/bcachefs/bcachefs.h:188,
-> > > >                  from fs/bcachefs/fs.c:4:
-> > > > fs/bcachefs/fs.c: In function '__wait_on_freeing_inode':
-> > > > fs/bcachefs/fs.c:281:31: error: initialization of 'long unsigned int *' from incompatible pointer type 'u32 *' {aka 'unsigned int *'} [-Wincompatible-pointer-types]
-> > > >   281 |         DEFINE_WAIT_BIT(wait, &inode->v.i_state, __I_NEW);
-> > > 
-> > > The fix we want is to replace that line with
-> > >    struct wait_bit_queue_entry wait;
-> > > I should have checked more carefully - sorry.
-> > > 
-> > > I guess we wait for rc3?
-> > > 
-> > > Kent: could you please make that change?  The inode_bit_waitqueue() does
-> > > initialisation equivalent of DEFINE_WAIT_BIT() so you only need the declaration.
-> > 
-> > Since the breakage was introduced via tip:sched/core, I've applied the fix 
-> > below.
-> > 
-> > Does this look good to you?
-> 
-> Perfect, thanks.
+1. Adding some more headers to the UDP section, making it consistent
+   with the TCP section.
 
-You are welcome!
+2. Excluding some files relating to Wireless from NETWORKING [GENERAL],
+   making their handling consistent with other files related to
+   Wireless.
 
-	Ingo
+The aim of this is to make things more consistent.  And for MAINTAINERS
+to better reflect the situation on the ground.  I am more than happy to
+be told that the current state of affairs is fine. Or for other ideas to
+be discussed.
+
+---
+Changes in v2:
+- Dropped RFC designation
+- Added tags: Thanks Willem and Johannes!
+- Link to v1: https://lore.kernel.org/r/20241004-maint-net-hdrs-v1-0-41fd555aacc5@kernel.org
+
+---
+Simon Horman (2):
+      MAINTAINERS: consistently exclude wireless files from NETWORKING [GENERAL]
+      MAINTAINERS: Add headers and mailing list to UDP section
+
+ MAINTAINERS | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+base-commit: 08c8acc9d8f3f70d62dd928571368d5018206490
+
 
