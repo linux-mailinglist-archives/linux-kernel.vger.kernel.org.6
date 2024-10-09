@@ -1,142 +1,135 @@
-Return-Path: <linux-kernel+bounces-357929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94199977EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:52:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E26B9977F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC211F25282
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F3B1C226DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C101E47B3;
-	Wed,  9 Oct 2024 21:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFFA1E132D;
+	Wed,  9 Oct 2024 21:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJF1U9WD"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lR0rgfUS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AB01E3DC0;
-	Wed,  9 Oct 2024 21:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D82117A583
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510675; cv=none; b=ftmj1qJAI4CyVy5shYLEdoVQTKhZ4FCV+q3EU6gRN8odlTcsWy97feVT6r3zRkristgJceG218TdPGHrdOfxUuSj/ZE+5sUyLBHqnsV0s2F9H/BTbLyi6QDw7qTA2PDDYWkVE8cOgQ7Gr4xeJNtaC1RI5B82Ww3c4EwEyPDRM+U=
+	t=1728510868; cv=none; b=bkSOsBJj5wn14XWFwaX89muyI2R/xkqSpJM3qkMIfQhpwFpsIo3U0ePInZSEuyZF8wxqn4eOxwntp9ZXDLnmPuWBbB99t+v7R34SER82tGplRvJ9DngCqo2KaMzFhKFaHzjc6JvUFNOSZ0Ym3yyOUHa+898Gv0viiK+2OERwOrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510675; c=relaxed/simple;
-	bh=rriGjK0Qsui0z8FOUhESLDFrd94RUi02X72fhkyWP8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oMwWIXCXiUzqoc9n3XGZK4Odv+S9DUmwg9gEPXZVna4FZF+Juoe83BxF5hTARMBRyWLswQravG0V7QPXH8czDPZYA+Dc2PitIQX2XqCZfCLiZWCQ0tmHqF9PzkCLN2vC6/pG8YqPAIKjdbMSDFlagSoqKrW5xhD60ZS3h/PTeGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJF1U9WD; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7163489149eso194331a12.1;
-        Wed, 09 Oct 2024 14:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728510673; x=1729115473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sol3W8UFrRCovXlLUgHlM7OspHqVODPsgRHoBONpm0U=;
-        b=FJF1U9WDifsBFMcPHV45Wx2yroXGlx9I/GUrRx4okCxCLCKpexw88q9Z+tNNjflizi
-         yVzqy5B6br+kHfTWhYG+z2Lvic3LDDchWfl24PhXVWPDmrPi4AIpEGpzOi3u2blv1uYE
-         h3s7dXxM+KrwuPBtD1HX948qIgI9QJNn5TXewdutKf+1YltR7klt0togmFdvrlQQ8iUf
-         p+G8+dkvBWi5t4JojsV8CJIcXX6/eXyLli2SL2YZ2l4Y0G6UKslm71248GKoHdq/QvLZ
-         jpOaTKNyK0qujerFNi5IkKs0ELBJs56/TGMMA+iWmnvJAfEe2ArPG9Te6AcRfnaSx51N
-         uIBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510673; x=1729115473;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sol3W8UFrRCovXlLUgHlM7OspHqVODPsgRHoBONpm0U=;
-        b=nvG1SuQ9BpolSbobJHmA+Vi6ltQD+RWomqXs4Nlhg/BP973weJMP7DNvmGxAFJVoi5
-         Df4eTNqOoUkHcGCAhLFcF67K5bc+m2l1gyoYftP5gW+L0Xxs49b921B3CSYECLqmABI2
-         btdxYxONzSMKCGIoOOpZ8J0Bwic3JPUGvoO9PI/rAhKh1xhS+KzeK32IZGKB74vnxO39
-         emJ/dOXpFivwx7xUpMcd/kh3vE/tkeDZWlYSAUuTdD/0NztS5yJps7LUsc6dxRAn/yMO
-         BUd5b+/7LvSadN/9Jwu83r1gy0/igmvjVGBO629sNrit2f1nBZ6ckctLThl1UIrEZw8v
-         +tlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6+CMYbd9ZkajB34BNSvmpvwDtugVy6f2/D1yHEBxXXsygHye0yVRrRmWK5pe18BR5XFOxwGA+L8JPdQob@vger.kernel.org, AJvYcCVDOMMglurXtQ+/nkOldHAPPWyJm5ZFg+vy+62UsDtMjWhna/DOzdkQstFP0zHflcA7/vXVS6V4PMI4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg/z4Muk+T6TlAadScXK9XUsrmYY32EVs+6/xSxJxGx0XRyUYe
-	kCOwzfSjqxgSt4xEluomo9AJ5avcyiNz9W7LVgLMs9srCDKUt4oi
-X-Google-Smtp-Source: AGHT+IFCMFQjQCs5Mduv7g2DFaLrTlXLCKgUXJHSGmeSMjL4kNtOPHyYzgo94KQARP/OLNeiSkbv8w==
-X-Received: by 2002:a05:6a21:a4c1:b0:1d2:ea38:39bc with SMTP id adf61e73a8af0-1d8a3bffb85mr7834663637.11.1728510672732;
-        Wed, 09 Oct 2024 14:51:12 -0700 (PDT)
-Received: from luna.turtle.lan ([2601:1c2:c184:dc00::315])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e9f6833a95sm7651847a12.52.2024.10.09.14.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:51:12 -0700 (PDT)
-From: Sam Edwards <cfsworks@gmail.com>
-X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	William Zhang <william.zhang@broadcom.com>,
-	Anand Gore <anand.gore@broadcom.com>,
-	Kursad Oney <kursad.oney@broadcom.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH 3/3] arm64: dts: broadcom: bcmbca: bcm4908: Fix Netgear R8000P partitioning
-Date: Wed,  9 Oct 2024 14:50:46 -0700
-Message-ID: <20241009215046.1449389-4-CFSworks@gmail.com>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20241009215046.1449389-1-CFSworks@gmail.com>
-References: <20241009215046.1449389-1-CFSworks@gmail.com>
+	s=arc-20240116; t=1728510868; c=relaxed/simple;
+	bh=tbcNQsWOcxzQ1VjvulPuranYgXQG11ZsObSNf8Esdg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYb8PtpZ1nr6Spi3bdqU0FJMY4UNtj4xH3YvcioMM6601cu6hYAkfBUQRllERbDuNkNWNPQsAKt5c0gANSOBQEx1QI35zhOzmvyX7N9Url3GwEu2QpZMIHPj7XelHCF8HoRxt0YMzm5SrNhE92MVBj+R9zb6g89FX05LLvu6TvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lR0rgfUS; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728510866; x=1760046866;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tbcNQsWOcxzQ1VjvulPuranYgXQG11ZsObSNf8Esdg4=;
+  b=lR0rgfUSOb5NpXi2xYRdATN+STjgcwxRtAVCtxco0QjgjBt0ib7HXWyB
+   2a9wd7sR1iSE+ed6cmDRKEBVnmD4PcDEAKwvpwfn1uijqK00P+SnEEni5
+   r1GrYYi3pCTfBXpq4Lnl3YtRD+HQkY2wEmsYK/IL2UoOFdptKFgbbHIES
+   9We76HNxZYN0fUtAAvU2SFIDQ3+0dfXNO9bkbrusmQ59cATldXLl8e0VF
+   3hUThAgPYP97dEmij4aLmQre5n7qrZkcY/iiwD+kKfiSehzLtFRInhYT8
+   480rLVGipLqSrzD9oSbieBNUxtG+Ew4Y19qzfJCZDNuDGXilR9ib5eh1r
+   g==;
+X-CSE-ConnectionGUID: nKIviCeVSoyrFRfQd1zvDQ==
+X-CSE-MsgGUID: jMy31F6jSxWKcji3mR/pKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27322227"
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="27322227"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 14:54:25 -0700
+X-CSE-ConnectionGUID: a+Ru/nSiTBSmgWA4pxJRAw==
+X-CSE-MsgGUID: iCAvY9WhSAWiD8cUG9iSsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="76859541"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 09 Oct 2024 14:54:23 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syedQ-0009qg-2N;
+	Wed, 09 Oct 2024 21:54:20 +0000
+Date: Thu, 10 Oct 2024 05:53:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Subject: Re: [PATCH 2/3] perf/dwc_pcie: Load DesignWare PCIe PMU driver
+ automatically on Ampere SoCs
+Message-ID: <202410100508.l5fTQewL-lkp@intel.com>
+References: <20241008231824.5102-3-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008231824.5102-3-ilkka@os.amperecomputing.com>
 
-As we have just modified the DT schema for BCM4908 partitioning in order
-to accommodate `nvmem-cells` partitions, the workaround of using
-`fixed-partitions` is no longer necessary to pass the DT check. Promote
-this partition table to full-blown BCM4908 active-partition detection
-and remove an inappropriate `ranges` property, thus fully complying with
-the schema.
+Hi Ilkka,
 
-Signed-off-by: Sam Edwards <CFSworks@gmail.com>
----
- .../arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
-index 999d93730240..23adcfd52843 100644
---- a/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
-+++ b/arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts
-@@ -139,7 +139,7 @@ &nandcs {
- 	#size-cells = <0>;
- 
- 	partitions {
--		compatible = "fixed-partitions";
-+		compatible = "brcm,bcm4908-partitions";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 
-@@ -150,7 +150,6 @@ partition@0 {
- 
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			ranges = <0 0x0 0x100000>;
- 
- 			base_mac_addr: mac@106a0 {
- 				reg = <0x106a0 0x6>;
-@@ -159,7 +158,6 @@ base_mac_addr: mac@106a0 {
- 
- 		partition@100000 {
- 			compatible = "brcm,bcm4908-firmware";
--			label = "firmware";
- 			reg = <0x100000 0x4400000>;
- 		};
- 	};
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.12-rc2 next-20241009]
+[cannot apply to arm-perf/for-next/perf]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ilkka-Koskinen/perf-dwc_pcie-Add-support-for-Ampere-SoCs/20241009-072027
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241008231824.5102-3-ilkka%40os.amperecomputing.com
+patch subject: [PATCH 2/3] perf/dwc_pcie: Load DesignWare PCIe PMU driver automatically on Ampere SoCs
+config: arc-randconfig-001-20241010 (https://download.01.org/0day-ci/archive/20241010/202410100508.l5fTQewL-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410100508.l5fTQewL-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410100508.l5fTQewL-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/perf/dwc_pcie_pmu.c:785:35: warning: 'dwc_pcie_pmu_table' defined but not used [-Wunused-const-variable=]
+     785 | static const struct pci_device_id dwc_pcie_pmu_table[] = {
+         |                                   ^~~~~~~~~~~~~~~~~~
+
+
+vim +/dwc_pcie_pmu_table +785 drivers/perf/dwc_pcie_pmu.c
+
+   784	
+ > 785	static const struct pci_device_id dwc_pcie_pmu_table[] = {
+   786		{
+   787			PCI_DEVICE(PCI_VENDOR_ID_AMPERE, PCI_ANY_ID),
+   788			.class		= PCI_CLASS_BRIDGE_PCI_NORMAL,
+   789			.class_mask	= ~0,
+   790		},
+   791		{ }
+   792	};
+   793	MODULE_DEVICE_TABLE(pci, dwc_pcie_pmu_table);
+   794	
+
 -- 
-2.44.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
