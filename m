@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-357041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C88996AC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2864B996AD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464DC28B212
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB491C2376D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1231991CA;
-	Wed,  9 Oct 2024 12:49:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98451E0E0E;
+	Wed,  9 Oct 2024 12:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Y2XQ8E24"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B75194C76;
-	Wed,  9 Oct 2024 12:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582981E0481;
+	Wed,  9 Oct 2024 12:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728478183; cv=none; b=YzNvdiya+4EGGjBWqyfq1KF6hH96sh+PRFvqdOzVCTmROqP7VcJu+ewPcKR4pIyPUYjZ1L8NYgrgdyZhsU84vuJ3p7pCAef7UPAH1XKFHKPKxPPNTyscGVzXBi2n6FNUjydT5ZtfDnMhB7DJJU2REhaqViKy795K8rFPs2jswCY=
+	t=1728478231; cv=none; b=bXIEJeJ2Roim6CP0YfBMYGQ0QRMDXZ/wYS7cDsbgjtR9lkZ7pwQ7fKWWWhnOBnSee37vZdLuIBSHwZiHqsR/F2ZVcb0BykrMRcodOlfSiUF80oUaq8XPP8Lv/IRAnM9eFbJzLZcpuG3hYqqPNzbrXIiUsNL6kp3sJifHnaG/7wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728478183; c=relaxed/simple;
-	bh=BaVk3s2KAvoqDvsifoqUDpefeIGff22P2TiuTCvppqk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H16KZ7ut3ss0uf2HGGtq4j99o/gLAcg+l24Uj9kIvK7JNswfiaDFLP+R4Y/Ip+Dw+INVZ+HZzwGqsjTeyTkE8Puw/aGad0dpVGUvKKcv8D8ywbg764PHYxx/iaPtTidvixwkuk16sGGZKpbVLEH+rkJT09nIXR2s6LNJwoNeXLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XNt4f1v2bz6GD69;
-	Wed,  9 Oct 2024 20:49:22 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0B01A140133;
-	Wed,  9 Oct 2024 20:49:40 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 9 Oct
- 2024 14:49:38 +0200
-Date: Wed, 9 Oct 2024 13:49:36 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, "Li, Ming" <ming4.li@intel.com>
-Subject: Re: [PATCH v4 08/28] cxl/mem: Read dynamic capacity configuration
- from the device
-Message-ID: <20241009134936.00003e0e@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-8-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-8-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728478231; c=relaxed/simple;
+	bh=+cAN/DObeXKW4IbTzwkaHNX54Rvjuw73IqC40UCh5mU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=LpPmaDnfB3ZbzJevHhCKyz4Xc3ikIC4DM4SIj2WshxAc7jKymHXWXk7KFfr9BNhHcCVv0ZXxtOLRB9rAmXfLQPdknLqRPJuEwwoFp+qFM+vjlzYmb1mwBKmKyVxJYkwVu87YvDFmx9/S7JQOynKR8jbXa/9aWXArUQ4dKbVlnBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Y2XQ8E24; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728478230; x=1760014230;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=+cAN/DObeXKW4IbTzwkaHNX54Rvjuw73IqC40UCh5mU=;
+  b=Y2XQ8E24TXKYlifDPU66jrRyeHK5rDfC/pTiPzn1nVp3rhkDHp/MzFNR
+   Kmk2570Tqdm2IxFbFmzJamdoB4hJ99vQloSDMTSnHwG3dw+OQVBAOiX24
+   14Nz3cQtvPUxOl6AXhOtQBQ4dHChAcTzBpz4zCdnrFM6uaCisaMPOPa5R
+   I++9GD1q9eDnIv9LfwAM7Vo/hInPFFOC1r2eSnS4AyUixwxqvaoKF15pQ
+   d2mgFskadeWMlsjE+alIf1z+Vc3BZIrVbVDrZGEcEgPvkcveYeNyDCmqo
+   2BUG8LsgYNmJwoFdBSZO2LYn3l0DxLpTKTa7APpFoCwCfYPRXWr9uqkqD
+   g==;
+X-CSE-ConnectionGUID: rgdn3Zg6SYizt573EhBTnQ==
+X-CSE-MsgGUID: ONyLJOPvRxWofXOlnD6HwQ==
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="32790654"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2024 05:50:29 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 9 Oct 2024 05:50:19 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 9 Oct 2024 05:50:17 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Date: Wed, 9 Oct 2024 14:49:56 +0200
+Subject: [PATCH net] net: sparx5: fix source port register when mirroring
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Message-ID: <20241009-mirroring-fix-v1-1-9ec962301989@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAPN7BmcC/x2MQQqDQAwAvyI5N7DqtmC/Ij1k11RzMJasiCD+3
+ djjDMwcUNiEC7yrA4w3KbKoQ/2oIE+kI6MMztCEJtYhdDiL2WKiI35lR3p2bRpyoleM4M3P2PX
+ /14PyCh+XiQpjMtI83auZROE8L50RWzZ7AAAA
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, <UNGLinuxDriver@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-On Mon, 07 Oct 2024 18:16:14 -0500
-ira.weiny@intel.com wrote:
+When port mirroring is added to a port, the bit position of the source
+port, needs to be written to the register ANA_AC_PROBE_PORT_CFG.  This
+register is replicated for n_ports > 32, and therefore we need to derive
+the correct register from the port number.
 
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> Devices which optionally support Dynamic Capacity (DC) are configured
-> via mailbox commands.  CXL 3.1 requires the host to issue the Get DC
-> Configuration command in order to properly configure DCDs.  Without the
-> Get DC Configuration command DCD can't be supported.
-> 
-> Implement the DC mailbox commands as specified in CXL 3.1 section
-> 8.2.9.9.9 (opcodes 48XXh) to read and store the DCD configuration
-> information.  Disable DCD if DCD is not supported.  Leverage the Get DC
-> Configuration command supported bit to indicate if DCD support.
-> 
-> Linux has no use for the trailing fields of the Get Dynamic Capacity
-> Configuration Output Payload (Total number of supported extents, number
-> of available extents, total number of supported tags, and number of
-> available tags). Avoid defining those fields to use the more useful
-> dynamic C array.
-> 
-> Cc: "Li, Ming" <ming4.li@intel.com>
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Before this patch, we wrongly calculate the register from portno /
+BITS_PER_BYTE, where the divisor ought to be 32, causing any port >=8 to
+be written to the wrong register. We fix this, by using do_div(), where
+the dividend is the register, the remainder is the bit position and the
+divisor is now 32.
 
-Looks fine to me.  Trivial comment inline
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 4e50d72b3b95 ("net: sparx5: add port mirroring implementation")
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+ drivers/net/ethernet/microchip/sparx5/sparx5_mirror.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_mirror.c b/drivers/net/ethernet/microchip/sparx5/sparx5_mirror.c
+index 15db423be4aa..459a53676ae9 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_mirror.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_mirror.c
+@@ -31,10 +31,10 @@ static u64 sparx5_mirror_port_get(struct sparx5 *sparx5, u32 idx)
+ /* Add port to mirror (only front ports) */
+ static void sparx5_mirror_port_add(struct sparx5 *sparx5, u32 idx, u32 portno)
+ {
+-	u32 val, reg = portno;
++	u64 reg = portno;
++	u32 val;
+ 
+-	reg = portno / BITS_PER_BYTE;
+-	val = BIT(portno % BITS_PER_BYTE);
++	val = BIT(do_div(reg, 32));
+ 
+ 	if (reg == 0)
+ 		return spx5_rmw(val, val, sparx5, ANA_AC_PROBE_PORT_CFG(idx));
+@@ -45,10 +45,10 @@ static void sparx5_mirror_port_add(struct sparx5 *sparx5, u32 idx, u32 portno)
+ /* Delete port from mirror (only front ports) */
+ static void sparx5_mirror_port_del(struct sparx5 *sparx5, u32 idx, u32 portno)
+ {
+-	u32 val, reg = portno;
++	u64 reg = portno;
++	u32 val;
+ 
+-	reg = portno / BITS_PER_BYTE;
+-	val = BIT(portno % BITS_PER_BYTE);
++	val = BIT(do_div(reg, 32));
+ 
+ 	if (reg == 0)
+ 		return spx5_rmw(0, val, sparx5, ANA_AC_PROBE_PORT_CFG(idx));
 
+---
+base-commit: 36efaca9cb28a893cad98f0448c39a8b698859e2
+change-id: 20241009-mirroring-fix-a593bdcba644
 
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index e8907c403edb..0690b917b1e0 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-...
+Best regards,
+-- 
+Daniel Machon <daniel.machon@microchip.com>
 
-> +/* See CXL 3.1 Table 8-164 get dynamic capacity config Output Payload */
-> +struct cxl_mbox_get_dc_config_out {
-> +	u8 avail_region_count;
-> +	u8 regions_returned;
-> +	u8 rsvd[6];
-> +	/* See CXL 3.1 Table 8-165 */
-> +	struct cxl_dc_region_config {
-> +		__le64 region_base;
-> +		__le64 region_decode_length;
-> +		__le64 region_length;
-> +		__le64 region_block_size;
-> +		__le32 region_dsmad_handle;
-> +		u8 flags;
-> +		u8 rsvd[3];
-> +	} __packed region[];
-
-Could throw in a __counted_by I think?
-
-> +	/* Trailing fields unused */
-> +} __packed;
-> +#define CXL_DYNAMIC_CAPACITY_SANITIZE_ON_RELEASE_FLAG BIT(0)
-> +#define CXL_DCD_BLOCK_LINE_SIZE 0x40
 
