@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-358013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EF9997932
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:38:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BCD997937
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93366B229DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:38:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5432843CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A86E1E3DD4;
-	Wed,  9 Oct 2024 23:38:14 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7291E32A4;
+	Wed,  9 Oct 2024 23:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsIGYjoW"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977EF169397
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 23:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E22F1E282B;
+	Wed,  9 Oct 2024 23:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728517094; cv=none; b=gE/3C+f2aPhsdzsNQvHMvHOp3O3GtCBEieJfFK2VUR/1J8LXbCBXTCL6N9jcl+F3XXI/Bdm5EwxSjit6dI7HGu3wQPcSWse8jOeIWI4tPhlcO2BmMLz0WbrGG8NjdYeT6CKJCNLkl4iavzVWWOULiRqdnTV9BLO47dHpGDz1Yxg=
+	t=1728517159; cv=none; b=qPCvQuzUPdpLa/WO3CzWat7QY94R91jA/e+41kbFzHzH4w6fgUEmh9PaQAuCIUi65mYRFBMdWPFI3uZGUf8FGfaGz862zv5fR8bsy0zjCfZBH8bLmcTcsXGR93w2/X1dXqpQL67vSt16e25mPs+dVLkOBk1yCxZQ+TU4Gzm3sQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728517094; c=relaxed/simple;
-	bh=3G/6R++b9vYj4FRd5vTu0OZai85D5ZFaHhqrAG01FuY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuAx7LiElvsxBAKIcm+tj3C4zvALaDE6RMm0wxQLYvS3cdu3CVdwOQ1/5kEz6fnMVzP4ICpxc3MxCFdObV4K/fI9jyDXh56eXIq5cC1Ho3eEJUUIz6XWuqBTHib8onPZJGpVEvPBC95YMyo4rrch6P9abG5lYr7zel8weJJu7ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 84804db4-8697-11ef-8860-005056bdd08f;
-	Thu, 10 Oct 2024 02:37:59 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 10 Oct 2024 02:37:59 +0300
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v2 1/1] x86/reboot: KVM: Guard
- nmi_shootdown_cpus_on_restart() with ifdeffery
-Message-ID: <ZwcT149jx-iOmEfl@surfacebook.localdomain>
-References: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
- <ZwbazZpTSAn9aAC7@google.com>
+	s=arc-20240116; t=1728517159; c=relaxed/simple;
+	bh=rSnkf6AzN1stli715Dvd/eCIAIPoikgjlJs78kTVG34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OEPOf0S3D41+rIiRKtKbxi8b5tG2SItl/GSEiC0IkARwZIPs8itSLH4mateCCn718hwQcYt47vEDhiP+zsQ6OYuBlnDjsaJg8GchTaxrCy85jhd+6nF2193p5nv1m9nKhsibgwHPcDMKQHD7V3Sa7SJM18NEktwPOeR04lKnu0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsIGYjoW; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20b7259be6fso3371405ad.0;
+        Wed, 09 Oct 2024 16:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728517158; x=1729121958; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7YDVGuCGzfm2yKn8XXH6Zv5BAq55NN1l2El92j++bwE=;
+        b=XsIGYjoW3H10Pd0jCcMChC9duj3Abps5REHECVfwn8k4QH/Ik4x5yN0YqGnxT+sWFz
+         PCPF98TopM4cagFFbSOa+zJ54sxnaieCSwUNJkdLkeUSka4DFmZ7mjaWOdow755Mji42
+         XSvyy0tVeX2SYFcKBehOCQokYhosdBglBj0OA4BEoW609OCd3iUsSIOdQaLZjDc91BOG
+         Y99IzY2mtotHjs07jrQxMSc5ASm/A3pgVJPXZplHJy8Tm5Evn9q3xXJ6DAzsZTEak5UB
+         n3o1kaVhEJ8ZIm4qPGnuMWJUlZv9Q/8+taLB5kuPC9TPTXOtpyfu1JV6NH1689FlWBBP
+         47KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728517158; x=1729121958;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7YDVGuCGzfm2yKn8XXH6Zv5BAq55NN1l2El92j++bwE=;
+        b=S3Mi+E5TFYpQVetw9kSW5oZ37RxCeMBkt+slvFVdYHo3DM1TJp4iZBUXVtrUGB7NGm
+         HK7AjJjsKNxv3M7F0+q71nxoSpNMScOCGM7uGRIW69KIMT89CmJq72vHqEDeOFBzBgbY
+         cGWruYc5pnIm7P/e7NKdFeAmc3M0EeO3h8Kee/Xs01BS68fmMDVRffYpujeKGamoVuUb
+         bpIBp+tTvWoB5vQtqXISHU0b0+6KVVQ0CoJKKf1w6GEI+ldCtNvlF1+rhgGtQvYfrcuN
+         n369Or3X20wC3UE5tCWFwfWktkjUmRU9rNqv/PwGj/HYmQPQEF5OOCXDuQNltvbeVFea
+         NlEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU703UeAhbi5gx9tXaWopBKe0yDu4tMIkK3Was6yNIf2aYATxY65kVS2skOlT2Cw/Mv4fHpibMoIzS4@vger.kernel.org, AJvYcCUhMiJKeLzhc4+FCWRjfZVIs8eVbWJ+hKmEWwl8zjOVEZjfz9iGpTqvCXJrol60CsQFGCs5TyVU7FBW+hTK@vger.kernel.org, AJvYcCWCnjjKWP5HBnLi/CUh9Pm3/yW9H1I6Xi6QVVmdOyIvQKAvIWdTzDGox4PRSCVAgih3n0EbEHseWgAHWoGk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsPYeymuvI34fvyB10bOwbAonS7iHFylwJ9k3aX0GK13H9TiFM
+	BAK1BX475ymkmpn8QLBtSAPpKlhPa0LI/iwsN8sy9CSDmhDeNXZI
+X-Google-Smtp-Source: AGHT+IFwVVyJJA9t3xXddWLFUsO9r8hffb9ogg4a0pigMHQ92EYSNpcj53Uo1V1aEcW82g4GITTM9g==
+X-Received: by 2002:a17:902:e845:b0:20b:8c13:533f with SMTP id d9443c01a7336-20c637341f2mr54030135ad.24.1728517157805;
+        Wed, 09 Oct 2024 16:39:17 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138ca835sm75542885ad.68.2024.10.09.16.39.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 16:39:17 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 0/2] serial: 8250_dw: Introduce SG2044 uart support.
+Date: Thu, 10 Oct 2024 07:39:04 +0800
+Message-ID: <20241009233908.153188-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwbazZpTSAn9aAC7@google.com>
+Content-Transfer-Encoding: 8bit
 
-Wed, Oct 09, 2024 at 12:34:37PM -0700, Sean Christopherson kirjoitti:
-> On Tue, Oct 08, 2024, Andy Shevchenko wrote:
-> > The nmi_shootdown_cpus_on_restart() in some cases may be not used.
-> > This, in particular, prevents kernel builds with clang, `make W=1`
-> > and CONFIG_WERROR=y:
-> > 
-> > arch/x86/kernel/reboot.c:957:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
-> >   957 | static inline void nmi_shootdown_cpus_on_restart(void)
-> >       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > Fix this by guarging the definitions with the respective KVM ifdeffery.
-> > 
-> > See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> > inline functions for W=1 build").
+SG2044 relys on an internal divisor when calculating bitrate, which
+means a wrong clock for the most common bitrates. So a quirk is needed
+for this uart device to skip the set rate call and only relys on the
+internal UART divisor.
 
-> Heh, I tried fixing this too, and have patches to clean things up, but I ended up
-> not posting them because I decided the W=1 warning was less ugly than the resulting
-> code in nmi_shootdown_cpus().
+Inochi Amaoto (2):
+  dt-bindings: serial: snps-dw-apb-uart: Add Sophgo SG2044 uarts
+  serial: 8250_dw: Add Sophgo SG2044 quirk
 
-CONFIG_WERROR=y is the default (at least in the current defconfigs for x86).
-My goal is to match what ARM builds survive (to some extend?), i.e. W=1, so
-may one apply either version I provided or yours?
+ .../devicetree/bindings/serial/snps-dw-apb-uart.yaml        | 4 ++++
+ drivers/tty/serial/8250/8250_dw.c                           | 6 ++++++
+ 2 files changed, 10 insertions(+)
 
-> If we're willing to take on a bit of weirdness in nmi_shootdown_cpus(), then much
-> of the #ifdeffery can go away.  Patches attached (lightly tested).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+--
+2.47.0
 
 
