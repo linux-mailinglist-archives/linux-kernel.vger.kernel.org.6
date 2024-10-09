@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-357957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1604B99787E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:25:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CB7997881
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A9B1F22E3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D251B2325C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5558D1E3785;
-	Wed,  9 Oct 2024 22:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1054C1E3769;
+	Wed,  9 Oct 2024 22:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="yRNEL+WA"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="JTieHRHn"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C330C1E284D
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C761E32C8
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 22:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728512726; cv=none; b=C2tsbT0yCylxXjeWBQhufVuATqmr3MqenZAV94DrgreKG+JnehojI8pMz2D7DxbJ8zqhSInfXXDAO+Nj1OPaxApgA1m1GIo/rziOQFD2Ypqrad7hsyLv+MI4DweIri4tj2C6BczYiufs6gNShDchYDA0mGte7M1NqKowyvNDSQc=
+	t=1728513100; cv=none; b=XFPR6ZeEXY7ThdFkDZNBuFHcpT2QYBIoUsa8JTMJMk/JH7G1ItBPsPDxla5YtvhnkPXfIqvHJp2WQWAklx7NhF6SBq6VpKi+ZxNyJgOx2YKkLJ/Q4OAc7re4S963iUZ2T6bCGopBJ3WYTssi8yRtt89KiHD+iMEaTxg7HMabPdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728512726; c=relaxed/simple;
-	bh=+z8kJc3NOSE2F4JkCVtI19Gp8PZl3CNqofrsETOuxNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PNeHryFKWx5w6Y3DhPEpyvriZ5WlNK/gNs0ntVqLpBZc75sMLVZU0GG5gIo3APEtTa3zBgs4L17sr5aM/z5g8gAZCEJKq/QW8Auz7e6B6zjqy+1rQ2d5P1pb+m0uqRL0ciByhsGTklXyea6n3PgtTQjf3ivAqlxUnD8BFN3cwaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=yRNEL+WA; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 32F682C012A;
-	Thu, 10 Oct 2024 11:25:20 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728512720;
-	bh=+z8kJc3NOSE2F4JkCVtI19Gp8PZl3CNqofrsETOuxNQ=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:Reply-To:From;
-	b=yRNEL+WARSUOXuMiLnpg1wCWPZJHWc0r5XzWauEWUwyCnkcAWab4GlN/wnQVn+apm
-	 jl0zHdWt1MfjPa3B93+EZhDtcxZ0qBTsG+lGqhPq3cBHHZsKjEC6ZglKTzAE0wsPrM
-	 dUR08oLZtA/Mt1QQQIjo+q/xiCQpGqJ3CeOuf5eAZPVKgSQQKN1eHKKY91RsGEJ48y
-	 6B2WCEpRRKxqNRgIrxQVufQYR7Lb1zshGyeM1cClp/xwchQ7miTQvQoEqu7z+UiqBG
-	 nb/F+2FeaOxUgWwrLj7DQn3Ym+lb8VISg0ZjRy4GTukuzz/YGfdZj4RPFErpHawwq7
-	 4h4HIAXtVf+5Q==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670702d00001>; Thu, 10 Oct 2024 11:25:20 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 11:25:19 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 10 Oct 2024 11:25:19 +1300
-From: Aryan Srivastava <Aryan.Srivastava@alliedtelesis.co.nz>
-To: "andrew@lunn.ch" <andrew@lunn.ch>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v0] net: phy: aquantia: poll status register
-Thread-Topic: [PATCH net-next v0] net: phy: aquantia: poll status register
-Thread-Index: AQHbGDe0125GDRy5fU+t3W0xmCSaErJ8ixIAgAGez4A=
-Date: Wed, 9 Oct 2024 22:25:19 +0000
-Message-ID: <aa887fc2d0477418c9511a4698225a742b204086.camel@alliedtelesis.co.nz>
-References: <20241006213536.3153121-1-aryan.srivastava@alliedtelesis.co.nz>
-	 <5f4a8026-0057-48dd-b51e-6888d79c3d76@lunn.ch>
-In-Reply-To: <5f4a8026-0057-48dd-b51e-6888d79c3d76@lunn.ch>
-Reply-To: "5f4a8026-0057-48dd-b51e-6888d79c3d76@lunn.ch"
-	<5f4a8026-0057-48dd-b51e-6888d79c3d76@lunn.ch>
-Accept-Language: en-US, en-NZ
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <92A449C553707C45AECD710923EEA037@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1728513100; c=relaxed/simple;
+	bh=s16GKP7PIIzYD3NjhkiAU6d8d8MyvTH/H5PWTSkhsKU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gMFqkX0wi4/bvSz+bjXs7CcfoGidhBnx1GJ7s/FczQoo0S0ugDFOZnXam8RHqX7uDFP0ZgD8FGwKL/KyCwuP57AGwSvGIC6OujaWlqGLSnqm3z5/wYoH41TBL4k9HLqQLWojJmnCNjssAA8fbeLbg00O1KYDdfh7cj1ksFRkQik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=JTieHRHn; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1syfDR-001sQz-2E; Thu, 10 Oct 2024 00:31:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=IBi/mETRE54sSOUeSu5Xs+ajeMs0LsADF1LzwwtI7CQ=; b=JTieHRHn55ksiW920a9adiNGcQ
+	WqcC/H16K1/TkPDVf5YkAQQxZTB5aefDlgXeinGOTQfzYsl1Jp8oSmZi+D2cFcZ3aq31SGhtBQPjZ
+	6Eegz61Z31dJfC4GY1R1x0hSB/hLhGJymNEvWNqbHlo0GNhdqkOKyWF52EG0qWG+4UrwErkLBgEdX
+	pTlMGhBqkrCufZxgXx9eONTxvIQuFQ7iug8oNAc1xpUaWc34cTYxEFeZpyJ7C1ooQ2YeS931y0Zv+
+	g3KIKPQxYNhJjGmKM9bU2eN6BJs5n2mdpJmUS8LsllV048ghqCRzS+vGxDamC111aJKYaXnTslU7E
+	VgIBHzfQ==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1syfDP-0005ul-0C; Thu, 10 Oct 2024 00:31:31 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1syfD9-00Esvy-UY; Thu, 10 Oct 2024 00:31:16 +0200
+Message-ID: <dc968352-4ce6-46a0-af69-058e29aa0df4@rbox.co>
+Date: Thu, 10 Oct 2024 00:31:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670702d0 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=w1vUsAckAk8A:10 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=42aPYgUVFb3LGEXNNI8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
+ fixes
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
+ <87y159yi5m.fsf@cloudflare.com>
+ <249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
+ <87ttfxy28s.fsf@cloudflare.com>
+ <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
+ <877cccqnvj.fsf@cloudflare.com>
+ <e78254c5-8f2f-4dc5-bf81-401caefabdd1@rbox.co>
+ <0d4edea2-f989-484f-88bc-d8fb6acd7572@rbox.co>
+ <87ikuh78z5.fsf@cloudflare.com>
+ <ab60e5c2-90a1-43c3-936b-10520c751dfb@rbox.co>
+ <87y12xy5fe.fsf@cloudflare.com>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <87y12xy5fe.fsf@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-T24gVHVlLCAyMDI0LTEwLTA4IGF0IDIzOjQwICswMjAwLCBBbmRyZXcgTHVubiB3cm90ZToKPiBP
-biBNb24sIE9jdCAwNywgMjAyNCBhdCAxMDozNTozNkFNICsxMzAwLCBBcnlhbiBTcml2YXN0YXZh
-IHdyb3RlOgo+ID4gVGhlIHN5c3RlbSBpbnRlcmZhY2UgY29ubmVjdGlvbiBzdGF0dXMgcmVnaXN0
-ZXIgaXMgbm90IGltbWVkaWF0ZWx5Cj4gPiBjb3JyZWN0IHVwb24gbGluZSBzaWRlIGxpbmsgdXAu
-IFRoaXMgcmVzdWx0cyBpbiB0aGUgc3RhdHVzIGJlaW5nCj4gPiByZWFkIGFzCj4gPiBPRkYgYW5k
-IHRoZW4gdHJhbnNpdGlvbmluZyB0byB0aGUgY29ycmVjdCBob3N0IHNpZGUgbGluayBtb2RlIHdp
-dGgKPiA+IGEKPiA+IHNob3J0IGRlbGF5LiBUaGlzIHJlc3VsdHMgaW4gdGhlIHBoeWxpbmsgZnJh
-bWV3b3JrIHBhc3NpbmcgdGhlIE9GRgo+ID4gc3RhdHVzIGRvd24gdG8gYWxsIE1BQyBjb25maWcg
-ZHJpdmVycywgcmVzdWx0aW5nIGluIHRoZSBob3N0IHNpZGUKPiA+IGxpbmsKPiA+IGJlaW5nIG1p
-c2NvbmZpZ3VyZWQsIHdoaWNoIGluIHR1cm4gY2FuIGxlYWQgdG8gbGluayBmbGFwcGluZyBvcgo+
-ID4gY29tcGxldGUKPiA+IHBhY2tldCBsb3NzIGluIHNvbWUgY2FzZXMuCj4gPiAKPiA+IE1pdGln
-YXRlIHRoaXMgYnkgcGVyaW9kaWNhbGx5IHBvbGxpbmcgdGhlIHJlZ2lzdGVyIHVudGlsIGl0IG5v
-dAo+ID4gc2hvd2luZwo+ID4gdGhlIE9GRiBzdGF0ZS4gVGhpcyB3aWxsIGJlIGRvbmUgZXZlcnkg
-MW1zIGZvciAxMG1zLCB1c2luZyB0aGUgc2FtZQo+ID4gcG9sbC90aW1lb3V0IGFzIHRoZSBwcm9j
-ZXNzb3IgaW50ZW5zaXZlIG9wZXJhdGlvbiByZWFkcy4KPiAKPiBEb2VzIHRoZSBkYXRhc2hlZXQg
-c2F5IGFueXRoaW5nIGFib3V0IHdoZW4gTURJT19QSFlYU19WRU5EX0lGX1NUQVRVUwo+IGlzIHZh
-bGlkPwo+IApUaGUgZGF0YXNoZWV0IGlzIHF1aXRlIGJyaWVmIGFib3V0IHRoZSByZWdpc3RlcnMu
-IFRoZXJlIGlzIGJhc2ljCmRlc2NyaXB0aW9uLCBidXQgbm90IG11Y2ggdG93YXJkcyBhbnkgbnVh
-bmNlcyB0aGV5IG1pZ2h0IGhhdmUsCnVuZm9ydHVuYXRlbHkuCj4gPiDCoCNkZWZpbmUgTURJT19Q
-SFlYU19WRU5EX0lGX1NUQVRVU19UWVBFX1hBVUnCoMKgwqDCoDQKPiA+IMKgI2RlZmluZSBNRElP
-X1BIWVhTX1ZFTkRfSUZfU1RBVFVTX1RZUEVfU0dNSUnCoMKgwqA2Cj4gPiDCoCNkZWZpbmUgTURJ
-T19QSFlYU19WRU5EX0lGX1NUQVRVU19UWVBFX1JYQVVJwqDCoMKgNwo+ID4gKyNkZWZpbmUgTURJ
-T19QSFlYU19WRU5EX0lGX1NUQVRVU19UWVBFX09GRsKgwqDCoMKgwqA5Cj4gPiDCoCNkZWZpbmUg
-TURJT19QSFlYU19WRU5EX0lGX1NUQVRVU19UWVBFX09DU0dNSUnCoDEwCj4gPiDCoAo+ID4gwqAj
-ZGVmaW5lIE1ESU9fQU5fVkVORF9QUk9WwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAweGM0MDAKPiA+IEBAIC0zNDIsOSArMzQzLDE4IEBAIHN0YXRpYyBpbnQgYXFy
-MTA3X3JlYWRfc3RhdHVzKHN0cnVjdAo+ID4gcGh5X2RldmljZSAqcGh5ZGV2KQo+ID4gwqDCoMKg
-wqDCoMKgwqDCoGlmICghcGh5ZGV2LT5saW5rIHx8IHBoeWRldi0+YXV0b25lZyA9PSBBVVRPTkVH
-X0RJU0FCTEUpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAwOwo+
-ID4gwqAKPiA+IC3CoMKgwqDCoMKgwqDCoHZhbCA9IHBoeV9yZWFkX21tZChwaHlkZXYsIE1ESU9f
-TU1EX1BIWVhTLAo+ID4gTURJT19QSFlYU19WRU5EX0lGX1NUQVRVUyk7Cj4gPiAtwqDCoMKgwqDC
-oMKgwqBpZiAodmFsIDwgMCkKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1
-cm4gdmFsOwo+ID4gK8KgwqDCoMKgwqDCoMKgLyoqCj4gPiArwqDCoMKgwqDCoMKgwqAgKiBUaGUg
-c3RhdHVzIHJlZ2lzdGVyIGlzIG5vdCBpbW1lZGlhdGVseSBjb3JyZWN0IG9uIGxpbmUKPiA+IHNp
-ZGUgbGluayB1cC4KPiA+ICvCoMKgwqDCoMKgwqDCoCAqIFBvbGwgcGVyaW9kaWNhbGx5IHVudGls
-IGl0IHJlZmxlY3RzIHRoZSBjb3JyZWN0IE9OCj4gPiBzdGF0ZS4KPiA+ICvCoMKgwqDCoMKgwqDC
-oCAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgcmV0ID0gcGh5X3JlYWRfbW1kX3BvbGxfdGltZW91dChw
-aHlkZXYsIE1ESU9fTU1EX1BIWVhTLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoE1ESU9fUEhZ
-WFNfVkVORF9JRl9TVEFUVVMsCj4gPiB2YWwsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKEZJ
-RUxEX0dFVChNRElPX1BIWVhTX1ZFTkRfCj4gPiBJRl9TVEFUVVNfVFlQRV9NQVNLLCB2YWwpICE9
-Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgTURJT19QSFlYU19WRU5EX0lGX1NUQVRVU19UCj4g
-PiBZUEVfT0ZGKSwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBBUVIxMDdfT1BfSU5fUFJPR19T
-TEVFUCwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBBUVIxMDdfT1BfSU5fUFJPR19USU1FT1VU
-LAo+ID4gZmFsc2UpOwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKHJldCkKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gcmV0Owo+IAo+IEkgZG9uJ3Qga25vdyBpZiByZXR1
-cm5pbmcgRVRJTUVET1VUIGlzIHRoZSBjb3JyZWN0IHRoaW5nIHRvIGRvCj4gaGVyZS4gSXQgbWln
-aHQgYmUgYmV0dGVyIHRvIHNldCBwaHlkZXYtPmxpbmsgdG8gZmFsc2UsIHNpbmNlIHRoZXJlIGlz
-Cj4gbm8gZW5kIHRvIGVuZCBsaW5rIHlldC4KWWVzIEkgYWdyZWUsIHdpbGwgY2hhbmdlIHRoaXMg
-dG8gdXNlICd2YWwnIHJlZ2FyZGxlc3Mgb2YgdGhlIHJldHVybiwKYW5kIGxldCB0aGUgc3dpdGNo
-L2Nhc2UgZGVhbCB3aXRoIHRoZSBPRkYgc3RhdHVzIGFzIHJlcXVpcmVkLgo+IAo+IMKgwqDCoMKg
-wqDCoMKgwqBBbmRyZXcKQ2hlZXJzLApBcnlhbgoK
+On 10/9/24 11:46, Jakub Sitnicki wrote:
+> That's curious. We don't override the proto::sendmsg callback for
+> protocols which don't support sk_msg redirects, like UDP:
+> 
+> https://elixir.bootlin.com/linux/v6.12-rc2/source/net/ipv4/udp_bpf.c#L114
+> 
+> The packet should get delivered to the peer socket as w/o sockmap.
+> I will have to double check that.
+
+Ugh, no, you're right. I was checking the wrong queue all that time...
+Sorry for the confusion.
+
+> Thanks. And yes - if possible, better to push fixes separately. Because
+> they go through the bpf tree, and they will still land in the upcoming
+> -rc releases (and get backported).
+> 
+> While improvements go through bpf-next. Of course that sometimes makes
+> life more difficult if the improvements depend on some fixes...
+
+I'm afraid that's the case for the redir selftest to run cleanly.
+Anyway, so those are the fixes mentioned, targeting bpf:
+https://lore.kernel.org/bpf/20241009-vsock-fixes-for-redir-v1-0-e455416f6d78@rbox.co/
+
+> Not sure if anything from bpf-next gets backported if it has a Fixes
+> tag. We can ask the stable kernel maintainers, if needed.
 
