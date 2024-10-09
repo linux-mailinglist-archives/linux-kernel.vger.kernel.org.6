@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-357741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCC9997507
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCAE99750F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993961F216F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7250B1C215CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B0A1E1A05;
-	Wed,  9 Oct 2024 18:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8880C1E1037;
+	Wed,  9 Oct 2024 18:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uvle0WSN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Noyar6L9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744931E1305;
-	Wed,  9 Oct 2024 18:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E282E381C4;
+	Wed,  9 Oct 2024 18:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728499328; cv=none; b=WxafvXaAYavB+gAf/fvsMoAIsjjOMeF5elffNFI/Ep2OCT6zlkLR11ItbGi70KeIwBfbS39g0KpmgVcsfnRBmDUJWyeWhqcbVrJKteEbdeJVqGi3A6DH3FOVF6Ou/awHIMP2XCjOtafYF3Y6Tod4XUtqDt1tCNSKLrO3YC9jf9M=
+	t=1728499428; cv=none; b=RACBSpGT4FUMKK8xDBfe9QDnDOyMwjdZ8MFfvlFtZzCgIMBtfZ8ykDyFs4CQ5lu13PHYg+pQDzQs6wOTZgOX04SF+GOFVbM4arT6AW9btql7sBllGNldDhD9jzuV5hqfOy8sNuPJxt5LX2hwY+N0ZzVz+oYu62UOUtMckmTjKL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728499328; c=relaxed/simple;
-	bh=Web/vzJs6TAHfjZ7w7xwKD5sgMRU+WqPuAd7fBBu/SA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GjHbAhM+uaDEnFUQDR8QbkIHG9Ac9v+j+rn2E+bg7ON5dzlGcGRts6wEC9mFprhzjGD5P1v4WdswpwS/wdQZ0GlX1mjAqzMbHKPYAjbCZVWVaFvBth2ZzDfprULotziXw7fDkJezjPzXo+Cltwfa1Ei3UfGAEKVstnJwzQ3xOAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uvle0WSN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A9A4C4CEC3;
-	Wed,  9 Oct 2024 18:42:07 +0000 (UTC)
+	s=arc-20240116; t=1728499428; c=relaxed/simple;
+	bh=2d2aztSu/7ODk0dRkAQqv8Y2ut92QG50KHaYipfBW5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WHBoPp3H6mSueok/FK5hVEcFvn9x+/McBVt9K07u5kiLHMEsCfgLvjyDruIDciG2v1RDMy9SE4JitFpylG/u3rRmprARj4GL0JPX++10+JwX69p+TtnOjq21Lh1il5D/RIar3cvqTGvgX84HMsVQ+l/zwpXr2ZcVPcDc/B8UlBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Noyar6L9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1B1C4AF0B;
+	Wed,  9 Oct 2024 18:43:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728499328;
-	bh=Web/vzJs6TAHfjZ7w7xwKD5sgMRU+WqPuAd7fBBu/SA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Uvle0WSNY/RFrRai07R5ZloqTaUo0dltQPqITOtJ5tC/tAOTZgIPbw3naWiXEFan2
-	 +9nxhLSQyXFY70KIOp2q5yh/wgLMgRqFa1vN+1s9/5QMGZ0hBRrMlk3uHgm1jBuhOG
-	 VmES8GJGtslz/624JO05ossYAk1ZAVMqubuCxW9Ez0jaRX/a/8a8LWCUaErsXUw6kT
-	 E/98G9zD8v1iZCSKQsmrVngQnBcNFV3xVqQbaX5C3kdjEV7TSyW/C9uMboiFkyCdh3
-	 7j/5nbpgSRbY3Yl9i405KCCXBjgeov1Jpqkb7/+u4UCFY34Xcg+x8KjAWEXfTSzboI
-	 yHZlyNXb1e0Tw==
-From: cel@kernel.org
-To: Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-Date: Wed,  9 Oct 2024 14:41:59 -0400
-Message-ID: <172849928289.133472.12075054007922427149.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241005164039.21255-1-pali@kernel.org>
-References: <20240912221917.23802-1-pali@kernel.org> <20241005164039.21255-1-pali@kernel.org>
+	s=k20201202; t=1728499426;
+	bh=2d2aztSu/7ODk0dRkAQqv8Y2ut92QG50KHaYipfBW5A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Noyar6L9/ZrRO+iU56MtKFcTL6UDsR9X+7u/w5xmif+OeduWMybCZkc26zgqoVcW/
+	 ydNrSUQ+hcL+25TQRgv/iV2ztdhYTXdVX4Sjuayo64EeDre5ROg9Bz8rH8c2RQZkph
+	 lwAzwPf75N+hnCSaJSOtaygSTafcU7NIPd+fGrLFZxI3ePtBGD/L+qFOVTchkTIL7y
+	 bi2j28JzzB8MrqWRAeHuDnwd6SvDR7WucIYWE0JkyKH5cLH6ZBmb93JySKTYFpxw2B
+	 VKBAZYLAU8ojfySI2A4k+HpXEMBfGy5U5WtsQfQ408VQ4QA2Tsn4HXyopQGsrN2O48
+	 m7eRIjmTWI1UA==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5e8038d4931so49812eaf.2;
+        Wed, 09 Oct 2024 11:43:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUlopWRpFTpLfDmwAgPZxw7hMZHR4RPC1MoRHiQGTPIrn7rd9QvLBpFCFXh8UrCyY+Lvlalue8L@vger.kernel.org, AJvYcCUsb7IIaUWZzBql5/MOJMLJyAuUWuHEzu2ixyiWwX0Amf6288xocLEE5BUgBrYmsJJheVGAmHuT0rM=@vger.kernel.org, AJvYcCWvKCPb2iADghDv32zzJdK9TYw4TLE4HOhVRFsCvZBHivZEg448nCNsbseofcAm8UWjq/2/6ErCEfzWPJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB3zHuQhBjjoQHL98E2RjddrYNVB531mxpQGyo2SzT9xCbdUSf
+	z6onZczi+f6IJwykW2i6tXnSvdzCa3WLqRfcVXZ8CKzKIOtH7gAzGzTdrpsepNwWqwROOgRkjZD
+	Pl68VrSdZ2z8yOUA3Hydh+8TKABM=
+X-Google-Smtp-Source: AGHT+IFBcOKTV8fgieDZGxv5RtD+Iv2rO4bccgdHXUJHn0EvgWywc1nSd5L/SYrdQPyTZn55yZjz6VIpQK+QT6srakk=
+X-Received: by 2002:a05:6820:80b:b0:5e1:e65d:5148 with SMTP id
+ 006d021491bc7-5e987ba3164mr2393069eaf.6.1728499425744; Wed, 09 Oct 2024
+ 11:43:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1113; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=xN1cVXO6QNFhWDTcMECh4CmXeO9GRPH7p6UxiKg74wQ=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnBs558czY8vxF0VLjM12KTIoz1+jMBotPUZxaN 3LuL42uuUCJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZwbOeQAKCRAzarMzb2Z/ l8l5D/9ik3XpVCrsNRbgjVk9oMyHi6yqzu1HOPZme6c/GSoOIfDPCNChfhAJLdMnNlW+RIyNQPu G06qMxQDx0nAf99/jd6ZuwXaom+gqi49AqHU8pQ/2g7/sOgTc/3/HzdoXJCAFZ1m0Il5oWtMsm5 FAAOLKJEuom0LRKrGDhKM2iCyQx5hIdomeh4nE+bmHEppANG9Ps0vtCnX9JYqtodJryL6gYgupU EYWpOmUpIWW6CchxMwvuU8QOsbTN9yFVTtnbJ3zxV3bOWAYwFFTDqcvCcNRsIPBIA0A10yWLMzm PZntbvd5vil1isZFK5kJatGvCNg6L/HpXdfjf9uk7ui2Ni/YboBzg5NYwn9h2+T2f284v57f1P7 uk0T+faMIbYkWiP3K/zp8cim9kgfvleIFHeAS5a1KYxOPpYH35PaoTDn4seQCVVdRQRK2unAFYB 8Eok/1T/kySL12Qnd232zXMwdASRSyAZP4TRd4+TuVFFu4Y6+jPs3c/OHzbXTZL7aKtCHRolge4 V4dwwx2iDF5SgcZhhjODAuy1R7VdR5h7PIrBsQz3goc2vJoT9/JaoTxm9eNWwW3N1TQzRe5P9q+ Xptvj6w993G17j0fedcyzzis+5Q8inBxsFIDgeEX+F7/dowuBjsCz1C70ahe5I25oP1iapQYyze kLeff7
- vsqTXESpg==
-X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
-Content-Transfer-Encoding: 8bit
+References: <20241009072001.509508-1-rui.zhang@intel.com> <f568dbbc-ac60-4c25-80d1-87e424bd649c@intel.com>
+In-Reply-To: <f568dbbc-ac60-4c25-80d1-87e424bd649c@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Oct 2024 20:43:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gHn9iOPZXgBPA7O0zcN=S89NBP4JFsjpdWbwixtRrqqQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gHn9iOPZXgBPA7O0zcN=S89NBP4JFsjpdWbwixtRrqqQ@mail.gmail.com>
+Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
+ timer shutdown
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com, x86@kernel.org, 
+	linux-pm@vger.kernel.org, hpa@zytor.com, peterz@infradead.org, 
+	thorsten.blum@toblux.com, yuntao.wang@linux.dev, tony.luck@intel.com, 
+	len.brown@intel.com, srinivas.pandruvada@intel.com, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chuck Lever <chuck.lever@oracle.com>
+On Wed, Oct 9, 2024 at 7:49=E2=80=AFPM Dave Hansen <dave.hansen@intel.com> =
+wrote:
+>
+> On 10/9/24 00:20, Zhang Rui wrote:
+> > diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> > index 6513c53c9459..d1006531729a 100644
+> > --- a/arch/x86/kernel/apic/apic.c
+> > +++ b/arch/x86/kernel/apic/apic.c
+> > @@ -441,6 +441,10 @@ static int lapic_timer_shutdown(struct clock_event=
+_device *evt)
+> >       v |=3D (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+> >       apic_write(APIC_LVTT, v);
+> >       apic_write(APIC_TMICT, 0);
+> > +
+> > +     if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
+> > +             wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
+>
+> One last thing, and this is a super nit.  We presumably have the actual
+> APIC_LVTT value (v) sitting in a register already.  Is there any
+> difference logically between a X86_FEATURE_TSC_DEADLINE_TIMER check and
+> an APIC_LVTT check for APIC_LVT_TIMER_TSCDEADLINE?
+>
+> I suspect this will generate more compact code:
+>
+>         if (v & APIC_LVT_TIMER_TSCDEADLINE)
+>                 wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
+>
+> Does it have any downsides?
 
-On Sat, 05 Oct 2024 18:40:39 +0200, Pali Rohár wrote:                                              
-> Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not bypass
-> only GSS, but bypass any method. This is a problem specially for NFS3
-> AUTH_NULL-only exports.
-> 
-> The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
-> section 2.3.2, to allow mounting NFS2/3 GSS-only export without
-> authentication. So few procedures which do not expose security risk used
-> during mount time can be called also with AUTH_NONE or AUTH_SYS, to allow
-> client mount operation to finish successfully.
-> 
-> [...]                                                                        
+I don't see any.
 
-Applied to nfsd-next for v6.13, thanks!                                                                
+> Oh, and how hot is this path?  Is this wrmsr() going to matter?  I
+> presume it's pretty cheap because it's one of the special
+> architecturally non-serializing WRMSRs.
 
-[1/1] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-      commit: fa3d3ae84c5a6e9bd406c9ef75d3128a46cf1109                                                                      
+lapic_timer_shutdown() is called under a raw spin lock in
+___tick_broadcast_oneshot_control(), so it better not take too much
+time or PREEMPT_RT might be unhappy.  I'm not sure how often that
+happens, though.
 
---                                                                              
-Chuck Lever
-
+Also tick_program_event() calls it to stop the tick, but it is assumed
+that this may take time AFAICS.
 
