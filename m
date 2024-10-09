@@ -1,168 +1,167 @@
-Return-Path: <linux-kernel+bounces-356845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9221D9967A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309509967A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11079B233AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B5111C224F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A08190072;
-	Wed,  9 Oct 2024 10:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FF5190059;
+	Wed,  9 Oct 2024 10:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Jt8B/gQ9"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PDicS0Vh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7218E03E;
-	Wed,  9 Oct 2024 10:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C7018EFEB
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728470932; cv=none; b=XLs1nyfA17ZWkUjj1nVdh66FXVw1/f9e5PO2SmNkP4Ag5aSnibBLna6XpO/E2tC2iaJ47iOyP2s5PF7y3Uv460c7NocmZbnPuLTu60m6G1WBYnnkJuUv7q+FxJE87oNySwVkKW9t5yRYaNowl8MLMhaxtHrFHTTL0mSfA035JAE=
+	t=1728471023; cv=none; b=YnLMrYyZ6x9236gs+Oz0Z8oTLGdTzhVatVhs9eWUbOFN954KqwDXs7Bd40jErNWjWV9BkDqdFbNBR3a1hxFgat06tk9242KYAj3evCImZR9gmYyNmX1FCr0T71d3XOZHIfDhyFEFgzKhrzEa0Bl+GQP4VK8/F6dZaqQi03AHhJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728470932; c=relaxed/simple;
-	bh=wqoq0EY38rrHJ3EbOaqBkiPZGV7y8Y8pVN1jG4bIumA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OIFWwMfHuaXPF4EQBsdfgSFJug2ycIG5SoRKThIBbsDEJU9e5jgIJo2kejOhoRc+r1KpSkjQHqjTgp8RVvQTjHKH1rVU/+viJF0bD0cJdFe5R5BLjQZEPvF7ODscX95A3+qaD4+Pg76GfrVKI+tt+91lToY/CdtHAO1qKxf+syQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Jt8B/gQ9; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0c5c3adc862c11ef88ecadb115cee93b-20241009
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=125oV6D49C4A1z2NuIkQKe4FP+y9yJocFdv6uX2yYjs=;
-	b=Jt8B/gQ9bioKHEhXgp0OSySseHKystPjzQElXXxAXKcO1sNh372gNqsI7IKZYUe1ZUfaHlp/KTxW+KZdhnKJoq8yPziM0HAuRDwxCB2am0yHfVeH563/5L6kYjMaY4m32/1Ze1gMdbry3vq/gT4tWVuzWCAL6ruWdfcz7O80t1k=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:481b5339-5941-477e-bf56-25dd401721e8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:13450041-8751-41b2-98dd-475503d45150,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 0c5c3adc862c11ef88ecadb115cee93b-20241009
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2035350135; Wed, 09 Oct 2024 18:48:41 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 9 Oct 2024 18:48:39 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 9 Oct 2024 18:48:37 +0800
-Message-ID: <9bf35a15-80ce-708d-3a45-08839edf41dc@mediatek.com>
-Date: Wed, 9 Oct 2024 18:48:36 +0800
+	s=arc-20240116; t=1728471023; c=relaxed/simple;
+	bh=DSgm22aJFfiNtDR5PH9COXLN1T3/sjP+t9mUNwfGUwc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pd0xuynAk0ez/4b5BYdJ2+ILdv7KWUTniyFg7szdtMsAk/0OyzX1rMVWvawVbD3U7KEwIaEY6qrCKTczIlDvpVylGwOBLIch8dpZbYnj2FLvyA413JEbSSf3yfh54SsGvrSL2lb/iREjYmbxElMOWD9UyG7LFEe485/xjL6INPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PDicS0Vh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728471020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DSgm22aJFfiNtDR5PH9COXLN1T3/sjP+t9mUNwfGUwc=;
+	b=PDicS0VhcsTqvmpflns9/rwRwqswB8RmklHD1TNlw/2TBej4iM7Fe5MswZe/Z9yQQawOBj
+	Est8sgEia2VzIWzJhK+u/3t8DwsQLJ1kYOPjNtZ0SSM3e/RYwuQcAGvMVdFtBAvsRNnF+/
+	K0nrKKqmJtgSbKKRZoBlHLeRtgedeb0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-416-XH27LujgNHWF6hXJJUoAuA-1; Wed, 09 Oct 2024 06:50:19 -0400
+X-MC-Unique: XH27LujgNHWF6hXJJUoAuA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb857fc7dso57277545e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 03:50:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728471018; x=1729075818;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DSgm22aJFfiNtDR5PH9COXLN1T3/sjP+t9mUNwfGUwc=;
+        b=ViTPKfdNwpJObSUzssNgBcjHlJIiGcokG9hVduxE1nixVuWJVuMSuKjq/MozSMwgJe
+         9xxwrLgzX3Kr0pFJ28BZoCpLddBBYXA3eHRjMCSa12q44H+tGAxUXgqpLutLb7Q4D2UD
+         s8G+hQdXhEesVVdS7k0O0QS1DAKg99kt+IV3dZ6F8fV5Z5JPHl1EhIwkFr4QocYKKAdl
+         A+ZZkSpvwp2Nbzor7nE9h+M2v+1RT06P1WaPzxMXBgE7C+pQ5skjgGVdLqeuaCAUYrG2
+         whc/4DeLOsKd9YM5g42jUdpYDteAgbioYatITJqlgCaLF6tPVUJkHK33eGfOWUDzrNy6
+         lOsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWF6xvP/+oiP4og417zvscwUMaBSklUKK7PAYS4mxlt5cGmoSeNsZuAIgA/9ki8HBNHXewLIjSgN/fXl+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR2EYu6fH9oXRLpt3NaGEX/cZ11QUVoedcF6LPYRPPJ8VfyBPJ
+	Mn7xuYkQcAoZplZs31X6nRco4rEpbLL93M0PyWZgdRc3uyCpquj6Y3IIqBku0y6B3ngdlGLS9dh
+	3JgOOLJVDoMWtBBYNtT0r1umD++7tsTexFuFrmp70ni810C7MHAz1eMfr48RWnA==
+X-Received: by 2002:a05:600c:154e:b0:42c:bf94:f9ad with SMTP id 5b1f17b1804b1-430d748c5demr14383665e9.34.1728471018503;
+        Wed, 09 Oct 2024 03:50:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHApNTrtsbft1V7n10B4IIxH4JucbHmoQkQ4Jkaz+as7iAf1Sn6WqJVUcb29pY2MStHfTeBSg==
+X-Received: by 2002:a05:600c:154e:b0:42c:bf94:f9ad with SMTP id 5b1f17b1804b1-430d748c5demr14383375e9.34.1728471017985;
+        Wed, 09 Oct 2024 03:50:17 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1695e62bsm10108645f8f.81.2024.10.09.03.50.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 03:50:17 -0700 (PDT)
+Message-ID: <6f54425072b008481a0511fc140bab2590cd1c06.camel@redhat.com>
+Subject: Re: [RFC PATCH 03/13] drivers/xen: Use never-managed version of
+ pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Juergen Gross <jgross@suse.com>, Damien Le Moal <dlemoal@kernel.org>, 
+ Niklas Cassel <cassel@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
+ Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri Kosina
+ <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex
+ Dubov <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>, Manish
+ Chopra <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
+ Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Stefano Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
+ Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
+ <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
+ Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi
+ Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+ Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Eric Auger
+ <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
+ =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>,  Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
+ Marc Zyngier <maz@kernel.org>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-input@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
+ linux-pci@vger.kernel.org,  linux-staging@lists.linux.dev,
+ kvm@vger.kernel.org,  xen-devel@lists.xenproject.org,
+ linux-sound@vger.kernel.org
+Date: Wed, 09 Oct 2024 12:50:14 +0200
+In-Reply-To: <3874c932-71c4-4253-9dcf-a9c302e6bc7e@suse.com>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+	 <20241009083519.10088-4-pstanner@redhat.com>
+	 <3874c932-71c4-4253-9dcf-a9c302e6bc7e@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 1/3] dt-bindings: mfd: mediatek: mt6397: Add start-year
- property to RTC
-Content-Language: en-US
-To: Lee Jones <lee@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <eddie.huang@mediatek.com>,
-	<sean.wang@mediatek.com>, <alexandre.belloni@bootlin.com>,
-	<sen.chu@mediatek.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>,
-	<kernel@collabora.com>
-References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
- <20240923100010.97470-2-angelogioacchino.delregno@collabora.com>
- <20241009101549.GB276481@google.com>
- <e0de3810-38b0-40a3-872d-678e9d4f72e5@collabora.com>
- <20241009103307.GD276481@google.com> <20241009103746.GE276481@google.com>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20241009103746.GE276481@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--14.158500-8.000000
-X-TMASE-MatchedRID: zGP2F0O7j/sOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
-	qIY+/skQkABPgKBt/0rfEt9Ay9zO7g20q/tyc1edx6hrpRSrYiv5bNUY+JJjyA6QlBHhBZuwAr5
-	mokJOphAzNhvZcetROVc3B1k53+RhemzGG4qDPakZXJLztZviXJWr6iSXWtgP+yNYYwngrxaJtv
-	q2ZmkpN/CGbwGH/FjAUvthaNK4TPYYB2fOueQzj4MbH85DUZXyseWplitmp0j6C0ePs7A07cNbT
-	FVOzjU8gwrmQLYen6kXt4N9KJ/nKNbV/0cyXV+n9qL5WV0e01k=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--14.158500-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	1153258BB8DA91B7858CF9A1A20F13D2387AE487A4B2C14681D709B82FAE76592000:8
 
+On Wed, 2024-10-09 at 10:51 +0200, Juergen Gross wrote:
+> On 09.10.24 10:35, Philipp Stanner wrote:
+> > pci_intx() is a hybrid function which can sometimes be managed
+> > through
+> > devres. To remove this hybrid nature from pci_intx(), it is
+> > necessary to
+> > port users to either an always-managed or a never-managed version.
+> >=20
+> > xen enables its PCI-Device with pci_enable_device(). Thus, it
+> > needs the never-managed version.
+> >=20
+> > Replace pci_intx() with pci_intx_unmanaged().
+> >=20
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+>=20
+> Acked-by: Juergen Gross <jgross@suse.com>
+>=20
+> BTW, the diffstat in the [PATCH 00/13] mail is missing some files,
+> e.g. the changes of this patch.
 
+Ooops, probably something exploded when I copied the backed-up cover-
+letter after regenerating the patches. Will fix.
 
-On 10/9/24 18:37, Lee Jones wrote:
-> 	
-> 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> On Wed, 09 Oct 2024, Lee Jones wrote:
-> 
->> On Wed, 09 Oct 2024, AngeloGioacchino Del Regno wrote:
->> 
->> > Il 09/10/24 12:15, Lee Jones ha scritto:
->> > > On Mon, 23 Sep 2024, AngeloGioacchino Del Regno wrote:
->> > > 
->> > > > Enable evaluating the start-year property to allow shifting the
->> > > > RTC's HW range.
->> > > > 
->> > > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> > > > ---
->> > > >   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 2 ++
->> > > 
->> > > No such file.
->> > > 
->> > 
->> > In the cover letter, I wrote:
->> > 
->> > 
->> > For the bindings commit, this series goes on top of the MT6397 schema
->> > conversion from Macpaul Lin [1].
->> > 
->> > This series was tested on a MT8195 Cherry Tomato Chromebook.
->> > 
->> > [1]: https://lore.kernel.org/all/20240918064955.6518-1-macpaul.lin@mediatek.com/
->> > 
->> > 
->> > So, that's why. :-)
->> 
->> Nope, try again. :)
-> 
-> I guess you actually mean:
-> 
->    https://lore.kernel.org/all/20240918064955.6518-2-macpaul.lin@mediatek.com/
-> 
-> It's on my list.  I'll place yours behind it and see how we go.
+But good to see that someone actually reads cover letters :p
 
-Just a reminder.
-The last reviewed patch set should be 'v8' because of the update for
+P.
 
-'Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml'
+>=20
+>=20
+> Juergen
+>=20
 
-[1/3] 
-https://lore.kernel.org/all/20241001104145.24054-1-macpaul.lin@mediatek.com/
-
-The [2/3] and [3/3] patches are dependent.
-
-> 
-> -- 
-> Lee Jones [李琼斯]
-> 
-
-Thanks
-Macpaul Lin
 
