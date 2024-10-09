@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-357910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736319977B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:44:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E970D9977C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 23:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8771C220D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C48CB220F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19291E285C;
-	Wed,  9 Oct 2024 21:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F121E22E9;
+	Wed,  9 Oct 2024 21:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="IP7Vn03r"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B/X3ythS"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486D71A0AFA;
-	Wed,  9 Oct 2024 21:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510255; cv=pass; b=lVSdw2vFNnPmU+HvIl8dGPBX8UnhvPqgQJWFScX12BFaIwOLPMfL5SjbhYJlXF9tyTUdZKH+Q+4UAsl4IZ80AzG/rn9l8UEWEXPQX4E13lvDj3IOGnQ474BI+tW2He4veh6IcDRJxWMkawy3XQMEcL6zABEGUgYFvIgefVYCZnM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510255; c=relaxed/simple;
-	bh=EumyMqRP3ZRih9USB9tVghZIhnj4oL3qMhwfHWb7Sbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VrLBsIz3+Yn4hNkQ4yt4cyhtfKNbrqjYb628FxyfPin8wAt2CAuyidG/lLwxOnefFJMNOVhEgHrZ2reei2QnP8p1+rgDOTl8EkwGclR8Liu4ciwpcbyMZX7tbnlV3eE1tFcqpGcJdG3lyWjR0wPm9ufCvgcDSuXtgxNgynNyi38=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=IP7Vn03r; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1728510238; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RNpVt7PgbXAoEY9ef9PTTEqmkLcTC28ULUs6HOqzh1GF6iHuffhAAYYVswsNmevzhE/qmFBw95n8Kd8bDoM08xhJGbjREdSVyd91kgcz1luFbeKzBJtrETG3t+nu0+KZNTEdLQYanPZm/+nJHpp6JuhKSc4mJq5HYtrUF3teGaE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1728510238; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=YIlrE0fcMEPzbyHoxB6Wnq7KQhP7bhlB1XNHnfKuC+g=; 
-	b=WB+vWQfxbmW9Igb53vhVA8xgInqaObyCraR2r/lXoQSKq5ADwjyWws+G8VSfcNf+F4amsOGtPrGq6K7px+sfH/bAsVaSodQG07++oG/+XnXeLJF14VPMZyd2t3rLjfpJtkyFEdw6Bd+VNC07W3wRUE029oGcoemhofYosm5CSvE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728510238;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=YIlrE0fcMEPzbyHoxB6Wnq7KQhP7bhlB1XNHnfKuC+g=;
-	b=IP7Vn03rIc5lYG9cF81FXkBwzSB0pfvi1QCXO5SuW+Bec++6cDN6J7kM+GhzDYI7
-	Iz/hPJ9QR0GjxUFpsdYYLdSKJVwB3BYedpLcz/m68p4doOlg9rOTgu9H1DtdMoL2Kum
-	/eJd9kWY11iO/T8lVuAp2vPv5acBz/4L6/nLlqQY=
-Received: by mx.zohomail.com with SMTPS id 1728510237013233.51078949345924;
-	Wed, 9 Oct 2024 14:43:57 -0700 (PDT)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-Cc: kernel@collabora.com,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation/gpu: Fix Panthor documentation build warnings
-Date: Wed,  9 Oct 2024 22:43:30 +0100
-Message-ID: <20241009214346.2308917-1-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.46.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6208B10E4
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 21:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728510399; cv=none; b=t1hQibio2fZRiq6D9u9xQhsPkXcZzLfaO9TyEIBdNVJS47kAi1lu42R/njFAe2CFyeF+v1c1Lab3hqSeNbRa1eoq2bz2W/fKALEmFHY9IaP5PPdkR/fq/7ImQXR7uzdKmum1W8YDV8h/8wLvRcAdr6ofi7FC2axps+vne5OhoC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728510399; c=relaxed/simple;
+	bh=LXFQq4cvcSOzmh+VSEJifllaIjnMQkAQDJOlptwZ8og=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qhTVNzrZgO8L6WcrK8Tk5iyG/ozcW0YEAPjz2PU9ZL64UkSY42Ldn8Vop3TuZ2VTNVvYO6/JBagU4Jfr7xLdUPi7pkAfVMV9N6lBl42qua9c0jrBWmdYGsTXaJm5TbsmO8ySUuFkiarKpNJkuwsrmpkWVB4TDlg1FDXs8IjJ/Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B/X3ythS; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e4244413so4070837b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 14:46:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728510397; x=1729115197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LXFQq4cvcSOzmh+VSEJifllaIjnMQkAQDJOlptwZ8og=;
+        b=B/X3ythSrKMI89/NxEakD32iSxy/c2NB9RRw8mVDQbsX2nWcGUqYv78w7jxnuzKMRA
+         wlNbaGmBdNAz7o1wvgGmnVXp59HBbt7P4PufIxOH1mJ2DHpdlncOkA5OtYz2NahwW3/5
+         b4nsOJK9AzwHYDyqlRAGMCccHzBXvEtaXMiGCmcFyP3L0WWDC7mushMnqwn6nDbUqL7r
+         7wTQaTyr/iiHGBNziYX3Zv7rRyWM3s6Zd3ThVCYWBrtCHs4z8z/UKy9w3Izyd5jvDonY
+         JNg9K6P/taYyS/sHA5IoyY2m0EjGG5QNA5LpIee6HwJGzd7yFs4eH7HVtFiwiADHQiHd
+         UzIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728510397; x=1729115197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LXFQq4cvcSOzmh+VSEJifllaIjnMQkAQDJOlptwZ8og=;
+        b=mKwTwe1eq4lfvIApt+CpXU0yQfrr49BrVnkFpR1PdwAOZ0C7+M+oFICJcIJ+lf4Bff
+         LE0J4W6dKfxpURsg6Ruumf3zAKxsvBjZ7Y0v07r5qsZEN5BLc2EnIer2IsXfVveXaTxq
+         yUaOn7ywYgk+huvkKN+IlPFFVdCaGftue76h4JQvXJeraiMZbovPXenUPDh9oVX3QTrx
+         6vdzUCfMcfjiSW/GHzEc1YN10MQOBHEyaCaNFVG2p7iRDyW5etodizgfOgEmXwWXC3qm
+         VRt9eyU8VZYDrKKW01nAkU8CUfE9InMv3aVpBcDSjwZXkQo6fBaPbakIrSZAdoKfsURW
+         bUQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCqk6bOS+wcXlQ1Yn1zt6S65aXSQuQGgVlq+pI8M1dp4fy9X9hC1aA0IeixCV7JbtUC2mG/XZ7la8fvAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFp76a8AXlxTvhNfRU2Jj1eRjxR2ajDt+mSq84qbGLPS7Zv7GI
+	CPc7lPioYnVJYtdFywxEaiECiVoxeqCSAAtwMzd+6GmB9V1TJ/Q6YkBua1iKnkhSvS2JURqQVu+
+	SKD/dJkUYVAduLR/GiErL09Wu5ciB1agtwv8b
+X-Google-Smtp-Source: AGHT+IE1D5PWRvqXNfRKyWsuevMOAJs9BGWU7JCR6FZfOmNBKloSiRVXNUTMQ9NwlRuQiTFERb3gOsFpYHbfeby7GkI=
+X-Received: by 2002:a05:690c:6a08:b0:6e2:547:5e7b with SMTP id
+ 00721157ae682-6e32219f138mr44127597b3.43.1728510397381; Wed, 09 Oct 2024
+ 14:46:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241009203218.26329-1-richard@nod.at> <20241009213345.GC3714@breakpoint.cc>
+In-Reply-To: <20241009213345.GC3714@breakpoint.cc>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 9 Oct 2024 17:46:26 -0400
+Message-ID: <CAHC9VhSFHQtg357WLoLrkN8wpPxDRmD_qA55NHOUEwFpE_pbrg@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
+To: Florian Westphal <fw@strlen.de>
+Cc: Richard Weinberger <richard@nod.at>, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, 
+	kuba@kernel.org, edumazet@google.com, davem@davemloft.net, 
+	kadlec@netfilter.org, pablo@netfilter.org, rgb@redhat.com, 
+	upstream+net@sigma-star.at
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix Panthor documentation build errors uncovered by the makedocs target
-when building with extra warnings enabled.
+On Wed, Oct 9, 2024 at 5:34=E2=80=AFPM Florian Westphal <fw@strlen.de> wrot=
+e:
+> Richard Weinberger <richard@nod.at> wrote:
+> > When recording audit events for new outgoing connections,
+> > it is helpful to log the user info of the associated socket,
+> > if available.
+> > Therefore, check if the skb has a socket, and if it does,
+> > log the owning fsuid/fsgid.
+>
+> AFAIK audit isn't namespace aware at all (neither netns nor userns), so I
+> wonder how to handle this.
+>
+> We can't reject adding a -j AUDIT rule for non-init-net (we could, but I'=
+m sure
+> it'll break some setups...).
+>
+> But I wonder if we should at least skip the uid if the user namespace is
+> 'something else'.
 
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-Fixes: f25044688b04 ("drm/panthor: add sysfs knob for enabling job profiling")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- Documentation/gpu/drivers.rst         | 1 +
- Documentation/gpu/drm-usage-stats.rst | 1 +
- Documentation/gpu/panthor.rst         | 2 +-
- 3 files changed, 3 insertions(+), 1 deletion(-)
+This isn't unique to netfilter and the approach we take in the rest of
+audit is to always display UIDs/GIDs in the context of the
+init_user_ns; grep for from_kuid() in kernel/audit*.c.
 
-diff --git a/Documentation/gpu/drivers.rst b/Documentation/gpu/drivers.rst
-index b899cbc5c2b4..7b1282e2d807 100644
---- a/Documentation/gpu/drivers.rst
-+++ b/Documentation/gpu/drivers.rst
-@@ -22,6 +22,7 @@ GPU Driver Documentation
-    afbc
-    komeda-kms
-    panfrost
-+   panthor
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/gpu/drm-usage-stats.rst b/Documentation/gpu/drm-usage-stats.rst
-index a80f95ca1b2f..12ca3193bf15 100644
---- a/Documentation/gpu/drm-usage-stats.rst
-+++ b/Documentation/gpu/drm-usage-stats.rst
-@@ -186,4 +186,5 @@ Driver specific implementations
- 
- * :ref:`i915-usage-stats`
- * :ref:`panfrost-usage-stats`
-+* :ref:`panthor-usage-stats`
- * :ref:`xe-usage-stats`
-diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
-index cbf5c4429a2d..3f8979fa2b86 100644
---- a/Documentation/gpu/panthor.rst
-+++ b/Documentation/gpu/panthor.rst
-@@ -4,7 +4,7 @@
-  drm/Panthor CSF driver
- =========================
- 
--.. _panfrost-usage-stats:
-+.. _panthor-usage-stats:
- 
- Panthor DRM client usage stats implementation
- ==============================================
--- 
-2.46.2
-
+--=20
+paul-moore.com
 
