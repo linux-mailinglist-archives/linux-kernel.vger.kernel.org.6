@@ -1,110 +1,77 @@
-Return-Path: <linux-kernel+bounces-357530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F06C99723D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E5699723E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 862F828367C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:47:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22FC71C240CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10AA19ABAA;
-	Wed,  9 Oct 2024 16:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9381547CF;
+	Wed,  9 Oct 2024 16:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="nB3mb4pQ"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZZlNYzr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723291925A0
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7C522098
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728492443; cv=none; b=UAKLWKo+O8D71Jv7hGmKu/Pz8ixy/EtEwqI+F6NeyrOitsyZMXoZdgMFmI/lNgnLLHpslhOtones2uaZ1oOZmvtNPwcaQnAFeCscixxt6A35kJsTpvSRwQHFbEmny22cjUtT1lbBntRlDhrJRZLz/9eadbdIskBvIYLUr185XaE=
+	t=1728492482; cv=none; b=skrusaAGJRCiMffHqHnQZ4Ce4mYRDBqv5MKDogaRkM2A+PogOb7TE9JZRGdl7uZtcaMM3A2amiIt+wZJpLnQ1dMq4V5jPVWARbIIcQN5WIBYqAgQ77xC7h6SCEDsnJSmcpC4AG10k77JskpJ1QgLA6OyNVnG4rDSvdcEywIcjwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728492443; c=relaxed/simple;
-	bh=7OKpaX0vTt3ZpWsPL9AFkKqd63HxkJPrYW7YJ1vto6g=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=RIUpxLQP7IrR6/ecL3TBd4T6uXlQRj2mz1Z9Vk4C7Qvr3ENjBwsPX9GExdub2YhfFkbPB/EGMPQwABUuhqsH3iV1Ezoi+LQf4WkwbBnbeBGwnvOkUgS12uQNCOKtDHZF3WwSHyegt7xSt1fmUetFWdiFB/wVY2S6PyHr93MEhIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=nB3mb4pQ; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b58f2e1f4so48243125ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 09:47:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1728492441; x=1729097241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QfiegqTqluk30uW9InRvZdJt/6Vj6WI5QVJzRzWcgJs=;
-        b=nB3mb4pQT3o5ayk1/VVhfPWd09fMX4SlaakT/zrh+wpp2Cw7R25WML3XzPJt4RCpyz
-         Pkv7iBbPqM4G5mMjUv8WDggG1QeywkbLYv3Q45xThlZq/jTVwHCqDfcd7V2rS9G4t2dE
-         UQYU0j+/6U318lQAOB5+1aFgv/oIRxQXomo5D8AHSx9M+J6Kee3YJFalG9xQEMrzqv0t
-         g3ZzT2TpA06+1N6tZD7HWs5hX2b+UrrhH10oqXTvVLq6OGATqTuAWMZhUemrrSJYEAUA
-         R7gODGWhVwOv9hXSk2AGAZJwj5bBu5K2gmLtoRQF9G+jHQVVtfOWevL45AdaW9Bp1CTP
-         t82w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728492441; x=1729097241;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QfiegqTqluk30uW9InRvZdJt/6Vj6WI5QVJzRzWcgJs=;
-        b=C/yi2+h5Q29hePe/NlvkODNr6HpJIxgDOtIk62IRxBKMc+BNLXwO4/FDfaT/pcy+pl
-         pCMPAQzVP++Js4yYL66O1JR+rsT1ZpQgdZynOSG6BCZgn7JKk8IYRuRO3t7z8+IRG7US
-         fS9DzRW36UChz2dSE27EM203dAasIOalOOo3n+oy5imViCLISPuebGYCNIBCfnBjGSrt
-         pcHMoRrjKgB6qnIQZbBMmFSrG6MPqFxcUogfYtHYwy8Lb/qog1FfWNZW8YxBspa92EUu
-         IXFsfgR1ZOuRUL8/klSxSJrMEhjkm9dZb+uAnEwIXzFAWQZuv/3x1CF0fp2r+pk2mawc
-         8x2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWs1e4epBMkK9bkCCJvreZB7i8LmF8aRNn9HLIYW3TlSAwajf90Kn+500YF2VAjUftRjdeO284g7MOnfS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJrMqNFkGivNIId/NGvhjYV2LGA/DZTkZ/mQgIaKfwn2poaQXD
-	YRiAWlMhkRFXj1vPdCl0Z6seOaBri9FLs4rWVmLXC3/90u/4BqCC3N/8BVPYBUs=
-X-Google-Smtp-Source: AGHT+IGro+ekaLb+vYWsCnr5zKEX15a+MHGaD6eX5gY1Apv6RjvWXyRZ3YU9RjBVYsXxt0KV9OJLKA==
-X-Received: by 2002:a17:902:e892:b0:20c:62e1:6361 with SMTP id d9443c01a7336-20c6374101cmr43814475ad.25.1728492440634;
-        Wed, 09 Oct 2024 09:47:20 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13988d4csm72448945ad.260.2024.10.09.09.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 09:47:20 -0700 (PDT)
-Date: Wed, 09 Oct 2024 09:47:20 -0700 (PDT)
-X-Google-Original-Date: Wed, 09 Oct 2024 09:47:18 PDT (-0700)
-Subject:     Re: [PATCH 3/3] riscv: Allow to enable PREEMPT_RT.
-In-Reply-To: <20240917104409.b9nGBsc8@linutronix.de>
-CC: namcao@linutronix.de, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, x86@kernel.org, hpa@zytor.com,
-  aou@eecs.berkeley.edu, bp@alien8.de, Catalin Marinas <catalin.marinas@arm.com>, williams@redhat.com,
-  dave.hansen@linux.intel.com, mingo@redhat.com, john.ogness@linutronix.de,
-  Paul Walmsley <paul.walmsley@sifive.com>, pmladek@suse.com, senozhatsky@chromium.org, rostedt@goodmis.org,
-  Will Deacon <will@kernel.org>
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: bigeasy@linutronix.de
-Message-ID: <mhng-5582a629-6b81-4a32-bcbe-02f2e177fe99@palmer-ri-x1c9>
+	s=arc-20240116; t=1728492482; c=relaxed/simple;
+	bh=hLIAN9ux1aPc6NJT1p9v4iCX20vpsU0RwWid80EujYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j3N3BpM1vRJCCvm/EDki/oyXjHi5RmzIgxZE5F58hZ+N4ud7/vnxOw8PPmuVbmJFOjOguwCL0dpMQJG/huJrHiAkks1HiPgrdSzZ1qwAtfjWEhOipOAnRmzEay5R0CqKV/HIuLe3h2WBsYPbv/y3+qBcByhihYjPVFuphiLFMwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZZlNYzr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E049DC4CEC3;
+	Wed,  9 Oct 2024 16:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728492482;
+	bh=hLIAN9ux1aPc6NJT1p9v4iCX20vpsU0RwWid80EujYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mZZlNYzrMbc3/E+odxlDMxFltHFOxpLNtpVcEKkQjvc8XqoOy4bhbIj8fYouaUq6f
+	 QsTB8m1R/RSvl11m26EXmCde9rPxKBn6E3aZQpfxl1qdQ3LW5WYjODsiZBKfEj4JEj
+	 7Oa79n/BFeg030f3dlf6/vg/H+WL0yPZ4rnmRJx07DvHYTYHlQfxOJydjo38rAhkA0
+	 E55L6wqUwy+SxBrc6uUeewAPSv7LX5oxpHvp+zekBqZWXC5OG38h0OwPF/OUv4xSxz
+	 xvigoX6E8igHylgH4ryKJKnosE7dhPbRYlyvgheo+s8SNqMzrQxow98fWWNnWEM+v0
+	 vwOfroUeTamBA==
+Date: Wed, 9 Oct 2024 06:48:01 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Honglei Wang <jameshongleiwang@126.com>
+Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: use correct function name in pick_task_scx()
+ warning message
+Message-ID: <ZwazwQBZdLtnsi7-@slm.duckdns.org>
+References: <20241009030602.91216-1-jameshongleiwang@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009030602.91216-1-jameshongleiwang@126.com>
 
-On Tue, 17 Sep 2024 03:44:09 PDT (-0700), bigeasy@linutronix.de wrote:
-> On 2024-09-06 11:48:03 [-0700], Palmer Dabbelt wrote:
->> I don't have a test setup yet, but I figure it's a new feature so I'll just
->> flip it on as a config post-rc1.  Presumably this just works in the QEMU
->> virt board, or is there some wizardry I'll need to copy?
->
-> I don't think you want to enable it by default for everyone. The riscv
-> defconfig sets CONFIG_PREEMPT_NONE=y by default. For testing you need to
-> flip this to CONFIG_PREEMPT_RT=y and since CONFIG_EXPERT=y is already
-> set this option is available.
-> And yes, it works on the virt board and there is no wizardry needed ;)
+On Wed, Oct 09, 2024 at 11:06:02AM +0800, Honglei Wang wrote:
+> pick_next_task_scx() was turned into pick_task_scx() since
+> commit 753e2836d139 ("sched_ext: Unify regular and core-sched pick
+> task paths"). Update the outdated message.
+> 
+> Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
 
-Sorry I missed this.  Just in case anyone's curious: I'm not flipping it 
-on by default or anything, just adding a CONFIG_PREEMPT_RT=y 
-configuration to the list of things I test before pushing to 
-for-next or fixes.
+Applied to sched_ext/for-6.12-fixes.
 
->
-> Sebastian
+Thanks.
+
+-- 
+tejun
 
