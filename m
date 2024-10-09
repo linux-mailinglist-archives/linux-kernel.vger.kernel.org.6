@@ -1,191 +1,221 @@
-Return-Path: <linux-kernel+bounces-356114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2D6995C99
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 02:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C6A995C9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1CB284808
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 00:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AABB6B20E72
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 01:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E03A18643;
-	Wed,  9 Oct 2024 00:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B749618C0C;
+	Wed,  9 Oct 2024 01:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="er78mva5"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="dLpZBjwb"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5C418C31;
-	Wed,  9 Oct 2024 00:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9EE137E
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 01:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728435531; cv=none; b=M7CaheHNIFfKSgGj8CQF/erL6gFQhXWzpBHSMcwxPKOM5+qhrjS54QjvAfAIs0yXkWfIHAY8JqZiDRCQn5ns1Gk7C2RPIFnxBDm7SuNj1qIUkQ1R7Yttlhpi0UraJgLSd5x+pHC4dioFRtDIgWpe7awduzgDvDJDkYioTjRZ4hA=
+	t=1728435687; cv=none; b=A/pVaEt4GXb3gFcPRrJl4XECBGie9wOBUtYWMgTgiH+PDmQmhRhVqlhbJIpnibEM100RHbQwuy0u59hTPHkwFqrHwT6HWf/4cxsZaVpDM/hrivr4Q+0B2Enuc5sqzLcUvSKm4nlr82upyH2ofVSI6hvM1SjU3A1piH3iI6BAaNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728435531; c=relaxed/simple;
-	bh=94+ST9p9ZEZx/gYVfmyH38elST3i1/AeA9RBXiRn/eg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdv43cjn4PHwODWFpIDgTvpbr8cHJW4X2GW+9htvLYWyeM7XEGppzoYwpUEid+/OQlUY5+gZRgTm1S+ZoGIOlgCN/4MWXqy7kvTpPCF8uA5Ixd24wcvdVPL2Hk/4449USUsue/kjA71JZFLCxrOPxy+Uf9xWberr6bQU/h9rZdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=er78mva5; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728435528;
-	bh=94+ST9p9ZEZx/gYVfmyH38elST3i1/AeA9RBXiRn/eg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=er78mva5H84qSS+DrO+FFLZNhR6jQFx4KMWPz9soeRQZ1fLAEPm6MEUMEC4Ze/SGF
-	 wUVzFJH+Xw0XxOABG7guUjARHKUWLG8MxK0tMC+WpG8Y0aZiZFSnFu3UWTSGU1uaJW
-	 +ZwIsefYapDwzZjExa2ES9TDmJxWarAQBZdMM+eZ8xCWQ9juQ4+tRicjkab0ztNnQz
-	 i8tg5mzqU7dlpLVuuLWEoWGLpHtUuZz+f2JEMVIFrTtSxHq+i+8aNg0dQ800EuZKJq
-	 syMSJNpfB2Ul/I0lRhXff9vmXs3TT5mWlcecYo3XGHCkVIBr5Y1P2H2zZ5NKKham3b
-	 G6cVapbPHUnqQ==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XNZJm1FWfzSRw;
-	Tue,  8 Oct 2024 20:58:48 -0400 (EDT)
-Message-ID: <74d621a3-5b82-4831-a875-7c04e56dec7b@efficios.com>
-Date: Tue, 8 Oct 2024 20:56:51 -0400
+	s=arc-20240116; t=1728435687; c=relaxed/simple;
+	bh=Hlua7vggiPfoi2UHU3g21jqc3cnrdncpJKezKfJFIv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=luERuDyXEGujuRC1zjHfFdPVeyfgpeILDzj6uS/w1YHfQKf7phqqXLIzC+TyRiX21kIvIMNpem1Oqh6e0416HDMRtMz8JHpOr4EUHfyyQpEBDH6G/Z3v7zjztRBSWIM/hnZ59gjfMtEAKMUNHIk8kAkogBynZAomv0zDx9cNaOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=dLpZBjwb; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a9a7bea3cfso365750985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Oct 2024 18:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1728435683; x=1729040483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WAxqxsiZEI5UhKg6mQ45OeLPjqDwtDP0T8PZqcd4lwY=;
+        b=dLpZBjwbcDf41qDtJdkKuLKZRt+jXh0C965h56dO/t+C31XAdCf5mo0t85jLirzyuV
+         OLQjudPF18g8PbgUG+gE57WyqGJ3o1zGpAtwRFVO1Zisg+rNy4jo2erxBuE98leqSEFK
+         4AzJaZelx7SqlQOgRw8nlO3G2zNxO3IGWeOIhuvqKFyoiAvefEnlcsK3GOjnb7GkxoZU
+         jN7qhqK4I7uaJ9x+RoMTFIaXscnA24aclx/+lE/DLtIwbfh1mj8BJ7FaHlL8tYGzF4BA
+         HzrnUiWHHluIJCEciOtMz4yMLsIccRVrPGo9w1dTBHbzp8BTsSxsRb5wNLb/CLHeBGoH
+         sM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728435683; x=1729040483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WAxqxsiZEI5UhKg6mQ45OeLPjqDwtDP0T8PZqcd4lwY=;
+        b=CcwAzhjVbyHiAyXln+pbra3MW2cn8gPOdFcNIiHQL147TaA5woLSskfl0e7un8H9tr
+         brccwnXZOg+2AW+RnekUvp2+4OG8wni8W14VZmXlOlI6ETiwSIOW5DtOqDG6FkZbXQ7U
+         d8hztREv7DX2H6NsjhGW8zCo9PYMpIFWM9ftjHs54C2KWddK7QfqqapCuD8H0SjwxNIf
+         wx8XWZqv6uQJ63X4MNZ4A9tkDtEvueKJRn3+cv1ZvUCTK4flRHMQxmYmHUilQrkLaERb
+         Xainesi0EsLawgh9sTGDJBCIxnZGzUvgAmQvlfa7Ty/xMMYJkEP6pQ7JnnYeUZGgTZr+
+         JxKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgtUSHpGHYP31oqmvFNvkwiz0xII+MdPGKXZfdjwkPjcZp0G1ed9wrR0koBVOIn5ICl+qGSyQpENnaVPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmkKgTS12HDaHI5VLDKHaHbGn1afdZBjD+WAF8XnJLrmGKFyNE
+	8g2EaP4Qu3HiDD9q/frQ+b+mrM5IjUWrSAGwgXva3X6rDryG1DR0JcD1PDZD8Ig=
+X-Google-Smtp-Source: AGHT+IEPtQJlB+jS7QuqGv08fQY1XB3dSoaLMX8dWHnBD76wwgyZFaTvnOY3H1afxMvTBAYbw7SRxw==
+X-Received: by 2002:a05:620a:40d0:b0:7af:cdf9:8c30 with SMTP id af79cd13be357-7b079551aa3mr105196285a.37.1728435682895;
+        Tue, 08 Oct 2024 18:01:22 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae75661426sm408144285a.88.2024.10.08.18.01.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 18:01:21 -0700 (PDT)
+Date: Tue, 8 Oct 2024 21:01:10 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, rrichter@amd.com, terry.bowman@amd.com,
+	dave@stgolabs.net
+Subject: Re: [PATCH v2] cxl/core/port: defer endpoint probes when ACPI likely
+ hasn't finished
+Message-ID: <ZwXV1gPqO6RkrAW5@PC2K9PVX.TheFacebook.com>
+References: <20241004212504.1246-1-gourry@gourry.net>
+ <6700836317627_964f2294f2@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZwCe23k_IDefi15j@PC2K9PVX.TheFacebook.com>
+ <6705b4398f0d0_964f22949e@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] tracing: Allow system call tracepoints to handle
- page faults
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20241004145818.1726671-1-mathieu.desnoyers@efficios.com>
- <20241004145818.1726671-6-mathieu.desnoyers@efficios.com>
- <20241008192334.54180520@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241008192334.54180520@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6705b4398f0d0_964f22949e@dwillia2-xfh.jf.intel.com.notmuch>
 
-On 2024-10-09 01:23, Steven Rostedt wrote:
-> On Fri,  4 Oct 2024 10:58:15 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Tue, Oct 08, 2024 at 03:37:45PM -0700, Dan Williams wrote:
+> Gregory Price wrote:
+> > On Fri, Oct 04, 2024 at 05:08:03PM -0700, Dan Williams wrote:
+> > > Gregory Price wrote:
+> > > > In cxl_acpi_probe, we add dports and uports to host bridges iteratively:
+> > > > - bus_for_each_dev(adev->dev.bus, NULL, root_port, add_host_bridge_dport);
+> > > > - bus_for_each_dev(adev->dev.bus, NULL, root_port, add_host_bridge_uport);
+> > > > 
+> > > > Simultaneously, as ports are probed, memdev endpoints can also be
+> > > > probed. This creates a race condition, where an endpoint can perceive
+> > > > its path to the root being broken in devm_cxl_enumerate_ports.
+> > > > 
+> > > > The memdev/endpoint probe will see a heirarchy that may look like:
+> > > >     mem1
+> > > >       parent => 0000:c1:00.0
+> > > >         parent => 0000:c0:01.1
+> > > > 	  parent->parent => NULL
+> > > > 
+> > > > This results in find_cxl_port() returning NULL (since the port hasn't
+> > > > been associated with the host bridge yet), and add_port_attach_ep
+> > > > fails because the grandparent's grandparent is NULL.
+> > > > 
+> > > > When the latter condition is detected, the comments suggest:
+> > > >     /*
+> > > >      * The iteration reached the topology root without finding the
+> > > >      * CXL-root 'cxl_port' on a previous iteration, fail for now to
+> > > >      * be re-probed after platform driver attaches.
+> > > >      */
+> > > > 
+> > > > This case results in an -ENXIO; however, a re-probe never occurs. Change
+> > > > this return condition to -EPROBE_DEFER to explicitly cause a reprobe.
+> > > 
+> > > Ok, thanks for the additional debug. Like we chatted on the CXL Discord
+> > > I think this is potentially pointing to a bug in bus_rescan_devices()
+> > > where it checks dev->driver without holding the lock.
+> > > 
+> > > Can you give this fix a try to see if it also resolves the issue?
+> > > Effectively, cxl_bus_rescan() is always needed in case the cxl_acpi
+> > > driver loads waaaay after deferred probing has given up, and if this
+> > > works then EPROBE_DEFER can remain limited to cases where it is
+> > > absolutely known that no other device_attach() kick is coming to save
+> > > the day.
+> > > 
+> > 
+> > Funny enough, not only did it not work, but now i get neither endpoint lol
+> > 
+> > $ ls /sys/bus/cxl/devices/
+> > decoder0.0  decoder1.0  decoder2.0  decoder3.1  mem0  port1  port3  root0
+> > decoder0.1  decoder1.1  decoder3.0  decoder4.0  mem1  port2  port4
+> > 
+> > w/ reprobe patch
+> > 
+> > # ls /sys/bus/cxl/devices
+> > decoder0.0  decoder1.0  decoder2.0  decoder3.1  decoder5.0  decoder6.0  endpoint5  mem0  port1  port3  root0
+> > decoder0.1  decoder1.1  decoder3.0  decoder4.0  decoder5.1  decoder6.1  endpoint6  mem1  port2  port4
 > 
->> Use Tasks Trace RCU to protect iteration of system call enter/exit
->> tracepoint probes to allow those probes to handle page faults.
->>
->> In preparation for this change, all tracers registering to system call
->> enter/exit tracepoints should expect those to be called with preemption
->> enabled.
->>
->> This allows tracers to fault-in userspace system call arguments such as
->> path strings within their probe callbacks.
->>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Michael Jeanson <mjeanson@efficios.com>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Yonghong Song <yhs@fb.com>
->> Cc: Paul E. McKenney <paulmck@kernel.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
->> Cc: bpf@vger.kernel.org
->> Cc: Joel Fernandes <joel@joelfernandes.org>
->> ---
->>   include/linux/tracepoint.h | 12 ++++++++++--
->>   init/Kconfig               |  1 +
->>   2 files changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
->> index 014790495ad8..cefd44b7c91f 100644
->> --- a/include/linux/tracepoint.h
->> +++ b/include/linux/tracepoint.h
->> @@ -17,6 +17,7 @@
->>   #include <linux/errno.h>
->>   #include <linux/types.h>
->>   #include <linux/rcupdate.h>
->> +#include <linux/rcupdate_trace.h>
->>   #include <linux/tracepoint-defs.h>
->>   #include <linux/static_call.h>
->>   
->> @@ -107,6 +108,7 @@ void for_each_tracepoint_in_module(struct module *mod,
->>   #ifdef CONFIG_TRACEPOINTS
->>   static inline void tracepoint_synchronize_unregister(void)
->>   {
->> +	synchronize_rcu_tasks_trace();
->>   	synchronize_rcu();
->>   }
->>   #else
->> @@ -204,11 +206,17 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->>   		if (!(cond))						\
->>   			return;						\
->>   									\
->> -		preempt_disable_notrace();				\
+> Such a violent result is interesting! While I would have preferred an
+> "all fixed!" version of "interesting", making something fail reliably and
+> completely is at least indication that the starting point was more
+> fragile than expected.
 > 
-> Should add a comment somewhere stating that the syscall version is to allow faults.
-
-I plan to add this comment on top of __TO_TRACE:
-
-+ *
-+ * With @syscall=0, the tracepoint callback array dereference is
-+ * protected by disabling preemption.
-+ * With @syscall=1, the tracepoint callback array dereference is
-+ * protected by Tasks Trace RCU, which allows probes to handle page
-+ * faults.
-
-Thanks,
-
-Mathieu
-
-
+> Now, I tried to get cxl_test to fail by probing memdevs asynchronously
+> alongside the ACPI root driver. That did reveal a use-after-free bug
+> when out-of-order shutdown causes some cleanup to be skipped, will send
+> a separate fixup for that, but it failed to reproduce the bug you are
+> seeing.
 > 
-> -- Steve
-> 
->> +		if (syscall)						\
->> +			rcu_read_lock_trace();				\
->> +		else							\
->> +			preempt_disable_notrace();			\
->>   									\
->>   		__DO_TRACE_CALL(name, TP_ARGS(args));			\
->>   									\
->> -		preempt_enable_notrace();				\
->> +		if (syscall)						\
->> +			rcu_read_unlock_trace();			\
->> +		else							\
->> +			preempt_enable_notrace();			\
->>   	} while (0)
->>   
->>   /*
->> diff --git a/init/Kconfig b/init/Kconfig
->> index fbd0cb06a50a..eedd0064fb36 100644
->> --- a/init/Kconfig
->> +++ b/init/Kconfig
->> @@ -1984,6 +1984,7 @@ config BINDGEN_VERSION_TEXT
->>   #
->>   config TRACEPOINTS
->>   	bool
->> +	select TASKS_TRACE_RCU
->>   
->>   source "kernel/Kconfig.kexec"
->>   
+> The incremental fix here, that applies on top of the device_attach()
+> fixup, is to make sure that all cxl_port instances registered by
+> cxl_acpi_probe() are active before cxl_bus_rescan() runs. That can only
+> be guaranteed when the cxl_port driver is pre-loaded.
 > 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+:< unfortunately the result is... the same but also different? 
 
+the worst kind of result
+
+# ls /sys/bus/cxl/devices/
+decoder0.0  decoder0.2  decoder2.0  decoder3.1  mem0  port1  port3  root0
+decoder0.1  decoder1.0  decoder3.0  decoder4.0  mem1  port2  port4
+
+apparently sometimes we get decoder0.2 and sometimes we get decoder1.1
+
+after a reboot we get it the other way
+
+# ls /sys/bus/cxl/devices/
+decoder0.0  decoder0.2  decoder2.0  decoder3.1  mem0  port1  port3  root0
+decoder0.1  decoder1.0  decoder3.0  decoder4.0  mem1  port2  port4
+
+in my experimental kernel where everything "works" I get something like
+
+# ls /sys/bus/cxl/devices/
+dax_region0  decoder0.0  decoder1.0  decoder3.1  decoder5.1  endpoint5  mem1   port3    region1
+dax_region1  decoder0.1  decoder2.0  decoder4.0  decoder6.0  endpoint6  port1  port4    region2
+dax_region2  decoder0.2  decoder3.0  decoder5.0  decoder6.1  mem0       port2  region0  root0
+
+which does not have decoder1.1 - but i haven't confirmed whether this is
+consistent or not.  I don't know what causes 0.N vs 1.M, maybe you do?
+
+but in the first result (past email) you can see the reprobe patch also generated
+decoder1.1 instead of decoder0.2
+
+probably not related, more fun side quests!
+
+Regardless, the additional patch did not resolve the problem :<
+
+> If you are running from an initial ram disk make sure cxl_port.ko is
+> included there...
+> 
+> -- 8< --
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 82b78e331d8e..432b7cfd12a8 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -924,6 +924,13 @@ static void __exit cxl_acpi_exit(void)
+>  
+>  /* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+>  subsys_initcall(cxl_acpi_init);
+> +
+> +/*
+> + * Arrange for host-bridge ports to be active synchronous with
+> + * cxl_acpi_probe() exit.
+> + */
+> +MODULE_SOFTDEP("pre: cxl_port");
+> +
+>  module_exit(cxl_acpi_exit);
+>  MODULE_DESCRIPTION("CXL ACPI: Platform Support");
+>  MODULE_LICENSE("GPL v2");
 
