@@ -1,80 +1,162 @@
-Return-Path: <linux-kernel+bounces-356765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39611996655
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:00:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE46996657
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A374287260
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EAFB1F2709C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA5718E35D;
-	Wed,  9 Oct 2024 10:00:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076D8185949;
-	Wed,  9 Oct 2024 10:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC0618DF73;
+	Wed,  9 Oct 2024 10:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLcXPAdH"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC0A15382F;
+	Wed,  9 Oct 2024 10:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728468035; cv=none; b=pWDorhMYSBgNvjzp+vDzJAajTrkdR9WeyiJAMwH6/lPdXdD6KTjY6wilY1HH0sRePcPysBEsmMR5ukAdo5X9MncnlmBUbSgwVk7xfU2dOlSUeIQcXnx5y7nHqShfij0jrhdQzqLh/wc4JLCgGTt9ms8iMvBQq+vEQkVF2P885AI=
+	t=1728468079; cv=none; b=LVW8n+CS38RaLLYbTI2l6usxvq6EqwuOgth0GfEs6IkOy2uIYl/p4AazKy/yjhUJxlnjTFE5QF1R/T8UMUx4eM4nC5tsagKo8Ge6BPuvhsT6Ve5vclWJ/QdQCp/du2zowBo6Y2pLRfpo3iQOnSdvcEEvM7rSjnnogRdP/RKlXMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728468035; c=relaxed/simple;
-	bh=9VMAKb/Kw/v4RiD4FG1omcECkrrKZnPeLNYV55fkUUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FBdB9/5i6qArM9WS9VTE8TCga/FNnwXtYxCZfeHRhwIfsXa0/EDU078PDdPBEfYnT8xzr8pORCoxAuk7Mvc1HjHPW+GQLO8rPGsI+COSkS6w4gmOUGvvyyorTW3P52I7H/Ajw4uhGhTDkJZuybTzzOw9K5oxyYObwXJIzsRHBWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82D88FEC;
-	Wed,  9 Oct 2024 03:01:02 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 716C93F64C;
-	Wed,  9 Oct 2024 03:00:30 -0700 (PDT)
-Message-ID: <dc93578d-0ef6-4446-ae40-ad9f4ba6af15@arm.com>
-Date: Wed, 9 Oct 2024 11:00:28 +0100
+	s=arc-20240116; t=1728468079; c=relaxed/simple;
+	bh=uQDUq9211a48TjUCS6KlseKbjtQ3LW+c+5F7r7rV7ck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KYqiOzh34bk0jdBOwSv0PI1U01fLVCw+pDtXebv08/BPi3HexoAlLHlXVAFkD7qkf2sKyqkCyxxaItvWf4QvChCqVkkRPpPgWQcm/41L5z5auvHqBZnukalErAMHoFf8ACisLXi0XHLOthixWpeAETvfWFai0pGFZf1QkccklQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLcXPAdH; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e1ed14105so53146b3a.3;
+        Wed, 09 Oct 2024 03:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728468077; x=1729072877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jqWZlm3yRT7bzwlRQigXbQucU7XYIO4vwZbCFW+v+iM=;
+        b=SLcXPAdHJUqEFCKn/NkzW/8y+tKUSbKuMg2iuLsjh+k7+O2SJQr8o+evOJegBvPpfh
+         SHWH8dg5E12d4EABVEDtkk/nGj74MsG2hyZH4+6jPAsL8aXkThZb5clFlObmXPhO7ZVa
+         VKwm8C/mZrhrjgK1LJTOnPr/xtkddFQXihB0c/abHocZnseOtnaU3UevVMEUHEUfdwkT
+         h4eA4vm+DeGR09GDo7ZmKfrlGDRgf9Y/tU6m5si1ZfhQIW5T2T3vQHTs0uo3JIeLnu8n
+         m8aSQR4P6Yj1j4O12R6NzNtktlJMw+hKWXLgaSFaWmMD1htVArAmULKovFTrc0ria2LD
+         Acaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728468077; x=1729072877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jqWZlm3yRT7bzwlRQigXbQucU7XYIO4vwZbCFW+v+iM=;
+        b=VnLbhgmzm2fK9ugH12ortHbF+gvgxo4sl7veuo5GGU7OWzZO7nE+GLENZzy/vkDvFT
+         CtLQsM+R5lbwQUP1kOdNVq0yhR9V9QGdivId9/I2Zr4jlBhl5mlrenG3/KSMgmc9sTbO
+         mf044fHX6/w6gmSaGKhEH6TVaUbfieBH0SFSlUfCUrG7YCf0RxFIlXecnvRBZHrNTLRy
+         XSmIqYTzDb3w5lBZk6+kGBo4uIxLXfcGyVO31o5DTgTQ/myqeonnFRxf5D+utpAz/uyl
+         4kkrftRAWnFWNWw2SKIuHZKJbOJfsZVrbuBzgrGSBZUrIGSSu0/hw7q3jqwiqNyNX4tB
+         8diA==
+X-Forwarded-Encrypted: i=1; AJvYcCVz1nCqmZr7rkfnVSDWLOG0BtjvkDw/qnkUW4ufnpPzF1y7ondV7EkhS8KK3WIaZUeuvHDy2PJLpRXOJuRM@vger.kernel.org, AJvYcCWvFd9mmFMZNuWLZoEI2dZR4VkkINgm5BefjX7qQHtDaP58/PA55P6bm69N0YKF0F94BVqiiLvul7zGkaw=@vger.kernel.org, AJvYcCXy2WGIko0NVos9oLZwuSMg6QpsaV0dRMtWMErtHir34Oq7KzyKIO8IyxSj/4vwYhlZlHSYO0n4qjHrEwua7og=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdgZl4qnopRevdSaZilpasJ8LgPe7fiPcmWp9qqQgXMV5xqdYD
+	IvThrBAizOJm5O/KN31cigB8g3jcYeuOOS1hvbjeTu33A+9CzDXLyMN4NlGFc0aaKH22qPbAm0b
+	nuAneHWDI9JkxBpjTeOIqV9jEld0=
+X-Google-Smtp-Source: AGHT+IHmb0DfZJV94TUYq/kEQy0nWKVz7tPBLXiFEmYCqx6M8cPMAGaISdxcGYMNpt5gZV2ATDCy0RxYBb/Z1lvzeWc=
+X-Received: by 2002:a05:6a00:2d97:b0:71c:5e1b:6871 with SMTP id
+ d2e1a72fcca58-71e1dbc8d89mr1309051b3a.6.1728468077208; Wed, 09 Oct 2024
+ 03:01:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 RESEND 0/5] Coresight: Add Coresight TMC Control Unit
- driver
-To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Tao Zhang <quic_taozha@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20241009095556.1754876-1-quic_jiegan@quicinc.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241009095556.1754876-1-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241008-rustc-option-bootstrap-v2-1-e6e155b8f9f3@google.com>
+ <CAGSQo02oVWxazut2nyh-9K9gK+937zKCfYMBkT4EQE2CddvZtg@mail.gmail.com>
+ <CAGSQo01FErmGbeu-+_kRfpQrO4xkaGuSo_zAXTmGHZuFVYXpNw@mail.gmail.com>
+ <CANiq72=40bsTubsXMqn_Jjx8TdfuuE9Z+eQNFvYrVXnX9S1-zg@mail.gmail.com>
+ <CAGSQo03_GZCJrnp9WPxo2T3GJz8TCtucHNx6_rAr7xfJ6ybukA@mail.gmail.com>
+ <CANiq72kN-LiTcCjGXp6Gg=51SP+mp12CjAunt2qk4J2ngdussg@mail.gmail.com> <CAH5fLgjwuGUpKogOVUL4+fUW0-xWM+3ZQ+WmSQ+J00G6+uR9bQ@mail.gmail.com>
+In-Reply-To: <CAH5fLgjwuGUpKogOVUL4+fUW0-xWM+3ZQ+WmSQ+J00G6+uR9bQ@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 9 Oct 2024 12:01:04 +0200
+Message-ID: <CANiq72k4XcxHQitFzogyeJmX83qFbXo2hwcwPvFjWMDUYhCi4g@mail.gmail.com>
+Subject: Re: [PATCH v2] Kbuild: fix issues with rustc-option
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/10/2024 10:55, Jie Gan wrote:
-> The Coresight TMC Control Unit(CTCU) device hosts miscellaneous configuration
-> registers to control various features related to TMC ETR device.
-> 
+On Wed, Oct 9, 2024 at 11:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> Miguel, can you link this issue? I don't think I saw it.
 
-Please rebase this on the v6.12-rc1, which has the sink specific trace
-id allocation changes and drop the "Depends-on" tags on the patches
-which don't make any sense at all.
+https://github.com/Rust-for-Linux/linux/pull/1087#issuecomment-2218445303
 
+(It was in the Lore message I linked yesterday, sorry, I should have
+been more explicit)
 
-Suzuki
+> Masahiro, are you able to clarify how to pass TMPOUT to rustc?
+>
+> __rustc-option =3D $(call try-run2,\
+>        $(1) $(2) $(3) --crate-type=3Drlib $(srctree)/rust/probe.rs
+> --out-dir=3D$(TMPOUT),$(3),$(4))
+>
+> Should I use $(TMPOUT) or $$TMPOUT for this case? Right now, only TMP
+> is defined inside try-run. I am assuming that there is a reason for
+> having TMP be defined in try-run, rather than just using $(TMP)
+> everywhere. Does the same reason apply to TMPOUT? Should I add a
+> TMPOUT=3D$(TMPOUT) inside try-run?
 
+`TMPOUT` is defined already in that `Makefile`, thus you can directly
+expand it. However, `TMP` is defined inside the `shell` function, and
+thus `$$TMP` is used so that that script (inside the `shell`) expands
+it instead.
 
+This is why Masahiro was saying that the `TMPOUT=3D$(TMPOUT)` was
+unnecessary, i.e. it would work, but we can just expand it directly.
+
+Something like this, combining everything [1] seems to work for me.
+
+i.e. passing the file inline, `RUSTC_BOOTSTRAP=3D1`, avoiding an output
+file, keeping `--out-dir` for intermediates files. I added using a
+null sysroot too (and skipping if already given, since that is an
+error).
+
+I will test it a bit more with KASAN etc.
+
+Cheers,
+Miguel
+
+[1]
+
+diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+index 057305eae85c..3ce6a808764a 100644
+--- a/scripts/Makefile.compiler
++++ b/scripts/Makefile.compiler
+@@ -76,7 +76,9 @@ ld-option =3D $(call try-run, $(LD) $(KBUILD_LDFLAGS)
+$(1) -v,$(1),$(2),$(3))
+ # __rustc-option
+ # Usage: MY_RUSTFLAGS +=3D $(call
+__rustc-option,$(RUSTC),$(MY_RUSTFLAGS),-Cinstrument-coverage,-Zinstrument-=
+coverage)
+ __rustc-option =3D $(call try-run,\
+-       $(1) $(2) $(3) --crate-type=3Drlib /dev/null --out-dir=3D$$TMPOUT
+-o "$$TMP",$(3),$(4))
++       echo '//!\n#![feature(no_core)]#![no_core]' | RUSTC_BOOTSTRAP=3D1\
++               $(1) --sysroot=3D/dev/null $(filter-out
+--sysroot=3D/dev/null,$(2)) $(3)\
++               --crate-type=3Drlib --out-dir=3D$(TMPOUT) --emit=3Dobj=3D- =
+-
+>/dev/null,$(3),$(4))
+
+ # rustc-option
+ # Usage: rustflags-y +=3D $(call
+rustc-option,-Cinstrument-coverage,-Zinstrument-coverage)
 
