@@ -1,141 +1,121 @@
-Return-Path: <linux-kernel+bounces-356822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FBF996736
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:25:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F314799673B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017DC285262
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:25:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF5EB26434
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4BE18FDB0;
-	Wed,  9 Oct 2024 10:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83DE18EFE0;
+	Wed,  9 Oct 2024 10:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CU/Syyph"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IaSZNmMU"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FB618C008;
-	Wed,  9 Oct 2024 10:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C0515382F;
+	Wed,  9 Oct 2024 10:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728469535; cv=none; b=gH4odi6BhEEuFqNJZ4IW6xn3xzga9Hf5toy4KC0BBlYvRQoj/TvoxJSJYyY+QHrzvAniLekMfoSnm2A8Hav/snPI8HRUilzpMICKX2diJa6WDXutY0A3cgbrn2QV0jKCYX0oxRfavAxMtoPXoc1pY45ZanDLKwjyJD8oWp1rTa8=
+	t=1728469631; cv=none; b=P0Cat8mvS6aUd4qvsevRwF+DjTaZNtPY80u47Dbbo0K25SN3fvVFjIr9+Vnhw6Xzh+GWnLJgPj2pbkAilm8N0UiW+VlIEirDmqWBIOuGh8FHWrG9kSwGpzdPZo4oqXX/P6xgv5eCK9W5uigudiajaDAOe9aN72X2fytYIZ1otjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728469535; c=relaxed/simple;
-	bh=E98w9taq8sn2oCFo6PyCyTLfRrjriLoSIyE58uTuJiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMOuAz3yas3TvRM0NpkUWutt3q4tUgp6zK/V2/GZ5qsFygPBoRpxxClS1wHswLY5U2SN+4Wz55IVawV63sGYSjPGiXAnUY+F3h8wXqfRT4DeVnJQnV9xnb4uYuPKlURD12V6bQ64rGOEArsJM39fazTzQKQ8b2YJwVpz2MYFHIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CU/Syyph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F86C4CEC5;
-	Wed,  9 Oct 2024 10:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728469534;
-	bh=E98w9taq8sn2oCFo6PyCyTLfRrjriLoSIyE58uTuJiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CU/SyyphBFW7CION5UzN5ZaM2s9B2KaWUYjQIE24jNpQiaaNBcPZ/JBx43vZR9RIm
-	 dKAuev96gZiqv3cQzmnlNpHZGs9yUnbcbXXoet9w9Wkw11upiEbCgMxXNsdL4ezFdY
-	 +p5Tmy9zeIo8mmLnp1544+X/5q23ssqCYC9uPdMTUlybp9F8xH4e8D5xzIK9/AHeT4
-	 VM8+SYp7oWGh1v48rq/tPnXUE9W2Y0QAcFjQlkkDsy7TNbdxWPifO6On6S6nNdb6x/
-	 +Q0hlFwhivhYuLDaOGJFcmJB/380AQV7gmfUOo5/8+ukhcjeDEpd9KT8HTxCDfwmeH
-	 x2vMMvQe1JdeA==
-Date: Wed, 9 Oct 2024 11:25:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "corbet@lwn.net" <corbet@lwn.net>, "robh@kernel.org" <robh@kernel.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor@kernel.org" <conor@kernel.org>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"jim.shu@sifive.com" <jim.shu@sifive.com>,
-	"alistair.francis@wdc.com" <alistair.francis@wdc.com>,
-	"cleger@rivosinc.com" <cleger@rivosinc.com>,
-	"kito.cheng@sifive.com" <kito.cheng@sifive.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"samitolvanen@google.com" <samitolvanen@google.com>,
-	"evan@rivosinc.com" <evan@rivosinc.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"atishp@rivosinc.com" <atishp@rivosinc.com>,
-	"andybnac@gmail.com" <andybnac@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"charlie@rivosinc.com" <charlie@rivosinc.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"richard.henderson@linaro.org" <richard.henderson@linaro.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"alexghiti@rivosinc.com" <alexghiti@rivosinc.com>
-Subject: Re: [PATCH v6 16/33] riscv/shstk: If needed allocate a new shadow
- stack on clone
-Message-ID: <ZwZaG3NT72BwYxJO@finisterre.sirena.org.uk>
-References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
- <20241008-v5_user_cfi_series-v6-16-60d9fe073f37@rivosinc.com>
- <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
+	s=arc-20240116; t=1728469631; c=relaxed/simple;
+	bh=5ZenLqU4VTWx8D4jCHpR0AkhS1gX0UMjyUhU2joZlLc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=jctKml0nIroi1QtqL32CquKw13Kifga4W44mqgepx5vix+xZUUbiNs3j4Ky6GIJzwuhk4kwwFHdq2yzM3oQ75pRPUuK7MReUwbNT9OeT1y3k+H7rGbFO/so4EQZnEtFMY+lvBqtE2X1z4C2jYpXerpMRAXCvffuoMOKmqtITxCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IaSZNmMU; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BAF6BFF807;
+	Wed,  9 Oct 2024 10:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728469627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kYFf+MxvDup/RI+1Ncetwr45O3Q+xf0MstIDXJK3vW4=;
+	b=IaSZNmMUGBhEeWI3TA/wm7PqsHBAdZB9oovNm9/LaIHN8rK00jZ3mmYxWjduw5/5KYwqCl
+	zPlfOjzy4IVbyLlYrAICwciDTO+pMj/9p0rkQOo96+tHAusUG/cTpBTOdrxg/Yws4qxaTz
+	2mJBOErBo2LLiH/W2HzzGnr9djcO3WrdKOXvV88On7ah9U9P488xtJwanNllkdHB94gThC
+	eciqHtYW8k4Hy7Vm7/Uskx9GhXlkWS9zdJLaLDosJbyf0ZLxfmaYh13HxX9rcjQYy8C96Q
+	hIhx+2Z8qbiY1QS1VoVK5I72EvWt3QwEhLTW0aq2xjlWYD2hYE0t75KHw+/anA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pV5KnxhmLMXWkQIN"
-Content-Disposition: inline
-In-Reply-To: <aa75cbd142c51b996423f18769d8b8d7ecc39081.camel@intel.com>
-X-Cookie: Editing is a rewording activity.
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 09 Oct 2024 12:27:06 +0200
+Message-Id: <D4R7CGGQAJ50.U5UY2B7PBGG@bootlin.com>
+Cc: "Linus Walleij" <linus.walleij@linaro.org>, "Andi Shyti"
+ <andi.shyti@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vladimir
+ Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 2/4] i2c: nomadik: support Mobileye EyeQ6H I2C
+ controller
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241008-mbly-i2c-v1-0-a06c1317a2f7@bootlin.com>
+ <20241008-mbly-i2c-v1-2-a06c1317a2f7@bootlin.com>
+ <oxcxs6n7y4bw33yfgaacd2cayf7otfochvlaofva2kabzjim6h@d6pam3gciepl>
+ <D4QI63B6YQU5.3UPKA7G75J445@bootlin.com>
+ <fc17ef3d-7895-4ee8-bfa0-d31dd45f2f2c@kernel.org>
+In-Reply-To: <fc17ef3d-7895-4ee8-bfa0-d31dd45f2f2c@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+On Tue Oct 8, 2024 at 6:03 PM CEST, Krzysztof Kozlowski wrote:
+> On 08/10/2024 16:43, Th=C3=A9o Lebrun wrote:
+> > On Tue Oct 8, 2024 at 3:39 PM CEST, Krzysztof Kozlowski wrote:
+> >> On Tue, Oct 08, 2024 at 12:29:41PM +0200, Th=C3=A9o Lebrun wrote:
+> >>> +	bool is_eyeq6h =3D of_device_is_compatible(np, "mobileye,eyeq6h-i2c=
+");
+> >>> +	bool is_eyeq5 =3D of_device_is_compatible(np, "mobileye,eyeq5-i2c")=
+;
+> >>
+> >> You should use match data, not add compatibles in the middle of code.
+> >> That's preferred, scallable pattern. What you added here last time doe=
+s
+> >> not scale and above change is a proof for that.
+> >=20
+> > I would have used match data if the driver struct had a .of_match_table
+> > field. `struct amba_driver` does not. Are you recommending the approach
+> > below?
+> >=20
+> > I don't see how it brings much to the driver but I do get the scaling
+> > issue as the number of support compatibles increases. This is a fear
+> > based on what *could* happen in the future though.
+>
+> You still have adev->dev.of_node, which you can use for matching in
+> probe. See for example of_match_device() (and add a note so people will
+> not convert it to device_get_match_data() blindly).
 
---pV5KnxhmLMXWkQIN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Just sent the new revision [0]. It uses of_match_device() in the same
+way as was shown in my previous answer to this thread [1]. Followed
+your recommendation and added a comment to avoid conversions to
+device_get_match_data().
 
-On Tue, Oct 08, 2024 at 10:55:29PM +0000, Edgecombe, Rick P wrote:
+Thanks!
 
-> A lot of this patch and the previous one is similar to x86's and arm's. It great
-> that we can have consistency around this behavior.
+[0]: https://lore.kernel.org/lkml/20241009-mbly-i2c-v2-0-ac9230a8dac5@bootl=
+in.com/
+[1]: https://lore.kernel.org/lkml/D4QI63B6YQU5.3UPKA7G75J445@bootlin.com/
 
-> There might be enough consistency to refactor some of the arch code into a
-> kernel/shstk.c.
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> Should we try?
-
-I think so - I think we discussed it before.  I was thinking of looking
-at it once the clone3() stuff settles down, I don't want to trigger any
-unneeded refectorings there and cause further delays.
-
---pV5KnxhmLMXWkQIN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGWhUACgkQJNaLcl1U
-h9CV8Qf+Ph9QxNDXCUSDZQA7lOMJTS+c3a+WdGbveXt6JMb2hP4Udd4ELfDvQVsP
-2vwWUtByxmDax2qjADTJn56IYnJp+1yB9YBfBuwEGHGP67KgKDpcUHieu4xPemue
-2pid1MtBjTUsviljsva6rAoewc+MO3Z5AAICoplF1wXYwW8JWpgKpALzehjsUnOG
-xGgEXqiS5ycjWc0ikmHyeOQRK13/4EVaiJr+pklcIbhhggLbnNIB7jvKTKnBr/ds
-fkXQZeW9aA6kQUAetPKjlkvwxOhyxix4xDR3tCncJjA/emX+9fze/UwLrBDs75JO
-eMHp4p8ZUDqVuxPu6ZNF8wGk8VJChA==
-=EDL3
------END PGP SIGNATURE-----
-
---pV5KnxhmLMXWkQIN--
 
