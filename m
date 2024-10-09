@@ -1,62 +1,45 @@
-Return-Path: <linux-kernel+bounces-356689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660CA996549
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B0F99654A
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0201C24917
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB612281F0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C848C18B48B;
-	Wed,  9 Oct 2024 09:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j0Px2J4s"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8469A18CBEE;
+	Wed,  9 Oct 2024 09:25:51 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A76188906;
-	Wed,  9 Oct 2024 09:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5027F18C91A;
+	Wed,  9 Oct 2024 09:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728465945; cv=none; b=ZlQ/6iapJt9A3IzNuPJzURH3sBbFTpgSWmrPboeFwid7A3r1aARp/vqZJb1MGl25kYkys0TgZ9m6g3E9n5j/kKKwzBH/QqVj4AHIvPTptdUKXT8RqbU2GNH+P97T1dK2MUVVTMFBZbfruj+StBzLME52F7vtxsyl7VUA4UgjJGA=
+	t=1728465951; cv=none; b=lfFYf0Kx7agOA4RpknUJTrhXXJXB4atSgjAN9ToeFF7DKWPtRzOJgK8hojc9B2wk0/9je9GIvmgx0CNTfd92D6XWlJCbgPY77mJJHyzQQYeVydllrcmUg3zbFlrkmOSluSKKabeiBY8QNLNrVVXDK/lfYlREO+BPBEQ4kI8ISQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728465945; c=relaxed/simple;
-	bh=8Rm3CqIaUH04nch4KNzaX9ksWJukZum7GopzBindC+I=;
+	s=arc-20240116; t=1728465951; c=relaxed/simple;
+	bh=i8qUuPXl72YM42vqEQZlOG+NYGtUNHsRsQ5E7hgzw8U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GidQOTwEctSLipBG3b2e1u/Ph5gag7ngS1xRY7QT5uX3Kti3g2fNsXGyluD1Ao2yKEUCFJy3Tk6YY+/BAP+fNpn9EIdx59+TElxVi/9cfiTjS0ca3z0GoStI1/u4f/xLNFNkx2h/bbufNFut6Q2Od5YGPYuxW/NrFDa1mlMNyE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j0Px2J4s; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4996OLCc029436;
-	Wed, 9 Oct 2024 09:25:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LD7A2pwBFdoyVPG2zETKNHHhWYtem0o4ej8s3AoD1fw=; b=j0Px2J4s0VOf4+Mq
-	hn0FlXUn1lvFQarYpMBwPwik6AJYnXjUjQF8TYA8QSXMPar/iZYLLyKtr6GehDfh
-	inoT8+7HtZItxUEGKtk1t+lXpuFSfH8sXKpRtGlnQ4eqGJf+dc4qgk2D8QPcNw6R
-	HJ4SupAZJfn/eRwiNHH7U5/TVc0lBoNcNPbn6BFvewW+SVAbhrc72Op5tOEUHyPz
-	EfsfBEBQKOp85Ob6rKZUDPe6iO3S26vHB/5r95EDrTknSuUgob6tU6+xccb6x/D8
-	NzSlXxSEx6jNg/6wnIMicXkk0RAbNYUH4i6LihNO+MUjm3gsagHtbUWcoV05EG6Q
-	vqvmFQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424yj041pm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 09:25:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4999PTN4025307
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 09:25:29 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
- 02:25:25 -0700
-Message-ID: <bbeccf0d-b98b-41f7-b910-b3ec07d1e069@quicinc.com>
-Date: Wed, 9 Oct 2024 17:25:22 +0800
+	 In-Reply-To:Content-Type; b=ml3iY/Wc0BKvvAoTTZU5S+6gWs+1+vtOwi9XYFjYiL3vBJr0YEhNrHz0vSMuyqK1OCmC15s559CNostv4MOlU5Gu+L5DyT9AmF8PQM0kAbLJQv6CbuXO6N9IyltUJ7tgrZvSJLZNH6na6OZblB3Fxn5Yhx92w4NFI7w2+iaRgoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XNnXQ49wHz1SCJJ;
+	Wed,  9 Oct 2024 17:24:38 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5D3991A0188;
+	Wed,  9 Oct 2024 17:25:44 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 9 Oct 2024 17:25:44 +0800
+Message-ID: <45174791-f446-4edf-9ccd-c0021eec2895@huawei.com>
+Date: Wed, 9 Oct 2024 17:25:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,88 +47,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 RESEND 0/3] coresight: Add static trace id support
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20240910100127.8948-1-quic_jinlmao@quicinc.com>
+Subject: Re: [PATCH v2] bcachefs: Fix shift-out-of-bounds in
+ bch2_stripe_to_text
+To: Zhao Mengmeng <zhaomengmeng@kylinos.cn>, Zhao Mengmeng
+	<zhaomzhao@126.com>, <kent.overstreet@linux.dev>
+CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241009054325.438556-1-zhaomzhao@126.com>
+ <b1c2154d-189a-43fa-84ff-a0d96787ff60@huawei.com>
+ <633662aa-120c-40e0-a836-da5faa7ed312@kylinos.cn>
 Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <20240910100127.8948-1-quic_jinlmao@quicinc.com>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <633662aa-120c-40e0-a836-da5faa7ed312@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AKMSlgSoWUfbAhzhaxD5D6vrjZYcJO2d
-X-Proofpoint-ORIG-GUID: AKMSlgSoWUfbAhzhaxD5D6vrjZYcJO2d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- bulkscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 clxscore=1011
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410090062
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
 
 
-On 2024/9/10 18:01, Mao Jinlong wrote:
-> Some HW has static trace id which cannot be changed via
-> software programming. For this case, configure the trace id
-> in device tree with "arm,static-trace-id = <xxx>", and
-> call coresight_trace_id_get_static_system_id with the trace id value
-> in device probe function. The id will be reserved for the HW
-> all the time if the device is probed.
+On 2024/10/9 17:16, Zhao Mengmeng wrote:
+> On 2024/10/9 17:10, Hongbo Li wrote:
+>>
+>>
+>> On 2024/10/9 13:43, Zhao Mengmeng wrote:
+>>> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>>>
+>>> syzbot report a shift-out-of-bounds issue:
+>>> ------------[ cut here ]------------
+>>> UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
+>>> shift exponent 108 is too large for 32-bit type 'unsigned int'
+>>> ----
+>>> Here s.csum_granularity_bits = 108, so shift is impossible for unsigned
+>>> int. To fix, add a check in bch2_stripe_validate() to bail out, it has
+>>> same checking logic with ec_stripe_key_init().
+>>>
+>>> Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+>>> Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
+>>> Suggested-by: Hongbo Li <lihongbo22@huawei.com>
+>>> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>>> ---
+>>>    fs/bcachefs/ec.c      | 6 ++++++
+>>>    fs/bcachefs/errcode.h | 3 ++-
+>>>    2 files changed, 8 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
+>>> index 141a4c63142f..bc5ff1331c6f 100644
+>>> --- a/fs/bcachefs/ec.c
+>>> +++ b/fs/bcachefs/ec.c
+>>> @@ -113,6 +113,12 @@ int bch2_stripe_validate(struct bch_fs *c, struct bkey_s_c k,
+>>>        const struct bch_stripe *s = bkey_s_c_to_stripe(k).v;
+>>>        int ret = 0;
+>>>    +    if (s->csum_granularity_bits >= ilog2(le16_to_cpu(s->sectors))) {
+>>
+>> csum_granularity_bits should do the left shift.
 > 
-> Changes since V3:
-> 1. Adda new API function
-> int coresight_trace_id_get_system_static_id(int trace_id).
-> 2. Use the term "static trace id" for these devices where
-> the hardware sets a non-programmable trace ID.
+> If use `1 << s->csum_granularity_bits(108)` to do the check, syzbot will still trigger shift-out-of
+> bounds warning. So better check the bits directly.
 > 
-> Changes since V2:
-> 1. Change "trace-id" to "arm,trace-id".
-> 2. Add trace id flag for getting preferred id or ODD id.
-> 
-> Changes since V1:
-> 1. Add argument to coresight_trace_id_get_system_id for preferred id
-> instead of adding new function coresight_trace_id_reserve_system_id.
-> 2. Add constraint to trace-id in dt-binding file.
-> 
-> Mao Jinlong (3):
->    dt-bindings: arm: Add arm,trace-id for coresight dummy source
->    coresight: Add support to get static id for system trace sources
->    coresight: dummy: Add static trace id support for dummy source
-> 
->   .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
->   .../arm/arm,coresight-dummy-source.yaml       |  6 ++
->   drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
->   .../hwtracing/coresight/coresight-platform.c  | 26 ++++++++
->   .../hwtracing/coresight/coresight-trace-id.c  | 38 ++++++++----
->   .../hwtracing/coresight/coresight-trace-id.h  |  9 +++
->   include/linux/coresight.h                     |  1 +
->   7 files changed, 140 insertions(+), 14 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
-
-Hi Reviewers,
-
-Gentle remainder for the review.
+You are right! :)
 
 Thanks
-Jinlong Mao
-
-> 
-
+Hongbo
 
