@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-357407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087CB9970ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:17:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADDE9970EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A16F1C20ACD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D5D1F22612
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58CF20721F;
-	Wed,  9 Oct 2024 15:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF161E6310;
+	Wed,  9 Oct 2024 15:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rk5FiHJU"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mEh1XN+d"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B790B1E5739
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246D21E5729
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489249; cv=none; b=FT6pxHWxraYyVkwjf9uFBqOT2cQjS0juAzBNME+amIMXhzhjXSiGs/j3UTzTXvQn9O1P0SOXrjxtpNt17fYZQ3nHQYpSmmq1GfG2OekECmuSS3ZNcjYFFcDMjqOHfsruxcz8FajEVJk33k46pB76RttrXEAh8cWAmAY8SjA7GLc=
+	t=1728489332; cv=none; b=QnGaKSj+IdoSdp522MIYvZNULZ6vdWHMvBUadL5xeOIP81hQcENLbQoGXx2+Fw3tREo5F0KGY6f/98KWFlGPSRcF4EcQYgAWrkjAWv5SQrKertp3qMQrnffs06fjNYDjXoj1eOCaxIrGfeynBYyeb57W5dWefinBNjZ8dBYjYF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489249; c=relaxed/simple;
-	bh=nAM+4uu5vTk/n0aQoY+yccvVJFEsYtw4m6pnwbNQZ6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCgwo3shSKQhXnOU88hpKtfYe0z9t0c/WbFtr0VwV9BcrvOgzYMCOhAiPSzAXjla/UHiY5kJxydc8hAoHqqs0tyQJl82356pqmw+ahZkT2jtBSHLEDL1aY1BzA4TSEtEbO5Y4XRBVnf1ZUl7btV++A1x1t4XUwfOruRrWltx+lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rk5FiHJU; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1728489332; c=relaxed/simple;
+	bh=9IyxbRxcXn3W/ovlgPhTagWUE9DYLB2d0t3NLu1GTEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dc22eQgRjymLe3GfXTAFpPhSB+1FqVz1iiN57Pg/65VBaXvQ0AaszWZdOYJnGIsSvKQ3v4Ihf0fSH3LGajNjWAfE/Dig6zqZcO0WbazBa6lKxfMOHrRA5gAFxTOdn0sl4Twks5k9RoscuO3JjdoTCxZTVd6bse+VfG75G3Amh50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mEh1XN+d; arc=none smtp.client-ip=209.85.219.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71df67c6881so3889823b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:54:07 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e29047bec8fso510265276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728489247; x=1729094047; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8761W3rypRmL3MeMAwrQjF2myH6re3LLMLmokDBjKNE=;
-        b=rk5FiHJUBIrjZt8vtMjsvKHnXu3MjqXbPtQM2cWOU2mFuEH/+TgCBvuaMLyId2+4lG
-         fu9hYXEELI/8CKGSf0p1PM3BzpMiklpaMEdfoPbNd/Mka+9USBK4GSM8DpZq0WhPMQAW
-         FDsThPGs89+gAEGIbuOFbb9wtAPHiDxEK2ItwTlcirLhjVgtuCNzsIYonuHfmt9b1TO0
-         D5F1i/1J+5KVM6JP7dVW7Z+dngbRt0QB8v+0E+C33F2wbRUjSoiml88XlJGq5Jy++KD+
-         7dRwaNifCBHk/n0AvMgYkctQQhKkHkhY+yGS1Fhbw4kJ3pHB1Pul4jOSBMJwDmnOI2HM
-         Zs4Q==
+        d=linaro.org; s=google; t=1728489330; x=1729094130; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PL9hRQRfd6A1OkAh+5JXcnzv2ciGXqoLre3DkSp5z4s=;
+        b=mEh1XN+dut+tJeZiI+F8yL2JB7TX6+Hjpcb76sZMjsqI+SyWRnsOlaaAzKV5wBrQgs
+         MOCCSuOm58I99hLeuZRlnZMX3pMngqTDsmhlHrWoM8eBWYZ36zfkcGki6Ao6pStOgolh
+         BEilJDpEs5E4UmOor0mN74rWGBocqoRaSHoWn9x4gjBIWWjcBz+Dy91YUugv6zPLbYmI
+         zE7HeUAn/Qe8+nJPchw4lVjWDmJvlcGtkkpigfI4KFM7h6Ev/A3tTeIRnZtSTPnf91Cb
+         KO1Jp1sp7x4vJmySQ5VelBb0wbxCaKs9RPMEOp1GBdjI8hsLPpdZzDpTNhYI91gwcvtX
+         J9Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728489247; x=1729094047;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8761W3rypRmL3MeMAwrQjF2myH6re3LLMLmokDBjKNE=;
-        b=VrkqLwYKel8pnD0/+wl9/1TfgNL+VIEHka9pKcrD6Ip3hk9U4Ont9oMRFnvpI8LnB9
-         /7hXP0RcQjNvtzcJEk6R+Tdu9yFhHpOIKnDBvmGEINqoXwPLBdypge9JAkHDVs8Lhusa
-         qgCPhtGoIxZ6h32lHJ9JVctuC7dBYhTqLMjZIaCBm7xEGMTJIfyWnwyhGg4uROcbxPai
-         x8sIsMRueG1QylftrY4N+6iI2iNlMvIxL/6jwqWQZOtr5wJCVtUOGc7193OE6g7kq6jm
-         bsqxnCRnk5DqP+y39+/Xb3vAyDax1kWz8O0qTketALkeja0JQuvnZXL/tJm5AbgLmYUL
-         /Zsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXErkeKZRBx12jeVakzzFl8wV33lrnw5ZzXbpNx7HOIKQvDCjcya1xkqaJA0/1lWUiBzVexAIp6JwQaHXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Ivuo4Mr0OvfJ/BddW3lwZCeVXzHTn89YPvyOAMdrYtIqU09+
-	N7OMvaXLbRCo6Sc3G4ff52lRxbiBq8db8frw1ELxgtBNV/2X08rcKaO+ka07s1o=
-X-Google-Smtp-Source: AGHT+IFMB+sZkdSpCaDZJCQnj0/IIDGEUWaGrMrzjkcsrtXMG2WQxkgjdmH5TLlo58ss1F9KU+Jlkg==
-X-Received: by 2002:a05:6a00:b52:b0:71d:f2e3:a87a with SMTP id d2e1a72fcca58-71e1db6ee22mr4867827b3a.3.1728489247092;
-        Wed, 09 Oct 2024 08:54:07 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1199:5ae1:92cd:b017])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0ccf02asm7898411b3a.74.2024.10.09.08.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 08:54:04 -0700 (PDT)
-Date: Wed, 9 Oct 2024 09:54:02 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
-	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: Fix spelling error in remoteproc.rst
-Message-ID: <ZwanGrWs3PI4X7OZ@p14s>
-References: <20241008071559.18523-1-everestkc@everestkc.com.np>
+        d=1e100.net; s=20230601; t=1728489330; x=1729094130;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PL9hRQRfd6A1OkAh+5JXcnzv2ciGXqoLre3DkSp5z4s=;
+        b=Us+g5PT1JlUX48TQouaoc88n1K6FIVmsMB88IQw5+g04Er/O8KfURcb9jOmAoDjYHS
+         oN2jvJbmrynvu2CYobZLrTKC1yczFS8jWNubWoKdV7B7QCWLed/1Zmh/QRgSdS4sY5Ta
+         dkq2Yz4MElz2Ay241B/DpDUhpapFHi9y5htebvHzmZZe+bJSB0pZPzZepKE4fvdG4mli
+         tqzDkZIf02L2gKYEzHlMMM1Jk3w1eLzECr4so4jyMgv4lBh9zZHHOgCx0wIw48MviRk1
+         PHsbtzvJH6aW8rydib2+ktE5rQQyTa4ZpP3yUaOa8OqT+q/epFd2t2y6CfVQnvuoO9Cx
+         mq8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWaikjHaL2K0X7J07CLz3aryZQMKYGnBRZiwEJOyWWN8mxYxeJ9OoMJ6bFA+W/PQcAdRNrcfuQVnJbHMJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwwUIZo57UVjMYXwaJ84eMlQMIw45eaofj3e8+oiVHjgjxBA1E
+	UoHuahnvwQ/P9YJ3oOKqT8MbijannXJIdbGbjCNEX7PdZwWtwUOWJ3iXnulQtDbQn1B7BMc8e71
+	6DCl2CY8g2fcg6IaHTEQvUmlnRBbvJ5XZdUpJ8g==
+X-Google-Smtp-Source: AGHT+IGr4JUYzFp39IBCDliI2NU/uIXqk9gKPXFzdTH3f5egjT/5+Vhap/s8Mz6XqzPyfQOagIBhPrN+2Q7yfWV9SU0=
+X-Received: by 2002:a25:fc28:0:b0:e1a:90ef:3b6d with SMTP id
+ 3f1490d57ef6-e290b5ddff5mr83158276.7.1728489329967; Wed, 09 Oct 2024 08:55:29
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008071559.18523-1-everestkc@everestkc.com.np>
+References: <20241002122232.194245-1-ulf.hansson@linaro.org>
+ <20241002122232.194245-4-ulf.hansson@linaro.org> <20241003071411.vvhqb6bxxnrbkaw7@vireshk-i7>
+ <CAPDyKFodrKnmFNjqLWfv2AExqkfRo9DRrf7wqB4ht=XwjZDhtw@mail.gmail.com> <20241009154807.4i5qse7utnqbsoib@vireshk-i7>
+In-Reply-To: <20241009154807.4i5qse7utnqbsoib@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Oct 2024 17:54:53 +0200
+Message-ID: <CAPDyKFoL5ZB45s6sgxDusjXk6PhUCA6U-n73XGZGHbvwCtVrLg@mail.gmail.com>
+Subject: Re: [PATCH v4 03/11] OPP: Rework _set_required_devs() to manage a
+ single device per call
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+	Vedang Nagar <quic_vnagar@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <quic_kdybcio@quicinc.com>, Nikunj Kela <nkela@quicinc.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Stephan Gerhold <stephan@gerhold.net>, Ilia Lin <ilia.lin@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Good morning,
+On Wed, 9 Oct 2024 at 17:48, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 09-10-24, 15:55, Ulf Hansson wrote:
+> > On Thu, 3 Oct 2024 at 09:14, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > On 02-10-24, 14:22, Ulf Hansson wrote:
+> > > >  /**
+> > > >   * struct opp_config_data - data for set config operations
+> > > >   * @opp_table: OPP table
+> > > >   * @flags: OPP config flags
+> > > > + * @index: The position in the array of required_devs
+> > > >   *
+> > > >   * This structure stores the OPP config information for each OPP table
+> > > >   * configuration by the callers.
+> > > > @@ -48,6 +49,7 @@ extern struct list_head opp_tables;
+> > > >  struct opp_config_data {
+> > > >       struct opp_table *opp_table;
+> > > >       unsigned int flags;
+> > > > +     unsigned int index;
+> > >
+> > > Maybe name this required_dev_index as well ?
+> >
+> > Sure!
+> >
+> > Did you manage to get some time to look at the other patches in the series yet?
+>
+> Ahh, they looked okay and most of them were already Acked by me I guess :)
 
-This is a case of old english vs. new english.  Using "implementors" is still
-correct.  Moreover, there are 33 instances of the word "implementor" in the
-kernel tree.  Unless there is an effor to change all occurences I will not move
-forward with this patch.
+Right, it was mostly patch 3 and patch4 that I would appreciate an
+ack/reviewed-by tag from you.
 
-Thanks,
-Mathieu
+If I make the rename to "required_dev_index" according to your
+suggestion above, it sounds like I could add the acks from you?
 
-On Tue, Oct 08, 2024 at 01:15:57AM -0600, Everest K.C. wrote:
-> Following spelling error reported by codespell
-> was fixed:
-> 	implementors ==> implementers
-> 
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
->  Documentation/staging/remoteproc.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-> index 348ee7e508ac..5c226fa076d6 100644
-> --- a/Documentation/staging/remoteproc.rst
-> +++ b/Documentation/staging/remoteproc.rst
-> @@ -104,7 +104,7 @@ Typical usage
->  	rproc_shutdown(my_rproc);
->    }
->  
-> -API for implementors
-> +API for implementers
->  ====================
->  
->  ::
-> -- 
-> 2.43.0
-> 
+>
+> Sorry for the confusion.
+
+No worries!
+
+Kind regards
+Uffe
 
