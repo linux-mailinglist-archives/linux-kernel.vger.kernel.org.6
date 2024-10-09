@@ -1,102 +1,128 @@
-Return-Path: <linux-kernel+bounces-356801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8309966DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:17:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DCD9966E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 12:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4B31C23C57
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:17:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B66EFB2A0CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 10:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6645818E75F;
-	Wed,  9 Oct 2024 10:16:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B5418E750;
+	Wed,  9 Oct 2024 10:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dMiGuOrC"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A363232C85
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 10:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC159188587;
+	Wed,  9 Oct 2024 10:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728468989; cv=none; b=BtxO4a4uWcJQpxcS4KCaoUWe5RejoEXkNuJR6hz/KVRRlVOqkmurnVcJI9msjrhW8skZX1pkWqyUXPpUfBVg3SMvVwIWNBdVxTp4GGIEl/7CreErhOp1FSDojHtsmDuPV/E6hG+LU+ZIy+NMrZ8s4P5F0GA7LuRZHQRgv2hJtdI=
+	t=1728469050; cv=none; b=FrFl/Ztc3qvYHeEpd2pNP/3SVSkRbwmS7ktvSBoIyx5u9+gRYx6DO8vA3eyh0dZZRYIpKqonNQu3qQdN1cZBgo0YIQyrcnCMAiMnQLVB/tF58RrNZ5zru0onvbw5pGPZyktgmCcVmRHMiZTiUKwE/ke4SeqoO6yRAZxBgP99wGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728468989; c=relaxed/simple;
-	bh=AmMZYRVxD32zx3X3TCEFkbpar8SD0iGV5EzI6KqS1AY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q4Jy4KYp3e1MpypPJdWz3gew5ct4/xjmN1FnBKbfro+wEjUoUX/S+wmwxGh8vbMEOWTdKJlk3RCIWBXzOeSkYtkIZ8UuZQiV2/Gj1kvH1pQW259jbOtOyImvUY12eST/vn8yukm4l0PeMRcdeESN28zjIP/m1/atYPsIWPJ/+t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1syTjh-00083F-Mr; Wed, 09 Oct 2024 12:16:05 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1syTjh-000a17-6n; Wed, 09 Oct 2024 12:16:05 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1syTjh-0006zc-0K;
-	Wed, 09 Oct 2024 12:16:05 +0200
-Message-ID: <c5f290c042419262092a7cfdfe855d2082a604bc.camel@pengutronix.de>
-Subject: Re: [PATCH v7 6/6] reset: mchp: sparx5: set the dev member of the
- reset controller
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Herve Codina <herve.codina@bootlin.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Simon
- Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Lars Povlsen
- <lars.povlsen@microchip.com>, Steen Hegelund
- <Steen.Hegelund@microchip.com>,  Daniel Machon
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew
- Lunn <andrew@lunn.ch>,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
- Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, =?ISO-8859-1?Q?Cl=E9ment_L=E9ger?=
- <clement.leger@bootlin.com>
-Date: Wed, 09 Oct 2024 12:16:04 +0200
-In-Reply-To: <20241003081647.642468-7-herve.codina@bootlin.com>
-References: <20241003081647.642468-1-herve.codina@bootlin.com>
-	 <20241003081647.642468-7-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1728469050; c=relaxed/simple;
+	bh=bbq465Lr8bF4LJTB3VozOip+eGyEl98TmJOQiFaPP9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Egeeapo9LFPX+TK2CRvCtAs4MbHhUFJYiJTfUL/mCW8CexC1twLVVaXN71lOgPv9zNGs9XXuf+LSw+L6Je/8NTWN5BFuD48EM1YQhgRyqlfsZ/2UmzbgN37WHGfU0E+gY6Z0KnlTIEMMTlkiapFuth1T0FqU8kECxED1EAbYSkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dMiGuOrC; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728469046;
+	bh=bbq465Lr8bF4LJTB3VozOip+eGyEl98TmJOQiFaPP9M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dMiGuOrCnWmurk2EXJ/dsGkp9OQaPgev161HD/VwTgyh3LqXmxCBXoLgBsxmNoCer
+	 NLXOwzpixc8s4AotoOk8DEtIocIfDl4wCF9wMR04IUWUTAlFion9CMBhDHZBPmzou6
+	 0TRH6/TOJZTB+rzemzj6ZFdKzabX286TSluSnGrZNsGuDaKrswP2BmTT1DiruMoZfH
+	 KZHGJ6CfSRkrYH7Evu6NuoK7TctMqXp7BTGFG56dWnQ5UKbcxc9Cl4GSCmJ6tMj/dq
+	 4tpUNm2WFXfML3n6JXtK4X/+7hgcJyBMqMtbBiKlpl8S9hlPJxzFadbGunXvAZy3pj
+	 lf0Oeu2axsC2A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4E59417E1034;
+	Wed,  9 Oct 2024 12:17:26 +0200 (CEST)
+Message-ID: <e0de3810-38b0-40a3-872d-678e9d4f72e5@collabora.com>
+Date: Wed, 9 Oct 2024 12:17:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: mfd: mediatek: mt6397: Add start-year
+ property to RTC
+To: Lee Jones <lee@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, eddie.huang@mediatek.com, sean.wang@mediatek.com,
+ alexandre.belloni@bootlin.com, sen.chu@mediatek.com,
+ macpaul.lin@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org,
+ kernel@collabora.com
+References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
+ <20240923100010.97470-2-angelogioacchino.delregno@collabora.com>
+ <20241009101549.GB276481@google.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241009101549.GB276481@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Do, 2024-10-03 at 10:16 +0200, Herve Codina wrote:
-> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->=20
-> In order to guarantee the device will not be deleted by the reset
-> controller consumer, set the dev member of the reset controller.
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+Il 09/10/24 12:15, Lee Jones ha scritto:
+> On Mon, 23 Sep 2024, AngeloGioacchino Del Regno wrote:
+> 
+>> Enable evaluating the start-year property to allow shifting the
+>> RTC's HW range.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 2 ++
+> 
+> No such file.
+> 
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+In the cover letter, I wrote:
 
-regards
-Philipp
+
+For the bindings commit, this series goes on top of the MT6397 schema
+conversion from Macpaul Lin [1].
+
+This series was tested on a MT8195 Cherry Tomato Chromebook.
+
+[1]: https://lore.kernel.org/all/20240918064955.6518-1-macpaul.lin@mediatek.com/
+
+
+So, that's why. :-)
+
+Cheers,
+Angelo
+
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>> index 953358bc997a..a83cc35f51f1 100644
+>> --- a/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml
+>> @@ -71,6 +71,8 @@ properties:
+>>                     - mediatek,mt6366-rtc
+>>                 - const: mediatek,mt6358-rtc
+>>   
+>> +      start-year: true
+>> +
+>>       required:
+>>         - compatible
+>>   
+>> -- 
+>> 2.46.0
+>>
+> 
+
+
 
