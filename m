@@ -1,101 +1,184 @@
-Return-Path: <linux-kernel+bounces-356727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DED9965C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AAA9965CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34111C208C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C811C22248
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A33F18C03B;
-	Wed,  9 Oct 2024 09:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F/WLdswv"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F3032C85;
-	Wed,  9 Oct 2024 09:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF5E18C34D;
+	Wed,  9 Oct 2024 09:46:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95228EF;
+	Wed,  9 Oct 2024 09:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728467052; cv=none; b=mfSBX+Qy0R0BV5VT6oZnslfVq1tOTpo4We0HcNHO0jNvNLMTi48ZuHTkvgK+jUuBrvSIjb1ouJSPHsfmCeBKShHnOupS8GadEH5izxRvB6ZpgvuE+gesNHNLnxdeTiX/CvdBc3XhsHHLsTvfJdlJ3955aEG4orsfrAIoSQNGIZU=
+	t=1728467210; cv=none; b=U0XvfHdyQnQmYJ6dxiSjydViq3zkd9jWvUgBXd+3wU3Jz+5q5rY/xLjkYLamFbp5JwQTQNJLmn9ZJt6IaU0y13tLJqJvYmQxKzdmkolljnz/RwGiAcS30R+D2nbmjR4BP+MjLv4Q2nOQ/T8Jx8axlBufLdZ/AKgMKZf19cYoYR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728467052; c=relaxed/simple;
-	bh=Z3iinUjgnAvC1S95E+xKJvY9e95ZF0aoef8w+t7z4Lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O2XLgDc+DXGZ2CGlnu16JYjWUQBThXJX++MvAi1G374fSnpZM1NJ5HjTqmgwBSfuyLfAdFDGrubEjwCs+juqJ2BAPoSnU6AdPRlntOUOdEpDM+fDXOJtNxEFUOglKGjxCwuaCFuuXB317Xm9H0BguOsgDAECJ/swKp2IueR4yh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F/WLdswv; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728467043;
-	bh=Z3iinUjgnAvC1S95E+xKJvY9e95ZF0aoef8w+t7z4Lg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F/WLdswvR0RLYChmpOxzQ8J66bjMJ5ClcudqSqQ1VOXUfcSWUxw+DZaE3gSjUgj8I
-	 C5+CErRmXg0sbc010nABjdQpKE8ygLc944c0rtOA5UiomXeUCH0ufVMnSjp7ZUzg+h
-	 YCj1qxnbvh7A2OSujxBxCwMSgP2ANUiCVf3wZXevgGzUT3HYXIy9KUc/df28dGE5GL
-	 CS8Ddg7wfvkDIOy2/4VEEs/OD729xLPfiUFkWIWW0eHskMXJ2gjfO4VapoB30woKpA
-	 OpnEUzsFnJs6Oobvrd3wFsV4bmXlNFrvFm3cOwNJzgnBPSuRBF2G00bFSg5ee3w8l3
-	 b5MvI81wL6kXQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B3C1417E120F;
-	Wed,  9 Oct 2024 11:44:02 +0200 (CEST)
-Message-ID: <37648a24-03be-4acc-bfba-cf0ecb4b8f91@collabora.com>
-Date: Wed, 9 Oct 2024 11:44:02 +0200
+	s=arc-20240116; t=1728467210; c=relaxed/simple;
+	bh=+/1qdEErw7r4OmVk0Wcg57j8okPyhJ1yRcVclaa3YsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUWfR2mkayc/1+ZMj67W2/A6po1zkRu+IzqlV+7zbkLg7evVnxsKLiO10HYfOLPSNU+gQ8HpzfESz/N5S/uKxBld9yXwWsJo44SXK2RTkuRTgDLeSj8eCsGCwDGc7o3sMoNVWXnTON5EtuvNLcxbr21xWVBuAMGFO8x18bdR+3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2FF0FEC;
+	Wed,  9 Oct 2024 02:47:16 -0700 (PDT)
+Received: from e130802.arm.com (unknown [10.1.25.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 05F4C3F64C;
+	Wed,  9 Oct 2024 02:46:43 -0700 (PDT)
+Date: Wed, 9 Oct 2024 10:46:35 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: mathieu.poirier@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org, robin.murphy@arm.com
+Cc: Adam.Johnston@arm.com, Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com,
+	andersson@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	liviu.dudau@arm.com, lpieralisi@kernel.org, sudeep.holla@arm.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+Message-ID: <20241009094635.GA14639@e130802.arm.com>
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <ce534365-0110-4aba-b8b5-0a46c5ea81d0@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] pmdomain: mediatek: Use OF-specific regulator API
- to get power domain supply
-To: Chen-Yu Tsai <wenst@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
- Johan Hovold <johan@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20240930044525.2043884-1-wenst@chromium.org>
- <20240930044525.2043884-4-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240930044525.2043884-4-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce534365-0110-4aba-b8b5-0a46c5ea81d0@arm.com>
 
-Il 30/09/24 06:45, Chen-Yu Tsai ha scritto:
-> The MediaTek power domain driver contains a hack that assigns the device
-> node of the power domain to the struct device of the power domain
-> controller in order to use the devres regulator API.
-> 
-> Now that there is a proper OF-specific regulator API, and even a devres
-> version, replace the hack with proper code.
-> 
-> This change is incompatible with incomplete device trees. Instead of
-> assigning the dummy regulator in cases where the power domain requires
-> a supply but the device tree does not provide one, the driver will just
-> error out. This will be seen on the MT8390 EVK, which is missing
-> supplies for the IMG_VCORE and CAM_VCORE domains. And likely all the
-> MediaTek EVBs, which have no power domain supplies specified. This is
-> however the correct behavior. If the power domain's supply is missing,
-> then it should not work. Relying on other parts of the system to keep
-> the unattached regulator enabled is likely to break in ways less easier
-> to understand.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Hello folks,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> On 22/08/2024 6:09 pm, Abdellatif El Khlifi wrote:
+> > Add devicetree binding schema for the External Systems remote processors
+> > 
+> > The External Systems remote processors are provided on the Corstone-1000
+> > IoT Reference Design Platform via the SSE-710 subsystem.
+> > 
+> > For more details about the External Systems, please see Corstone SSE-710
+> > subsystem features [1].
+> > 
+> > [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
+> > 
+> > Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+> > ---
+> >   .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
+> >   1 file changed, 90 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> > new file mode 100644
+> > index 000000000000..827ba8d962f1
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> > @@ -0,0 +1,90 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: SSE-710 External System Remote Processor
+> 
+> Thing is, this is not describing SSE-710. As far as I can work out, it is
+> describing the firmware and hardware that a particular example
+> implementation of the Corstone-1000 kit has chosen to put in the "external
+> system" hole in the SSE-710 within that kit.
+> 
+> If I license SSE-710 alone or even the Corstone-1000 kit, I can put whatever
+> I want in *my* implementation of those subsystems, so there clearly cannot
+> possibly be a common binding for that.
+> 
+> For instance what if I decide to combine a Cortex-M core plus a radio and
+> some other glue as my external subsystem? Do we have dozens of remoteproc
+> bindings and drivers for weird fixed-function remoteprocs whose
+> "firmware-name" implies a Bluetooth protocol stack? No, we treat them as
+> Bluetooth controller devices. Look at
+> devicetree/bindings/sound/fsl,rpmsg.yaml - it's even unashamedly an rpmsg
+> client, but it's still not abusing the remoteproc subsystem because its
+> function to the host OS is as an audio controller, not an arbitrarily
+> configurable processor.
+> 
+> As I said before, all SSE-710 actually implements is a reset mechanism, so
+> it only seems logical to model it as a reset controller, e.g. something
+> like:
+> 
+> 	hbsys: syscon@xyz {
+> 		compatible = "arm,sse710-host-base-sysctrl", "syscon";
+> 		reg = <xyz>;
+> 		#reset-cells = <1>;
+> 	};
+> 
+> 	something {
+> 		...
+> 		resets = <&hbsys 0>;
+> 	};
+> 
+> 	something-else {
+> 		...
+> 		resets = <&hbsys 1>;
+> 	};
+> 
+> 
+> Then if there is actually any meaningful functionality in the default
+> extsys0 firmware preloaded on the FPGA setup then define a binding for
+> "arm,corstone1000-an550-extsys0" to describe whatever that actually does. If
+> a user chooses to create and load their own different firmware, they're
+> going to need their own binding and driver for whatever *that* firmware
+> does.
+> 
+> FWIW, driver-wise the mapping to the reset API seems straightforward -
+> .assert hits RST_REQ, .deassert clears CPUWAIT (.status is possibly a
+> combination of CPUWAIT and RST_ACK?)
 
+We are happy to follow what Robin recommended.
+
+This can be summarized in two parts:
+
+Part 1: Writing an SSE-710 reset controller driver
+
+    An SSE-710 reset controller driver that switches on/off the external system.
+    The driver will be helpful for products using SSE-710. So whoever licenses
+    Corstone-1000 or SSE-710 will find the reset controller driver helpful.
+    They can use it with their implementation of the external system.
+
+    Note: It's likely that the external systems the end user will be using in
+    their products will be different from the Corstone-1000 external system
+    given as an example. Differences in the memory configuration, subsystem
+    involved, boot roms configurations, ...
+    These differences mean that the end user will need to write their own driver
+    which might or might not be a remoteproc driver (e.g: Bluetooth, audio, ...).
+
+Part 2: Corstone-1000 remoteproc driver
+
+    Corstone-1000 HW is being upgraded to support memory sharing between the
+    Cortex-A35 (Linux) and the external system (Cortex-M3).
+
+    Once the HW is ready, we can write a Corstone-1000 remoteproc driver able
+    to reload the external system firmware and doing communication with the MHUs.
+    This remoteproc driver can use the reset subsystem APIs to call the SSE-710
+    reset controller driver to switch on/off the external system (already
+    developed in part 1).
+
+Impact on the current patchset:
+
+- The current remoteproc patchset will be paused until the HW is upgraded.
+- In CY25Q1, I'll send to the mailing list the SSE-710 reset controller bindings
+  and a driver under the Reset Controller subsystem.
+
+Thank you for your support and expertise.
+
+Cheers,
+Abdellatif
 
