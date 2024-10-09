@@ -1,202 +1,126 @@
-Return-Path: <linux-kernel+bounces-357164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180B8996CC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:52:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4797D996CCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3A21C21D5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:52:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC3D2811CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC3F19925F;
-	Wed,  9 Oct 2024 13:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6304199949;
+	Wed,  9 Oct 2024 13:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="PrW6gATx"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HAtXFfby"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E971917EB
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 13:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815FB38DE5;
+	Wed,  9 Oct 2024 13:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728481956; cv=none; b=m8hiQvuOk7i8Dmh+R4c8sPEITjAZvNdSXnIy4ZwbKcDIUIkhO+SaXD7KPck7uD9KWyHWmqIBPcsGiw8FPp3buCIoWVkOKoZ5dwOaJ6Sv1hYTE+voDalrra1QxerIx9G/kllyJ7qFCdIMx1OaE4vNAEUYkf8seqKg3BVlaV3SGCE=
+	t=1728482047; cv=none; b=tDh08n0LOTPLEKQXdplkKZuynwUcyc1ql1auHtIbx0JJbpmFOMbEh0/1TuTHJi0lh6cbHTj7jnpec3BC2/n/LK6gLGmJQYF6OCDHO8AT0OZweHVYKOcCtnHD75+Th7cqTOAKxJiMpmon20IF3OqMknMA3PaBb0OOXyBsFfv9OXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728481956; c=relaxed/simple;
-	bh=Kof5Yodg6TBaoa9v2GsFAXmZLlexak4T4ZwsrVsSJJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bm5CfSi/MOOKPYbiEzelKR2izo3HPF8Fz0NIxFGPJCS3eFqrg8sJa7oEjwo0+L002pxZleZwdZcVWLle3TZRInQr/ZngFXDVuhHHqnOpWjykTuwa0TLN8mIeUwwBIAQtJganwVxO+wQHZTyaEICrRG+JDOLzZnFe80t9XF3zT7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=PrW6gATx; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so8842375a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 06:52:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1728481953; x=1729086753; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kof5Yodg6TBaoa9v2GsFAXmZLlexak4T4ZwsrVsSJJA=;
-        b=PrW6gATxWP3OoTNd3E6HM4uEKIUBnUI/r4yW4tTxql6o/M4fHYP5fzeA0sWmr6eWG7
-         RgaImqmkndSjdXFZBU0F/tX5uSU9oZ+co/avPw6a0Iq1BgdhMlZksXQBIUfKNcHX0XI4
-         MEj89GFxe1bRxMhdIleWgoAi8orospov8sFs4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728481953; x=1729086753;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kof5Yodg6TBaoa9v2GsFAXmZLlexak4T4ZwsrVsSJJA=;
-        b=LnyqNYrv2d7zIxZF32mXSJfIsdW6MtVXHnVb+MDToi1FXa5apvz71vsA9Fcgwdl5eC
-         DrCB95nNVm5EHn/y60yPIEnR28gQ+63mO1ou2gmQbswMIKMarPwHdCFGQnDsOJZBx29b
-         L/MQgIa5pMIYco9ENQFB83uPaHKHE6QjjbC5vgKwD4KwirqF3JnUbZKoThaRdT2LPPQf
-         4YK5pHK8Kv7idlpEnl0zla1oaON0n2I1CwKBOjzdnBnIYKzSE6tGHPNTOOUwOhdBQWuQ
-         M6iWiwVpyvRdn1X0s7MG36YlMgTw6u6q5ELnHL6nvuv0DJaAHnv2CBDyo8d10XZMO+52
-         dtkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW43mnGYrRKJkMg/RsUe0FN0rmJ/GDg+e6GBatgSkaIDjwca2OgGL8DYAeAB8DUitzLOMF8mW1UIZrGqjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBzd4gtg1y9d0ZLz7dgwQJtaVt3VohK6grS8J/zFbVUQzZYDPj
-	55jKNGlTdLeH2y9+zZ0jCrOs7g8K2/bzKRu45ccFrshwgqoYOjE6QS7aoi/iu0Q=
-X-Google-Smtp-Source: AGHT+IEVZgQja/pq0KJhq7VaRjn+rVNTXUMFEKVAbK6fh4PeIkrIqp1GR26w0Uq8ecU3H8Rfn+TsfA==
-X-Received: by 2002:a05:6402:26c3:b0:5c0:ab6f:652a with SMTP id 4fb4d7f45d1cf-5c91d53e920mr1661784a12.3.1728481952620;
-        Wed, 09 Oct 2024 06:52:32 -0700 (PDT)
-Received: from [10.125.226.166] ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05eccf0sm5480050a12.64.2024.10.09.06.52.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 06:52:32 -0700 (PDT)
-Message-ID: <e0fa3af9-503c-4569-86e0-571a0218c35b@citrix.com>
-Date: Wed, 9 Oct 2024 14:52:29 +0100
+	s=arc-20240116; t=1728482047; c=relaxed/simple;
+	bh=5gy1wURQ9sXzt042bjSluaDkjgIP0l5MjWBbnVlhYe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GJNwazTu2O+ggN+GnAYfAUBXdSy7O55HnMPDPQQYTPW9T+9OmPeXrdBQSlYX0HP7WMspQeCEI3P8wdgvjD39AXil4to7eOwpJnOlonkpERkBecHDN79IyVc5BAdp2Si5RBE6nk7rEUDFzaMMPUWrlCxON96g9wyaO3gQ3dGe7ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HAtXFfby; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 39FA340E021E;
+	Wed,  9 Oct 2024 13:54:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IdbX89wCKlFI; Wed,  9 Oct 2024 13:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1728482039; bh=ENByvpOkGcPi0iC2AE3+sSC4IuiELUBQ7SmJZ4Ik5Kg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HAtXFfbyhb4nIVi8+kllC9pJb9A6w261F1LECfCAU1UvwUhtwo3y+MefG80xG2uf/
+	 hQ2WQbZvNKmX8DmXQa1mg8IgdtsCA1ekPzG3QvQyZgQ4rqGvJ6B1m12B9VrzCQlXyx
+	 8wAFRWGB1s5G4JZoCYuQgG0qJegr23Ai7o33rFYpo4M3TQEeN2Rszzh8HvqgsO/5Gv
+	 SlebH+Hlz0lTwT1guFGvzMu+c3ZUYWgk5PNzD9yAgUgjp5FHlxOdq/EIbwn+CPXzc+
+	 BCXfdpYpUznLlHts5md8m+nbfdYaHCPDtCGPPKqwmomLaDjuIkRVH1vNn1YTxGzU0r
+	 8qkQGELNiiltoCwRCk4FcZEGcQsG79/3dtWKmGwEU3VXlk88EqC8aVAEHiPa+QaU9A
+	 2l4SpGvD8ioG0SshuxdthgcL/AKr6f2UHKrOfjgRz2k4HrvB7YREICiFzAIScqdGSt
+	 4qRdUcR68byHmi52DoCsTCArlYyJL+7mtqQpLYAa3bHJ1i+qIcgNZjkeR/DNi2ix8N
+	 NhbuFBiKJolf9AlzhCBQCfjTMfVlh2LJOjKOk7XQfnVI+v/VkXmyC5kn9/C19Tured
+	 MoV0RUr0XEqBTVxNvcgsgU78tq+xnyXGT0FVYi+QoxUAtU0qlR4D7a0x1YZHCcsSns
+	 fPQ2ed54HKuszUogfr4oiTq0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EF0AB40E0191;
+	Wed,  9 Oct 2024 13:53:40 +0000 (UTC)
+Date: Wed, 9 Oct 2024 15:53:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
+	kvm@vger.kernel.org
+Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
+Message-ID: <20241009135335.GKZwaK32jOZlA477HX@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
+ <sng54pb3ck25773jnajmnci3buczq4tnvuofht6rnqbfqpu77s@vucyk6py2wyf>
+ <20241009104234.GFZwZeGsJA-VoHSkxj@fat_crate.local>
+ <7vgwuvktoqzt5ue3zmnjssjqccqahr75osn4lrdnoxrhmqp5f6@p5cy6ypkchdv>
+ <20241009112216.GHZwZnaI89RBEcEELU@fat_crate.local>
+ <wb6tvf6ausm23cq4cexwdncz5tfj52ftrrdhhvrge53za3egcf@ayitc4dd6itr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-To: "Manwaring, Derek" <derekmn@amazon.com>, seanjc@google.com,
- dave.hansen@linux.intel.com
-Cc: ackerleytng@google.com, ajones@ventanamicro.com, anup@brainfault.org,
- bfoster@redhat.com, brauner@kernel.org, david@redhat.com,
- erdemaktas@google.com, fan.du@intel.com, fvdl@google.com,
- haibo1.xu@intel.com, isaku.yamahata@intel.com, jgg@nvidia.com,
- jgowans@amazon.com, jhubbard@nvidia.com, jthoughton@google.com,
- jun.miao@intel.com, kalyazin@amazon.co.uk, kent.overstreet@linux.dev,
- kvm@vger.kernel.org, linux-fsdevel@kvack.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- maciej.wieczor-retman@intel.com, mike.kravetz@oracle.com,
- muchun.song@linux.dev, oliver.upton@linux.dev, pbonzini@redhat.com,
- peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com,
- quic_eberman@quicinc.com, richard.weiyang@gmail.com, rientjes@google.com,
- roypat@amazon.co.uk, rppt@kernel.org, shuah@kernel.org, tabba@google.com,
- vannapurve@google.com, vkuznets@redhat.com, willy@infradead.org,
- zhiquan1.li@intel.com, graf@amazon.de, mlipp@amazon.at, canellac@amazon.at
-References: <ZwWOfXd9becAm4lH@google.com>
- <ac337485-f8ab-45a4-b223-eb846e21c762@amazon.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <ac337485-f8ab-45a4-b223-eb846e21c762@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <wb6tvf6ausm23cq4cexwdncz5tfj52ftrrdhhvrge53za3egcf@ayitc4dd6itr>
 
-On 09/10/2024 4:51 am, Manwaring, Derek wrote:
-> On 2024-10-08 at 19:56+0000 Sean Christopherson wrote:
->> Another (slightly crazy) approach would be use protection keys to provide the
->> security properties that you want, while giving KVM (and userspace) a quick-and-easy
->> override to access guest memory.
->>
->>   1. mmap() guest_memfd into userpace with RW protections
->>   2. Configure PKRU to make guest_memfd memory inaccessible by default
->>   3. Swizzle PKRU on-demand when intentionally accessing guest memory
->>
->> It's essentially the same idea as SMAP+STAC/CLAC, just applied to guest memory
->> instead of to usersepace memory.
->>
->> The benefit of the PKRU approach is that there are no PTE modifications, and thus
->> no TLB flushes, and only the CPU that is access guest memory gains temporary
->> access.  The big downside is that it would be limited to modern hardware, but
->> that might be acceptable, especially if it simplifies KVM's implementation.
-> Yeah this might be worth it if it simplifies significantly. Jenkins et
-> al. showed MPK worked for stopping in-process Spectre V1 [1]. While
-> future hardware bugs are always possible, the host kernel would still
-> offer better protection overall since discovery of additional Spectre
-> approaches and gadgets in the kernel is more likely (I think it's a
-> bigger surface area than hardware-specific MPK transient execution
-> issues).
->
-> Patrick, we talked about this a couple weeks ago and ended up focusing
-> on within-userspace protection, but I see keys can also be used to stop
-> kernel access like Andrew's project he mentioned during Dave's MPK
-> session at LPC [2]. Andrew, could you share that here?
+On Wed, Oct 09, 2024 at 03:12:41PM +0300, Kirill A. Shutemov wrote:
+> If you use SNP or TDX check in generic code something is wrong.  Abstraction
+> is broken somewhere. Generic code doesn't need to know concrete
+> implementation.
 
-This was in reference to PKS specifically (so Sapphire Rapids and
-later), and also for Xen but the technique is general.
+That's perhaps because you're thinking that the *actual* coco implementation type
+should be hidden away from generic code. But SNP and TDX are pretty different
+so we might as well ask for them by their name.
 
-Allocate one supervisor key for the directmap (and other ranges wanting
-protecting), and configure MSR_PKS[key]=AD by default.
+But I can see why you'd think there might be some abstraction violation there.
 
-Protection Keys were identified as being safe as a defence against
-Meltdown.  At the time, only PKRU existed, and PKS was expected to have
-been less overhead than KPTI on Skylake, which was even more frustrating
-for those of us who'd begged for a supervisor form at the time.  What's
-done is done.
+My goal here - even though there might be some bad taste of abstraction
+violation here - is simplicity. As expressed a bunch of times already, having
+cc_platform *and* X86_FEATURE* things used in relation to coco code can be
+confusing. So I'd prefer to avoid that confusion.
 
+Nothing says anywhere that arch code cannot use cc_platform interfaces.
+Absolutely nothing. So for the sake of KISS I'm going in that direction.
 
-The changes needed in main code would be accessors for directmap
-pointers, because there needs to temporary AD-disable.  This would take
-the form of 2x WRMSR, as opposed to a STAC/CLAC pair.
+If it turns out later that this was a bad idea and we need to change it, we
+can always can. As we do for other interfaces in the kernel.
 
-An area of concern is the overhead of the WRMSRs.  MSR_PKS is defined as
-not-architecturally-serialising, but like STAC/CLAC probably comes with
-model-dependent dispatch-serialising properties to prevent memory
-accesses executing speculatively under the wrong protection key.
+If you're still not convinced, I already asked you:
 
-Also, for this strategy to be effective, you need to PKEY-tag all
-aliases of the memory.
+"Do you have a better idea which is cleaner than what we do now?"
 
-~Andrew
+Your turn.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
