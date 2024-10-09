@@ -1,257 +1,161 @@
-Return-Path: <linux-kernel+bounces-357398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA3C9970D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE409970D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E89281392
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1805A1F2102E
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8340206947;
-	Wed,  9 Oct 2024 15:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F557206971;
+	Wed,  9 Oct 2024 15:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BLRheKmN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x24IOWQl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BLRheKmN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x24IOWQl"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="chWmB0Ot"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972601D31BB;
-	Wed,  9 Oct 2024 15:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E651E4121
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728489042; cv=none; b=Q6Xjij5Mv1u5sfLZ4lkyGg4oySpBA8ynXuc6SYDf0CswqI2gvYn4YgG/mfg7qSvbf/va2Ka4AzV0emlkBgT8yP8kkrnePyXhoF0jsdB2nrUVyozuVJWupxM4bxWb7LImXyogNujhafCpPeDRH5YOdMOzw7Cggn3ohAw9FsHprhk=
+	t=1728489048; cv=none; b=cSMbyQ1wwSgIiP/bb0sn2eIwkD5h9RooGM9EUrUgU+J6MUoDYgGAQBjvJ2gsxSVsZf6FXHWjMnDWHAiu3cCpRof40kp3vdwLIeySJ/TCbsJJ2x3tOy5UvGRrM0x9bPBupZ2jU1DKtGQ33U9iouxDyBtI2iX+vF1njjGkqq06fUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728489042; c=relaxed/simple;
-	bh=K4a6Anb6XFV0N0vLSweihy8dhlHDWNe2cLz75Sm/SRI=;
+	s=arc-20240116; t=1728489048; c=relaxed/simple;
+	bh=OmwyS3GSE5s/9kY3ybmyfZGiNcfsRHrwELKvRrHQkSE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7Ai4QHg8Q6IFr4mqdjiVBhI6XSvY0KqSXTsklx1syrLqWWdTy/dr5RijYjr0Jmsp5UC/XISFwsdd4jPBwqJemNaJrn6z+7rWmNLznZj7LjFBdtHLg7T6nuPeJ81u0CIlDRDqkHxsRyk/u7zz4fsKCXS6n9vc5I/MOWxa0YuJ/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BLRheKmN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x24IOWQl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BLRheKmN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x24IOWQl; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 53B9921F8A;
-	Wed,  9 Oct 2024 15:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728489033; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j07AqS1qj107vCWfCFBhnKE8M9hBSY14+6ixtpYjsyY=;
-	b=BLRheKmNJI4qOm/Xvpcfw09m7jYcqmxz42QYKCuub36Z393Cp//yDIga6ktovFphV4EQI+
-	fA3+2Qj9ewIT/jBJj+qIXoUYNqqXf4GQ2a0Uk9oPftj/k8PxnI6548KA1nRYrAg/IqQA19
-	QjwDX+atnPqdzTl5FDhGrJcIBrl8k+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728489033;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j07AqS1qj107vCWfCFBhnKE8M9hBSY14+6ixtpYjsyY=;
-	b=x24IOWQlm98sKXVT3JS7Lzy8SriWrRyrTZf7DRaoKi+XyLhsIL7+jOMFh2liY6IG0x2Pll
-	NruBaNTZc/0dulBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728489033; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j07AqS1qj107vCWfCFBhnKE8M9hBSY14+6ixtpYjsyY=;
-	b=BLRheKmNJI4qOm/Xvpcfw09m7jYcqmxz42QYKCuub36Z393Cp//yDIga6ktovFphV4EQI+
-	fA3+2Qj9ewIT/jBJj+qIXoUYNqqXf4GQ2a0Uk9oPftj/k8PxnI6548KA1nRYrAg/IqQA19
-	QjwDX+atnPqdzTl5FDhGrJcIBrl8k+c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728489033;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j07AqS1qj107vCWfCFBhnKE8M9hBSY14+6ixtpYjsyY=;
-	b=x24IOWQlm98sKXVT3JS7Lzy8SriWrRyrTZf7DRaoKi+XyLhsIL7+jOMFh2liY6IG0x2Pll
-	NruBaNTZc/0dulBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4672513A58;
-	Wed,  9 Oct 2024 15:50:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rRwtEUmmBmdnXwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 09 Oct 2024 15:50:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EE669A0896; Wed,  9 Oct 2024 17:50:28 +0200 (CEST)
-Date: Wed, 9 Oct 2024 17:50:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Qianqiang Liu <qianqiang.liu@163.com>, tytso@mit.edu,
-	Jan Kara <jack@suse.cz>, adilger.kernel@dilger.ca,
-	syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
-Message-ID: <20241009155028.u7jpzrw6txldt43j@quack3>
-References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
- <66efba95.050a0220.3195df.008c.GAE@google.com>
- <Zu+8aQBJgMn7xVws@thinkpad.lan>
- <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKbbuoGrZg2hTfqrUn4L4k74pNreSsBy6OjYWKss9nYm8KVBe42fAU34MhXgvLIQu2EUv0xwRzx73IqHGCiEdP3bsxFXg87sLwrjjjD/a/E/ZK6/pbQVyYiPUI00e4BMBYzZL75Fn+uAc96ZcrfiWKZaRhqpXa5O/EAY9BOquBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=chWmB0Ot; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45f05f87ca5so10198981cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 08:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1728489046; x=1729093846; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C0BahaGyOs3RbKN27MjD5OzyEnaYqYENahYoWiqAVa0=;
+        b=chWmB0Ot/DwYNdbxUngtOMMhrfjExt7RP8sD9ypFgJsdh1YllO7m0FsTR1I9WK1qju
+         R4B8K5olBHVh6lcEQ4RJb+ibYLnuRjyFlq5EvvZnBJG7eXIUalQTHfjPPFjGBL+NFi1r
+         c0zVgzQKCVCPmBU356asoyPsPLJBx2b6IR6PL5waiGYIPiHH6zUasPtfB4AKssXwT9vv
+         TLuurU1R6Qi0AGTjP+P4z/Zf8qyeOha4n5z//CypCzxn+wfoHoskq6ujKR2bk00wYQQM
+         6hXv/TvuA+QYDLQmAu57Q0OCcT6Yy42oGKbLZei0iqipb0qcfm0zwfM0XX8qzcL82tpo
+         ARVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728489046; x=1729093846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C0BahaGyOs3RbKN27MjD5OzyEnaYqYENahYoWiqAVa0=;
+        b=mfWFYuIRZs5esdgJMWZxkaoXiKHt99NDoFkCI+dWpiOF4TQYq7DMLgjUWgqpSdkaQh
+         XShn2yAb/kTNFLeweQhTCMAqivxi8zgIqyFhbtqkdguW8IR18AuRK2MPftb8mP3Vea4F
+         4Z2YfbbvNritNZzuYcApNl9N1gIfLla1VZ6iwW7stJec38+4jJta6MOiOkb7CGJYw/pa
+         7qGhvIVhBVXZNtEzRAwVXIsqepXVhTcbaz33UlTIWuYBSZwlWH7MgM68d5BKebSqxKfP
+         KLMhRLrUYjYV3tmkCT1d/Fhb7MrrfYqyObmED0SNR0CzpzwO7LDF2DMMHd8h09SWY/KC
+         VFtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkVqjla6/+00nXrf02tuQ+nj9tXhtzYZ2Nu0e3hHvwWEBnPaDauRS6WoSOs5G8jEv9cxcZ5MyS/8DLpg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRRGAp0CLaM5zBanhey6+dTilHn9CFebOKO3X1MgPZX0pl+NeB
+	LodPFbvHw86gUXjKxrY/ZpXGgEghBSiPGsGf96oT3QfdXDeHxY9YY1WEx3KwLQ==
+X-Google-Smtp-Source: AGHT+IGVv9FRSuf+Rrvp+G110Shph8S5aMJB4HlFe+wKJFnKmoExxlTR6BybSIsHj1ywu8PwtUpanw==
+X-Received: by 2002:ac8:5782:0:b0:453:15b5:26b9 with SMTP id d75a77b69052e-45fb0e75577mr39831301cf.52.1728489045831;
+        Wed, 09 Oct 2024 08:50:45 -0700 (PDT)
+Received: from rowland.harvard.edu ([2607:fb60:2501:2805:c6d5:fe22:7fa3:ec54])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45efcedd9dcsm17305761cf.91.2024.10.09.08.50.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 08:50:45 -0700 (PDT)
+Date: Wed, 9 Oct 2024 11:50:42 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: duanchenghao <duanchenghao@kylinos.cn>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Hongyu Xie <xy521521@gmail.com>, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz,
+	stanley_chang@realtek.com, tj@kernel.org,
+	Hongyu Xie <xiehongyu1@kylinos.cn>
+Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+Message-ID: <2c368013-8363-4a4e-bfee-2f0b14d01162@rowland.harvard.edu>
+References: <20240906030548.845115-1-duanchenghao@kylinos.cn>
+ <1725931490447646.3.seg@mailgw.kylinos.cn>
+ <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
+ <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
+ <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
+ <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
+ <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
+ <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
+ <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
+ <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[f792df426ff0f5ceb8d1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[163.com,mit.edu,suse.cz,dilger.ca,syzkaller.appspotmail.com,vger.kernel.org,googlegroups.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
 
-On Tue 08-10-24 15:40:39, Baokun Li wrote:
-> On 2024/9/22 14:42, Qianqiang Liu wrote:
-> > syzbot has found an out-of-bounds issue in ext4_xattr_set_entry:
-> > 
-> > ==================================================================
-> > BUG: KASAN: out-of-bounds in ext4_xattr_set_entry+0x8ce/0x1f60 fs/ext4/xattr.c:1781
-> > Read of size 18446744073709551572 at addr ffff888036426850 by task syz-executor264/5095
-> > 
-> > CPU: 0 UID: 0 PID: 5095 Comm: syz-executor264 Not tainted 6.11.0-syzkaller-03917-ga940d9a43e62 #0
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > Call Trace:
-> >   <TASK>
-> >   __dump_stack lib/dump_stack.c:93 [inline]
-> >   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
-> >   print_address_description mm/kasan/report.c:377 [inline]
-> >   print_report+0x169/0x550 mm/kasan/report.c:488
-> >   kasan_report+0x143/0x180 mm/kasan/report.c:601
-> >   kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> >   __asan_memmove+0x29/0x70 mm/kasan/shadow.c:94
-> >   ext4_xattr_set_entry+0x8ce/0x1f60 fs/ext4/xattr.c:1781
-> > [...]
-> > ==================================================================
-> > 
-> > This issue is caused by a negative size in memmove.
-> > We need to check for this.
-> > 
-> > Fixes: dec214d00e0d ("ext4: xattr inode deduplication")
-> > Reported-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=f792df426ff0f5ceb8d1
-> > Tested-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
-> > Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> > ---
-> >   fs/ext4/xattr.c | 9 ++++++++-
-> >   1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> > index 46ce2f21fef9..336badb46246 100644
-> > --- a/fs/ext4/xattr.c
-> > +++ b/fs/ext4/xattr.c
-> > @@ -1776,7 +1776,14 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
-> >   	} else if (s->not_found) {
-> >   		/* Insert new name. */
-> >   		size_t size = EXT4_XATTR_LEN(name_len);
-> > -		size_t rest = (void *)last - (void *)here + sizeof(__u32);
-> > +		size_t rest;
-> > +
-> > +		if (last < here) {
-> > +			ret = -ENOSPC;
-> > +			goto out;
-> > +		} else {
-> > +			rest = (void *)last - (void *)here + sizeof(__u32);
-> > +		}
-> >   		memmove((void *)here + size, here, rest);
-> >   		memset(here, 0, size);
-> This change just passes syzbot's test cases without fixing the real
-> problem.
+On Wed, Oct 09, 2024 at 10:35:05AM +0800, duanchenghao wrote:
+> Hi Alan,
 > 
-> The root cause of the problem is that the inode's xattr block is marked as
-> free in the block bitmap, so that block is allocated to the ea inode
-> resulting in the data in the xattr block being overwritten, and the last of
-> the second lookups changing resulting in out-of-bounds access.
+> These are two patches, each addressing the same issue. The current
+> patch is a direct solution to the problem of the interrupt bottom half
+> being frozen. The patch you replied with is another, alternative
+> solution to the same problem. Please review which solution is more
+> suitable, or if there are any other revised proposals.
 > 
-> The stack that triggers the problem is as follows:
 > 
-> // An inode with an xattr block of 33.
-> __ext4_mark_inode_dirty
->  __ext4_expand_extra_isize
->   ext4_expand_extra_isize_ea
->    ext4_xattr_make_inode_space
->     // Move xattr from inode to block
->     ext4_xattr_move_to_block
->      // Find out if the xattr exists in the block
->      ext4_xattr_block_find
->       // If xattr does not exist, here == last
->       xattr_find_entry
->      // Add a new xattr to the block
->      ext4_xattr_block_set
->       |// xattr is too long, needs an ea inode
->       |ext4_xattr_inode_lookup_create
->       | ext4_xattr_inode_create
->       | ext4_xattr_inode_write
->       |  ext4_map_blocks
->       |   // xattr block 33 is assigned to the new ea inode
->       |  memcpy(bh->b_data, buf, csize)
->       |   // The value of xattr overwrites the data in the xattr block.
->       |ext4_xattr_set_entry
->        // Since the contents of the xattr block have changed,
->        // now here == last does not hold, so it is possible to
->        // have last < here and trigger an out-of-bounds access.
-> 
-> So I think we should probably add a helper function ext4_mb_block_inuse()
-> that checks if xattr block is free with the block bitmap in check_xattrs().
+> Please review the patch I mentioned:
+> https://lore.kernel.org/all/0a4dc46ae767c28dd207ae29511ede747f05539a.camel@kylinos.cn/
 
-Well, even that would be a relatively narrow fix. You could have e.g.
-file reference the xattr block as one of its data blocks and then corrupt
-xattr contents at unfortunate moment. That will not get fixed by checking
-whether the block is allocated. These multiply claimed blocks (as e2fsck
-calls it) are very hard to detect inside the kernel.
+I still think your whole approach is wrong.  There is no need to change 
+the way the HCD_FLAG_WAKEUP_PENDING flag gets set or cleared; that's not 
+the reason for the problem you're seeing.
 
-> Or go one step further and add a mechanism like xfs Reverse-Mapping, which
-> makes sure that allocated blocks do point to the target inode, which could
-> replace the current block_validity, and could also be used in future online
-> fscks.
+The problem occurs because when suspend_common() in 
+drivers/usb/core/hcd-pci.c sets do_wakeup, it does so by calling 
+device_may_wakeup(), and the value that function returns is not what we 
+want.  The value is based on whether the controller's power/wakeup 
+attribute is set, but we also have to take into account the type of 
+suspend that's happening.
 
-Well, that is a rather big change. It requires significant on-disk format
-change and also performance cost when to maintain. Furthermore for xattr
-blocks which can be shared by many inodes it is not even clear how to
-implement this... So I'm not sure we really want to do this either.
+Basically, if msg is one of the suspend types for which wakeups should 
+always be disabled, then do_wakeup should be set to false.  There isn't 
+a macro to test for these things, but there should be.  Something like 
+PMSG_IS_AUTO() in include/linux/pm.h; maybe call it PMSG_NO_WAKEUP().  
+This macro should return true if the PM_EVENT_FREEZE or PM_EVENT_QUIESCE 
+bits are set in msg.event.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Rafael, please correct me if I got any of this wrong.
+
+So the right way to fix the problem is to add to pm.h:
+
+#define PMSG_NO_WAKEUP(msg)	(((msg.event) & \
+		(PM_EVENT_FREEZE | PM_EVENT_QUIESCE)) != 0)
+
+and in suspend_common():
+
+	if (PMSG_IS_AUTO(msg))
+		do_wakeup = true;
+	else if (PMSG_NO_WAKEUP(msg))
+		do_wakeup = false;
+	else
+		do_wakeup = device_may_wakeup(dev);
+
+Then with do_wakeup set to false, none of the HCD_WAKEUP_PENDING() tests 
+in the following code will be executed, so the routine won't fail during 
+the freeze or restore phase with -EBUSY.
+
+You'll also have to define an hcd_pci_freeze() routine, just 
+like hcd_pci_suspend() except that it uses PMSG_FREEZE instead of 
+PMSG_SUSPEND.  And the .freeze callback in usb_hcd_pci_pm_ops should be 
+changed to hcd_pci_freeze.
+
+In fact, it looks like choose_wakeup() in drivers/usb/core/driver.c 
+could also use the new macro, instead of checking for FREEZE or QUIESCE 
+directly the way it does now.
+
+Alan Stern
 
