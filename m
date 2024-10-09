@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-356468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF6C99618A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:55:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22AE2996191
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 09:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C32E283E08
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9911F21F1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 07:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F95186E4A;
-	Wed,  9 Oct 2024 07:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC59F18786C;
+	Wed,  9 Oct 2024 07:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BZFuJ9JM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQLRa4fm"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DCC17BEC5;
-	Wed,  9 Oct 2024 07:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A43917BEC5
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 07:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728460539; cv=none; b=liYgizYtCofgWBo6Gaw6hUM0JQ1V3st4vd17JDLCUgrJrolatVI42N4XoY4ea8TRcaAfxTUf+gzLudqArhDYenx4EInOIJ8cdeuXo8zBNe+BDFAj/9GrFspteL4GJEGuXlQ+baDu4kUU61q4jpvWCKvJl5mGiK4osm7cnr6U+2c=
+	t=1728460560; cv=none; b=PQiH3m11pKKN4rQ8UctJxr3KrCiOjcyJ23jyRXkNgpUoS97d8EPJbD+qRK5JFhY0MwvlFda7fXy2m8eUZnhu2KSyn2OpB/cLgZ91rvg3tuc8YM5DNmpZeKTEyMtUrEFyHq8fv+F2rL/3KblH8hH3CJLKnc88OgVRUgLOYWec5fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728460539; c=relaxed/simple;
-	bh=oCAOo8Bdc/kr0LgFyMUbMXb2BpaSFaCjRK7n2HuwAko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mon3Gg0oX+WiuQqvT3Re8ep6OGZYPvOvlV82iFn3khr9kEpKBjBVuqO5DGKapHQKUUMS4/H6rfckSi6N5TAt1Xo1AP/nksPcs4GO5mevFmGL2kSqhC+jy4RkTjPqAG7ssZFf6o/mMa0onAFo1xCNKf839wVGH+bAnRzjcI8ZivE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BZFuJ9JM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 642BCC4CEC5;
-	Wed,  9 Oct 2024 07:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728460539;
-	bh=oCAOo8Bdc/kr0LgFyMUbMXb2BpaSFaCjRK7n2HuwAko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BZFuJ9JMTj8mUD7SeHthX8fQF227odujYoOWwGg7Q1zYWxuUDM4cYJUqwEhSeaZ45
-	 2m+HA2sNJqbaEO4/1YOzWIXNl02EQEDapyEDdQlQ8iN+k5ii0kcJDYHQgolRayVH6U
-	 vG+Ujlx3rpjgPVlKIL4wc2fAZYsel9nEQYwrzvmI=
-Date: Wed, 9 Oct 2024 09:55:30 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
-	linux_oss@crudebyte.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	m.grzeschik@pengutronix.de, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] net/9p/usbg: Fix build error
-Message-ID: <2024100910-distrust-cornhusk-a8bd@gregkh>
-References: <20240930081520.2371424-1-ruanjinjie@huawei.com>
- <2ff5834d-cb88-39f5-168d-8e179f152757@huawei.com>
+	s=arc-20240116; t=1728460560; c=relaxed/simple;
+	bh=A4lSNrRXaEkXG8jgMnUAfOsb+5/EvFkHHsoQooCyPwU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EBqcQ3hu1ORxI+BqWvK3u4C+JXXuL9fcJocm5qQcTWHyG0J1JLzMP0WBOva85Mu8SSBEbMade37UDE7ew3DAc8KMtQN6ptgg1mAluji7xdoWISwNxXNI9CCL3dTF9ZqS6wtPFnlSKe0ao4iXVW/8PzIO9R6xnCkusvL6NTBjgzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FQLRa4fm; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ccdc0d7f6so4102051f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 00:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728460557; x=1729065357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vF+bwgt5K0DxX6gVjgMOFqltEB1h2u/fKc87de81MiQ=;
+        b=FQLRa4fmHguUUoqdTx/shRjAP3gQgpkB5X7qMPff1ucRxmdwe9va93Af5lbzJywBfT
+         AjuY9K89lxUUX3Ls/cgkX5J/yec0FwS6azpg5YhsqudoG/Okn+W4xoPv54ngNO7DcyJq
+         KN4HOQ3eN7N2w78n8tfiStQk/1jvnk7qbHBC0L/S9/2ZtPU1HpWULnCmABWIXwuxga1O
+         2R/VJD/Jeg+U7hlpaPxOvTnZ4EtMycFzK05/LGbalg+VFi3Iwz1StKmw5h8AqVmNHuls
+         9Ar2dMtRt6COCWYGmkLuWvvqgcXjZ+EHgCM5StLJRmT8jMDgwmqkWxvbfvKr8NEW9kcG
+         6YAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728460557; x=1729065357;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vF+bwgt5K0DxX6gVjgMOFqltEB1h2u/fKc87de81MiQ=;
+        b=k/u0p8OgC/0LvTyWOT6rZ20RgAk056TZMA6+1kRJsG9v3iY322uKnfsqMvlVseQfe6
+         OFirmyjvpMwaeGP9MiKDPPSeQ3JETr5Xto/JzBOExJjNhX9rF85g6iMeUb09pJRjqVM3
+         VH9jKwgKKFUyx0iHz+DENM/AHzykxvqujzAkaJQKHPFLF8IbmXp06vZMpVi5K7eCdQ5t
+         wrd4NF7xbFCbj+SgLUMhXeAUT6JfZ0L7sSAhOdcT92nlMzSygyaZtY/WuQA/eLqzuara
+         F3lEYVEThG3hWg33+ujfgzoC9Q/1oOKJmq6IY6fhemf/iqXI8RaRi0Y4grMInZBFYh7G
+         AXZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPQ5LSMuxgpX7XtIzBiSFaovcZ6RQ7RKZz5fWtORIxjSyLCZLXZFyB/mS6kJ71vUfhhWoZPJE6IHvTsk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIzlvbIw/H9lLsgtuU9MQjySlViwKZCPn+zyf3X94iEcMreD7G
+	G13vc0xB25Mx9ydsQ+m9uq3ZxamK91dTj2gpbTklA+5N1Qs4kQbwpHcg0poHD40=
+X-Google-Smtp-Source: AGHT+IHLlUU3NnG9hXwulDxBDdXbtdhESRXfgH6ae8spTgJdMsE262PfGzNXfp3eWmSSA9CE1JyGgA==
+X-Received: by 2002:adf:fa82:0:b0:37c:cd71:2b96 with SMTP id ffacd0b85a97d-37d3aa84533mr951060f8f.36.1728460556864;
+        Wed, 09 Oct 2024 00:55:56 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16972fd9sm9660342f8f.104.2024.10.09.00.55.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 00:55:56 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Simona Vetter <simona.vetter@ffwll.ch>, Frieder Schrempf <frieder@fris.de>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>, 
+ Chris Morgan <macromorgan@hotmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
+ Heiko Stuebner <heiko.stuebner@cherry.de>, 
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Parthiban Nallathambi <parthiban@linumiz.com>, Peng Fan <peng.fan@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20240828074753.25401-1-frieder@fris.de>
+References: <20240828074753.25401-1-frieder@fris.de>
+Subject: Re: (subset) [PATCH v2 0/4] arm64: dts: imx8mm-kontron: Add HDMI
+ and LVDS display support
+Message-Id: <172846055533.3028267.13306014745754490027.b4-ty@linaro.org>
+Date: Wed, 09 Oct 2024 09:55:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ff5834d-cb88-39f5-168d-8e179f152757@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Wed, Oct 09, 2024 at 03:49:22PM +0800, Jinjie Ruan wrote:
-> Ping.
+Hi,
+
+On Wed, 28 Aug 2024 09:46:52 +0200, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
 > 
-> On 2024/9/30 16:15, Jinjie Ruan wrote:
-> > When CONFIG_NET_9P_USBG=y but CONFIG_USB_LIBCOMPOSITE=m and
-> > CONFIG_CONFIGFS_FS=m, the following build error occurs:
-> > 
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_free_func':
-> > 	trans_usbg.c:(.text+0x124): undefined reference to `usb_free_all_descriptors'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_rx_complete':
-> > 	trans_usbg.c:(.text+0x2d8): undefined reference to `usb_interface_id'
-> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x2f6): undefined reference to `usb_string_id'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_func_bind':
-> > 	trans_usbg.c:(.text+0x31c): undefined reference to `usb_ep_autoconfig'
-> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x336): undefined reference to `usb_ep_autoconfig'
-> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x378): undefined reference to `usb_assign_descriptors'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `f_usb9pfs_opts_buflen_store':
-> > 	trans_usbg.c:(.text+0x49e): undefined reference to `usb_put_function_instance'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc_instance':
-> > 	trans_usbg.c:(.text+0x5fe): undefined reference to `config_group_init_type_name'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc':
-> > 	trans_usbg.c:(.text+0x7aa): undefined reference to `config_ep_by_speed'
-> > 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x7ea): undefined reference to `config_ep_by_speed'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_set_alt':
-> > 	trans_usbg.c:(.text+0x828): undefined reference to `alloc_ep_req'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modexit':
-> > 	trans_usbg.c:(.exit.text+0x10): undefined reference to `usb_function_unregister'
-> > 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modinit':
-> > 	trans_usbg.c:(.init.text+0x1e): undefined reference to `usb_function_register'
-> > 
-> > Select the config for NET_9P_USBG to fix it.
-> > 
-> > Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
-> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> > ---
-> >  net/9p/Kconfig | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/net/9p/Kconfig b/net/9p/Kconfig
-> > index 63f988f0c9e8..ee967fd25312 100644
-> > --- a/net/9p/Kconfig
-> > +++ b/net/9p/Kconfig
-> > @@ -43,6 +43,8 @@ config NET_9P_XEN
-> >  config NET_9P_USBG
-> >  	bool "9P USB Gadget Transport"
-> >  	depends on USB_GADGET=y || USB_GADGET=NET_9P
-> > +	select CONFIGFS_FS
-> > +	select USB_LIBCOMPOSITE
-> >  	help
-> >  	  This builds support for a transport for 9pfs over
-> >  	  usb gadget.
+> This add support for the display bridges (DSI->LVDS and DSI->HDMI)
+> on the BL i.MX8MM and the 7" LVDS panel in a separate overlay.
+> 
+> Only one of the interfaces (HDMI or LVDS) is supported at the same
+> time. Enabling the LVDS overlay will disable the HDMI interface.
+> 
+> [...]
 
-Ah, I can take this through the USB tree as it fixes a bug that came in
-through there.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-thanks,
+[1/4] dt-bindings: vendor-prefixes: Add Jenson Display
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/763dc2cdeb2ac5a5067972b614f9f0603f716f9b
+[2/4] dt-bindings: display: panel-lvds: Add compatible for Jenson BL-JT60050-01A
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/15bda06bc93fca828e5f11ca6b773fed19e45b8e
 
-greg k-h
+-- 
+Neil
+
 
