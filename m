@@ -1,266 +1,179 @@
-Return-Path: <linux-kernel+bounces-357359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B667D997052
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C12099705B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B9151F23C02
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:03:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CBF2815E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D171F7072;
-	Wed,  9 Oct 2024 15:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243F419DF66;
+	Wed,  9 Oct 2024 15:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irG0skcj"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ide8S54K"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2055.outbound.protection.outlook.com [40.107.22.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1C91E1A0F;
-	Wed,  9 Oct 2024 15:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488233; cv=none; b=i6w6hYAXV3pJWnoq+5OY8C59LruUgpKrNwuR5AE2g2F1FuKGGx84uZblTtzI8o2KNaIVFrvhAW62f91yOcgZbZ5pD02F36zWga2NbgusHE/U2lr/+3QnPVQkCHMDjnBTxX2cxnWML1V0+j3dNwJ2yPWXHwJzCIv4VvToJjWNK8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488233; c=relaxed/simple;
-	bh=P8MGz3LNk2Y0603knKpYlKyHn7VnI3x9yNJiXnRYrQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kQSeuKSsRy/mFeoQg2WExlcfZi9+rK9wowa/69LSRD93ciZwB+emPVhjKPqGSD64s+4TgVvdvh4Fv/gvZbZ02YCLVbAhhT5GuUqAwzGt3CLOCBIrPMKaKZdVniWYZis+DpREU3zLx18EhE0daQ75Qc2OiLi1kh5A8qSLtr2U8NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irG0skcj; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso103167801fa.3;
-        Wed, 09 Oct 2024 08:37:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728488230; x=1729093030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AYVkpM4Dea0jgBbEaWFly3uGZzFTEnbuSisXaR4H3ms=;
-        b=irG0skcj/cX/ermCTpOa1KQtpxICF2hmoLS+VwfE/qfL5BfqXQVQpiOBEMRG+1Trlx
-         dFNz0xEU/e/VcNGZU60HvfykVCL1HklsGTitNjUpPAg77N/Rxk6hhD389DB22DCACnja
-         8OhH5NI66GLWJPq1EPEOjOXn7MuSrbrEN04IK+HQbTW8LonlFYG8NnRbABnKEUpmHGKf
-         HURNtu4I8uypEBrBSc7aXwamFeumEEbOJ0hryi9b598JHbtUrqgjbQDm7n3J+iSZHysm
-         khfPK/GOW7wboYjzSn/OqekiyW8XyP+ZxuFCo9tmhqPw5bJiR5Z53kTodeGC+xh7uT2q
-         TncA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728488230; x=1729093030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AYVkpM4Dea0jgBbEaWFly3uGZzFTEnbuSisXaR4H3ms=;
-        b=hAsufuQd+ckgLmlu6SzDm5BHWca6iS3K2A1+WsXl26zSvTAavHlzRoF/pQOz5REqUi
-         jGYNLNJHeD1b1w1SXPBxrTy3SBFShXR8qsWCcz41XeTPW8fVETseREDi4Du7X942vVaV
-         vD0FKK+KN/hRrzo0ROqtlEC0hoXMIQXyYP92qVkxQbhxO2hqQCzINAi21NwSKdhqTvgQ
-         q/CBIxzfg+9E++UiwH1oQ/hl5jmAlk5Ags3HZW5SEaw/bjIfolz2eChpKFUAwOeXU1i3
-         iB8HsbkjrbPlXeZiMQpMAblkB8/ckMJz7TOVlXdYUTQ8jyn9om8dD4i57p0lEUEQwBwl
-         o0sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUamL+ogVFUL3FnznF+b1shMMQHTwjqF/uyh30KRTimZPhz1c8Sfq02tO/FBbO2MELgf0/NNeM3TsjjCzA=@vger.kernel.org, AJvYcCV7CRksQgDWmZX4IG/61H1PVQaHTTvaPYmBkKoYEZPtleyvyjAsTGM5oPXEZrEgrgA/pn7WHj65tLhDmsT8RDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypBQV82qDs1NEmc1iRI1rzBHED23gu9fLlHG8aEvnEJCcqT0WB
-	3QMZFuBgO0sgUFm5z/3bVC/ZpBZ/6H9cD7VPm2HQ64olXutmIw2l0Cp76he4
-X-Google-Smtp-Source: AGHT+IEo6/STpMGFOZfGqqWMK0ZXaIxkpaXfgffldN4wmrC5hAQNrkh14ZeNCjibF3DfKe2CC2j9Zg==
-X-Received: by 2002:a05:6512:1113:b0:538:9e36:7b6a with SMTP id 2adb3069b0e04-539c48e335amr2771586e87.32.1728488229764;
-        Wed, 09 Oct 2024 08:37:09 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf2f:2200:1a63:5a2f:b369:2dac? (p200300dfbf2f22001a635a2fb3692dac.dip0.t-ipconnect.de. [2003:df:bf2f:2200:1a63:5a2f:b369:2dac])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a996274deeesm316411966b.103.2024.10.09.08.37.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 08:37:09 -0700 (PDT)
-Message-ID: <813594ff-b167-4ae2-8105-e2f958ec2cc7@gmail.com>
-Date: Wed, 9 Oct 2024 17:37:08 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A751CDFDA;
+	Wed,  9 Oct 2024 15:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728488294; cv=fail; b=u9h+HjllsQ/X8ZrDsKNb4FGlAPqUHyWomB7F85TfKhP2t+fBemKZDAEYSORsLOe4VN7m3e6Xcj0bXf7Kxa1DZ4rHcbBifvADTSsIsTAfrIfZ/9Mj9gvwBqt41wSqIQwRvu39bdndrIKSkqpu2S0YtYXFTKCxk5p0gLPii9WSY2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728488294; c=relaxed/simple;
+	bh=atZUNAtNucVMjIq3Ut37OAJiw02VOvRDao/Yeh4nkjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ehUitAkuH7bJ8nAL9Qzs32V/HjdpIAsNm3NKGLXNDOeDZT9Xd6G76+7ompDGKCsJWyytrLCX8Z5u2U6BXD3FTmBR8Q23XMrqWHLrGZFEkXAqJkmvFiZvL6pKWsKLudvPOw2GRzoFV+e12klSL99qvLNyEyRLBbCK9TUNJUGpeTQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ide8S54K; arc=fail smtp.client-ip=40.107.22.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gcJiSyWgmafhk07Uy8dXXPkN0gIKlHNRcOPIpmVxfQ+EFUOpUhyxasdTu0SRFpveSwrztYLMOUK9AvE29/l9vR3WOZOvTzadaIZ4xlA3XXMB9oEDRSsiLqhnhly9w8sTItQ5NVZRq+n45D3z5ztFx1HA8cPCjDv4pKWEhwKpJo/IXsYuoG+kgYjFoea8/bO9mKlABrpS88I9lkrtz6m0zPyGge4YBPzTzuGof3UbwOZeuHBFUQ8LoDwxWhgconh1dUoiUAAEsI8cJLE1cMWKp1jNShdAPUsOWlS7fvgI1tK9wf14djtpvryp7y6+KJlNuJ2CDhqVN+nYwiMTTv05oA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T0I2+EtTZRtkaqSItCgif93D6eHZqLS6bUIK48dZJtA=;
+ b=a1R6lgLJBIiS0QvXIE2EWADX3cb616nHqrFj1yxQ0vxHWc77coM0NVCcRWOIQB9RJEvfBixk50qlYRY2pjG3pwe8vO8As32H1rRKEEoBgf/FKP8GJLZcYQHEOoqUifo5jxp9wYPlU+KTV9ULUV4P8nbGmhFjOVQ1RXSuBUzZvZ8ni3XsPqrhF4MsRhbpasCVAoExjtwYhnjbvPGbkOufV0XRFA1ZD26ROLv3xflLBEO0KCKznCIBKefHy4xeQ4fsPegoRKFcpzqenGwkKidzcV/NwEG3HCNO+Slb03bEng8eSOI+ouzl35OYqUgM4oo0WrtVETK5sF5M0ThjsRoxjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T0I2+EtTZRtkaqSItCgif93D6eHZqLS6bUIK48dZJtA=;
+ b=ide8S54KFzPvadrpkUPGNofZ5pHDbKgyWr90yoUWYw3Ct1yTjBilN20vTkSYjLFowtTLQ1Xd4wAiDl8sPhfFA79vMd/T62Q+MuByAqg0dmKoRynlqgwzygHuSXNYRb32s0UP7bCaYFI9x3ZtcTwaxsaVU+Sd7ymxnu/iGz1otMU+amRZtsM1YAqSVNGv5qjvhBGheB4kXX8fUgNNJZ/Sb0NoHXhEJmXiOMRrlG4X+t9zoQeO9Py1GecRZKaG8d4r9ab3wJpWrSP/8YL8zcZPLjjLUeurM2HG/Gxvzm6Pu9VhfupB2OFIpZtTmlH4XOVVtXXIaZseuBGMUBdehFwo7g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB7494.eurprd04.prod.outlook.com (2603:10a6:20b:23f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.18; Wed, 9 Oct
+ 2024 15:38:08 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8048.013; Wed, 9 Oct 2024
+ 15:38:08 +0000
+Date: Wed, 9 Oct 2024 11:37:57 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marek Vasut <marex@denx.de>
+Cc: u.kleine-koenig@baylibre.com, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, festevam@gmail.com,
+	francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
+	kernel@pengutronix.de, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, p.zabel@pengutronix.de,
+	pratikmanvar09@gmail.com, robh@kernel.org, s.hauer@pengutronix.de,
+	shawnguo@kernel.org, xiaoning.wang@nxp.com
+Subject: Re: [PATCH v8 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+Message-ID: <ZwajVXRwDLDg2rc7@lizhi-Precision-Tower-5810>
+References: <20241008194123.1943141-1-Frank.Li@nxp.com>
+ <41cc47bd-f18f-463b-a0dc-843088ecf91e@denx.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41cc47bd-f18f-463b-a0dc-843088ecf91e@denx.de>
+X-ClientProxiedBy: SJ0PR05CA0149.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rust: remove unnecessary #includes
-To: Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org
-Cc: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Dirk Behme <dirk.behme@de.bosch.com>,
- Filipe Xavier <felipe_life@live.com>, linux-kernel@vger.kernel.org
-References: <20241009151017.26685-1-tamird@gmail.com>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <20241009151017.26685-1-tamird@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7494:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8afb9b8-009a-4793-82ba-08dce8786016
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?J8Rv6lQfCqW6oWzGj6O7XRUhDJ6/a+T6/0wSped7suoLFT+w2xMjBCxqIf94?=
+ =?us-ascii?Q?PNDs8+RMu06gs2JFsoS29lTGxw44yu9J5UnG3pDID9vbQkX5swA7QGmGflxs?=
+ =?us-ascii?Q?LA4TFfVNrTPi8tXAULm7MmAg2JqgiMM2gA3c6yUpPuvID7Uats7PM7TlXHz1?=
+ =?us-ascii?Q?jq1d8RhQQokABpXfmJtEQKBZu6YxkQgCJ9pnIHlMnExHC+ydE4RxNJB4IO89?=
+ =?us-ascii?Q?7gXTvsyoXOBoQlJ4kbwNmTtOv91tXfRp1OqeGMkhSFVtnCZwZuLOlKdwSnZL?=
+ =?us-ascii?Q?FIo7XkSYQunK68p7wxrnX0kDvwsDeGC6Izgg7GXZQ+lfWdW9Rx7xY8NVGZcZ?=
+ =?us-ascii?Q?HkSZ3OkUh5iMljaizkRcQoE1iPXChokrT+oJIFZdmm99cUJkIzA44Xb9czCS?=
+ =?us-ascii?Q?cQQQ1EMQz7+y8NMexxRNCBIbjIe/LsHH8R9MpJ3co5MpMb+mhlZqjLi37ILd?=
+ =?us-ascii?Q?ff7TnZ38fh72QPj2/+4YGtZPfqVUv8MRkPIp5aPbZ790tR9ofBauL65pRhvh?=
+ =?us-ascii?Q?wWec1rHKYFAC5cGY9aG4Sqr/QCK1hPU9yoxPXpQMbThGCWQwYumt1NPjz6GP?=
+ =?us-ascii?Q?Qj1f/h4AwKJ5IsKnLa0ydrzCdTk4amvoFPCPmcA6bVkzFZAVpofLC2nnKHaZ?=
+ =?us-ascii?Q?uuPCMo9MTZb507Hr3MyF75EsABAI+kxL8a5cLnU2uw2OJ0WW959lo07XIT1h?=
+ =?us-ascii?Q?sxUTrYzipLYNd+3KnIEbtLRYt3D07ZSDQYcoMtwU8jqrX/Oqseg0VX5iUr+o?=
+ =?us-ascii?Q?WzY5wEA6mhnwIyZVgEi7ZQ3yhnaVYey0FtexLq20mc6XxlKoTo8uCOnfxtdI?=
+ =?us-ascii?Q?EO1eQridZzf/PnsorxErkQu6SccQEP9h9yfaee7q5jeP8afW0CC3CssWr3L0?=
+ =?us-ascii?Q?R0C0tKcKTuBRDwSyAwcp3F0L1H3+2KUVK5R7hAu/PilqRGVtBs4/l7kGQWw8?=
+ =?us-ascii?Q?JiB7XVBkUBRWcS33o/yUm9Q4W4/IAk4rFCpppJpG64s4oVuNy7m+NFOOjoLh?=
+ =?us-ascii?Q?TEtlZdOhaajvTAjSGnqVTNTLm0mm3GUEfdksYLE1YSRQ3DD6sHAJ/ZcgItzi?=
+ =?us-ascii?Q?qcYKOxmBLtowD6crnvgbsrLPtesyT7bqtWYki96X6oGiE55oO3aGOB+FtD3c?=
+ =?us-ascii?Q?3ErInikDG2D0lKi2BoY9Gd16oh5G0roMLR4LDsk0MNCi/+1ehW/PyV0S2Tpp?=
+ =?us-ascii?Q?AMe51dv16VvAFZ0cEHWiEZWhr0DgFjW8A3PiJjn5cPKZ8N7ZXUcubRgfSkeU?=
+ =?us-ascii?Q?qGIZENRx82dHYHpjLY+pHmwXK0K37UCO+KZFX2USko0NDPeUdgUdQA4J7xB3?=
+ =?us-ascii?Q?TmKG3tCHJlMKmv/JwJVSa/IThkLeYdq1CxjAmABc8cgMoQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?M07kN22e0XzzQklgN2Gf3T9UBZxFSLLyyXUtTwn+cYEgxb9qwFbQZo6/lDVS?=
+ =?us-ascii?Q?6aDjQHONd0/YYDBLlgpTFzipNRPnlwTNeeZKLZTJ5Pr7k9eL71BBqdiy+e/7?=
+ =?us-ascii?Q?hkquqgwoM+ThIfOYqr8zJiN5+EbHw/lItJBtH71+69dmabVADwWFUcFivYl9?=
+ =?us-ascii?Q?fHFcT9bbDpXQ/z+wt5imMl1UStp0UJ6D47ju1AAA2ySfgHyxR3PCqvqTmj1H?=
+ =?us-ascii?Q?4nBP4g8VUWbURTEIEYbxFD6Xk2KUJGFxHFVgVEVKt/U439EuZx1vYNYcLnNR?=
+ =?us-ascii?Q?IaPVq6cMImEB4txzegCtGI1qlvw+ZlioiBExOFOejz/XtLr06L1ghKtkm02H?=
+ =?us-ascii?Q?TAz/LDg79HxY1uuDt8WamI0OWYcU393LDefFcpLCmg+5Fh5YIzGZQSrAcY6k?=
+ =?us-ascii?Q?MTJ6mHgswTsPC82CxVYpl/iUA+aYq3X3NskdVtN111IO74yEKJooYGE96QN3?=
+ =?us-ascii?Q?botmsOCWLip/bdfOI96sLCJz5MuDqHmYf83dUIBkkvEKew6Bgi9Tv+fwlqxz?=
+ =?us-ascii?Q?6dQQ2TKq76VGglaX661NOqRQxyuqaRpRc7rLmNsDzL9Etg+d3TYMv6XK9EDY?=
+ =?us-ascii?Q?oLzGi3xvByab4D6/SV2NO0fnwEwCbhL0gFLHv3IezmBtgarYVtiKCD4bG/7x?=
+ =?us-ascii?Q?xxUBoJyQmrat5fXr3WZ2LnKViRAzZp98hZBV3zEgR8NrUjiubYxOvkJlc6VS?=
+ =?us-ascii?Q?rJJvysbxummu7MuZO/poC5qfbWtiQi5D87Xkcoh2nSzrAoFmM5Us1Xa4FInu?=
+ =?us-ascii?Q?jPWp/T6s3t6tN20WAefwy9DWk5hTtJ/B9IjK6sF+LOIfar0Sk9xTVk8kuiyc?=
+ =?us-ascii?Q?iDeckThgX7p7bUMWv1bxr8CmgolE2i3VKjuPe9C3/wAEy26OG76B7STYBBiC?=
+ =?us-ascii?Q?wpwfE35qMadr9tg/puRraXeU2IAGNNhxQZmrMF2mTkXaX+9qlaW615FtYRWf?=
+ =?us-ascii?Q?fhmU3mWtuwAqDMYF4sROokayxkv+kTZoYk31tJ2Jhv1gQLUGO18FjOcQEZGY?=
+ =?us-ascii?Q?6EGxfoW04vR5QfjMKVThJEfHfFOo0DbAvEub3kWWLSp4NQo3x7o8q8oI0+7x?=
+ =?us-ascii?Q?XlhMDEmmMyCNScvBWwHxs/mgm91cGyOt5Nl5N++oLNqjnmvV2sN6DhVxtP3E?=
+ =?us-ascii?Q?YN5Y5TKmtPP1cNxlMeM1K+dHewNPpFQl96tbeFoMfIM4/YDi4Cymj+Kh7zYQ?=
+ =?us-ascii?Q?ZU+OVHhi2vlrLsi1lMQF44FFkGQIUNKmLVB2N9FWAxJ5f709xhFt+Lt3vWqE?=
+ =?us-ascii?Q?jpmePNC9m1LF1JG5fHgpPsnf88at5F5Yk2mghMnrwwxjVAyy8fBbJyO4L8BM?=
+ =?us-ascii?Q?ljqnP9vMtoB8pI9TrKYs6G0gPuZ3en0A2+V1ZuW5Ek2y8mTY5F/MPtDqAUv1?=
+ =?us-ascii?Q?+zGQXMDPOhlWAydwN4fzZ0oEFvTSap7Czd8SwpP2hg/Mx0H7VlVBgJ0Rhksd?=
+ =?us-ascii?Q?ZNWGqWljEgt5qzl+figktr23nsAOSnqFJU05XiO8LR559Prai6dUVP2GqTP4?=
+ =?us-ascii?Q?EZu1cAKFRGmjICHyoODln7hIJrFlWhjMISkFxU3m5mZWyqp0k+hPTznjq8M3?=
+ =?us-ascii?Q?Vo+eNOO/X6iWYY4M2ldlt4teXQAxXWjqDuQ7jzli?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8afb9b8-009a-4793-82ba-08dce8786016
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 15:38:08.7465
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q0gJqYOAItslnv0mBPuESa/15cs5Kr0fqK7RWUs48xPbsYpKtSNtfNtHZ+1uRLhjCFtiHkGRL2VMwb1smce0ug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7494
 
-Am 09.10.24 um 17:09 schrieb Tamir Duberstein:
-> Commit e26fa546042a ("rust: kbuild: auto generate helper exports")
-> removed the need for these by automatically generating the exports; it
-> removed the explicit uses of EXPORT_SYMBOL_GPL but didn't remove the
-> header includes.
+On Wed, Oct 09, 2024 at 03:55:35AM +0200, Marek Vasut wrote:
+> On 10/8/24 9:41 PM, Frank Li wrote:
+>
+> [...]
+>
+> > +	c = clkrate * 1500;
+> > +	do_div(c, NSEC_PER_SEC);
+> > +
+> > +	local_irq_save(flags);
+> > +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+> > +
+> > +	if (duty_cycles < imx->duty_cycle && (cr & MX3_PWMCR_EN)) {
+>
+> I think you can use state->enabled instead of (cr & MX3_PWMCR_EN).
 
+state->enabled is new state. Need check old state here. If old state is
+disable, needn't this workaround at all.
 
-I was about to send the same patch. You have been faster. Thanks! :)
-
-Two nits:
-
-* Theoretically the grammer fix in exports.c could go into an 
-independent patch. But if not it at least should be mentioned in the 
-commit message. Let Miguel decide if he wants an extra patch or not ;)
-
-* Maybe a
-
-Fixes: e26fa546042a ("rust: kbuild: auto generate helper exports")
-
-tag could be added? Even though Miguel might route it through 
-rust-next as its not urgent for routing through rust-fixes.
-
-Anyhow, regarding the main change:
-
-Reviewed-by: Dirk Behme <dirk.behme@gmail.com>
-
-
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->   rust/exports.c           | 6 +++---
->   rust/helpers/build_bug.c | 1 -
->   rust/helpers/err.c       | 1 -
->   rust/helpers/kunit.c     | 1 -
->   rust/helpers/mutex.c     | 1 -
->   rust/helpers/refcount.c  | 1 -
->   rust/helpers/signal.c    | 1 -
->   rust/helpers/spinlock.c  | 1 -
->   rust/helpers/task.c      | 1 -
->   rust/helpers/wait.c      | 1 -
->   rust/helpers/workqueue.c | 1 -
->   11 files changed, 3 insertions(+), 13 deletions(-)
-> 
-> diff --git a/rust/exports.c b/rust/exports.c
-> index e5695f3b45b7..fd278e272751 100644
-> --- a/rust/exports.c
-> +++ b/rust/exports.c
-> @@ -3,9 +3,9 @@
->    * A hack to export Rust symbols for loadable modules without having to redo
->    * the entire `include/linux/export.h` logic in Rust.
->    *
-> - * This requires the Rust's new/future `v0` mangling scheme because the default
-> - * one ("legacy") uses invalid characters for C identifiers (thus we cannot use
-> - * the `EXPORT_SYMBOL_*` macros).
-> + * This requires Rust's new/future `v0` mangling scheme because the default one
-> + * ("legacy") uses invalid characters for C identifiers (thus we cannot use the
-> + * `EXPORT_SYMBOL_*` macros).
->    *
->    * All symbols are exported as GPL-only to guarantee no GPL-only feature is
->    * accidentally exposed.
-> diff --git a/rust/helpers/build_bug.c b/rust/helpers/build_bug.c
-> index e994f7b5928c..44e579488037 100644
-> --- a/rust/helpers/build_bug.c
-> +++ b/rust/helpers/build_bug.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/errname.h>
->   
->   const char *rust_helper_errname(int err)
-> diff --git a/rust/helpers/err.c b/rust/helpers/err.c
-> index be3d45ef78a2..544c7cb86632 100644
-> --- a/rust/helpers/err.c
-> +++ b/rust/helpers/err.c
-> @@ -1,7 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
->   #include <linux/err.h>
-> -#include <linux/export.h>
->   
->   __force void *rust_helper_ERR_PTR(long err)
->   {
-> diff --git a/rust/helpers/kunit.c b/rust/helpers/kunit.c
-> index 9d725067eb3b..b85a4d394c11 100644
-> --- a/rust/helpers/kunit.c
-> +++ b/rust/helpers/kunit.c
-> @@ -1,7 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
->   #include <kunit/test-bug.h>
-> -#include <linux/export.h>
->   
->   struct kunit *rust_helper_kunit_get_current_test(void)
->   {
-> diff --git a/rust/helpers/mutex.c b/rust/helpers/mutex.c
-> index a17ca8cdb50c..7e00680958ef 100644
-> --- a/rust/helpers/mutex.c
-> +++ b/rust/helpers/mutex.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/mutex.h>
->   
->   void rust_helper_mutex_lock(struct mutex *lock)
-> diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
-> index f47afc148ec3..d6adbd2e45a1 100644
-> --- a/rust/helpers/refcount.c
-> +++ b/rust/helpers/refcount.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/refcount.h>
->   
->   refcount_t rust_helper_REFCOUNT_INIT(int n)
-> diff --git a/rust/helpers/signal.c b/rust/helpers/signal.c
-> index 63c407f80c26..1a6bbe9438e2 100644
-> --- a/rust/helpers/signal.c
-> +++ b/rust/helpers/signal.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/sched/signal.h>
->   
->   int rust_helper_signal_pending(struct task_struct *t)
-> diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
-> index 775ed4d549ae..b7b0945e8b3c 100644
-> --- a/rust/helpers/spinlock.c
-> +++ b/rust/helpers/spinlock.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/spinlock.h>
->   
->   void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
-> diff --git a/rust/helpers/task.c b/rust/helpers/task.c
-> index 7ac789232d11..190fdb2c8e2f 100644
-> --- a/rust/helpers/task.c
-> +++ b/rust/helpers/task.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/sched/task.h>
->   
->   struct task_struct *rust_helper_get_current(void)
-> diff --git a/rust/helpers/wait.c b/rust/helpers/wait.c
-> index c7336bbf2750..ae48e33d9da3 100644
-> --- a/rust/helpers/wait.c
-> +++ b/rust/helpers/wait.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/wait.h>
->   
->   void rust_helper_init_wait(struct wait_queue_entry *wq_entry)
-> diff --git a/rust/helpers/workqueue.c b/rust/helpers/workqueue.c
-> index f59427acc323..b2b82753509b 100644
-> --- a/rust/helpers/workqueue.c
-> +++ b/rust/helpers/workqueue.c
-> @@ -1,6 +1,5 @@
->   // SPDX-License-Identifier: GPL-2.0
->   
-> -#include <linux/export.h>
->   #include <linux/workqueue.h>
->   
->   void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
-
+Frank
 
