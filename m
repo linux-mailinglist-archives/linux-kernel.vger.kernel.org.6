@@ -1,193 +1,113 @@
-Return-Path: <linux-kernel+bounces-357218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E217996DCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC00F996DCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FD41F219FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0965284CBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 14:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3DE19CC28;
-	Wed,  9 Oct 2024 14:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4C881AC8;
+	Wed,  9 Oct 2024 14:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnLHcQlu"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IRQR2Fhb"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D41A2562
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D7417555
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 14:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728484197; cv=none; b=WV4QVe2oxI1mraQcylBZY7wPFyqypIWZbMww+n4+aHAvpGohlLpbu1qFB16Hcr7Pdr6CmWIDajujN8sGHz/STLyM8tf6UYbmS8bhzvrHtQdHLMRXM9VbzIuOVunscGbS6bOSCGvLTXCQVdRF26L2UY3A/OfaD0NRLiTCRQksjko=
+	t=1728484209; cv=none; b=l8c7zI/UXE5HxTM8M91ZqHY4Cq7jHfVbMzNaf+bPmN6+hICwTD1CS6r4Rrs2eevJSOjQgc1Wo/wLDv2Bzfp1CjrbEKRPhe+alh3L86SBcGeQxO+COmqhbnET9kNzwBETmpj9yVJzcsiBkWsdsg+kNEywaH9xm5fip4XR+X9cRNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728484197; c=relaxed/simple;
-	bh=6rg8fudV2HDi1NEoULsMUGCnazkZy5kFAgN4WeYPYbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cUwndNOfUwn7Mslmf/DVhtEQ8bFZPZSQQL4sVkp20Bjy4amjTaf7YbNBD9vkfGYqBJzh5uRrk5Sf404jul3Ag21wJnKnrHe9ZHPdiqlbfJ6Ozm2g7i9g0it4QDPqRsPVhw0EqlP/VYvzIunY5vE8RsGIcSmP8kxzuHJI1rYi0Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnLHcQlu; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5e800d4e47dso769699eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:29:55 -0700 (PDT)
+	s=arc-20240116; t=1728484209; c=relaxed/simple;
+	bh=6DUxtqFeYCk0yVNMLdhvhgUM+KP6wb51Y9BDmTKikvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRiMESzKLeM6jcsWvXgYEqILf30YalI7CcAo39hOG3V5NC8fF0OpD0gKQAkU4vG9ZvvtnhLanJ8I8ZeoGCpwdUXkUGyR/ik5fK2GjkMRTpuaC+A/GXotRHuXIG7PJEvi725qCu3j2j9C4HcEqBwL9pYn0iHBcZmsu0Gz0lT8nEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IRQR2Fhb; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42e82f7f36aso61318605e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 07:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728484195; x=1729088995; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1HJ5l2YJxm3O72neDz3rx650xEJBhAU/4equGAO1fYw=;
-        b=VnLHcQluLuEC1YhygaVznuCTqL7K4Q534f8mhX+hptUqmojq59x4MjfVO3IpQX9m93
-         opg93Hr31fhvyjbjPI/FtWXBjyZofFsqjeZyhfvfmokfZqTh7ZklLBVQaTcIFasxCJOW
-         ItlYw43ojYbbRpcg4xVoCLboEly7nwsnus6B/4LB6SD/McA/g0GV95+VXLKsYxA5R1aX
-         uQKl9l0QF+pVeEtDXoBsjU1BphOjEKU5ZY9jNARF1gfPCDHQqroAHYbSDqps7KzCpjlI
-         krFW2T5jQA38TdWWok7lyvV1MeBjBdlHdzuegwPPm2r6nt2UQmATrBHG5y/EFTUhuLuU
-         SG5A==
+        d=linaro.org; s=google; t=1728484206; x=1729089006; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYe0UDJwZywf5zVofsmCoLxxt4WBBMPiUob9KTaisSA=;
+        b=IRQR2FhbuT2JRHCcfVHueSiaLI35s7TST7fzhbTXTnrt4DfIw/41rvrWR5pVfzqqu9
+         4bgfmiqgbbS4UWBvk35I52/Su5IOwKyd5FpsXZlb83ZkW0GO1mQuGjc6Yq5yx0RrA3eb
+         UzqU9RvUNL48/UEg7SCVuPB8gz3i+5rX3DNx9mjKo4zGNjNAAKt3ceMbjgvRJD3fTA4U
+         3l0Bm0wALwpeTVFUiIz52AxPpRglIm8DW4rBBvDjc46aWyPkNZJh90r1btF0rjCOe1nu
+         hG1MLb4j0b7XPKWCssuZlakanunrfZbnoP9djcJHJvRTSYZVBY3lYMYd7jwvojb91G0U
+         I+ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728484195; x=1729088995;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1HJ5l2YJxm3O72neDz3rx650xEJBhAU/4equGAO1fYw=;
-        b=SVeb4gthEtpoDs9PgvEFWoGXsIhZERDERN5uOeIwOTL/wji5jWbMCSRkp1ZhRX5Hzb
-         AKWsWME1OXHIJBGSExw7xLfUujV3nDuoXUKzT8IJeHUsbbKQ9eLKFI36WfiiNfdhpDhA
-         czW+WIlX/IJFlysBN5lyTmndqMvkoM7x2jd+AOI6ciYY/ufBqH+cFahAQZFCpaK7XGb1
-         HCS6BP1BFoODBxKY8Ivi8gDXEaOZXKfryO+x2tj4uUd5GjvvREjE6MXG6GEdM0/by4ZW
-         AHRUJNFLiY6B4mliFMQ26POxfavy4M3Tign6O0u+qYvxABOiN8Dr6qLkdDsn4MVJbmS0
-         c2Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHpbmkJgIGEPsa19ojiVa8JmcJiXOj+5CDK9ig5qI5xKqapWWe+mj9XYoVuJEE+J9S+TWuv//uLk2gYTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNOHVcKtU7Xd78Q8ne5LbxHBSbiyVZATywXth5YlVXMsq7evxp
-	sACgoYph/SBwpuTBvhJ0OC3H47qwz0vFVnoSYVv6rpaAtPUB2cAmmcA79fZlJ8uDfKpltvnnsZA
-	x5f9Rsz+Ri/e1f5Y2gjSbrCvNkfM=
-X-Google-Smtp-Source: AGHT+IHOrvLRQI0/DuijimlqP0nw80CW8kMD/I1XWLU6FBTX4UZBqAZ7fjEFo17vF1pCXjI4KLjeFyqN7tzpy6H2yAQ=
-X-Received: by 2002:a05:6820:308c:b0:5e8:4dd:46cb with SMTP id
- 006d021491bc7-5e987b8b2c2mr1453420eaf.8.1728484195021; Wed, 09 Oct 2024
- 07:29:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728484206; x=1729089006;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VYe0UDJwZywf5zVofsmCoLxxt4WBBMPiUob9KTaisSA=;
+        b=tsp+tQj8s6FkRtLjLSsf1DngNR5PX5x4kggzB8+dnCggb72hdFMvmr60Kp+HwwgZvX
+         o9sU5zEXE2pO+weBLPTtD2Aro8iO21xHR4o0abLeARQE8Bfg2Nnmi+T9UxXqA64h4xrg
+         ZOyGeEHtOAood/IsDD4p3FF+HlA8gqfbv2dEJpsLhAy/mAkUO7BslQOEdfuSRHKcd0in
+         XvKdPTqh5e8kdrU7HTHRCeYtTuaPxjT+QNJIwxEdqPI1cxFMMZlZWRNO/HaukcX+SocX
+         pRxz1OvcQN4p9Xv50t7R/0KSTQjndlspYo18IRZBMn+tPRrQQ1/QL7sS3w+hrmN4RNiI
+         wpmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkOelN3ZZaXoC+pu5LyuNr958vhva+o0X97fXC8hJk3/q3Lxq61C3XSWGxqB1M8EYjuObdQch3MQ8P6kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1L/jxmv2+GYiUza5Ofy7y+0DpNCSZyuPyMz7stJi0GlFTpmVq
+	WlFX5c3+2PBvkYE+HmH+wFSlSJFFNAHxZJSOi3FsqBwbr5k2MvR5+qDpp9eWm8scOBMV7yYx4PF
+	p
+X-Google-Smtp-Source: AGHT+IGlS2o4g/GZdl5D/67AlFAU0IALKSNCiQ5PhERwo+PloE/WKbeKZuNI0nFK8YJ1ev0hhpW/4A==
+X-Received: by 2002:a05:600c:1d09:b0:42f:68e8:d874 with SMTP id 5b1f17b1804b1-430d70b3e15mr19146415e9.31.1728484206301;
+        Wed, 09 Oct 2024 07:30:06 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf4f7aesm22176065e9.12.2024.10.09.07.30.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 07:30:05 -0700 (PDT)
+Date: Wed, 9 Oct 2024 17:30:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: jgg@ziepe.ca, leon@kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/nldev: Fix NULL pointer dereferences issue in
+ rdma_nl_notify_event
+Message-ID: <a84a2fc3-33b6-46da-a1bd-3343fa07eaf9@stanley.mountain>
+References: <20240926143402.70354-1-qianqiang.liu@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007035616.2701-3-linux.amoon@gmail.com> <a86437f6-1f62-4f44-bff1-f1203d04edda@stanley.mountain>
-In-Reply-To: <a86437f6-1f62-4f44-bff1-f1203d04edda@stanley.mountain>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 9 Oct 2024 19:59:38 +0530
-Message-ID: <CANAwSgQObCHr19fmwuc2BfQmoiV3ZgDTFumtfCH8PP_9VbQw+w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, lkp@intel.com, oe-kbuild-all@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926143402.70354-1-qianqiang.liu@163.com>
 
-Hi Dan,
+On Thu, Sep 26, 2024 at 10:34:03PM +0800, Qianqiang Liu wrote:
+> nlmsg_put() may return a NULL pointer assigned to nlh, which will later
+> be dereferenced in nlmsg_end().
+> 
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+> ---
+>  drivers/infiniband/core/nldev.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
+> index 39f89a4b8649..7dc8e2ec62cc 100644
+> --- a/drivers/infiniband/core/nldev.c
+> +++ b/drivers/infiniband/core/nldev.c
+> @@ -2816,6 +2816,8 @@ int rdma_nl_notify_event(struct ib_device *device, u32 port_num,
+>  	nlh = nlmsg_put(skb, 0, 0,
+>  			RDMA_NL_GET_TYPE(RDMA_NL_NLDEV, RDMA_NLDEV_CMD_MONITOR),
+>  			0, 0);
+> +	if (!nlh)
+> +		goto err_free;
 
-Thanks for the report.
+Need to set the error code before the goto.  "ret = -EMSGSIZE;"
 
-On Wed, 9 Oct 2024 at 17:55, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> Hi Anand,
->
-> kernel test robot noticed the following build warnings:
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/phy-rockchip-pcie-Simplify-error-handling-with-dev_err_probe/20241007-115910
-> base:   8f602276d3902642fdc3429b548d73c745446601
-> patch link:    https://lore.kernel.org/r/20241007035616.2701-3-linux.amoon%40gmail.com
-> patch subject: [PATCH v2 2/3] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
-> config: loongarch-randconfig-r071-20241009 (https://download.01.org/0day-ci/archive/20241009/202410092019.vGogfPIO-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.1.0
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202410092019.vGogfPIO-lkp@intel.com/
->
-> smatch warnings:
-> drivers/phy/rockchip/phy-rockchip-pcie.c:278 rockchip_pcie_phy_init() warn: missing error code 'err'
->
+regards,
+dan carpenter
 
-All the functions in this file explicitly return 0 instead of err, I
-will fix this.
-
-> vim +/err +278 drivers/phy/rockchip/phy-rockchip-pcie.c
->
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  269  static int rockchip_pcie_phy_init(struct phy *phy)
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  270  {
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  271      struct phy_pcie_instance *inst = phy_get_drvdata(phy);
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  272      struct rockchip_pcie_phy *rk_phy = to_pcie_phy(inst);
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  273      int err = 0;
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  274
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  275      mutex_lock(&rk_phy->pcie_mutex);
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  276
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  277      if (rk_phy->init_cnt++)
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19 @278              goto err_out;
->
-> Originally, this path just unlocked at returned zero.
->
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  279
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  280      err = reset_control_assert(rk_phy->phy_rst);
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  281      if (err) {
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  282              dev_err(&phy->dev, "assert phy_rst err %d\n", err);
-> 3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  283              goto err_out;
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  284      }
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  285
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  286      mutex_unlock(&rk_phy->pcie_mutex);
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  287      return 0;
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  288
-> 3114329651e74f drivers/phy/rockchip/phy-rockchip-pcie.c Anand Moon 2024-10-07  289  err_out:
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  290      rk_phy->init_cnt--;
->
-> Now it decrements the counter so presumably it leads to an underflow/use after
-> free.
-
-I was planning to replace the mutex_lock / mutex_unlock
-with guard(mutex)(&rk_phy->pcie_mutex) in the follow up patch.
-I will add this in the next revision.
-
->
-> 90a7612d070d5c drivers/phy/rockchip/phy-rockchip-pcie.c Shawn Lin  2017-07-19  291      mutex_unlock(&rk_phy->pcie_mutex);
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  292      return err;
-> fcffee3d54fcad drivers/phy/phy-rockchip-pcie.c          Shawn Lin  2016-09-01  293  }
->
-
-Here are my modified changes on top of my changes for the review process.
------8<----------8<----------8<----------8<----------8<----------8<-----
-diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c
-b/drivers/phy/rockchip/phy-rockchip-pcie.c
-index 2c4d6f68f02a..09685dc3fe17 100644
---- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-+++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-@@ -248,20 +248,19 @@ static int rockchip_pcie_phy_init(struct phy *phy)
-
-        mutex_lock(&rk_phy->pcie_mutex);
-
--       if (rk_phy->init_cnt++)
--               goto err_out;
-+       if (rk_phy->init_cnt++) {
-+               mutex_unlock(&rk_phy->pcie_mutex);
-+               return err;
-+       }
-
-        err = reset_control_assert(rk_phy->phy_rst);
-        if (err) {
-                dev_err(&phy->dev, "assert phy_rst err %d\n", err);
--               goto err_out;
-+               rk_phy->init_cnt--;
-+               mutex_unlock(&rk_phy->pcie_mutex);
-+               return err;
-        }
-
--       mutex_unlock(&rk_phy->pcie_mutex);
--       return 0;
--
--err_out:
--       rk_phy->init_cnt--;
-        mutex_unlock(&rk_phy->pcie_mutex);
-        return err;
- }
-
-Thanks
--Anand
 
