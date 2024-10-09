@@ -1,102 +1,134 @@
-Return-Path: <linux-kernel+bounces-356873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3545B9967FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:05:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED938996804
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59EE28B1BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BBC1F21D98
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 11:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3E0191496;
-	Wed,  9 Oct 2024 11:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7ED1917E7;
+	Wed,  9 Oct 2024 11:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NxYb88W0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQ/b9j93"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C89B1C6BE
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 11:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2CA1C6BE;
+	Wed,  9 Oct 2024 11:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728471921; cv=none; b=T4eL5uff3LQl940gVjHh08/w+NjNxkBi03erJHeLKIeA9+Vm2xahtUe0/DQqdZSmk7e15KqNWnvWVwSql24qa6BBowm6jnYy3UZOi5DjjRIXcR+Xt+eB80wiaHZuMnSgsqOmbK4syEiDlCsQWG8dVr8IA+dXPIvzNbHVX3J/nnI=
+	t=1728471961; cv=none; b=fR+eABf2KOUZX6pk5kq0FAJFvs8hWB0Y1+FCj4iog869nM9TywvTpK4BuoPnEs4qkh1n3sZHWQ0sIV2eB/VusrBySnTSnSu1V3sN+fv6tElpdzlTVm12UZZfZG1kcv7qgVUui9k9TL8oVbK/f1nFYWdQUWVgsilRp3UIl83kfgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728471921; c=relaxed/simple;
-	bh=6XbZgR83m/0tqAHP6Iz5wI7T504cypNosEUxPvNNVZU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IcGUd6+0e2xTueG8/HCM3KXwpmVyY2GzFF46NnukLpr9p6zIx3qt9NXXFnOe/DZbwpl+7MzwGrb+RvDWpQQOnCIcL+bS+534L+rc6iyTrePHcR16PkFPqYaF6d85AoqQWSiu8k2Y7KQj3q15I+H2rZcJhdiIeYg7tgvC48rZ7aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NxYb88W0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E707C4CEC5;
-	Wed,  9 Oct 2024 11:05:21 +0000 (UTC)
+	s=arc-20240116; t=1728471961; c=relaxed/simple;
+	bh=q/ht5rusQH29reCgQKkQ7cxAxVD7sSLy4Jo1uGfHo0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yb9v7Ymc0lLZdSQGrCBe2gSNhQQDaOUfGrjzT5ciCvCX8hUSpoq2HbitQTaDaXMkruyQoGDmX+XUKv0yrHvj1WRwzd3+xk0R3tgU4Og3RIYWqpig0jp0hft8rbdRJKiz4laeDny5GRgUw4UD+omRza0v4ogFG5SSTXGqbyEYYic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQ/b9j93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFB2BC4CEC5;
+	Wed,  9 Oct 2024 11:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728471921;
-	bh=6XbZgR83m/0tqAHP6Iz5wI7T504cypNosEUxPvNNVZU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NxYb88W0fmD7vbWpDmLty06Eo01CgKyfaa+ZE/71KNgOkaDbSKHngYvorQWz5hhYz
-	 CVZo6fO6uot5pLUQ69Hzhnn4ig2M7iYSQxr42oa2uD3GN3tPcw7DPM5ZFjEOwlLnBc
-	 9pMEd3VhIAkilKANhoP0q5ehVsN0cnJ813HGc1T1MollhTt2+wNY77FsRNfakDUrap
-	 x0fq/XQQUs5NG31uBAktMKIOk1hs0ullpmxNkVbqYkx7HYMIq+fEkyufPJMh49b8/g
-	 TZL+qe+6mlgDRBgqY5a3MCrQO7ijXD5yytvRtUbGp1nL+kov/iG5kmR+nRMELpRv7d
-	 JTBVK73zlguaQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1syUVK-001nkW-QJ;
-	Wed, 09 Oct 2024 12:05:18 +0100
-Date: Wed, 09 Oct 2024 12:05:17 +0100
-Message-ID: <86ttdl5yfm.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] drivers: irqchip: Remove ARM_GIC_V3_ITS_PCI Kconfig leftover
-In-Reply-To: <20241009101533.189093-1-lpieralisi@kernel.org>
-References: <20241009101533.189093-1-lpieralisi@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1728471960;
+	bh=q/ht5rusQH29reCgQKkQ7cxAxVD7sSLy4Jo1uGfHo0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZQ/b9j93K6RqAqgOUVMgfWoJsX5As1kolPBoc1Y73PNguggklUUrUm2Ap+8EzcnQL
+	 q1m6g5FdIty689UhD2b5AzShUkate3A6XOljtsoMwAwmAWIgjx4jayaN+AWF8F4T9S
+	 z26oFKbiOTGuQS86JgZwc2gC9p4KnFCD7dLoSUKSS5Nf2TtSABKSG1CslKD55avTD6
+	 nudWnFJtEZ2i5CHu60HDNsExl6LyE2587gf6cMM3mS/fC9mra+T0Wa4nFpqjpsXVQ4
+	 aagGb/fIscXPvjhoTdQGNYv8iQLBq4HwXneOlsq96NIQAJtqmEm24eqebhSI6o2bfj
+	 1JnC7rG+hfcLg==
+Date: Wed, 9 Oct 2024 12:05:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, rick.p.edgecombe@intel.com,
+	David Hildenbrand <david@redhat.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andy Chiu <andy.chiu@sifive.com>
+Subject: Re: [PATCH v6 00/33] riscv control-flow integrity for usermode
+Message-ID: <ZwZjlSZKoJ9np3td@finisterre.sirena.org.uk>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7oPJV4nwhqMkz2xI"
+Content-Disposition: inline
+In-Reply-To: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+X-Cookie: Editing is a rewording activity.
 
-On Wed, 09 Oct 2024 11:15:33 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
-> 
-> GICv3 ITS PCI handling code moved to the MSI parent infrastructure in:
-> 
-> commit b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for
-> PCI/MSI[-X]")
-> 
-> the code move removed source files that were selected by the
-> the ARM_GIC_V3_ITS_PCI config option; it now sits unused.
-> 
-> Remove it.
-> 
-> Fixes: b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
-> Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Marc Zyngier <maz@kernel.org>
 
-Already fixed as of:
+--7oPJV4nwhqMkz2xI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://lore.kernel.org/r/172787481077.390.6867959419187258610.tip-bot2@tip-bot2
+On Tue, Oct 08, 2024 at 03:36:42PM -0700, Deepak Gupta wrote:
 
-Thanks,
+> Equivalent to landing pad (zicfilp) on x86 is `ENDBRANCH` instruction in Intel
+> CET [3] and branch target identification (BTI) [4] on arm.
+> Similarly x86's Intel CET has shadow stack [5] and arm64 has guarded control
+> stack (GCS) [6] which are very similar to risc-v's zicfiss shadow stack.
 
-	M.
+> x86 already supports shadow stack for user mode and arm64 support for GCS in
+> usermode [7] is ongoing.
 
--- 
-Without deviation from the norm, progress is not possible.
+FWIW the arm64 support is now in -next, including these:
+
+> Mark Brown (2):
+>       mm: Introduce ARCH_HAS_USER_SHADOW_STACK
+>       prctl: arch-agnostic prctl for shadow stack
+
+shared changes to generic code.
+
+--7oPJV4nwhqMkz2xI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcGY5QACgkQJNaLcl1U
+h9DuYgf/Yx/hYhzwGnR6YPAWZpgt5JjVuDPJa1JE1Ei8ieKYodc7o6QkOA5hSrTm
+WYjjS9qnSLJMACL3DYu4mSJA8xQotPF5iqQaMppk1O/o2e3oTwawz7s0nV/YrWro
+AqVenIjySprRKZMNLMT7px8D0NFUlqICKS05NO3+KlS3J/tdxEnW5ugscd0abE6V
+UuEUA6JnHqtwrdff5T2I3hZqDw1W+3uMDoCYjB5hsmRbZQsdR31IbaAqJIiV30Xn
+e2tXbl+/62YIiebxZzUJGexuc7CbwdMnNC6aRjMTFEZ1R4YF1DJZMu9TcIBP/W2b
+q6AR4EUd7yJlirhYQIzbhTVozmqMlA==
+=L1c6
+-----END PGP SIGNATURE-----
+
+--7oPJV4nwhqMkz2xI--
 
