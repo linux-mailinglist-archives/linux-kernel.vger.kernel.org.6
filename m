@@ -1,107 +1,84 @@
-Return-Path: <linux-kernel+bounces-357377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD2C99708C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0944D99712C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE3F1C21A29
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B3EB1C223CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 16:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6EF1FCC45;
-	Wed,  9 Oct 2024 15:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D141EF08B;
+	Wed,  9 Oct 2024 16:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="OELBm3w0"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qP/O0Jg7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7FlWn+C8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FE01FBC8D;
-	Wed,  9 Oct 2024 15:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8691E3DCE
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 16:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488683; cv=none; b=hqwM5vXADNFu2Z+xHu2GOt692psYUmCUT/ukm+gOwN3bsGTmfndsVKBaQqA68QKSNphOjI5aJzarxDDhmN+7H1t3pd1rixlp7q+IvCnnPvJ2O8UQrHNY2QvjK7RDdDt6HuaAJ2DpZP4jcmwm1hOQEb5IRPTSOcsJW+wnczscsxc=
+	t=1728490247; cv=none; b=URJPdSWz2CVV47aau1CuK+y0GtiAgLnbpvX369lX657r/NFoZ6tv452UsfoXXvhUAoYQl9obgSajkAhmRZ9OTGXxT6frOeBPpX8fQHDXZvpFHaHqL0Kub0e5HD2ylRK4WgbCilHqF8m/tat0NV4Ii7ZdAxCuQvMDjNux4lkKL0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488683; c=relaxed/simple;
-	bh=vN3oSRt+DWWZYqxbDzof1CIKa34v7dtlDeUZmDHCEDU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PYuihjghRZgyp+VGk3TFZZhY4Dt2chw2DSgRDYaZe5xykt7tRg8DSn8soXtfwo0UICwWhpGc1IbcbdCEqD/EcwRKHRdYk72ouULOMHneKBMzcuGS4BN+thIzL92hhc37JFCG0vJ6cWESRmozSgOKfekPzt62uNMZyJUjJ4usspY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=OELBm3w0; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4994jS5K008613;
-	Wed, 9 Oct 2024 10:40:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=pyKC/dASsCtA3+TZDyqPMdHSCS0SUd5biiWP/yIPQtI=; b=
-	OELBm3w0TyQMFW+Pyki/LB0esGQNT/NKmYuitCVLVuSnvCAo4XM/xNYeYzjtABeA
-	A85Fzf5zkybp5IykVQwffQVIdA7y+Pxl1WD0QwwRdu/6fo6KIDnouT29ys6gEtBY
-	pzMO6xHG7UNXMTwfdu8ZKyp4CflyEohZgG69gyJHFvG/WSEjDtZNBuHfX8tJf9DK
-	OGpbRtSWSRxkvWxFAptfZ5TZsU0Zm8vPvkVMIUf1mgwqHjBVHs+zcmeGIfCQ7NpX
-	wEvLS51GQ7k+7VdkmCeKw2s14HJJbRf/ekOdGpFZ3qHlH+sssCqQaqTK/It6LljY
-	th3ZTtv9gWKhnYW5qYRUgQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4231vhwgp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 10:40:59 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
- 16:40:57 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 9 Oct 2024 16:40:57 +0100
-Received: from aus-sw-rshr002.ad.cirrus.com (aus-sw-rshr002.ad.cirrus.com [141.131.145.15])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id AEAF582024A;
-	Wed,  9 Oct 2024 15:40:56 +0000 (UTC)
-From: James Ogletree <jogletre@opensource.cirrus.com>
-To: <jikos@kernel.org>, <bentiss@kernel.org>, <dmitry.torokhov@gmail.com>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        James Ogletree
-	<jogletre@opensource.cirrus.com>
-Subject: [RFC PATCH 2/6] HID: logitech-hidpp: Assign max concurrent playbacks
-Date: Wed, 9 Oct 2024 15:40:42 +0000
-Message-ID: <20241009154046.1011226-3-jogletre@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241009154046.1011226-1-jogletre@opensource.cirrus.com>
-References: <20241009154046.1011226-1-jogletre@opensource.cirrus.com>
+	s=arc-20240116; t=1728490247; c=relaxed/simple;
+	bh=RB6WLXvlaw0yd1HUtlcB9os9LS12nwZnsWNbOwYPQU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KeHNtdbjtZvuIcV/ZfsTWPuRB9JyuSebcm3zVWiRq/D+RisOZpp1Tex5epzW9eZ/gw3t5gx8tl54DBBR2EyrNfLvS0zY2fi7/OKWrpjwvnlLhazOGlZSB+rPYCv1I9Ok1xYniXiiepHw9gd6ynXB14D3BP2NLeaPgJQMLaW8sdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qP/O0Jg7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7FlWn+C8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728490244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RB6WLXvlaw0yd1HUtlcB9os9LS12nwZnsWNbOwYPQU0=;
+	b=qP/O0Jg7z0yubL0SlIhRquAWqbsxWgw1h/PMIhB6bG5WQ9FoIx3cMohAzGOyZgsyE88sv3
+	B7yBljvlHQ6KzBV9I0oCAXdVMIT266KUpXEnlK6+a0ptV/8sRwxmjOMfZK0uuokKmXCgn9
+	hajt8bR0ks3aqg67T1G9ErYoYW9vuJwkfu6OfSN1TtiiJF6gbmB0B+EO06DkvxjPIZEGb/
+	8fd2s9xlltNYKVNl4mWVvNZvu+5Sen6bHE46zqt+htR5wHcEl1ZoKuf1EUGoSfRzBVlPtH
+	mBAZBHiWjlL14PBOVsqkRy6F9ypEsJ5xePgUxBPeOYF7Vs8M67LQAlaaHTMSKg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728490244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RB6WLXvlaw0yd1HUtlcB9os9LS12nwZnsWNbOwYPQU0=;
+	b=7FlWn+C8KesVQsxE4AcWH+GETCx7zn59uxzRwlcC9x30eeTAqnRXLpzgzJ6z8fbYytcuAe
+	fBfvBL1MzNQ0agCg==
+To: linux-kernel@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH 0/1] lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING.
+Date: Wed,  9 Oct 2024 17:45:02 +0200
+Message-ID: <20241009161041.1018375-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: tgIxNsgKgqIDtWuiPzLtcGz4ZB62_3nz
-X-Proofpoint-ORIG-GUID: tgIxNsgKgqIDtWuiPzLtcGz4ZB62_3nz
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: quoted-printable
 
-Explicitly assign the maximum number of simultaneously playable
-effects.
+Hi,
 
-Signed-off-by: James Ogletree <jogletre@opensource.cirrus.com>
----
- drivers/hid/hid-logitech-hidpp.c | 1 +
- 1 file changed, 1 insertion(+)
+PeterZ poked me regarding the status of PROVE_RAW_LOCK_NESTING. To my
+best knowledge printk was triggering this during boot. This is gone
+since the rework that landed in v6.12.
+Before that rework, people booting with `quiet' got reports for "other"
+splats and handled them. I booted a few boxes with this option enabled,
+and didn't run into any splats.
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index 400d70e6dbe2..843697b176ef 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -2895,6 +2895,7 @@ static int hidpp_ff_init(struct hidpp_device *hidpp,
- 	ff->set_gain = hidpp_ff_set_gain;
- 	ff->set_autocenter = hidpp_ff_set_autocenter;
- 	ff->destroy = hidpp_ff_destroy;
-+	ff->max_concurrent_playbacks = num_slots;
- 
- 	/* Create sysfs interface */
- 	error = device_create_file(&(hidpp->hid_dev->dev), &dev_attr_range);
--- 
-2.43.0
+It might be time to enable it by default.
+
+Sebastian
 
 
