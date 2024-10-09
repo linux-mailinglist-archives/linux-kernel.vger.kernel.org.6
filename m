@@ -1,206 +1,137 @@
-Return-Path: <linux-kernel+bounces-357792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5CD499761F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:01:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6FD997624
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 22:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E3EB20CE8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6562F1F2228B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548C71E1A29;
-	Wed,  9 Oct 2024 20:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5422E1E1A12;
+	Wed,  9 Oct 2024 20:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KMy6GLe1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAyyZ0VV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F52175D5F;
-	Wed,  9 Oct 2024 20:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E9D173336;
+	Wed,  9 Oct 2024 20:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728504087; cv=none; b=Hd2TYdEvUQfojyLOxKCz91y03LTuh6dAL9FtSWToaPlba6qqnRVmhyICEwRSbY+z5PhLsoGU5AzH8amnUjjB0X+iCsuWRO9TZUTV+0zBtz71hEuqTHjX5LMuoc502rKfpmRgv8N0diKmQyBu6DigoQ8whgDRSL1eiiMf9g+gCE0=
+	t=1728504152; cv=none; b=PNn7JSkqnlLBWxprZn5801SDPqQH0v0fg1jBEErEvwXSqcKTi5nrb6iVyusQEtrURBlzp9S1XZiMo1pMTFYJTYXGGU7PEJIvWFcD/GvpJmP76Ea1pH/6C8Gj8IrGMnWcYJqb/k0TAIziqgjzQ/ME3U0UNNe9C2cLX4PvIGkj9+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728504087; c=relaxed/simple;
-	bh=zFdUQ+MRpLUDqfQc+JTntU/+06D/KiG/nS/BisdDa08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcYL9UtVfHeht/d+s81gRNnu1ASAqhewS7IQFMd0XJ7o43AABDifGki84saRQfTU9wbqfKw6PvYHQhG9lZf00IS3bdXjLhM4yTqbCw5WOfqZMMODol78N3RHtk0jcCy6XB4OBlqO6VPN+oQvjCjkCh0J0dsbp9x5MOO4fZlpZAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KMy6GLe1; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728504085; x=1760040085;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zFdUQ+MRpLUDqfQc+JTntU/+06D/KiG/nS/BisdDa08=;
-  b=KMy6GLe1+gIoSIJGqPxcUPvt+WuG2R3hGccpasf9tdgvd5XIVWejVcMw
-   IZuffw1UUCrNfRgyiSkI/E0Hxeht/c2iY0KhtqDeVIK9/uNQftEVYCIAq
-   fCqIx7F7ZkLf0eqIn1OhkOl0cPBROz5Yf/5gVivgtHDTnQsPZ8HizGnvM
-   /1EgqTExbhRQTkRcKeOuvPC1dCiO931RW/B67j+l3s81HJ8OcILYbZdtb
-   BkdBgbwhGapUl9PxYMluv3G7qS1XcJ7AA6ue6Rp9m8NGDsIMkQGDDQGzJ
-   cUKmF2/PjgyAo0GwwNHy1SzDyIgmMkjfYxaGUvsGljg6vP8LoDm1ymlB6
-   w==;
-X-CSE-ConnectionGUID: fBSSH2L0T0SXmqdfJyyXjw==
-X-CSE-MsgGUID: BPuUqIG0StCi49gsSR+dwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45304849"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="45304849"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 13:01:24 -0700
-X-CSE-ConnectionGUID: iACf1EpnQ+m0h4w8o7hFeA==
-X-CSE-MsgGUID: FanvvHS4RrKCbi65y4S7Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="81163288"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 09 Oct 2024 13:01:19 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sycs0-0009kn-2F;
-	Wed, 09 Oct 2024 20:01:16 +0000
-Date: Thu, 10 Oct 2024 04:00:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
-	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-Message-ID: <202410100321.D89hHCPV-lkp@intel.com>
-References: <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+	s=arc-20240116; t=1728504152; c=relaxed/simple;
+	bh=fgFWJ/oEjnladuvaBsVXpkihxJsAI1TGvExLtbgb5ts=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VtZCrNIi0MpuSJmYWeR0T3KahPw/jo/SBdweD1oHHDVB7yl2dlbnrJFHeHKpKkDMlHDrcOvXgbZ5oA2H0RdKpp8VgOTZTnx40jlHQnmH4eTZF3afiB8FJiLP+uQL38sLco1W87b67ED1m2KJ6gd1ywDIaOQ3T1IFyslnVmgsdLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAyyZ0VV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1C2C4CEC3;
+	Wed,  9 Oct 2024 20:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728504152;
+	bh=fgFWJ/oEjnladuvaBsVXpkihxJsAI1TGvExLtbgb5ts=;
+	h=From:Date:Subject:To:Cc:From;
+	b=WAyyZ0VVAQNVFpEs0S0ZmBeAclishnvxjKFUe8JiVW0wDb/mzu7fATm1+uFfrjCrH
+	 paXDunQcP0B4OEB9g4fzkX31JNSUf0QwJVTNPNVixN/r4O4WrvYGibrZKGM2o0dFrU
+	 O7txuLEI6rEiYcrMnP6onyl/HQhYGgeqioF81qiBEc5XxFY1nkcd5i2uaNC4R0q+VB
+	 8SeGzEFlNqmDq8hI0B9DNn+A2q7RKpm3RX9eaaymzGZ9Y0lhSPnGHu1ro35a4HaWTk
+	 0u+AsT/KYP7csBiksyJ9g9znHzDwEPuN99NIg/N1za6zCRtPXnED+dYqbGTInalw2I
+	 BN8hrnnW5lqVw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 09 Oct 2024 16:02:21 -0400
+Subject: [PATCH RFC] sunrpc: always set RPC_TASK_SOFTCONN in
+ rpcb_register_call()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241009-nfsd-next-v1-1-058496d8960f@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEzhBmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwNL3by04hTdvNSKEl0zw8TEJEMjI8MUU0sloPqCotS0zAqwWdFKQW7
+ OSrG1tQCVw6LWYAAAAA==
+X-Change-ID: 20241009-nfsd-next-61aab1221d59
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ syzbot+e7baeb70aa00c22ed45e@syzkaller.appspotmail.com, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1811; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=fgFWJ/oEjnladuvaBsVXpkihxJsAI1TGvExLtbgb5ts=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnBuFWQiWFs+1ydwTEjkd2Zk0m33kf5jdPXA+A9
+ tZjinl55p2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZwbhVgAKCRAADmhBGVaC
+ Fb7rD/sHGYMlrrmpufdLkyBGnJGvGX+cc2SN8ax9hbzpauITPC4Br+y1aCWRi3LKGUNGCrMTL50
+ unoKUCO3VkP5NyK5V508TEuojCl84wPAn+arbcaqgPayeUBOk8Pdze6Gw6gk9wyDKfQbNBNe0oX
+ oDyE4RfGjbZGCWBRjjiqh6L1+eOxjT8abRaT0Aioj+lSLoxNVhLh4RkQU+nxEC30LP8rXwI9lN8
+ 3+RcyfNQUT5mWqPkNZ+Cr7zSqpj25iMR8xEYVlQszJSsHlqUSONTikWG6ZXGsJk8MUq1w1ngAT3
+ K3Vrvswha+uqg+fdiHYdsHq1PTr19euHUgAFL9EXWuHu6gdMVpGA2aVQYi205EKH4f2ZkufMFEF
+ XTp0vd36Hs2RnzW2nmoq/+hYekTDzxaoLfmUEnVXwv9q0Mj+uvu2vguOYQL5lchzKL5sub0BhxI
+ WEYNZbxqArRFxiC5Vz/4vveNV/w5LIhfgzmYabXjIHss1C74FUml4kl2IQH+WbdRqpJTOFZ0k37
+ acOkNhfqndXuv5hRd4mpowwFyXDKEheNtVYhfhfHW/BijF8HlOINtfuJKWjpiSxa4qQcJUTxmuc
+ caVbI0KGUT3TfJAa1kGTyf5IYGVN1IGwUmido4kVdVGvtRJn8ZIIIOMR84PADaTFDSCkR2cc6lE
+ crr00JVlow7hcfQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Hi Shawn,
+We've had a few hung task reports from syzbot fuzzing the nfsd netlink
+control interfaces. We don't have hard evidence of this, but one way
+this could happen is for userland to send down a large number of
+listening sockets and for them all to get stuck dealing with the
+portmapper.
 
-kernel test robot noticed the following build errors:
+Set RPC_TASK_SOFTCONN unconditionally in rpcb_register_call, instead of
+only doing that on set requests or when rpcbind isn't using an AF_LOCAL
+socket.
 
-[auto build test ERROR on jejb-scsi/for-next]
-[also build test ERROR on mkp-scsi/for-next robh/for-next linus/master v6.12-rc2 next-20241009]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reported-by: syzbot+e7baeb70aa00c22ed45e@syzkaller.appspotmail.com
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This is a bit of a Hail Mary play, as we don't have any firm evidence
+that this is the problem. Still, the scenario seems plausible, and it
+doesn't seem to make much sense using different RPC_TASK flags on
+rpcbind set and unset operations.
+---
+ net/sunrpc/rpcb_clnt.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shawn-Lin/scsi-ufs-core-Add-UFSHCI_QUIRK_DME_RESET_ENABLE_AFTER_HCE/20241009-042350
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/1728368130-37213-6-git-send-email-shawn.lin%40rock-chips.com
-patch subject: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-config: csky-randconfig-r073-20241010 (https://download.01.org/0day-ci/archive/20241010/202410100321.D89hHCPV-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410100321.D89hHCPV-lkp@intel.com/reproduce)
+diff --git a/net/sunrpc/rpcb_clnt.c b/net/sunrpc/rpcb_clnt.c
+index 102c3818bc54d4f9a1fc5f854c3a841289974869..f0cad9bb0752d51f82733b2f7533f2269b4c69c4 100644
+--- a/net/sunrpc/rpcb_clnt.c
++++ b/net/sunrpc/rpcb_clnt.c
+@@ -402,14 +402,10 @@ static struct rpc_clnt *rpcb_create(struct net *net, const char *nodename,
+ 
+ static int rpcb_register_call(struct sunrpc_net *sn, struct rpc_clnt *clnt, struct rpc_message *msg, bool is_set)
+ {
+-	int flags = RPC_TASK_NOCONNECT;
+ 	int error, result = 0;
+ 
+-	if (is_set || !sn->rpcb_is_af_local)
+-		flags = RPC_TASK_SOFTCONN;
+ 	msg->rpc_resp = &result;
+-
+-	error = rpc_call_sync(clnt, msg, flags);
++	error = rpc_call_sync(clnt, msg, RPC_TASK_SOFTCONN);
+ 	if (error < 0)
+ 		return error;
+ 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410100321.D89hHCPV-lkp@intel.com/
+---
+base-commit: 144cb1225cd863e1bd3ae3d577d86e1531afd932
+change-id: 20241009-nfsd-next-61aab1221d59
 
-All error/warnings (new ones prefixed by >>):
-
-   drivers/ufs/host/ufs-rockchip.c: In function 'ufs_rockchip_runtime_suspend':
->> drivers/ufs/host/ufs-rockchip.c:293:16: error: implicit declaration of function 'ufshcd_runtime_suspend'; did you mean 'pm_runtime_suspend'? [-Wimplicit-function-declaration]
-     293 |         return ufshcd_runtime_suspend(dev);
-         |                ^~~~~~~~~~~~~~~~~~~~~~
-         |                pm_runtime_suspend
-   drivers/ufs/host/ufs-rockchip.c: In function 'ufs_rockchip_runtime_resume':
->> drivers/ufs/host/ufs-rockchip.c:312:16: error: implicit declaration of function 'ufshcd_runtime_resume'; did you mean 'pm_runtime_resume'? [-Wimplicit-function-declaration]
-     312 |         return ufshcd_runtime_resume(dev);
-         |                ^~~~~~~~~~~~~~~~~~~~~
-         |                pm_runtime_resume
-   drivers/ufs/host/ufs-rockchip.c: In function 'ufs_rockchip_system_suspend':
->> drivers/ufs/host/ufs-rockchip.c:324:16: error: implicit declaration of function 'ufshcd_system_suspend'; did you mean 'ufs_rockchip_system_suspend'? [-Wimplicit-function-declaration]
-     324 |         return ufshcd_system_suspend(dev);
-         |                ^~~~~~~~~~~~~~~~~~~~~
-         |                ufs_rockchip_system_suspend
-   drivers/ufs/host/ufs-rockchip.c: At top level:
->> drivers/ufs/host/ufs-rockchip.c:315:12: warning: 'ufs_rockchip_system_suspend' defined but not used [-Wunused-function]
-     315 | static int ufs_rockchip_system_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/ufs/host/ufs-rockchip.c:296:12: warning: 'ufs_rockchip_runtime_resume' defined but not used [-Wunused-function]
-     296 | static int ufs_rockchip_runtime_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/ufs/host/ufs-rockchip.c:275:12: warning: 'ufs_rockchip_runtime_suspend' defined but not used [-Wunused-function]
-     275 | static int ufs_rockchip_runtime_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +293 drivers/ufs/host/ufs-rockchip.c
-
-   274	
- > 275	static int ufs_rockchip_runtime_suspend(struct device *dev)
-   276	{
-   277		struct ufs_hba *hba = dev_get_drvdata(dev);
-   278		struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-   279		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-   280	
-   281		clk_disable_unprepare(host->ref_out_clk);
-   282	
-   283		/*
-   284		 * Shouldn't power down if rpm_lvl is less than level 5.
-   285		 * This flag will be passed down to platform power-domain driver
-   286		 * which has the final decision.
-   287		 */
-   288		if (hba->rpm_lvl < UFS_PM_LVL_5)
-   289			genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
-   290		else
-   291			genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
-   292	
- > 293		return ufshcd_runtime_suspend(dev);
-   294	}
-   295	
- > 296	static int ufs_rockchip_runtime_resume(struct device *dev)
-   297	{
-   298		struct ufs_hba *hba = dev_get_drvdata(dev);
-   299		struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-   300		int err;
-   301	
-   302		err = clk_prepare_enable(host->ref_out_clk);
-   303		if (err) {
-   304			dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
-   305			return err;
-   306		}
-   307	
-   308		reset_control_assert(host->rst);
-   309		usleep_range(1, 2);
-   310		reset_control_deassert(host->rst);
-   311	
- > 312		return ufshcd_runtime_resume(dev);
-   313	}
-   314	
- > 315	static int ufs_rockchip_system_suspend(struct device *dev)
-   316	{
-   317		struct ufs_hba *hba = dev_get_drvdata(dev);
-   318		struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-   319	
-   320		/* Pass down desired spm_lvl to Firmware */
-   321		arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
-   322				host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
-   323	
- > 324		return ufshcd_system_suspend(dev);
-   325	}
-   326	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jeff Layton <jlayton@kernel.org>
+
 
