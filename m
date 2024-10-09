@@ -1,141 +1,93 @@
-Return-Path: <linux-kernel+bounces-356239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-356238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7A6995E5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE95B995E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 05:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4921F275AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C84B1C21962
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 03:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9251531E8;
-	Wed,  9 Oct 2024 03:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D54214D71E;
+	Wed,  9 Oct 2024 03:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Vq14Ska6"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxeiYtxf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9609513BADF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA07D14885E
 	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 03:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728445927; cv=none; b=SP+dwCsUNrVtVkN8EuUW7OyCRui2+sP7SBpsysLLnyNTQC/xLLZ31nJQke6hpGpF+6ZldH3kMNAqayTXuT9hSptUnWfMCgJHu+whhDyMhNoNb4XgVMOVusa1ssX9nK2ofGcZxz0y3B2ZSOWqPDIQeaUmlCUQnma/2/O4lVLJ5Ew=
+	t=1728445925; cv=none; b=QGgfzmfg7vcffwVdR4HYX2BYC5YxOzqrRqUkKZtFROkTNC4a4AEXZydFXGl42/7+EiKgijk+7Q47YPJYJ+gCfgmZpTZfSpuzDEpL46cTXGhjIiPmG7vH9/Nr+e3rrJ1Js48eqwWLjQ61ZHbvZGvpApGi6YD/cwvYzjqGFpX6+GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728445927; c=relaxed/simple;
-	bh=CNA+IwsxiyK9OFBTXdJn56em+2sA6DE+qY0MP6jbhd8=;
+	s=arc-20240116; t=1728445925; c=relaxed/simple;
+	bh=MWSYD62Ltb5ymo/NwUHdZrIc6KoW2Yhbq3iaAcNNJMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbRonqQDqocIgHAZkFZbYg+Vcg6KJfFwd+HxBvX8gklAYUYdipuHlXv+zvnOHQJappgAZD/pdRtG9c2r8Sf9gWdyHGyKtCyRlH9ls/wYiV6bgIb6IizMNhCoXNFemICBSMh/6V/k2eYVlgySp09O8B9GePgK+weNOjwRFRXzejw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Vq14Ska6; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (c-73-9-28-129.hsd1.il.comcast.net [73.9.28.129])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4993pdiQ026190
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Oct 2024 23:51:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1728445902; bh=hc/4UiI2kJNBSUQuicW9YL2kaR4Xf/C8fzRhntjE+WM=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=Vq14Ska6VHQMslm1coPtYYuQspE169G6Sv6tSkuYceol5m48jXCBzfJMjOpG8ukEa
-	 SpqdiLM5DuTk2Iaqavt89b0Fog08Zg821cepbtRRrSXQ4KnJklrcBsvmE206Uvtby5
-	 aShbbik+HF4lqbrOSb7KQ2e0DAfSXfVYcW2E4L0O4jDixO17pTC08yvBL3eTB51vxJ
-	 l2SUQ4nqdNr6PG6vEAR+X23LcMNAxxFGcGbTqspMjYekKoeeRJamQKJl5nYo/gMWgw
-	 KB7aYHk1vgPSyBzC8O+VTv15fz6h9xMLDv+7Af1KjjfUrP2/0qol6yOpM0XPQCyhUz
-	 R42RibVDZ+nbw==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 92359340572; Tue, 08 Oct 2024 22:51:39 -0500 (CDT)
-Date: Tue, 8 Oct 2024 22:51:39 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-Message-ID: <20241009035139.GB167360@mit.edu>
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
- <CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
- <x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
- <CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
- <e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
- <CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
- <2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
- <20241006043002.GE158527@mit.edu>
- <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZRWNGfEt4E1AfTDv6sZf5Gml53lSl+q4AM8tmJcUESvSQ0lNTzRGEUbJ09TG3Uf91LScmX8lV2zOyZnGjx4DjvNdp9mtzVaFpJcNd/ysnPyGnWuBcBQsasYYXJfc78bGmnXkIZlKC91hyG+5Un50Dh+oeEehHbpwdHfhLESFSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxeiYtxf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD91C4CEC5;
+	Wed,  9 Oct 2024 03:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728445925;
+	bh=MWSYD62Ltb5ymo/NwUHdZrIc6KoW2Yhbq3iaAcNNJMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mxeiYtxf4ijk1OaBAwqdxatmUBgZch4J0W0eSMdIu/SRr8dHeep/g5J8m38wHQqQB
+	 TMxg5VyNCcsKdc+X2DEgO2kmIsGMFwAhla0QNhkxF650iDDlbZFWXYiPKtYSP3arpP
+	 YJCDe3pOnrhEQ1dYubKgDzQvek2kDsoirybPQ8SYeNqLub7OLluMrq6ZUT+Cqsm+8w
+	 9xlB9oW/uTGD2EsP9uNRjsHE6tZFJAv/hBCAY0/FwftpO00j3FBxhHrP4ItckEOdV9
+	 oOjnagTHJFIxYIJ5ed9hoBhz0h5YgnK15zHVInag0IeP2xdTW4eY8A6BZ1RybLjgAw
+	 LkiWAZ0fE7W6Q==
+Date: Tue, 8 Oct 2024 20:52:03 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: HONG Yifan <elsk@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 RESEND] objtool: Also include tools/include/uapi
+Message-ID: <20241009035203.aqaxu22kckgmm4rr@treble>
+References: <20241008234718.17127-1-elsk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
+In-Reply-To: <20241008234718.17127-1-elsk@google.com>
 
-On Sun, Oct 06, 2024 at 12:33:51AM -0400, Kent Overstreet wrote:
+On Tue, Oct 08, 2024 at 11:47:17PM +0000, HONG Yifan wrote:
+> When building objtool against a sysroot that contains a stripped down
+> version of the UAPI headers, the following error happens:
 > 
-> Correct me if I'm wrong, but your system isn't available to the
-> community, and I haven't seen a CI or dashboard for kdevops?
+>     In file included from arch/x86/decode.c:10:
+>     In file included from .../tools/arch/x86/include/asm/insn.h:10:
+>     In file included from <sysroot>/include/asm/byteorder.h:9:
+>     In file included from <sysroot>/include/linux/byteorder/little_endian.h:15:
+>     In file included from <sysroot>/include/linux/stddef.h:9:
+>     In file included from .../tools/include/linux/compiler_types.h:36:
+>     .../tools/include/linux/compiler-gcc.h:3:2: error: "Please don't include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
+>         3 | #error "Please don't include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
+>         |  ^
+>     1 error generated.
+> 
+> As hinted by the error, this is because <sysroot>/include/linux/stddef.h
+> (a stripped-down version of uapi/include/linux/stddef.h) includes
+> linux/compiler_types.h directly. However, this gets resolved to
+> tools/include/linux/compiler_types.h, which is not expected to be
+> included directly.
+> 
+> To resolve this, I added tools/include/uapi to the include paths when
+> building objtool. With this trick, linux/stddef.h is resolved to
+> tools/include/uapi/linux/stddef.h, which doesn't include
+> linux/compiler_types.h.
+> 
+> Signed-off-by: HONG Yifan <elsk@google.com>
 
-It's up on github for anyone to download, and I've provided pre-built
-test appliance so people don't have to have downloaded xfstests and
-all of its dependencies and build it from scratch.  (That's been
-automated, of course, but the build infrastructure is setup to use a
-Debian build chroot, and with the precompiled test appliances, you can
-use my test runner on pretty much any Linux distribution; it will even
-work on MacOS if you have qemu built from macports, although for now
-you have to build the kernel on Linux distro using Parallels VM[1].)
+Queued, thanks!
 
-I'll note that IMHO making testing resources available to the
-community isn't really the bottleneck.  Using cloud resources,
-especially if you spin up the VM's only when you need to run the
-tests, and shut them down once the test is complete, which
-gce-xfstests does, is actually quite cheap.  At retail prices, running
-a dozen ext4 file system configurations against xfstests's "auto"
-group will take about 24 hours of VM time, and including the cost of
-the block devices, costs just under two dollars USD.  Because the
-tests are run in parallel, the total wall clock time to run all of the
-tests is about two and a half hours.  Running the "quick" group on a
-single file system configuration costs pennies.  So the $300 of free
-GCE credits will actually get someone pretty far!
-
-No, the bottleneck is having someone knowledgeable enough to interpret
-the test results and then finding the root cause of the failures.
-This is one of the reasons why I haven't stressed all that much about
-dashboards.  Dashboards are only useful if the right person(s) is
-looking at them.  That's why I've been much more interested in making
-it stupidly easy to run tests on someone's local resources, e.g.:
-
-     https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
-
-In fact, for most people, the entry point that I envision as being
-most interesting is that they download the kvm-xfstests, and following
-the instructions in the quickstart, so they can run "kvm-xfstests
-smoke" before sending me an ext4 patch.  Running the smoke test only
-takes 15 minutes using qemu, and it's much more convenient for them to
-run that on their local machine than to trigger the test on some
-remote machine, whether it's in the cloud or someone's remote test
-server.
-
-In any case, that's why I haven't been interesting in working with
-your test infrastructure; I have my own, and in my opinion, my
-approach is the better one to make available to the community, and so
-when I have time to improve it, I'd much rather work on
-{kvm,gce,android}-xfstests.
-
-Cheers,
-
-						- Ted
-
-
-[1] Figuring out how to coerce the MacOS toolchain to build the Linux
-kernel would be cool if anyone ever figures it out.  However, I *have*
-done kernel development using a Macbook Air M2 while on a cruise ship
-with limited internet access, building the kernel using a Parallels VM
-running Debian testing, and then using qemu from MacPorts to avoid the
-double virtualization performance penalty to run xfstests to test the
-freshly-built arm64 kernel, using my xfstests runner -- and all of
-this is available on github for anyone to use.
+-- 
+Josh
 
