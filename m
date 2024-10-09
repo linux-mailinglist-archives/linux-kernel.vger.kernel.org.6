@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-357107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB283996BA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:18:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C6B996BAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 15:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AADC528410C
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898261F2313C
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 13:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625BD1957E7;
-	Wed,  9 Oct 2024 13:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071B91946AA;
+	Wed,  9 Oct 2024 13:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYQ8V9tv"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="i4/u3j5Y";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Zjn6SWKP"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2444A189B98;
-	Wed,  9 Oct 2024 13:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ACD196C86;
+	Wed,  9 Oct 2024 13:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728479927; cv=none; b=cfoLGHYhh4ywQ7oSdd0qtjJEknHCQ74LYUHLOZa+9wqixETPgeEJ67sHOHcL6h2GFzgqLcQzzG9a8LgWpl8nGlTa+dchvimq56V0WNcv+aeFwkOvipybLCgjM0ltpL0ebW/8kUApLiajjr8MQwOSftJTCJJwT1V2I1/hfn4tEqM=
+	t=1728480006; cv=none; b=nlzTeZuajurvg6O9XikGM/KWC5W/Um+P6gvy1DwbReFQsyrUL6ghlYIyG7jCBGCR2u839spgWY/YrxfK/zgajpmjWQWjLiUg3OTCRBA9FKQ3AMP4kLizOpLukOkda7S3BcOOyBra4/7IfmCamoZJeS05OIzvJcE10mPumYnApqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728479927; c=relaxed/simple;
-	bh=gf4uinudsi3EhhYPe557c3TVX78vkpj0/JnAktTLxWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2Z3HMES79MF35Vh4u9txFEuIk9CP3HCW7HINutCy6c3x44Zo1F0i4E1LLjzxkJP1GOq67g9DYFIvxaeXqetBDfrSshjkYgu9wxajvbaFbtGe1KKuzcAjzoLf/xyhNcnfhrDdLF6rhocM8orz5N/p0QFSbfXIWVKtIj2q/5RRD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYQ8V9tv; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso99989281fa.3;
-        Wed, 09 Oct 2024 06:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728479924; x=1729084724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gf4uinudsi3EhhYPe557c3TVX78vkpj0/JnAktTLxWg=;
-        b=ZYQ8V9tvUb5vHif/56XLSZepDvW6XCLxp+GqEiTqY2tey2WtlMHLv5MAJcXprFJjYv
-         I97wexE4eHqPTCpV5/O0ZpTp9x//0X3JHLkiIZ0HtXpWLiMvpucMxarsLNIh7vwjruNu
-         rWif4mRUlwTMH0iZiBtZLFD7rydWlFlpB1sr1ThmxvkGyfO085uJnIE9DnnRBt1pyjpi
-         H0YwBKBj4JY8B8CsOxNBWqQUnTb2gHNuuruvYkGqPOYek0rF3YV+SoxbJGbSEBvCZTmk
-         cKhr4GmsgF10k4PYPvfJNs2R6mCu6SoLcw52pEYhpBQ7rjVZAs8N8jX60C53G1AMYqUT
-         MPrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728479924; x=1729084724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gf4uinudsi3EhhYPe557c3TVX78vkpj0/JnAktTLxWg=;
-        b=KJUA6d9KjqvpoylzSywVx5qAOg9nfB+1mPmcEKiheVjUaeOlQ/Xjjk+y8hgG5nSjM2
-         CNGATR0G2iwZh47FdMpTcqZL2O0jdn6u5Y04EnmC0v2XeQ32WG0UsSN3tOJ4/0iPE5gU
-         OEI/EJQi+Yjd+NhhxuBYz9qkgJ5R4lDO//qrszvqDkmjhSmV4OAuW19nGXDPpkzqvSuh
-         1qe60J3sTWYzIXkTxqklQiMV96wpbTgAkYcDt6WaPvyW06QstlUILmD5MCxX7WaotUey
-         bXLwc4zdeYyAxEq2fZ0ZLwkfzaVO6fbf4qXAugHp9hkuUbOIVPCdFLLw1TH9bvampCc3
-         MXCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSdD8Gp43/eKO9d3+8kbO5Nd9H19N1rLz6cFSxXR/nruCGyb0TU/sazneoIerMMn5S+VyLdH/NSpaTZxnj@vger.kernel.org, AJvYcCX5qETc0DKUEh5ZOwynld2X0tBiHWt5NKVBUvK7f4GwIkwMGbpmMNSeN6FnCjXrGhcbgSOaMCEcrYOs56c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8w4K+vvDXqtQ8fu2NOY9jt3Hrm+cEcrX+cTd9B4/QCK+X4fRm
-	6bVWn3ATO5PMhUy/IoMngnjEqTxG0FOnf+gaCkDrwyd4vY7CYgPASB5a1DWrfpQtsonMVJuUees
-	BEKXXrkmvhBB+/zYUfrW8vzVu+P4=
-X-Google-Smtp-Source: AGHT+IFyLliKwHPJ9zxnU2SNYwwOW51gKG7j4dWAjY9vwpTFifZsh5HvI2n8XCOM847rNz2nbPQsWUtjJmU1Tyd7FV0=
-X-Received: by 2002:a05:651c:2110:b0:2fa:d75b:2ef5 with SMTP id
- 38308e7fff4ca-2fb187c9afbmr23773891fa.32.1728479924193; Wed, 09 Oct 2024
- 06:18:44 -0700 (PDT)
+	s=arc-20240116; t=1728480006; c=relaxed/simple;
+	bh=/6zX/Tj8gWAC7yFovU4xDjO2DGh9/SYgizXBiOJ4HZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hz/cqjWCHdW3vhrnWTIaP1Q8c2LppO9H3YNG7yswV3EMaLxWNQkMn+ZxT4NnFkgwQ/ZJNMWfsQbnehPK6xeBqITLdtbiul2sjJP4CvuQwoD3k+/hfUVJUsNA/R51raOE8K0yw9fSsCunTe/NmU6fUbEzRxBaer/TBK48uOaE5Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=i4/u3j5Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Zjn6SWKP; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id A210313801C5;
+	Wed,  9 Oct 2024 09:20:02 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Wed, 09 Oct 2024 09:20:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1728480002;
+	 x=1728566402; bh=CCTu9/F6jubvRF/VFjjIwubXxVchs2h+hTOjh90UQGs=; b=
+	i4/u3j5YT1iIZTqYwJhTwppxd2xoNTrTtw00BGR3G1afALcb2gbTf8BMU5YAv8io
+	yUwQ/XLUwch+gSQ1ItFUaRQQu9cx4IqsUwt3zNQzZL1IHVKZ/21dE1WknXrM8m8b
+	saNqjW7PmpDZY6rtWO4HbXsQ8XPi5ePh3OfE78Bc8fpe10ET7vyWXJpt3pq5E7dt
+	hbaK7TXaXF3BC/Mnau+59THXZLDE9lbvAxB8p2OIzPRakW4qEHqg58cZeOyxdswH
+	07PuMhgvzD6SjCQ6O/FsKnQJt9HLdPWePQX8VQIHbYgKqy5SgsThlykTP91EgWdT
+	O6FG6CXGuv9ju874UMZJBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728480002; x=
+	1728566402; bh=CCTu9/F6jubvRF/VFjjIwubXxVchs2h+hTOjh90UQGs=; b=Z
+	jn6SWKPU3ZQ2MIvA1dHWtOKDOZ/KTvRSfn74/uWGoKpnEUkBt5/JFGZ+YZFbUAaw
+	euYx7Mpc1vc/6GOwMC6AXarmXa74DKq2k9hCfup/3QyW2AMsXFlOBu5h/R22lMdK
+	GRX9emdpm9ENfmlXW32TY5+7hsqeSNffCi4eZ4xU4oDS3CR+kaWMqYpUzL5n6PKd
+	xeNh5B/OLWG4apCIIqct1Xs7Fim4TvTGXeBC8s9aQBIs0lP2uRsPu5BBxH97GnCY
+	1nXcfLHnkTEVQatcNZVt1WbQAMPlRtWWmFW3tMBJeWBP3G3/BO4Q16RaGr62hcqh
+	8S/EMnEDFyxF9blD8KoqA==
+X-ME-Sender: <xms:AoMGZ2WZvbpVFJUzBWGTNc-mTVj6EvRRaewze08bDfMvMRfcFGhN-Q>
+    <xme:AoMGZykqnSEEfmv0k8_ci5zMkFXVXAZKk9UGmmIUZqeckRERCknZ_IhIt54udR2z-
+    wObyOG_lDzqkGPDQ_w>
+X-ME-Received: <xmr:AoMGZ6Yh-OY5jLNaiEqRb-oBw4ZZoFJOxaPicGgwDw-G9zzFn5udqb6aj0QXscPCeCvcqNKcJMRFgm1SSPE0BEgkvNOYlg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeffedgieehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpeforghtihgrshcuuehjpphrlhhinhhguceomhessghjohhrlhhinhhgrd
+    hmvgeqnecuggftrfgrthhtvghrnhepkeefieeutddvteeguedthedvudfggfevgeevkeeg
+    geefkeeufffffeelleevgefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepmhessghjohhrlhhinhhgrdhmvgdpnhgspghrtghpthhtohepkedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthheslhhsthdruggvpdhrtghpth
+    htohepkhgsuhhstghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegulhgvmhhorghl
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtrghsshgvlheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheplhhinhhugidqnhhvmhgvsehlihhsthhsrdhinhhfrhgruggvrggu
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqsghlohgtkhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehmrghtihgrshdrsghjohhrlhhinhhgseifuggtrdgtoh
+    hm
+X-ME-Proxy: <xmx:AoMGZ9XjzIMSXX8pK1x_zN2RgLy1XmMEZuVDMTuFFcVKzkA38mvimQ>
+    <xmx:AoMGZwkkji1XEuA3C4S9tbSRE1iygIjrrgkA2ZljO87i6ex3_mXlUQ>
+    <xmx:AoMGZycKGKEfsaOF1UnwwxTT4yCW_0zAB1yhICkGs5k8mpKwd330wg>
+    <xmx:AoMGZyHu7NBhajM-dyGJE2UhBlBw-CEW4tcuKEEdFajc9aILx8ipkw>
+    <xmx:AoMGZ66_KkwLb2Rz5GwZFZk1Dvk4s5hujPDod_mvbIbk68XiGd50xsBv>
+Feedback-ID: if4314918:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 9 Oct 2024 09:20:00 -0400 (EDT)
+Message-ID: <0076eb5e-6816-490e-abaf-a0a4a25a2915@bjorling.me>
+Date: Wed, 9 Oct 2024 15:19:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com> <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
-In-Reply-To: <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 9 Oct 2024 09:18:08 -0400
-Message-ID: <CAJ-ks9neMso9pL_LPOeOwLGZG7Wy9RxV-ixKsDv=Wfzy7yKVBA@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] nvme: make independent ns identify default
+To: Christoph Hellwig <hch@lst.de>
+Cc: kbusch@kernel.org, dlemoal@kernel.org, cassel@kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Matias_Bj=C3=B8rling?=
+ <matias.bjorling@wdc.com>
+References: <20241008145503.987195-1-m@bjorling.me>
+ <20241008145503.987195-2-m@bjorling.me> <20241009074611.GB16181@lst.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
+In-Reply-To: <20241009074611.GB16181@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 9, 2024 at 9:13=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Wed, Oct 9, 2024 at 2:57=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
-> >
-> > What would you have me link to? With this patch applied and using
->
-> I was thinking perhaps the series from Daniel, if that is the latest
-> discussion (?), i.e. I would like to understand what is the policy
-> around changes like this, what happens if it breaks, etc.
+On 09-10-2024 09:46, Christoph Hellwig wrote:
+> On Tue, Oct 08, 2024 at 04:55:02PM +0200, Matias Bjørling wrote:
+>> However, the independent namespace data structure
+>> is mandatory for devices that implement features from the 2.0+
+>> specification. Therefore, we can check this data structure first. If
+>> unavailable, retrieve the generic attributes from the NVM command set
+>> identify namespace data structure.
+> 
+> I'm not a huge fan of this.  For pre-2.0 controllers this means
+> we'll now send a command that will fail most of them time.  And for
+> all the cheap low-end consumer device I'm actually worried that they'll
+> get it wrong and break something.
+> 
 
-Ah, I see. The relevant discussion took place on zulip[0]. As for policy: I=
-'m
-guessing there isn't one, and the whole endeavor is best-effort.
+It's a good point. Damien, Keith, and I were debating it during ALPSS. 
+They preferred the "send command and see if it fails" approach over 
+writing specific conditions where it would apply. Note that Keith did 
+suggest to avoid the command on 1.0 and 1.1 devices, and they were known 
+to fail with unsupported CNS ids.
 
-Daniel's other patches weren't necessary for the kernel config I'm using.
+If making the check conditional, I think checking if the device follows 
+2.0 specification isn't sufficient, as some devices may implement a 
+subset of the 2.0 features (for example the independent ns data struct), 
+while reporting as a 1.4 device.
 
-> > https://github.com/bee-headers/homebrew-bee-headers I was able to build=
- a kernel
-> > on my apple silicon mac. Relevant config:
->
-> That is great.
->
-> Thanks!
->
-> Cheers,
-> Miguel
+Is there maybe better way, that isn't dependent on some feature being 
+implemented (such as CRIMS capability)?
 
-Thanks Miguel! As this is my first patch, please let me know if further act=
-ion
-is required.
 
-Cheers.
-Tamir
 
-[0] https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/topi=
-c/macOS.20build
+
 
