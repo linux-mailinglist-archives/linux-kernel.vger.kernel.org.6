@@ -1,241 +1,115 @@
-Return-Path: <linux-kernel+bounces-357708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CA499744F
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:11:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D7F997453
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 20:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD5E288D69
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131541F2056F
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 18:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92A71E22F5;
-	Wed,  9 Oct 2024 18:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDAB1E2312;
+	Wed,  9 Oct 2024 18:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtIHaeJw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="utuSNZoo"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE1D1E1C11;
-	Wed,  9 Oct 2024 18:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDFD1E1C16
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 18:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728497344; cv=none; b=UZFb0ryr/+IZBi0RCVOdAjkdTF+UDTptb9va+q39OiMC+OqnffGjFpVkXyHYThd3dIvsNBPZHR7JZAJ/xefWRL3uvbrCNWzOZ66TGKgU0K8nHiDJvWR1NjC1clJ/bqdw8WlnkNFcf87AxnItOyyoF3kC6M7bRraiZiInMCAVRT4=
+	t=1728497344; cv=none; b=izEDG0gw8aI5okfuNPA4F4XlvYc0rzW5D7NEt7evQEIg5F4SKcKLs26HcmhmrkMe4A0YvweXJHC3JpMe0oXx/idTp9GbOXSjFZhlhFP0BCYiNYxjygwhHxWloyxceoNT8TR3ZYFSCXMVDgkBGzQDlAiiLmO32MTKzCDLPcOZ2Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728497344; c=relaxed/simple;
-	bh=YllkjQvsWrr6dQbJlUjRUABqghggyZA8loEEeE76mk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kwm8dcfz9uTqvWoW6vEEo2ruonObkTJGkV8gU0b6/YoDibxM7OaOd4Vcae0HSpxxOfuNpXVU3A5yMUbyeXjoyjDxwXjlfUMs+wYByXQDscDcdmpFipTHBifi7fCQtEGkhIb1k4R+gpwvak1Sbkr3+wsKonxECvxcR8Qc4MAOba0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtIHaeJw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D9B2C4CED5;
-	Wed,  9 Oct 2024 18:08:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728497343;
-	bh=YllkjQvsWrr6dQbJlUjRUABqghggyZA8loEEeE76mk8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EtIHaeJwWAoCvtdCbCxK9EeVGERQLZ46T6d38Orf178juX3xbiSVV8C3zYclZ4a3D
-	 iQGTL7fyxijvASXlADNp0ip35EijAZNvymeSHSlBE7F8/8U3Mq9Tuxp8gd8Z53SVKP
-	 jQyccxNQ7+RAC8iWXR6z8qN0YJsNLLOZQt2zaftoVyBlufZugSbmIopLnXL+TWEQ8l
-	 N+2zP4nbxkV+aY4tzK+NbxMTpI7TBse9dp+Uk4EIirxkfVkGCCEWl/7ZBwXGJluB38
-	 3RWErEhT/fiA5UNNDAn1/JNzpTyjVpUE73YLkc9wCI1OJbQMDeJCSrnnfCiQEcJMPY
-	 Zt9wg5wAM+50Q==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Mike Rapoport <rppt@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>,
-	Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-modules@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v5 1/8] mm: vmalloc: group declarations depending on CONFIG_MMU together
-Date: Wed,  9 Oct 2024 21:08:09 +0300
-Message-ID: <20241009180816.83591-2-rppt@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241009180816.83591-1-rppt@kernel.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
+	bh=aJTtulUnlkRq2sI8ySHzYkE0tYPtx4y4/j6e6KligUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NKJ7fEUWcC8ppHxScV0S90q55zSlpukgBLgIAWHCJOPq2mXW7i0qOizT2qHfbE/4iyJUQHuO6a9dvAeiL4FPVL1gYLh+alsdTZ9ZiaOXjg7KANfOGqWP3lD4+Fk8XfWMwYm94dbrnNAP8bLu/dG6KrK3U/kU73Eg+FGypU4UPDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=utuSNZoo reason="signature verification failed"; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c920611a86so11831a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 11:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc.com.np; s=everest; t=1728497341; x=1729102141; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JO6EoSor9lmUSKV+3Z+tdGRLdha9xvjiiLQgbjwM1gE=;
+        b=utuSNZooxokaaFSdymkzA3uj4FUqFknWbCDxjGPowFqyhjfAIKjeaXHUqQZSen9UsY
+         jzXedJ3VNaWezyYLcaeSI5xOagCqj70H1G3W3Ef7G+080tA7VQd0O4TGtRfaGoF5SZHa
+         ZxIl5j0VpxdYNKE1ddl5/+Yw67rurfQQaEp0NS6GkPjMPCiCbGIHolgBEBQ6kVMkno3t
+         /T4mG4WGYnsyhH7GiB8E/58MO/YuMN/jcxWjWskdK4Ni4D8rUJ4wurX6Weo/IoMaU2UI
+         /SuNdkZV98O9u1cHMxdWkvd1TznMBed4vR0PrRInWv5URgNiLcu5HnZnMTGZ5CFL2oui
+         /muA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728497341; x=1729102141;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JO6EoSor9lmUSKV+3Z+tdGRLdha9xvjiiLQgbjwM1gE=;
+        b=nvBkbLhY8E9hnyFnn4ZVvEqaszm0qgdnSpATPXzaoHS0XakokZd+n0dOXPidBzQygH
+         bec9do5GAqG26RQplS2wG9M+2484xmJxY83z/R9moftDC28VTPyLv3lWx+igEJuWls8i
+         M8eC9EGIEyK7uL2+F+F1BaMQb8iWKohFfsPnCB3b11E1rte9hLD2JT2Az+elLk9OV9kh
+         xw6prhYTI3XCtPLZ7QxXx4qSnfqf3lbUTIaqvdBrcFu+LVRTCwwtwDKj2tmvklhfz15o
+         otjH8azQmtSabCsFWB8mmbEUEJBWv9mUA1m7dZGtwbkwv8ivGD4yrr6Ya03SeDC+LiiN
+         8o9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGCduZAxWURNAa7FP60ec5ouB4mjbGWiXwxeVCyjh+AT6tUsARznEx7jSTZ11GAy8jOL6P5loIhAb2UY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSEM9xRH0RidyLfwMVKHrth5aHCM1VAt+U9gOy0O8EUVHcKeWk
+	26X8/3ulonJ5q6H0niEXYvcpcqr94iVB/sKDjqN1viZSdRK0z12Gd3TIWt+cTF37DJhkRDgGSIH
+	vaFIM/mERWZMY3auYL4iERILjCIuExYefncbCjw==
+X-Google-Smtp-Source: AGHT+IFAGQFdq9yD9qsAynELVksZGAxjXUQUXG4JzrvYS7sgNSRjidBrHY7zboQK2G2Fhi2wJG2fYfR31JcBK1QafZQ=
+X-Received: by 2002:a05:6402:3594:b0:5c4:1437:4159 with SMTP id
+ 4fb4d7f45d1cf-5c91d675554mr2986701a12.28.1728497341514; Wed, 09 Oct 2024
+ 11:09:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241008071559.18523-1-everestkc@everestkc.com.np>
+ <ZwanGrWs3PI4X7OZ@p14s> <CAEO-vhFFHXeHH961e8KMYrwyUHtGCZmPOP9VC7QrhpabH2wP5A@mail.gmail.com>
+ <87v7y19mmk.fsf@trenco.lwn.net>
+In-Reply-To: <87v7y19mmk.fsf@trenco.lwn.net>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Wed, 9 Oct 2024 12:08:50 -0600
+Message-ID: <CAEO-vhFrEopCh+qUmueOOqwC0MWW6dLeqJP7mTNXJ_sY3GrHGw@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Fix spelling error in remoteproc.rst
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, andersson@kernel.org, 
+	skhan@linuxfoundation.org, linux-remoteproc@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Wed, Oct 9, 2024 at 12:06=E2=80=AFPM Jonathan Corbet <corbet@lwn.net> wr=
+ote:
+>
+> "Everest K.C." <everestkc@everestkc.com.np> writes:
+>
+> > On Wed, Oct 9, 2024 at 9:54=E2=80=AFAM Mathieu Poirier
+> > <mathieu.poirier@linaro.org> wrote:
+> >>
+> >> Good morning,
+> >>
+> >> This is a case of old english vs. new english.  Using "implementors" i=
+s still
+> >> correct.  Moreover, there are 33 instances of the word "implementor" i=
+n the
+> >> kernel tree.  Unless there is an effor to change all occurences I will=
+ not move
+> >> forward with this patch.
+> > I can work on changing all 33 instances of the word "implementor".
+> > Should I create a patchset for it ?
+>
+> Honestly, given that "implementor" is correct, this really doesn't seem
+> like it is worth the effort and churn.
+Noted.
+> jon
 
-There are a couple of declarations that depend on CONFIG_MMU in
-include/linux/vmalloc.h spread all over the file.
-
-Group them all together to improve code readability.
-
-No functional changes.
-
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- include/linux/vmalloc.h | 60 +++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 36 deletions(-)
-
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index ad2ce7a6ab7a..9a012cd4fad2 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -134,12 +134,6 @@ extern void vm_unmap_ram(const void *mem, unsigned int count);
- extern void *vm_map_ram(struct page **pages, unsigned int count, int node);
- extern void vm_unmap_aliases(void);
- 
--#ifdef CONFIG_MMU
--extern unsigned long vmalloc_nr_pages(void);
--#else
--static inline unsigned long vmalloc_nr_pages(void) { return 0; }
--#endif
--
- extern void *vmalloc_noprof(unsigned long size) __alloc_size(1);
- #define vmalloc(...)		alloc_hooks(vmalloc_noprof(__VA_ARGS__))
- 
-@@ -266,12 +260,29 @@ static inline bool is_vm_area_hugepages(const void *addr)
- #endif
- }
- 
-+/* for /proc/kcore */
-+extern long vread_iter(struct iov_iter *iter, const char *addr, size_t count);
-+
-+/*
-+ *	Internals.  Don't use..
-+ */
-+extern __init void vm_area_add_early(struct vm_struct *vm);
-+extern __init void vm_area_register_early(struct vm_struct *vm, size_t align);
-+
-+int register_vmap_purge_notifier(struct notifier_block *nb);
-+int unregister_vmap_purge_notifier(struct notifier_block *nb);
-+
- #ifdef CONFIG_MMU
-+#define VMALLOC_TOTAL (VMALLOC_END - VMALLOC_START)
-+
-+extern unsigned long vmalloc_nr_pages(void);
-+
- int vm_area_map_pages(struct vm_struct *area, unsigned long start,
- 		      unsigned long end, struct page **pages);
- void vm_area_unmap_pages(struct vm_struct *area, unsigned long start,
- 			 unsigned long end);
- void vunmap_range(unsigned long addr, unsigned long end);
-+
- static inline void set_vm_flush_reset_perms(void *addr)
- {
- 	struct vm_struct *vm = find_vm_area(addr);
-@@ -279,24 +290,14 @@ static inline void set_vm_flush_reset_perms(void *addr)
- 	if (vm)
- 		vm->flags |= VM_FLUSH_RESET_PERMS;
- }
-+#else  /* !CONFIG_MMU */
-+#define VMALLOC_TOTAL 0UL
- 
--#else
--static inline void set_vm_flush_reset_perms(void *addr)
--{
--}
--#endif
--
--/* for /proc/kcore */
--extern long vread_iter(struct iov_iter *iter, const char *addr, size_t count);
--
--/*
-- *	Internals.  Don't use..
-- */
--extern __init void vm_area_add_early(struct vm_struct *vm);
--extern __init void vm_area_register_early(struct vm_struct *vm, size_t align);
-+static inline unsigned long vmalloc_nr_pages(void) { return 0; }
-+static inline void set_vm_flush_reset_perms(void *addr) {}
-+#endif /* CONFIG_MMU */
- 
--#ifdef CONFIG_SMP
--# ifdef CONFIG_MMU
-+#if defined(CONFIG_MMU) && defined(CONFIG_SMP)
- struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
- 				     const size_t *sizes, int nr_vms,
- 				     size_t align);
-@@ -311,22 +312,9 @@ pcpu_get_vm_areas(const unsigned long *offsets,
- 	return NULL;
- }
- 
--static inline void
--pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms)
--{
--}
--# endif
--#endif
--
--#ifdef CONFIG_MMU
--#define VMALLOC_TOTAL (VMALLOC_END - VMALLOC_START)
--#else
--#define VMALLOC_TOTAL 0UL
-+static inline void pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms) {}
- #endif
- 
--int register_vmap_purge_notifier(struct notifier_block *nb);
--int unregister_vmap_purge_notifier(struct notifier_block *nb);
--
- #if defined(CONFIG_MMU) && defined(CONFIG_PRINTK)
- bool vmalloc_dump_obj(void *object);
- #else
--- 
-2.43.0
-
+With Regards,
+Everest K.C.
 
