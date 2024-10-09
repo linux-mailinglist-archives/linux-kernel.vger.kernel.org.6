@@ -1,138 +1,103 @@
-Return-Path: <linux-kernel+bounces-357790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-357791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265EF997616
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:58:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB93E997618
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 21:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8910C1F23586
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:58:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59F11B21D02
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Oct 2024 19:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FA61E284E;
-	Wed,  9 Oct 2024 19:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7C91E1A17;
+	Wed,  9 Oct 2024 19:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P0oy6Tz4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e/3o8xwf"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F42391E2821;
-	Wed,  9 Oct 2024 19:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB221B3F30
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Oct 2024 19:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728503823; cv=none; b=BM9up2uMsiTVvJXOyiDfyAyZlxBJGwONTcfapX1CG5TD1ce7JhNytSuYRjmAQbVQopDu4h2uP4QtR8ZiMbD03sREYtHGQyrBngCPPSGBUmmR/fjeJjcMfXYaaze/QN7tmaYTY29s2myUUdUkRkBMuD/d/kNfHKr+FwjxuvKPVTI=
+	t=1728503928; cv=none; b=t/rwlVHFLKVjUeCKfP5FQpV29SolxiJ21s6bDfu/9P4BNb/KNmvJseJI6Ut1j1T3DhcP0eA9opB9uN+yd4o7XYyW2yHsBMjKDDFiavQwWtsDRUzRcwGTjZL2gxHk2OpJdmq5BJovTF0VEGiHuUPb/rN5kyHYrpysTFxuDb1AHA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728503823; c=relaxed/simple;
-	bh=ntltuQGLLpIlG5pRJkcPkdPOn1Oz4Rza7eNFqvuv8FU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oaJDtT7tSjSGFYSfF5qD1ar5jU4xrDMYU7k5QC/61ZUEciSN5EbVf6jWTvZxQ+OzM6JYnBwJKwct0J0XcEJL7KwZ/x9MpDs7c1Q03K1t2mitfRpAvSJ0KQI9LczfCZPD/BEZiFqyV5tqUcPgr23RfUqCGFOvRgesI38c5CnLYwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P0oy6Tz4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499Hxmru018520;
-	Wed, 9 Oct 2024 19:57:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6B7LiOnAyCwacf6RlniMixrcMBc55j2v4Dd7OpIsZ9Y=; b=P0oy6Tz4Df8N1Qkw
-	xxTIGTCcMMp0vzREubvDjB56f4MGbjyNCnEeftr7opdNV1RMjBEdbdOV5isA9SBY
-	rjJX69PCDVG+A8p+9kFQ+eJiiMpq6QDPUj2hreZJBnrqqxhbFyJCVe6H8XTmi5DN
-	JfROdetB8rt+KWv3aygvD2Ya5P94cN3GS53EgR7+5Vea14oWHDI8R/K6XJmVY2aj
-	XIj3aXqIom36I7m3s3RoeoYkZd0A7fjjObeTfKYGRpiPhKlWPtwGJJfT/eq7sMy9
-	neavJMw5Fac6d7QIK8ifjjN0hnl+gp/9UppzzDA7UbNIhg8aUb6xDYZE3LR8nD5B
-	/wpbiw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xptra3n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 09 Oct 2024 19:57:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 499JuxSZ032278
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 9 Oct 2024 19:56:59 GMT
-Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 12:56:55 -0700
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <quic_ppratap@quicinc.com>,
-        <quic_jackp@quicinc.com>, Krishna Kurapati <quic_kriskura@quicinc.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: Enable USB controllers for QCS8300
-Date: Thu, 10 Oct 2024 01:26:36 +0530
-Message-ID: <20241009195636.2649952-3-quic_kriskura@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241009195636.2649952-1-quic_kriskura@quicinc.com>
-References: <20241009195636.2649952-1-quic_kriskura@quicinc.com>
+	s=arc-20240116; t=1728503928; c=relaxed/simple;
+	bh=NfHTMlcLeIvdDweTgtwVoYY5GdBkXiWBWcHPSsaJyA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IyY6UhP01DUUO2OweLjDzogVrMkTaU+E6lL636vrj5wdr7YtPVUycqC/FiyceXgzxLeTe2/cC5st8lShkB3RHEmL+Q6dOYrNW1kmlmN4upmTJk0k2fktPNWPCM+t+EfGXsRFaXwE11a/9byiYDlm1BvhbuJ2DZ7XB6juvq8NqA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e/3o8xwf; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so101340a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 12:58:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728503925; x=1729108725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NfHTMlcLeIvdDweTgtwVoYY5GdBkXiWBWcHPSsaJyA0=;
+        b=e/3o8xwf7X/zfSnovyyvLNt8yAoaHMXLObgzChX+HVr2cv0RgPpnLerNfN8O3XT1Dz
+         nXvlYjBLl0VzNjTJheahwRAnHGYDaxqEdjT1pIaBEhPNdSLbr3tsW8naExMUIS1ajKQ3
+         j1xzCIh/zmATjxjHCJBaGeppExHAE2IwGlIhtPpgqUA8S/sKhCnxuXIPy78/YV5VnHfc
+         JjXMCEzt/2lzU39+k3wUxm5NJabXEQXixhKuqywjD89nLZGIBqRlIIn1BM3/gJE+IsmI
+         UAfQTwHIcnJ2FvQGLDnkk7M5TQgDsgk7iAjU3zrKplpX14A5uEqYISK4nFxChQG1gJKp
+         5h4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728503925; x=1729108725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NfHTMlcLeIvdDweTgtwVoYY5GdBkXiWBWcHPSsaJyA0=;
+        b=vAXqYTal+RO+cpwxti4P/6bmKK6wm3zWr8LyvNGRy3oce8IYEk7rfJVhFlp0tpyqk0
+         QjBuQ982j04gAuDpt3zcM7tcIhW40WsmnMRXtOo8zUlxoz/kb64qzCdHk4NnNXKVl8hE
+         H9xF5V4ZLSRQIPOzw3Njv8t34NM9HqWtzO8HeyUoqzvsbrOoTvjtS+UW9BKHtp/2kVDD
+         Elpjn/DjiwDZ2YdVW9Byz2DE8vq4CkGFq2vlcVMGarT4VE50+2HPicOfdNmxyHyhZGzb
+         DrV7Gl2EBgeSbGdw8XVmYEsi1nTwkkF5FvL3oktCHr8auFE0GNqhm9prPqsS4C8r5FYK
+         MDVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZdQdJb/2R4xdEkXSU5jwaHWoqZaWd5JeqH9uIM88L6YGY6DflbapcgtI8WGs0w3+ojIic549JzUzFUUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHALrTtj+/qkuI4BtXLxIw7FR6TQb0Ha0ds6ZwFLIXFBAqLnpf
+	yBFL9jTZJZOXcyEQRMs5nnhOB47QP9lWG6DeXlnky0uvX5ACrbNc0XwE+QNk6ZfUc1jypbdMhxT
+	Q01DfmpaCp2OUA+/z1pKIyAa5Sfg0cRfeu0w=
+X-Google-Smtp-Source: AGHT+IHxtYkLIkxNlDjK87qi1yhBQTPxuSD3L45q7+j8+ET8HOF9fuHAjTNBiHXNu0dr5D6OrP/tk5ih65g65aAxdqc=
+X-Received: by 2002:a17:907:1c16:b0:a8a:6c5d:63b2 with SMTP id
+ a640c23a62f3a-a999e695b1dmr120436566b.18.1728503924422; Wed, 09 Oct 2024
+ 12:58:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fWuhi-NRs1XlQ893sWhQ5TtNH_GJdNZu
-X-Proofpoint-GUID: fWuhi-NRs1XlQ893sWhQ5TtNH_GJdNZu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
- phishscore=0 mlxlogscore=465 lowpriorityscore=0 clxscore=1015
- impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410090124
+References: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-0-554456a44a15@linutronix.de>
+ <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-4-554456a44a15@linutronix.de>
+In-Reply-To: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-4-554456a44a15@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 9 Oct 2024 12:58:32 -0700
+Message-ID: <CANDhNCojYH=c8Dqgi2nPP4tK7QPqxpQMLCCAyrDJbyhv2761gg@mail.gmail.com>
+Subject: Re: [PATCH v2 04/25] timekeeping: Abort clocksource change in case of failure
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
+	Christopher S Hall <christopher.s.hall@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable primary USB controller on QCS8300 Ride platform and
-set the dr mode to peripheral mode.
+On Wed, Oct 9, 2024 at 1:29=E2=80=AFAM Anna-Maria Behnsen
+<anna-maria@linutronix.de> wrote:
+>
+> From: Thomas Gleixner <tglx@linutronix.de>
+>
+> From: Thomas Gleixner <tglx@linutronix.de>
+>
+> There is no point to go through a full timekeeping update when acquiring =
+a
+> module reference or enabling the new clocksource fails.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 7eed19a694c3..3e925228379c 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -265,3 +265,26 @@ &ufs_mem_phy {
- 	vdda-pll-supply = <&vreg_l5a>;
- 	status = "okay";
- };
-+
-+&usb_1_hsphy {
-+	vdda-pll-supply = <&vreg_l7a>;
-+	vdda18-supply = <&vreg_l7c>;
-+	vdda33-supply = <&vreg_l9a>;
-+
-+	status = "okay";
-+};
-+
-+&usb_qmpphy {
-+	vdda-phy-supply = <&vreg_l7a>;
-+	vdda-pll-supply = <&vreg_l5a>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3 {
-+	dr_mode = "peripheral";
-+};
--- 
-2.34.1
-
+Acked-by: John Stultz <jstultz@google.com>
 
