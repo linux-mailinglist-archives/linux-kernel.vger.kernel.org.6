@@ -1,82 +1,123 @@
-Return-Path: <linux-kernel+bounces-359396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63132998AF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:08:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CBB998AFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E8C1F27308
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:08:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63AD29109B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593BA1E32D4;
-	Thu, 10 Oct 2024 15:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732BE1CCB26;
+	Thu, 10 Oct 2024 15:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVIZTJrh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlWs5Q0l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7F61CB53B;
-	Thu, 10 Oct 2024 15:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB681CC88F;
+	Thu, 10 Oct 2024 15:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572565; cv=none; b=gtUBj0uXgBuQho1HV4exdHLciGDRoFbVkb7Hn3msXYSAkizDSGn+r7AzEoM4mOMF2OwuLseyE/TZetwGeksQYX//0ib8+8Tg3c7aJvn34nFDazy3qTSSR7mx6x23PV0WXbgtknGvf46zEWBNSQMZA5XHac1kiqxeSCCwYL74DsM=
+	t=1728572630; cv=none; b=Lbr7U9lQEFmRVZArIp5PHsq8hwVnVasowjByyXmTW+1JwD77O/aJe3jPXxRDOR1cHfCOUjkqWShP588b7VqJPSy3xU8+o+Ugrvr40RuD3Af1N3cx6wSIKAJW/oDZxHdXNVZoALsC7U8lJmg4/QENnG7VAiL4EXvaOXZ/bbMFtOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572565; c=relaxed/simple;
-	bh=bjy6e6QEhhN5c+EuFMe9xasd22I0t3FiJxHHAH6y3Do=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBP0mUTLfFq1EScinJefbsOYxNFzSkXQX/6JVgnv0nZlnwoqiN47rAFwGTtb9r3TP5ON5wT8fXtM96VjQ+SkbJleKt45mckHha0rLHmP8p+feTH7zb/GFJjvTe+EGK09PuH1q9IZGj5gvaz8EIxIQ1FLV3vcZh1GgOc1Ln8DIGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVIZTJrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 394A1C4CEC5;
-	Thu, 10 Oct 2024 15:02:45 +0000 (UTC)
+	s=arc-20240116; t=1728572630; c=relaxed/simple;
+	bh=TWFU0C6rsLuYEF4R+l0rttKWu6E5GxvtM4XdY3cjoSE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=YP8pGmsNL7lEbD3gh48z3FC+JrIZrf6zM/bpMS9XswWbLljdgEFYtk/RfqY8svEakigN3Olx4gGPJu7ea+FEXduiR/8Oe8wAIV2XTXIU95hhUyekcY1ss5pBlURI/AHII1k+t4NzMPx5uRtrYuutvJQJEfgw57ZKi9ZhYgjsnZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlWs5Q0l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5730C4CEC5;
+	Thu, 10 Oct 2024 15:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728572565;
-	bh=bjy6e6QEhhN5c+EuFMe9xasd22I0t3FiJxHHAH6y3Do=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SVIZTJrhzvphIu3Ftqo6erLe999jvVlPE+6ogBZaG1lsWXqNtw3gIGYdT64v+6++w
-	 W1iIadWdeURCQUaaNAPLtWuWM0iaxcJLGw3n0U0PBCe9j4ytj1KBM2szHu8dDfwsRG
-	 gIPoq8BMJLLPvZBGsgI5GXkFbr27Rf1D3WnxXSg6Igl0g3CQ785i6gsbn/lds3d/pG
-	 8fNEzco/oFh5l7kUPfmkcpvTclus8NmztH4SCraKVwDS1TUfiFj/3QHTbKsVloOK84
-	 466q3ppjnTFTdrI0xAcgjfgf8PRA9N3Ygt6ez0YSXUOonUBixicoABzhy8V7VzEmMq
-	 w/rg0Vg1LPHTA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syugk-0000000084s-0xnH;
-	Thu, 10 Oct 2024 17:02:50 +0200
-Date: Thu, 10 Oct 2024 17:02:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org,
-	jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
-	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
-Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
-Message-ID: <ZwfsmqInJlqkQD_3@hovoldconsulting.com>
-References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+	s=k20201202; t=1728572630;
+	bh=TWFU0C6rsLuYEF4R+l0rttKWu6E5GxvtM4XdY3cjoSE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BlWs5Q0lOtbwvcdvdw0ADP4HpXG3a/cL9vIZ8+tFdscavbFcAo26kbAAV5iwtG8s7
+	 X+jF/+q3YofiHlefSN+2FU+bxHZuH00pBUPwvzNnJP6FX5jpHMJn7cdmwRKlpmojM7
+	 NoUO04Wk6Ypu41VIwEn9eE9HvfQMfOFKk2akaEHw9oSGWVwk6b7Lbg6BwyxHRTsQ6Y
+	 8Sz4ma7Hc4/wuotYAL2RFWmewu+LCsYf32DKczRQdyo3IErAnSa34EqANYyLxJK0tb
+	 2HEU8N7KU8BOo3qc/x3xR40dYjWJeb5TZeiRTJ6bX0kq2pQyUd3SPGn/wjKOXXWt46
+	 bZ1Y5BJmw75CQ==
+Date: Fri, 11 Oct 2024 00:03:47 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Tatsuya S <tatsuya.s2862@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: Fix function name for trampoline
+Message-Id: <20241011000347.4b16dc96221873388475cb40@kernel.org>
+In-Reply-To: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
+References: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 11:36:38AM +0530, Sibi Sankar wrote:
-> The series addresses the kernel warnings reported by Johan at [1] and are
-> are required to X1E cpufreq device tree changes [2] to land.
+On Thu, 10 Oct 2024 22:02:59 +0900
+Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+
+> The issue that unrelated function name is shown on stack trace like
+> following even though it should be trampoline code address is caused by
+> the creation of trampoline code in the area where .init.text section
+> of module was freed after module is loaded.
 > 
-> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
+> bash-1344    [002] .....    43.644608: <stack trace>
+>   => (MODULE INIT FUNCTION)
+>   => vfs_write
+>   => ksys_write
+>   => do_syscall_64
+>   => entry_SYSCALL_64_after_hwframe
 > 
-> The following warnings remain unadressed:
-> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> To resolve this, when function address of stack trace entry is in
+> trampoline, output without looking up symbol name.
+> 
+> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+> ---
+>  kernel/trace/trace_output.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 868f2f912f28..32a0858373e2 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -1246,6 +1246,11 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+>  			break;
+>  
+>  		trace_seq_puts(s, " => ");
+> +		if (is_ftrace_trampoline((*p) + delta)) {
+> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
 
-Are there any plans for how to address these?
+If we know that address is the ftrace trampoline, we'd better show something
+like "[FTRACE TRAMPOLINE]"
 
-Johan
+> +			trace_seq_putc(s, '\n');
+
+And this is not needed. So for example,
+
+			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
+
+is enough.
+
+> +			continue;
+> +		}
+>  		seq_print_ip_sym(s, (*p) + delta, flags);
+>  		trace_seq_putc(s, '\n');
+>  	}
+
+Thank you,
+
+> -- 
+> 2.46.2
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
