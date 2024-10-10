@@ -1,51 +1,53 @@
-Return-Path: <linux-kernel+bounces-359404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE12998C54
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A696F998B0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2EC0B39AF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:10:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA7D292580
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42281CC179;
-	Thu, 10 Oct 2024 15:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57001CEAAD;
+	Thu, 10 Oct 2024 15:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PM4ZNOoe"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k+cy53q3"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F20E1CB32D;
-	Thu, 10 Oct 2024 15:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6A23D3B8;
+	Thu, 10 Oct 2024 15:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572897; cv=none; b=eVsYnCCoieyEKD4FCcUiSnVJmhRBCBfu2whuPnfHMf0OXSjMTHAk6OYHgzGK9BuUUlsHcVgvRIo2/039dqHRbdG3Nwx+BCEFqHGvPmsPNKXFMeM57yyrjHDUpGp4+cttPEbs4XuV1+EX/ys9xK6ql0mGvtJ7HUX71aIHVmZn95U=
+	t=1728572898; cv=none; b=Vv0YuvAVG6f4vn1kY1i8+oz1FX+9+vRNkvdmiqsAJiyearslgzaT7axGp5JOvi7aYEIZy4fyxgngg3Gwyn0aJIST+lcSGi5xgC4Ea7yeHLuSJ2s2T0Qu/EL3ulHlKMP+dw2tyrMeLA+yhGdKpKlsUub6XWSirKzaMDQCkyWwYWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572897; c=relaxed/simple;
-	bh=6v+/RVGVcBLms3pLraZ2kUfatU1nG8QxLPIYz8M4Nig=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IsvPecEr07IQp4e9oNDRnQtGgHY/YeqkfTrbyYUKfYGXBry20qvUmEK/dZGJXbnUZ7JM8v1dVLPBawBKf/RP8LoWgyGOm70GvUHRd11Dtsgb6n8HU1yhnrPew5LBJJ38bqZYxK8OhAy1oOb+mptA6NW75tnghwv8A0v03Ndt6XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PM4ZNOoe; arc=none smtp.client-ip=217.70.183.197
+	s=arc-20240116; t=1728572898; c=relaxed/simple;
+	bh=dLosNywBJ7Lee8nOYYUpr4AQkUC/E5LusguNX8FFw4A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pAosjvsaBRU99+PuGNtaIx3HDd5TiME9mTCMA6+wwXnDv0Eu7a8jS3kr0iaKwvyGm1tDcyjviQJ+NATALEz3cvjMOUUrerP8oLcxhWL7eTwiYEhjWK9B7+1F0yiXescY5jPg/FPI8zhP4h4EAb6Deu3WC82FNeSZRrCbXQLZB7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k+cy53q3; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 560621C0009;
-	Thu, 10 Oct 2024 15:08:03 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E519E1C0002;
+	Thu, 10 Oct 2024 15:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728572886;
+	t=1728572887;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T5Jus8ME/eIiTNM0qUOv+UNXq09uP1fqmQJwoOm6oNg=;
-	b=PM4ZNOoejV4UsJG2CsGMeundur1sZSQEGQnDzkWGlGmQM4FGIoWgke5FcxwRI495/oGndI
-	FXAYJ6a/2hrbv5uc3V3O5InjlKXo5VFlMBhX1lgkvnZlmPqa2bWS5PKdFPWvFtkf6Co5qL
-	A0HkXSw4no0Hh3x26WYEYlDsqCtzaul4H/pt+xEkGnjLdwji+AndCI1J5hzLrTqlDuLKON
-	MX6MpH+1HoFQZRdsEDKCrEMFKzqu6sXRZWlVN5UrU7YwHo/5wKVVnhpJAEYxEfe422e08k
-	L54ZfNc/pzMQwz2DkvyZy63ccPDdEUYtOxFjPrS6/S0aNsywfiMej+8Z5vuiQw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fqdCRYpUpWtmxoATzqfKvQ7Vf09Tqe7FVeasQf33ud4=;
+	b=k+cy53q35OLyFbTyFYBQ//jALk6PBH18DJpyH2sY3ts1iHjqaQpo12zEsbCxXiUG/YrsTu
+	e4iFSkNCYc3b+NtEhgo0C4+71izV7bw2LqHhpvW9LJHDczV5nwSd0VYobDkIXfOHIZKr66
+	/sskHOK9GXisLmywEEaCY86/oTE9j7mmp5h9fHsovbKW0hKWAxni5JWJsB0KHhPBkFsHuy
+	BEr5Zy9aciD8Y8P8rO3+lb+bbEaM90ahS6hdgSSbOnaFFJzZTde/uPRXSyuW8Q2bq6Nh/g
+	7kq5/3OUkQu4WKZtI78oJVe5asnlrkEo+c5T/DH+qGQqDr8B3gbt2K9AdtoxiA==
 From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Subject: [PATCH v5 0/2] Add board support for Sipeed LicheeRV Nano
-Date: Thu, 10 Oct 2024 17:07:05 +0200
-Message-Id: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
+Date: Thu, 10 Oct 2024 17:07:06 +0200
+Subject: [PATCH v5 1/2] riscv: dts: sophgo: Add initial SG2002 SoC device
+ tree
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,12 +56,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJntB2cC/3XOy2rDMBAF0F8JWtdFM6NnV/2P0oWeiaC1ih1MQ
- vC/V07BqXG7vELn3rmxMQ0ljezlcGNDmspYat+CfDqwcHL9MXUltsyQo+ASZDcekXPsLMWQIKI
- in1j7/DWkXC73orf3lk9lPNfheu+dYHndVUzQ8Y5i1gac4cLAq6/1/FH651A/l84fgLQB1oPwF
- ow1zv0D9AaAV8GTCclksQHLmRM+TlPAV4gNJiQfKatIXP+5pAA3AKyTRrqsjFD7JXosaW5XSA2
- 6rLUNFIFs3EPxCwKsUDQYrU4BSbVCuYXzPH8DxNQ4idwBAAA=
-X-Change-ID: 20240515-sg2002-93dce1d263be
+Message-Id: <20241010-sg2002-v5-1-a0f2e582b932@bootlin.com>
+References: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
+In-Reply-To: <20241010-sg2002-v5-0-a0f2e582b932@bootlin.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Paul Walmsley <paul.walmsley@sifive.com>, 
@@ -77,56 +76,67 @@ Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
 X-Mailer: b4 0.14.2
 X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
-minimal device tree files for this board to make it boot to a basic
-shell.
+Add initial device tree for the SG2002 RISC-V SoC by SOPHGO.
 
 Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 ---
-Changes in v5:
-- Add support for pinctrl
-- Remove nodes for i2c0 and uart1
-- Drop dt-bindings patch that are already applied
-- Link to v4: https://lore.kernel.org/r/20240711-sg2002-v4-0-d97ec2367095@bootlin.com
-
-Changes in v4:
-- Add correct bindings configuration for SG2002 sdhci
-- Drop commit "dt-bindings: timer: Add SOPHGO SG2002 clint" because it
-  has already been merged in Daniel Lezcano git tree.
-- Link to v3: https://lore.kernel.org/r/20240709-sg2002-v3-0-af779c3d139d@bootlin.com
-
-Changes in v3:
-- Remove /dts-v1/ directive from sg2002.dtsi file
-- Add disable-wp property to sdhci node to avoid having a write
-  protected SD card
-- Drop changes in cv18xx.dtsi and cv1800b.dtsi
-- Add fallback compatible to cv1800b in SDHCI node of sg2002.dtsi
-- Link to v2: https://lore.kernel.org/r/20240612-sg2002-v2-0-19a585af6846@bootlin.com
-
-Changes in v2:
-- Add SDHCI support
-- Change device tree name to match the Makefile
-- Add oscillator frequency
-- Add aliases to other UARTs
-- Add aliases to GPIOs
-- Move compatible for SDHCI from common DT to specific DT 
-- Link to v1: https://lore.kernel.org/r/20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com
-
+The commit adding the bindings for the compatible "sophgo,sg2002-clint"
+has been applied to Daniel Lezcano git tree. This commit may trigger the
+bots because of this missing binding.
 ---
-Thomas Bonnefille (2):
-      riscv: dts: sophgo: Add initial SG2002 SoC device tree
-      riscv: dts: sophgo: Add LicheeRV Nano board device tree
+ arch/riscv/boot/dts/sophgo/sg2002.dtsi | 42 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
- arch/riscv/boot/dts/sophgo/Makefile                |  1 +
- .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 95 ++++++++++++++++++++++
- arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 42 ++++++++++
- 3 files changed, 138 insertions(+)
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20240515-sg2002-93dce1d263be
+diff --git a/arch/riscv/boot/dts/sophgo/sg2002.dtsi b/arch/riscv/boot/dts/sophgo/sg2002.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..242fde84443f0d6a2c8476666dfa3d72727071b1
+--- /dev/null
++++ b/arch/riscv/boot/dts/sophgo/sg2002.dtsi
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2024 Thomas Bonnefille <thomas.bonnefille@bootlin.com>
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/pinctrl/pinctrl-sg2002.h>
++#include "cv18xx.dtsi"
++
++/ {
++	compatible = "sophgo,sg2002";
++
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x80000000 0x10000000>;
++	};
++
++	soc {
++		pinctrl: pinctrl@3008000 {
++			compatible = "sophgo,sg2002-pinctrl";
++			reg = <0x03001000 0x1000>,
++			      <0x05027000 0x1000>;
++			reg-names = "sys", "rtc";
++		};
++	};
++};
++
++&plic {
++	compatible = "sophgo,sg2002-plic", "thead,c900-plic";
++};
++
++&clint {
++	compatible = "sophgo,sg2002-clint", "thead,c900-clint";
++};
++
++&clk {
++	compatible = "sophgo,sg2000-clk";
++};
++
++&sdhci0 {
++	compatible = "sophgo,sg2002-dwcmshc";
++};
 
-Best regards,
 -- 
-Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+2.47.0
 
 
