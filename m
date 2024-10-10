@@ -1,211 +1,169 @@
-Return-Path: <linux-kernel+bounces-358289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2088997CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:59:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B86997CC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B59128460A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:59:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 288E7B21ED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1F61A01C4;
-	Thu, 10 Oct 2024 05:59:32 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCB01A00E2;
+	Thu, 10 Oct 2024 06:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLq9l48h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E5A3A268;
-	Thu, 10 Oct 2024 05:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0742863D;
+	Thu, 10 Oct 2024 06:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728539972; cv=none; b=IyK+RFsIe8BXhmtO9jCrx5jTbWGcGLDHqfSWmINJgbsrUPEI4hLWUooUUhNc4tlJ/Ywmp0IRlov7N6Fwr/7P0wGt4SkEiYyxMk8TU9QxX/FI8rvHC3qywHOx8TJzQIV+8nxYcx6cmtOGR2040/PV48NVAy1SX2MlWATHBfO9i6U=
+	t=1728540054; cv=none; b=WrTRKwMQ7ULW5AV6pphIuVjGAFOV6CcfOaqtwibZfjYC/V9YTKWPn6fdxEpfiTUwZehFk7cwMcoBlnwPQUgj4zL54wpAxJvm4gZHvxZvMP2VbZ4MtncsfgUzi/+MUk+ggmTFRGIrJhqZEEtNskuA4jbNJfTRf3KjnleuBtSogT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728539972; c=relaxed/simple;
-	bh=cp+aGe2QQNVvpt/reaHlSSqkoGtiQBoT7HMWL7oJcDs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OYG2jej+ZXZTwy2jC2xE5705/mAn5dyM/7nVuiIDc4g5NQKwwE6D6SG3tGfEv+vxqiMiTjBhZmAyzd1SFyZpdHD1WTgrxNdyUUggJ9c36/3NpYDSg+jwwlovwUvk7+P20339cNhzGCsN+U/xkQNiNfUJm9+Bscb2WBpfDNvDhds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c8f8e3ac86cc11efa216b1d71e6e1362-20241010
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
-	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-	ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:cb75e74b-01e6-444f-9b59-aaae8a0fe0d1,IP:15,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACT
-	ION:release,TS:28
-X-CID-INFO: VERSION:1.1.38,REQID:cb75e74b-01e6-444f-9b59-aaae8a0fe0d1,IP:15,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACTIO
-	N:release,TS:28
-X-CID-META: VersionHash:82c5f88,CLOUDID:b12e1dcf33b9fb9d30aee613fce78312,BulkI
-	D:2409062205428B690IWE,BulkQuantity:37,Recheck:0,SF:44|64|66|38|24|17|19|1
-	02,TC:nil,Content:1|-5,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40|20,QS:ni
-	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_OBB,TF_CID_SPAM_FCD,TF_CID_SPAM_ULS
-X-UUID: c8f8e3ac86cc11efa216b1d71e6e1362-20241010
-X-User: duanchenghao@kylinos.cn
-Received: from [172.30.80.21] [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 915648642; Thu, 10 Oct 2024 13:59:17 +0800
-Message-ID: <5f2f6b979e95e4c2bc33ea0277112939164f6024.camel@kylinos.cn>
-Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
- USB status when S4 wakes up
-From: duanchenghao <duanchenghao@kylinos.cn>
-To: Alan Stern <stern@rowland.harvard.edu>, "Rafael J. Wysocki"
-	 <rafael@kernel.org>
-Cc: Hongyu Xie <xy521521@gmail.com>, gregkh@linuxfoundation.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz, 
- stanley_chang@realtek.com, tj@kernel.org, Hongyu Xie <xiehongyu1@kylinos.cn>
-Date: Thu, 10 Oct 2024 13:59:08 +0800
-In-Reply-To: <2c368013-8363-4a4e-bfee-2f0b14d01162@rowland.harvard.edu>
-References: <20240906030548.845115-1-duanchenghao@kylinos.cn>
-	 <1725931490447646.3.seg@mailgw.kylinos.cn>
-	 <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
-	 <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
-	 <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
-	 <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
-	 <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
-	 <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
-	 <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
-	 <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
-	 <2c368013-8363-4a4e-bfee-2f0b14d01162@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728540054; c=relaxed/simple;
+	bh=PK7oZMg/krXjhlNrDoVFQfXTxHOhq4hpTEDSiQrqDME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5ey1AIn9k0gQMTvRNJ+Cs0nbWCIfCxM44M6i18UPmRhKNVzDyebsOqWnE6KR1Mwui4WM/7MaZ+lhnWPyDjFYlGNJpgvj3DDydccg4AN7hsUzu5MpHVvcYzg/+vrHpXYbrG8ODv7tTicya8e1Ow4/M7MowI3ZtA6fgmMb4m7Qi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLq9l48h; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728540052; x=1760076052;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PK7oZMg/krXjhlNrDoVFQfXTxHOhq4hpTEDSiQrqDME=;
+  b=CLq9l48htPc3hUYt+pdpPHeEFm99xMaMmMKiC4SuBdccne4rwEhgG895
+   6jJCRVMzZsNe9InCOqQitDqVR8gibmBpQFBjjXRDG7LKPjbeH+JcB7htq
+   n5ha8DBhn3fNQDwoYZLr2Yp4puLKDHtFtJ7DXzMLEU+HjAlVwOy4A9DfA
+   NpGp29QAY9sPQVT9f7xWPNSB4DMCyyfS24RFfWOC0WVZ+qGig8K2n9KMw
+   uEHsVlvOPp5bkQcFG+EeisWcZ4fgana+N6TWsoZbyQgiA+RvSgNeEWTyq
+   XyJ5h2902dQyECnaAQOy2kH8z8lUgjXOgMBW+9qpkTrM2RRMH7neXAQLr
+   w==;
+X-CSE-ConnectionGUID: 5Sx2sbMNTPiTBv5tMSgPyw==
+X-CSE-MsgGUID: bq41FM1/SVO0b6yIbLPb2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="15498886"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="15498886"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 23:00:52 -0700
+X-CSE-ConnectionGUID: BASR9FPEQmGnZyQhWB2nEg==
+X-CSE-MsgGUID: w4QsR1g9SImq5EPcW6Cc/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="76096954"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 09 Oct 2024 23:00:49 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1symEB-000AF7-1f;
+	Thu, 10 Oct 2024 06:00:47 +0000
+Date: Thu, 10 Oct 2024 14:00:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Dan Murphy <dmurphy@ti.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] leds: lp55xx: Fix check for invalid channel number
+Message-ID: <202410101313.hQc9I8AL-lkp@intel.com>
+References: <1728464547-31722-1-git-send-email-michal.vokac@ysoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1728464547-31722-1-git-send-email-michal.vokac@ysoft.com>
 
-Hi Alan,
+Hi Michal,
 
-=E5=9C=A8 2024-10-09=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 11:50 -0400=EF=BC=
-=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
-> > On Wed, Oct 09, 2024 at 10:35:05AM +0800, duanchenghao wrote:
-> > > > Hi Alan,
-> > > >=20
-> > > > These are two patches, each addressing the same issue. The
-> > > > current
-> > > > patch is a direct solution to the problem of the interrupt
-> > > > bottom
-> > > > half
-> > > > being frozen. The patch you replied with is another,
-> > > > alternative
-> > > > solution to the same problem. Please review which solution is
-> > > > more
-> > > > suitable, or if there are any other revised proposals.
-> > > >=20
-> > > >=20
-> > > > Please review the patch I mentioned:
-> > > > https://lore.kernel.org/all/0a4dc46ae767c28dd207ae29511ede747f05539=
-a.camel@kylinos.cn/
-> >=20
-> > I still think your whole approach is wrong.=C2=A0 There is no need to
-> > change=20
-> > the way the HCD_FLAG_WAKEUP_PENDING flag gets set or cleared;
-> > that's
-> > not=20
-> > the reason for the problem you're seeing.
-> >=20
+kernel test robot noticed the following build errors:
 
-Thank you very much for your evaluation of the scheme. I have a
-question regarding why the set_bit operation for the
-HCD_FLAG_WAKEUP_PENDING flag is performed in the top half of an
-interrupt handler, while the clear_bit operation is done in the bottom
-half. This seems to contradict conventional practices. The issue is not
-limited to S4; if other processes freeze the work queue in the bottom
-half, the same problem may arise.
+[auto build test ERROR on lee-leds/for-leds-next]
+[also build test ERROR on linus/master v6.12-rc2 next-20241009]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The solution you described below should be able to resolve the current
-S4 issue, but for now, we haven't identified any other scenarios that
-require the same operation. Based on my understanding, the USB device
-is woken up in the bottom half of the interrupt, and both the set_bit
-and clear_bit operations for the HCD_FLAG_WAKEUP_PENDING flag should be
-executed within the same thread in the bottom half. May I ask if there
-are any other reasons why the set_bit is executed in the top half?
+url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Vok/leds-lp55xx-Fix-check-for-invalid-channel-number/20241009-171340
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/1728464547-31722-1-git-send-email-michal.vokac%40ysoft.com
+patch subject: [PATCH] leds: lp55xx: Fix check for invalid channel number
+config: xtensa-randconfig-r071-20241010 (https://download.01.org/0day-ci/archive/20241010/202410101313.hQc9I8AL-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410101313.hQc9I8AL-lkp@intel.com/reproduce)
 
-Thanks
-Duanchenghao
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410101313.hQc9I8AL-lkp@intel.com/
 
-> > The problem occurs because when suspend_common() in=20
-> > drivers/usb/core/hcd-pci.c sets do_wakeup, it does so by calling=20
-> > device_may_wakeup(), and the value that function returns is not
-> > what
-> > we=20
-> > want.=C2=A0 The value is based on whether the controller's power/wakeup=
-=20
-> > attribute is set, but we also have to take into account the type of
-> > suspend that's happening.
-> >=20
-> > Basically, if msg is one of the suspend types for which wakeups
-> > should=20
-> > always be disabled, then do_wakeup should be set to false.=C2=A0 There
-> > isn't=20
-> > a macro to test for these things, but there should be.=C2=A0 Something
-> > like=20
-> > PMSG_IS_AUTO() in include/linux/pm.h; maybe call it
-> > PMSG_NO_WAKEUP().=C2=A0=20
-> > This macro should return true if the PM_EVENT_FREEZE or
-> > PM_EVENT_QUIESCE=20
-> > bits are set in msg.event.
-> >=20
-> > Rafael, please correct me if I got any of this wrong.
-> >=20
-> > So the right way to fix the problem is to add to pm.h:
-> >=20
-> > #define PMSG_NO_WAKEUP(msg)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(((msg.event) =
-& \
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0(PM_EVENT_FREEZE | PM_EVENT_QUIESCE)) !=3D 0)
-> >=20
-> > and in suspend_common():
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (PMSG_IS_AUTO(msg))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0do_wakeup =3D true;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else if (PMSG_NO_WAKEUP=
-(msg))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0do_wakeup =3D false;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0do_wakeup =3D device_may_wakeup(dev);
-> >=20
-> > Then with do_wakeup set to false, none of the HCD_WAKEUP_PENDING()
-> > tests=20
-> > in the following code will be executed, so the routine won't fail
-> > during=20
-> > the freeze or restore phase with -EBUSY.
-> >=20
-> > You'll also have to define an hcd_pci_freeze() routine, just=20
-> > like hcd_pci_suspend() except that it uses PMSG_FREEZE instead of=20
-> > PMSG_SUSPEND.=C2=A0 And the .freeze callback in usb_hcd_pci_pm_ops
-> > should
-> > be=20
-> > changed to hcd_pci_freeze.
-> >=20
-> > In fact, it looks like choose_wakeup() in drivers/usb/core/driver.c
-> > could also use the new macro, instead of checking for FREEZE or
-> > QUIESCE=20
-> > directly the way it does now.
-> >=20
-> > Alan Stern
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from include/linux/acpi.h:14,
+                    from include/linux/i2c.h:13,
+                    from drivers/leds/leds-lp55xx-common.c:17:
+   drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_parse_common_child':
+>> drivers/leds/leds-lp55xx-common.c:1130:25: error: 'dev' undeclared (first use in this function); did you mean 'cdev'?
+    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
+         |                         ^~~
+   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   drivers/leds/leds-lp55xx-common.c:1130:17: note: in expansion of macro 'dev_err'
+    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
+         |                 ^~~~~~~
+   drivers/leds/leds-lp55xx-common.c:1130:25: note: each undeclared identifier is reported only once for each function it appears in
+    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
+         |                         ^~~
+   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   drivers/leds/leds-lp55xx-common.c:1130:17: note: in expansion of macro 'dev_err'
+    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
+         |                 ^~~~~~~
 
 
+vim +1130 drivers/leds/leds-lp55xx-common.c
+
+  1111	
+  1112	static int lp55xx_parse_common_child(struct device_node *np,
+  1113					     struct lp55xx_led_config *cfg,
+  1114					     int led_number, int *chan_nr)
+  1115	{
+  1116		int ret;
+  1117	
+  1118		of_property_read_string(np, "chan-name",
+  1119					&cfg[led_number].name);
+  1120		of_property_read_u8(np, "led-cur",
+  1121				    &cfg[led_number].led_current);
+  1122		of_property_read_u8(np, "max-cur",
+  1123				    &cfg[led_number].max_current);
+  1124	
+  1125		ret = of_property_read_u32(np, "reg", chan_nr);
+  1126		if (ret)
+  1127			return ret;
+  1128	
+  1129		if (*chan_nr < 0 || *chan_nr >= cfg->max_channel) {
+> 1130			dev_err(dev, "Use channel numbers between 0 and %d\n",
+  1131				cfg->max_channel - 1);
+  1132			return -EINVAL;
+  1133		}
+  1134	
+  1135		return 0;
+  1136	}
+  1137	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
