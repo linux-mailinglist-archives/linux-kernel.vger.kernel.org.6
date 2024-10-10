@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-358774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F020199837A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:24:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E3699837C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DDF1F239DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BBB1F21C1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00811C2DA4;
-	Thu, 10 Oct 2024 10:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FhXyedf7"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B521BFDE7;
+	Thu, 10 Oct 2024 10:24:00 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ECD1C243D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992D51BF7E5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728555815; cv=none; b=Uqm6nBAA9qYxEbbLW7hsZXzXH0QAXqZtmxKoPo2UUqJfB2622LUImUv0LfbeGuQD2x1zpoXgyZgjyXfpanPVNkcFzX1nFno8cKymeFcyc24rxMSi7pa7ar25HGKEV5UVQJtjseZY1YI5pZSgQdGRTqswfAoBbIwO3vemMc4Yn4Y=
+	t=1728555840; cv=none; b=I8GbJCoPC6B//Sy68x7U0IJUFkIXg+aSykfPdiaSex9yIj23CbGK19C1QBqwtji3IGwH1p/G2ibp6rWGy87Xsr66MP8PWOb6lg1NkylL44vdnB+8/BLBQEvtUD3CF+bX7zplhdTSqOTdZB3f9sBJEA0k+qC6RXy0x2ebqapZIuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728555815; c=relaxed/simple;
-	bh=s/1gGhbnt50tcEUMLNEZ7eg+4hprLgeErANYEfXxqho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d2zW3X9SZJqcgwKU5fPfAIExQIOb2C7mdrhxoVUzhkerc+ZsGQjv2TAF2mOJlK4dTctYHr+XN/P4Jcx7N1Ote+ETYgDyGMNb2Sc8myitnWI1KY5oqJJqgxfboURPbtzoUR6N/dOLivdoraNF0ml3i5sjQfV0yuQ0FWhj+udJwkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FhXyedf7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5F06F1648;
-	Thu, 10 Oct 2024 12:21:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728555709;
-	bh=s/1gGhbnt50tcEUMLNEZ7eg+4hprLgeErANYEfXxqho=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FhXyedf7uq/9gqlzV1eYj7ouAG0A7n/jKnsL2qcZJ0hTaRf7ld7GFB3P/+YjJfZYL
-	 KuN1W7kiWh5MU/eRpio4YTouFUY7nEK4I/EpAYTqoUS0NqSO0RYjyl0Cg8T/FkPc3U
-	 LJtWLgo2P4yoilFtgF1lJcF2eN0MNgxln15CPapg=
-From: Umang Jain <umang.jain@ideasonboard.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH 5/5] staging: vchiq_core: Locally cache cache_line_size information
-Date: Thu, 10 Oct 2024 15:52:49 +0530
-Message-ID: <20241010102250.236545-6-umang.jain@ideasonboard.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241010102250.236545-1-umang.jain@ideasonboard.com>
-References: <20241010102250.236545-1-umang.jain@ideasonboard.com>
+	s=arc-20240116; t=1728555840; c=relaxed/simple;
+	bh=h1R63jixfSue3R7Ieez3jUjailTzjr2SNM0L2a+aAIY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=F1CTY21Io5Kcy0uixCyx6PayERoe8vpulmRXolP+urN9M/cC86OrfpfNe9cQWSsN6v/DCHw2zz5VY/VEm/XSmM9JWFYRYeROLD3H0JUqeN/3/I70O+bXrXc9XabloOgn+0M6DmbDpoKL+q/PWjXHsepaDlRsxCOBIr/ob6t7eRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-31-zFKabjwrN-S-U-Z5gNyBvg-1; Thu, 10 Oct 2024 11:23:55 +0100
+X-MC-Unique: zFKabjwrN-S-U-Z5gNyBvg-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 10 Oct
+ 2024 11:23:54 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 10 Oct 2024 11:23:54 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Thomas Gleixner' <tglx@linutronix.de>, Steven Rostedt
+	<rostedt@goodmis.org>
+CC: Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, Ankur Arora <ankur.a.arora@oracle.com>,
+	"mingo@kernel.org" <mingo@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "juri.lelli@redhat.com"
+	<juri.lelli@redhat.com>, "vincent.guittot@linaro.org"
+	<vincent.guittot@linaro.org>, "dietmar.eggemann@arm.com"
+	<dietmar.eggemann@arm.com>, "bsegall@google.com" <bsegall@google.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
+	<vschneid@redhat.com>, "efault@gmx.de" <efault@gmx.de>
+Subject: RE: [PATCH 0/5] sched: Lazy preemption muck
+Thread-Topic: [PATCH 0/5] sched: Lazy preemption muck
+Thread-Index: AQHbGo8XexbPsuHzxEm33+r9fps+rbJ/xYLA
+Date: Thu, 10 Oct 2024 10:23:54 +0000
+Message-ID: <ea496d1ea02049e88a701f984b0f2a6b@AcuMS.aculab.com>
+References: <20241007074609.447006177@infradead.org>
+ <20241008153232.YwZfzF0r@linutronix.de> <87wmihdh3u.fsf@oracle.com>
+ <20241009062019.1FJYnQL1@linutronix.de>
+ <20241009080202.GJ17263@noisy.programming.kicks-ass.net>
+ <20241009100133.2569e2a7@gandalf.local.home> <87h69lqbk0.ffs@tglx>
+ <20241009164355.1ca1d3d3@gandalf.local.home> <87ed4pq953.ffs@tglx>
+In-Reply-To: <87ed4pq953.ffs@tglx>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Locally cache 'cache_line_size' information in a variable instead of
-repeatedly accessing it from drv_mgmt->info. This helps to reflow lines
-under 80 columns.
+...
+> And once all the problems with LAZY are sorted then this cond_resched()
+> line just goes away and the loop looks like this:
+>=20
+>     while ($cond) {
+>           spin_lock(L);
+>           do_stuff();
+>           spin_unlock(L);
+>     }
 
-No functional change intended in this patch.
+The problem with that pattern is the cost of the atomics.
+Thay can easily be significant especially if there are
+a lot of iterations and do_stuff() is cheap;
 
-Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
----
- .../interface/vchiq_arm/vchiq_core.c          | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+If $cond needs the lock, the code is really:
+=09spin_lock(L);
+=09while ($cond) {
+=09=09do_stuff();
+=09=09spin_unlock(L);
+=09=09spin_lock(L);
+=09}
+=09spin_unlock(L);
+which make it even more obvious that you need a cheap
+test to optimise away the unlock/lock pair.
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index d03b67f9cdb7..19c24dd9d1b3 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1516,6 +1516,7 @@ create_pagelist(struct vchiq_instance *instance, char *buf, char __user *ubuf,
- 	size_t pagelist_size;
- 	struct scatterlist *scatterlist, *sg;
- 	int dma_buffers;
-+	unsigned int cache_line_size;
- 	dma_addr_t dma_addr;
- 
- 	if (count >= INT_MAX - PAGE_SIZE)
-@@ -1666,10 +1667,10 @@ create_pagelist(struct vchiq_instance *instance, char *buf, char __user *ubuf,
- 	}
- 
- 	/* Partial cache lines (fragments) require special measures */
-+	cache_line_size = drv_mgmt->info->cache_line_size;
- 	if ((type == PAGELIST_READ) &&
--	    ((pagelist->offset & (drv_mgmt->info->cache_line_size - 1)) ||
--	    ((pagelist->offset + pagelist->length) &
--	    (drv_mgmt->info->cache_line_size - 1)))) {
-+	    ((pagelist->offset & (cache_line_size - 1)) ||
-+	    ((pagelist->offset + pagelist->length) & (cache_line_size - 1)))) {
- 		char *fragments;
- 
- 		if (down_interruptible(&drv_mgmt->free_fragments_sema)) {
-@@ -1699,6 +1700,7 @@ free_pagelist(struct vchiq_instance *instance,
- 	struct pagelist *pagelist = pagelistinfo->pagelist;
- 	struct page **pages = pagelistinfo->pages;
- 	unsigned int num_pages = pagelistinfo->num_pages;
-+	unsigned int cache_line_size;
- 
- 	dev_dbg(instance->state->dev, "arm: %pK, %d\n",
- 		pagelistinfo->pagelist, actual);
-@@ -1714,6 +1716,7 @@ free_pagelist(struct vchiq_instance *instance,
- 	pagelistinfo->scatterlist_mapped = 0;
- 
- 	/* Deal with any partial cache lines (fragments) */
-+	cache_line_size = drv_mgmt->info->cache_line_size;
- 	if (pagelist->type >= PAGELIST_READ_WITH_FRAGMENTS &&
- 	    drv_mgmt->fragments_base) {
- 		char *fragments = drv_mgmt->fragments_base +
-@@ -1721,10 +1724,10 @@ free_pagelist(struct vchiq_instance *instance,
- 			drv_mgmt->fragments_size;
- 		int head_bytes, tail_bytes;
- 
--		head_bytes = (drv_mgmt->info->cache_line_size - pagelist->offset) &
--			     (drv_mgmt->info->cache_line_size - 1);
-+		head_bytes = (cache_line_size - pagelist->offset) &
-+			     (cache_line_size - 1);
- 		tail_bytes = (pagelist->offset + actual) &
--			     (drv_mgmt->info->cache_line_size - 1);
-+			     (cache_line_size - 1);
- 
- 		if ((actual >= 0) && (head_bytes != 0)) {
- 			if (head_bytes > actual)
-@@ -1737,8 +1740,8 @@ free_pagelist(struct vchiq_instance *instance,
- 		    (tail_bytes != 0))
- 			memcpy_to_page(pages[num_pages - 1],
- 				       (pagelist->offset + actual) &
--				       (PAGE_SIZE - 1) & ~(drv_mgmt->info->cache_line_size - 1),
--				       fragments + drv_mgmt->info->cache_line_size,
-+				       (PAGE_SIZE - 1) & ~(cache_line_size - 1),
-+				       fragments + cache_line_size,
- 				       tail_bytes);
- 
- 		down(&drv_mgmt->free_fragments_mutex);
--- 
-2.45.2
+Perhaps it could be wrapped inside a spin_relax(L)?
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
