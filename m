@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-359452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3462998CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 774C6998D7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29E4AB2DA78
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:32:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F88DB3BA49
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D18C1CCB45;
-	Thu, 10 Oct 2024 15:31:27 +0000 (UTC)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F9E1C460E;
+	Thu, 10 Oct 2024 15:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eZJ+W72Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BB8282FB;
-	Thu, 10 Oct 2024 15:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA31917FB;
+	Thu, 10 Oct 2024 15:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574286; cv=none; b=EXw/Ib4dxJCd5U+Oanem0ROd6kOOVGt+uqLgkT4fXlhxnJXTAPftF5Mj8qfkkEV8XGKiqxCtRkS/uScWLrAcVeTYDHyInmonMytYtz1k220oXbKvoOZDTsT0ddwPseB4k1CT5FfFv80tCdhfJvBJxRptfmkuw8xb9zuFrkTIqvI=
+	t=1728575618; cv=none; b=kmGoiEEXy3lVUbOPc781gQmjuSyFf5t3ZLSuvgp8XUH9gJ4ZwVgjk6y4noGp3C8hJUkgZEbESOHROsW8JU7IFM+nQYeleU9QnBiIrTTYShg0aY43jv7lsS81PadMQqqWInCRYj4HwzrwMxw9qH43cDqynX2PqR/CUtNJAig922s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574286; c=relaxed/simple;
-	bh=JLmEn3Y3Mup+MIsj1v4X+aQ/1zIlI6rtFcqdaNpOSHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HYxEN3V888sk01vn0lWbvYrTE7s9Dmiuw4v4y8wIa9//gTO2cOOJ32wkmPOhbR8Vetw+gep+phd6jgPItNNwcOwx98UQWQ8/6Yhxsi1SxBDdTIwXoQsYhB7gzkaxqJ4JaF4fD3OxXqpFNrg44KeLaBvCzigCo5YlGYqhNg1BfRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2e4244413so12652877b3.3;
-        Thu, 10 Oct 2024 08:31:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728574283; x=1729179083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b0mCUH7aNgtABnVVF5yxDimhVzJlZrl+fopZk7Shdng=;
-        b=OBeTsDFHTfnjmDMgcbwpkxAHZ5QEybAABnSvtrBRAhE13zpuljL4Uayl2LrHqdW+ct
-         /VqmKzWoqDpdpsB46yv4MRV9pcNy3adPnRByzAiCkIXQ1htZamYapnybYfigYUGWqrGF
-         cuBbZA4QzkRFmrloJuSdtY63BMa9HfrGSSLnkIqFvPgXR/AU+rSHiewjLUdrNIxF9Rpr
-         Oc5e3w9u/63M6NCxg3Z/MHggrs5XJuwvfgmpxGBs7WGwL97W419/yohUwIKNNlPvPHT8
-         gq/zpWygg+JdZAFpQBX1gLreW5Iq47iFH29TBNFpuxpUB+OX0dLuELNhK88XNYuNkDia
-         /eHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2+Me++54MIEyQ/sa2E4nscqkiIhVGLNG+TPdmJVEPkCTuvlIjdA7S/xf5M8yvDeztX+cwiu5uPvSJ@vger.kernel.org, AJvYcCUpvY4XxD7I/9fVBCmWn0BDe2bG8GK6MdBh2aYze1vSS0S1nHeNH5wX2ZDQX7SnuwL7D3zFuOHDNb8U@vger.kernel.org, AJvYcCWqhejzMBeNeqigDarVT/7dxCVZyL3ssh1f2Ukm2EThmNSJshd4eTwJBRe4HBOZDcU1E7a4CXBWXfCv/pJy@vger.kernel.org, AJvYcCXe1wkwdyFkKJeBrFYIigc0qIUlhrLOj33tteMqA5X3GW1Qd9DVFOTLyFaXh6RmooGyruILOT/TYH4+pbiQMX8YBZI=@vger.kernel.org, AJvYcCXtxU6WqML4q+hFPDho8k7FG3XUS3ytPliBLnEurrXZGz+HUVRkxOpIGYfe5R7WAK4qtDHM0Hi9MkSO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrmxorECorvk583O6Gjns5+zFyyRrnlI1mCH+lZYfFNRVRAaFz
-	Duj4fFOqSbQWBCdzGG53+owjMJKZwxjCYuOo5xButBg5G2IX96gWjLWsI83w
-X-Google-Smtp-Source: AGHT+IHdQOYTFmbKtk9ycHJSV57flTpVebEOzQg2Y0AizXU7pFjOeG+FrxKCH3hrS15uimwesy2uKQ==
-X-Received: by 2002:a05:690c:7690:b0:6e3:323f:d8fb with SMTP id 00721157ae682-6e3323fdcafmr16339837b3.14.1728574283115;
-        Thu, 10 Oct 2024 08:31:23 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332cb3783sm2378867b3.141.2024.10.10.08.31.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 08:31:22 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e2d36343caso9121057b3.2;
-        Thu, 10 Oct 2024 08:31:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVTJ50cAZdC8x3LsO5OEcEoQRYzhdLN539QTwJM6w3ygmpznekg9u8WbCazyPLmHyyANCHXdueyZZGw@vger.kernel.org, AJvYcCVmY3rnoZyAFLiQJGxqbxRnTTOpq9zRdUc0nU/3yoipSo1UlJuF1abxE7oxeQxJFFltT15IKvBdoOqY5ggTTRysjeM=@vger.kernel.org, AJvYcCWQ5LAVNCKAnhdcbcDZoEInveR8RjVKULx6UZ9CuKIa8HtI53U3bIkOM7iOPTijuRH8U8sOBsUkyI/e@vger.kernel.org, AJvYcCX8nMzbJ/i01UvMOT07QgLsELXPg/ovRJMc8Ke5ckH4Wf/b7bJbvWqYOSqMDeUBJ64120hGMfxgUUWa/SH6@vger.kernel.org, AJvYcCXKdMHcA0bSiuj5V5FNNkH50IvikEXIhw+tsZhM/mR0FeIPYvNZnW1rjxEAX3WMGDXWQtMN13fy5R9V@vger.kernel.org
-X-Received: by 2002:a05:690c:6606:b0:6e2:1742:590d with SMTP id
- 00721157ae682-6e32212b7d6mr61109317b3.3.1728574282330; Thu, 10 Oct 2024
- 08:31:22 -0700 (PDT)
+	s=arc-20240116; t=1728575618; c=relaxed/simple;
+	bh=b68TMNixbJy7Wtf4/eoCaCNV0RHGXTaO6jAyhchzRFk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Q0VT+mbwm6QMOjdxajeGZw0S8myUK/+q4QsGFobStKiEfmI6pWYzlOU1zQiTsWKUQuRa63oyEGjnoQQow7WFtwTc43xNJZYf1VYd5h0loYNy8TfVXkj8+GILeBbQVMii44cS8cBEP9FRQvWTKtQeC8lEDeGc143XWn3aZ3RDqbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eZJ+W72Q; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728575617; x=1760111617;
+  h=from:to:cc:subject:date:message-id;
+  bh=b68TMNixbJy7Wtf4/eoCaCNV0RHGXTaO6jAyhchzRFk=;
+  b=eZJ+W72QPzG1N2tuaViiXW5xR3nGxdqWOTOCeuCFaAxEwXl5AIwK6djZ
+   8gxhNdDH0Ehsi/8aJKe3dtK4Sf2MWB1EYAPxb7ApAtbP/Ltogpf+GG2yq
+   3faapVUDMA9/xFfecRUl06bnSGlxsfUH+bPA7qqvGmZERBGVKrvAkKIV3
+   O+maqJsZcXGDek8xSTAnSZmRsxjECHLjDvJF1+LXb5GfZwGD3qwEEAOFA
+   62535AkymeWe3R4fwPPWc8RmVLBOA3u/psplUri6wTeQgx0j9guYEiHym
+   XxHRflLaQSUiJLyutgi5cVcwbOZx1Xq9OV94ZSHKhz90vNV0wnvMytCaI
+   Q==;
+X-CSE-ConnectionGUID: otw229xdQ+i91D7dygG0lg==
+X-CSE-MsgGUID: 2yi5AJ/hQO+qfEJN+5mY1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31643414"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="31643414"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:53:37 -0700
+X-CSE-ConnectionGUID: Mt0Zb7ozRhGLwMLoG+5vuw==
+X-CSE-MsgGUID: Bai38vZrSU6/zkNvc+ntDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="81221635"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:53:33 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: tony.luck@intel.com,
+	bp@alien8.de
+Cc: tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	x86@kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qiuxu.zhuo@intel.com
+Subject: [PATCH 00/10] Clean up some x86/mce code
+Date: Thu, 10 Oct 2024 23:31:52 +0800
+Message-Id: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
- <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWeGC_N3-XF29+UUR43OGJKqVNNHs042J8HRuNpiD=vOg@mail.gmail.com> <1c733190-bd46-43d0-8f3d-62e0ed5fde42@tuxon.dev>
-In-Reply-To: <1c733190-bd46-43d0-8f3d-62e0ed5fde42@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Oct 2024 17:31:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVWhAoFQOHrDRFKX7bJFobC73qkHggFRdSCmhrsZmXWbA@mail.gmail.com>
-Message-ID: <CAMuHMdVWhAoFQOHrDRFKX7bJFobC73qkHggFRdSCmhrsZmXWbA@mail.gmail.com>
-Subject: Re: [PATCH v3 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document
- the Renesas RTCA-3 IP
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
-	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+1. Clean up some x86/mce code as below. No functional changes intended.
 
-On Thu, Oct 10, 2024 at 11:52=E2=80=AFAM claudiu beznea
-<claudiu.beznea@tuxon.dev> wrote:
-> On 10.10.2024 12:29, Geert Uytterhoeven wrote:
-> > On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
-ev> wrote:
-> >> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
-> >> The RTC IP available on Renesas RZ/V2H is almost identical with the
-> >> one found on Renesas RZ/G3S (it misses the time capture functionality
-> >> which is not yet implemented on proposed driver). For this, added also=
- a
-> >> generic compatible that will be used at the moment as fallback for bot=
-h
-> >> RZ/G3S and RZ/V2H.
+    - Simplify some code.
 
-> > Sorry for chiming in late, but this RTCA-3 block seems to be a
-> > derivative of the RTC blocks found on older SuperH SoCs, and on RZ/A1
-> > and RZ/A2 ARM SoCs.  Differences are found in (lack of)
-> > 100/1000-year-count parts and the Year Alarm Enable Register, and in
-> > some control register bits.
->
-> At a 1st look it seems so, yes. I was inclined at the beginning to just u=
-se
-> the rtc-sh but the RZ/G3S HW manual mentions a lot of restrictions that
-> need to be followed when configuring the IP. Because of these restriction=
-s
-> I chose to have a different driver. Otherwise the rtc-sh would have becom=
-e
-> way too complication as far as I can tell.
+    - Remove some unnecessary code.
 
-[...]
+    - Improve readability for some code.
 
-Thank you, makes sense!
+    - Fix some typos.
 
-Gr{oetje,eeting}s,
+    [ Reduce the text segment size by ~116 bytes. ]
 
-                        Geert
+2. Pass the following basic tests:
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+   - Compile test.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+   - Correctable/uncorrectable memory errors can be notified via CMCI/MCE interrupts.
+
+   - Correctable/uncorrectable memory errors can be dispatched to the mcelog daemon and the EDAC driver.
+
+   [ Tested on an Intel Sapphire Rapids server. ]
+
+3. This patch series is based on v6.12-rc2.
+
+Qiuxu Zhuo (10):
+  x86/mce/dev-mcelog: Use xchg() to get and clear the flags
+  x86/mce/intel: Use MCG_BANKCNT_MASK instead of 0xff
+  x86/mce: Make several functions return bool
+  x86/mce/threshold: Remove the redundant this_cpu_dec_return()
+  x86/mce/genpool: Make mce_gen_pool_create() return explicit error codes
+  x86/mce: Convert multiple if () statements into a switch() statement
+  x86/mce: Remove the unnecessary {}
+  x86/mce: Remove the redundant zeroing assignments
+  x86/mce/amd: Remove unnecessary NULL pointer initializations
+  x86/mce: Fix typos in comments
+
+ arch/x86/include/asm/mce.h           |  4 +--
+ arch/x86/kernel/cpu/mce/amd.c        | 18 +++++------
+ arch/x86/kernel/cpu/mce/core.c       | 47 ++++++++++++++--------------
+ arch/x86/kernel/cpu/mce/dev-mcelog.c | 11 ++-----
+ arch/x86/kernel/cpu/mce/genpool.c    |  8 ++---
+ arch/x86/kernel/cpu/mce/intel.c      | 11 ++++---
+ arch/x86/kernel/cpu/mce/threshold.c  |  2 +-
+ 7 files changed, 46 insertions(+), 55 deletions(-)
+
+
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+-- 
+2.17.1
+
 
