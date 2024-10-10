@@ -1,71 +1,65 @@
-Return-Path: <linux-kernel+bounces-359996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A972599935B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C28FD999361
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47AC91F2516B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186101F24CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF361CF7CE;
-	Thu, 10 Oct 2024 20:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD151D04B9;
+	Thu, 10 Oct 2024 20:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="Ci5tsXV9"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwA6t6oD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443FF15B0F2;
-	Thu, 10 Oct 2024 20:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93AC1CF7CF;
+	Thu, 10 Oct 2024 20:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728590979; cv=none; b=ffnMriD/A+yyuoBbosW0y6wogUr4/TKNUnaZjSo6WCX/63GhTVGj33QcDwc29UQzaXtfKdNsQpoOiU3+PrGQ9MXvo7ph64R511nVcFnoxaIRpVGV4TazdAe2qr5ep6I4cTFs4xHFpg0fu6u7L2Y8nRoh2CVkY4gm5owH8CiVpsA=
+	t=1728591004; cv=none; b=Mf7waCtMsH/tkN8X3rUUGnLQlIplPUFzfWtBRWw3mJPptI2aq/tw4SiHQW0EaAGnf7IO16dI6GttweM+7j8tMfSVoOf6/e0s/rnylB3Qs+zzSOYYGWmUcItNkcOiZzWQo/OimfNOUwIqMDiyPiF/2xCoYz7vCFnY70FNLMmXQ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728590979; c=relaxed/simple;
-	bh=ScHtd03XmMsy/5ONHGpjp0TXFSfTz28aZMtUZmKPkuk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OD6zGfVWx8Tmf/MK9wrOsbYdKSOna/DqMaVQt/Dh7R4dh7MwlwP3jKLWdnLgZXZHDb6wJNoiMJzV1yoN0gw+G5qZO6/lKAxkc3iKYu5qtKJ2frsVokw9JLqrtsZ+tNQsBGQRd16jucgfid10Ws9CJmMogUFnBG6QD0qVmdVQUvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=Ci5tsXV9; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 0E3ECC000E;
-	Thu, 10 Oct 2024 23:09:32 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 0E3ECC000E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1728590972; bh=9RjdrpvF0dpMEdfTvZGOFgbwSOlSJKtjDlVDRQCOgww=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Ci5tsXV9C0MvPjO1ZFbV1GYX3s+rtX9DNZ76QfGQ+WCVW82HL7zy6cA7D3gVi794p
-	 sOJkDF4iBzJYossBHD2L/rL0Sr4GJLiw1a0lZMcgYHcprHBVgiiS4FRqXH3xxmOFlT
-	 YAQ8shdzYil74ZFVym/YirwyY0n5kSWj+iLYNNUJaRgnChLMt5bQlxhbxzYtH5b144
-	 LqapO/eKC1zKdoRtgduzSCuiqFbO1PKNBmYTERXI58oudsKlqm4d7D8E2SAFbIg9y7
-	 UPdtMCCZMxEtUfAJh4wBKtZGwu+E0BIVgRCSko154kSR62uNUK5pkP1u5FnlrrjNhh
-	 iWpdftS2v95kg==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Thu, 10 Oct 2024 23:09:31 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (10.0.247.250) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Thu, 10 Oct 2024 23:09:30 +0300
-From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Ranjani Sridharan
-	<ranjani.sridharan@linux.intel.com>, Bard Liao
-	<yung-chuan.liao@linux.intel.com>, Pierre-Louis Bossart
-	<pierre-louis.bossart@linux.intel.com>, Mark Brown <broonie@kernel.org>,
-	Cezary Rojewski <cezary.rojewski@intel.com>, Liam Girdwood
-	<liam.r.girdwood@linux.intel.com>, Peter Ujfalusi
-	<peter.ujfalusi@linux.intel.com>, Kai Vehmanen
-	<kai.vehmanen@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH 6.1] ASoC: Intel: sof_realtek_common: set ret = 0 as initial value
-Date: Fri, 11 Oct 2024 01:08:50 +0500
-Message-ID: <20241010200852.22365-2-v.shevtsov@maxima.ru>
+	s=arc-20240116; t=1728591004; c=relaxed/simple;
+	bh=x8e2ILBwpZmzCxpX45Psnyob3wOlz2/6sCLppTDJwt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AwJNV0xvOWh9u/4c0CN6sXtgQsAmW7Tfyh2trCj33ZRrIjhHRARnzL1Ti2Oe+HuiIIzGiMiAKV9kWch9UO1xYYsKcNdjoP1qKOXS5RqSyLDPhXGQA0PNUVid6dQoWDZ4bokHiAsQrS8q2EHYkpaKs2NGkkLm/EJliZBq7Vpr13Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwA6t6oD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F1BC4CECD;
+	Thu, 10 Oct 2024 20:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728591004;
+	bh=x8e2ILBwpZmzCxpX45Psnyob3wOlz2/6sCLppTDJwt8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gwA6t6oDlVJEQQOT7Qi6oQvt7+/F6fF+dV21W5anTTrHU0yCAvQ0VaLNF8Z3TsDl2
+	 5rd/NzjoPtPi0qRqzxTelTdm+vHAjbNZlJt0i6i0cw7nUbd5Zq0FSm8CNBtNZm7CcL
+	 rI/LMxQRzALKQ+QQN8UkwBIrmPtZvn73YpEOcvZ46zLliSDnx1kSiT0B1zhEXzSwl0
+	 w332Scqvh6ECYGoDwPGW2HzYLHorlA5ED/znqb7AWuosJuCirp5fayzLViEzB8z1MM
+	 cNjMOcax6s633gjYp20zsvjL6gphYjsqhXoYoD9wOqgD1z7k42nF2swO6us+HB1Di6
+	 yotGr+iqF5uDw==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCHv6 bpf-next,perf/core 00/16] uprobe, bpf: Add session support
+Date: Thu, 10 Oct 2024 22:09:41 +0200
+Message-ID: <20241010200957.2750179-1-jolsa@kernel.org>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,57 +68,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188364 [Oct 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, maxima.ru:7.1.1;lore.kernel.org:7.1.1;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/10 19:30:00
-X-KSMG-LinksScanning: Clean, bases: 2024/10/10 19:30:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/10 18:55:00 #26733176
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
+hi,
+this patchset is adding support for session uprobe attachment and
+using it through bpf link for bpf programs.
 
-commit 47d2b66fec133cb27da3a551334686e465d19469 upstream.
+The session means that the uprobe consumer is executed on entry
+and return of probed function with additional control:
+  - entry callback can control execution of the return callback
+  - entry and return callbacks can share data/cookie
 
-'ret' will not be initialized if dai_fmt is not DSP_A or DSP_B.
+On more details please see patch #2.
 
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20221206212507.359993-4-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+The patchset is based on Peter's perf/core [1] tree merged in bpf-next/master.
+
+There's an proposal from Andrii how to get this merged in [2]:
+
+> I think uprobe parts should stay in tip/perf/core (if that's where all
+> uprobe code goes in), as we have a bunch of ongoing work that all will
+> conflict a bit with each other, if it lands across multiple trees.
+> 
+> So that means that patches #1 and #2 ideally land in tip/perf/core.
+> But you have a lot of BPF-specific things that would be inconvenient
+> to route through tip, so I'd say those should go through bpf-next.
+> 
+> What we can do, if Ingo and Peter are OK with that, is to create a
+> stable (non-rebaseable) branch off of your first two patches (applied
+> in tip/perf/core), which we'll merge into bpf-next/master and land the
+> rest of your patch set there. We've done that with recent struct fd
+> changes, and there were few other similar cases in the past, and that
+> all worked well.
+> 
+> Peter, Ingo, are you guys OK with that approach?
+
+
+v6 changes:
+  - added acks [Andrii, Oleg]
+  - added missing Fixes tags
+  - added fix to force uprobe bpf program to always return 0 [Andrii]
+  - separated kprobe session verifier check for return value check
+    and squashed similar uprobe session fix in patch 5 [Andrii]
+  - move session return handler check for cookie data to handle_uretprobe_chain [Andrii]
+  - added threads the session test to speed it up
+  - several smaller fixes [Andrii]
+
+thanks,
+jirka
+
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/core
+[2] https://lore.kernel.org/bpf/CAEf4BzY8tGCstcD4BVBLPd0V92p--b_vUmQyWydObRJHZPgCLA@mail.gmail.com/
 ---
- sound/soc/intel/boards/sof_realtek_common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Jiri Olsa (16):
+      uprobe: Add data pointer to consumer handlers
+      uprobe: Add support for session consumer
+      bpf: Allow return values 0 and 1 for kprobe session
+      bpf: Force uprobe bpf program to always return 0
+      bpf: Add support for uprobe multi session attach
+      bpf: Add support for uprobe multi session context
+      libbpf: Add support for uprobe multi session attach
+      selftests/bpf: Add uprobe session test
+      selftests/bpf: Add uprobe session cookie test
+      selftests/bpf: Add uprobe session recursive test
+      selftests/bpf: Add uprobe session verifier test for return value
+      selftests/bpf: Add kprobe session verifier test for return value
+      selftests/bpf: Add uprobe session single consumer test
+      selftests/bpf: Scale down uprobe multi consumer test
+      selftests/bpf: Add uprobe sessions to consumer test
+      selftests/bpf: Add threads to consumer test
 
-diff --git a/sound/soc/intel/boards/sof_realtek_common.c b/sound/soc/intel/boards/sof_realtek_common.c
-index ff2851fc8930..6c12ca92f371 100644
---- a/sound/soc/intel/boards/sof_realtek_common.c
-+++ b/sound/soc/intel/boards/sof_realtek_common.c
-@@ -267,7 +267,8 @@ static int rt1015_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_soc_pcm_runtime *rtd = asoc_substream_to_rtd(substream);
- 	struct snd_soc_dai_link *dai_link = rtd->dai_link;
- 	struct snd_soc_dai *codec_dai;
--	int i, clk_freq, ret;
-+	int i, clk_freq;
-+	int ret = 0;
- 
- 	clk_freq = sof_dai_get_bclk(rtd);
- 
--- 
-2.46.2
-
+ include/linux/uprobes.h                                            |  25 ++++++-
+ include/uapi/linux/bpf.h                                           |   1 +
+ kernel/bpf/syscall.c                                               |   9 ++-
+ kernel/bpf/verifier.c                                              |  10 +++
+ kernel/events/uprobes.c                                            | 148 +++++++++++++++++++++++++++++--------
+ kernel/trace/bpf_trace.c                                           |  63 +++++++++++-----
+ kernel/trace/trace_uprobe.c                                        |  12 ++-
+ tools/include/uapi/linux/bpf.h                                     |   1 +
+ tools/lib/bpf/bpf.c                                                |   1 +
+ tools/lib/bpf/libbpf.c                                             |  19 ++++-
+ tools/lib/bpf/libbpf.h                                             |   4 +-
+ tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c              |   2 +-
+ tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c         |   2 +
+ tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c         | 336 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
+ tools/testing/selftests/bpf/progs/kprobe_multi_verifier.c          |  31 ++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_consumers.c         |   6 +-
+ tools/testing/selftests/bpf/progs/uprobe_multi_session.c           |  71 ++++++++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c    |  48 ++++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c |  44 +++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_session_single.c    |  44 +++++++++++
+ tools/testing/selftests/bpf/progs/uprobe_multi_verifier.c          |  31 ++++++++
+ 21 files changed, 808 insertions(+), 100 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/kprobe_multi_verifier.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_cookie.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_single.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_verifier.c
 
