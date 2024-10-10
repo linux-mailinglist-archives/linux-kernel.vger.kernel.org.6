@@ -1,154 +1,193 @@
-Return-Path: <linux-kernel+bounces-358628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14ED99820F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:24:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D72C9981C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8CC3B2A897
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F461C23CA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26C11BBBFC;
-	Thu, 10 Oct 2024 09:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D6B192B78;
+	Thu, 10 Oct 2024 09:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ehEAcb64"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NJq4mpTA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641E71BC9E9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2351C233D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551500; cv=none; b=HTDbWQNhpwErtNMnEqlPCmbhvLc1JtVTmbDhIOW3P3uEAQhNtgdqv/zQ0+BqYbe3R6E8spQzh47iP2Rdhyd/90nLW9xao9m5VBzOAuSDwrjVnsFBq2OCpvwPWeJJbM/+e1yDHyn5KTLrh+A4eSWdguKKGB+TtvP4WYC8iDEQcUo=
+	t=1728551505; cv=none; b=vD9g1YC/gD/N1LB7SE1/SmcA5yWtoclNTbCTAdRS4egGAu2cPPnKwVcl6IRMsA86//yQhnSYGoT0ytdQGzKi9Y5sKbXy5Qe4/I2BsO3wKMxeT4FTeMEQ3ah8ckrmO67etGhcUMj5RocaZ7eTZImwWfH4+lX1bnZzqQnXS8eRHXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551500; c=relaxed/simple;
-	bh=lop93zME/MAk20ShSlwDXy/fimaoKZNuh+nrwS45zjg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FYCcVwh7uSUOlF7p63K9zAzFUObVDrAroozZUQC2uedZ0RF6DcQ5Pss68P5B4aTr7g0VPOnAWw8gKiSNhJt8PsV4OLP6u/IgToHWO1PYYLPLOCj/V1mV14Jg6h1g3spHyG1qc2Skzgt6RnFfMHYZeHk+hP74wyuu5Y0c5C/NacY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ehEAcb64; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43057f4a16eso5809195e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:11:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728551497; x=1729156297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h6JTCbobwY+WrBm4quxkMy51PYIhzCK3wsE6+gxsIc8=;
-        b=ehEAcb64UnshT16y44TkcqXdXwVkFeWfTF39alQVQCdQAzQMkf3JhY/ieA8q2leSxb
-         wJZVh+99TyAvHMvSmZrUj8wS0WuCYT63oaUv7trM1zlq28nS0v41EnjIr0UBHYaYzlc+
-         Alw/0wF7vHu1sPB40FGCO5J25qYqu7h6ThR0qolCAC9fJlgEZfGlD6xWd7KOnmj5mjhA
-         82PXhVi2C7Egmv6xftpu1X2eMFTACWGxcIpeW1AJ2awuZchikt3uG0zq9IBnFutPrrF5
-         WdQvTYUxwnfUpBTrR8o/q7cCBYi76P8rl/7LeLLdUGwOv/6Rw7ZuAF2SqkXqoBuo1LmY
-         lRQQ==
+	s=arc-20240116; t=1728551505; c=relaxed/simple;
+	bh=+ex92FX/6NsvBWmXun+uf0gF3wK3BeTi9EqHuTvNsZQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bLKkmtw1zt7spe8myf37Qrr1PdQ4I2rw+ACrNRde/fGSClyiVgrM2cHrrk0qzkEO4SrreQzIHyBGi+2TgMssUcHmL+T9Ti7603eWDPKu9jNZCOfa/hKYIWnJ4M67XgUaEgBcbEmjrKtVzQ9YGaQ2mHo6rFjZ1+foTcxkuoCMZ+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NJq4mpTA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728551502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+ex92FX/6NsvBWmXun+uf0gF3wK3BeTi9EqHuTvNsZQ=;
+	b=NJq4mpTAcVEpju4GP7UXQ3tFtQq/iwJKZbaUcP9X8XyhDE1gvMJPTtOarmmgE9+I0rCPf4
+	yeWON2JS3SedQ18+NhFqPdsIwG8QoFVuC3GYByzq0eMLlsw+e1MugbE70jLtAxPVn6b1tl
+	1n9SCjjvdqeNfSsVtuq3LybW+vJVIeA=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-gbQ8BDaSMGqBfGvSNdxnvA-1; Thu, 10 Oct 2024 05:11:41 -0400
+X-MC-Unique: gbQ8BDaSMGqBfGvSNdxnvA-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-536800baa8aso728200e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:11:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728551497; x=1729156297;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6JTCbobwY+WrBm4quxkMy51PYIhzCK3wsE6+gxsIc8=;
-        b=DG0l8N5dnQRAn+F0Oc+eM95p9p6buxzHZUgCZUmT8qzvoMKvpOAshwEdKOY83wCdKq
-         DsS0z83gV1aUa0h2VslRTZmEXb98E/lCs/W4Pr4g5ceQfOwO6CC2Peg76F909wFdUkAv
-         QAgOY4c7zMurrtpDCNzzBpb9w/mSe8P9yK+43VqrlwIaaWH8myfKic4WrZYpZu6XCnRl
-         cOxzsxhH5hQ84H2Wrqib0nDRx16JiFRFZxIuG5Miwu+PInoJ7vyMuWnZn3X7CWb2bOaL
-         ACM7XIqr/pQ9gstO6wTny2yYsLaJP7GjxFCUlGMdJDl1CqGC108xv1/cFtFhZOrsxXVy
-         nOBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeRLKEZoKF3X3ARBBsDDABQtgeGoelgRJhFrMCA2/u6rDZewhIfUp8ZKZOy2Csc/FHbdgqdiEIcgNmmdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYS6xDiM9NpZlfxOEJNh0NO3CXKjxbWikZRCnp+21gsZKSyPo6
-	P7AlMjOXCvrZFuqIzgc5KB5Y+1HIZR3Ra7mFOB0SqXGtg9oJyIDre1ZjIqMASKw=
-X-Google-Smtp-Source: AGHT+IFBsRb0rbqSkjKUmR415ghSYtyxxKX74L/CjXBW9IVAWKIH/NxpFP3toMV1RSim/i2R4l25gg==
-X-Received: by 2002:a05:600c:a00a:b0:42f:75e0:7829 with SMTP id 5b1f17b1804b1-431157f436dmr24289665e9.30.1728551496657;
-        Thu, 10 Oct 2024 02:11:36 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431183565desm9878205e9.32.2024.10.10.02.11.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 02:11:36 -0700 (PDT)
-Message-ID: <5f3f55a8-a378-4e16-8e5b-6fff329e75fd@linaro.org>
-Date: Thu, 10 Oct 2024 10:11:35 +0100
+        d=1e100.net; s=20230601; t=1728551499; x=1729156299;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+ex92FX/6NsvBWmXun+uf0gF3wK3BeTi9EqHuTvNsZQ=;
+        b=vHk0Kg4HMV9AKEmMxo4wpag+Q31ybC2xw/UKfBHbcnvmG3VJNJ669YrKx6tcwS/5pM
+         /Mj9Pk7oEJxlRkjH2obg8eDWlOV1D+tF9Atnaq5H7kgBBTyI5YESlAeVedA9hWmT8Jxj
+         NKdeJdX9Sh8hsjv+a4hGGpwIzn5LXcO4D/uoDNTo+Y7m+0d3lIrGvlxp7MpRJV+47XGu
+         iAlrbxMkXUWlwC4baNfrdqmsOyiTvbMSpbb1YMpMhpMqERa6qfuqgZ2mmgCwvfZ31L9E
+         EqMDnCiXEteBYZEZ9p6a87JMWo7YagfZ/T36lVjEjphEimvPVf1xI/MiUcyG6lua22sH
+         88BA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmAgNSMc8xDyGLeqXAfhzzh7cTwQNgkybEkfe3zQGTqS2GFbt2RgN1kCFpNLcazSvIpi4DH/wxueGrIK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn4rJWLF53y4B2jGQ2/Ll2K/9zBFWXNU5bRM18BlGujnbldMHz
+	62DhLkit94fSI+hwexz4J8itQCt0KwamdD9xooVyVjeoPJ5JcwaKc6BwbTTJSmEyxo4ln5kF3AS
+	50Q/6xF9T6zVcEnG/0qdC125DLlPe7KVSeBvhsM36c2n2OlH3dOSJxRk4s/vsYw==
+X-Received: by 2002:a05:6512:10d1:b0:536:55ae:7444 with SMTP id 2adb3069b0e04-539c4896eb7mr3177298e87.22.1728551499306;
+        Thu, 10 Oct 2024 02:11:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExq3OJhlyNTGpjtR1+LjaW3R0iv5Mu7sB9drW/xRJaoCLaoe8gSPgF49M2/ruF8wr/J6TLJA==
+X-Received: by 2002:a05:6512:10d1:b0:536:55ae:7444 with SMTP id 2adb3069b0e04-539c4896eb7mr3177227e87.22.1728551498734;
+        Thu, 10 Oct 2024 02:11:38 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fdc2sm949476f8f.88.2024.10.10.02.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 02:11:38 -0700 (PDT)
+Message-ID: <f42bb5de4c9aca307a3431dd15ace4c9cade1cb9.camel@redhat.com>
+Subject: Re: [RFC PATCH 13/13] Remove devres from pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj Natikar
+ <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
+ Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
+ Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
+ Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
+ Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
+ <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
+ Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi
+ Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+ Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Eric Auger
+ <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
+ =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>,  Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
+ Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-input@vger.kernel.org,
+ netdev@vger.kernel.org,  linux-wireless@vger.kernel.org,
+ ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+ linux-staging@lists.linux.dev, kvm@vger.kernel.org, 
+ xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Date: Thu, 10 Oct 2024 11:11:36 +0200
+In-Reply-To: <7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+	 <20241009083519.10088-14-pstanner@redhat.com>
+	 <7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
- BPF skeletons
-From: James Clark <james.clark@linaro.org>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
- Namhyung Kim <namhyung@kernel.org>, Howard Chu <howardchu95@gmail.com>
-Cc: Alan Maguire <alan.maguire@oracle.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-perf-users <linux-perf-users@vger.kernel.org>
-References: <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org>
- <ZuL_0V5jgaaEUOY_@x1> <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org>
- <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
- <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com>
- <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
- <CAH0uvohEozKixjDM9_jJ5FFxYK7agsqVO-BrAsm=4hCTDQAx2A@mail.gmail.com>
- <9bbfe425-1f2b-4846-a5a3-a31618742e9a@oracle.com>
- <CAH0uvojJ1rME4hb6NfrA4NPj2XmGMDLOLP3wEbHh8B5-qWGvFQ@mail.gmail.com>
- <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
- <ZwcnVKn3wVSSMcaL@google.com>
- <CA+JHD93JgJL_4GJFcFUNu-FpNfFOoyDRJ7QuvO82M8G1EwM5pQ@mail.gmail.com>
- <bcf50648-3c7e-4513-8717-0d14492c53b9@linaro.org>
-Content-Language: en-US
-In-Reply-To: <bcf50648-3c7e-4513-8717-0d14492c53b9@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+On Thu, 2024-10-10 at 11:50 +0300, Dan Carpenter wrote:
+> On Wed, Oct 09, 2024 at 10:35:19AM +0200, Philipp Stanner wrote:
+> > pci_intx() is a hybrid function which can sometimes be managed
+> > through
+> > devres. This hybrid nature is undesirable.
+> >=20
+> > Since all users of pci_intx() have by now been ported either to
+> > always-managed pcim_intx() or never-managed pci_intx_unmanaged(),
+> > the
+> > devres functionality can be removed from pci_intx().
+> >=20
+> > Consequently, pci_intx_unmanaged() is now redundant, because
+> > pci_intx()
+> > itself is now unmanaged.
+> >=20
+> > Remove the devres functionality from pci_intx(). Remove
+> > pci_intx_unmanaged().
+> > Have all users of pci_intx_unmanaged() call pci_intx().
+> >=20
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+>=20
+> I don't like when we change a function like this but it still
+> compiles fine.
+> If someone is working on a driver and hasn't pushed it yet, then it's
+> probably
+> supposed to be using the new pcim_intx() but they won't discover that
+> until they
+> detect the leaks at runtime.
 
+There wouldn't be any *leaks*, it's just that the INTx state would not
+automatically be restored. BTW the official documentation in its
+current state does not hint at pci_intx() doing anything automatically,
+but rather actively marks it as deprecated.
 
-On 10/10/2024 10:00 am, James Clark wrote:
-> 
-> 
-> On 10/10/2024 2:20 am, Arnaldo Carvalho de Melo wrote:
->> On Wed, Oct 9, 2024, 10:01 PM Namhyung Kim <namhyung@kernel.org> wrote:
->>
->>> On Tue, Oct 08, 2024 at 12:27:24AM -0700, Howard Chu wrote:
->>>> Hi Alan, Arnaldo and James,
->>>>
->>>> This problem was solved in [PATCH 0/2] perf trace: Fix support for the
->>>> new BPF feature in clang 12 (Link:
->>>>
->>> https://lore.kernel.org/linux-perf-users/20241007051414.2995674-1- 
->>> howardchu95@gmail.com/T/#t
->>> ),
->>>> sorry I forgot to cc you two.
->>>>
->>>> Alan's thought was correct. Thank you so much! :)
->>>
->>> It'd be great if any of you can test this change.  Now I only have
->>> machines with clang 16.
->>>
->>
->> I'll test this tomorrow.
->>
->> - Arnaldo
->>
->>>
->>> Thanks,
->>> Namhyung
->>>
->>>
->>
-> 
-> Tested with clang 15:
-> 
-> $ sudo perf trace -e write --max-events=100 -- echo hello
-> 
->    0.000 ( 0.014 ms): echo/834165 write(fd: 1, buf: hello\10, count: 6)
->                                             =
-> 
-> Tested-by: James Clark <james.clark@linaro.org>
-> 
+But you are right that a hypothetical new driver and OOT drivers could
+experience bugs through this change.
 
-Should have left this tag on the actual patch. Will re-post it there.
+>=20
+> Why not leave the pci_intx_unmanaged() name.=C2=A0 It's ugly and that wil=
+l
+> discorage
+> people from introducing new uses.
+
+I'd be OK with that. Then we'd have to remove pci_intx() as it has new
+users anymore.
+
+Either way should be fine and keep the behavior for existing drivers
+identical.
+
+I think Bjorn should express a preference
+
+P.
+
+>=20
+> regards,
+> dan carpenter
+>=20
 
 
