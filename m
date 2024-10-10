@@ -1,173 +1,175 @@
-Return-Path: <linux-kernel+bounces-358247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0130E997C00
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81248997C03
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235E41C23359
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2720C1F24B49
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9089019EEC0;
-	Thu, 10 Oct 2024 04:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B08D19E830;
+	Thu, 10 Oct 2024 04:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1h08fyz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uo7clEvs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17F4A15;
-	Thu, 10 Oct 2024 04:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0827339AB;
+	Thu, 10 Oct 2024 04:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728535840; cv=none; b=JSvPnzPRYeIYO5Hfj59eid0RKOnDgZaWhyweu5dn0iPr0PqgXc+SYMqLRfs1AOmH7voSCUhls2Mdin/izPfo748E6LXNWhe1xQQL1XW7sRR1gUCf+CokiTx7z1z5g80Pa4rOR+JagiKRz/ERwPl98u6dqeHBXPVHxmlGGK2DrqI=
+	t=1728535930; cv=none; b=rqFLxHlsiB8M9S/Mfy3/FfE9/E8s9LOoIfOLzcBjy2eJyQJZQvPfukpc8mnNeW3bxHub9Dy4Jf/j1hicgvXejjq6CDQx1lgQXoIPLOFNaK3AneSggqHqGbHo02f5EQNyviDXBUkuArbYycLoLfX/5oUK0Z+baBYFVNdwle1Wshw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728535840; c=relaxed/simple;
-	bh=SJQtIAt6QYdCs7oBad8yA/2kIDjGnFvxdNmmodWlddc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ng/lbCh69X0eu1ilS1saef3ZqQeK3Km5sJvnT8pUseXpi4l7XI1DiOL+lZSIDpa/PrYP6lzq5YN+dkiU4A2tYCb3BzrvSZVqsygSAMHOq9b2mmnMpAwwb/b5LEdd995AbjbXnLN81OylKqRyWvGd75HO2vr9CnWset+MsviIfn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1h08fyz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7059C4CECD;
-	Thu, 10 Oct 2024 04:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728535839;
-	bh=SJQtIAt6QYdCs7oBad8yA/2kIDjGnFvxdNmmodWlddc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O1h08fyzrJINl9jgqXJ7H/tJQxtp9rsWinT/+y31r42NSekGF972T9S/rVng+YOHU
-	 egfswxQKok59csdpdAmbJDNdZIMUfw1xPRIyKncDyq/anqJFiBnLWfVZwIUlS7jG8x
-	 phm4zl5mKZa4BdzrBFTHI+th9AmK+ldwz33qiLzWanwrHv//OE9k/3FkCBcgqcs02c
-	 i7V6Z0hnwnJhKjUtaNUc/N+Djylmjaa9QaPNR2EdFjhtiMwuqqyxu+Z0pbKr+ncnio
-	 yq2fnlpjAi21NDmPWOoSNC1YqjQp3kV4e4cZdqqA+6IG+wIfUdvSaslBq2yLkZaYo/
-	 0iFzweyXcF26w==
-Message-ID: <997f9f43-d8dd-499d-b37a-7109d06f4e8d@kernel.org>
-Date: Thu, 10 Oct 2024 06:50:28 +0200
+	s=arc-20240116; t=1728535930; c=relaxed/simple;
+	bh=vG+z0hB9QOJAHw7x1DQKho8mZLiIEA5OhquV4KvSbaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwSNEpOAEn8Q6tTYPnHNcUNjU0txABZTOikZqSIs0Zo2Ua9Zbh/2mr3vr/bPxJUAggCjU3Dxx7y6boLYPeCCOOeQDR6zv/GnsIMhkFlF7R3mAPhoT3bF2aW3ko/G20tVTV/B05Er7JsFyatlxGzDQ0yEqKwYzdnvkCGGOQWExhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uo7clEvs; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728535929; x=1760071929;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=vG+z0hB9QOJAHw7x1DQKho8mZLiIEA5OhquV4KvSbaI=;
+  b=Uo7clEvsazoVhJBGvKkdJhIAys22eRiBJ0OXT1SpifV84PPEw/359RM5
+   m3+P+JPluDOnnqH0RSxwRrtt2dta6xSKwR6ScsZVaxW8pG83Lf0sbkOH5
+   Zii5E4XOQ6p+RGD7HTg+VdmI+HR+M8tQtCaQX/aqP+XwyWSE3q2QLdjKq
+   a1dSH7vkVNk56wB20u6es+lbBzafGrKbEE+6Wcak/6MMtRcdOI95zJ6aR
+   h8ytr8xOxp523WQKEenCbBN1oBsuG/yqJpvtFIxFw9QMEiIfxcZ0YpohJ
+   /Q7b2g5NBaInP2/VJ9NsHEGfLiRKOLC0zLa3nAixIbMefqbJkulxYTsO7
+   g==;
+X-CSE-ConnectionGUID: 83kku5j0S2SmU9k1GTuENQ==
+X-CSE-MsgGUID: qrKsjTjdRGGTgC/nIR/+Zw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39264005"
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="39264005"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 21:52:08 -0700
+X-CSE-ConnectionGUID: /DGeCitOQ7+oGY3FaPEeUA==
+X-CSE-MsgGUID: J+o820GlQ96eYYYvJipFbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="77296249"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 09 Oct 2024 21:52:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 7D3ED192; Thu, 10 Oct 2024 07:52:04 +0300 (EEST)
+Date: Thu, 10 Oct 2024 07:52:04 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Kai-Heng Feng <kaihengfeng@gmail.com>, bhelgaas@google.com,
+	mario.limonciello@amd.com, linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
+Message-ID: <20241010045204.GE275077@black.fi.intel.com>
+References: <20240913080123.GP275077@black.fi.intel.com>
+ <20241009222403.GA507767@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 5/5] documentation: use nvmem-layout in examples
-To: Rosen Penev <rosenp@gmail.com>, devicetree@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- William Zhang <william.zhang@broadcom.com>,
- Anand Gore <anand.gore@broadcom.com>, Kursad Oney
- <kursad.oney@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Christian Marangi <ansuelsmth@gmail.com>,
- "open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
- "moderated list:BROADCOM BCMBCA ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-mediatek@lists.infradead.org>
-References: <20241009214847.67188-1-rosenp@gmail.com>
- <20241009214847.67188-6-rosenp@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241009214847.67188-6-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241009222403.GA507767@bhelgaas>
 
-On 09/10/2024 23:48, Rosen Penev wrote:
-> nvmem-cells are deprecated and replaced with nvmem-layout. For these
-> examples, replace. They're not relevant to the main point of the
-> document anyway.
+On Wed, Oct 09, 2024 at 05:24:03PM -0500, Bjorn Helgaas wrote:
+> On Fri, Sep 13, 2024 at 11:01:23AM +0300, Mika Westerberg wrote:
+> > On Fri, Sep 13, 2024 at 02:00:58PM +0800, Kai-Heng Feng wrote:
+> > > On Fri, Sep 13, 2024 at 12:57 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > On Thu, Sep 12, 2024 at 11:00:43AM +0800, Kai-Heng Feng wrote:
+> > > > > On Thu, Sep 12, 2024 at 3:05 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > > > On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
+> > > > > > > Some laptops wake up after poweroff when HP Thunderbolt
+> > > > > > > Dock G4 is connected.
+> > > > > > >
+> > > > > > > The following error message can be found during shutdown:
+> > > > > > > pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
+> > > > > > > pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
+> > > > > > > pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
+> > > > > > > pcieport 0000:09:04.0:    [ 7] BadDLLP
+> > > > > > >
+> > > > > > > Calling aer_remove() during shutdown can quiesce the error
+> > > > > > > message, however the spurious wakeup still happens.
+> > > > > > >
+> > > > > > > The issue won't happen if the device is in D3 before
+> > > > > > > system shutdown, so putting device to low power state
+> > > > > > > before shutdown to solve the issue.
+> > > > > > >
+> > > > > > > I don't have a sniffer so this is purely guesswork,
+> > > > > > > however I believe putting device to low power state it's
+> > > > > > > the right thing to do.
+> > > > > >
+> > > > > > My objection here is that we don't have an explanation of
+> > > > > > why this should matter or a pointer to any spec language
+> > > > > > about this situation, so it feels a little bit random.
+> > ...
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-You already got this comment, is something unclear?
-
->  .../mtd/partitions/qcom,smem-part.yaml        | 21 +++++++++++--------
->  .../bindings/net/marvell,aquantia.yaml        | 13 +++++++-----
->  2 files changed, 20 insertions(+), 14 deletions(-)
+> > I don't mean to confuse you guys but with this one too, I wonder if you
+> > tried to "disable" the device instead of putting it into D3? On another
+> > thread (Mario at least is aware of this) I mentioned that our PCIe SV
+> > folks identified a couple issues in Linux implementation around power
+> > management and one thing that we are missing is to disable I/O and MMIO
+> > upon entering D3.
+> > ...
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-> index 1c2b4e780ca9..c2cc11286d80 100644
-> --- a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-> +++ b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
-> @@ -23,7 +23,7 @@ properties:
->  
->  patternProperties:
->    "^partition-[0-9a-z]+$":
-> -    $ref: nvmem-cells.yaml
-> +    $ref: nvmem-layout.yaml
+> This is really interesting -- did they discover a functional problem,
+> or did they just notice that we don't follow the PCI PM spec?
 
-There is no such file here, so this should be full path /schemas/nvmem/....
+The latter.
 
-but is this a nvmem? Looks like MTD and NAND. Previously this was a
-partition, now it is not. I don't understand what you are trying to
-achieve here.
+> > +++ b/drivers/pci/pci.c
+> > @@ -2218,6 +2218,13 @@ static void do_pci_disable_device(struct pci_dev *dev)
+> >  		pci_command &= ~PCI_COMMAND_MASTER;
+> >  		pci_write_config_word(dev, PCI_COMMAND, pci_command);
+> >  	}
+> > +	/*
+> > +	 * PCI PM 1.2 sec 8.2.2 says that when a function is put into D3
+> > +	 * the OS needs to disable I/O and MMIO space in addition to bus
+> > +	 * mastering so do that here.
+> > +	 */
+> > +	pci_command &= ~(PCI_COMMAND_IO | PCI_COMMAND_MEMORY);
+> > +	pci_write_config_word(dev, PCI_COMMAND, pci_command);
+> >  
+> >  	pcibios_disable_device(dev);
+> >  }
+> 
+> This do_pci_disable_device() proposal is interesting.
+> 
+> pci_enable_device() turns on PCI_COMMAND_MEMORY and PCI_COMMAND_IO,
+> which enables the device to respond to MMIO and I/O port accesses to
+> its BARs from the driver.  It also makes sure the device is in D0,
+> because BAR access only works in D0.
+> 
+> pci_set_master() turns on PCI_COMMAND_MASTER, which enables the device
+> to perform DMA (including generating MSIs).
+> 
+> pci_disable_device() *sounds* like it should be the opposite of
+> pci_enable_device(), but it's currently basically the same as
+> pci_clear_master(), which clears PCI_COMMAND_MASTER to prevent DMA.
+> I didn't know about this text in 8.2.2, and I wish I knew why we
+> don't currently clear PCI_COMMAND_MEMORY and PCI_COMMAND_IO.
+> 
+> If we want to pursue this, I think it should be split to its own patch
+> and moved out of pci_disable_device() because I don't think this path
+> necessary implies putting the device in D3, so I think it would fit
+> better with the spec if we cleared PCI_COMMAND_MEMORY and
+> PCI_COMMAND_IO in a path that explicitly does put it in D3.
+> 
+> I think there's a significant chance of breaking something because
+> drivers are currently able to access BARs after pci_disable_device(),
+> and there are a LOT of callers.  But if there's a problem it would
+> fix, we should definitely explore it.
 
-Best regards,
-Krzysztof
-
+At the moment it does not seem to fix anything as far as I can tell so
+not sure how important it is. Of course from spec perspective we should
+probably deal with it.
 
