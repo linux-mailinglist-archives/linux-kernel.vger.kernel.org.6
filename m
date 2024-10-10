@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-359211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980069988C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:06:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CB99988C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 328CB1F230F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2081F229BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE051CB305;
-	Thu, 10 Oct 2024 14:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFE71CB513;
+	Thu, 10 Oct 2024 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEJwP06b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LA4TS5az"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5421C8FBA;
-	Thu, 10 Oct 2024 14:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F0B1CB326;
+	Thu, 10 Oct 2024 14:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569180; cv=none; b=PkuqnW8hUDJHc9NobpCFPN2P3z7v8syP511gyrvgXkmoDMGehTl645oGsvsA1+Mp5o2vqwQFpcuuHY+CFxlLerPVL2E2romLQRcocU0H7oWYflyhurAm2v8YiVneyIivbfmhABBuWqd6CkpFShYRJcQiw0TimR+vhtGD3ooDSA0=
+	t=1728569225; cv=none; b=n/Zc/dyEStLP3tJByw/12tk7p8rI0H7K5c8r13RXQjlmGcY/wmiw88g8DZRuUGQLDicoCy6+LmbKQf92r2zc3uOeoFU6rYdg1lYmyrqMuKcrNDuDUs8i7uAdDMXXdeDbCDsbru+RGtD7y4WtRRCvhTzzk/gJHt4vzmtMlKYcunM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569180; c=relaxed/simple;
-	bh=JutsYus4gJc7pvGb6/yexVCO//qodS3hmI4MIw7beGY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=D5JtluQl1GcYGbO+nEAA2fB8yH8DB5+jXu2vDdoxgECojrquTKbL2CJq91LukEACMumW3ItNLPnButWpz2iOdN9ZUh7xWMqtFhx3zm/Fdo6LyMChVLClTuBcxi/78S8NT8KpcBtlrLS3CvRfLhSetYZwR1aByu0w2Ax+U+TTABc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEJwP06b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A85F4C4CEC5;
-	Thu, 10 Oct 2024 14:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728569177;
-	bh=JutsYus4gJc7pvGb6/yexVCO//qodS3hmI4MIw7beGY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pEJwP06ba+Sf56kqjzkH6tDMcZ6NNTrf/vGq5oeWM978Gec16yGQcglIdgXMRk5e2
-	 riImnfHItHW4ubKvg9TSNc1/2ew83Y96as/t5+lraVj5sDhJPPb5OfC/Nya5VhlWl1
-	 PxVnWKcQne3NWQeFLjO0V2NEWOKp18DgAa6QMb9SzDvH5j5oCG7V2HUI2Y2moYsWGG
-	 0ew2wZ3fx5Ix93q7noQI3L/ULhXJOrddrYW/F9uvKpQMqJvbCujFuZm5JkFf5s487a
-	 bjeqGbBEH72SDXGn+18T0Q4PB8zxolXmiQ/qUbV4LrQjB8EsK8uNFHApPhFw8yZe0n
-	 W4oLjRwze7/LQ==
-Date: Thu, 10 Oct 2024 23:06:13 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, mark.rutland@arm.com,
- mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/fgraph: Simplify return address printing in
- function graph tracer
-Message-Id: <20241010230613.9eb8d8e156789037bf52593b@kernel.org>
-In-Reply-To: <CAErzpmtyA9hh611jGS=FHT9K4YyfsRv5=9mg6YLD2m5XQS8dyw@mail.gmail.com>
-References: <172851694646.226680.6609563595100451829.stgit@devnote2>
-	<CAErzpmtyA9hh611jGS=FHT9K4YyfsRv5=9mg6YLD2m5XQS8dyw@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728569225; c=relaxed/simple;
+	bh=+VIJR/jRN35W8TUo7LIlgUYGvs9YkZvUmGdSwGjTx2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=htSQ2eViRtHtqmeL41U1VHLUqO/Scq8ikh8g0/bsD2H1lTPDe7BnkAheH5UztsfTDMe5vxMoBZUNxWKL30x5h+C+xCw06GBwMJkVTkeNRitskmsf2ZTf/7QSWWy2NSxnOh/pk+o2/bKdoDqDO0G/rMRUC77kp2gwhSOCUg3jKXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LA4TS5az; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728569225; x=1760105225;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+VIJR/jRN35W8TUo7LIlgUYGvs9YkZvUmGdSwGjTx2c=;
+  b=LA4TS5azzqR+ul5DWMEgjz0ZyCg5+ArZdlL9jJiaoMlwJanOibYPBfH5
+   izTxQ1W9xAPmRLfyBdcrz7tG2shcWVtvJblzte3QtB20MPYEcWQY98sVQ
+   BXoiRzOxqTICtCsuj8mxjum3/RByhV46gEBQT90iGd+X4nQozocMnwjAB
+   mIn8D0tYe7CjTLCjTW9/ahcrHIO6B3dv/LKUd/9uOE6HdqXnQK4fp24K0
+   JZwGQraorH1tHl8bM1SPkZYMaWi9nwOxfN6C0/ranuStxOsOgcwrKwcvS
+   bsfsU/uJ9LeKfTcldYKsfJqmcjP1bX/id4MdxeNtHykgmZeC0UjyH0Uc0
+   Q==;
+X-CSE-ConnectionGUID: 9weIRhmVSeKRiwCScBH6VA==
+X-CSE-MsgGUID: kp+87TyFR5G1yedn5GB5OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28065196"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="28065196"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:06:47 -0700
+X-CSE-ConnectionGUID: silB9qaRRry0dLuH+nGr2w==
+X-CSE-MsgGUID: LhyR3bcRSFOB7iqNiCs7IQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="81184419"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:06:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sytoQ-00000001YYZ-3o2I;
+	Thu, 10 Oct 2024 17:06:42 +0300
+Date: Thu, 10 Oct 2024 17:06:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: Re: [PATCH 13/13] media: i2c: ds90ub953: Add error handling for i2c
+ reads/writes
+Message-ID: <ZwffcuhmpndoCXrD@smile.fi.intel.com>
+References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
+ <20241004-ub9xx-fixes-v1-13-e30a4633c786@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-ub9xx-fixes-v1-13-e30a4633c786@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 10 Oct 2024 10:40:02 +0800
-Donglin Peng <dolinux.peng@gmail.com> wrote:
+On Fri, Oct 04, 2024 at 05:46:44PM +0300, Tomi Valkeinen wrote:
+> Add error handling for i2c reads/writes in various places.
 
-> On Thu, Oct 10, 2024 at 7:35 AM Masami Hiramatsu (Google)
-> <mhiramat@kernel.org> wrote:
-> >
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
-> > Simplify return address printing in the function graph tracer by removing
-> > fgraph_extras. Since this feature is only used by the function graph
-> > tracer and the feature flags can directly accessible from the function
-> > graph tracer, fgraph_extras can be removed from the fgraph callback.
-> >
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  include/linux/ftrace.h               |   16 ++++--------
-> >  kernel/trace/fgraph.c                |   45 ++++++++++++++++++++++------------
-> >  kernel/trace/ftrace.c                |    3 +-
-> >  kernel/trace/trace.h                 |    3 +-
-> >  kernel/trace/trace_functions_graph.c |   14 +++++------
-> >  kernel/trace/trace_irqsoff.c         |    3 +-
-> >  kernel/trace/trace_sched_wakeup.c    |    3 +-
-> >  kernel/trace/trace_selftest.c        |    8 ++----
-> >  8 files changed, 48 insertions(+), 47 deletions(-)
-> >
-> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> > index 2ac3b3b53cd0..997e1f0335b6 100644
-> > --- a/include/linux/ftrace.h
-> > +++ b/include/linux/ftrace.h
-> > @@ -1068,29 +1068,20 @@ struct ftrace_graph_ret {
-> >         unsigned long long rettime;
-> >  } __packed;
-> >
-> > -struct fgraph_extras;
-> >  struct fgraph_ops;
-> >
-> >  /* Type of the callback handlers for tracing function graph*/
-> >  typedef void (*trace_func_graph_ret_t)(struct ftrace_graph_ret *,
-> >                                        struct fgraph_ops *); /* return */
-> >  typedef int (*trace_func_graph_ent_t)(struct ftrace_graph_ent *,
-> > -                                     struct fgraph_ops *,
-> > -                                     struct fgraph_extras *); /* entry */
-> > +                                     struct fgraph_ops *); /* entry */
-> >
-> >  extern int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace,
-> > -                                  struct fgraph_ops *gops,
-> > -                                  struct fgraph_extras *extras);
-> > +                                  struct fgraph_ops *gops);
-> >  bool ftrace_pids_enabled(struct ftrace_ops *ops);
-> >
-> >  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> >
-> > -/* Used to convey some extra datas when creating a graph entry */
-> > -struct fgraph_extras {
-> > -       u32 flags;
-> > -       unsigned long retaddr;
-> > -};
-> > -
-> >  struct fgraph_ops {
-> >         trace_func_graph_ent_t          entryfunc;
-> >         trace_func_graph_ret_t          retfunc;
-> > @@ -1131,12 +1122,15 @@ function_graph_enter(unsigned long ret, unsigned long func,
-> >
-> >  struct ftrace_ret_stack *
-> >  ftrace_graph_get_ret_stack(struct task_struct *task, int skip);
-> > +unsigned long ftrace_graph_top_ret_addr(struct task_struct *task);
-> >
-> >  unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-> >                                     unsigned long ret, unsigned long *retp);
-> >  unsigned long *fgraph_get_task_var(struct fgraph_ops *gops);
-> >
-> >  u32 graph_tracer_flags_get(u32 flags);
-> > +#define graph_tracer_flags_is_set(flags)       \
-> > +       (graph_tracer_flags_get(flags) == (flags))
-> 
-> Do we need to retain the function graph_tracer_flags_get? it will be
-> only invoked in the
-> file trace_functions_graph.c, so we may access the tracer_flags
-> variable directly.
+...
 
-Good catch!
-Let me send v2.
+> +	ret = ub953_write(priv, UB953_REG_CLKOUT_CTRL1, clkout_ctrl1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
 
-Thanks!
+This is just a more verbose version of
 
+	return ub953_write(priv, UB953_REG_CLKOUT_CTRL1, clkout_ctrl1);
+
+...
+
+> -	ub953_write_clkout_regs(priv, &clkout_data);
+> -
+> -	return 0;
+> +	return ub953_write_clkout_regs(priv, &clkout_data);
+
+...and seems you use that pattern.
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
 
