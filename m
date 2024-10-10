@@ -1,81 +1,51 @@
-Return-Path: <linux-kernel+bounces-359162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363A4998836
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1EE99883A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5244B24ED9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4FB1C20B7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D04E1CB524;
-	Thu, 10 Oct 2024 13:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gIQbxEz1"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0691CB328;
+	Thu, 10 Oct 2024 13:48:35 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7311CB307
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C560A1C9EA6;
+	Thu, 10 Oct 2024 13:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568078; cv=none; b=bcpuTo/3B5DF0YazGQyBAllz2oHmXnI1rM8SZex8xilYo2Ty9zMge/iyyYrA1y9YYFr0WsBvF3rdk42jSTPwJzb3cBtFjihEWitz9uw9osnliclrGf36XdI/N6HPpJrIG5dA9sP+6vOy7NtnLZCRt/+/RHlQIaf9QjdMH9y+TGs=
+	t=1728568115; cv=none; b=SNyzig7bwrqpLdM5ZjWM4HAuTQQTRYBtWWGDTUk7rmIv1GfrvMoqM4HuI3yGiHA2mG/eSdPhhELaBjn4KkNbX+6B9k3q4NbmytLyf7w7EjkN0TRZ0OBGmBEc+P8vPqNQgoIuvCR8fEJyC3bOfgp6RJKgy1c596++SjeF/1Xjbyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568078; c=relaxed/simple;
-	bh=YCktKjLn0MSEw2PJMMzh38/Oa32wsLHWQSGx36/qLTE=;
+	s=arc-20240116; t=1728568115; c=relaxed/simple;
+	bh=B+SRA3wGamZN+Jkbv4ADv2rNdpKnl2uX8ctXhrniUVc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umPahVc8BrGQPu0KtqEr32g72pWqGxo22vd5X309QfJqIzw4zDRGlAFMjcYPj3XGCjIPcWzW+si0mRRzM9S2XFEyYwgLEY2sWLNkVCvaugAF9IfhESfFdQsPa7z8h8712cWTFN0BIazxLs1jhA4fLKtyxrDgOhWO5Y5AMfdr9y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gIQbxEz1; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5398f3be400so1069564e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:47:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728568075; x=1729172875; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P72PVJgi4uitEzWkX+CGhxiijiq09qyKhZsAdOcJJtA=;
-        b=gIQbxEz1ERcL/lrrrn3U9xlIumMU0XQvl9PAS7fCQyghM6UrJMnBMu4m2AsaK+fEfA
-         BAG3cjgox1WDgusI7P2goGNd04H55LSGgvKDjvQnJ55Y4paK/8HMY9QVvmF0D0ghilGw
-         2Gnp9YTc+buwRsF3VNHPMmYxFzjSwq9Dy5VczAJ1SZ44gP6aETxwLmWP2+Z6bQuZTPBJ
-         22dj1Urs4ABTltlifJbvitP/OZgoAAp1VC8kN9Nvpfmj6Y1oUz5/5UCnbhPMxQSM54zD
-         32eM7WIbUKOZmjXgUOVNOG2vTGGFKzgd8TAdURhrdV4R/+s8rNdoZzHAXdQEQ4XOybe9
-         +H6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568075; x=1729172875;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P72PVJgi4uitEzWkX+CGhxiijiq09qyKhZsAdOcJJtA=;
-        b=R5MRf5vqUcWkZTX49bvvnQ8nDjc+8nia16B9/Gk7qRLC1VYZCh12svcMIoVBJnHd4/
-         qgPyy+njWiMB4/2I9KMttiQhGwseBHiSDI82vClHLBOUnPg/6kkfKgvX2Uj2QZjQodbq
-         OPNaIjfI5hO/aP453VDCsI2nIkAAmZ9VikeyTlsnnCED4TkqBZ34CYCY5UXEIoJzfHD2
-         CGRFEfR/DgdqZu8MgmyzKbuGkPTehYsrVqNF7aBhIasS8gEJpvKPN6QuIFV7bg4/2Zi7
-         o1RqzK7ARB4LfEOliwcGUr5E08c++sRfU8ILvYK1lv8d/+nZDio5kOouaf24SClRWZ46
-         8u1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtXvosi/9gZBvoKc85RaEVoXRamSSjJrQPPJIGkper5HoMO1RB7CngRqyoTjMrJiC1NC9mnsDODzxQRDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztseVHb+LZ3HLNluxhpyzue0fPHXI9ab4eVdwohrOsqMCM3e4B
-	F7b1Lm1aUGvenpBFO7UyqKljAbgeSehPGji1v5rwfK98HY2EB8qX1eG7p7jb/cc=
-X-Google-Smtp-Source: AGHT+IEjiQ58D2UdYLj6Yl92fdF2u466WimLIPKrNDpd4Kv0zCmXqRdfPWW59v1LOM5jtmbzLl3WsQ==
-X-Received: by 2002:a05:6512:23a9:b0:535:6a4d:ed74 with SMTP id 2adb3069b0e04-539c496114amr4079862e87.51.1728568075061;
-        Thu, 10 Oct 2024 06:47:55 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb9059f1sm255143e87.301.2024.10.10.06.47.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:47:53 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:47:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
-	agross@kernel.org, andersson@kernel.org, linux-kernel@vger.kernel.org, 
-	konrad.dybcio@linaro.org, mchehab@kernel.org, quic_vgarodia@quicinc.com, 
-	stanimir.k.varbanov@gmail.com, kvalo@kernel.org, quic_jjohnson@quicinc.com, 
-	ath11k@lists.infradead.org
-Subject: Re: [PATCH v4] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-Message-ID: <asvhh4kzq6s6yz3wrqfmuolcnlonoobogoh45pnq4zdr44lpxs@zgarzpduk2sk>
-References: <20241010132902.2882939-1-quic_miaoqing@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwTjXc1mCHPYxnkKfot2R5Jk4BsxTu3gsm8gwLE64FSVsQgmUp0vSBZoPwng/jVxgFVl6iTXllKAVjysm9Ud6UnBJGID579KH0Q09DWNDVCpKYtwo5EuxUyD4sjCfGr6cQlBTabrAWyYjlsbWtSxSFQXI8XlpIWgUdH44Huri5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sytWl-0000zX-5H; Thu, 10 Oct 2024 15:48:27 +0200
+Date: Thu, 10 Oct 2024 15:48:27 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Richard Weinberger <richard@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, kadlec@netfilter.org, pablo@netfilter.org,
+	rgb@redhat.com, paul@paul-moore.com, upstream+net@sigma-star.at,
+	Florian Westphal <fw@strlen.de>
+Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
+Message-ID: <20241010134827.GC30424@breakpoint.cc>
+References: <20241009203218.26329-1-richard@nod.at>
+ <20241009213345.GC3714@breakpoint.cc>
+ <3048359.FXINqZMJnI@somecomputer>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,30 +54,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010132902.2882939-1-quic_miaoqing@quicinc.com>
+In-Reply-To: <3048359.FXINqZMJnI@somecomputer>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Oct 10, 2024 at 09:29:02PM GMT, Miaoqing Pan wrote:
-> Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
-> board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
+Richard Weinberger <richard@sigma-star.at> wrote:
+> Am Mittwoch, 9. Oktober 2024, 23:33:45 CEST schrieb Florian Westphal:
+> > There is no need to follow ->file backpointer anymore, see
+> > 6acc5c2910689fc6ee181bf63085c5efff6a42bd and
+> > 86741ec25462e4c8cdce6df2f41ead05568c7d5e,
+> > "net: core: Add a UID field to struct sock.".
 > 
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> ---
-> v2:
->   - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
->   - relocate pcieport0 node in alphabetical order.
-> v3:
->   - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
-> v4:
->   - update 'ath11k-calibration-variant' to "Ride".
+> Oh, neat!
+>  
+> > I think we could streamline all the existing paths that fetch uid
+> > from sock->file to not do that and use sock_net_uid() instead as well.
+>  
+> Also xt_owner?
 
-What exactly is Ride? Is there just one Ride board? I thought it's a
-board family name.
-
-Also, could you please extend the commit message with messages from the
-ath11k driver, showing the chip_id / board_id ?
-
-
--- 
-With best wishes
-Dmitry
+sk->sk_uid is already used e.g. for fib lookups so I think it makes
+sense to be consistent, so, yes, xt_owner, nfqueue, nft_meta.c, all can
+be converted.
 
