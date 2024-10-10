@@ -1,77 +1,94 @@
-Return-Path: <linux-kernel+bounces-359537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E824B998CD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798C5998CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76074282FC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFC6B281D15
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75261CDFB4;
-	Thu, 10 Oct 2024 16:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AB31CDFB4;
+	Thu, 10 Oct 2024 16:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4tfqS4j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Df7q5HwW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488761CDA23;
-	Thu, 10 Oct 2024 16:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FAA1CDA23;
+	Thu, 10 Oct 2024 16:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728576529; cv=none; b=nTnciphc91aPDBZdx7s9g1JVzIMyowvwW2uTWC8zBhohw2QaDKtRgllsLRS31ATwjDLEM6ZSpV8RjsmD0UBBG6a/hkjSCDpA2FA//bgbh9Nba9J1kIyqZDXkxSKLJtPO5f7ppDWBJ8W9sN/YvxmYgOqz72F8pPhjnLTfDbkCyvc=
+	t=1728576661; cv=none; b=dvDechEOUeWXAYs2Xk32rYiRl4BCENeyoiFUQYK+OphSaYsoMMwStvJG7N9rRwLxWVmhCZ4H0RSXO4h0tQmDWGgckIyWH5i2vVIfO20ldx7xAF5BXlf5wsGVidnjyeU1JHHqHrDrYrU0MDmy9T1KY3xbmNHuLDHf9UP+JosMZ6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728576529; c=relaxed/simple;
-	bh=H/CDRM8cNCk2Uyzx9OYI7E5kI6hdfMo4nCgOpogddZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gyYpr9VO83o6hD9cjwVfNXEZKRJAr2prVhMBzvu31E44grSo8VUoaZMhr4G+d9fVAdnYgy1DewygyiN1iL5REuxXy+WskZA76Vx2DS4AIy3/eFDSYzwJVTCMwlo8sJSqyMlV2jjTBYES5ZXTnRGiJ+wb6MQ+z7hzUg6CB46sty4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4tfqS4j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E24B1C4CED1;
-	Thu, 10 Oct 2024 16:08:47 +0000 (UTC)
+	s=arc-20240116; t=1728576661; c=relaxed/simple;
+	bh=mO1M5lVTa79bIuXQiFTo7ewhsi/XZ+4dYMG4cO7vlzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n274qQt2fRuGFItuiLfImaO/A5Y6tvC0eHrQqy4zrN9dVtwdaPRZtG4rDeXtALdf9/mpeI05c+sduhh/+/UjXXOE1cAadTTFHid3++5IY/Sk4EkVhlaI4N/ax9OIOECyBNUamNZJOX4VIzUlMlEv4faRoCcK+IICRFk8DICkBoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Df7q5HwW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED3BBC4CEC5;
+	Thu, 10 Oct 2024 16:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728576528;
-	bh=H/CDRM8cNCk2Uyzx9OYI7E5kI6hdfMo4nCgOpogddZU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h4tfqS4j0eRoFhq9N4DOjFKqL0A82C7alpYPYR5aCfFq8bnx8fSxr9YCiYxvtEKAi
-	 3QVmFuztRGoqqjXvKbCY/lz3//8EyeKJUjBqMe+Ws8qKnMf42xEuk+EcsA3gJyqYr9
-	 YujEIrSTL/VF4LlHekER85L4JYSfACZkbqYR1wlqujTB2UEtBWWwCH2PKaEQGzHQfw
-	 MEhY6f8gXlYpusNfpYK/8a1rCweZHTG4w6qKALEVKIvhgO0v5U5suLF3RtdLUhxIlx
-	 DBekig2HEhssa7Pr5pVzOsiAUZhLJ6oppc8OZjkFWAJz/Bu90pVDM5Uc/MKTJNn9xw
-	 wIKRTMfSf1iqQ==
-Date: Thu, 10 Oct 2024 09:08:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
- mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
- bjorn@rivosinc.com, amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
- willemdebruijn.kernel@gmail.com, "David S. Miller" <davem@davemloft.net>,
- Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Jiri
- Pirko <jiri@resnulli.us>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, Kory
- Maincent <kory.maincent@bootlin.com>, Johannes Berg
- <johannes.berg@intel.com>, "open list:DOCUMENTATION"
- <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [net-next v5 5/9] net: napi: Add napi_config
-Message-ID: <20241010090846.1857dbae@kernel.org>
-In-Reply-To: <Zwf54UVvfyx830sk@LQ3V64L9R2>
-References: <20241009005525.13651-1-jdamato@fastly.com>
-	<20241009005525.13651-6-jdamato@fastly.com>
-	<CANn89iKytfwyax_d+7U8Xw-Wvj5z1d7xoi4LNhmUQphDiborDQ@mail.gmail.com>
-	<Zwf54UVvfyx830sk@LQ3V64L9R2>
+	s=k20201202; t=1728576660;
+	bh=mO1M5lVTa79bIuXQiFTo7ewhsi/XZ+4dYMG4cO7vlzU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Df7q5HwWj/ddG1mQzfquoASd/P0ba6/mLr/A9DsPRwiQkm9mzBLIVW5gcDFXuABps
+	 jBe4/N6UmIPD3v1EeDhAejGxfFIm9Odrdnu8/Rw9X01AJ5tVu1Ow9wyvvKHNCq5UkP
+	 RAh2EKxkReQWRYoGgiL1YnY/oytaaDJoiImzmoej2JIiAtoiPqVQETD2KrF++cd3u4
+	 JKIoQyQIS2hqIyP0nOaknfOtDOn8Y9g+yxqLqxizWMWKzavnXcGibtwjsxdTcl+aEy
+	 enBdSDQuZ38nkzkJgqnhkq/q4Tc657nKFd1Ho+P5EItZVdnH5LdTL8BKkLCLvcbQKF
+	 8QZYy5MnYyc3Q==
+Date: Thu, 10 Oct 2024 09:10:57 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] perf cpumap: Correct for perf_cpu_map__merge()
+Message-ID: <Zwf8kTiphIRniYw9@google.com>
+References: <20240925195325.426533-1-leo.yan@arm.com>
+ <0a0bebe6-b104-4a84-9415-68fdee086a5f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0a0bebe6-b104-4a84-9415-68fdee086a5f@arm.com>
 
-On Thu, 10 Oct 2024 08:59:29 -0700 Joe Damato wrote:
-> Jakub: I hope that it's OK if I retain your Reviewed-by tag as the
-> change Eric suggested is a minor one?
+On Thu, Oct 10, 2024 at 04:01:21PM +0100, Leo Yan wrote:
+> On 9/25/24 20:53, Leo Yan wrote:
+> > perf_cpu_map__merge() has two arguments, 'orig' and 'other', as
+> > described in its original comment:
+> > 
+> > "orig either gets freed and replaced with a new map, or reused
+> > with no reference count change (similar to "realloc")
+> > other has its reference count increased."
+> > 
+> > This causes confusion due to the different reference counting on the CPU
+> > map objects, which complicates its usage and makes maintenance
+> > difficult. We also discussed this in the email [1].
+> > 
+> > This patch series makes that a new CPU map is allocated for the
+> > merging result, or the reference count is increased if an existing CPU
+> > map is reused. This means that once perf_cpu_map__merge() is invoked,
+> > the caller gains ownership of the resulting map and must release it
+> > with perf_cpu_map__put().
+> 
+> Gentle ping ...
 
-Yes
+Ian and Adrian, can you please review this patchset?
+
+Thanks,
+Namhyung
+
 
