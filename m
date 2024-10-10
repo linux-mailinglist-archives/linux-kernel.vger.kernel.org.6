@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-359107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4AE998791
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:24:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16B6998794
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02B9285D2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1461C22467
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D62F1C9DD5;
-	Thu, 10 Oct 2024 13:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A941C9DE4;
+	Thu, 10 Oct 2024 13:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="plgBF/Aa"
-Received: from pv50p00im-ztdg10012001.me.com (pv50p00im-ztdg10012001.me.com [17.58.6.51])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="uZWzoPcT"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8841C9B93
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3141C2457;
+	Thu, 10 Oct 2024 13:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566685; cv=none; b=ou5r8JTUfzqfsOab2PPyTp1LRq4hAaUKqfmsO8NmATOuDAkoMa+uYceo+kRsEhk0fPedHlFlLZWmliuKeV4jQTKBpcu73798dWhXKqeFbLyC7RSm1CJujpZX/LV293X29CNfJbViGje1Hc+CFQYd4EUlisIurtgIWVya3FYiuYY=
+	t=1728566776; cv=none; b=kf2HmOKE9N/0oDSFQV8OmS8c5d+BLaTjcB+D2sIah90KAbwjUv60Aj9KbM9K+k2KOtLQi5Pgt9h2NidHob1WcXTp2TUuR2apYhItq6s4Wx58+qkcUtdQnnBtbBvJA6Mfk+cuNJsZ8pYiGFlcGO+OB7O0GjBj5pfyZhNOIBm7mJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566685; c=relaxed/simple;
-	bh=RPUzWRPmZGtFyZr0kjLm7nOCKdJiTpjtAznJ/S9/Fu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JOyu4eX2heSg+g1LS4U41f0uKRfNiIZOTyFGizlPm9qDi6ZLOkMw9dpuQHe7QStMfG7J+4uTkbuu5CL4y3tiVcmfKkohDqhsY4gyYzWz6+Vkub/NJeHIOdGXVSNO5P+5/FHAMfGjQlJ4SzSRfDSZVK9JE2pWurSCsuUixa0ss+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=plgBF/Aa; arc=none smtp.client-ip=17.58.6.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1728566682;
-	bh=UN6iJmBioqcajfS273owz7jWyQHQYDCLoGRNIcRMsEc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=plgBF/AaALXUyCcwEzSU725LOltypIU++Xw3KTDZBrfeb+NkpQIy1PZHcKM5PE5E/
-	 7+2wFplxuHJcQDAS9iotTBjlMz0O4UsYdMhKWpi+XeB9oZmuUqIWn9CFkZPJUTa6zW
-	 kuuXZ80nBQ/GE+AyhxLlHbVZoPXq5B0YGS57pbgkjRWHdqXAGyZLbsWOOI+AaJHppm
-	 u+SW5KtExW6p5IlAjKENcOfqzU0Ai9/W8XZp9lPxoHTojRctSIMwVu/eDfip34Sw5d
-	 zIGUPJg+Zb94ClR2vvJqqZnf8fNPcys1Io96FVjiE6HpKuMxcx2AzEuk6QeGcIU9gM
-	 D5/X6C3Aa1zrQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10012001.me.com (Postfix) with ESMTPSA id 92FC5A009C;
-	Thu, 10 Oct 2024 13:24:38 +0000 (UTC)
-Message-ID: <d1438cf0-8bea-4125-a046-6e4abfbba2fd@icloud.com>
-Date: Thu, 10 Oct 2024 21:24:34 +0800
+	s=arc-20240116; t=1728566776; c=relaxed/simple;
+	bh=lbwvQcbDJsKhSQNGTExP3AgqlRBNb9vOza2lfHEioag=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OkFO2zFWkQYYBtqA2OMkU9nZc4qwD9ixNdxv6jEvRRL6WFHBU1vbdmurcFvGyfDEbeK24xZhythZvNOVlraii+zGjbqIfR2oTkShI+R+vJtUuCg2lleJPPoa3OgcNwGbZSFeMz4ipgwZBLYAyTxPjeptmII9vpxl2zqTJyC1Q6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=uZWzoPcT; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1728566756; x=1729171556; i=christian@heusel.eu;
+	bh=ZxURnu2H08+OwhwYM8XDXAevNHVNRfjBtJfTgxY1KTE=;
+	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uZWzoPcTBHAfk9YSOiUcDlX6xi0XjA8l4OeW55GJ9kLRSrKjK8KczW6GKqssGDGe
+	 tVFhBt/eSKIbht8g9tbUwsmVs+v4VE2Wxs43ooYQCt7PpQef1cr2zWS2OzUEiDoQG
+	 B+Hoy509WbrB80SJNlTA7NNFAnDP2ReXOcNIpsD7/HUoo6dE864Yvasqxz084AmbS
+	 QVnPwjIhCIR1ILfFdk+o2gKaaR8WilRqRB+4DuwUZcJpqU32gbE66JKCyp7RQHRb7
+	 Q+I6dq8OEGeZIczRx1JTEaCdcUOPTsq/5XD5IF8zGtpTFCCeUpmwg7U4hPLmH7FsQ
+	 1L+VVMH4HYFhTOilcg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from meterpeter.localdomain ([141.70.80.5]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1McHQA-1tZ3LE1H1I-00hv8U; Thu, 10 Oct 2024 15:25:56 +0200
+From: Christian Heusel <christian@heusel.eu>
+Date: Thu, 10 Oct 2024 15:25:25 +0200
+Subject: [PATCH] btrfs: send: cleanup unneeded variable in changed_verity
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] PM: sleep: wakeirq: Fix a serious logical error in
- dev_pm_disarm_wake_irq()
-To: Johan Hovold <johan@kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Johan Hovold <johan+linaro@kernel.org>,
- Tony Lindgren <tony@atomide.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
- <ZvqigTC7RvngLpme@hovoldconsulting.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <ZvqigTC7RvngLpme@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 3dxJ_xHJTHPaMZnECM4qYor-VgcqZdeW
-X-Proofpoint-GUID: 3dxJ_xHJTHPaMZnECM4qYor-VgcqZdeW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- phishscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410100089
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20241010-btrfs-return-cleanup-v1-1-3d7a7649530a@heusel.eu>
+X-B4-Tracking: v=1; b=H4sIAMTVB2cC/x3MywqDMBBG4VeRWXcg8YLgq5QunPhHBySViZaC+
+ O4Gl9/inJMyTJFpqE4y/DTrNxX4V0VhGdMM1qmYale33nnHslvMbNgPSxxWjOnYuOshIrFrgoB
+ Kuhmi/p/t+3NdN9jTLiRmAAAA
+X-Change-ID: 20241010-btrfs-return-cleanup-57ebbbf53cbe
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Christian Heusel <christian@heusel.eu>
+X-Mailer: b4 0.14.2
+X-Provags-ID: V03:K1:R8mcuuc5g1POkw3nnpQce73yHBzZvE9EWy3hyp94uMZ3roLAFoY
+ QkgcBft29CvN8qYcioCfNjG3Ln7f3Jrxc+4y153V34WpTRBS/leG064qC5hxi00pb64i9k2
+ sNpjxIva+GrgMKuFoPpHtqVGYRjJS48/3MHLZxPzEg7V5P7fCq/qsKO3UycINR7yYI6uVqj
+ A2Og/M15tKU43Z37TUJJw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZctUuu1v6GU=;w9OCmNNfC0Meonbhc8waVyhUy/X
+ K9Hxcxl4hzt3VHjmp85SsbMac8Jq/5V81GlIKC5eIGWoVJKWrHQfNgfmi6Xod3pRkk45RmnVC
+ Lg2vyvsv24WXS14ArfpP+IgHqGra0+8pnpbEgAlD8pttNUOk/CWszk/NaVlcCDLSg/HPhF6ff
+ ZWWL5Pf2Z5LJ5vANrqxH/aXuoC+5l8+pF+P1exkxGrkFiAqyStx1X0uttft2Rbd5S7smXDa3g
+ 2D/thhdVdAnfEGi+Bgx97Klmj5VZZztORrMojcxGfPqyTzPsM8GGHwhOTZ0y/yR94zqNispg7
+ rWED8VR5ajBB7dsJCV5x6+DN4cIr7hj/tyOzSMWAjj0uqf+ytAsF3RbbDJ8mluGotJIeiZ2rK
+ RwZI5G4zx2p9vQzTwR6jVjDWRLayGucFreDl4PN+8FxVBztcZNxD7IdPWsjlMjBq7GkiPNL+D
+ JxQlKfYmZEz+gddyyg6ZMr1l3kQ6733vxK2dDtigOeb+AAWkFWCa3/K4tvFPKLbHQ+PXVmoRV
+ ZKdnep0+1BOsvqLAINQmlwCyZqmXhBZba10HJSeGEOh7BGh19AQ0yWKiXTEGTY9VpMyX+v4YT
+ GhmMd9aF5DnGeWadVGsIJu9qaMD1jLvIVdeVae+DKI30cd2UZVZep5PYE1JqvxBD1EgaLqe16
+ XUfSAnLp3kPTuwait+mT4+6xISw99821mlz+i339u04kGQZjPNTQBJ6i6mCAbDQB1nZZkjiMo
+ JwZrBfzehThD/8VF9sTgSzPVe5wpR71qA==
 
-On 2024/9/30 21:07, Johan Hovold wrote:
-> On Sat, Sep 28, 2024 at 02:26:27AM -0700, Zijun Hu wrote:
->> IT is a serious logical error for dev_pm_disarm_wake_irq() not to disable
->> the wake irq enabled by dev_pm_arm_wake_irq()
-> 
-> You need to explain *why* you believe this is an error.
-> 
+As all changed_ functions need to return something, just return 0
+directly here, as the verity status is passed via the context.
 
-thank you for code review.
-sorry to give reply late due to travel.
+Suggested-by: David Sterba <dsterba@suse.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410092305.WbyqspH8-lkp@in=
+tel.com/
+Signed-off-by: Christian Heusel <christian@heusel.eu>
+=2D--
+ fs/btrfs/send.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-by convention, dev_pm_disarm_wake_irq() needs to undo the jobs done by
-dev_pm_arm_wake_irq(). but actually it does not do that.
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 7f48ba6c1c77a0862932bdeffdf7b350267ca544..3f7e100a63cd5e444f8cd76c24=
+114a5855a86e61 100644
+=2D-- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -7167,13 +7167,11 @@ static int changed_extent(struct send_ctx *sctx,
 
->> fixed by simply correcting
->> the wrong if condition.
-> 
-> Your commit message is basically just claims "P is wrong, fix P", which
-> doesn't really explain anything.
-> 
-> Writing good commit messages explaining what the problem is is not just
-> required because this is a collaborative project where others need to
-> understand your reasoning, but it also forces you as the author to think
-> through your changes, which can often prevent broken patches from being
-> submitted in the first place.
-> 
+ static int changed_verity(struct send_ctx *sctx, enum btrfs_compare_tree_=
+result result)
+ {
+-	int ret =3D 0;
+-
+ 	if (!sctx->cur_inode_new_gen && !sctx->cur_inode_deleted) {
+ 		if (result =3D=3D BTRFS_COMPARE_TREE_NEW)
+ 			sctx->cur_inode_needs_verity =3D true;
+ 	}
+-	return ret;
++	return 0;
+ }
 
-thanks for these good suggestions and will follow it for further patches
-(^^)(^^)
+ static int dir_changed(struct send_ctx *sctx, u64 dir)
 
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->> List relevant commits as following:
->>
->> johan+linaro@kernel.org  2023-07-13
->> Commit: 8527beb12087 ("PM: sleep: wakeirq: fix wake irq arming")
->>
->> tony@atomide.com  2018-02-09
->> Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
->>
->> The former commit fixes the later.
-> 
-> These references are relevant, but you need to include them in your
-> commit messages (above ---) and explain why.
-> 
+=2D--
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241010-btrfs-return-cleanup-57ebbbf53cbe
 
-got it, thank you
-
->> ---
->>  drivers/base/power/wakeirq.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
->> index 5a5a9e978e85..8b15f9a0e8f9 100644
->> --- a/drivers/base/power/wakeirq.c
->> +++ b/drivers/base/power/wakeirq.c
->> @@ -356,7 +356,7 @@ void dev_pm_disarm_wake_irq(struct wake_irq *wirq)
->>  		disable_irq_wake(wirq->irq);
->>  
->>  		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
->> -		    !(wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
->> +		    (wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
->>  			disable_irq_nosync(wirq->irq);
-> 
-> I think the current code works as intended.
->
-
-thank you for this point and let me do more investigation.
-(^^)
-
->>  	}
->>  }
-> 
-> Johan
+Best regards,
+=2D-
+Christian Heusel <christian@heusel.eu>
 
 
