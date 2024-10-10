@@ -1,168 +1,443 @@
-Return-Path: <linux-kernel+bounces-358989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FE499860B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:32:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E3899860D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A9791C23BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24D81C241C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F42221C6F44;
-	Thu, 10 Oct 2024 12:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30531C4635;
+	Thu, 10 Oct 2024 12:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4kw2GX4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V5t0wMOz"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10201C462A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89AB1C461F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563501; cv=none; b=V5B6nVuD7av7oRQeKBoRXQUSKJJDrwQ+s/XvwSEa9NP5o3u+ffHqHhOfbKvbxzMNXNDK41Jb5EyVVgGaXqYITbp5t9gekArUDKFSwaDY6nxN1znVvD615la/GZEwhueJbQMGruENvlkzEtYyBwrgvsY+uqhY2x+PWMqFOBxGE10=
+	t=1728563516; cv=none; b=UJG0w+EMdyEsFHmpr1w6m7Vhe6wnkb/zX1gHQvredrDZLhIQdGgSqJAOQHEimE5B0STxfd0ce7EEfdPQ4gYqgHRIVDtml2iPVPXVyZreOB062q3ocnA3GKbtKHF+Fj08rnPjNIfpFQGH2Sk2/WympfTyAbG90NW+tWdlwNjXBb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563501; c=relaxed/simple;
-	bh=L4ooXiCT1u8VDy2NKMaHzqDIECfnj5QbZHivTQRFVXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smWNdR44Jmo+Ki+Wr4v9eivSALQRRf9is+j1rNr0fuKwjqNSK9RtLSpoHIx8j1N65kVxmu4i6NI0dx4MA4Dw2iX+v1kLJRmnMMdHfhYy8tVkSTfmMmkZDTqVH+Bjd4FlyZjYqEl6lsOxPWyhILOUVj3+YQkRxdGxq5ykXVe8EA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4kw2GX4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728563498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yMLaQ5QkFa8Mr6Qfl8g21moI0yjtVUAR75K3syFBELE=;
-	b=E4kw2GX4yCrchyYHjTBM8uGThGV4/YGaUSfN/7lXpF3VBfWuJIy4BNB3zBZj07oY2yD1sb
-	qZUa45HR6kcGwSB4JEUcz78aAX9cS6mdtbRxhnW+1JcAHObxhi1OUdaQy/eTiwDuFKbYk4
-	DEeU2ukp0jJYNT8VxSkG7fySIoKrhSE=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-296-oIWyaeacNlGAFswY1yqNmg-1; Thu, 10 Oct 2024 08:31:37 -0400
-X-MC-Unique: oIWyaeacNlGAFswY1yqNmg-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2fb1c04af0bso7082551fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:31:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728563495; x=1729168295;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+	s=arc-20240116; t=1728563516; c=relaxed/simple;
+	bh=c11A/XXP2WzoIPdE4HYgPE5p6Pl1DbotJKHSAN69Nxg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sI/iBytoPLDPEWaDrt+QqVOkucs2HTlFejXDnM0VMp+8yhbePxfE6/F62PDjFp2KE/rkO26wGfRfHDXCQ4F+FtirBUjJ5JEdrfd1q8jh0TRAsNZiAdSXmBIyUJ9j2trQbfH0WbPu4qq/6Qj8uhfg7E593ky4c8IGIgNsfTicfKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V5t0wMOz; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a843bef98so114184566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1728563512; x=1729168312; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=yMLaQ5QkFa8Mr6Qfl8g21moI0yjtVUAR75K3syFBELE=;
-        b=Lp7ERtwBZ3RC6vpRY7N0BprDCAc9fh6toksAP+1NulRWPYpfRoar5mhlqHLANqgOav
-         IPwyPwvbrl232uPW4Nc0X02wMWN9H6MOJoftXIPITvouAqv4rYZnbKPGElP3sAJMN1lA
-         bX8JHad2xD7YldyqnGumjkOwGDYiMN2lj8zAPK6CN1v1k6ujG46keKYrgwBc9dd06BbD
-         Y7x4bEN+7HCZ15ETY5A2zNj7OeiH0xITHu/PG9EXE+c8Xx7yyGKsF8I+W3WB0I0LL/3M
-         rCrIYOxKucAFXCwlj4PEZcJPP71uy9xE2JJjbCAORLmXBrQGeLU9qlZQR/nLhD3vgv45
-         be/Q==
-X-Gm-Message-State: AOJu0YwUygpzn0/QiPnWXeYrL1xQqwvHL0PEi6JJRcCpC8uCznKZam5X
-	rZxI7c9PvCRmmiwRVoiILHf/KfRCXqWXlsePoEtlob2kA8LXEDPaSU7OJW0GaPsAdeWZyp0+A9K
-	QBygsuF9cHLxlmW7Vo/18yD0UHdyc4vBLcYH/Ya/n0RqDS0eMfjYJGEimHd3Xag==
-X-Received: by 2002:a05:6512:224a:b0:52f:154:661b with SMTP id 2adb3069b0e04-539c488d6b3mr3544281e87.11.1728563494625;
-        Thu, 10 Oct 2024 05:31:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnHr4Irxyr+RYVKlyujdagWkzSUYqYfjeKA3ExmFU3+AVt6K1LdKHp/baluH2R3E5i7h5IRg==
-X-Received: by 2002:a05:6512:224a:b0:52f:154:661b with SMTP id 2adb3069b0e04-539c488d6b3mr3544262e87.11.1728563494163;
-        Thu, 10 Oct 2024 05:31:34 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c742:9200:eb2e:74f9:6f5c:3040? (p200300cbc7429200eb2e74f96f5c3040.dip0.t-ipconnect.de. [2003:cb:c742:9200:eb2e:74f9:6f5c:3040])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d748dd50sm47931965e9.47.2024.10.10.05.31.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 05:31:33 -0700 (PDT)
-Message-ID: <e0e13b95-bc9a-4f4b-a721-379676725525@redhat.com>
-Date: Thu, 10 Oct 2024 14:31:31 +0200
+        bh=i00+tlk4mfyWBRDoWPDZnWruZu2qaQ8UaM3uG2ALdoE=;
+        b=V5t0wMOzgtUBrQdRIIFQD2/iMjZ2dZfqE1DN7sTi9mVFRRPe6RMrsedcLMtHKshPYH
+         5dK6aPq53nYBX3ADZKuBEzISxJErxdiTBuGLjIlIFzPrkPMaoIjCTSY7zGYwgK10qB8W
+         fS1hutUEsnZYI2qzUwwnLOCSClp+Y71cNawXy7EdXaWcExwCkf6KLZ5QZWDhyhDCo+5m
+         8RMbHTVtt6tsyKBRQywqiKwlUcrfTS4Zsma7JGCcAuac0X80iYjb4kG+B31k3WZlc4SN
+         1mQjSUGOgoYCzImvKhCDOmigfyWCyVtZkyXAZ+Mb+GWLrW6RYo0Rbx28T6GfJak2pHjt
+         zYQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728563512; x=1729168312;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i00+tlk4mfyWBRDoWPDZnWruZu2qaQ8UaM3uG2ALdoE=;
+        b=uM4TlrjmmkIHI0qfGni/0+z9fdzpMa+4whA5BiKrBLnuiU2SZ52MWVCLFCs3W5n2Gy
+         2EgSVLaul4foLpnZknVO6nDECZisMkulrE8FMhEYoLm4g78qf5vs3o2CsuoMvnaniBoz
+         Lwz1oL52DSqIvQ3YVcCMrV9bMz8hlzhqlkz4RINp6nRt867wY2X/Gd9/f9HUfkLtVXon
+         aXklOsF1dq0SmF6ycuqJDGzXVk32BZ86firu5QgsdpMtw/NO//TbsOVL7kWqCR55bm8q
+         0ze++jo9N8ovLCWmAVROo2OTkA2KRFF4dvdrqZWBK27gtnTYuCNl4vp20p4my5u37+RH
+         sX0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXLb4rIhypc5fUD6A0EYtPw++97WaIuX3kMnAqDvchqQcAI9zakRv/GWLFO/IB+Sua/2rLEJUyZr4plBes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaukoN49LcugOtBxCMdIAX42XccU0/fesA33LWN5rII13Tq9Cf
+	znuEW0p9RgjR30ZAKH6ZfhFzws9V7/DFfRal5uNPn4mnZais/F4KCwg/TzAg/8k=
+X-Google-Smtp-Source: AGHT+IGie4+Zg6o0Nh6mpie38stwtUpyzEbjyWMPC33p1QSWb8USkok26cll6pwexQdpvwTJTYjD5w==
+X-Received: by 2002:a17:907:3e14:b0:a99:37f5:de59 with SMTP id a640c23a62f3a-a998d34ba62mr543881466b.53.1728563511855;
+        Thu, 10 Oct 2024 05:31:51 -0700 (PDT)
+Received: from [192.168.3.3] (151.36.160.45.gramnet.com.br. [45.160.36.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f5b0aasm83665366b.92.2024.10.10.05.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 05:31:51 -0700 (PDT)
+Message-ID: <0d554ea7bd3f672d80a2566f9cbe15a151372c32.camel@suse.com>
+Subject: Re: [PATCH 1/1] selftests: livepatch: add test cases of stack_order
+ sysfs interface
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: Wardenjohn <zhangwarden@gmail.com>, jpoimboe@kernel.org, mbenes@suse.cz,
+ 	jikos@kernel.org, pmladek@suse.com, joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 10 Oct 2024 09:31:45 -0300
+In-Reply-To: <20241008075203.36235-2-zhangwarden@gmail.com>
+References: <20241008075203.36235-1-zhangwarden@gmail.com>
+	 <20241008075203.36235-2-zhangwarden@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] virtio-mem: s390x support
-To: Mario Casquero <mcasquer@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
-References: <20240910191541.2179655-1-david@redhat.com>
- <CAMXpfWvRy_fpNUXeVO_-0O9WXDYY8f+cBEQQvsqZD2g2043LaA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAMXpfWvRy_fpNUXeVO_-0O9WXDYY8f+cBEQQvsqZD2g2043LaA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 10.10.24 10:41, Mario Casquero wrote:
-> This series has been successfully tested along with the QEMU's series.
-> Virtio-mem devices could be resized, plugged and unplugged seamlessly.
-> The memory information displayed is correct and reboot doesn't cause
-> any issue.
-> 
-> Tested-by: Mario Casquero <mcasquer@redhat.com>
+On Tue, 2024-10-08 at 15:52 +0800, Wardenjohn wrote:
+> Add selftest test cases to sysfs attribute 'stack_order'.
+>=20
+> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+> ---
+> =C2=A0.../testing/selftests/livepatch/test-sysfs.sh | 71
+> +++++++++++++++++++
+> =C2=A0.../selftests/livepatch/test_modules/Makefile |=C2=A0 5 +-
+> =C2=A0.../test_klp_livepatch_noreplace.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 53 ++++++++++++++
+> =C2=A0.../test_klp_livepatch_noreplace2.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 53 ++++++++++++++
+> =C2=A0.../test_klp_livepatch_noreplace3.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 53 ++++++++++++++
+> =C2=A05 files changed, 234 insertions(+), 1 deletion(-)
+> =C2=A0create mode 100644
+> tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_nor
+> eplace.c
+> =C2=A0create mode 100644
+> tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_nor
+> eplace2.c
+> =C2=A0create mode 100644
+> tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_nor
+> eplace3.c
 
-Thanks a bunch for testing!
+IIUC, you only need to test the stack order by loading LP modules. In
+this case you could use our currently existing LP testing module for
+that, right? That's what we currently do when testing different sysfs
+attributes.
 
-If there are no more comments, I'll add the in-tree kernel update for 
-the new diag500 subcall and resend.
-
--- 
-Cheers,
-
-David / dhildenb
+>=20
+> diff --git a/tools/testing/selftests/livepatch/test-sysfs.sh
+> b/tools/testing/selftests/livepatch/test-sysfs.sh
+> index 05a14f5a7bfb..a086b62fb488 100755
+> --- a/tools/testing/selftests/livepatch/test-sysfs.sh
+> +++ b/tools/testing/selftests/livepatch/test-sysfs.sh
+> @@ -5,6 +5,9 @@
+> =C2=A0. $(dirname $0)/functions.sh
+> =C2=A0
+> =C2=A0MOD_LIVEPATCH=3Dtest_klp_livepatch
+> +MOD_LIVEPATCH_NOREPLACE=3Dtest_klp_livepatch_noreplace
+> +MOD_LIVEPATCH_NOREPLACE2=3Dtest_klp_livepatch_noreplace2
+> +MOD_LIVEPATCH_NOREPLACE3=3Dtest_klp_livepatch_noreplace3
+> =C2=A0
+> =C2=A0setup_config
+> =C2=A0
+> @@ -131,4 +134,72 @@ livepatch: '$MOD_LIVEPATCH': completing
+> unpatching transition
+> =C2=A0livepatch: '$MOD_LIVEPATCH': unpatching complete
+> =C2=A0% rmmod $MOD_LIVEPATCH"
+> =C2=A0
+> +start_test "sysfs test stack_order read"
+> +
+> +load_lp $MOD_LIVEPATCH_NOREPLACE
+> +
+> +check_sysfs_rights "$MOD_LIVEPATCH_NOREPLACE" "stack_order" "-r--r--
+> r--"
+> +check_sysfs_value=C2=A0 "$MOD_LIVEPATCH_NOREPLACE" "stack_order" "1"
+> +
+> +load_lp $MOD_LIVEPATCH_NOREPLACE2
+> +
+> +check_sysfs_rights "$MOD_LIVEPATCH_NOREPLACE2" "stack_order" "-r--r-
+> -r--"
+> +check_sysfs_value=C2=A0 "$MOD_LIVEPATCH_NOREPLACE2" "stack_order" "2"
+> +
+> +load_lp $MOD_LIVEPATCH_NOREPLACE3
+> +
+> +check_sysfs_rights "$MOD_LIVEPATCH_NOREPLACE3" "stack_order" "-r--r-
+> -r--"
+> +check_sysfs_value=C2=A0 "$MOD_LIVEPATCH_NOREPLACE3" "stack_order" "3"
+> +
+> +disable_lp $MOD_LIVEPATCH_NOREPLACE2
+> +unload_lp $MOD_LIVEPATCH_NOREPLACE2
+> +
+> +check_sysfs_rights "$MOD_LIVEPATCH_NOREPLACE" "stack_order" "-r--r--
+> r--"
+> +check_sysfs_value=C2=A0 "$MOD_LIVEPATCH_NOREPLACE" "stack_order" "1"
+> +check_sysfs_rights "$MOD_LIVEPATCH_NOREPLACE3" "stack_order" "-r--r-
+> -r--"
+> +check_sysfs_value=C2=A0 "$MOD_LIVEPATCH_NOREPLACE3" "stack_order" "2"
+> +
+> +disable_lp $MOD_LIVEPATCH_NOREPLACE3
+> +unload_lp $MOD_LIVEPATCH_NOREPLACE3
+> +
+> +disable_lp $MOD_LIVEPATCH_NOREPLACE
+> +unload_lp $MOD_LIVEPATCH_NOREPLACE
+> +
+> +check_result "% insmod test_modules/$MOD_LIVEPATCH_NOREPLACE.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH_NOREPLACE'
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': initializing patching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': completing patching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': patching complete
+> +% insmod test_modules/$MOD_LIVEPATCH_NOREPLACE2.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH_NOREPLACE2'
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': initializing patching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': completing patching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': patching complete
+> +% insmod test_modules/$MOD_LIVEPATCH_NOREPLACE3.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH_NOREPLACE3'
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': initializing patching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': completing patching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': patching complete
+> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH_NOREPLACE2/enabled
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': initializing unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': starting unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': completing unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE2': unpatching complete
+> +% rmmod $MOD_LIVEPATCH_NOREPLACE2
+> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH_NOREPLACE3/enabled
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': initializing unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': starting unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': completing unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE3': unpatching complete
+> +% rmmod $MOD_LIVEPATCH_NOREPLACE3
+> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH_NOREPLACE/enabled
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': initializing unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': starting unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': completing unpatching
+> transition
+> +livepatch: '$MOD_LIVEPATCH_NOREPLACE': unpatching complete
+> +% rmmod $MOD_LIVEPATCH_NOREPLACE"
+> +
+> =C2=A0exit 0
+> diff --git a/tools/testing/selftests/livepatch/test_modules/Makefile
+> b/tools/testing/selftests/livepatch/test_modules/Makefile
+> index e6e638c4bcba..dad6ca00d3e6 100644
+> --- a/tools/testing/selftests/livepatch/test_modules/Makefile
+> +++ b/tools/testing/selftests/livepatch/test_modules/Makefile
+> @@ -11,7 +11,10 @@ obj-m +=3D test_klp_atomic_replace.o \
+> =C2=A0	test_klp_state2.o \
+> =C2=A0	test_klp_state3.o \
+> =C2=A0	test_klp_shadow_vars.o \
+> -	test_klp_syscall.o
+> +	test_klp_syscall.o \
+> +	test_klp_livepatch_noreplace.o \
+> +	test_klp_livepatch_noreplace2.o \
+> +	test_klp_livepatch_noreplace3.o \
+> =C2=A0
+> =C2=A0# Ensure that KDIR exists, otherwise skip the compilation
+> =C2=A0modules:
+> diff --git
+> a/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace.c
+> b/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace.c
+> new file mode 100644
+> index 000000000000..ead609aeac67
+> --- /dev/null
+> +++
+> b/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace.c
+> @@ -0,0 +1,53 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2014 Seth Jennings <sjenning@redhat.com>
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/livepatch.h>
+> +
+> +#include <linux/seq_file.h>
+> +static int livepatch_cmdline_proc_show(struct seq_file *m, void *v)
+> +{
+> +	seq_printf(m, "%s: %s\n", THIS_MODULE->name,
+> +		=C2=A0=C2=A0 "this has been live patched with number 1");
+> +	return 0;
+> +}
+> +
+> +static struct klp_func funcs[] =3D {
+> +	{
+> +		.old_name =3D "cmdline_proc_show",
+> +		.new_func =3D livepatch_cmdline_proc_show,
+> +	}, { }
+> +};
+> +
+> +static struct klp_object objs[] =3D {
+> +	{
+> +		/* name being NULL means vmlinux */
+> +		.funcs =3D funcs,
+> +	}, { }
+> +};
+> +
+> +static struct klp_patch patch =3D {
+> +	.mod =3D THIS_MODULE,
+> +	.objs =3D objs,
+> +	.replace =3D false,
+> +};
+> +
+> +static int test_klp_livepatch_init(void)
+> +{
+> +	return klp_enable_patch(&patch);
+> +}
+> +
+> +static void test_klp_livepatch_exit(void)
+> +{
+> +}
+> +
+> +module_init(test_klp_livepatch_init);
+> +module_exit(test_klp_livepatch_exit);
+> +MODULE_LICENSE("GPL");
+> +MODULE_INFO(livepatch, "Y");
+> +MODULE_AUTHOR("Seth Jennings <sjenning@redhat.com>");
+> +MODULE_AUTHOR("Wardenjohn <zhangwarden@gmail.com>");
+> +MODULE_DESCRIPTION("Livepatch test: livepatch module");
+> diff --git
+> a/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace2.c
+> b/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace2.c
+> new file mode 100644
+> index 000000000000..8d54b0976be1
+> --- /dev/null
+> +++
+> b/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace2.c
+> @@ -0,0 +1,53 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2014 Seth Jennings <sjenning@redhat.com>
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/livepatch.h>
+> +
+> +#include <linux/seq_file.h>
+> +static int livepatch_cmdline_proc_show(struct seq_file *m, void *v)
+> +{
+> +	seq_printf(m, "%s: %s\n", THIS_MODULE->name,
+> +		=C2=A0=C2=A0 "this has been live patched with number 2");
+> +	return 0;
+> +}
+> +
+> +static struct klp_func funcs[] =3D {
+> +	{
+> +		.old_name =3D "cmdline_proc_show",
+> +		.new_func =3D livepatch_cmdline_proc_show,
+> +	}, { }
+> +};
+> +
+> +static struct klp_object objs[] =3D {
+> +	{
+> +		/* name being NULL means vmlinux */
+> +		.funcs =3D funcs,
+> +	}, { }
+> +};
+> +
+> +static struct klp_patch patch =3D {
+> +	.mod =3D THIS_MODULE,
+> +	.objs =3D objs,
+> +	.replace =3D false,
+> +};
+> +
+> +static int test_klp_livepatch_init(void)
+> +{
+> +	return klp_enable_patch(&patch);
+> +}
+> +
+> +static void test_klp_livepatch_exit(void)
+> +{
+> +}
+> +
+> +module_init(test_klp_livepatch_init);
+> +module_exit(test_klp_livepatch_exit);
+> +MODULE_LICENSE("GPL");
+> +MODULE_INFO(livepatch, "Y");
+> +MODULE_AUTHOR("Seth Jennings <sjenning@redhat.com>");
+> +MODULE_AUTHOR("Wardenjohn <zhangwarden@gmail.com>");
+> +MODULE_DESCRIPTION("Livepatch test: livepatch module");
+> diff --git
+> a/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace3.c
+> b/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace3.c
+> new file mode 100644
+> index 000000000000..a267c58e07d4
+> --- /dev/null
+> +++
+> b/tools/testing/selftests/livepatch/test_modules/test_klp_livepatch_n
+> oreplace3.c
+> @@ -0,0 +1,53 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2014 Seth Jennings <sjenning@redhat.com>
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/livepatch.h>
+> +
+> +#include <linux/seq_file.h>
+> +static int livepatch_cmdline_proc_show(struct seq_file *m, void *v)
+> +{
+> +	seq_printf(m, "%s: %s\n", THIS_MODULE->name,
+> +		=C2=A0=C2=A0 "this has been live patched with number 3");
+> +	return 0;
+> +}
+> +
+> +static struct klp_func funcs[] =3D {
+> +	{
+> +		.old_name =3D "cmdline_proc_show",
+> +		.new_func =3D livepatch_cmdline_proc_show,
+> +	}, { }
+> +};
+> +
+> +static struct klp_object objs[] =3D {
+> +	{
+> +		/* name being NULL means vmlinux */
+> +		.funcs =3D funcs,
+> +	}, { }
+> +};
+> +
+> +static struct klp_patch patch =3D {
+> +	.mod =3D THIS_MODULE,
+> +	.objs =3D objs,
+> +	.replace =3D false,
+> +};
+> +
+> +static int test_klp_livepatch_init(void)
+> +{
+> +	return klp_enable_patch(&patch);
+> +}
+> +
+> +static void test_klp_livepatch_exit(void)
+> +{
+> +}
+> +
+> +module_init(test_klp_livepatch_init);
+> +module_exit(test_klp_livepatch_exit);
+> +MODULE_LICENSE("GPL");
+> +MODULE_INFO(livepatch, "Y");
+> +MODULE_AUTHOR("Seth Jennings <sjenning@redhat.com>");
+> +MODULE_AUTHOR("Wardenjohn <zhangwarden@gmail.com>");
+> +MODULE_DESCRIPTION("Livepatch test: livepatch module");
 
 
