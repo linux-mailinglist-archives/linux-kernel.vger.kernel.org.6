@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-360133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33066999503
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED3C99952C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6981F246E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79BFF286DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB7E1E2839;
-	Thu, 10 Oct 2024 22:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FBA1E7C02;
+	Thu, 10 Oct 2024 22:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOjDNuJb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="oK9dhEkg"
+Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6573719A2A3;
-	Thu, 10 Oct 2024 22:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61EA1E4928;
+	Thu, 10 Oct 2024 22:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598592; cv=none; b=HdOGsLMgD1/iR+bWJZxHqumrd1o9Z3TrUr5aZVoWQ/r32oegNgZIkHvFFnkOoICIFMgGn29eMr7BeaLfqgMK7bEerjPOFYjStt7wmnrRiPjsLFsjLJYSFi0Bba7/nShircNGaMRPD7nTNb+Qqw4rViD0XnrAkePy2lsGupDaEiU=
+	t=1728599084; cv=none; b=SaApH7YnmBw9fZM5sworY/vzBuXTigzq0CsQERlQ66xDVPnI2qQJ+MTmAh7Cb+ndUVqbQdMh3JcQKBrSw0ioRvXz1uT2OIPJ7eNi2Fnj7/hTlwumN5RiQeZSOpMgTfC8z7/gT/n1DJ86eb8PQWtoEe6tzRa02IPqz0jiFSVPE3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598592; c=relaxed/simple;
-	bh=/fSUe/XuT4djq6U2zM2gzmBo0xFuuCYD1/zFnLdp/QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YRshi/AN7o4onSPp5SG7VJ4iEEuGVFIToean06fX97KAFtJskKfiix9Qfu38U5I/CdRtSPQuEtJGRDZTKpYCv7eCyUsFuDd3x0HXlXi9YrYPfCz5tJtjfnM2D/+gbAASKUm4xWpF/3cLlCW38xWB3Ivorl/5pUw/qMCQrKvBAdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOjDNuJb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5136C4CEC5;
-	Thu, 10 Oct 2024 22:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728598591;
-	bh=/fSUe/XuT4djq6U2zM2gzmBo0xFuuCYD1/zFnLdp/QU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ZOjDNuJbForY00J9ZrwYA99p1VYOnT3JUgWwXgRVQ+fBnZSIImFd/K5x70FlGYEes
-	 wxEgP7tEOGaV6XBtHdmT9Wmr+22/QRGErM6dJHTul27R+qBAZdP0FuJh3u+6JUtF9V
-	 DH5nuDkADPqJIhdVztudOAEOJnYXxfQojAf4LS0/T/nBYEY4pnWfKesRyHZWlTofXM
-	 hLHC+etVaffbIFf1e5ig9awUHBcozyvz0Qunn+jvE/JHfmAzUOrHbHa80HDzwrryAy
-	 rPaHfkMotx9Shw+x8Fdj8iOoWejgiINbyZt1xoL64kOllpaxC8LahQftjfSmT/Nw3c
-	 wCPSNp9T/68mQ==
-Date: Thu, 10 Oct 2024 17:16:28 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lukas@wunner.de,
-	dan.j.williams@intel.com, bhelgaas@google.com, dave@stgolabs.net,
-	dave.jiang@intel.com, vishal.l.verma@intel.com,
-	Jonathan.Cameron@huawei.com
-Subject: Re: [PATCH] PCI/DOE: Poll DOE Busy bit for up to 1 second in
- pci_doe_send_req
-Message-ID: <20241010221628.GA580128@bhelgaas>
+	s=arc-20240116; t=1728599084; c=relaxed/simple;
+	bh=nnppAyg0uu9DQyucYYwiM38Kjn9/msZ/fi8oUktdXJw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FViIb1gsImIdwCxj8HngEeW7Znumf+VeK7CERB8jnASa1j59y/RcZJJ68TNsy4cSm1YfpUvZqu0H3iwcKO8tn8JBHLweAfVbTQ+NET5JzvnNwbFQxntWVXH0vqb6ARK+sqBiUWuG//eiltdu3w2Ie782PqthRAMNopJkPblX60k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=oK9dhEkg; arc=none smtp.client-ip=81.200.124.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
+	by ksmg02.maxima.ru (Postfix) with ESMTP id A57491E000E;
+	Fri, 11 Oct 2024 01:18:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru A57491E000E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1728598683; bh=oTVEzPYQGmSNBS05cQ2KHdUTxfJGHwOb/ByzaCoMz4w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=oK9dhEkg9c5s6EedS0v9cJGieopFVFcwlN3VrsLsKVv5jzrpbKtKDB9GhB2C3yqbI
+	 2w+we9qyW29gHehD7ZRnXsYNgxFdVfwuKqHYxpIjNnQTW5mjvP3N/xtlMaJH/JBxER
+	 peCCIwl2G96GlJDgHc07wZxVyvs4dsjVAHxwcP7WPO5oACuEwFhYxhlfaVukw2lupY
+	 PjBt5o1gWVwdmZy3TekerGK2xGjR+TVOSx1fo0zQvFSRDbOPZhFiUjrx/qOEnSyyJp
+	 WhABS1oA1yXHSktgsyQqvQL4/HQH8mqSctXcoX8IL/sogkDb4lE0jL9CArQ8gmMTgv
+	 up0j66hoaaXPA==
+Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg02.maxima.ru (Postfix) with ESMTPS;
+	Fri, 11 Oct 2024 01:18:03 +0300 (MSK)
+Received: from GS-NOTE-190.mt.ru (10.0.247.244) by mmail-p-exch02.mt.ru
+ (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Fri, 11 Oct
+ 2024 01:18:01 +0300
+From: Murad Masimov <m.masimov@maxima.ru>
+To: Jaroslav Kysela <perex@perex.cz>
+CC: Murad Masimov <m.masimov@maxima.ru>, Takashi Iwai <tiwai@suse.com>, Vitaly
+ Rodionov <vitalyr@opensource.cirrus.com>, <linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] ALSA: hda/cs8409: Fix possible NULL dereference
+Date: Fri, 11 Oct 2024 01:16:45 +0300
+Message-ID: <20241010221649.1305-1-m.masimov@maxima.ru>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004162828.314-1-gourry@gourry.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
+ (81.200.124.62)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188364 [Oct 10 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;81.200.124.62:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;maxima.ru:7.1.1;ksmg02.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/10 20:32:00 #26733528
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Fri, Oct 04, 2024 at 12:28:28PM -0400, Gregory Price wrote:
-> During initial device probe, the PCI DOE busy bit for some CXL
-> devices may be left set for a longer period than expected by the
-> current driver logic. Despite local comments stating DOE Busy is
-> unlikely to be detected, it appears commonly specifically during
-> boot when CXL devices are being probed.
-> 
-> This was observed on a single socket AMD platform with 2 CXL memory
-> expanders attached to the single socket. It was not the case that
-> concurrent accesses were being made, as validated by monitoring
-> mailbox commands on the device side.
-> 
-> This behavior has been observed with multiple CXL memory expanders
-> from different vendors - so it appears unrelated to the model.
-> 
-> In all observed tests, only a small period of the retry window is
-> actually used - typically only a handful of loop iterations.
-> 
-> Polling on the PCI DOE Busy Bit for (at max) one PCI DOE timeout
-> interval (1 second), resolves this issues cleanly.
-> 
-> Per PCIe r6.2 sec 6.30.3, the DOE Busy Bit being cleared does not
-> raise an interrupt, so polling is the best option in this scenario.
-> 
-> Subsqeuent code in doe_statemachine_work and abort paths also wait
-> for up to 1 PCI DOE timeout interval, so this order of (potential)
-> additional delay is presumed acceptable.
+If snd_hda_gen_add_kctl fails to allocate memory and returns NULL, then
+NULL pointer dereference will occur in the next line.
 
-I provisionally applied this to pci/doe for v6.13 with Lukas and
-Jonathan's reviewed-by.  
+Since dolphin_fixups function is a hda_fixup function which is not supposed
+to return any errors, add simple check before dereference, ignore the fail.
 
-Can we include a sample of any dmesg logging or other errors users
-would see because of this problem?  I'll update the commit log with
-any of this information to help users connect an issue with this fix.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> ---
->  drivers/pci/doe.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
-> index 652d63df9d22..27ba5d281384 100644
-> --- a/drivers/pci/doe.c
-> +++ b/drivers/pci/doe.c
-> @@ -149,14 +149,26 @@ static int pci_doe_send_req(struct pci_doe_mb *doe_mb,
->  	size_t length, remainder;
->  	u32 val;
->  	int i;
-> +	unsigned long timeout_jiffies;
->  
->  	/*
->  	 * Check the DOE busy bit is not set. If it is set, this could indicate
->  	 * someone other than Linux (e.g. firmware) is using the mailbox. Note
->  	 * it is expected that firmware and OS will negotiate access rights via
->  	 * an, as yet to be defined, method.
-> +	 *
-> +	 * Wait up to one PCI_DOE_TIMEOUT period to allow the prior command to
-> +	 * finish. Otherwise, simply error out as unable to field the request.
-> +	 *
-> +	 * PCIe r6.2 sec 6.30.3 states no interrupt is raised when the DOE Busy
-> +	 * bit is cleared, so polling here is our best option for the moment.
->  	 */
-> -	pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
-> +	timeout_jiffies = jiffies + PCI_DOE_TIMEOUT;
-> +	do {
-> +		pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
-> +	} while (FIELD_GET(PCI_DOE_STATUS_BUSY, val) &&
-> +		 !time_after(jiffies, timeout_jiffies));
-> +
->  	if (FIELD_GET(PCI_DOE_STATUS_BUSY, val))
->  		return -EBUSY;
->  
-> -- 
-> 2.43.0
-> 
+Fixes: 20e507724113 ("ALSA: hda/cs8409: Add support for dolphin")
+Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
+---
+ sound/pci/hda/patch_cs8409.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/pci/hda/patch_cs8409.c b/sound/pci/hda/patch_cs8409.c
+index 26f3c31600d7..614327218634 100644
+--- a/sound/pci/hda/patch_cs8409.c
++++ b/sound/pci/hda/patch_cs8409.c
+@@ -1403,8 +1403,9 @@ void dolphin_fixups(struct hda_codec *codec, const struct hda_fixup *fix, int ac
+ 		kctrl = snd_hda_gen_add_kctl(&spec->gen, "Line Out Playback Volume",
+ 					     &cs42l42_dac_volume_mixer);
+ 		/* Update Line Out kcontrol template */
+-		kctrl->private_value = HDA_COMPOSE_AMP_VAL_OFS(DOLPHIN_HP_PIN_NID, 3, CS8409_CODEC1,
+-				       HDA_OUTPUT, CS42L42_VOL_DAC) | HDA_AMP_VAL_MIN_MUTE;
++		if (kctrl)
++			kctrl->private_value = HDA_COMPOSE_AMP_VAL_OFS(DOLPHIN_HP_PIN_NID, 3, CS8409_CODEC1,
++					       HDA_OUTPUT, CS42L42_VOL_DAC) | HDA_AMP_VAL_MIN_MUTE;
+ 		cs8409_enable_ur(codec, 0);
+ 		snd_hda_codec_set_name(codec, "CS8409/CS42L42");
+ 		break;
+--
+2.39.2
+
 
