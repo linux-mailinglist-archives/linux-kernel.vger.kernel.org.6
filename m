@@ -1,139 +1,210 @@
-Return-Path: <linux-kernel+bounces-358657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA1599820D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:24:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B96998287
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34F62841DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381001F20C95
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161B71A072A;
-	Thu, 10 Oct 2024 09:24:09 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ADE1BBBC3;
+	Thu, 10 Oct 2024 09:39:23 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE9C17C22F;
-	Thu, 10 Oct 2024 09:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B301187859
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552248; cv=none; b=qSzc9BLAYVZcppRk4OrCpFosW46S5pPzWZmmhyNyN4AE8L7SqqRyi2NBzPGrfn26xGAXhMOACFHOEu2VZC2kkF3USCMdGEP/QGTcqevWf13NF0Wl3m07mRRz+x17Iz2hkrX6t3qQi1Ey9880qqrGJ0dz0WG7k3UhuhaOa2X8JzE=
+	t=1728553162; cv=none; b=Ggc3/cHwYILt6KA6b+7jvRVC6/Fc6bIFpj+3aZQafmv9/L1tjKT7eG7uzzQX3orm0NgOFPC3WS4WaBA5WVrDzL5EcvDi7pRjwgzq0DqnsOTk2XteF4NpcP73CHbJrMOpfsFk+cBm1CKAjK+QA7XaXIX4z+YfMRVCQTjxlKXSnaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552248; c=relaxed/simple;
-	bh=ghzwxPwNu8feBDF0hyGDHijR9VuaksqZcNMBiDbhfH4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fFEJkhw6yTs2MDpqCJqwoh3+oF4BfFm0TtjWvIt/caFWFzyYjVx34C5Bo9zdVbzbB1Bd4MaxJfSyxPbovUXAKbbIRB530zrfKCQ60Gzt/7m4EsLCaKhrYU7b0LwOSKHzD/8OzuEXafodybmUH2ypHAyxGECfkcL15zLe9xKE7As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPPSv4N0Xz4f3jdW;
-	Thu, 10 Oct 2024 17:23:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7AF541A058E;
-	Thu, 10 Oct 2024 17:24:00 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.127.227])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMgvnQdnqFHIDg--.40076S4;
-	Thu, 10 Oct 2024 17:24:00 +0800 (CST)
-From: Ye Bin <yebin@huaweicloud.com>
-To: djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	chandan.babu@oracle.com,
-	dchinner@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	yebin10@huawei.com,
-	zhangxiaoxu5@huawei.com
-Subject: [PATCH] xfs: fix dead loop when do mount with IO fault injection
-Date: Thu, 10 Oct 2024 17:38:35 +0800
-Message-Id: <20241010093835.1506926-1-yebin@huaweicloud.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1728553162; c=relaxed/simple;
+	bh=TUEExBDmXOMKGA7QMEpcIYMd2sXLOSkTm0h7tsDYN28=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=kbk5cdeEALDOJ3o7Cb/Sljjp+1l1S336IzB5+CixzCUgsYxDsrH3AzEj3+O3DBCf2kBccBj1ZpeLbaKlJCwci1PGYVIc+8yLGDTJkO4Ey4WDWicQG4TUzOUW56mWEKOohEe2MLCAPLv7U3kSqUV4ZXEU4QCN4oFW0SPzKX+KkY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XPPmk2nmYz1T88N;
+	Thu, 10 Oct 2024 17:37:26 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id EFCE218010F;
+	Thu, 10 Oct 2024 17:39:10 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 17:39:10 +0800
+Subject: Re: [patch 21/25] debugobjects: Implement batch processing
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+CC: Waiman Long <longman@redhat.com>
+References: <20241007163507.647617031@linutronix.de>
+ <20241007164914.258995000@linutronix.de>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <192cb914-556e-4617-fdfa-25bdc8c56f43@huawei.com>
+Date: Thu, 10 Oct 2024 17:39:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnXMgvnQdnqFHIDg--.40076S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr1UJF4xJw13ur13Gr4fGrg_yoW8KF4rp3
-	93Ga1DGrykWr45Cws2kas8K348K3yrCa1a9rs2g3W3X3ZxJryxKF1rtFnFgryDKFsYvry0
-	qr18Gw4DWw45Ca7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUbiF4tUUUUU==
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+In-Reply-To: <20241007164914.258995000@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-From: Ye Bin <yebin10@huawei.com>
 
-When do IO fault injection, mount maybe hung:
-blk_update_request: I/O error, dev dm-4, sector 2128216 op 0x0:(READ)
-flags 0x1000 phys_seg 1 prio class 0
-XFS (dm-4): metadata I/O error in "xfs_btree_read_buf_block.constprop.
-0+0x190/0x200 [xfs]" at daddr 0x207958 len 8 error 5
-blk_update_request: I/O error, dev dm-4, sector 2108042 op 0x1:(WRITE)
-flags 0x29800 phys_seg 1 prio class 0
-XFS (dm-4): log I/O error -5
-XFS (dm-4): Metadata I/O Error (0x1) detected at xfs_trans_read_buf_map
-+0x2b6/0x510 [xfs] (fs/xfs/xfs_trans_buf.c:296).  Shutting down filesystem.
-sd 6:0:0:3: [sdh] Synchronizing SCSI cache
-XFS (dm-4): Please unmount the filesystem and rectify the problem(s)
-XFS (dm-4): Failed to recover intents
-XFS (dm-4): Ending recovery (logdev: internal)
 
-xfs_buftarg_drain+0x53a/0x740
-xfs_log_mount_finish+0x2be/0x550
-xfs_mountfs+0x16ba/0x2220
-xfs_fs_fill_super+0x1376/0x1f10
-get_tree_bdev+0x44a/0x770
-vfs_get_tree+0x8d/0x350
-path_mount+0x1228/0x1cc0
-do_mount+0xf7/0x110
-__x64_sys_mount+0x193/0x230
-do_syscall_64+0x39/0xb0
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
+On 2024/10/8 0:50, Thomas Gleixner wrote:
+> Adding and removing single objects in a loop is bad in terms of lock
+> contention and cache line accesses.
+> 
+> To implement batching, record the last object in a batch in the object
+> itself. This is trivialy possible as hlists are strictly stacks. At a batch
+> boundary, when the first object is added to the list the object stores a
+> pointer to itself in debug_obj::batch_last. When the next object is added
+> to the list then the batch_last pointer is retrieved from the first object
+> in the list and stored in the to be added one.
+> 
+> That means for batch processing the first object always has a pointer to
+> the last object in a batch, which allows to move batches in a cache line
+> efficient way and reduces the lock held time.
 
-Above issue hapnens as xfs_buf log item is in AIL list, but xlog is already
-shutdown, so xfs_log_worker() will not wakeup xfsaild to submit AIL list.
-Then the last 'b_hold' will no chance to be decreased. Then
-xfs_buftarg_drain() will dead loop to free xfs_buf.
-To solve above issue there is need to push AIL list before call
-xfs_buftarg_drain(). As xfs_log_mount_finish() return error, xfs_mountfs()
-will call xfs_log_mount_cancel() to clean AIL list, and call
-xfs_buftarg_drain() to make sure all xfs_buf has been reclaimed. So what we
-need to do is call xfs_wait_buftarg() when 'error == 0' in
-xfs_log_mount_finish().
+It seems that adding a helper function hlist_cut_position() can make the code
+look more concise and clear. But there's a lot of patches now. We can do it
+later, and maybe I can do it then.
 
-Signed-off-by: Ye Bin <yebin10@huawei.com>
----
- fs/xfs/xfs_log.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Similar to the current list_cut_position():
+/**
+ * list_cut_position - cut a list into two
+ * @list: a new list to add all removed entries
+ * @head: a list with entries
+ * @entry: an entry within head
 
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 817ea7e0a8ab..b91892733b78 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -765,7 +765,9 @@ xfs_log_mount_finish(
- 	} else {
- 		xfs_info(mp, "Ending clean mount");
- 	}
--	xfs_buftarg_drain(mp->m_ddev_targp);
-+
-+	if (!error)
-+		xfs_buftarg_drain(mp->m_ddev_targp);
- 
- 	clear_bit(XLOG_RECOVERY_NEEDED, &log->l_opstate);
- 
+
+Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
+
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  lib/debugobjects.c |   61 +++++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 46 insertions(+), 15 deletions(-)
+> 
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -149,18 +149,31 @@ static __always_inline bool pool_must_re
+>  
+>  static bool pool_move_batch(struct obj_pool *dst, struct obj_pool *src)
+>  {
+> -	if (dst->cnt + ODEBUG_BATCH_SIZE > dst->max_cnt || !src->cnt)
+> +	struct hlist_node *last, *next_batch, *first_batch;
+> +	struct debug_obj *obj;
+> +
+> +	if (dst->cnt >= dst->max_cnt || !src->cnt)
+>  		return false;
+>  
+> -	for (int i = 0; i < ODEBUG_BATCH_SIZE && src->cnt; i++) {
+> -		struct hlist_node *node = src->objects.first;
+> +	first_batch = src->objects.first;
+> +	obj = hlist_entry(first_batch, typeof(*obj), node);
+> +	last = obj->batch_last;
+> +	next_batch = last->next;
+>  
+> -		WRITE_ONCE(src->cnt, src->cnt - 1);
+> -		WRITE_ONCE(dst->cnt, dst->cnt + 1);
+> +	/* Move the next batch to the front of the source pool */
+> +	src->objects.first = next_batch;
+> +	if (next_batch)
+> +		next_batch->pprev = &src->objects.first;
+> +
+> +	/* Add the extracted batch to the destination pool */
+> +	last->next = dst->objects.first;
+> +	if (last->next)
+> +		last->next->pprev = &last->next;
+> +	first_batch->pprev = &dst->objects.first;
+> +	dst->objects.first = first_batch;
+>  
+> -		hlist_del(node);
+> -		hlist_add_head(node, &dst->objects);
+> -	}
+> +	WRITE_ONCE(src->cnt, src->cnt - ODEBUG_BATCH_SIZE);
+> +	WRITE_ONCE(dst->cnt, dst->cnt + ODEBUG_BATCH_SIZE);
+>  	return true;
+>  }
+>  
+> @@ -182,16 +195,27 @@ static bool pool_push_batch(struct obj_p
+>  
+>  static bool pool_pop_batch(struct hlist_head *head, struct obj_pool *src)
+>  {
+> +	struct hlist_node *last, *next;
+> +	struct debug_obj *obj;
+> +
+>  	if (!src->cnt)
+>  		return false;
+>  
+> -	for (int i = 0; src->cnt && i < ODEBUG_BATCH_SIZE; i++) {
+> -		struct hlist_node *node = src->objects.first;
+> +	/* Move the complete list to the head */
+> +	hlist_move_list(&src->objects, head);
+>  
+> -		WRITE_ONCE(src->cnt, src->cnt - 1);
+> -		hlist_del(node);
+> -		hlist_add_head(node, head);
+> -	}
+> +	obj = hlist_entry(head->first, typeof(*obj), node);
+> +	last = obj->batch_last;
+> +	next = last->next;
+> +	/* Disconnect the batch from the list */
+> +	last->next = NULL;
+> +
+> +	/* Move the node after last back to the source pool. */
+> +	src->objects.first = next;
+> +	if (next)
+> +		next->pprev = &src->objects.first;
+> +
+> +	WRITE_ONCE(src->cnt, src->cnt - ODEBUG_BATCH_SIZE);
+>  	return true;
+>  }
+>  
+> @@ -226,7 +250,7 @@ static struct debug_obj *pcpu_alloc(void
+>  			if (!pool_move_batch(pcp, &pool_global))
+>  				return NULL;
+>  		}
+> -		obj_pool_used += pcp->cnt;
+> +		obj_pool_used += ODEBUG_BATCH_SIZE;
+>  
+>  		if (obj_pool_used > obj_pool_max_used)
+>  			obj_pool_max_used = obj_pool_used;
+> @@ -239,9 +263,16 @@ static struct debug_obj *pcpu_alloc(void
+>  static void pcpu_free(struct debug_obj *obj)
+>  {
+>  	struct obj_pool *pcp = this_cpu_ptr(&pool_pcpu);
+> +	struct debug_obj *first;
+>  
+>  	lockdep_assert_irqs_disabled();
+>  
+> +	if (!(pcp->cnt % ODEBUG_BATCH_SIZE)) {
+> +		obj->batch_last = &obj->node;
+> +	} else {
+> +		first = hlist_entry(pcp->objects.first, typeof(*first), node);
+> +		obj->batch_last = first->batch_last;
+> +	}
+>  	hlist_add_head(&obj->node, &pcp->objects);
+>  	pcp->cnt++;
+>  
+> 
+> .
+> 
+
 -- 
-2.31.1
-
+Regards,
+  Zhen Lei
 
