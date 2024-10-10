@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-359298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA8C9989E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:39:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C50B9989E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ED491F2A092
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED19289E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF5F1CF288;
-	Thu, 10 Oct 2024 14:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57E21C68B2;
+	Thu, 10 Oct 2024 14:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNYuneBR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urJG02DX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99CA1F12FE;
-	Thu, 10 Oct 2024 14:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CFA1F1319;
+	Thu, 10 Oct 2024 14:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570608; cv=none; b=cdGNl7XYjCsVXKIyUUGQZ8gbmKauJRwcVFBAwedMslGaJoVxqG1ym8ZX9tUq6A+RcvSUTKqartowdTEfaZ6pqm9e+91LW7MuduiPXY9o2thBtuVWyD3yW90E9O1osDobwo5dHTryIV+8uoZUcGC7XJPRk5RntZhDzaC3zmFWqpw=
+	t=1728570609; cv=none; b=IABHbn+ydsABsePS9+RHaaAIQ9a60QiOM/CmHhx9i3YwOh34Ra5Ws365Eq9ufiJpR7wPZb8eiQI9402jLujrZ7y21iYMVuCZYR9BUPHbQmMci5BX4D9n5aw+z446zWbGj1bYGAlHy4oG0vlrfFlr1nLBnuRjOL8Cd0ebdpPjbkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570608; c=relaxed/simple;
-	bh=ctkMf4tghZPNxc4SxxFSQUGrmC5LwwFvTKfi1PczQLg=;
+	s=arc-20240116; t=1728570609; c=relaxed/simple;
+	bh=OXYTseSavrvP5Laj4WRn5qD6AAIg2e7hd5QYSkTyaJ4=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=FD5vrURDdPVaqIckB9fmaW+RyE9NXpGLIvaXDFHD34pvA7hbs70UokZfc00tIXYF84SwJ1WEBn/2kMiT1Y5iUj8vXzbfKQur0Yb8WMLMnejv+xl0Em4hxIapVT1ill+V8xZwp4c0cNYd2oFsAcS3ckFOJgzdkYPJGv1N879ITQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNYuneBR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 606A5C4CEC5;
-	Thu, 10 Oct 2024 14:30:08 +0000 (UTC)
+	 Message-Id:Subject; b=LWLpIaRXW7yoRWIE3R1Nb9zOpif2XZA8AKRQY9BOEmS5hw+JHZeP49yoywDNm64DSAVRCSYPKmv8JYFuxRJeTFjZBVBkcIRBOD6FmwjsgtGCjJHr2r0BQlKX7m/7TW5ZPShgbPmLebFshPbcF1RMqid5NfQvZ/hKab6a+2t8G4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urJG02DX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8317AC4CEC5;
+	Thu, 10 Oct 2024 14:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728570608;
-	bh=ctkMf4tghZPNxc4SxxFSQUGrmC5LwwFvTKfi1PczQLg=;
+	s=k20201202; t=1728570609;
+	bh=OXYTseSavrvP5Laj4WRn5qD6AAIg2e7hd5QYSkTyaJ4=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=kNYuneBRPgrdSYUoufBHK8eEBzcnHWoTmAysjUZEyC82XDjQcObN1r9XsP62wGbAJ
-	 bSTx78Sa3iJKQ/nEYcxyo7GBN050jXXz5i1HVlHb/Njx8pYB94UX5M2QU7oeKcvOJl
-	 3+pu2KewTSKCo6sJWHUJ6QgpzXLy4khDpvlKfvvwwOFBsgzFeFc6bb5oVo1a48taGa
-	 AsHTE6Wzkzgo+GA9oTb7upv0Xgo6gKIENM5mFbVO0dn3hrt8sJfCr1gBM49c/5vCAY
-	 h4a0Kzxa1lPb2XhBCYydOX+8X9JZ7/9DApB5YfEkAwmNMVgehtx90ONJml36uS8pNh
-	 uW+6BP6xqhYnw==
-Date: Thu, 10 Oct 2024 09:30:07 -0500
+	b=urJG02DXdX02b2LP/wiaLOZwLu16lu8GyI4Jk1sRkMWWOfKWKjVVQCUReypybEDy3
+	 +cIQnCL3c6MUiKuSx5DkwuzFqMXyG0OPFRaWFLfk7pNEYEMBew3GfMj9Dd1qVxk50Y
+	 E3JUtZ8LeQNZBj/PChmbTCTmGecLlwKFPR6v3hKE8sZ48ZECOi44eUhXgxRQFt1KU+
+	 S9nKcEtAYMgTY5oV+MPlw0c47c/ycMLXj8IhZ0F6F36noUClXQNwB0z57pF0CYFC1C
+	 jvtsZzMg5N7o58qFRe83ugeXZtUuLZYBS9KBA9OToliDfrxNxYvl3foIByt4aKoNEH
+	 7pqBLnDZg3PGg==
+Date: Thu, 10 Oct 2024 09:30:08 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,30 +50,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Conor Dooley <conor.dooley@microchip.com>, Joel Stanley <joel@jms.id.au>, 
- Conor Dooley <conor+dt@kernel.org>, linux-aspeed@lists.ozlabs.org
-In-Reply-To: <20241010112337.3840703-1-naresh.solanki@9elements.com>
-References: <20241010112337.3840703-1-naresh.solanki@9elements.com>
-Message-Id: <172857036038.1533242.5775916298170949713.robh@kernel.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: arm: aspeed: add IBM SBP1 board
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+ claudiu.beznea@tuxon.dev, nicolas.ferre@microchip.com, krzk+dt@kernel.org, 
+ sre@kernel.org, mihai.sain@microchip.com, devicetree@vger.kernel.org, 
+ linux-pm@vger.kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20241010120142.92057-1-varshini.rajendran@microchip.com>
+References: <20241010120142.92057-1-varshini.rajendran@microchip.com>
+Message-Id: <172857036103.1533272.15935981992235971511.robh@kernel.org>
+Subject: Re: [PATCH v8 0/9] Add support for sam9x7 SoC family
 
 
-On Thu, 10 Oct 2024 16:53:31 +0530, Naresh Solanki wrote:
-> Document the new compatibles used on IBM SBP1.
+On Thu, 10 Oct 2024 17:31:42 +0530, Varshini Rajendran wrote:
+> This patch series adds support for the new SoC family - sam9x7.
+>  - The device tree, configs and drivers are added
+>  - Clock driver for sam9x7 is added
+>  - Support for basic peripherals is added
+>  - Target board SAM9X75 Curiosity is added
 > 
-> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> Changes in V4:
-> - Retain Acked-by from v2.
-> - Fix alphabetic order
-> ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  Changes in v8:
+>  --------------
+> 
+>  - Dropped patches that are applied from the series
+>  - Picked up Reviewed-by tags
+>  - Changed the node name from leds to led-controller in the board dts
+>    file.
+> 
+>  Changes in v7:
+>  --------------
+> 
+>  - Addressed all the review comments in the patches
+>  - Dropped patches that are applied from the series
+>  - Removed sfr node from the DT to add it later after creating the right
+>    DT documentation for microchip sfr IPs.
+>  - All the specific changes are captured in the corresponding patches
+> 
+>  Changes in v6:
+>  --------------
+> 
+>  - Addressed all the review comments in the patches
+>  - Picked up all Acked-by and Reviewed-by tags
+>  - Reverted the IRQ patch to that of version 3 of the same series
+>  - All the specific changes are captured in the corresponding patches
+> 
+>  Changes in v5:
+>  --------------
+> 
+>  - Addressed all the review comments in the patches
+>  - Picked up all Acked-by and Reviewed-by tags
+>  - Dropped applied patches from the series
+>  - Addressed the ABI breakage reported in the IRQ patch
+>  - All the specific changes are captured in the corresponding patches
+> 
+>  Changes in v4:
+>  --------------
+> 
+>  - Addressed all the review comments in the patches
+>  - Picked up all Acked-by and Reviewed-by tags
+>  - Dropped applied patches from the series
+>  - Added pwm node and related dt binding documentation
+>  - Added support for exporting some clocks to DT
+>  - Dropped USB related patches and changes. See NOTE.
+>  - All the specific changes are captured in the corresponding patches
+> 
+>  NOTE: Owing to the discussion here
+>  https://lore.kernel.org/linux-devicetree/CAL_JsqJ9PrX6fj-EbffeJce09MXs=B7t+KS_kOinxaRx38=WxA@mail.gmail.com/
+>  the USB related changes are dropped from this series in order to enable
+>  us to work on the mentioned issues before adding new compatibles as
+>  said. The issues/warnings will be addressed in subsequent patches.
+>  After which the USB related support for sam9x7 SoCs will be added. Hope
+>  this works out fine.
+> 
+>  Changes in v3:
+>  --------------
+> 
+>  - Fixed the DT documentation errors pointed out in v2.
+>  - Dropped Acked-by tag in tcb DT doc patch as it had to be adapted
+>    according to sam9x7 correctly.
+>  - Picked by the previously missed tags.
+>  - Dropped this patch "dt-bindings: usb: generic-ehci: Document clock-names
+>    property" as the warning was not found while validating DT-schema for
+>    at91-sam9x75_curiosity.dtb.
+>  - Dropped redundant words in the commit message.
+>  - Fixed the CHECK_DTBS warnings validated against
+>    at91-sam9x75_curiosity.dtb.
+>  - Renamed dt nodes according to naming convention.
+>  - Dropped unwanted status property in dts.
+>  - Removed nodes that are not in use from the board dts.
+>  - Removed spi DT doc patch from the series as it was already applied
+>    and a fix patch was applied subsequently. Added a patch to remove the
+>    compatible to adapt sam9x7.
+>  - Added sam9x7 compatibles in usb dt documentation.
+> 
+> 
+>  Changes in v2:
+>  --------------
+> 
+>  - Added sam9x7 specific compatibles in DT with fallbacks
+>  - Documented all the newly added DT compatible strings
+>  - Added device tree for the target board sam9x75 curiosity and
+>    documented the same in the DT bindings documentation
+>  - Removed the dt nodes that are not supported at the moment
+>  - Removed the configs added by previous version that are not supported
+>    at the moment
+>  - Fixed all the corrections in the commit message
+>  - Changed all the instances of copyright year to 2023
+>  - Added sam9x7 flag in PIT64B configuration
+>  - Moved macro definitions to header file
+>  - Added another divider in mck characteristics in the pmc driver
+>  - Fixed the memory leak in the pmc driver
+>  - Dropped patches that are no longer needed
+>  - Picked up Acked-by and Reviewed-by tags
+> 
+> Varshini Rajendran (9):
+>   dt-bindings: atmel-ssc: add microchip,sam9x7-ssc
+>   power: reset: at91-poweroff: lookup for proper pmc dt node for sam9x7
+>   power: reset: at91-reset: add reset support for sam9x7 SoC
+>   power: reset: at91-reset: add sdhwc support for sam9x7 SoC
+>   dt-bindings: reset: atmel,at91sam9260-reset: add sam9x7
+>   dt-bindings: power: reset: atmel,sama5d2-shdwc: add sam9x7
+>   ARM: dts: at91: sam9x7: add device tree for SoC
+>   dt-bindings: arm: add sam9x75 curiosity board
+>   ARM: dts: microchip: sam9x75_curiosity: add sam9x75 curiosity board
+> 
+>  .../devicetree/bindings/arm/atmel-at91.yaml   |    6 +
+>  .../devicetree/bindings/misc/atmel-ssc.txt    |    1 +
+>  .../power/reset/atmel,sama5d2-shdwc.yaml      |    3 +
+>  .../reset/atmel,at91sam9260-reset.yaml        |    4 +
+>  arch/arm/boot/dts/microchip/Makefile          |    3 +
+>  .../dts/microchip/at91-sam9x75_curiosity.dts  |  324 +++++
+>  arch/arm/boot/dts/microchip/sam9x7.dtsi       | 1220 +++++++++++++++++
+>  drivers/power/reset/Kconfig                   |    4 +-
+>  drivers/power/reset/at91-sama5d2_shdwc.c      |    1 +
+>  9 files changed, 1564 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
+>  create mode 100644 arch/arm/boot/dts/microchip/sam9x7.dtsi
+> 
+> --
+> 2.25.1
+> 
+> 
 > 
 
 
@@ -91,81 +208,26 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-ibm-sbp1.dtb' for 20241010112337.3840703-1-naresh.solanki@9elements.com:
+New warnings running 'make CHECK_DTBS=y microchip/at91-sam9x75_curiosity.dtb' for 20241010120142.92057-1-varshini.rajendran@microchip.com:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: timer: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: bus@1e600000: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: syscon@1e6e2000: 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/syscon@1e6e2000/interrupt-controller@560: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic0']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: adc@1e6e9000: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: adc@1e6e9100: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: crypto@1e6fa000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/video@1e700000: failed to match any schema with compatible: ['aspeed,ast2600-video-engine']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: lpc@1e789000: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@114: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: sdc@1e740000: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: sdc@1e740000: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/bus@1e78a000/i2c@280/bmc-slave@10: failed to match any schema with compatible: ['ipmb-dev']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mux@77: interrupts: False schema does not allow [[44, 4]]
-	from schema $id: http://devicetree.org/schemas/i2c/i2c-mux-pca954x.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu2@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu2@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu1@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu1@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu3@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu3@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu0@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu0@58: 'regulators' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: fsi@1e79b000: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: fsi@1e79b100: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
-arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
+arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
 
 
 
