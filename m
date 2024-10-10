@@ -1,200 +1,310 @@
-Return-Path: <linux-kernel+bounces-358561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC229980E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF78E9980D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39777283DF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EEDE1F2161B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7833D966;
-	Thu, 10 Oct 2024 08:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780DA1BDA8B;
+	Thu, 10 Oct 2024 08:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+PvIvUe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="d2B1znvl"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D423186607;
-	Thu, 10 Oct 2024 08:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0BE192D8C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728549725; cv=none; b=foRpqzf3QDuUJcpForxO3FEUbLyxesgl+8j2VL7bCHIUi7tImSwevPz/RI2Culzzl+xLTgbf4jPLeMnFY+U4ntngWLkFy54oh7902t87zjvSEMoSt/FUoDcJjWRuWskSfKdKLk2P6MZ/RCcZPivWnOr5DRDREtQRtqbTaORj7SM=
+	t=1728549564; cv=none; b=MV3FhwFtxtXuhJc6MGnHTD8yUBlhk9vlp/qHhInL4fDYTaN3k255y865+v7a8a6ZhM+vMgkeDTa3hsD3pzP+cjroyf5zBbSGlgxEyKYD/3LkzpTeyWFWhGqxkHf3KBDXNCatIwyvBs5C3l7xF5d9ZsP8X1kE8XW0P6uJWv/KPLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728549725; c=relaxed/simple;
-	bh=gPz0V1/A7NMEWjttCvillyhO8tdS22vPwwwZ6yc/VHU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TfzB8ApHMVGNbC8y6E0UovglSJlGXwSUywuoxPu8Dj1qxNoGZ9RZ/Uh7ltH3DI/txavlsaWSV3Jkpz61h1QP1M7PVTGvVpen6C5P6Fc+xtEoeQz26MV6L6EG6qP1NlRumVAucLIscPayySUM5M/XAVcMKo0yzBXiZVb42MLS3+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+PvIvUe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E251C4CECE;
-	Thu, 10 Oct 2024 08:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728549724;
-	bh=gPz0V1/A7NMEWjttCvillyhO8tdS22vPwwwZ6yc/VHU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=u+PvIvUeTqD/ATcZEX+kHWbjblum3KcBVdDvKYsgvO05M1/ADLurjwK3mGbzKHhHa
-	 t/TDtq/R47Vlq9RPtqgwppfbWmi8ce7CiPETu8f8P8vVcsf6ZC48leyQo8qrxn/yla
-	 lxI16PQoAgdqXEp67/Ckx1FzIFYkQTAPFicqk47S+LcooPZNLETZjt5Y5UythgGVWy
-	 j1/3aHK+NhtD7mw5ohj9W4wUTXr7TqidOhNFOC8rOKZmyVpkTe8WAa5lLfUMyIAgHd
-	 WD+/Y6RmyyGBKLMdplG2LD0OlKgPFVAVB608gefCcuSfqeKeI9HWWvcSsuy5r9N4Gs
-	 L1FfkenhI6iEg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Gary Guo" <gary@garyguo.net>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Greg KH"
- <gregkh@linuxfoundation.org>,  "Boqun Feng" <boqun.feng@gmail.com>,
-  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Jens Axboe" <axboe@kernel.dk>,  "Will Deacon"
- <will@kernel.org>,  "Peter Zijlstra" <peterz@infradead.org>,  "Mark
- Rutland" <mark.rutland@arm.com>,  <linux-block@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
-In-Reply-To: <87msjioax2.fsf@kernel.org> (Andreas Hindborg's message of "Sat,
-	05 Oct 2024 16:56:57 +0200")
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<20241004155247.2210469-4-gary@garyguo.net>
-	<OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
-	<2024100507-percolate-kinship-fc9a@gregkh> <87zfniop6i.fsf@kernel.org>
-	<CAH5fLghK1dtkF5bRpcRcu2SXZ6vgPoHGLRqW2=r0J3-2T3ALwQ@mail.gmail.com>
-	<fz1Ji-tl63pAnAOL2TkFwggNx45TTBONKOUcKAKq7e6ZOCX2KsklDS6Zbc_xqnMef1eevpM-a64Bui_nEg49mA==@protonmail.internalid>
-	<20241005142332.78b8b5d0.gary@garyguo.net> <87msjioax2.fsf@kernel.org>
-Date: Thu, 10 Oct 2024 10:39:08 +0200
-Message-ID: <871q0onyhf.fsf@kernel.org>
+	s=arc-20240116; t=1728549564; c=relaxed/simple;
+	bh=dCZuBk9Z9qNS8HU0hjwMIMOrDWce7O1Fl/3I1ZHY9To=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vDcgMt0Fgf4MtjYYTLVlxheQWUMnfto7oMNaX4Ihg4DDvrYLolN2RAgnbVAq7GZ+e/RrS5ZO9cYN8NjoUH5P8kfs9SK26J6PUmSfn9lHWvhR84ntvCKzgweTOp98JHejSYkQC2lKXvFwmnaDEv9JLlrXEQ/MfTQKID9s17ckM/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=d2B1znvl; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43055b43604so5834225e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1728549560; x=1729154360; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dCZuBk9Z9qNS8HU0hjwMIMOrDWce7O1Fl/3I1ZHY9To=;
+        b=d2B1znvlxLwTRdozBpEagjROstGILO8jwOsKW/i9rJ8r5lG2XKIHhUB4UsOISCt2/p
+         Lj6RD7rX6StaEpvimDmklpef+vCRvfQO3yeBunB/j/vXaEtPdbcqhmzbGa0/hAwz5rTW
+         V2TBSL9Ex/Qsl+WnVL1S6kxJDTww6pDMm9wdudvXRAK10TqpuURqhTaNiiEmc6lSOoS4
+         ow/rGcP7NkuSVEGdZ4w/NBseWVWKtnljib4YNZ4q+heIggqZ8YpZQMubHq1CNl+Fel4u
+         ny87wDnWeKxovC9a64L8ajFAYeH6xG6F1waVlrnZWiFfZGEFCDFse5MTHc9ja9MoDQkt
+         0yRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728549560; x=1729154360;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dCZuBk9Z9qNS8HU0hjwMIMOrDWce7O1Fl/3I1ZHY9To=;
+        b=eN618l6+iC1uMascwwqUfeF9bymVurM8xFX8vAhRgZjT1Es6Gt6bCf36a9eIB3CJdg
+         sC/81KDaablG8pqT5O8iCPNCtzTm2NjRWG7SMXm5u+TDVSGvkaUm5Rqbh9dlJxsGoU8C
+         CbxJy0sq8sq+MYj62PYHMXA1Nx+S1udKdlFUsOvNpPtBaMumDtDMT344LZGg7zibn2GV
+         KnTUmUgQAceWyx3stp4WSKiDNSPHNQGgjitIxLsCEo6zx04wCs2IA3JhDYBfJg21HleR
+         9tSN7qY0g4QxW+BZB7ecXijNDb1K9McZAe/IS5J7jbVypDCAfhrj0E+nvyoz4aFfwWUj
+         c63Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1szFb8zg0yTy4pxmcdLQWkwn4KyLrChqUKl96/iq8OpmF1CPOUmndkoSG5rd8tiDhy0bGWxdQkWuRdJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvoKnCuUr+Whmls5twvxcuruwtkImkTzcJMb0PDzVuT0CwsUf6
+	kBi46/PUGZtjfmOpX0t2lQlTlu7F+47YkhCgmSFCBPJFhNwfMb8YFF9I6CpIQZd1LP1Wx1HwG36
+	n
+X-Google-Smtp-Source: AGHT+IEGiVX4Qqrts3FDxq9q5ihtW24ru2VKa3ERbgHsOb0DhYJmQfXCuIngoIoHbbbce+zNT71UTg==
+X-Received: by 2002:a05:600c:3543:b0:430:699b:7d22 with SMTP id 5b1f17b1804b1-430d6facb53mr46326005e9.26.1728549560033;
+        Thu, 10 Oct 2024 01:39:20 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8714:8700:db3b:60ed:e8b9:cd28? (p200300e587148700db3b60ede8b9cd28.dip0.t-ipconnect.de. [2003:e5:8714:8700:db3b:60ed:e8b9:cd28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835c4fbsm8847405e9.39.2024.10.10.01.39.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 01:39:19 -0700 (PDT)
+Message-ID: <e7b98fbf-ee28-4083-a4c5-7dc122252e07@suse.com>
+Date: Thu, 10 Oct 2024 10:39:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] xen: Remove dependency between pciback and privcmd
+To: Jiqian Chen <Jiqian.Chen@amd.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+References: <20241010075848.1002891-1-Jiqian.Chen@amd.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20241010075848.1002891-1-Jiqian.Chen@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------5JLKjz3mUhBs0KD9nsYdqmCO"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------5JLKjz3mUhBs0KD9nsYdqmCO
+Content-Type: multipart/mixed; boundary="------------nKIDyJ1Fqtsi3Zi7CZrTsZD0";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Jiqian Chen <Jiqian.Chen@amd.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+Message-ID: <e7b98fbf-ee28-4083-a4c5-7dc122252e07@suse.com>
+Subject: Re: [PATCH v2] xen: Remove dependency between pciback and privcmd
+References: <20241010075848.1002891-1-Jiqian.Chen@amd.com>
+In-Reply-To: <20241010075848.1002891-1-Jiqian.Chen@amd.com>
+
+--------------nKIDyJ1Fqtsi3Zi7CZrTsZD0
+Content-Type: multipart/mixed; boundary="------------R64fdqNZBeRN9br6IgVuJq1i"
+
+--------------R64fdqNZBeRN9br6IgVuJq1i
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+T24gMTAuMTAuMjQgMDk6NTgsIEppcWlhbiBDaGVuIHdyb3RlOg0KPiBDb21taXQgMmZhZTZi
+YjdiZTMyICgieGVuL3ByaXZjbWQ6IEFkZCBuZXcgc3lzY2FsbCB0byBnZXQgZ3NpIGZyb20g
+ZGV2IikNCj4gYWRkcyBhIHdlYWsgcmV2ZXJzZSBkZXBlbmRlbmN5IHRvIHRoZSBjb25maWcg
+WEVOX1BSSVZDTUQgZGVmaW5pdGlvbiwgdGhhdA0KPiBkZXBlbmRlbmN5IGNhdXNlcyB4ZW4t
+cHJpdmNtZCBjYW4ndCBiZSBsb2FkZWQgb24gZG9tVSwgYmVjYXVzZQ0KPiBkZXBlbmRlbnQg
+eGVuLXBjaWJhY2sgaXMgYWx3YXlzIG5vdCBiZSBsb2FkZWQgc3VjY2Vzc2Z1bGx5IG9uIGRv
+bVUuDQo+IA0KPiBUbyBzb2x2ZSBhYm92ZSBwcm9ibGVtLCByZW1vdmUgdGhhdCBkZXBlbmRl
+bmN5LCBhbmQgZG8gbm90IGNhbGwNCj4gcGNpc3R1Yl9nZXRfZ3NpX2Zyb21fc2JkZigpIGRp
+cmVjdGx5LCBpbnN0ZWFkIGFkZCBhIGhvb2sgaW4NCj4gZHJpdmVycy94ZW4vYXBjaS5jLCB4
+ZW4tcGNpYmFjayByZWdpc3RlciB0aGUgcmVhbCBjYWxsIGZ1bmN0aW9uLCB0aGVuIGluDQo+
+IHByaXZjbWRfaW9jdGxfcGNpZGV2X2dldF9nc2kgY2FsbCB0aGF0IGhvb2suDQo+IA0KPiBG
+aXhlczogMmZhZTZiYjdiZTMyICgieGVuL3ByaXZjbWQ6IEFkZCBuZXcgc3lzY2FsbCB0byBn
+ZXQgZ3NpIGZyb20gZGV2IikNCj4gUmVwb3J0ZWQtYnk6IE1hcmVrIE1hcmN6eWtvd3NraS1H
+w7NyZWNraSA8bWFybWFyZWtAaW52aXNpYmxldGhpbmdzbGFiLmNvbT4NCj4gU2lnbmVkLW9m
+Zi1ieTogSmlxaWFuIENoZW4gPEppcWlhbi5DaGVuQGFtZC5jb20+DQo+IC0tLQ0KPiB2MS0+
+djIgY2hhbmdlczoNCj4gQWRkZWQgaG9vayB4ZW5fYWNwaV9nZXRfZ3NpX2Zyb21fc2JkZi4N
+Cj4gQ2hhbmdlZCBwY2lzdHViX2dldF9nc2lfZnJvbV9zYmRmIHRvIHN0YXRpYyBhbmQgcGNp
+YmFjayByZWdpc3RlciBpdCBhcyB0aGUgcmVhbCBob29rIGZ1bmN0aW9uLg0KPiAtLS0NCj4g
+ICBkcml2ZXJzL3hlbi9LY29uZmlnICAgICAgICAgICAgICAgIHwgIDEgLQ0KPiAgIGRyaXZl
+cnMveGVuL2FjcGkuYyAgICAgICAgICAgICAgICAgfCAxNyArKysrKysrKysrKysrKysrKw0K
+PiAgIGRyaXZlcnMveGVuL3ByaXZjbWQuYyAgICAgICAgICAgICAgfCAgNiArKy0tLS0NCj4g
+ICBkcml2ZXJzL3hlbi94ZW4tcGNpYmFjay9wY2lfc3R1Yi5jIHwgIDQgKystLQ0KPiAgIGlu
+Y2x1ZGUveGVuL2FjcGkuaCAgICAgICAgICAgICAgICAgfCAxMiArKysrLS0tLS0tLS0NCj4g
+ICA1IGZpbGVzIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMveGVuL0tjb25maWcgYi9kcml2ZXJzL3hlbi9L
+Y29uZmlnDQo+IGluZGV4IDcyZGRlZTRjMTU0NC4uZjdkNmY0Nzk3MWZkIDEwMDY0NA0KPiAt
+LS0gYS9kcml2ZXJzL3hlbi9LY29uZmlnDQo+ICsrKyBiL2RyaXZlcnMveGVuL0tjb25maWcN
+Cj4gQEAgLTI2MSw3ICsyNjEsNiBAQCBjb25maWcgWEVOX1NDU0lfQkFDS0VORA0KPiAgIGNv
+bmZpZyBYRU5fUFJJVkNNRA0KPiAgIAl0cmlzdGF0ZSAiWGVuIGh5cGVyY2FsbCBwYXNzdGhy
+b3VnaCBkcml2ZXIiDQo+ICAgCWRlcGVuZHMgb24gWEVODQo+IC0JaW1wbHkgWEVOX1BDSURF
+Vl9CQUNLRU5EDQo+ICAgCWRlZmF1bHQgbQ0KPiAgIAloZWxwDQo+ICAgCSAgVGhlIGh5cGVy
+Y2FsbCBwYXNzdGhyb3VnaCBkcml2ZXIgYWxsb3dzIHByaXZpbGVnZWQgdXNlciBwcm9ncmFt
+cyB0bw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy94ZW4vYWNwaS5jIGIvZHJpdmVycy94ZW4v
+YWNwaS5jDQo+IGluZGV4IDllMjA5NjUyNGZiYy4uMGJmZjJmM2E4N2QyIDEwMDY0NA0KPiAt
+LS0gYS9kcml2ZXJzL3hlbi9hY3BpLmMNCj4gKysrIGIvZHJpdmVycy94ZW4vYWNwaS5jDQo+
+IEBAIC0xMjUsMyArMTI1LDIwIEBAIGludCB4ZW5fYWNwaV9nZXRfZ3NpX2luZm8oc3RydWN0
+IHBjaV9kZXYgKmRldiwNCj4gICAJcmV0dXJuIDA7DQo+ICAgfQ0KPiAgIEVYUE9SVF9TWU1C
+T0xfR1BMKHhlbl9hY3BpX2dldF9nc2lfaW5mbyk7DQo+ICsNCj4gK2dldF9nc2lfZnJvbV9z
+YmRmX3QgZ2V0X2dzaV9mcm9tX3NiZGYgPSBOVUxMOw0KPiArDQo+ICt2b2lkIHhlbl9hY3Bp
+X3JlZ2lzdGVyX2dldF9nc2lfZnVuYyhnZXRfZ3NpX2Zyb21fc2JkZl90IGZ1bmMpDQo+ICt7
+DQo+ICsJZ2V0X2dzaV9mcm9tX3NiZGYgPSBmdW5jOw0KPiArfQ0KPiArRVhQT1JUX1NZTUJP
+TF9HUEwoeGVuX2FjcGlfcmVnaXN0ZXJfZ2V0X2dzaV9mdW5jKTsNCj4gKw0KPiAraW50IHhl
+bl9hY3BpX2dldF9nc2lfZnJvbV9zYmRmKHUzMiBzYmRmKQ0KPiArew0KPiArCWlmIChnZXRf
+Z3NpX2Zyb21fc2JkZikNCj4gKwkJcmV0dXJuIGdldF9nc2lfZnJvbV9zYmRmKHNiZGYpOw0K
+PiArDQo+ICsJcmV0dXJuIC1FSU5WQUw7DQo+ICt9DQo+ICtFWFBPUlRfU1lNQk9MX0dQTCh4
+ZW5fYWNwaV9nZXRfZ3NpX2Zyb21fc2JkZik7DQo+IFwgTm8gbmV3bGluZSBhdCBlbmQgb2Yg
+ZmlsZQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy94ZW4vcHJpdmNtZC5jIGIvZHJpdmVycy94
+ZW4vcHJpdmNtZC5jDQo+IGluZGV4IDMyNzNjYjhjMmE2Ni4uNGY3NWJjODc2NDU0IDEwMDY0
+NA0KPiAtLS0gYS9kcml2ZXJzL3hlbi9wcml2Y21kLmMNCj4gKysrIGIvZHJpdmVycy94ZW4v
+cHJpdmNtZC5jDQo+IEBAIC04NTAsMTUgKzg1MCwxMyBAQCBzdGF0aWMgbG9uZyBwcml2Y21k
+X2lvY3RsX21tYXBfcmVzb3VyY2Uoc3RydWN0IGZpbGUgKmZpbGUsDQo+ICAgc3RhdGljIGxv
+bmcgcHJpdmNtZF9pb2N0bF9wY2lkZXZfZ2V0X2dzaShzdHJ1Y3QgZmlsZSAqZmlsZSwgdm9p
+ZCBfX3VzZXIgKnVkYXRhKQ0KPiAgIHsNCj4gICAjaWYgZGVmaW5lZChDT05GSUdfWEVOX0FD
+UEkpDQo+IC0JaW50IHJjID0gLUVJTlZBTDsNCj4gKwlpbnQgcmM7DQo+ICAgCXN0cnVjdCBw
+cml2Y21kX3BjaWRldl9nZXRfZ3NpIGtkYXRhOw0KPiAgIA0KPiAgIAlpZiAoY29weV9mcm9t
+X3VzZXIoJmtkYXRhLCB1ZGF0YSwgc2l6ZW9mKGtkYXRhKSkpDQo+ICAgCQlyZXR1cm4gLUVG
+QVVMVDsNCj4gICANCj4gLQlpZiAoSVNfUkVBQ0hBQkxFKENPTkZJR19YRU5fUENJREVWX0JB
+Q0tFTkQpKQ0KPiAtCQlyYyA9IHBjaXN0dWJfZ2V0X2dzaV9mcm9tX3NiZGYoa2RhdGEuc2Jk
+Zik7DQo+IC0NCj4gKwlyYyA9IHhlbl9hY3BpX2dldF9nc2lfZnJvbV9zYmRmKGtkYXRhLnNi
+ZGYpOw0KPiAgIAlpZiAocmMgPCAwKQ0KPiAgIAkJcmV0dXJuIHJjOw0KPiAgIA0KPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy94ZW4veGVuLXBjaWJhY2svcGNpX3N0dWIuYyBiL2RyaXZlcnMv
+eGVuL3hlbi1wY2liYWNrL3BjaV9zdHViLmMNCj4gaW5kZXggMmYzZGE1YWM2MmNkLi45MDBl
+NjE5OWVlYzcgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMveGVuL3hlbi1wY2liYWNrL3BjaV9z
+dHViLmMNCj4gKysrIGIvZHJpdmVycy94ZW4veGVuLXBjaWJhY2svcGNpX3N0dWIuYw0KPiBA
+QCAtMjI3LDcgKzIyNyw3IEBAIHN0YXRpYyBzdHJ1Y3QgcGNpX2RldiAqcGNpc3R1Yl9kZXZp
+Y2VfZ2V0X3BjaV9kZXYoc3RydWN0IHhlbl9wY2lia19kZXZpY2UgKnBkZXYsDQo+ICAgfQ0K
+PiAgIA0KPiAgICNpZmRlZiBDT05GSUdfWEVOX0FDUEkNCj4gLWludCBwY2lzdHViX2dldF9n
+c2lfZnJvbV9zYmRmKHVuc2lnbmVkIGludCBzYmRmKQ0KPiArc3RhdGljIGludCBwY2lzdHVi
+X2dldF9nc2lfZnJvbV9zYmRmKHVuc2lnbmVkIGludCBzYmRmKQ0KPiAgIHsNCj4gICAJc3Ry
+dWN0IHBjaXN0dWJfZGV2aWNlICpwc2RldjsNCj4gICAJaW50IGRvbWFpbiA9IChzYmRmID4+
+IDE2KSAmIDB4ZmZmZjsNCj4gQEAgLTI0Miw3ICsyNDIsNiBAQCBpbnQgcGNpc3R1Yl9nZXRf
+Z3NpX2Zyb21fc2JkZih1bnNpZ25lZCBpbnQgc2JkZikNCj4gICANCj4gICAJcmV0dXJuIHBz
+ZGV2LT5nc2k7DQo+ICAgfQ0KPiAtRVhQT1JUX1NZTUJPTF9HUEwocGNpc3R1Yl9nZXRfZ3Np
+X2Zyb21fc2JkZik7DQo+ICAgI2VuZGlmDQo+ICAgDQo+ICAgc3RydWN0IHBjaV9kZXYgKnBj
+aXN0dWJfZ2V0X3BjaV9kZXZfYnlfc2xvdChzdHJ1Y3QgeGVuX3BjaWJrX2RldmljZSAqcGRl
+diwNCj4gQEAgLTQ4NCw2ICs0ODMsNyBAQCBzdGF0aWMgaW50IHBjaXN0dWJfaW5pdF9kZXZp
+Y2Uoc3RydWN0IHBjaXN0dWJfZGV2aWNlICpwc2RldikNCj4gICAJCWlmIChlcnIpDQo+ICAg
+CQkJZ290byBjb25maWdfcmVsZWFzZTsNCj4gICAJCXBzZGV2LT5nc2kgPSBnc2k7DQo+ICsJ
+CXhlbl9hY3BpX3JlZ2lzdGVyX2dldF9nc2lfZnVuYyhwY2lzdHViX2dldF9nc2lfZnJvbV9z
+YmRmKTsNCg0KSSBkb24ndCB0aGluayB0aGlzIGlzIHRoZSByaWdodCBwbGFjZSBmb3IgcmVn
+aXN0ZXJpbmcgdGhlIGZ1bmN0aW9uLg0KDQpJdCBzaG91bGQgYmUgZG9uZSBhdCB0aGUgZW5k
+IG9mIHhlbl9wY2lia19pbml0KCkgKGd1YXJkZWQgd2l0aCBDT05GSUdfWEVOX0FDUEkpLg0K
+DQpBZGRpdGlvbmFsbHkgeW91IHNob3VsZCByZXNldCB0aGUgZnVuY3Rpb24gcG9pbnRlciBO
+VUxMIGluIHhlbl9wY2lia19jbGVhbnVwKCkuDQoNCg0KSnVlcmdlbg0K
+--------------R64fdqNZBeRN9br6IgVuJq1i
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-> "Gary Guo" <gary@garyguo.net> writes:
->
->> On Sat, 5 Oct 2024 13:59:44 +0200
->> Alice Ryhl <aliceryhl@google.com> wrote:
->>
->>> On Sat, Oct 5, 2024 at 11:49=E2=80=AFAM Andreas Hindborg <a.hindborg@ke=
-rnel.org> wrote:
->>> >
->>> > Hi Greg,
->>> >
->>> > "Greg KH" <gregkh@linuxfoundation.org> writes:
->>> >
->>> > > On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
->>> > >> There is an operation needed by `block::mq`, atomically decreasing
->>> > >> refcount from 2 to 0, which is not available through refcount.h, so
->>> > >> I exposed `Refcount::as_atomic` which allows accessing the refcount
->>> > >> directly.
->>> > >
->>> > > That's scary, and of course feels wrong on many levels, but:
->>> > >
->>> > >
->>> > >> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &AR=
-ef<Self>) {
->>> > >>      /// C `struct request`. If the operation fails, `this` is ret=
-urned in the
->>> > >>      /// `Err` variant.
->>> > >>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::req=
-uest, ARef<Self>> {
->>> > >> -        // We can race with `TagSet::tag_to_rq`
->>> > >> -        if let Err(_old) =3D this.wrapper_ref().refcount().compar=
-e_exchange(
->>> > >> -            2,
->>> > >> -            0,
->>> > >> -            Ordering::Relaxed,
->>> > >> -            Ordering::Relaxed,
->>> > >> -        ) {
->>> > >> +        // To hand back the ownership, we need the current refcou=
-nt to be 2.
->>> > >> +        // Since we can race with `TagSet::tag_to_rq`, this needs=
- to atomically reduce
->>> > >> +        // refcount to 0. `Refcount` does not provide a way to do=
- this, so use the underlying
->>> > >> +        // atomics directly.
->>> > >> +        if this
->>> > >> +            .wrapper_ref()
->>> > >> +            .refcount()
->>> > >> +            .as_atomic()
->>> > >> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering::=
-Relaxed)
->>> > >> +            .is_err()
->>> > >
->>> > > Why not just call rust_helper_refcount_set()?  Or is the issue that=
- you
->>> > > think you might not be 2 here?  And if you HAVE to be 2, why that m=
-agic
->>> > > value (i.e. why not just always be 1 and rely on normal
->>> > > increment/decrement?)
->>> > >
->>> > > I know some refcounts are odd in the kernel, but I don't see where =
-the
->>> > > block layer is caring about 2 as a refcount anywhere, what am I mis=
-sing?
->>> >
->>> > It is in the documentation, rendered version available here [1]. Let =
-me
->>> > know if it is still unclear, then I guess we need to update the docs.
->>> >
->>> > Also, my session from Recipes has a little bit of discussion regarding
->>> > this refcount and it's use [2].
->>> >
->>> > Best regards,
->>> > Andreas
->>> >
->>> >
->>> > [1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html#=
-implementation-details
->>> > [2] https://youtu.be/1LEvgkhU-t4?si=3DB1XnJhzCCNnUtRsI&t=3D1685
->>>
->>> So it sounds like there is one refcount from the C side, and some
->>> number of references from the Rust side. The function checks whether
->>> there's only one Rust reference left, and if so, takes ownership of
->>> the value, correct?
->>>
->>> In that case, the CAS should have an acquire ordering to synchronize
->>> with dropping the refcount 3->2 on another thread. Otherwise, you
->>> might have a data race with the operations that happened just before
->>> the 3->2 refcount drop.
->>>
->>> Alice
->>
->> The code as is is fine since there's no data protected in
->> `RequestDataWrapper` yet (in fact it's not even generic yet). I know
->> Andreas does want to introduce driver-specific data into that, so in
->> the long term the acquire would be necessary.
->>
->> Andreas, please let me know if you want me to make the change now, or
->> you'd rather change the ordering when you introduce data to
->> `RequestDataWrapper`.
->
-> I guess we will have said data dependencies when we are going to run
-> drop for fields in the private data area. Thanks for pointing that out.
-> I will update the ordering when I submit that patch.
->
-> As I mentioned before, I would rather we do not apply this patch before
-> we get a way to inline helpers.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-As discussed offline, the code that suffers the performance regression
-is downstream, and since this change seems to be important, I can apply
-the helper LTO patch downstream as well.
+--------------R64fdqNZBeRN9br6IgVuJq1i--
 
-Since the plan for the downstream code _is_ to move upstream, I really
-hope to see the helper LTO patch upstream, so we don't get a performance
-regression because of these refcounts.
+--------------nKIDyJ1Fqtsi3Zi7CZrTsZD0--
 
-If we cannot figure out a way to get the LTO patches (or an alternative
-solution) upstream, we can always revert back to a more performant
-solution in block.
+--------------5JLKjz3mUhBs0KD9nsYdqmCO
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-BR Andreas
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmcHkrcFAwAAAAAACgkQsN6d1ii/Ey+B
+2ggAkacemurpyKS7QfXQWS6HcxfbEYySl/oVABB6Ol7WbSR5sFe+jUr1uCwOJXeakJ5JFBm1juPw
+UT7wOqITr0eoozgKKwUzOZKy+M3PFXlD/xCHC+bPuGGRfl5VCkJsWIkMy+d0yA/rDVoOb6PPuc1S
+m33OyHtAJTJl3m0JjNSp99iZ5oSXzfD6G/w/cQokjXP7tokktc9J4Yq/Ft+n9WF7Gr5HAxwy9TqA
+yFz7uIV3Sk8afUYJTrYBK1l+i4obVvSjq4wJYDGQ3vvR2/aWRfKjv5t/WWFWwbezKYjdh4/XQfHT
+6pOzUAVcuJCpLvQPtfa53cvVPYc5XDcLpETPjU2aCg==
+=3R75
+-----END PGP SIGNATURE-----
 
-
+--------------5JLKjz3mUhBs0KD9nsYdqmCO--
 
