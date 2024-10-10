@@ -1,206 +1,181 @@
-Return-Path: <linux-kernel+bounces-359043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966FD9986B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AD69986BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94D91C23AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63E9D1C23E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FAC1C7B64;
-	Thu, 10 Oct 2024 12:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ld7bUSNa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152841C7B99;
+	Thu, 10 Oct 2024 12:55:13 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAEE1C7B70
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042F91C7B63;
+	Thu, 10 Oct 2024 12:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564881; cv=none; b=BeWZHBQIInrAeDiLAK0bkF1SK5E/8Ve/3Zb/b4pGPIvkr5yMokCGl164PfrNVVvm0pvZzaPh/ksg1RT8NlFtFz2dfLdIio5otK8MemE/alCzfGttyQHSX884RWZz5p59an/MaM9zZF2QznSXbAXcAbsA7HCpR6A2J23C4ILQ3/c=
+	t=1728564912; cv=none; b=DAUgFh7qmQKBZHVLz+Qbt1ZWt4rZjB42mVv45FRGccyFwFQhi30rG/8QS7MMhp2b+k6DsnZuT4jTDKweweBPHU9L2fgALvt8wfpMoWdkPUWw+ihk7zOMpOv+PaZa+Du66EkcdAl68KhYdLl91vZDA8YNhCwZ3UaBd5HQdHy9Qok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564881; c=relaxed/simple;
-	bh=b7gxtVekXd5R3td+Z0Cu5zRIBs3g2P0ZEA517vflQkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=njAdUK1Yfg6hxSrTqf2szsAPhOTEVWQXDnqxdCV+TQamv3IhmuAw3KMKod1GMzdvyj6h79GexZ03OpmCFh7tcd/LGm7eSbnKt2ZfHssIC9Wcvg+hG8jyl4tbMkmnxdKRWvs8ZKSJbZIopbQl9XHBf/lK7onEvvYIylPVKitjax4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ld7bUSNa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728564878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cZL6g0fMpa/mgW56phL714cp05p/JmPmKoNz8gp0+y0=;
-	b=Ld7bUSNan79Leea62U2g6KXlZNXa+zFatB7rpXE/aNMPJnpfwYo+EJqukGuQBPdVE2tRkw
-	AeN6UT1UJEJ5uSwUBRzjPcPSUZNQcnNp4TiQSt8FPm80FchLQlC97+3mExdUyG3MiKNi9I
-	mW7F6j2v0UGowKRMn2g3wu32Bkx7unw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-272-mG-yzIrCOM6r3S4gtQG7Cw-1; Thu, 10 Oct 2024 08:54:37 -0400
-X-MC-Unique: mG-yzIrCOM6r3S4gtQG7Cw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42f8ceb8783so7236105e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:54:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728564876; x=1729169676;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cZL6g0fMpa/mgW56phL714cp05p/JmPmKoNz8gp0+y0=;
-        b=QTwEnSLcHDEvRxZVQ6hDJwpvaPkqjFRNaD0mWE6knEBscHMpC/vMFz98NBNHDYm3mW
-         h/ttFezAkX+/iyee0aXAeUlR8pB9Kcn+GWUVmcvO2F+CB3Sp/ybC0N95x3IS3CO2BFnn
-         c6d4stHxEErXcfViMhvBVXwpKctoI8Q4LKj3OpEu2Uii2QXjh3907GKpXoLe6g+Y+zzA
-         oli/VC8UJcUifgLJ2uCy5XO7Q3p82DyNKbPqpAJwH+SCzIehoRo/c8rLv8qenFL3H40B
-         KBNoyqmZMsUpcokBQbyV8Qm05uRBQooeJ9riucWXUGMIzfwGlSpIZmhHD1xu6zfoyLZf
-         nONA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4mrqxkBY55/yg839ica5xBeuOzbB+/oszI5GddOkw8uFaZ+0w+3wRZRY8fzClK+Z78yAb+Wlf9bgPlHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYZHqLfOk/Llmr6rGEYxOzvutSWxR8IX7zhryB9veH5gBSeeYh
-	Ubqx3N4lmL4AmAn1geo8blLmTI/MqUjU29WW/4j/DQJP7udP65EVt7SuIGdBd/38nvynOEp6XAL
-	XEyrWLPnsKd/I2n1SbygPNHgyUxFPcAHUea7gWQGIjn1uPo7i/EMlId8KGZtsvw==
-X-Received: by 2002:a05:600c:3148:b0:42c:a89e:b0e6 with SMTP id 5b1f17b1804b1-431157aa5cbmr32393965e9.11.1728564876366;
-        Thu, 10 Oct 2024 05:54:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2p8L8ELIXrumoPAPLW1IaY8NSi4pHxZ0J4QVILie3z6IAvUH/Ukh/rrSs7O2Sy2/qpzBUWA==
-X-Received: by 2002:a05:600c:3148:b0:42c:a89e:b0e6 with SMTP id 5b1f17b1804b1-431157aa5cbmr32393715e9.11.1728564875932;
-        Thu, 10 Oct 2024 05:54:35 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c742:9200:eb2e:74f9:6f5c:3040? (p200300cbc7429200eb2e74f96f5c3040.dip0.t-ipconnect.de. [2003:cb:c742:9200:eb2e:74f9:6f5c:3040])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d70b4674sm48380265e9.38.2024.10.10.05.54.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 05:54:34 -0700 (PDT)
-Message-ID: <d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
-Date: Thu, 10 Oct 2024 14:54:33 +0200
+	s=arc-20240116; t=1728564912; c=relaxed/simple;
+	bh=9T18g7yr2ox+C+1PRX2dfhTcOSFI6bMTmsJZHdGkvlM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dd5tOTEbocv0s8XQG6aaiFINjRxdmiDxivsRVcnW4GiwnKtGiWZwZdByFvffxUTm5KIGxWS7e/2QfZjn+sT0Imzyj9VeIo2ZhdySvWhsDNd9A/Qbrldlp6qQlBXKlKJj94ghxDUDaZoQ0vevnHN9gFBAJrEDBQPchJEOGrRRZhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sysh6-000000003AT-2EW4;
+	Thu, 10 Oct 2024 12:55:04 +0000
+Date: Thu, 10 Oct 2024 13:55:00 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next v2 3/5] net: phy: aquantia: correctly describe LED
+ polarity override
+Message-ID: <86a413b4387c42dcb54f587cc2433a06f16aae83.1728558223.git.daniel@makrotopia.org>
+References: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-To: Huang Ying <ying.huang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alistair Popple <apopple@nvidia.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>
-References: <20241010065558.1347018-1-ying.huang@intel.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241010065558.1347018-1-ying.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
 
-On 10.10.24 08:55, Huang Ying wrote:
-> Currently, if __region_intersects() finds any overlapped but unmatched
-> resource, it walks the descendant resource tree to check for
-> overlapped and matched descendant resources.  This is achieved using
-> for_each_resource(), which iterates not only the descent tree, but
-> also subsequent sibling trees in certain scenarios.  While this
-> doesn't introduce bugs, it makes code hard to be understood and
-> potentially inefficient.
-> 
-> So, the patch renames next_resource() to __next_resource() and
-> modified it to return NULL after traversing all descent resources.
-> Test shows that this avoids unnecessary resource tree walking in
-> __region_intersects().
-> 
-> It appears even better to revise for_each_resource() to traverse the
-> descendant resource tree of "_root" only.  But that will cause "_root"
-> to be evaluated twice, which I don't find a good way to eliminate.
+Use newly defined 'active-high' property to set the
+VEND1_GLOBAL_LED_DRIVE_VDD bit and let 'active-low' clear that bit. This
+reflects the technical reality which was inverted in the previous
+description in which the 'active-low' property was used to actually set
+the VEND1_GLOBAL_LED_DRIVE_VDD bit, which means that VDD (ie. supply
+voltage) of the LED is driven rather than GND.
 
-I'm not sure I'm enjoying below code, it makes it harder for me to
-understand what's happening.
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+v2: use dedicated bools force_active_high and force_active_low to make
+    aqr_phy_led_polarity_set() more robust
 
-I'm also not 100% sure why "p" becomes "root" and "dp" becomes "p" when
-calling the function :) Likely this works as intended, but it's confusing
-(IOW, bad naming, especially for dp).
+ drivers/net/phy/aquantia/aquantia.h      |  1 +
+ drivers/net/phy/aquantia/aquantia_leds.c | 19 ++++++++++++++-----
+ drivers/net/phy/aquantia/aquantia_main.c | 12 +++++++++---
+ 3 files changed, 24 insertions(+), 8 deletions(-)
 
-
-I think you should just leave next_resource() alone and rather add
-a new function that doesn't conditionally consume NULL pointers
-(and also no skip_children because you're passing false either way).
-
-static struct resource *next_resource_XXX(struct resource *root,
-		struct resource *p)
-{
-	while (!p->sibling && p->parent) {
-		p = p->parent;
-		if (p == root)
-			return NULL;
-	}
-	return p->sibling;
-}
-
-Maybe even better, add a new for_each_resource() macro that expresses the intended semantics.
-
-#define for_each_resource_XXX(_root, _p) \
-	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
-
-XXX TBD
-
-Or do you think this should not only be "improved" for the __region_intersects() use case
-but for all for_each_resource() users? I cannot tell easily.
-
+diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
+index 2465345081f8..0c78bfabace5 100644
+--- a/drivers/net/phy/aquantia/aquantia.h
++++ b/drivers/net/phy/aquantia/aquantia.h
+@@ -177,6 +177,7 @@ static const struct aqr107_hw_stat aqr107_hw_stats[] = {
+ struct aqr107_priv {
+ 	u64 sgmii_stats[AQR107_SGMII_STAT_SZ];
+ 	unsigned long leds_active_low;
++	unsigned long leds_active_high;
+ };
+ 
+ #if IS_REACHABLE(CONFIG_HWMON)
+diff --git a/drivers/net/phy/aquantia/aquantia_leds.c b/drivers/net/phy/aquantia/aquantia_leds.c
+index 201c8df93fad..2bafd6c78b00 100644
+--- a/drivers/net/phy/aquantia/aquantia_leds.c
++++ b/drivers/net/phy/aquantia/aquantia_leds.c
+@@ -121,13 +121,13 @@ int aqr_phy_led_active_low_set(struct phy_device *phydev, int index, bool enable
+ {
+ 	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, AQR_LED_DRIVE(index),
+ 			      VEND1_GLOBAL_LED_DRIVE_VDD,
+-			      enable ? VEND1_GLOBAL_LED_DRIVE_VDD : 0);
++			      enable ? 0 : VEND1_GLOBAL_LED_DRIVE_VDD);
+ }
+ 
+ int aqr_phy_led_polarity_set(struct phy_device *phydev, int index, unsigned long modes)
+ {
++	bool force_active_low = false, force_active_high = false;
+ 	struct aqr107_priv *priv = phydev->priv;
+-	bool active_low = false;
+ 	u32 mode;
+ 
+ 	if (index >= AQR_MAX_LEDS)
+@@ -136,7 +136,10 @@ int aqr_phy_led_polarity_set(struct phy_device *phydev, int index, unsigned long
+ 	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+ 		switch (mode) {
+ 		case PHY_LED_ACTIVE_LOW:
+-			active_low = true;
++			force_active_low = true;
++			break;
++		case PHY_LED_ACTIVE_HIGH:
++			force_active_high = true;
+ 			break;
+ 		default:
+ 			return -EINVAL;
+@@ -144,8 +147,14 @@ int aqr_phy_led_polarity_set(struct phy_device *phydev, int index, unsigned long
+ 	}
+ 
+ 	/* Save LED driver vdd state to restore on SW reset */
+-	if (active_low)
++	if (force_active_low)
+ 		priv->leds_active_low |= BIT(index);
+ 
+-	return aqr_phy_led_active_low_set(phydev, index, active_low);
++	if (force_active_high)
++		priv->leds_active_high |= BIT(index);
++
++	if (force_active_high || force_active_low)
++		return aqr_phy_led_active_low_set(phydev, index, force_active_low);
++
++	unreachable();
+ }
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index dcad3fa1ddc3..c62fc65ddbdb 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -517,7 +517,7 @@ static int aqr107_config_mdi(struct phy_device *phydev)
+ static int aqr107_config_init(struct phy_device *phydev)
+ {
+ 	struct aqr107_priv *priv = phydev->priv;
+-	u32 led_active_low;
++	u32 led_idx;
+ 	int ret;
+ 
+ 	/* Check that the PHY interface type is compatible */
+@@ -548,8 +548,14 @@ static int aqr107_config_init(struct phy_device *phydev)
+ 		return ret;
+ 
+ 	/* Restore LED polarity state after reset */
+-	for_each_set_bit(led_active_low, &priv->leds_active_low, AQR_MAX_LEDS) {
+-		ret = aqr_phy_led_active_low_set(phydev, led_active_low, true);
++	for_each_set_bit(led_idx, &priv->leds_active_low, AQR_MAX_LEDS) {
++		ret = aqr_phy_led_active_low_set(phydev, led_idx, true);
++		if (ret)
++			return ret;
++	}
++
++	for_each_set_bit(led_idx, &priv->leds_active_high, AQR_MAX_LEDS) {
++		ret = aqr_phy_led_active_low_set(phydev, led_idx, false);
+ 		if (ret)
+ 			return ret;
+ 	}
 -- 
-Cheers,
-
-David / dhildenb
-
+2.47.0
 
