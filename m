@@ -1,134 +1,118 @@
-Return-Path: <linux-kernel+bounces-358120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B808997A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:07:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97176997A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F281F23331
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:07:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2225EB2310B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238104CB2B;
-	Thu, 10 Oct 2024 02:06:22 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EB1170A14;
+	Thu, 10 Oct 2024 02:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ti2A+fbV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6273CF58
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996D6148300;
+	Thu, 10 Oct 2024 02:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728525981; cv=none; b=WtN71mUN+2Tj3gXIWnrdHDMQXBD8unaPod0EQ5XrvHJ+xU+JqXzZODrK3vyPo1vG2alu585AUphk40TgZGtEMqSuXSgc2tWrEIxcHd+lW+zQaCOO7krXhJYCmm2IUQX8tUcJWuddPD2loWTuL/bRuUe/P5IO3ZfJSNdhJZ5SOd0=
+	t=1728525982; cv=none; b=LAi37G9ECo078h9EgC1oWx1Pfv9VTXwrgK6EQpnceXo0S1eVtAuHwVJP+hjmJ3xd4ztrTV9hPsyG0EA5PRH6Sl65bSXPtAsE4VLIFppSzh0EVULq6u9Q+2HgslyPWLmltUUkZFlyBzTnqbcmTT0siagtTpW6wrvgO+elzaF6QEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728525981; c=relaxed/simple;
-	bh=1pKOvqjkmWg3Iphfkje73m4O8tgM8IjJroQCpRpBEWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bkLTHaNULA5/MWUZ+GcJrSGkYMR+uOroiTug4gLi3mdgpuo81SC4kOUcPV2vig1S9rgjJYdAj5UJw3NAzH329+dMq8wDSOdgJk+a281q/inpkTOM6HKSRQ+6WqmibJooIXNnNoGt59/F4kktZKSuIo6RklNayyclegY1wQVaIlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPCmC43s3z26gbb;
-	Thu, 10 Oct 2024 10:06:19 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id F17B5140120;
-	Thu, 10 Oct 2024 10:06:14 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 10:06:14 +0800
-Message-ID: <7e29e022-eae6-4a93-f7f1-841febab0988@huawei.com>
-Date: Thu, 10 Oct 2024 10:06:13 +0800
+	s=arc-20240116; t=1728525982; c=relaxed/simple;
+	bh=4M/5IXgGXD6Ftk2kiSm9epBvP+MbBjUzWj8trE3/gdo=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Vbd4xdsL6IQM+jDIMTvXLmWkSl1HFMfPJJkWZo3HRUEQ9B1gORzJcZ505Nx06SYKTEhfrupopOQCjv7aZOFB+IAK4f8eS2qUzzMCyBH07OEL1pFN4LnUozSKu3tKoaZxwwr7n4cz/T2wx8uzmt9y6kTlNjTSvl4hJm9tUSjKVpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ti2A+fbV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAEE1C4CECD;
+	Thu, 10 Oct 2024 02:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728525981;
+	bh=4M/5IXgGXD6Ftk2kiSm9epBvP+MbBjUzWj8trE3/gdo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=Ti2A+fbVc5wjoixIDSWPC8cGOd6r4prCpv8nVY3FNG7O1Mw2mIVFBSEpx0Yj+GgQ6
+	 9ch5sS3rBH/khjbUD4UI/+QJv2GWbByjk8s66hvZtbTFa6dpYh89P3xETQP2NC4Rw1
+	 KM71Wc05OBK5e03JP5GGHl1ExYHPCvm4oU8zJsTNWMYcYMRIYKr4nWQNOigfRG2Ey3
+	 zEv60phOxRqraWoknWB0AY1y4ayBVKNHejsslILWdVl+P520htNxl3ycsRYCPM8Ys/
+	 ho6Q50SwNH/KUejF458Mj8SZJJwP1WT3R0KZMdVO7xYmFq5HlwrEwd0F5v4YUe8zsX
+	 2t2e7IhRbL5qg==
+Date: Wed, 09 Oct 2024 21:06:19 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] net/9p/usbg: Fix build error
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <ericvh@kernel.org>, <lucho@ionkov.net>, <asmadeus@codewreck.org>,
-	<linux_oss@crudebyte.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <m.grzeschik@pengutronix.de>,
-	<v9fs@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-References: <20240930081520.2371424-1-ruanjinjie@huawei.com>
- <2ff5834d-cb88-39f5-168d-8e179f152757@huawei.com>
- <2024100910-distrust-cornhusk-a8bd@gregkh>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <2024100910-distrust-cornhusk-a8bd@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Kursad Oney <kursad.oney@broadcom.com>, 
+ William Zhang <william.zhang@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Anand Gore <anand.gore@broadcom.com>, 
+ Sam Edwards <CFSworks@gmail.com>
+In-Reply-To: <20241009215046.1449389-2-CFSworks@gmail.com>
+References: <20241009215046.1449389-1-CFSworks@gmail.com>
+ <20241009215046.1449389-2-CFSworks@gmail.com>
+Message-Id: <172852597949.940870.12502709428315249090.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: mtd: Relax BCM4908 partition schema
 
 
-
-On 2024/10/9 15:55, Greg KH wrote:
-> On Wed, Oct 09, 2024 at 03:49:22PM +0800, Jinjie Ruan wrote:
->> Ping.
->>
->> On 2024/9/30 16:15, Jinjie Ruan wrote:
->>> When CONFIG_NET_9P_USBG=y but CONFIG_USB_LIBCOMPOSITE=m and
->>> CONFIG_CONFIGFS_FS=m, the following build error occurs:
->>>
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_free_func':
->>> 	trans_usbg.c:(.text+0x124): undefined reference to `usb_free_all_descriptors'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_rx_complete':
->>> 	trans_usbg.c:(.text+0x2d8): undefined reference to `usb_interface_id'
->>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x2f6): undefined reference to `usb_string_id'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_func_bind':
->>> 	trans_usbg.c:(.text+0x31c): undefined reference to `usb_ep_autoconfig'
->>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x336): undefined reference to `usb_ep_autoconfig'
->>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x378): undefined reference to `usb_assign_descriptors'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `f_usb9pfs_opts_buflen_store':
->>> 	trans_usbg.c:(.text+0x49e): undefined reference to `usb_put_function_instance'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc_instance':
->>> 	trans_usbg.c:(.text+0x5fe): undefined reference to `config_group_init_type_name'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc':
->>> 	trans_usbg.c:(.text+0x7aa): undefined reference to `config_ep_by_speed'
->>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x7ea): undefined reference to `config_ep_by_speed'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_set_alt':
->>> 	trans_usbg.c:(.text+0x828): undefined reference to `alloc_ep_req'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modexit':
->>> 	trans_usbg.c:(.exit.text+0x10): undefined reference to `usb_function_unregister'
->>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modinit':
->>> 	trans_usbg.c:(.init.text+0x1e): undefined reference to `usb_function_register'
->>>
->>> Select the config for NET_9P_USBG to fix it.
->>>
->>> Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
->>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>> ---
->>>  net/9p/Kconfig | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/net/9p/Kconfig b/net/9p/Kconfig
->>> index 63f988f0c9e8..ee967fd25312 100644
->>> --- a/net/9p/Kconfig
->>> +++ b/net/9p/Kconfig
->>> @@ -43,6 +43,8 @@ config NET_9P_XEN
->>>  config NET_9P_USBG
->>>  	bool "9P USB Gadget Transport"
->>>  	depends on USB_GADGET=y || USB_GADGET=NET_9P
->>> +	select CONFIGFS_FS
->>> +	select USB_LIBCOMPOSITE
->>>  	help
->>>  	  This builds support for a transport for 9pfs over
->>>  	  usb gadget.
+On Wed, 09 Oct 2024 14:50:44 -0700, Sam Edwards wrote:
+> The BCM4908 partition "parser" is really just a fixed partitions table,
+> with a special partition compatible (`brcm,bcm4908-firmware`) that
+> automatically labels the partition as "firmware" or "backup" depending
+> on what CFE is communicating as the selected active partition.
 > 
-> Ah, I can take this through the USB tree as it fixes a bug that came in
-> through there.
-
-Hi, Greg
-Thank you very much!
-
+> The bcm4908-partitions schema is currently too restrictive, requiring
+> that all child nodes use this special compatible or none at all. This
+> not only contracits what is allowed by the "parser" but also causes
+> warnings for an existing file ("bcm4908-asus-gt-ac5300.dts").
 > 
-> thanks,
+> Modify the schema to be strict only for child partitions that use the
+> -firmware compatible. Also update the child name regex to agree with
+> fixed-partitions, so that these differences apply consistently.
 > 
-> greg k-h
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> ---
+>  .../mtd/partitions/brcm,bcm4908-partitions.yaml | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml: patternProperties:^partition(-.+|@[0-9a-f]+)$: 'if' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
+	from schema $id: http://devicetree.org/meta-schemas/nodes.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml: patternProperties:^partition(-.+|@[0-9a-f]+)$: 'then' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
+	from schema $id: http://devicetree.org/meta-schemas/nodes.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241009215046.1449389-2-CFSworks@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
