@@ -1,208 +1,269 @@
-Return-Path: <linux-kernel+bounces-359416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259F7998B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F28D998B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B5229110B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3A5294514
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07E61CBEB5;
-	Thu, 10 Oct 2024 15:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEAD1CC147;
+	Thu, 10 Oct 2024 15:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ELCC1stu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kEzY9akY"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010030.outbound.protection.outlook.com [52.101.69.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02391BD018;
-	Thu, 10 Oct 2024 15:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728573385; cv=none; b=WSSA/aMMHYkwTbWifgNdLsK0iad6Em7KobHQb+Gpa9SfwSvtdsQG+oGYV3HgO0n5OxxehuPtgIxR1bgALMdkORknjPmGjSneaDuKg4aEPMXlMlkx5w+TddBlMcIxsx3YmQuKZohFamyGU+/ZXMU56gs8qHU7JrZ8aNRPzvB0jh8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728573385; c=relaxed/simple;
-	bh=3r7XjWCd7n9+cKPDndkUACyizjbXDe/S2rPom65uPUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSX5FGYd8THAvlT+HrxPV2XNc62hj8iMBylI42Y9fFlapWC0AqCvTfmFMhOGWi4TOj9UyqqPIcjYQI9G8HBDGxqsgQTSC+MU8/CbzhYtOPk2bnuc3jZgxz07/bLk3J1h57osfKYjBhbEjaoBdYjXgzvxwzqWK/Q0z14FJSJBYBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ELCC1stu; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728573384; x=1760109384;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3r7XjWCd7n9+cKPDndkUACyizjbXDe/S2rPom65uPUI=;
-  b=ELCC1stu2LMfO8IS9p9gtMcR8WB42r2/UuvJKishUHF90e8d186letiO
-   khOjbaxxZNKBiMEbPWOc10Ofk0p79cnmzooomdAWULovIa9yeasmC7ATW
-   1SYusxVziUC7SHap4Vlpe4E6KBLaLausc//SvdtvJip9E7X6MRvMywgAR
-   Iy1BgfqHoOgOVOoTPb+iHNa591JBCQAJvnDK2wZe5yv7ZN37d6cOGDkz8
-   tFP3S7rHa5P1V8hUYozmZoF3uDJlSANV2dP1tB7GAae3rnbOqWnBfPsNm
-   0lZVXwgoXJlkfXi2d5Ulj1irERYq5O+CKN8RsieWTXDLMj12ms7KzfoSo
-   A==;
-X-CSE-ConnectionGUID: PsC8Zlm0SlaWtfmR71K1JA==
-X-CSE-MsgGUID: 87IqGehJRUuWu8jlHdU4Kw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27810877"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="27810877"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:16:17 -0700
-X-CSE-ConnectionGUID: TnDZstXQSZeeixD90okhAA==
-X-CSE-MsgGUID: ALlT+SXEQ2qwUWC6WyZnRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="81439049"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:16:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1syutc-00000001Zgw-2s69;
-	Thu, 10 Oct 2024 18:16:08 +0300
-Date: Thu, 10 Oct 2024 18:16:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
-Message-ID: <ZwfvuA2WhD_0P3gL@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-5-wenst@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B1E1BD018;
+	Thu, 10 Oct 2024 15:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728573428; cv=fail; b=dmGWjoicqFxdGZNBrLYC1naEemXESCk7adezMEIcpSoul+RX/oRku2lzP2gMSKEr8zxGU3GJx847x3UD0HSh9XkeeH62Mwa8yyI6AYVg6XcGphx+o2Fkz75AR0Ltq1MZPFcLdTickg681AVYUzovXELlhYkJVKQ58lmevi90gFo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728573428; c=relaxed/simple;
+	bh=XvwyvA6OzojE/AmbQPe7sRl+OT/SBLMwCzJm/luCZL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JzszUAfJnktHHvhBqoVEBV30By7ULgTrnZenWwNzKHASGm9gU4xeGbRmB/G25kNcYOnGJdzKv74WdRYT+q4ka3gKz2pVCRBQepVoddL4Or0dh5MXE+3Zv+c9d1xOnmi1HWHQhh/GKU6/4PwjU/TUjwh+DobYLs+AdcCFyKKwdFI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kEzY9akY; arc=fail smtp.client-ip=52.101.69.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xhh5DR79dH0Shg3JeYzbZQoqtR9dDen+RLjduHTrrPqcd31Wcw+w7YVxV0jALStyjyz8VBdn/Jk75oVDiPjWDd5jE6B1E2IghHd10QU6hthxwNfjzpQu3I4EVpsb1hQcfPauIbDvS9kLYZYY3+KBcR2rG7ZjZOP0NeimAnuT4ctLHsslOYDR8MOjF/Ln8v+twx0bAfkKkE1MPDsQh5sMX7KGecenz8jQskSYb7zeob7dOrdkM7SeVGLC4xnarsxWQXHmHG9whYheAj6C3PqXCazui55saHgXv/Cn9X8vIO2fi7TJNsgenLiJbyPZAVBWodJIJD40SqVaUrfRUgfukQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NtU7CjRY67FMsM5BgRClCXEz/XD0N4xPPipguSChTM8=;
+ b=ud+IXFsS1pVc4Jl44xHMxOB8ZMiWeaHlNGXpdIqsNo9hjJziFohQ5BsSAc6UcuwFUu1K4h5IboN/8MB90x7aEVz2stdhf94wbYP6+PV223Ivgih/UghpYAKz/67MTfSubCsbF7bWcoHddGPUocV4DdZ8mArNuNfM5BSBSgvEve3vQcHyNkFORV6rs76K23svM/uQWmZkBmHIsRKpsibx6XvtQeKc4BZAkGGlJS/46PwhuUtMj+odhis6/LgD9kYOalaq84+Q9f2VFwYAC20IzFoyi2HaCnGHylnK9SssMjMx5erm65UXRET5w4I5/nJyayTzT59mY6I9F25Yz1vBPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NtU7CjRY67FMsM5BgRClCXEz/XD0N4xPPipguSChTM8=;
+ b=kEzY9akY4E1Zl4Sm8lTaPgCXmsabg+O9kdMAaNI0uDXgqIwp0g1KVokcdSHTH8+9FsltPgRpkKCMHhNAiecSuCb8Rw4IHr0PFKhg64NPf2a15JymLA0DybUBvNUIfcQ4UayST/RanhHP6MPPP8xdibEVToGMt1RZgCs5D0cfmAfF6HA3d68Fq9BM3WjichgMRtNDOGUVjGm5bYjCqA0H6pGEcHznLxLpzx35fyYU8ThHwVR/DOZ+HFo39EOFkndCd7x5R5Og8eF8X9vCQTmsuSo4D8lXepeoF5i9jbjFqpi2Jwn/W+P2+A0yDMZI1rMPPpUaE9qgAsmzu3N5ifWOUQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB7655.eurprd04.prod.outlook.com (2603:10a6:20b:292::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 15:17:01 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
+ 15:17:01 +0000
+Date: Thu, 10 Oct 2024 11:16:50 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: Rob Herring <robh@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH net-next 02/11] dt-bindings: net: add i.MX95 ENETC support
+Message-ID: <Zwfv4if3mWPLStb/@lizhi-Precision-Tower-5810>
+References: <20241009095116.147412-1-wei.fang@nxp.com>
+ <20241009095116.147412-3-wei.fang@nxp.com>
+ <ZwavhfKthzaOR2R9@lizhi-Precision-Tower-5810>
+ <20241009205304.GA615678-robh@kernel.org>
+ <PAXPR04MB8510E8B2938E88DB022648F588782@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR04MB8510E8B2938E88DB022648F588782@PAXPR04MB8510.eurprd04.prod.outlook.com>
+X-ClientProxiedBy: BY3PR10CA0011.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008073430.3992087-5-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB7655:EE_
+X-MS-Office365-Filtering-Correlation-Id: 137f2a21-fba6-421e-2ff2-08dce93e9712
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|366016|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V2gxYTVZejRvUWJLQnBDVEdxYXNCV21UN0J6RjdxN1Uzdm9BK3F4aHJnaHdY?=
+ =?utf-8?B?ZU9wZmJjQ3BGWmw2aFV1a013NzVmeXI0RWp5dG5SbFJTOHp2N2NUN0o2YlB1?=
+ =?utf-8?B?RXBqNjc1Sm5OR2l5QWtoZ3hPWDRtSkYwa3JQNFBxczhzNDdqNWtwUzBoOWVL?=
+ =?utf-8?B?bU5aWFYxcVorK2dFTHlNdGMwaVZ0Q3JrZnFOV1JyUlRBWjArRlRVT21jTnQr?=
+ =?utf-8?B?RkNqRUs0TzM5WnkvVUNseFl1cWNTSmUwSDB2ZGFja0REVkRkVk9mV09UUkdO?=
+ =?utf-8?B?RGlnZUZ2T3laY3VlVXU5Ly9KMldQeFBvN2tnRGQ3R0tpanRVOGpFTkI0aWo0?=
+ =?utf-8?B?VkVWbHhQcWNOTlgvNE5lUm83bHhCYjNPdTBYZHVYWmRFRWFLc09aTy8reUZB?=
+ =?utf-8?B?REJsaXhHZDFoV1d6aVBtNWo2KzB5VzJrdFh6U3VOYVEzZGpHRXAwOFVrZEZU?=
+ =?utf-8?B?YmpFNHRzSStNUTIvYVUrYmZEbGVhSmtJTTU3R2c3MDRoTzNrZzVYYUEwaVZk?=
+ =?utf-8?B?cFAzWXFJUWZTVmNzSHZyY1FPMWxhWUZ5NTZzOUwvR3V2SVE5STZXcUEzcGQ1?=
+ =?utf-8?B?SVE4aWVnZFRZaHBTRk9lTTZ4eWlYbWhyc3p3UEhmVXB2aTgrVVdaMkp4Q21H?=
+ =?utf-8?B?anhOb1BNaWxzL01mWWxZS25MRU5WMEhzdkNRSnZBa3hHKzZ5c2VGdG82K2I1?=
+ =?utf-8?B?QjlId0I5WkNQeUE3VXVsUTlNbUViTDdNcUg2K1Rzc2krZUpIckU4cU1zdUF6?=
+ =?utf-8?B?UUljK2d3WmFhN2VWN1h6alpHNDRBR0tmbDBOcWNhQnE5dTI2Q255NFhzbDJt?=
+ =?utf-8?B?Q3c2Y0s4M2xEQ2o2azVyQzV6cXRXK3lGY0o2aEd6WnE5SlpqcGkvbEY1T3Bp?=
+ =?utf-8?B?TzdreU5PV3dQTjlsRDliTE4raUxGa2E3Vm84MXRQQkxROXA2MzJNendReTIz?=
+ =?utf-8?B?RmQwNHl2R09iTHFtRnFzU0xPMktRYTBrWWhxWG9kdXM4bmJ2TXpEQ2dTT3Vl?=
+ =?utf-8?B?T0c5TnliQnBQS2RmcG9QMUo0WFJGQ2x4N3k2b2x4dnZKTlluUDhlczVFQzdz?=
+ =?utf-8?B?TVlJb2IyenVBbEVZUmlKYzJjeHFEeE82WkZTakVyT3pCQVQxUUFwN0xNZldF?=
+ =?utf-8?B?RVRidStQN1hVVHprcklaMk10S3N1L0wwOVFnaXdaUW5ZOTdxbTdUYTUxMDVY?=
+ =?utf-8?B?cmdKeVUwY3ZIV3dzbDF3Q0Z6ek9BMm14aUJvS3hYWi9iaHdmcmQ0WldZM3dt?=
+ =?utf-8?B?MUVzSTRNa3gwYmdicUpDY1czdVd6ZXNGZmNkdWRhOFB0RHQ0RGFsWjRNMW1G?=
+ =?utf-8?B?Q2Q5bThOTGVkTGpTUXh0SlJWZVJvL09icm1QUXdjUllsMVdHUUl3bmovRU9Y?=
+ =?utf-8?B?TkVLS1pQS3dMdlBnTWwxOFhvNGMrYUhnNWdWU0JDQWhzYXBpTTRWRUtqUGZn?=
+ =?utf-8?B?U2Q3Ky9aOFVzbExrb0w4SlpRbXFSakoxZGlJNFk1VDZqTi9ZM21FamgvR21Y?=
+ =?utf-8?B?RjVuZzlMOUI1d0p6eHpnK01kT3JaYWRlZjR5ekhzak5KQ0dwanlrRGpiNUhn?=
+ =?utf-8?B?MzlRT2FtT20xaWExaFRHQUVRTVpGVEpLSlFubWt0Wm42RWRkYmx0OVYrU3RP?=
+ =?utf-8?B?OUNZVFBpVmk1OG4wMjVETWRmWlpYYmF3YjkveFNiVGhySXlTemFRZ3BXamEr?=
+ =?utf-8?B?TkV6MUlLSnl0N2taOS9mcnlCQzhwc1dXczBGVlpZaG5nMEkzTkg3WmJUNmdu?=
+ =?utf-8?B?Q21iOEFWSjVkOEhvWG9DWlkyUzdTMFRsdnBTandBSk5BQ3pxQVNzcURsWGdO?=
+ =?utf-8?B?RCtuZXJhMUJXZ2ptRnJnUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aXZRRTBVNnlIY2RGVnRaWFNleXVDQjRGNUdDZW44c3R5czVrU2xYalZPdUti?=
+ =?utf-8?B?NExrNTRaS1NDTVFMUUNIdGpJeG1BZU8rUW5NR0ppOTNXc1RUY2xaeE1ReUJn?=
+ =?utf-8?B?bGNwekhsY3pUa1J4Y3hxemRueU1LSTIwMFR2cTBEbzd2SWtOWjNEdHlCTFJV?=
+ =?utf-8?B?aStvYjg3NnV2MzA2aXVFYlIwYXp4UGRUTG9Ia0xpbmZ6anhZd0E2QWtBVXZH?=
+ =?utf-8?B?RG1sTTVxMkpZVkpvbHRiWWZZUTE4aFZQTDk1cVhsT3JqNk1xeUpnRUNGbXpt?=
+ =?utf-8?B?ZnZIUFZWdng3L0RzQ084d05MLzlXcGhvUW1iSlNWTkVoaERwU1dleldvM2Jy?=
+ =?utf-8?B?cFVxQlBsUHZWd0JMRVduYTNRWEoxUXpnTjg5SmlWNzJETlJxdHg5cFpURzd4?=
+ =?utf-8?B?V3I3STd0RE9McjFjbHd3cU5DRDg3aVl1d2IyMzczYnBJd2lLWmxhSUR6RW9y?=
+ =?utf-8?B?bkFLTThaaGdFTjkvMWNFdnlURlhoRFVGNWtodDZUNm13VFkza1N3YU5XamlH?=
+ =?utf-8?B?MDdLTUN2K3hLSmN1VCtablUydkZYMHkvZDVzYWV5Ui9JV01UelpsR3B1a1Rx?=
+ =?utf-8?B?T3h1azgzSEJsK2RHekR3NkYvTFptUVRQdFN0VmozWFNndFE5cXRsVTBzNnll?=
+ =?utf-8?B?d0YzSzBka0pzS2pjNEV1N3hLcDBjVEZXaWVJdCtBQVBsT2pOK2RSQnN1MUhi?=
+ =?utf-8?B?R1pJOXd4SFBnMGF0SWcwUVY3RCtpRGxBaXplcCt0WDQxT29LUXloN3lFZEll?=
+ =?utf-8?B?cEJZRUovK1RlSFo4czBUVCs4b2Rvem5qemdNaGxZU0R5L1lRaWkwWjV3S1NN?=
+ =?utf-8?B?a1ovbGRDMGs1ZUZFbFFNVk1XbFdNR1lpVW9OVGhGZDhlR0ZBMjV4ZTd2eFNL?=
+ =?utf-8?B?ckNZbHZNY0ozZ3U1NUJjdkFWRFdZajlYVkdFSjRTZU55LzVaQzlNQVZqNnoz?=
+ =?utf-8?B?OHdoL2FJRDAydjV3dnJFaFJzUitFVmI4b2c4cEtmMWRMaU5WREI1c1ZVc2Uy?=
+ =?utf-8?B?ZlhjdHZCWVNjVUEvYXllWnhvblBON1FUNEF5b0tGM3F0aUFSblJ4U2d6c2M3?=
+ =?utf-8?B?aHpZNUFiUC9jWW83ZXFJWW50ZndDeWExbGcyc0NPQWdsMERIcVUrMk5HV1ZJ?=
+ =?utf-8?B?emVTSU1hR25zZW10S1oxSStLRzAvSk84UnBnWjVlNlFLd0FNK0xWQzRqRG5z?=
+ =?utf-8?B?emN5ZkJsOGtONVV4aWxPZEJnTWIvL1l5Mll5N3RTMVhzc1FwVkd5Y1UxM25L?=
+ =?utf-8?B?NU5aZCtaUEF6VHIrR1NKSmlXU3J6S2tENkRzZ3NsdkxTZGhLdFVFTVE0RWpS?=
+ =?utf-8?B?VEl5TzNnQ0QvbEhYRkZnTUR2SXBkejVsQ0I5cjF0TFdDb1NiYTlyUStySFRC?=
+ =?utf-8?B?VmcxMEdHdWh0WGwyamx5eHc1bWVVVENpa2pwbDdQeUtVbkF0QmRXV0wyTTcv?=
+ =?utf-8?B?Z1pBYUhhMEYvKzEyZ2gwYjFHZFNSaEFqcXh6UUNvWlRNQmYyTTZRMEpxb1Jv?=
+ =?utf-8?B?ZFQwTVNuMXB6OFFmZTJ5UVZmMVFQQktqUFlCZmhXaXdKK3FRc29QUHdjdXRB?=
+ =?utf-8?B?VkVUaDdMaDdyNnZEZ2oxZjVScVgvOU1UR0FtZWp0Wi9YZHJRVDJZblBXRWU4?=
+ =?utf-8?B?OWJYSEs5OWU4d1c3TW1sSTZKYkduSUp1bDJqZnZUeElpVnBKbWY5N2Ztdzhx?=
+ =?utf-8?B?SGlGYW4zdVkvQ2ZzY2I5SzRkUS9aYVJDSUtqYStjS3cxbG9YdCtxZWhXL2VG?=
+ =?utf-8?B?SmkzMHVOMXd4blh2c29RMEtlMGl1SXNGRGFzdW5ub2hxaEluQ096MEhlVEFW?=
+ =?utf-8?B?b3k1engrdkM4R3VhYzdEREROVmJFdW83eXR2a0k5eTI3TFEvWkhnS1orUWFF?=
+ =?utf-8?B?SWJUK1FEeEVwcWVkbWx1M2hKcWtMNGx5UVd4TDZsVXUxaVdyNGZaVTRhY1E3?=
+ =?utf-8?B?Y2MzMmtZQWNRd041L0c4bko4bGNtYkVCeHRBTmFFMEhwSUZVbm1uNEZyQ2tY?=
+ =?utf-8?B?TmVZYU9WUW9nODUzVTNvSHQ0Z3dVamJNOHJBZEptL0s1UVEzNG8rMmtkN200?=
+ =?utf-8?B?YTlHSEdDY0xEVUtnd3p2Y2JXR2FncWdzblVxTTBkRGlWMS9ydXhFd3A3MnZE?=
+ =?utf-8?Q?e/D8=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 137f2a21-fba6-421e-2ff2-08dce93e9712
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 15:17:01.3416
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SX6MaQZTFAQog3uuetevynOCpaL7a4dFQug3n+JWDo15NSxqdgc2QLGFaEt+rl42Idh+jO8IA6tkhfq8KyGYgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7655
 
-On Tue, Oct 08, 2024 at 03:34:23PM +0800, Chen-Yu Tsai wrote:
-> Some devices are designed and manufactured with some components having
-> multiple drop-in replacement options. These components are often
-> connected to the mainboard via ribbon cables, having the same signals
-> and pin assignments across all options. These may include the display
-> panel and touchscreen on laptops and tablets, and the trackpad on
-> laptops. Sometimes which component option is used in a particular device
-> can be detected by some firmware provided identifier, other times that
-> information is not available, and the kernel has to try to probe each
-> device.
-> 
-> This change attempts to make the "probe each device" case cleaner. The
-> current approach is to have all options added and enabled in the device
-> tree. The kernel would then bind each device and run each driver's probe
-> function. This works, but has been broken before due to the introduction
-> of asynchronous probing, causing multiple instances requesting "shared"
-> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> time, with only one instance succeeding. Work arounds for these include
-> moving the pinmux to the parent I2C controller, using GPIO hogs or
-> pinmux settings to keep the GPIO pins in some fixed configuration, and
-> requesting the interrupt line very late. Such configurations can be seen
-> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> Lenovo Thinkpad 13S.
-> 
-> Instead of this delicate dance between drivers and device tree quirks,
-> this change introduces a simple I2C component probe function. For a
-> given class of devices on the same I2C bus, it will go through all of
-> them, doing a simple I2C read transfer and see which one of them responds.
-> It will then enable the device that responds.
-> 
-> This requires some minor modifications in the existing device tree. The
-> status for all the device nodes for the component options must be set
-> to "fail-needs-probe". This makes it clear that some mechanism is
-> needed to enable one of them, and also prevents the prober and device
-> drivers running at the same time.
+On Thu, Oct 10, 2024 at 02:14:50AM +0000, Wei Fang wrote:
+> > -----Original Message-----
+> > From: Rob Herring <robh@kernel.org>
+> > Sent: 2024年10月10日 4:53
+> > To: Frank Li <frank.li@nxp.com>
+> > Cc: Wei Fang <wei.fang@nxp.com>; davem@davemloft.net;
+> > edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
+> > krzk+dt@kernel.org; conor+dt@kernel.org; Vladimir Oltean
+> > <vladimir.oltean@nxp.com>; Claudiu Manoil <claudiu.manoil@nxp.com>; Clark
+> > Wang <xiaoning.wang@nxp.com>; christophe.leroy@csgroup.eu;
+> > linux@armlinux.org.uk; bhelgaas@google.com; imx@lists.linux.dev;
+> > netdev@vger.kernel.org; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org
+> > Subject: Re: [PATCH net-next 02/11] dt-bindings: net: add i.MX95 ENETC support
+> >
+> > On Wed, Oct 09, 2024 at 12:29:57PM -0400, Frank Li wrote:
+> > > On Wed, Oct 09, 2024 at 05:51:07PM +0800, Wei Fang wrote:
+> > > > The ENETC of i.MX95 has been upgraded to revision 4.1, and the vendor
+> > > > ID and device ID have also changed, so add the new compatible strings
+> > > > for i.MX95 ENETC. In addition, i.MX95 supports configuration of RGMII
+> > > > or RMII reference clock.
+> > > >
+> > > > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > > > ---
+> > > >  .../devicetree/bindings/net/fsl,enetc.yaml    | 23 +++++++++++++++----
+> > > >  1 file changed, 19 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > index e152c93998fe..1a6685bb7230 100644
+> > > > --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > > > @@ -20,14 +20,29 @@ maintainers:
+> > > >
+> > > >  properties:
+> > > >    compatible:
+> > > > -    items:
+> > > > -      - enum:
+> > > > -          - pci1957,e100
+> > > > -      - const: fsl,enetc
+> > > > +    oneOf:
+> > > > +      - items:
+> > > > +          - enum:
+> > > > +              - pci1957,e100
+> > > > +          - const: fsl,enetc
+> > > > +      - items:
+> > > > +          - const: pci1131,e101
+> > > > +      - items:
+> > > > +          - enum:
+> > > > +              - nxp,imx95-enetc
+> > > > +          - const: pci1131,e101
+> > >
+> > >     oneOf:
+> > >       - items:
+> > >           - enum:
+> > >               - pci1957,e100
+> > >           - const: fsl,enetc
+> > >       - items:
+> > >           - const: pci1131,e101
+> > >           - enum:
+> > >               - nxp,imx95-enetc
+> >
+> > const.
+> >
+> > Or maybe just drop it. Hopefully the PCI ID changes with each chip. If
+> > not, we kind of have the compatibles backwards.
+>
+> I am pretty sure that the device ID will not change in later chips unless
+> the functionality of the ENETC is different.
 
-Fresh reading of the commit message make me think why the firmware or
-bootloader on such a device can't form a dynamic OF (overlay?) to fulfill
-the need?
+It is quite weird for PCIe devices. Device ID, at least Reversion ID should
+change. At least, I have not see use "nxp,imx95-enetc" at driver code.
 
-Another question is that we have the autoprobing mechanism for I2C for ages,
-why that one can't be (re-)used / extended to cover these cases?
+Frank
 
-...
-
-> +#ifndef _LINUX_I2C_OF_PROBER_H
-> +#define _LINUX_I2C_OF_PROBER_H
-
-Missing kconfig.h.
-
-> +struct device;
-> +struct device_node;
-> +
-> +/**
-> + * struct i2c_of_probe_ops - I2C OF component prober callbacks
-> + *
-> + * A set of callbacks to be used by i2c_of_probe_component().
-> + *
-> + * All callbacks are optional. Callbacks are called only once per run, and are
-> + * used in the order they are defined in this structure.
-> + *
-> + * All callbacks that have return values shall return %0 on success,
-> + * or a negative error number on failure.
-> + *
-> + * The @dev parameter passed to the callbacks is the same as @dev passed to
-> + * i2c_of_probe_component(). It should only be used for dev_printk() calls
-> + * and nothing else, especially not managed device resource (devres) APIs.
-> + */
-> +struct i2c_of_probe_ops {
-> +	/**
-> +	 * @enable: Retrieve and enable resources so that the components respond to probes.
-> +	 *
-> +	 * Resources should be reverted to their initial state before returning if this fails.
-> +	 */
-> +	int (*enable)(struct device *dev, struct device_node *bus_node, void *data);
-> +
-> +	/**
-> +	 * @cleanup_early: Release exclusive resources prior to enabling component.
-> +	 *
-> +	 * Only called if a matching component is actually found. If none are found,
-> +	 * resources that would have been released in this callback should be released in
-> +	 * @free_resourcs_late instead.
-> +	 */
-> +	void (*cleanup_early)(struct device *dev, void *data);
-> +
-> +	/**
-> +	 * @cleanup: Opposite of @enable to balance refcounts and free resources after probing.
-> +	 *
-> +	 * Should check if resources were already freed by @cleanup_early.
-> +	 */
-> +	void (*cleanup)(struct device *dev, void *data);
-> +};
-> +
-> +/**
-> + * struct i2c_of_probe_cfg - I2C OF component prober configuration
-> + * @ops: Callbacks for the prober to use.
-> + * @type: A string to match the device node name prefix to probe for.
-> + */
-> +struct i2c_of_probe_cfg {
-> +	const struct i2c_of_probe_ops *ops;
-> +	const char *type;
-> +};
-> +
-> +#if IS_ENABLED(CONFIG_OF_DYNAMIC)
-> +
-> +int i2c_of_probe_component(struct device *dev, const struct i2c_of_probe_cfg *cfg, void *ctx);
-> +
-> +#endif /* IS_ENABLED(CONFIG_OF_DYNAMIC) */
-> +
-> +#endif /* _LINUX_I2C_OF_PROBER_H */
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> >
+> > >           minItems: 1
+> >
+> > Then why have the fallback?
 
