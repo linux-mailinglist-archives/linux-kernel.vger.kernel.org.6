@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-359759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228B399903D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:29:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60392999047
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4197283679
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:29:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472291F24FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B790F1EF09E;
-	Thu, 10 Oct 2024 18:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F211EF954;
+	Thu, 10 Oct 2024 18:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OrSuHW3L"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zBhsl50q"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DD71EBA06
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E201EF0A0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584722; cv=none; b=GrTKTMmRjXWviJRqsWoEB1sXlisLtf45tgZVnZQDy5/1PPRwO3UdJn+wA+XL3QGXYJNXPXQwHWUehmklZhROaUBpQYNy+HeFw4i1bBIOPWW3gXgREhlmtxtXn/NvyD/aYsnOaRKQh9CB+XFxU+o4T5piX8CQWzCa4PjwBsBGwok=
+	t=1728584725; cv=none; b=hZ8jI/5DJy7L009qibkEBv1tVc0PeYWRVVt0jWoMIqSkCpehTt1hso8e3YfZ9TXZK5/gfAGhUX1TRERiWrHqE4y79fD9Qz5XCOuM/t8TopXYqJlPm2O3w7senbxTMzdVJtu7GksgzL/2yUR/G+SoTA3EQngCK4QEg3TtMTr/R14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584722; c=relaxed/simple;
-	bh=IF5BVNwy5lfsZS2zGuSAAv+TGmQDGgo7CuXbuO4ZMc4=;
+	s=arc-20240116; t=1728584725; c=relaxed/simple;
+	bh=rFmsStC1d1lztIwj7oxh4zyq4MQj9meeqHdDcxeq/wk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OgtgR/nEnrelRHzkHRCS+417MJ3QnWBFr6P/dTedOHes1KXBK/zG/58Vyzm1u7DdZzerEy8IlNCmnOpdfKWlrU4fDTXVX5r/RY/vx9+11AJedIxViCl7WsF05hHmU+X32baX65P8E7HZAylKa0dxGIo3IsC4CT+l7hLiPnKqkug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OrSuHW3L; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=Q/dg6eiatbSddyOo9LAKJhoIjCFFBasoy8w4Vmh4GRvnATG3INl2R8gH8YNuR4JF7fF9UEhufquQTqlvJasKt7Q/K95SbG04g/93hptK2+pN3qrrfWfasipqScHDBYuuZdCcRHeei+DnTz8D181S2nV596hMmfpunkU0mMwxJ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zBhsl50q; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e284982a31so22425127b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:25:20 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7d4dee4dfdcso1264255a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728584719; x=1729189519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F0+KYw/6HzWsmGATvSxbQuKdqCcRS3waqcwxHrAen8Y=;
-        b=OrSuHW3LuAFGFcLFdBetAruGipimy71Kdd23mnkCvSb3kzL/ihIej8uTFHbxMiLtnA
-         6YXSI2J+unla/LKg7JIEqX4mCyvrr3VQ406BwPbBG3PiTMk+2hz8bnoRevRPodlhpmMn
-         aYJOYXJWz/3t+SqCWv1rhWrcN4c2Ngbiu7CrMUkXV7A/egH9oRwfDsMuE+3yorA8VAOz
-         djCQlkkb9mc9WG+6oBsuPymdYZpYY26x8ENW3hOt+jiqZzezffl3p0vFDG1wHBHrBrbq
-         D5swTKZ9IT9IBSz41WC4R7QS/s7rDjGVXDZH7rNvgqH9bS1bMtz43t3X2ef5ejrnse9y
-         5+Ng==
+        d=google.com; s=20230601; t=1728584722; x=1729189522; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=RdgAxVyxp31c7WibHLiyIF43paER00mxZOAIHhsdwhk=;
+        b=zBhsl50qhIyYlq5VgEtE/+OL3pX+IkWGN8RxGVp/QOIATD1A51kLNeCudHlw6tpDB0
+         TTnMuZ0YrHvKBYD5A8G+ycj8IUIKyFCIAvMqpCIDMUUrDrOdy+ab52MBoxiszJHwHzOm
+         sj7/CT59ErmtRPL1Q4YUop0G579u9pMO68H1UQD9Q5tvvttPtuceH0HBENkiQygrEN+L
+         UXFheIKzvN3cuQNMasUDogdtF4XkKlByJg1oeWEuvwjQVYTXh4u+Ukk61xBxYSl0CUBn
+         zAffTJ/B4qMDCsY9MtrgvulhfXkVKD4XfiY8/udxWcKlNZIr+Ec1bJeX/OtZ25Pola2P
+         ZJog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728584719; x=1729189519;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=F0+KYw/6HzWsmGATvSxbQuKdqCcRS3waqcwxHrAen8Y=;
-        b=SyEyQJU1NrPwfqwD6gxmFsdxq5vbe2F87pCKiKtCtmCzUAN71NfXdjALG1MESOBjA2
-         PbyDdPBscnXrIazmhdR5Zw96XSitDZd2uBg2oEF3l4kMOkzXDPVuZ8TUgy6KHA0Qxomt
-         ad3P32GznrUYXQ3330Q/ECeGNMKEhmOeMy8XSEzPlCDJuBI+wepn/CksHl7/CpLav6BZ
-         JiMLHJFJq7SfUwtEJAjCxcnbipOgNIXFG1szPTDEwqM74KG0XPOQf+4eolpW3xCsR24G
-         ns0c1e+99bH+X5q/S/G0ttYns8pqTH8oBlfhGY+47jgtKIPY2tfbGVbc4cawyX2b3hNt
-         M3eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIn0FcJfCrXnT1mXEI6GjJL5kZN+67jJzdzuOGy+4n+obF3wwQuGM9D506tvlAyFtyz3jT1K0l+Qjpcyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT7zT5CYWEUMkJCIdZ6bmyzhy+K8DNsjJ2xPNTbD8EQX9dvdmi
-	mupaHix8tIOUbQM7vH1A04qU+jWhL1rG7iCrI7L4csiQrO+uctScTZimcQtYgnZGBEjN/RhzmIb
-	u+A==
-X-Google-Smtp-Source: AGHT+IEeBu92qjGJ6/8zutZUBi8WOanw4UupdtztXpUfLE+vAeLHZHNkVuFOksmpHMU427MoGYN+Q9YZlwU=
+        d=1e100.net; s=20230601; t=1728584722; x=1729189522;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RdgAxVyxp31c7WibHLiyIF43paER00mxZOAIHhsdwhk=;
+        b=B9M517QGKU9Xyy2/tqI19d54S91xUGtoJd3hAEu0vQID1tNJkeNtjgnK5egDgeRxEN
+         IAtMUjPZE4bzTCNLQwjA+nfRUZrxq8OzH+ifw6fgLW7H1V7zmUC0N/ua1ktMNKZ9Sp0F
+         pmQYgkVcId944ruC8MBkIAfNAt2LHbJjpUbzWG4ovnnhVO150RF14r3TU2AFjWd23JrK
+         isE4kvldbYaruZ3TvBnpCLU26oBRSV+/lPjZ5/3MhO9bpbZdH8L3zyz6MZYTaTC83Q+Z
+         QAnBe1wwXyyrB+E2cmqjFEuF89iYnS0/0dWBi8/b9OH1FV4ATtB0a4SVZBKMoRL2Jv5/
+         nYOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeKuYVq9uMuZHG8+yYV8o1Dcnz2sKXIuvpxr4MEaXqIFuv+rShDCykpQ8ZsiVBRfXJ//wVXHLhqZlPiBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypMbnKJ75HHkOz/AmwzM/u515DZ8tQjB+ms6DcA6/tfYbWF9So
+	goPmT4/otgih3c45bgdcfdDGbcNPVTV+T/1Zbwad+VBrxno4wm6xwD5cEpA6YijvtzexBQ6YAAk
+	1kg==
+X-Google-Smtp-Source: AGHT+IH031wjBK6zBugJiyQwbgM1S3WkZumhuZG0/47H7WWzE24O4tbIqX0eqBdD0TzKWzHgCchY3qP4ics=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:3204:b0:62c:f976:a763 with SMTP id
- 00721157ae682-6e322185b22mr897567b3.1.1728584719334; Thu, 10 Oct 2024
- 11:25:19 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:90a:9a94:b0:2e2:da81:40c1 with SMTP id
+ 98e67ed59e1d1-2e2f09f2280mr107a91.1.1728584720854; Thu, 10 Oct 2024 11:25:20
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 11:23:15 -0700
+Date: Thu, 10 Oct 2024 11:23:16 -0700
 In-Reply-To: <20241010182427.1434605-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241010182427.1434605-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241010182427.1434605-14-seanjc@google.com>
-Subject: [PATCH v13 13/85] KVM: Annotate that all paths in hva_to_pfn() might sleep
+Message-ID: <20241010182427.1434605-15-seanjc@google.com>
+Subject: [PATCH v13 14/85] KVM: Return ERR_SIGPENDING from hva_to_pfn() if GUP
+ returns -EGAIN
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
@@ -95,43 +95,38 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>, 
 	Andrew Jones <ajones@ventanamicro.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Now that hva_to_pfn() no longer supports being called in atomic context,
-move the might_sleep() annotation from hva_to_pfn_slow() to hva_to_pfn().
+Treat an -EAGAIN return from GUP the same as -EINTR and immediately report
+to the caller that a signal is pending.  GUP only returns -EAGAIN if
+the _initial_ mmap_read_lock_killable() fails, which in turn onnly fails
+if a signal is pending
 
-Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
-Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
+Note, rwsem_down_read_slowpath() actually returns -EINTR, so GUP is really
+just making life harder than it needs to be.  And the call to
+mmap_read_lock_killable() in the retry path returns its -errno verbatim,
+i.e. GUP (and thus KVM) is already handling locking failure this way, but
+only some of the time.
+
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- virt/kvm/kvm_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ virt/kvm/kvm_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 0bc077213d3e..17acc75990a5 100644
+index 17acc75990a5..ebba5d22db2d 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -2804,8 +2804,6 @@ static int hva_to_pfn_slow(unsigned long addr, bool *=
-async, bool write_fault,
- 	struct page *page;
- 	int npages;
-=20
--	might_sleep();
--
- 	if (writable)
- 		*writable =3D write_fault;
-=20
-@@ -2939,6 +2937,8 @@ kvm_pfn_t hva_to_pfn(unsigned long addr, bool interru=
-ptible, bool *async,
- 	kvm_pfn_t pfn;
- 	int npages, r;
-=20
-+	might_sleep();
-+
- 	if (hva_to_pfn_fast(addr, write_fault, writable, &pfn))
+@@ -2946,7 +2946,7 @@ kvm_pfn_t hva_to_pfn(unsigned long addr, bool interruptible, bool *async,
+ 				 writable, &pfn);
+ 	if (npages == 1)
  		return pfn;
-=20
---=20
+-	if (npages == -EINTR)
++	if (npages == -EINTR || npages == -EAGAIN)
+ 		return KVM_PFN_ERR_SIGPENDING;
+ 
+ 	mmap_read_lock(current->mm);
+-- 
 2.47.0.rc1.288.g06298d1525-goog
 
 
