@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-359681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63940998EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:55:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85981998EEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B3B1C21D83
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038B01F231C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007451CEADF;
-	Thu, 10 Oct 2024 17:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688771CDFC5;
+	Thu, 10 Oct 2024 17:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="o8G/lQSb"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rIDutW1v"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A9919ABC4;
-	Thu, 10 Oct 2024 17:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11C31CCEF4
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582830; cv=none; b=JbGwCneGWv/SV4EUTw8KpLwc6011NQ97sNyWkTrqkpFPmIF+f0aOts2o/5kgFSIYBuFVN0LvcC/sNgjpcehB82uuZISqFMfyEU6eSCApp0NWmpG7zgSZ/al0oOAq3U5isGNWqLGfpmfdUqWBUxJ72BYgkUjMWgIx1iO3HanMmQs=
+	t=1728582827; cv=none; b=bEKm+WKt8h0Ii0Z0QI3UooY2Dv0Vi/gEZqtVKJ4dxEBmZbG7TEXfxNGDRjuIIjmiWY4nNvt6WCjiAfWgq08430KVW3xuhs1ITspsw/koBaur8pYvBpbEaxUkA0QA5FKIcSPe21d3MBjZcLFtwvBvLadDI7eYfzaUJc+lfAkK8WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582830; c=relaxed/simple;
-	bh=0X0YxQOa1OiKz8GaWTAGs9aM+4QyEcL7l+GVc39WZ90=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=lMjWB3FtF8QtdPJmczRVJhoXwadHx858oIhaMfC+g4w1VyOHKtO6I6TbgVVLUAtZ7gwZRuRuItOggJ5O3hGOAneDbwywh3i1N7iWLJa0LYBeqDxom1MuuM6c1EVfah/1eN2SrWme6lnWxMAfX02Nu7/qbYWFnZ6egHNSHazOXio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=o8G/lQSb; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728582798; x=1729187598; i=markus.elfring@web.de;
-	bh=0X0YxQOa1OiKz8GaWTAGs9aM+4QyEcL7l+GVc39WZ90=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=o8G/lQSby+kI/KFQK+a4EatTl5yyCISPQqaIsLREOJlU06RZqWasBhATU6Itec8k
-	 w3q1j6njrvqKU58xdSspUWhSTWF9rq04VKVhw6llSvTnFzt/Lssoxm78McCSa3P8h
-	 Fn4hBVsC0zCNNGZ3LWoZZRFbuDLTdfuKU/UDSXhRFRfjh+hqgBiA4ZmuTxAZc2vyx
-	 YiyL8YeUWHYrccQ4YrhcffUctPIiBGLcZpGu9gIURlwWQTtmL1+yuCkrLrTxxDNtT
-	 US8v5HAXP1L5h/uhmFZmKY2etVWrzRIYFW7kRmsqchHiRl1umDqIDijVOEgUg7pPj
-	 BZJAZadvK58uZZ4p/Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mo6Nt-1tk90n1Y55-00nwpD; Thu, 10
- Oct 2024 19:53:18 +0200
-Message-ID: <2e9bf925-8fcd-4e0b-bc3b-996fffc84681@web.de>
-Date: Thu, 10 Oct 2024 19:53:07 +0200
+	s=arc-20240116; t=1728582827; c=relaxed/simple;
+	bh=YzXifwgJSJSNIXlwxWyYUhBYj6pGIAoVtfeOgQdv62U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GfFeZrjPmOpsCT4cTa7wdNnm6HYG4a1kkRuE5Hm69dbzyIs59S8O/8n0iyRNP/UjfNVYySedt+PvqxR5aKOtlU9ENCbFzgM1NkFoPUhSjEWH18/6MWQr5zggzHfj2oJsJvMQ6rpTbJhc/9MWNmT3icq+O3xaKzxUd9tv7d3u0rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rIDutW1v; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4311b5e4eb7so581995e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728582824; x=1729187624; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ucUNq6DfZ6kzJNCh9EH0qZzNvjV7pwLl5byFikfNic=;
+        b=rIDutW1vUQjbRtF5pcNVXlHz0pbS/L1aqVFhjNGvNPrED63ubMQGDpsvSvnIskHOjO
+         4h1QnkSBkBx2TfVDTAIoFUqk9TvyQEHqdA5Od7e2mz+0+dZlwBxv+KQn9MBNet9eUsd+
+         pFy2UWd0vrDXn5OPAPZbvGMzq88ycPAPdqEEhoxIG27634ckQB6lc8ZY2qNMz8k4GuGo
+         ySxANFDMBmxvq7OjW8cEr55Zvv6ZM5RjO6xzmZsMHlDFNfHUdMB1i7wqPwoMSH2TdsQU
+         zRJeZItwyF/dcP7xadg/tOaARLqXOq4lVbIQhgSnVMPqwx6MH7wG1/ktlt+pM71Io1r2
+         0XsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728582824; x=1729187624;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0ucUNq6DfZ6kzJNCh9EH0qZzNvjV7pwLl5byFikfNic=;
+        b=jRHWcIIMftd1ubLTkkjk0EnSKG11wp4o8oD+WQ+dPgTbsh2p0MuzbPRlAT2k19QNiH
+         fG/fHDL1XhdZv3ooi4wB0nIE+jMiqRrmGFQ3pyIfq0z8t5drdHcjNrJ1FQl8/piJJLx9
+         B+0HQbG/B3l5Vndsd8SBSCJ081P4z0AYK7ieNJQa9YfzrrkR6R/cz/iLvY8oXQEwJyy8
+         j4Aur3O1ukBwO0Q3eQC72tuZ7OJ3T1MAfp5p1Ypaq2ggPiJ58UR4p2QAkDy1JuC47sul
+         hh8iDxDhUSwJGs3Oml5Zl9XiYXX2CBIF5G1QlpBt/EtXL4wpCgOhse9uz6Gho9vdfbvm
+         6u+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVGV4rjsyOutPJ4ooiJrzVjdJVWQX9um8LNYKqyaqu8IKNb7Nl5KagtNPGvFrFasKvFW95d3gq1+7HQL9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5mHpkkQuo6mgw9ouyoq3b1C3EiUali1FawL4gbiAcrhqgw6W0
+	SVa1MAsu7kVhEcIYVylng3qCXNUVBx2jJdKzRCyt7VUwYRNaJCezZcjJ3+eNuYg=
+X-Google-Smtp-Source: AGHT+IEOz5fz6+YBFURACCn40ez7P5s2JRlWE8GFt6DmtuCLL3Y0WMRAtwBtrntBNBUm05KKykiu/A==
+X-Received: by 2002:a05:600c:5250:b0:42c:c0d8:bf34 with SMTP id 5b1f17b1804b1-430c3a9fb52mr30099115e9.0.1728582824024;
+        Thu, 10 Oct 2024 10:53:44 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431183061a4sm22333165e9.23.2024.10.10.10.53.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 10:53:42 -0700 (PDT)
+Message-ID: <3403afd2-20ee-436a-9d3a-22e1c38f78ea@linaro.org>
+Date: Thu, 10 Oct 2024 19:53:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,56 +76,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Marc Zyngier <maz@kernel.org>
-References: <20241010164155.808931-1-fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH v3] irqchip/renesas-rzg2l: Fix missing put_device
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241010164155.808931-1-fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v3 2/6] thermal: of: Use scoped device node handling to
+ simplify thermal_of_trips_init()
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>
+References: <20241008-b4-cleanup-h-of-node-put-thermal-v3-0-825122398f71@linaro.org>
+ <20241008-b4-cleanup-h-of-node-put-thermal-v3-2-825122398f71@linaro.org>
+ <20241008123209.00005cee@Huawei.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241008123209.00005cee@Huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:s+TRnpRKUTP3hwfWpBXDjBOmuWLFr19ZgrbHGsfejHIjDC69MFg
- TU/aRWZaxMclBMEPw4FjVcW8cmW5PBZBFpxXV7FBYv7cgH8Gl/qxfXCoI88M+9o9eEgUmf6
- ndLwLKIWe/nD9Vdrx+bgQcas9oOmlfWM2QwRjh910aEayH6BDRNMaeajPaaoFB/LBvK+uP3
- ur90hvX8gP2dfeg38cQFg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gzhvEgWo+Lc=;VjKUM2vSEQaVYzkPO9vwP1PWP4O
- mZdBbCdTJpf7yTuBfBll/Ir6FX/jgdDGyP0lJ57JlqTRauoTqK3sKCx5hoWUVaI2b9Zn2UULE
- CzPnvzqYc0ZrUuBscLOsk/2PMpm9AEhBhCLQ51OtF1QrZr15gyLV0jVWuDXAUiziFa84QCXr0
- r5QYoisM0zhTPRzX6th0k3BbR4IZQZC/Y8zOSSJe2VJOw8qW9G01+ccggVSe0g7vajWUaHRil
- Jl8/kgFO+++C9Zl8MsQpU5Yko+JUNWq42jBmOdeqllMumbYFIPaz4qxHRkpRVsr/4VNs5bUCo
- W15TMDqk4a/retiXz1LDjUif3djkean8dEBGM9S665XogUIc+C949vj//cIr8s1//5B3dOtwz
- QzCO8aU3AvkjM1labH1no6fE3jvzY1k3FTpUH+OIrzvpXmb8Bm5O7Ikzz/dLvcGk1hrWeTux/
- bh+oJtr8Hh3Bo69/dNOfe94//LXbNda2Qqqf3FTKW8WYXzHD4dlKFl/J9eKUKRqR0oNG+SXOc
- vs2MpBqUVqDR6I6RmzF/KoGS367kz+br5TJgkpS6MP6fv9PKUzuOE5hsl+Uw5qNpy/YY4iqbT
- OUOTlNxWDnGWf76l6gPCIxVRWbcKUB/Oqmq+/2FFsV0Iv3HNAqKFUfNlL3ZHZoI2Ljh+7JoTn
- X+3rYQE2mmLAJyfCSumCj7RTl6qMS6YM1ek+hLR2kd33Q3MhQD6hcuhBBf5LQM8RAQ0dV9P+5
- HByEaCmaF3rDfE0hafpJs5Nqdi0xB5eJsC819k2Oz5i0d4yZOOFi4nYlEgw+GqWTy1/xGQgKd
- 1xtIO5LvFaWjg6Rs/fBKlymg==
+Content-Transfer-Encoding: 7bit
 
-> rzg2l_irqc_common_init calls of_find_device_by_node, but the
-> corresponding put_device call is missing.
->
-> Make sure we call put_device when failing.
->
-> "make coccicheck" will complain about a missing put_device before
-> successfully returning from rzg2l_irqc_common_init, however, that's
-> a false positive.
->
-> Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driv=
-er")
+On 08/10/2024 13:32, Jonathan Cameron wrote:
+>>  	tt = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
+>> -	if (!tt) {
+>> -		ret = -ENOMEM;
+>> -		goto out_of_node_put;
+>> -	}
+>> +	if (!tt)
+>> +		return ERR_PTR(-ENOMEM);
+>>  
+>>  	*ntrips = count;
+>>  
+>> @@ -127,15 +123,11 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
+>>  			goto out_kfree;
+>>  	}
+>>  
+>> -	of_node_put(trips);
+>> -
+>>  	return tt;
+>>  
+>>  out_kfree:
+>>  	kfree(tt);
+> May be worth a follow up to do __free(kfree) on this + a steal for the return.
+> Then push the ntrips set until after the populate so it doesn't need resetting to 0.
 
-Might the application of scope-based resource management become more
-interesting accordingly?
+That's good idea, I'll send v4 with a revised patch (dropping your RB here).
 
-Regards,
-Markus
+Best regards,
+Krzysztof
+
 
