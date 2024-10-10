@@ -1,148 +1,106 @@
-Return-Path: <linux-kernel+bounces-360109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCEC999484
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03252999487
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4601F248E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:39:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324061C22764
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7351C9EBB;
-	Thu, 10 Oct 2024 21:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D8C1E284A;
+	Thu, 10 Oct 2024 21:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNpy7F1e"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="duYBIzAv"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C1D18DF6B;
-	Thu, 10 Oct 2024 21:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779491C9EBB;
+	Thu, 10 Oct 2024 21:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728596366; cv=none; b=Gp117jyWQxxy5Oz2/MfA3E1qV2WEJoc6NvRU3afX0VWmIIV+knzu2+frnRXNiPVSDrJhqQtqji/ssqVk9XBqFZPX6m2e6xp1lTMlRFmHSmNhft/6mayG3aYznZYUtuJAz03JYqIkvguTqoYI1rnW7O5AYy3Cy9bvSH22rgMDC/Y=
+	t=1728596394; cv=none; b=ZEG3EO3LmWfkhHf/+JHewqg4w5Z3wxDX3kKcfHnSSwjdyrgFanwFsnFKQCeevOrQlzhvII4FnJczGzbHNRjez6f7oYkLwQb/IqHgG2SGTHcAl2LE1QXoa2K+XbIXi4srIlUz2fbQPbYS/tu+EoOM22u1AM4B6XPoxQuI+6tDNbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728596366; c=relaxed/simple;
-	bh=XyYW6A6c8SZBEh5/bYJIXoKJoFg/MQvzLyWnhYNLSBU=;
+	s=arc-20240116; t=1728596394; c=relaxed/simple;
+	bh=sAL6tvxL7TkJaJnYVUXx9mAHsz+JpJwVRL7bctnfK7M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XMeczTa4PsJWcnp02E8HIuuupTW11068DfrWRDpv3RMibhqkxYYScErGMdVuoNoewqokcqpSVKKAqrRsDnmvIVu3sVnlfzAW9OmtrsKVyui/5S3LBvEHCt7dy/N6Id2Fo77DaHoGEXXICFm7Mii293ZO+Z6VwYf6jx54U9UkQ/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNpy7F1e; arc=none smtp.client-ip=209.85.221.41
+	 To:Cc:Content-Type; b=PQjHyyzPZ6uPKQLJUu1iislbCWboBQ1pdallZ0TuI7J8LpmV3h1jckjmM/ubcnI2nf2M38vvMyvT/V/LsGuUu52ozIa3qDHb2ihSYvn6mWf5t0KxeI6qBV9G51c3iLHUZjp65oX3UrsRVw3gGcVpXwEngcOeC3lUkdCr0P9SSu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=duYBIzAv; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d533b5412so245159f8f.2;
-        Thu, 10 Oct 2024 14:39:24 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fac275471dso13468321fa.0;
+        Thu, 10 Oct 2024 14:39:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728596363; x=1729201163; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728596391; x=1729201191; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iSmm3ujWM9Lc1PSwYMhMkjrX/ACOqoUCH/T2z1DTYLQ=;
-        b=gNpy7F1e9QB+NyqzBNKGN708FOhzSOmSBcDCAVtqzMt3eneBrn6800onf6dHtHDX12
-         alLw51GE+TCzgZdDibRh8TyV4PnI6DErMVqbYVnCPObK/oZgxpr5LT7JZC0JONwYgFNj
-         xLTmD2G3kHULpe6+7FZiQkW6zcFYFsNF1ei/0qy6VAgVhMOCtodiSGSz9gi5kMcC5XXh
-         QID7dE2RYgD9QFFG6VOXkGvLNok8vuZ49Rx5+M4dx5fGYrjObm2Nsmw4R03P/k0CFc/m
-         +Tld3mYAvz/wPi+jRbwrbuc9ddNDqxx9OT2/CLYXO5xLCSAfrurULhtXXlqqEQB4STvY
-         URRQ==
+        bh=FF4v77tUiHknJjjsfC13TN4fd/UAbD5A6Ni6iYYEH3A=;
+        b=duYBIzAv4lvSdi594BqW1Q86lZW/95VYgie3/kBMCONwZIr+sTEfdgimS/kquZr64C
+         DqAH9fPs1FWtyjZjexFNCoTLse7PgVF9muIetDx2sYLEWaUiHl9rB5cxEudxVoFN1529
+         zphYDZ1dYgcsEGp87CgrMTrNkiInuaHvSIb5XhE4tCFiyTOyIwflXq5psOdXwWjyO6MA
+         83AIVV4/qpTL0t+yIBL0DWynPANZv5alD6V40l+n2bVeoGRRT4EsgCjK8nF9X8afj23v
+         GRfetm0U2iPsav+ORgaW2llnnOOtGs2MSNCr/aNGqdG1cSqt+EUFoDnx69XaYCBayMDM
+         oHKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728596363; x=1729201163;
+        d=1e100.net; s=20230601; t=1728596391; x=1729201191;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iSmm3ujWM9Lc1PSwYMhMkjrX/ACOqoUCH/T2z1DTYLQ=;
-        b=m+NhqrPgz5Xm+tzDlODYaq4S0aHK0HU2JVslW8e96PJ3dZdO20bqNcTtMtVS3GbCYW
-         C2sVZ1DMGxh3AxHQuzculXJyIRt1rtLrb6b7sEbB57ct/bkkF8iTeb/VtssDBLiQBAsG
-         DPMpXaHtV9HrM04bocCjt78lP6A5iA1KfNTHHHLeyMfzrLKUX9xGW5avubZdfFWCAxFB
-         ji7Y+3XqZkaQlxteeLuh5BfAKF4dD7EsKJbucdw3dSrVuX8fSgJl8yNmOozTk57dH98L
-         RhFLsYhlk5eIzfGHa2SGbfJKCP/vbBVVhouprqlOxFOMXTje3WH8q+0DAMhl9A9l62Wv
-         lwXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEP/kffFmVLdhbyBdTT1tHCi+REDvMNahOVApgLXHl3Afb0VkISKNsrfyNd1w7khiQpvjcGWRfRiFSlP4t@vger.kernel.org, AJvYcCUjScexdeeeEizGsGtcCgdGnAiZ7DQ2KUlNmqPzbMjPdvnT0iTX8Br2Apbf2zphUtZ4vG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDOYxTWz+Yr9kNpy+zpSwVfdyWmi+KCShOer1B/pRWOimeiMu4
-	Yj9icVBJQDdCZ9rSq8wC+ioTJiLHoS4tU3Pi+2c81sRjFWwsn6iyQByGvAr6i1aAWnRZNtdkhF9
-	KUAFmEJnP8ZV2cy0y0wJXjNUEIUY=
-X-Google-Smtp-Source: AGHT+IFMEBpaLju4jvCLHsZaAkZnakbHbO0bzSr1Lxhx4zkylvqs35dJaafFDVXRM129wI/Y/PIljSr8Ivm3T6d21+w=
-X-Received: by 2002:a05:6000:181a:b0:37d:50e1:b3d3 with SMTP id
- ffacd0b85a97d-37d551b76c9mr259081f8f.20.1728596362610; Thu, 10 Oct 2024
- 14:39:22 -0700 (PDT)
+        bh=FF4v77tUiHknJjjsfC13TN4fd/UAbD5A6Ni6iYYEH3A=;
+        b=t/2nUaedseJqbtzX1A5miCYs2eErUI5WPCyPxccRxJ1iHyWP0l1cOqRmlN/bL12N9G
+         Ro+0oPtFqemuczBEuFWVsijdUPjQDdWixjN3YESf8BNQROAMMa90c/zIykQW1iJKc27C
+         QZCnqPsBJ0MPav+mlzky6LyWy5n4f+3OTA2jtRrHcygR53L6x/W/Qweq/xOjg+0Eebjz
+         tL/k2rXvgmfKePqhRA55M74sHp/0wiihOezEFEty6nlXLFNJ0bXB+L1xBktnC/hki5KO
+         G1DvTgTiQ4YwY3FTHb8OEY3gx4PWyoXEtRaWKm3DEhwOri1qmrsayIOQwh0j9flohiYF
+         hMCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUySrkavLejuhAeqsRfLLMZ6CaHt8v6zfGfWb3Y8UTCLOA0QHO7Y8QJa+UxriLO1LvAucCa9SYvnU/VXV2MvA==@vger.kernel.org, AJvYcCUzkdnLzaM0wFLU3vY2/CRBKih1F5gQkif1p68Ut8Z40mV37HjS6Adn86P2/cEZoK6OfPuWkwh0rh4=@vger.kernel.org, AJvYcCWmT5yp+y0IEqNh+DoqLnrG1VIgDCoFPV2MSjHRvIivWFm3BDfU/z+LccxfAIZ25BTgpMSJ/ox27PhDeIef@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLO9zOXRUZo+gihIkMw/qJL7nfj/CSO/UdHI7M5HCLf7JxKAl5
+	ymMN2Ml50MG+xMY0frIuagoiKLcM6q8vZtM28GJXomkMXpM17TgGVeLg+rD9tIT4m39RXVMAJMw
+	U81A50siZcT3xMYsxA3zlCkmfBdA=
+X-Google-Smtp-Source: AGHT+IEhHiCtho5ZAZJ1EQLtUzYBwqNgiXO9+ywmxuSamLa+NAVuf9dcih68IXfAmcj/6x7/2iTEk0IFhLzYZ78sWa4=
+X-Received: by 2002:a2e:a548:0:b0:2ef:2c40:dd67 with SMTP id
+ 38308e7fff4ca-2fb30da01a0mr1833071fa.3.1728596390301; Thu, 10 Oct 2024
+ 14:39:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANpmjNNPnEMBxF1-Lr_BACmPYxOTRa=k6Vwi=EFR=BED=G8akg@mail.gmail.com>
- <20241010131130.2903601-1-snovitoll@gmail.com>
-In-Reply-To: <20241010131130.2903601-1-snovitoll@gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 10 Oct 2024 23:39:11 +0200
-Message-ID: <CA+fCnZfs6bwdxkKPWWdNCjFH6H6hs0pFjaic12=HgB4b=Vv-xw@mail.gmail.com>
-Subject: Re: [PATCH v5] mm, kasan, kmsan: copy_from/to_kernel_nofault
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: elver@google.com, akpm@linux-foundation.org, bpf@vger.kernel.org, 
-	dvyukov@google.com, glider@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryabinin.a.a@gmail.com, 
-	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com, 
-	vincenzo.frascino@arm.com
+References: <CAJ-ks9khQo8o_7qUj_wMS+_LRpmhy7OQ62nhWZBwam59wid5hQ@mail.gmail.com>
+ <20241010141309.52527-2-tamird@gmail.com> <f7fba2fa-cac9-4ecd-98e1-adb2cac474ab@infradead.org>
+In-Reply-To: <f7fba2fa-cac9-4ecd-98e1-adb2cac474ab@infradead.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 10 Oct 2024 17:39:13 -0400
+Message-ID: <CAJ-ks9mz5deGSA_GNXyqVfW5BtK0+C5d+LT9y33U2OLj7+XSOw@mail.gmail.com>
+Subject: Re: [PATCH v3] XArray: minor documentation improvements
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 3:10=E2=80=AFPM Sabyrzhan Tasbolatov
-<snovitoll@gmail.com> wrote:
+Hi Randy!
+
+On Thu, Oct 10, 2024 at 5:35=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+> > -You can then set entries using xa_store() and get entries
+> > -using xa_load().  xa_store will overwrite any entry with the
+> > -new entry and return the previous entry stored at that index.  You can
+> > -use xa_erase() instead of calling xa_store() with a
+> > +You can then set entries using xa_store() and get entries using
+> > +xa_load().  xa_store() will overwrite any entry with the new entry and
+> > +return the previous entry stored at that index.  You can unset entries
+> > +using xa_erase() or by setting the entry to ``NULL`` using xa_store().
+> >  ``NULL`` entry.  There is no difference between an entry that has neve=
+r
 >
-> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index a181e4780d9d..cb6ad84641ec 100644
-> --- a/mm/kasan/kasan_test_c.c
-> +++ b/mm/kasan/kasan_test_c.c
-> @@ -1954,6 +1954,42 @@ static void rust_uaf(struct kunit *test)
->         KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
->  }
->
-> +static void copy_to_kernel_nofault_oob(struct kunit *test)
-> +{
-> +       char *ptr;
-> +       char buf[128];
-> +       size_t size =3D sizeof(buf);
-> +
-> +       /* This test currently fails with the HW_TAGS mode.
-> +        * The reason is unknown and needs to be investigated. */
-> +       ptr =3D kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> +       OPTIMIZER_HIDE_VAR(ptr);
-> +
-> +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
-> +               /* Check that the returned pointer is tagged. */
-> +               KUNIT_EXPECT_GE(test, (u8)get_tag(ptr), (u8)KASAN_TAG_MIN=
-);
-> +               KUNIT_EXPECT_LT(test, (u8)get_tag(ptr), (u8)KASAN_TAG_KER=
-NEL);
-> +       }
+> Is the line above supposed to be here?
+> Confusing to me.
+> Thanks.
 
-It appears you deleted a wrong check. I meant the checks above, not
-the CONFIG_KASAN_HW_TAGS one.
-
-> +
-> +       /*
-> +       * We test copy_to_kernel_nofault() to detect corrupted memory tha=
-t is
-> +       * being written into the kernel. In contrast, copy_from_kernel_no=
-fault()
-> +       * is primarily used in kernel helper functions where the source a=
-ddress
-> +       * might be random or uninitialized. Applying KASAN instrumentatio=
-n to
-> +       * copy_from_kernel_nofault() could lead to false positives.
-> +       * By focusing KASAN checks only on copy_to_kernel_nofault(),
-> +       * we ensure that only valid memory is written to the kernel,
-> +       * minimizing the risk of kernel corruption while avoiding
-> +       * false positives in the reverse case.
-> +       */
-> +       KUNIT_EXPECT_KASAN_FAIL(test,
-> +               copy_to_kernel_nofault(&buf[0], ptr, size));
-> +       KUNIT_EXPECT_KASAN_FAIL(test,
-> +               copy_to_kernel_nofault(ptr, &buf[0], size));
-
-Nit: empty line before kfree.
-
-> +       kfree(ptr);
-> +}
+Ah I think there's a latent sentence fragment there.
 
