@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-358899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD2499851D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B8199851E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08DCC1C243B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 425931C238DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5421C4626;
-	Thu, 10 Oct 2024 11:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10461CC148;
+	Thu, 10 Oct 2024 11:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cni6dLyH"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLW2V3Dz"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03A31CB52F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7E41CBEA8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560063; cv=none; b=CsfFpO/jCGydAz6fbhDs4tufJrlIsp4MMK5NTyTlEsb/o1D16aPFSvRRxEup4b/acvg7I6irkLjwAPfn1Ck24q90X4lNkwTGNWuSxeztwmdgmvPTRbT//RGDz02jTCeN5HgEw1doFYhSVpuk98P3FuTrEZqq0hyk62HmwslkoHs=
+	t=1728560065; cv=none; b=jhYKYL/NEH8ceh2ZQo+sp/HD7iSf0cB8aVQd4FEZoYIbZkcIlXNr1YSM1ERKTUX0H60ad/Q6hkJCsC5ajWHu5JB2/8mJEAjRQrrpMcSddkouWUl8i24qpDRd1/tLwJWeRIkXKNhXKvw/Vazg5SzQCQudh/gnIMAqBVCO4+nUUYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560063; c=relaxed/simple;
-	bh=oB6HP3SopbCX1pJb2/iEaIAmUOMLymz+4GahfTzk35I=;
+	s=arc-20240116; t=1728560065; c=relaxed/simple;
+	bh=iM/dQm4bBW4OzU1EedLHO9rK90B09M3TWGeyZRpr9ek=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ongiox0DeKO9CQqdrpL+S8Ww0MiqDbvrLW9fST/bl0ZYYv+WNkiRCQZD3MDbQ3sWk0t8nyGV7MmzHXB4aoohFuinNAPbZTYwNAJNkjgVCytXsd9SbIr3NvKtTi11iw09H0NF74z0eZrrDpwAv7BUgepUqpetAGQCFOJ6AGwx8Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cni6dLyH; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:To:Cc; b=CLp/La3hCM2Ar8GZ9A5+eOOeSuFoVDd48EvNP8kGdKfNKQ5gqvq+fYy9xTipQ8+aWjTT3EL3XFz/wMEoT9aC4u7N5qUE/dVVNf4Ct8CrlmnNKcTyUPZ21YmfrciIyolPuBh4HIWsoxKm3F1IAiTWTfQjCSNKYWvEwIycY8g5ags=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OLW2V3Dz; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a99415adecaso340306066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:34:21 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99422c796eso133963566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728560060; x=1729164860; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728560062; x=1729164862; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Gi2KcUYCbZkPlsUdwrNEo9QLrpmnXM+YJIWNYO7+o8Y=;
-        b=cni6dLyHsCCvLlMUb4SeWPDVDfo+x1aGg30gbaF8IEP8hZE//4nJTX252D6PFkhrs/
-         zogwdb+vNVJcamarzWoNHon4U395sr4iO3apMyRdVic7vrVlgv9cEfc9JT9GfPW5bFe9
-         0Qyg/F8QzM2SOx2Kfyx8nf+etefaHL+aZ0AlIG+L0B2nrNLd2HLLm6CMD4/25vOLjcNU
-         /bHVGFvDjVarlpQnQijKcYrdnz7qyhhxCDb6Waum7JGQubp/diWMvBl4iPm848L9DFQY
-         y0/YIWYJ9ipDYprfbRSwJJN/R+2IX9pLX9f1mYAH0vdbMq14E350aYTuwdxp5BgIXcWp
-         ON/Q==
+        bh=bckn3YFGIgJxyi6JuzR+D6XCfS8U3/QVQiTYkjNWbHI=;
+        b=OLW2V3DzOLhZ3k3Hm4ty64ImRMcgL9oTfjheEv5h/UMFOe6Otv+ImKxFgzlgT/9CJ1
+         sKbmd85b+D3a7WO97ar5AsOxD/o6MVS1/SdcJey6fq+DBUhEjc4J9hdCHVf88VsCXW2h
+         4H+Ygf18IGO8cDYPDkNGuV94UYsdOK7s+s0vobPNW2QJKGV/HCoQLH6uNBubk+IwQiHn
+         2UYOpTXxgNueYZe/D4F0xjrauxziHUGdbVuX1Be1sLm3SqqTkj5Q89VhKTQyzgh2A5vB
+         YodDGvblBv2hDW434k01KWOb3cBuiFPM8IfYrecJZTUGN6UQCHQccq7VBx+xkLETZtIz
+         YkAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728560060; x=1729164860;
+        d=1e100.net; s=20230601; t=1728560062; x=1729164862;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Gi2KcUYCbZkPlsUdwrNEo9QLrpmnXM+YJIWNYO7+o8Y=;
-        b=w27mR13VoHuEO4iC45uiiK5AiAYMS8FbguXKyBRAPWF2eMF4meQFdYswPfVrSWJh45
-         csGaoI9ttg5WpvtabWPAWFi4kFuqGQe+waBAkpVrajXdBYirYpu/gNLWV2C8rJAf6x0j
-         vgHwG58N6XdqLNgdUc8p1i2RxjulqH2gf4ja0DL1T2019eGbehnOMPLTaoXhCwYwKdmi
-         RVH1tYoiSWHulsid4cA9jlT0Ogd4XQTbtSk/U8E4rsmY2auhddZMaF6Fw6BnuAJTXSA8
-         U4r3HmJWbFLlSxuVkSWB/n1uaMeO02pV+OrbgtB+AiZGFIjoyzet+Y0TZ6JUqmXhBhVk
-         DIBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoTei8x6O4AiCuBpUPwu8rcBKBRjiiILHZmJGhoaGnJre9i3z+RmafhhNqqB94ZDEMlUvymVpy+OClYDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEjTXPAvgBQMzShGwRQkXXg9JMtKPp3qRpzfiYc4pc5AYcP0R8
-	4H1ewQ1ZjPH3XdGAsnZ8kkAN2Na48vudIa4RXNILHYGYWAUshGC/qzDaSE+SYgs=
-X-Google-Smtp-Source: AGHT+IG0T9Kw9rtdvh8MtWNWqvxS8ro6kLfwIAoOvd9amat2XPjlnHbF8UXzNiDyhtYS8hL41xf2rA==
-X-Received: by 2002:a17:907:7f8e:b0:a8d:4954:c209 with SMTP id a640c23a62f3a-a99a13ae710mr266075066b.22.1728560060101;
-        Thu, 10 Oct 2024 04:34:20 -0700 (PDT)
+        bh=bckn3YFGIgJxyi6JuzR+D6XCfS8U3/QVQiTYkjNWbHI=;
+        b=I3dX+4za5P9SqndaTLFK+sxODSA9tjdX3bXptCG4eo0sMCdK94PSZvDsKCBLIYH2i9
+         bbH8j/LdWgjdx76VGWpZ/KDNkewNWUsrjZml8XQfJqxXhXjSjN724u9tUIH3E3IgVSB9
+         Cf0yzIv6icRdAXviVpdh3yYd2GoFx3QbofQjceeBLBBWJpyNUL5rpMb/q/rcxzKF7/sb
+         jEvD2f0s274UWQlU3wPF77tbDmLTLU/WN6PADBMES51d4KtLju3iX7Le+KxTZRljmrfl
+         /MnzM1c1guTjuz82X/ZfBkydT9r7AKhbSQstsBGStfh3JzcCuksSzn1DqDsRrLKIMNlL
+         8KCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF95dW6PFFRHV7s4HngtRhuFCRI6lP5n00A++a50Wu9Op3Ygz+AJvgsqj2R/ilugsJrXPz+cidY8g/PWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1IHOYf6Ka6K01yqnqfkWZvK6T/gZqVy7FmkzkzKCXeiTHyPRY
+	tZDnCvnPLOLZTP+tFg2HpFsqMtf28ZDfuWDTMfVrzWRtUvVzxp8WYRJ93LUWV7Q=
+X-Google-Smtp-Source: AGHT+IFigyJ/4+OGI1gC8uCP0lgfYv0O7YK2EBVE6+TDguBMfdVneKhgbLHN8YNte2qxqNUZjO00NA==
+X-Received: by 2002:a17:907:944d:b0:a99:5baf:12a4 with SMTP id a640c23a62f3a-a999e695b35mr298335366b.17.1728560062133;
+        Thu, 10 Oct 2024 04:34:22 -0700 (PDT)
 Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.34.18
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.34.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 04:34:18 -0700 (PDT)
+        Thu, 10 Oct 2024 04:34:20 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 10 Oct 2024 13:34:00 +0200
-Subject: [PATCH RFC 22/28] ARM: entry: Move work processing to C
+Date: Thu, 10 Oct 2024 13:34:01 +0200
+Subject: [PATCH RFC 23/28] ARM: entry: Stop exiting syscalls like IRQs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-arm-generic-entry-v1-22-b94f451d087b@linaro.org>
+Message-Id: <20241010-arm-generic-entry-v1-23-b94f451d087b@linaro.org>
 References: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 In-Reply-To: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 To: Oleg Nesterov <oleg@redhat.com>, Russell King <linux@armlinux.org.uk>, 
@@ -90,75 +90,75 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.0
 
-At the end of a syscall software interrupt and every time we exit
-an interrupt handler we check if there is work to do, i.e. if the
-current thread (userspace or kernel daemon) has set the
-_TIF_SYSCALL_WORK flag.
+The syscalls are issued as software interrupts, and to this point
+they were sharing code with the other exception handlers, but
+this does not work with generic entry.
 
-Move this processing over to the C entry code.
+Make syscall_exit_to_user_mode do what irqentry_exit_to_user_mode
+does at it's tail, and drop the invocations of
+irqentry_exit_to_user_mode from the syscall path so that these
+are now exception-exclusive.
+
+Split ret_to_user and ret_to_user_from_irq into two distinct
+execution paths.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/kernel/entry-common.S | 14 +-------------
- arch/arm/kernel/entry.c        | 10 ++++++++++
- 2 files changed, 11 insertions(+), 13 deletions(-)
+ arch/arm/kernel/entry-common.S | 14 ++++++++++++--
+ arch/arm/kernel/entry.c        |  4 ++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 33bc9e7c5b32..5385574c4339 100644
+index 5385574c4339..e2ac6d3216b6 100644
 --- a/arch/arm/kernel/entry-common.S
 +++ b/arch/arm/kernel/entry-common.S
-@@ -42,19 +42,7 @@ ret_fast_syscall:
+@@ -42,7 +42,6 @@ ret_fast_syscall:
  	/* do_rseq_syscall needs interrupts enabled. */
  	mov	r0, sp				@ 'regs'
  	bl	syscall_exit_to_user_mode
--	ldr	r1, [tsk, #TI_FLAGS]		@ re-check for syscall tracing
--	movs	r1, r1, lsl #16
--	beq	2f
--
--	tst	r1, #_TIF_SYSCALL_WORK
--	beq	1f
--
--	b	2f
--
--1:	mov	r0, sp				@ 'regs'
--	bl	do_work_pending
--
--2:	asm_irqentry_exit_to_user_mode
-+	asm_irqentry_exit_to_user_mode
+-	asm_irqentry_exit_to_user_mode
  
  #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
  	bl	stackleak_erase_on_task_stack
+@@ -62,6 +61,18 @@ ENTRY(ret_to_user)
+ 	enable_irq_notrace			@ enable interrupts
+ 	mov	r0, sp				@ 'regs'
+ 	bl	syscall_exit_to_user_mode
++	ldr	r1, [tsk, #TI_FLAGS]
++	movs	r1, r1, lsl #16
++	beq	1f
++	mov	r0, sp				@ 'regs'
++	bl	do_work_pending
++1:
++#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
++	bl	stackleak_erase_on_task_stack
++#endif
++	restore_user_regs
++ENDPROC(ret_to_user)
++
+ ENTRY(ret_to_user_from_irq)
+ 	ldr	r1, [tsk, #TI_FLAGS]
+ 	movs	r1, r1, lsl #16
+@@ -76,7 +87,6 @@ no_work_pending:
+ #endif
+ 	restore_user_regs
+ ENDPROC(ret_to_user_from_irq)
+-ENDPROC(ret_to_user)
+ 
+ /*
+  * This is how we return from a fork.
 diff --git a/arch/arm/kernel/entry.c b/arch/arm/kernel/entry.c
-index 472338047337..0e3960844b94 100644
+index 0e3960844b94..88a7a699306a 100644
 --- a/arch/arm/kernel/entry.c
 +++ b/arch/arm/kernel/entry.c
-@@ -1,10 +1,16 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <asm/entry.h>
-+#include <asm/ptrace.h>
- #include <asm/signal.h>
- #include <linux/context_tracking.h>
- #include <linux/irqflags.h>
- #include <linux/rseq.h>
- 
-+static inline bool has_syscall_work(unsigned long flags)
-+{
-+	return unlikely(flags & _TIF_SYSCALL_WORK);
-+}
-+
- long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
- {
- 	trace_hardirqs_on();
-@@ -18,8 +24,12 @@ long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
- 
- void syscall_exit_to_user_mode(struct pt_regs *regs)
- {
-+	unsigned long flags = read_thread_flags();
-+
- 	rseq_syscall(regs);
+@@ -30,6 +30,10 @@ void syscall_exit_to_user_mode(struct pt_regs *regs)
  	local_irq_disable();
-+	if (has_syscall_work(flags))
-+		do_work_pending(regs, flags);
+ 	if (has_syscall_work(flags))
+ 		do_work_pending(regs, flags);
++
++	trace_hardirqs_on();
++	/* This context tracking call has inverse naming */
++	user_enter_callable();
  }
  
  noinstr void irqentry_enter_from_user_mode(struct pt_regs *regs)
