@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-359256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872169989DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF7199896E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BD48B262FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7028F1F20F53
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B911E1A33;
-	Thu, 10 Oct 2024 14:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNECdP7R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F9E1E2301;
+	Thu, 10 Oct 2024 14:21:23 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C0D1A2643;
-	Thu, 10 Oct 2024 14:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11761CBEAF;
+	Thu, 10 Oct 2024 14:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570035; cv=none; b=pahE6ObjoPpb4Uy+WPvsni8f0I17mqlCtsea41n1Wv0xZ9p55Rb0/jrsB1MteX/EfYTYnUx4dnV6qFgpgJqgMMLv0gVgBPl5kOudEMevlMLzjTsyLlEiOuSa0qT1bmEzz3KhWtKflaTR9knfTBvPvzsZTxspS6rpRZgHsZZ54No=
+	t=1728570083; cv=none; b=mGF6idXBwGEqPyMeMWadD9aitUopTWxAawC/A82QYrlIKLlEifQbdKz2wp9dFyVgFMOnzEKFpIqvQKv6JIlMhlRO+N8a58q4ClZt2cg9GCBu6g5i5X+BxBjJrbHE+47DxEAIcMdOSSBERMNCq4/QBr38dGbtPCVgd7nuNLas6yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570035; c=relaxed/simple;
-	bh=IvfXKC1ll/kv00u18cZmSVby/wOPPigQ1SMJthqTGQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ebJy9UZzBqmxUOUMyseGFHxNFAA6OIvab/f3XoTlHgNck/HYh3z1VinPzmEWY+DDRiFO+amGx/C/HwkE3IdCShlpp9RAfULr12nHJbt4FdJjXIhNcimXxjGy8mHSOxq3UGLq1UXUBWKDhfms/QTUPkjoTW7t7I9oDWLoalBck/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNECdP7R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 510FCC4CECC;
-	Thu, 10 Oct 2024 14:20:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728570035;
-	bh=IvfXKC1ll/kv00u18cZmSVby/wOPPigQ1SMJthqTGQc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oNECdP7RZdL9/c5GcOA5f0Dtc72MJKTYvEopK6kwW7nxVoVxhnpMfWCgiMBjWB03Y
-	 McRcdv2s1rCX42XyyZrz1BRT8uaX712yD5GiLUdJYprBBMCqItgzsa1nY8Fi0GUhE6
-	 +aUAx40Lax332DDnJMmZvVgekcBLQQVybT8ENwNEcqrC4rogDTTXDPF3yWVjBKL2Ky
-	 4MIe3Hm/VookR7azSbGL7cyPeWUHhgomwgcAymNA69g5/9qYPVc9gcG8r1KeaLmaRY
-	 zMRoqZmdKZISj+aOkq3JU0I5Mmzpk5XIg35XhuZwjMH1y4GRnTNCOAY7pvR+twPAfE
-	 fWco2at2iUQ7Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syu1w-000000005jD-1LnG;
-	Thu, 10 Oct 2024 16:20:40 +0200
-Date: Thu, 10 Oct 2024 16:20:40 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: neil.armstrong@linaro.org, Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: mark pd-mapper as broken
-Message-ID: <ZwfiuJW1gkYPFic1@hovoldconsulting.com>
-References: <20241010074246.15725-1-johan+linaro@kernel.org>
- <CAA8EJpoiu2hwKWGMTeA=Kr+ZaPL=JJFq1qQOJhUnYz6-uTmHWw@mail.gmail.com>
- <ZweoZwz73GaVlnLB@hovoldconsulting.com>
- <CAA8EJprg0ip=ejFOzBe3iisKHX14w0BnAQUDPqzuPRX6d8fvRA@mail.gmail.com>
- <Zwe-DYZKQpLJgUtp@hovoldconsulting.com>
- <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
- <ZwfVg89DAIE74KGB@hovoldconsulting.com>
- <jtxci47paynh3uuulwempryixgbdvcnx3fhtkru733s6rkip7l@jxoaaxdxvp3d>
- <Zwffi40TyaMZruHj@hovoldconsulting.com>
- <CAA8EJppWgcyzS14rY2TfX2UNR1iqKBo1=qxHAbwkbeXLrZ2MPw@mail.gmail.com>
+	s=arc-20240116; t=1728570083; c=relaxed/simple;
+	bh=vQcroqrfXxjJH/WrgCFcllXXIoax+Vpt+UI+OK0sYyg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dxBHzdlxAqILK8ocOgX8dAq3qUS19JIdLHWH5MHFaONLxm7PhG8Aj78oSlhfzZ8AqxIhiNh0xZF9jfkOxOVVj7K3PGewZ9D4eDcM/SxMozOFaYKqUaeHmFV8Z4LMA3MfUslRjwzFqDYfP6dpDts6q+V7QNe0K/8O6S6JKksLI5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPX2h4Hf6z6K6Jk;
+	Thu, 10 Oct 2024 22:19:56 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AEBD0140B3C;
+	Thu, 10 Oct 2024 22:21:17 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 16:21:17 +0200
+Date: Thu, 10 Oct 2024 15:21:15 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 20/28] cxl/core: Return endpoint decoder information
+ from region search
+Message-ID: <20241010152115.000041b1@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-20-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-20-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppWgcyzS14rY2TfX2UNR1iqKBo1=qxHAbwkbeXLrZ2MPw@mail.gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 10, 2024 at 05:13:44PM +0300, Dmitry Baryshkov wrote:
-> On Thu, 10 Oct 2024 at 17:07, Johan Hovold <johan@kernel.org> wrote:
+On Mon, 07 Oct 2024 18:16:26 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
 
-> > Yes, Chris's analysis of the ECANCELED issue suggests that this is not
-> > SoC specific.
+> cxl_dpa_to_region() finds the region from a <DPA, device> tuple.
+> The search involves finding the device endpoint decoder as well.
 > 
-> "When the firmware implements the glink channel this way...", etc.
-> Yes, it doesn't sound like being SoC-specific, but we don't know which
-> SoC use this implementation.
+> Dynamic capacity extent processing uses the endpoint decoder HPA
+> information to calculate the HPA offset.  In addition, well behaved
+> extents should be contained within an endpoint decoder.
+> 
+> Return the endpoint decoder found to be used in subsequent DCD code.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-So let's err on the safe side until we have more information and avoid
-having distros drop the user-space daemon until these known bugs exposed
-by the in-kernel pd-mapper have been fixed.
-
-Johan
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
