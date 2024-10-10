@@ -1,54 +1,72 @@
-Return-Path: <linux-kernel+bounces-358659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5FC998217
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37F399821C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6391F253CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:26:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E488B1C24497
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FC51A264C;
-	Thu, 10 Oct 2024 09:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5101A072A;
+	Thu, 10 Oct 2024 09:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fu5s6DNf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ec37QHXK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE761922DD;
-	Thu, 10 Oct 2024 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F65429AF
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552368; cv=none; b=jHuBdd3dXlGxVejIiJ3dsI3ghpWPS0y8GFtHPzWJag1zSjU16YadXZ+hfJd5w8kEvF3eLYrNIj/LEzUD1Q/4u4ZFiZ0UVnzjMLfj8h6diwpW/+fherh71hb+rFl5g41Q9rj2CkQlTPZOAijvZHieB54RhTI1DD5vQLbdSQdP7eY=
+	t=1728552443; cv=none; b=gNhdYE8r8EzRnBZ6OJZ3nxcpZ6loDogP2E8r2TA4FJaIJR2NDnyAU4+Y5GbXkqDiwuDWtt2OcogdlJmy5Uyg0o16UjB8w98ImbSGGA05aEM6vLNXNdVcAipcWqo/gHeGRigQlA6ggM8Y4KfhjCQIOv4EIM1SFWdT6GdQG/vebns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552368; c=relaxed/simple;
-	bh=MUNnJAfZBwiGRUv3CoIf4POyn7nVfA36YbnFb7U/+4A=;
+	s=arc-20240116; t=1728552443; c=relaxed/simple;
+	bh=2vzqPlZnY0wfsU0ljF0ulnyS0A6DONz1tFpR0bdWC8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TdXtUr+9i/EkVIuNbxLO5n5S92xxPXm8zo+5do9dKTgnHHnnDiemzh8M3aJnTz0nzAz/OgSAiefim0p+hMQsgIhHktUxzbLHEhVTi4ZEuP76GXMlH773L5CcvGadeSmedf47nnk8L2TS3bJ8E3zcPvn8DR4cY1sMrEnzxPl49bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fu5s6DNf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD39DC4CEC5;
-	Thu, 10 Oct 2024 09:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728552368;
-	bh=MUNnJAfZBwiGRUv3CoIf4POyn7nVfA36YbnFb7U/+4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fu5s6DNf+1ARrhLwLE/vGfJoYMJjs1sM3qq/UNwrvFkVIeIrvyYTEbLzDjCLl4uGm
-	 uFptnniGCFFZuYT5JMqB/nmgOCpqNwbXFtmLTrEvQmKoIjieZuqWTAHJPch2pODdFE
-	 Lvd5xB74Y4eFe1eHpiUBif5iGCGmOJL2DP60QEAOXRZy1TQll5DZ6XSeABb5/EK16o
-	 gplsihkjLuTSldp6xWy/bAARRZnoqA4TdfQWNHiJcrlzlkA2UT7IaGit5o6wKabZKx
-	 nOM+etq+FDjaptgPVcab46mrm5kGqSf/z+LeuQtR99qiq0YBiPgwo3Crnhyo4jXAaz
-	 f4F4g2cn08UYg==
-Date: Thu, 10 Oct 2024 11:26:04 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241010-nahtlos-erproben-27bf691dcc06@brauner>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <87msjd9j7n.fsf@trenco.lwn.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lPl9jgH6CDCr+rHokKSm1KKvlSkG4Kar4gKO66Hrrr2Y7nG1uLrMxD2Q2E5zbiVD/Sf5cPKuzWKJHX3QBH7Ct5rI5t9J0U1FZKyLcFKaeFndEJw3n6sd6jztejw/f3kpgyNT0ghIgTEPwAniD/4lxQyGCkOjHqcBo3lSaRcacPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ec37QHXK; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728552441; x=1760088441;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=2vzqPlZnY0wfsU0ljF0ulnyS0A6DONz1tFpR0bdWC8E=;
+  b=ec37QHXKHF1HfYDq2kw5n1BGBKt7pSM6vG6/kneYMABKfps6NfcgIFsy
+   aUQGjYo1XO87POaoFIFdUTufGSwcMMbztRJyAhzGfO5k4g7fdWPE0T3wl
+   aCEtNemuj1c11yQ04idYQcqrx7DMFvMyCEb0xo59+uH4yGcSgCeyRTt6G
+   9CTKC/LAcKEFePWwk2nq30i5AGbqeCOfMn9/Fyhd92KrF+x21u9x+CJX0
+   9hBhmm8Dil6yJfY+OtxO53sQKxL4r7ven0fAgILYAUaY3O/yhed9tKjbE
+   ZYWC9+gUVJ6YWrWgJhJue5GH5f6x/BqFld+mWJecTfqrHNgyeTESOA47W
+   Q==;
+X-CSE-ConnectionGUID: WSAb1RD6SiSFP537n9+01Q==
+X-CSE-MsgGUID: T+iLc36wTnO5uwg/nEnRBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28029634"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="28029634"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:27:20 -0700
+X-CSE-ConnectionGUID: vSm6azH4RWaSQocRWjKG+w==
+X-CSE-MsgGUID: 9zi92uwCTQu0QnDVx8skQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="81332712"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:27:19 -0700
+Date: Thu, 10 Oct 2024 17:26:20 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+	yi1.lai@intel.com
+Subject: Re: [Syzkaller & bisect] There is KASAN: slab-use-after-free Read in
+ __nf_unregister_net_hook in v6.12-rc1
+Message-ID: <ZwedvOBlB6WyFRhr@ly-workstation>
+References: <ZweN3SiUk4bK9N7u@ly-workstation>
+ <CANn89iKNZ4AZVYfxzhGWnx82T44_7tw5P63-TE0-GUn+sTRkZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,20 +75,202 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87msjd9j7n.fsf@trenco.lwn.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iKNZ4AZVYfxzhGWnx82T44_7tw5P63-TE0-GUn+sTRkZg@mail.gmail.com>
 
-> > +	/*
-> > +	 * If userspace and the kernel have the same struct size it can just
-> > +	 * be copied. If userspace provides an older struct, only the bits that
-> > +	 * userspace knows about will be copied. If userspace provides a new
-> > +	 * struct, only the bits that the kernel knows about will be copied and
-> > +	 * the size value will be set to the size the kernel knows about.
-> > +	 */
-> > +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
-> > +		return -EFAULT;
+
+
+On Thu, Oct 10, 2024 at 10:58:35AM +0200, Eric Dumazet wrote:
+> On Thu, Oct 10, 2024 at 10:19 AM Lai, Yi <yi1.lai@linux.intel.com> wrote:
+> >
+> > Hi Eric,
+> >
+> > Greetings!
+> >
+> > I used Syzkaller and found that there is KASAN: slab-use-after-free Read in __nf_unregister_net_hook in v6.12-rc1
+> >
+> > After bisection and the first bad commit is:
+> > "
+> > 78c3253f27e5 net: use synchronize_rcu_expedited in cleanup_net()
+> > "
+> >
+> > All detailed into can be found at:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/241001_170248___nf_unregister_net_hook
+> > Syzkaller repro code:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/241001_170248___nf_unregister_net_hook/repro.c
+> > Syzkaller repro syscall steps:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/241001_170248___nf_unregister_net_hook/repro.prog
+> > Syzkaller report:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/241001_170248___nf_unregister_net_hook/repro.report
+> > Kconfig(make olddefconfig):
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/241001_170248___nf_unregister_net_hook/kconfig_origin
+> > Bisect info:
+> > https://github.com/laifryiee/syzkaller_logs/tree/main/241001_170248___nf_unregister_net_hook/bisect_info.log
+> > bzImage:
+> > https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/241001_170248___nf_unregister_net_hook/bzImage_9852d85ec9d492ebef56dc5f229416c925758edc
+> > Issue dmesg:
+> > https://github.com/laifryiee/syzkaller_logs/blob/main/241001_170248___nf_unregister_net_hook/9852d85ec9d492ebef56dc5f229416c925758edc_dmesg.log
+> >
+> > "
+> > [   16.910304] ==================================================================
+> > [   16.910757] BUG: KASAN: slab-use-after-free in __nf_unregister_net_hook+0x640/0x6b0
+> > [   16.911156] Read of size 8 at addr ffff8880106fe400 by task repro/725
+> > [   16.911529]
+> > [   16.911674] CPU: 1 UID: 0 PID: 725 Comm: repro Not tainted 6.12.0-rc1-9852d85ec9d4+ #1
+> > [   16.912338] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+> > [   16.913460] Call Trace:
+> > [   16.913859]  <TASK>
+> > [   16.913983]  dump_stack_lvl+0xea/0x150
+> > [   16.914262]  print_report+0xce/0x610
+> > [   16.914585]  ? __nf_unregister_net_hook+0x640/0x6b0
+> > [   16.914845]  ? kasan_complete_mode_report_info+0x80/0x200
+> > [   16.915133]  ? __nf_unregister_net_hook+0x640/0x6b0
+> > [   16.915497]  kasan_report+0xcc/0x110
+> > [   16.915687]  ? __nf_unregister_net_hook+0x640/0x6b0
+> > [   16.916082]  ? __pfx_bpf_link_release+0x10/0x10
+> > [   16.916398]  __asan_report_load8_noabort+0x18/0x20
+> > [   16.916655]  __nf_unregister_net_hook+0x640/0x6b0
+> > [   16.916895]  ? __pfx_bpf_link_release+0x10/0x10
+> > [   16.917177]  ? __pfx_bpf_link_release+0x10/0x10
+> > [   16.917467]  nf_unregister_net_hook+0xea/0x140
+> > [   16.917770]  bpf_nf_link_release+0xda/0x1e0
+> > [   16.917983]  bpf_link_free+0x139/0x2d0
+> > [   16.918187]  bpf_link_release+0x68/0x80
+> > [   16.918397]  __fput+0x414/0xb60
+> > [   16.918603]  ____fput+0x22/0x30
+> > [   16.918777]  task_work_run+0x19c/0x2b0
+> > [   16.919006]  ? __pfx_task_work_run+0x10/0x10
+> > [   16.919235]  ? free_nsproxy+0x344/0x470
+> > [   16.919448]  ? switch_task_namespaces+0xf9/0x110
+> > [   16.919711]  do_exit+0xb19/0x2a30
+> > [   16.919913]  ? audit_log_end+0x156/0x2c0
+> > [   16.920202]  ? __pfx_do_exit+0x10/0x10
+> > [   16.920419]  ? audit_seccomp+0x1b2/0x220
+> > [   16.920656]  ? audit_seccomp+0x1b9/0x220
+> > [   16.920872]  __secure_computing+0x2f5/0x350
+> > [   16.921109]  syscall_trace_enter+0x9b/0x230
+> > [   16.921354]  do_syscall_64+0x115/0x140
+> > [   16.921551]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   16.921816] RIP: 0033:0x7f2464518a4d
+> > [   16.922038] Code: Unable to access opcode bytes at 0x7f2464518a23.
+> > [   16.922363] RSP: 002b:00007ffe02122928 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > [   16.922759] RAX: ffffffffffffffda RBX: 00007f24645f69e0 RCX: 00007f2464518a4d
+> > [   16.923163] RDX: 00000000000000e7 RSI: ffffffffffffff80 RDI: 0000000000000000
+> > [   16.923583] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000020
+> > [   16.923965] R10: 00007ffe021227d0 R11: 0000000000000246 R12: 00007f24645f69e0
+> > [   16.924353] R13: 00007f24645fbf00 R14: 0000000000000001 R15: 00007f24645fbee8
+> > [   16.924750]  </TASK>
+> > [   16.924870]
+> > [   16.924962] Allocated by task 725:
+> > [   16.925153]  kasan_save_stack+0x2c/0x60
+> > [   16.925387]  kasan_save_track+0x18/0x40
+> > [   16.925607]  kasan_save_alloc_info+0x3c/0x50
+> > [   16.925853]  __kasan_slab_alloc+0x62/0x80
+> > [   16.926065]  kmem_cache_alloc_noprof+0x114/0x370
+> > [   16.926334]  copy_net_ns+0xf0/0x6e0
+> > [   16.926520]  create_new_namespaces+0x403/0xb40
+> > [   16.926769]  unshare_nsproxy_namespaces+0xca/0x200
+> > [   16.927038]  ksys_unshare+0x424/0xa10
+> > [   16.927242]  __x64_sys_unshare+0x3a/0x50
+> > [   16.927451]  x64_sys_call+0xcf1/0x20d0
+> > [   16.927670]  do_syscall_64+0x6d/0x140
+> > [   16.927888]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > [   16.928148]
+> > [   16.928243] Freed by task 51:
+> > [   16.928414]  kasan_save_stack+0x2c/0x60
+> > [   16.928631]  kasan_save_track+0x18/0x40
+> > [   16.928841]  kasan_save_free_info+0x3f/0x60
+> > [   16.929073]  __kasan_slab_free+0x3d/0x60
+> > [   16.929308]  kmem_cache_free+0x1aa/0x550
+> > [   16.929529]  cleanup_net+0x8af/0xae0
+> > [   16.929745]  process_one_work+0x92e/0x1b50
+> > [   16.929981]  worker_thread+0x68d/0xe90
+> > [   16.930204]  kthread+0x35a/0x470
+> > [   16.930424]  ret_from_fork+0x56/0x90
+> > [   16.930626]  ret_from_fork_asm+0x1a/0x30
+> > [   16.930843]
+> > [   16.930935] The buggy address belongs to the object at ffff8880106fd400
+> > [   16.930935]  which belongs to the cache net_namespace of size 6912
+> > [   16.931597] The buggy address is located 4096 bytes inside of
+> > [   16.931597]  freed 6912-byte region [ffff8880106fd400, ffff8880106fef00)
+> > [   16.932280]
+> > [   16.932430] The buggy address belongs to the physical page:
+> > [   16.932757] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x106f8
+> > [   16.933195] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> > [   16.933592] memcg:ffff88801157d281
+> > [   16.933783] flags: 0xfffffc0000040(head|node=0|zone=1|lastcpupid=0x1fffff)
+> > [   16.934155] page_type: f5(slab)
+> > [   16.934329] raw: 000fffffc0000040 ffff88800d71cdc0 dead000000000122 0000000000000000
+> > [   16.934782] raw: 0000000000000000 0000000080040004 00000001f5000000 ffff88801157d281
+> > [   16.935209] head: 000fffffc0000040 ffff88800d71cdc0 dead000000000122 0000000000000000
+> > [   16.935610] head: 0000000000000000 0000000080040004 00000001f5000000 ffff88801157d281
+> > [   16.936038] head: 000fffffc0000003 ffffea000041be01 ffffffffffffffff 0000000000000000
+> > [   16.936507] head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+> > [   16.936913] page dumped because: kasan: bad access detected
+> > [   16.937285]
+> > [   16.937398] Memory state around the buggy address:
+> > [   16.937698]  ffff8880106fe300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > [   16.938149]  ffff8880106fe380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > [   16.938634] >ffff8880106fe400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > [   16.939010]                    ^
+> > "
+> >
+> > I hope you find it useful.
+> >
+> > Regards,
+> > Yi Lai
+> >
+> > ---
+> >
+> > If you don't need the following environment to reproduce the problem or if you
+> > already have one reproduced environment, please ignore the following information.
+> >
+> > How to reproduce:
+> > git clone https://gitlab.com/xupengfe/repro_vm_env.git
+> > cd repro_vm_env
+> > tar -xvf repro_vm_env.tar.gz
+> > cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+> >   // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+> >   // You could change the bzImage_xxx as you want
+> >   // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+> > You could use below command to log in, there is no password for root.
+> > ssh -p 10023 root@localhost
+> >
+> > After login vm(virtual machine) successfully, you could transfer reproduced
+> > binary to the vm by below way, and reproduce the problem in vm:
+> > gcc -pthread -o repro repro.c
+> > scp -P 10023 repro root@localhost:/root/
+> >
+> > Get the bzImage for target kernel:
+> > Please use target kconfig and copy it to kernel_src/.config
+> > make olddefconfig
+> > make -jx bzImage           //x should equal or less than cpu num your pc has
+> >
+> > Fill the bzImage file into above start3.sh to load the target kernel in vm.
+> >
+> >
+> > Tips:
+> > If you already have qemu-system-x86_64, please ignore below info.
+> > If you want to install qemu v7.1.0 version:
+> > git clone https://github.com/qemu/qemu.git
+> > cd qemu
+> > git checkout -f v7.1.0
+> > mkdir build
+> > cd build
+> > yum install -y ninja-build.x86_64
+> > yum -y install libslirp-devel.x86_64
+> > ../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+> > make
+> > make install
 > 
-> Which "size value" are you referring to here; I can't see it.
+> 
+> Probably reported in
+> https://lore.kernel.org/all/000000000000635bfa0607ed5cdc@google.com/T/
+>
 
-Luca did just copy my comment from another interface which has a
-separate size parameter. This should indeed be fixed.
+Thanks for pointing out. I will follow up this thread.
+
+> You probably should CC netfilter maintainers on this one.
+
+Thanks. I will include domain maintainers in later reports.
 
