@@ -1,149 +1,133 @@
-Return-Path: <linux-kernel+bounces-358719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E9D9982CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D1A9982C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63644B23742
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676AF1F222AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE71C242E;
-	Thu, 10 Oct 2024 09:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F2B1BD503;
+	Thu, 10 Oct 2024 09:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FX9wII5V"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fjtd1GYd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F301BDA84;
-	Thu, 10 Oct 2024 09:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2901BD4FD;
+	Thu, 10 Oct 2024 09:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553766; cv=none; b=f68nvrpAh28hAFC7rRIGOMqMf6hocMbn2jQlTuGelT10thXICr1fc1rbs4x+y1FR0YIHbmcu179Yu2yyZDQz4yp8zEi9mKzr59YGfBOwJjTeLpiBf96EoCokCNs4x7YoBb30yFBluw6923pHAOnU+OMgKE0sX8MeAXrYFhBDDHA=
+	t=1728553764; cv=none; b=uIMFI0uZHP0zv5OKlgl40ExHJgv1tH69zpuGshsDniI7oht2zHMIoKGld+t2scVZ4liNV+Yc1hN5jIOY0Z6LTbhT72GOJENBrrUsiT4LtYQz/J+2A2h50Pj50dKlm81BGociWchvXMSVyL+jgRu+ri8xOyf1J6L3lAYBvO9XQoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553766; c=relaxed/simple;
-	bh=Tyl00PbkL/ws7xZ1wCMqtutTUiJDn/3tjgm/2QQIBAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Pa58jGcDwOqHUPj4iLOw/0pWHu9EMPcaEBWPJYgzjXchobwEvv5lRhfpMc045F3D9a4SBiWPf1S120kIMFycFnEKcWjYEbih4YR90F/5p3S+c2uYSrtVKBx0W834tVEr7YgHhuzmP3upF5eXwohcYr77Wsam9fehLm39GQiDsVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FX9wII5V; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1bWIj024265;
-	Thu, 10 Oct 2024 09:49:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5S6BVALT7qXSFotZAPbtBOUp5KIHBelry/SMIeD57sk=; b=FX9wII5V1hCC2bpi
-	cO42Usl78ed9C7jMpNZuj8INHdCD8tfMEtWphDbcS8LsInid/tQk3oKwY8W4Wyu1
-	z7Jri/YQ99QkTmqUzRKMWTibqfX62goUtgzJHInbhXC/qOTzrtxcdyYDyneuCu64
-	mJtLK9YaR2U4aPZSeimX2MrLWKzmsp3SibJmDYn9xkdHMCJ7vjXw9uLZJW8tqh67
-	20THORRvjlTDuTg0B2G47y5wl0x8Nb7/e2sV7KrIsKpkAf7hNHmNldb0lulPLJZY
-	Y0OAx/uOuiZfqwu+23hr2HjbVM5ZyLTOUNtor4nQO0PIntGlMOKOntzb2hjPw9Wa
-	msB+Pg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424wgs83e4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 09:49:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A9n8FW031874
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 09:49:08 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
- 2024 02:49:04 -0700
-Message-ID: <742d1cec-13ec-4f08-b7f3-611c6d602b3b@quicinc.com>
-Date: Thu, 10 Oct 2024 17:49:02 +0800
+	s=arc-20240116; t=1728553764; c=relaxed/simple;
+	bh=YKwBaNRBcMS2JUEZSf0dCWw9etVXQcaFKd1Ay07y9YE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGs0bMr5Cd3IQXV6x1QyUfsEbQAHVqkU9htzIELyiip6hwLlMnDDSktgdCNCI7as/IZ2ynF5uyjbyH/EXv5jmIaWgWRnUayyxKitIflKFV6xGWD2j+krOxOXtnPBcSt829tdc6wYEk0894Vf/nY/7LDXIh/QTFIlZ9ft+lLBV/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fjtd1GYd; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728553763; x=1760089763;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YKwBaNRBcMS2JUEZSf0dCWw9etVXQcaFKd1Ay07y9YE=;
+  b=Fjtd1GYd0eXRGZuwRmoGN6G/tf3emSx9JrrNmvs+oU15gK18Lb1IwPMu
+   ks2AcMgXze4I6Ro+MEusQHZDELT78GN9jh0pAtu3jpGVFS+nYbdac9P0n
+   4Z2ALKnusmdFuHO94LhnSued7bGs0EMj9BvZdvrNko+EXLjaYke2laBvq
+   R1qEwxMHCO4ASpBTapmkxqBOrr6queaXkdVsvtdpBHZt9+tL2vBwVKVji
+   VjmQu9pwqm9G93ayUW2e9G6In6TqGR4hJ4EDIujxXvkeZaK990//fL3W8
+   RbwE29OaKwkTvEub6hErKRpTGDdUtZZ9A4F/zkDH/UwBTgalP4AAktc5I
+   A==;
+X-CSE-ConnectionGUID: +lAWoJ5pRg+ZpSA4LWyj/w==
+X-CSE-MsgGUID: u4JlRoVbQ1uJm3Jz/0uL+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39265377"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="39265377"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:49:22 -0700
+X-CSE-ConnectionGUID: WTr7bdOISeOZ2Up/vEvgNQ==
+X-CSE-MsgGUID: EH9vSkLlSRm8b9lQnQPmQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="81538325"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.114])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:49:18 -0700
+Date: Thu, 10 Oct 2024 12:49:11 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	kvm@vger.kernel.org, kai.huang@intel.com, isaku.yamahata@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+Message-ID: <ZwejF11FxumXLFFr@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+ <b8ed694f-3ab1-453c-b14b-25113defbdb6@suse.com>
+ <Zs_-YqQ-9MUAEubx@tlindgre-MOBL1>
+ <b3a46758-b0ac-4136-934b-ec38fc845eeb@redhat.com>
+ <ZuFPBPLy9MqgTsR1@tlindgre-MOBL1>
+ <3275645a-ffd9-4dd4-bfa4-037186a989ae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] Add Qualcomm extended CTI support
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20240903121847.6964-1-quic_jinlmao@quicinc.com>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <20240903121847.6964-1-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tvXki-f8ORmCsyLIHWqsu_8qQ73ff2Ra
-X-Proofpoint-ORIG-GUID: tvXki-f8ORmCsyLIHWqsu_8qQ73ff2Ra
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1011 adultscore=0
- spamscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3275645a-ffd9-4dd4-bfa4-037186a989ae@intel.com>
 
-
-
-On 2024/9/3 20:18, Mao Jinlong wrote:
-> The QCOM extended CTI is a heavily parameterized version of ARM’s CSCTI.
-> It allows a debugger to send to trigger events to a processor or to send
-> a trigger event to one or more processors when a trigger event occurs on
-> another processor on the same SoC, or even between SoCs.
+On Thu, Oct 10, 2024 at 04:25:30PM +0800, Xiaoyao Li wrote:
+> On 9/11/2024 7:04 PM, Tony Lindgren wrote:
+> > On Tue, Sep 10, 2024 at 07:15:12PM +0200, Paolo Bonzini wrote:
+> > > On 8/29/24 06:51, Tony Lindgren wrote:
+> > > > > nit: Since there are other similarly named functions that come later how
+> > > > > about rename this to init_kvm_tdx_caps, so that it's clear that the
+> > > > > functions that are executed ones are prefixed with "init_" and those that
+> > > > > will be executed on every TDV boot up can be named prefixed with "setup_"
+> > > > We can call setup_kvm_tdx_caps() from from tdx_get_kvm_supported_cpuid(),
+> > > > and drop the struct kvm_tdx_caps. So then the setup_kvm_tdx_caps() should
+> > > > be OK.
+> > > 
+> > > I don't understand this suggestion since tdx_get_capabilities() also needs
+> > > kvm_tdx_caps.  I think the code is okay as it is with just the rename that
+> > > Nik suggested (there are already some setup_*() functions in KVM but for
+> > > example setup_vmcs_config() is called from hardware_setup()).
+> > 
+> > Oh sorry for the confusion, looks like I pasted the function names wrong
+> > way around above and left out where setup_kvm_tdx_caps() can be called
+> > from.
+> > 
+> > I meant only tdx_get_capabilities() needs to call setup_kvm_tdx_caps().
+> > And setup_kvm_tdx_caps() calls tdx_get_kvm_supported_cpuid().
+> > 
+> > The data in kvm_tdx_caps is only needed for tdx_get_capabilities(). It can
+> > be generated from the data already in td_conf.
+> > 
+> > At least that's what it looks like to me, but maybe I'm missing something.
 > 
-> QCOM extended CTI supports up to 128 triggers. And some of the register
-> offsets are changed.
-> 
-> The commands to configure CTI triggers are the same as ARM's CTI.
-> 
+> kvm_tdx_caps is setup in __tdx_bringup() because it also serves the purpose
+> to validate the KVM's capabilities against the specific TDX module. If KVM
+> and TDX module are incompatible, it needs to fail the bring up of TDX in
+> KVM. It's too late to validate it when KVM_TDX_CAPABILITIES issued.  E.g.,
+> if the TDX module reports some fixed-1 attribute bit while KVM isn't aware
+> of, in such case KVM needs to set enable_tdx to 0 to reflect that TDX cannot
+> be enabled/brought up.
 
-Hi Reviewers,
+OK makes sense, thanks for clarifying the use case for __tdx_bringup().
 
-Could you please help to provide some comments from the design point of 
-view for the changes ?
+We can check the attributes_fixed1 and xfam_fixed1 also on __tdx_bringup()
+no problem.
 
-The main difference of extended CTI to the normal CTI is that the
-address mapping is changed and it supports a max of 128 trigger signals.
+Regards,
 
-On one soc, there will be both normal arm CTIs and QCOM extended CTIs.
-
-As max trigger number becomes 128. So triger registers becomes 4.
-
-Like CTITRIGINSTATUS  --- > CTITRIGINSTATUS_EXTENDED(n)     (0x040 + (4 
-* n))  n is 0 to 4.
-
-Thanks
-Jinlong Mao
-
-> Mao Jinlong (2):
->    dt-bindings: arm: Add Qualcomm extended CTI
->    coresight: cti: Add Qualcomm extended CTI support
-> 
->   .../bindings/arm/arm,coresight-cti.yaml       |  14 ++
->   .../hwtracing/coresight/coresight-cti-core.c  |  75 +++++++----
->   .../coresight/coresight-cti-platform.c        |  16 ++-
->   .../hwtracing/coresight/coresight-cti-sysfs.c | 124 ++++++++++++++----
->   drivers/hwtracing/coresight/coresight-cti.h   | 123 +++++++++++------
->   5 files changed, 253 insertions(+), 99 deletions(-)
-> 
-
+Tony
 
