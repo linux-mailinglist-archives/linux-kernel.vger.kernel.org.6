@@ -1,210 +1,196 @@
-Return-Path: <linux-kernel+bounces-358615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84CA599819A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B806F9981E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBBA21F2149D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 174B2B2B06B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7D71BC9EE;
-	Thu, 10 Oct 2024 09:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313F21BB6BF;
+	Thu, 10 Oct 2024 09:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0xTcg5L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b="EexO/Y78"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2082.outbound.protection.outlook.com [40.107.241.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD021BC072;
-	Thu, 10 Oct 2024 09:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551211; cv=none; b=hRWtgqKpIoNeZr8CmUjvJoTYfHaG17uBltpqmWKLlu0Vak/+/jrBoPHv7XOfu2pPECEjmGVbo71/hjBsR2xYRUvll+z8Nlei3/FRNSTTjgk1RF1epkZRfqq0SBFkoWeN7oB+sFQ2EF1Pc2ATlYCLqSlVTzVyN3QTQZdjwg2S6ng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551211; c=relaxed/simple;
-	bh=v4F8XpUl4hzFdHfzDjb5HLOD91LVHfyBbNZzZzRfUAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tA4vyqVmnk6OO75vamtImUOjlBkAHz0AQs/MA5+EO9vkuSVGgMha+SsuYPxYMRqQSrQsfwPPi5gqOFWO7HvSO3Q8ih+qQPCK3nAiHDvCrhmFpAPHi8QQ67YH9mfUgprZ5n0l8dI4/oBN53vHMI9/UkdH5eS9QewwuvT4TujKXi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0xTcg5L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F882C4CEC5;
-	Thu, 10 Oct 2024 09:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728551211;
-	bh=v4F8XpUl4hzFdHfzDjb5HLOD91LVHfyBbNZzZzRfUAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=R0xTcg5L2aCx/ttD6ENUD6O6y1Zfwx3aCFVpWkNrHVIazxdpJw5ZtkdwfKBhtURRr
-	 nKs+katFJtGY4y9BHsx6YE5YLYjJyfbk5XB0Ad2iiIxeARpwAHC7FA+lJZdmhUd74G
-	 Sv67APBSjpoytNZZVp828xYUo8/esQSrHxYAzGzMi1pqcAAmjQcVphmr4yIWk06iuh
-	 0yZ9pbVU6fAogCQZzdc83nl7zeVrgLPZLlbhR4nNZl8VIRciqGgae2hONIXtep4um7
-	 EfOB3Vby2EJIgRv2v2i0IPeo+hySRYJ1+p/AJ+HhbBPMXpH9jnWoITGvuAkWNODkV/
-	 UtSHXuY5irBBg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Gary Guo" <gary@garyguo.net>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Greg KH"
- <gregkh@linuxfoundation.org>,  "Boqun Feng" <boqun.feng@gmail.com>,
-  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
- <tmgross@umich.edu>,  "Jens Axboe" <axboe@kernel.dk>,  "Will Deacon"
- <will@kernel.org>,  "Peter Zijlstra" <peterz@infradead.org>,  "Mark
- Rutland" <mark.rutland@arm.com>,  <linux-block@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
-In-Reply-To: <871q0onyhf.fsf@kernel.org> (Andreas Hindborg's message of "Thu,
-	10 Oct 2024 10:39:08 +0200")
-References: <20241004155247.2210469-1-gary@garyguo.net>
-	<20241004155247.2210469-4-gary@garyguo.net>
-	<OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
-	<2024100507-percolate-kinship-fc9a@gregkh> <87zfniop6i.fsf@kernel.org>
-	<CAH5fLghK1dtkF5bRpcRcu2SXZ6vgPoHGLRqW2=r0J3-2T3ALwQ@mail.gmail.com>
-	<fz1Ji-tl63pAnAOL2TkFwggNx45TTBONKOUcKAKq7e6ZOCX2KsklDS6Zbc_xqnMef1eevpM-a64Bui_nEg49mA==@protonmail.internalid>
-	<20241005142332.78b8b5d0.gary@garyguo.net> <87msjioax2.fsf@kernel.org>
-	<871q0onyhf.fsf@kernel.org>
-Date: Thu, 10 Oct 2024 11:06:36 +0200
-Message-ID: <87set4min7.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7173AB66C;
+	Thu, 10 Oct 2024 09:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728551485; cv=fail; b=WEeU7TRIlMdEQPSeuDnWcKyxjqng3OWNoJuU/UFewYpLtd4FQvtYLmzvpvtpE5GsGhREiatJKVIVAolDImTpN+fOhXmnA/e0lZzhOEvjJk/d7mi+rYECpmGSDvefAQxzyAS3QrlLP+28sCyNBnPP0HpXlbMEE2eQxA8+/Wq5myk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728551485; c=relaxed/simple;
+	bh=nWBwAjmtWrHQjezkX8yKHU4qGSx4T2X1YXeCXeBjqkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ULHPRaEpleQQt+4imbTXDirGicfTCiEzbfpX6q1klerjOBlFZtZjLDAF8W0ndNvbVl7KsMl0ndcYouM/BGCvzsKGMJJLJlnPUCBMylDyUt0qvBxBSAz2hcsZCO/ZRQDxCv9ZCeOuHXJk/VmxezgEsLeBwJEr4YgPkVuPEGQJURw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com; spf=fail smtp.mailfrom=nokia.com; dkim=pass (2048-bit key) header.d=nokia.com header.i=@nokia.com header.b=EexO/Y78; arc=fail smtp.client-ip=40.107.241.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nokia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nokia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iIAhLY5J9ylt99H6RrV0esJ7WGQehdyqLlcS+6O2L9I8yZrWJBQWAWQq9ScjhML5ZxmmLt5ycKrrohD1EGbT04sliwnzWx7F5fyTya0ryfuJILMi23WnfCCuOVW2UJRBHWDrknRZzkQY10NE02l7qYcGmxwtf0OQo1/Er5Y/PCwchK121YnOEkiP7K77HyxJ4Tu5t9V62cdi/nCHxGRx0Td8VaND718+YBwkoN3x0g6m8208QsIojpn3nIo/F6xggzVKkUJVugu4apCik1FlWS913rXVqWPu19TFbLy1zz7JCCy6F7rCsaPEvQjilqe9CP/x23x6EavtUAHWNaH5ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mL5Ywg/26+01JEogw3M4dGMw5q8T9FaP1kRzVv0U74U=;
+ b=KonCt8ZNyWXs8phyVgb61Yjns95B62HHfUnQTO1RBsUK02dMWLYtubtOWjqmAO8/G/u3jA3h/gKg2kIxfEUu2WVvymwK//S80LbT8yeQopWwqYc5uYF6Rjbnrvbs4/jH+hQ+xzs+Efead9Q80TVwm+HI/9IRUhUAnSEkBB4t3/ba8+KBIjTnQUXytFRpcNqjzNcFRxboJx6tTn0OmoCPxwuduKRi/J5y4OmgwnMIACaBMPGJILkHl2baVW26fcFbQODYGdrvuHE5t7HXahUNQ7jX0PBJPQqbF6TqyVgxoPBHnCKClSjOGAw2XI10x87YuDtoJ2D/xWQqOC6b4tPwqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mL5Ywg/26+01JEogw3M4dGMw5q8T9FaP1kRzVv0U74U=;
+ b=EexO/Y784lkjYDQuYHiATi6FHJUBJ7yP5WjaxgqXKhF0xSdvF+iHc8sc0OouqLEc+Kaa4cJtb+bsLRmRH9mU4FZHdvmbyFlRoctSn7319mRvkYserSF72pw2JDTUc7CETkuTvrp5K+0zvalXv7pkMi/4M6E6dDzd570NN53aiB6NwVwwVozzj+s4U1adSNiRx4jqT6lWySueqEH11hC93lN4aAMi5mfACLIV42zU34W2rkNJA/jjjSDPzxToj/yxKmUkVB3IU5p8e6Dc0WhjtkB3CQittTwmKdGXw03odGkI4N2pcmtANNjYV8NfinFRQq89IcaB3aPlEPkYh0mx7A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nokia.com;
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com (2603:10a6:102:383::17)
+ by DB9PR07MB9768.eurprd07.prod.outlook.com (2603:10a6:10:4c2::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 09:11:18 +0000
+Received: from PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::6b9d:9c50:8fe6:b8c5]) by PAWPR07MB9688.eurprd07.prod.outlook.com
+ ([fe80::6b9d:9c50:8fe6:b8c5%4]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
+ 09:11:18 +0000
+From: Stefan Wiehler <stefan.wiehler@nokia.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wiehler <stefan.wiehler@nokia.com>
+Subject: [PATCH net v3 1/4] ip6mr: Lock RCU before ip6mr_get_table() call in ip6mr_vif_seq_start()
+Date: Thu, 10 Oct 2024 11:07:39 +0200
+Message-ID: <20241010090741.1980100-2-stefan.wiehler@nokia.com>
+X-Mailer: git-send-email 2.42.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR4P281CA0242.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f5::20) To PAWPR07MB9688.eurprd07.prod.outlook.com
+ (2603:10a6:102:383::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAWPR07MB9688:EE_|DB9PR07MB9768:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc464372-9855-49a2-8449-08dce90b8038
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QQG99HxiMSCTT0JKuM9R6ghW8crUTWL57ug9x3oM3j4jhFJNde1AWZ9w6WTN?=
+ =?us-ascii?Q?ytY8fxZpDPPyXeNzuTaP3UWLfjos+6UDOw/aLH7yF+py4OKRelNUvcr7XRDx?=
+ =?us-ascii?Q?vOGxPtZFll+UyQdsALVXub3kbqHFqPLCLRgGIOm+Vkfanyji/wd8Kifrub70?=
+ =?us-ascii?Q?7Ep5VP9aaIZUmc8vWrCairkLoHVAJzLM2Op8RO00hiBkxpec+r61Ez1ZBuKT?=
+ =?us-ascii?Q?vIuNHxNn5nZsmj6svm3ii+JIKE6sixLCt+LDofBMt3hH+bBhFIq4YZKJokt1?=
+ =?us-ascii?Q?+6vaUhP/ii1GD0bhMAu1pQkNbB9qExI8yoRbRfXrfUsMhe8wwTytzS9wOpWY?=
+ =?us-ascii?Q?NTom+s8wNM4Kl4r1syNoWaJKbMUx5s+Nj6kd8WJmXXOUzqwpx+NSRnTXV20u?=
+ =?us-ascii?Q?Bwy7DxCdF2CwE808pMYcRtzk2GY0FSHSpv7anzwEnR7A2QfYdZx3yf1/Bv0K?=
+ =?us-ascii?Q?FKZ5GOUCC4jsKKSVtsp7CADMsuyjkOKDaJrC5so9vaPAIBa8Jh9qGExk4LT2?=
+ =?us-ascii?Q?R1rpMBMLZRax+yfly46M2kN8uCas6xY0nQb9C1hFENxCX+44hI5jhxoJZYaZ?=
+ =?us-ascii?Q?uH8MCqFIT625EsSwQaukqjNR3qKXg5Cso2x32q7ivNI1KfaCBGMkJt5CASyL?=
+ =?us-ascii?Q?+QJ7Ro3w2xWTUR25uykeXyHV1aRuMgkNpn4MP5eC8DVSlpOSgv+Z6d4OzCEH?=
+ =?us-ascii?Q?5dIYqt0Ex4xonQV6tqnklycLs3kg1ehMSfrQCnWAlMb/oPN1Nex3mMmR7r1h?=
+ =?us-ascii?Q?R1XezgXpz/kDTcFArzljrVo3kbjb9XUzHCJReym6lDBVElxfjXXTXu9GFPvV?=
+ =?us-ascii?Q?WxOvJzkta/KBmpRRImHDTMhhu/er8Uz4Jz4wykI8c9Sa53vwBicljvYVqq9U?=
+ =?us-ascii?Q?5di/pPplgKk4gXDR07EPCQ6vdepSAvzKFrIZWLJn1Kk1hi+xD+sMX8qmul9z?=
+ =?us-ascii?Q?7uLz3q6FF29njcemMi9urq+B1BZ+xxej48BQLL2wvYvz9AnsRErIXLBBT3LH?=
+ =?us-ascii?Q?23evYFIIpXwCD5dmBm4I6NCLh72uNZzgEB4BLRddJ92pK9wGMoAfXubmgmmn?=
+ =?us-ascii?Q?L1UFE4iIfwqRM6dk2Y8k+fbweax1Dtl1BJr2mYYnwWTxbXvpqmk4yRjOmU6j?=
+ =?us-ascii?Q?joEA59czKnV4ezcvfs89cC+Jhz5HOxsrh3JD2BcG/akF5fPPdi7JAZtPWd9u?=
+ =?us-ascii?Q?L2q7supoQLsIfIiCos3hjVV933kOD0TcvjCvouEUFWQMufUrr8//njf4Ti05?=
+ =?us-ascii?Q?nArQMjEH3NtkU3yAvBhB6deehyRkENhc375299xuzmrNkSCVMBGuvhCa7dyL?=
+ =?us-ascii?Q?m55EPFhc8PXKKi4WuBtfLifEUSSZgbQKdjbb+kO0ooSp5w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR07MB9688.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?cKc8/0dCTz/8Da/KEbIJ+XZGR8gj59EVJ9rd8rod9orwDjZTuDAiGgdM3E2i?=
+ =?us-ascii?Q?PbxHtmsI6ae6RAGPCRLALpxMPXiem4CvgEPhcDyFcA6XeH57rSEHyDpSKtV9?=
+ =?us-ascii?Q?uIEsvgX/IhRSAlilULOhPd01SH5xsjZWfTlKJ+WehQ2whvzisLjonQ3d9h5C?=
+ =?us-ascii?Q?lPm770YhLOFyxSmBbJkB8djPchvHnm5GArxnD0yzABs/GexYSe8jaoawpy0z?=
+ =?us-ascii?Q?MMir+oayVH2nIn580i90vhd2qxeR5D7EfGVIDFBacUH1yYOQbnb5p5DY9ZlR?=
+ =?us-ascii?Q?/UOHPLPgg2awtm9dYLk9mSKqMxh1z3fzQT+Ddp8BrHyFVMpze0QCDNIRmk2X?=
+ =?us-ascii?Q?sMTaFShIfKI/fP8MKgByyK7wTVlIyFLehwihJsFiq1sO+AzAMNPv3wV2Rxs4?=
+ =?us-ascii?Q?51h5VwOdrf1JIq8pgCQgJIDfu1aDRKR2K7o9NB/XLKud/TLx+2X/jiYwxA1Q?=
+ =?us-ascii?Q?CnsCVG5eg4UJdq41WSg9bgi4lJAMKq1ssqacJeAkZwp9NN5ntSD7pKErWcJ/?=
+ =?us-ascii?Q?jDhWelMCXM2drF0XLGspZjzKsN0gHbVRaLEs8no5eccMjDRceW0rEQIsrkwh?=
+ =?us-ascii?Q?C558CD8wmJgiJuhPnbD/lMT948rhXV5CWlE5bmax21ra/xUXaGdFib1zYoIn?=
+ =?us-ascii?Q?PlU7A2/y5SkvKFpN5lcUGvjPtXMfSg1tyj1c+t9SErOwHV+A3c2cFevsycR0?=
+ =?us-ascii?Q?M1ibg+qr1POwWsJ9fKvZokCjI8AfTzDHEHcC/pp52etCha/qdB0X/G9Iwq8a?=
+ =?us-ascii?Q?IYtZYFUyRBR2Ccfwvd80pfy2WZh4qbWlrm2/s8J5TGLcrzstAWgu6Ej9GEo3?=
+ =?us-ascii?Q?iwLjD9VG8HGf9Kx83bVzPVg1IoxcVm45nkD95jIHhVsAoVG1y45tLHFFFi9K?=
+ =?us-ascii?Q?W+l9vkByIhEheYWX9121Y9DCSFyK8X94RPrwH6MTwFj3xcyCVSJnghKEr832?=
+ =?us-ascii?Q?Ji/m9NJewgbnSzFQo38XxPkqDUsvR4e7YMzhVbz+ATgCnAXakmBygv1bVPcs?=
+ =?us-ascii?Q?5MfAJ6Q67Gun+QKQ7aG6/c1wfg7pPTjwYqsrud5eqFZafm1e+nwl+bwAWMV6?=
+ =?us-ascii?Q?oDcnCxRhWBzxV7owRJsqD8/lKNqbqtCKAGnfGKmmE+fibt8pVsUG+N79IqPU?=
+ =?us-ascii?Q?9Fh3lhATdR/Eqg9Soe6SYnBQ9rxidc7Gv5olunWmWENNohnGvygEVcJsBmd/?=
+ =?us-ascii?Q?LtyFDt0WQRO+1VnXFEQQtSqiHUFWiyBKRT+uHv619b5X6Nu4D7XWxMO9GsX9?=
+ =?us-ascii?Q?/HYtt2OrHT0yzsFI+ZvuMA9SCkLMJZMQOcG9RDNiuGMhLw0dYjPCQZJx3f37?=
+ =?us-ascii?Q?n1yIHZj1udAGUMtGeJaF+vstG/gfAM17iySBPeUxsqKFxmr1e2ryHA2xe/7i?=
+ =?us-ascii?Q?gtRYOoX6oO2UNbEqTDV/LsvCSJjsCQlETL7p1q0ZhPw8gsJBc5OPVAwuzkgb?=
+ =?us-ascii?Q?YXbsHhdA5JJFRPTWZev3OP6hq/QL48trw/mgypUYJeDj5olgqNKbwVvsnn4x?=
+ =?us-ascii?Q?V9CsF8sMkI+3gsT1sYw89jTF6r9e9g6ezIMesMdEsGfth3Z7PRQvSW1NMzpq?=
+ =?us-ascii?Q?2eXZUiRak5CDLC08jpnpku0nyAz7dyubsAEp2xztdvlj8GACySvI9E52Zpqo?=
+ =?us-ascii?Q?AQ=3D=3D?=
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc464372-9855-49a2-8449-08dce90b8038
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR07MB9688.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 09:11:18.5935
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6ljRDu+njxpH4Acl5TQiJgZCEUVemP4bfc0syGDqn9ObNsaYyZw8vh7ebe0beRW96wxjTHVS1+yyfBuvlnqC9fiuaLJ4VQfzgWbE44wYg5c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB9768
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
+When IPV6_MROUTE_MULTIPLE_TABLES is enabled, calls to ip6mr_get_table()
+must be done under RCU or RTNL lock.
 
-> Andreas Hindborg <a.hindborg@kernel.org> writes:
->
->> "Gary Guo" <gary@garyguo.net> writes:
->>
->>> On Sat, 5 Oct 2024 13:59:44 +0200
->>> Alice Ryhl <aliceryhl@google.com> wrote:
->>>
->>>> On Sat, Oct 5, 2024 at 11:49=E2=80=AFAM Andreas Hindborg <a.hindborg@k=
-ernel.org> wrote:
->>>> >
->>>> > Hi Greg,
->>>> >
->>>> > "Greg KH" <gregkh@linuxfoundation.org> writes:
->>>> >
->>>> > > On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
->>>> > >> There is an operation needed by `block::mq`, atomically decreasing
->>>> > >> refcount from 2 to 0, which is not available through refcount.h, =
-so
->>>> > >> I exposed `Refcount::as_atomic` which allows accessing the refcou=
-nt
->>>> > >> directly.
->>>> > >
->>>> > > That's scary, and of course feels wrong on many levels, but:
->>>> > >
->>>> > >
->>>> > >> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &A=
-Ref<Self>) {
->>>> > >>      /// C `struct request`. If the operation fails, `this` is re=
-turned in the
->>>> > >>      /// `Err` variant.
->>>> > >>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::re=
-quest, ARef<Self>> {
->>>> > >> -        // We can race with `TagSet::tag_to_rq`
->>>> > >> -        if let Err(_old) =3D this.wrapper_ref().refcount().compa=
-re_exchange(
->>>> > >> -            2,
->>>> > >> -            0,
->>>> > >> -            Ordering::Relaxed,
->>>> > >> -            Ordering::Relaxed,
->>>> > >> -        ) {
->>>> > >> +        // To hand back the ownership, we need the current refco=
-unt to be 2.
->>>> > >> +        // Since we can race with `TagSet::tag_to_rq`, this need=
-s to atomically reduce
->>>> > >> +        // refcount to 0. `Refcount` does not provide a way to d=
-o this, so use the underlying
->>>> > >> +        // atomics directly.
->>>> > >> +        if this
->>>> > >> +            .wrapper_ref()
->>>> > >> +            .refcount()
->>>> > >> +            .as_atomic()
->>>> > >> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering:=
-:Relaxed)
->>>> > >> +            .is_err()
->>>> > >
->>>> > > Why not just call rust_helper_refcount_set()?  Or is the issue tha=
-t you
->>>> > > think you might not be 2 here?  And if you HAVE to be 2, why that =
-magic
->>>> > > value (i.e. why not just always be 1 and rely on normal
->>>> > > increment/decrement?)
->>>> > >
->>>> > > I know some refcounts are odd in the kernel, but I don't see where=
- the
->>>> > > block layer is caring about 2 as a refcount anywhere, what am I mi=
-ssing?
->>>> >
->>>> > It is in the documentation, rendered version available here [1]. Let=
- me
->>>> > know if it is still unclear, then I guess we need to update the docs.
->>>> >
->>>> > Also, my session from Recipes has a little bit of discussion regardi=
-ng
->>>> > this refcount and it's use [2].
->>>> >
->>>> > Best regards,
->>>> > Andreas
->>>> >
->>>> >
->>>> > [1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html=
-#implementation-details
->>>> > [2] https://youtu.be/1LEvgkhU-t4?si=3DB1XnJhzCCNnUtRsI&t=3D1685
->>>>
->>>> So it sounds like there is one refcount from the C side, and some
->>>> number of references from the Rust side. The function checks whether
->>>> there's only one Rust reference left, and if so, takes ownership of
->>>> the value, correct?
->>>>
->>>> In that case, the CAS should have an acquire ordering to synchronize
->>>> with dropping the refcount 3->2 on another thread. Otherwise, you
->>>> might have a data race with the operations that happened just before
->>>> the 3->2 refcount drop.
->>>>
->>>> Alice
->>>
->>> The code as is is fine since there's no data protected in
->>> `RequestDataWrapper` yet (in fact it's not even generic yet). I know
->>> Andreas does want to introduce driver-specific data into that, so in
->>> the long term the acquire would be necessary.
->>>
->>> Andreas, please let me know if you want me to make the change now, or
->>> you'd rather change the ordering when you introduce data to
->>> `RequestDataWrapper`.
->>
->> I guess we will have said data dependencies when we are going to run
->> drop for fields in the private data area. Thanks for pointing that out.
->> I will update the ordering when I submit that patch.
->>
->> As I mentioned before, I would rather we do not apply this patch before
->> we get a way to inline helpers.
->
-> As discussed offline, the code that suffers the performance regression
-> is downstream, and since this change seems to be important, I can apply
-> the helper LTO patch downstream as well.
->
-> Since the plan for the downstream code _is_ to move upstream, I really
-> hope to see the helper LTO patch upstream, so we don't get a performance
-> regression because of these refcounts.
->
-> If we cannot figure out a way to get the LTO patches (or an alternative
-> solution) upstream, we can always revert back to a more performant
-> solution in block.
+Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
+Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
+---
+v3:
+  - split into separate patches
+v2: https://patchwork.kernel.org/project/netdevbpf/patch/20241001100119.230711-2-stefan.wiehler@nokia.com/
+  - rebase on top of net tree
+  - add Fixes tag
+  - refactor out paths
+v1: https://patchwork.kernel.org/project/netdevbpf/patch/20240605195355.363936-1-oss@malat.biz/
+---
+ net/ipv6/ip6mr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I forgot to report the result of the benchmarks. Over the usual
-benchmark workload that I run for `rnull` I see an average 0.8 percent
-performance penalty with this patch. For some configurations
-I see 95% CI N=3D40 [-18%;-5%]. So it is not insignificant.
-
-
-BR Andreas
+diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+index 2ce4ae0d8dc3..268e77196753 100644
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -411,13 +411,13 @@ static void *ip6mr_vif_seq_start(struct seq_file *seq, loff_t *pos)
+ 	struct net *net = seq_file_net(seq);
+ 	struct mr_table *mrt;
+ 
++	rcu_read_lock();
+ 	mrt = ip6mr_get_table(net, RT6_TABLE_DFLT);
+ 	if (!mrt)
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	iter->mrt = mrt;
+ 
+-	rcu_read_lock();
+ 	return mr_vif_seq_start(seq, pos);
+ }
+ 
+-- 
+2.42.0
 
 
