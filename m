@@ -1,173 +1,89 @@
-Return-Path: <linux-kernel+bounces-360138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E137999512
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76329994FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63ED1F25D32
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B7B1C22C8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1893C1E573C;
-	Thu, 10 Oct 2024 22:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555631BE86E;
+	Thu, 10 Oct 2024 22:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cYQJ/t4+"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="O8cHpUgX"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE031BBBC4;
-	Thu, 10 Oct 2024 22:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4297A1ADFFE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598957; cv=none; b=kzj2e+qEKy2TmQjmmMY8S+X7VpCCCjJ//xdfkGHjU5DN16AZaLqUPkN4Sh/bsvf8mCkZIu02ssBoBfh6BILjW1TkPbDTfhf3h/F8jVo9L2LNQbFVd7DhhI/rGIY3ga0IOo8BcFiTBUpdTSmSju8hr1t4vg5p8ZNXd5Wxqth9QCo=
+	t=1728598505; cv=none; b=Kv3Dtq9rlw7wdvyC49kPtkosfZa/YhtUXxskTqcopUWL3FRm2OinEArJXVrYyBJIUJRqheO5JJvVeNJ9C31JEvAxARWyS+HEqmGq09He1DPdBvPLILqFbKUd9/WneX9/7W9JOi9dIu0NCTyAGTkLcieELmM/lFDyDj2vgyfcGhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598957; c=relaxed/simple;
-	bh=oZ3MkYoI/38gHlsW+UpIxuXSBrs2+RlFIlO9IgUbsic=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YhmhAU9qu8o10ZcnKYtNLMK1wQTSWXCxcL7tNCMs9xZwANyGhaz+ckNAtAjYo5pIhmgkhaRk00nTc0E3pfcVJjGPhgoewIw7HS50II8/bZszk/mZiLw/irrQePpnJbvWTazKdv5grD6WFSj+YnsJ7BzwlFqaR5kad+/IOpF7XRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cYQJ/t4+; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 75ad9fdc9bd72b61; Fri, 11 Oct 2024 00:22:27 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 443F669EF02;
-	Fri, 11 Oct 2024 00:22:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728598947;
-	bh=oZ3MkYoI/38gHlsW+UpIxuXSBrs2+RlFIlO9IgUbsic=;
-	h=From:Subject:Date;
-	b=cYQJ/t4+wj8QqntZv8ZmaH9qvC0G/hG8bRlYPHU3PB18cxyVG97Zd7Jwgjexxf3jI
-	 c6tDQSLkXCa1igl+ix7HJRYoGXeoppWx2Be5WHa/m7cJBZlRwHL9elYUTNAVIVSdRS
-	 KbZwFLaMsKuEe2K4YRyAGzXYu0RznTV0PplnCcxyahiuKWopQCXS3NEYAq+ng1vuNp
-	 PQFIkaiKsDkpgndrCbXKGwJZQ7EIt37ogrWocxl06KftUpwziqVfEuqKxG/zUCfNHs
-	 DrIYAY0/WtL6st1npP2WDcPZr3fp1YLHBOEmUSOUTK6GVYX2aZCvXAhm1HBsRzwy2m
-	 /sjno3+aFrhBQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 06/11] thermal: core: Introduce thermal_instance_add()
-Date: Fri, 11 Oct 2024 00:13:50 +0200
-Message-ID: <3618899.iIbC2pHGDl@rjwysocki.net>
-In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1728598505; c=relaxed/simple;
+	bh=6wuvlwCa6TSt0v332U+6mY0pX9kM6s8vhMYzCkSEeEk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kojPoKg+WIMMzBTzKAkkMlQFiTH8VoPwpf7VwzCcdyaY5CgZYOX1I5M1bPpJH+Pvzsz/Ml87YyWoDI/4eBp8ubZQ5ENtW6NfVTzHqLQjKgV13o7oHqloL8kQkm3+226gxUHrGR3B/UdDm+rEAVS+J0m1ShJL6qhrLeiKqS2ipT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=O8cHpUgX; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1728598497; x=1728857697;
+	bh=c2eztCA1e4UB4MlQh9sJYpniTjBOlUpjxUjuhUGTTBM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=O8cHpUgX+pv15xmM7aAjyhLNuYGKog5tKvySd3F4NoAmQFnRlieCKSa2meQA6560M
+	 Lu0LsrdwMN17MXdhfJJZl2G3JyoxJkLNGhtXZVBKID61WeN0Zgi+w7AbtvUoa81IGV
+	 oxnwf5UeA4v2bRTIZMLOClUUhZrPCKv969NZOF4DZCGy0w9Xm/I3SJ464oXAYL14nb
+	 kwCWPywUfbRuYFtaVJT0kB+c2+TfsuhNnNLDWf1qX9LwFS0BdyOaoBhWbkHvamg0gc
+	 7x3zqrOS0Gmvb8tiFKqPXPsCNzCIjQvNpFco+O5d4jLLqVtOkj4+O87tmfEav5Z9iF
+	 2g3LXWWGALQDA==
+Date: Thu, 10 Oct 2024 22:14:52 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] rust: add global lock support
+Message-ID: <2376e7b3-42a4-4743-a5cd-83251dcc0075@proton.me>
+In-Reply-To: <87msjckqfw.fsf@kernel.org>
+References: <20240930-static-mutex-v4-1-c59555413127@google.com> <HVPdDHj35lGMPHyA8YvYjO4hhof-vNaVDqo_ILwyCmuY13oskqVKxaIA7OK4wo6fWYeJIV_RMtbPdjVRGJcLvg==@protonmail.internalid> <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me> <87msjckqfw.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e1ab7e91a78749aba42462da63b16ce6f6adcaba
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedguddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriih
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 10.10.24 16:01, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>=20
+>>
+>> Also,
+>>
+>>     error: type `__static_lock_ty_VALUE` should have an upper camel case=
+ name
+>>        --> rust/kernel/sync/lock/global.rs:100:18
+>>         |
+>>     100 |               type [< __static_lock_ty_ $name >] =3D $valuety;
+>>         |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert=
+ the identifier to upper camel case: `StaticLockTyValue`
+>>
+>=20
+> How did you manage to get these errors?
 
-To reduce the number of redundant result checks in
-thermal_bind_cdev_to_trip() and make the code in it easier to
-follow, move some of it to a new function called thermal_instance_add()
-and make thermal_bind_cdev_to_trip() invoke that function.
+I added a `global_lock!` invocation to `lib.rs`. Otherwise I also don't
+get them (they might also be emitted from the examples, but I didn't
+compile those).
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-
-This is a resend of
-
-https://lore.kernel.org/linux-pm/2641944.Lt9SDvczpP@rjwysocki.net/
-
----
- drivers/thermal/thermal_core.c |   46 ++++++++++++++++++++++++++---------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -743,6 +743,28 @@ struct thermal_zone_device *thermal_zone
-  *				     binding, and unbinding.
-  */
- 
-+static int thermal_instance_add(struct thermal_instance *new_instance,
-+				struct thermal_cooling_device *cdev,
-+				struct thermal_trip_desc *td)
-+{
-+	struct thermal_instance *instance;
-+
-+	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
-+		if (instance->cdev == cdev)
-+			return -EEXIST;
-+	}
-+
-+	list_add_tail(&new_instance->trip_node, &td->thermal_instances);
-+
-+	mutex_lock(&cdev->lock);
-+
-+	list_add_tail(&new_instance->cdev_node, &cdev->thermal_instances);
-+
-+	mutex_unlock(&cdev->lock);
-+
-+	return 0;
-+}
-+
- /**
-  * thermal_bind_cdev_to_trip - bind a cooling device to a thermal zone
-  * @tz:		pointer to struct thermal_zone_device
-@@ -761,7 +783,7 @@ static int thermal_bind_cdev_to_trip(str
- 				     struct thermal_cooling_device *cdev,
- 				     struct cooling_spec *cool_spec)
- {
--	struct thermal_instance *dev, *instance;
-+	struct thermal_instance *dev;
- 	bool upper_no_limit;
- 	int result;
- 
-@@ -823,23 +845,15 @@ static int thermal_bind_cdev_to_trip(str
- 	if (result)
- 		goto remove_trip_file;
- 
--	mutex_lock(&cdev->lock);
--	list_for_each_entry(instance, &td->thermal_instances, trip_node)
--		if (instance->cdev == cdev) {
--			result = -EEXIST;
--			break;
--		}
--	if (!result) {
--		list_add_tail(&dev->trip_node, &td->thermal_instances);
--		list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
--	}
--	mutex_unlock(&cdev->lock);
-+	result = thermal_instance_add(dev, cdev, td);
-+	if (result)
-+		goto remove_weight_file;
- 
--	if (!result) {
--		thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
--		return 0;
--	}
-+	thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
-+
-+	return 0;
- 
-+remove_weight_file:
- 	device_remove_file(&tz->device, &dev->weight_attr);
- remove_trip_file:
- 	device_remove_file(&tz->device, &dev->attr);
-
-
+Cheers,
+Benno
 
 
