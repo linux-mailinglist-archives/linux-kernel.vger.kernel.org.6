@@ -1,136 +1,107 @@
-Return-Path: <linux-kernel+bounces-358229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F96997BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:13:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104AD997BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05B9CB22A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7BF1F245D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DCF19ADAA;
-	Thu, 10 Oct 2024 04:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B137219ABD8;
+	Thu, 10 Oct 2024 04:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c8UTv+fs"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0EM1WTzy"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790E26EB7D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFBE6EB7D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728533612; cv=none; b=Gu6olQhjyZCI0DFo6Bkjy1PnYs0ysm9XdP9+iQjeK3vfSVZQDgAwS9mYzeZjYqeDWK1RdbCD0IxI8xomu2Z3UmqMbxUw/VZUeDs5+8X7P3RfhqNTI5Y98+BFTyzC8LqWYmadONtZG+cPbxiuB9MfbDh0pShK6KtTn0rXrnpchFI=
+	t=1728533596; cv=none; b=Sz+opGfgPu5WUtDDhEkgx60pWh0HOqLGX8m76ijpNxGvRAQJM6rMEvCnJ5hngot/UaWvAQNTBXmrhoGDt76gf5JcNyfiJyI0i6GGDepkMx+B2Qhfoh/VjFTy74GEOKDnd/TNKnPbuzejTxAgLvWXSxTvSfytLLkPEKFQa0XErAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728533612; c=relaxed/simple;
-	bh=Fa3yqUWIKihSvM8Dky3yrhEY+bGlMJzVhZjJlYz0KOE=;
+	s=arc-20240116; t=1728533596; c=relaxed/simple;
+	bh=NeY05LlwBc0ajuq1r6Lvp+ySX0MuSaKuKFkUvi7MQXQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I/02KRJ8PgTha7rUHqJ6zuZzcE+I+G3X+seRdNN5A8YKkBXI+5ocEXXDeAOwtOqK+JtHgx1A3buz9Be7JIy4VVS6v7rtRAERQeeeeWu08S0r7jiJn0Ta78JCj21XaA5f67jkaEfL1aMbkD5OZ5euTWI/h8TIoNkTU6iIHuHIHhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c8UTv+fs; arc=none smtp.client-ip=209.85.128.44
+	 To:Cc:Content-Type; b=OmTG+O/pBGvynzLTKnic1CltrsEymy6MbXKFH5TmAK7SxiCpCDzzc1Faz6pkhVuA4b9ODodLg6P0FmpeSplcXnDwJKNVjZBdZDL7sgYO+/GFhFjT1r4uMgYoOrDahnfbxr/Bx5oq6OPjBieN8AsffhwCH82NlQkK1WzSrIuqCzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0EM1WTzy; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431141cb4efso144595e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:13:31 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c5cf26b95aso521051a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728533610; x=1729138410; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728533592; x=1729138392; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Iyc9jvA68dVH8P7BvKMjtZ4Po1WR7+Mp5iLLQbqq2p8=;
-        b=c8UTv+fs1ckWgKPTV4BB9wWHtzT5dyyXPhKYnVvwiqnX1WmablKYvQkjYL3alSaJjc
-         POCov2pMGGDv6850+xMsxT7P6pnXpfH36aTJHSolExJy/3K1+VJTE1nO0H2eJI2+El9h
-         XYUpGsTi8mkkOjfsh1i32uFm3tcN455kCLgdXOsVIW855HtUrbaO6ryaLg4z9aUblHvL
-         TPdqb2YAwLGCXvckWC8AvlOyQ9VqGGbJ+Ve8YjVcvCjgjalrVVKhtRlYDsGmVBcSjDuX
-         o+e9Gs5kf9o/VgtDAsfnWGiSKqwPj+I8DgQza7qV969xvSq6uc+HsZvbpA7MJGD7RvWA
-         ffwg==
+        bh=NeY05LlwBc0ajuq1r6Lvp+ySX0MuSaKuKFkUvi7MQXQ=;
+        b=0EM1WTzyfqEdVvrzi4s8pAh+ov2jymKnhbhUkSe4w8tgknr4M9A2n5tqynYtjFwuwF
+         BRLAzPREE9IiyPEwWRvmZbu0FTHFMRRXeWDx8GH+rGDGQh+oaS/QMGNmGYERqQsvghAu
+         XfV7I3FeNooMdZDIg6DznMY8sy2OZ8jmrCvNj+/nkIYFoflhZSfSzcQ6RLco4NFs4Snj
+         gOI8ul0qpKx0hD715gOuaLwfiR3RqQ5J/dg45w8S4kptcMSFfNwf/SgjBzhSSSeXNIr5
+         QqluuNBZUUEC4QEAuwyF4ywpKA0iebvVnxYiO1g45w1xH3XqzGJ/zy/FP9crbasKpQVB
+         rl+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728533610; x=1729138410;
+        d=1e100.net; s=20230601; t=1728533592; x=1729138392;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Iyc9jvA68dVH8P7BvKMjtZ4Po1WR7+Mp5iLLQbqq2p8=;
-        b=QtLpw58NYobK7fqH3g4DFJncm3CK6T+w4uyTYMvyiDsArBXqJe3QjrcnTwP//7jwl0
-         Y52EidMsePJmO9I6kvY0s2o52IAgcVh/TDttUKndejd2id/H+WO4r5cKK1A6DdBcJfbP
-         TLhhw+vh/tLXWyHHZiSQomLNrc/xQQlum0xF9HLxqpNwyFruD+fLSjUfGQcmwmRq9V/6
-         yrIjUHCJyoamy2Ycv/qxjC7Gf7MnBnhOcZRkwUo3G+DXOM5sUuEl8TAX5jIxA4N3sf6z
-         Ue5Q3gY+Puiqm7VS8zMcHtwhuDI09ZcCdGsdYb4KKycs2KlSGJOTzX1EN52Ttb04AbjW
-         SnCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0a78UWdZcDW4oY419BjePxIuaj0UMuFOnexFxlYE55whd/w1vy4cYofRCdyAheih7UWeaYCc3zfpxosQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTPyIaOYQBOwAFaGFFb6EcJhP7mSmCCGH4JLeErOrcSyW3LGWJ
-	yKLzlr8c4Bqa4N5YAYdpyhW87p1JzH06EJBpnr1Z2zl0CXzxp30lN1e6x8XgUEljA5AyO8HNhua
-	zqrLERwAQeua6zIQFCn2jPOjAH7GSBLREVbR3
-X-Google-Smtp-Source: AGHT+IFdTWUmTn70J6M/KPiw48mRgBT/PQg7viT/3MqWWJ4nJxut+FCES5a2TXWuELQHIfFu2HpKQYH/QOZz5aWIejw=
-X-Received: by 2002:a05:600c:1e21:b0:42b:a8fc:3937 with SMTP id
- 5b1f17b1804b1-431161b4011mr2588745e9.4.1728533609702; Wed, 09 Oct 2024
- 21:13:29 -0700 (PDT)
+        bh=NeY05LlwBc0ajuq1r6Lvp+ySX0MuSaKuKFkUvi7MQXQ=;
+        b=er99HhNOe4XJ5ZwFkuwG/vZtuRHlM1wQ0bYhOxNgWjTqRXwaH3qKc17GPv3lhsC4ye
+         mA5fLytj6PzewILHNLGrMVknISLWkFrg5tZxoOhytDnMENElhHbGAzwAwNuPi8+8ix1Q
+         wRKNk8tqCfV4eouHgU1SNJVU63b2Srktc/aEW1CcitMjdcabJLMaANjiiSr7gCBdvAiv
+         9ARqAgFsc6vgxojkh7Uhzu8fpZ20v7s0wbr4EvM1XGdh5nEy53qnOS2m/YyIrK3J+nYE
+         YwgQWEKZlDeFeQxbLm4bt+bVncFXt1K2DfH2cCOKLybTqbMLhBxoZJCzGIbYnaWGEIQh
+         7jAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLZw/CaQTFOmmueGok3z209ALLu4hqySpOnlBV4ohLiCdXKvrZOMIavPSBT5TwvSlI1xm2ZtdGRGUoAWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy309U7SfaG91wUna1fduSQ3IGoTmg4ykdwQZEmZ1E5+/KMNu7D
+	RJrnArrFJ43drh21MIy2h1mGb7Ppbw/n7SU2oGdWF1W2jy1PPJ79LBOemZn+k3BT/J5aNVMhyLK
+	p8Hnc4kNbysqeA/jSlXSbMTzqUsJ22HNzP6o5
+X-Google-Smtp-Source: AGHT+IG+FVwH/Qj12xcjY3CkGWjMkdfNSI/LctZhiS6nktk17XPL2NZH4mbMaPk+5ew/hx877PmjHC+OTnmlCYT8uX0=
+X-Received: by 2002:a05:6402:2742:b0:5c9:3428:20a4 with SMTP id
+ 4fb4d7f45d1cf-5c934282139mr901645a12.12.1728533591505; Wed, 09 Oct 2024
+ 21:13:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009054429.3970438-1-guanyulin@google.com>
- <20241009054429.3970438-2-guanyulin@google.com> <2024100943-gallantly-animosity-2822@gregkh>
-In-Reply-To: <2024100943-gallantly-animosity-2822@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Thu, 10 Oct 2024 12:12:00 +0800
-Message-ID: <CAOuDEK3UqynUa6NSDj_mTcnQAZ2vv7kGt9hDJCtmVrm_+-6vOg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] usb: dwc3: separate dev_pm_ops for each pm_event
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, mathias.nyman@intel.com, 
-	stern@rowland.harvard.edu, elder@kernel.org, oneukum@suse.com, 
-	yajun.deng@linux.dev, dianders@chromium.org, kekrby@gmail.com, perex@perex.cz, 
-	tiwai@suse.com, tj@kernel.org, stanley_chang@realtek.com, 
-	andreyknvl@gmail.com, christophe.jaillet@wanadoo.fr, 
-	quic_jjohnson@quicinc.com, ricardo@marliere.net, grundler@chromium.org, 
-	niko.mauno@vaisala.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, badhri@google.com, 
-	albertccwang@google.com, quic_wcheng@quicinc.com, pumahsu@google.com
+References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-4-jdamato@fastly.com>
+In-Reply-To: <20241009005525.13651-4-jdamato@fastly.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 10 Oct 2024 06:13:00 +0200
+Message-ID: <CANn89iKD5eMrQY2wz1JKMygQRhGn71ATSjhV_qWO7LH_693-3g@mail.gmail.com>
+Subject: Re: [net-next v5 3/9] net: napi: Make gro_flush_timeout per-NAPI
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com, 
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com, 
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Kory Maincent <kory.maincent@bootlin.com>, Johannes Berg <johannes.berg@intel.com>, 
+	Breno Leitao <leitao@debian.org>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 8:45=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
+On Wed, Oct 9, 2024 at 2:56=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
+e:
 >
-> On Wed, Oct 09, 2024 at 05:42:55AM +0000, Guan-Yu Lin wrote:
-> > +
-> > +static int dwc3_poweroff(struct device *dev)
-> > +{
-> > +     struct dwc3     *dwc =3D dev_get_drvdata(dev);
-> > +     int             ret;
-> > +
-> > +     ret =3D dwc3_suspend_common(dwc, PMSG_HIBERNATE);
+> Allow per-NAPI gro_flush_timeout setting.
 >
-> Why is power off hibernate?
+> The existing sysfs parameter is respected; writes to sysfs will write to
+> all NAPI structs for the device and the net_device gro_flush_timeout
+> field. Reads from sysfs will read from the net_device field.
 >
-> This needs an ack from the dwc3 maintainer as I can't determine if it's
-> correct at all...
+> The ability to set gro_flush_timeout on specific NAPI instances will be
+> added in a later commit, via netdev-genl.
 >
-> thanks,
->
-> greg k-h
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 
-Described in /include/linux/pm.h, PM_EVENT_HIBERNATE message denotes
-the following transition in the PM core code:
-"Hibernation image has been saved, call ->prepare() and ->poweroff()
-for all devices."
-Meantime, the interpretation of the the above description could be
-found in /drivers/base/power/main.c:
-static pm_callback_t pm_op(const struct dev_pm_ops *ops, pm_message_t state=
-)
-{
-...
-        case PM_EVENT_HIBERNATE:
-                return ops->poweroff;
-...
-}
-An example in device drivers could be found in usb/drivers/usb/core/usb.c:
-static int usb_dev_suspend(struct device *dev)
-{
-        return usb_suspend(dev, PMSG_SUSPEND);
-}
-
-Regards,
-Guan-Yu
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
