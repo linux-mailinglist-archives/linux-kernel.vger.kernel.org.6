@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-359183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E795F99886F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2752C998870
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892261F22287
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEC51F21B8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011B21C9EB5;
-	Thu, 10 Oct 2024 13:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E751C9ED3;
+	Thu, 10 Oct 2024 13:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rtZmJ+Qy"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RAS2eGlg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF0A1C8FD7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C5C1C2DD5;
+	Thu, 10 Oct 2024 13:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568496; cv=none; b=PTaXDHmg0PTqZnC98cKs0I2lGEiw85TIJaa6HCVYphSRSY6OVT27Xvh0+NYkeHii1BC3VD6nferPkHGbnfZLq1McmeYcSi2M7UytkquK5s9XG6QB76qVt22r022KZWsV+AIt19huJyqcpExFlVxm97fujr4ndzv5M+4quKofy28=
+	t=1728568517; cv=none; b=khkWT0KO9IRwA+CgflRky9sYVjMUIMGD5eBkU/6R31dvY0Uxpssqs1mKM6+sX7mYZzQGX0/Nu98LT38ZqBhfQh0Pux/psBrXbg9JIKIuTlYOxkWb6kFMK4qwE8sGwolSp95T7AGtEB9PYrBTChf/N9tbEOtEFj8oGWBLteKkznU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568496; c=relaxed/simple;
-	bh=qSUxFxZspgMcfQY5+jl1jPXfgQQnoNowZXPOJtAoLYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SA9zz6Rvr1XDrAtc2hBnCYmCbRfoqe8Fs5eyrvhMYUPoLIgRJGMF6xUuXH6nawR7mkVaFn8U+ENbaefhRRCip7yC8O3f3F1KYm5uA6k0WUhnu+hOKiH06nqPaZm4CjqAb3TA8ETBBCruXFNdWioU4vVncAFFmpqQ2psk43EQwg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rtZmJ+Qy; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=v8tFS6BLOJ3erqK+DhD25hVS1almgqLVcNOb3Z708U8=; b=rtZmJ+QyqXimeHs1
-	8+6c32YRdgu/5BHZEoxIHEUqNs0AZoro7A8Mp0XHLsvL/WcXeTLMgEZdKNV6quzl1WQ2R9K+Xuh62
-	OYzCx8d3WJpo0VPp7Vp4Y4oAMkBEJjf0BhR9RZiTNsur3bT59nkhrPI9GAiswn5P4+8W89zDrAldu
-	pEqZlFlFvfMvBPaHlg5hB1sjbjgVd/n0/dISWcvmemBO9RyyIO0R/QjykUWEyVZhGcQqZEajUssUq
-	/c6JdxbE1nBTWsAL7WG1JTZ3wM01/tTIziT4vEk7UGbkCL3Q++PFmvy6OJ8I0eYF6vt3RdTYaninF
-	kIpkeirmZ5IghxUczA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sytct-00AFZ7-1C;
-	Thu, 10 Oct 2024 13:54:47 +0000
-From: linux@treblig.org
-To: jstultz@google.com,
-	tglx@linutronix.de,
-	sboyd@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2] clocksource: Remove unused clocksource_change_rating
-Date: Thu, 10 Oct 2024 14:54:46 +0100
-Message-ID: <20241010135446.213098-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728568517; c=relaxed/simple;
+	bh=DTL5ztx2b+NpQq3sdrbksGVgSsewmzJdp2pI7oNZdrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXX1cioe/OsHMWEbZYKQ7UnD224mdpQx1Dt6fK8N42KZ+wYhOp2Eoqh+tSvGzb+n+oSnb6YlPHDgdAfz9PdFQjfMThVGwTjrLbIlLHKP75oO+SaJEsuWr9IRMcmJb3KKKi6yh7/d+lTiJi//Eu+/FL0L7EiVQUOGxij7Rq4LKsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RAS2eGlg; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728568515; x=1760104515;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DTL5ztx2b+NpQq3sdrbksGVgSsewmzJdp2pI7oNZdrg=;
+  b=RAS2eGlgh2TyKKMsPODp/OscrV3cqB/+mXjsd/IZ9BLeZuU8NxzgqcdB
+   6bG4l5FrG4/m+J6UPeMQxFtM3dwwwxIQdajvVK3oPzFwitrBcm+a5rX2v
+   qjGdCE6rbLCV8UFkY+MCT8RVVW7MZ6u5IQuVKxDACM77dVSpZs5ItRvoG
+   Jb9TC/HY6jOmkx3Oc18kBFdC1vPhVCDosoNiLhXebN6u6eG1PdKvLS0yJ
+   savCZNpAqZDs0xyRRscYq2dfeNZZwCTYQ8Q2OQmzzE4CzY0H5FIDBtsN2
+   GNf6Gt/uRcxpm4SNcM2nL72pwRPXoOQfHneSaTmaE9/diRA+x09MxG/8u
+   g==;
+X-CSE-ConnectionGUID: cFQJZ1+jRZaIMufacs9rdg==
+X-CSE-MsgGUID: IC7/IoFmSLSj3BUzp7qBKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39315724"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="39315724"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:55:15 -0700
+X-CSE-ConnectionGUID: 4i93k9QyTm2eDV0LpAD6AQ==
+X-CSE-MsgGUID: MU1tYFPrRLy0lwSsj/iiDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="99933403"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:55:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sytdG-00000001YN9-2fV0;
+	Thu, 10 Oct 2024 16:55:10 +0300
+Date: Thu, 10 Oct 2024 16:55:10 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: Re: [PATCH 03/13] media: i2c: ds90ub960: Fix use of non-existing
+ registers on UB9702
+Message-ID: <ZwfcvuRRWO5oN94C@smile.fi.intel.com>
+References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
+ <20241004-ub9xx-fixes-v1-3-e30a4633c786@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-ub9xx-fixes-v1-3-e30a4633c786@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, Oct 04, 2024 at 05:46:34PM +0300, Tomi Valkeinen wrote:
+> UB9702 doesn't have the registers for SP and EQ. Adjust the code in
+> ub960_rxport_wait_locks() to not use those registers for UB9702. As
+> these values are only used for a debug print here, there's no functional
+> change.
 
-clocksource_change_rating() has been unused since 2017's commit
-63ed4e0c67df ("Drivers: hv: vmbus: Consolidate all Hyper-V specific clocksource code")
+...
 
-Remove it.
+> +		if (priv->hw_data->is_ub9702) {
+> +			dev_dbg(dev, "\trx%u: locked, freq %llu Hz\n",
+> +				nport, (v * 1000000ULL) >> 8);
 
-__clocksource_change_rating now only has one use which is ifdef'd.
-Move it into the ifdef'd section.
+Perhaps HZ_PER_MHZ?
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/clocksource.h |  1 -
- kernel/time/clocksource.c   | 38 +++++++++----------------------------
- 2 files changed, 9 insertions(+), 30 deletions(-)
+> +		} else {
 
-diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
-index d35b677b08fe..ef1b16da6ad5 100644
---- a/include/linux/clocksource.h
-+++ b/include/linux/clocksource.h
-@@ -215,7 +215,6 @@ static inline s64 clocksource_cyc2ns(u64 cycles, u32 mult, u32 shift)
- 
- extern int clocksource_unregister(struct clocksource*);
- extern void clocksource_touch_watchdog(void);
--extern void clocksource_change_rating(struct clocksource *cs, int rating);
- extern void clocksource_suspend(void);
- extern void clocksource_resume(void);
- extern struct clocksource * __init clocksource_default_clock(void);
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 23336eecb4f4..63564339b7a9 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -20,6 +20,8 @@
- #include "tick-internal.h"
- #include "timekeeping_internal.h"
- 
-+static void clocksource_enqueue(struct clocksource *cs);
-+
- static noinline u64 cycles_to_nsec_safe(struct clocksource *cs, u64 start, u64 end)
- {
- 	u64 delta = clocksource_delta(end, start, cs->mask);
-@@ -171,7 +173,6 @@ static inline void clocksource_watchdog_unlock(unsigned long *flags)
- }
- 
- static int clocksource_watchdog_kthread(void *data);
--static void __clocksource_change_rating(struct clocksource *cs, int rating);
- 
- static void clocksource_watchdog_work(struct work_struct *work)
- {
-@@ -191,6 +192,13 @@ static void clocksource_watchdog_work(struct work_struct *work)
- 	kthread_run(clocksource_watchdog_kthread, NULL, "kwatchdog");
- }
- 
-+static void __clocksource_change_rating(struct clocksource *cs, int rating)
-+{
-+	list_del(&cs->list);
-+	cs->rating = rating;
-+	clocksource_enqueue(cs);
-+}
-+
- static void __clocksource_unstable(struct clocksource *cs)
- {
- 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
-@@ -1255,34 +1263,6 @@ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
- }
- EXPORT_SYMBOL_GPL(__clocksource_register_scale);
- 
--static void __clocksource_change_rating(struct clocksource *cs, int rating)
--{
--	list_del(&cs->list);
--	cs->rating = rating;
--	clocksource_enqueue(cs);
--}
--
--/**
-- * clocksource_change_rating - Change the rating of a registered clocksource
-- * @cs:		clocksource to be changed
-- * @rating:	new rating
-- */
--void clocksource_change_rating(struct clocksource *cs, int rating)
--{
--	unsigned long flags;
--
--	mutex_lock(&clocksource_mutex);
--	clocksource_watchdog_lock(&flags);
--	__clocksource_change_rating(cs, rating);
--	clocksource_watchdog_unlock(&flags);
--
--	clocksource_select();
--	clocksource_select_watchdog(false);
--	clocksource_suspend_select(false);
--	mutex_unlock(&clocksource_mutex);
--}
--EXPORT_SYMBOL(clocksource_change_rating);
--
- /*
-  * Unbind clocksource @cs. Called with clocksource_mutex held
-  */
+...
+
+> +			dev_dbg(dev,
+> +				"\trx%u: locked, SP: %d, EQ: %u, freq %llu Hz\n",
+> +				nport, strobe_pos, eq_level,
+> +				(v * 1000000ULL) >> 8);
+
+Ditto.
+
+> +		}
+
 -- 
-2.47.0
+With Best Regards,
+Andy Shevchenko
+
 
 
