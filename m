@@ -1,78 +1,69 @@
-Return-Path: <linux-kernel+bounces-358290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B86997CC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:01:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C70997CCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 288E7B21ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:01:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F1C2B2343D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCB01A00E2;
-	Thu, 10 Oct 2024 06:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332C21A00F8;
+	Thu, 10 Oct 2024 06:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLq9l48h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fnuRMqLZ"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0742863D;
-	Thu, 10 Oct 2024 06:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8F463D;
+	Thu, 10 Oct 2024 06:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728540054; cv=none; b=WrTRKwMQ7ULW5AV6pphIuVjGAFOV6CcfOaqtwibZfjYC/V9YTKWPn6fdxEpfiTUwZehFk7cwMcoBlnwPQUgj4zL54wpAxJvm4gZHvxZvMP2VbZ4MtncsfgUzi/+MUk+ggmTFRGIrJhqZEEtNskuA4jbNJfTRf3KjnleuBtSogT8=
+	t=1728540367; cv=none; b=qHBepl9TiNeTxdqiQz51GGiYTn4VmgeRgvOips+C2ciawPOMj08UTUiYE0bg6D2skLN4NHeMsu1IyaMFbTv0wF6imaDlbD9WEOndsA3XOxaSoYHZOnGGWAcw0ns2IbWivG9kcq0eoci1jFMrlbkGnhzwVl7HbfnBCHKlR0O9uV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728540054; c=relaxed/simple;
-	bh=PK7oZMg/krXjhlNrDoVFQfXTxHOhq4hpTEDSiQrqDME=;
+	s=arc-20240116; t=1728540367; c=relaxed/simple;
+	bh=B2NxE/VURy/vjBy0GHUs/N24pfT7iFiiBWoSUrtvJ0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5ey1AIn9k0gQMTvRNJ+Cs0nbWCIfCxM44M6i18UPmRhKNVzDyebsOqWnE6KR1Mwui4WM/7MaZ+lhnWPyDjFYlGNJpgvj3DDydccg4AN7hsUzu5MpHVvcYzg/+vrHpXYbrG8ODv7tTicya8e1Ow4/M7MowI3ZtA6fgmMb4m7Qi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLq9l48h; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728540052; x=1760076052;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PK7oZMg/krXjhlNrDoVFQfXTxHOhq4hpTEDSiQrqDME=;
-  b=CLq9l48htPc3hUYt+pdpPHeEFm99xMaMmMKiC4SuBdccne4rwEhgG895
-   6jJCRVMzZsNe9InCOqQitDqVR8gibmBpQFBjjXRDG7LKPjbeH+JcB7htq
-   n5ha8DBhn3fNQDwoYZLr2Yp4puLKDHtFtJ7DXzMLEU+HjAlVwOy4A9DfA
-   NpGp29QAY9sPQVT9f7xWPNSB4DMCyyfS24RFfWOC0WVZ+qGig8K2n9KMw
-   uEHsVlvOPp5bkQcFG+EeisWcZ4fgana+N6TWsoZbyQgiA+RvSgNeEWTyq
-   XyJ5h2902dQyECnaAQOy2kH8z8lUgjXOgMBW+9qpkTrM2RRMH7neXAQLr
-   w==;
-X-CSE-ConnectionGUID: 5Sx2sbMNTPiTBv5tMSgPyw==
-X-CSE-MsgGUID: bq41FM1/SVO0b6yIbLPb2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="15498886"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="15498886"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 23:00:52 -0700
-X-CSE-ConnectionGUID: BASR9FPEQmGnZyQhWB2nEg==
-X-CSE-MsgGUID: w4QsR1g9SImq5EPcW6Cc/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="76096954"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Oct 2024 23:00:49 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1symEB-000AF7-1f;
-	Thu, 10 Oct 2024 06:00:47 +0000
-Date: Thu, 10 Oct 2024 14:00:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Dan Murphy <dmurphy@ti.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] leds: lp55xx: Fix check for invalid channel number
-Message-ID: <202410101313.hQc9I8AL-lkp@intel.com>
-References: <1728464547-31722-1-git-send-email-michal.vokac@ysoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMKY3dbQ0HGhl1Z4o/IA4qvFceQcXGf11ITbOUfk9f5Rxl20UCMt3otEiy7euEXoo6pfqac6s9ttdCTWpeI8TqehvFuO5aHL9k8Uz9b7QfwrbS6wvY0Y6ZoN81FmEZ+DyELVGotESYljwZxjOjRAkT840Aw1pK5d8eP94yeG++I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fnuRMqLZ; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=6XUnNZxdV444hVjpvvyIdb/pQ4HNS1/DPVIt1z8Oi3M=; b=fnuRMqLZ0sBmx/sXo7vulvdPVn
+	4WaRmpEVAMy6omDESvcQewfyn05mcKwfqQlD5gu+Q1QIQLOohxJP7xd8604d7eAKcptfJpvppdfrB
+	6rXtGtsjIzX+vDwIn7LHCalKJMh6+ZA+J0qxH3eGEw9q+/8i+o+rYW6eIxH2a9JXMdYwzdY92img3
+	ykR16cWAo9tucP4dSADxxZCUklzaWqidcQH5VkmQz2Ra2XgRN5sUBQR30tAXqKFfSpBYAjTcQi6kp
+	lPbF/O5Xz6xhtbH7CAlliq/AlrFm7eofUscBu6zhmhYOtp2xfRLRvOTPuscxhmQtO+6c8Hi0bIbww
+	wFCbN7FA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sym9H-008FZ1-01;
+	Thu, 10 Oct 2024 14:05:57 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 10 Oct 2024 14:05:56 +0800
+Date: Thu, 10 Oct 2024 14:05:56 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Romain Perier <romain.perier@free-electrons.com>
+Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
+ Turris Omnia
+Message-ID: <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
+References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
+ <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+ <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
+ <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
+ <ZwZAExmK52txvHE8@gondor.apana.org.au>
+ <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,89 +72,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1728464547-31722-1-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
 
-Hi Michal,
+On Wed, Oct 09, 2024 at 06:48:21PM +0200, Klaus Kudielka wrote:
+>
+> Oh, I had to increase log_buf_len, to catch everything. Booting is really slow now ;)
+> Full dmesg output is attached.
 
-kernel test robot noticed the following build errors:
+Thanks! This is very helpful.
 
-[auto build test ERROR on lee-leds/for-leds-next]
-[also build test ERROR on linus/master v6.12-rc2 next-20241009]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> [    4.118765] mv_cesa_ahash_queue_req: 0 (ptrval)
+> [    4.121966] mv_cesa_ahash_queue_req: 0 (ptrval)
+> [    4.126678] mv_cesa_int: 0 0x4ea1 0x80
+> [    4.131394] mv_cesa_ahash_queue_req: 0 (ptrval)
+> [    4.135927] mv_cesa_ahash_complete: 0 (ptrval)
+> [    4.153221] mv_cesa_ahash_req_cleanup: 0 (ptrval)
+> [    4.157942] mv_cesa_int: 0 0x4ea1 0x80
+> [    4.157949] alg: ahash: mv-sha256 test failed (wrong result) on test vector 3, cfg="import/export"
+> [    4.161699] mv_cesa_ahash_complete: 0 (ptrval)
+> [    4.170686] alg: self-tests for sha256 using mv-sha256 failed (rc=-22)
+> [    4.175132] mv_cesa_ahash_complete: 0 (ptrval)
+> [    4.175136] mv_cesa_ahash_req_cleanup: 0 (ptrval)
+> [    4.179589] ------------[ cut here ]------------
+> [    4.184304] mv_cesa_ahash_req_cleanup: 0 (ptrval)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Vok/leds-lp55xx-Fix-check-for-invalid-channel-number/20241009-171340
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/1728464547-31722-1-git-send-email-michal.vokac%40ysoft.com
-patch subject: [PATCH] leds: lp55xx: Fix check for invalid channel number
-config: xtensa-randconfig-r071-20241010 (https://download.01.org/0day-ci/archive/20241010/202410101313.hQc9I8AL-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410101313.hQc9I8AL-lkp@intel.com/reproduce)
+As I suspected, the first multi-request op on a single engine
+triggers a failure.  This looks like a bug in the TDMA chaining
+code.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410101313.hQc9I8AL-lkp@intel.com/
+It is chaining what appears to be a live request.  In other words
+after we have already passed a chain to the hardware, we appear
+to be adding new entries to the end of the chain in
+mv_cesa_tdma_chain by assigning last->next_dma.
 
-All errors (new ones prefixed by >>):
+Unfortunately I don't have documentation for this hardware so I can't
+say whether this is definitely illegal but it certainly smells bad :)
 
-   In file included from include/linux/device.h:15,
-                    from include/linux/acpi.h:14,
-                    from include/linux/i2c.h:13,
-                    from drivers/leds/leds-lp55xx-common.c:17:
-   drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_parse_common_child':
->> drivers/leds/leds-lp55xx-common.c:1130:25: error: 'dev' undeclared (first use in this function); did you mean 'cdev'?
-    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
-         |                         ^~~
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/leds/leds-lp55xx-common.c:1130:17: note: in expansion of macro 'dev_err'
-    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
-         |                 ^~~~~~~
-   drivers/leds/leds-lp55xx-common.c:1130:25: note: each undeclared identifier is reported only once for each function it appears in
-    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
-         |                         ^~~
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/leds/leds-lp55xx-common.c:1130:17: note: in expansion of macro 'dev_err'
-    1130 |                 dev_err(dev, "Use channel numbers between 0 and %d\n",
-         |                 ^~~~~~~
+Boris, what are the rules of engagement for TDMA chaining?
 
+Is it really OK to add new entries to the chain after it has been
+given over to the hardware?
 
-vim +1130 drivers/leds/leds-lp55xx-common.c
-
-  1111	
-  1112	static int lp55xx_parse_common_child(struct device_node *np,
-  1113					     struct lp55xx_led_config *cfg,
-  1114					     int led_number, int *chan_nr)
-  1115	{
-  1116		int ret;
-  1117	
-  1118		of_property_read_string(np, "chan-name",
-  1119					&cfg[led_number].name);
-  1120		of_property_read_u8(np, "led-cur",
-  1121				    &cfg[led_number].led_current);
-  1122		of_property_read_u8(np, "max-cur",
-  1123				    &cfg[led_number].max_current);
-  1124	
-  1125		ret = of_property_read_u32(np, "reg", chan_nr);
-  1126		if (ret)
-  1127			return ret;
-  1128	
-  1129		if (*chan_nr < 0 || *chan_nr >= cfg->max_channel) {
-> 1130			dev_err(dev, "Use channel numbers between 0 and %d\n",
-  1131				cfg->max_channel - 1);
-  1132			return -EINVAL;
-  1133		}
-  1134	
-  1135		return 0;
-  1136	}
-  1137	
-
+Thanks,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
