@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-359099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D387998771
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB05998786
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81B91C21B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715201C20FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316071C9DE6;
-	Thu, 10 Oct 2024 13:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295BC1C9DC0;
+	Thu, 10 Oct 2024 13:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qGlJF3OJ";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qGlJF3OJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xdy6LJKZ"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4121BE245;
-	Thu, 10 Oct 2024 13:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB7A1C3316;
+	Thu, 10 Oct 2024 13:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566382; cv=none; b=k9QDPWWISJLsPVaAuhKtRTjrWNTOd2t2SP0IOReZPFFO3yacAnWxuIYAYaeHq0NdJ0FuqDV3AgymqqGlWuadB/mP2NtLmu+ObxNesLumRE1dmTVlFSx0NZFIHT1QW619R7fiAOeouCsbOdQNJpOef2dD/X4mIfUmQlNdvIh6lAU=
+	t=1728566561; cv=none; b=owSjsZjz+ttcTw+dfbrOnfLoYhilP56NHLG7m6welUVnfdn2fsZX3jb2ImylLQMdEmZ3NRaZUuWiatywbPCbPs1JYEt+OAsQrfyQXKmfX/WJkvZ6rzGx6g49nB4WLUlwKLoc21/eyY7L0leWuppvYotZrfchsaXjxOh1fX9ChFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566382; c=relaxed/simple;
-	bh=Kip+g3NUeabI/R2YzpRmlSwA0m5LSlFdee3BzrAlaPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWIYCwZ9VnzHixNQfTtjDWyNjvmeuWoPT/VpXYOY/C1ck2nOHlM+akn2Kdsus2QmJzdPN1mdriiH289kJLjPZ1FdpBQxzUgCbYajZq8PUYShuJJoFglNPIHhmIlKJYtnc+3X5JEsR686gGho5LpqPpGABhqmacpi+o81dfRL5gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qGlJF3OJ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qGlJF3OJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B996C1F45A;
-	Thu, 10 Oct 2024 13:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1728566377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yDqItrqmUk+6wjzIhXJNTmX7NNV0awuFoUw0XQgqWkA=;
-	b=qGlJF3OJVLrfjXd/fKZcRjIFd6h7nIqFcznaYFxHs7Z+pDNfo5wi5XmkjT4hiY4llslFa2
-	zZJouCZplHfuW8eTgamjVa4FlOL/UBp8KWHPsdcZS3LcTzQxWC3jC0NiZBCZMnbfwtPQNv
-	LgPmYLM2kWdFMcXzSAO4TFxerD5XTCU=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=qGlJF3OJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1728566377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yDqItrqmUk+6wjzIhXJNTmX7NNV0awuFoUw0XQgqWkA=;
-	b=qGlJF3OJVLrfjXd/fKZcRjIFd6h7nIqFcznaYFxHs7Z+pDNfo5wi5XmkjT4hiY4llslFa2
-	zZJouCZplHfuW8eTgamjVa4FlOL/UBp8KWHPsdcZS3LcTzQxWC3jC0NiZBCZMnbfwtPQNv
-	LgPmYLM2kWdFMcXzSAO4TFxerD5XTCU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 791F213A6E;
-	Thu, 10 Oct 2024 13:19:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id c8JkHGnUB2fvUQAAD6G6ig
-	(envelope-from <oneukum@suse.com>); Thu, 10 Oct 2024 13:19:37 +0000
-From: Oliver Neukum <oneukum@suse.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH net] net: usb: usbnet: fix race in probe failure
-Date: Thu, 10 Oct 2024 15:19:14 +0200
-Message-ID: <20241010131934.1499695-1-oneukum@suse.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1728566561; c=relaxed/simple;
+	bh=zU4OHd4fqQutU5LKhoOEeIxeaA4fdDxhCxQBuGiHw7Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQz42fOL0Cst9ARD2hX1VtmibL8kaz8mMvdmKMVVfH7Cmx0Tzsq73qMWHf2ceUtMdF9DCqx5Yo+3RH53nrD4BRSNOHij/UNVYP/Wgdnsfl6XQZeHkioXUSozxZQ9CJGnvpedVguXj05vXLTnSYhX88OMCKnWIdQ3wPPTxuv371w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xdy6LJKZ; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A8iLrg000495;
+	Thu, 10 Oct 2024 15:22:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=Ccn+f/QO1SGOWh5NjiitG2bf
+	+psS5zLHBT5PvfxdYR8=; b=xdy6LJKZivFTdUh1VV1XDLky5AuuZTcrXAWwIwsO
+	xTDkhIVExC/Q0Tc5IPCvrDtczIXuyTotXmE5JDF6Z3ut433A1hs1hKYWg6B2x6p7
+	4iMon06BvLBivZOY0doHSLiNagHWbGlaD7Kh9/LJH9byEg8ll9GONLBWHTsA9SX5
+	abVuehsNY/FqSJqmR3tlxicJ7/MYbfL75u/OECm2Jz14ChQtjllpRIcqFfyJmJ5U
+	oFgZbhyXaXXAhq9czU7KQTV3g+K81baE6TEZQj2dZ0tjaZ+WR3SxdlyviILpudra
+	2GhehTbDClUyxmZyQ+YHZb1bdFzWlI3iq2NYlu1Q0pj6fw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423f1173q1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 15:22:09 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AD4B54004C;
+	Thu, 10 Oct 2024 15:21:17 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9A59E23CB43;
+	Thu, 10 Oct 2024 15:19:34 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 10 Oct
+ 2024 15:19:34 +0200
+Date: Thu, 10 Oct 2024 15:19:29 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Valentin Caron <valentin.caron@foss.st.com>,
+        <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] spi: stm32: fix missing device mode capability in
+ stm32mp25
+Message-ID: <20241010131929.GA3275914@gnbcxd0016.gnb.st.com>
+References: <20241009-spi-mp25-device-fix-v1-1-8e5ca7db7838@foss.st.com>
+ <ZwavaP0QHQCyDbtB@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B996C1F45A
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZwavaP0QHQCyDbtB@finisterre.sirena.org.uk>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-The same bug as in the disconnect code path also exists
-in the case of a failure late during the probe process.
-The flag must also be set.
+Hi Mark,
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
----
- drivers/net/usb/usbnet.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Oct 09, 2024 at 05:29:28PM +0100, Mark Brown wrote:
+> On Wed, Oct 09, 2024 at 06:15:52PM +0200, Alain Volmat wrote:
+> 
+> > Fixes: a4e7908abf0c ("spi: stm32: add st,stm32mp25-spi compatible supporting STM32MP25 soc")
+> > Cc: stable@vger.kernel.org
+> 
+> That SHA1 doesn't exist...
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 2506aa8c603e..ee1b5fd7b491 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -1870,6 +1870,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
- 	 * may trigger an error resubmitting itself and, worse,
- 	 * schedule a timer. So we kill it all just in case.
- 	 */
-+	usbnet_mark_going_away(dev);
- 	cancel_work_sync(&dev->kevent);
- 	del_timer_sync(&dev->delay);
- 	free_netdev(net);
--- 
-2.46.1
+Oups, sorry about that.  Sending a v2 with correct SHA1.
+
+Regards,
+Alain
+
 
 
