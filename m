@@ -1,92 +1,230 @@
-Return-Path: <linux-kernel+bounces-359489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83721998C4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:49:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7535B998C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380C81F22F6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976F11C236A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAFF1C1AD1;
-	Thu, 10 Oct 2024 15:49:51 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F611C1AD1;
+	Thu, 10 Oct 2024 15:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dw6PbTFy"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014121917C0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F6D1917C0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575390; cv=none; b=lfE+3jx4gaxzw2d+ivzdDk8CeA+EQarcXXnhSQzHYdU3QJ2SRItz01/EPFnTu40pqcO+z6PVB7PAeDtSjeX1Wvn2XfXerujhLRJVKeR1Ae+CMnv7ponDU0CBvoetUfs0zXiZkS0bdRaJsu3vV21f6GouBSeY89k4dJ86vWdcQi8=
+	t=1728575423; cv=none; b=QbSirU+HwnQhUiKQI1EsmaWJTiOX0mj+yXIUd/7ubf37GD2RlB1+CB9glw8rrifGRCFTzFBFZ+9szFgFP5sZltRxgZ8Q1ZxMZ2Vu4/E5Yy5aikMLaevVOr48IHKq+aX4nhLASYVliTOA9kpjY34Qqd/9Zmpt1mOMiR2HnwZkJrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575390; c=relaxed/simple;
-	bh=vv//5ekSEcWr5P3Sp+lQmrBP0oOlGOyYRdbA6C87hfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPic4Ro+gXypdPOb1zeNcKajEYbkeej7azVLPmj7X8WCDBV/9CIAWn3QCngGI737iImInJNhglg3lwYg/XeLEfesVMxxzr/W1e0aQ0I36v3zqaO52OKeerVh5akU4Bx4vRvxPZHPKV+bslouNdYMo/qyGjh3/YY2eqwBxyheZAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1syvQ1-0002HR-RT; Thu, 10 Oct 2024 17:49:37 +0200
-Date: Thu, 10 Oct 2024 17:49:37 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Florian Westphal <fw@strlen.de>, "Lai, Yi" <yi1.lai@linux.intel.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
-	yi1.lai@intel.com
-Subject: Re: [Syzkaller & bisect] There is KASAN: slab-use-after-free Read in
- __nf_unregister_net_hook in v6.12-rc1
-Message-ID: <20241010154937.GA8322@breakpoint.cc>
-References: <ZweN3SiUk4bK9N7u@ly-workstation>
- <CANn89iKNZ4AZVYfxzhGWnx82T44_7tw5P63-TE0-GUn+sTRkZg@mail.gmail.com>
- <CANn89iKvrv+-yMRwmyb_bjus6sN1hOq+QmOwvpCFU9G0UzkWNw@mail.gmail.com>
- <20241010120219.GA30424@breakpoint.cc>
- <CANn89iK0a_h2KdGekLdvYKrxOyzwW=L2u33QscDBKH1zKwTdQg@mail.gmail.com>
+	s=arc-20240116; t=1728575423; c=relaxed/simple;
+	bh=qhOxO4ONtclTNMDXzHvaQ8+AflWsYw4+9H8QES3JtII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nz36Tc4RS/YkBy24wARWMoOeF8fzlxSxyrk3OBve1p5ZBz+/94ApVuUru2vszxBKK7ta2RquBBF6xUpX0ZHMqZN+NFy6xv6nGg4hovSbvdR74u2A3Fpozjt4eY6i/VFU0O45fOVU2/P4x3ktPxJGHnBRWIG052l/Jy4FrHthxlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dw6PbTFy; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83542d9d7c1so44318839f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728575418; x=1729180218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vg/yor8UwdQ8Oe3H/zJkreOXjYG4wInbDnh3i6jir0U=;
+        b=dw6PbTFyo4A37N5Zn2qnuQSlDZYE4/hfH5sQonhCBhwj5KyUP+bHkzgFmRVOiiO3KZ
+         5w9DHLX+CWqWnr0ij68izUmt5jdG/8qFKbChO8tRvaylNb6I+OTK2hGxgvxdVTFA1Ygm
+         hIofXrVnbF48ozQghE/c7/8uh8MPET5LptskQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728575418; x=1729180218;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vg/yor8UwdQ8Oe3H/zJkreOXjYG4wInbDnh3i6jir0U=;
+        b=XDiO7XF2t7ZKnDT/FA3VlyqGcPUfMjGGTOod0r7ApaVCUvkBx96FmU0PuFGPhot/1D
+         giSEB6YsRZ8TfKAo2kgEOylJj/YM5gzIEEVixLT5xVhxWCy18wYWHLXlFaKzSaEv7tw0
+         Ln3bECnrXwYj4dGlnNE9fMRdlnDcd4gxRhQd95oyFlM2bmbQVaMMJgg141C/pg9YfM23
+         gWoB4YeP4gXuArxde+3tWuLbJ4ud77xNJUNgtfDQwmxc/n0UXzvju23fImCnAo99ZClB
+         fdjO5uYOe995B29kfEmqCzJGrGJwgCcnRQ9WRe4U7H7RNtQloONjY0x8HslsRBHiphrI
+         ZlxA==
+X-Gm-Message-State: AOJu0YyOWVKzpbMFfuHm+QliwWd27lyep9U91l8vojrpdxbVcAHi6855
+	AHERXhpgU3Xwe2uxjo3Ebd5ppSjZOZWRGguldEUERoQZeEZHWO98F2MBccXQa3Q=
+X-Google-Smtp-Source: AGHT+IGpKaSQwpFTgwpTMojAbCcGc828CWQuH3jzfJx59SWrqRB/qdsTdBqeGXfoX6ADlOFwwF7uZQ==
+X-Received: by 2002:a05:6602:1506:b0:834:f744:d067 with SMTP id ca18e2360f4ac-83547b974f8mr409994939f.8.1728575418175;
+        Thu, 10 Oct 2024 08:50:18 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8354b9130d0sm28862439f.17.2024.10.10.08.50.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 08:50:16 -0700 (PDT)
+Message-ID: <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
+Date: Thu, 10 Oct 2024 09:50:15 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iK0a_h2KdGekLdvYKrxOyzwW=L2u33QscDBKH1zKwTdQg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
+ directly
+To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Eric Dumazet <edumazet@google.com> wrote:
-> On Thu, Oct 10, 2024 at 2:02 PM Florian Westphal <fw@strlen.de> wrote:
-> >
-> > Eric Dumazet <edumazet@google.com> wrote:
-> > > On Thu, Oct 10, 2024 at 10:58 AM Eric Dumazet <edumazet@google.com> wrote:
-> > > >
-> > > > On Thu, Oct 10, 2024 at 10:19 AM Lai, Yi <yi1.lai@linux.intel.com> wrote:
-> > > > >
-> > > Florian, Pablo :
-> > >
-> > > It seems that bpf was able to defer the __nf_unregister_net_hook()
-> > > after exit()/close() time.
-> >
-> > Thanks for the analysis, I will send a patch later today.
+On 10/10/24 06:16, zhouyuhang wrote:
+> From: zhouyuhang <zhouyuhang@kylinos.cn>
 > 
-> Wow, this was fast, thanks Florian !
+> The libcap commit aca076443591 ("Make cap_t operations thread safe.") added a
+> __u8 mutex at the beginning of the struct _cap_struct,it changes the offset of
+> the members in the structure that breaks the assumption made in the "struct libcap"
+> definition in clone3_cap_checkpoint_restore.c.So use the capget and capset syscall
+> directly and remove the libcap library dependency like the commit 663af70aabb7
+> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") does.
+> 
 
-I spoke too soon, I cannot get the rerpdocuer to work, it fails with:
+NIT: grammar and comma spacing. Please fix those for readability.
+e.g: Change "struct _cap_struct,it" to "struct _cap_struct, it"
+Fix others as well.
 
-bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_NETFILTER, insn_cnt=4, insns=0x20000200, license="syzkaller", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(0, 0, 0), prog_flags=0, prog_name="", prog_ifindex=0, expected_attach_type=BPF_NETFILTER, prog_btf_fd=-1, func_info_rec_size=0, func_info=NULL, func_info_cnt=0, line_info_rec_size=0, line_info=NULL, line_info_cnt=0, attach_btf_id=0, attach_prog_fd=0, fd_array=NULL}, 144) = -1 EINVAL (Invalid argument)
-bpf(BPF_LINK_CREATE, {link_create={prog_fd=-1, target_fd=0, attach_type=BPF_NETFILTER, flags=0}, ...}, 64) = -1 EBADF (Bad file descriptor)
-...
-Killed
-uname -a
-Linux virtme-ng 6.12.0-rc1-kvm-virtme #1 SMP PREEMPT_DYNAMIC Thu Oct 10 17:25:40 CEST 2024 x86_64 GNU/Linux
+> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+> ---
+>   tools/testing/selftests/clone3/Makefile       |  1 -
+>   .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
+>   2 files changed, 28 insertions(+), 33 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+> index 84832c369a2e..59d26e8da8d2 100644
+> --- a/tools/testing/selftests/clone3/Makefile
+> +++ b/tools/testing/selftests/clone3/Makefile
+> @@ -1,6 +1,5 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
+> -LDLIBS += -lcap
+>   
+>   TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+>   	clone3_cap_checkpoint_restore
+> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> index 3c196fa86c99..111912e2aead 100644
+> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> @@ -15,7 +15,7 @@
+>   #include <stdio.h>
+>   #include <stdlib.h>
+>   #include <stdbool.h>
+> -#include <sys/capability.h>
+> +#include <linux/capability.h>
+>   #include <sys/prctl.h>
+>   #include <sys/syscall.h>
+>   #include <sys/types.h>
+> @@ -27,6 +27,13 @@
+>   #include "../kselftest_harness.h"
+>   #include "clone3_selftests.h"
+>   
+> +#ifndef CAP_CHECKPOINT_RESTORE
+> +#define CAP_CHECKPOINT_RESTORE 40
+> +#endif
+> +
 
-... with vng --build --config kconfig_origin on
-9852d85ec9d492ebef56dc5f229416c925758edc (== 6.12.0-rc1).
+Why is this necessary? This is defined in linux/capability.h.
 
-As Erics analysis looks correct to me I will send a patch anyway, but I
-can't say if it resolves the problem or not.
+> +int capget(cap_user_header_t header, cap_user_data_t data);
+> +int capset(cap_user_header_t header, const cap_user_data_t data);
+
+In general prototypes such as these should be defined in header
+file. Why are we defining these here?
+
+These are defined in sys/capability.h
+
+I don't understand this change. You are removing sys/capability.h
+which requires you to add these defines here. This doesn't
+sound like a correct solution to me.
+
+> +
+>   static void child_exit(int ret)
+>   {
+>   	fflush(stdout);
+> @@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
+>   	return ret;
+>   }
+>   
+> -struct libcap {
+> -	struct __user_cap_header_struct hdr;
+> -	struct __user_cap_data_struct data[2];
+> -};
+> -
+>   static int set_capability(void)
+>   {
+> -	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+> -	struct libcap *cap;
+> -	int ret = -1;
+> -	cap_t caps;
+> -
+> -	caps = cap_get_proc();
+> -	if (!caps) {
+> -		perror("cap_get_proc");
+> +	struct __user_cap_data_struct data[2];
+> +	struct __user_cap_header_struct hdr = {
+> +		.version = _LINUX_CAPABILITY_VERSION_3,
+> +	};
+> +	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
+> +	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
+> +	int ret;
+> +
+> +	ret = capget(&hdr, data);
+> +	if (ret) {
+> +		perror("capget");
+>   		return -1;
+>   	}
+>   
+>   	/* Drop all capabilities */
+> -	if (cap_clear(caps)) {
+> -		perror("cap_clear");
+> -		goto out;
+> -	}
+> +	memset(&data, 0, sizeof(data));
+>   
+> -	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+> -	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
+> +	data[0].effective |= cap0;
+> +	data[0].permitted |= cap0;
+>   
+> -	cap = (struct libcap *) caps;
+> +	data[1].effective |= cap1;
+> +	data[1].permitted |= cap1;
+>   
+> -	/* 40 -> CAP_CHECKPOINT_RESTORE */
+> -	cap->data[1].effective |= 1 << (40 - 32);
+> -	cap->data[1].permitted |= 1 << (40 - 32);
+> -
+> -	if (cap_set_proc(caps)) {
+> -		perror("cap_set_proc");
+> -		goto out;
+> +	ret = capset(&hdr, data);
+> +	if (ret) {
+> +		perror("capset");
+> +		return -1;
+>   	}
+> -	ret = 0;
+> -out:
+> -	if (cap_free(caps))
+> -		perror("cap_free");
+>   	return ret;
+>   }
+>   
+
+thanks,
+-- Shuah
+
 
