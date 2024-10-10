@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-359425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DC3998B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:20:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43153998B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CBA7295A49
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:20:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DEE295A46
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41391CC15A;
-	Thu, 10 Oct 2024 15:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFD91CC174;
+	Thu, 10 Oct 2024 15:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z0lpxxZS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="isyhRglW"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F73B646;
-	Thu, 10 Oct 2024 15:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39FE1BD018
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728573641; cv=none; b=r2wGOPdi3hmQWBR0AhwdVURRvLyj6P9cLtifZXE+diRVyWX67018CnRbp4nfRbF5jfFEcX+k3AmfWYBKLcSpBqxx9pERd0F9P8yzKM1SLypgwSyaNq4umWRaU/Rr7hebb/TVu+rp+RbBwmt1aPf1gElkGwIrLX61vwuAA5dLJ3g=
+	t=1728573642; cv=none; b=hDqaHKjKPEk1xDX7+I8gfqnCEXFbXzH1XGLJ0k93Ts1UnxUjRXj4svuegn+0x0guwHl8cXmk/AeXFAK3AtpSpT3V3ZGPnPuxOzW9Ddyn2Yi2bM2+6m0jeGy0bDw85C4t9COn5zAWwqoInx//BiD4HE3GDmLgvpykSOHqKOeHEFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728573641; c=relaxed/simple;
-	bh=FMOKQmRnRuG0u6SCHuk/rSndbZsClfTEYhslQL/e4Ss=;
+	s=arc-20240116; t=1728573642; c=relaxed/simple;
+	bh=bBl/8kLn3PMgofJWXoRDcak4u44INDe+5nr3slY9Rag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnaL6pqJ4dpwrJfeahfMKD++CPfbavR1IqWvK9uaMq8tJRMr8HTHI9pxG3nhjdxqtnD9xgOBpiT6YVYhY9f/LPWD4lcIfvsGt7I/5RKyOHM3eWmNttHYDxJi1q3L8KLJ+e1CHJAtUkijSpXFCoEliltnHmy927IG8+XdKkefOMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z0lpxxZS; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728573640; x=1760109640;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FMOKQmRnRuG0u6SCHuk/rSndbZsClfTEYhslQL/e4Ss=;
-  b=Z0lpxxZSVK9zbaYNzoqGUBV29/foJEJf7mVF3GY8IWsSbnU0Qg0W3q0Y
-   58EZ6HUZswo1Z2M8utA7g9z7qUSdQkONfXHS2TliWtCw5oMkQ7FolWJpg
-   2Ls217S+PrhlJ5I0tVZzAGZMcfLUrUHmAFMvFLDpmLm4Q4eJwblg+Abxy
-   auyvLob1gN9vJ0lwjp5nh/NKgmsvm8iy2Ip+D1NAM8korusUGqnMRq3CO
-   6wLxOW0ltXsEc1887z8xx5ChoQaGRBr7TwYN/inChRG/3mu7Z02HVhD1e
-   +VSjQYq4TZ6Q/uEp+nCnWSpGvB+XrOoN1xM+/oB2oedecnrIgw55qnOTl
-   A==;
-X-CSE-ConnectionGUID: W35/HYwmSrqEun/momCJJA==
-X-CSE-MsgGUID: JqyMZV81RTu2+bLrf40CkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45417083"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="45417083"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:20:39 -0700
-X-CSE-ConnectionGUID: uFuqKWFpRUGoCWa1ZSzSlg==
-X-CSE-MsgGUID: HFVp1nsLSFi0YkYM0dHCyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="76532971"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:20:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1syuxr-00000001ZlS-3lMj;
-	Thu, 10 Oct 2024 18:20:31 +0300
-Date: Thu, 10 Oct 2024 18:20:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 6/8] i2c: of-prober: Add GPIO support to simple helpers
-Message-ID: <Zwfwv-O9ln-PVMdc@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-7-wenst@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dOR9xZTsaeNPzo5xvriOa0Qy/bHSzJTKpGHXp4PDSG2U/2kH1dkdgk5boztrxL+sJDSjVeg6B5QUD+ghrCDQI6iwJ89UnozlqJ5blpVmB8B3P0T6EBfr31ml6eVon0UlWtF552RSjL058GJeB2jMqm778q5fyv1X++9HnJic4rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=isyhRglW; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539885dd4bcso1422516e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:20:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728573639; x=1729178439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yl+AJ7lyFwjwDvwphBTlSXLZHqolk5S2mucilQyKVTA=;
+        b=isyhRglWpvkyu3Ci3+LSBZsQVMxL6rsmfguP0dtkongfYWduhQ6UIqcwUpS7meJqR3
+         TUtDI/vB/uQOC2bRt9Bna9f+46vXhbiM+8HLMVnSgPBZsi8RsGcYVUn9J2Q39oavlMjt
+         WBIQgvTaB78139WJ80dKYax9nGBuzVz4jcP0UX5e2va2216aX3Pnw4KTpBAfkGJm1DOu
+         kly3Kz5pyGPHQF9U/u+gyjhSldGVleFkjMyla1HkFArnA6lsSqXTmHBgIylb28YYXy1D
+         Z871g64FbGB22XWcPXyho5WvobYWzpi6/47XJEFFrbkbeR/lXiUCR1SFepNaS5TcNG2n
+         R1AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728573639; x=1729178439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yl+AJ7lyFwjwDvwphBTlSXLZHqolk5S2mucilQyKVTA=;
+        b=vsZP0xThk95k0R/RALR6Evk/GwS1sSVn3TlSjjAPIGlAo2xq7CYo1WiXg67h3cVkuJ
+         Wufi+xKcIMK7ohGOkIZ+nnBWfhQ2R2qBAbcHAYwaVdsDTQZkXPfxIGOJtlWXttVljeUg
+         O1wvx7G09ciXHihhyBSgIM4nW9KYexFlaHofIgxtxfyNTNzH4RRwicZGtJy/L50w0Jnk
+         W1awsmamUlA4gQ3/AdGPWryehbqYxH+ObEEszfYnXT0Wiho8eLr3cw3aWMkP/Xrckf4h
+         X4Mcs0BpUNXccdqS4eEWz2kpgC2CxlEAnQFsZGo1L1uFhUmY7pKXASGWx52bJDcUSi2U
+         BWUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfNoQSfA50uUmsBEhBGAx6rDaHKCruUxHu0SGgAKRtoAx2jnCtm/tcYb8tF3akcYYs5wvPurTXzhm5Mmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypiUbydDxmKLI8aV6+IRR83ndSWm/S0tWOfm16NVXNbH9TGyx/
+	w6YeAVsLPNa/Sy/DTLnMT+I8QKDrQEeJEDuMauzPsyUdtYKaZp+ya2w9Gsedu0Y=
+X-Google-Smtp-Source: AGHT+IH/AhoqLxAeDa8GrTS+pYtnDRk05gpq3mqxJbZBvTFUqCKS16r2AzappociNsYeq9ZA5HsNug==
+X-Received: by 2002:a05:6512:3195:b0:535:3ca5:daa with SMTP id 2adb3069b0e04-539c488d6f3mr4627086e87.7.1728573638749;
+        Thu, 10 Oct 2024 08:20:38 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb905182sm287086e87.258.2024.10.10.08.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 08:20:37 -0700 (PDT)
+Date: Thu, 10 Oct 2024 18:20:36 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH] drm/msm/dpu: Don't always set merge_3d pending flush
+Message-ID: <5scqahnsr5i26rkumg5eqdiwrg5n7rrnrp5642c6moxucf6w3r@xcgrxtjhj3pz>
+References: <20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,84 +84,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008073430.3992087-7-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com>
 
-On Tue, Oct 08, 2024 at 03:34:25PM +0800, Chen-Yu Tsai wrote:
-> Add GPIO support to the simple helpers for the I2C OF component prober.
-> Components that the prober intends to probe likely require their
-> regulator supplies be enabled, and GPIOs be toggled to enable them or
-> bring them out of reset before they will respond to probe attempts.
-> Regulator supplies were handled in the previous patch.
+On Wed, Oct 09, 2024 at 08:41:13PM GMT, Jessica Zhang wrote:
+> Don't set the merge_3d pending flush bits if the mode_3d is
+> BLEND_3D_NONE.
 > 
-> The assumption is that the same class of components to be probed are
-> always connected in the same fashion with the same regulator supply
-> and GPIO. The names may vary due to binding differences, but the
-> physical layout does not change.
+> Always flushing merge_3d can cause timeout issues when there are
+> multiple commits with concurrent writeback enabled.
 > 
-> This supports at most one GPIO pin. The user must specify the GPIO name,
-> the polarity, and the amount of time to wait after the GPIO is toggled.
-> Devices with more than one GPIO pin likely require specific power
-> sequencing beyond what generic code can easily support.
+> This is because the video phys enc waits for the hw_ctl flush register
+> to be completely cleared [1] in its wait_for_commit_done(), but the WB
+> encoder always sets the merge_3d pending flush during each commit
+> regardless of if the merge_3d is actually active.
+> 
+> This means that the hw_ctl flush register will never be 0 when there are
+> multiple CWB commits and the video phys enc will hit vblank timeout
+> errors after the first CWB commit.
 
-...
+From this description, wouldn't it be more correct to always set
+intf_cfg.merge_3d in WB code (even if mode_3d is NONE)?
 
-> +static int i2c_of_probe_simple_get_gpiod(struct device *dev, struct device_node *node,
-> +					 struct i2c_of_probe_simple_ctx *ctx)
-> +{
-> +	struct fwnode_handle *fwnode = of_fwnode_handle(node);
-> +	struct gpio_desc *gpiod;
-> +	const char *con_id;
-> +
-> +	/* NULL signals no GPIO needed */
-> +	if (!ctx->opts->gpio_name)
-> +		return 0;
-> +
-> +	/* An empty string signals an unnamed GPIO */
-> +	if (!ctx->opts->gpio_name[0])
-> +		con_id = NULL;
-> +	else
-> +		con_id = ctx->opts->gpio_name;
-
-Can it use positive conditional?
-
-	if (ctx->opts->gpio_name[0])
-		con_id = ctx->opts->gpio_name;
-	else
-		con_id = NULL;
-
-> +	gpiod = fwnode_gpiod_get_index(fwnode, con_id, 0, GPIOD_ASIS, "i2c-of-prober");
-> +	if (IS_ERR(gpiod))
-> +		return PTR_ERR(gpiod);
-> +
-> +	ctx->gpiod = gpiod;
-> +
-> +	return 0;
-> +}
-
-...
-
-> +static void i2c_of_probe_simple_disable_gpio(struct device *dev, struct i2c_of_probe_simple_ctx *ctx)
-> +{
-> +	if (!ctx->gpiod)
-> +		return;
-
-Do you need this check for the future patches?
-
-> +	/* Ignore error if GPIO is not in output direction */
-> +	gpiod_set_value(ctx->gpiod, !ctx->opts->gpio_assert_to_enable);
-> +}
-
-...
-
->  struct regulator;
-> +struct gpio_desc;
-
-Ordered?
+> [1] commit fe9df3f50c39 ("drm/msm/dpu: add real wait_for_commit_done()")
+> 
+> Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
+> Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for writeback")
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 5 ++++-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c  | 5 ++++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
