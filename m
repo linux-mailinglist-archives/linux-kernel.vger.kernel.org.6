@@ -1,184 +1,147 @@
-Return-Path: <linux-kernel+bounces-359522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959D9998C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:01:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D16998CA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED0922811C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579201C24B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBD31CCEE3;
-	Thu, 10 Oct 2024 16:01:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25D11CCECB;
+	Thu, 10 Oct 2024 16:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EABvwbII"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F203E4207F;
-	Thu, 10 Oct 2024 16:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2791313C682;
+	Thu, 10 Oct 2024 16:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728576076; cv=none; b=WP3AgubWdFZWewN/EySnk8Xm9UWuQWCFiLYjJkUX47iz25L8LMTYOj6RwwBjo5gZdsXqONguLuyLzossi/Q51WfwMoXZFbs2ElMtxV2LCmGdYgBNdiTy3PZlEbdJNGNYnF4S1zoF2Qlr3leK+JV0uhf0/4A3MzRQb+KcV9axlJE=
+	t=1728576133; cv=none; b=s4SK2uipDj9qukXk2QrsqccldOeI/sSNttHDbzisvKUtal4wFe82JG7GOAGhg1SZzV/6Bf3sSxSGbzJXt8j60crL3S8uEoChJIIh4+ojKJWvVRm4s30YT1bDd9Mw0z4IskzYASLPlFgEhzXh+A2CQ1PqWe4fCk0QSEiEHq218gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728576076; c=relaxed/simple;
-	bh=UH4y1cVuG/rp5iFVwmdeZSf8A6fP63A4SCsHVcjrGq4=;
-	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EkhqTZTkuNv1FerwjRO4ytQXCjuqjYwOprfu5XFTrM63aUod4KvmpOjCMqNmk4//X7CN6QTpNE2FMfXOKGnuBj4EX8jtF5fAV7Zpl9ck5fOXCMSXdR1nGiBYfD7cB3XBvNxDjClJb9Po8KM6AmSt42tlmRKkEEADEhEtQfmbt/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPZBV4d5xz6J7t4;
-	Thu, 10 Oct 2024 23:56:50 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id CB3FC140518;
-	Fri, 11 Oct 2024 00:01:11 +0800 (CST)
-Received: from GurSIX1 (10.204.104.168) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 18:01:05 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
-	<shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
-References: <cover.1728555449.git.gur.stavi@huawei.com> <9e15c0c2cd19d94207a1791de0dc9051a5abb95a.1728555449.git.gur.stavi@huawei.com> <6707d56835f42_2029212942b@willemb.c.googlers.com.notmuch>
-In-Reply-To: <6707d56835f42_2029212942b@willemb.c.googlers.com.notmuch>
-Subject: RE: [PATCH net-next v03 1/3] af_packet: allow fanout_add when socket is not RUNNING
-Date: Thu, 10 Oct 2024 19:00:58 +0300
-Message-ID: <000001db1b2d$9f9a00f0$dece02d0$@huawei.com>
+	s=arc-20240116; t=1728576133; c=relaxed/simple;
+	bh=AKnMhupUriCZw8twr8ssapsHpDs5xeYCV6PJwt/rkGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlcBdqksKpPZ5YvifOsu29Bh8Ghs2kZh9xw1jbFJ+lV+9xphdUWUjIDQhLQ7+jqzRQvCBKlmOJtkq+dlycFbRyBDSEDwrFB+fBuwaiJTdq9NEFD5a4b3IGGUMgbZKkt3lIzSxBXPkWEminzT/SNC0L+yA+BRZ5JE+Wh0MRlg9ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EABvwbII; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AFiofe025085;
+	Thu, 10 Oct 2024 16:01:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=a
+	RVSqJeIBM4P/yTtc34+JqyyPgM1QcxniwmaD3Dpay4=; b=EABvwbIIeQCOinHf6
+	dhCI17lSp0fbVj8kQuVbn0rw5s4+Uc18Wn588QMEZPTa001iSdETDXrELR3UKWhw
+	k3P2aCVvQ0S6MwtWaPCHZVIN9PoyOoyDSeCunj3i/+AQJiJfVP3FJEPNPLg92Aqk
+	zN7+h3A0cSoX1aVAC4ELgqtj/4ENMg06UytQ92VU4KdPr4PBcsbekMUgjM7Cj0h5
+	Xg6z27p16osefzMO++I+9TH4cx93rtA+I1yHghrATeFa/AAVvlxuqV1nCybvzHXD
+	+pQ0uz9w9bttm0a4AJ3jEEyZxFMDpDgQNlPRYVtn7sn3SM+OxGkwNGepokgjrN+U
+	kbEEg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426hu5g29g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 16:01:14 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49AG1Emf029252;
+	Thu, 10 Oct 2024 16:01:14 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426hu5g29a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 16:01:14 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49AFi8cF030168;
+	Thu, 10 Oct 2024 16:01:12 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsn0nt5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 16:01:12 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49AG18aT53281078
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 16:01:08 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2C3120043;
+	Thu, 10 Oct 2024 16:01:08 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B427920040;
+	Thu, 10 Oct 2024 16:01:07 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 10 Oct 2024 16:01:07 +0000 (GMT)
+Date: Thu, 10 Oct 2024 18:01:06 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-s390@vger.kernel.org, loongarch@lists.linux.dev,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 6/9] s390/vdso: Remove timekeeper includes
+Message-ID: <20241010160106.15346-F-hca@linux.ibm.com>
+References: <20241010-vdso-generic-arch_update_vsyscall-v1-0-7fe5a3ea4382@linutronix.de>
+ <20241010-vdso-generic-arch_update_vsyscall-v1-6-7fe5a3ea4382@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHbGv7mksA7veRkl0u2n9N9OvQm77J/18cAgABJxLA=
-Content-Language: en-us
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- frapeml500005.china.huawei.com (7.182.85.13)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241010-vdso-generic-arch_update_vsyscall-v1-6-7fe5a3ea4382@linutronix.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 1_f3XWFj058GjuDseAZVwzQNnRq2_S41
+X-Proofpoint-ORIG-GUID: zxhxQjmvWvZNQVEbX_m8_FF8HYH53KWD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=9 lowpriorityscore=0
+ phishscore=0 mlxscore=9 bulkscore=0 priorityscore=1501 adultscore=0
+ spamscore=9 suspectscore=0 clxscore=1011 malwarescore=0 mlxlogscore=103
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410100106
 
-> Gur Stavi wrote:
-> > PACKET socket can retain its fanout membership through link down and up
-> > and leave a fanout while closed regardless of link state.
-> > However, socket was forbidden from joining a fanout while it was not
-> > RUNNING.
-> >
-> > This patch allows PACKET socket to join fanout while not RUNNING.
-> >
-> > The previous test for RUNNING also implicitly tested that the socket is
-> > bound to a device. An explicit test of ifindex was added instead.
-> >
-> > Signed-off-by: Gur Stavi <gur.stavi@huawei.com>
-> > ---
-> >  net/packet/af_packet.c | 35 +++++++++++++++++++++--------------
-> >  1 file changed, 21 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> > index f8942062f776..8137c33ab0fd 100644
-> > --- a/net/packet/af_packet.c
-> > +++ b/net/packet/af_packet.c
-> > @@ -1843,26 +1843,29 @@ static int fanout_add(struct sock *sk, struct
-> fanout_args *args)
-> >  		match->prot_hook.ignore_outgoing = type_flags &
-> PACKET_FANOUT_FLAG_IGNORE_OUTGOING;
-> >  		list_add(&match->list, &fanout_list);
-> >  	}
-> > -	err = -EINVAL;
-> >
-> >  	spin_lock(&po->bind_lock);
-> > -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
-> > -	    match->type == type &&
-> > -	    match->prot_hook.type == po->prot_hook.type &&
-> > -	    match->prot_hook.dev == po->prot_hook.dev) {
-> > +	if (po->ifindex == -1 || po->num == 0) {
+On Thu, Oct 10, 2024 at 05:44:49PM +0200, Thomas Weiﬂschuh wrote:
+> Since the generic VDSO clock mode storage is used, this header file is
+> unused and can be removed.
 > 
-> This patch is more complex than it needs to be.
+> This avoids including a non-VDSO header while building the VDSO,
+> which can lead to compilation errors.
 > 
-> No need to block the case of ETH_P_NONE or not bound to a socket.
-
-
-ETH_P_NONE was blocked before as well.
-packet_do_bind will not switch socket to RUNNING when proto is 0.
-
-	if (proto == 0 || !need_rehook)
-		goto out_unlock;
-
-Same for packet_create.
-
-So the old condition could only pass the RUNNING condition if proto
-was non-zero.
-The new condition is exactly equivalent except for allowing IFF_UP
-to be cleared in the bound device.
-
-
-Yes, the same result could be achieved with a FEW less line changes
-but I think that the new logic is more readable where every clause
-explains itself with a comment instead of constructing one large if
-statement. And since the solution does add another nested if for the
-RUNNING the extra indentation started to look ugly.
-
+> Also drop the comment which is out of date and in the wrong place.
 > 
-> I would have discussed that in v2, but you already respun.
-> 
-> > +		/* Socket can not receive packets */
-> > +		err = -ENXIO;
-> > +	} else if (match->type != type ||
-> > +		   match->prot_hook.type != po->prot_hook.type ||
-> > +		   match->prot_hook.dev != po->prot_hook.dev) {
-> > +		/* Joining an existing group, properties must be identical */
-> > +		err = -EINVAL;
-> > +	} else if (refcount_read(&match->sk_ref) >= match->max_num_members)
-> {
-> >  		err = -ENOSPC;
-> > -		if (refcount_read(&match->sk_ref) < match->max_num_members) {
-> > +	} else {
-> > +		/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
-> > +		WRITE_ONCE(po->fanout, match);
-> > +		po->rollover = rollover;
-> > +		rollover = NULL;
-> > +		refcount_set(&match->sk_ref, refcount_read(&match->sk_ref) +
-> 1);
-> > +		if (packet_sock_flag(po, PACKET_SOCK_RUNNING)) {
-> >  			__dev_remove_pack(&po->prot_hook);
-> > -
-> > -			/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
-> > -			WRITE_ONCE(po->fanout, match);
-> > -
-> > -			po->rollover = rollover;
-> > -			rollover = NULL;
-> > -			refcount_set(&match->sk_ref, refcount_read(&match-
-> >sk_ref) + 1);
-> >  			__fanout_link(sk, po);
-> > -			err = 0;
-> >  		}
-> > +		err = 0;
-> >  	}
-> >  	spin_unlock(&po->bind_lock);
-> >
-> > @@ -3452,8 +3455,12 @@ static int packet_create(struct net *net, struct
-> socket *sock, int protocol,
-> >  	po->prot_hook.af_packet_net = sock_net(sk);
-> >
-> >  	if (proto) {
-> > +		/* Implicitly bind socket to "any interface" */
-> > +		po->ifindex = 0;
-> >  		po->prot_hook.type = proto;
-> >  		__register_prot_hook(sk);
-> > +	} else {
-> > +		po->ifindex = -1;
-> >  	}
-> >
-> >  	mutex_lock(&net->packet.sklist_lock);
-> > --
-> > 2.45.2
-> >
-> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  arch/s390/include/asm/vdso/vsyscall.h | 5 -----
+>  arch/s390/kernel/time.c               | 1 -
+>  2 files changed, 6 deletions(-)
 
-
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
