@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-359370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5184998ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6E6998ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A435C1C24EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13FA21F21FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22901CDA35;
-	Thu, 10 Oct 2024 14:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F47E1CC174;
+	Thu, 10 Oct 2024 14:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iXqA8s3m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k1s96HPh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u9xdIvwl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68D41C9EDD;
-	Thu, 10 Oct 2024 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E60C1CEAD8;
+	Thu, 10 Oct 2024 14:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572096; cv=none; b=FnO0vx7Ju7UZj1O6nIh7xCCkF/Fnpa3zkImf8MRoddjo3bMYt8DDwsQC0UUMgViEHpHCutGyVgqnNjaEHy70w7/ebqZrfe9wY92JvzHyAK4oQgFBSLZsU82WzmwWXzULMbGpAldgSv3ouyRi4ITewYqMr+B4QJL8HwtkHEMBM8w=
+	t=1728572138; cv=none; b=oykpiEukgLrqvQzyHLzo6hYxwJbsiMwnvSWMsqarR5GuVaSy9oNmxjJT4JkPjZYhJrJTr8WYGMka7zNoU/OrFTyfP3yeylPZtnWU20xrXgR21Mok3zuooPERp9P0U5E4/87H0EcTJIIJE8+wdL0G64++8SmhTcXarsLFoDwQvI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572096; c=relaxed/simple;
-	bh=LgiGrQlM3gDVzjYBIboDkagGXFjdao2iqR3QbcZoJF0=;
+	s=arc-20240116; t=1728572138; c=relaxed/simple;
+	bh=VaKy3/SYsBJIOkT4AZRE2/1NOauMYryXBe8mPgSv6mo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sI0EaiKJRAXWBzK01INrqVUqWX8Qr161XoSRGMHrPOiXlc4QwM0qjzuTq/Qj9RYD/gnEbFIZRiOCuWgNmxwesDDylp/TzL1UKIpREijg+70CsaOVJoQsOJeDBMzR/fX3aSVLz0VXhEu1is06DxS61iCm8uI812qvC5EkHgF9Q6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iXqA8s3m; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728572095; x=1760108095;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LgiGrQlM3gDVzjYBIboDkagGXFjdao2iqR3QbcZoJF0=;
-  b=iXqA8s3mi/WcWDRrNilacyyKP2YuthrUTQsBjtOXmxLiwjBpGfVgHkjK
-   hc0NfL9COqn0KHusazoB3sleCnjiDFbDRoPsYV3G9mO7NQSGylxtXLTcn
-   a84Kiy7pCqICJxXGFZ20lFAuYowJYiNPrc5uTq0jlOSV0Xdgo0SRa23gM
-   BzvXqeMZy3aVCdJh5Li36JoSQI3kJZSJUKsiQsqbYW1S2N6vDXlg4c/L2
-   7TxjHHjWAamoXjlHu49pJPP8H2C89jBk4t5u6xZldn7bNFdLpCUf/0N0D
-   G7/UquGyD2rlI22ytamctzR+GYhlda3CfWoS3FeUCinC4lQ+mu9HWSoE3
-   g==;
-X-CSE-ConnectionGUID: mcvZBt+0T7CnE1R/rmzVnA==
-X-CSE-MsgGUID: oAe3BW39QqqINxqQFYqXRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27828123"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="27828123"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:54:54 -0700
-X-CSE-ConnectionGUID: qkWAqSZRQWO1o9uZ1H90aQ==
-X-CSE-MsgGUID: Ip46FiQNQLeLcguU/URfYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="107337394"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:54:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1syuYy-00000001ZN8-1eFg;
-	Thu, 10 Oct 2024 17:54:48 +0300
-Date: Thu, 10 Oct 2024 17:54:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <ZwfquBFOVJEz5lTT@smile.fi.intel.com>
-References: <20241009233908.153188-1-inochiama@gmail.com>
- <20241009233908.153188-2-inochiama@gmail.com>
- <oyvqsywyznanpx5oflnemcsrk7r7nnhvxl6ly7b55oan2boi5d@kobrtldqbj6m>
- <muz6ze7cxho5niz67agoxwnaowumzlcto2vwydmxs2yzdjmisi@symog2asftmv>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4nW3VV7vrkekZ8EYnB0+89AG8D15klDxmPSIfM2vh+IAzzHMmvtP44IejLWJRWzpoEyFpS9BQMtY1wcrV3MlxmzKN4B24tqlkJEbVhrBAHY5dRmFnqsTOhzmWbio/qvnE740AE9i6Ycmz/67lSjCtevB29XNnEND3s562VfemQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k1s96HPh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u9xdIvwl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Oct 2024 16:55:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728572134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z62FhbIDGnDEM0JzTHpSQ5bTUtwOmOam/JPhtFyeT0U=;
+	b=k1s96HPhvHH+MVDWbeM91SI3Xr1WCEAcHZcC5ktchhqSnb6v37biafjJBDTddbIwacvfsj
+	DeHKa0saPnC77Il9oNFTYfJczRFIXo4X4v4URhYoRH9rYZcM2P3+s13ZOLZx/J9S16UBfl
+	LjqKIV4mmi1K/kcFnGNlK1wNVfdxHBlQ8ymwuMUnu7lw7zHrYFQAmL/P/mDDK3h0zgbj7N
+	dicI+HBRkjvspfgqH4N+wifdt8bjGEAr63lAik/Alw7TiIiR4vBGQzVoOtSm2EUhbhkbaY
+	gD9pIn7OcYM3zooQEqxy3HO1zbTUorTP1h9kwM8fHBnuzQ7ANiX8V9cQ+I5/WA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728572134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z62FhbIDGnDEM0JzTHpSQ5bTUtwOmOam/JPhtFyeT0U=;
+	b=u9xdIvwlTzOl6UHMmGKrXMFwPH/POsfVxZPkmpNVffJNU8kC1pQrs49CsjzLQbdoMq42nA
+	oBc3qirx0+Pd+1AQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
+	mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, efault@gmx.de,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 2/3] tracing: Record task flag NEED_RESCHED_LAZY.
+Message-ID: <20241010145533.koFksAZb@linutronix.de>
+References: <20241009105709.887510-1-bigeasy@linutronix.de>
+ <20241009105709.887510-3-bigeasy@linutronix.de>
+ <87iku1b2vf.fsf@oracle.com>
+ <20241009133328.23fc671c@gandalf.local.home>
+ <87bjztaz7e.fsf@oracle.com>
+ <20241010105611.VArhcxcr@linutronix.de>
+ <20241010105214.0b8f4375@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <muz6ze7cxho5niz67agoxwnaowumzlcto2vwydmxs2yzdjmisi@symog2asftmv>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241010105214.0b8f4375@gandalf.local.home>
 
-On Thu, Oct 10, 2024 at 04:23:05PM +0800, Inochi Amaoto wrote:
-> On Thu, Oct 10, 2024 at 08:12:41AM +0200, Krzysztof Kozlowski wrote:
-> > On Thu, Oct 10, 2024 at 07:39:05AM +0800, Inochi Amaoto wrote:
-> > > Add compatibles string for the Sophgo SG2044 uarts.
-> > 
-> > This we see from the diff, say something about hardware.
+On 2024-10-10 10:52:14 [-0400], Steven Rostedt wrote:
+> On Thu, 10 Oct 2024 12:56:11 +0200
+> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 > 
-> The reason for this compatiable (and the hardware) is mainly in the
-> next patch. Will it be better to submit a new verion with improved
-> description? If so, I wonder whether I can reserve your ack.
+> > +++ b/kernel/trace/trace.c
+> > @@ -2544,6 +2544,8 @@ unsigned int tracing_gen_ctx_irq_test(unsigned int irqs_status)
+> >  		trace_flags |= TRACE_FLAG_NEED_RESCHED;
+> >  	if (test_preempt_need_resched())
+> >  		trace_flags |= TRACE_FLAG_PREEMPT_RESCHED;
+> > +	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && tif_test_bit(TIF_NEED_RESCHED_LAZY))
+> > +		trace_flags |= TRACE_FLAG_NEED_RESCHED_LAZY;
+> >  	return (trace_flags << 16) | (min_t(unsigned int, pc & 0xff, 0xf)) |
+> >  		(min_t(unsigned int, migration_disable_value(), 0xf)) << 4;
+> >  }
 > 
-> > I would just add it to starfive enum, but this is fine as well.
+> This is the only update you made from your previous version right?
 
-Even after reading the second patch I don't understand why you shouldn't re-use
-the starfive compatible or make a new one that covers this quirk? At least I would
-see that as second patch is basically not needed.
+Yes.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> If so, my reviewed-by stands.
 
+Let me add your's and Ankur's.
 
+> -- Steve
+
+Sebastian
 
