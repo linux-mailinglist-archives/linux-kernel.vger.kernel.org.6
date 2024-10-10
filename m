@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-358538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D661499808A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:47:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E778499808B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D52283381
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A3D1C27446
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6CB1E47B0;
-	Thu, 10 Oct 2024 08:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CD81BD508;
+	Thu, 10 Oct 2024 08:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="im5Buc1A"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2043.outbound.protection.outlook.com [40.107.223.43])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rtzkaLnX"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0411E47CE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0DD1C2DC8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.84
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728548998; cv=fail; b=qrO0ufH9WbFRQk83V93aTdpRUvEmHlSzJA1K+n+/dkt5wXgG1DyytotddRa76wWHoOaXIxuxekOupbZnvi4tp28RL2UbR9CPQkKNz/3wA79QAMI4C85MXor2H6mBH4xSEwGxE3UMO1wRHAtQznYytp6fAD+qCCzRlq1kML8Gjy4=
+	t=1728549018; cv=fail; b=tuQDnd4ntSTQ4VmxDyXu2KBQJQOmiRqOX+zeyOtgWqBcMIIwr2YWyM7K8VR6Q5xUcnTfRVqF5qne8bsELGDFsgZR2gNvYrU4l0aQumEiDdjur7EB7cjNXU6F03gUsvG+WN/UHPnT3mFPOp3r8pbTI/EaO/wRsAoVApSmASCED8k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728548998; c=relaxed/simple;
-	bh=XF30CN7cWmudARMquoHOZyuFyy9SaKpDMg+DZXNSi8I=;
+	s=arc-20240116; t=1728549018; c=relaxed/simple;
+	bh=nbJP8WRnCjnBhKbuGtdSj/ZNwLdbZaPTvZT65ZzOOZ4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JA1aHc03KiZ5ZIsAqaO4yrGLBBpTvtPr9UHDXbCwz3ndGbFkllPBZDKaK4tLedIRt/DjWnvDJSzo0UmcRNx3JS0YqoQfNmcIBc/y+03Xh41nRvmKgArRxiRg29vvh6C74uxvDCD6ZntU48FDm6qDvOOroBnq1CKpAlgH65nAyi0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=im5Buc1A; arc=fail smtp.client-ip=40.107.223.43
+	 MIME-Version:Content-Type; b=Sv76N5v8z++KdFNgcsFuBkmh/mzwemHO8HSu0nRzZgucZc48pAn5U8DD3CskW5H+1fDKhlhU53/pJHup3kbdfpwFaUjs6slb5repHIzryILwfXvTBUlCxwjaG1ysJA9HxZl4NnO6M3scYKFUShCTlbUR8ciw7cnQVV1KQkgGEIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rtzkaLnX; arc=fail smtp.client-ip=40.107.223.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QVATg5wYZkKQe4uul2O500HMrdG5swMWP9NVPT8E7JbeWPaz5e9cBju/pOFLonhWG5ZbBX6INkOCrdTpgVrhNIJ7HFc0rpn7rxf7yjFiHIAArV3LdAEDe3xSjslQ/gw7kc8U5dLwOCrSOHCPaj4NLq/qaERk/pVGPlhh7NyKLiUd3kHi6bnBUSNkNNZTY+7cAnStY5L+EQZP0wWcPmcV/mVV0gD7swCNbjt36U/gvSqYoRxCgI0KJUfUJD0GtD4QeMcOMoR/gb7s6hLT9n1s8oIZZsYII0YAmJehVicEORqZ/I0jvxE8EEu2ayspIBn+nGA0rq8afbtFCI4QPPQI2g==
+ b=RrekyXAXoKLM1PSOuuwrEmKZLJGRiYLMtOB5ZgLIOKeoKKHmRE/VvteBewBmPLoaKiFllYwuCznc/pd8b4LgaYqckoh25iSvIc76TV9NZI43+eIvMLIT+Nte06i8qeUIb4Brk+5Zk0SMqti3nJLQbZVTy+zhLySv9/WIzEbudsphX3eoVjxOKIf3oqZBI4O8Ssq4g1WMW1Gqaek1+yCeZaAkuFNqQLkhnbWItV3YP9qHi+eXeOnTt6MHT1UTKnR7cqt5vn9m7oRl1n92q5BQGUi2hD1x4dJPDpxFhsHFqT+mvnROiZXs3fhgcHXho0kC6Cun+UR8HgtEMCYyPxshcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oRw5K7kejgEm399NaHPqxG2ygmBBVcZmRM0t0JoPNTo=;
- b=kF7aS1EYv/5spiDimlnLvD8cI8ePJD/DuDUWhH77BjMqJKALF3vcsu1ITEzoPOgypM/wvp2WSIqe/8KkN5wXqkZqJ9vQyH3q8iI1Eqznm32wpnWtO5KuLapoTlU/YG5tKq5cYpPD6yT7wvzrxrwqM0vBvrQa5Bt0pPg2GjlFRh3B9y5GsuC79oo1BkbbtdgGeTymL009YrFvMhv1MyKMRH3NYSi7uPKgntscpvYAZKwdU7ZOx6hELfW1IRWhQtc+ooRCrPk7d4nfvYJAmknJjcvk44YGG3gqeedXdtbPF6WDiyxTiv1BbwM63EF7jJNhyETcuLJQPhot15IJxlvTsQ==
+ bh=ll/5a6F3CswLgcNZn8xXuTF5Uvq6c1j7yM9pajEzP0o=;
+ b=LqLr2s7v0VlkcyQ6At8Ysj+8qySAF2nl6WXeTuu4C/eoAua9Ou9YL5ltyNUVBeCu5PVBqAByZWuuVolSJM+ryMjBzuxjq7MbMV4nSly3uXSU64ibqswgTNDnwRHyMwHyS1cjx8X+REEkTlzfDRiMxSS/FSRPcEVNXCmdA75w7qew5reJGhZ7rWbMc3SS4kr1SqZMvVxFCcxgXkzxprrSesjdM/Mv1hcBhpSRivFIYgXK+sD8wJ3ansk0/nR5SiqmmQ94gKsDm7dgBywniSmeRlP2Qjuwh3Rwr3+hA2+Ewck1NTj01TKVIy8XT28o//1HUh5nPwGtLCJhK2w5Y7ndJA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oRw5K7kejgEm399NaHPqxG2ygmBBVcZmRM0t0JoPNTo=;
- b=im5Buc1AZ6vhY1Y7WWwrDPPZvJp5mEZvB4AtpypVWDYOh9V7ImKBuKRbHJp2qQKwX+B/6J/M/sLU8oZgd8NWl2r1c6qDPyZI8KDUVSPU9tF3chW2h/Um4znXSx73wqdBYuIE79C2Fay/+yTJkIcjj/U1FnH5VSz/nbOMEC3nNrY=
-Received: from BN0PR02CA0059.namprd02.prod.outlook.com (2603:10b6:408:e5::34)
- by MW5PR12MB5652.namprd12.prod.outlook.com (2603:10b6:303:1a0::15) with
+ bh=ll/5a6F3CswLgcNZn8xXuTF5Uvq6c1j7yM9pajEzP0o=;
+ b=rtzkaLnXszwWNdxwsxuNVxDj4dPEZAKA/7TvEPBeqvpoV5wBdcoOarnJqCFzezK6FG+lqj60j6YLHCo3m6imR/8zFWINieNFQu5RTc8scviEC5N+H44ByFCOb/Kps7a4MirLvx1tZGu5A0LLXlDjfxpAC9y7E2CQQeqm/KHrZY0=
+Received: from BLAPR03CA0082.namprd03.prod.outlook.com (2603:10b6:208:329::27)
+ by CH2PR12MB4087.namprd12.prod.outlook.com (2603:10b6:610:7f::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 08:29:53 +0000
-Received: from BL6PEPF00022570.namprd02.prod.outlook.com
- (2603:10b6:408:e5:cafe::d2) by BN0PR02CA0059.outlook.office365.com
- (2603:10b6:408:e5::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Thu, 10 Oct
+ 2024 08:30:12 +0000
+Received: from BL6PEPF00022575.namprd02.prod.outlook.com
+ (2603:10b6:208:329:cafe::4a) by BLAPR03CA0082.outlook.office365.com
+ (2603:10b6:208:329::27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18 via Frontend
- Transport; Thu, 10 Oct 2024 08:29:52 +0000
+ Transport; Thu, 10 Oct 2024 08:30:11 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF00022570.mail.protection.outlook.com (10.167.249.38) with Microsoft
+ BL6PEPF00022575.mail.protection.outlook.com (10.167.249.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Thu, 10 Oct 2024 08:29:52 +0000
+ 15.20.8048.13 via Frontend Transport; Thu, 10 Oct 2024 08:30:11 +0000
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Oct
- 2024 03:29:46 -0500
+ 2024 03:30:05 -0500
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Peter Ziljstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
@@ -83,9 +83,9 @@ CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
 	<gautham.shenoy@amd.com>, Youssef Esmat <youssefesmat@google.com>, "Paul
  Menzel" <pmenzel@molgen.mpg.de>, Bert Karwatzki <spasswolf@web.de>,
 	<regressions@lists.linux.dev>, K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [PATCH 2/3] sched/core: Add ENQUEUE_WAKEUP flag alongside ENQUEUE_DELAYED
-Date: Thu, 10 Oct 2024 08:28:37 +0000
-Message-ID: <20241010082838.2474-3-kprateek.nayak@amd.com>
+Subject: [PATCH 3/3] sched/core: Indicate a sched_delayed task was migrated before wakeup
+Date: Thu, 10 Oct 2024 08:28:38 +0000
+Message-ID: <20241010082838.2474-4-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241010082838.2474-1-kprateek.nayak@amd.com>
 References: <20241010082838.2474-1-kprateek.nayak@amd.com>
@@ -101,72 +101,94 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022570:EE_|MW5PR12MB5652:EE_
-X-MS-Office365-Filtering-Correlation-Id: 438a52ea-b58c-4027-2037-08dce905b6a6
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022575:EE_|CH2PR12MB4087:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e426f38-079d-45be-2a4a-08dce905c1e8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?74q0omOs68bwPu/H9qCOOw3ryaPCV2iI1XdHw3GCC04rUjL3RZaJwXYCjSQ0?=
- =?us-ascii?Q?SiwA51ETfJbS1+ljdq0GMkqlXPQLeF6NyK1n4q+iVMfN3/bxRAVuUliy03Mb?=
- =?us-ascii?Q?SDDvcow1PTKX+e29cs1boKgfXbpfMkDOxA0GF7S/pVwAfmtc7xBNXLG9L51J?=
- =?us-ascii?Q?QAnM55ZoaYqmF7A/TzHrUro4ylfkHxXHci2wTi3hrjCnesTdmZFvoIhk/26g?=
- =?us-ascii?Q?/WHMhy4nKFuAMBiFsgu/q0ko6u3Ec+uBBSbTK4Kx5C4QXw6dYvlDL2nJzYLb?=
- =?us-ascii?Q?NlL7GUVYUwdjn3kkY+0XGBBe1Q4uvn+yFXyMFqgNjJjFmdUXkUQzwkGAuqMf?=
- =?us-ascii?Q?bnRUt4geLzGIcvPqpeyTwFjszxsbuzEpU5qbUo8/mRu1bjKojEkmqCZUqwVJ?=
- =?us-ascii?Q?WtvDs4tUi7mxL4o2dob65j55Axgdr4dNRGET9qIbnXHcL+AWlIUO3ufAgK+p?=
- =?us-ascii?Q?2R18bG4VVjQ2c8oMp6ynxwskwApOtn5p2or5S4KiGjKONt+ulEQqdZW0GoLb?=
- =?us-ascii?Q?GrsVHiBh7ccZgaHwECth7BKg4kHo8qeOhsAYxD6yF8IVtLe3yuWESlG35SYg?=
- =?us-ascii?Q?Vz879onlwWAEU7CU3CNnoBa+F9YKANmdfnJLfPgDhU3kpxmSOA+y9pM+h34u?=
- =?us-ascii?Q?zRLZ0IcIV15j83RnaUsyk+4gB498HkivQ0tm1Hb+7RqpTGjKXkwjQnm/Rlb6?=
- =?us-ascii?Q?CtpSYHM3MNXmpeRg98aT0+uHEvBXLWVujKX5Ds7//4PK4W7SAqEJs0tKrYkV?=
- =?us-ascii?Q?VGLwYq9KbP1ZDAZEgh860fuDQNG+0UiuCm1kDoCvPTnvc9XtxFLdcLfOztuM?=
- =?us-ascii?Q?O120Igk9LqASXj19CW93iSGFJTRMbGCpnfPvX0mfkhAJ+50lEcXCb3ecr1G7?=
- =?us-ascii?Q?6Xmm4bWzBiZWCvh1MkwT2+YW21zfL8kynFkShSCXcG5DsQXZ3ZdMknuEoeqJ?=
- =?us-ascii?Q?di+SQBPcblupZ8nQmKrL7+AV86c830FyWwDAjkrCoHB51tV3Tx66RGr6vuxc?=
- =?us-ascii?Q?aAH8cpd0yC8G+3XOp14Whlbr2Y5Kl9PST7OWH7tZ8a83KP4zZakP5X2RDXxr?=
- =?us-ascii?Q?cWOxIcHwTnNl25zvexmzSf3qZTjQ5/s6eWl6SniBiZn/bDrB/6yKJ9Mvmpcs?=
- =?us-ascii?Q?9EJIwrzZNGwoIgoWBYqdGa7APcQdQdKAF4W2bcAPibg2upWXdEr967GgqNmS?=
- =?us-ascii?Q?6gz8XxZW+rJSOP5GrhfECwiyTqJdukcmZGdCeJEoHn54EJgdDn5kKM02CRy+?=
- =?us-ascii?Q?uS+qjwYEwi+k3qvfTKVtfzqBETbm2p4PyPIUb0pQw1Hg+aeZwGMUryVqqVfH?=
- =?us-ascii?Q?BEvwGTl2A0GQ7hLEGzfaZNPplT4XftARc+KYCv8tt7364erAJPnkcufFPX7Y?=
- =?us-ascii?Q?MMM0KZVkbK1JWBef9jEfSlnLWY82?=
+	=?us-ascii?Q?xXpb+KcPp4/Kr/fYldIf8WTNXc+5YlyUKEB8ldcvay0NZCHLy5tFK25NJIMZ?=
+ =?us-ascii?Q?x3wgcESNkFnkSuf/pIXy6AsrNVp7x27euApKAt2O4oaere3GXlDy1jju5UFp?=
+ =?us-ascii?Q?XEyM2DpzO8KtX75mR4r07EMDn2yybSVWz6XaX0sEkH3ETmIhMMTlVsoWhVsY?=
+ =?us-ascii?Q?/Te4Mt9uTfuSxWal0tdiXdQb2vUsqp7nxKGqSI3YBIcyUQNX/Ci0UzqtLGL3?=
+ =?us-ascii?Q?V67s5ls53b1YjdjogepRCLGUJBiVJ0SOKyuVcoXgGSS0MymoDNfRsWr7RAMd?=
+ =?us-ascii?Q?jX6I2T6jWYBy0RN/WCN1jC+B/s19r36bgibqTHAtMcI4BzsbRlsHDFnVOIEL?=
+ =?us-ascii?Q?+Q+kXzh0Uu4xOGHq3jz1wdxIcRXobiciLvtjbm5QfyyhEQILPRYoVjuNnngD?=
+ =?us-ascii?Q?7y+DYl7/he66SKQXFLQSYtQnIYFX+AENuvKeVcbUXc/ZtmEg5Deqx/59TTrq?=
+ =?us-ascii?Q?8iqJIy1mK/hQ9QR7Bxfr+u4O3ODMy3Z0lmernzaJ9HL1LUhtbv8eKXNNTjXs?=
+ =?us-ascii?Q?6xVwmhHA/A9oSx4zQ6Ey62Nb0nYfa4FvbaScuYnL7TgWPf3j2Vurw+SOOJpN?=
+ =?us-ascii?Q?vt5B24wI2SkQagf2dNsrq2D3bMeOE2sXe0Ovfb1WkdV4QCVVdP4QEzm1UJYm?=
+ =?us-ascii?Q?mlve1ecpHghRbkyN5nOzI04H3vxLGyFRheVnQUk8bcpcrWuCL9GcvXwfHt3Z?=
+ =?us-ascii?Q?hhoi6vfdKJzZpyEkf2lnwyFSilRuHGBMT3avZAaeHfoVPBo9LpryiH/6/are?=
+ =?us-ascii?Q?bSJPfZuuvnkVjB/HyjYIRoepXpkAG0pL/9Vq/+1zi7sM8AHmALVCxNQXe+wX?=
+ =?us-ascii?Q?X66cKxgkMRb/XVXjleaILC4JnY0xb1OHg3skWfpLpf2CegrPTHGqzkuxr8wM?=
+ =?us-ascii?Q?9GU9dLQUf8ANJsFtejzh7DxTdCbVhiwJvOu7BQXC3hSVntbvUSp+Ysc+PLub?=
+ =?us-ascii?Q?a4xOSXKN+pnsJUNBi7y5Ntd6p/IG2R5MK/OCiVvqBVCQ1waw4YxWxi+wQdBp?=
+ =?us-ascii?Q?2lzSSRgaVjvMGu99tljwPINfM0sJ5C5x6HpFXe87RqSuCkHayspwkDQSbyUm?=
+ =?us-ascii?Q?iH8TeT3ETaiyw3STribdJliui5UJj7qe1jcCrez2ZgUUgbyNtv8+P2I4u9PP?=
+ =?us-ascii?Q?KRUCVzlYG1NXsynl55Pc9qPQpWMj4TtlhJuCT94+lnaJ0tCh/tyP7zj76bOw?=
+ =?us-ascii?Q?BZpTXNTO8vxn34VKMD3pJJs2pFUbnlO4dub7XlxpdtKI7kn6UP7MsISsqpMt?=
+ =?us-ascii?Q?pjS4nc0CwJbc+wzsPEYHk38gTbyxM3CcWOpLSapL8g7UJzGUV1QDydxK+zC5?=
+ =?us-ascii?Q?9bNL3upmTwaEpMV2hpqaFZRz5I0BBKpljTD1lbRwbWiSeCawpkUtxGBVISWZ?=
+ =?us-ascii?Q?zqZqnRthShskbnrHYaG3XZMHdjQg?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 08:29:52.7591
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 08:30:11.6312
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 438a52ea-b58c-4027-2037-08dce905b6a6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e426f38-079d-45be-2a4a-08dce905c1e8
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022570.namprd02.prod.outlook.com
+	BL6PEPF00022575.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5652
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4087
 
-With the fixup in dequeuing of PSI signals for delayed tasks, a new
-inconsistent PSI task state splat was discovered during boot similar to:
+Since sched_delayed tasks remain on "rq->cfs_tasks" list even after
+blocking, they can be migrated from one runqueue to another in a delayed
+state by the load balancer. When they are eventually requeued or woken
+up on the same CPU via the try_to_wake_up() path, the eventual
+activation is clueless about the migration. This trips the PSI
+accounting since, in terms of enqueue flags, PSI only considers the
+following as a wakeup for PSI accounting:
 
-    psi: inconsistent task state! task=... cpu=... psi_flags=5 clear=4 set=1
+    (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED)
+
+This can lead inconsistent PSI task state splat similar to:
+
+    psi: inconsistent task state! task=... cpu=... psi_flags=4 clear=. set=4 # Without partial fixup from this patch
+    psi: inconsistent task state! task=... cpu=... psi_flags=0 clear=4 set=1 # With partial fixup from this patch
 
 Tracking the PSI changes along with task's state revealed the following
 series of events:
 
     psi_task_switch: psi_flags=4 clear=4 set=1 # sched_delayed is set to 1
-    psi_enqueue:     psi_flags=1 clear=0 set=4 # requeue of delayed entity via ENQUEUE_DELAYED
-    psi_task_switch: psi_flags=5 clear=4 set=1 # task is blocked again but 1 is already set
-    psi: inconsistent task state! task=... cpu=... psi_flags=5 clear=4 set=1
+    psi_dequeue:     psi_flags=1 clear=1 set=0 # dequeued for migration
+    psi_enqueue:     psi_flags=0 clear=0 set=4 # enqueued after migration
+    psi_enqueue:     psi_flags=4 clear=1 set=4 # wakeup after migration
+    psi: inconsistent task state! task=... cpu=... psi_flags=4 clear=1 set=4
 
-The TSK_IOWAIT flag was never cleared onrequeue since psi_enqueue() only
-clears it on a "wakeup" which, in term of enqueue flags, is defined as:
+Moving psi_enqueue() to after "p->sched_class->enqueue_task()" and
+skipping enqueue until the delayed task is actually woken up (referred
+to partial fixup previously) changes the above scenario to the
+following:
 
-    (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED)
+    psi_task_switch: psi_flags=4 clear=4 set=1 # sched_delayed is set to 1
+    psi_dequeue:     psi_flags=1 clear=1 set=0 # dequeued for migration
+    psi_enqueue:     psi_flags=0 clear=0 set=0 # enqueued after migration, sched delayed
+    psi_enqueue:     psi_flags=0 clear=1 set=4 # wakeup of delayed task
+    psi: inconsistent task state! task=... cpu=... psi_flags=0 clear=1 set=4
 
-Add ENQUEUE_WAKEUP alongside ENQUEUE_DELAYED for requeue through
-ttwu_runnable(). psi_enqueue() is the only observer of this flag in the
-requeue path and it pairs with the DEQUEUE_SLEEP in block_task().
+psi_enqueue() tries to clear the TSK_IOWAIT since it believes the task
+has not migrated due to the lack of ENQUEUE_MIGRATED flag in case of a
+requeue or a full wakeup on "p->wake_cpu", but in-fact TSK_IOWAIT was
+cleared during dequeue for migration and was never set again.
+
+Define "DELAYED_MIGRATED" and set it in "p->migration_flags" when a
+delayed task is migrated. This flag is consumed when the delayed entity
+is finally woken up, and psi_enqueue() is notified of the migration.
 
 Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
 Closes: https://lore.kernel.org/lkml/20240830123458.3557-1-spasswolf@web.de/
@@ -175,22 +197,100 @@ Link: https://lore.kernel.org/lkml/f82def74-a64a-4a05-c8d4-4eeb3e03d0c0@amd.com/
 Tested-by: Johannes Weiner <hannes@cmpxchg.org>
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c  | 19 ++++++++++++++++++-
+ kernel/sched/sched.h |  1 +
+ kernel/sched/stats.h | 10 ++++++++++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 88cbfc671fb6..52be38021ebb 100644
+index 52be38021ebb..1a353fa69a54 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -3733,7 +3733,7 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
- 	if (task_on_rq_queued(p)) {
+@@ -2009,12 +2009,19 @@ unsigned long get_wchan(struct task_struct *p)
+ 
+ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+ {
++	bool wakee_not_migrated = (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED);
++
+ 	if (!(flags & ENQUEUE_NOCLOCK))
  		update_rq_clock(rq);
- 		if (p->se.sched_delayed)
--			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
-+			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_WAKEUP | ENQUEUE_DELAYED);
- 		if (!task_on_cpu(rq, p)) {
- 			/*
- 			 * When on_rq && !on_cpu the task is preempted, see if
+ 
+ 	if (!(flags & ENQUEUE_RESTORE)) {
+ 		sched_info_enqueue(rq, p);
+-		psi_enqueue(p, (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED));
++
++		/* Notify PSI that the task was migrated in a delayed state before wakeup. */
++		if ((p->migration_flags & DELAYED_MIGRATED) && !task_on_rq_migrating(p)) {
++			wakee_not_migrated = false;
++			p->migration_flags &= ~DELAYED_MIGRATED;
++		}
+ 	}
+ 
+ 	p->sched_class->enqueue_task(rq, p, flags);
+@@ -2023,6 +2030,8 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+ 	 * ->sched_delayed.
+ 	 */
+ 	uclamp_rq_inc(rq, p);
++	if (!(flags & ENQUEUE_RESTORE))
++		psi_enqueue(p, wakee_not_migrated);
+ 
+ 	if (sched_core_enabled(rq))
+ 		sched_core_enqueue(rq, p);
+@@ -2042,6 +2051,14 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!(flags & DEQUEUE_SAVE)) {
+ 		sched_info_dequeue(rq, p);
+ 		psi_dequeue(p, flags & DEQUEUE_SLEEP);
++
++		/*
++		 * Indicate that a sched_delayed task was migrated.
++		 * enqueue_task() needs this for correct accounting
++		 * when the delayed task eventually wakes up.
++		 */
++		if (p->se.sched_delayed && task_on_rq_migrating(p))
++			p->migration_flags |= DELAYED_MIGRATED;
+ 	}
+ 
+ 	/*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b1c3588a8f00..2dc2c4cb4f5f 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1326,6 +1326,7 @@ static inline int cpu_of(struct rq *rq)
+ }
+ 
+ #define MDF_PUSH		0x01
++#define DELAYED_MIGRATED	0x02 /* Task was migrated when in DELAYED_DEQUEUE state */
+ 
+ static inline bool is_migration_disabled(struct task_struct *p)
+ {
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 237780aa3c53..06a2c6d3ec1e 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -129,6 +129,13 @@ static inline void psi_enqueue(struct task_struct *p, bool wakeup)
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
++	/*
++	 * Delayed task is not ready to run yet!
++	 * Wait for a requeue before accounting.
++	 */
++	if (p->se.sched_delayed)
++		return;
++
+ 	if (p->in_memstall)
+ 		set |= TSK_MEMSTALL_RUNNING;
+ 
+@@ -148,6 +155,9 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
++	/* Delayed task can only be dequeued for migration. */
++	WARN_ON_ONCE(p->se.sched_delayed && sleep);
++
+ 	/*
+ 	 * A voluntary sleep is a dequeue followed by a task switch. To
+ 	 * avoid walking all ancestors twice, psi_task_switch() handles
 -- 
 2.34.1
 
