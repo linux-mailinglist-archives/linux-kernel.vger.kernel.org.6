@@ -1,124 +1,163 @@
-Return-Path: <linux-kernel+bounces-359985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E96E999342
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C04C999340
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8030EB29CC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:56:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BC11C2160A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B9C1CEAC7;
-	Thu, 10 Oct 2024 19:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C741CEE9B;
+	Thu, 10 Oct 2024 19:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2Fs28wP"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIQw5q6T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A2F1CEADB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A4F1990C1;
+	Thu, 10 Oct 2024 19:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728590192; cv=none; b=pofzB/4+7FZY5pLMWlYf/O52aJcfKw3gk6mFM4DNKQM86tvKDy8zlUiv4iq2UymFC8kOKgPDiJqzxS7eXxDiIRUQ8eFt/vSqb7CcgrXsuXc3pw0oDcm0XLoip20C+c51ofiMDKDeqAPIZYz8HqCnD3Bjz/7ZGe4P9tarIwOl2Iw=
+	t=1728590230; cv=none; b=NgSrlBVxfS1MFsOUodgTstgOChwOCtHE2E7meQZF2mCD7KHXVszlk0L2ewrLFVSQxvq9jM6KZUmull9Yr5v1jA0C3jttVc99+lyeBrH3kE9Riz/HK+sAbm380LVSFjYH/PL6V3EWpjZqJwZ4ih6QKPeM51yyv8tXkmpB9qTqIAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728590192; c=relaxed/simple;
-	bh=6bMhQ6vS4IBL5G11MHPbX4blmNf/jwNV6R3qQIiP2y4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dSHsCakPJyguNJbDWi7Vc7Zvv9m2GCq15ajAouVtobaaVsQYr/zMKaIIvkDVXJvlSU/SCwxzrZ/NdYkjuR7rOEi/n2qBwTd4//68e6u8znkFUeK0jwa8QyguS4UOreYlr0BJzq5lmcTUVWejhhW5MJRbsGbT+DlnBScOkhNZQNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2Fs28wP; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-50ca1581a1aso428610e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:56:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728590190; x=1729194990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ll+zUf8+pVpggXRhbcBYKb1wpr1Jta5nrzpQw3NsDzY=;
-        b=g2Fs28wPDBB8tK4S2kw0GJLhaSv8eRLy8/iwP7HWOwkrKPB889tN3mvF+rAJc5hVVm
-         p5Sh4X2Egh7qjPi7NbqB2qzqs86+bfSgOzN+Tqz+s34YnhWq+zuX6srd+6kbeKt5cVAU
-         9W3fPUPcXcd3vGwujtrS5MX1m4u5kRQf6YtIacmaCEBadS58rzKkxIRlYnJbOJpR+3wq
-         fJBo9iX+meUab8IfV1gPHZJ3YddWhvLMR5PAjoqYPB84QfIFtW381bOObMgmKATA4+ef
-         QfkiJ9twlqDAi+UmU4pXf0ngiBMyyBEcyvQE9kUzp/vcZx8Thli6rS0Ecbie1ZwdIhMq
-         bUmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728590190; x=1729194990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ll+zUf8+pVpggXRhbcBYKb1wpr1Jta5nrzpQw3NsDzY=;
-        b=o+HwVXvQDTVDk4ASnr93F9DmNVIyKQ3u1QOoiNDSiMPwrXq0LXOvH92g0HRpHbfH4j
-         ilvEl8TuT84sGRYVwoUXb6FaK9OzV5O7k8UOCwlfRulVt23OqVkyNS3ObywDkw2WmI58
-         H9lM9+aF4pyxHzlfCZHoarPpt1a59RKGxgeuokxWfZ4hmLpUuR6JeGepxWfMoUcnpR1d
-         OWSR0jx9L+7jYq6FN0IvhGuFry+pUIMC/cEcuKKnlb0gMeD9dALVn23SSv1t/6f3eMBQ
-         JhXsRbJ1j4XsYQhtDwGMZCr7Q1SFmEzEi+TJVVqY1E2a0wXnNKodt9DDT6gW4wWUlxqF
-         +JJA==
-X-Gm-Message-State: AOJu0YzGVUQ2Z/+5daDZw/5sQ0aJQDbYWwU2ST/QfV9WdEXOrz4C7xd/
-	oaV0BSCV56yV9CN1cp4lubsZPjYA/+PgMeEu7JIEAx1+3pzeUw/nr5ohgsnvglSIJwHQ5ZWZSpc
-	Ggg6PZZKqvbP2SUCq1/6DE6DrUsY=
-X-Google-Smtp-Source: AGHT+IF0FbgxcM0z3IsnyEWo6M4VFT66JVWSxbkmp9oUUF5mXwopBFUspVDLMVlV0NkCSPtXgjkq8tnZyI51H1M8X5I=
-X-Received: by 2002:a05:6122:a0e:b0:50a:8cb6:e9ca with SMTP id
- 71dfb90a1353d-50d1f4c9334mr23402e0c.2.1728590189800; Thu, 10 Oct 2024
- 12:56:29 -0700 (PDT)
+	s=arc-20240116; t=1728590230; c=relaxed/simple;
+	bh=q9Q/osgeAQXVfJAaHOfFlNollpmh1cJYbXNK0esuEbc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=emKoAMw7nOAPN4wiEwZ43OtFw5HxUPM8rJEcG4NrHkVQNcRVsuy7ubacxfm7/c5lXB7yWG9oTS/tuPWSGWEk+NxqD9ooBKCn4pprdRZyzITzun6iXuOQ7haWS4CO42DUA1nz+ToYkLMUcxBzBZSIhdv+QkSTnxYY4Zno4E8C8ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIQw5q6T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51A97C4CEC5;
+	Thu, 10 Oct 2024 19:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728590230;
+	bh=q9Q/osgeAQXVfJAaHOfFlNollpmh1cJYbXNK0esuEbc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZIQw5q6TCBLsIV2ZfkgA1p2lJofWPuOHM6Tt/ejVGH+5/vttDbyuK1tYkqCPOZoZb
+	 rdCYx+6hosSrDLlZFVSxCkcg91CzpdsG0o/qZ+piBwMbVzfGRgFkrKcellgoM0ijU2
+	 xBqUplGCOIferYXtpd1KY6lTtyQORUSLdULX0Lve1W293HbZtFutr9C0K3li3Oz9t+
+	 DfaiSKLNSXgKW3yAYGfF5xD8+slECYPZEKqdbQz7bTNw3T/uW1k5gRFL7mMNmMBz7R
+	 hEhggUb5N0GJrnIDQLatIHq1gLEJmZ3MgqgkpFDCp/ABHFK2/jYV3tXobHINCrSUX7
+	 i0yn/hBvCsAyA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Thu, 10 Oct 2024 15:56:55 -0400
+Subject: [PATCH] nfsd: handle OPEN_XOR_DELEGATION outside of st_mutex in
+ open codepath
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010000923.1278817-1-jaegeuk@kernel.org>
-In-Reply-To: <20241010000923.1278817-1-jaegeuk@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Thu, 10 Oct 2024 12:56:18 -0700
-Message-ID: <CACOAw_zuRue4baJczA1o7Uip3Wm=JN14p98+Kqma-VL39_GNaA@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: allow parallel DIO reads
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241010-delstid-v1-1-1e0533c6617b@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIYxCGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0MD3ZTUnOKSzBTdlCSjREOjNCMTozRjJaDqgqLUtMwKsEnRsbW1AOm
+ 3cEdZAAAA
+X-Change-ID: 20241010-delstid-db2a12f242f3
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <oliver.sang@intel.com>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3225; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=q9Q/osgeAQXVfJAaHOfFlNollpmh1cJYbXNK0esuEbc=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnCDGN9sXfc5DauxclktLtMGkCH6tstpA0rcJWp
+ Io/YqB/m0mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZwgxjQAKCRAADmhBGVaC
+ FXIoEACI2vArBHpYfD5ZRa7SSQE7KeayjUjKJFCIYp+hvqbof7VzPDTU2j7e1lRd/Oj6ieHy3pG
+ VLUtC8BIpyidJ03eyaOdNg9uH87WdFDUgvPEfy/yiKgZrZceper/66BDoB+x1+PtgCZ4QEABqMe
+ bUDltrvBZfhC/+x2u9QeuEXssUjnPzX2dw3gSxc6L9+qyp+MaMiYhTOyRZXPu1LkhLK20WhUyfV
+ NvcpfgKZOVyyxCqIyIjIxtlhZTHh9lZhm6kpk0azlQqrB1C7uX3heceswzAAnbs6alI8AF6vPe1
+ XPHzbAptFv9yrWF1Vgd+W/wLiDeNVjmGnO24PzTi/3OD4+z9EtEwVwhmthLkK3VcG78CRBwqffJ
+ ZNGzVl0KAD5CidMHhIZqUCozoiuFK2fIyI7bmXJNxpYxA8wbMCZNap8sQwi0WV4cDPr9Pikj+jA
+ QPWhfVM1ilgMC+rHo6p4M036V9EFQSBqe9I2WeDg1+/QWe68ravqjtHztQPS6SwUzw4UmwsgIvz
+ ucZUba59BSiJbBV4k9o6pABToX5lUEWVKNrQeIkMy7mCEoO9/tBv7eMjlOQ/Gk7Sb9ZdpMVzQXN
+ GhU2Vu66xzpvxwDgrXjSTra10N8kwn84qpfb4WIZJZpPkDtK+eksZ2wyROJT0EwOto1Mk480QrD
+ uYsF4LZSXGYS+hQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
+When I originally wrote these patches, I was under the mistaken
+impression that I didn't need to increment the stateid in the case of an
+existing stateid (because we weren't returning it). After some
+discussion upstream, it turns out that the server should ignore the
+WANT_OPEN_XOR_DELEGATION flag if there is an outstanding open stateid.
 
-Thanks,
+Given that, there is no need to expand the scope of the st_mutex to
+cover acquiring the delegation. The server may end up bumping the seqid
+in a brand new open stateid that it ends up discarding, but that's not a
+problem.
 
-On Wed, Oct 9, 2024 at 5:10=E2=80=AFPM Jaegeuk Kim via Linux-f2fs-devel
-<linux-f2fs-devel@lists.sourceforge.net> wrote:
->
-> This fixes a regression which prevents parallel DIO reads.
->
-> Fixes: 0cac51185e65 ("f2fs: fix to avoid racing in between read and OPU d=
-io write")
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 71d5ded9eeda..adc7d64a6f47 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -4647,7 +4647,8 @@ static ssize_t f2fs_file_read_iter(struct kiocb *io=
-cb, struct iov_iter *to)
->                                         iov_iter_count(to), READ);
->
->         /* In LFS mode, if there is inflight dio, wait for its completion=
- */
-> -       if (f2fs_lfs_mode(F2FS_I_SB(inode)))
-> +       if (f2fs_lfs_mode(F2FS_I_SB(inode)) &&
-> +           get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE))
->                 inode_dio_wait(inode);
->
->         if (f2fs_should_use_dio(inode, iocb, to)) {
-> --
-> 2.47.0.rc1.288.g06298d1525-goog
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+This also seems to lower the "App Overhead" on the fs_mark test that
+the kernel test robot reported.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409161645.d44bced5-oliver.sang@intel.com
+Fixes: e816ca3f9ee0 ("nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+We had a report of a performance regression (in the form of higer "App
+Overhead") in fs_mark. After some experimentation, I found that the
+cause seemed to be the change in how the mutex is handled in e816ca3f9ee0.
+
+This patch restores the App Overhead back to its previous levels (and
+may even improve it a bit -- go figure). Chuck, this should probably be
+squashed into e816ca3f9ee0.
+---
+ fs/nfsd/nfs4state.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 9c2b1d251ab31b4e504cf301d1deaa4945bd244f..73c4b983c048c101d16ec146b3f80922bcca3c69 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6120,7 +6120,6 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
+ 	struct nfs4_delegation *dp = NULL;
+ 	__be32 status;
+ 	bool new_stp = false;
+-	bool deleg_only = false;
+ 
+ 	/*
+ 	 * Lookup file; if found, lookup stateid and check open request,
+@@ -6175,6 +6174,9 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
+ 			open->op_odstate = NULL;
+ 	}
+ 
++	nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
++	mutex_unlock(&stp->st_mutex);
++
+ 	if (nfsd4_has_session(&resp->cstate)) {
+ 		if (open->op_deleg_want & NFS4_SHARE_WANT_NO_DELEG) {
+ 			open->op_delegate_type = NFS4_OPEN_DELEGATE_NONE_EXT;
+@@ -6194,17 +6196,12 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
+ 	 * returned. Only respect WANT_OPEN_XOR_DELEGATION when a new
+ 	 * open stateid would have to be created.
+ 	 */
+-	deleg_only = new_stp && open_xor_delegation(open);
+-nodeleg:
+-	if (deleg_only) {
++	if (new_stp && open_xor_delegation(open)) {
+ 		memcpy(&open->op_stateid, &zero_stateid, sizeof(open->op_stateid));
+ 		open->op_rflags |= OPEN4_RESULT_NO_OPEN_STATEID;
+ 		release_open_stateid(stp);
+-	} else {
+-		nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
+ 	}
+-	mutex_unlock(&stp->st_mutex);
+-
++nodeleg:
+ 	status = nfs_ok;
+ 	trace_nfsd_open(&stp->st_stid.sc_stateid);
+ out:
+
+---
+base-commit: 144cb1225cd863e1bd3ae3d577d86e1531afd932
+change-id: 20241010-delstid-db2a12f242f3
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
