@@ -1,223 +1,127 @@
-Return-Path: <linux-kernel+bounces-358810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45E199841E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:47:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB53B99841F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6004428365D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DDE31F2502E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE321A0737;
-	Thu, 10 Oct 2024 10:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38121BE251;
+	Thu, 10 Oct 2024 10:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KydmEq3D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DcnNL9FJ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27421A3038;
-	Thu, 10 Oct 2024 10:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4F1A00F0;
+	Thu, 10 Oct 2024 10:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557229; cv=none; b=WIvmyxNOAwFEeJ+7Z+fDNPaVRZwf/3Z3ClF8FxqeFsX/mHS8TtzNhMnob5n0UGSwjg3NnlU/AnVVAM3/jXwcjpEbJJz7VaZuda4eYtfU2RXA0jqu1MJapONXX7M2RK6GRvBt1kK8p6x9FkJnHJdrT/UeLuduBz+OWfo4w563Nq0=
+	t=1728557256; cv=none; b=Zd1xgIa+Hr+z4ikcWDjj3SZErKaR70GL7AJbvbYa6J8mnN+oiAj9LjvXDJSOEf9y/Q1ti+PCv8Yx5eYdy9RPsliTBOQMjJcaIOaH//KdCufNPOCcCyGGz0JHsXMnd7VGihe5vEI+NvPJUj6YNl5droWVrQDObKf02uo5vnflQRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557229; c=relaxed/simple;
-	bh=YMDy6bGmfOxER1Wv+tP5jbJx8zCzdbAPXTAuNo4sIjY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KFW0Rwm95X96/fcvXrSKzVrtZeTVCadzBr1qOdEADfuGnMYehmQCYQk9xyXvOEQYCyzerLueXOkgN0i84425u849rpOgwCJowZ98+25g3BQSNNrZ9q2o9sAG1KVdaywg7osd51vSIooEnQfpS9y3ItGMFHfdtOEFaXMyGDfAm3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KydmEq3D; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728557228; x=1760093228;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=YMDy6bGmfOxER1Wv+tP5jbJx8zCzdbAPXTAuNo4sIjY=;
-  b=KydmEq3D2MP89YVsk5vtPIfiXZOJqDXZbQOYTZ59v5fIdtyjLa8ldaeL
-   B6fs9XzoDwlcJjEcOa4P35tQSorSDXQ6TlxJGqTstyn4MY/Mj4z4xExO5
-   lfIl0ePlpGhVx24qbTv+cDt7vMO3UlFJ1lgse3+F9P0XO2AL7Zlh5XhQi
-   HLmXSzJ11IH5ssCgwDW2tiniaZ+62yK5v213DxITUz5H0zMQgCJVbktb0
-   Qf6zp/2AQQI1jjjrldxfe/OpKwkM7ty90ca9zrS4oI6S+cp5Hlp8YCe4c
-   09CBXuyZ0GXNdCdhIJuhKjlsfkqNVs/ON+8+pSP+ibDSzCf1rZX0mY+EH
-   Q==;
-X-CSE-ConnectionGUID: ZbXzTLOLQy2ZonduFVz8/w==
-X-CSE-MsgGUID: narqm6z+R56k61powT6zRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31695373"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="31695373"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 03:47:07 -0700
-X-CSE-ConnectionGUID: eLfEQUBGQ3iNLT3dBbYACw==
-X-CSE-MsgGUID: dXDbgdTHR06dVma7SeuQsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="81357904"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.237])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 03:47:00 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 10 Oct 2024 13:46:57 +0300 (EEST)
-To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
-cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [PATCH v3 2/5] PCI: Add a helper to identify IOV resources
-In-Reply-To: <20241010103203.382898-3-michal.winiarski@intel.com>
-Message-ID: <f360f00e-2282-ff6b-a390-697f8acd7917@linux.intel.com>
-References: <20241010103203.382898-1-michal.winiarski@intel.com> <20241010103203.382898-3-michal.winiarski@intel.com>
+	s=arc-20240116; t=1728557256; c=relaxed/simple;
+	bh=v1m6sKjUWaKH5tcwIPZPQRzsAK8mfmTeuH6SEbXZQJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MyeGb3kQ0ir3+6MH0AiRqR/dyiIAZyJ+hwDZIIUDR+gC0poDkbUuwiEMff5gKYO9i9uBKmWCmIjS/klSQZH73Ur51TZmvW8mLTXSsEcNWA0FL8lEZhM5ZWS/YA31nYFnsyLbhQxCbifpdVjP7J6OX+AoxWhjkmmBbtjNsrpiESM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DcnNL9FJ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=b0md/58JspE7aFSFNfnKWagcGNvByj1vnQKOUmwdHEw=; b=DcnNL9FJHzB7UIU0Q3YEGQLBhv
+	yAd7Rqhpm2GWXdmU+LEJAP6KhN9sNVezFfP+X8y07JKbwLtx2Nl7dXj3fL/t115ocOsDmPfEEDIZn
+	FOsDnPnExT93oBErJq4mPZPuW/lTMPLproEMScJrftmp86eccLgDCJFyXjKUQ1+i/JLtNz2si/y/F
+	B0GrX1SNaeutFnLxvK849Fu1/Kh/Q6BibXoZiiri2/R/3JicuNFFj04wtJgVzM/5FPmb+kmX7ZLOR
+	iGLLa4p0MfvGRqZA7U1PxwimyGLSiftU0SHi2nE3aP1QOhh1akqJ3oCeTbav+OgqmplLewxzTU64z
+	4L0rtLCQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syqhY-00000007QLt-2DDQ;
+	Thu, 10 Oct 2024 10:47:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9AFCA30088D; Thu, 10 Oct 2024 12:47:24 +0200 (CEST)
+Date: Thu, 10 Oct 2024 12:47:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Klaus Kudielka <klaus.kudielka@gmail.com>,
+	Chris Bainbridge <chris.bainbridge@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Youssef Esmat <youssefesmat@google.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Bert Karwatzki <spasswolf@web.de>, regressions@lists.linux.dev
+Subject: Re: [PATCH 0/3] sched/core: Fix PSI inconsistent task state splats
+ with DELAY_DEQUEUE
+Message-ID: <20241010104724.GK14587@noisy.programming.kicks-ass.net>
+References: <20241010082838.2474-1-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-665666153-1728557217=:12246"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010082838.2474-1-kprateek.nayak@amd.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Oct 10, 2024 at 08:28:35AM +0000, K Prateek Nayak wrote:
+> After the introduction of DELAY_DEQUEUE, PSI consistently started
+> warning about inconsistent task state early into the boot. This could be
+> root-caused to three issues that the three patches respectively solve:
+> 
+> o PSI signals not being dequeued when the task is blocked, but also
+>   delayed since psi_sched_switch() considered "!task_on_rq_queued()" as
+>   the task being blocked but a delayed task will remain queued on the
+>   runqueue until it is picked again and goes through a full dequeue.
+> 
+> o enqueue_task() not using the ENQUEUE_WAKEUP alongside ENQUEUE_DELAYED
+>   in ttwu_runnable(). Since psi_enqueue() only considers (in terms of
+>   enqueue flags):
+> 
+>     (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED)
+> 
+>   ... as a wakeup, the lack of ENQUEUE_WAKEUP can misguide psi_enqueue()
+>   which only clears TSK_IOWAIT flag on wakeups.
+> 
+> o When a delayed task is migrated by the load balancer, the requeue or
+>   the wakeup context may be aware that the task has migrated between it
+>   blocking and it waking up. This is necessary to be communicated to PSI
+>   which forgoes clearing TSK_IOWAIT since it expects the psi_.*dequeue()
+>   to have cleared it during migration.
+> 
+> The series correctly communicates the blocked status of a delayed task
+> to psi_dequeue(), adds the ENQUEUE_WAKEUP flag during a requeue in
+> ttwu_runnable(), re-arranges the psi_enqueue() to be called after a
+> "p->sched_class->enqueue_task()", and notify psi_enqueue() of a
+> migration in delayed state using "p->migration_flags" to maintain the
+> task state consistently.
+> 
+> This series was previously posted as one large diff at
+> https://lore.kernel.org/lkml/f82def74-a64a-4a05-c8d4-4eeb3e03d0c0@amd.com/
+> and was tested by Johannes. The tags on the diff have been carried
+> to this series.
 
---8323328-665666153-1728557217=:12246
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Thanks!
 
-On Thu, 10 Oct 2024, Micha=C5=82 Winiarski wrote:
+I've renamed DELAYED_MIGRATED to MF_DELAYED, and made a note to go
+rename the MDF_PUSH thing to something consistent.
 
-> There are multiple places where special handling is required for IOV
-> resources.
-> Extract it to a helper and drop a few ifdefs.
->=20
-> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
-> ---
->  drivers/pci/pci.h       | 18 ++++++++++++++----
->  drivers/pci/setup-bus.c |  5 +----
->  drivers/pci/setup-res.c |  4 +---
->  3 files changed, 16 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 14d00ce45bfa9..c55f2d7a4f37e 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -580,6 +580,10 @@ void pci_iov_update_resource(struct pci_dev *dev, in=
-t resno);
->  resource_size_t pci_sriov_resource_alignment(struct pci_dev *dev, int re=
-sno);
->  void pci_restore_iov_state(struct pci_dev *dev);
->  int pci_iov_bus_range(struct pci_bus *bus);
-> +static inline bool pci_resource_is_iov(int resno)
-> +{
-> +=09return resno >=3D PCI_IOV_RESOURCES && resno <=3D PCI_IOV_RESOURCE_EN=
-D;
-> +}
->  extern const struct attribute_group sriov_pf_dev_attr_group;
->  extern const struct attribute_group sriov_vf_dev_attr_group;
->  #else
-> @@ -589,12 +593,20 @@ static inline int pci_iov_init(struct pci_dev *dev)
->  }
->  static inline void pci_iov_release(struct pci_dev *dev) { }
->  static inline void pci_iov_remove(struct pci_dev *dev) { }
-> +static inline void pci_iov_update_resource(struct pci_dev *dev, int resn=
-o) { }
-> +static inline resource_size_t pci_sriov_resource_alignment(struct pci_de=
-v *dev, int resno)
-> +{
-> +=09return 0;
-> +}
->  static inline void pci_restore_iov_state(struct pci_dev *dev) { }
->  static inline int pci_iov_bus_range(struct pci_bus *bus)
->  {
->  =09return 0;
->  }
-> -
-> +static inline bool pci_resource_is_iov(int resno)
-> +{
-> +=09return false;
-> +}
->  #endif /* CONFIG_PCI_IOV */
-> =20
->  #ifdef CONFIG_PCIE_PTM
-> @@ -616,12 +628,10 @@ unsigned long pci_cardbus_resource_alignment(struct=
- resource *);
->  static inline resource_size_t pci_resource_alignment(struct pci_dev *dev=
-,
->  =09=09=09=09=09=09     struct resource *res)
->  {
-> -#ifdef CONFIG_PCI_IOV
->  =09int resno =3D res - dev->resource;
-> =20
-> -=09if (resno >=3D PCI_IOV_RESOURCES && resno <=3D PCI_IOV_RESOURCE_END)
-> +=09if (pci_resource_is_iov(resno))
->  =09=09return pci_sriov_resource_alignment(dev, resno);
-> -#endif
->  =09if (dev->class >> 8 =3D=3D PCI_CLASS_BRIDGE_CARDBUS)
->  =09=09return pci_cardbus_resource_alignment(res);
->  =09return resource_alignment(res);
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index 23082bc0ca37a..8909948bc9a9f 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -1093,17 +1093,14 @@ static int pbus_size_mem(struct pci_bus *bus, uns=
-igned long mask,
->  =09=09=09     (r->flags & mask) !=3D type3))
->  =09=09=09=09continue;
->  =09=09=09r_size =3D resource_size(r);
-> -#ifdef CONFIG_PCI_IOV
->  =09=09=09/* Put SRIOV requested res to the optional list */
-> -=09=09=09if (realloc_head && i >=3D PCI_IOV_RESOURCES &&
-> -=09=09=09=09=09i <=3D PCI_IOV_RESOURCE_END) {
-> +=09=09=09if (realloc_head && pci_resource_is_iov(i)) {
->  =09=09=09=09add_align =3D max(pci_resource_alignment(dev, r), add_align)=
-;
->  =09=09=09=09r->end =3D r->start - 1;
->  =09=09=09=09add_to_list(realloc_head, dev, r, r_size, 0 /* Don't care */=
-);
->  =09=09=09=09children_add_size +=3D r_size;
->  =09=09=09=09continue;
->  =09=09=09}
-> -#endif
-
-Heh, I realized I've made pretty much the same patch a few days back...
-
-Please leave empty lines around this SRIOV / optional resource.
-
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-
->  =09=09=09/*
->  =09=09=09 * aligns[0] is for 1MB (since bridge memory
->  =09=09=09 * windows are always at least 1MB aligned), so
-> diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-> index c6d933ddfd464..e2cf79253ebda 100644
-> --- a/drivers/pci/setup-res.c
-> +++ b/drivers/pci/setup-res.c
-> @@ -127,10 +127,8 @@ void pci_update_resource(struct pci_dev *dev, int re=
-sno)
->  {
->  =09if (resno <=3D PCI_ROM_RESOURCE)
->  =09=09pci_std_update_resource(dev, resno);
-> -#ifdef CONFIG_PCI_IOV
-> -=09else if (resno >=3D PCI_IOV_RESOURCES && resno <=3D PCI_IOV_RESOURCE_=
-END)
-> +=09else if (pci_resource_is_iov(resno))
->  =09=09pci_iov_update_resource(dev, resno);
-> -#endif
->  }
-> =20
->  int pci_claim_resource(struct pci_dev *dev, int resource)
->=20
---8323328-665666153-1728557217=:12246--
+I've stuck then in queue.git sched/urgent along with a few other fixes
+and I will hopefully push the lot into tip soon.
 
