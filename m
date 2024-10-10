@@ -1,149 +1,94 @@
-Return-Path: <linux-kernel+bounces-358768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631C199836A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:22:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C38998376
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D222834BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:22:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85811B22484
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6871BF324;
-	Thu, 10 Oct 2024 10:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A9A1BF7F8;
+	Thu, 10 Oct 2024 10:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jfAzzQhB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ijTxbKUf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD0A1BDAB8;
-	Thu, 10 Oct 2024 10:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A551BB6BF
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728555728; cv=none; b=qDbupsWn2WU58+q8RT0ZkOGcDaVMS+aE94wTmbwDc8oT1BWFojol9AROInJ3e+pCcJ15XgEi86VEPjvJn5nJuT6Y/GKb14+HBwroo21s+DSa3uD4MJDzxmIBvoBpNr7bs6I/fKyiwK6SAsVwiTHoG4LNw8snmWBpg1WJ1Io+z/Q=
+	t=1728555808; cv=none; b=RAr0wDJXm/AODyyJZLu4qNPS0WbeuXVBfP38rSz7kCaQNYEZazl0mYs3VNMvaINdhm2MW5hgtXpurlF0VJDXmq9ExYTuRHsKEoTgVIiUSBQRNB5SftM6Q5uR9wtGqCOnR7P/jyYyPZaxX23oz24IOZP3LA3WPDBPUkDGhIXlhKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728555728; c=relaxed/simple;
-	bh=noMQNUM0FgQjj7sTljBuE+0agFGGBwUO1uePFbZXEoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n0PZYhC521GW6Q+lhtF4HHGnUtmfenDF7Gi+Od4UN2Wwdv5hYozohezxU0l1VkDAUh3GGDvwl9MmFXLWejR1v2KM4TH5RY0u6RPwOwXIGUlyBKI23v95wGCZbgzQ/taKht9JVr11wU5E/iofOQ0gR61hcI/Zm7ILcN7QrE+df+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jfAzzQhB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6061FC4CED4;
-	Thu, 10 Oct 2024 10:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728555727;
-	bh=noMQNUM0FgQjj7sTljBuE+0agFGGBwUO1uePFbZXEoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jfAzzQhB7zXjxgBqto5C6yVPKnsNdIhtv8ZUuDlmzP/q34AgMSUUQhCCPZSVWMu9l
-	 0CjN+Pqpl9lcyV57cAolX8onG1L2/dlwY4ofv3Oszmg7fpVQYJash268DpTuh7nI6T
-	 rtMJ1NdsHUyU0R3stPra2CEta2W2YOliuxtxyvyRBV8eun2TZH46vMn86iYtoHpN24
-	 NE5p2pmFGiYX1O1G7mQZU/Cs1J+C9k6q0ZzEVAckSQQVK3nLZ0buzbvdH2aXkAcPhA
-	 Nm7nIIGQF0hu9jrLU6fzFVpnPoBHCTn5LjGPekxlllfuwEwCKzKdKz4VDwC4LLQgxi
-	 NQQ2tiMi1dJ/Q==
-Date: Thu, 10 Oct 2024 11:22:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com, andrew@lunn.ch,
-	jdamato@fastly.com, kalesh-anakkur.purayil@broadcom.com,
-	christophe.jaillet@wanadoo.fr, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V11 net-next 04/10] net: hibmcge: Add interrupt supported
- in this module
-Message-ID: <20241010102201.GG1098236@kernel.org>
-References: <20241008022358.863393-1-shaojijie@huawei.com>
- <20241008022358.863393-5-shaojijie@huawei.com>
+	s=arc-20240116; t=1728555808; c=relaxed/simple;
+	bh=BTBxOvVuTM6WsUy711z6oEamya74MHIMHKK3ovmyR4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rVEbpsm6Rd5F6VHwi7fJ9Orl/hh35U5SKNmeMRTrtxUg/WG/cFwzH0GE5Yg4B4hZjTH3fHApdA2A003QnJm2kLkET7tg3QB3KO4fq71xs2R8kfzI2N5cz2W4rXaCy+tnX9B8Pe0KpIWYjvLYFw2eRGTt+bOxK7ICKvPJfAsfsFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ijTxbKUf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D6BF4D4;
+	Thu, 10 Oct 2024 12:21:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728555698;
+	bh=BTBxOvVuTM6WsUy711z6oEamya74MHIMHKK3ovmyR4U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ijTxbKUfolk9+TdYDRxKJfqsraL6NR9T44Q50tG6RBqO90JJXEG8oqaVAXlyqE4hH
+	 5N0hbGmXngsuaNBkppBnVrD+obRaIAGNExoJrS8QFgTTgqBVnJIkAcAFWqS41QzxLe
+	 0dD7I3zz6R7F5NcR/MFysQGwemEbROBxSILsI3Tg=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH 0/5] staging: vchiq_core: Improve indentation
+Date: Thu, 10 Oct 2024 15:52:44 +0530
+Message-ID: <20241010102250.236545-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008022358.863393-5-shaojijie@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 10:23:52AM +0800, Jijie Shao wrote:
-> The driver supports four interrupts: TX interrupt, RX interrupt,
-> mdio interrupt, and error interrupt.
-> 
-> Actually, the driver does not use the mdio interrupt.
-> Therefore, the driver does not request the mdio interrupt.
-> 
-> The error interrupt distinguishes different error information
-> by using different masks. To distinguish different errors,
-> the statistics count is added for each error.
-> 
-> To ensure the consistency of the code process, masks are added for the
-> TX interrupt and RX interrupt.
-> 
-> This patch implements interrupt request, and provides a
-> unified entry for the interrupt handler function. However,
-> the specific interrupt handler function of each interrupt
-> is not implemented currently.
-> 
-> Because of pcim_enable_device(), the interrupt vector
-> is already device managed and does not need to be free actively.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+Small self-contained series to improve indentation on vchiq_core.c.
+Mostly addressed by reflowing code long lines under 80 columns to adhere
+to coding style guidelines.
 
-...
+The dev_dbg() statements are left untouched. Followed the principle
+mentioned in the guidelines as:
 
-> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
+```
+However, never break user-visible strings such as printk messages,
+because that breaks the ability to grep for them.
+```
 
-...
 
-> +static const char *irq_names_map[HBG_VECTOR_NUM] = { "tx", "rx", "err", "mdio" };
-> +
-> +int hbg_irq_init(struct hbg_priv *priv)
-> +{
-> +	struct hbg_vector *vectors = &priv->vectors;
-> +	struct device *dev = &priv->pdev->dev;
-> +	int ret, id;
-> +	u32 i;
-> +
-> +	/* used pcim_enable_device(),  so the vectors become device managed */
-> +	ret = pci_alloc_irq_vectors(priv->pdev, HBG_VECTOR_NUM, HBG_VECTOR_NUM,
-> +				    PCI_IRQ_MSI | PCI_IRQ_MSIX);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "failed to allocate MSI vectors\n");
-> +
-> +	if (ret != HBG_VECTOR_NUM)
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "requested %u MSI, but allocated %d MSI\n",
-> +				     HBG_VECTOR_NUM, ret);
-> +
-> +	/* mdio irq not requested, so the number of requested interrupts
-> +	 * is HBG_VECTOR_NUM - 1.
-> +	 */
-> +	for (i = 0; i < HBG_VECTOR_NUM - 1; i++) {
-> +		id = pci_irq_vector(priv->pdev, i);
-> +		if (id < 0)
-> +			return dev_err_probe(dev, id, "failed to get irq number\n");
-> +
-> +		snprintf(vectors->name[i], sizeof(vectors->name[i]), "%s-%s-%s",
-> +			 dev_driver_string(dev), pci_name(priv->pdev),
-> +			 irq_names_map[i]);
-> +
-> +		ret = devm_request_irq(dev, id, hbg_irq_handle, 0,
-> +				       vectors->name[i], priv);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "failed to requset irq: %s\n",
+Hridesh MG (1):
+  staging: vchiq_core: Fix white space indentation error
 
-nit: request
+Umang Jain (4):
+  staging: vchiq_core: Indent static_assert on single line
+  staging: vchiq_core: Reflow long lines to 80 columns
+  staging: vchiq_core: Macros indentation fix
+  staging: vchiq_core: Locally cache cache_line_size information
 
-> +					     irq_names_map[i]);
-> +	}
-> +
-> +	vectors->info_array = hbg_irqs;
-> +	vectors->info_array_len = ARRAY_SIZE(hbg_irqs);
-> +	return 0;
-> +}
+ .../interface/vchiq_arm/vchiq_core.c          | 317 +++++++++++-------
+ 1 file changed, 194 insertions(+), 123 deletions(-)
 
-...
+-- 
+2.45.2
+
 
