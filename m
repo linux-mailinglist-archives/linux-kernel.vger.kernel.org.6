@@ -1,194 +1,291 @@
-Return-Path: <linux-kernel+bounces-359586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EFF998D9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B21998DAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E683C1F24BF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B451C239FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F16198A1B;
-	Thu, 10 Oct 2024 16:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A9419AD97;
+	Thu, 10 Oct 2024 16:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="a8U1fTO0"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazolkn19010004.outbound.protection.outlook.com [52.103.43.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mvH4Sfzo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71F2192B9E;
-	Thu, 10 Oct 2024 16:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578388; cv=fail; b=NsjldrkNKXMNc8uEkooC7zhLWqGAn91nxZjKRJ/nDWjoJsjU+w/oGrwWCSagwjo6Sv7/2AwV1wrY/xuBVPhrpqLuyhpIIvNxfCGIFgewvRkRRGf9xm23XZ70c6q3N9cgVVZwWsr/pVNHDOPLSkMWOBgAFNz00VVZjM6tALHcZLc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578388; c=relaxed/simple;
-	bh=Pr4aKHf947ekQATbTwrdS8FFbCkLA/uRAE6i5hGrkO8=;
-	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=h+uTTippR03pV4s7HzoA2OSKkFltFg4w6446HRHUWASjeif3byaWfwPhPrEkuybkhUi1b/ZVsn7SqPfCFFBl7lNBBaj6CAI1A0eXVlvkSjE0B9KoukRfLzj5HfvBF5x8VK9rrwoLmuptG4N9BIyBgCQGseDIhbr0vboK2arYPTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=a8U1fTO0; arc=fail smtp.client-ip=52.103.43.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G1ovb9J+fwCP5lZ+GAWUraNIysHlQIhh1Ixuph/zsOFEYhQ7vkVtmDFRlycfgQ943kyYCs4pfTXbRXYucuAqlPlt+25TGgpwmWRm5NvayFQgu7tYgRqQ5tMiOfMbFYHYyAtefR+K5dATrOli/znq3NMzWpRZBbeITecJFvCBTeVtRtnFvn2+z//4Q2hKqNggKphDHyNHz3MdjN7cqZCub+XNlOaM/jWa6LkcW+whlAkJmBmcEBdCMKSxdRqzcPsbxFx1w2PVaM/1+CUcMCT04KGtUNhqgUUxHy1QIk+zWCklOKlvNevu3H1VH7Zq3O1grUm2QrzOzjhbok1aAf6BXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QCVLp4aTaNfS1qAEnIvDloZENq51ViWFksfUwtyqRTc=;
- b=QtxaNMnk+pdhT03KYpCWY6MmNOpIZTj5J96JwkkKGEAx1O/7IWB4NOBV2qCfGUoD4FWFTFw/+m5lVwZV5BPMnq13Z13jQ+oULms3Vv2o5zWFDzvSDrahn+7juVDM3Hvyt5eD0LbrQOb5VrSxaaHcSfcBVbYS3GIFjK6k51+bH+jTwjhWBb4Mc2bfXGz7nMPe84UAXvedii7qItyWcP63oeXSKHxp3A8WGT08TYUmFo4R8Z1/RYfxb3eh+3jolSq68e8+60V0qjrBKvEz0IYEaoGObc5H9eVPlVUYVZ1LuggTRjhPXJ+sYO3mWBzogUchS7A1/z8UCzquPF83OPQmOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QCVLp4aTaNfS1qAEnIvDloZENq51ViWFksfUwtyqRTc=;
- b=a8U1fTO0hyhDpxjtyGgWAPBjm1MHSIaq0FPw/zk+MC5ARsl7XzJGcIuYvxvxhaKo1EhA7jMqUKJyBqtKx7CO8yYkaWBTDLWkqIkYnuW0E/pUt6Q/iWOX17gxCrGl4CRdj4WxXvZr1/98XLhcmZ+wB3TM4oG3YNDRv6FkasATdQqfCl7MbpvkgQTNKDcx8hoZ6g1HbGzCj236eRxEy6+WE7vupADiT6Sn6i5zJ5rpGOFzeyXxIJfWpHYitVLLkf5c4CE3ph4PDJrAJgLon5HZ+E/GrcNCH8S2KDd1s7TLAceQ3jgBaWvz876bicn5NmIh5tgAf73xJYqJad9qB/ve3A==
-Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com (2603:1096:400:156::5)
- by TYWPR01MB9388.jpnprd01.prod.outlook.com (2603:1096:400:1a5::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
- 2024 16:39:42 +0000
-Received: from TYCPR01MB8437.jpnprd01.prod.outlook.com
- ([fe80::83e7:751f:f3af:768f]) by TYCPR01MB8437.jpnprd01.prod.outlook.com
- ([fe80::83e7:751f:f3af:768f%6]) with mapi id 15.20.8026.020; Thu, 10 Oct 2024
- 16:39:42 +0000
-Message-ID:
- <TYCPR01MB8437648E5B722461FC13D8C598782@TYCPR01MB8437.jpnprd01.prod.outlook.com>
-Date: Fri, 11 Oct 2024 00:39:38 +0800
-User-Agent: Mozilla Thunderbird
-Cc: wiagn233@outlook.com, linux@armlinux.org.uk, andrew@lunn.ch,
- hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] net: sfp: change quirks for Alcatel Lucent G-010S-P
-To: Jakub Kicinski <kuba@kernel.org>
-References: <TYCPR01MB843714CF627B46DFA06E471B98732@TYCPR01MB8437.jpnprd01.prod.outlook.com>
- <20241009174044.73e1fce0@kernel.org>
-From: Shengyu Qu <wiagn233@outlook.com>
-Content-Language: en-US
-Autocrypt: addr=wiagn233@outlook.com; keydata=
- xsFNBGK0ObIBEADaNUAWkFrOUODvbPHJ1LsLhn/7yDzaCNWwniDqa4ip1dpBFFazLV3FGBjT
- +9pz25rHIFfsQcNOwJdJqREk9g4LgVfiy0H5hLMg9weF4EwtcbgHbv/q4Ww/W87mQ12nMCvY
- LKOVd/NsMQ3Z7QTO0mhG8VQ1Ntqn6jKQA4o9ERu3F+PFVDJx0HJ92zTBMzMtYsL7k+8ENOF3
- Iq1kmkRqf8FOvMObwwXLrEA/vsQ4bwojSKQIud6/SJv0w2YmqZDIAvDXxK2v22hzJqXaljmO
- BF5fz070O6eoTMhIAJy9ByBipiu3tWLXVtoj6QmFIoblnv0Ou6fJY2YN8Kr21vT1MXxdma1e
- l5WW/qxqrKCSrFzVdtAc7y6QtykC6MwC/P36O876vXfWUxrhHHRlnOxnuM6hz87g1kxu9qdr
- omSrsD0gEmGcUjV7xsNxut1iV+pZDIpveJdd5KJX5QMk3YzQ7ZTyiFD61byJcCZWtpN8pqwB
- +X85sxcr4V76EX85lmuQiwrIcwbvw5YRX1mRj3YZ4tVYCEaT5x+go6+06Zon3PoAjMfS1uo/
- 2MxDuvVmdUkTzPvRWERKRATxay28efrE5uNQSaSNBfLKGvvPTlIoeYpRxLk7BN0xi/KZIRpS
- lIf0REc1eg+leq2Hxv7Xk/xGwSi5gGxLa6SzwXV8RRqKnw2u6QARAQABzSFTaGVuZ3l1IFF1
- IDx3aWFnbjIzM0BvdXRsb29rLmNvbT7CwY4EEwEKADgWIQSX5PUVXUNSaGVT2H/jUgzJGSnI
- 5wUCYrQ5sgIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRDjUgzJGSnI57GwD/9O6kei
- 9M3nbb1PsFlDE1J9H27mlnRWzVJ2S3yJ8G1oJo8NSaRO7vcTsYPBYpEL1poDQC5MEGh6FXSi
- OnyyHrg8StmGLksQE9awuTnlnQgvXDQMVtm87r1abBAavP5ru2R9x/Tk63+W/VT2hPekMfHa
- JwFi1KATSI1AhsF3CVoj0yDulz1u0uZlircKdbeEDj+raMO0LA12YxWaWtL/b9XaoAqV9vor
- aKhx+0DsZS5bWoUvs+715BArPBr4hPqKavsBwOWfzWDTKln2qv8d+glWkmk6dgvZFcV/9JEJ
- Q8B7rOUMX614dqgwi1t71TI0Fbaou3nhAnES1i1it/aomDUCLvRwjGU2oarmUISFgvZoGYdB
- 9DfVfY3FWKtfDJ9KLUk9k3BFfBZgeAYoLnFZwa3rMyruCojAGTApZtaaLZH/jzQf7FpIGGhD
- YnvGKXS01nLCHuZSOEvURLnWdgYeOtwKW1IIcnWJtB12Ajz2yVu3w4tIchRT3wekMh2c3A3Z
- DeEjszezhFyXgoRpNYDBzNl6vbqhnopixq5Wh/yAj6Ey0YrIUbW9NOhIVCGkP4GyJg756SGz
- yPny0U4lA+EP7PS3O7tE0I3Q5qzDH1AEH2proNlsvjZeG4OZ9XWerI5EoIxrwZcOP9GgprB4
- TrXUR0ScTy1wTKV1Hn+w3VAv6QKtFM7BTQRitDmyARAA0QGaP4NYsHikM9yct02Z/LTMS23F
- j4LK2mKTBoEwtC2qH3HywXpZ8Ii2RG2tIApKrQFs8yGI4pKqXYq+bE1Kf1+U8IxnG8mqUgI8
- aiQQUKyZdG0wQqT1w14aawu7Wr4ZlLsudNRcMnUlmf0r5DucIvVi7z9sC2izaf/aLJrMotIp
- Hz9zu+UJa8Gi3FbFewnpfrnlqF9KRGoQjq6FKcryGb1DbbC6K8OJyMBNMyhFp6qM/pM4L0tP
- VCa2KnLQf5Q19eZ3JLMprIbqKLpkh2z0VhDU/jNheC5CbOQuOuwAlYwhagPSYDV3cVAa4Ltw
- 1MkTxVtyyanAxi+za6yKSKTSGGzdCCxiPsvR9if8a7tKhVykk4q2DDi0dSC6luYDXD2+hIof
- YGk6jvTLqVDd6ioFGBE0CgrAZEoT0mK6JXF3lHjnzuyWyCfuu7fzg6oDTgx3jhMQJ2P45zwJ
- 7WyIjw1vZ3JeAb+5+D+N+vPblNrF4zRQzRoxpXRdbGbzsBd5BDJ+wyUVG+K5JNJ34AZIfFoD
- IbtRm3xt2tFrl1TxsqkDbACEWeI9H36VhkI3Cm/hbfp2w2zMK3vQGrhNuHybIS/8tJzdP3Ci
- zcOmgc61pDi/B6O2IXpkQpgz+Cv/ZiecDm1terRLkAeX84u8VcI4wdCkN/Od8ZMJOZ2Ff+DB
- bUslCmkAEQEAAcLBdgQYAQoAIBYhBJfk9RVdQ1JoZVPYf+NSDMkZKcjnBQJitDmyAhsMAAoJ
- EONSDMkZKcjnnIcP/1Px3fsgNqOEwVNH7hm0S2+x/N/t3kz50zpKhczHZ8GWbN3PPt4wkQkd
- bF+c7V4uXToN4a17bxGdUnA9qljxt8l3aEqd4jBqLn2OJriu21FSnrZOpxb1EwWwvnVUwrLx
- CuV0CFQJdBlYp2ds64aV8PcBOhQ62y1OAvYpAX1cx5UMcHsNVeqrWU0mDAOgvqB86JFduq+G
- mvbJwmh3dA8GnI2xquWaHIdkk06T55xjfFdabwEyuRmtKtqxTP/u6BzowkV2A/GLxWf1inH5
- M81QgGRI2sao6To7sUt45FS+y2zhwh62excOcSxcYqKzs/OiYEJjWMv9vYRwaqJGEVhbfGFO
- jeBOYr+ZCCeARh+z4ilo1C2wupQT8VPsFiY9DRYgkAPKlbn9OqJvoD7VhvyelJagSNuRayrr
- mnEaZMsoRdS22fneCVWM0xlGSgPCVD0n9+6unTnVbmF/BZsEg5QufQKqlFSomu1i23lRDPK/
- 1aPc2IoxcQPh2fomy8spA5ROzOjLpgqL8ksEtQ75cBoF1K5mcC2Xo1GyDmdQvbIZe+8qwvQ3
- z9EDivvFtEByuZEeC5ixn4n/c9UKwlk+lQeQeN+Bk7l8G9phd4dWxnmWXQ/ONR/aLzG+Fguu
- GNZCPpu5dVQH44AXoFjoi9YVscUnWnv8sErY943hM8MUsMQ5D0P2
-In-Reply-To: <20241009174044.73e1fce0@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0091.apcprd02.prod.outlook.com
- (2603:1096:4:90::31) To TYCPR01MB8437.jpnprd01.prod.outlook.com
- (2603:1096:400:156::5)
-X-Microsoft-Original-Message-ID:
- <7bc13447-c512-4095-b13a-e29892c2fe29@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A02E19A285;
+	Thu, 10 Oct 2024 16:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728578431; cv=none; b=hhCop7JauaVTZBt8gnsn/UcLuFKkHjfxiiO0xYvkMenfs5ihCdfWlZslZJeqMlZYC/xlNRFmQKaqqNeF+/D0/76phx+pq2UEAppkvEZV42LB4R9j4e03WYJw/Z1FcmcBaVgODC+P6S5B9hqAxfSzZSL+LSXpzkZy1gthxMxuZ78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728578431; c=relaxed/simple;
+	bh=DN2D9uqPaO8rZvr1YulT4ZNQtz5tSOtqH1QeCqLEVXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGHA8vk1WELsEqR+QHdLNyC3awQe5ZdNEULtkMPMNvQcsP2hasTUq4k/RRwm+LygMSoZk00tVAAU3GrsCEE6yAF9bDBoCLNn5AJNLdvjoGYEBpTR+850zbIhN+q643Nuk1MLiVbZR8Dle9RSfjYsyh7eNqXvPvvRvCxXz8Sdodg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mvH4Sfzo; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728578429; x=1760114429;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DN2D9uqPaO8rZvr1YulT4ZNQtz5tSOtqH1QeCqLEVXA=;
+  b=mvH4Sfzoe3MaQgtUsdHmUQb5y3aQfRPMSIFWAVo2mkscuyJFcD5O73FY
+   /yPEroFSlL2T/0bhLRlIIVQA7/WMWnPc5R+21PNEA6VcV+lr+vXB6is33
+   uXo362uU1OJYpgmjJyJhfa496Ux1BtdKx3q9P07C9L4X1NzBH1Rr/Q5hb
+   U7c5dT366sO9EHAc46T6jPo+lzJ8OkzcXHayF8ViXvpj+zJtS+PlNP6OH
+   +YCOm6l2tpbsPZrvLbI1QfaS6CXI+6gKtsR8CHpjo8RGQdIAJ891KvqXB
+   LaHIxX/Z/UajEDqQz2m33RYPNlpOUxPQLxBZ4iiXinLcrZ9gbRPiNudqt
+   w==;
+X-CSE-ConnectionGUID: qr5Q/TFeSU22uP/d74Xhsw==
+X-CSE-MsgGUID: KmtlYW9LTievqyjMmiJjvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39322646"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="39322646"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 09:40:28 -0700
+X-CSE-ConnectionGUID: l5UiI2hJTOSvrJNFQOVDFg==
+X-CSE-MsgGUID: WKs+SeFxSU2xoURwvsxr7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="81448225"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 10 Oct 2024 09:40:23 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sywD7-000B1b-18;
+	Thu, 10 Oct 2024 16:40:21 +0000
+Date: Fri, 11 Oct 2024 00:39:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Anastasia Kovaleva <a.kovaleva@yadro.com>, target-devel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	bvanassche@acm.org, quinn.tran@cavium.com,
+	himanshu.madhani@cavium.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux@yadro.com, hare@suse.de,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] scsi: qla2xxx: Drop starvation counter on success
+Message-ID: <202410110059.pb1whtvg-lkp@intel.com>
+References: <20241009111654.4697-2-a.kovaleva@yadro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB8437:EE_|TYWPR01MB9388:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ee13d50-7eab-43c9-a3d0-08dce94a2426
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|8060799006|461199028|15080799006|5072599009|6090799003|7092599003|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	pNhxWSNYDsTNuG1FdsPunBVHxQSdTfhuBWaoQw4bGJDcUSkt3GlwZl/iEgacuSZfMCkm9PDZnhMMG3gOI3M0lNpnagBLjh9ykVDN3WYXCnGy2QMYPN22b/0+xrnbKLmUmzsv4RYfhW5JxsLuNZpNyvSEifAyA606IUzvBbNttKqWdNtHRY4RuXJugQxPw39KkuGHOc234cDSc+Biegq6nRs69ji6ksoPAuQF9S4HchEFEnFmKNFLpJK1qokkunj8sAsNLNxT7HrTdvGN3O8FtCPUaN+rgZImVkiBt5K4FPi9uUbDUCvBUeWhZu9kVVUmyJkPf/G0CMhOF/P50fOvSuke5w4sa57++3c2y0xnq78QNRaFnJ7/Ft+uSRcl9lVju1+jNo2YPtbtR7lKMukqzQumori8atEzGup2foR32DIXMniNu3slaDrJI5diGb8W4SNQM9GiZpYJikxDJFRH44E518VoZBsaTPqoqUCBY6kixY90mQixiw5e8LGjeaH7YxZ4yDPRZBIOExjW+hQQkgo2I8k7I5cSZ5gyZoiCYObyCRrF/ZL2wR4XXdbA5cYYWRA95prjSWtwj4D3qvkSO0J7/pRq5ld6kYFhiLCgzKw6pAwKg/R0ZAm/F5MeboBc1Kz11RwtTgshENNmhFifZ+A2F1JTxW66EmNxYZUMTo2MlVWT03VjlLLge2m1W3/6v0MUJTrOLmi3jwNYDcMn90AhMAoVEGOw94f+g0J/3xRq6Pl0sJbEgkIPNkBa1l8JilOKMZR8U7atTAlV6R90O13y/ngv8iDwbnnmu9fQCiA=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b0JrbUYxRkhWeWh4R004ajlaQUVOakRORWZjMmRCRlMvU2ZxazBpRlpqNjhj?=
- =?utf-8?B?RGxOaVA2c0lYZHVacndDSVpaNHlBbjBsR1JWRWp2OGRVK085WUN5UmR2Y2U4?=
- =?utf-8?B?eHRxdmlwQ1JIZGFMdkhjWmkxbW5jc2c0OUh1YUE5aUJrcDM2cmFOYmJaUVg4?=
- =?utf-8?B?bGlmdGtza2V0TUxtNlR3WmZuWktiVGFSU2JFckpTV2pkZnhWVU16NG9WaFI4?=
- =?utf-8?B?N0FqWUlrTC9SdTJLc255bnVtSktFd3JraGhidWVsVkJmYm01ektMTWdBYzBO?=
- =?utf-8?B?anhOdWsyaDdNcFkxNEdxNU1rSHNxYU9PUHNKeHJxT0h2K0dmM1ZhVExwSGow?=
- =?utf-8?B?MzdaWnFuSFhYYlRpbjRzWmcxbUk4RloxU0pJYVZHUTJiY294bGdIWGtPTlph?=
- =?utf-8?B?bm5SUVV6U2Z6Z2t6c09Bcnkxdms1eDVXWUdycVdqYXIvVFYrczludTJ3cFJG?=
- =?utf-8?B?NjV6M0dIYWJyYytTL0hXVTQ1TTFoR2lqMWwrbStHYjdzNHhyZ1FicGRpcncv?=
- =?utf-8?B?WnFhZlZ4RG5BNVJ4V3dkMFJ0R0RaWStlN2RldVkwTXZ1V3FYaW1RNWdBZ3hk?=
- =?utf-8?B?Rm5rNVY0cWVwYUFRckxCN0syb1NFNUFJYnFtdkpTSG1od3cwWkRaRUt3UWJ1?=
- =?utf-8?B?aE41cUxDY2s3RTBFN0dHelVMUm5nRE9qem1YdHFiRXdGZWJ0cnh5b1NHMnI4?=
- =?utf-8?B?MFU4RnZwVHc5d2VxTjhGdG51TFNhQ29QNjl5TitBWG1CWVZYY3h3d0R2NlZM?=
- =?utf-8?B?YWlYNjNwa3JsQ2RhWm9SZ29jdmdCaXRtNVJiMlJVRi81NEFVdHYrT3NVNTU5?=
- =?utf-8?B?VlNMVURmMGl5a0g4bDJPUHJ6KzVmcDI5MTFZMWIwc3FyeUdqekI3QmdqZkJ0?=
- =?utf-8?B?V05rNXpCOWhyZW5XRmJ6akxxNzhORSswRExLcnE1djQ3OTQwYm8wcWE2d1Zs?=
- =?utf-8?B?NHdzWGZhQlhsMjB5cDNiZjRGdXJhT25MNHh1RFEvdG10SjRBYXA4SWh1RWhZ?=
- =?utf-8?B?dHErTlBKRDN0M3ovL2RFY3NPcWhkdXM4UHM2K2dYSHVncjZNREtmMXFCQ25O?=
- =?utf-8?B?MzA1dXY0NElOVEp2c2lkZjNWUXF3NHNIS2xIZG04THFtS2J3ZVNJbjBHc2VX?=
- =?utf-8?B?cC9PZWF6UFVxOFl4N0VRZng2L3JIMkpxZE9XR2xQT3JiejRFNE9GaXd0MFRn?=
- =?utf-8?B?eFlGbU9YYXQwMklLdFkxM0x1cWxPTDNWVTBHd3BSTjVYNjFWaHI2c1daRWVX?=
- =?utf-8?B?aVpVMERnMDh5OW5KTCthNEVSWCtaRTBnOTN5Nlg1ODZkNVNGcVhUZHFjeVZI?=
- =?utf-8?B?dUFiOTZrZ0tEcU9yZm01bDR4TWZwYkxlRjR4dHNVMkNnVk5wQ3lVdUppTVhw?=
- =?utf-8?B?VFJlSUJjNmtTVDNicS9tSW9sOW1QcXZ5djlzbERpYmFya0NYcWxzMEphbXFw?=
- =?utf-8?B?bjlwTVF2eEZLbjkzeGFrcHEyWmhRcWt2bnU2YmVoNkVZQU5CUTZZZjVERUYv?=
- =?utf-8?B?cTdnNVFQMk81ZUtrTzQrQzMxZGhFZEI5VWhnbjJvRm5zZnVKZ3FjZFNtMDkv?=
- =?utf-8?B?RFJtMzdyTUpNOWl6blVLQmtrMkFDbTdjK05IZC8zTjZyYjJwZktzSWlHb0xh?=
- =?utf-8?Q?2gONNMZb/Df8rJpMlhcGMgoEkFrcx7evbY/jObuo5Bho=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ee13d50-7eab-43c9-a3d0-08dce94a2426
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB8437.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 16:39:42.5671
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9388
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009111654.4697-2-a.kovaleva@yadro.com>
 
-Hello Jakub,
+Hi Anastasia,
 
-Sorry, I can't. Outlook has just disabled using password to log into
-smtp server and Oauth2 is the only choice. And I don't know how to
-configure git send-email to use it. So I copied the text in patch file
-and send it using thunderbird.
+kernel test robot noticed the following build errors:
 
-Best regards,
-Shengyu
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.12-rc2 next-20241010]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-在 2024/10/10 8:40, Jakub Kicinski 写道:
-> On Sun, 6 Oct 2024 00:04:29 +0800 Shengyu Qu wrote:
->> Seems Alcatel Lucent G-010S-P also have the same problem that it uses
->> TX_FAULT pin for SOC uart. So apply sfp_fixup_ignore_tx_fault to it.
-> 
-> Looks like your email client (or server) has corrupted the patch.
-> Please try resending using git send-email?
+url:    https://github.com/intel-lab-lkp/linux/commits/Anastasia-Kovaleva/scsi-qla2xxx-Drop-starvation-counter-on-success/20241009-192031
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241009111654.4697-2-a.kovaleva%40yadro.com
+patch subject: [PATCH v2 1/3] scsi: qla2xxx: Drop starvation counter on success
+config: um-allmodconfig (https://download.01.org/0day-ci/archive/20241011/202410110059.pb1whtvg-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410110059.pb1whtvg-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410110059.pb1whtvg-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/scsi/qla2xxx/qla_target.c:20:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/um/include/asm/cacheflush.h:4:
+   In file included from arch/um/include/asm/tlbflush.h:9:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/scsi/qla2xxx/qla_target.c:20:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/scsi/qla2xxx/qla_target.c:20:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/scsi/qla2xxx/qla_target.c:20:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/um/include/asm/hardirq.h:5:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/scsi/qla2xxx/qla_target.c:6833:4: error: cannot take the address of an rvalue of type 'uint8_t *' (aka 'unsigned char *')
+    6833 |                         WRITE_ONCE(&vha->hw->exch_starvation, 0);
+         |                         ^          ~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:61:2: note: expanded from macro 'WRITE_ONCE'
+      61 |         __WRITE_ONCE(x, val);                                           \
+         |         ^            ~
+   include/asm-generic/rwonce.h:55:25: note: expanded from macro '__WRITE_ONCE'
+      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+         |                                ^ ~
+   13 warnings and 1 error generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +6833 drivers/scsi/qla2xxx/qla_target.c
+
+  6793	
+  6794	/*
+  6795	 * qlt_24xx_process_atio_queue() - Process ATIO queue entries.
+  6796	 * @ha: SCSI driver HA context
+  6797	 */
+  6798	void
+  6799	qlt_24xx_process_atio_queue(struct scsi_qla_host *vha, uint8_t ha_locked)
+  6800	{
+  6801		struct qla_hw_data *ha = vha->hw;
+  6802		struct atio_from_isp *pkt;
+  6803		int cnt, i;
+  6804	
+  6805		if (!ha->flags.fw_started)
+  6806			return;
+  6807	
+  6808		while ((ha->tgt.atio_ring_ptr->signature != ATIO_PROCESSED) ||
+  6809		    fcpcmd_is_corrupted(ha->tgt.atio_ring_ptr)) {
+  6810			pkt = (struct atio_from_isp *)ha->tgt.atio_ring_ptr;
+  6811			cnt = pkt->u.raw.entry_count;
+  6812	
+  6813			if (unlikely(fcpcmd_is_corrupted(ha->tgt.atio_ring_ptr))) {
+  6814				/*
+  6815				 * This packet is corrupted. The header + payload
+  6816				 * can not be trusted. There is no point in passing
+  6817				 * it further up.
+  6818				 */
+  6819				ql_log(ql_log_warn, vha, 0xd03c,
+  6820				    "corrupted fcp frame SID[%3phN] OXID[%04x] EXCG[%x] %64phN\n",
+  6821				    &pkt->u.isp24.fcp_hdr.s_id,
+  6822				    be16_to_cpu(pkt->u.isp24.fcp_hdr.ox_id),
+  6823				    pkt->u.isp24.exchange_addr, pkt);
+  6824	
+  6825				adjust_corrupted_atio(pkt);
+  6826				qlt_send_term_exchange(ha->base_qpair, NULL, pkt,
+  6827				    ha_locked, 0);
+  6828			} else {
+  6829				/*
+  6830				 * If we get correct ATIO, then HBA had enough memory
+  6831				 * to proceed without reset.
+  6832				 */
+> 6833				WRITE_ONCE(&vha->hw->exch_starvation, 0);
+  6834	
+  6835				qlt_24xx_atio_pkt_all_vps(vha,
+  6836				    (struct atio_from_isp *)pkt, ha_locked);
+  6837			}
+  6838	
+  6839			for (i = 0; i < cnt; i++) {
+  6840				ha->tgt.atio_ring_index++;
+  6841				if (ha->tgt.atio_ring_index == ha->tgt.atio_q_length) {
+  6842					ha->tgt.atio_ring_index = 0;
+  6843					ha->tgt.atio_ring_ptr = ha->tgt.atio_ring;
+  6844				} else
+  6845					ha->tgt.atio_ring_ptr++;
+  6846	
+  6847				pkt->u.raw.signature = cpu_to_le32(ATIO_PROCESSED);
+  6848				pkt = (struct atio_from_isp *)ha->tgt.atio_ring_ptr;
+  6849			}
+  6850			wmb();
+  6851		}
+  6852	
+  6853		/* Adjust ring index */
+  6854		wrt_reg_dword(ISP_ATIO_Q_OUT(vha), ha->tgt.atio_ring_index);
+  6855	}
+  6856	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
