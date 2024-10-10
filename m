@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-359627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32960998E4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:27:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E94998E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E974E28369C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172631F2541B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DE619CC16;
-	Thu, 10 Oct 2024 17:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0394D19CD01;
+	Thu, 10 Oct 2024 17:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u8k1EL9o"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkQsFpk3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9619CC06
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E593199E88;
+	Thu, 10 Oct 2024 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728581251; cv=none; b=DeNGRCQWMG+KW+vrIXgvG5yHARjaxO8iqgxEbAjaIQSdx+NcNh2gN86C2YRu79DnSQ5zFT2MOtLCN6AYDHolyhxwmqx4dAIu5xay3FGBeS8Vix3YBB8POfr4yVHWWbfqX/Yrw7Mtie5IZx3SKlnYNk2GS7LNQXX0C7MLul9yeNw=
+	t=1728581418; cv=none; b=JJKxuPi+Vzb3GTjiVWqIG47CCKpvujuHzQAKuxrA8S1fKKGR9q2f3d6w+r6LZEKSiEaDaqbWpXFzq/79HAkybgi3+u+APRZuW2hOpwzsUQERdgiRGtXqvsgfPjKdASQF+n7aE37nz5gyIsldlBiDnEl9K40Dzm+NpGni9SLEiNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728581251; c=relaxed/simple;
-	bh=Ao4t8Rd+GNMX4tFjKE5sXChnKVztvnZ5xoHE0429CRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WROL6qzCupwnLbEmarc1TzbVpBN6RXEORMtdoiTzpompkhrFHUyQdLXFwlYd8BX1yLdUa45b0nNgfhRYluffOf5Ka3HP8HXv7uvIJbgps90FTiepj+pRK4BtnXTFwi1O0ECo6ANO517AN0at22X/CfFfTOZ/C+uTc7cVvn2GtMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u8k1EL9o; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 10 Oct 2024 10:27:20 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728581247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cte0SjyxO3LPNz1UcE8kNcEfEtgnbXauFmqf2BL8sEw=;
-	b=u8k1EL9ojeo8f2L/H89Hnd6deF/3qbzjy7PUJ/n0yNK3YIH1Skln2Sk3vEfTSL9Oh0AvNB
-	Swzv/vbxwZIHT9KPXMwGQIG8pRsSyDY3d2v6yGFYVnAlY9Zgey18SLPjIZHWJDPeNluF9J
-	mUS+viPu0UrxFXBEiZ936DhRKuQURa4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
-	JP Kobryn <inwardvessel@gmail.com>, Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
-Message-ID: <hp45j5kdj5lrqltor5zsx5ti5fsw5j6pzomgtgixr3iq6z2qdd@6if6wvwmzi4h>
-References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
- <Zwcj5SC_MYrPpNQq@google.com>
+	s=arc-20240116; t=1728581418; c=relaxed/simple;
+	bh=XpGRAGtyIsiEHPmjp/KaxtwHf6HZzgXUKIaW/Wjya58=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JEvBxODfFiTsghujc5uWTqyGDiki5gKOa85Cm4FJjxTHvACJA1TMOoHozmRQkVi+4BpMMmJzpufJBrQjpUrXJrOyly7rm/yMTpAhBXZsjK8LwBgdtqHkOf+bnm1efrBqhzMDryoaOzhnU4XX/Xa31If6XwOg1so/xUM/p3kY1qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkQsFpk3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BC8C4CEC5;
+	Thu, 10 Oct 2024 17:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728581418;
+	bh=XpGRAGtyIsiEHPmjp/KaxtwHf6HZzgXUKIaW/Wjya58=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QkQsFpk3jc348bLUkR6DV5qw1h2SmIHN6xJi5xxpUeF7nEjimWi0+OKuNK3nQM1Cl
+	 jgFEFleUVicrTMgNRshAkamAxcmVrRPZOAdBg7Ko3DDXu6gxP5nI9JYuths3ji320G
+	 emQQsa9plZHnDO+1sYT9QeJExTacCqVh2iMh8/68RhLrA546SoUZ0bV63Tx44vdH93
+	 gIpkhVJPjXzZ/TdKLa2eN7bZt0gxQtNJ1xd8ywYQ6RLsgvecJ9X3g/g68Ci5khY9rK
+	 V46b6k/alcIPFTFAaSyqIxO7blWGeOH8Khv5MNoQyb3qG8qES//g/EyRi2ZA9zeCXP
+	 Urg+/S/LHaykg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 77F103803263;
+	Thu, 10 Oct 2024 17:30:23 +0000 (UTC)
+Subject: Re: [GIT PULL] Btrfs fixes for 6.12-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <cover.1728571063.git.dsterba@suse.com>
+References: <cover.1728571063.git.dsterba@suse.com>
+X-PR-Tracked-List-Id: <linux-btrfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cover.1728571063.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc2-tag
+X-PR-Tracked-Commit-Id: e761be2a0744086fc4793a4870d4b5746b7fe8cd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
+Message-Id: <172858142218.2104012.8283558730005244193.pr-tracker-bot@kernel.org>
+Date: Thu, 10 Oct 2024 17:30:22 +0000
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zwcj5SC_MYrPpNQq@google.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 10, 2024 at 12:46:29AM GMT, Roman Gushchin wrote:
-> On Wed, Oct 09, 2024 at 05:35:50PM -0700, Shakeel Butt wrote:
-> > The memcg stats are maintained in rstat infrastructure which provides
-> > very fast updates side and reasonable read side. However memcg added
-> > plethora of stats and made the read side, which is cgroup rstat flush,
-> > very slow. To solve that, threshold was added in the memcg stats read
-> > side i.e. no need to flush the stats if updates are within the
-> > threshold.
-> > 
-> > This threshold based improvement worked for sometime but more stats were
-> > added to memcg and also the read codepath was getting triggered in the
-> > performance sensitive paths which made threshold based ratelimiting
-> > ineffective. We need more visibility into the hot and cold stats i.e.
-> > stats with a lot of updates. Let's add trace to get that visibility.
-> > 
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> 
-> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+The pull request you sent on Thu, 10 Oct 2024 17:01:57 +0200:
 
-Thanks for the review.
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc2-tag
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
