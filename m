@@ -1,91 +1,94 @@
-Return-Path: <linux-kernel+bounces-358074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823369979F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:00:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA7F9979F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AC31F2220B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69AB1B22A5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7342E29D06;
-	Thu, 10 Oct 2024 01:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40F2224CF;
+	Thu, 10 Oct 2024 01:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3vDKsI/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8ORzYCT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF715BE68;
-	Thu, 10 Oct 2024 01:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B83DF9D6;
+	Thu, 10 Oct 2024 01:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728522025; cv=none; b=k97rfuMdJypmjoeDpZt11nggYYJNHgPWQBjwKwMVoeBvSlz3RTsKEFboZtbZ+I1I6Yrjsjww//LmUuXp3eM5TtPCibNkAsJNCvlIXciuQBaOo/hvCCzqQ63q9PcHHPmaClK7msR5+UplQFhTLFHPQ31cWsDhVtxqTx7I/wGrvIc=
+	t=1728522070; cv=none; b=dUSSCGBSSm7GTNa0Stu13UFibgCPEC4qAs3i+Nxh5bJ/FDMIGeG7fmmEF+wcQ2IThvuB3djwXiFBHRr2orWuQhfiHX8MNK8OEel9+sPM3ByfZLmD59GycEUtdrIZiC1e6qBeC+MS9seEoKH6l0J0/JlkI7lGUuNjE/I+hlFD7YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728522025; c=relaxed/simple;
-	bh=pG2K624uEgi0xR+pggi3+7hy+WagHSAnEj/80vrp7VA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=n7P41SBB30EYBJDnkntkaC7nqfOWB1UTOAsTuIydpHQEGf2eydohV0y4dCi+W35OkImx/adCwTPD4qKX6qxjcI0JOcsNq3/9GhQDdkBmZPwO8bDJBT1eslkGFeJcgC9l0mGSGqzfRs0fVZwuUWb3CYn6877ckmunb/smdrwZw34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3vDKsI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09DDC4CEC3;
-	Thu, 10 Oct 2024 01:00:25 +0000 (UTC)
+	s=arc-20240116; t=1728522070; c=relaxed/simple;
+	bh=DpeB5UWr5Bb8oES9qXDvqB1/Pw3hbXWVNjFtf+W36Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqlJoUfuxG7GVGp4CFNEOndrDU/vVK9MMV8JlMoEkiAWYWC4Eq9EtFW1pqVqvqb4KTwn39EFSyFvMnLiCisXnEncWP0FcMYoArZ09aQaXDoPjQnR0gr9FFQgcgIxxG5lpBHBy7HjDLfUoJOxeKZCGH2hhM5U/RkTlaGpOYmfHFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8ORzYCT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A53CC4CEC3;
+	Thu, 10 Oct 2024 01:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728522025;
-	bh=pG2K624uEgi0xR+pggi3+7hy+WagHSAnEj/80vrp7VA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=m3vDKsI/ckTkn/sLY3MewfqfEU2dP4580FqwcCzozAtlcbp2yqhFOw/FnmyLksAeF
-	 /NhhY/fEG7MmMJydL5hfmA9qzqK61lkCXdpba0BmfqtfDTJ7yDUCw+Ur12NXQ1w6ra
-	 djySIMvuRqV5XnT0l5OyXKV0GTLUpGdhOwM5c7SfuyIJPcY/ZIbceSQd/K/4C9O5UL
-	 7CkO8M8MzfRGi369CgfwlIkkoEURG+73INBXEbi9Dn3fuo9olz3O9iZanKTQ68b8Sg
-	 FlgjORihI1OSevCaJuBQhX6I6fW4+JX7o9AcrEJVHu4m3Pm8sEk4kBLm6j+KSjRUJt
-	 OnURw8u1kdFfQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DA63806644;
-	Thu, 10 Oct 2024 01:00:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1728522069;
+	bh=DpeB5UWr5Bb8oES9qXDvqB1/Pw3hbXWVNjFtf+W36Ow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s8ORzYCTeYXPJAEUkV/ulCHp01iGvhr9UK67dKySFI+txfdyWr395q8DTkG/u1M5+
+	 2hjwsknNZMbcehlq2JmjJlQsEVASp93fzS6VN9IVcUeZy0vmnfm1nb4sfmvgeze9J5
+	 9UX9hLkWB7+BxJznALD0kQ0z5DHJlnwHfcZL/4Nmuy0ssGtr3jH6TEZ6hmlebb/yHV
+	 OWjjNDpNjtHfFu+2Q0nNKFxSvJlnGU0QpJUm4Esm+uyxXpsZmJNeLd5K394jo6h6J6
+	 cp/Z2EPI6tjPK/AJo6Q9IAGuy6qPK87JL7lARUyTIB3L4mBzgnNNpQ5EKjcvro8pc8
+	 f8hulp7/CU9KA==
+Date: Wed, 9 Oct 2024 18:01:08 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Alan Maguire <alan.maguire@oracle.com>,
+	Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	James Clark <james.clark@linaro.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
+ BPF skeletons
+Message-ID: <ZwcnVKn3wVSSMcaL@google.com>
+References: <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org>
+ <ZuL_0V5jgaaEUOY_@x1>
+ <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org>
+ <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
+ <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com>
+ <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
+ <CAH0uvohEozKixjDM9_jJ5FFxYK7agsqVO-BrAsm=4hCTDQAx2A@mail.gmail.com>
+ <9bbfe425-1f2b-4846-a5a3-a31618742e9a@oracle.com>
+ <CAH0uvojJ1rME4hb6NfrA4NPj2XmGMDLOLP3wEbHh8B5-qWGvFQ@mail.gmail.com>
+ <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net] net: ftgmac100: fixed not check status from fixed phy
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172852202999.1525987.11825427813885563934.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 01:00:29 +0000
-References: <20241007032435.787892-1-jacky_chou@aspeedtech.com>
-In-Reply-To: <20241007032435.787892-1-jacky_chou@aspeedtech.com>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, jacob.e.keller@intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 7 Oct 2024 11:24:35 +0800 you wrote:
-> Add error handling from calling fixed_phy_register.
-> It may return some error, therefore, need to check the status.
+On Tue, Oct 08, 2024 at 12:27:24AM -0700, Howard Chu wrote:
+> Hi Alan, Arnaldo and James,
 > 
-> And fixed_phy_register needs to bind a device node for mdio.
-> Add the mac device node for fixed_phy_register function.
-> This is a reference to this function, of_phy_register_fixed_link().
+> This problem was solved in [PATCH 0/2] perf trace: Fix support for the
+> new BPF feature in clang 12 (Link:
+> https://lore.kernel.org/linux-perf-users/20241007051414.2995674-1-howardchu95@gmail.com/T/#t),
+> sorry I forgot to cc you two.
 > 
-> [...]
+> Alan's thought was correct. Thank you so much! :)
 
-Here is the summary with links:
-  - [net] net: ftgmac100: fixed not check status from fixed phy
-    https://git.kernel.org/netdev/net/c/70a0da8c1135
+It'd be great if any of you can test this change.  Now I only have
+machines with clang 16.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Thanks,
+Namhyung
 
 
