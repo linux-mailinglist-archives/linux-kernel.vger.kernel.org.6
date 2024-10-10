@@ -1,145 +1,219 @@
-Return-Path: <linux-kernel+bounces-359070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C707998710
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBE4998718
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD1B1C215EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:04:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800C61C22FDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46781C7B8F;
-	Thu, 10 Oct 2024 13:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F51C7B6E;
+	Thu, 10 Oct 2024 13:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UO5kNgvI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fkLtGfLV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D271C7B70;
-	Thu, 10 Oct 2024 13:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E181C9DFA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565415; cv=none; b=XFIglxma88v5r+vZ42//7W2nkhPn7IhVT+ai8VFMk7QOgvxHI2KWPWvyGykyEmVmNNpdfyJPKC02If3uJQbIzBlh889CmO0UsNKoeC5560BS0dPxdRPyqKEQdWW5uRpN9VH7+dZXcv6aDJgzLzW1Ht/z3KZtjsc+9t2/jVl7g5o=
+	t=1728565477; cv=none; b=u297jirUvpKMZ+M6Au8xIgC8QNdAPQkRG9FsWcwyq0lpqimBUo1sF4zarnxOp+3jGS4yRcVnIMU3LQZndB8rYcG/Y9IuzT/Pe4qqjiRDv2ncAL9J6LXMG2lFsRy7oY8KLLxoFUA2ryqVP6UG/RC05g1qQDbCg8jZso8XQbGbofA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565415; c=relaxed/simple;
-	bh=lxTwG9FeY6tGa/suySl5tWQBbHE4hFx2E8w3ZHNgXu4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OLeTWvH7OVP6fUTCyiPouilYwS8aX1ejhZfAnafovvoOaiPaGTcFV3l1biOpFSMXuBuaLp1JpqzjkfFYDTCWchyrm18leWCc77klJKgiW7cNOgU8UTzLitdSJWrnfwwpB556W5/0RtwGm9ObUNYP42lwhni8UAN5RbWN/Ga3/p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UO5kNgvI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9D1C4CECC;
-	Thu, 10 Oct 2024 13:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728565414;
-	bh=lxTwG9FeY6tGa/suySl5tWQBbHE4hFx2E8w3ZHNgXu4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UO5kNgvIcGDuHVNFYCYI0c+G0EbwoaMcgQWGOu4kZKes9aOcnYvxyWuBiC618dyNm
-	 QW0R+QFFjozmPlaezhHAuBP2U/1A0f55vTY68kB93dJ0gBFn5InP54GDYqomD+eIsY
-	 jRAvuk2q7UkZb7JNJwgfHPy+qnBHm3Ih75R17T0K1/99sx6vU/gDkp8yTMiB5OZKut
-	 px7ZyVjo8MgdeZkAAYYuM+U7p0MD+0yV7G0CpyqtEUMe901bxURJbPfJqk5LwSM/3O
-	 2WL7360heBCEkHl1qq7+TO6mSQPyJhcZsb0UUWiSrSa7L+Rq9IbP+pVLBFzqclMNrN
-	 TEFLMCrXJQVfw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1syspI-002BvM-9A;
-	Thu, 10 Oct 2024 14:03:32 +0100
-Date: Thu, 10 Oct 2024 14:03:31 +0100
-Message-ID: <86o73s5cv0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>,	Oliver Upton
- <oliver.upton@linux.dev>,	Joey Gouly <joey.gouly@arm.com>,	Suzuki K Poulose
- <suzuki.poulose@arm.com>,	Zenghui Yu <yuzenghui@huawei.com>,	Catalin
- Marinas <catalin.marinas@arm.com>,	Will Deacon <will@kernel.org>,	Nathan
- Chancellor <nathan@kernel.org>,	Bill Wendling <morbo@google.com>,	Justin
- Stitt <justinstitt@google.com>,	=?UTF-8?B?UGllcnJlLUNsw6ltZW50?= Tosi
- <ptosi@google.com>,	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,	linux-kernel@vger.kernel.org,	llvm@lists.linux.dev
-Subject: Re: [PATCH] KVM: arm64: nVHE: gen-hyprel: Silent build warnings
-In-Reply-To: <b3c21234-73a0-43dd-8365-9039c62b7aa7@linux.alibaba.com>
-References: <20241009085751.35976-1-tianjia.zhang@linux.alibaba.com>
-	<86set55yca.wl-maz@kernel.org>
-	<b3c21234-73a0-43dd-8365-9039c62b7aa7@linux.alibaba.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1728565477; c=relaxed/simple;
+	bh=pf/Zzn68NMI/2QRu4HEmgc/wf5KLDfWtBLBltAF0X5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lFlkcgsP9ISyTdqigdy4XKqbAH1hmgtf8rGhDkdFAKtcGogaZNax59Snn6TwHJFNCLa2ID96TxBfZ0DYldZ64w9BnjTKlw6v8Ro0mSmxs36l0ghPQWyNnXgV+hFdupM6fpvCUE6NI4t7nLl6g8h8RH/jsukcgnD4gTd9quYJT0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fkLtGfLV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728565474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YgNKqmVF4jcBWTvWxpQl8M7npUyGix1i4lIqegvFbp8=;
+	b=fkLtGfLV18pWHY1YeCcgpX9cKdbJV4pU5QnPJryPjfbVHRHc6VPO/oYvOK2IHcy9PkOu5S
+	jgMO3GopcSTza7p7SxzRpE23PSeYz8+oVMkwbpJJMkHaTtyHF5gh3+kpWUt1edkvu+4RSA
+	GXBV/Kr+gA1BUNHbmM7J2zFCv/gHiJY=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-328-mC0SvDxgO6O0wz8_uQAsfw-1; Thu, 10 Oct 2024 09:04:24 -0400
+X-MC-Unique: mC0SvDxgO6O0wz8_uQAsfw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a996c29edaaso66012466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:04:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728565463; x=1729170263;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YgNKqmVF4jcBWTvWxpQl8M7npUyGix1i4lIqegvFbp8=;
+        b=DFoTcfJw1BhttFBnTG5X8jNpuVnsfCPTihihF/qGdITWzND7GzRqZWPSYhVG2P/izN
+         SiLTJ1Z7ep3/5QcWvl85U+fJAOQXcqpZPhM7UWy36aT3SCyEJm4EVsmtYyajcd9k6r8x
+         VdvwjM9TKp35RCiGdXVel7t1bwZUnqTRcNRxI6dJedLp/wmL9YpBsClxPXJ9RJhzTF5r
+         tovN578ZO7QwnzEg2V/tL/DUVOhxXur54+eCsBwBl6OdfqedboqNSoSonxMQdMCT+Cs1
+         3cV/G38bcqNLN5XjogaE0e+Pc0k3i48K7WlhG0Fj0QGCFqpl+WlWXgEYXSyCaA4j1dtq
+         xUiw==
+X-Gm-Message-State: AOJu0YxMqnM5fgi1MutOUXTMSwy7XYqW9VG7h2HO0n/EDtvCvfTH8pAd
+	GoWdNd39WnulVDjWqr+phfdvgaBwRMxCtxxlVPh9STBg62kE7XBmm+w/Hoz6FQHKgr3YN3XDuSB
+	mM2Wwk+llyv0NEwiuxnJVWb4NvPVVJglO4fE1GNvW0vMSKJ+DswDBeILqpQGdSg==
+X-Received: by 2002:a17:907:e89:b0:a99:3f4e:6de8 with SMTP id a640c23a62f3a-a998d3832e7mr553908766b.64.1728565462612;
+        Thu, 10 Oct 2024 06:04:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMD1tBOQvmwj6n6vN+SMosHlfw+ZrWKqK36twaCfYHtFB9zxuN7j1h3AJS92NyQRDi8e/Ghw==
+X-Received: by 2002:a17:907:e89:b0:a99:3f4e:6de8 with SMTP id a640c23a62f3a-a998d3832e7mr553903666b.64.1728565462083;
+        Thu, 10 Oct 2024 06:04:22 -0700 (PDT)
+Received: from [192.168.10.81] ([151.81.124.37])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a99a80f29e5sm85470866b.204.2024.10.10.06.04.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 06:04:21 -0700 (PDT)
+Message-ID: <9fd97046-b7b1-49d6-8fc5-2104814152d6@redhat.com>
+Date: Thu, 10 Oct 2024 15:04:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: tianjia.zhang@linux.alibaba.com, ndesaulniers@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, nathan@kernel.org, morbo@google.com, justinstitt@google.com, ptosi@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 0/5] mm: Introduce guest_memfd library
+To: Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Fuad Tabba <tabba@google.com>, David Hildenbrand <david@redhat.com>,
+ Patrick Roy <roypat@amazon.co.uk>, qperret@google.com,
+ Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, linux-arm-msm@vger.kernel.org
+References: <20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Oct 2024 09:12:29 +0100,
-"tianjia.zhang" <tianjia.zhang@linux.alibaba.com> wrote:
+On 8/30/24 00:24, Elliot Berman wrote:
+> In preparation for adding more features to KVM's guest_memfd, refactor
+> and introduce a library which abstracts some of the core-mm decisions
+> about managing folios associated with the file. The goal of the refactor
+> serves two purposes:
 > 
+> 1. Provide an easier way to reason about memory in guest_memfd. With KVM
+> supporting multiple confidentiality models (TDX, SEV-SNP, pKVM, ARM
+> CCA), and coming support for allowing kernel and userspace to access
+> this memory, it seems necessary to create a stronger abstraction between
+> core-mm concerns and hypervisor concerns.
 > 
+> 2. Provide a common implementation for other hypervisors (Gunyah) to use.
 > 
-> On 10/9/24 7:07 PM, Marc Zyngier wrote:
-> > On Wed, 09 Oct 2024 09:57:51 +0100,
-> > Tianjia Zhang <tianjia.zhang@linux.alibaba.com> wrote:
-> >> 
-> >> This patch silent the some mismatch format build warnings
-> >> with clang, like:
-> >> 
-> >>    arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:233:2: warning: format specifies
-> >>    type 'unsigned long' but the argument has type 'Elf64_Off'
-> >>    (aka 'unsigned long long') [-Wformat]
-> >>      233 |         assert_ne(off, 0UL, "%lu");
-> >>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>          |                              %llu
-> >>    arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:193:34: note: expanded from macro 'assert_ne'
-> >>      193 | #define assert_ne(lhs, rhs, fmt)        assert_op(lhs, rhs, fmt, !=)
-> >>          |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>    arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:188:19: note: expanded from macro 'assert_op'
-> >>      187 |                                 " failed (lhs=" fmt ", rhs=" fmt        \
-> >>          |                                                 ~~~
-> >>      188 |                                 ", line=%d)", _lhs, _rhs, __LINE__);    \
-> >>          |                                               ^~~~
-> >>    arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:167:17: note: expanded from macro 'fatal_error'
-> >>      166 |                 fprintf(stderr, "error: %s: " fmt "\n",                 \
-> >>          |                                               ~~~
-> >>      167 |                         elf.path, ## __VA_ARGS__);                      \
-> >>          |                                      ^~~~~~~~~~~
-> >> 
-> >> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> > 
-> > I don't see these warnings. What version of LLVM are you using?
-> > 
+> To create a guest_memfd, the owner provides operations to attempt to
+> unmap the folio and check whether a folio is accessible to the host. The
+> owner can call guest_memfd_make_inaccessible() to ensure Linux doesn't
+> have the folio mapped.
 > 
-> I compiled the kernel on Apple Silicon M3 Pro in macOS 15.0.1, Maybe this is
-> a special scenario that is rarely used.
+> The series first introduces a guest_memfd library based on the current
+> KVM (next) implementation, then adds few features needed for Gunyah and
+> arm64 pKVM. The Gunyah usage of the series will be posted separately
+> shortly after sending this series. I'll work with Fuad on using the
+> guest_memfd library for arm64 pKVM based on the feedback received.
 > 
-> Details of clang:
+> There are a few TODOs still pending.
+> - The KVM patch isn't tested. I don't have access a SEV-SNP setup to be
+>    able to test.
+> - I've not yet investigated deeply whether having the guest_memfd
+>    library helps live migration. I'd appreciate any input on that part.
+> - We should consider consolidating the adjust_direct_map() in
+>    arch/x86/virt/svm/sev.c so guest_memfd can take care of it.
+> - There's a race possibility where the folio ref count is incremented
+>    and about to also increment the safe counter, but waiting for the
+>    folio lock to be released. The owner of folio_lock will see mismatched
+>    counter values and not be able to convert to (in)accessible, even
+>    though it should be okay to do so.
+>   
+> I'd appreciate any feedback, especially on the direction I'm taking for
+> tracking the (in)accessible state.
 > 
->     # clang --version
->     Homebrew clang version 19.1.1
->     Target: arm64-apple-darwin24.0.0
->     Thread model: posix
->     InstalledDir: /opt/homebrew/Cellar/llvm/19.1.1/bin
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> 
+> Changes in v2:
+> - Significantly reworked to introduce "accessible" and "safe" reference
+>    counters
 
-What I have is similar enough:
+Was there any discussion on this change?  If not, can you explain it a 
+bit more since it's the biggest change compared to the KVM design?  I 
+suppose the reference counting is used in relation to mmap, but it would 
+be nice to have a few more words on how the counts are used and an 
+explanation of when (especially) the accessible atomic_t can take any 
+value other than 0/1.
 
-ClangBuiltLinux clang version 19.1.1 (https://github.com/llvm/llvm-project.git d401987fe349a87c53fe25829215b080b70c0c1a)
-Target: aarch64-unknown-linux-gnu
-Thread model: posix
-InstalledDir: /home/maz/hot-poop/llvm/llvm-19.1.1-aarch64/bin
+As an aside, allocating 8 bytes of per-folio private memory (and 
+dereferencing the pointer, too) is a bit of a waste considering that the 
+private pointer itself is 64 bits on all platforms of interest.
 
-and yet this doesn't fire. Can you try with a compiler actually
-targeting with Linux instead of MacOS?
+Paolo
 
-Thanks,
+> - Link to v1:
+>    https://lore.kernel.org/r/20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com
+> 
+> ---
+> Elliot Berman (5):
+>        mm: Introduce guest_memfd
+>        mm: guest_memfd: Allow folios to be accessible to host
+>        kvm: Convert to use guest_memfd library
+>        mm: guest_memfd: Add ability for userspace to mmap pages
+>        mm: guest_memfd: Add option to remove inaccessible memory from direct map
+> 
+>   arch/x86/kvm/svm/sev.c      |   3 +-
+>   include/linux/guest_memfd.h |  49 ++++
+>   mm/Kconfig                  |   3 +
+>   mm/Makefile                 |   1 +
+>   mm/guest_memfd.c            | 667 ++++++++++++++++++++++++++++++++++++++++++++
 
-	M.
+I think I'd rather have this in virt/lib.
 
--- 
-Without deviation from the norm, progress is not possible.
+Paolo
+
 
