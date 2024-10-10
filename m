@@ -1,121 +1,152 @@
-Return-Path: <linux-kernel+bounces-358270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2681997C60
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:26:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA11997C65
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD3D1F242D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:26:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3C16B23648
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8593519DF75;
-	Thu, 10 Oct 2024 05:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D1C19EEC7;
+	Thu, 10 Oct 2024 05:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TmT6J0gz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hrEDYwFz"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C3819DFA7;
-	Thu, 10 Oct 2024 05:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C28F2AEEC;
+	Thu, 10 Oct 2024 05:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728537959; cv=none; b=kqE5HaN4xe9qNr0kJAwADo0fJQHKJsmp4/XmPpaQ/dxiOzLyS3uXSP9ZYg109ZyB8pYxVdQ+Z2EYNlKWVsuLEsfAca5LX2rB4AjR1QgCgVHZ0jOF47PLHY35UR7p/N/NXzgXt1Nc3y7H1RdQ1w3lQfv8+5JSyvjuo36m8KctjuI=
+	t=1728538005; cv=none; b=IPrbhp4VNwLkDBviQltfFYN5UE95Dc2713S5StOw4tLIVMkbS3wXA3DMdXZwlV+ujrlHYLFYzUM+4t3VN+KK3AQNO6ipzci/aRJECPFe1wXxJwojvKIxUGhVedTBiIhV746HHBKof/zCQG6akQZTxqbOLnfCA43Y6rBLnHaNZHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728537959; c=relaxed/simple;
-	bh=HqNI68+1egIUPuvtdCchmRg1KOxzKwFABjAGLj1YEyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qgNULzRnnJuL6QBhHqQuM8dkPCu24vy2nIIlDwvJ0vvsKPOfmN30Z8gQVxKz/EcAV9ofwqiXHus6OptAT61RnHGRaijlyA7tiHgEKCG3magfpvUXa3pZz0A5g5ygs1EqoUL7x45fQdxBlbHW4NMjfNiI5WLiTfHvEkf7BZuffZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TmT6J0gz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1bDQQ015787;
-	Thu, 10 Oct 2024 05:25:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Rrxvtk20DyXUT9Q3kRJiXziMCR5VRU40fplU6u4GV+k=; b=TmT6J0gzyMToyrUc
-	sm0IA/vdygGwHb0dLlrl+LVOVxCG8p7zOHWf3atuSMabPf/qDeDiWjRO6P923/6l
-	QJteYZlTTKcPkTfL6/xIQqLO0eAG1AfSz7G/Nr+rpeYhJm+47A73u0oRR610n4PF
-	4ZR9TpMsiq6nH1o70S30u85BKOmNlkhbM8ISKPpaEEovBgbaRAjpv/VpM66yLZYC
-	tR1QSG4ORhwuvvuoBnMVUbkrNjhJgoeUIXkVVCdrgHpRWuz9XN+nFUMlte/nhfcq
-	zeJBfioR/C0S4MH2tnnduxOH25bvBpRrYUa3Vy+dGwf3SoMglvxZN4pwFzeyJrnU
-	UjSQqA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424kaf0knk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 05:25:53 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A5Ppm0023201
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 05:25:51 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 9 Oct 2024
- 22:25:48 -0700
-Message-ID: <27fee62d-a39c-4473-88b4-91670ddc8fde@quicinc.com>
-Date: Thu, 10 Oct 2024 10:55:45 +0530
+	s=arc-20240116; t=1728538005; c=relaxed/simple;
+	bh=sFwwmMSzqurE1sruBpItZIzFYoywFaGLAcvZ+DkleU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dVlmXvsU+pSFL2F0tPQbb0gBi7Ouv7uXUVITgSqh1sjTC9r9kqJ4pG2rDl90FOd7440wwSJQEyBn9onG4zolDY5b8+p0Nlhlv+CQsAGpiNR0b7/+Ce9vnfsk9faYCdmVJknolKfVlPA9aisR2zel7r/frW4bG46QBbmOTlMLx3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hrEDYwFz; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53959a88668so545196e87.2;
+        Wed, 09 Oct 2024 22:26:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728538002; x=1729142802; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I2OggcA+gxqqTXGi/3T5tDMn09O+q9SzuiOHvmMgRpY=;
+        b=hrEDYwFzbe9C2gsRAH3VRZVoZjlD+27AXqm6pHTTZ3uoCOUdUdIJ1B6jepxTcwTiaO
+         BqEAmw2ISNKDMu4SRExCA0NqbqvpRKx8ECe/2CU7PhM5VIXwWx9KpnKvJbTI4XpQ6CA5
+         34jVe3qc3YzahdUw4BXdtBfiojfRAw+qOp1pcpMdjotEugwY+whwYKqKXEokwLn66pA4
+         Z3NFWKTSnqLUlWLKTb5HMraQToxnPm5fWzBpCT4or18QHTvNrlH4InYAw+z/7+cWcQNU
+         CBUIor36+lj1x6LhcUQlTIM1iH5ogn3SQX1PLkOzO6/ogYtNrfSlCA4u+ddjtjDQdC0Q
+         Yydw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728538002; x=1729142802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I2OggcA+gxqqTXGi/3T5tDMn09O+q9SzuiOHvmMgRpY=;
+        b=tdfWAxwGTi66flHgkONCr13UN/7L5sTmfwuLOXjMKsXb/dJQUVlq6eBkvMlrMPJoYw
+         tNK4LaRs/CaiARu8tNT+sACQlj7q9v/PQ02Op6C4XDUcV1ZRjjnu+X26xVX+JpFhsudL
+         2ndteeI5kcRuhg9l/1Oi9B9XWYMeJ7aim4i7YXDqKIj9nVtfePA+P2OFxnUrPtynljwN
+         VtOxN0ifQAAc71egCS70WJeTzZVfx36ZDbZFzc4M7GZlcWjLnKtzkc6KCTtlfh7ilwhB
+         7V6/65SLw85+pczqYYumO7mBYXVJSOhftmwWNU6ECTpZUpBaTg4EJV/JqNYaKM6mGJbG
+         6Rxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA9GIQHYIlDYpTOBmsFcSAu359IFA6EvoUSEvYgumgwteMsPCpMCjKUeqdE/KDuLCmWZBxQ9EKpZ744eg=@vger.kernel.org, AJvYcCXKKQ/OJn5bqVyF+vjcLbTv7TumZD5ERL7atL2Xk9hvjstuZFCRcOarrKJkWJ0e+22nml2k3THGVG87Gsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjvOZnCa/pUMbhGFkUZ8+cwIWy09g/G+8NEwT558lE71o/Wmm6
+	W2A+jHyoHqGzkQun4u0U2dFlWccfjh5aoyUDskMVSUfT+eodr6s+qMnKpw6ZVqcjCWpoyUCyJ9p
+	IKIQW168t3eI/xSMLkkytNdJweGLdcezs
+X-Google-Smtp-Source: AGHT+IEbIWNphp9CaxyIBmS6fFoevv90QzHYFfcACGBeoawWKdzJgDWeGYAJzuVQ4Yqa5/qKqf5ITwHfksRZcGmb+ws=
+X-Received: by 2002:a05:6512:4003:b0:539:88f7:d3c0 with SMTP id
+ 2adb3069b0e04-539c496ce04mr3124182e87.51.1728538001854; Wed, 09 Oct 2024
+ 22:26:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] misc: fastrpc: Add CRC support using invokeV2
- request
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>
-References: <20241007084518.3649876-1-quic_ekangupt@quicinc.com>
- <20241007084518.3649876-2-quic_ekangupt@quicinc.com>
- <2024100729-overall-sugar-d3b8@gregkh>
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024100729-overall-sugar-d3b8@gregkh>
+References: <20241001175057.27172-1-quic_pintu@quicinc.com> <CABdmKX2xEn8QjObqR3VNb=RqMZVNBiNtkfYWm8h_3Xc8KMkdag@mail.gmail.com>
+In-Reply-To: <CABdmKX2xEn8QjObqR3VNb=RqMZVNBiNtkfYWm8h_3Xc8KMkdag@mail.gmail.com>
+From: Pintu Agarwal <pintu.ping@gmail.com>
+Date: Thu, 10 Oct 2024 10:56:29 +0530
+Message-ID: <CAOuPNLihBBQ0zviFsQ7Vqsde+yy3CGP5OJUkaZFA=1aZbj_NZg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dma-buf/heaps: replace kmap_atomic with kmap_local_page
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: Pintu Kumar <quic_pintu@quicinc.com>, sumit.semwal@linaro.org, 
+	benjamin.gaignard@collabora.com, Brian.Starkey@arm.com, jstultz@google.com, 
+	christian.koenig@amd.com, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org, joe@perches.com, skhan@linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6uFSrIisUPkg-C-OKWfDOjKCSIUIdko2
-X-Proofpoint-GUID: 6uFSrIisUPkg-C-OKWfDOjKCSIUIdko2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=703 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100034
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/7/2024 2:23 PM, Greg KH wrote:
-> On Mon, Oct 07, 2024 at 02:15:15PM +0530, Ekansh Gupta wrote:
->> +struct fastrpc_invoke_v2 {
->> +	struct fastrpc_invoke inv;
->> +	__u64 crc;
->> +	__u32 reserved[16];
-> I'm sure we have been over this before, but if you have a reserved
-> field, you HAVE to check that it is zero if you ever want to use it in
-> the future.  As you did not check it, just remove it from this structure
-> as obviously it can never be used for anything.
+On Wed, 2 Oct 2024 at 02:54, T.J. Mercier <tjmercier@google.com> wrote:
 >
-> Your internal review should have caught this, if not, please go fix it
-> AND get some internal review and signed-off-by before submitting this
-> series again.
-Thanks for your insights. I'll fix this in the next patch. My apologies for missing it.
-
---ekansh
+> On Tue, Oct 1, 2024 at 7:51=E2=80=AFPM Pintu Kumar <quic_pintu@quicinc.co=
+m> wrote:
+> >
+> > Use of kmap_atomic/kunmap_atomic is deprecated, use
+> > kmap_local_page/kunmap_local instead.
+> >
+> > This is reported by checkpatch.
+> > Also fix repeated word issue.
+> >
+> > WARNING: Deprecated use of 'kmap_atomic', prefer 'kmap_local_page' inst=
+ead
+> > +                       void *vaddr =3D kmap_atomic(page);
+> >
+> > WARNING: Deprecated use of 'kunmap_atomic', prefer 'kunmap_local' inste=
+ad
+> > +                       kunmap_atomic(vaddr);
+> >
+> > WARNING: Possible repeated word: 'by'
+> > +                        * has been killed by by SIGKILL
+> >
+> > total: 0 errors, 3 warnings, 405 lines checked
+> >
+> > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
 >
-> thanks,
+> Reviewed-by: T.J. Mercier <tjmercier@google.com>
 >
-> greg k-h
+> The Android kernels have been doing this for over a year, so should be
+> pretty well tested at this point:
+> https://r.android.com/c/kernel/common/+/2500840
+>
+Thank you TJ for the review.
+Hope this will be picked soon.
 
+> > ---
+> >  drivers/dma-buf/heaps/cma_heap.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/c=
+ma_heap.c
+> > index 93be88b805fe..8c55431cc16c 100644
+> > --- a/drivers/dma-buf/heaps/cma_heap.c
+> > +++ b/drivers/dma-buf/heaps/cma_heap.c
+> > @@ -309,13 +309,13 @@ static struct dma_buf *cma_heap_allocate(struct d=
+ma_heap *heap,
+> >                 struct page *page =3D cma_pages;
+> >
+> >                 while (nr_clear_pages > 0) {
+> > -                       void *vaddr =3D kmap_atomic(page);
+> > +                       void *vaddr =3D kmap_local_page(page);
+> >
+> >                         memset(vaddr, 0, PAGE_SIZE);
+> > -                       kunmap_atomic(vaddr);
+> > +                       kunmap_local(vaddr);
+
+However, I realized one more thing.
+This can be easily replaced by:
+memset_page(page, 0, 0, PAGE_SIZE);
+
+I will push this in new patchset once this is available in linux-next.
+
+Thanks,
+Pintu
 
