@@ -1,122 +1,171 @@
-Return-Path: <linux-kernel+bounces-359030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F164F998693
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:48:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0E299869A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D852815E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF951F22262
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA5026AC1;
-	Thu, 10 Oct 2024 12:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA31C6F4D;
+	Thu, 10 Oct 2024 12:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cg0eNGU/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oz1mEWob"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E421C2DC0;
-	Thu, 10 Oct 2024 12:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165C61C3F26;
+	Thu, 10 Oct 2024 12:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564532; cv=none; b=GS6SoKmRZVNQy5LZGBtcUD2xOrm/RI1NxcMqsd+jIqbNps22Pk2mCJIR3CjoBazNK77dnApPmFCx1uTYis/MfUvp3c43fdaFXRJNhjZx+J6DhcdxcovlPg9ykTQNVaYDJvm4+bATA+X028ll0pJBcw1lvSPhGUl839lZzPgmBFY=
+	t=1728564564; cv=none; b=ZrChTgdTpoyK4cyRI779H4WHx5fHLdQjGTrForGKI1seiKgXckz8yqmp6qJ9f/p81hpjOquQVEvV4k7ZCjREAx2V90yPIt2wBbx6VYpNaeiD8WPTZMpNWXPCAs0JzJR7ivFFx2LpNHxDO67d0+8KP3U+RsIhxaCOtqapr28KehA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564532; c=relaxed/simple;
-	bh=WUsGBhNiUOGibvX+TfnhtxeDW+47I99Xj6155xLKYE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRPH5tkAukbAb3HETolcFvrZq7MBuGmEBmBXmMQzPLp8gUiLUj0aaHoXgthQBW+9rCyyf6Cil4YRjCa76uiasVIS6iucHm7O04tV+HLlq/JwW34BzfsnlkRlXHbX4T7GdHl6cT0PR32P7AoASFEXq/05cvGOoY4wwc46fZjHWlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cg0eNGU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952DBC4CEC5;
-	Thu, 10 Oct 2024 12:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728564532;
-	bh=WUsGBhNiUOGibvX+TfnhtxeDW+47I99Xj6155xLKYE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cg0eNGU/DxBGfV06IVtnxr1gs8cgunS1vYUfaSsJiwnXcSjfPFjTY+whTG40x4R+A
-	 2eA658sLq1Nf1aSZfPXKl+IzLp0RtCbSVF68PXy5GZgdiY215G3o5NVOfnwX9fxyuG
-	 FTbRVr3czFEp0W8c5MVZFMLraKdeigDRW3gKvxfZ44aV2yvEaJlmhNyRYOZypkc3Ob
-	 l57p91mxSMeDcDu05Ov4yZaSyL8QLGRwZ7whZDukUvFhIRGxl5fWwgt2fUNIvaKHf+
-	 Eg9aDP5KDBS6spu0DerZIXyVTFAYIciQIYuaeO2B3eirQAFF2qMrsTR2ozk+h36z7/
-	 KzgUILDUO4e2A==
-Date: Thu, 10 Oct 2024 09:48:47 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>
-Subject: Re: [PATCH] perf test: Fix probe testsuite with a new error message
-Message-ID: <ZwfNL2sLL8cDy2au@x1>
-References: <20241010051620.1066407-1-namhyung@kernel.org>
+	s=arc-20240116; t=1728564564; c=relaxed/simple;
+	bh=peJCajT9JrXEyFW7QG0r6H6LQ1MBhLze2K+6buEL3xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+o58NTSaWiK1A7PbQyB97jHcOMIOvRo30IUQ/tNrNmSmSq1EMSokXnfGocKpxk5czt9tbKcBdP4WQlItOfz9gXMCGVViYdQXC439nramoLAdE5hWiF3GEXlDuUolqpjV/MCNML4wdSk6DcneKbXXTSfwd9cmXcC9GoXCLoFRgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oz1mEWob; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728564560;
+	bh=peJCajT9JrXEyFW7QG0r6H6LQ1MBhLze2K+6buEL3xw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oz1mEWob0bLo3tFj/UZ1xluxr6hYvEq4h1UspMdA6+l+A/m1HNWUQmfOSVlR6ttGy
+	 J3KCM9lroR2SFR+3TRZIFhBXmr9xEU+BNp7FZCwQQcI+dsB5AlPRSzna/Ke6ZrOZGT
+	 N1nSislJSTMtsj0d9UjBkvkWaaIdXhgSzWfQ2UGfmuWe6TWU0cmeJ3w7PI9K6JoOEh
+	 AqYzvkgywv4D4j1thdPHBA2OL8UlI1H0iXXsZGdhNxdxGuA2wGqRJL/l+Eaw4uCGTe
+	 U05rr0cvsUZk/TUARKVnMyn4W8DqOOwQ72WkeMgJ7KGAmAf3YVDlU3Yv37WOjhKHF9
+	 mN+/9pAZy5EFA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7C6F217E35EA;
+	Thu, 10 Oct 2024 14:49:19 +0200 (CEST)
+Message-ID: <93234ce4-e831-41aa-9485-53997b5cacaf@collabora.com>
+Date: Thu, 10 Oct 2024 14:49:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010051620.1066407-1-namhyung@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 04/10] media: platform: mediatek: add isp_7x cam-raw
+ unit
+To: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian Konig <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
+ teddy.chen@mediatek.com, hidenorik@chromium.org, yunkec@chromium.org,
+ shun-yi.wang@mediatek.com
+References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+ <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 10:16:20PM -0700, Namhyung Kim wrote:
-> On my system, it's constantly failing because of new error message from
-> perf probe.  It should update the regex pattern to match the message -
-> "A function DIE doesn't have decl_line. Maybe broken DWARF?".
+Il 09/10/24 13:15, Shu-hsiang Yang ha scritto:
+> Introduces the ISP pipeline driver for the MediaTek ISP raw and yuv
+> modules. Key functionalities include data processing, V4L2 integration,
+> resource management, debug support, and various control operations.
+> Additionally, IRQ handling, platform device management, and MediaTek
+> ISP DMA format support are also included.
 > 
->   $ sudo head -n 2 /sys/kernel/debug/kprobes/blacklist | cut -f2
->   warn_thunk_thunk
->   asm_exc_divide_error
-> 
->   $ sudo perf probe warn_thunk_thunk
->   A function DIE doesn't have decl_line. Maybe broken DWARF?
->   A function DIE doesn't have decl_line. Maybe broken DWARF?
->   Probe point 'warn_thunk_thunk' not found.
->     Error: Failed to add events.
-> 
->   $ sudo perf probe asm_exc_overflow
->   Failed to find scope of probe point.
->     Error: Failed to add events.
-
-We discussed this in the past, I came up with a similar patch, Veronika
-rightly pointed out that this may point to a real problem, Masami said
-that since these are for DWARF from assembly those are known issues, I
-suggested Veronika checked if the CU where the function came from was
-generated from Assembly (there are DWARF tags that have that info), IIRC
-she said she would try to do it.
-
-I'll try to find out the threads and see what happened.
-
-- Arnaldo
- 
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Michael Petlan <mpetlan@redhat.com>
-> Cc: Veronika Molnarova <vmolnaro@redhat.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>
 > ---
->  tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>   .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.c  | 5359 +++++++++++++++++
+>   .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.h  |  325 +
+>   .../isp/isp_7x/camsys/mtk_cam-raw_debug.c     |  403 ++
+>   .../isp/isp_7x/camsys/mtk_cam-raw_debug.h     |   39 +
+>   .../isp_7x/camsys/mtk_camera-v4l2-controls.h  |   65 +
+>   5 files changed, 6191 insertions(+)
+>   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
+>   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.h
+>   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw_debug.c
+>   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw_debug.h
+>   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_camera-v4l2-controls.h
 > 
-> diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-> index b5dc10b2a73810b3..01e5e09053c37e46 100755
-> --- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-> +++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-> @@ -42,7 +42,8 @@ REGEX_ERROR_MESSAGE="Error: Failed to add events."
->  REGEX_INVALID_ARGUMENT="Failed to write event: Invalid argument"
->  REGEX_SYMBOL_FAIL="Failed to find symbol at $RE_ADDRESS"
->  REGEX_OUT_SECTION="$BLACKFUNC is out of \.\w+, skip it"
-> -../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
-> +REGEX_BROKEN_DWARF="A function DIE doesn\'t have decl_line\. Maybe broken DWARF\?"
-> +../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" "$REGEX_BROKEN_DWARF" < $LOGS_DIR/adding_blacklisted.err
->  CHECK_EXIT_CODE=$?
->  
->  print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
-> -- 
-> 2.47.0.rc0.187.ge670bccf7e-goog
+> diff --git a/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
+> new file mode 100644
+> index 000000000000..c025f53c952d
+> --- /dev/null
+> +++ b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
+> @@ -0,0 +1,5359 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2022 MediaTek Inc.
+> +
+> +#include <linux/clk.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/vmalloc.h>
+> +#include <linux/videodev2.h>
+> +#include <linux/suspend.h>
+> +#include <linux/rtc.h>
+> +
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-event.h>
+> +#include <media/v4l2-ioctl.h>
+> +#include <media/v4l2-subdev.h>
+> +
+> +#include <soc/mediatek/smi.h>
+> +
+> +#include "mtk_cam.h"
+> +#include "mtk_cam-feature.h"
+> +#include "mtk_cam-raw.h"
+> +
+> +#include "mtk_cam-regs-mt8188.h"
+> +
+> +#include "mtk_cam-video.h"
+> +#include "mtk_cam-seninf-if.h"
+> +#include "mtk_camera-v4l2-controls.h"
+> +
+> +#include "mtk_cam-dmadbg.h"
+> +#include "mtk_cam-raw_debug.h"
+> +
+> +static unsigned int debug_raw;
+> +module_param(debug_raw, uint, 0644);
+> +MODULE_PARM_DESC(debug_raw, "activates debug info");
+> +
+> +static int debug_raw_num = -1;
+> +module_param(debug_raw_num, int, 0644);
+> +MODULE_PARM_DESC(debug_raw_num, "debug: num of used raw devices");
+> +
+> +static int debug_pixel_mode = -1;
+> +module_param(debug_pixel_mode, int, 0644);
+> +MODULE_PARM_DESC(debug_pixel_mode, "debug: pixel mode");
+> +
+> +static int debug_clk_idx = -1;
+> +module_param(debug_clk_idx, int, 0644);
+> +MODULE_PARM_DESC(debug_clk_idx, "debug: clk idx");
+> +
+> +static int debug_dump_fbc;
+> +module_param(debug_dump_fbc, int, 0644);
+> +MODULE_PARM_DESC(debug_dump_fbc, "debug: dump fbc");
+> +
+In addition to the first review that I gave you on patch [02/10]: please drop
+all those module parameters. If you want debug switches, use debugfs instead.
+
+Regards,
+Angelo
 
