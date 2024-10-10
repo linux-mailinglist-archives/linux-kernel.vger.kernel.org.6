@@ -1,227 +1,217 @@
-Return-Path: <linux-kernel+bounces-360137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB12999511
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D0E999527
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5466A284609
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256821F274B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88BB1E572D;
-	Thu, 10 Oct 2024 22:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC161EF0BD;
+	Thu, 10 Oct 2024 22:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="eNapYM1q"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvOHar8S"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA201BDA9A;
-	Thu, 10 Oct 2024 22:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F6A1E9091;
+	Thu, 10 Oct 2024 22:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598957; cv=none; b=UZf12Z/i6PauxMLuj7xU4WxrAXttNmD7HRLKJv6qAOrvdCEBDi3u8sq9daq3GWhxm09v9CkctgjWDMHELiq0XBNYJnImHP45kPcW/bmeshgcoC15P8akDxZrFAvZQQ/jSSv5TzeL6dWRnL4f3yoa78qdIABybeuz2f6n9lPN6pc=
+	t=1728598961; cv=none; b=OarNxrTpmfivUPGUKxRapNKqPma977gbmAKcalwrb5eu846Zonn1/t5kiySaCGdm3zCTcxGBJhwl0g40b/g5RGpMmLQdvkcMoDu4yihzVlM3ShJ96Ee6OiaSKNM/yym3Ja8m8hUIMc1z2UgTJtqfPPop09z4bFZzgMoyWV+dHRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598957; c=relaxed/simple;
-	bh=/ZCMzvsyY8AkHkTgqfvOe0987FpFdTCSBezdckfQuss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MmSQ9w7al1cxYKaiQ1kVAEINGaNIPO8GzEkashKchuGrX+dx/3mE7yYmKiappdcHY2pFyKVvjhoWV2GEQb4BMvd3H6wvlqtKgK2SQbdvT6CMt5qJOTptWlaJ02qejl83+4nQ5VZr1Nt7Hq07P4FefoDFfaWl5AVg9TAStLlpKFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=eNapYM1q reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 92e9b709ea85c6a5; Fri, 11 Oct 2024 00:22:25 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3507369EF02;
-	Fri, 11 Oct 2024 00:22:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728598945;
-	bh=/ZCMzvsyY8AkHkTgqfvOe0987FpFdTCSBezdckfQuss=;
-	h=From:Subject:Date;
-	b=eNapYM1qme+moj8TNyhiVf4tEjaInNKOgRCi8MFoH+lGDtX1ZOVkXUqMAAoqyZnfC
-	 JbkfRgKN2wxnpWii7oiMEdIhrT/XC9BXR4ck+tGA4Sa2js34kCZh7E6IZh/Glkz5X6
-	 4yi+EHSdr1lfBqjuuST+Rzo3iNOsJ4YLgbv0eL5mZGqM09fCOawRNu/453u8dqU/Ur
-	 bjkMLlDp94UDpU3fQMqrlwkHuDWgAx/g1BEpfDIQHOb0PefmEdyVC6+noS5pYEYJIx
-	 HI+aq4/LlaT7X15MW5elTWkFd4tsnZ3k6UOrf4X8V/y2eGumVBJG2bILKxeCk1LSkz
-	 7lr0Zgeijvpjw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v2 11/11] thermal: core: Manage thermal_governor_lock using a mutex
- guard
-Date: Fri, 11 Oct 2024 00:22:09 +0200
-Message-ID: <3679429.R56niFO833@rjwysocki.net>
-In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1728598961; c=relaxed/simple;
+	bh=gemCiS2iR6rMBKQV+E/ag/riT2JdV0rWSQPpaz+ddsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mrWGSZ5vEfvYT9SWQSahToAL/bk66exvWqa+vVvaIY2ofj1Wkrvb7HnWArjSk1VPVGx2eXyDJDdAi/jlj3XRe2gZwUFYhls2xLLwu4fGMT/ypqZIl8wXQ5rPcbzMHFqbsmzInUZML+tgt5vJa0ytbEBVhSOSWtV03HF09qXBBq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvOHar8S; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2bb1efe78so1035205a91.1;
+        Thu, 10 Oct 2024 15:22:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728598959; x=1729203759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DJ3QmMlS95A6MHzFTxNEnAHvRaHc4Cdj7eqnkirwFiE=;
+        b=HvOHar8SlYD0VRxO5vJvbMLR9NL9xhl7T7VpZ8zBrGlOsLkbomeJRhryhGmDOWNS9B
+         1t0RhoDeMcQJ/Ke4oEJpgxuXXSujmQ32+IhE5DuxF6nmpyC9NU/skwzQVMVOBEiLRkcm
+         TDzEScUxuKwTwmJ4mGaax/K712CrqXbTZ5J6JenT+GkfOJ7OskcaLb1IXxQ5C4S0qFoA
+         FXdhEX8e8Qnr2LdHfOgNF3GHB+gvBIkcroOgfL3e/c2JVfV1M/M6ecnsqIR3Oq3uw7Ua
+         dDhVoVnSdqvPmn1mwipP99lME5Pm7FGQAPD/OZsP1S4YbJF5IQ8rUvPt7Gn668B8c2t2
+         ms/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728598959; x=1729203759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DJ3QmMlS95A6MHzFTxNEnAHvRaHc4Cdj7eqnkirwFiE=;
+        b=FxbqNEwR6neWk2599CByhen7aUmeBNUCKrVV2pVd2hyjK5roZ/HiiNH8sx2YVGb03W
+         gvueZxRLQI42UyPOI6hGofN05mYUb0Pi2QUVrgvYvMJqI1Oc0seiO9+GSM5rxDJAZIwj
+         zDYIzouPKpb6rubLY4h/DCKecv430vD98CunKmwGlgyzDSpi4z2Vq4Z2DuncTBfJ1/rC
+         sL2CZFFg5Kl5YC2WqIikPAbjkS+T2FVfWM8TeFR9HANXi82sBP3bRYbDAZtRl+46LqZM
+         FGobnej4u7q+wmP+IYqW2mTjSHNQKIInZAcOOjg167U32PqYvjZQu1rud4hrNj3Yl5+V
+         aPOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTeKSuJ4Zc6NHVA6YNtsXbuO46A/M8WvZtH0PQpIDwqMe3JDkulisDON8qpaw2TSeuCpetzYZHwjWOdu2S@vger.kernel.org, AJvYcCW+fMd3/5kyse24J1z7ZOHBeqBokQ6QjpV7ocG0R0aGQ3GUEgLjiZY/fv3OB95USlOQdko=@vger.kernel.org, AJvYcCXsR9LNjOHYtro0Xuw/bfcAA8FMgZNoB74KxbXWyd58dthlu2AtVist5BiJSycoUu/UnPdM+gegOz81yCL3LYDY+fIs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiGXV1CgKUi+4LcDXBi8t6L9mDzpOX/F8mrp1gCbCA1VGqAq5j
+	EvgYheVja2TswqlktS8YHcAWMOgEXHFPmWH3PFhu2lPXXyJCbb2hMgG9YOA0SaG7FPt31xp6HZw
+	IoXaRUnEmzXQe3A/kH+hqijSt2AondJ/6
+X-Google-Smtp-Source: AGHT+IF0HWG7jJwsVwL+jVP75fRAK56Gx2iufwCdfrFqkGu3wPHuQlDLS+8o28DvbEI4M7jB5O+2jJtOXHzLUVjMsOE=
+X-Received: by 2002:a17:90a:a412:b0:2d8:b510:170f with SMTP id
+ 98e67ed59e1d1-2e2c81d3daamr6242625a91.20.1728598958986; Thu, 10 Oct 2024
+ 15:22:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20240909071114.1150053-1-liaochang1@huawei.com>
+ <CAEf4BzZVUPZHyuyt6zGZVTQ3sB8u64Wxfuks9BGq-HXGM1yp3A@mail.gmail.com> <ZwezYJIIsiAeK46P@J2N7QTR9R3>
+In-Reply-To: <ZwezYJIIsiAeK46P@J2N7QTR9R3>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 10 Oct 2024 15:22:26 -0700
+Message-ID: <CAEf4BzbEGN4zpjg9fwdfnj0pjBDT2_YzE1WkpwVjee-FZL1_ZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: insn: Simulate nop instruction for better
+ uprobe performance
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Liao Chang <liaochang1@huawei.com>, will@kernel.org, catalin.marinas@arm.com, 
+	ast@kernel.org, puranjay@kernel.org, andrii@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedguddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriih
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Oct 10, 2024 at 3:58=E2=80=AFAM Mark Rutland <mark.rutland@arm.com>=
+ wrote:
+>
+> Hi Andrii,
+>
+> On Wed, Oct 09, 2024 at 04:54:25PM -0700, Andrii Nakryiko wrote:
+> > On Mon, Sep 9, 2024 at 12:21=E2=80=AFAM Liao Chang <liaochang1@huawei.c=
+om> wrote:
+>
+> > I'm curious what's the status of this patch? It received no comments
+> > so far in the last month. Can someone on the ARM64 side of things
+> > please take a look? (or maybe it was applied to some tree and there
+> > was just no notification?)
+> >
+> > This is a very useful performance optimization for uprobe tracing on
+> > ARM64, so would be nice to get it in during current release cycle.
+> > Thank you!
+>
+> Sorry, I got busy chasing up a bunch of bugs and hadn't gotten round to
+> this yet.
+>
+> I've replied with a couple of minor comments and an ack, and I reckon we
+> can queue this up this cycle. Usually this sort of thing starts to get
+> queued around -rc3.
 
-Switch over the thermal core to using a mutex guard for
-thermal_governor_lock management.
+Thanks Mark! I'm happy to backport it internally before it goes into
+official kernel release, as long as it's clear that the patch is in
+the final state. So once Liao posts a new version with your ack, I'll
+just go ahead and use it internally.
 
-No intentional functional impact.
+When you get a chance, please also take another look at Liao's second
+optimization targeting STP instruction. I know it was more
+controversial, but hopefully we can arrive at some maintainable
+solution that would still benefit a very common uprobe tracing use
+case. Thanks in advance!
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+  [0] https://lore.kernel.org/linux-trace-kernel/20240910060407.1427716-1-l=
+iaochang1@huawei.com/
 
-This is a resend of
-
-https://lore.kernel.org/linux-pm/863177860.0ifERbkFSE@rjwysocki.net/
-
----
- drivers/thermal/thermal_core.c |   40 +++++++++++++---------------------------
- 1 file changed, 13 insertions(+), 27 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -124,7 +124,7 @@ int thermal_register_governor(struct the
- 	if (!governor)
- 		return -EINVAL;
- 
--	mutex_lock(&thermal_governor_lock);
-+	guard(mutex)(&thermal_governor_lock);
- 
- 	err = -EBUSY;
- 	if (!__find_governor(governor->name)) {
-@@ -163,8 +163,6 @@ int thermal_register_governor(struct the
- 		}
- 	}
- 
--	mutex_unlock(&thermal_governor_lock);
--
- 	return err;
- }
- 
-@@ -175,10 +173,10 @@ void thermal_unregister_governor(struct
- 	if (!governor)
- 		return;
- 
--	mutex_lock(&thermal_governor_lock);
-+	guard(mutex)(&thermal_governor_lock);
- 
- 	if (!__find_governor(governor->name))
--		goto exit;
-+		return;
- 
- 	list_del(&governor->governor_list);
- 
-@@ -189,9 +187,6 @@ void thermal_unregister_governor(struct
- 				 THERMAL_NAME_LENGTH))
- 			thermal_set_governor(pos, NULL);
- 	}
--
--exit:
--	mutex_unlock(&thermal_governor_lock);
- }
- 
- int thermal_zone_device_set_policy(struct thermal_zone_device *tz,
-@@ -200,16 +195,13 @@ int thermal_zone_device_set_policy(struc
- 	struct thermal_governor *gov;
- 	int ret = -EINVAL;
- 
--	mutex_lock(&thermal_governor_lock);
--
-+	guard(mutex)(&thermal_governor_lock);
- 	guard(thermal_zone)(tz);
- 
- 	gov = __find_governor(strim(policy));
- 	if (gov)
- 		ret = thermal_set_governor(tz, gov);
- 
--	mutex_unlock(&thermal_governor_lock);
--
- 	thermal_notify_tz_gov_change(tz, policy);
- 
- 	return ret;
-@@ -220,15 +212,13 @@ int thermal_build_list_of_policies(char
- 	struct thermal_governor *pos;
- 	ssize_t count = 0;
- 
--	mutex_lock(&thermal_governor_lock);
-+	guard(mutex)(&thermal_governor_lock);
- 
- 	list_for_each_entry(pos, &thermal_governor_list, governor_list) {
- 		count += sysfs_emit_at(buf, count, "%s ", pos->name);
- 	}
- 	count += sysfs_emit_at(buf, count, "\n");
- 
--	mutex_unlock(&thermal_governor_lock);
--
- 	return count;
- }
- 
-@@ -668,17 +658,18 @@ int for_each_thermal_governor(int (*cb)(
- 			      void *data)
- {
- 	struct thermal_governor *gov;
--	int ret = 0;
- 
--	mutex_lock(&thermal_governor_lock);
-+	guard(mutex)(&thermal_governor_lock);
-+
- 	list_for_each_entry(gov, &thermal_governor_list, governor_list) {
-+		int ret;
-+
- 		ret = cb(gov, data);
- 		if (ret)
--			break;
-+			return ret;
- 	}
--	mutex_unlock(&thermal_governor_lock);
- 
--	return ret;
-+	return 0;
- }
- 
- int for_each_thermal_cooling_device(int (*cb)(struct thermal_cooling_device *,
-@@ -1346,20 +1337,15 @@ EXPORT_SYMBOL_GPL(thermal_zone_get_crit_
- static int thermal_zone_init_governor(struct thermal_zone_device *tz)
- {
- 	struct thermal_governor *governor;
--	int ret;
- 
--	mutex_lock(&thermal_governor_lock);
-+	guard(mutex)(&thermal_governor_lock);
- 
- 	if (tz->tzp)
- 		governor = __find_governor(tz->tzp->governor_name);
- 	else
- 		governor = def_governor;
- 
--	ret = thermal_set_governor(tz, governor);
--
--	mutex_unlock(&thermal_governor_lock);
--
--	return ret;
-+	return thermal_set_governor(tz, governor);
- }
- 
- static void thermal_zone_init_complete(struct thermal_zone_device *tz)
-
-
-
+>
+> Mark.
+>
+> >
+> > > diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/i=
+nsn.h
+> > > index 8c0a36f72d6f..dd530d5c3d67 100644
+> > > --- a/arch/arm64/include/asm/insn.h
+> > > +++ b/arch/arm64/include/asm/insn.h
+> > > @@ -549,6 +549,12 @@ static __always_inline bool aarch64_insn_uses_li=
+teral(u32 insn)
+> > >                aarch64_insn_is_prfm_lit(insn);
+> > >  }
+> > >
+> > > +static __always_inline bool aarch64_insn_is_nop(u32 insn)
+> > > +{
+> > > +       return aarch64_insn_is_hint(insn) &&
+> > > +              ((insn & 0xFE0) =3D=3D AARCH64_INSN_HINT_NOP);
+> > > +}
+> > > +
+> > >  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
+> > >  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u=
+32 insn);
+> > >  u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
+> > > diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kern=
+el/probes/decode-insn.c
+> > > index 968d5fffe233..be54539e309e 100644
+> > > --- a/arch/arm64/kernel/probes/decode-insn.c
+> > > +++ b/arch/arm64/kernel/probes/decode-insn.c
+> > > @@ -75,6 +75,15 @@ static bool __kprobes aarch64_insn_is_steppable(u3=
+2 insn)
+> > >  enum probe_insn __kprobes
+> > >  arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *a=
+pi)
+> > >  {
+> > > +       /*
+> > > +        * While 'nop' instruction can execute in the out-of-line slo=
+t,
+> > > +        * simulating them in breakpoint handling offers better perfo=
+rmance.
+> > > +        */
+> > > +       if (aarch64_insn_is_nop(insn)) {
+> > > +               api->handler =3D simulate_nop;
+> > > +               return INSN_GOOD_NO_SLOT;
+> > > +       }
+> > > +
+> > >         /*
+> > >          * Instructions reading or modifying the PC won't work from t=
+he XOL
+> > >          * slot.
+> > > diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/ke=
+rnel/probes/simulate-insn.c
+> > > index 22d0b3252476..5e4f887a074c 100644
+> > > --- a/arch/arm64/kernel/probes/simulate-insn.c
+> > > +++ b/arch/arm64/kernel/probes/simulate-insn.c
+> > > @@ -200,3 +200,14 @@ simulate_ldrsw_literal(u32 opcode, long addr, st=
+ruct pt_regs *regs)
+> > >
+> > >         instruction_pointer_set(regs, instruction_pointer(regs) + 4);
+> > >  }
+> > > +
+> > > +void __kprobes
+> > > +simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
+> > > +{
+> > > +       /*
+> > > +        * Compared to instruction_pointer_set(), it offers better
+> > > +        * compatibility with single-stepping and execution in target
+> > > +        * guarded memory.
+> > > +        */
+> > > +       arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+> > > +}
+> > > diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/ke=
+rnel/probes/simulate-insn.h
+> > > index e065dc92218e..efb2803ec943 100644
+> > > --- a/arch/arm64/kernel/probes/simulate-insn.h
+> > > +++ b/arch/arm64/kernel/probes/simulate-insn.h
+> > > @@ -16,5 +16,6 @@ void simulate_cbz_cbnz(u32 opcode, long addr, struc=
+t pt_regs *regs);
+> > >  void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
+> > >  void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *reg=
+s);
+> > >  void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *r=
+egs);
+> > > +void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
+> > >
+> > >  #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
+> > > --
+> > > 2.34.1
+> > >
 
