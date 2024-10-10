@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-359549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B59D998DB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:43:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6435D998D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D23B234D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:19:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3E48285D43
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69401CDFC1;
-	Thu, 10 Oct 2024 16:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEF71CDFC2;
+	Thu, 10 Oct 2024 16:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kWWCbLRu"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUN3kgnT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5682A1D3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442D11C5781;
+	Thu, 10 Oct 2024 16:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728577141; cv=none; b=tMw8E4+dbOifKzRLyMc+MwKO0ibDzebKzhfO+EEfRLHVxLpZd15TbXyO6Dn7MXja4yINYW/eAG1WIAw8SFQS3zxywEkBlrrtdIafICQ6I7dOozG5py+XiazkXs6Et1il7GuFRT807WznxB9HiJ9pBXRxZwYqt5V2GB0FPDEe1gg=
+	t=1728577152; cv=none; b=ox1cQgbiMRjaeKurfVUPuikXan2h2ZeOoa0uopmb9JW2jZRnlOERX06OUObfJlaNnlv+7odTNIg64eINKenlys1GGIB0xTb/MGIG8v53830pa4bxjtrvAuNxn+3J3V32+ckHN4Pb9TiReFHAbTjjf3PEYFyL40prfttLzikqav8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728577141; c=relaxed/simple;
-	bh=0taRQhQ9LqfmmG+vQ7qFCD+ZjBUWXq1z8qfHRkn6bZg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c1+snGA6S8w+N7HV5OKc30d63ASXWZK5P0bHwPToYsk6+XPpgRr12zNoX4xl7fNPFNhADCPuTGMotzUcsGRrQieiWzkrMqaAlwYOlciooyhtuGU5y2lMGgbqXme1VSQGGb068k6ObleyvuicRmpEfUW3MiMG2p/bY9KnG+pAmIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kWWCbLRu; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b5792baaso1449497276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728577139; x=1729181939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D6G7OUX8q4BUWDj+3AyCy0cvuvdbRoe5UQJNlr3xoSc=;
-        b=kWWCbLRuo7dJPl8n9SJ/OOo8+MMeZAEl0/Q5fd42OGcNy28G4UdvT/MO1WkOIEs9uH
-         l0yG6MKSKGLFm4EoKeI/83pfYsqZzKW89DHkP4DsrZsgDoC/+b9s2Z77IGsX4qghrH3t
-         0SK7FENveCC0T/5bE6R21o9S7NOMv/Eth+XwrjJYyqnMgcIPiRaJLmPzgWpb5dRwZ413
-         rCpxH3QR6U/x3FH06VQ0dr7/+HYnrLuJjRNA5bdihob4cntVkjpTmNQo8QdJuUmLyaOY
-         QD+8FRDGOOzuYsg9MSudjY8K8JEt24oQf6E7jRk93Zv/4PZ0jDIC4YtBu+4tAzPXS50C
-         cbKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728577139; x=1729181939;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D6G7OUX8q4BUWDj+3AyCy0cvuvdbRoe5UQJNlr3xoSc=;
-        b=MdK+TOK5jqKiX54TNVB1Duuy2CIo6q/nxjzBhVz0GqDBaQQ0MmhOEcFHNR+59hofT7
-         3CRaWQSC2U/L6OIhfjalAGFEc2qArHB/SbOBHT16R42D+j2PZECwR6VyI4yEU+jO9yjc
-         AL3UMHm3gdYIKWNFiEgPQnElRvi4jCjuMxdSxFxLESMIqz60bKIg3qgg/LtlrwwtzQbr
-         yPaaLW0AO0tEGdkdO3SUZ9+YTFUmxIvYP4VOJSMN342ES4Rk4NfQra5ffAfVDVNYtwUq
-         lusKc95Yn7Zv+VtXnMvInL+QhgrY95Dt1a57u9Go4WUHhp47pp2Bt03Cm5JAQ5mVq4vD
-         YcLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUugmfHVUdC2c1L1TxpiekDSSSL626AocgRMX3F/823MUOuPAVpoZKMI6tFiETsFCfFWChOzt16TPkk2ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk/QqvepKqClzBpG3LIls3XSp1Z8N6xQ+cvm1wdk4zYsWVX0Mz
-	MwCjNsvWPC3Z2WcJUNa0uvYkRznK0He3rSuPbnjaSAQOhwf06iUMrt/EaR+gqJh/Yg6f871e2VX
-	JNQ==
-X-Google-Smtp-Source: AGHT+IEs3IpuQOP/zvRG77UWqmGygsitarAq+g3ot9CvViFEmkmJwJvNdEkRmxmn8vkxRVvB44456Fm4Qgg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:d353:0:b0:e28:e74f:4cb with SMTP id
- 3f1490d57ef6-e28fe0df614mr95229276.0.1728577138650; Thu, 10 Oct 2024 09:18:58
- -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:18:57 -0700
-In-Reply-To: <028501cdd2469a678df3b77c25c3cd9a1b6eff66.camel@gmx.de>
+	s=arc-20240116; t=1728577152; c=relaxed/simple;
+	bh=bZF3l92VFF3sTRPd2QvKJgiWWBI1vZuFkAWAOS127Z4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Sf8Jvhrb9kpST+c52Wt7MZQIm4xDv0AclGcvbNRHF3mckoHFNn8QQ+wQmnBVlkcMlBE0GxaJ6e8ZahHIYoDw1OPWiBBP1EwsP+5ymc+xl9397N1ac4UlPrmKAoMhAO8ZIEJQUJLwuJG7nSh5YZ3CHMtkB8wUhX1Bv0x/wx7uNJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUN3kgnT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7730C4CEC5;
+	Thu, 10 Oct 2024 16:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728577151;
+	bh=bZF3l92VFF3sTRPd2QvKJgiWWBI1vZuFkAWAOS127Z4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hUN3kgnTo3eAnFiBJAWsRHhkzn9bCD19LvMM4ETzI1N16ftI/GiP8wHoETUeAh3Pc
+	 jsiL5RtB8wVTtlEdJu1kUS9p09nvyVvfMtrCTPSJIqFwYi+6+i8CBeuNaQo4G83Ejn
+	 4dHLAbH80NtEVNgDKwEQie40bH0OVXuukHsBcOMpcZmUGcP85h78ZiGIu32yoZl6Cc
+	 zxIfHyYu0PD46x0DhOXg2btApEcG80M9H5vyxdofRv44PDinMYObyxH3v2PSyTmrGm
+	 37VYc+Z4nWnd/YUULRfdE4BeL9kPlUqpIKn/BldhLFI8OSFz0ViSXNk+xUmBLC+pxU
+	 +4EZXLvfJLnLg==
+From: Lee Jones <lee@kernel.org>
+To: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+ linux-usb@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In-Reply-To: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
+References: <20241005193029.1929139-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 0/4] mfd: intel_soc_pmic_bxtwc: Fix IRQ domain usage
+Message-Id: <172857714957.2687257.4921456811511949312.b4-ty@kernel.org>
+Date: Thu, 10 Oct 2024 17:19:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240727102732.960974693@infradead.org> <20240727105030.226163742@infradead.org>
- <CGME20240828223802eucas1p16755f4531ed0611dc4871649746ea774@eucas1p1.samsung.com>
- <5618d029-769a-4690-a581-2df8939f26a9@samsung.com> <ZwdA0sbA2tJA3IKh@google.com>
- <028501cdd2469a678df3b77c25c3cd9a1b6eff66.camel@gmx.de>
-Message-ID: <Zwf-cfADFwt0awj3@google.com>
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-From: Sean Christopherson <seanjc@google.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
-	kvm@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Thu, Oct 10, 2024, Mike Galbraith wrote:
-> On Wed, 2024-10-09 at 19:49 -0700, Sean Christopherson wrote:
-> >
-> > Any thoughts on how best to handle this?=C2=A0 The below hack-a-fix res=
-olves the issue,
-> > but it's obviously not appropriate.=C2=A0 KVM uses vcpu->preempted for =
-more than just
-> > posted interrupts, so KVM needs equivalent functionality to current->on=
--rq as it
-> > was before this commit.
-> >
-> > @@ -6387,7 +6390,7 @@ static void kvm_sched_out(struct preempt_notifier=
- *pn,
-> > =C2=A0
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WRITE_ONCE(vcpu->scheduled_o=
-ut, true);
-> > =C2=A0
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (current->on_rq && vcpu->wants=
-_to_run) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (se_runnable(&current->se) && =
-vcpu->wants_to_run) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 WRITE_ONCE(vcpu->preempted, true);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 WRITE_ONCE(vcpu->ready, true);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> Why is that deemed "obviously not appropriate"?  ->on_rq in and of
-> itself meaning only "on rq" doesn't seem like a bad thing.
+On Sat, 05 Oct 2024 22:27:03 +0300, Andy Shevchenko wrote:
+> It appears that the driver has been developed without proper thinking
+> of what the difference between HW IRQ and Linux IRQ (also known as vIRQ).
+> This misunderstanding led to the 0 being used as vIRQ which is no-no and
+> platform APIs unveil this after the commit a85a6c86c25b ("driver core:
+> platform: Clarify that IRQ 0 is invalid"). With this the Intel Broxton
+> Whiskey Cove PMIC driver has to be fixed all over the places.
+> 
+> [...]
 
-Doh, my wording was unclear.  I didn't mean the logic was inappropriate, I =
-meant
-that KVM shouldn't be poking into an internal sched/ helper.
+Applied, thanks!
+
+[1/4] mfd: intel_soc_pmic_bxtwc: Use IRQ domain for USB Type-C device
+      commit: 59703271a86fee0fb2087d3a9990068fa0f147fb
+[2/4] mfd: intel_soc_pmic_bxtwc: Use IRQ domain for TMU device
+      commit: e005ef9f90c045dc284589ece4d6d14af3462a32
+[3/4] mfd: intel_soc_pmic_bxtwc: Use IRQ domain for PMIC devices
+      commit: 8db3d3e5439808cd899d14fb80e0b01beb9f6379
+[4/4] mfd: intel_soc_pmic_bxtwc: Fix IRQ domain names duplication
+      commit: 673f0f9a8db71c94e1eb880d1a88204c334710c9
+
+--
+Lee Jones [李琼斯]
+
 
