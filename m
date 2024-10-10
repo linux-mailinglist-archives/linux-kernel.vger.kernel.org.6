@@ -1,89 +1,145 @@
-Return-Path: <linux-kernel+bounces-360132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76329994FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:15:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34248999520
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B7B1C22C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:15:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E58A9282335
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555631BE86E;
-	Thu, 10 Oct 2024 22:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFDB1EBFF8;
+	Thu, 10 Oct 2024 22:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="O8cHpUgX"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="p6vxYdUn"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4297A1ADFFE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3E01E2029;
+	Thu, 10 Oct 2024 22:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598505; cv=none; b=Kv3Dtq9rlw7wdvyC49kPtkosfZa/YhtUXxskTqcopUWL3FRm2OinEArJXVrYyBJIUJRqheO5JJvVeNJ9C31JEvAxARWyS+HEqmGq09He1DPdBvPLILqFbKUd9/WneX9/7W9JOi9dIu0NCTyAGTkLcieELmM/lFDyDj2vgyfcGhk=
+	t=1728598959; cv=none; b=BZegMlteA1X9MCJjQkEWT+ZE9C83dOAA3eDAGCMnavb/sbWbe71aT8YH3T6+Vx6JAVXWkuiCs99qnaGtTeTfIxQCk8iyRB+1YxiL1FN38NGWo5ffob61nEQn7koiU6drBOelP7xb+QXCKlMGYGtQNAcAeOXqunIjQs8xPQ1bJ8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598505; c=relaxed/simple;
-	bh=6wuvlwCa6TSt0v332U+6mY0pX9kM6s8vhMYzCkSEeEk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kojPoKg+WIMMzBTzKAkkMlQFiTH8VoPwpf7VwzCcdyaY5CgZYOX1I5M1bPpJH+Pvzsz/Ml87YyWoDI/4eBp8ubZQ5ENtW6NfVTzHqLQjKgV13o7oHqloL8kQkm3+226gxUHrGR3B/UdDm+rEAVS+J0m1ShJL6qhrLeiKqS2ipT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=O8cHpUgX; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1728598497; x=1728857697;
-	bh=c2eztCA1e4UB4MlQh9sJYpniTjBOlUpjxUjuhUGTTBM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=O8cHpUgX+pv15xmM7aAjyhLNuYGKog5tKvySd3F4NoAmQFnRlieCKSa2meQA6560M
-	 Lu0LsrdwMN17MXdhfJJZl2G3JyoxJkLNGhtXZVBKID61WeN0Zgi+w7AbtvUoa81IGV
-	 oxnwf5UeA4v2bRTIZMLOClUUhZrPCKv969NZOF4DZCGy0w9Xm/I3SJ464oXAYL14nb
-	 kwCWPywUfbRuYFtaVJT0kB+c2+TfsuhNnNLDWf1qX9LwFS0BdyOaoBhWbkHvamg0gc
-	 7x3zqrOS0Gmvb8tiFKqPXPsCNzCIjQvNpFco+O5d4jLLqVtOkj4+O87tmfEav5Z9iF
-	 2g3LXWWGALQDA==
-Date: Thu, 10 Oct 2024 22:14:52 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] rust: add global lock support
-Message-ID: <2376e7b3-42a4-4743-a5cd-83251dcc0075@proton.me>
-In-Reply-To: <87msjckqfw.fsf@kernel.org>
-References: <20240930-static-mutex-v4-1-c59555413127@google.com> <HVPdDHj35lGMPHyA8YvYjO4hhof-vNaVDqo_ILwyCmuY13oskqVKxaIA7OK4wo6fWYeJIV_RMtbPdjVRGJcLvg==@protonmail.internalid> <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me> <87msjckqfw.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e1ab7e91a78749aba42462da63b16ce6f6adcaba
+	s=arc-20240116; t=1728598959; c=relaxed/simple;
+	bh=xjilEsLX+G8kf8JRPFeXyzM3RwuC/YiY5ih1BDEWdZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IlB2V7NPCPma6ZlME0vDvUkDkbHKwd0u4RUQ5OzBDZMvsFuSNE/Bkh7TSEtSYsJAIri1nRYGi6bHRWta0i7reilAXdK3g+FLyLnQDNpXvuoZmWHzIKgiy8KyOlrVNzo0AVMyAnH+8aJznP5VuiBoXkp3myeiDwlzwxU/ECfDoo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=p6vxYdUn; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id c8883fc4938e307c; Fri, 11 Oct 2024 00:22:27 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id DED5C69EF02;
+	Fri, 11 Oct 2024 00:22:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1728598947;
+	bh=xjilEsLX+G8kf8JRPFeXyzM3RwuC/YiY5ih1BDEWdZ0=;
+	h=From:Subject:Date;
+	b=p6vxYdUnrVEzbz4V31Kv3NQtX+8J6yRyETKOqnwQho8ukgmFBm6vKaVPJRs2OrEde
+	 99eEJHq1+7CTE6Cm+pf1R2dWMUbTbKFKmtZVkmqJj+PI1kqpNiPr+Gzh6FT3aRMF6N
+	 YyYmQ4NaEb2zHnGQfSPNI3mJsHHQnoho0vKBTQnDjuMUyNbQzbEEoYQpi1WymRvcP8
+	 fECHN3ucBI0hDUxu4EZsOTfx3nrAzhjktPCVxHuTSjPR8P92xisROM0PSNozWRdPNv
+	 zAYfcTVp1cij6XGtwlXLWofBLdElCAEpFOaKopPB62H3CPC1pW1wlk5zzrwc2q2O0n
+	 UGOmJUgUo7w9Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2 07/11] thermal: core: Introduce thermal_instance_delete()
+Date: Fri, 11 Oct 2024 00:15:22 +0200
+Message-ID: <3275745.5fSG56mABF@rjwysocki.net>
+In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
+References: <4985597.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedguddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriih
+X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
 
-On 10.10.24 16:01, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->=20
->>
->> Also,
->>
->>     error: type `__static_lock_ty_VALUE` should have an upper camel case=
- name
->>        --> rust/kernel/sync/lock/global.rs:100:18
->>         |
->>     100 |               type [< __static_lock_ty_ $name >] =3D $valuety;
->>         |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert=
- the identifier to upper camel case: `StaticLockTyValue`
->>
->=20
-> How did you manage to get these errors?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I added a `global_lock!` invocation to `lib.rs`. Otherwise I also don't
-get them (they might also be emitted from the examples, but I didn't
-compile those).
+It is not necessary to walk the thermal_instances list in a trip
+descriptor under a cooling device lock, so acquire that lock only
+for deleting the given thermal instance from the list of thermal
+instances in the given cdev.
+
+Moreover, in analogy with the previous change that introduced
+thermal_instance_add(), put the code deleting the given thermal
+instance from the lists it is on into a separate new function
+called thermal_instance_delete().
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This is a resend of
+
+https://lore.kernel.org/linux-pm/2224279.Mh6RI2rZIc@rjwysocki.net/
 
 ---
-Cheers,
-Benno
+ drivers/thermal/thermal_core.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -866,6 +866,17 @@ free_mem:
+ 	return result;
+ }
+ 
++static void thermal_instance_delete(struct thermal_instance *instance)
++{
++	list_del(&instance->trip_node);
++
++	mutex_lock(&instance->cdev->lock);
++
++	list_del(&instance->cdev_node);
++
++	mutex_unlock(&instance->cdev->lock);
++}
++
+ /**
+  * thermal_unbind_cdev_from_trip - unbind a cooling device from a thermal zone.
+  * @tz:		pointer to a struct thermal_zone_device.
+@@ -882,16 +893,12 @@ static void thermal_unbind_cdev_from_tri
+ {
+ 	struct thermal_instance *pos, *next;
+ 
+-	mutex_lock(&cdev->lock);
+ 	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
+ 		if (pos->cdev == cdev) {
+-			list_del(&pos->trip_node);
+-			list_del(&pos->cdev_node);
+-			mutex_unlock(&cdev->lock);
++			thermal_instance_delete(pos);
+ 			goto unbind;
+ 		}
+ 	}
+-	mutex_unlock(&cdev->lock);
+ 
+ 	return;
+ 
+
+
 
 
