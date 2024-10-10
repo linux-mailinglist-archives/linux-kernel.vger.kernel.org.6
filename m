@@ -1,105 +1,146 @@
-Return-Path: <linux-kernel+bounces-359692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBD1998F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51F6998F27
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9128C28A2CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56F8D1F21746
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9626219D083;
-	Thu, 10 Oct 2024 17:59:32 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC811CF5F2;
+	Thu, 10 Oct 2024 17:59:38 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65A81CBEA7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1FE19D89E;
+	Thu, 10 Oct 2024 17:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583172; cv=none; b=Z/rObURx51VKA1AdhX4tyqgn+rBJVovbALZFIfQvaV5m92iDot86KshxKG+L3DeOlN3jLsYH6txrLQt7FGX6UQJw5oVmKKQyrgG4QFkPIiE5tfpptEGpb3TtWWD1ODvspSt9twb0QucwbUC3AYleoS9EBdqBadhiuvwRy03emxY=
+	t=1728583177; cv=none; b=q7fg4GFcT4juuvske4R61UsFHC8zxQvAFr+fY/SSvQ1Nu4bI6cx/adVPKJxy09jAlqSUKYVCbLqIyuPNr1Uz99ZE+bEWNxLYD/UAs4+onALQSZFqXbPTubJr63A/BauwNVHR1NAnNdPqX5tUwE5+snEWOr8EEg5VMK/zZA1ML8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583172; c=relaxed/simple;
-	bh=RlqVEm7hlQ7c1Xw9SH/CMR5gdNLZRgvV2Xm8S+4w9cc=;
+	s=arc-20240116; t=1728583177; c=relaxed/simple;
+	bh=1gGbuD2zQB9hadLSmAdeixSVFXtTIIIno/flnOJvm5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCUnmHTf535CXUJ9cTdx2KfVsi89tP/+Z6bJyXXukvXfxUM6T6RC9e8y+NEiWe2S5Q5XlHivLZYdKaRy3eQ7ASS2z1p+RTNLeijK33Qcgczip/5txYXNSXL4/Pn/SDG3mgfG2SLZZvgpjkuPkLq9imKQ7sWyvNBAAPm0BQT+lTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6dbb24ee2ebso14685457b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:59:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728583170; x=1729187970;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RlqVEm7hlQ7c1Xw9SH/CMR5gdNLZRgvV2Xm8S+4w9cc=;
-        b=Wbd4i/UFNCJti+z3laOYXmUQURQXX/wqt+uxV5FS/JPJpJqRN9aeEw+qY9QFke+Gob
-         Hlxa9nb3oDm18i7qhwhJ+/ksMwoxocyhFy/VxBbyls/VFWRMcqHd5axiG3Wr7FNGhZ18
-         hd7+vFlXWP0Za+f8sLcbGSvTLxcvlUacp5hWI+ChD8kKCzH+AneHrhk41uW8ihTIN7R6
-         32YO7V3d1ddHNOCQrd3d0j+hIeiGR19zz2oIvY51cYgapMgHshFA6qeTZR2mPgXqrvoZ
-         rMHNH9uhDqEfzd/1EK7j+tfdQgwoNamZHxWo8h/eCsDa8FLV3sOC2KWnCiSPNufUXoGf
-         nIqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Pu+6l/89xyjTl0UYBEfrTFKhe6XdC+4jRFE5j1/bwXcih43yKNgCZf7EHHBsYhufrYzt8qDTeCrCWxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHLoEe0grRnX1u5gSZKUhbs6MHksIgUF9Qu/eJO0FJaQmpgIaq
-	pZSsMVOuQ5hqCJILbGqFikbKY4AE7cKU5RcCf8oV0Y+7Y8d/KuqKx3nwJw==
-X-Google-Smtp-Source: AGHT+IE8sGUf8UIPdtWOz0Zt0mAyMT54y/HhHTp1i9gpw4d9tOPqGUWU+US7JZLp0K1XwYuWFtx6HQ==
-X-Received: by 2002:a05:690c:3082:b0:6e3:4190:ab45 with SMTP id 00721157ae682-6e343cbc0e9mr2033797b3.15.1728583169281;
-        Thu, 10 Oct 2024 10:59:29 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332bad8afsm2916797b3.59.2024.10.10.10.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 10:59:28 -0700 (PDT)
-Date: Thu, 10 Oct 2024 12:59:26 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
-Subject: Re: [PATCH 1/6] Revert "sched_ext: Use shorter slice while bypassing"
-Message-ID: <20241010175926.GA28209@maniforge>
-References: <20241009214411.681233-1-tj@kernel.org>
- <20241009214411.681233-2-tj@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r6HZYyQz5jbZ3fPCSscVMeNz+4yyNlw8P/25IBeDQT3ZcZ8GFFupzkufkrdqktYh9GUkQF0AShz9F+axvBMkyreWj6NMgI3HDm/gMCYiL287MFoWRE8SgM4JhxuLmZze+LjtjjfoZyPIGc1ViivaZWSVwelarkDKW/UYGO4uedw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: Z2RnOjFzQmWbeuzh/ENTZg==
+X-CSE-MsgGUID: cw+urGtERz+Yd8Kz6Iy1lw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="15586636"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="15586636"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 10:59:36 -0700
+X-CSE-ConnectionGUID: jnPqD4YURz65FiPn5RDGWg==
+X-CSE-MsgGUID: c6t/WL0HRKWNHQsTOZelNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="100003386"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 10:59:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1syxRh-00000001czV-1HSt;
+	Thu, 10 Oct 2024 20:59:29 +0300
+Date: Thu, 10 Oct 2024 20:59:29 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <ZwgWAV7SQwV02ott@smile.fi.intel.com>
+References: <20240926135418.8342-1-ramona.nechita@analog.com>
+ <20240926135418.8342-4-ramona.nechita@analog.com>
+ <ZvV2mHkl4qxVVmBH@smile.fi.intel.com>
+ <DM6PR03MB4315785FB25B980264748BCBF3782@DM6PR03MB4315.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="J8HuaA2LTHU5Ag/W"
-Content-Disposition: inline
-In-Reply-To: <20241009214411.681233-2-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
-
-
---J8HuaA2LTHU5Ag/W
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <DM6PR03MB4315785FB25B980264748BCBF3782@DM6PR03MB4315.namprd03.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Oct 09, 2024 at 11:40:57AM -1000, Tejun Heo wrote:
-> This reverts commit 6f34d8d382d64e7d8e77f5a9ddfd06f4c04937b0.
->=20
-> Slice length is ignored while bypassing and tasks are switched on every t=
-ick
-> and thus the patch does not make any difference. The perceived difference
-> was from test noise.
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+On Thu, Oct 10, 2024 at 02:32:49PM +0000, Nechita, Ramona wrote:
 
-Acked-by: David Vernet <void@manifault.com>
+...
 
---J8HuaA2LTHU5Ag/W
-Content-Type: application/pgp-signature; name="signature.asc"
+> >> +struct ad7779_state {
+> >> +	struct spi_device *spi;
+> >> +	const struct ad7779_chip_info *chip_info;
+> >> +	struct clk *mclk;
+> >> +	struct iio_trigger *trig;
+> >> +	struct completion completion;
+> >> +	unsigned int sampling_freq;
+> >> +	enum ad7779_filter filter_enabled;
+> >> +	/*
+> >> +	 * DMA (thus cache coherency maintenance) requires the
+> >> +	 * transfer buffers to live in their own cache lines.
+> >> +	 */
+> >> +	struct {
+> >> +		u32 chans[8];
+> >> +		s64 timestamp;
+> >
+> >	aligned_s64 timestamp;
+> >
+> >while it makes no difference in this case, this makes code aligned inside
+> >the IIO subsystem.
+> 
+> I might be missing something but I can't find the aligned_s64 data type,
+> should I define it myself in the driver?
 
------BEGIN PGP SIGNATURE-----
+Definitely, basically the rule of thumb is to create your patches based on
+the respective subsystem tree. In such a case this is IIO tree togreg branch
+(in some cases testing should be used).
 
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZwgV/gAKCRBZ5LhpZcTz
-ZKPVAQD2tmekeuF69Lm2YD51JbYkQLAX0dd/8Hrabsze2u5oogD8C7J1yvLLDBPV
-Ea56LXAXwEU3re4kAaUSxW7sZuuewgw=
-=w7LJ
------END PGP SIGNATURE-----
+There is the mentioned type been introduced.
 
---J8HuaA2LTHU5Ag/W--
+> >> +	} data __aligned(IIO_DMA_MINALIGN);
+> >
+> >Note, this is different alignment to the above. And isn't the buffer below should have it instead?
+> >
+> >> +	u32			spidata_tx[8];
+> >> +	u8			reg_rx_buf[3];
+> >> +	u8			reg_tx_buf[3];
+> >> +	u8			reset_buf[8];
+> >> +};
+
+...
+
+> >> +static int ad7779_write_raw(struct iio_dev *indio_dev,
+> >> +			    struct iio_chan_spec const *chan, int val, int val2,
+> >> +			    long mask)
+> >
+> >long? Not unsigned long?
+> 
+> I copied the function header directly from iio.h, shouldn't it be left as such?
+
+Oh, this is unfortunate. It should be fixed there, indeed.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
