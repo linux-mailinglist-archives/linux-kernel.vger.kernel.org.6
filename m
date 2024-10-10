@@ -1,66 +1,79 @@
-Return-Path: <linux-kernel+bounces-359206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D239988A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:03:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D809988B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C282866F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD441C230DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700D1CBE86;
-	Thu, 10 Oct 2024 14:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2A91C9EDA;
+	Thu, 10 Oct 2024 14:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyCLCPQF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ANygyVig"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2FC1C9EB4;
-	Thu, 10 Oct 2024 14:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888AC1A264C;
+	Thu, 10 Oct 2024 14:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568967; cv=none; b=OI9F+dQGJxmQJJ+b9ZFwKsi/9glmhz/YUT2HlaYS7pnV4m9x/hi211RodiqXUbyVVbOPiVfAiB1kjvf2wg/7qvsyr0gQrx5lCk/pJY9q9wha7RR+2Iu3r8sI7lHmz4sPNEY96ZBLTGCqbarlu3c3UULv0JkBaD8gZXrPtziOS8s=
+	t=1728569054; cv=none; b=QxzIqshHPrsKxsGEhqBZPOD9ZmSC2c6WksPjw6SOYhPd737pJ4Fiq+orCWmvyVpfXqpU79FiqXQAP22W8gI2kZBvU/DN4XRd7//W2wElL4I0MjRS4I0qYkOEtVCCkFQ96qiYfRq4gUCeJWPkah0bzKjTw3IWabhpmq3Wc+x27QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568967; c=relaxed/simple;
-	bh=nS8LibFP7Uli0nM5nRHClR7oAA1za5RJPPtfXxGKNIc=;
+	s=arc-20240116; t=1728569054; c=relaxed/simple;
+	bh=W2BJvnWqECUROFGUdQwhoOVO7J8ucf3LKzKXYU59GRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EiykE2MlSs83eb+dW4iCGTUng7Q2GSSla8J0odVA0r37wN/tHwmOyWWv21SAjM1Nsm4Y5YIGsHoXDX2JljyjsGwDY7f7DGWujuIrpyajAsn0Bg11LbaWYZr22XmbnGF1gWKH0G/VpZxxnAtuF30Qs3Lqh0+36IGf9Q41pIfDiC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyCLCPQF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CB0C4CEC5;
-	Thu, 10 Oct 2024 14:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728568966;
-	bh=nS8LibFP7Uli0nM5nRHClR7oAA1za5RJPPtfXxGKNIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MyCLCPQFAFlAiWOS7trGzk0UzeG3YI+swbEmRrvEDad7VftBx5duSlzfY4+dEJbys
-	 +dq2tKvvOYJppgxQSMoo4PYs7kvOQpCz/Rcfow918vppbKySYYELc47k3Z0/U4Kp0g
-	 v/6BhoXVnchbDLdycv89jMiUN6PK6vo8hO4ZL3pd+DbeGWeZGVkgPbvDPVyw14ov1i
-	 PPTE+z04jtrOrVLimy1dYHVMwnzfCYay1XdEYDTQc6ORqbK0WWf9T0RAM9NKGiFXux
-	 XEG2hoDnO9fDEjgC1c2otmofLK19h8loetz5O4yZ6LtTC9yQswPqu+ouhbLxMUZQ5E
-	 leMII6DEFfNDA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sytkh-000000005Pr-1g8e;
-	Thu, 10 Oct 2024 16:02:51 +0200
-Date: Thu, 10 Oct 2024 16:02:51 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
-Message-ID: <Zwfei-Jn6goiya4H@hovoldconsulting.com>
-References: <20241009161715.14994-1-johan+linaro@kernel.org>
- <xwscnif4mqzykjinjtbr7jqsksy2buzindyttkk754jmumktm3@p5xxnmia7fxe>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkOmO2p8bQxlW2ifhEqN6JEmNhuJ+WLt5L2r+LqsHWyacZvRjBi7Pfw2I6VBiH3euckRMLiC7PY1Y9hiNZSqvmJQXIzo4a/JtEV8Kerc6RFumVGe/Ct6r74QLdTW8bK9n2Jr5AXrZ2c19lhgjs9QTiU4uOk4YtW/1RiYsGTV3H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ANygyVig; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728569054; x=1760105054;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W2BJvnWqECUROFGUdQwhoOVO7J8ucf3LKzKXYU59GRw=;
+  b=ANygyVigLCDcOJEMfn6k9zvvd5fYVvFtrjKeO4hMw4O1xnUQkuPTwAs4
+   4DqOAc0xoHuSaiTIzlqTIkbLm1Cj4AefX74gYjFCNRl1BePK7dFIqcW2V
+   JKT0mRdfGMlv1OULGWjOaZ6+SoMgeFw/DQ1XBDMfBcXfz1s7Nu3tnCVXR
+   nMlYXyut0Lc9P1bGylEfBXyeZd9zQo7dSQcXf+cVCeAF9jtV6voslJKl1
+   Fln+M/Y31VIaJbnvxWrWPrT9pVHiX5iCGUmm3krpG8lD9l61vX2gmjDce
+   py9Sp9vl9dE4KIiSonY+bptOKOBtxFHnFhYHvxkBs6JH3fuKWWHPJC8ar
+   Q==;
+X-CSE-ConnectionGUID: XES3C/YQTei0+OE6wkqmXw==
+X-CSE-MsgGUID: TpG9XX4MTtio0DhiRzDryA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27872596"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="27872596"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:02:59 -0700
+X-CSE-ConnectionGUID: QJFfAHIuTLyzw3ryxES2zQ==
+X-CSE-MsgGUID: bGcLxQGOSoOynXOKE2w+Nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="114069301"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:02:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sytkj-00000001YVh-1r3v;
+	Thu, 10 Oct 2024 17:02:53 +0300
+Date: Thu, 10 Oct 2024 17:02:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: Re: [PATCH 01/13] media: i2c: ds90ub9x3: Fix extra
+ fwnode_handle_put()
+Message-ID: <ZwfejTUojOm4gOBt@smile.fi.intel.com>
+References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
+ <20241004-ub9xx-fixes-v1-1-e30a4633c786@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,42 +82,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xwscnif4mqzykjinjtbr7jqsksy2buzindyttkk754jmumktm3@p5xxnmia7fxe>
+In-Reply-To: <20241004-ub9xx-fixes-v1-1-e30a4633c786@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Oct 10, 2024 at 04:54:19PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Oct 09, 2024 at 06:17:15PM GMT, Johan Hovold wrote:
-> > The DWC PCIe controller can be used with its internal MSI controller or
-> > with an external one such as the GICv3 Interrupt Translation Service
-> > (ITS).
-> > 
-> > Add the msi-map properties needed to use the GIC ITS. This will also
-> > make Linux switch to the ITS implementation, which allows for assigning
-> > affinity to individual MSIs. This specifically allows NVMe and Wi-Fi
-> > interrupts to be processed on all cores (and not just on CPU0).
-> > 
-> > Note that using the GIC ITS on x1e80100 will cause Advanced Error
-> > Reporting (AER) interrupts to be received on errors unlike when using
-> > the internal MSI controller. Consequently, notifications about
-> > (correctable) errors may now be logged for errors that previously went
-> > unnoticed.
-> > 
-> > Also note that PCIe5 (and PCIe3) can currently only be used with the
-> > internal MSI controller due to a platform (firmware) limitation.
-> > 
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
-> > 
-> > The PCIe Gen4 stability fixes [1] are now in 6.12-rc1 so that we can enable
-> > the GIC ITS without being flooded with link error notifications [2].
+On Fri, Oct 04, 2024 at 05:46:32PM +0300, Tomi Valkeinen wrote:
+> The ub913 and ub953 drivers call fwnode_handle_put(priv->sd.fwnode) as
+> part of their remove process, and if the driver is removed multiple
+> times, eventually leads to put "overflow", possibly causing memory
+> corruption or crash.
 > 
-> Cc: <stable+noautosel@kernel.org> # Depends on driver stability fixes
+> The fwnode_handle_put() is a leftover from commit 905f88ccebb1 ("media:
+> i2c: ds90ub9x3: Fix sub-device matching"), which changed the code
+> related to the sd.fwnode, but missed removing these fwnode_handle_puts.
 
-This patch is enabling a new feature, it is not a fix, so Bjorn please
-do not include the above tag when applying.
+fwnode_handle_put():s
 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-But thanks for reviewing.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Johan
+
 
