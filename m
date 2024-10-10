@@ -1,117 +1,82 @@
-Return-Path: <linux-kernel+bounces-358580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E06998116
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD7299811B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC33C2846EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41F3284D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FF91BDAA0;
-	Thu, 10 Oct 2024 08:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B451BF336;
+	Thu, 10 Oct 2024 08:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7jlUXNG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="c52M554W"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05431B86DC;
-	Thu, 10 Oct 2024 08:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2BB19D8BB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728550371; cv=none; b=HtqzINxLVWGdhy7gD5xmPfMxiersXxwKna6YD8LNjIzqTZPayrhuS2qruf17E1QhHsE9Nitj/MUIqxBXeph7+BDvNlhBDLQ0MR0pc+Zz9rFnw1pnW3R/2MfweM09KhyqnDR2TIosVMH6qIHwIHEDyd6pn0UsmZ4ZpgPRf+knUDw=
+	t=1728550445; cv=none; b=B/JnwC7nWP39mATRbdcrX9Hll5/6z9xjwtoQiH7EcXUa9NiHe/a3ydxMifezY/iYi4GZN7D8hXeIwBVbMsdcvbSe0kMOsrZ2ARi2rTLFGvfUgZWAZ0vLOWNn+MMCSAa5BbBqqwLH/65rOHSAhzH5FAYI5qXNlIUr6EZcHwolVKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728550371; c=relaxed/simple;
-	bh=PKDQuDF1+TKUxRxHDwn/99UgykIjEZ8ANf4mtoAWawc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKe9XoyglfyVlmVqZFJMvS9nev/OuIgdIYFCf+jEdBGol/N8ZOCF4a4Hn8S5n4NtpvZPSDaqAbCkYMImiD1QuiSxr1bhkcOx3J/l84LU6oLPu0ingY4ys0cIpXhyz04OopKcjqadH23ZOim4FmBYaTji0SYA0356sHnPC1zZsnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7jlUXNG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C61AC4CEC5;
-	Thu, 10 Oct 2024 08:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728550371;
-	bh=PKDQuDF1+TKUxRxHDwn/99UgykIjEZ8ANf4mtoAWawc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E7jlUXNG0pDUT3IB/LubwoBqNPH0i0vjJdecWzkgrKz02lDfD6/1I/5z1ZDl2Jz+Z
-	 YeWVa7R/yr3XzCwZM08JD2l0g8CbhsgfKqmlOb/rZa36WDjNvqT+C1gF0zTynOyths
-	 B6c6z1zBfAiCbt3LUBqxiI6jhXROGBeN7q9YXQzwloV5356FFlHhUL9TbzPMzB+qIv
-	 7benhOaGYc5ZYTXT/xwk+FRN3djgJH1zD6XyBzmNGVHEJrUWCNCCCLnCGKCtJAaZVy
-	 rFWTuMaDj1sIv8oyLfAQ/zTrp9p0tNs0DLeL8tW/SX63f2P284Wi285KptkA+dSXNl
-	 8/TmEyco1jWzQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syouk-000000006p4-30XG;
-	Thu, 10 Oct 2024 10:52:55 +0200
-Date: Thu, 10 Oct 2024 10:52:54 +0200
-From: Johan Hovold <johan@kernel.org>
-To: =?utf-8?B?SsOpcsO0bWU=?= de Bretagne <jerome.debretagne@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: sc8280xp: Add Microsoft Surface
- Pro 9 5G
-Message-ID: <ZweV5mcEWHofpF4J@hovoldconsulting.com>
-References: <20240908223505.21011-1-jerome.debretagne@gmail.com>
- <20240908223505.21011-6-jerome.debretagne@gmail.com>
+	s=arc-20240116; t=1728550445; c=relaxed/simple;
+	bh=t/nYnsopstvIy22BbL/ndmU8/Va7L7PXQblhnksgHfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PzeoVA+OmfZcR/xoS0YUoeeUn8vxYU+7s4Yf5kT3ThJf6bimZVm4wzcNSQHqE8D93c3lND7hjtHtERt10prC9sUQCvogUh3nsY4kvfMw5xbmUEsg3HhU/jnodtoBwtxXZXWNW3x/DjVZVeeknVvvc/lHr2AY94fHQW4x0dSt1fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=c52M554W; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728550440; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Ca62slCO8FsSYSilwJ414+sJXuEBrQt2YouWTe1gVSg=;
+	b=c52M554W4IPu5hdxhUkavN1E5kivU2zlnKG0E6MCNBBQjDjxHjF5PmufX5wG7Yi6nFvTVMVkUOh3VfcE8wgjBfkeV5NAucmmNHBRVA5eYraXhSQta7GNGjpzyDsTm4QRqiJaK2auTrN1B9Iz5QZzIPL4Z6VnTpRKpjvt0oxbaXs=
+Received: from 30.74.144.160(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WGlqylg_1728550437 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 10 Oct 2024 16:53:58 +0800
+Message-ID: <c5a86a1f-5486-45d9-944f-28c4f9daab93@linux.alibaba.com>
+Date: Thu, 10 Oct 2024 16:53:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/1] remove SWAP_MAP_SHMEM
+To: Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org, yosryahmed@google.com, hughd@google.com,
+ shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+ chrisl@kernel.org, david@redhat.com, kasong@tencent.com,
+ willy@infradead.org, viro@zeniv.linux.org.uk, baohua@kernel.org,
+ chengming.zhou@linux.dev, v-songbaohua@oppo.com, linux-mm@kvack.org,
+ kernel-team@meta.com, linux-kernel@vger.kernel.org
+References: <20241002012042.2753174-1-nphamcs@gmail.com>
+ <CAKEwX=Of2U7x+KHikU5p94=qL5VeO_JfysEWKz+=VR3jyq0B5Q@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAKEwX=Of2U7x+KHikU5p94=qL5VeO_JfysEWKz+=VR3jyq0B5Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240908223505.21011-6-jerome.debretagne@gmail.com>
 
-On Mon, Sep 09, 2024 at 12:35:05AM +0200, Jérôme de Bretagne wrote:
-> Add an initial devicetree for the Microsoft Surface Pro 9 5G, based
-> on SC8280XP.
+
+
+On 2024/10/2 09:22, Nhat Pham wrote:
+> On Tue, Oct 1, 2024 at 6:20 PM Nhat Pham <nphamcs@gmail.com> wrote:
+>>
+>> Changelog:
+>> v2:
+>>          * Fix a WARN in the shmem THP swap path. Thanks Baolin, Yosry, and Barry
+>>          for the report and the discussion on how to solve it.
 > 
-> It enables the support for Wi-Fi, NVMe, the two USB Type-C ports,
-> Bluetooth, 5G cellular modem, audio output (via Bluetooth headsets
-> or USB audio), external display via DisplayPort over Type-C (only
-> the bottom USB Type-C port is working so far), charging, the Surface
-> Aggregator Module (SAM) to get keyboard and touchpad working with
-> Surface Type Cover accessories.
-> 
-> Some key features not supported yet:
-> - built-in display (but software fallback is working with efifb
->   when blacklisting the msm module)
-> - built-in display touchscreen
-> - external display with the top USB Type-C port
-> - speakers and microphones
-> - physical volume up and down keys
-> - LID switch detection
-> 
-> This devicetree is based on the other SC8280XP ones, for the Lenovo
-> ThinkPad X13s and the Qualcomm CRD.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Jérôme de Bretagne <jerome.debretagne@gmail.com>
+> Hi Baolin, could you run your stress program again on this version?
+> FWIW, I was able to trigger 64kb mTHP swap in shmem + no-fallback
+> swapout, so I think the issue is fixed.
 
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2024, Jérôme de Bretagne <jerome.debretagne@gmail.com>
-> + */
+I tested it on my platform, and no issues were found. So
 
-You mention it in the commit message, but since a lot of this is copied
-from the X13s (and CRD) devicetrees you should probably make that clear
-here as well and include the relevant copyright notices. For example by
-adding:
-
-	Based on ...
-
-	Copyright ...
-
-Johan
+Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
