@@ -1,164 +1,108 @@
-Return-Path: <linux-kernel+bounces-358913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE546998539
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02EC99853B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B454281CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86EEF1F2267E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5851C3F01;
-	Thu, 10 Oct 2024 11:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7166C1C3310;
+	Thu, 10 Oct 2024 11:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="SYpBSO9x"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jf/7uvEs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD6C1BDA99
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAE61C245C;
+	Thu, 10 Oct 2024 11:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560517; cv=none; b=K12ktJS6+Txp8UTxtnIzUWCglyhdKW9HKhY5fqf/VuY6VBdZIK0NV3gRnBWHSHSQrAXYU12/1s9AsucNfEx2x1j/66w7uhLYP+/EZHaQmZbPKbNmBU8SdNMxcRqSiEY0Qnylsi/u5QxyqQqKJoPLOu5SeZ8i+eDL3pbbcPHaTDA=
+	t=1728560547; cv=none; b=EWVBp0N5kr1rjLR0E6AdIEibAn35SI69TxnxGnt//89iIn7k3sbtHeVUGu8UZiYVPiIKfjksyVYfzuVDpIHToAK/wI2ax1wGVyIkc6msF/2Yh5ptnbOpIbDd/UGiPAuBM1Jeou3axO307yb9GjkMYBiiUqd8ohc++j8WWihy4EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560517; c=relaxed/simple;
-	bh=cD3n/uf1r9a2FxmfN8WSucBewvCmKvnyhsZqZXLZ0mQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dBCKP0zpCrYKHwVwPDljzlpU4HhrrFelFsa70qgzQH7nwNTWZMHNYeRF0o/4k+aTtCA1GiDVQryBOrNKjcf6hzbQ3YrzH7sI4ItqkqmC4IZz8MhK5OO7DWe/vzj9orW83XTFwmNrOM1IJgzHsm/iyNmFKJWDeliJhEGt04jcWRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=SYpBSO9x; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a3b3f4a48bso267255ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:41:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1728560515; x=1729165315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JLGEeXitWZKflpz7f8dvCOzHMw8lQ7/MkR5+khK1S4U=;
-        b=SYpBSO9xntUv72qsLx/7VjTBlHcqieu+UIxc67cOY/3qGVwlfi5qMUUd6+GvMyakiG
-         InLC4DB9Mn93u4214snJmTNlV9KgaCk7YbrlxZ3vWQlgY7w6TWQZgB2JiMFtxnfSVa5h
-         DTBlaJ4AhzhZf1B9xmOabDggcytdHuJe1ws4cr9I6y+uHYFyz8Ge59pgDt7P7Wqk8KY6
-         9pIXDgerqyIqQz7q9iG6uQt4rc95cYs5Rjk6HBl6aWnAZIDFvywffXDqzrcb+xzDvWGe
-         PVR0gkHxTR9sLDn13Dhd4HEFnpRbuLJZQ1Mbn7vI8TdfTg5hNGDbw/6U+rsMqwxSCFya
-         g3Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728560515; x=1729165315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JLGEeXitWZKflpz7f8dvCOzHMw8lQ7/MkR5+khK1S4U=;
-        b=aNZtBPrSLs8GKzl4eYcJkiH8LKi2oWd22IzQreyESs3qYY/NbOkjnbq/VvkuVGIcCe
-         eAntFHOeYkrLTpxfc7apoHlnxtqe9symWz+0aIbEH36iaxwWZlsMaXxU6aCBqmVdJE13
-         eCW4ajK30zQ2acUzhn0JOht186L6qzTbhwrdCt+f26LnSCZRMPljBIgqJvn5bLNinYcg
-         ePEbfsdlsHp6BQAzoT2x0OPqUlFIx9IIsCMcstyVvIfKq03+wWntaxSoZOBc/eEkgdHL
-         aCY84alIaPQKaU+hCwy7Av0yEI5oGe7Zc0sTudAR+4xr1gwhBmuhjXWcUgaLbuNigqNs
-         pPIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAe53+GXi3+DDna5CH1TcQwFouilKhGjM5XWTzoehW+ooT4Ywv8IPtIfJsZH44fLjZ8wusXtFhQ3lFFOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWqNOdlBtTo5BqV0Xw7zzgrY+nUSHSLKSooW+bI1WHL91+zgK1
-	RaZt6GuhnkJcQIctvMPj3j6uSr1WEKdJeph95C2f4AuIi+Ca7o6l2vvyIKLDD9reb9CdwWlvMEY
-	YM63U6EF6Xpi/pluLH5aOC2yTiZ+0q/pHJzvnSQ==
-X-Google-Smtp-Source: AGHT+IGdjd1/XT2c4B0Z8vQGIotkt4pyM5B4YYch5zcEe11pNDikzWWp/JAP0Tw+7KI97Zc523H2fMoWAABaV3y6nik=
-X-Received: by 2002:a92:c265:0:b0:39f:325f:78e6 with SMTP id
- e9e14a558f8ab-3a3a6d2747dmr16106495ab.0.1728560514733; Thu, 10 Oct 2024
- 04:41:54 -0700 (PDT)
+	s=arc-20240116; t=1728560547; c=relaxed/simple;
+	bh=ZfoVzNMfjGzbh5wETqGwoOdK7krPhEN+2Z42yHsSf00=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c0tFkU6sgq6UZFjexwkjRbhUM4YEWL/5y5LNdbGfyd0+XcA4gROEKlmt8knWOyvZXNk089E+xHQAAMRMqNA+YIOZEa/7p09of6AiIebIaRQyb4cp1qjM4AMrWttRLWm1YgZlvqxJ9WhbUZHmI8NVyHDE2R4TMDHf6Z7h7R5Va0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jf/7uvEs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBC7C4CECC;
+	Thu, 10 Oct 2024 11:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728560546;
+	bh=ZfoVzNMfjGzbh5wETqGwoOdK7krPhEN+2Z42yHsSf00=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Jf/7uvEsiL4CmiHAA4ccf5SRvoVv+6Ea/u/ljbGt4yLiI8PBRT3aCW2FfZ1UbcCfS
+	 cxhgZaLghCQtm4z3onTqLikNLCTGuR8/yYSAyJYobBF447HO9b6Tm6X1U82ILX3amP
+	 uQs2Fa5OrkehXPVNc/ecBNQfIgKezDvhS7eCQ32ev00mLtA79hhww83fsVc1HA9v42
+	 YZhKcq+p1k1+gf8J4pU2Ml2fkBkYM6GTuh9LAU5wknpE+jNHbzzD3sGANj6ly2BJ3l
+	 btsl78AM1b5VA5o3J6wTsqIgzLJ2bNgfEvQfdUrCuf6rMdMm1DAFkxjp4hwbtVIior
+	 /CKpNy6CBxs+A==
+Date: Thu, 10 Oct 2024 12:42:21 +0100
+From: Will Deacon <will@kernel.org>
+To: joro@8bytes.org
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	kernel-team@android.com
+Subject: [GIT PULL] iommu/arm-smmu: Fixes for 6.12-rc
+Message-ID: <20241010114221.GA13611@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009154953.1073471-1-seanjc@google.com> <20241009154953.1073471-2-seanjc@google.com>
-In-Reply-To: <20241009154953.1073471-2-seanjc@google.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Thu, 10 Oct 2024 17:11:43 +0530
-Message-ID: <CAAhSdy0Z27X9KMF-ps97-s5==7xdA=6B84Mxa2b-um_t+NjWkg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/14] KVM: Move KVM_REG_SIZE() definition to common
- uAPI header
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Andrew Jones <ajones@ventanamicro.com>, James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Oct 9, 2024 at 9:19=E2=80=AFPM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> Define KVM_REG_SIZE() in the common kvm.h header, and delete the arm64 an=
-d
-> RISC-V versions.  As evidenced by the surrounding definitions, all aspect=
-s
-> of the register size encoding are generic, i.e. RISC-V should have moved
-> arm64's definition to common code instead of copy+pasting.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Hi Joerg,
 
-For KVM RISC-V:
-Acked-by: Anup Patel <anup@brainfault.org>
+Please can you pull these three Arm SMMU fixes for 6.12-rc? The summary
+is in the tag but the main thing is fixing SMMUv3 for hardware with
+support for 32-bit StreamIDs.
 
-Thanks,
-Anup
+Cheers,
 
-> ---
->  arch/arm64/include/uapi/asm/kvm.h | 3 ---
->  arch/riscv/include/uapi/asm/kvm.h | 3 ---
->  include/uapi/linux/kvm.h          | 4 ++++
->  3 files changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/=
-asm/kvm.h
-> index 964df31da975..80b26134e59e 100644
-> --- a/arch/arm64/include/uapi/asm/kvm.h
-> +++ b/arch/arm64/include/uapi/asm/kvm.h
-> @@ -43,9 +43,6 @@
->  #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
->  #define KVM_DIRTY_LOG_PAGE_OFFSET 64
->
-> -#define KVM_REG_SIZE(id)                                               \
-> -       (1U << (((id) & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT))
-> -
->  struct kvm_regs {
->         struct user_pt_regs regs;       /* sp =3D sp_el0 */
->
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
-asm/kvm.h
-> index e97db3296456..4f8d0c04a47b 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -207,9 +207,6 @@ struct kvm_riscv_sbi_sta {
->  #define KVM_RISCV_TIMER_STATE_OFF      0
->  #define KVM_RISCV_TIMER_STATE_ON       1
->
-> -#define KVM_REG_SIZE(id)               \
-> -       (1U << (((id) & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT))
-> -
->  /* If you need to interpret the index values, here is the key: */
->  #define KVM_REG_RISCV_TYPE_MASK                0x00000000FF000000
->  #define KVM_REG_RISCV_TYPE_SHIFT       24
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 637efc055145..9deeb13e3e01 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -1070,6 +1070,10 @@ struct kvm_dirty_tlb {
->
->  #define KVM_REG_SIZE_SHIFT     52
->  #define KVM_REG_SIZE_MASK      0x00f0000000000000ULL
-> +
-> +#define KVM_REG_SIZE(id)               \
-> +       (1U << (((id) & KVM_REG_SIZE_MASK) >> KVM_REG_SIZE_SHIFT))
-> +
->  #define KVM_REG_SIZE_U8                0x0000000000000000ULL
->  #define KVM_REG_SIZE_U16       0x0010000000000000ULL
->  #define KVM_REG_SIZE_U32       0x0020000000000000ULL
-> --
-> 2.47.0.rc0.187.ge670bccf7e-goog
->
+Will
+
+--->8
+
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git tags/arm-smmu-fixes
+
+for you to fetch changes up to 7de7d35429aa2e9667e51b88ff097be968feaf8f:
+
+  iommu/arm-smmu-v3: Convert comma to semicolon (2024-10-08 18:38:34 +0100)
+
+----------------------------------------------------------------
+Arm SMMU fixes for 6.12
+
+- Clarify warning message when failing to disable the MMU-500 prefetcher
+
+- Fix undefined behaviour in calculation of L1 stream-table index when
+  32-bit StreamIDs are implemented
+
+- Replace a rogue comma with a semicolon
+
+----------------------------------------------------------------
+Chen Ni (1):
+      iommu/arm-smmu-v3: Convert comma to semicolon
+
+Daniel Mentz (1):
+      iommu/arm-smmu-v3: Fix last_sid_idx calculation for sid_bits==32
+
+Robin Murphy (1):
+      iommu/arm-smmu: Clarify MMU-500 CPRE workaround
+
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 ++--
+ drivers/iommu/arm/arm-smmu/arm-smmu-impl.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
