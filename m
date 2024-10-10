@@ -1,175 +1,88 @@
-Return-Path: <linux-kernel+bounces-359662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94205998EB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:48:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F49D998F01
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CBF01C24496
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:48:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 487A1B28EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAF219A292;
-	Thu, 10 Oct 2024 17:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE231CDA3C;
+	Thu, 10 Oct 2024 17:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UMNB4+y7"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y0gxGgft"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3CC19ABC6
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDC61CDA05
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582484; cv=none; b=UFH1JqxhI/LeumZQC2eQxhzxr5ib6QdsF7gqcNV1h2YY34U+DKxtBPn7o3CozFlxIL3xq22HQowtrRMPdRak0bZoPGXmbPbKczHQB3kqVh8DEVmhyO0BUPJi+5LUQRxazTTwM+Jd/aFmgyRPDR+1VbxmQ4g4VmDFe+J2YeoubjI=
+	t=1728582688; cv=none; b=mnMA0PNAg/1Gv+bEUwrINioj+PHiNfmqowrbauq4LCePXu+3+Z4yt1oI75cSFwx5Np6aIlviKxHEzHUgLqizy+sx21joB0ZjQPKusPW77G8zs+vNz92hSlQWofvp3Rzm6qNqoWCzyGhURTq9WuB6VtlzPhQ9ZV/E5gWioEckSFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582484; c=relaxed/simple;
-	bh=E8mbeffuJCF5vv+fAvVmB2Ys8E6dCWOV1902JqtVczw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Lsd86i1uHvpIRairWuXbYMo/EeUdEsn4oSTA0o5MXyFBtCeTo33LFbN0cB/ZikmmqU9i3sqmTnNIWZo3o7SASmi+v/wBwR/y7Gez1WyayTlDAi8QZ5FsNIHqVdQ4XqyeIPOkHIfRwnOLzJEVWrFJmFpHrgmBInhelOcPWQCCqIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UMNB4+y7; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b5792baaso1608414276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728582482; x=1729187282; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X1Z42wRbrt15yDSnqRKqM6/kC3SQS2TPM9wcYC+W7Ws=;
-        b=UMNB4+y7EjVUZLgIGOqdsiqTA9dBPw/WZWFoqidjXSdJYJxJhPXsf5EBFPP86/zzNZ
-         HWV1A6uZqY6dGscLBtLo9XMdAr0PINu7yAAsaaNtosg6TAB12ugIvwM13K46OrHlTBlw
-         I4XS5JfUMSWdg+eKd3Ym5TZYeKvmSVWCHer7Ke82ifnIBWHx1ie5BF5Qfk85y6nmALnz
-         YJTsP1Q8L43CYCLG9VqNJTh5wavuvxh3tU1C/Xn8zFhkr+wVO544EUiInVdGcKBGZd51
-         1toOYv89EFcO9Mhuxoyw6OWwtmAt31+W5GD3zd16GedQbzZ39jO4MiTgehyMnRpd0r2S
-         rrGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728582482; x=1729187282;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X1Z42wRbrt15yDSnqRKqM6/kC3SQS2TPM9wcYC+W7Ws=;
-        b=BlH/BrHWelbEoNbWQ4iUwXJs4HnhSeLZB6LGeJCo3QDE0Yhy5TtVK+HqTSHbqnG0Zu
-         MnEjAR/NSmSfkcxVCvVdWbjjjem2JGG/yTEIg9Zpw3cJE6Ru9pZFqmCPzWVJkr6OatNw
-         rlcGONbNl3wNKYLmASHknhlttn4xqHwqNunRtpi7JYHtW92LV2fFSwTwe28uC+1xKS5B
-         QWbSVYzxKRNZxcfEkJeG+5N+GJH8xE+tuEX+1lzUzi68iEkIKo/0JjiiCEYklJ4jSHtn
-         yWxH5dliuQ1Ufel+FxY4mYKNr4QSw9UQZzFiOJEyOF8Qsx1U+xmN9Dc7rozQOAqk/THc
-         AYzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGEDBJxVvVrrAyEKs2lEnVZzqDj//nI2UuQZZJQ+T5pohS8taqk8/WY8T/ghTCKBZFcsSVZz9/q4fbqbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcNGNHTnssZx/J6c81X/bgw6O/brqU7ZJ+9+7S+9S4haNe9TxP
-	s1YlZFVjTRgjnQy1zYOLaROeaFI6TC5yFd2aMthiNqUVJ+ZNHCSLkWyiYZ4VVk4o5iMV23adchu
-	08Q==
-X-Google-Smtp-Source: AGHT+IF0dDDUVU5j61y3AwnqaoruwprA9uZzFBQnwA7DNa3maVwIMFNNKTf0+Fg7U7/6tuyOWQZWYl0/xnc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:a2c5:0:b0:e28:f1e8:6596 with SMTP id
- 3f1490d57ef6-e28fe328e1emr94533276.1.1728582481751; Thu, 10 Oct 2024 10:48:01
- -0700 (PDT)
-Date: Thu, 10 Oct 2024 10:48:00 -0700
-In-Reply-To: <1baf4159-ce53-4a75-99bf-adf4b89dd07b@redhat.com>
+	s=arc-20240116; t=1728582688; c=relaxed/simple;
+	bh=mLSjiTOUh+E9CxgYwi1U1f5AhkZN84D58GBwPA5jKvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s5nSN6UYU93Qgss+HGGFpOHF9Pn7ENLGCF4rz0WeHIhOdIX4ZXuWBlNiLfn+bFJQ/4NjEolf9lv5cxP6gkDZJQ+wPKj4MHK480I/Gfk18+5gzduqHK842XvkMyZMIeQu1LJGETY8TH/7RGmg4YZBuBtYgfAUXj5cR3u+wXgST8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y0gxGgft; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728582686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mLSjiTOUh+E9CxgYwi1U1f5AhkZN84D58GBwPA5jKvA=;
+	b=Y0gxGgft4AAnDeQdvPfG0/xX8xtyHOvF1zZzdBNufp+lds9jbUoma+4XpoDv0mL4AUlDKb
+	idAZqrPFEvkDRttaOq/RibpngJz9Od7vuksln9ElOfHPBh6NF0DFhfrK/pCU5wXxG9r+dC
+	8y0U5DpcchzkMSTvIgEnYP5tIFzAyyo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-YefpJFcHO92pOnqSvKAYyw-1; Thu,
+ 10 Oct 2024 13:51:21 -0400
+X-MC-Unique: YefpJFcHO92pOnqSvKAYyw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D38BA1955D42;
+	Thu, 10 Oct 2024 17:51:19 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.239])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3FE8919560A2;
+	Thu, 10 Oct 2024 17:51:16 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: kvalo@kernel.org,
+	jjohnson@kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: jtornosm@redhat.com
+Subject: [PATCH 0/2] wifi: ath12k: fix issues when unbinding
+Date: Thu, 10 Oct 2024 19:48:57 +0200
+Message-ID: <20241010175102.207324-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241009150455.1057573-1-seanjc@google.com> <20241009150455.1057573-5-seanjc@google.com>
- <1baf4159-ce53-4a75-99bf-adf4b89dd07b@redhat.com>
-Message-ID: <ZwgTUNCOIh2xwU6e@google.com>
-Subject: Re: [PATCH 4/6] Revert "KVM: Fix vcpu_array[0] races"
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Will Deacon <will@kernel.org>, Michal Luczaj <mhal@rbox.co>, Alexander Potapenko <glider@google.com>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Oct 10, 2024, Paolo Bonzini wrote:
-> On 10/9/24 17:04, Sean Christopherson wrote:
-> > Now that KVM loads from vcpu_array if and only if the target index is
-> > valid with respect to online_vcpus, i.e. now that it is safe to erase a
-> > not-fully-onlined vCPU entry, revert to storing into vcpu_array before
-> > success is guaranteed.
-> > 
-> > If xa_store() fails, which _should_ be impossible, then putting the vCPU's
-> > reference to 'struct kvm' results in a refcounting bug as the vCPU fd has
-> > been installed and owns the vCPU's reference.
-> > 
-> > This was found by inspection, but forcing the xa_store() to fail
-> > confirms the problem:
-> > 
-> >   | Unable to handle kernel paging request at virtual address ffff800080ecd960
-> >   | Call trace:
-> >   |  _raw_spin_lock_irq+0x2c/0x70
-> >   |  kvm_irqfd_release+0x24/0xa0
-> >   |  kvm_vm_release+0x1c/0x38
-> >   |  __fput+0x88/0x2ec
-> >   |  ____fput+0x10/0x1c
-> >   |  task_work_run+0xb0/0xd4
-> >   |  do_exit+0x210/0x854
-> >   |  do_group_exit+0x70/0x98
-> >   |  get_signal+0x6b0/0x73c
-> >   |  do_signal+0xa4/0x11e8
-> >   |  do_notify_resume+0x60/0x12c
-> >   |  el0_svc+0x64/0x68
-> >   |  el0t_64_sync_handler+0x84/0xfc
-> >   |  el0t_64_sync+0x190/0x194
-> >   | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
-> > 
-> > Practically speaking, this is a non-issue as xa_store() can't fail, absent
-> > a nasty kernel bug.  But the code is visually jarring and technically
-> > broken.
-> > 
-> > This reverts commit afb2acb2e3a32e4d56f7fbd819769b98ed1b7520.
-> > 
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Michal Luczaj <mhal@rbox.co>
-> > Cc: Alexander Potapenko <glider@google.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Reported-by: Will Deacon <will@kernel.org>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   virt/kvm/kvm_main.c | 14 +++++---------
-> >   1 file changed, 5 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index fca9f74e9544..f081839521ef 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -4283,7 +4283,8 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
-> >   	}
-> >   	vcpu->vcpu_idx = atomic_read(&kvm->online_vcpus);
-> > -	r = xa_reserve(&kvm->vcpu_array, vcpu->vcpu_idx, GFP_KERNEL_ACCOUNT);
-> > +	r = xa_insert(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, GFP_KERNEL_ACCOUNT);
-> > +	BUG_ON(r == -EBUSY);
-> >   	if (r)
-> >   		goto unlock_vcpu_destroy;
-> > @@ -4298,12 +4299,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
-> >   	kvm_get_kvm(kvm);
-> >   	r = create_vcpu_fd(vcpu);
-> >   	if (r < 0)
-> > -		goto kvm_put_xa_release;
-> > -
-> > -	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
-> > -		r = -EINVAL;
-> > -		goto kvm_put_xa_release;
-> > -	}
-> > +		goto kvm_put_xa_erase;
-> 
-> I also find it a bit jarring though that we have to undo the insertion. This
-> is a chicken-and-egg situation where you are pick one operation B that will
-> have to undo operation A if it fails.  But what xa_store is doing, is
-> breaking this deadlock.
-> 
-> The code is a bit longer, sure, but I don't see the point in complicating
-> the vcpu_array invariants and letting an entry disappear.
+wifi: ath12k: fix issues when unbinding
 
-But we only need one rule: vcpu_array[x] is valid if and only if 'x' is less than
-online_vcpus.  And that rule is necessary regardless of whether or not vcpu_array[x]
-is filled before success is guaranteed.
+Currently, ath12k driver is not working from VMs but it cannot be unbinded
+either from there. I would like to send these patches to fix the issues that
+I have found in order to get the unbind operation working there, at least to
+fix the errors found during the process when the initial error is detected.
 
-I'm not concerned about the code length, it's that we need to do _something_ if
-xa_store() fails.  Yeah, it should never happen, but knowingly doing nothing feels
-all kinds of wrong.  I don't like BUG(), because it's obviously very doable to
-gracefully handle failure.  And a WARN() is rather pointless, because continuing
-on with an invalid entry is all but guaranteed to crash, i.e. is little more than a
-deferred BUG() in this case.
+Just FYI and out of the scope of these patches, I am unbinding and binding
+to apply a workaround with an extra module to fix the MSI addressing by
+means of kprobes to be able to work with this device from VMs.
+
+Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+
 
