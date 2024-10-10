@@ -1,221 +1,132 @@
-Return-Path: <linux-kernel+bounces-359497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8367998C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:53:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B07F998C65
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C461F221EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:53:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E131C2110E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AE11CCB47;
-	Thu, 10 Oct 2024 15:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E576A1CDA2D;
+	Thu, 10 Oct 2024 15:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="XwnHlW6X"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gLfg+uGL"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4131C7B68
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C905D1CB311
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575565; cv=none; b=H2J7/paAakRD8YX90E4oq7tXrRaiLxVQWQxQifwVunVaWzWfdal9HjLA/NEmnESxoKTx6A+62HaOd+MD4Qi/ZEsBwp1Nfrar+6L8TC8j1zBaGMK68zYtqxku3X4Tq26cVbRpH+aUf8xJQMcdLC9bJqKxUi7efWEQz/2KlNIDJJQ=
+	t=1728575599; cv=none; b=i338/nXRYl7AXpfIHbTsGWM7WOBnQ0cmZ81zWcZh+oJ+Sxyzt6D8r1GNTXMaRAC/7z4MqVhtTX2ix6diFHYq0VU4NGqKfeoz7RqF6IY36rdK6mqH8cPki3Syd8Ser2d5Tuwx5t5zGFz7QOUBBGsMK67ZW9CW7X6nnYTBZHHCaog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575565; c=relaxed/simple;
-	bh=UD6gE8Ajbe1yu0kKtf5syRQL8hngYhpGDpczsNaYu0M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y9M+4Vfs5tMBc9CmnVsWHmr9UklW1s/f/VoYeov/PlxF4W5D0Tueg/bWyHoRdkIb/bd5XlepSIF0sqMd3ps8ZG5Dr9n3ye66fp0pCopv6aWcziGxLkt0mim+qDGgtzp5Y+aA1+GHWJxy6VMUQmPEWKJpBEh444MWwHUKJYhHmyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=XwnHlW6X; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1728575599; c=relaxed/simple;
+	bh=OEKgT5FaXcrpIO0R1OJJHf0yvgx7y1d7mR06I8IroIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cp0YUvcjcdDq7QkQIkwWeTKC+n3XwE+9krRNdhyWnN/xwdfFA/TxC5iLriga41y2A7x8TeuvWeGayTJ1/fJOPjXX1SJ78qRfSoeQleRm2QLwD36MAnAFRnuhBenlAR3sSDq2ODZX1lzkvFQUfuCLN4P2+kl7zfYd/qvcPyEwlVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gLfg+uGL; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-45fb0ebb1d0so257231cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:53:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1728575564; x=1760111564;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Kkum1blv47enqgyq2aUGev7ra3ELmRp0dUTOAbl+I58=;
-  b=XwnHlW6XYoJPa/bv9C261CUd1VGONwodjKce/FrKZxkkdr/HqFFXS8h3
-   GVXkI+wtuH9Cao+FaP5X/HHHsM5ngppua8lu5Bjy2vVkE1lzTUlisk0ED
-   KROfQaXHoKF5VKpDhytdbcHIf4DGNfCeFBqS5FnmEaDaTRiryObr47z8F
-   4=;
-X-IronPort-AV: E=Sophos;i="6.11,193,1725321600"; 
-   d="scan'208";a="238327105"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 15:52:39 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:23851]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.18.228:2525] with esmtp (Farcaster)
- id 646efd08-675e-4746-8ba7-c38ece7edc16; Thu, 10 Oct 2024 15:52:37 +0000 (UTC)
-X-Farcaster-Flow-ID: 646efd08-675e-4746-8ba7-c38ece7edc16
-Received: from EX19D033EUB001.ant.amazon.com (10.252.61.11) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 10 Oct 2024 15:52:28 +0000
-Received: from EX19MTAUEB001.ant.amazon.com (10.252.135.35) by
- EX19D033EUB001.ant.amazon.com (10.252.61.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 10 Oct 2024 15:52:27 +0000
-Received: from email-imr-corp-prod-iad-1box-1a-9bbde7a3.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.135.35) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Thu, 10 Oct 2024 15:52:27 +0000
-Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com [10.253.79.181])
-	by email-imr-corp-prod-iad-1box-1a-9bbde7a3.us-east-1.amazon.com (Postfix) with ESMTPS id 229F342252;
-	Thu, 10 Oct 2024 15:52:25 +0000 (UTC)
-From: Fares Mehanna <faresx@amazon.de>
-To: <david@redhat.com>
-CC: <akpm@linux-foundation.org>, <ardb@kernel.org>, <arnd@arndb.de>,
-	<bhelgaas@google.com>, <broonie@kernel.org>, <catalin.marinas@arm.com>,
-	<faresx@amazon.de>, <james.morse@arm.com>, <javierm@redhat.com>,
-	<jean-philippe@linaro.org>, <joey.gouly@arm.com>,
-	<kristina.martsenko@arm.com>, <kvmarm@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <mark.rutland@arm.com>, <maz@kernel.org>,
-	<nh-open-source@amazon.com>, <oliver.upton@linux.dev>, <ptosi@google.com>,
-	<rdunlap@infradead.org>, <rkagan@amazon.de>, <rppt@kernel.org>,
-	<shikemeng@huaweicloud.com>, <suzuki.poulose@arm.com>, <tabba@google.com>,
-	<will@kernel.org>, <yuzenghui@huawei.com>
-Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use it
-Date: Thu, 10 Oct 2024 15:52:10 +0000
-Message-ID: <20241010155210.13321-1-faresx@amazon.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <813b9bcb-afde-40b6-a604-cdb71b4b6d7a@redhat.com>
-References: <813b9bcb-afde-40b6-a604-cdb71b4b6d7a@redhat.com>
+        d=google.com; s=20230601; t=1728575597; x=1729180397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bRF7QTAhluph4t1u2jY3lQtQT6pq0IqnJy/G2sC0qKY=;
+        b=gLfg+uGL9nnJXg3JX0x9h1w/z1xRq5/GKSna+PmYzrHn7KIHLxUgvUALoqM9YJ5NgF
+         SDDt09uxrVVKZ6pBH8mLnC7SwqqaM0D1CinL785Ip6NAmoh2zocSvhuv6909SrLfBDvA
+         laxdhU9ZKUdahT66MQIQPBhLvvV9heCvHg+zZ+jx+65FbE6kjAIKik1cWKFEWKsCqvcd
+         F0hEp/spjigQSK9wMJ+SW6s5UH0EE5Zb0Haa4DQXCdvSvYE2uwro9Hwd2dkfudo7BR1Q
+         HVpxPysO+/nkdQfmTwwarGpL/uTBVtenAab5dadGeU++cYr/dkk41dbbPw+3animKJGs
+         87DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728575597; x=1729180397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bRF7QTAhluph4t1u2jY3lQtQT6pq0IqnJy/G2sC0qKY=;
+        b=qU3A3fGSuDXvks4CmCYONZb2MY84pjwL4KBh2jSzpS688WR39NpT/Y+40vg+1IMT9C
+         YXRvfdS6rUu/K4NM5gDvh3QYJ4dsGKb2ICOmMLOUv7AnB10v2MDhIZkPV+UI3sUhofmZ
+         rFsrqw1LCt7a+668N7OKztiTc/FKiW/QU7Y7fZKUERi5wF6rM+BWo8SEQreqF9v6h1+/
+         Khzb8mkDTvkdSwdL573JNBNQAEzHONhsXr1PSZaWPs8KRQs0sGc5Uh/e9IK7rAnZpME1
+         rmtkr34QhSUJJO3DvHoWr50j8Oqx+M1lloQ+JOW5chDyBQ2/WAxPW9P+t912kD44u/39
+         dgSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjfKarbIF7kf5tRz1gqlS6fOwLS5hr/CHgDNZy+iobHQ9E8qNi06qrx0ROOxoPXzMyQTGM4CLUmgjNJ4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsk669aszb3ktnDRAv8b+KVhKloUxK7f0PyIfjdioXIxx7Xepj
+	NxQ6c4GaZYucP2KGFtMW/ebMc4uQmIDueIUM400VB/LT3dCxhSN3iO6w28uz99Sv83hCH7P0dT0
+	5EmULsZ9A5ksj1UsSap9gMVvAClUIYJwLN/+M
+X-Google-Smtp-Source: AGHT+IFQAlD/kyDgC4ga4+ipIjureI+CBWbmGopaPOHkfvMa2Tw2xU4vZqdtGy3/S6U22tdGXqVetrx15+hx10NVr30=
+X-Received: by 2002:a05:622a:450d:b0:45f:9b3:c7d4 with SMTP id
+ d75a77b69052e-46040329dc4mr4203261cf.6.1728575596483; Thu, 10 Oct 2024
+ 08:53:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <42aa307d7ffae1851b4a8787f5c276dd0b3beece.1728543368.git.linux@leemhuis.info>
+ <b32f1e42-d775-4538-ba36-9e9b906a34e3@leemhuis.info> <CA+icZUUgwJWY=PWO5fQPZbUc-q=LkdHXVe4+g-LnXmQfCA3N7Q@mail.gmail.com>
+ <CA+icZUX9hrwFXA-6KVT+yZ=-NqyPB=LOKKWSf77-xb32totgHA@mail.gmail.com> <a5b3c47e-5f0f-4c0f-8ad9-4fb34d150548@leemhuis.info>
+In-Reply-To: <a5b3c47e-5f0f-4c0f-8ad9-4fb34d150548@leemhuis.info>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 10 Oct 2024 08:52:37 -0700
+Message-ID: <CABCJKudayCsPuowkUW7_JV_2HPNp5tf_py6jjDe6Ld7oMai9jg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] module: sign with sha512 by default to avoid build errors
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: sedat.dilek@gmail.com, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	linux-modules@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > In a series posted a few years ago [1], a proposal was put forward to allow the
-> > kernel to allocate memory local to a mm and thus push it out of reach for
-> > current and future speculation-based cross-process attacks.  We still believe
-> > this is a nice thing to have.
-> > 
-> > However, in the time passed since that post Linux mm has grown quite a few new
-> > goodies, so we'd like to explore possibilities to implement this functionality
-> > with less effort and churn leveraging the now available facilities.
-> > 
-> > An RFC was posted few months back [2] to show the proof of concept and a simple
-> > test driver.
-> > 
-> > In this RFC, we're using the same approach of implementing mm-local allocations
-> > piggy-backing on memfd_secret(), using regular user addresses but pinning the
-> > pages and flipping the user/supervisor flag on the respective PTEs to make them
-> > directly accessible from kernel.
-> > In addition to that we are submitting 5 patches to use the secret memory to hide
-> > the vCPU gp-regs and fp-regs on arm64 VHE systems.
-> 
-> I'm a bit lost on what exactly we want to achieve. The point where we 
-> start flipping user/supervisor flags confuses me :)
-> 
-> With secretmem, you'd get memory allocated that
-> (a) Is accessible by user space -- mapped into user space.
-> (b) Is inaccessible by kernel space -- not mapped into the direct map
-> (c) GUP will fail, but copy_from / copy_to user will work.
-> 
-> 
-> Another way, without secretmem, would be to consider these "secrets" 
-> kernel allocations that can be mapped into user space using mmap() of a 
-> special fd. That is, they wouldn't have their origin in secretmem, but 
-> in KVM as a kernel allocation. It could be achieved by using VM_MIXEDMAP 
-> with vm_insert_pages(), manually removing them from the directmap.
-> 
-> But, I am not sure who is supposed to access what. Let's explore the 
-> requirements. I assume we want:
-> 
-> (a) Pages accessible by user space -- mapped into user space.
-> (b) Pages inaccessible by kernel space -- not mapped into the direct map
-> (c) GUP to fail (no direct map).
-> (d) copy_from / copy_to user to fail?
-> 
-> And on top of that, some way to access these pages on demand from kernel 
-> space? (temporary CPU-local mapping?)
-> 
-> Or how would the kernel make use of these allocations?
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
+Hi,
 
-Hi David,
+On Thu, Oct 10, 2024 at 1:57=E2=80=AFAM Thorsten Leemhuis <linux@leemhuis.i=
+nfo> wrote:
+>
+> On 10.10.24 10:42, Sedat Dilek wrote:
+> > On Thu, Oct 10, 2024 at 10:29=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail=
+.com> wrote:
+> >> On Thu, Oct 10, 2024 at 10:19=E2=80=AFAM Thorsten Leemhuis <linux@leem=
+huis.info> wrote:
+> >>> On 10.10.24 09:00, Thorsten Leemhuis wrote:
+> >>
+> >> That was wrong in the original code which you moved:
+> >>
+> >> +config MODULE_SIG_SHA384
+> >> +       bool "SHA-384"
+> >> +       select CRYPTO_SHA512 <--- SHA*384*
+> >
+> > Thorsten, please fix it!
+>
+> That looks intentional to me -- and CRYPTO_SHA384 from a quick look does
+> not even exist.
 
-Thanks for taking a look at the patches!
+It is intentional. SHA-384 is just truncated SHA-512 with different
+initial hash values. The same with SHA-224/256.
 
-We're trying to allocate a kernel memory that is accessible to the kernel but
-only when the context of the process is loaded.
+> But that's not at all my area of expertise, so I would not want to touch
+> it anyway.
+>
+> Ciao, Thorsten
+>
+> P.S.: Vegard Nossum mentioned in the fediverse that I could also solve
+> the problem the patch is about by adding "default MODULE_SIG_SHA512" to
+> the "choice" section; haven't tried that, but that sounds like a better
+> solution. Will likely give it a try, unless someone brings up unwanted
+> side effects this might cause.
 
-So this is a kernel memory that is not needed to operate the kernel itself, it
-is to store & process data on behalf of a process. The requirement for this
-memory is that it would never be touched unless the process is scheduled on this
-core. otherwise any other access will crash the kernel.
+Yes, that would be a much better way to change the default. Overall,
+moving away from SHA-1 seems like a good idea and SHA-512 feels like a
+reasonable choice. Luis, do you see any issues with changing the
+default here?
 
-So this memory should only be directly readable and writable by the kernel, but
-only when the process context is loaded. The memory shouldn't be readable or
-writable by the owner process at all.
-
-This is basically done by removing those pages from kernel linear address and
-attaching them only in the process mm_struct. So during context switching the
-kernel loses access to the secret memory scheduled out and gain access to the
-new process secret memory.
-
-This generally protects against speculation attacks, and if other process managed
-to trick the kernel to leak data from memory. In this case the kernel will crash
-if it tries to access other processes secret memory.
-
-Since this memory is special in the sense that it is kernel memory but only make
-sense in the term of the owner process, I tried in this patch series to explore
-the possibility of reusing memfd_secret() to allocate this memory in user virtual
-address space, manage it in a VMA, flipping the permissions while keeping the
-control of the mapping exclusively with the kernel.
-
-Right now it is:
-(a) Pages not accessible by user space -- even though they are mapped into user
-    space, the PTEs are marked for kernel usage.
-(b) Pages accessible by kernel space -- even though they are not mapped into the
-    direct map, the PTEs in uvaddr are marked for kernel usage.
-(c) copy_from / copy_to user won't fail -- because it is in the user range, but
-    this can be fixed by allocating specific range in user vaddr to this feature
-    and check against this range there.
-(d) The secret memory vaddr is guessable by the owner process -- that can also
-    be fixed by allocating bigger chunk of user vaddr for this feature and
-    randomly placing the secret memory there.
-(e) Mapping is off-limits to the owner process by marking the VMA as locked,
-    sealed and special.
-
-Other alternative (that was implemented in the first submission) is to track those
-allocations in a non-shared kernel PGD per process, then handle creating, forking
-and context-switching this PGD.
-
-What I like about the memfd_secret() approach is the simplicity and being arch
-agnostic, what I don't like is the increased attack surface by using VMAs to
-track those allocations.
-
-I'm thinking of working on a PoC to implement the first approach of using a
-non-shared kernel PGD for secret memory allocations on arm64. This includes
-adding kernel page table per process where all PGDs are shared but one which
-will be used for secret allocations mapping. And handle the fork & context
-switching (TTBR1 switching(?)) correctly for the secret memory PGD.
-
-What do you think? I'd really appreciate opinions and possible ways forward.
-
-Thanks!
-Fares.
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+Sami
 
