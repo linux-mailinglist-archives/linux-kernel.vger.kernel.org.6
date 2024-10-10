@@ -1,164 +1,83 @@
-Return-Path: <linux-kernel+bounces-358049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5955999799E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2D39979A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C2481C222C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073871C2244D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B367EEDB;
-	Thu, 10 Oct 2024 00:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B96210957;
+	Thu, 10 Oct 2024 00:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwHWn7bh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGn0J00H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA4D63C;
-	Thu, 10 Oct 2024 00:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80972A1D2;
+	Thu, 10 Oct 2024 00:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728520296; cv=none; b=tDGDi01g6tDVp3L/krOdFNtTLxpGkihi0yMZR+0f6HrJZ3FPLD/+Fhs64PjREefL+98zr7JXvLfdm63i3TQCCGGtlawsqu8bEGKw9x01tdFecJJM4G8XZ3gi8o50GI6OKDbHdWB+FFZVgHtQbYJ6wl061p0eTvrz9ytSZ55l744=
+	t=1728520375; cv=none; b=DCV+zrALAmDI5lIEkBTjP76AMsJJJRqhosKVFYTUCCnW8Xr4EKrgfyhT8rIBJc5CxJrm/XTgawMnzn6sN7itJo5Ca9LQyzswyjR+TZ0tD2HSgTwpTxZBeYyzGlIjo3NxeoHnBj+4V2CYY+GtTqTtrdQ+Mv45NhUiOrYLd8eRzqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728520296; c=relaxed/simple;
-	bh=kkNfJj1RJ4WClW0GjZ2xR6/HQqOcEkFTBgBDBztekd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NiH2P9NtjQTusIA12rz2+4h+K5zVzKLlFTOlYAJvyYhxjcP8BdVVm2NYZ3X/Jh2lhiVLrxR+5XbuySWVodlaFUu1yizQ0Y9C4SQKXMd4mDOTtBGCQoFpMmGWqqNsBOPmwzo40Uqw4KHKMcnOXkyWwAmfMO1xqfTnl5u1rwdGrXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwHWn7bh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C04C4CEC3;
-	Thu, 10 Oct 2024 00:31:35 +0000 (UTC)
+	s=arc-20240116; t=1728520375; c=relaxed/simple;
+	bh=QarAG9OsS0S7oXws7XJsQIFCQAcnaMCbtsh+DM35Fcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YBwI5hacrjs5G900x33xyknx5XzAPvVsrSu3vTIv1XFAjyn2+bUBNFA9H5Z/ytdM93DnUxeNPUSBKzjF74QhtRXaJIh6RFEJK1tMCkvnaFJNzDOZ/HNy/ouCnf+8rygNH/MlgfmhjOOhFpFORNqc6VlSg9mp5t0mwSjq99MSeG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGn0J00H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6633CC4CEC3;
+	Thu, 10 Oct 2024 00:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728520296;
-	bh=kkNfJj1RJ4WClW0GjZ2xR6/HQqOcEkFTBgBDBztekd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pwHWn7bhIWuezx2aRXLO4s04278vgJ5DWNpUTaicVZQsEC0hmCVvOty5q9Rgub9gf
-	 ruL3hw6XsCcwldQB6zJK7stel97kWQRC+WAWtIpkUW50RWYq49PTv3qqXCmepH9GS6
-	 FF0qqFE3CSgaIQHYI6zUIgeIRbqPzWEPQBFdanSrc88GrjzvrnVo9lL0zk9QrArcKc
-	 ps1w5r7l0JsLATZ7beDCX165nHgK2y3z8/kyBlZyXaubFRfeaOHuCT54jvt//cHfm9
-	 e2iJSt1nC3rG1rpoxRai0yePh6Jl4g/sKT9YG4O1U8rpNUOChHjyfxPxoCWj/KUdd6
-	 cgoXMswvZ80vQ==
-Date: Wed, 9 Oct 2024 17:31:34 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Tengda Wu <wutengda@huaweicloud.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH -next v3 1/2] perf stat: Support inherit events during
- fork() for bperf
-Message-ID: <ZwcgZhOC_gq9kToT@google.com>
-References: <20240916014318.267709-1-wutengda@huaweicloud.com>
- <20240916014318.267709-2-wutengda@huaweicloud.com>
- <CAPhsuW6wrwcMYLufVfu-R9OzPBfspJD0w-pZUr68UBRSZExc=A@mail.gmail.com>
+	s=k20201202; t=1728520375;
+	bh=QarAG9OsS0S7oXws7XJsQIFCQAcnaMCbtsh+DM35Fcw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FGn0J00HfbQ3QOMVUqk1P7sFWmH62grr/Lc9+Ar39iMKi+ib9tL6BLhCpOB1ZxllE
+	 0MRu42N7V/iGB9cBbdJfiOwSrsdTdPn9NwUypq52PfjxzpFXlkEinsT7EEDfvrNRzb
+	 nXmCqlafauZ46G5rrpSPV+rUEZE82Ux0wGJWns13gCl7f/La5N026MaRT4hHcTFvfe
+	 tKxX77Y0gwrEKnMPMJYe6QSgQ1FOHg8/8C1cCfAuBbez7m+eCCrHicLjxZzIrFkuNb
+	 PVKAHtJnkdlmyu1fKMNRcxPyIZ5CmvG2vp3tw9AP0i1TQBMI9i3oJM27PgPVmhYMrT
+	 Km5smAzOMfAcQ==
+Date: Wed, 9 Oct 2024 17:32:53 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
+ <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
+ David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
+ <abuehaze@amazon.com>, Paolo Abeni <pabeni@redhat.com>, "Christopher S .
+ Hall" <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>,
+ John Stultz <jstultz@google.com>, "Michael S . Tsirkin" <mst@redhat.com>,
+ netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier
+ <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, qemu-devel
+ <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next v7] ptp: Add support for the AMZNC10C 'vmclock'
+ device
+Message-ID: <20241009173253.5eb545db@kernel.org>
+In-Reply-To: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
+References: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW6wrwcMYLufVfu-R9OzPBfspJD0w-pZUr68UBRSZExc=A@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 10:18:44AM -0700, Song Liu wrote:
-> On Sun, Sep 15, 2024 at 6:53 PM Tengda Wu <wutengda@huaweicloud.com> wrote:
-> >
-> > bperf has a nice ability to share PMUs, but it still does not support
-> > inherit events during fork(), resulting in some deviations in its stat
-> > results compared with perf.
-> >
-> > perf stat result:
-> > $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
-> >
-> >    Performance counter stats for './perf test -w sqrtloop':
-> >
-> >        2,316,038,116      cycles
-> >        2,859,350,725      instructions
-> >
-> >          1.009603637 seconds time elapsed
-> >
-> >          1.004196000 seconds user
-> >          0.003950000 seconds sys
-> >
-> > bperf stat result:
-> > $ ./perf stat --bpf-counters -e cycles,instructions -- \
-> >       ./perf test -w sqrtloop
-> >
-> >    Performance counter stats for './perf test -w sqrtloop':
-> >
-> >           18,762,093      cycles
-> >           23,487,766      instructions
-> >
-> >          1.008913769 seconds time elapsed
-> >
-> >          1.003248000 seconds user
-> >          0.004069000 seconds sys
-> >
-> > In order to support event inheritance, two new bpf programs are added
-> > to monitor the fork and exit of tasks respectively. When a task is
-> > created, add it to the filter map to enable counting, and reuse the
-> > `accum_key` of its parent task to count together with the parent task.
-> > When a task exits, remove it from the filter map to disable counting.
-> >
-> > After support:
-> > $ ./perf stat --bpf-counters -e cycles,instructions -- \
-> >       ./perf test -w sqrtloop
-> >
-> >  Performance counter stats for './perf test -w sqrtloop':
-> >
-> >      2,316,252,189      cycles
-> >      2,859,946,547      instructions
-> >
-> >        1.009422314 seconds time elapsed
-> >
-> >        1.003597000 seconds user
-> >        0.004270000 seconds sys
-> >
-> > Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-> 
-> The solution looks good to me. Question on the UI: do we always
-> want the inherit behavior from PID and TGID monitoring? If not,
-> maybe we should add a flag for it. (I think we do need the flag).
+On Sun, 06 Oct 2024 08:17:58 +0100 David Woodhouse wrote:
+> +config PTP_1588_CLOCK_VMCLOCK
+> +	tristate "Virtual machine PTP clock"
+> +	depends on X86_TSC || ARM_ARCH_TIMER
+> +	depends on PTP_1588_CLOCK && ACPI && ARCH_SUPPORTS_INT128
+> +	default y
 
-I think it should depend on the value of attr.inherit.  Maybe we can
-disable the autoload for !inherit.
-
-> 
-> One nitpick below.
-> 
-> Thanks,
-> Song
-> 
-> [...]
-> >
-> > +struct bperf_filter_value {
-> > +       __u32 accum_key;
-> > +       __u8 exited;
-> > +};
-> nit:
-> Can we use a special value of accum_key to replace exited==1
-> case?
-
-I'm not sure.  I guess it still needs to use the accum_key to save the
-final value when exited = 1.
-
-Thanks,
-Namhyung
-
-> 
-> > +
-> >  #endif /* __BPERF_STAT_U_H */
-> > --
-> > 2.34.1
-> >
+Why default to enabled? Linus will not be happy..
 
