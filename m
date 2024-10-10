@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-359668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB4998ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:51:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B53998ED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 882E3B28FD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579C21F24B8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F27B1CF287;
-	Thu, 10 Oct 2024 17:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ABB1C9EA4;
+	Thu, 10 Oct 2024 17:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onqp1m+C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cVV9CWOd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XGVeQmfK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cVV9CWOd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XGVeQmfK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6241CEAD8;
-	Thu, 10 Oct 2024 17:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2464198831;
+	Thu, 10 Oct 2024 17:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582632; cv=none; b=X9hyhNItcfTeyakLQSUYVnQ432JxkOOCe1pQm8CX5ttA8+nsoMw1OPYWDnytXjFAkNWjCoItP5bK5lyK9qa8aBK6lfD2qpkCRzXY1YRL+hgfVnNdNolGRlVcbAzg2pxDsfWlZCs+X7dJRwvM9cneYu/Yo0vukoOnerMQbEheNbI=
+	t=1728582679; cv=none; b=g/7o9EWyMSX7IrwSOfX69CWzIT1ZTvhtaYlArgX78FSi84zH9HtjKkV/cqAY4YuvPhT8OjjySRISnx9dQXkBq3UzQ8QEfeT8280Lfgssc+yCYCPur488ooeZFv78mFIZrIRjYdFEJTUrLKBVWs65L8r6CjaruREIHuWHt14+f1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582632; c=relaxed/simple;
-	bh=e2ct8EgYpnqZZr08HUKWQNGYtu2nQSXbY5wl+rtsE68=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=pjfkFkAI439wVZtV/Yj3SIoekhMRTsHbvpULhZVbgjMZ+gKOx8HAjjFG94+2vjttRWiKfwgl+UeCaHwWj0D9Bv/j/FgWNBk4UMghCHBLKVYrpxhQbsLsNSWrpT//mqbkeMhLwe4EjOno7gwQzC3FBd2AlXrHgYhBK0fvet+Zzws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onqp1m+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9055C4CECC;
-	Thu, 10 Oct 2024 17:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728582632;
-	bh=e2ct8EgYpnqZZr08HUKWQNGYtu2nQSXbY5wl+rtsE68=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=onqp1m+Chu2s1rdECvnyt9l7leioNL/SHAyciVnS7UgPGlOzCzm4LRSr/KGp2CA80
-	 UbMdYz/LBwjiptaVhPMSO6PiRtMqVxlRPIy321HsN4bjyNCIRMGfvi6G911FTVjSgq
-	 NIonrIRb31X4hFA3XAQjUSqTQtyy1qnYhRRBqISpqx8VA3RMETZHtjO0oQJzVlE6AJ
-	 BJhckatk2ze9cOZw9ZBOMf+DGPiJyi2Ir7h/UoW8GTYRcCmUsIdPVqKl6B0wFJgFP4
-	 a8YoHthkLecJLEm8ZPchjoD/gHEjGeZpcMXZp+LO62MblsHBOyhjqAd/DWw7q6lqX1
-	 hf3LrRI3OkIIA==
-Date: Thu, 10 Oct 2024 12:50:30 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1728582679; c=relaxed/simple;
+	bh=jobFgPk37rqd3MarI9UadU6Ux0ibFBTduuVRuzoynUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pAjbhFI/WminpCSduFVFtqEZhJs4ZW8Aex3jLykhLHFixCRlUdvYFCfLF0o01h0I8TJNAcMBw8flukP+pS/WtAtTRTBb5J4Cu+JSFQpQJMS1hpqFbvVPUoL75dqzJXuoL/REpdDQOZmsu1v+zmlBUpoIlhd3UUw8KiEXoSg3BpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cVV9CWOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XGVeQmfK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cVV9CWOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XGVeQmfK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 456C61FF0D;
+	Thu, 10 Oct 2024 17:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728582676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
+	b=cVV9CWOd0wJ+FWjjPvP4VYovviTTPMGu45G5XNaHqXkwnySHdZHVrk+p6xCChHngQijf+d
+	MfUMzeH2Ojc43/ijaXLogD2WaUJaTMr8ln7Ugn+eWc1nvm9s21oNzNkQhAvww94HUQf6ZH
+	HgaAvl/L/IEW7Qq+JrpCqvFWKTXv/6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728582676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
+	b=XGVeQmfKMm20SrDiAkHVezgQsHdtImS8NaT+aY4CfHL486ORizUU8U5xVHd6vjDvjWoGob
+	cQULAk87GmU5GfBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728582676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
+	b=cVV9CWOd0wJ+FWjjPvP4VYovviTTPMGu45G5XNaHqXkwnySHdZHVrk+p6xCChHngQijf+d
+	MfUMzeH2Ojc43/ijaXLogD2WaUJaTMr8ln7Ugn+eWc1nvm9s21oNzNkQhAvww94HUQf6ZH
+	HgaAvl/L/IEW7Qq+JrpCqvFWKTXv/6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728582676;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
+	b=XGVeQmfKMm20SrDiAkHVezgQsHdtImS8NaT+aY4CfHL486ORizUU8U5xVHd6vjDvjWoGob
+	cQULAk87GmU5GfBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FB1B13A6E;
+	Thu, 10 Oct 2024 17:51:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SLKnORMUCGcNJwAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 17:51:15 +0000
+Date: Thu, 10 Oct 2024 13:51:06 -0400
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/12] iomap: add bioset in iomap_read_folio_ops for
+ filesystems to use own bioset
+Message-ID: <culcdpzjq7dhe2rvyalc4rfyucvcyijyttwtuoeqfayxm3ssbo@3l2zpexykayn>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <95262994f8ba468ab26f1e855224c54c2a439669.1728071257.git.rgoldwyn@suse.com>
+ <ZwT_OwN9MOZSEseE@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Guenter Roeck <linux@roeck-us.net>, Conor Dooley <conor+dt@kernel.org>, 
- Daniel Thompson <daniel.thompson@linaro.org>, 
- dri-devel@lists.freedesktop.org, Wim Van Sebroeck <wim@linux-watchdog.org>, 
- linux-watchdog@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, 
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20241010-zii_yaml-v2-4-0ab730607422@nxp.com>
-References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
- <20241010-zii_yaml-v2-4-0ab730607422@nxp.com>
-Message-Id: <172858262752.2080943.12465101127692480556.robh@kernel.org>
-Subject: Re: [PATCH v2 4/5] dt-bindings: watchdog: convert
- zii,rave-sp-wdt.txt to yaml format
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwT_OwN9MOZSEseE@infradead.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_THREE(0.00)[3]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-
-On Thu, 10 Oct 2024 11:42:41 -0400, Frank Li wrote:
-> Convert device binding doc zii,rave-sp-wdt.txt to yaml format.
-> Additional changes:
-> - Ref to watchdog.yaml.
-> - Remove mfd node in example.
-> - Remove eeprom part in example.
+On  2:45 08/10, Christoph Hellwig wrote:
+> >  	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
+> > +		struct bio_set *bioset;
+> >  		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
+> >  		gfp_t orig_gfp = gfp;
+> >  		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/watchdog/zii,rave-sp-wdt.txt          | 39 ------------------
->  .../bindings/watchdog/zii,rave-sp-wdt.yaml         | 47 ++++++++++++++++++++++
->  2 files changed, 47 insertions(+), 39 deletions(-)
+> Nit: I try to keep variables just declared and not initialized after
+> those initialized at declaration time.
+> 
+> > +
+> > +		if (ctx->ops && ctx->ops->bio_set)
+> > +			bioset = ctx->ops->bio_set;
+> > +		else
+> > +			bioset = &fs_bio_set;
+> > +
+> > +		ctx->bio = bio_alloc_bioset(iomap->bdev, bio_max_segs(nr_vecs),
+> > +				REQ_OP_READ, gfp, bioset);
+> > +
+> 
+> But it would be nice to move this logic into a helper, similar to what
+> is done in the direct I/O code.  That should robably include
+> picking the gfp flags from the ctx.
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Agree. I will put this in the next version.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
-Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241010-zii_yaml-v2-4-0ab730607422@nxp.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Goldwyn
 
