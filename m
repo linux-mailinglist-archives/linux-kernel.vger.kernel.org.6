@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-360052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C8C9993EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5389993F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4721C2271A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:52:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A9E1C22894
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438B21E2029;
-	Thu, 10 Oct 2024 20:52:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE991E1C15;
+	Thu, 10 Oct 2024 20:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NagXoIPD"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0781CF7B8;
-	Thu, 10 Oct 2024 20:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76E1CF7B8;
+	Thu, 10 Oct 2024 20:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593548; cv=none; b=KPsSWZSDlhwoj5pjieRj+NSSasSvfSi81rxc+fEMEFm0EC+EVS7p3FruMN6Vk2BYeALkKPCxvRwJ9n7By8ZppdHQ+LDzl7svguln7XG5ynzniqAiCxsi6SIiZKlbqrqtst21nHeQE5f/9egpbCNDqRcpIH8clvtbFa792KBm7BQ=
+	t=1728593577; cv=none; b=dX+cP7um/5ra1atvqc6SRT3m9L2SeM528GW18MomLXBDBrbK8I9JxPbDfhN0al6jkye3atmkeOOh7L8/onpEZW8tlEuM/o5Z8mWVAYkZvl+DT8T1YCPaGD+oJAfvP1M4laMxt213L87MYUGoY6o+ZW1VpsyDZyHaFz6844+iwe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593548; c=relaxed/simple;
-	bh=VOLSGxoFpqEKw8p69LGCSzYyDXmPRCffVpLrGBu5v+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JGwNvuZ7Vn2v7XGHvy/hipdJovS4kb0W0LGHI2mmiHsR9saylRUVOlx79C9ynqArFoaOQNNfFcTqU7ZmLDohfShDJBu/ITCok3VvCtuM7sCL1ynEDgqekxC3wrlWh3AndVFeB9JWw6zFpsVSnocayIxgv0d0dsNW2K/lsWO3OOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E1EC4CEC5;
-	Thu, 10 Oct 2024 20:52:27 +0000 (UTC)
-Date: Thu, 10 Oct 2024 16:52:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v3] ftrace/selftest: Test combination of function_graph
- tracer and function profiler
-Message-ID: <20241010165235.35122877@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728593577; c=relaxed/simple;
+	bh=etEDntW0X/md7gzZZSsscb2sy5hgRhbqVNrPnRO1MkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L0/SqCCgSBXrn7IWwpOa/C82x8bqMt9T0cMnzN8EnVt7icX5RMsveVGe3cGgdgHaSInWN11Daj9/22OgFGDksGjSO4Ud2DVvHEg+hngivAVROFmDG0cKVvfSir4HeJ0tfVwOQ4ZP4SpTsUbv4lrv4maEG+YHOPqM9MAnDfSBoGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NagXoIPD; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AJthn1001702;
+	Thu, 10 Oct 2024 20:52:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=wLyIh6+9gn3e4xbPSOwVBCRNfUEr4
+	1UaG6ybaOHaEqI=; b=NagXoIPDGGQhvlyp1LT5AFFKHu9sR6f7PrAt5gm7LY/lc
+	VjnPM4ZoEqSZ8JwzHhMvEoUAl9VJweQ39OpIDbSKR26LbFH7iyZQcWpwoDw2pzlP
+	yfK2ZBs1/SHLOMDnVEGRnOHHiYKNUpGbHhjgtS8Hsz+g5RFiVAuVTGD550U3wAJe
+	3ErxbGLHlGaVu1kz3DfbOq6NX5cbb7Hvtt1WkCK793HafO1f1QJg4SrPqufELOIn
+	MfBZkFdBMohhSdEO9WcXhC6mjAqzQChibo73Kf/X4QhBUMi0TZ3iLRrLdSKBRdyW
+	PauC08k8DgomkB23F1n+yUGLrverIoTNaWvDJvoKg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 423063upts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 20:52:44 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49AKqJHd027694;
+	Thu, 10 Oct 2024 20:52:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uwakw24-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 20:52:43 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49AKqg7i023518;
+	Thu, 10 Oct 2024 20:52:42 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 422uwakw0j-1;
+	Thu, 10 Oct 2024 20:52:42 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: christophe.jaillet@wanadoo.fr, Jacky Huang <ychuang3@nuvoton.com>,
+        Shan-Chun Hung <schung@nuvoton.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
+        stable@vger.kernel.org
+Subject: [PATCH] pinctrl: nuvoton: fix a double free in ma35_pinctrl_dt_node_to_map_func()
+Date: Thu, 10 Oct 2024 13:52:37 -0700
+Message-ID: <20241010205237.1245318-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_15,2024-10-10_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410100137
+X-Proofpoint-ORIG-GUID: RLLLelALefeX2SGF4qW2m8rwk2iQWf2e
+X-Proofpoint-GUID: RLLLelALefeX2SGF4qW2m8rwk2iQWf2e
 
-From: Steven Rostedt <rostedt@goodmis.org>
+'new_map' is allocated using devm_* which takes care of freeing the
+allocated data on device removal, call to
 
-Masami reported a bug when running function graph tracing then the
-function profiler. The following commands would cause a kernel crash:
+	.dt_free_map = pinconf_generic_dt_free_map
 
-  # cd /sys/kernel/tracing/
-  # echo function_graph > current_tracer
-  # echo 1 > function_profile_enabled
+double frees the map as pinconf_generic_dt_free_map() calls
+pinctrl_utils_free_map().
 
-In that order. Create a test to test this two to make sure this does not
-come back as a regression.
+Fix this by using kcalloc() instead of auto-managed devm_kcalloc().
 
-Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Cc: stable@vger.kernel.org
+Fixes: f805e356313b ("pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO driver")
+Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
-Changes since v2: https://lore.kernel.org/20241004145618.18436d7e@gandalf.local.home
+This is based on static analysis and reading code, only compile tested.
+Added the stable tag as the commit in Fixes is also in 6.11.y
+---
+ drivers/pinctrl/nuvoton/pinctrl-ma35.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Fixed grammar of comment
-
- .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-
-diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-new file mode 100644
-index 000000000000..ffff8646733c
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
-@@ -0,0 +1,31 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: ftrace - function profiler with function graph tracing
-+# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
-+
-+# The function graph tracer can now be run along side of the function
-+# profiler. But there was a bug that caused the combination of the two
-+# to crash. It also required the function graph tracer to be started
-+# first.
-+#
-+# This test triggers that bug
-+#
-+# We need both function_graph and profiling to run this test
-+
-+fail() { # mesg
-+    echo $1
-+    exit_fail
-+}
-+
-+echo "Enabling function graph tracer:"
-+echo function_graph > current_tracer
-+echo "enable profiler"
-+
-+# Older kernels do not allow function_profile to be enabled with
-+# function graph tracer. If the below fails, mark it as unsupported
-+echo 1 > function_profile_enabled || exit_unsupported
-+
-+# Let it run for a bit to make sure nothing explodes
-+sleep 1
-+
-+exit 0
+diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+index 1fa00a23534a..59c4e7c6cdde 100644
+--- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
++++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
+@@ -218,7 +218,7 @@ static int ma35_pinctrl_dt_node_to_map_func(struct pinctrl_dev *pctldev,
+ 	}
+ 
+ 	map_num += grp->npins;
+-	new_map = devm_kcalloc(pctldev->dev, map_num, sizeof(*new_map), GFP_KERNEL);
++	new_map = kcalloc(map_num, sizeof(*new_map), GFP_KERNEL);
+ 	if (!new_map)
+ 		return -ENOMEM;
+ 
 -- 
-2.45.2
+2.39.3
 
 
