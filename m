@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-359458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58759998C68
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:54:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178D4998BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E6E9B3577D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28CCB1C232D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E90D1CCB3B;
-	Thu, 10 Oct 2024 15:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IE0oEvRc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC301CDA3B;
+	Thu, 10 Oct 2024 15:34:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7131CC140;
-	Thu, 10 Oct 2024 15:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BCB1CCB46;
+	Thu, 10 Oct 2024 15:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574435; cv=none; b=uq5y6jgeEmt6xDTxLpNJ4YERL3Bt3daRyp18WwQkP5ZZz+ySIwaYAeH4Ai39xGW4UuIVPlt0Qyx70MKxAauE3HNUsHgPVpdrrckZ3hPHr9Df5BLQIQnYN7Q4z3En0xmqbVWMzm1k49fWmifCRLeWOYDSQAJo31LWUWAs/84nwdM=
+	t=1728574452; cv=none; b=K6TlV8pzkgu1FVAeCCtFMde2ff1xL3oTs+RwctzFHFPNLGzaORNIJvQwBCT5zgrbYFDihWfDyvNTXllZ26PK4zuZ0t6ziqQ5Ji7GNG4LmngP1HmJnyb8U8OWZcPRVhDVonLwH7juIn1pfmcggAbFKJpCB9EfNr6Aw1Sq005YeXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574435; c=relaxed/simple;
-	bh=dlxa8WkgVla/y46rnMys2EnNObaeLNp/NdzuivF7Pd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UjVH4jiHL+KfdxGGTJ/b/uoLlQtneO1KwET7QUzOjEn+tcS3Y1Hx7O1KO5OMmIC3bcKOF1irH0bIdBaZz783zlLP3IiMeWzB9W9r4eqcvWiABla0mEo+ZcjcK3Maat9Rk9xZNL7w4kcraJ1keqQQQhkAeg/ULQJbWJq4tzpnRF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IE0oEvRc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 32F3B40E021E;
-	Thu, 10 Oct 2024 15:33:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id g5_EAXIcqA5L; Thu, 10 Oct 2024 15:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728574425; bh=39uKMYCT3KgVkd7t9Lsq2trDmnvk6X8UkIGf6ni2s3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IE0oEvRcw/fymvusQ6smbGe9aC7VD/KGoZOlSrkR801eqGnvTbvr2DsGU6LwNvF9N
-	 icMEnhv9+gOqKejIQf3Qy62RZreAFqfygkHuXJDHCHMzlaiP5LYhJohYKRS8Mg29Qo
-	 bzpxiLs+3/u2WA4fiAuvaHZk2lt399iMQEdOwRlXgBG5Vm/8unHGfllvXV8SnN6r5N
-	 Pj/85Gy0c5MllbXDLZkLb6OKdebErRjtFoahP5d/riBEWVoSRLgobRWNnv7SrPWXG3
-	 po3Zqn4v/EI5XO++JdFqpYAbV5XASZ62iPyQu2vL88YFwl5tH7iACKkffsiNergudP
-	 79FOsNy8Qo5Knzu0Q2oa2CIexOBcogmParbbbBp5twTotq/U1eTghtYkTsvB0/67fn
-	 dt5sZcfqHAciIIPNFDnRwXZ7SuuLXr3qwApishqOt47xpjnZO8QeIjY80/BTRIzfeH
-	 rzW2sp+jBas495rT2eyjnZRip3Jpt9TUEpzuKsfqYGf2sj5K0cGkc5cXXT5BnQ4wQL
-	 29jHnxntodS0b4poIVB5FvOrQCVcLJ1FkY9DQUZqDmYbW5fY774TAm3mCvgLJtsJLy
-	 WxpzoqDGdwmJFla0DsRpAYwxnzT2R0/vH6su9Q3p5NUtUI2rWvFUZGTmxX4/R242eE
-	 Kaib41+hzx+f0kHe/k2gdCts=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 18BD740E0163;
-	Thu, 10 Oct 2024 15:33:26 +0000 (UTC)
-Date: Thu, 10 Oct 2024 17:33:20 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/6] EDAC: fsl_ddr: Pass down fsl_mc_pdata in ddr_in32()
- and ddr_out32()
-Message-ID: <20241010153320.GPZwfzwGeFF1cz4arw@fat_crate.local>
-References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
- <20240709-imx95_edac-v1-1-3e9c146c1b01@nxp.com>
+	s=arc-20240116; t=1728574452; c=relaxed/simple;
+	bh=EllmNvsh7fQqqPvaUW4yCBiPLtpI7eF8Gz+UCBruqL8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bivXNt5Sj70gs9fG/MaeIUtKVXZ3GXKG3xYUu21aALynV3Coc9Qz89qJ3LvvsS9JU61DERcuVSJilBfn6L/I2PD/jmM4mZ9WNrTMLavKT/sHgrI4jaj6NwdtUl2bdC3bA45t3RBUePsnk4/Ru05l75P4kC1AgMoxw2FoXFgHYNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPYgs73r8z6HJyK;
+	Thu, 10 Oct 2024 23:33:45 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E4DCF140CB1;
+	Thu, 10 Oct 2024 23:34:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 17:34:00 +0200
+Date: Thu, 10 Oct 2024 16:33:59 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 25/28] cxl/region: Read existing extents on region
+ creation
+Message-ID: <20241010163359.000001f7@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-25-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-25-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709-imx95_edac-v1-1-3e9c146c1b01@nxp.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Jul 09, 2024 at 04:23:02PM -0400, Frank Li wrote:
-Subject: Re: [PATCH 1/6] EDAC: fsl_ddr: Pass down fsl_mc_pdata in ddr_in32() and ddr_out32()
+On Mon, 07 Oct 2024 18:16:31 -0500
+ira.weiny@intel.com wrote:
 
-The subject prefixes in the EDAC subsystem have the following format:
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> Dynamic capacity device extents may be left in an accepted state on a
+> device due to an unexpected host crash.  In this case it is expected
+> that the creation of a new region on top of a DC partition can read
+> those extents and surface them for continued use.
+> 
+> Once all endpoint decoders are part of a region and the region is being
+> realized, a read of the 'devices extent list' can reveal these
+> previously accepted extents.
+> 
+> CXL r3.1 specifies the mailbox call Get Dynamic Capacity Extent List for
+> this purpose.  The call returns all the extents for all dynamic capacity
+> partitions.  If the fabric manager is adding extents to any DCD
+> partition, the extent list for the recovered region may change.  In this
+> case the query must retry.  Upon retry the query could encounter extents
+> which were accepted on a previous list query.  Adding such extents is
+> ignored without error because they are entirely within a previous
+> accepted extent.
+> 
+> The scan for existing extents races with the dax_cxl driver.  This is
+> synchronized through the region device lock.  Extents which are found
+> after the driver has loaded will surface through the normal notification
+> path while extents seen prior to the driver are read during driver load.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+One buglet, and a request for an error message.
+With those.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-"EDAC/driver: <Sentence starting with a capital letter"
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index d66beec687a0..6b25d15403a3 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -1697,6 +1697,111 @@ int cxl_dev_dynamic_capacity_identify(struct cxl_memdev_state *mds)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_dev_dynamic_capacity_identify, CXL);
+>  
+> +/* Return -EAGAIN if the extent list changes while reading */
+> +static int __cxl_process_extent_list(struct cxl_endpoint_decoder *cxled)
+> +{
+> +	u32 current_index, total_read, total_expected, initial_gen_num;
+> +	struct cxl_memdev_state *mds = cxled_to_mds(cxled);
+> +	struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
+> +	struct device *dev = mds->cxlds.dev;
+> +	struct cxl_mbox_cmd mbox_cmd;
+> +	u32 max_extent_count;
+> +	bool first = true;
+> +
+> +	struct cxl_mbox_get_extent_out *extents __free(kfree) =
 
-> Pass down fsl_mc_data in help function ddr_in32() and ddr_out32() to
-> prepare add iMX9 support. iMX9 have a little difference register layout.
+__free(kvfree)
 
-Since everyone is using AI nowadays, you could have it verify your commit
-messages. I did this:
+> +				kvmalloc(cxl_mbox->payload_size, GFP_KERNEL);
+> +	if (!extents)
+> +		return -ENOMEM;
 
-| ChatGPT, Please verify and correct the grammar in this english text: "Pass
-| down fsl_mc_data in help function ddr_in32() and ddr_out32() to prepare add
-| iMX9 support. iMX9 have a little difference register layout."
+...
 
-It replied with:
 
-| "Pass down fsl_mc_data in the helper functions ddr_in32() and ddr_out32() to
-| prepare for adding iMX9 support. The iMX9 has a slightly different register
-| layout."
-| 
-| Changes made:
-| 1. "help function" changed to "helper functions" for clarity.
-| 
-| 2. "prepare add iMX9 support" changed to "prepare for adding iMX9 support" for
-|    grammatical correctness.
-| 
-| 3. "iMX9 have a little difference register layout" changed to "The iMX9 has
-|    a slightly different register layout" for subject-verb agreement and
-|    smoother phrasing.
+> +}
 
-And this all looks good to me.
+>  static void cxlr_dax_unregister(void *_cxlr_dax)
+>  {
+>  	struct cxl_dax_region *cxlr_dax = _cxlr_dax;
+> @@ -3224,6 +3233,9 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
+>  	dev_dbg(&cxlr->dev, "%s: register %s\n", dev_name(dev->parent),
+>  		dev_name(dev));
+>  
+> +	if (cxlr->mode == CXL_REGION_DC)
+> +		cxlr_add_existing_extents(cxlr);
 
-With all the cringe we all get from AI, I think it is very useful for
-verifying commit messages.
+Whilst there isn't a whole lot we can do if this fails, I'd like an error
+print to indicate something odd is going on.  Probably pass any error
+up to here then print a message before carrying on.
 
-Do that for all your commit messages pls.
+> +
+>  	return devm_add_action_or_reset(&cxlr->dev, cxlr_dax_unregister,
+>  					cxlr_dax);
+>  err:
 
-Thx.
-
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/edac/fsl_ddr_edac.c | 62 ++++++++++++++++++++++++---------------------
->  1 file changed, 33 insertions(+), 29 deletions(-)
-
-How did you test these patches of yours?
-
-They don't even build!
-
-drivers/edac/fsl_ddr_edac.c: In function 'fsl_mc_err_probe':
-drivers/edac/fsl_ddr_edac.c:538:21: error: too few arguments to function 'ddr_in32'
-  538 |         sdram_ctl = ddr_in32(pdata->mc_vbase + FSL_MC_DDR_SDRAM_CFG);
-      |                     ^~~~~~~~
-drivers/edac/fsl_ddr_edac.c:38:19: note: declared here
-   38 | static inline u32 ddr_in32(struct fsl_mc_pdata *pdata, unsigned int off)
-      |                   ^~~~~~~~
-make[4]: *** [scripts/Makefile.build:229: drivers/edac/fsl_ddr_edac.o] Error 1
-make[3]: *** [scripts/Makefile.build:478: drivers/edac] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:478: drivers] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1936: .] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
-Before you submit next time, build-test *every* *single* patch of yours and
-test the driver with all of them.
-
-This should not ever happen in submission.
-
-Stopping review here.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
