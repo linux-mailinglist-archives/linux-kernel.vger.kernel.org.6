@@ -1,181 +1,295 @@
-Return-Path: <linux-kernel+bounces-358232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C13D997BC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:22:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E177B997BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9356EB238F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:22:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 585C4B238D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F4619CD13;
-	Thu, 10 Oct 2024 04:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A8519D090;
+	Thu, 10 Oct 2024 04:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nnLSv2MN"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KFFIWhB7"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8976220334
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2B20334
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728534146; cv=none; b=sfsvuOCCHabf54lbuvJTDMFiwdeBCnXt67lVMprFIYdUm4vw2h7MPi1JrFAqLCa0mc9K/qKQhOwQdGqhYVt7k8RYqoa32Gk+Vhy4uFjU+2FQIbQKAy6c4LXd0RkGlyjQe8eC/Hao3O7pH0pdWRfKSWwoiAPXjhhZjqITSO3q4KA=
+	t=1728534309; cv=none; b=esVYfOsAiMKJIQHyo4tUkctJEixctayFmu/cTc1ik6bAcMA/syyHPJk3JcdOsZ1jHveFcLi0TlZeGaDJ82qJxg0YLEOMN6Z6K5dK0nEqXX7oie43u1GEBPaa3CUSWg8v1vEas/NYr+du5bEKX8NbxV2+tJuy0/qBp9Xqr2QbpSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728534146; c=relaxed/simple;
-	bh=XE08S0gU6O1ey+7cGRPfMzNdqFMlwKFDi5LYuTNpmMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNaEkio/a2+gTuOop5pdH7lI4UwSx87ujrLCJugGDEWAdD5ODL0Fb8IvU2OI78zOXaxjZv2ZOg9y0G03t0LgFJdzai4tAkxCUEkjEnNRx1cnk7paIfePqAnT3HRqcimy/dRm8Uqq5CS8eOufMRzCIDWjxB/d4GzQKKDs+OvzHvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nnLSv2MN; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1728534309; c=relaxed/simple;
+	bh=IzrgkmuURIu8MAwSdYUsLYVkJkijsn1AfNL7OptyW/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HyB0hbWSKGtswNlNEE4YO1CEgaT5AioDqifwzdqMUlIy1u8N9B4Bcq4I5QotoINJHcGRKzyuiwFTZq7rOzDH61rWKhNoSjLAtlzEhC2PzjkJP1S25i3Az26sjQy3o8f7MExuPemQ6iQTPn4PUEVB1KjSaQFw7Npmf1qnUsP+W40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KFFIWhB7; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c5fdd0fe3so131205ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:22:24 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c9150f9ed4so532939a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:25:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728534144; x=1729138944; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dYnzX/ygicXmrXwrwnSe5Ie0YJrwJceBZYllZsEBCy0=;
-        b=nnLSv2MNgsOLK51+75L/OKkYxg2KVT4kLC2Axjg+QXfgp8i/lUVAtg+dVBsdMnv1vS
-         4SfpRU5eyaSAylXVbGJp//MrKOErWudIo374QowrE1vpZGfppDCrWk6nG+lUICzctVgk
-         XuNjb1/TXBg29zmxoQ85c2dsGDyvEZAHSFXzeqN7rNVQfPVXkR7tBPd7scLs9V2mKP8V
-         IJce+nuz3JNHR57rWOwCD/BS8wbnrBPNSUD9uZuLO/xQNZlkqwxV/kKYuZSI6jq9ez9H
-         24PztxSABBEPb8xfcZ3g1Qysu+qLVqJY6lonR/HHfesd9iJkkf6OyITmLAzK9+9uDTGo
-         iNqA==
+        d=google.com; s=20230601; t=1728534306; x=1729139106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vS+5mt2Jic6TNgTcrAq7H8a5Jt96tTYPxl+St69+/88=;
+        b=KFFIWhB7XxViHuO8bU3/hnPTZAE1hTVs26PPaTEugtRhdH9SSSnGZJqLTFECEDplfc
+         r2wRwSY8eyGqEMDaZFWC7wlpwVqTuihcfV1rNXX7dkYnTlKTsgrrjndDCWokIdVDltJy
+         n+8AR0oYMgxhNBc1vyXomFCXud5MwPO7Wy1/hEGexb6FEil0PsufxwFxsL6yBZSZSGoN
+         y26ikF3e8+0NiLtHVifN1oG9D+BtJjlTPmJTSfMe8aRqUuYaUF+Cvbz4ByIGHiWs6FHE
+         cSxJ+zTTm9jQ3F+PMW5XY1fTUNGyIIzdQaG++R6v+z2+DxxI3u1+j77tSkgwikqibu9z
+         e6bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728534144; x=1729138944;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYnzX/ygicXmrXwrwnSe5Ie0YJrwJceBZYllZsEBCy0=;
-        b=OsQPFsq+NifsyCDw6qfQaf+n9BrNcSkiufPQenhLQ9FBm20C4Tl1Eze4npT3lhDCyi
-         9QW+nXlQhZY3JzzE7m3pmiZclw1/SmQL0LUDiyEx0jIQP9W30KLaQlIUUKj5Un/9Mh+b
-         HAr8AO0+1/hAFKkJjIblOQdFDuxAvSHdtDpBh8w+HmcWHW6cTRalvsZfWAB6a8AGDTTa
-         pMaDVrhSjmuwUtsr8ijqN988wib8gQuusC8ko935V72E64OFmBoBY8c/cwZMP27saEfA
-         4QLhVnQAzq/W1l7XfERgZLjj//qWPc5pkUkelXPF2EjEYf+DGIUKk+zALVyywDC6nOmT
-         FTOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3ceEHQVomJhgmDSH4OiQimxCaBIREI9b04Eze/BsMcinH0O4i/p63kKhddxXd1kbnDYrE5dwkArHDgPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIIkifc9hh1W8DJQmlpODeGtAkiWlMYbcBoXaU/fUUbIJmusFe
-	23uoQQMgbOxUbCOF/Gh3gEmmxKwjVN8gGKqooOqhv4Oy/IGM+XHVwlbKLxyaCQ==
-X-Google-Smtp-Source: AGHT+IGZ4DY58vKyFJS6CFq59viTnsP7rlKWDcKfosYkedh5t2qjtWmvGzctfWvTcfqOoJnXL+bkLA==
-X-Received: by 2002:a17:903:2287:b0:20c:568f:37c7 with SMTP id d9443c01a7336-20c8720f2bemr1223375ad.17.1728534143716;
-        Wed, 09 Oct 2024 21:22:23 -0700 (PDT)
-Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9f6fc1sm220037b3a.79.2024.10.09.21.22.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 21:22:23 -0700 (PDT)
-Date: Thu, 10 Oct 2024 04:22:19 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Shu Han <ebpqwerty472123@gmail.com>
-Cc: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-	surenb@google.com, linux-kernel@vger.kernel.org,
-	aliceryhl@google.com
-Subject: Re: [PATCH] binder: use augmented rb-tree for faster descriptor
- lookup
-Message-ID: <ZwdWe_I2p3zD-v1O@google.com>
-References: <20240917030203.286-1-ebpqwerty472123@gmail.com>
- <ZuyQ8ECy0ypuOStg@google.com>
- <CAHQche-rZODDsxbf6b3uagLfM52YtcoUuaeW0NxXcPTFFNcsZA@mail.gmail.com>
- <ZwWdBIu6j0lL2rbt@google.com>
- <CAHQche8v5CTW0L2cJGCDWOJ---KRv9wxWAk=eUaK1+k9UTcpHA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1728534306; x=1729139106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vS+5mt2Jic6TNgTcrAq7H8a5Jt96tTYPxl+St69+/88=;
+        b=np+g7EbUTLzuE2dsJ3BwK8KluQqn39YczgZe8a/M0zyxeUw/ym4q4aQDJDQuC8cLE9
+         H+BEImZ9OjBwSHy7O2phrkeXpiVTkIzHSn8nGtJLR2tFfB2LpFr6N/HGs0r/z/Bwo52K
+         v2PzE/swAzSC8iSUqjFbm3yZuKmS1bq4xJlw0Z5HOWxBwotZTFZ7mQdxpR5GhXARZdPo
+         Lm6M3ukY5R2D4co1X5JtEsKVLunuJKjv4Ji3S9AHw9N0yAzyD5ZITn4TWT1CvXhO6mIb
+         irutlKPoUFR/eXWk9iAEqXki7fFikgY6Z7s2PnJNcZE7Y4Ot6Tfk1tx6/u5BV3Leo3we
+         kNcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhxGz7xWL4i4M5Z6JJZzWheOADiMjmsCHsGN2AQ/PlFAF5Kxt6Bd5/kWnMYNV2S4GCIgnWdJu0GEdMXyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzQbSgGFawqWlewFNw7IECQ56fE67FCeKeqvk1rTxACXdV6Hq+
+	7Ukx5ZQXibSlemY1300tZrEu6FOcVdkEvuyJPwM9e85n4gXnX0djAUIbJ0WQoI67Exwsw/14qF6
+	ASvZCsDaIGbV5JD2jvcs6GMeX7OLGv7Bb5lvO
+X-Google-Smtp-Source: AGHT+IEgVe8WI6zZ9IXhPwM6gk7DQh07FJlH2KuBbAQRppOjApcfrMvKt96YYXcJnGDeQF5QVjBzy/Z/rbbCOB2UUbM=
+X-Received: by 2002:a05:6402:518f:b0:5c7:1ed7:8825 with SMTP id
+ 4fb4d7f45d1cf-5c91d5817c6mr3750836a12.12.1728534305884; Wed, 09 Oct 2024
+ 21:25:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHQche8v5CTW0L2cJGCDWOJ---KRv9wxWAk=eUaK1+k9UTcpHA@mail.gmail.com>
+References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-7-jdamato@fastly.com>
+In-Reply-To: <20241009005525.13651-7-jdamato@fastly.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 10 Oct 2024 06:24:54 +0200
+Message-ID: <CANn89iJ1=xA9WGhXAMcCAeacE3pYgqiWjcBdxiWjGPACP-5n_g@mail.gmail.com>
+Subject: Re: [net-next v5 6/9] netdev-genl: Support setting per-NAPI config values
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com, 
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com, 
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Mina Almasry <almasrymina@google.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 11:08:42PM +0800, Shu Han wrote:
-> On Wed, Oct 9, 2024 at 4:58 AM Carlos Llamas <cmllamas@google.com> wrote:
-> 
-> Thank you for your patient reply.
-> 
-> > I honestly don't remember. It might have been that we required to expand
-> > the 'struct binder_ref' size. This issue starts to be a problem when we
-> > have thousands of references e.g. 30,000. Adding 4 bytes to each one of
-> > them might not be worth it. But let me check...
-> 
-> I didn't consider memory overhead before...
-> That's indeed an important point.
+On Wed, Oct 9, 2024 at 2:56=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
+e:
+>
+> Add support to set per-NAPI defer_hard_irqs and gro_flush_timeout.
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  Documentation/netlink/specs/netdev.yaml | 11 ++++++
+>  include/uapi/linux/netdev.h             |  1 +
+>  net/core/netdev-genl-gen.c              | 18 ++++++++++
+>  net/core/netdev-genl-gen.h              |  1 +
+>  net/core/netdev-genl.c                  | 45 +++++++++++++++++++++++++
+>  tools/include/uapi/linux/netdev.h       |  1 +
+>  6 files changed, 77 insertions(+)
+>
+> diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netl=
+ink/specs/netdev.yaml
+> index bf13613eaa0d..7b4ea5a6e73d 100644
+> --- a/Documentation/netlink/specs/netdev.yaml
+> +++ b/Documentation/netlink/specs/netdev.yaml
+> @@ -690,6 +690,17 @@ operations:
+>          reply:
+>            attributes:
+>              - id
+> +    -
+> +      name: napi-set
+> +      doc: Set configurable NAPI instance settings.
+> +      attribute-set: napi
+> +      flags: [ admin-perm ]
+> +      do:
+> +        request:
+> +          attributes:
+> +            - id
+> +            - defer-hard-irqs
+> +            - gro-flush-timeout
+>
+>  kernel-family:
+>    headers: [ "linux/list.h"]
+> diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
+> index cacd33359c76..e3ebb49f60d2 100644
+> --- a/include/uapi/linux/netdev.h
+> +++ b/include/uapi/linux/netdev.h
+> @@ -201,6 +201,7 @@ enum {
+>         NETDEV_CMD_NAPI_GET,
+>         NETDEV_CMD_QSTATS_GET,
+>         NETDEV_CMD_BIND_RX,
+> +       NETDEV_CMD_NAPI_SET,
+>
+>         __NETDEV_CMD_MAX,
+>         NETDEV_CMD_MAX =3D (__NETDEV_CMD_MAX - 1)
+> diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
+> index b28424ae06d5..e197bd84997c 100644
+> --- a/net/core/netdev-genl-gen.c
+> +++ b/net/core/netdev-genl-gen.c
+> @@ -22,6 +22,10 @@ static const struct netlink_range_validation netdev_a_=
+page_pool_ifindex_range =3D
+>         .max    =3D 2147483647ULL,
+>  };
+>
+> +static const struct netlink_range_validation netdev_a_napi_defer_hard_ir=
+qs_range =3D {
+> +       .max    =3D 2147483647ULL,
 
-Yeah, I actually started with a solution that kept a list of references
-that had "gaps" behind them. This also required expanding struct
-binder_ref and I eventually abandoned this idea.
+Would (u64)INT_MAX  work ?
 
-> 
-> Fortunately, after checking, I found that this patch does not occupy any
-> additional memory for `struct binder_ref`.
+> +};
+> +
+>  /* Common nested types */
+>  const struct nla_policy netdev_page_pool_info_nl_policy[NETDEV_A_PAGE_PO=
+OL_IFINDEX + 1] =3D {
+>         [NETDEV_A_PAGE_POOL_ID] =3D NLA_POLICY_FULL_RANGE(NLA_UINT, &netd=
+ev_a_page_pool_id_range),
+> @@ -87,6 +91,13 @@ static const struct nla_policy netdev_bind_rx_nl_polic=
+y[NETDEV_A_DMABUF_FD + 1]
+>         [NETDEV_A_DMABUF_QUEUES] =3D NLA_POLICY_NESTED(netdev_queue_id_nl=
+_policy),
+>  };
+>
+> +/* NETDEV_CMD_NAPI_SET - do */
+> +static const struct nla_policy netdev_napi_set_nl_policy[NETDEV_A_NAPI_G=
+RO_FLUSH_TIMEOUT + 1] =3D {
+> +       [NETDEV_A_NAPI_ID] =3D { .type =3D NLA_U32, },
+> +       [NETDEV_A_NAPI_DEFER_HARD_IRQS] =3D NLA_POLICY_FULL_RANGE(NLA_U32=
+, &netdev_a_napi_defer_hard_irqs_range),
+> +       [NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT] =3D { .type =3D NLA_UINT, },
+> +};
+> +
+>  /* Ops table for netdev */
+>  static const struct genl_split_ops netdev_nl_ops[] =3D {
+>         {
+> @@ -171,6 +182,13 @@ static const struct genl_split_ops netdev_nl_ops[] =
+=3D {
+>                 .maxattr        =3D NETDEV_A_DMABUF_FD,
+>                 .flags          =3D GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
+>         },
+> +       {
+> +               .cmd            =3D NETDEV_CMD_NAPI_SET,
+> +               .doit           =3D netdev_nl_napi_set_doit,
+> +               .policy         =3D netdev_napi_set_nl_policy,
+> +               .maxattr        =3D NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT,
+> +               .flags          =3D GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
+> +       },
+>  };
+>
+>  static const struct genl_multicast_group netdev_nl_mcgrps[] =3D {
+> diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
+> index 8cda334fd042..e09dd7539ff2 100644
+> --- a/net/core/netdev-genl-gen.h
+> +++ b/net/core/netdev-genl-gen.h
+> @@ -33,6 +33,7 @@ int netdev_nl_napi_get_dumpit(struct sk_buff *skb, stru=
+ct netlink_callback *cb);
+>  int netdev_nl_qstats_get_dumpit(struct sk_buff *skb,
+>                                 struct netlink_callback *cb);
+>  int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info);
+> +int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)=
+;
+>
+>  enum {
+>         NETDEV_NLGRP_MGMT,
+> diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+> index 64e5e4cee60d..59523318d620 100644
+> --- a/net/core/netdev-genl.c
+> +++ b/net/core/netdev-genl.c
+> @@ -303,6 +303,51 @@ int netdev_nl_napi_get_dumpit(struct sk_buff *skb, s=
+truct netlink_callback *cb)
+>         return err;
+>  }
+>
+> +static int
+> +netdev_nl_napi_set_config(struct napi_struct *napi, struct genl_info *in=
+fo)
+> +{
+> +       u64 gro_flush_timeout =3D 0;
+> +       u32 defer =3D 0;
+> +
+> +       if (info->attrs[NETDEV_A_NAPI_DEFER_HARD_IRQS]) {
+> +               defer =3D nla_get_u32(info->attrs[NETDEV_A_NAPI_DEFER_HAR=
+D_IRQS]);
+> +               napi_set_defer_hard_irqs(napi, defer);
+> +       }
+> +
+> +       if (info->attrs[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT]) {
+> +               gro_flush_timeout =3D nla_get_uint(info->attrs[NETDEV_A_N=
+API_GRO_FLUSH_TIMEOUT]);
+> +               napi_set_gro_flush_timeout(napi, gro_flush_timeout);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
+> +{
+> +       struct napi_struct *napi;
+> +       unsigned int napi_id;
+> +       int err;
+> +
+> +       if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_NAPI_ID))
+> +               return -EINVAL;
+> +
+> +       napi_id =3D nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
+> +
+> +       rtnl_lock();
 
-This is good news. I hadn't actually checked this. I'll keep this in
-mind.
+Hmm.... please see my patch there :
 
-> 
-> In a modern 64-bit platform, the size of `struct binder_ref` is 104 bytes.
-> If we add a 4-byte field into it, the size will be 112 bytes(aligned by
-> long). And both of them occupy a 128-byte slab(aligned by kmalloc_index).
-> So the memory cost won't be increased, if there isn't a pending change
-> that needs exactly 24 bytes in `struct binder_ref`.
-> 
-> In Rust, a rbtree::Node costs 40 bytes, 4 of 40 are used for alignment,
-> adding a 4-byte field won't change the size of the struct.
-> 
-> In a 32-bit platform, the number is from 60 bytes to 64 bytes, a 64-byte
-> slab, exactly 4 bytes.(very close to the slab bound)
-> 
-> Perhaps it's caused by introducing augmented rbtree into Rust which
-> requires considerable effort. But personally, I think it's not bad to just
-> introduce augmented rbtree into C (Rust and C are already quite different
-> here).
-> 
-> > Yeah, I think it would look cleaner if we do a revert of the previous
-> > patches though. This way we can remove the noise and see the actual
-> > changes. I'll do this locally for now, no need to send a v2 just yet.
-> 
-> Great point. thanks.
-> 
-> Best regards.
+ https://patchwork.kernel.org/project/netdevbpf/patch/20241009232728.107604=
+-2-edumazet@google.com/
 
-I ran a benchmark test that creates multiple references on a Pixel
-device and the numbers between the augmented rbtree implementation and
-the current dbitmap are pretty much the same:
+Lets not add another rtnl_lock() :/
 
-augmented rbtree:
---------------------------------------------------------------------
-Benchmark                          Time             CPU   Iterations
---------------------------------------------------------------------
-BM_collectProxies/0/10        696251 ns       334494 ns         2363 kernel
-BM_collectProxies/0/100      4047417 ns      1886942 ns          390 kernel
-BM_collectProxies/0/1000    29510599 ns     14827312 ns           51 kernel
-BM_collectProxies/0/5000   136774414 ns     70482303 ns            9 kernel
-BM_collectProxies/0/10000  248333277 ns    125898564 ns            5 kernel
-BM_collectProxies/0/20000  485156508 ns    245891699 ns            3 kernel
-
-dbitmap:
---------------------------------------------------------------------
-Benchmark                          Time             CPU   Iterations
---------------------------------------------------------------------
-BM_collectProxies/0/10        646427 ns       291657 ns         1935 kernel
-BM_collectProxies/0/100      4203230 ns      2005648 ns          484 kernel
-BM_collectProxies/0/1000    30859725 ns     15369365 ns           42 kernel
-BM_collectProxies/0/5000   147910844 ns     75179017 ns            9 kernel
-BM_collectProxies/0/10000  239196875 ns    121801066 ns            5 kernel
-BM_collectProxies/0/20000  481154229 ns    247742285 ns            3 kernel
-
-You should have this test avialable as 'binderRpcBenchmark' I ran with
-the following parameters if you want to play with it:
-  $ binderRpcBenchmark --benchmark_filter="BM_collectProxies/0/*"
-
-Even if the numbers are too close it seems the bump in memory might be a
-problem. Particularly in 32bit as these devices are more sensitive to
-increases in allocations.
-
-Regards,
-Carlos Llamas
+> +
+> +       napi =3D napi_by_id(napi_id);
+> +       if (napi) {
+> +               err =3D netdev_nl_napi_set_config(napi, info);
+> +       } else {
+> +               NL_SET_BAD_ATTR(info->extack, info->attrs[NETDEV_A_NAPI_I=
+D]);
+> +               err =3D -ENOENT;
+> +       }
+> +
+> +       rtnl_unlock();
+> +
+> +       return err;
+> +}
+> +
+>  static int
+>  netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
+>                          u32 q_idx, u32 q_type, const struct genl_info *i=
+nfo)
+> diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux=
+/netdev.h
+> index cacd33359c76..e3ebb49f60d2 100644
+> --- a/tools/include/uapi/linux/netdev.h
+> +++ b/tools/include/uapi/linux/netdev.h
+> @@ -201,6 +201,7 @@ enum {
+>         NETDEV_CMD_NAPI_GET,
+>         NETDEV_CMD_QSTATS_GET,
+>         NETDEV_CMD_BIND_RX,
+> +       NETDEV_CMD_NAPI_SET,
+>
+>         __NETDEV_CMD_MAX,
+>         NETDEV_CMD_MAX =3D (__NETDEV_CMD_MAX - 1)
+> --
+> 2.34.1
+>
 
