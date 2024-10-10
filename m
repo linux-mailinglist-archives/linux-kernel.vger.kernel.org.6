@@ -1,121 +1,149 @@
-Return-Path: <linux-kernel+bounces-358291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C70997CCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49433997CCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F1C2B2343D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785031C22127
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332C21A00F8;
-	Thu, 10 Oct 2024 06:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8418919EED3;
+	Thu, 10 Oct 2024 06:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fnuRMqLZ"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRcaVMNu"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8F463D;
-	Thu, 10 Oct 2024 06:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3431618A6D4
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728540367; cv=none; b=qHBepl9TiNeTxdqiQz51GGiYTn4VmgeRgvOips+C2ciawPOMj08UTUiYE0bg6D2skLN4NHeMsu1IyaMFbTv0wF6imaDlbD9WEOndsA3XOxaSoYHZOnGGWAcw0ns2IbWivG9kcq0eoci1jFMrlbkGnhzwVl7HbfnBCHKlR0O9uV0=
+	t=1728540375; cv=none; b=pKeMcyJiVY43NdWhXllLTHpA1qgzBfmxipt2P6gafWitiVt4ZdckXRbVZqn1HdAXBTvHd/fCwCyK3yQD7E/C9qlDWSY4sNDYi2LgA40eKwBsq8PzkFRodQkgQ+efP8xYXQkNgY3lRaycdHkmzMVYtJkx98+G9pFZWcnU2Yg0lpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728540367; c=relaxed/simple;
-	bh=B2NxE/VURy/vjBy0GHUs/N24pfT7iFiiBWoSUrtvJ0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMKY3dbQ0HGhl1Z4o/IA4qvFceQcXGf11ITbOUfk9f5Rxl20UCMt3otEiy7euEXoo6pfqac6s9ttdCTWpeI8TqehvFuO5aHL9k8Uz9b7QfwrbS6wvY0Y6ZoN81FmEZ+DyELVGotESYljwZxjOjRAkT840Aw1pK5d8eP94yeG++I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fnuRMqLZ; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6XUnNZxdV444hVjpvvyIdb/pQ4HNS1/DPVIt1z8Oi3M=; b=fnuRMqLZ0sBmx/sXo7vulvdPVn
-	4WaRmpEVAMy6omDESvcQewfyn05mcKwfqQlD5gu+Q1QIQLOohxJP7xd8604d7eAKcptfJpvppdfrB
-	6rXtGtsjIzX+vDwIn7LHCalKJMh6+ZA+J0qxH3eGEw9q+/8i+o+rYW6eIxH2a9JXMdYwzdY92img3
-	ykR16cWAo9tucP4dSADxxZCUklzaWqidcQH5VkmQz2Ra2XgRN5sUBQR30tAXqKFfSpBYAjTcQi6kp
-	lPbF/O5Xz6xhtbH7CAlliq/AlrFm7eofUscBu6zhmhYOtp2xfRLRvOTPuscxhmQtO+6c8Hi0bIbww
-	wFCbN7FA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sym9H-008FZ1-01;
-	Thu, 10 Oct 2024 14:05:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 10 Oct 2024 14:05:56 +0800
-Date: Thu, 10 Oct 2024 14:05:56 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Klaus Kudielka <klaus.kudielka@gmail.com>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Romain Perier <romain.perier@free-electrons.com>
-Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
- Turris Omnia
-Message-ID: <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
-References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
- <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
- <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
- <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
- <ZwZAExmK52txvHE8@gondor.apana.org.au>
- <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
+	s=arc-20240116; t=1728540375; c=relaxed/simple;
+	bh=wDI9M0VUTK2V07yTXbkJn/eodimdWecJgH31V1EdOjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ucKNogjGI5kJj07UwV42oLLhOv22ApklvAyvojlLSDkHaihkO148HlzmwstjSp59Nz306rNsyiZbwKjZHz+NoJbN1TdF+J8OJlT73A/n7UsRNABeKbM4cIaeFvppOcv6KCeAb8XYsLfe865aAqhqbz32/eZX6/K2QQN9m9v0wEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRcaVMNu; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so547509e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:06:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728540372; x=1729145172; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SDmfkcHsaZoE+Z/j0j3jVrFX1zabGcs5ByvLRQ2W7IY=;
+        b=NRcaVMNuxFI4TGhxiBpc8yHXoOM56RmdaTV/c8vFdUm41uDxjf4vRwr3Sx+RMLujYf
+         Nt2smPKg4uwid28GX72lZwgmxn6C1ExPQy87Z4KjNeBE0E9CwAiNqW8Kb+vHmly+Bz8s
+         7HEUZpbf8XzM7DSsFh4QxGHx6ryCvi3/b/eGho8q10jc5x+rVifdEQ2u+qfgNbguqqVP
+         WFkhqtC80oV//RvodfXN789ThWC52tXd6anr7chz4GWJW4o6E+c3EVuk35RfFcaR01Cb
+         gVuh93okMYAOcvlPqYVXN8W03mM5z5sWfo4msaLZi2QDQpd8e39FkbCAvGEz6zes+bC9
+         L/iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728540372; x=1729145172;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SDmfkcHsaZoE+Z/j0j3jVrFX1zabGcs5ByvLRQ2W7IY=;
+        b=alnO780fxdwux36iT4yq2vp6XuFFK7eZsFAgB3jM6ia7FED8/9IteRfapECt5qTCpS
+         M1rT8vAqh+/slilzXwuPaN05ns9URiu/se/g3pCA0aJz1bMdcjLt2ZYpokPYcfi5xmxZ
+         cB745VgUUtMRMz+B7F4Vx4eVRyh4R2kBsqgTgRnHhENDEH2TcCCbLApeGqwRjW7Hkf9Q
+         QA/MdLhfQaRhziMfLWZtig4HGNZnNnLPynTesR8S4Y0kaEclk/6dOoEvPe7pRBoUo2RU
+         m71UeMp+sgyM6qwkTRGMJ1U4cAp3pxeIMjDKv3zHNhU60il73BOra8MqfC3yh+CSUBRb
+         kpiA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9pLJa0OKIvUBD88Mn/WD0772WqbzKu//NOmrp1IzbxsiC4qvQCuNV7uZZNpT4BQBAuhsSEFZlrQ8Ogv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGA5uI/AnDxNFT5WfQ+vYMWDuvFrx1jz+18emlLw5YZDh7in3j
+	vbbKuVXukws0f1LSXgmV58ZzNvI1LhznGjuhUzow4KpwdXAPECi4
+X-Google-Smtp-Source: AGHT+IF6IqkDzrfo7ZML+sPDXjd4gGptwZ3UgFrYw2RAuo5wopw6fuzvOt0tKS4XDgclnGrkqczkQg==
+X-Received: by 2002:a05:6512:230a:b0:52f:c5c0:2879 with SMTP id 2adb3069b0e04-539c92b1adfmr1540595e87.41.1728540371982;
+        Wed, 09 Oct 2024 23:06:11 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c8711sm114848e87.88.2024.10.09.23.06.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 23:06:11 -0700 (PDT)
+Message-ID: <786b739c-8f4a-4222-bfa3-68b2ff26bf6c@gmail.com>
+Date: Thu, 10 Oct 2024 09:06:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mfd: bd96801: Add ERRB IRQ
+To: Lee Jones <lee@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <cover.1727931468.git.mazziesaccount@gmail.com>
+ <dda4464443fba81f79d5f8d73947dbd63083cff2.1727931468.git.mazziesaccount@gmail.com>
+ <20241009161113.GA661995@google.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241009161113.GA661995@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 06:48:21PM +0200, Klaus Kudielka wrote:
->
-> Oh, I had to increase log_buf_len, to catch everything. Booting is really slow now ;)
-> Full dmesg output is attached.
+On 09/10/2024 19:11, Lee Jones wrote:
+> On Thu, 03 Oct 2024, Matti Vaittinen wrote:
+> 
+>> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
+>> handling can in many cases be omitted because it is used to inform fatal
+>> IRQs, which usually kill the power from the SOC.
+>>
+>> There may however be use-cases where the SOC has a 'back-up' emergency
+>> power source which allows some very short time of operation to try to
+>> gracefully shut down sensitive hardware. Furthermore, it is possible the
+>> processor controlling the PMIC is not powered by the PMIC. In such cases
+>> handling the ERRB IRQs may be beneficial.
+>>
+>> Add support for ERRB IRQs.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>> Revision history:
+>> New series (only ERRB addition)
+>> v2:
+>> 	- Suffle local variables in probe()
+>> 	- Unify and improve the error prints when adding regmap IRQ chip for
+>> 	  INTB or ERRB fails.
+>> v1:
+>> 	- use devm allocation for regulator_res
+>> 	- use goto skip_errb instead of an if (errb)
+>> 	- constify immutable structs
+>>
+>> Old series (All BD96801 functionality + irqdomain and regmap changes)
+>> v2 => v3:
+>> 	- No changes
+>> v1 => v2:
+>> 	- New patch
+>> ---
+>>   drivers/mfd/rohm-bd96801.c | 275 ++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 241 insertions(+), 34 deletions(-)
+> 
+> Are the 2 patches tied together or can they be taken separately?
+> 
 
-Thanks! This is very helpful.
+I tried compiling the commits individually, and there should be no 
+compilation dependencies between them. The MFD commit introduces the 
+IRQs the regulator commit is using - but the regulator code should not 
+abort if getting the ERRB IRQs fails - assuming I read the code right. I 
+don't have the BD96801 at my hands to test right now (I'm not in the 
+office).
 
-> [    4.118765] mv_cesa_ahash_queue_req: 0 (ptrval)
-> [    4.121966] mv_cesa_ahash_queue_req: 0 (ptrval)
-> [    4.126678] mv_cesa_int: 0 0x4ea1 0x80
-> [    4.131394] mv_cesa_ahash_queue_req: 0 (ptrval)
-> [    4.135927] mv_cesa_ahash_complete: 0 (ptrval)
-> [    4.153221] mv_cesa_ahash_req_cleanup: 0 (ptrval)
-> [    4.157942] mv_cesa_int: 0 0x4ea1 0x80
-> [    4.157949] alg: ahash: mv-sha256 test failed (wrong result) on test vector 3, cfg="import/export"
-> [    4.161699] mv_cesa_ahash_complete: 0 (ptrval)
-> [    4.170686] alg: self-tests for sha256 using mv-sha256 failed (rc=-22)
-> [    4.175132] mv_cesa_ahash_complete: 0 (ptrval)
-> [    4.175136] mv_cesa_ahash_req_cleanup: 0 (ptrval)
-> [    4.179589] ------------[ cut here ]------------
-> [    4.184304] mv_cesa_ahash_req_cleanup: 0 (ptrval)
+Also, the ERRB IRQ registration is only attempted if ERRB IRQs are given 
+in device-tree. I don't think we have users who run the bleeding-edge 
+upstream and I'd be _very_ surprized if there are users who run newest 
+upstream (or subsystem trees) AND have added ERRBs to device-tree.
 
-As I suspected, the first multi-request op on a single engine
-triggers a failure.  This looks like a bug in the TDMA chaining
-code.
+So, I'd say it should be safe to take em separately, but sure it'd be 
+nice to have them landing in same release.
 
-It is chaining what appears to be a live request.  In other words
-after we have already passed a chain to the hardware, we appear
-to be adding new entries to the end of the chain in
-mv_cesa_tdma_chain by assigning last->next_dma.
-
-Unfortunately I don't have documentation for this hardware so I can't
-say whether this is definitely illegal but it certainly smells bad :)
-
-Boris, what are the rules of engagement for TDMA chaining?
-
-Is it really OK to add new entries to the chain after it has been
-given over to the hardware?
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Yours,
+	-- Matti
 
