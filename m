@@ -1,179 +1,109 @@
-Return-Path: <linux-kernel+bounces-359560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052CD998D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:27:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33889998D5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8071F21A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455561C22564
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8861CEAD0;
-	Thu, 10 Oct 2024 16:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949441CEAB7;
+	Thu, 10 Oct 2024 16:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDuJwCz3"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBfZ7uX+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032DF1CEAA2;
-	Thu, 10 Oct 2024 16:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62B91CDA2D;
+	Thu, 10 Oct 2024 16:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728577648; cv=none; b=CwacxO3uwn9wIoa3Riua6wbZqebZIzOv6MFxNfdg/uJhHcpPRkGFQLs7sYzpsMShr1Pcz490rpMKkeDR9/3Pz23pJQ7nFmtKWH5uHsQWtI6qrBLGuhVHLQ/kql0Xv1N5ewwA5vkvhLwXN6sNGicfRBrr8a4KCVZ6l3ACGPDLZjg=
+	t=1728577679; cv=none; b=uEbB87FFn1g7tpGrJ6uh0t2+j4dGOtXcjh7ATbThDoYA39+mVbyQfHpGogYV++OMu0X96LiTQxIEkm/SPgs5aSSDSfwjlBEO+Kz9zYIsJNGyJIrVB5M4Uix5QaatP96+cM4Zf161djMAM9MjwjKfflwighBXXdskLQZQXd5NIdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728577648; c=relaxed/simple;
-	bh=EezNVeA2uyxOZbiJHcAoytd4T0u9uCuZE27/ZijVLTA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J0/hhLaqj7VrLGKdB8TQeK1mGK6E/e8AzUmg0XE35UTDueItbHNBd0RB2bKoLXJVrjJ/EKB6vr32VBoDW8IHe3MJ6kdcOmrmLpAKL46U8fuOHOARhbX2LZ7UNSmIKdLTlNiPM9nKOhotXpeBksRrZpgBgfhUANpm+vq2+crt/ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDuJwCz3; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71de9e1f431so918664b3a.3;
-        Thu, 10 Oct 2024 09:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728577645; x=1729182445; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSLzl5yBihgiBmsYyY0ZLdSXzjCf12rYeXArERj6rDI=;
-        b=lDuJwCz3N6IUynHgFPSSnuFU/R2IcSe4xFZaBIzyW5IZXF4sw8SCxsZAhwF89BPHf6
-         XlL/tMGqiKnXboWlgWI3asRJeWWOnqW8t/fFhd/MX/Q7FgisVA1TPEKtvIsolTptH1V7
-         gwLT/eTKjFEPvQlW/vSi2q76GD4b8ecnL+wViouknZJZGbGbI59dMdjTTbKKffTwENJt
-         FyJzDH87vfq1Qe0sY6nY9MtU2NSbcn1EV5/VqnRRyoIprO9UbU6/ioQC3KfdZpBXytsa
-         y5TXYbHjPUzerJRaVDT8eUlNtdUSZcE4SnUzudFsrwoPu3rvVDayNXx0u7ENFKHr33IF
-         /bWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728577645; x=1729182445;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fSLzl5yBihgiBmsYyY0ZLdSXzjCf12rYeXArERj6rDI=;
-        b=ufUvFa0EEBMwELJGIWt0ASrioRlrZQx8YKmGS67HC34/Z/7XxCkRv+NdxGoeAf7z1Q
-         dIxwWGbIOCtcMpajFyTOvaIod+0OSeXSVem5hUYSPHn5WeDm6WOLBIKSMqy7JO2E/Y3J
-         peIpIrUTZfzEcbKZaAGIr5Ea8kicL5VrtwNRibaXAEFHL0oxDmx9OA6xtFWS07i6YZMY
-         uFqMIyHDgMi0szdqUWKLQ72zjZRY3Hleq/WlUHF7U864+SCkLXF6HWshA6DaCNHLLAY2
-         QbD21ojiEsL6k566RNU7i7+1RII6CenJQl1zwhQi0q5b1YVIia+pSY2ltbuI5JMfdtHO
-         I/qA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4RnKIhRCM+Gy3l074rlOuPHzxEG9lajwqOFXxb2D+H4CnmxXRFVo0fTEXGBZbtDIjgdHTeqW04T8f@vger.kernel.org, AJvYcCW6Y6qCjiYL0hWYjxS+BVBUwReBl/zhMoeuz8Iu7RQjCeSuwKECJbKe7VRxxqOIkkyU9aZbE2elxcxiymNc@vger.kernel.org, AJvYcCWCPlE1XUuw6tJ2Y+Ur2hOWkYixJJJhSnNDkRi40XFkGg8v1/K+8c+4/+urXVMoMqKyQX6nUQrblPip@vger.kernel.org, AJvYcCX90iDcWlU5no+31lc8o+Tl+mim5ojdMXz4dvPPXrrNKbAmgb5alZGYaFUQhJvTtvzJdDCaq09AtFJTHQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGn4vJZAXMBNnz7ybzekv+duil3/fgK+Mn1gSUOBAw6hjmuND9
-	9Lv+7uJPdJAXuPTVaYOIVwccpC55N+AYrck3L9EwOfk5u5N0mn6JSI2y0w==
-X-Google-Smtp-Source: AGHT+IGIsf4f/iQQgXnwF0falPkwr2nFCnUFSLBEZqjJbFXQB+jGFOTfXuGfIuYojsJ2HGj2GIYvYg==
-X-Received: by 2002:a05:6a00:2e9e:b0:71e:2d2:1de4 with SMTP id d2e1a72fcca58-71e1db6485emr10418466b3a.3.1728577645027;
-        Thu, 10 Oct 2024 09:27:25 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:c165:c800:4280:d79b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aaba3a7sm1200121b3a.169.2024.10.10.09.27.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 09:27:24 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Thu, 10 Oct 2024 09:27:03 -0700
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 15/28] cxl/region: Refactor common create region code
-Message-ID: <ZwgAV81DSbpW7Ezd@fan>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-15-c261ee6eeded@intel.com>
+	s=arc-20240116; t=1728577679; c=relaxed/simple;
+	bh=pAybqgmIwmNbjIqIXpZlFut4c805d6kX1GVVhSSpf4E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RuHGWbDHb87Ujet5DVCf8KbsPoKLFtzJZmsJD//6ixPSG/L0SffletITfJbJTn/uFNvUl5EZ0M0qVjo+30TSmbRpqdVxYKgFMy4eU0snL8eCxj330DvBCrrM65etvp72gbaPEQwNRDinFmmMnifz4pB6HLoZDhAjR1c7UR3+54E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBfZ7uX+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572A8C4CEC5;
+	Thu, 10 Oct 2024 16:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728577678;
+	bh=pAybqgmIwmNbjIqIXpZlFut4c805d6kX1GVVhSSpf4E=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jBfZ7uX+rcc6o5/ZXq3r82ktchz1KruUBipM0Bt1cyGrhWMVvmsNZiWSF252Q6CQt
+	 UOy9+fcU2zh1JfVpHygVieVMU04aO4PO05d0F95PYOONCEdIXt6SS6zj78PLzGUsa6
+	 l7KDGQqeGtrUjuUmBbVUPzVcp2bJjObcM31QvVjscGWIDXTgnkpG4WxvafZlt3eW1J
+	 PUAF4WBFay6uC4+oFrvtVtuo3g/yQ7gNAcu4CPdVhCNXZhY6krZnhnrlBzc3C3rdBP
+	 FOVQev0+vuXpd9cHSk6IixbWFVNZTzBkp62M5jT89rG23QaMvUxVrIQ+MHBB08AKrW
+	 HJUPahZtylCQA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH 0/7] of: Constify DT structs
+Date: Thu, 10 Oct 2024 11:27:13 -0500
+Message-Id: <20241010-dt-const-v1-0-87a51f558425@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-15-c261ee6eeded@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGEACGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0MD3ZQS3eT8vOISXfPk1NQ0c+OUNCPLZCWg8oKi1LTMCrBR0bG1tQC
+ 6u1wZWgAAAA==
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Saravana Kannan <saravanak@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.15-dev
 
-On Mon, Oct 07, 2024 at 06:16:21PM -0500, Ira Weiny wrote:
-> create_pmem_region_store() and create_ram_region_store() are identical
-> with the exception of the region mode.  With the addition of DC region
-> mode this would end up being 3 copies of the same code.
-> 
-> Refactor create_pmem_region_store() and create_ram_region_store() to use
-> a single common function to be used in subsequent DC code.
-> 
-> Suggested-by: Fan Ni <fan.ni@samsung.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
+This series constifies many usages of DT structs in the DT core code. 
+Many uses of struct device_node where the node refcount is not 
+changed can be const. Most uses of struct property can also be const.
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+The first 2 patches are dependencies. The functions called by the 
+DT core where the fwnode_handle needs to be const to make the containing 
+device_node const.
 
->  drivers/cxl/core/region.c | 28 +++++++++++-----------------
->  1 file changed, 11 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index ab00203f285a..2ca6148d108c 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2552,9 +2552,8 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
->  	return devm_cxl_add_region(cxlrd, id, mode, CXL_DECODER_HOSTONLYMEM);
->  }
->  
-> -static ssize_t create_pmem_region_store(struct device *dev,
-> -					struct device_attribute *attr,
-> -					const char *buf, size_t len)
-> +static ssize_t create_region_store(struct device *dev, const char *buf,
-> +				   size_t len, enum cxl_region_mode mode)
->  {
->  	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
->  	struct cxl_region *cxlr;
-> @@ -2564,31 +2563,26 @@ static ssize_t create_pmem_region_store(struct device *dev,
->  	if (rc != 1)
->  		return -EINVAL;
->  
-> -	cxlr = __create_region(cxlrd, CXL_REGION_PMEM, id);
-> +	cxlr = __create_region(cxlrd, mode, id);
->  	if (IS_ERR(cxlr))
->  		return PTR_ERR(cxlr);
->  
->  	return len;
->  }
-> +
-> +static ssize_t create_pmem_region_store(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t len)
-> +{
-> +	return create_region_store(dev, buf, len, CXL_REGION_PMEM);
-> +}
->  DEVICE_ATTR_RW(create_pmem_region);
->  
->  static ssize_t create_ram_region_store(struct device *dev,
->  				       struct device_attribute *attr,
->  				       const char *buf, size_t len)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
-> -	struct cxl_region *cxlr;
-> -	int rc, id;
-> -
-> -	rc = sscanf(buf, "region%d\n", &id);
-> -	if (rc != 1)
-> -		return -EINVAL;
-> -
-> -	cxlr = __create_region(cxlrd, CXL_REGION_RAM, id);
-> -	if (IS_ERR(cxlr))
-> -		return PTR_ERR(cxlr);
-> -
-> -	return len;
-> +	return create_region_store(dev, buf, len, CXL_REGION_RAM);
->  }
->  DEVICE_ATTR_RW(create_ram_region);
->  
-> 
-> -- 
-> 2.46.0
-> 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Rob Herring (Arm) (7):
+      PCI: Constify pci_register_io_range() fwnode_handle
+      logic_pio: Constify fwnode_handle
+      of: Constify struct device_node function arguments
+      of: Constify struct property pointers
+      of: Constify of_changeset_entry function arguments
+      of: Constify safe_name() kobject arg
+      of/address: Constify of_busses[] array and pointers
 
+ drivers/of/address.c       | 22 +++++++++++-----------
+ drivers/of/base.c          | 20 ++++++++++----------
+ drivers/of/cpu.c           |  2 +-
+ drivers/of/dynamic.c       |  4 ++--
+ drivers/of/irq.c           |  4 ++--
+ drivers/of/kobj.c          |  8 ++++----
+ drivers/of/of_private.h    | 12 ++++++------
+ drivers/of/overlay.c       | 19 ++++++++++---------
+ drivers/of/property.c      | 10 +++++-----
+ drivers/of/resolver.c      | 12 ++++++------
+ drivers/pci/pci.c          |  2 +-
+ include/linux/logic_pio.h  |  6 +++---
+ include/linux/of.h         | 28 ++++++++++++++--------------
+ include/linux/of_address.h |  6 +++---
+ include/linux/of_irq.h     |  4 ++--
+ include/linux/pci.h        |  2 +-
+ lib/logic_pio.c            |  4 ++--
+ 17 files changed, 83 insertions(+), 82 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241010-dt-const-7ceef73df29c
+
+Best regards,
 -- 
-Fan Ni
+Rob Herring (Arm) <robh@kernel.org>
+
 
