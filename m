@@ -1,226 +1,114 @@
-Return-Path: <linux-kernel+bounces-359446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A6E998B9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:30:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2501998BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E350B1C267EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1956F289814
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD551CC894;
-	Thu, 10 Oct 2024 15:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AYdf3mSN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9499C1CCB46;
+	Thu, 10 Oct 2024 15:30:38 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C708E1C2424;
-	Thu, 10 Oct 2024 15:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB881441D;
+	Thu, 10 Oct 2024 15:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574194; cv=none; b=gi3NRZ4JvwGEHFho3tZEx82bIv9FqE+PDtYc39aHCXrmUGoJhP5As5GSR8dCM7r2tNChthi5NULZbCyy+OWjKBdGeASYKY4j83FbciXbB1qvHR10j5vUatC672AuZOy16TkwYIPM/KlpiSvjKHVboitXuSDgXJCZyVRdbDjgp7M=
+	t=1728574238; cv=none; b=CDdyNqtfF6MSttwVJhNvMJGtLX6XMxisZfOv2xs+dWb3C4JQDMbpiZVk6/FLk8YW1ehBaDZqhxrtTdmIoXpsRpiPbU/KwE2cm++ZnFVkve2LSIkH37vQU1y/qZiylu4p43TwgoAN362EaGZTMl5xMeYMXN7Nxnp2SROKGnn4HAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574194; c=relaxed/simple;
-	bh=3Yh7DZRlIIUDk+aIqbJ40eQmrJ7arxkdSCZSAYEQQxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7Ew08LY2Q/tmvPqEYi3FVnb/dw+IGVAxjMDlLhyYPK+JyvIcm/9hVHowLPC5Hlc+7IPfux5u2bAvtxRYP+2gCPuI9Ig9IQaoGREhXEXKAdpskq4p3z8mGmTtCvhVyUoqDVsIIMmmB1NGUyvKBMY8UegqCF+zy6peh+gKu3tfUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AYdf3mSN; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728574193; x=1760110193;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Yh7DZRlIIUDk+aIqbJ40eQmrJ7arxkdSCZSAYEQQxo=;
-  b=AYdf3mSNV7V+giE+pV+3K50uQDPabzPIj3bCHdHuHrCUw2l6lCm9lX6A
-   gmCEVl9dDtZ3KVTRAH9dFx9JeWyaB331ULF1iWakLUbk1h7bci4N5peQL
-   722D1TjcQXhFQdUYaqukhFjzUTglui4gVsPS+0Xl2l3fadZ3iBkIO+Uzr
-   H9u6QMgxiacTuQiKOpQPx8ZmPQ7LDgzzScifgk31AY+VLF9PWkRWBq5+8
-   ZiNRe/AVCOWnmJefUqHPKEDyAE+fKSf19NWFuQvKeJ5GIzEaGKkK3kt5H
-   oF7l64SEc4BnEDSAfwFg/PU/ZKBb+WFSfm6BLtu+ho5T0GEnPnQppAzps
-   g==;
-X-CSE-ConnectionGUID: 57OpOhz8TuuRu4zqntEVCA==
-X-CSE-MsgGUID: p+VTLes/T1aye+vhUE955Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27388507"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="27388507"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:29:52 -0700
-X-CSE-ConnectionGUID: XrYEqfQKRwaX4NHaTCuDjw==
-X-CSE-MsgGUID: IKQnyKw7TIOwS2prjh7F+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="81151289"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:29:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1syv6m-00000001Zuf-3h6N;
-	Thu, 10 Oct 2024 18:29:44 +0300
-Date: Thu, 10 Oct 2024 18:29:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware
- prober
-Message-ID: <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-8-wenst@chromium.org>
+	s=arc-20240116; t=1728574238; c=relaxed/simple;
+	bh=7F15DEZ+iv156zRTNTt8JfDx03l4MNXXqM/1CMSRDVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKcLgiGBGJ015iGVhU6PD4Js1ef7Al+uFLCytI5+T9Wm8aye8Z5nHFYPWOoCce38126Yr6afFMzfAJyMTG4aNOZkArxo5QlE4OMOkZRz8fD4fjyDvP7uzwidDFU0yrEkv2FaIUwIhnYN3giKP/svKWGW+guhgufTaengmraPPUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e2e427b07dso8634647b3.1;
+        Thu, 10 Oct 2024 08:30:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728574234; x=1729179034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sVCxjXJKRC5il2Xap2UVREQcGWuyfIQxKnP1aTdayOA=;
+        b=aDsQCJbIC11mOrUUIX60hN6ZXcD5XURfAdEJmfcpQuf4lrUUd3yEcUOaiGiJzqsfiU
+         JaRZjs/RGHWtHyeka+b1MalwP6nY0iZhzE4YQkReyDpbF5QDfjKOw/nR60mGaVEEHwU4
+         B/roCGcHXOd723ZWBaJdMnwNKLRKnVyK188PvXf8N2SqeSbnSZYEfVnyV2NB47ZXM5Qc
+         cYQb95i3IrtizObs40vJgfj2fc4a9dulOBBrksrXmcjlAV5lMrQFPseyW7KHjGe/pJQU
+         M1KOq20RSMw3MuYeK7KCOgH7Y9HMGOXZOALQdvbDHwNc7DfxKRzWuRAZmwWleW1DuHdg
+         NzmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9mn2shnjlX3pNHLtc/OWEAMSoOrk6w8/+zSXtNY64nmhCmHiOLNb3nD7KB/66tKg7FGDdhAWgZGnh@vger.kernel.org, AJvYcCWOCFtnbgC/eqG1N04NCi9VFeJi4fr/OHqwTUQJPKGSvv7C9lD3Y4pWg9nR2nhcZHo9L1StAsLQ7Bzn@vger.kernel.org, AJvYcCWuZI340vZSBNlhxplGi+y2VG4Bq/iJ1Om7CXX3OneH3tDcvQ9uSrcxrksCy2BXT/UE67gKPeSdNmd1FuWyP9F2FXI=@vger.kernel.org, AJvYcCXJD+jK9iawKlEKAbON9fyejoUyE1aGMujY4SGZ0oOcm8OuuSsHEfmyE73XVfQzYw0JZmmwko4AMJ5V@vger.kernel.org, AJvYcCXOMw7CoauwXVrWPlJ5iuhL92BQYPCQiU7bSqrFtQ+x876vaTrPTWjmOX2OR/D/UiwNAscsPBRSKn+zTcva@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAcw5KHIHd7gprtbzzrtrIMrhzd7/s4cqSa8/91tPuhCyDcHa+
+	z+M6ANbvCB5K50mMWcVTYTe67VHTqBq7DnainQtV/ojv7ThqTKTB56ULuMch
+X-Google-Smtp-Source: AGHT+IH8upw16K9s5HbQ7mK6vihO2S9n3CZoy9NqU07UFEFYkOXf3vWQUuZfKjsR2Rb4Sz1Mv4Riag==
+X-Received: by 2002:a05:690c:112:b0:6e3:32bf:b85f with SMTP id 00721157ae682-6e332bfcf71mr18263497b3.25.1728574233465;
+        Thu, 10 Oct 2024 08:30:33 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332cb3b4csm2377417b3.140.2024.10.10.08.30.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 08:30:32 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e2e427b07dso8634177b3.1;
+        Thu, 10 Oct 2024 08:30:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKSAE2nYr24AEOeURAQpq0kgA/sxF23PDrCQlib+aue0YonAFQiWroKkkYdDB2e7DSdud/R2TVDjR7@vger.kernel.org, AJvYcCUcXhxGkKea5OhbWkASyiptLyqP3HZ9VQHxvVOXn0SjRAtioGL1ZnSp4ZkM54SCDwlkAgwfZcT3pcKB@vger.kernel.org, AJvYcCUowDQy+5A+cD/rWw6asYTZ+n2yAQ5iHXX5q1vPJhamxAq/awb1Zc1eybAcBM/e5TEg+OcU18C25eSF@vger.kernel.org, AJvYcCWQZGTBH12pX1XI8wuqXFzZj/XHz4YHblzNGHLNCUFdRM+kSrQF0PTqAciMpDq0M5cHimwGbtQGo5smLQk98JTeUuw=@vger.kernel.org, AJvYcCX6o6a+JtXxUg8oRxpeE9kczEgV4zlbmi4lviFQ5Cnq1RF9UJC/Pb/q0oRi8vV3552msSEPiahfBVUGU91M@vger.kernel.org
+X-Received: by 2002:a05:690c:dc2:b0:6e3:1a7b:9c9b with SMTP id
+ 00721157ae682-6e32210de3fmr60284057b3.3.1728574232563; Thu, 10 Oct 2024
+ 08:30:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008073430.3992087-8-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-13-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-13-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Oct 2024 17:30:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVt5jNf-AjZ_-4PAMP+WLzZZhgqx=U3G6LkjEy59X5KDQ@mail.gmail.com>
+Message-ID: <CAMuHMdVt5jNf-AjZ_-4PAMP+WLzZZhgqx=U3G6LkjEy59X5KDQ@mail.gmail.com>
+Subject: Re: [PATCH v3 12/12] arm64: defconfig: Enable Renesas RTCA-3 flag
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
-> Some devices are designed and manufactured with some components having
-> multiple drop-in replacement options. These components are often
-> connected to the mainboard via ribbon cables, having the same signals
-> and pin assignments across all options. These may include the display
-> panel and touchscreen on laptops and tablets, and the trackpad on
-> laptops. Sometimes which component option is used in a particular device
-> can be detected by some firmware provided identifier, other times that
-> information is not available, and the kernel has to try to probe each
-> device.
-> 
-> This change attempts to make the "probe each device" case cleaner. The
-> current approach is to have all options added and enabled in the device
-> tree. The kernel would then bind each device and run each driver's probe
-> function. This works, but has been broken before due to the introduction
-> of asynchronous probing, causing multiple instances requesting "shared"
-> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> time, with only one instance succeeding. Work arounds for these include
-> moving the pinmux to the parent I2C controller, using GPIO hogs or
-> pinmux settings to keep the GPIO pins in some fixed configuration, and
-> requesting the interrupt line very late. Such configurations can be seen
-> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> Lenovo Thinkpad 13S.
-> 
-> Instead of this delicate dance between drivers and device tree quirks,
-> this change introduces a simple I2C component prober. For any given
-> class of devices on the same I2C bus, it will go through all of them,
-> doing a simple I2C read transfer and see which one of them responds.
-> It will then enable the device that responds.
-> 
-> This requires some minor modifications in the existing device tree.
-> The status for all the device nodes for the component options must be
-> set to "fail-needs-probe". This makes it clear that some mechanism is
-> needed to enable one of them, and also prevents the prober and device
-> drivers running at the same time.
+On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Enable Renesas RTCA-3 flag for the Renesas RZ/G3S SoC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - none
 
-...
+May be combined with [11/12].
 
-> +#include <linux/array_size.h>
-> +#include <linux/errno.h>
-> +#include <linux/i2c-of-prober.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +static int chromeos_i2c_component_prober(struct device *dev, const void *_data)
-> +{
-> +	const struct chromeos_i2c_probe_data *data = _data;
-> +	struct i2c_of_probe_simple_ctx ctx = {
-> +		.opts = data->opts
+Gr{oetje,eeting}s,
 
-Leave trailing comma in such cases (when it's not a terminator and
-not on the same line with the variable definition).
+                        Geert
 
-> +	};
-> +
-> +	return i2c_of_probe_component(dev, data->cfg, &ctx);
-> +}
-> +
-> +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_dumb_touchscreen = {
-> +	.cfg = &(const struct i2c_of_probe_cfg) {
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Perhaps you can introduce something like
-
-#define DEFINE_I2C_OF_PROBE_CFG(_type_, _ops_)		\
-	(struct ...) {					\
-		.ops = _ops_,				\
-		.type = #_type_,			\
-	}
-
-and use it here as
-
-	.cfg = DEFINE_I2C_OF_PROBE_CFG(touchscreen, NULL),
-
-> +		.type = "touchscreen"
-
-Ditto.
-
-> +	}
-
-Ditto.
-
-> +};
-> +
-> +static const struct i2c_of_probe_cfg chromeos_i2c_probe_simple_trackpad_cfg = {
-> +	.ops = &i2c_of_probe_simple_ops,
-> +	.type = "trackpad"
-
-Leave a comma.
-
-> +};
-
-...
-
-> +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_hana_trackpad = {
-> +	.cfg = &chromeos_i2c_probe_simple_trackpad_cfg,
-
-	.cfg = DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_ops),
-
-Or even
-
-#define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)			\
-	DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
-
-> +	.opts = &(const struct i2c_of_probe_simple_opts) {
-
-Perhaps also DEFINE_xxx for this compound literal?
-
-> +		.res_node_compatible = "elan,ekth3000",
-> +		.supply_name = "vcc",
-> +		/*
-> +		 * ELAN trackpad needs 2 ms for H/W init and 100 ms for F/W init.
-> +		 * Synaptics trackpad needs 100 ms.
-> +		 * However, the regulator is set to "always-on", presumably to
-> +		 * avoid this delay. The ELAN driver is also missing delays.
-> +		 */
-> +		.post_power_on_delay_ms = 0,
-> +	}
-> +};
-> +
-> +static const struct hw_prober_entry hw_prober_platforms[] = {
-> +	{ .compatible = "google,hana", .prober = chromeos_i2c_component_prober, .data = &chromeos_i2c_probe_dumb_touchscreen },
-> +	{ .compatible = "google,hana", .prober = chromeos_i2c_component_prober, .data = &chromeos_i2c_probe_hana_trackpad },
-
-These strings are a bit long, perhaps wrap on one member per line?
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
