@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-358921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63703998551
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 269D9998554
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9435E1C233DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335AF1C21733
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7FD1C3308;
-	Thu, 10 Oct 2024 11:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMSM8+Wm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923501C3F03;
+	Thu, 10 Oct 2024 11:47:36 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A4C183CD9;
-	Thu, 10 Oct 2024 11:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F901C2454;
+	Thu, 10 Oct 2024 11:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560837; cv=none; b=fDMNyJz8ajcg09HGe89nJSSsr/VM4gFyNKPJLSs7Mw5YNeELb8/r1OBCD/CBGV6/+WUg3MohLY0T8iNOgcILArFAIy/DQ4Y/NPu+pv0ZwHSE4LFJc2EcpGzIGL0iQ61yEVQlW3KTGra8/uEGcj2z95Lf0YpYTDGvlrN9qHJRXa8=
+	t=1728560856; cv=none; b=S7M4mluDmir4MSeBaB78HDjnNTd1CF/HIzPyVVrwtLU+lQ00GXuAmReYDCYDDcXKKQxdmcyAcyiUfjLyypV5UsAy6aSs1GW8ET2SIvBVx7Z4bhZY1zxg/VxQHgXDA/hJJQyEcT/zwylW1RvtzKuNxfC956LsJnp7AakiU3EjAFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560837; c=relaxed/simple;
-	bh=qxy0NvJ2FXl78wFpq4gNLGDUGi8/SfY1T3TOOmJk6wE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oTDmdVZjDM8gPHTeE44UjFCin8ljivKZbWNh/DGH9Xk4AAcBahAYSKyFAlwUITeJTQeKitYv4aZdDTrUGD+ac4XYvp2GOHD3F4YO60ZiuHh2vEecNjWIjUBApOWSF+VYv17ALEqIvJOzkae3i/ylwm+fSdpE/GzCglMAyunvGUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMSM8+Wm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C1F9C4CEC5;
-	Thu, 10 Oct 2024 11:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728560836;
-	bh=qxy0NvJ2FXl78wFpq4gNLGDUGi8/SfY1T3TOOmJk6wE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LMSM8+WmePoArZE93IEUlJh+FmKEYFvcixVvnUYjCkvusaFooZQ/f1GAQW7Afu5qK
-	 t78ib+oP6OnsV/9f6cXNoEyo0zjxVNlf38oOKYTU1ZZ9aqHHH47xNKAXwxtPDlVewV
-	 fXtkElSv0kPrg4qCfwHlyE2BSS/e5Ec9ex4oQ0PcMg9vmXiyPu5F+eywtdbgq45wYx
-	 4Yj7RUpIfuLVUc/DSCvonSwmJpcipUehaUgUu6DkuchY++ZCcvWLkumBoZ/Ko9jh3C
-	 SontlYaLrdAl3wMJEy5yj7G9vmrC/4QZ8VnA7jkJJ7RLbGYadzREZVIIot575e6rli
-	 yodrSaoxGOxcw==
-Message-ID: <f9bbe108-1a0d-451f-a1c7-14e8aadc76b5@kernel.org>
-Date: Thu, 10 Oct 2024 13:47:09 +0200
+	s=arc-20240116; t=1728560856; c=relaxed/simple;
+	bh=nhY+3d7RGBjqO61vM1Gmf89cUgL0SF7x1G+0ivnWjWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=j9UohtrqjGJgR1Wm5Q5XiXkWOoWBmemmqjANSjl7RIbFNFg+uZZRX2RIKj/kUN4+GjNDm6IGlij1a4BVHp+U6XbLKJdaP1ttcQgtcVpGLBLGNCWDqNGOy98XpHW9y7CEPDqyEBP2czq5PRvgRO3zD1EnPhMnAE7dyrpnhtuYUvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPScn6jgHz10N2b;
+	Thu, 10 Oct 2024 19:45:45 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id DFE8618010F;
+	Thu, 10 Oct 2024 19:47:30 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 19:47:29 +0800
+Message-ID: <df196eaa-e017-4f2e-a443-0431873a5d71@huawei.com>
+Date: Thu, 10 Oct 2024 19:47:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,99 +47,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: watchdog: Document ExynosAutoV920
- watchdog bindings
-To: Taewan Kim <trunixs.kim@samsung.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
-References: <20241010111807.3635504-1-trunixs.kim@samsung.com>
- <CGME20241010111837epcas2p11dddc10945ca0648997dccaaf4854d93@epcas2p1.samsung.com>
- <20241010111807.3635504-2-trunixs.kim@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241010111807.3635504-2-trunixs.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 6/8] cachefiles: Modify inappropriate error return value
+ in cachefiles_daemon_secctx()
+To: David Howells <dhowells@redhat.com>
+CC: <netfs@lists.linux.dev>, <jlayton@kernel.org>,
+	<hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
+	<zhujia.zj@bytedance.com>, <linux-erofs@lists.ozlabs.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<libaokun1@huawei.com>, <yangerkun@huawei.com>, <houtao1@huawei.com>,
+	<yukuai3@huawei.com>
+References: <20240821024301.1058918-7-wozizhi@huawei.com>
+ <20240821024301.1058918-1-wozizhi@huawei.com>
+ <304108.1728559896@warthog.procyon.org.uk>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <304108.1728559896@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On 10/10/2024 13:18, Taewan Kim wrote:
-> From: Byoungtae Cho <bt.cho@samsung.com>
+
+
+在 2024/10/10 19:31, David Howells 写道:
+> Zizhi Wo <wozizhi@huawei.com> wrote:
 > 
-> Add "samsung-exynosautov920-wdt" compatible to the dt-schema
-> document. ExynosAutoV920 is new SoC for automotive, similar to
-> exynosautov9 but some CPU configurations are quite different.
+>> In cachefiles_daemon_secctx(), if it is detected that secctx has been
+>> written to the cache, the error code returned is -EINVAL, which is
+>> inappropriate and does not distinguish the situation well.
 > 
-> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+> I disagree: it is an invalid parameter, not an already extant file, and a
+> message is logged for clarification.  I'd prefer to avoid filesystem errors as
+> we are also doing filesystem operations.
+> 
+> David
+> 
+> 
 
-Shall we do the work twice?
+Alright, what I originally intended was to differentiate the error codes
+between cases where no arguments are specified and where cache->secctx
+already exists.
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
-
+Thanks,
+Zizhi Wo
 
