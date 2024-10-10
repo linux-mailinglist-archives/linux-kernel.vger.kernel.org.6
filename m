@@ -1,131 +1,164 @@
-Return-Path: <linux-kernel+bounces-359182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B4F99886E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E795F99886F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F0B1C229E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892261F22287
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC38E1C9ED6;
-	Thu, 10 Oct 2024 13:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011B21C9EB5;
+	Thu, 10 Oct 2024 13:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ce4nYN2E"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rtZmJ+Qy"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEB71C9EBA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF0A1C8FD7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568467; cv=none; b=Hw6np7UNhdCKmsW+VIJjSC3rI/TMn1mh0GrrCuLTqp75FMt5IoYPNNqbmGi9ZU4xHXVXnldluWRrDvqnHHBrY+lKtj5OTf4uZ7bK0HLsppIsRMPlJZNk8oqV1iWNPnsF+LHjdFO87XWJtb1Lmz3gdEyAzapokaaAiU1yCcrLnM8=
+	t=1728568496; cv=none; b=PTaXDHmg0PTqZnC98cKs0I2lGEiw85TIJaa6HCVYphSRSY6OVT27Xvh0+NYkeHii1BC3VD6nferPkHGbnfZLq1McmeYcSi2M7UytkquK5s9XG6QB76qVt22r022KZWsV+AIt19huJyqcpExFlVxm97fujr4ndzv5M+4quKofy28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568467; c=relaxed/simple;
-	bh=/MdJOYWSFWYjBmuIvZwF0RaW/1K9KTkshG8s96mlx+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogEIdjrMvZeQ2qMswwaqgM5eUDSeT0bFHkZ0gB4m1+V7NQN0UjHwMbAkgioJhXWWdb05iGasd/SSiLgWEwYPuUpe0itwfh7bV+Y9O7VOTOQZE01eMKvjp5yQz3wdVPWl5t25RcF7OSpOm09bUC/QW7KLP0lNny6Qk5M5HJVexs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ce4nYN2E; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398e4ae9efso1270778e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728568462; x=1729173262; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qb9do28lJl8LSAbvRHjfrwyeq3FZfjo+Pf8ixrbq3FY=;
-        b=Ce4nYN2EKddNroMmU2PJMQOO7CwwTpKDnyYKRlRkKXgxzmEiwGUo9OLSVFASTHpW4c
-         OPtMLBPUF5p/Gx07ypZ23OnBGUhVPRr+Muc5kJ68Qp60w5G3tJ43QqVBvAWGbS22T1OF
-         pPoj9KSSyxdwfX1048V7b0npOns7CDT/TxTsabu5UlogsqVgmh/NUby1VHAxJI/q7ExW
-         NDJRHxl+sJQM02iMyhB5Gx3IXy893XwKpJn6uPepf9xvLCvo/2SUmMthj2/3Xl2LBIfz
-         br3is214NMwK4yK7r6XEj84To1R8zcwpsH9OJGCq05HA70JsB8eDseF4tMEGxBLWInBe
-         j2ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568462; x=1729173262;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qb9do28lJl8LSAbvRHjfrwyeq3FZfjo+Pf8ixrbq3FY=;
-        b=gnmOlhKCGFshcDcYBQ+gkEi59stPlJY1Nc3Nd0ljqTkvDPVarnigLE8lq3/b2C+is8
-         f+UcFIU7GffC2B4ak3jtSN2W5nYXf6a3GjYOcTwo+Jss2sMFM+HTfQA6vWSmMHghsZVM
-         zNtsf2Y1k6uLtTg8eK4w7zeha2VSBbZ2ZNmdjgUAWzALIN/6KoqA9L1byCU9ouST6QDc
-         ML68dsjsy68OTIXI4vAHwpqlGDYjDbKtHpLl+8x202SJEjaqJU8eFuTs2y2xXS8fW+hT
-         Oyw3DvmZKQtjE0bwBHpzwQRLbgi/A3nhkj0YUnowuwxGwGPUjsmArIMAyjfE9mMS2RTn
-         FuYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDfmxN9I29wZ6si6TNM9SBqI/hYz18oR+KA3xoYCo0ho54GhJI9MGgTDu1nL7PX/7j1CRANuscdYKq7fM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztZV1ow2iHwdc6y6+c3CIj2AGGnxheXmfX63cPebQPpVJfXKy0
-	+i6CEIr6sCrCFwMsA0kUCyBs/fnOCKQFk6WMavwjaTJQmIaCcMvsW8moOWZGfxA=
-X-Google-Smtp-Source: AGHT+IETmVHkFlLTgoETu0Xv+7MfN8SyNcGln0i9cCU+nmxqBIFSBYMKVVj3KwdQ5T6DQl1hWggOFQ==
-X-Received: by 2002:a05:6512:3d8d:b0:538:9ef8:881a with SMTP id 2adb3069b0e04-539c488e739mr4488887e87.12.1728568462477;
-        Thu, 10 Oct 2024 06:54:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c86f9sm264641e87.86.2024.10.10.06.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:54:21 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:54:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
-Message-ID: <xwscnif4mqzykjinjtbr7jqsksy2buzindyttkk754jmumktm3@p5xxnmia7fxe>
-References: <20241009161715.14994-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1728568496; c=relaxed/simple;
+	bh=qSUxFxZspgMcfQY5+jl1jPXfgQQnoNowZXPOJtAoLYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SA9zz6Rvr1XDrAtc2hBnCYmCbRfoqe8Fs5eyrvhMYUPoLIgRJGMF6xUuXH6nawR7mkVaFn8U+ENbaefhRRCip7yC8O3f3F1KYm5uA6k0WUhnu+hOKiH06nqPaZm4CjqAb3TA8ETBBCruXFNdWioU4vVncAFFmpqQ2psk43EQwg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rtZmJ+Qy; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=v8tFS6BLOJ3erqK+DhD25hVS1almgqLVcNOb3Z708U8=; b=rtZmJ+QyqXimeHs1
+	8+6c32YRdgu/5BHZEoxIHEUqNs0AZoro7A8Mp0XHLsvL/WcXeTLMgEZdKNV6quzl1WQ2R9K+Xuh62
+	OYzCx8d3WJpo0VPp7Vp4Y4oAMkBEJjf0BhR9RZiTNsur3bT59nkhrPI9GAiswn5P4+8W89zDrAldu
+	pEqZlFlFvfMvBPaHlg5hB1sjbjgVd/n0/dISWcvmemBO9RyyIO0R/QjykUWEyVZhGcQqZEajUssUq
+	/c6JdxbE1nBTWsAL7WG1JTZ3wM01/tTIziT4vEk7UGbkCL3Q++PFmvy6OJ8I0eYF6vt3RdTYaninF
+	kIpkeirmZ5IghxUczA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sytct-00AFZ7-1C;
+	Thu, 10 Oct 2024 13:54:47 +0000
+From: linux@treblig.org
+To: jstultz@google.com,
+	tglx@linutronix.de,
+	sboyd@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2] clocksource: Remove unused clocksource_change_rating
+Date: Thu, 10 Oct 2024 14:54:46 +0100
+Message-ID: <20241010135446.213098-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009161715.14994-1-johan+linaro@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 09, 2024 at 06:17:15PM GMT, Johan Hovold wrote:
-> The DWC PCIe controller can be used with its internal MSI controller or
-> with an external one such as the GICv3 Interrupt Translation Service
-> (ITS).
-> 
-> Add the msi-map properties needed to use the GIC ITS. This will also
-> make Linux switch to the ITS implementation, which allows for assigning
-> affinity to individual MSIs. This specifically allows NVMe and Wi-Fi
-> interrupts to be processed on all cores (and not just on CPU0).
-> 
-> Note that using the GIC ITS on x1e80100 will cause Advanced Error
-> Reporting (AER) interrupts to be received on errors unlike when using
-> the internal MSI controller. Consequently, notifications about
-> (correctable) errors may now be logged for errors that previously went
-> unnoticed.
-> 
-> Also note that PCIe5 (and PCIe3) can currently only be used with the
-> internal MSI controller due to a platform (firmware) limitation.
-> 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-> 
-> The PCIe Gen4 stability fixes [1] are now in 6.12-rc1 so that we can enable
-> the GIC ITS without being flooded with link error notifications [2].
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Cc: <stable+noautosel@kernel.org> # Depends on driver stability fixes
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+clocksource_change_rating() has been unused since 2017's commit
+63ed4e0c67df ("Drivers: hv: vmbus: Consolidate all Hyper-V specific clocksource code")
 
-> Johan
-> 
-> [1] https://lore.kernel.org/lkml/20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org/
-> [2] https://lore.kernel.org/lkml/ZpDnSL8as7km9_0b@hovoldconsulting.com/
-> 
-> Changes in v2
->  - amend commit message with comment about PCIe3 and PCIe5 only
->    supporting the internal MSI controller
-> 
-> 
+Remove it.
 
+__clocksource_change_rating now only has one use which is ifdef'd.
+Move it into the ifdef'd section.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/linux/clocksource.h |  1 -
+ kernel/time/clocksource.c   | 38 +++++++++----------------------------
+ 2 files changed, 9 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index d35b677b08fe..ef1b16da6ad5 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -215,7 +215,6 @@ static inline s64 clocksource_cyc2ns(u64 cycles, u32 mult, u32 shift)
+ 
+ extern int clocksource_unregister(struct clocksource*);
+ extern void clocksource_touch_watchdog(void);
+-extern void clocksource_change_rating(struct clocksource *cs, int rating);
+ extern void clocksource_suspend(void);
+ extern void clocksource_resume(void);
+ extern struct clocksource * __init clocksource_default_clock(void);
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 23336eecb4f4..63564339b7a9 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -20,6 +20,8 @@
+ #include "tick-internal.h"
+ #include "timekeeping_internal.h"
+ 
++static void clocksource_enqueue(struct clocksource *cs);
++
+ static noinline u64 cycles_to_nsec_safe(struct clocksource *cs, u64 start, u64 end)
+ {
+ 	u64 delta = clocksource_delta(end, start, cs->mask);
+@@ -171,7 +173,6 @@ static inline void clocksource_watchdog_unlock(unsigned long *flags)
+ }
+ 
+ static int clocksource_watchdog_kthread(void *data);
+-static void __clocksource_change_rating(struct clocksource *cs, int rating);
+ 
+ static void clocksource_watchdog_work(struct work_struct *work)
+ {
+@@ -191,6 +192,13 @@ static void clocksource_watchdog_work(struct work_struct *work)
+ 	kthread_run(clocksource_watchdog_kthread, NULL, "kwatchdog");
+ }
+ 
++static void __clocksource_change_rating(struct clocksource *cs, int rating)
++{
++	list_del(&cs->list);
++	cs->rating = rating;
++	clocksource_enqueue(cs);
++}
++
+ static void __clocksource_unstable(struct clocksource *cs)
+ {
+ 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
+@@ -1255,34 +1263,6 @@ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+ }
+ EXPORT_SYMBOL_GPL(__clocksource_register_scale);
+ 
+-static void __clocksource_change_rating(struct clocksource *cs, int rating)
+-{
+-	list_del(&cs->list);
+-	cs->rating = rating;
+-	clocksource_enqueue(cs);
+-}
+-
+-/**
+- * clocksource_change_rating - Change the rating of a registered clocksource
+- * @cs:		clocksource to be changed
+- * @rating:	new rating
+- */
+-void clocksource_change_rating(struct clocksource *cs, int rating)
+-{
+-	unsigned long flags;
+-
+-	mutex_lock(&clocksource_mutex);
+-	clocksource_watchdog_lock(&flags);
+-	__clocksource_change_rating(cs, rating);
+-	clocksource_watchdog_unlock(&flags);
+-
+-	clocksource_select();
+-	clocksource_select_watchdog(false);
+-	clocksource_suspend_select(false);
+-	mutex_unlock(&clocksource_mutex);
+-}
+-EXPORT_SYMBOL(clocksource_change_rating);
+-
+ /*
+  * Unbind clocksource @cs. Called with clocksource_mutex held
+  */
 -- 
-With best wishes
-Dmitry
+2.47.0
+
 
