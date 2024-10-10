@@ -1,330 +1,116 @@
-Return-Path: <linux-kernel+bounces-359441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D7D998B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:28:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F595998B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A006D28D8AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3E251F29417
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21831CC8B7;
-	Thu, 10 Oct 2024 15:27:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7A81C2424;
+	Thu, 10 Oct 2024 15:28:27 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A06A1CC179;
-	Thu, 10 Oct 2024 15:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186BB1C57BA;
+	Thu, 10 Oct 2024 15:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574072; cv=none; b=WCGJ3iZaH/Bf3Tg6267ywHcoMwA0HzChz7zTac3k/cKqBBJEGTdjTM8pPkQUsu9w5H+zHQN8gpk7QmOrC7tkmGYqlo3iOUCD7VD6unx4Zm+o+FJt+LBBXa57wPWsUwP/SQjIMsSCvgkRebiJ/DU6UNe0mfD+Vza3I540gWIRx1Q=
+	t=1728574107; cv=none; b=Eky2Ilkb9f8F4QGI1CI74IWO/JWj83rBYPe6A4q8V9Dkusm9bzevrmDoxDuefXLQr/KJgB2gVod7xCjsHZ8eKG9qa3l23eGk2T/eEiuOru4NLt8VE7ASNpkN6XD+Hsbf1XVz0rkRHoY66nEG9zt0Rrqa1bwy/Tqk5G9umxM9/Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574072; c=relaxed/simple;
-	bh=SNVe+TdvAayhuxSjhFCoU0u7zIY9O6cAdSoJx16is/E=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EnPIE2Y7gpfBVdJHRlW22SFwwwHLiJAatoQTRa0zUw+otCE3LBj7pmBa29TnmYucxEUHdi6ZtGD3VenkRsv9UpwsUDekgDcZqGYNX/eVic+oFCfrydJGKifjSWSpxsk04eKplXcHdSceLp5Ted/tAk8TxG1EituoH/pYxqYhV8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPYRy2q5Jz6J7sj;
-	Thu, 10 Oct 2024 23:23:26 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 510E4140A78;
-	Thu, 10 Oct 2024 23:27:47 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 17:27:46 +0200
-Date: Thu, 10 Oct 2024 16:27:45 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 24/28] dax/region: Create resources on sparse DAX
- regions
-Message-ID: <20241010162745.00007b31@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-24-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-24-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728574107; c=relaxed/simple;
+	bh=ewPr7Nugz+b5xJtHDibyLNTiQ+4VHImYxBCZi3pWaYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=neboNcP9GP/jcVnmQB7ofbcI0PvRg1HdFx1g43T77lkmFMMZLEnXrHd68fe56YiE8e2ZFuN0006uzo2u81BKggrCSsWKhHZeGKZ5n4kFtSpKiwBXMB7kGEKcdqcMnaLAGcpjzhZvhldrR9iku7K9VTpd/x7RpK02A9BioLmnq3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e2e4244413so12611677b3.3;
+        Thu, 10 Oct 2024 08:28:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728574104; x=1729178904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q+FUiD0xVp5OOvt65U+GUfX5IiAyky/cSIiHVZpRQ6w=;
+        b=qYJlL9AAEcZaD9OV4xTFb+pDV875QjBOnWRXaIrHyuOpUOOcwRiUT4yT8rJza8KTac
+         u1JW+5gwTIoK5MOOruc/x3Oyo8Fer1ziEkuK8Q0RRalF0nAvO/EZoo6lXU122F2vfoA8
+         A4ve3LJ+9u++NoLwPpvEibeKZJfouJZ/sxG8FrrzgdW1FZvAxgSB2LhGL5AQUOAbAZUJ
+         zEEVrZbwBwl0m09q9EIr6UXpke9ibEnKJ144I5xs2q2qF7sKSJ1JRrna8+d5QSRV3Def
+         Sr+3k8t8hZWG3PbZxMiy//t3MMTjcMXtCVHzFn5S0Wv2+0IWY2cbn05oDk/OXrJ5CVxJ
+         yJGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIf4dZzqBlzprhJI4NklbMiLjdhgkIs301pfeoIGlYLRmjHtuYsSIkGQ4Y6o1t5hxut3fizn9xcZo@vger.kernel.org, AJvYcCVQq3GamVG4vz8ZBJR5dIVNjBfo5WwItlty+N7FG6C3w72X2OT5tZhvdoGfpAvL6mqAORQCJEcCzLBC080/@vger.kernel.org, AJvYcCVm7mYsXROJ7ddyshXDXVaV7Qyp3GQ3z6IGYC0ytDwZ5IWlvmVfV4NeAkG+nlRxeDHEza7XCeAjWSB1RNmUqsFF+u4=@vger.kernel.org, AJvYcCWO14C9y19y8Jio/810W6ZBacNHN/NrjH1GA8/bt09DyzR84Mngu4oGodwWwTVMXVomxDhBGKEpYJBM@vger.kernel.org, AJvYcCXJf00Fq7qcYGFhAt8zbNbq8xCPjmKr4s1FDzkgWhbQXR6VVLAScnWqo2Oe/2/UmvqsEMmKDs0mAcLz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhSbaot0YWRcBSCBP7fxjoDBehLZZRgzqxuVqjWXSoT6ftfpRs
+	pePLYaC9EvAYH6i35fUdky5LtcRt4nfSw5iPzNn36eY7ym+0x9KoWXuVXPzn
+X-Google-Smtp-Source: AGHT+IGITm7nx8mYfQsDpCCfWzk27Bvg21SGubs6Yhpq3yhBQaT6KbgBM+iHPMzcsgT8sp5evMViOg==
+X-Received: by 2002:a05:690c:6706:b0:6e2:1bba:ed4c with SMTP id 00721157ae682-6e3221430b3mr65370927b3.17.1728574103708;
+        Thu, 10 Oct 2024 08:28:23 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332cb383dsm2425777b3.139.2024.10.10.08.28.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 08:28:23 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2d36343caso9085277b3.2;
+        Thu, 10 Oct 2024 08:28:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8JhDg9UH3nHc8W4ShRdKaonhJ5hI7QOnQjkogsKTaw1cVx5Z+q1/We82BQH0FfRnk/g6t9cqQU2Ep@vger.kernel.org, AJvYcCUFWo3wkk3SAYDSohe4GuGLEOXSBynHwgwq07XHgp3cwFiny1QsrxIMVedTB55QzaiHbB40UZcVpY98@vger.kernel.org, AJvYcCVMghTZa/f5IVf0i2+YIfHE2v96hlb3QRqTgM1carW5YbYtHkYeGwfNMWmdn6BeqjZlJJ2c75KhcIDNfAM9DYVg9SQ=@vger.kernel.org, AJvYcCWjIjHMG1a9P2w7I/jJFD74fIrKgLpcTbC7c/QKaEjearCdWEJbJM7Ft52QumokTJGlfUg62QLJNqrLjUFC@vger.kernel.org, AJvYcCXcrEkUEftkQBIb/PuZK3o/+CgYwdFzuTgoU2kkkhozTe5Jralo8E9hyilIxPodQgSZdjxY5dUBOCyH@vger.kernel.org
+X-Received: by 2002:a05:690c:86:b0:6e3:2608:d5af with SMTP id
+ 00721157ae682-6e32608d759mr55680917b3.26.1728574103360; Thu, 10 Oct 2024
+ 08:28:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-10-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-10-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Oct 2024 17:28:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWybEZHeQM526=xuvgs3tpDz96HwY69YRcVfc8pM48s+g@mail.gmail.com>
+Message-ID: <CAMuHMdWybEZHeQM526=xuvgs3tpDz96HwY69YRcVfc8pM48s+g@mail.gmail.com>
+Subject: Re: [PATCH v3 09/12] arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 07 Oct 2024 18:16:30 -0500
-ira.weiny@intel.com wrote:
-
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> DAX regions which map dynamic capacity partitions require that memory be
-> allowed to come and go.  Recall sparse regions were created for this
-> purpose.  Now that extents can be realized within DAX regions the DAX
-> region driver can start tracking sub-resource information.
-> 
-> The tight relationship between DAX region operations and extent
-> operations require memory changes to be controlled synchronously with
-> the user of the region.  Synchronize through the dax_region_rwsem and by
-> having the region driver drive both the region device as well as the
-> extent sub-devices.
-> 
-> Recall requests to remove extents can happen at any time and that a host
-> is not obligated to release the memory until it is not being used.  If
-> an extent is not used allow a release response.
-> 
-> The DAX layer has no need for the details of the CXL memory extent
-> devices.  Expose extents to the DAX layer as device children of the DAX
-> region device.  A single callback from the driver aids the DAX layer to
-> determine if the child device is an extent.  The DAX layer also
-> registers a devres function to automatically clean up when the device is
-> removed from the region.
-> 
-> There is a race between extents being surfaced and the dax_cxl driver
-> being loaded.  The driver must therefore scan for any existing extents
-> while still under the device lock.
-> 
-> Respond to extent notifications.  Manage the DAX region resource tree
-> based on the extents lifetime.  Return the status of remove
-> notifications to lower layers such that it can manage the hardware
-> appropriately.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-More somewhat superficial review from me.
-Needs DAX expert reviewers.
-
-Jonathan
-
+On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Enable the VBATTB controller. It provides the clock for RTC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  drivers/cxl/core/extent.c |  74 ++++++++++++--
->  drivers/cxl/cxl.h         |   6 ++
->  drivers/dax/bus.c         | 243 +++++++++++++++++++++++++++++++++++++++++-----
->  drivers/dax/bus.h         |   3 +-
->  drivers/dax/cxl.c         |  62 +++++++++++-
->  drivers/dax/dax-private.h |  42 ++++++++
->  drivers/dax/hmem/hmem.c   |   2 +-
->  drivers/dax/pmem.c        |   2 +-
->  8 files changed, 396 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
-> index a1eb6e8e4f1a..75fb73ce2185 100644
-> --- a/drivers/cxl/core/extent.c
-> +++ b/drivers/cxl/core/extent.c
-> @@ -270,20 +270,65 @@ static void calc_hpa_range(struct cxl_endpoint_decoder *cxled,
->  	hpa_range->end = hpa_range->start + range_len(dpa_range) - 1;
->  }
->  
-> +static int cxlr_notify_extent(struct cxl_region *cxlr, enum dc_event event,
-> +			      struct region_extent *region_extent)
-> +{
-> +	struct device *dev = &cxlr->cxlr_dax->dev;
-> +	struct cxl_notify_data notify_data;
-> +	struct cxl_driver *driver;
-> +
-> +	dev_dbg(dev, "Trying notify: type %d HPA %pra\n",
-> +		event, &region_extent->hpa_range);
-> +
-> +	guard(device)(dev);
-> +
-> +	/*
-> +	 * The lack of a driver indicates a notification has failed.  No user
-> +	 * space coordiantion was possible.
-spell check.
-coordination
+>
+> Changes in v3:
+> - updated patch description
+> - dropped vbattclk
+> - added renesas,vbattb-load-nanofarads on vbattb
+> - moved vbattb before vbattb_xtal
 
-> +	 */
-> +	if (!dev->driver)
-> +		return 0;
-> +	driver = to_cxl_drv(dev->driver);
-> +	if (!driver->notify)
-> +		return 0;
-> +
-> +	notify_data = (struct cxl_notify_data) {
-> +		.event = event,
-> +		.region_extent = region_extent,
-> +	};
-> +
-> +	dev_dbg(dev, "Notify: type %d HPA %pra\n",
-> +		event, &region_extent->hpa_range);
-> +	return driver->notify(dev, &notify_data);
-> +}
+With assigned-clock* resolved
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index f0e3f8c787df..4e19d18369de 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -183,6 +183,86 @@ static bool is_sparse(struct dax_region *dax_region)
->  	return (dax_region->res.flags & IORESOURCE_DAX_SPARSE_CAP) != 0;
->  }
+Gr{oetje,eeting}s,
 
-> +
-> +int dax_region_add_resource(struct dax_region *dax_region,
-> +			    struct device *device,
-> +			    resource_size_t start, resource_size_t length)
-> +{
-> +	struct resource *new_resource;
-> +	int rc;
-> +
-> +	struct dax_resource *dax_resource __free(kfree) =
-> +				kzalloc(sizeof(*dax_resource), GFP_KERNEL);
-> +	if (!dax_resource)
-> +		return -ENOMEM;
-> +
-> +	guard(rwsem_write)(&dax_region_rwsem);
-> +
-> +	dev_dbg(dax_region->dev, "DAX region resource %pr\n", &dax_region->res);
-> +	new_resource = __request_region(&dax_region->res, start, length, "extent", 0);
-> +	if (!new_resource) {
-> +		dev_err(dax_region->dev, "Failed to add region s:%pa l:%pa\n",
-> +			&start, &length);
-> +		return -ENOSPC;
-> +	}
-> +
-> +	dev_dbg(dax_region->dev, "add resource %pr\n", new_resource);
-> +	dax_resource->region = dax_region;
-> +	dax_resource->res = new_resource;
-> +	dev_set_drvdata(device, dax_resource);
-> +	rc = devm_add_action_or_reset(device, dax_release_resource,
-> +				      no_free_ptr(dax_resource));
-> +	/*  On error; ensure driver data is cleared under semaphore */
+                        Geert
 
-It's not used in the dax_release_resource callback (that I can
-immediately spot) so could you just not set it until after
-this has succeeded?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> +	if (rc)
-> +		dev_set_drvdata(device, NULL);
-i.e. move
-	dev_set_drvdata(device, dax_resource);
-to here.
-
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_region_add_resource);
-Adding quite a few exports. Is it time to namespace DAX exports?
-Perhaps a follow up series.
-
-
-
->  bool static_dev_dax(struct dev_dax *dev_dax)
->  {
->  	return is_static(dev_dax->region);
-> @@ -296,19 +376,44 @@ static ssize_t region_align_show(struct device *dev,
->  static struct device_attribute dev_attr_region_align =
->  		__ATTR(align, 0400, region_align_show, NULL);
->  
-> +#define for_each_child_resource(extent, res) \
-> +	for (res = (extent)->child; res; res = res->sibling)
-> +
-Extent naming in here is a little off for a general sounding macro.
-Maybe for_each_child_resource(parent, res) or something like that?
-
-Seem generally useful. Maybe move to resource.h?
-
-> @@ -1494,8 +1679,14 @@ static struct dev_dax *__devm_create_dev_dax(struct dev_dax_data *data)
->  	device_initialize(dev);
->  	dev_set_name(dev, "dax%d.%d", dax_region->id, dev_dax->id);
->  
-> +	if (is_sparse(dax_region) && data->size) {
-> +		dev_err(parent, "Sparse DAX region devices must be created initially with 0 size");
-> +		rc = -EINVAL;
-> +		goto err_id;
-
-Right label?  This code doesn't have side effects and the next error path is goto err_range
-Looks like you fail to reverse the alloc_dev_dax_id() in this error path.
-
-> +	}
-> +
->  	rc = alloc_dev_dax_range(&dax_region->res, dev_dax, dax_region->res.start,
-> -				 data->size);
-> +				 data->size, NULL);
->  	if (rc)
->  		goto err_range;
->  
-> diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
-> index 783bfeef42cc..ae5029ea6047 100644
-> --- a/drivers/dax/bus.h
-> +++ b/drivers/dax/bus.h
-> @@ -9,6 +9,7 @@ struct dev_dax;
->  struct resource;
->  struct dax_device;
->  struct dax_region;
-> +struct dax_sparse_ops;
->  
->  /* dax bus specific ioresource flags */
->  #define IORESOURCE_DAX_STATIC BIT(0)
-> @@ -17,7 +18,7 @@ struct dax_region;
->  
->  struct dax_region *alloc_dax_region(struct device *parent, int region_id,
->  		struct range *range, int target_node, unsigned int align,
-> -		unsigned long flags);
-> +		unsigned long flags, struct dax_sparse_ops *sparse_ops);
->  
->  struct dev_dax_data {
->  	struct dax_region *dax_region;
-> diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
-> index 367e86b1c22a..df979ea2cb59 100644
-> --- a/drivers/dax/cxl.c
-> +++ b/drivers/dax/cxl.c
-> @@ -5,6 +5,58 @@
->  
->  #include "../cxl/cxl.h"
->  #include "bus.h"
-> +#include "dax-private.h"
-> +
-> +static int __cxl_dax_add_resource(struct dax_region *dax_region,
-> +				  struct region_extent *region_extent)
-> +{
-> +	resource_size_t start, length;
-> +	struct device *dev;
-> +
-> +	dev = &region_extent->dev;
-Might as well do
-	struct device *dev = &region_extent->dev;
-
-
-> +	start = dax_region->res.start + region_extent->hpa_range.start;
-> +	length = range_len(&region_extent->hpa_range);
-> +	return dax_region_add_resource(dax_region, dev, start, length);
-> +}
-
-
-> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-> index ccde98c3d4e2..e3866115243e 100644
-> --- a/drivers/dax/dax-private.h
-> +++ b/drivers/dax/dax-private.h
-...
-
-> +/*
-> + * Similar to run_dax() dax_region_{add,rm}_resource() and dax_avail_size() are
-> + * exported but are not intended to be generic operations outside the dax
-> + * subsystem.  They are only generic between the dax layer and the dax drivers.
-> + */
-> +int dax_region_add_resource(struct dax_region *dax_region, struct device *dev,
-> +			    resource_size_t start, resource_size_t length);
-> +int dax_region_rm_resource(struct dax_region *dax_region,
-> +			   struct device *dev);
-> +resource_size_t dax_avail_size(struct resource *dax_resource);
-> +
-> +typedef int (*match_cb)(struct device *dev, resource_size_t *size_avail);
-Why is this here?
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
