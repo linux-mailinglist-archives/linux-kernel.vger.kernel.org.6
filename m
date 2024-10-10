@@ -1,181 +1,127 @@
-Return-Path: <linux-kernel+bounces-358600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B301998177
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:04:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23975998179
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2651C246B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:04:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967FBB28BD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60521BE22D;
-	Thu, 10 Oct 2024 09:00:26 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BF51C3F37;
+	Thu, 10 Oct 2024 09:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gklgb7b3"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0C01BDAA0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7684A1BDABE;
+	Thu, 10 Oct 2024 09:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728550826; cv=none; b=W+/hkuJWBUJ4Wbogf8qVRjEHEPA7t6FuPIM5QGpnkfzd91j1JOzWjWzEgXdX7aHqQo2PkZRPDCWuVwArphDJzO1GjbOpA5Xl42nrAd/EuajLahbfeQYjzS8wX3JkGiC5m3kDXjrfbxaScgSWakKzAnHZKh/6GwOKQLneXoWF6Uw=
+	t=1728550836; cv=none; b=Fvp4KckjD+qyWidsVp5VzgxsPCMGAWJ6XnoBWEIAhpedLfJ8MZX2805f0UTibZaA2vuo9aYhqUzc+rTAfSa8ajgy+sKtgFgO2pEvZCNqDc7Ava1JaPpFU5O1lRsykV3Z7nyBCi9/soPyvQGp50SMCePQ3dPhy396Fim328WPoe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728550826; c=relaxed/simple;
-	bh=l9SzKVZfg59A2Gy9EKzokIi0Q9KBkco80LuOQXhnkLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ASBB9UL3yohXJcyZ/PJKQ0CxhwIntVS8yGzxwP3cBAOuCPdiUDkfkPxuAVHVbqUK64+557BjXDTsCqoWXiGWRDCU3XadzV0mJU0/wuxiaL622ymsDrgIwazj7RKFpgXNa95pORzEyCw4YK7kPgUjr6g7RRpxJpObt4mucP1oyjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XPNxx4D8Pz9sPd;
-	Thu, 10 Oct 2024 11:00:21 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id PVlEZLE3DrkG; Thu, 10 Oct 2024 11:00:21 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XPNxr4lZMz9sS8;
-	Thu, 10 Oct 2024 11:00:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 92CE18B79F;
-	Thu, 10 Oct 2024 11:00:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id DDueIiD9HNs4; Thu, 10 Oct 2024 11:00:16 +0200 (CEST)
-Received: from [192.168.232.17] (unknown [192.168.232.17])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D984B8B79E;
-	Thu, 10 Oct 2024 11:00:15 +0200 (CEST)
-Message-ID: <0a3d0813-e44f-45be-8b9a-957c75aa26cb@csgroup.eu>
-Date: Thu, 10 Oct 2024 11:00:15 +0200
+	s=arc-20240116; t=1728550836; c=relaxed/simple;
+	bh=Fia6irOv3VDqu6NKzoWzAVMngAe0tifmHNg6sodLiE4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZSv08CuMgSjYb6xsm441lBpsXxNZwhcqdusuRP2bLgj9mZu/KWfFSDfg4rrWLA/lNdM2HY41gpOyRTFM2r7g4Cd+9TN56R6kFucCfRfN+9p82o73RSPl0u76S0z7HHpbFZ09gpKa+4Nqtc0LHxEVdyx9pV7iwhc4XpH/p/n1nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gklgb7b3; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9950d27234so98445766b.1;
+        Thu, 10 Oct 2024 02:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728550833; x=1729155633; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LR1M84LN52X4U6RwSoUyMMdQCDpU64S8085SG37H4l0=;
+        b=gklgb7b3bIW9ZcLdzlxtFhKfkoff361CW8EqZifsla6BwyuwMgUUqrJY5JmP/bmdts
+         9Bs0OZLe3NVF1bkU6HDDeq4mFt2pnTOSijDFKtLrIOy51HogKzHNM8u7r58h9JvdqPsp
+         IdxfuqFPzmxUiRrXNlkFiyTdPbgFPXfj40PtYMlh6jX/nevOU8C/w1otkcRRx26Cb3B8
+         tvtQ3I+ul2v7UQlkleFK3qu0jXgVXR1FVPpUK8uj16xz5u8+LzCMgJ3RU9D/dZvmOqE8
+         mVigClfpZSjbf5QdoGFfVkX6SklUt6KQ63jLqEI8N233CO7cA8y97yZ4oBisjrt/mXB9
+         o9Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728550833; x=1729155633;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LR1M84LN52X4U6RwSoUyMMdQCDpU64S8085SG37H4l0=;
+        b=TALk1RHEJX/Mf1oSUMHKfEt8hmgkYuqaA6fmRbImkekzFVYjOek1qbotdS5LHhYoUg
+         l5811RDrKSYP6+a9AAUi9wq2oGu0Q0y+iVEykMx4/9dGwDNzIkzPaAqUy1B8favZmGIB
+         QcNmg3Kv1rFC6SWeh1pe6DNjqUMD5qiYbjfwqU9SdLrCPZdU8nFxqRfT9LPloh0sCO39
+         DwtycCQjxDDqPYE70jMAl3Eciduz2sENOS/+F83xpsKh7xllB+m3rLvm5F+w8hwHYGNg
+         Ugm6iA2Xq+97QCb6wVgrB6JpBRBBRytRm1XsDzj5aYEgsJIiHmJ3dvCHUsWKK7dsZlsO
+         l7fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBCGoNCNH4MMzNA1i2qXRb2Ib4F18R+fDbqMITKTwXj6YUw+WxF6C0zHBJNp4qZq2VAbynrlcuVhsPhXPT@vger.kernel.org, AJvYcCXX5aEzE8eip2gE/ffaMfU3Z5/Sn+W1Qfpch7SG6JQ8/wCxoma8xOtNyuzYZ7LvwQ/PhFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE7CG6Om0F2E4K501ONagNxgiGYcuj0UoTfVYnuT47eTP6HEce
+	VwHgxV64xJsadA+3TYHyzmGtd5AMk3xGI1B6rRpvH2l8OCfGcHQbXTmRgnQ1
+X-Google-Smtp-Source: AGHT+IF62mHBJEn1yNrnGwuST05IG0cpzQ2jrDUA/Rm0x0nY9OWDv9BbdP/KHA+6UgUPaFphRnkm2g==
+X-Received: by 2002:a17:907:7da0:b0:a86:a481:248c with SMTP id a640c23a62f3a-a998d197379mr413059766b.19.1728550832509;
+        Thu, 10 Oct 2024 02:00:32 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f266e8sm58844466b.63.2024.10.10.02.00.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 02:00:32 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 10 Oct 2024 11:00:30 +0200
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <olsajiri@gmail.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <ZweXrhopOmEb9rMx@krava>
+References: <ZsMwyO1Tv6BsOyc-@krava>
+ <20240819113747.31d1ae79@gandalf.local.home>
+ <ZsRtOzhicxAhkmoN@krava>
+ <20240820110507.2ba3d541@gandalf.local.home>
+ <Zv11JnaQIlV8BCnB@krava>
+ <Zwbqhkd2Hneftw5F@krava>
+ <20241010003331.gsanhvqyl5g2kgiq@treble.attlocal.net>
+ <20241009205647.1be1d489@gandalf.local.home>
+ <20241009205750.43be92ad@gandalf.local.home>
+ <20241010031727.zizrnubjrb25w4ex@treble.attlocal.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] powerpc/vdso: Implement __arch_get_vdso_rng_data()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Jason@zx2c4.com
-References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
- <a1a9bd0df508f1b5c04684b7366940577dfc6262.1727858295.git.christophe.leroy@csgroup.eu>
- <20241010101449-007991a0-f7c7-4f76-a6cc-413c474b9219@linutronix.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241010101449-007991a0-f7c7-4f76-a6cc-413c474b9219@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010031727.zizrnubjrb25w4ex@treble.attlocal.net>
 
-Hi Thomas,
-
-Le 10/10/2024 à 10:20, Thomas Weißschuh a écrit :
-> On Wed, Oct 02, 2024 at 10:39:29AM +0200, Christophe Leroy wrote:
->> VDSO time functions do not call any other function, so they don't
->> need to save/restore LR. However, retrieving the address of VDSO data
->> page requires using LR hence saving then restoring it, which can be
->> heavy on some CPUs. On the other hand, VDSO functions on powerpc are
->> not standard functions and require a wrapper function to call C VDSO
->> functions. And that wrapper has to save and restore LR in order to
->> call the C VDSO function, so retrieving VDSO data page address in that
->> wrapper doesn't require additional save/restore of LR.
->>
->> For random VDSO functions it is a bit different. Because the function
->> calls __arch_chacha20_blocks_nostack(), it saves and restores LR.
->> Retrieving VDSO data page address can then be done there without
->> additional save/restore of LR.
->>
->> So lets implement __arch_get_vdso_rng_data() and simplify the wrapper.
->>
->> It starts paving the way for the day powerpc will implement a more
->> standard ABI for VDSO functions.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->> ---
->>   arch/powerpc/include/asm/vdso/getrandom.h | 15 +++++++++++++--
->>   arch/powerpc/kernel/asm-offsets.c         |  1 -
->>   arch/powerpc/kernel/vdso/getrandom.S      |  1 -
->>   arch/powerpc/kernel/vdso/vgetrandom.c     |  4 ++--
->>   4 files changed, 15 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/powerpc/include/asm/vdso/getrandom.h b/arch/powerpc/include/asm/vdso/getrandom.h
->> index 501d6bb14e8a..4302e7c67aa5 100644
->> --- a/arch/powerpc/include/asm/vdso/getrandom.h
->> +++ b/arch/powerpc/include/asm/vdso/getrandom.h
->> @@ -7,6 +7,8 @@
->>   
->>   #ifndef __ASSEMBLY__
->>   
->> +#include <asm/vdso_datapage.h>
->> +
->>   static __always_inline int do_syscall_3(const unsigned long _r0, const unsigned long _r3,
->>   					const unsigned long _r4, const unsigned long _r5)
->>   {
->> @@ -43,11 +45,20 @@ static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsig
->>   
->>   static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
->>   {
->> -	return NULL;
->> +	struct vdso_arch_data *data;
->> +
->> +	asm(
->> +		"	bcl	20, 31, .+4\n"
->> +		"0:	mflr	%0\n"
->> +		"	addis	%0, %0, (_vdso_datapage - 0b)@ha\n"
->> +		"	addi	%0, %0, (_vdso_datapage - 0b)@l\n"
->> +	: "=r" (data) :: "lr");
->> +
->> +	return &data->rng_data;
->>   }
+On Wed, Oct 09, 2024 at 08:17:27PM -0700, Josh Poimboeuf wrote:
+> On Wed, Oct 09, 2024 at 08:57:50PM -0400, Steven Rostedt wrote:
+> > On Wed, 9 Oct 2024 20:56:47 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > 
+> > > I was thinking if something like objtool (could be something else that can
+> > > read the executable code) and know of where functions are. It could just
+> > > see if anything tests rdi, rsi, rdx, rcx, r8 or r9 (or their 32 bit
+> > > alternatives) for NULL before using or setting it.
+> > > 
+> > > If it does, then we know that one of the arguments could possibly be NULL.
+> > 
+> > Oh, and it only needs to look at functions that are named:
+> > 
+> >   trace_event_raw_event_*()
 > 
-> Did you also try something like this:
+> Unfortunately it's not that simple, the args could be moved around to
+> other registers.  And objtool doesn't have an emulator.
 > 
-> extern struct vdso_arch_data _vdso_datapage __attribute__((visibility("hidden")));
-> 
-> static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-> {
->         return &_vdso_datapage.rng_data;
-> }
-> 
-> Not knowing much about ppc asm the resulting assembly looks simpler.
-> And it would be more in line with what other archs are doing.
+> Also it's not clear how that would deal with >6 args, or IS_ERR() as
+> Jirka pointed out upthread.
 
-Did you build it ?
+another complication might be that the code in tracepoint's fast assign
+can potentially call global function (?), that could do the argument NULL
+check and we won't have its code at objtool invocation time
 
-I get :
-
-   VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
-   VDSO32L arch/powerpc/kernel/vdso/vdso32.so.dbg
-arch/powerpc/kernel/vdso/vdso32.so.dbg: dynamic relocations are not 
-supported
-make[2]: *** [arch/powerpc/kernel/vdso/Makefile:75: 
-arch/powerpc/kernel/vdso/vdso32.so.dbg] Error 1
-
-Current solution gives:
-
-   24:	42 9f 00 05 	bcl     20,4*cr7+so,28 <__c_kernel_getrandom+0x28>
-   28:	7e a8 02 a6 	mflr    r21
-   2c:	3e b5 00 00 	addis   r21,r21,0
-			2e: R_PPC_REL16_HA	_vdso_datapage+0x6
-   30:	3a b5 00 00 	addi    r21,r21,0
-			32: R_PPC_REL16_LO	_vdso_datapage+0xa
-
-
-Your solution gives:
-
-   60:	3e e0 00 00 	lis     r23,0
-			62: R_PPC_ADDR16_HA	_vdso_datapage
-   64:	3a f7 00 00 	addi    r23,r23,0
-			66: R_PPC_ADDR16_LO	_vdso_datapage
-
-
-So yes your solution looks simpler, but relies on absolute addresses set 
-up through dynamic relocation which is not possible because different 
-processes map the same VDSO datapage at different addresses.
-
-Christophe
+jirka
 
