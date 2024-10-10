@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-358868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135319984EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:24:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1676E998487
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42FBD1C24142
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:24:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A9B1C22942
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1349C1C2DA1;
-	Thu, 10 Oct 2024 11:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hclnYxbE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877C61C245B;
+	Thu, 10 Oct 2024 11:11:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEC71C32FE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE331BDAA5;
+	Thu, 10 Oct 2024 11:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728559470; cv=none; b=sMm/HFc1Y0rZaMpV7QR24vGJbw3L4DydoUiTpbNcvUl8PJDPO1wYAKgZsYqQTnL4oRNEp9Ij+Hq/1JAiIBxD6bf2ELLoe40O1oohfBdbtaapr7PepLOe8SErFeB9xv5oSOcnpasN1iNZgNFu5+nNTE5FyLE3sJmfS2E41Alqv5M=
+	t=1728558676; cv=none; b=lNGtKTSQs6LuBxKWW9CBq4QAwQZcWkYQl6o0KqN8dX5CYIUjlgeH3h9RyEreBJe1unbuzm8J6EzMnjE2b1YYi+WKnX+ev2tPScS0rKLBZGeinHyXCU1rtdjaFhXccP4C4dvRVP2IkROPPTp6fXTk9imqgAk4Aqb+zxvWV7i2M6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728559470; c=relaxed/simple;
-	bh=91MakKXXdZ/X8v1/goDuWFlMTUMGbgqBgnskPiSeMP0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=TLlQNyDpOSHYjM1D5gx6WJ4aPfQA9kmnKqGe6o2gd2WO4pXNcqzCCRBVNRosPAQlYy6ZYD8NKTxlMi27Qon4kwif8cciuIBhTm/wcWBT55YgjhFnVrPsdQDVReJ2BXqzTgqgY4zeFwfhaYAoyJcDDaJDKz5CXk5HnTgLqynTz6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hclnYxbE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728559467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91MakKXXdZ/X8v1/goDuWFlMTUMGbgqBgnskPiSeMP0=;
-	b=hclnYxbEJvPa6OUVyH7DdyXycxlmc1CFJt6EnRkLka0vVjdJw9AQbWapKcsvJz7zNp6sAB
-	npU/4ZK/2zlQu8+hXbQDG0E9uHEX0/i7pBskLQ7r2geNc1UOqZPgsgTvtEz1SXr3/22Qmj
-	75r066wbhe3OS4C5Rw4fPWcvEvOZaZQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-120-ppm18wj7PQSs_wzc0tN0EA-1; Thu,
- 10 Oct 2024 07:24:24 -0400
-X-MC-Unique: ppm18wj7PQSs_wzc0tN0EA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B128B195608C;
-	Thu, 10 Oct 2024 11:24:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A21B819560AE;
-	Thu, 10 Oct 2024 11:24:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240821024301.1058918-9-wozizhi@huawei.com>
-References: <20240821024301.1058918-9-wozizhi@huawei.com> <20240821024301.1058918-1-wozizhi@huawei.com>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
-    hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
-    zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    libaokun1@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
-    yukuai3@huawei.com
-Subject: Re: [PATCH 8/8] netfs/fscache: Add a memory barrier for FSCACHE_VOLUME_CREATING
+	s=arc-20240116; t=1728558676; c=relaxed/simple;
+	bh=tioH2+Nu0/O0BVQptKPKvWiYwH+xyZ2L4a0+gMS1QYs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ca9XIPXl91PfQfLY23OLg/WL20UHvpHqJa/ZcOSetrzBcUe7fPkuu9O/I8Xf3hK3vHTJAr69zK11xY6QmJtKyFoH8mU67NCuidkAf8QTyjKMl+naBnA5aeg2f8QM696FsKhY/9N5KqZLOAC/U+Hj8n1TZipsWgscd1CNF5lBgdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPRrf4h3jz4f3k6M;
+	Thu, 10 Oct 2024 19:10:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 705371A0A22;
+	Thu, 10 Oct 2024 19:11:10 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.127.227])
+	by APP4 (Coremail) with SMTP id gCh0CgDH+sZMtgdnmHXPDg--.37048S4;
+	Thu, 10 Oct 2024 19:11:10 +0800 (CST)
+From: Ye Bin <yebin@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	yebin10@huawei.com,
+	zhangxiaoxu5@huawei.com
+Subject: [PATCH 0/3] add support for drop_caches for individual filesystem
+Date: Thu, 10 Oct 2024 19:25:40 +0800
+Message-Id: <20241010112543.1609648-1-yebin@huaweicloud.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <303925.1728559457.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Oct 2024 12:24:17 +0100
-Message-ID: <303926.1728559457@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDH+sZMtgdnmHXPDg--.37048S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1xtF1DGF4kur1DKryDJrb_yoWDKrg_Z3
+	WfXrykWFWxZan7Jay7KFnxCFZxKrs5GF1DZ3W5JrWDtFyjvFs8Ja1DXry5uw1UWrnagFn0
+	kw1vqrnYqr17CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0E
+	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
-Zizhi Wo <wozizhi@huawei.com> wrote:
+From: Ye Bin <yebin10@huawei.com>
 
-> In fscache_create_volume(), there is a missing memory barrier between th=
-e
-> bit-clearing operation and the wake-up operation. This may cause a
-> situation where, after a wake-up, the bit-clearing operation hasn't been
-> detected yet, leading to an indefinite wait. The triggering process is a=
-s
-> follows:
-> ...
-> By combining the clear and wake operations into clear_and_wake_up_bit() =
-to
-> fix this issue.
-> =
+In order to better analyze the issue of file system uninstallation caused
+by kernel module opening files, it is necessary to perform dentry recycling
+on a single file system. But now, apart from global dentry recycling, it is
+not supported to do dentry recycling on a single file system separately.
+This feature has usage scenarios in problem localization scenarios.At the
+same time, it also provides users with a slightly fine-grained
+pagecache/entry recycling mechanism.
+This patchset supports the recycling of pagecache/entry for individual file
+systems.
 
-> Fixes: bfa22da3ed65 ("fscache: Provide and use cache methods to lookup/c=
-reate/free a volume")
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+Ye Bin (3):
+  vfs: introduce shrink_icache_sb() helper
+  sysctl: add support for drop_caches for individual filesystem
+  Documentation: add instructions for using 'drop_fs_caches sysctl'
+    sysctl
 
-Acked-by: David Howells <dhowells@redhat.com>
+ Documentation/admin-guide/sysctl/vm.rst | 27 ++++++++++++++++
+ fs/drop_caches.c                        | 43 +++++++++++++++++++++++++
+ fs/inode.c                              | 17 ++++++++++
+ fs/internal.h                           |  1 +
+ include/linux/mm.h                      |  2 ++
+ kernel/sysctl.c                         |  9 ++++++
+ 6 files changed, 99 insertions(+)
+
+-- 
+2.31.1
 
 
