@@ -1,96 +1,66 @@
-Return-Path: <linux-kernel+bounces-358675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A336998253
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:33:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC22998235
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D591F21730
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0FC1C217EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707D41BC091;
-	Thu, 10 Oct 2024 09:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFC71BC066;
+	Thu, 10 Oct 2024 09:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOVNNKtr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnGHnmWb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E16919F41D;
-	Thu, 10 Oct 2024 09:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6A71A08C5;
+	Thu, 10 Oct 2024 09:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552807; cv=none; b=qPbpPVDQ+a8w6ozik17wcF4sHnzlSlMtYbOOBirI1CMQ7+FaASMvxnkQT84rDIHBrntHdnO4iEosLxOUZQa8SmUQGYr9DaJv+xEzR3v4/zcN8qEY9NRQaAZsDCe73IqkOWfDbNaxYTazOrc7k0bSNL6zeym/myyb35m2V6Bfp5A=
+	t=1728552594; cv=none; b=OUodFnzyzUk/IV5YdSkDYkhQz1dXVu1Aqx16jDERnpMhmMpAhnsTY69gB7CDHpxEWd6aSzcEqQ6j/Dt4lqHvSeThQQR3o1tN1qd+UFvS0shXBVfUZquLCg5GHmXj6QZ/73a1vQirwu9RwbwwnQm5oplu6+tboVSYOuiZnug86jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552807; c=relaxed/simple;
-	bh=IHjj8Pm1cvim8ImsaUaQl0ADY0QKS9kDKJZxcyI9510=;
+	s=arc-20240116; t=1728552594; c=relaxed/simple;
+	bh=wygPBK0maJmHMNj8t3gRaivMfDHnHdWPpKzMIB4FL0g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/kr7K7j/QChCjIu/QlHZg+ZRwrQVwQxKsyHLxgkTbFOEYPnBEgIqKDJxaMzUqyKWyjV/9jfdPxGIV2KeMOft14D/2mFu75sW25ifO3tF+kcunTi0J88LrnA4YI+JF9sL/alYVzkHMgepippNUT45QyNC9v5b6Aey+zKF7CbpTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOVNNKtr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18111C4CEC5;
-	Thu, 10 Oct 2024 09:33:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=o7Hh3DkX3ODGokr+Uy/snAp5c0hgpRGa3UdnOk0B/DWj1mSUDZY3cH51upTPgTOKDJ5iNU7WX8AKoB6Em2YNUi9xoSiW4Ep5vTkmCNyhnNDF4JFX67VdJPiLs5qa3qZHlBX/H5LOa4s1GeJmmGpmUdqfgzVzGIxAxLud8a1vWiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnGHnmWb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E1AC4CEC5;
+	Thu, 10 Oct 2024 09:29:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728552807;
-	bh=IHjj8Pm1cvim8ImsaUaQl0ADY0QKS9kDKJZxcyI9510=;
+	s=k20201202; t=1728552593;
+	bh=wygPBK0maJmHMNj8t3gRaivMfDHnHdWPpKzMIB4FL0g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TOVNNKtrf8daQuuMacjY7pAlRlt/k4vb7wjQCQYF0aVuw/4MxtY1IEDmecYy869WA
-	 eL70bjSLCWzeSg87onzBIfUU+BSv9+MhwYkC/eIJ924jg8Lyc5Ubk1r7GreDoZptDJ
-	 teVpdajxre4MsBPJA9mql4sRA7irY3J0uloNZaSVW+zDmxt4CzZVh6D1UOnW7YD45l
-	 /XMlYCHBMS9YgkvBhtdnENr2FDWIvohUoNzgrqIpRpXIOWraQQuc8IrP9OJlfmnsWJ
-	 /Y7TcehyVVbI3ky02lFC2Bu9TlmKaTridXnO8cdxvFKPK24cuDB2/RZZ9PsqYrxZV2
-	 Py4W9D9Jti/XA==
-Date: Thu, 10 Oct 2024 12:29:39 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
-Message-ID: <Zweeg3oc-zrrG_D9@kernel.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
- <20241009180816.83591-8-rppt@kernel.org>
- <20241009132427.5c94fb5942bae3832446bca5@linux-foundation.org>
+	b=TnGHnmWbp+auJiEspx8VO/l5+R2+/CVeKtvukoRzdPnZnBGbrlUMWkAL/u4TP0goV
+	 +iIWIzoKhALMHv2U6R0Gf4cEocuWNfK4T31OsRy6Eumua/goNV9uyqSCgMDbeKxJsz
+	 CuYEZMAnElKoQ0jFtB0jQeKDV9YlZoeQkIvyF6LAhnj0isxX+G7EA53qR6dwx12v99
+	 0JF22AbZmLHtlNAHhjWWa+Aju0kojicTM3cz9Y5womxQ05rgcZjVHce6rF8S3UqcR8
+	 e+6VFODW/Bipgp1LJSZf12gzfoS+KZUoAZZ5wDksVRIh5tiUj8HHnf54cbWj9PS5pz
+	 SRslHn/pxwZvQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sypUb-000000001X1-0lz5;
+	Thu, 10 Oct 2024 11:29:57 +0200
+Date: Thu, 10 Oct 2024 11:29:57 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: x1e80100: Add QUP power domains
+ and OPPs
+Message-ID: <ZweelaVcejunff6u@hovoldconsulting.com>
+References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
+ <20241007-x1e80100-pwrseq-qcp-v1-1-f7166510ab17@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,33 +69,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009132427.5c94fb5942bae3832446bca5@linux-foundation.org>
+In-Reply-To: <20241007-x1e80100-pwrseq-qcp-v1-1-f7166510ab17@linaro.org>
 
-On Wed, Oct 09, 2024 at 01:24:27PM -0700, Andrew Morton wrote:
-> On Wed,  9 Oct 2024 21:08:15 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+On Mon, Oct 07, 2024 at 08:22:25PM +0200, Stephan Gerhold wrote:
+> Add the power domains and OPP tables to all the QUP-related UART/I2C/SPI
+> nodes to ensure that we vote for the necessary performance states. Similar
+> to sm8350.dtsi, the OPPs depend on the QUP instance. The first two
+> instances in each geniqup group need &rpmhpd_opp_svs starting at 120MHz,
+> the others already starting at 100MHz. I2C always runs at a lower clock
+> frequency and therefore uses a fixed vote.
 > 
-> > Using large pages to map text areas reduces iTLB pressure and improves
-> > performance.
-> 
-> Are there any measurable performance improvements?
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-I don't have any numbers, I just followed the common sense of "less TLB
-entries is better" and relied on Thomas comments from previous discussions.
- 
-> What are the effects of this series upon overall memory consumption?
- 
-There will be some execmem cache fragmentation and an increase in memory
-consumption. It depends on the actual modules loaded and how large it the
-fragmentation.
+Looks good to me.
 
-For a set of pretty randomly chosen modules where most come from
-net/netfilter I see an increase from 19M to 25M.
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-> The lack of acks is a bit surprising for a v5 patch, but I'll add all
-> this to mm.git for some testing, thanks.
-> 
-
--- 
-Sincerely yours,
-Mike.
+Johan
 
