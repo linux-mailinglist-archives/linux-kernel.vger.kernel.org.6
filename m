@@ -1,195 +1,100 @@
-Return-Path: <linux-kernel+bounces-359649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75E2998E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64179998E99
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB251F2302A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095D21F21F2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90CA1CCEF0;
-	Thu, 10 Oct 2024 17:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618151BC9EE;
+	Thu, 10 Oct 2024 17:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1tCJDMG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmxR6ljD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE3C1CCEF4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38B219CD1D;
+	Thu, 10 Oct 2024 17:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582202; cv=none; b=N27NzC211pR1ADnq0MZ1yK+R1T4tfHILQVaxVF/Jbni5v6rzk/pdkL4AAhYeZqhObWymq19SfuchApEyipKH4Q3LYQdzCVlZsNq1r0fAQmJJuV20LRMbQ5ltxB/31m6xc7y6sw/nX+2GZps4hZZQgEea8kk3uGc7C1EMMzhN8yM=
+	t=1728582213; cv=none; b=goTqJfJFP3Jvub/6FGwGlFOvbLuAr0LFeUJdHFFTUqfn3VhxUt0sGAkvbqmIHSbJQqVF6pH5ETCEGnvWptvoObi/TMT8P2dgc4pRbfKErAKo94h0NyzlpAJasA3cQcOHVL/jId/420y6Wh40VBCq59rckosA9f6X2TDrBrslKN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582202; c=relaxed/simple;
-	bh=VkW56jTE0kaiaQu6sdNA9gReyPzVF9DBS+DAGqaddq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uelFecBv+J9RejphImGn7qIqwsm4yWsjeps4bXO5FlZ414IhfReWp/koJDCWROCstFQbmgiuyKtGHPOz8jkKXq1/XiCAx5FdsNJM8vdbcN6HCj1gY1VafSe+/C6XJ6iRNqU00sa7vKE3rLK1uB3JcT3Oohapc4/x6X692p5Q4cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1tCJDMG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728582199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=irpjS10coO2t0wwvE3gFasz0R9ftgsaNlPSsljy/7YU=;
-	b=A1tCJDMGQoLe7VUEs9vHqF30dovrkJbz1ec1QtVFo5AMOd4G7F+QL6W4KZCTAgAF2uhic4
-	eLov1JvrxtfdSdeyMfvH4i4tcNFmwcuiNOU3gz3ldIfI8UNBS7B5hpg4YJlyQBVYtcGNOu
-	0varpCNPYSfOuMBT7QzISA8diDSLL5o=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-6BsZ9OS0O3iLrDev7yA5PQ-1; Thu, 10 Oct 2024 13:43:18 -0400
-X-MC-Unique: 6BsZ9OS0O3iLrDev7yA5PQ-1
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8354cbec0d5so5952839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:43:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728582198; x=1729186998;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=irpjS10coO2t0wwvE3gFasz0R9ftgsaNlPSsljy/7YU=;
-        b=QjexYwns9fRYb/n/eLoOuzawue/Mml23i9MCJIU8E7H3QgJgksPAT3eu4mziFTZC8A
-         Kyvk4SNAm6cx0/9w+kIWO57r2SqZhh4vExRM1tpml1+cCYRshOD4r7Mt4c1GA3Z53kkw
-         8wiNk+HJjV/DNrNKAKqpHpBaxPKfIxyMckm00DiO8Y4MxBXX9Yxx9fY7dp3FjjdPu35o
-         BVSTDKx4mtLE//nc6U7zKmnieqedwKCNDxEl7u1OiawU2ou/n8A7ckUTseuRfLcbPkFV
-         l8tv24lsxoe8+zFW2KwsHqrjEaVQrYM3KWJ+ykiIMhd86+FxfklokIauCkcaIs3c1WOL
-         bkLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZG0EW6stg7Hnr21v255zDt9pxCRx4tooPK+FliCnzlSIOjBaHdbkih8cff6K2HxXevWShca7ronUHeZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjpoDLTbYEhZ1OChJUsunmbGKwN9jt3kAe0Z/INY439bWmncEH
-	Y4thDdnismS6NYWt8tjRlH/ExulufdVq7PvEuIM6ctFDVh4tCWhlboQPgLMjQNxgeyEMwAHfG+c
-	cZbcPBuQ/5gbf/bSCMvwcknVFeGKoe29N2mKAqgluhRW+X6JFHd4NMJFNCt/tBA==
-X-Received: by 2002:a05:6e02:1c46:b0:3a0:a1ab:7ce6 with SMTP id e9e14a558f8ab-3a397cdda26mr18750505ab.1.1728582197731;
-        Thu, 10 Oct 2024 10:43:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaLJzsYWJH/NUMC+IMyT+j/CP16HRwxWkCBGHxtTft8rw7tBisUdCTh60bMs+LHrYbLbadmw==
-X-Received: by 2002:a05:6e02:1c46:b0:3a0:a1ab:7ce6 with SMTP id e9e14a558f8ab-3a397cdda26mr18750415ab.1.1728582197304;
-        Thu, 10 Oct 2024 10:43:17 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbadaa9f67sm322910173.153.2024.10.10.10.43.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 10:43:16 -0700 (PDT)
-Date: Thu, 10 Oct 2024 11:43:14 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Damien Le Moal
- <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Sergey Shtylyov
- <s.shtylyov@omp.ru>, Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri
- Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alex Dubov <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>,
- Manish Chopra <manishc@marvell.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
- <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
- <imitsyanko@quantenna.com>, Sergey Matyukevich <geomatsi@gmail.com>, Kalle
- Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
- S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
- Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
- =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
- <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
- Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi
- Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>,
- Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Eric Auger
- <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
- =?UTF-8?B?TWFyY3p5a293c2tpLUfDs3JlY2tp?= <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
- Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- ntb@lists.linux.dev, linux-pci@vger.kernel.org,
- linux-staging@lists.linux.dev, kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Subject: Re: [RFC PATCH 13/13] Remove devres from pci_intx()
-Message-ID: <20241010114314.296db535.alex.williamson@redhat.com>
-In-Reply-To: <f42bb5de4c9aca307a3431dd15ace4c9cade1cb9.camel@redhat.com>
-References: <20241009083519.10088-1-pstanner@redhat.com>
-	<20241009083519.10088-14-pstanner@redhat.com>
-	<7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
-	<f42bb5de4c9aca307a3431dd15ace4c9cade1cb9.camel@redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728582213; c=relaxed/simple;
+	bh=RMXsM9+daLz0wDlNHh/0NCwE/l30K6rBnwaZjnhUduA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oT5mbTznaFhkPYHwqDxIcZcU3734uG2risjbqz+ShVWueAzmjNntt29YtXBYOiYQiHUd44imxKPf82ZQ2q+sWBvpS6+qMXPXuMTUwu8je8TbThfXl5+o6PbkTQzfdEarZunOoELn7KhHGrwQpHEOd/pvzIk1AjhPFoRDzSUNaVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmxR6ljD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7225C4CEC5;
+	Thu, 10 Oct 2024 17:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728582213;
+	bh=RMXsM9+daLz0wDlNHh/0NCwE/l30K6rBnwaZjnhUduA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MmxR6ljDZQNaWsEGh7lI3NoP4YGIF6dWWnYUA8Agmgo8+GqnzBrafKDgimmEhJ2ry
+	 6x3dON7Jwnhb2c5BZzwPshbhzha8PFSYiH25FRM1LCKZqIMDZNHajfecrd0AUTYekj
+	 Cx9fFrSWP5lRSRWJdCnWdXeWroZ3kc+Pr/j9tZIYOY/BcDH45JqyAm3zaKnhz/rPs1
+	 ig03hT4DRM+FFDVHJvXMo8rJ8LClpUbU8jbjVj8675Onmp6oMVwnh9qYLzY1SHpKP4
+	 j+4dQ5nfuH0AH2bxM+8k90zuf5D1acObMwGe8kRH2a29LZ7kM7vPx2uJXewtKgSF+c
+	 MiWyH8PYUXmeg==
+Date: Thu, 10 Oct 2024 12:43:31 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: patches@lists.linux.dev, devicetree@vger.kernel.org,
+	Saravana Kannan <saravanak@google.com>,
+	linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] of: Skip kunit tests when arm64+ACPI doesn't populate
+ root node
+Message-ID: <172858218311.2064946.5279211050619703517.robh@kernel.org>
+References: <20241009204133.1169931-1-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009204133.1169931-1-sboyd@kernel.org>
 
-On Thu, 10 Oct 2024 11:11:36 +0200
-Philipp Stanner <pstanner@redhat.com> wrote:
 
-> On Thu, 2024-10-10 at 11:50 +0300, Dan Carpenter wrote:
-> > On Wed, Oct 09, 2024 at 10:35:19AM +0200, Philipp Stanner wrote: =20
-> > > pci_intx() is a hybrid function which can sometimes be managed
-> > > through
-> > > devres. This hybrid nature is undesirable.
-> > >=20
-> > > Since all users of pci_intx() have by now been ported either to
-> > > always-managed pcim_intx() or never-managed pci_intx_unmanaged(),
-> > > the
-> > > devres functionality can be removed from pci_intx().
-> > >=20
-> > > Consequently, pci_intx_unmanaged() is now redundant, because
-> > > pci_intx()
-> > > itself is now unmanaged.
-> > >=20
-> > > Remove the devres functionality from pci_intx(). Remove
-> > > pci_intx_unmanaged().
-> > > Have all users of pci_intx_unmanaged() call pci_intx().
-> > >=20
-> > > Signed-off-by: Philipp Stanner <pstanner@redhat.com> =20
-> >=20
-> > I don't like when we change a function like this but it still
-> > compiles fine.
-> > If someone is working on a driver and hasn't pushed it yet, then it's
-> > probably
-> > supposed to be using the new pcim_intx() but they won't discover that
-> > until they
-> > detect the leaks at runtime. =20
->=20
-> There wouldn't be any *leaks*, it's just that the INTx state would not
-> automatically be restored. BTW the official documentation in its
-> current state does not hint at pci_intx() doing anything automatically,
-> but rather actively marks it as deprecated.
->=20
-> But you are right that a hypothetical new driver and OOT drivers could
-> experience bugs through this change.
->=20
-> >=20
-> > Why not leave the pci_intx_unmanaged() name.=C2=A0 It's ugly and that w=
-ill
-> > discorage
-> > people from introducing new uses. =20
->=20
-> I'd be OK with that. Then we'd have to remove pci_intx() as it has new
-> users anymore.
->=20
-> Either way should be fine and keep the behavior for existing drivers
-> identical.
->=20
-> I think Bjorn should express a preference
+On Wed, 09 Oct 2024 13:41:31 -0700, Stephen Boyd wrote:
+> A root node is required to apply DT overlays. A root node is usually
+> present after commit 7b937cc243e5 ("of: Create of_root if no dtb
+> provided by firmware"), except for on arm64 systems booted with ACPI
+> tables. In that case, the root node is intentionally not populated
+> because it would "allow DT devices to be instantiated atop an ACPI base
+> system"[1].
+> 
+> Introduce an OF function that skips the kunit test if the root node
+> isn't populated. Limit the test to when both CONFIG_ARM64 and
+> CONFIG_ACPI are set, because otherwise the lack of a root node is a bug.
+> Make the function private and take a kunit test parameter so that it
+> can't be abused to test for the presence of the root node in non-test
+> code.
+> 
+> Use this function to skip tests that require the root node. Currently
+> that's the DT tests and any tests that apply overlays.
+> 
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/r/6cd337fb-38f0-41cb-b942-5844b84433db@roeck-us.net
+> Link: https://lore.kernel.org/r/Zd4dQpHO7em1ji67@FVFF77S0Q05N.cambridge.arm.com [1]
+> Fixes: 893ecc6d2d61 ("of: Add KUnit test to confirm DTB is loaded")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/of/of_kunit_helpers.c | 15 +++++++++++++++
+>  drivers/of/of_private.h       |  3 +++
+>  drivers/of/of_test.c          |  3 +++
+>  drivers/of/overlay_test.c     |  3 +++
+>  4 files changed, 24 insertions(+)
+> 
 
-FWIW, I think pcim_intx() and pci_intx() align better to our naming
-convention for devres interfaces.  Would it be sufficient if pci_intx()
-triggered a WARN_ON if called for a pci_is_managed() device?  Thanks,
-
-Alex
+Applied, thanks!
 
 
