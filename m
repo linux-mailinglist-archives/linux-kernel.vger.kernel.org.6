@@ -1,171 +1,170 @@
-Return-Path: <linux-kernel+bounces-358047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90755997998
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:29:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1EC99799D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B301E1C22365
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB0DB22179
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BA5BE68;
-	Thu, 10 Oct 2024 00:29:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866AAEEC5;
+	Thu, 10 Oct 2024 00:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AX/V4zx+"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8CF2913
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C6717FD;
+	Thu, 10 Oct 2024 00:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728520145; cv=none; b=C3LINyxhFwbjTwbLbP0LYE7JPkn5Oj11day7IDuOXnLaY941lltWVfRK1JtlArZ7fu7r9SdtWI/u3LNrIbMmit2Ng/z9FCC8MH4N3gK9RlbDmOgmOymITv4ADVBgQytkOU41lIouGv3WK6Fqklzr/YOMWI5qU3x52bLdgwPHsUc=
+	t=1728520217; cv=none; b=KwjUKlGs71fohNIEPaR4363D7PM2+y/AWhFEhXFRFZMcn5qGc4IY/ybQtPCpAPmnPkaPArG5lo0bvT5jvTV+siC0kzaWvsBaJ4p31qo+6ig6FsttF72dR3hhQV1YusaWQyMYyT8JA/ef12/HuUMsUHVs9twOsPMwv7eYlYP0u14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728520145; c=relaxed/simple;
-	bh=CrIuY1z2O47EY9ZXiK6fBtnEvPAyPbApAgb6+54fk9Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sCxqrspUoKe1RxuNZmUKJ6DYtmoGSLmakUTMu3FLDgKPvZhVD+6/o/vbXN9xDB3CQcLGaGDUwxuaTRPgb6H+8XXQqIEHEqc04xVYUVibMr+/HF/GLBcPucUTE6Pqtu0NH2crlZoGoNq98WCnK72nNzDGCtzCk7CZYK57G/Zip+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3a5f6cb13so3887665ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 17:29:03 -0700 (PDT)
+	s=arc-20240116; t=1728520217; c=relaxed/simple;
+	bh=Y6mucGzONTsK08EwLcPn6ZvfEgpK2e0x/4SITkeMyFE=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=dqujLUhclh/T5/bWrzISYIhj4sxDLSlUz3YoS16t2j7lhRg5yIkNfzr/EgKzdM3hIaiePr8kPAKqGw15s3aBYrNYx4V3nT3NRaYPCWR+LuxoYp0uBhcS6m7IQhFx3onV6tE5/oRhFkmE0Up01weoNbhkLIGs7t9NbdLADdWM/+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AX/V4zx+; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6cbcc2bd7fcso2766486d6.1;
+        Wed, 09 Oct 2024 17:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728520214; x=1729125014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MZCm59ZacQ5/yxalW14FBY5YCwiURS4yess2j5b/Gu0=;
+        b=AX/V4zx+NDxCYe1JaUis7qXpYlojbCeaQhqTXUcIA+TUQWFpWyoTQEPUyTc2sl7wCm
+         mZ0b8xL6hoy2hvI7Q6TLwGXB+rT2fsYKGbzxqJZYCFbyr8My6hZMHCE+jnU2KWwhC3kQ
+         sZjk1e/4jMwnKH/HPxwc/VfcIstKqDUpI4Jbt1iY6g5+oDhxx9n4z2XCUm/k6HC/FG+w
+         2VI2P9LxfcGYc2zdGcSw7Fltr1M9So76Mj6DXdD3qhP76cZfFVsvadbg1XGlg+BII2l7
+         5PSVMC2cFvYxm+lsA6DUaHAil+FwGSAabHKKjM4mPrINUFLxnuBEBtokLhHHdAfvnZfU
+         9Wvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728520143; x=1729124943;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+1TxVT65BFXCYuMbBvsOMesJ1m9NwSOjZLNCeNxe5HY=;
-        b=nJiF9P75RQsMg0N4DHzD9DbHnfeI2NInu74Kcc4fLCWYapLjjiHwOjN4xFgJt5ld5e
-         WIPXPxu3I3NwmLI0jSsOSEaHYQDLw4n+b4MSC9dfpIZzh87O9fdm322O7uF3z0XTW8jp
-         2PrZ0Mm64Z+cx10HW+ax/ei2oUhDFyJJmrNml6a7NJODc9VWNjA5tVWBSzrKWh3VH4X5
-         2AEFVhTFjH2KoPY8cg7gIJP4iYzFAxwMo+zW4ntygv3suELn6B8flGI+98JAlDR5dIvn
-         APD/21XMS1FtNrbfITxObbQZOic6WfaPW2ob8yKBWyYU+2EkBLpQ9HIZTYtkZJtqNVoJ
-         Wkhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiQIZ/A4PpIcVDLw1OMeLXo6xgbWkM+T1RI9DZSszd084jN+qRtb5P1BPbtwlXKNN33nXgshsGccI8U14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDq61tBb4EDmkIy6CpGzIEcVV9+rvmuHi8MrUuJYad0EEZbx7Y
-	UbEc9scPNiC5NXYEAbAHqOq3YuksJF8k3lT4zYySlocaoW8fpfJgnLwDqx7KWEC4pa8GOk8DZPy
-	4I4mAwyf+M3Uo0xRFz6CEhigHnuV5SwwrRZv2ZBDQo5BsjSH2h/vLV7o=
-X-Google-Smtp-Source: AGHT+IGOXEhmv9FleUOZIxF5i+on3yXbmJNyROKLayw8lALZldteiBQx/alNGkBheTqA4gpilBDDcl5R/eI2dhcjd3JfTlcyBKpM
+        d=1e100.net; s=20230601; t=1728520214; x=1729125014;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MZCm59ZacQ5/yxalW14FBY5YCwiURS4yess2j5b/Gu0=;
+        b=Z35YzMObCNOed/eRvuUatEi0CDz281gUEpAICY7Oo6IvY0qA3hxerDTALszE68xGNK
+         ZFh9k5pNGeIPWX1D564vbd3fndPcV2hXp75mA0P7qA/tDYxScFJDL7v2z2NS0EP5g23q
+         bn6tE0COM4BcNKiL+Qy6KAt5Oc7nG/O/or8N/4H1jbCNwcMhLVJOdQwOryHCIwpTQnlt
+         tPGQA/1JjqOUQdEQEt15Sx9fBRnmRh9UslxMWTLUuAfscRc+wUjKvK/4uaPpRwsiIYuE
+         Bn99pNOGR1RrXs9puTRGU7x5SskPz/rokP+7B1XiCwjRV07igP735YzQ02O5NA4Aag9M
+         99Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP928FTKyfkODUhRkqKgTZruppSKnHDIk1s8ITocPi0TTYLiucIeTaXIyTBDdUR/+LImD9Gc09@vger.kernel.org, AJvYcCW7bw1Jp1BtHmuyB1nrQb//jtyJPkiOIZ6HqeiXDKDv2OHKn5Xg3m92npzMhjJIkdnryPGXSE/sk2ObHg8Iwx1y@vger.kernel.org, AJvYcCX/8nJLOOdgINXtFShvJv8N7c9lt8Ki/9RQX72FC+L3hP6k9jgacMzk9WcaBlOtZvTiP3ixWPrdcmTyUO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo21sOrJF3Wnw7YWw1iOJC/rfGs5cAevT8QH+PN6BNEv1/eVJM
+	QX9LR0GED9nFBh7nWyKAcL9ZOE+ptpnDQHzSxoNUzGz4C6LwTDxd
+X-Google-Smtp-Source: AGHT+IFtHx+Y48SrwfQzVNGdaSh+zzW2eBWVJNK97GlbOf3Y5EleiQkbNLJUzRbRsQUpy0dZmeib+w==
+X-Received: by 2002:a05:6214:3292:b0:6cb:387a:dd44 with SMTP id 6a1803df08f44-6cbc9549987mr66121506d6.40.1728520212641;
+        Wed, 09 Oct 2024 17:30:12 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8630ab2sm475646d6.121.2024.10.09.17.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 17:30:11 -0700 (PDT)
+Date: Wed, 09 Oct 2024 20:30:10 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Gur Stavi <gur.stavi@huawei.com>, 
+ 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ pabeni@redhat.com, 
+ shuah@kernel.org
+Message-ID: <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch>
+In-Reply-To: <002201db1a75$9a83b420$cf8b1c60$@huawei.com>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch>
+ <20241009065837.354332-1-gur.stavi@huawei.com>
+ <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch>
+ <002201db1a75$9a83b420$cf8b1c60$@huawei.com>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket
+ is not RUNNING
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a69:b0:3a0:9954:a6fa with SMTP id
- e9e14a558f8ab-3a397ce58abmr34572735ab.9.1728520143261; Wed, 09 Oct 2024
- 17:29:03 -0700 (PDT)
-Date: Wed, 09 Oct 2024 17:29:03 -0700
-In-Reply-To: <abc5e714-53a8-4b23-be5c-966442cbb0c1@gmx.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67071fcf.050a0220.1139e6.0013.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in getname_kernel (2)
-From: syzbot <syzbot+cee29f5a48caf10cd475@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quwenruo.btrfs@gmx.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Gur Stavi wrote:
+> > Gur Stavi wrote:
+> > > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct sock *sk,
+> > struct fanout_args *args)
+> > > >>  	err = -EINVAL;
+> > > >>
+> > > >>  	spin_lock(&po->bind_lock);
+> > > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> > > >> -	    match->type == type &&
+> > > >> +	if (match->type == type &&
+> > > >>  	    match->prot_hook.type == po->prot_hook.type &&
+> > > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
+> > > >
+> > > > Remaining unaddressed issue is that the socket can now be added
+> > > > before being bound. See comment in v1.
+> > >
+> > > I extended the psock_fanout test with unbound fanout test.
+> > >
+> > > As far as I understand, the easiest way to verify bind is to test that
+> > > po->prot_hook.dev != NULL, since we are under a bind_lock anyway.
+> > > But perhaps a more readable and direct approach to test "bind" would be
+> > > to test po->ifindex != -1, as ifindex is commented as "bound device".
+> > > However, at the moment ifindex is not initialized to -1, I can add such
+> > > initialization, but perhaps I do not fully understand all the logic.
+> > >
+> > > Any preferences?
+> > 
+> > prot_hook.dev is not necessarily set if a packet socket is bound.
+> > It may be bound to any device. See dev_add_pack and ptype_head.
+> > 
+> > prot_hook.type, on the other hand, must be set if bound and is only
+> > modified with the bind_lock held too.
+> > 
+> > Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD also
+> > succeeds in case bind() was not called explicitly first to bind to
+> > a specific device or change ptype.
+> 
+> Please clarify the last paragraph? When you say "also succeeds" do you
+> mean SHOULD succeed or MAY SUCCEED by mistake if "something" happens ???
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in getname_kernel
+I mean it succeeds currently. Which behavior must then be maintained.
+ 
+> Do you refer to the following scenario: socket is created with non-zero
+> protocol and becomes RUNNING "without bind" for all devices. In that case
+> it can be added to FANOUT without bind. Is that considered a bug or does
+> the bind requirement for fanout only apply for all-protocol (0) sockets?
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 6008 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00045-g964c2da72390 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:strlen+0x2c/0x70 lib/string.c:402
-Code: 1e fa 41 57 41 56 41 54 53 49 89 fe 48 c7 c0 ff ff ff ff 49 bf 00 00 00 00 00 fc ff df 48 89 fb 49 89 c4 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 75 12 48 ff c3 49 8d 44 24 01 43 80 7c 26 01
-RSP: 0018:ffffc900035af8a8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802d46bc00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff942c58f7 R09: 1ffffffff2858b1e
-R10: dffffc0000000000 R11: fffffbfff2858b1f R12: ffffffffffffffff
-R13: ffff8880727f8000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00007f01495d76c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f75ffff CR3: 000000002cffe000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- getname_kernel+0x1d/0x2f0 fs/namei.c:232
- kern_path+0x1d/0x50 fs/namei.c:2716
- is_good_dev_path fs/btrfs/volumes.c:760 [inline]
- btrfs_scan_one_device+0x19e/0xd90 fs/btrfs/volumes.c:1492
- btrfs_get_tree_super fs/btrfs/super.c:1841 [inline]
- btrfs_get_tree+0x30e/0x1920 fs/btrfs/super.c:2114
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- fc_mount+0x1b/0xb0 fs/namespace.c:1231
- btrfs_get_tree_subvol fs/btrfs/super.c:2077 [inline]
- btrfs_get_tree+0x652/0x1920 fs/btrfs/super.c:2115
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- vfs_cmd_create+0xa0/0x1f0 fs/fsopen.c:225
- __do_sys_fsconfig fs/fsopen.c:472 [inline]
- __se_sys_fsconfig+0xa1f/0xf70 fs/fsopen.c:344
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f014877dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f01495d7038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 00007f0148935f80 RCX: 00007f014877dff9
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
-RBP: 00007f01487f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0148935f80 R15: 00007ffe7a9c13b8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:strlen+0x2c/0x70 lib/string.c:402
-Code: 1e fa 41 57 41 56 41 54 53 49 89 fe 48 c7 c0 ff ff ff ff 49 bf 00 00 00 00 00 fc ff df 48 89 fb 49 89 c4 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 75 12 48 ff c3 49 8d 44 24 01 43 80 7c 26 01
-RSP: 0018:ffffc900035af8a8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802d46bc00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff942c58f7 R09: 1ffffffff2858b1e
-R10: dffffc0000000000 R11: fffffbfff2858b1f R12: ffffffffffffffff
-R13: ffff8880727f8000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  00007f01495d76c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f75ffff CR3: 000000002cffe000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	fa                   	cli
-   1:	41 57                	push   %r15
-   3:	41 56                	push   %r14
-   5:	41 54                	push   %r12
-   7:	53                   	push   %rbx
-   8:	49 89 fe             	mov    %rdi,%r14
-   b:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
-  12:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
-  19:	fc ff df
-  1c:	48 89 fb             	mov    %rdi,%rbx
-  1f:	49 89 c4             	mov    %rax,%r12
-  22:	48 89 d8             	mov    %rbx,%rax
-  25:	48 c1 e8 03          	shr    $0x3,%rax
-* 29:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	75 12                	jne    0x44
-  32:	48 ff c3             	inc    %rbx
-  35:	49 8d 44 24 01       	lea    0x1(%r12),%rax
-  3a:	43                   	rex.XB
-  3b:	80                   	.byte 0x80
-  3c:	7c 26                	jl     0x64
-  3e:	01                   	.byte 0x1
+I'm beginning to think that this bind requirement is not needed.
+
+All type and dev are valid, even if an ETH_P_NONE fanout group would
+be fairly useless.
+
+The type and dev must match that of the fanout group, and once added
+to a fanout group can no longer be changed (bind will fail).
+
+I briefy considered the reason might be max_num_members accounting.
+Since f->num_members counts running sockets. But that is not used
+when tracking membership of the group, sk_ref is. Every packet socket
+whose po->rollover is increased increases this refcount.
+
+> What about using ifindex to detect bind? Initialize it to -1 in
+> packet_create and ensure that packet_do_bind, on success, sets it
+> to device id or 0?
+> 
+> psock_fanout, should probably be extended with scenarios that test
+> "all devices" and all/specific protocols. Any specific scenario
+> suggestions?
+> 
+> 
 
 
-Tested on:
-
-commit:         964c2da7 btrfs: make buffered write to copy one page a..
-git tree:       https://github.com/adam900710/linux.git subpage_read
-console output: https://syzkaller.appspot.com/x/log.txt?x=1296b7d0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3ec5955a0d4f6ede
-dashboard link: https://syzkaller.appspot.com/bug?extid=cee29f5a48caf10cd475
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
