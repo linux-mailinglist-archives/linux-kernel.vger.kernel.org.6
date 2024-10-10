@@ -1,132 +1,130 @@
-Return-Path: <linux-kernel+bounces-359676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5DA998EE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:54:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFE4998EEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C871F24B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0921C2357C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DDD1C9B67;
-	Thu, 10 Oct 2024 17:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C329D1CB30D;
+	Thu, 10 Oct 2024 17:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tkjBXiWU"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="bBW3VocI"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2078.outbound.protection.outlook.com [40.92.18.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7123D1BC9EE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582747; cv=none; b=p/qwD+7VXkdYgwq3MBJS9mhodL7Mh/WTXGFCa0ErJGQ5sUacTWkzvq2iYIVyS0PszDxwh1vjurBJsQSx04M4y3gbrSw6qR8QWCqNkqiW8y3RM2UrsHNp4wfucLaUyVhharliTHOEPhumfaVbBxSi0s4SJmOLLIPdbgXJUobv7dQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582747; c=relaxed/simple;
-	bh=zd1av6Fc40E2UhYTdrDXA71AlPFDV24ywT4uxHlQlG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQ3CzsZbLI+5V3navDl/V5G0cqITwLqVhuMXBSOh4Z1M8uSenrzfqXt9c2J3rI3SvViLKSY4x6vEEzOXvVPJ+oA00yR7T4W6e7SKPmcqRB9JWr3DLQdbXmgzEwQv8pry6R2nZugFa6H4r9g6FSAH3bM3nc4AqV64GOlBLc+Pybs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tkjBXiWU; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso18845161fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:52:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728582743; x=1729187543; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N9GWTTOAK3xYsbDrD4IwkOXIfk0ISdS2LgMx/4Ojd7s=;
-        b=tkjBXiWUp1rPc1MDk+FQ/Jrh0rLPki7lUpTy0y/QrQZEWz8Q6JSGayP5wxdMFLPA6e
-         x/XFQLSTYZPZiQO0kg/rPPKXOiByViWty+a3ofZgZAOeVMQq22jnCnqFbSBdYxHPe0m/
-         HzZjD5E+17iNOIiZzsgZfJHVhOD99ja5BTocy/Udl7z6Hwr0+/IyttPeLCzp1L2/jvva
-         Ulwpl96kbZg8tDkC/Dh3lvK8HXEIXwlTxTjylv11Kyf7jXTlj9P0rCrJfhpo9u9pdRz7
-         0C2k77BSeymYBENQ3AqqgxkSx8noAYYEy0lRSO+RsHxdMsLztYOeOaWFk+FB/S+rrRf6
-         JaDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728582743; x=1729187543;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N9GWTTOAK3xYsbDrD4IwkOXIfk0ISdS2LgMx/4Ojd7s=;
-        b=mpFvbUb04uRGKhbC7htvz9qx9VKB5Up+yYhiHTHPI2nTWhDgbxX8KVY2aBK15+DW8T
-         4kh5biZlVLcVKl77AaGCBVmotRcBBbdZZ0RVM73QN2FRPZF24VGiEU8HPviHJE/Tad0i
-         Qzq8GEIxu4Y7OJLK6XNV5OPdoAo+HVZUVVHEdye+9wXLrldcatnbLdFdbuc3yxRFjUH0
-         BQ46co2FUm4uT/aiI2TFsQfsPtpWBaHRfo5V6Wqv6/oFh3Zc5eJoSagG+KV9RHjnpeXp
-         mCe68uIr9EmaW7Q8pMx7oxJHVFuIiTWbbWR0T1e3pB7tMJnuLvYFAQfZSWcw38wYMI6F
-         VHEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKIVmM5wHaA3RrA8P6eh0peXUUNeyvH7W5KpCKSoM/qkD1MthslhZwslqD/xuXEMrE9wFmVYDfUmIonvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznGyh/OD5mbeQGEzxDwEpiovQUzZvjzWqH/RXYzqppSwRiF2Or
-	U/Hm6Ju3D8fpwEKQJKVjmTsEt8QLdbtw6alHHxm8AcMHR5X6MHgWePIEtTghOoLyTbIgLLnfuyv
-	Z
-X-Google-Smtp-Source: AGHT+IHGnF80vbcXnZMKV66ImCfvKSUUrwvKQXz0L7I5zHVN860njIn35NiSafpg20jfvTnhnsqtMw==
-X-Received: by 2002:a2e:750:0:b0:2fb:256a:59f9 with SMTP id 38308e7fff4ca-2fb256a5b5bmr20932011fa.22.1728582743435;
-        Thu, 10 Oct 2024 10:52:23 -0700 (PDT)
-Received: from yamato (93-45-8-132.ip100.fastwebnet.it. [93.45.8.132])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa21sm2056872f8f.85.2024.10.10.10.52.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 10:52:22 -0700 (PDT)
-Date: Thu, 10 Oct 2024 19:52:09 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	dletchner@baylibre.com, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5 02/10] iio: dac: adi-axi-dac: update register names
-Message-ID: <eyx4gykoki4b4gwf6rmtnjgqec3ltdgtszbjugidtf37uei4pn@jqczhf3thuka>
-References: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
- <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-2-3d410944a63d@baylibre.com>
- <a02f256c54089da4faa3ee1807c01b9cb6e70bc6.camel@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BA21DF997
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.18.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728582756; cv=fail; b=mIxcwvEt9UdgvVrR6KvJ3kJB3Cwuq/L5Pc8vibH9cu4ykkPNq8qMqwQT4tERCjLMFhwgfbVTqegIi12Fp49hKwyiypF4l6WbLKmidoVB3J591M04jdxZ/pxy1bH0M76GEWXboFjhZNe0Md0XY7otyZhLLyxaHKwUJn0lsVNsl1E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728582756; c=relaxed/simple;
+	bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+	h=Message-ID:Date:To:From:Subject:Content-Type:MIME-Version; b=KwZ2PiUiSGq2p1Sjq0b/GJvR6gJOXaLQ60L+6S1npm5x7cRXY5oqYZFDsV7xEGbiD+BW+x1CsnmB6ucjrLnzyd4xCycZUWfdeD4IKBR0yhJasuwYepLGVZtkpNmv62rxF9XmUlvf+Fudkszn+WM/4mJmL/bZvbgeTqyIMspx9nw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=bBW3VocI; arc=fail smtp.client-ip=40.92.18.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r41NiEdq1bxUvG1bPCk18CLYeKM2Q7saJCcoyfFoksFHbVyaYQUu20I4JMVzCPZDtiAe4EQAQSZXusho70ENh91kNqNw8LtGcCmyyiBXH2Q5euOoGfDJ9kfjwYgsRDGMEf6YshfA28XZ+wWMfq7vmgzpwOz+YF/omImBMgeG5XdL0pA6yHfDDZHTpklhfVZc6/I4ACJYlIXlOJXcq+e2Ugq4GdEDpuhKuND3VlPfG9bI/0Dui07GZtCtG28FsbFPQTZSacnQoGxVzi25MAIxh5M+iDSAJ6QpIIZWCcdW0gUg4PAXl/Uc+TH3vYR9iMxS9DF9smhieuAXdqMZQTM72g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+ b=zHMs7sWX7vlt7GAJyu/KEnHICGOPhn1e5DFsq9UogVIij0mlS8Gb+cPV1stKzAlPJUAmoaieP6jF+4YPpuw0390/+TtCvvJ6bOVqD9s0EPVGhc4c4KxqDiJZvqiWovthVG72Ye621H7T76NRM7NgIYd1wEzlxJlxK4nI+JjjVOUit4wnsDdhmU/Ikfnpp+GqCBfhr2WIMyHDBmPo4etwx1EbP1WVcN8PXluw8UAMs+OmfYZWlrU8P83YEVSol2lISgPDBNWjCJyAzOJgiCjRyuhCu8ul4Q1MmTfmvv+sguFQZZ57iZ2pOXYr3bbH22iBTMGQMa/AXOdlY76TyAl6jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bIkL3j1SUti+mxRknWXsGzjEHfZ++LfAOrCAj6OvBfk=;
+ b=bBW3VocIoYg6VWfBOcffVNZmQPAYnWhD3SgNSvNW1CqHMTQT7G2MF1NcPONQ0TX/HJbbeo90gNM84oHUswdqjEvelV8x29ytfQ+GBCZg16BYU/DD+LpVBm8gvG07VMKyxf5r+vMU2Y+FbeL3YxOXoNmFw6egGASKIIfzEFqgtJ4YKYYFxrFNoj2e1xKGzbYvPAkStRaC5rKTW7NThyahvjRNM4QLaKSEXRJ5GV6huh++4TU3umBjmYObr4tVXrhUw2s/DN+KCLsT6rSHcph9fRqNoucEx428yjYct35NyQtM54SbRzM00dzWDOD+MMbjNmQEenW84tklbiu044ziHw==
+Received: from CH3PR84MB3522.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:610:1ca::5)
+ by SJ0PR84MB1823.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:a03:435::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 17:52:32 +0000
+Received: from CH3PR84MB3522.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::ab1f:ea69:7433:dd47]) by CH3PR84MB3522.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::ab1f:ea69:7433:dd47%3]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
+ 17:52:32 +0000
+Message-ID:
+ <CH3PR84MB35227A198AC74F4CF46D0786D5782@CH3PR84MB3522.NAMPRD84.PROD.OUTLOOK.COM>
+Date: Thu, 10 Oct 2024 13:52:31 -0400
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org
+From: Iulian Gilca <igilca@outlook.com>
+Subject: subscribe
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9PR03CA0785.namprd03.prod.outlook.com
+ (2603:10b6:408:13f::10) To CH3PR84MB3522.NAMPRD84.PROD.OUTLOOK.COM
+ (2603:10b6:610:1ca::5)
+X-Microsoft-Original-Message-ID:
+ <0b7e4fcc-7303-4403-8b0a-638e180988de@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a02f256c54089da4faa3ee1807c01b9cb6e70bc6.camel@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR84MB3522:EE_|SJ0PR84MB1823:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6a93602-4202-40b4-b597-08dce9545113
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|6090799003|461199028|15080799006|7092599003|5072599009|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	k7L8eeNd6z3vpv6jbiiTGA06aKGs1vNjsPhX+gyyb3EL3op5Te8Kg/IIVmtB3/iuVyZuQbgCs5RN8DNArVp5cN/Xlt/hJfcVW4l11q13SlLspiF8L6pXZA4Jby55WomB0mQ0kzRzA+Lh3U+MNTm+5o67jY95Qd0hglFxcqt2sBG8A+GGFH9oAPRDopjPJw4Y/zLWuqN2N4kdEpHGGu6tie2MPhI1sKZ3q7My8iGRPYh1eJrQV7nfyeg41Vubao0YQq07zNNlbHomK4zxpaxi46uv0yuu6Ut9V3gxEyDiy42wAQZ2LDb5SwibRCdk/wexmmInleH1XActh0jVWLaDSAC/HrrvpRAZxovwaZ2xiasPAcAgPsMdVa3h/f3nvfahl0n0mmsmVLhvBhdXb5zk3fdAuQ96tY7UQqCFmKzPgxrj3mhdw/YxdbaparKNycw+31NVhCdKeR6AVWeECW3zPaH99DxhLQoQwhc3en0lVII=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VzhGTTZVRVBzQWtHZTlyQlV2UEp1dGVPVEVITG1hbU1OdmRHbEZ2Ui8wWVpv?=
+ =?utf-8?B?L3c4b0xoZFlnbWlEZVdZNmgwb0RjRnFJdzJSUk96UHp6NTZ6UGxZaUEvODJQ?=
+ =?utf-8?B?OThweEZhcXdzN0hHSWY1ajhFd245U0ZiaTVYVFVndFJVSjNJWkROdDVRZUI1?=
+ =?utf-8?B?MXgrTTBNdWJLVWZQYVc2U1dleTROK0hWZEFVWFl4b1prU0ZKOG53K2U4bGhQ?=
+ =?utf-8?B?bE00SDdzQmNJZEdnUFVUY0NiTE9XNDV6aWFuNmEyY3dZNU0yZUxxTERSdThK?=
+ =?utf-8?B?MERHNUtJSUM0d1lTTjI0SSs2TkhJL1V4YjQyejRvc3A0c3BJbEgrUlk2ckRI?=
+ =?utf-8?B?RSswQ2hJMGxGMVkvb3VNY2x2UE5UdjJKR0NZck05d3FrTzhxMEM2VGV0d1Fq?=
+ =?utf-8?B?YUl5cEdueC9Nd3hDZHN5d1o4bE5ib2JCQmxQTGYxeFo3QVljdU96M3M3WGZ1?=
+ =?utf-8?B?QlJaWEpwaGtnTXJ1ODhBQ05JS3RtSWZDL0k5YlViSExycHhKcnYyc0hDUHdl?=
+ =?utf-8?B?VzV0RkYrUVUyL1FSeERkeU5uTGNOUkRBWXlLanRra3NjaGhiQlRyNjVVQU4z?=
+ =?utf-8?B?M05mVk01YzBvQXJhbEJXR1hpVXIzdUhWaHZZK3o1MHNIQnNtTytkQTNhUXpz?=
+ =?utf-8?B?ajFPNEhnZWxtdzZJYWdPRTFnRWtvZ1N3MDBnYVNtZE44QkxlbkpyT1ZFZmtp?=
+ =?utf-8?B?WDRiMTBqclkva0p5cjZUTkhTTWVDL0FISERLYTgyYkZ6V3UrTUFQUVEvY1Az?=
+ =?utf-8?B?Y2xrVWpjRDRZQ2VlY1hPR2dhMmowUzhzR1k0aFc3Nyt0NmlhMS9KM3I4YWJ5?=
+ =?utf-8?B?TkUweGZIcTZKU084YUt6b2djNEZSSkM0MjNybTBDZ1FQMFZNdTNGSlBaeGFz?=
+ =?utf-8?B?NmNTY2tsSU5SSlU2ZllJOTZIL2lvTlZJNkJRNTVpT2Y0ZWJlTkhkMjdnSVkr?=
+ =?utf-8?B?NVBjWk44WjZ0ZG1PY3BPSHhTZmxZNWRzM3llTE11a0NHL1g5VzNOMVM4eUxZ?=
+ =?utf-8?B?TjJMa29QZGZJVHVLck9XeDNuczdNdnN5YkNRdjBLYlMxNHExSU03YzB0MEpI?=
+ =?utf-8?B?cVdzTWFpZzJFRFJlWHNRaC8rdmlyb25hdGpneDZBWmUwS1VIRXdGOFZ5ajZM?=
+ =?utf-8?B?cmlXbnlvbWxyamdsb3NTYVZHbmtadndldy9nT1UwREE0QzE0V0Y5b3dubnFZ?=
+ =?utf-8?B?VXk4VVdvSk9RVkRDWEt1VDlSZHgycDlBOHQyWGVyU09Yd2EwMGhUS1UxYXlY?=
+ =?utf-8?B?dnl5RHhmN0ZlY2l0SDE3cjNGY1NnSUY3MkxvemVKaU1BSlVrd1VuRjNvMEpa?=
+ =?utf-8?B?QWx5S0RzblQwdG50WGZEREdGNHg0dFM5RXd2TWladGpuQUZQSjhjMnBQbFlU?=
+ =?utf-8?B?UWRia3R2TWQ5MEU2clBQMWxja0J1UStxNHJmbGpxcnc5YTB0TGFNOGdTLzZE?=
+ =?utf-8?B?VWtxWlk4VWxBdyswWklpaTJyQUVBUFhNK3B6VlRHNHVhWnpPNXphUzV4U1Mz?=
+ =?utf-8?B?L0p1eFp3NWp2ZFd4c3R1WnRHOU5qdjNoMG04dVBMMGR5bFdDaEQzYlI5V3RM?=
+ =?utf-8?B?TStOK3hQZTljQjM2aFYrc1dZSzY1cUphNldmdDRmbFNuQVF0UmlmWWo1UXQx?=
+ =?utf-8?B?R2ZibVpLWVA5REhKdERMUGRoZG5UeW1JWmFvbGZPR1BhNWZqNGJ5bnZFcjRv?=
+ =?utf-8?B?eEovL2RBSG9hMmJUdmFkWjUxMDRuSFcwUXV4c2UyT2w3czh3RzFwV2VaNXQ2?=
+ =?utf-8?Q?etGtb/aJN9eBPWQ6/I=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6a93602-4202-40b4-b597-08dce9545113
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR84MB3522.NAMPRD84.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 17:52:32.8633
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR84MB1823
 
-Hi Nuno,
+subscribe
 
-On 10.10.2024 14:59, Nuno Sá wrote:
-> On Tue, 2024-10-08 at 17:43 +0200, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Non functional, readability change.
-> > 
-> > Update register names so that register bitfields can be more easily
-> > linked to the register name.
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> 
-> I don't fully agree that this is so much better that's worth the churn...
-> 
-> From a quick a look I saw (I think) some defines where _REG seems to be missing.
-> Those is fine to change for consistency but I don't really seeing the big
-> benefit in changing them all.
-> 
-> (Sorry for only complaining in v5 about this...)
-> 
-
-no problem,
-
-the change was suggested from Jonathan, was not something i need, 
-let's see if he has further feedbacks, in case i can roll back
-easily.
-
-> - Nuno Sá
-> 
-> 
-
-
-Regards,
-  angelo
 
