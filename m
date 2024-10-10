@@ -1,101 +1,108 @@
-Return-Path: <linux-kernel+bounces-358712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F196F9982B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF52D9982C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D011F21A9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE57C281DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1F51BCA0A;
-	Thu, 10 Oct 2024 09:47:26 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894F81BE874;
+	Thu, 10 Oct 2024 09:49:01 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE672AF18
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9040A1BE86E;
+	Thu, 10 Oct 2024 09:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553646; cv=none; b=HTxj8aJstI43l9H10GuIzpWZZckV2OQuJgrfwljn4ppzNAgPa914vWF1jcnMTJO83wJxZte2te1MGS7oYXiiPiIEV6Spr2q2PVBAdLvSr+Pbo0Jm+zAP2DbXwISxYd4JSF6pY/kj7YIkKCXUbf8cqrfLshI4IDTuC7Ht42BhDag=
+	t=1728553741; cv=none; b=KRsD7jbCdngvQvJ3AczuK7fJ21lmfMg55lqhju321TIB6kWrWy3f+Gj76DYcn5+QRAttanpNijl3mPLwQSk/a3Z7ZCF4NivS8PV9iqwYsBMozalEQJs4atBNr6XWC16vIXxQwFFQ0J4z+soyKr86r1oyYUltLEIQ24Tpljpc6RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553646; c=relaxed/simple;
-	bh=Za32LgXO4KETW3RlWS7RTk/2Y57maLYLm5UF/riXKn8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UAi6x2EHIiuUSz/5vvGhz2N6qgebLVe1cWGlr8wTb6RBB9ZqQTPvEO9WRQ9SNg8BbYwc1NBGcCZnTh7Misux0duRi/dEgSFOOnyXOlzdd6u8vFGnyuQNXc1IMykynnGSe/x4qjdgVqmJcuMeDEu2otKsm3TAUxTK2yUgJ7yZjWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id 6806EAA290;
-	Thu, 10 Oct 2024 18:47:22 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 120juincZe4u; Thu, 10 Oct 2024 18:47:22 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 47569AA264;
-	Thu, 10 Oct 2024 18:47:22 +0900 (JST)
-From: takakura@valinux.co.jp
-To: john.ogness@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	takakura@valinux.co.jp
-Subject: Re: [PATCH] printk: Allow direct printing for PREEMPT_RT during panic
-Date: Thu, 10 Oct 2024 18:47:22 +0900
-Message-Id: <20241010094722.15194-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <847cagmjsx.fsf@jogness.linutronix.de>
-References: <847cagmjsx.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1728553741; c=relaxed/simple;
+	bh=PnF5N+fRjfIewioC2YVgyK7Bm6+yYBPxwH7/N1QgHLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cXzuhm7L0LM/0M19r0CK55A3rArW12N254F5euXSB4pty2DdhcPnY0EYylSv+iMpE39QPHQugx2cYvu4LKxmmSr/JzquiP1KYPXa55uSbzRp7wz3bWtb6v5AIk6GG5pQSI+T9gOV/lJJ8FA4YXJ1mr7lA7uW7JUw36zEMpiRv2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 49A9mCMT030328;
+	Thu, 10 Oct 2024 18:48:12 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 49A9mCwE030323
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 10 Oct 2024 18:48:12 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <7fbdb7db-57c3-47b8-89ed-da974d03f17f@I-love.SAKURA.ne.jp>
+Date: Thu, 10 Oct 2024 18:48:12 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [apparmor?] [ext4?] INFO: rcu detected stall in
+ sys_getdents64
+To: syzbot <syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Network Development <netdev@vger.kernel.org>
+References: <6707499c.050a0220.1139e6.0017.GAE@google.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <6707499c.050a0220.1139e6.0017.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Hi, John!
+This is a printk() flooding problem in bridge driver. Should consider using ratelimit.
 
-On 2024-10-10, john.ogness@linutronix.de wrote:
->On 2024-10-10, takakura@valinux.co.jp wrote:
->> If PREEMPT_RT was enabled, printing for legacy consoles are deferred
->> by default, including after printk_legacy_allow_panic_sync() during 
->> panic which allows direct printing afterwards in case of !PREEMPT_RT.
->> As a result, printing of messages during panic for PREEMPT_RT
->> is handled by the console_flush_on_panic() called at the end.
->
->This is on purpose because legacy consoles are not safe in many contexts
->under PREEMPT_RT. console_flush_on_panic() is used as a final "hope and
->pray" excercise even though it is not safe on PREEMPT_RT, which is why
->it is at the end of panic(). printk_legacy_allow_panic_sync() only
->exists for !PREEMPT_RT.
->
->> In case if kexec was loaded, console_flush_on_panic() will not be
->> called and starts booting into the second kernel without printing
->> the messages.
->
->If legacy printing is allowed before, the kexec may never happen because
->the unsafe legacy printers can hang the system.
+#syz set subsystems: net
 
-Thanks for clarifying, I see that it was on purpose.
+On 2024/10/10 12:27, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1083b380580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba92623fdea824c9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=17bc8c5157022e18da8b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135f7d27980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1483b380580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/2ad9af7b84b4/disk-fc20a3e5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1afa462ca485/vmlinux-fc20a3e5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/75c0900b4786/bzImage-fc20a3e5.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com
+> 
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5244/1:b..l
+> rcu: 	(detected by 1, t=10503 jiffies, g=5253, q=1466 ncpus=2)
+> task:syz-executor116 state:R  running task     stack:18800 pid:5244  tgid:5244  ppid:5243   flags:0x00000002
+(...snipped...)
+> net_ratelimit: 33488 callbacks suppressed
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
 
->> Allow direct printing for PREEMPT_RT during panic so that messages
->> before kexec gets printed.
->
->Sorry, NACK. This goes against everything we have worked for with the
->rework. The solution is to update your console drivers to NBCON.
-
-Got it, I will look into it!
-
->John Ogness
-
-Sincerely,
-Ryo Takakura
 
