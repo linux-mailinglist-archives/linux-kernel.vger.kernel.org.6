@@ -1,206 +1,168 @@
-Return-Path: <linux-kernel+bounces-358107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70269997A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:45:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A9C997A45
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B6B1C21BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:45:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 237CAB22CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446E527446;
-	Thu, 10 Oct 2024 01:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A221179A3;
+	Thu, 10 Oct 2024 01:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aOsMUZRP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ExeoKNjp"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D13B66C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEC5B66C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728524752; cv=none; b=czWH73xGxFue4g7mo5msZTtc8fP55eQy7mOFtau1A/jS9zvXdkuAtw86usMluEA3mIMuyYPGEnP4E5Vqs+5hysAMCSsrMzryDoQpcLr9Z7MK0Nc8Kukx9iY7f5YZc9EjKlUHlNvZOcy6/Btqp2gKXBu3ZGZI8kVF6O7Ddr4c6tM=
+	t=1728524838; cv=none; b=Jc+8yWZF+5CuOtBrF53u0KojpZayfGUd6s7L0ci/XpWv0js/EzenlroZAmTHHQZN2mo52+6YSGvVEKI3x3Rpb4+ZN5W4fQLhz4+EQpomOFrsuDzYE3fvXs3lFFxvfURObWY6PZcHZbEsE1Z4N53dOPQJ42pirZu0qeIEgTVAJIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728524752; c=relaxed/simple;
-	bh=+567s1J+tkFYek+s05uOAF1f4xezsjVVs3hVLYMspQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PNHGSqS0s9tKL8tB2q4qT/rVm9EazRVANSVbwrvn3YHQfGlx8arfx6AR+ojS2fcjSZrsgCgPo+0HoFeVmCMHBKRV9hw3L9afF/l379/W/6tuc2xl8Y1Skeij4aVuwDnDzk3NlqmV67UE67nbc1HZwzG5/0E7Am1EMO+0uQ5i2Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aOsMUZRP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728524749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vJ3L7UNjRJqtMbV6PyQFveasfPHAEGSmGfF+EhlxxfM=;
-	b=aOsMUZRPsdTXu/ZGW0ccXqUM0FCHCQcAB6fxs0T1jtPiwsnqtP2ic7DzWqVkrOdG3Ei+3y
-	uzjAy3YsE8XGDkuHm7FB7jfM6MZ0kpNA8txysa8JKA2j6/+7d0bfEzgikWXW9dtGuGWL3a
-	3HJQGr85gmLV7mraiJkciVxiC105ECI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-481-PDNCtnSoNWefGxt62t_oRQ-1; Wed,
- 09 Oct 2024 21:45:01 -0400
-X-MC-Unique: PDNCtnSoNWefGxt62t_oRQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 05ADB19560B4;
-	Thu, 10 Oct 2024 01:44:59 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.16.237])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F17E7300018D;
-	Thu, 10 Oct 2024 01:44:54 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Luis Goncalves <lgoncalv@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] sched/core: Disable page allocation in task_tick_mm_cid()
-Date: Wed,  9 Oct 2024 21:44:32 -0400
-Message-ID: <20241010014432.194742-1-longman@redhat.com>
+	s=arc-20240116; t=1728524838; c=relaxed/simple;
+	bh=zwHJ6Cto7VTHLKrulxBYuyq+JRK+W1sqQawSdpa9UTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Op+RECTA0lPlGJV256ld6dWnRpgFMP+leOdDiLsEAwAGenO1nnzRlZ5JtBw2IIBmaCBZ1x3riIAXSQnTArAlFSQF6YrcQICFjUZZsXyRmzXOmpY/0QysRVAb60mTKkxr3EQhkEuH8EU1lZ/tUWwDPR1p6bu91VNg7NARlKlZEfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ExeoKNjp; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e2e41bd08bso5355457b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 18:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728524835; x=1729129635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MdcTNAl/zNhJjLlHdVeR2ByMa+E2JXdIstKxPRioi6g=;
+        b=ExeoKNjpSvNa5/5ikNe010igdw3grxhC6v6klWnJ1oVg18GrhWLJ33Ym2I2sHnBikm
+         55bKVDssBzP/ceAbD0WYIfh6RtdDBvG5E8nI+fC1nPEe2Kgs08yOXH35qhi45KBLvouu
+         WrCKDttDnSqx4ZXzs3p+ZvEhAGHV8h5H9+EzMgpUPhPyE6BtebV2sjxKWRBYUn1zMDqt
+         NpacXZi9G13zrJpAfvOXMUAs6/Yxh3trOYUuRnReECXzdB6yy4FmdmV2J4C/Q0CJRiBV
+         GRzgbZvw4ETks3k3r7qnLu8XwL7w4RM9IFxhAXaop0vj9lv2oQkkZj+qEhCYSY0NA82g
+         VwDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728524835; x=1729129635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MdcTNAl/zNhJjLlHdVeR2ByMa+E2JXdIstKxPRioi6g=;
+        b=KmlzE1A6eg01SZ61zIVNMNNKQb8QeG9Hb8UwsDuBfZMJn7lqKEPZCb1g650UqKOcyP
+         06c6jFUF82bxTq2nCNHmLrS98Q0oBNPNxmEAG31/weHYTQCu3cgyO1ZKnl74qBEPZRT7
+         2yjmlOo4Yo2YBOPAq1PDmEodHs6DFwcGPVJdJCKbayrnGsS8zvjL6qTkOqE3vrO5hCYs
+         qcc0O+mrR60Q97qjgH0QvVUORe7SQYMHGu3MOQWRvxwXIaajcFbZ+upq3HEcBeq90sIs
+         c0Nr9xPQAx8z2QmKL2FkbqufbHSAz84HTyN4HMolzmY9NY3frifVkwQ3Acr+Rxx/dKpB
+         nGtw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/EhVJZ23sViSYcPvxa9/GT8MY6/LSLn6eu1DMV/hf0O88svnR8zx1IbpmF7Vbz4YxXETRVzqQFkIUOXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdyyKAVUtMJ1W/r4zp767X4aGT0un4p6XSiTeQZKCDefktze2g
+	qhtLnNulyXdRRSs3yaqFFupvb806DtZk0jiL57uwTkMCqP/RiLwprEITA9Ei6N5xXthgzfScUNe
+	DW7f+TSZooM6Q9DsneRxaIXb+65rvbOHY0TbwLw==
+X-Google-Smtp-Source: AGHT+IEXCaAqs23+faG84Xbw0uLAys4Y42dQjl9KJR547/GRJW2/9mYWarS+Ua7dASs4AVA+2dWVFy8+L5nX5SMGZDE=
+X-Received: by 2002:a05:690c:d8e:b0:6e3:21a9:d3c2 with SMTP id
+ 00721157ae682-6e32210dfe7mr45994217b3.8.1728524835161; Wed, 09 Oct 2024
+ 18:47:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-20-v1-0-139511076a9f@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-20-v1-2-139511076a9f@linaro.org>
+ <CAA8EJpr-B2OZbn5_6dUnojf9ZTXkVcE2nUL1QHohTmk0Qa+bPg@mail.gmail.com>
+In-Reply-To: <CAA8EJpr-B2OZbn5_6dUnojf9ZTXkVcE2nUL1QHohTmk0Qa+bPg@mail.gmail.com>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Thu, 10 Oct 2024 09:47:04 +0800
+Message-ID: <CABymUCMAsXFz4tMdNexxU8UVGu_khcD6EE+KBt=5EHmKbXvG5A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/msm/dpu: configure DSC per number in use
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With KASAN and PREEMPT_RT enabled, calling task_work_add() in
-task_tick_mm_cid() may cause the following splat.
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
+=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 06:10=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Wed, 9 Oct 2024 at 09:39, Jun Nie <jun.nie@linaro.org> wrote:
+> >
+> > Only 2 DSC engines are allowed, or no DSC is involved currently.
+>
+> Can't parse this phrase.
 
-[   63.696416] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-[   63.696416] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 610, name: modprobe
-[   63.696416] preempt_count: 10001, expected: 0
-[   63.696416] RCU nest depth: 1, expected: 1
+How about this:
+If DSC is enabled, the only case is with 2 DSC engines so far.
 
-This problem is caused by the following call trace.
 
-  sched_tick() [ acquire rq->__lock ]
-   -> task_tick_mm_cid()
-    -> task_work_add()
-     -> __kasan_record_aux_stack()
-      -> kasan_save_stack()
-       -> stack_depot_save_flags()
-        -> alloc_pages_mpol_noprof()
-         -> __alloc_pages_noprof()
-	  -> get_page_from_freelist()
-	   -> rmqueue()
-	    -> rmqueue_pcplist()
-	     -> __rmqueue_pcplist()
-	      -> rmqueue_bulk()
-	       -> rt_spin_lock()
+>
+> > We need 4 DSC in quad-pipe topology in future. So let's only configure
+> > DSC engines in use, instread of maximum number of DSC engines.
+>
+> Nit: instead
 
-The rq lock is a raw_spinlock_t. We can't sleep while holding
-it. IOW, we can't call alloc_pages() in stack_depot_save_flags().
+Yep.
+>
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 13 ++++++++-----
+> >  1 file changed, 8 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/=
+drm/msm/disp/dpu1/dpu_encoder.c
+> > index 39700b13e92f3..e8400b494687c 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > @@ -1871,10 +1871,13 @@ static void dpu_encoder_dsc_pipe_cfg(struct dpu=
+_hw_ctl *ctl,
+> >                 ctl->ops.update_pending_flush_dsc(ctl, hw_dsc->idx);
+> >  }
+> >
+> > -static void dpu_encoder_prep_dsc(struct dpu_encoder_virt *dpu_enc,
+> > -                                struct drm_dsc_config *dsc)
+> > +static void dpu_encoder_prep_dsc(struct drm_encoder *drm_enc)
+> >  {
+> >         /* coding only for 2LM, 2enc, 1 dsc config */
+> > +       struct dpu_encoder_virt *dpu_enc =3D to_dpu_encoder_virt(drm_en=
+c);
+> > +       struct dpu_crtc_state *cstate =3D to_dpu_crtc_state(drm_enc->cr=
+tc->state);
+> > +       struct drm_dsc_config *dsc =3D dpu_enc->dsc;
+>
+> Why? This doesn't seem to be related to num_dscs introduction.
 
-The task_tick_mm_cid() function with its task_work_add() call was
-introduced by commit 223baf9d17f2 ("sched: Fix performance regression
-introduced by mm_cid") in v6.4 kernel.
-
-Fortunately, there is a kasan_record_aux_stack_noalloc() variant that
-calls stack_depot_save_flags() while not allowing it to allocate
-new pages.  To allow task_tick_mm_cid() to use task_work without
-page allocation, a new TWAF_NO_ALLOC flag is added to enable calling
-kasan_record_aux_stack_noalloc() instead of kasan_record_aux_stack()
-if set. The task_tick_mm_cid() function is modified to add this new flag.
-
-The possible downside is the missing stack trace in a KASAN report due
-to new page allocation required when task_work_add_noallloc() is called
-which should be rare.
-
-Fixes: 223baf9d17f2 ("sched: Fix performance regression introduced by mm_cid")
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/task_work.h |  5 ++++-
- kernel/sched/core.c       |  4 +++-
- kernel/task_work.c        | 15 +++++++++++++--
- 3 files changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-index cf5e7e891a77..2964171856e0 100644
---- a/include/linux/task_work.h
-+++ b/include/linux/task_work.h
-@@ -14,11 +14,14 @@ init_task_work(struct callback_head *twork, task_work_func_t func)
- }
- 
- enum task_work_notify_mode {
--	TWA_NONE,
-+	TWA_NONE = 0,
- 	TWA_RESUME,
- 	TWA_SIGNAL,
- 	TWA_SIGNAL_NO_IPI,
- 	TWA_NMI_CURRENT,
-+
-+	TWA_FLAGS = 0xff00,
-+	TWAF_NO_ALLOC = 0x0100,
- };
- 
- static inline bool task_work_pending(struct task_struct *task)
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 43e453ab7e20..0259301e572e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10458,7 +10458,9 @@ void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
- 		return;
- 	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
- 		return;
--	task_work_add(curr, work, TWA_RESUME);
-+
-+	/* No page allocation under rq lock */
-+	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
- }
- 
- void sched_mm_cid_exit_signals(struct task_struct *t)
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 5d14d639ac71..c969f1f26be5 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -55,15 +55,26 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
- 		  enum task_work_notify_mode notify)
- {
- 	struct callback_head *head;
-+	int flags = notify & TWA_FLAGS;
- 
-+	notify &= ~TWA_FLAGS;
- 	if (notify == TWA_NMI_CURRENT) {
- 		if (WARN_ON_ONCE(task != current))
- 			return -EINVAL;
- 		if (!IS_ENABLED(CONFIG_IRQ_WORK))
- 			return -EINVAL;
- 	} else {
--		/* record the work call stack in order to print it in KASAN reports */
--		kasan_record_aux_stack(work);
-+		/*
-+		 * Record the work call stack in order to print it in KASAN
-+		 * reports.
-+		 *
-+		 * Note that stack allocation can fail if TWAF_NO_ALLOC flag
-+		 * is set and new page is needed to expand the stack buffer.
-+		 */
-+		if (flags & TWAF_NO_ALLOC)
-+			kasan_record_aux_stack_noalloc(work);
-+		else
-+			kasan_record_aux_stack(work);
- 	}
- 
- 	head = READ_ONCE(task->task_works);
--- 
-2.46.2
-
+You mean the comments above these 3 lines? Yeah, it should be removed.
+>
+> > +       int num_dsc =3D cstate->num_dscs;
+> >         struct dpu_encoder_phys *enc_master =3D dpu_enc->cur_master;
+> >         struct dpu_hw_ctl *ctl =3D enc_master->hw_ctl;
+> >         struct dpu_hw_dsc *hw_dsc[MAX_CHANNELS_PER_ENC];
+>
+> [...]
+>
+> > @@ -1953,7 +1956,7 @@ void dpu_encoder_prepare_for_kickoff(struct drm_e=
+ncoder *drm_enc)
+> >         }
+> >
+> >         if (dpu_enc->dsc)
+> > -               dpu_encoder_prep_dsc(dpu_enc, dpu_enc->dsc);
+> > +               dpu_encoder_prep_dsc(drm_enc);
+> >  }
+> >
+> >  bool dpu_encoder_is_valid_for_commit(struct drm_encoder *drm_enc)
+> >
+> > --
+> > 2.34.1
+> >
+>
+>
+> --
+> With best wishes
+> Dmitry
 
