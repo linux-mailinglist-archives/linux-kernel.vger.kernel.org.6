@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-359589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89AAC998DA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFFD998DAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7641C2374B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36A13281E14
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50300199FB9;
-	Thu, 10 Oct 2024 16:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9C619C547;
+	Thu, 10 Oct 2024 16:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPtWkw73"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qPsGo8OS"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A147427468;
-	Thu, 10 Oct 2024 16:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB7C19A285
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578424; cv=none; b=cb53519xbpPo/mtuxi9C6c0E9tc7qCL8U8o38pxt5HnuoeB3jEpF6aOsuRoGbB5ooUlLImWZfjJC1j66NNFwym/4uh1e+4C9Wy7vjszkLghVyfoCjOxgFWEdEIRGlnY+YLm5I8u8a+VS7J5nwKwqtKKSGiDHFOlqNR4NVyrYux8=
+	t=1728578440; cv=none; b=GCwNv3xmEpCMIEWrwWt6KQaaFPqucKsx+C9YgELKdTq4ZITc8ymLZZG1Q7YGKHq8wMPbRfO3ZAXP9FAQPUQZ25YroxFdnxRYRo2pbW8SXSbGBnFEGmQwYM/yqDShy7u79GhdWvnbQMaNkPJV2gtMCWpMKD8x43w5QTaRidepQXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578424; c=relaxed/simple;
-	bh=2tnUvN8WVDyeeze4eTyLGRFX9dex7o4pDaAp2PrX1Og=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UFyDqwMFfoE8y4y5bp/uLqb7gcgqJI1+hq4ugIhpknEg2Umb/kDFSa4qPhGoMsuC6WXECiBXwTzqqDuKPC1Oj1M25Xuom7/acDWXabOtx+xwI2cmWfhD7KhWd7sCZC7YuJOZWWyyFLGmNbTHQ2h5g7XUHDX561Q+nYaRTUkv02s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPtWkw73; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 136DEC4CEC5;
-	Thu, 10 Oct 2024 16:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728578424;
-	bh=2tnUvN8WVDyeeze4eTyLGRFX9dex7o4pDaAp2PrX1Og=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RPtWkw73AptWbERtk3a4uzI9ksK5gusm2D0X6sJXrfqG05S7mz3/GgRPeY76PnCcA
-	 6hRSfujYfsaRU/Y4fkicTfM/0KMZjRTOcRmvoybPo4RuUy9aLkXEBrubYby3jU6fFI
-	 bOZyJMcYGsRnci7pBu/svwPpRjfWDnWiB8VVZbSY33ewVkzOqsOookiPoNARkppBbg
-	 RPwIzyjOWZp9XehZ1ApxFWon2UtFmquYUFYM3AnLAUL67/IXNkBup3BCQxKb/rBPvi
-	 Y3AcJnQYj+TiSBlZA9HNPhrYWpzoTrUIZjoyDEUh9bpcu5SKQ81WB+D/Syfr5+UOCJ
-	 /3AFUxyCBELew==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE6E3803263;
-	Thu, 10 Oct 2024 16:40:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728578440; c=relaxed/simple;
+	bh=emRD/yhiwJNd5I3pgU02YmFVVUfHmQHkMVwo0yCFw0I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tTfWXNeNxI5VdkdOTHHLyI4IjEdmRpmbUCPsez5F961cJUb6F0UeEtlkRJcTA7CKJdjftDyjEkZ6naLWJy6moTC4Oy5MsQvoh/Ekp0JBwA/iMEs313qVuz1BXTovBR4H4zvACfN473GhPJOlKVUgHT4ztjqIvEpMUpVDu0/qUMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qPsGo8OS; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-8354599fd8aso44154939f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728578436; x=1729183236; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xyEsB+OCzLx40GaxNsnDi2QdTHIQWPihWeYETwMhlxk=;
+        b=qPsGo8OS6Sl9xhrIuNpN0TgusVnXqpRlx8G6KM4xOP3rmGq6KNhd2dLTBc8bTLvCON
+         ZcGF4eEDaqB+HnXpj4WOzJdaYRGVv5nVUpS2ZOc3WbYUggza6ON0JLTMYDwGCOcPJOqh
+         OcO0IUsHzf1w5nm4eEh+JxKcmU9vvHHPFAvILGRN0HOioG+vfe5FJxUiOXI+9hFcz8Xk
+         9PveRexzB3hlgV40sasC/nDXvLD7B9rzKq6qqEjLlgOd5eVEb0Q5qZ2EnpbH/2jqQh9N
+         e8vsozbuh2Odep9EnabCUvksxlNiRLC1Mr7rl5ZjMHv5+Rt7ZjBXUr5d4Gh76aKklmZE
+         h1mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728578436; x=1729183236;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xyEsB+OCzLx40GaxNsnDi2QdTHIQWPihWeYETwMhlxk=;
+        b=lOGXZxIrKNCrRa8gS99kZr4LCVtiY2gPCHshFBZmh9l8Xc/Xnry9iA6HhVxXiz0Guo
+         e2IwucK4YlVJpAgnnR4fxY0x+Tvyc1upOyoV3LOcnk8KjXONaBgWv3jr2f0wOeiLpu+1
+         L9FLOzFZg7bIabArGCDYCYtrt6/ChNrJJW5Z+IVn3QVKKkhHtKFSOLdVltq6kWI6inHF
+         cOqXhwxFhOe7tc6rCjaB8s8/5is8MpKdZs04VJQzUO2FpIa4R0zeiDHihY6CWpGd9KBX
+         GBw6nS139Op8sQJQ2jRuwZVFXB8NHxhaYKCwbdhqBCWad7Ud2dKhBtaPP2Bv4en+oOnl
+         Epng==
+X-Forwarded-Encrypted: i=1; AJvYcCWq7GKZUfwDAK2A13N0ALG3I4P3QBV2NIUHXdUa8P7WN2BAzkADfFckfdoe75NumwBsS4zoFTSfhtEpfow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrPjbCIhfO/8Bkj3J8v0ONWVRbNPBlFQoE1XdSF8LwwK9d2z5T
+	VxXE+IHpoggC4756ZiAIzHDipu98BxFAXzM1P4osOQ4B16J6MIMyrcv899roMdlS1Y2hsLpIjNO
+	lq2o=
+X-Google-Smtp-Source: AGHT+IFEmCZPBVhf98FTxzWL+eR06aMmyiWwZQg2crpBWOEdUtRFqg0o1IYByJp66uZ0W79z+8AwVA==
+X-Received: by 2002:a05:6602:1555:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-8353d5125a7mr656986839f.14.1728578436301;
+        Thu, 10 Oct 2024 09:40:36 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbad9d51afsm308876173.44.2024.10.10.09.40.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 09:40:35 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Breno Leitao <leitao@debian.org>
+Cc: kernel-team@meta.com, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241010141509.4028059-1-leitao@debian.org>
+References: <20241010141509.4028059-1-leitao@debian.org>
+Subject: Re: [PATCH] elevator: do not request_module if elevator exists
+Message-Id: <172857843553.77782.4750472326626678741.b4-ty@kernel.dk>
+Date: Thu, 10 Oct 2024 10:40:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2 0/2] MAINTAINERS: Networking file coverage updates
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172857842850.2091174.8907404119655762226.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 16:40:28 +0000
-References: <20241009-maint-net-hdrs-v2-0-f2c86e7309c8@kernel.org>
-In-Reply-To: <20241009-maint-net-hdrs-v2-0-f2c86e7309c8@kernel.org>
-To: Simon Horman <horms@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, johannes@sipsolutions.net,
- willemdebruijn.kernel@gmail.com, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, willemb@google.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hello:
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 09 Oct 2024 09:47:21 +0100 you wrote:
-> Hi,
+On Thu, 10 Oct 2024 07:15:08 -0700, Breno Leitao wrote:
+> Whenever an I/O elevator is changed, the system attempts to load a
+> module for the new elevator. This occurs regardless of whether the
+> elevator is already loaded or built directly into the kernel. This
+> behavior introduces unnecessary overhead and potential issues.
 > 
-> The aim of this proposal is to make the handling of some files,
-> related to Networking and Wireless, more consistently. It does so by:
-> 
-> 1. Adding some more headers to the UDP section, making it consistent
->    with the TCP section.
+> This makes the operation slower, and more error-prone. For instance,
+> making the problem fixed by [1] visible for users that doesn't even rely
+> on modules being available through modules.
 > 
 > [...]
 
-Here is the summary with links:
-  - [net,v2,1/2] MAINTAINERS: consistently exclude wireless files from NETWORKING [GENERAL]
-    https://git.kernel.org/netdev/net/c/9937aae39bc0
-  - [net,v2,2/2] MAINTAINERS: Add headers and mailing list to UDP section
-    https://git.kernel.org/netdev/net/c/5404b5a2fea9
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] elevator: do not request_module if elevator exists
+      commit: 822138bfd69ba93e240dc3663ad719cd8c25d1fa
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Jens Axboe
+
 
 
 
