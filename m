@@ -1,173 +1,142 @@
-Return-Path: <linux-kernel+bounces-358163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEE6997AE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978A8997AEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2CF1B2363D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C336C1C239D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFE519ADBF;
-	Thu, 10 Oct 2024 02:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8624F14A0AB;
+	Thu, 10 Oct 2024 02:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AGUxMpIp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C22819ABCE;
-	Thu, 10 Oct 2024 02:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KeOhi5Z/"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0888E188704;
+	Thu, 10 Oct 2024 02:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728529079; cv=none; b=q84VHGh31nFntCXFlQo4Dhbiypf//H0wfEhV/UBR+WELSvg9TvBpLrMwihsDkuTNJ+EVGr0hHkzs3aQ+Wp5Nuvx7ORTYBsAYMLi+/vA/C1TPdqZx2M3IDxqWNRaFDRuUe8Uyq/HSGpaJxR/w4GWnjC76kFQAhsR1bViGqMfwtfw=
+	t=1728529152; cv=none; b=fYvM2XvDZzScsDT0+qAM2mNtF3y3N38LZUpC7xaTn1P7vZLk7Bs6id5dqluKHBgc+YnwQUWDDfWdwzHawjkD5N9MrwmPA60L+ng9BJswG+Ibh+VsYPtr2MZC5xbUgmYe5aqZDv4v+a1JLRkJ2BBnQeLPvVvg1Me0Z23gej1byUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728529079; c=relaxed/simple;
-	bh=248BamQ+JWrADpqZT5LCu4RUjmYzIhnfxiDeD231yrg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=JF8pAM2Us8en4wPLKG2ZO7XaK96JoZ9YnZMErFGjvM7mO+B2Qqy6jfl+L4XqcQbNl9nLwhmJxomdrbGbu1hE+i9pLcF5v9b6ayv3vSRluO9XQO5NHMLhPR6hSABvM+bXucQLatx0wEHffyKzu6bODoPQCXsJJ01koiF6hXTPFys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AGUxMpIp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1bbC1030175;
-	Thu, 10 Oct 2024 02:57:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uyTNLAbVdvtf4O0AccyXTcW2zXG5Ga+7NNYYLRzfFB8=; b=AGUxMpIpqDf9nQZa
-	Ay8mDjn4HKNj5khBnhGpNFN82FjwRIPlC5b38HaOkpPbdjuB82/pLNtrZgRjIJk/
-	6+mlxz90KkFeMrtxIOgHu4+msgo+bHzOfE3ayXi+RLY0zbjfEl/R3aL9xaJCVMKo
-	66jgeKpRPzxDdNqSvWTc0C+TMR1aJ1Nb2RmsplcfI3raUkSbXy90CVjc4p40aPrI
-	Xeaip06nObU00drrEPnIbp2Ialck31MjbuKE0ZI1rhPGCRDnTo5l42wZ5SwlpeRq
-	onD68W+2ym0PhmFohr89y++npCaNayllHM9KSQzPLMpJzq0U+ztgmy81Q7O/WRXS
-	vtMftg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4258psvx63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 02:57:54 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A2vrqo006828
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 02:57:53 GMT
-Received: from yijiyang-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 19:57:49 -0700
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-Date: Thu, 10 Oct 2024 10:57:19 +0800
-Subject: [PATCH 5/5] arm64: dts: qcom: qcs8300-ride-r2: add new board file
+	s=arc-20240116; t=1728529152; c=relaxed/simple;
+	bh=6KcPaF+1W6KzpMYD4h2jaZLaTzqARo1nCL7ouwgqo0Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iX37dWvY3Kt9VIvK9OrzuFm9wDOpNh/8KJFmE09YTwHhfrO8aS68bJiSJ/zSDML304Jzb/7+f9StRLWsOK3tUEILKdvef9c44hh4WF2rZaiA2mp3WCptqFDu8RwS2KabrwgitUa2OLwb2BJ9Oef2+WKUTq8hGliZVAygAoo2Dsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KeOhi5Z/; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=SDA7Z
+	Yp2Z4hIwN64hp5hPfoNZvkXl2fYdBoL9D4Lwy8=; b=KeOhi5Z/9w9u9wV+j494u
+	Cb/EKv0t5a2vzErAYjcADhCSpwRzRT162RQxbzSYEGycLGlGV7Msz2sIcp2QmMcR
+	+FzkiVTCniaN5U3bcwY7emAEi3yTRE7E6WEiGMEI3EA+EPlO39plvC5fWr1BG9aO
+	gmiKHUTqQUsMC41kXm87c4=
+Received: from liubaolin-VMware-Virtual-Platform.localdomain (unknown [223.70.253.255])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3_y3wQgdnZpfDAA--.21796S2;
+	Thu, 10 Oct 2024 10:58:58 +0800 (CST)
+From: Baolin Liu <liubaolin12138@163.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz
+Cc: zhangshida@kylinos.cn,
+	longzhi@sangfor.com.cn,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: [PATCH v1] ext4: fix a assertion failure due to ungranted bh dirting
+Date: Thu, 10 Oct 2024 10:58:55 +0800
+Message-Id: <20241010025855.2632516-1-liubaolin12138@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241010-dts_qcs8300-v1-5-bf5acf05830b@quicinc.com>
-References: <20241010-dts_qcs8300-v1-0-bf5acf05830b@quicinc.com>
-In-Reply-To: <20241010-dts_qcs8300-v1-0-bf5acf05830b@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Richard Cochran
-	<richardcochran@gmail.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        Yijie Yang
-	<quic_yijiyang@quicinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728529047; l=2063;
- i=quic_yijiyang@quicinc.com; s=20240408; h=from:subject:message-id;
- bh=248BamQ+JWrADpqZT5LCu4RUjmYzIhnfxiDeD231yrg=;
- b=zwnDrJhL/cSo8pZ5NASyva96EyYM+s7/eJHYKjfCWFwAG0ThxIwPn4GwGGmM/Gi9+TSoTOZsw
- 499y/5zNGGPBD0CcglaWZH2caoLNm39zMqZhe0vgyUhn/JeG+edo+tr
-X-Developer-Key: i=quic_yijiyang@quicinc.com; a=ed25519;
- pk=XvMv0rxjrXLYFdBXoFjTdOdAwDT5SPbQ5uAKGESDihk=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XQYovE7IZXUbWHcvVcgyoJjcSqFnUraM
-X-Proofpoint-ORIG-GUID: XQYovE7IZXUbWHcvVcgyoJjcSqFnUraM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 mlxscore=0 bulkscore=0 impostorscore=0 clxscore=1015
- suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100018
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_y3wQgdnZpfDAA--.21796S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF45Jr48uF1fKryrWw13twb_yoW5Gr48pr
+	9xKr93KrWjqry2gFZ3KF47ZF1UWa48GrW7GFWfGry5Za45GFnFgFyjqr1DJF1qkrWxAw1r
+	XFW8Aryak3WjyrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joAp5UUUUU=
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiMRB0ymcHPNfEFQAAsF
 
-Revision 2 of the qcs8300-ride board uses a different PHY for the two
-ethernet ports and supports 2.5G speed. Create a new file for the board
-reflecting the changes.
+From: Baolin Liu <liubaolin@kylinos.cn>
 
-Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+Since the merge of commit 3910b513fcdf ("ext4: persist the new uptodate
+buffers in ext4_journalled_zero_new_buffers"), a new assertion failure
+occurred under a old kernel(ext3, data=journal, pagesize=64k) with
+corresponding ported patches:
+================================================================
+Call trace:
+  __ext4_handle_dirty_metadata+0x320/0x7e8
+  write_end_fn+0x78/0x178
+  ext4_journalled_zero_new_buffers+0xd0/0x2c8
+  ext4_block_write_begin+0x850/0xc00
+  ext4_write_begin+0x334/0xc68
+  generic_perform_write+0x1a4/0x380
+  ext4_buffered_write_iter+0x180/0x370
+  ext4_file_write_iter+0x194/0xfc0
+  new_sync_write+0x338/0x4b8
+  __vfs_write+0xc4/0xe8
+  vfs_write+0x12c/0x3d0
+  ksys_write+0xf4/0x230
+  sys_write+0x34/0x48
+  el0_svc_naked+0x44/0x48
+================================================================
+
+which was caused by bh dirting without calling
+do_journal_get_write_access().
+
+In the loop for all bhs of a page in ext4_block_write_begin(),
+when a err occurred, it will jump out of loop.
+But that will leaves some bhs being processed and some not,
+which will lead to the asserion failure in calling write_end_fn().
+
+To fixed that, get write access for the rest unprocessed bhs, just
+as what write_end_fn do.
+
+Fixes: 3910b513fcdf ("ext4: persist the new uptodate buffers in ext4_journalled_zero_new_buffers")
+Reported-and-tested-by: Zhi Long <longzhi@sangfor.com.cn>
+Suggested-by: Shida Zhang <zhangshida@kylinos.cn>
+Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
 ---
- arch/arm64/boot/dts/qcom/Makefile            |  1 +
- arch/arm64/boot/dts/qcom/qcs8300-ride-r2.dts | 33 ++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+ fs/ext4/inode.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index b69be54829ea..65c69f30e0b5 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -112,6 +112,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride-r2.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride-r2.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride-r2.dts
-new file mode 100644
-index 000000000000..e8bf4668b70e
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride-r2.dts
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 54bdd4884fe6..a72f951288e4 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1102,9 +1102,24 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+ 			err = -EIO;
+ 	}
+ 	if (unlikely(err)) {
+-		if (should_journal_data)
++		if (should_journal_data) {
++			if (bh != head || !block_start) {
++				do {
++					block_end = block_start + bh->b_size;
 +
-+/dts-v1/;
++					if (buffer_new(bh))
++						if (block_end > from && block_start < to)
++							do_journal_get_write_access(handle,
++										    inode, bh);
 +
-+#include "qcs8300-ride.dtsi"
-+/ {
-+	model = "Qualcomm Technologies, Inc. QCS8300 Ride Rev2";
-+	compatible = "qcom,qcs8300-ride-r2", "qcom,qcs8300";
-+	chassis-type = "embedded";
-+};
++					block_start = block_end;
++					bh = bh->b_this_page;
++				} while (bh != head);
++			}
 +
-+&ethernet0 {
-+	phy-mode = "2500base-x";
-+};
-+
-+&mdio {
-+	compatible = "snps,dwmac-mdio";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	sgmii_phy0: phy@8 {
-+		compatible = "ethernet-phy-id31c3.1c33";
-+		reg = <0x8>;
-+		device_type = "ethernet-phy";
-+		interrupts-extended = <&tlmm 4 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <11000>;
-+		reset-deassert-us = <70000>;
-+	};
-+};
-
+ 			ext4_journalled_zero_new_buffers(handle, inode, folio,
+ 							 from, to);
++		}
+ 		else
+ 			folio_zero_new_buffers(folio, from, to);
+ 	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
 -- 
-2.34.1
+2.39.2
 
 
