@@ -1,145 +1,186 @@
-Return-Path: <linux-kernel+bounces-358489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D046997FF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706C3997FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5081C24078
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29BAB28257B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6023204944;
-	Thu, 10 Oct 2024 08:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BD9206041;
+	Thu, 10 Oct 2024 08:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smfaReOH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V06FKKLf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1087A28F1;
-	Thu, 10 Oct 2024 08:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F23828F1
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728547414; cv=none; b=CDDs7Rb2BP+4dU05258bVp7LWE44xzdFJEPt5Mgk34hqIAajjH/DO3VbXcqMgWKWs5pLT0kZfi3d7B60x0h/Sl53Qx3G/Ho+NBK0uLblH9JHjJXoYcJctCd3f/J5x6s4QoTi9w2gvD8zWVkGV4AAHi0b/pHqadSofkxFz7A91PA=
+	t=1728547420; cv=none; b=eyLoaD+C59ZfG8gDMjX4xd1JDEHmQrDHp/wU49vjwmuv2pPXukRE9zqlA5IuB46FVaIGP8BFKxVlSv7kPT78XZ7QWpvrS5UWBbHfj3Tti9tx2CdNGBoQLXqz0+LaLUH57A/n38G1+BG5+MXZsZ0Q+fRyKxR2DvhYcsaHU9J52Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728547414; c=relaxed/simple;
-	bh=rjfKk6/QYrRyVSayAlToLVMphmXCkVpLEhaPG9+49x8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tPP20dOtlUmU6PzrEz+XuDagVZsP652TDc6nM4AwReReS9UVNx0XNSNA3RpRxd7Zxs6G8coGMkWDBTC6NYMxxQPGUf1z8b5AKhp5eY51nSuVY/Uw1P3A1TvDZb9Dd3/w58j0oR4ia5iW8XBEo0+fKCZH7R83nZVBb+LG9bw7+u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smfaReOH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4FACC4CEC5;
-	Thu, 10 Oct 2024 08:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728547413;
-	bh=rjfKk6/QYrRyVSayAlToLVMphmXCkVpLEhaPG9+49x8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=smfaReOHsOVU7qKCrJ2Lgwo++Udq/GzHyoXI0fraGafgEPn9cpb0t2WBZzyJeTREa
-	 AciG3G/JY6BHLVcLQfvwzlhKXnTR6C1zzZBEmy3KU1cIAuy3v04zY02yftmlpl5Fdg
-	 NN6ZE04pdBEsV9VNTtbAoXzz/PZvsZDSuxLs+t8C4gK/vIQRyrVsVngaIJHFI80yTr
-	 ftLRnJyhFsGet6ehm9hr0lmdagfYHDpPBTFw2DkPAMsQkueYh4jUozPbHWyE7wrRrn
-	 VJ6GkU52tZOmqCFpC83X2EePIMvQuHe2el+InZfW3j9q62EodeN44iE8kReJIC9xbB
-	 eJmiNzXmah+jg==
-Message-ID: <29ff8cda-3a4d-4605-8441-5db4e7c59894@kernel.org>
-Date: Thu, 10 Oct 2024 10:03:26 +0200
+	s=arc-20240116; t=1728547420; c=relaxed/simple;
+	bh=o6Yj13wTDdGSHGjmO/sKiO7EHFlnxmZYRbSplb6dOKU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BjjpmO9LKGolH1biwp11JhDLMosJeqrH74rI2Enk4+PT73rpUu3UzOJJFwBCWvOTUEx9dn4k7fcO0R7d4YzCMIWRJRG8uOEo0AX4SJUXenwnkYFmObl/Oo/qlDOnnS+5FzK+C4ZrEeQSVWfJqFyFpUBOO1Ydpz5YpPq9acFXhyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V06FKKLf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728547417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o6Yj13wTDdGSHGjmO/sKiO7EHFlnxmZYRbSplb6dOKU=;
+	b=V06FKKLfh0wVRwXh6q3qYbDOJy1yw1gBc25JvhXojdGKCAAHID1eZ2jFf2ywG6QG1uVOdr
+	pAU5TqOQP7mEMjFM5kAUUvGNGARDKo9TAEZmKgMBAczuG+L2N4YdRHgM+MBjfmscTOLh6h
+	31Id8eGeGgcmBRZKB467dY5eDyi9rbg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-421-8FewhZCqOx2okBiIx0PCfw-1; Thu, 10 Oct 2024 04:03:36 -0400
+X-MC-Unique: 8FewhZCqOx2okBiIx0PCfw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d4922d8c7so182289f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:03:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728547415; x=1729152215;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o6Yj13wTDdGSHGjmO/sKiO7EHFlnxmZYRbSplb6dOKU=;
+        b=gcpBOtFyf9aeFCIJPEJubZSpHydK5ah3Lxpi9p0Os0LBhTywiIAa3XRPxrgJHxtmhk
+         2a36dZCSRCgiE8oQxAu6vu2o9STPct6HyyjmxfL8nj1A4628CaKO/+h6wqNniOMlmTJ7
+         fi6bSg7jK6/ak648+hM4pIh1jiQ0VUJS2vQmylmyy5HcazyUgGKghKs5x4tAPpAD0EQZ
+         px7DAutqtJn/O4NhIm6dsEem3bQ8kz4/wxTBdtrup89Q5aLHejoJVxqy2ppCB7c6bTWm
+         asVMrXD6w7Kfcb4Y6yLMaA4r9znS6ldFlen4OcNPTPLjSNHBJsAqn/zsNJBu7xethFKx
+         C7gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhaiuGSGWBtgGb6EkHXMohW9X8S2szXZJRALIKjIhzlBS+1kif7i8nKh9Vwu8FhSFdDFFz0nZ220bscUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEaljNntAmYkOmxE3z5plUIIxoim5y0vDH0LjJB5TYBj74lz7g
+	zmp94pQWw/u28XKTYHfY9ODKz7FTtwCesUd26XUiRsi2K7sO4ayheKnbsydYpDpDIit15aIeaF2
+	DGHUVUmqMS4TyRqSZ9H1Dc2MbTkLaxXo9T9Q0yP23B9ejkIjF1CrElljgB+Z4nQ==
+X-Received: by 2002:adf:f3c7:0:b0:37c:d299:b5f0 with SMTP id ffacd0b85a97d-37d3ab44f04mr2752550f8f.59.1728547414821;
+        Thu, 10 Oct 2024 01:03:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCPZ/N+8I6yvkHpm2WH4x1aWbcKYPe3oMumoEtWLk5b9nz8TmEseUc5OhVu0HO7+xCgvRnQw==
+X-Received: by 2002:adf:f3c7:0:b0:37c:d299:b5f0 with SMTP id ffacd0b85a97d-37d3ab44f04mr2752523f8f.59.1728547414296;
+        Thu, 10 Oct 2024 01:03:34 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7edecasm776544f8f.97.2024.10.10.01.03.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 01:03:33 -0700 (PDT)
+Message-ID: <b57dbf0c83125d58e4e2b488b5b5f71410fd8d6a.camel@redhat.com>
+Subject: Re: [RFC PATCH 10/13] staging: rts5280: Use always-managed version
+ of pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj Natikar
+ <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
+ Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Alex Dubov
+ <oakad@yahoo.com>,  Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>,  Rasesh Mody <rmody@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>, 
+ Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
+ Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
+ <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
+ Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi
+ Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+ Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Eric Auger
+ <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
+ =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
+ <kai.vehmanen@linux.intel.com>,  Peter Ujfalusi
+ <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
+ Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-input@vger.kernel.org,
+ netdev@vger.kernel.org,  linux-wireless@vger.kernel.org,
+ ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+ linux-staging@lists.linux.dev, kvm@vger.kernel.org, 
+ xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Date: Thu, 10 Oct 2024 10:03:30 +0200
+In-Reply-To: <411f3c94-58b5-471e-bc58-e23d89d2078f@gmail.com>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+	 <20241009083519.10088-11-pstanner@redhat.com>
+	 <2024100936-brunette-flannels-0d82@gregkh>
+	 <411f3c94-58b5-471e-bc58-e23d89d2078f@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: cache: qcom,llcc: Document the QCS615
- LLCC
-To: Song Xue <quic_songxue@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241010-add_llcc_support_for_qcs615-v2-0-044432450a75@quicinc.com>
- <20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 10/10/2024 08:38, Song Xue wrote:
-> Document the LLCC on the QCS615 platform.
-> 
-> The QCS615 platform has LLCC as the system cache controller. It
-> includes 1 LLCC instance and 1 broadcast interface.
-> 
-> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+On Wed, 2024-10-09 at 21:41 +0200, Philipp Hortmann wrote:
+> On 10/9/24 11:38, Greg Kroah-Hartman wrote:
+> > On Wed, Oct 09, 2024 at 10:35:16AM +0200, Philipp Stanner wrote:
+> > > pci_intx() is a hybrid function which can sometimes be managed
+> > > through
+> > > devres. To remove this hybrid nature from pci_intx(), it is
+> > > necessary to
+> > > port users to either an always-managed or a never-managed
+> > > version.
+> > >=20
+> > > rts5208 enables its PCI-Device with pcim_enable_device(). Thus,
+> > > it needs the
+> > > always-managed version.
+> > >=20
+> > > Replace pci_intx() with pcim_intx().
+> > >=20
+> > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > > ---
+> > > =C2=A0 drivers/staging/rts5208/rtsx.c | 2 +-
+> > > =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >=20
+>=20
+> Hi Philipp,
+>=20
+> this driver (rts5208) will be removed soon - patch is send in.
+>=20
+> Discussion about removal:
+> https://lore.kernel.org/linux-staging/2024100943-shank-washed-a765@gregkh=
+/T/#t
 
-<form letter>
-This is a friendly reminder during the review process.
 
-It looks like you received a tag and forgot to add it.
+Alright, thx for the heads up.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+I'm not entirely how best to deal with that, though. I could drop this
+patch, but then the driver would end up with an unmanaged pci_intx().
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+Might this be a problem for users if my series lands sooner than the
+removal, say in v6.13 and your removal in v6.14?
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+P.
 
-Your internal guideline tells you this, so please read it before posting
-any further patches.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+>=20
+> Thanks for your support.
+>=20
+> Bye Philipp
+>=20
 
 
