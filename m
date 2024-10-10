@@ -1,196 +1,136 @@
-Return-Path: <linux-kernel+bounces-358327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937D8997D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:29:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62FE997D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50FD1C220FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84EAF285CE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B85A1A2653;
-	Thu, 10 Oct 2024 06:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21911A0737;
+	Thu, 10 Oct 2024 06:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a/Hp2Lrd"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2050.outbound.protection.outlook.com [40.107.243.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJbFZmbd"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3708F1A2540;
-	Thu, 10 Oct 2024 06:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728541733; cv=fail; b=BlniQ+Tp/9v8rUzwDvq89FrKd9SolUINkmNMZ1JVx3tMN0/1m/PWAjPQa4VhAfOPuzu9Ni04I6Dcl8T2dyrEZ28p7urOycg5UPZAWo4tSg2QrXx7ZW8DQY6NEpGmDO2ReP0deT/uUREww5FIElMjgIOWSNNt2+29FBxfXYyoVVU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728541733; c=relaxed/simple;
-	bh=BAvpIKpdtM91Qk62oLrCe02fPjDvric6dIGQH79zbU0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OI1nNxgu8j87Q8BOw21bq+Jk8YqBNjlWaT2MyOZ3fmJLc2/ddcQ/uEWo/Bzj8G/aHVjdewYu4G5foIAqcGOgGyvvCB1anS+EEYUGfAK/H0sz8dWqZ1xg6yvJkkK8vXKMaQYN0OGp6U2KmDCLahv+CR5EOhmhhALqNcTRewd9ooo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a/Hp2Lrd; arc=fail smtp.client-ip=40.107.243.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gRxm9wLPVjLhJ0PDny/zOCY3ycmy5aDKDtuWYpbaM66Ht+xuYWZpK1byqlYkYGPDRHQi68Tvn1Z/M3jGtyQQzx/nsto6b2ouzbU1sKEgWa34irhNeQaE0mpt5ERiTRA7gsBZFHYwR+nXsw4HjiTMhfcc9xldq/2a4SMLQxtgfCPXJ9u2oaqZSjeY/OMiRYFk822V5RDk8Rti/c9MG1qtql5F9vAC0OkMgkjHbjZTP1xl4R1gGhemyjry938JgRAmNaBFtYrn8QIl8OBAW+f2PEKxpeFEXHfIE4LKWmTdODcpNAy+T3F6XNtD//ayb4OfTUvir/RAffl1+mvab3Ckmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NYg9uxWfGPLLGx3EWchcjJlcZ2C1TxfyIEMvFX9J5zM=;
- b=xPQtqfXc579HyOcxTVm9nF8pjPRxnnuI5lQ3sFR3lyiJXvTnWANOs5YN5qonGbLYIZawKKp06VhOsIi3VwZWWOK1Djcuac+KfUA0Nt8fgjeyTkNJX0eUfSlkwF564QdA9DTpOFRfR0B2gv/sYLVF2JDDvSGS8tVPIpzYeM/HMShxLabORKa3kmwo+AUrwAAp2LoSaH+tV762RaT6HaqVHajpflrCq+/gPZUJvxmTSCQ+2NsoHSxnn8q6LmbCkYjKKDWNjJNy8+fztIgJtPJVALIZpfagQMnIKD/di7njRaQPKFFa0TZKaj0W6g0VVkhy1+6DAW23zuNEn62zhgEsDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NYg9uxWfGPLLGx3EWchcjJlcZ2C1TxfyIEMvFX9J5zM=;
- b=a/Hp2Lrd45WQUuLDlywteXqqggSRos/ltqyOG/pBE+5flQ/1Er/yYW0ncOxOKcZNcFyt/xv3p6Z0GQ1eUWmrLhmmwOpIjBXRrDaAU/fzlXgQ4j2qXXKoDWKF+uRlLI7GOTQ7a8Xjn/hMtcsSUXaGACkEFMwiJ6En7UDVrRJ7Fu4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- DM6PR12MB4042.namprd12.prod.outlook.com (2603:10b6:5:215::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.18; Thu, 10 Oct 2024 06:28:49 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%4]) with mapi id 15.20.8026.020; Thu, 10 Oct 2024
- 06:28:49 +0000
-Message-ID: <ec1630ad-a75c-7164-49fd-9dcea3d1bc68@amd.com>
-Date: Thu, 10 Oct 2024 11:58:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v12 00/19] Add Secure TSC support for SNP guests
-To: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241009092850.197575-1-nikunj@amd.com>
- <52279d55-11bf-490f-b3c7-69e6fe246c9d@intel.com>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <52279d55-11bf-490f-b3c7-69e6fe246c9d@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN0PR01CA0054.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:49::15) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B2233CD2
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728541729; cv=none; b=gxremnCgYenAKlMDQIuOSpxw+8t8FIJ0TOOwNhE2OX3dyEW/KVSzsKQXJONM6aQHz4kyGFQB/6Lca3m1eNUsefX1ZIDXKxdaV9Yb65noqpmSSZF55qYiO+VHAvIij1Kw0nxJpaPj7poURadqhLFInITj43/Dr+TrnCgm8dCRBsE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728541729; c=relaxed/simple;
+	bh=Ud6a0AcXSkNN5SehkfF9Thgf/ouNbtxcshiTNmNn82o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nl/qG5OKFBh9b74WkZrwv/NqtHoHdstUixUDKC0ue/k8573qLhN14Fuvr//HB8yxYIM6qw54NUmRWIQuCVUfbgiBYSgASGg1mRbePm0fdp/78K0grL5EceqiVbP1lvsJ8uPD7rs6hTisdcBOTRfHVv7pYKBWC0GTkMdmuKSUeZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJbFZmbd; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9951fba3b4so91212166b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728541726; x=1729146526; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vQIRk9er/7JER8ZB4cm93/qw+JSPkCedJXj2bvL9sTE=;
+        b=MJbFZmbdFovUEakN3pKtLuyxT+/CyuOYisnZL4fEWbzWfRij1hHc7OzqUNyZ9a2iSn
+         naDkcEGujlhOviVogT5g70WbaPBpD4gcY8qLH9v/GaJUUOFHyP4bqFfthHHLNjIjQNri
+         YIwoftWmNs38vNq/Wc/lmGB12J4xQygooXPCoJ9mDfAsMYp+kWUAadFC7KQfSoVI0tPz
+         AO1VOcs1bWwHlIurTkg/WetHfgKMeDo2kPojv39OTGYje0/Zhn1A2OFqNRxJzpuNsOru
+         fnr02LYxBSMyLccs04ZXPAWdppSkekKNa3FMLe4JQiob/EfP4vecIFhpCj8KF0ykb7Fn
+         TXew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728541726; x=1729146526;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=vQIRk9er/7JER8ZB4cm93/qw+JSPkCedJXj2bvL9sTE=;
+        b=qKd1wqcJy9vGfH74X1PtKoOCWhtq4syZDYo6BeB8llbJul+a9yi4v2918NJe3TNzBU
+         8vv2CzFAQ/tZaWDZKQMuCTMSsnxVBE6nGm6hHDxUekOjZXZxENEgtlwwRvPn3KMycwrn
+         xfBuxUVPjnwACv0Ryj2DJquO1HfkdtDNcrGlXK3A+7UQVZHKGLniAZmxx8eDLnu3pVOc
+         RrGqQ396EgNETOkmWw7fdMfM2LVXA5DbpsG21dsLFYznW2hYIyPVRbuBFbXOWfWnXK1D
+         rEatJzmHS3vWlGSSAWAxy9VcpTuzJyFp5uZu9Rs0FkbuF6rTP7H+9BY7MwaTFmKGoEXP
+         Yj3A==
+X-Gm-Message-State: AOJu0Yz5fX+TcDTCWlu85pbY3sME5KpGa5kV+rxHMMsR/3w3B0u/uxn2
+	Pvlv54UxJ67e7H5R/bMVmu3fac5fVUaa0lpT0YC3Os0LuiEGp6QB
+X-Google-Smtp-Source: AGHT+IFMuVT3IEB1d/RlM1JoMKQlmjt2MB8ypTxZGTx0a7hamvKO0j6NZYswS1fnDDP3LOo01bemkw==
+X-Received: by 2002:a17:907:94d4:b0:a8d:250a:52b2 with SMTP id a640c23a62f3a-a998d114bbemr388572366b.6.1728541725498;
+        Wed, 09 Oct 2024 23:28:45 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f21f5sm39299266b.202.2024.10.09.23.28.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Oct 2024 23:28:44 -0700 (PDT)
+Date: Thu, 10 Oct 2024 06:28:44 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+	linux-mm@kvack.org, akpm@linux-foundation.org,
+	liam.howlett@oracle.com, willy@infradead.org,
+	richard.weiyang@gmail.com
+Subject: Re: [PATCH] maple_tree: remove conditionals to detect wr_node_store
+Message-ID: <20241010062844.vf4pyrd6isfddwo4@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20241009152007.2096-1-sidhartha.kumar@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|DM6PR12MB4042:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f608426-5a32-4dea-c2b6-08dce8f4cd53
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WTVZZkNMbDFQWHFzZUF1UjNieFZWaVQxQWVhSThIYnIrQ2M4UDczTjEyeXlL?=
- =?utf-8?B?bXFkQWhqOGwrbEpXN2dLVzVYSFVzOW5Pek8wSHlYQmxSZGxiRGRCZXZJeUx5?=
- =?utf-8?B?YXh0VXVWbU1WOHNVNDR4c21MdU5UM3FJaHA5UVcvYzQrRkVqeGR1Tkx2ZGM1?=
- =?utf-8?B?VHRjN2s5V1BsVFdyMElXeVp6aXVjWXBlTUYyeWU4dHR3RkNOOXR6Rmd6QnR2?=
- =?utf-8?B?RFA5MXpUR3hZRi9LZk9zZllrcFFvbytvWjFwYnZtWHFHRzBNTTEzemR0anV4?=
- =?utf-8?B?Rk5tMjJraUt5SlRHcmoxbVVsdWdVVjVoR3hVWWR1ZFVzTVlDSklySlRibUVL?=
- =?utf-8?B?YWxweUZTRGhQS3BqUVUxSURjdlFsZDhZR20vRWFJek1FYWh1WnI3U2FsM2Nh?=
- =?utf-8?B?YytYaVU3WHdDRVBCZFJkM2Q5Y2dIaHFBTHFmQVI1Q1NDVDhDNzRmYzdVaHY2?=
- =?utf-8?B?MWZ6Y0p3T3lrdUxJVStnSTlheVVJNDNHZFZHSWJ6c3k5MXhuNHBEakZnYTBJ?=
- =?utf-8?B?NDVjOTlVakR5UUhYVjMwbWZpTkxreFFFT2R3eEVaajJRc2xvK29PeGFnemQw?=
- =?utf-8?B?MEl5V3BycTJyNG1Oc0VjRmZPcVdoZFFTS0F3WDdxWno3QlV5QkEzaVlMcGo5?=
- =?utf-8?B?ekRqNHNNTEx5Ymhpdkl6SmxDdEpOQmxRczN0RVE5QmtLbXIvWlYyL0RRTGxl?=
- =?utf-8?B?ZUd5SFVOVy9oSkdVOWhDWE5tNXpGaS9USnJvTG5HbVJJWjVhOFB2UStTdlJE?=
- =?utf-8?B?eGlxV1V0aldJYm8zOEQzbUNJZWFYdlkyellqcU9GVjBZN01aSExoOFFsUDVJ?=
- =?utf-8?B?c1MzTmFYK1lINDRZVlRmQUpXVDRDUmxoK1VjTTNJTU1PVWxwUjFIUzB5SFlV?=
- =?utf-8?B?WXBYbGFvTDA4ajVuS1I3UmYzbWZGWDRiWXljbnJqWlYrSGVvcmt3em83RWVE?=
- =?utf-8?B?eHJZT2d1eEhQaGNwVFRscUl2c3JNak9HNzdPeDhhQ0hiN3kxRTAyVjZ6VUsy?=
- =?utf-8?B?YkYrQUYzdWZkZnNLbHkxZWZaL0NBMUh4VVpid2JpTG1XSWRJNGFZS3Q3K2pU?=
- =?utf-8?B?MXVmd1pDRVR1VjExMnFzcG83di81cUk0dnVpaVF1bTBadmhVWG83T1RZWFZI?=
- =?utf-8?B?M0p3dWo0dGhobFlhSG81a2ErdTdLc2hyRTFyZVcvNUxrSk9uMDgvYUF3OTAr?=
- =?utf-8?B?bU9zamJKcUpjVWhxNmhsVkRSU0c4NjhWY1FsWGFlemt0b3dpS210S2FJcXoz?=
- =?utf-8?B?b1BINU8zNit6RXpUdzNxQ3NFYU9pTk1aWnRPTTJWRENkdytFSHc5ZzdCVkJi?=
- =?utf-8?B?SFVIc3FqOFh3UWJOaVBud1kwNWllaHhoTjJXSlYvUHJsMG54d1pubUFwTXc0?=
- =?utf-8?B?bXJVbHBodzk1WVVwNWpDZkVtS1JvVmtOckQrdmVWRVhtN2V5Q2RDaDhJc1N2?=
- =?utf-8?B?c3VxS1ZvQnY0YTh2c21HdVFRVFAzQWhSVUdLYjAwREdnTUNuaGdrcFZYVE5S?=
- =?utf-8?B?RWtjMzBZNUsxNHdocVBwbkFOeFg1NnBxSERWYlFaeU5IMkt3N1dOZXFSdmxy?=
- =?utf-8?B?Wit5ZGh6QWpJOFdvUjhES1lLcExNY0NFenlGMjVtZGdSYThPVWZxVGNzdVJv?=
- =?utf-8?B?RVdqb3FhTWFlTlgrR2VhL1pBbG5JbThDSUFwRHFaektnVjdQa012LzNVSktZ?=
- =?utf-8?B?QlZ6SW1nVVJQdTFQMWlNV3RIdU54bXRhcGVBMFI5S2s2L25JSDNIYTRnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aWcwTVBnR20vVGt5dGxLWUdrNERCZ2JGaXM2QnZWbkdIbUIvNk9vL3pTY0Er?=
- =?utf-8?B?M1dBRWRZZmhPK1hNWEF5cm9LUDM0UVZ2QTlBYU9xNSs1bGtWSmpjaFdYVTV5?=
- =?utf-8?B?TCtnN2ZqamdzU0o5RWVBenh3bnpyODUxZ3dXdXk2UzhhamZzRjlZKyt5RitH?=
- =?utf-8?B?a3N5KzBaMXpPb2tpbWQ4RnVpQ3FSejFPSlRpWkFlTnR0bGorR0hVMnNmZjRy?=
- =?utf-8?B?d0h6dGtUVlVVRFJJQjg2QXlVK1ZBUkdGS3QvdWpFUUV0cE1rRFcyWHhhcGYw?=
- =?utf-8?B?UTEzRkx1alQrMklRNDM1ZW5CK1NQcU1aNURMVkJ4K3NhdnJDenBqR2ZCeFFq?=
- =?utf-8?B?YWRYTEthZVFIS05zVTlRZklWV0F6NndreEJyd3pDR3luVUczUEwzNmloNFc5?=
- =?utf-8?B?QjJFekZBSmVpMVhYdWhTakJOOTZzWFlHU2FuTExIODk3MEZ6MjFVT0luc2J1?=
- =?utf-8?B?YmM1SVVGeHBVN1F0bXkxSE0rdkRVR1I1ZThtRExFalRWNzR2WEpwVlhvbmpz?=
- =?utf-8?B?NDFMSnVHY0xCSEM3THh6THV2MGxtdm5Cbk9OSFAzU1ZYS3haVS9iTFdNR1p5?=
- =?utf-8?B?SWVSS3Vhd0tqMWpkT1BZb1BXbTBBZEt1Q0Z6TjAxVVU4OGU2UXM0SDFrZGlT?=
- =?utf-8?B?TmZnY0YzcURiVVdKN3VrMG5IOVRmNG1xeFpUdlFiS25uc0xnMmludkxGYVhp?=
- =?utf-8?B?Z0xlNFE2TGtxUy9pdmtmLzAzQnhKWUVSdWl0R0FQSjZVNFFQaXhYL0Y4WGdX?=
- =?utf-8?B?QTlwcElVend3SGVsZzM4UXpCZUNZc0hXV0ROSktNdkJKR2VLNk40dllaTUVm?=
- =?utf-8?B?WUpNM2lMeU00cWVrWEtML2EvN3hCbnlDT0ZENFJFeGcrMzloVDZQNWlGWDND?=
- =?utf-8?B?bXd0SjZ1TjFIUC9OZzdMc0IrUHhoRFRuUU04ajU0ZXRBYjN6ejRGMmQ5YnVJ?=
- =?utf-8?B?RUNXcFcvMlZOa0RDWkFiSW5IdlNTNkpYbXo3OWVYcXZJRXhiKzI5aXdyNmt6?=
- =?utf-8?B?aVNBbkNMMUhrTFNYK1FaK094TnFlWlF3bTg0Nm5HUCtqOUJtbDBYVUVjWnhv?=
- =?utf-8?B?ekRMWEhISHozU0puNUFZZzk5Y1RyK2RyTUN1aUZoK2V0OHVNcVdOdUNZdU1r?=
- =?utf-8?B?dXN1Vy9CN2s1RTNiMnRxZHFCNURyZ2dJQjhieEt2b2g2c0VGQW4rdnlSSEIy?=
- =?utf-8?B?SzZpSWVsOVkySy9UOWY1UThPamMwcDhTUjJ6NFZ3bVp5cFh5QXN0NFBmOXpu?=
- =?utf-8?B?MXZpM2hlTll0a3NYa0l5UndKdzZDczF6T24zakdpMUF5MDZPMGppYW45M3Z3?=
- =?utf-8?B?cnlBeWNBcExvSENuSWVHejRiSHB3WktVS0I1MjNZWFhxcUpvQW5pT2IrT0Rh?=
- =?utf-8?B?SGJUZGhBTkZ3enNGQVpHMWdTWis4a2pLcC9nMmtyWWc1L1BtamRoK3RDdEVU?=
- =?utf-8?B?aU1UNTdoR3RQWlFSNzJYd2RpeWxSTUp6VVRxUTgrVkMwTm16Y2tmZVR6a05F?=
- =?utf-8?B?T0xBOC8vZ25mVVkxUlY1bEhLNGk1dHdiZjVGRmRIUUJ6eHd5WXV3OC91NHpr?=
- =?utf-8?B?Zm9zdEFDSDhIOVVteW4zYTJLYmdBRnh3OCs0REFoYStDb3B5K3ZqRVVIYjBJ?=
- =?utf-8?B?UFJLWVhHNlJzUlVTRmFCZTRTU2FPU2FVU0Rpc0oyTTAvZDBOM3RPc3pkMU1x?=
- =?utf-8?B?SE1SeXNhWnJaRVVVYWhlTngwVWIzTFJPUERwcWp0MUZISVV1elFFbE9QOXZI?=
- =?utf-8?B?UlRyTkpvS2MvMVdOZ0Z5WVR6U3h5TVJNQVVPakx4UU1XNDJLZUNFZHNWdGdW?=
- =?utf-8?B?M2xES0gvVENwYTNlY091SWhFQm5aMnhDSnNoeU1CTlJITEJRK1JSd0FqTDgr?=
- =?utf-8?B?L2Y3dXR6ZGdTcTFEaXh6Q2hJdjMyeFlnUmc2ald6THNRVkpXUFFWK2RtMUJz?=
- =?utf-8?B?Wi95UXVLYVJaWGJiNHZXeFYzWlE4d2NTd3pvalNkbElkRmlJcFMzMEFVWllP?=
- =?utf-8?B?MTc3dWxSbXZWdVpySHJoeWc0NnJvVjlkMHZPTmFETnN1ZllMWmlvWTZFMmJG?=
- =?utf-8?B?L3NDWm44a0g0WmUrSkthWmVsLzJOYmhROXpZNVZvZ3EySHdDQVdMV0RNcmx2?=
- =?utf-8?Q?l8NcmQ2Y4Wl74JxNg9bBPptQb?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f608426-5a32-4dea-c2b6-08dce8f4cd53
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 06:28:49.7709
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yW5W+k9iwJk+lwAOWMTNNJPkXq8MTISXR09hkUFwH5MrfllcdjqYfxhA8r0mbXDqLrvQNhTpruYPmk7/gLxDpg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4042
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009152007.2096-1-sidhartha.kumar@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-
-
-On 10/9/2024 9:38 PM, Dave Hansen wrote:
-> On 10/9/24 02:28, Nikunj A Dadhania wrote:
->> Secure TSC allows guests to securely use RDTSC/RDTSCP instructions as the
->> parameters being used cannot be changed by hypervisor once the guest is
->> launched. More details in the AMD64 APM Vol 2, Section "Secure TSC".
->>
->> In order to enable secure TSC, SEV-SNP guests need to send a TSC_INFO guest
->> message before the APs are booted.
+On Wed, Oct 09, 2024 at 11:20:07AM -0400, Sidhartha Kumar wrote:
+>From: Sidhartha <sidhartha.kumar@oracle.com>
+>
+>In mas_wr_store_type(), we check if new_end < mt_slots[wr_mas->type]. If
+>this check fails, we know that ,after this, new_end is >= mt_min_slots.
+>Checking this again when we detect a wr_node_store later in the function
+>is reduntant. Because this check is part of an OR statement, the statement
+>will always evaluate to true, therefore we can just get rid of it.
+>
+>Suggested-by; Wei Yang <richard.weiyang@gmail.com>
+>Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+>---
+> lib/maple_tree.c | 9 +--------
+> 1 file changed, 1 insertion(+), 8 deletions(-)
+>
+>diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+>index 4b423330d83c..f5a12d37b352 100644
+>--- a/lib/maple_tree.c
+>+++ b/lib/maple_tree.c
+>@@ -4252,14 +4252,7 @@ static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
+> 		return;
+> 	}
 > 
-> Superficially, this seems kinda silly.  If you ask someone, do you want
-> more security or less, they usually say "more".
+>-	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
+>-		(mas->mas_flags & MA_STATE_BULK)) {
+>-		mas->store_type = wr_node_store;
+>-		return;
+>-	}
+>-
+>-	mas->store_type = wr_invalid;
+>-	MAS_WARN_ON(mas, 1);
 
-All SNP features are opt-in by default. The option is left to the VMM.
-It is similar to having a legacy vs secure VM, the option is left to
-the user.
- 
-> Why do guests need to turn this on instead of just always having a
-> secure TSC?  There must be _some_ compromise, either backward
-> compatibility or performance or...
+If my understanding is correct, here is the only place we assign wr_invalid.
 
-Secure TSC has been there since the introduction of Milan when SEV-SNP was
-introduced. It wasnt enabled in the kernel yet.
+So maybe we can remove this definition?
 
-Regards
-Nikunj 
+>+	mas->store_type = wr_node_store;
+> }
+> 
+> /**
+>-- 
+>2.43.0
+
+-- 
+Wei Yang
+Help you, Help me
 
