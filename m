@@ -1,224 +1,343 @@
-Return-Path: <linux-kernel+bounces-358815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2225F998435
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB101998437
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D341C20B47
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730651F25270
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8171C2300;
-	Thu, 10 Oct 2024 10:52:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F3F1BDAA0;
-	Thu, 10 Oct 2024 10:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170421C1AD9;
+	Thu, 10 Oct 2024 10:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G2Barmaw"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5181C1723
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557579; cv=none; b=tl/CTpCXDKb/+KdWmU12IRzcnouFWcXQgZ5ig7N9bXWZ5X/40tPEtm4FgqRn9fzMCAg21Wqke/t5SaQUXJ3Z79am8w+EkQCMEiolGgofuK57CaA9ZE5HuqMexdCTJwq5MJJDUdXMrWvvDoJYtPlRujJwzVP6gsyvsYI5SO7GBUo=
+	t=1728557597; cv=none; b=H1wS+Xo79HjApsGpB7RvCyMCSvZu7T6lbB6bjvRLyaI6uHKarw0GTqOEC7lcnnCX4m4UZzGF2is6PrzJ86akFUZQYTxpxz9CkCgay2IsAakaeO8JtDbptGB4Wv1wN4S8l9UHLk1lyDtAXmwpQ98YeucIKKA2aQZ52XEW5tJHP8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557579; c=relaxed/simple;
-	bh=3nBY+r72A2NZGoMcahve99LHPkxjRYwF/W92mnKOjhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a53VnOOT5JedIP9yDTh6mBBR2IV+A6rKzDYUQGCThNJ3vaDzss0F+1zTZPphzzavV5PxXtiGYOfZ9XNPZzOax/rS1F33bNPBS2NOmLNW7CwSjEfogNL1ce+7MI/OQ7gy6wVCKvA1H2L504FjXAkLvBRhs/k2ZwsZ26frDLVKO3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF394497;
-	Thu, 10 Oct 2024 03:53:25 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F6DE3F58B;
-	Thu, 10 Oct 2024 03:52:54 -0700 (PDT)
-Date: Thu, 10 Oct 2024 11:52:51 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Liao Chang <liaochang1@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, ast@kernel.org,
-	puranjay@kernel.org, andrii@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: insn: Simulate nop instruction for better
- uprobe performance
-Message-ID: <ZweyA3tZc1BiBcb6@J2N7QTR9R3>
-References: <20240909071114.1150053-1-liaochang1@huawei.com>
+	s=arc-20240116; t=1728557597; c=relaxed/simple;
+	bh=wr4g7WrAaVt4FSNmramjcqwrwexM5YywBWOycd1WeY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u/miif8jQ8X8Ba5xk/ZSW9iAAseajBkiaohih1saGntWWZZGi/7FVnrRhH1aVhMv9t7nTx0vK3YfBXpFPwedLJZ52z6l7D8mwVGabHau78kQl4Nl5Rs0RT3CWX96uOaJfIbWFpSGmxz3hrC1QL6gsjtgHJ9kLe2WL+pVkk8f+GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G2Barmaw; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5398996acbeso879024e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:53:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728557594; x=1729162394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PTjiIlIDmkW31NEt7dU34CDwKHTtnQ3rlMBj2piyMko=;
+        b=G2BarmawVHrATtIqn5JIWuktlKs3udv4xTMH5JrrJZFlbiUHgPkeMbHjIRs9K75iEW
+         OwweNogKkezXu9AEdXDPnzrJTcu+s+9no+DDMDQ8RQSOAd+Dln0ksqvXGQP3JTWIeUG/
+         HFV4cTH/KiRrQBe+JsrUu9D6IivQVrh1pIXCt+dXDd0s7SwQPf+Xa4jTSSgMymPIOVvL
+         9bXMbFc0IXw5V6Ijt+zJahgkN/F5eudhigsGTgexXjYpD2Qa5sUOfoVp+paVQo8ripFB
+         OTyF/RZX/Aqsq3FgO6mExLLw2OvdfvPXDdL8FovZ0aEqJ1MbzjNkd7Sq7QpACic+cIHp
+         cStw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728557594; x=1729162394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PTjiIlIDmkW31NEt7dU34CDwKHTtnQ3rlMBj2piyMko=;
+        b=I06XwGmbc3dxwS6mbo9CQN6KynmKX+0YMVuy8xeyduyZRbXY2DjlWjEhnQpjv1u/89
+         Yr6/5+i96n2aK/IpPS7LkAxh2ZAnJC8MdtMNEwLrkr1g6XHqYJTU9G+qwjY7D5vFIh0u
+         L1PNGlYzde43WoRo9v7/2dsI5q7LGF5ZieRJSAcMdw8XLOpt96z2XMIgr/v1QkCP4xxO
+         DtyZk/WUtqXX4VDxLSgrY2zKpTC7ZM3XfYN6QBix8xf/tKJ4+H+DPC1u1hkWU6iVk4iH
+         Z6fyXzsxY1g5SW+ytqfDY8CeNMDMkicuKB+bZRNLWuoLIT3Jzt6zjg55X5MAm4cEm24X
+         A82g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCKC2+VX1z/DHMkJGXL1LbshD0Iktpd+mSJCgLtb5Foc0n/L8llEZNdZJ4VUspp4HPm7f6Au8qwI+lN0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfkyDmPfgXbkno82X6WzJHFQza5gWV4lg1YNlWrIXSyE3JbhQH
+	uh9RClQ/xAni6dngUQQmTSkEmsH9i1RPXs0oWOEO17C5Xd1aOIR59X/eBxQEOw4y0UOtIsv3ZtV
+	s1heITfsFAW8qPCilG6P7i6lBi5KNFh/SQr9c
+X-Google-Smtp-Source: AGHT+IHMSK5vZNHeTCpbHkyx4RZBnFDj8afuIKVUzp/n5MwooCpNDogKA0UTCJR9J9QEr/qtTHU3gSe1ObZxoJZ/fAQ=
+X-Received: by 2002:a05:6512:1096:b0:535:65ce:e901 with SMTP id
+ 2adb3069b0e04-539c488cb22mr3749513e87.4.1728557593434; Thu, 10 Oct 2024
+ 03:53:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240909071114.1150053-1-liaochang1@huawei.com>
+References: <20240930-static-mutex-v4-1-c59555413127@google.com> <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me>
+In-Reply-To: <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 10 Oct 2024 12:53:00 +0200
+Message-ID: <CAH5fLghsozD0qeTygBM0-WDgXRwtGcsc6B3bT1794QMx3=vSTg@mail.gmail.com>
+Subject: Re: [PATCH v4] rust: add global lock support
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 09, 2024 at 07:11:14AM +0000, Liao Chang wrote:
-> v2->v1:
-> 1. Remove the simuation of STP and the related bits.
-> 2. Use arm64_skip_faulting_instruction for single-stepping or FEAT_BTI
->    scenario.
-> 
-> As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
-> counterintuitive result that nop and push variants are much slower than
-> ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
-> which excludes 'nop' and 'stp' from the emulatable instructions list.
-> This force the kernel returns to userspace and execute them out-of-line,
-> then trapping back to kernel for running uprobe callback functions. This
-> leads to a significant performance overhead compared to 'ret' variant,
-> which is already emulated.
-> 
-> Typicall uprobe is installed on 'nop' for USDT and on function entry
-> which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
-> and fp into stack regardless kernel or userspace binary. In order to
-> improve the performance of handling uprobe for common usecases. This
-> patch supports the emulation of Arm64 equvialents instructions of 'nop'
-> and 'push'. The benchmark results below indicates the performance gain
-> of emulation is obvious.
-> 
-> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
-> 
-> xol (1 cpus)
-> ------------
-> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
-> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
-> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
-> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
-> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
-> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
-> 
-> emulation (1 cpus)
-> -------------------
-> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/prod)
-> uprobe-push: 1.743 ± 0.006M/s  (1.743M/prod)
-> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/prod)
-> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/prod)
-> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/prod)
-> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/prod)
-> 
-> As shown above, the performance gap between 'nop/push' and 'ret'
-> variants has been significantly reduced. Due to the emulation of 'push'
-> instruction needs to access userspace memory, it spent more cycles than
-> the other.
-> 
-> As Mark suggested [1], it is painful to emulate the correct atomicity
-> and ordering properties of STP, especially when it interacts with MTE,
-> POE, etc. So this patch just focus on the simuation of 'nop'. The
-> simluation of STP and related changes will be addressed in a separate
-> patch.
-> 
-> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
-> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
-> 
-> CC: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Liao Chang <liaochang1@huawei.com>
-> ---
->  arch/arm64/include/asm/insn.h            |  6 ++++++
->  arch/arm64/kernel/probes/decode-insn.c   |  9 +++++++++
->  arch/arm64/kernel/probes/simulate-insn.c | 11 +++++++++++
->  arch/arm64/kernel/probes/simulate-insn.h |  1 +
->  4 files changed, 27 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> index 8c0a36f72d6f..dd530d5c3d67 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -549,6 +549,12 @@ static __always_inline bool aarch64_insn_uses_literal(u32 insn)
->  	       aarch64_insn_is_prfm_lit(insn);
->  }
->  
-> +static __always_inline bool aarch64_insn_is_nop(u32 insn)
-> +{
-> +	return aarch64_insn_is_hint(insn) &&
-> +	       ((insn & 0xFE0) == AARCH64_INSN_HINT_NOP);
-> +}
+On Thu, Oct 10, 2024 at 12:39=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>
+> On 30.09.24 15:11, Alice Ryhl wrote:
+> > diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/gl=
+obal.rs
+> > new file mode 100644
+> > index 000000000000..fc02fac864f6
+> > --- /dev/null
+> > +++ b/rust/kernel/sync/lock/global.rs
+> > @@ -0,0 +1,260 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2024 Google LLC.
+> > +
+> > +//! Support for defining statics containing locks.
+> > +
+> > +/// Defines a global lock.
+> > +///
+> > +/// Supports the following options:
+> > +///
+> > +/// * `value` specifies the initial value in the global lock.
+> > +/// * `wrapper` specifies the name of the wrapper struct.
+> > +/// * `guard` specifies the name of the guard type.
+> > +/// * `locked_by` specifies the name of the `LockedBy` type.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// A global counter.
+> > +///
+> > +/// ```
+> > +/// # mod ex {
+> > +/// # use kernel::prelude::*;
+> > +/// kernel::sync::global_lock! {
+> > +///     // SAFETY: Initialized in module initializer before first use.
+> > +///     static MY_COUNTER: Mutex<u32> =3D unsafe { uninit };
+> > +///     value: 0;
+> > +/// }
+> > +///
+> > +/// fn increment_counter() -> u32 {
+> > +///     let mut guard =3D MY_COUNTER.lock();
+> > +///     *guard +=3D 1;
+> > +///     *guard
+> > +/// }
+> > +///
+> > +/// impl kernel::Module for MyModule {
+> > +///     fn init(_module: &'static ThisModule) -> Result<Self> {
+> > +///         // SAFETY: called exactly once
+> > +///         unsafe { MY_COUNTER.init() };
+> > +///
+> > +///         Ok(MyModule {})
+> > +///     }
+> > +/// }
+> > +/// # struct MyModule {}
+> > +/// # }
+> > +/// ```
+> > +///
+> > +/// A global mutex used to protect all instances of a given struct.
+> > +///
+> > +/// ```
+> > +/// # mod ex {
+> > +/// # use kernel::prelude::*;
+> > +/// kernel::sync::global_lock! {
+> > +///     // SAFETY: Initialized in module initializer before first use.
+> > +///     static MY_MUTEX: Mutex<()> =3D unsafe { uninit };
+> > +///     value: ();
+> > +///     guard: MyGuard;
+> > +///     locked_by: LockedByMyMutex;
+> > +/// }
+> > +///
+> > +/// /// All instances of this struct are protected by `MY_MUTEX`.
+> > +/// struct MyStruct {
+> > +///     my_counter: LockedByMyMutex<u32>,
+> > +/// }
+> > +///
+> > +/// impl MyStruct {
+> > +///     /// Increment the counter in this instance.
+> > +///     ///
+> > +///     /// The caller must hold the `MY_MUTEX` mutex.
+> > +///     fn increment(&self, guard: &mut MyGuard) -> u32 {
+> > +///         let my_counter =3D self.my_counter.as_mut(guard);
+> > +///         *my_counter +=3D 1;
+> > +///         *my_counter
+> > +///     }
+> > +/// }
+> > +///
+> > +/// impl kernel::Module for MyModule {
+> > +///     fn init(_module: &'static ThisModule) -> Result<Self> {
+> > +///         // SAFETY: called exactly once
+> > +///         unsafe { MY_MUTEX.init() };
+> > +///
+> > +///         Ok(MyModule {})
+> > +///     }
+> > +/// }
+> > +/// # struct MyModule {}
+> > +/// # }
+> > +/// ```
+>
+> The docs here don't mention that you still need to call `.init()`
+> manually (though the examples show it nicely). I don't know if we want
+> macros to have a `# Safety` section.
+>
+> > +#[macro_export]
+> > +macro_rules! global_lock {
+> > +    {
+> > +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$va=
+luety:ty> =3D unsafe { uninit };
+> > +        value: $value:expr;
+>
+> I would find it more natural to use `=3D` instead of `:` here, since then
+> it would read as a normal statement with the semicolon at the end.
+> Another alternative would be to use `,` instead of `;`, but that doesn't
+> work nicely with the static keyword above (although you could make the
+> user write it in another {}, but that also isn't ideal...).
+>
+> Using `=3D` instead of `:` makes my editor put the correct amount of
+> indentation there, `:` adds a lot of extra spaces.
 
-Can we please make this:
+That seems sensible.
 
-static __always_inline bool aarch64_insn_is_nop(u32 insn)
+> > +        wrapper: $wrapper:ident;
+> > +        $( name: $lname:literal; )?
+> > +        $(
+> > +            guard: $guard:ident;
+> > +            locked_by: $locked_by:ident;
+> > +        )?
+> > +    } =3D> {
+> > +        $crate::macros::paste! {
+> > +            type [< __static_lock_ty_ $name >] =3D $valuety;
+> > +            const [< __static_lock_init_ $name >]: [< __static_lock_ty=
+_ $name >] =3D $value;
+>
+> Why are these two items outside of the `mod` below?
+> Also why do you need to define the type alias? You could just use
+> `$valuety`, right?
+
+Because they might access things that are in scope here, but not in
+scope inside the module.
+
+> Also,
+>
+>     error: type `__static_lock_ty_VALUE` should have an upper camel case =
+name
+>        --> rust/kernel/sync/lock/global.rs:100:18
+>         |
+>     100 |               type [< __static_lock_ty_ $name >] =3D $valuety;
+>         |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert =
+the identifier to upper camel case: `StaticLockTyValue`
+>
+> The same error affects the `wrapper` type forwarding below.
+>
+>
+> > +
+> > +            #[allow(unused_pub)]
+>
+>     error: unknown lint: `unused_pub`
+>        --> rust/kernel/sync/lock/global.rs:103:21
+>         |
+>     103 |               #[allow(unused_pub)]
+>         |                       ^^^^^^^^^^ help: did you mean: `unused_mu=
+t`
+
+Uhhh. This is the lint for when you mark a function pub but don't
+actually export it from the crate. But now I can't find the lint
+anywhere ... I'm so confused.
+
+> Though I also get
+>
+>     error: methods `init` and `lock` are never used
+>        --> rust/kernel/sync/lock/global.rs:128:42
+>         |
+>     122 | /                 impl $wrapper {
+>     123 | |                     /// Initialize the global lock.
+>     124 | |                     ///
+>     125 | |                     /// # Safety
+>     ...   |
+>     128 | |                     pub(crate) unsafe fn init(&'static self) =
 {
-	return insn == aarch64_insn_gen_nop();
-}
+>         | |                                          ^^^^
+>     ...   |
+>     142 | |                     pub(crate) fn lock(&'static self) -> $cra=
+te::global_lock_inner!(guard $kind, $valuety $(, $guard)?) {
+>         | |                                   ^^^^
+>     ...   |
+>     146 | |                     }
+>     147 | |                 }
+>         | |_________________- methods in this implementation
+>
+> But that is governed by the `dead_code` lint.
 
-That way we don't need to duplicate the encoding details, and it's
-"obviously correct".
+I guess I have to look into the lints again. I did not get this lint.
 
-> +
->  enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
->  u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
->  u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
-> diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
-> index 968d5fffe233..be54539e309e 100644
-> --- a/arch/arm64/kernel/probes/decode-insn.c
-> +++ b/arch/arm64/kernel/probes/decode-insn.c
-> @@ -75,6 +75,15 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
->  enum probe_insn __kprobes
->  arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api)
->  {
-> +	/*
-> +	 * While 'nop' instruction can execute in the out-of-line slot,
-> +	 * simulating them in breakpoint handling offers better performance.
-> +	 */
-> +	if (aarch64_insn_is_nop(insn)) {
-> +		api->handler = simulate_nop;
-> +		return INSN_GOOD_NO_SLOT;
-> +	}
-> +
->  	/*
->  	 * Instructions reading or modifying the PC won't work from the XOL
->  	 * slot.
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-> index 22d0b3252476..5e4f887a074c 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.c
-> +++ b/arch/arm64/kernel/probes/simulate-insn.c
-> @@ -200,3 +200,14 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
->  
->  	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
->  }
-> +
-> +void __kprobes
-> +simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
-> +{
-> +	/*
-> +	 * Compared to instruction_pointer_set(), it offers better
-> +	 * compatibility with single-stepping and execution in target
-> +	 * guarded memory.
-> +	 */
-> +	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-> +}
+> > +            mod [< __static_lock_mod_ $name >] {
+> > +                use super::[< __static_lock_ty_ $name >] as Val;
+> > +                use super::[< __static_lock_init_ $name >] as INIT;
+> > +                type Backend =3D $crate::global_lock_inner!(backend $k=
+ind);
+> > +                type GuardTyp =3D $crate::global_lock_inner!(guard $ki=
+nd, Val $(, $guard)?);
+>
+> `GuardTyp` is only used once, so you should be able to just inline it.
+> `Backend` is used twice, but I don't know if we need a type alias for
+> it.
 
-Can we please delete the comment? i.e. make this:
+They're both used twice. Inlining them makes the lines really long.
 
-	void __kprobes
-	simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
-	{
-		arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-	}
+> > +
+> > +                /// # Safety
+> > +                ///
+> > +                /// Must be used to initialize `super::$name`.
+> > +                pub(super) const unsafe fn new() -> $wrapper {
+>
+> Why is this function not associated to `$wrapper`?
+>
+> > +                    let state =3D $crate::types::Opaque::uninit();
+>
+> Why not add
+>
+>     const INIT: $valuety =3D $value;
+>
+> here instead of outside the mod.
 
-With those two changes:
+Because it might reference things that are only in scope outside of the mod=
+ule.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+> > +                    $wrapper {
+> > +                        // SAFETY: The user of this macro promises to =
+call `init` before calling
+> > +                        // `lock`.
+> > +                        inner: unsafe {
+> > +                            $crate::sync::lock::Lock::global_lock_help=
+er_new(state, INIT)
+> > +                        }
+> > +                    }
+> > +                }
+> > +
+> > +                /// Wrapper type for a global lock.
+> > +                pub(crate) struct $wrapper {
+>
+> How can the wrapper struct be `pub(crate)` when the constant might be
+> global `pub`?
+>
+>     error: type `__static_lock_wrapper_INIT` is more private than the ite=
+m `INIT`
+>        --> rust/kernel/sync/lock/global.rs:206:14
+>         |
+>     206 |               };
+>         |                ^ static `INIT` is reachable at visibility `pub`
+>         |
+>
+> The functions should probably just be `pub`.
 
-... and I can go chase up fixing the other issues in this file.
+I used to do that, but got some errors about `pub` being unused. I'll
+look into this again.
 
-Mark.
-
-
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
-> index e065dc92218e..efb2803ec943 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.h
-> +++ b/arch/arm64/kernel/probes/simulate-insn.h
-> @@ -16,5 +16,6 @@ void simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs);
->  void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
->  void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
->  void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
-> +void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
->  
->  #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
-> -- 
-> 2.34.1
-> 
-> 
+Alice
 
