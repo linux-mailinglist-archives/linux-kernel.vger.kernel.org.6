@@ -1,169 +1,294 @@
-Return-Path: <linux-kernel+bounces-359895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF4499921F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB759999226
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E1A7283F38
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63326284AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230C11CEE9B;
-	Thu, 10 Oct 2024 19:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523E01A00F8;
+	Thu, 10 Oct 2024 19:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxL8Dtpm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RUnY44Ss"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67962199E9B;
-	Thu, 10 Oct 2024 19:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A458C1CEEA4
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728588165; cv=none; b=C8dGdTiqHBWieRkpfqq0TH6N7roM5DyAaqcc69440oHztKUOR9E7qihBOz6WME5cSl72CSTxx3MTS1aaDgNGeviRZ6Iy+x5TVRRmUfHi3xc9e28ttvT9jvGBdeSRGTr5WTynFkPer1JqeSECpyUh3m+mhsNfvBc0Ew4G61x1AKk=
+	t=1728588248; cv=none; b=KvFlvmH3QQleZzSQrbw19WzJg0BJEVmAV1zGDPODMLfuQaPWZ978J6KMbDIVSAeN2VLQGi2t0vnLvKEPCuJEA2UwUPmFRsv2EHcGMZibpkwpGWf4ZvCZ3e2X8XR07RQgZiU1bcxhIqU9iZaCM42R9+sJUgbjQVbssCc3RRQYE/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728588165; c=relaxed/simple;
-	bh=BobLlBAHXvgkmTfcYJ918ZwYFw0KZ50oja9YbgYE578=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WwxjmHy0i0bV7GNCEThF4AK8PPUpXZv/0vhH6Kg4pKy+r7z6ocUvYc0icarjJe0DZQ7QfiquExmYMND2wfuIFwWSn0wkpMnTh7ACPBqdKuHCxs2A/QfKEAF4nA5BBv/ge8/0kGhVfpT8l7kmHH9rA6D7vxKdqZ97RlzXfFUZdaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxL8Dtpm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3EDDC4CECD;
-	Thu, 10 Oct 2024 19:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728588165;
-	bh=BobLlBAHXvgkmTfcYJ918ZwYFw0KZ50oja9YbgYE578=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VxL8DtpmsZ5s62//hcB6UyBuWVpNLlNZliRP1k6XpGxdgNjgkNJDpI+25sFjZnh1B
-	 hZF92dbDyUbZKSPKZR5OesyedLtFqu6Zv0xzmyzeuBNkShYrobrCwSJZnWaF0rQ/xY
-	 zzDxaVNBPuxseoYAbbjT3XpzqwcK33Tr7ZYMqZ32PY8JZZkzsg6DJCXlUoyYDWsb7w
-	 VOOJ6NEFaEUnikP1wCdqFs1I/EeHUC3+nJrbMXcyt05oAM/MuNHhwIyJoYRWOesePb
-	 1O/5LhM4vIOWCL6ft9LvN5ZND5wj2IJgJmTaCVhGpIBMJTMf0XjXF9ZR1wMkntSHiw
-	 SGBfd3g0zr+tg==
-Date: Thu, 10 Oct 2024 14:22:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v9 1/6] misc: Add support for LAN966x PCI device
-Message-ID: <20241010192243.GA573660@bhelgaas>
+	s=arc-20240116; t=1728588248; c=relaxed/simple;
+	bh=Br1AxsK6G2zITBU06UJ4LCc0PQ27ZbVzckFdNsOtF74=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pDdinKRsXkQsw4+l7Lo8TAa3rlJRp7SP3bp2dKJiEmJ+8Sd7uOMpsCUb/LQGkbGlXu5vskh02xH4W45iDWcodSQhOXDn2UReqZ32ZmIvRJJ8La8VabTq5XLa4ZADbeetsGR9MmoSDQ6C6Y41RrCcipjy2B5gMqniySjYdWnayuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RUnY44Ss; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e290b8b69f8so2253099276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728588245; x=1729193045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4ETGyYo6ZzlHh9A7cMyV5yBkPeWcwcB1u3k4+pSohw=;
+        b=RUnY44SsMXnYStxmXvAGuc+sJWBjMr5hBTOuuVabg3iyQWzeN9jiec5G+iWoUKFP26
+         YsOmENd5avF0ujxmPbca9e3tIJMuKXFsa3e3ttlTx5wI6KHhdaN2N8KdVWdwUnIE8TnA
+         qaYGRLfF/A9aYUb8O8vYNRh3EMB0ArALZdGDNZYDx9y46zpoaiimc7I2jGjjiGFOQkLQ
+         RzA61l3J/kuTNUgRWg1L6+QI542NVRvpP+vc8iagZXN3qrKWa41gx3r8DMho4Ai/12fE
+         QZv+aKilIEAr8aKBdDuV9kDLjAzg0QjvlqQGjYxaBGrs65RL0vBkoR+Itr0pygev2VAi
+         dZyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728588245; x=1729193045;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V4ETGyYo6ZzlHh9A7cMyV5yBkPeWcwcB1u3k4+pSohw=;
+        b=UrQY9//UroFRR1wZANqleLBgUP/Zm9DntRKJ/Rj07Dt00Xd6DWeRxdGPSOnz8AwHjh
+         sspM8EdvqcSIw35Z2YufyuF2QgCGzJQlPQVstP3/EY4gR7ZwWvcMYYGAz23mirNe9+wo
+         jSHXeaRA/PG/5a6qvbu78T0jU0F74NiEHN70JAuepXND04DC3pAZaZmWf9gPGpcA3p8X
+         VVvNBvmEhVN15/SkD0Bbqkwjv1gZWTDPwEkJ6UDAYvUucz0sX4gLySBVd4eNXcmgNDI5
+         YJ49tvww1bEx4RurJLX6geRwp9MQeg7fVx40DwAv9ivihOS39TDESnPj5v1GLIKvjg3B
+         nLnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDkXJg5BkHXxSjpudHKZSGXDZ7YNA0585gv4UCJCutuSjGzRpCWOYJyYR9onxQlQHyaAG4oSbeHen5UGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm1wuJS4Lq4e2uYRuNLz+ztD1VjMc9dKjc5i0RoTIBEwmemyp4
+	s2/t6uZNvw5ColI+joENexFmjCTBroOD3TKbvW0ikdeS1ubHHVWV03it/yb8NDCaAw==
+X-Google-Smtp-Source: AGHT+IFvD9TZ5wh/EuMlij6GXPddXoLFl/Vb64vRgCkXEt7itjau1CwxqUboctyq3BOj/cRKruFjfuE=
+X-Received: from xur.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:2330])
+ (user=xur job=sendgmr) by 2002:a25:ae61:0:b0:e28:e97f:538d with SMTP id
+ 3f1490d57ef6-e291a200f54mr1276.6.1728588244145; Thu, 10 Oct 2024 12:24:04
+ -0700 (PDT)
+Date: Thu, 10 Oct 2024 12:23:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010063611.788527-2-herve.codina@bootlin.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241010192400.451187-1-xur@google.com>
+Subject: [PATCH v3 0/6] Add AutoFDO and Propeller support for Clang build
+From: Rong Xu <xur@google.com>
+To: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Rong Xu <xur@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>
+Cc: x86@kernel.org, linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 08:36:01AM +0200, Herve Codina wrote:
-> Add a PCI driver that handles the LAN966x PCI device using a device-tree
-> overlay. This overlay is applied to the PCI device DT node and allows to
-> describe components that are present in the device.
-> 
-> The memory from the device-tree is remapped to the BAR memory thanks to
-> "ranges" properties computed at runtime by the PCI core during the PCI
-> enumeration.
-> 
-> The PCI device itself acts as an interrupt controller and is used as the
-> parent of the internal LAN966x interrupt controller to route the
-> interrupts to the assigned PCI INTx interrupt.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Hi,
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# quirks.c
+This patch series is to integrate AutoFDO and Propeller support into
+the Linux kernel. AutoFDO is a profile-guided optimization technique
+that leverages hardware sampling to enhance binary performance.
+Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friendly
+and straightforward application process. While iFDO generally yields
+superior profile quality and performance, our findings reveal that
+AutoFDO achieves remarkable effectiveness, bringing performance close
+to iFDO for benchmark applications.
 
-> ---
->  drivers/misc/Kconfig          |  24 ++++
->  drivers/misc/Makefile         |   3 +
->  drivers/misc/lan966x_pci.c    | 215 ++++++++++++++++++++++++++++++++++
->  drivers/misc/lan966x_pci.dtso | 167 ++++++++++++++++++++++++++
->  drivers/pci/quirks.c          |   1 +
->  5 files changed, 410 insertions(+)
->  create mode 100644 drivers/misc/lan966x_pci.c
->  create mode 100644 drivers/misc/lan966x_pci.dtso
-> 
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 3fe7e2a9bd29..8e5b06ac9b6f 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -610,6 +610,30 @@ config MARVELL_CN10K_DPI
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called mrvl_cn10k_dpi.
->  
-> +config MCHP_LAN966X_PCI
-> +	tristate "Microchip LAN966x PCIe Support"
-> +	depends on PCI
-> +	select OF
-> +	select OF_OVERLAY
-> +	select IRQ_DOMAIN
-> +	help
-> +	  This enables the support for the LAN966x PCIe device.
-> +	  This is used to drive the LAN966x PCIe device from the host system
-> +	  to which it is connected.
-> +
-> +	  This driver uses an overlay to load other drivers to support for
-> +	  LAN966x internal components.
-> +	  Even if this driver does not depend on these other drivers, in order
-> +	  to have a fully functional board, the following drivers are needed:
+Propeller is a profile-guided, post-link optimizer that improves
+the performance of large-scale applications compiled with LLVM. It
+operates by relinking the binary based on an additional round of runtime
+profiles, enabling precise optimizations that are not possible at
+compile time.  Similar to AutoFDO, Propeller too utilizes hardware
+sampling to collect profiles and apply post-link optimizations to improve
+the benchmark=E2=80=99s performance over and above AutoFDO.
 
-I don't think "overlay" by itself has enough context to be useful as
-help text.  Maybe "device tree" or similar hint?
+Our empirical data demonstrates significant performance improvements
+with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
+on large warehouse-scale benchmarks. This makes a strong case for their
+inclusion as supported features in the upstream kernel.
 
-Add blank lines between paragraphs or reflow into a single paragraph.
+Background
 
-> +	    - fixed-clock (COMMON_CLK)
-> +	    - lan966x-oic (LAN966X_OIC)
-> +	    - lan966x-cpu-syscon (MFD_SYSCON)
-> +	    - lan966x-switch-reset (RESET_MCHP_SPARX5)
-> +	    - lan966x-pinctrl (PINCTRL_OCELOT)
-> +	    - lan966x-serdes (PHY_LAN966X_SERDES)
-> +	    - lan966x-miim (MDIO_MSCC_MIIM)
-> +	    - lan966x-switch (LAN966X_SWITCH)
-> +
->  source "drivers/misc/c2port/Kconfig"
->  source "drivers/misc/eeprom/Kconfig"
->  source "drivers/misc/cb710/Kconfig"
+A significant fraction of fleet processing cycles (excluding idle time)
+from data center workloads are attributable to the kernel. Ware-house
+scale workloads maximize performance by optimizing the production kernel
+using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index dccb60c1d9cc..41dec625ed7b 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -6266,6 +6266,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0xa76e, dpc_log_size);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5020, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5021, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_REDHAT, 0x0005, of_pci_make_dev_node);
-> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_EFAR, 0x9660, of_pci_make_dev_node);
->  
->  /*
->   * Devices known to require a longer delay before first config space access
-> -- 
-> 2.46.2
-> 
+iFDO can significantly enhance application performance but its use
+within the kernel has raised concerns. AutoFDO is a variant of FDO that
+uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to collect
+profiling data. While AutoFDO typically yields smaller performance
+gains than iFDO, it presents unique benefits for optimizing kernels.
+
+AutoFDO eliminates the need for instrumented kernels, allowing a single
+optimized kernel to serve both execution and profile collection. It also
+minimizes slowdown during profile collection, potentially yielding
+higher-fidelity profiling, especially for time-sensitive code, compared
+to iFDO. Additionally, AutoFDO profiles can be obtained from production
+environments via the hardware=E2=80=99s PMU whereas iFDO profiles require
+carefully curated load tests that are representative of real-world
+traffic.
+
+AutoFDO facilitates profile collection across diverse targets.
+Preliminary studies indicate significant variation in kernel hot spots
+within Google=E2=80=99s infrastructure, suggesting potential performance ga=
+ins
+through target-specific kernel customization.
+
+Furthermore, other advanced compiler optimization techniques, including
+ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iFDO.
+ThinLTO achieves better runtime performance through whole-program
+analysis and cross module optimizations. The main difference between
+traditional LTO and ThinLTO is that the latter is scalable in time and
+memory.
+
+This patch series adds AutoFDO and Propeller support to the kernel. The
+actual solution comes in six parts:
+
+[P 1] Add the build support for using AutoFDO in Clang
+
+      Add the basic support for AutoFDO build and provide the
+      instructions for using AutoFDO.
+
+[P 2] Fix objtool for bogus warnings when -ffunction-sections is enabled
+
+[P 3] Change the subsection ordering when -ffunction-sections is enabled
+
+[P 4] Enable =E2=80=93ffunction-sections for the AutoFDO build
+
+[P 5] Enable Machine Function Split (MFS) optimization for AutoFDO
+
+[P 6] Add Propeller configuration to the kernel build
+
+Patch 1 provides basic AutoFDO build support. Patches 2 to 5 further
+enhance the performance of AutoFDO builds and are functionally dependent
+on Patch 1. Patch 6 enables support for Propeller and is dependent on
+patch 2 and patch 3.
+
+Caveats
+
+AutoFDO is compatible with both GCC and Clang, but the patches in this
+series are exclusively applicable to LLVM 17 or newer for AutoFDO and
+LLVM 19 or newer for Propeller. For profile conversion, two different
+tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
+needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternatively,
+create_llvm_prof v0.30.1 or newer can be used instead of llvm-profgen.
+
+Additionally, the build is only supported on x86 platforms equipped
+with PMU capabilities, such as LBR on Intel machines. More
+specifically:
+ * Intel platforms: works on every platform that supports LBR;
+   we have tested on Skylake.
+ * AMD platforms: tested on AMD Zen3 with the BRS feature. The kernel
+   needs to be configured with =E2=80=9CCONFIG_PERF_EVENTS_AMD_BRS=3Dy", To
+   check, use
+   $ cat /proc/cpuinfo | grep =E2=80=9C brs=E2=80=9D
+   For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug with
+   AMD LBRv2 implementation in Genoa which blocks the usage.
+
+Experiments and Results
+
+Experiments were conducted to compare the performance of AutoFDO-optimized
+kernel images (version 6.9.x) against default builds.. The evaluation
+encompassed both open source microbenchmarks and real-world production
+services from Google and Meta. The selected microbenchmarks included Neper,
+a network subsystem benchmark, and UnixBench which is a comprehensive suite
+for assessing various kernel operations.
+
+For Neper, AutoFDO optimization resulted in a 6.1% increase in throughput
+and a 10.6% reduction in latency. Unixbench saw a 2.2% improvement in its
+index score under low system load and a 2.6% improvement under high system
+load.
+
+For further details on the improvements observed in Google and Meta's
+production services, please refer to the LLVM discourse post:
+https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-inclu=
+ding-thinlto-and-propeller/79108
+
+Thanks,
+
+Rong Xu and Han Shen
+
+Change-Logs in V2:
+Rebased the source to e32cde8d2bd7 (Merge tag 'sched_ext-for-6.12-rc1-fixes=
+-1')
+1. Cover-letter: moved the Propeller description to the top (Peter Zijlstra=
+)
+2. [P 1]: (1) Makefile: fixed file order (Masahiro Yamada)
+          (2) scripts/Makefile.lib: used is-kernel-object to exclude
+              files (Masahiro Yamada)
+          (3) scripts/Makefile.autofdo: improved the code (Masahiro Yamada)
+          (4) scripts/Makefile.autofdo: handled when DEBUG_INFO disabled (N=
+ick Desaulniers)
+3. [P 2]: tools/objtool/elf.c: updated the comments (Peter Zijlstra)
+4. [P 3]: include/asm-generic/vmlinux.lds.h:
+          (1) explicit set cold text function aligned (Peter Zijlstra and P=
+eter Anvin)
+          (2) set hot-text page aligned
+5. [P 6]: (1) include/asm-generic/vmlinux.lds.h: made Propeller not dependi=
+ng
+              on AutoFDO
+          (2) Makefile: fixed file order (Masahiro Yamada)
+          (3) scripts/Makefile.lib: used is-kernel-object to exclude
+              files (Masahiro Yamada). This removed the change in
+              arch/x86/platform/efi/Makefile,
+              drivers/firmware/efi/libstub/Makefile, and
+              arch/x86/boot/compressed/Makefile.
+              And this also addressed the comment from Arnd Bergmann regard=
+ing
+              arch/x86/purgatory/Makefile.
+          (4) scripts/Makefile.propeller: improved the code (Masahiro Yamad=
+a)
+
+Change-Logs in V3:
+Rebased the source to eb952c47d154 (Merge tag 'for-6.12-rc2-tag').
+1. [P 1]: autofdo.rst: removed code-block directives and used "::" (Mike Ra=
+poport)
+2. [P 6]: propeller.rst: removed code-block directives and use "::" (Mike R=
+apoport)
+
+Rong Xu (6):
+  Add AutoFDO support for Clang build
+  objtool: Fix unreachable instruction warnings for weak funcitons
+  Change the symbols order when --ffuntion-sections is enabled
+  AutoFDO: Enable -ffunction-sections for the AutoFDO build
+  AutoFDO: Enable machine function split optimization for AutoFDO
+  Add Propeller configuration for kernel build.
+
+ Documentation/dev-tools/autofdo.rst   | 165 ++++++++++++++++++++++++++
+ Documentation/dev-tools/index.rst     |   2 +
+ Documentation/dev-tools/propeller.rst | 161 +++++++++++++++++++++++++
+ MAINTAINERS                           |  14 +++
+ Makefile                              |   2 +
+ arch/Kconfig                          |  42 +++++++
+ arch/x86/Kconfig                      |   2 +
+ arch/x86/kernel/vmlinux.lds.S         |   4 +
+ include/asm-generic/vmlinux.lds.h     |  54 +++++++--
+ scripts/Makefile.autofdo              |  25 ++++
+ scripts/Makefile.lib                  |  20 ++++
+ scripts/Makefile.propeller            |  28 +++++
+ tools/objtool/check.c                 |   2 +
+ tools/objtool/elf.c                   |  15 ++-
+ 14 files changed, 524 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/dev-tools/autofdo.rst
+ create mode 100644 Documentation/dev-tools/propeller.rst
+ create mode 100644 scripts/Makefile.autofdo
+ create mode 100644 scripts/Makefile.propeller
+
+
+base-commit: eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
+--=20
+2.47.0.rc1.288.g06298d1525-goog
+
 
