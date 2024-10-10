@@ -1,193 +1,138 @@
-Return-Path: <linux-kernel+bounces-358629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D72C9981C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A60F9981C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F461C23CA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C944E1F277DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D6B192B78;
-	Thu, 10 Oct 2024 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NJq4mpTA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F131BDA80;
+	Thu, 10 Oct 2024 09:12:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2351C233D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B461A0AF5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551505; cv=none; b=vD9g1YC/gD/N1LB7SE1/SmcA5yWtoclNTbCTAdRS4egGAu2cPPnKwVcl6IRMsA86//yQhnSYGoT0ytdQGzKi9Y5sKbXy5Qe4/I2BsO3wKMxeT4FTeMEQ3ah8ckrmO67etGhcUMj5RocaZ7eTZImwWfH4+lX1bnZzqQnXS8eRHXc=
+	t=1728551524; cv=none; b=IHuUEx8k14nJQ7WIuWQu0Q1TxtC/1yWYcFeLz+rGDqTvQRHyF8AYqcMeYidmuerB787dkgmk6UlUE/Obp1Okfa8HqDUwlKGogTgHsJHZtPSKHQQveBRjRBdIlYWoHMCV1jSCGaLnFtnwKspwE6HiDOxmNmMvWM8++empxvQXDz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551505; c=relaxed/simple;
-	bh=+ex92FX/6NsvBWmXun+uf0gF3wK3BeTi9EqHuTvNsZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bLKkmtw1zt7spe8myf37Qrr1PdQ4I2rw+ACrNRde/fGSClyiVgrM2cHrrk0qzkEO4SrreQzIHyBGi+2TgMssUcHmL+T9Ti7603eWDPKu9jNZCOfa/hKYIWnJ4M67XgUaEgBcbEmjrKtVzQ9YGaQ2mHo6rFjZ1+foTcxkuoCMZ+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NJq4mpTA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728551502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ex92FX/6NsvBWmXun+uf0gF3wK3BeTi9EqHuTvNsZQ=;
-	b=NJq4mpTAcVEpju4GP7UXQ3tFtQq/iwJKZbaUcP9X8XyhDE1gvMJPTtOarmmgE9+I0rCPf4
-	yeWON2JS3SedQ18+NhFqPdsIwG8QoFVuC3GYByzq0eMLlsw+e1MugbE70jLtAxPVn6b1tl
-	1n9SCjjvdqeNfSsVtuq3LybW+vJVIeA=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-481-gbQ8BDaSMGqBfGvSNdxnvA-1; Thu, 10 Oct 2024 05:11:41 -0400
-X-MC-Unique: gbQ8BDaSMGqBfGvSNdxnvA-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-536800baa8aso728200e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:11:40 -0700 (PDT)
+	s=arc-20240116; t=1728551524; c=relaxed/simple;
+	bh=Baa1CNuR+wNXGnAjKzqW4Zh2XNIJUVFwC7+X15892H0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W3L55K7PajU21QdRcbHQha5YZE+bwhXvNJZnDf1qvZzm4um0fk8J3Jcw4qETfhfqq2b8ksALUY8a1c8dZeIdclQ0uQBD33r4sBBN9a7W8eoeTa8socVwTsfwaBLS09b2gQ0yBWIjC5jSY/nuV2AG0FGiyC33ItuuY59TzYd2o0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a363981933so10069485ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:12:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728551499; x=1729156299;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+ex92FX/6NsvBWmXun+uf0gF3wK3BeTi9EqHuTvNsZQ=;
-        b=vHk0Kg4HMV9AKEmMxo4wpag+Q31ybC2xw/UKfBHbcnvmG3VJNJ669YrKx6tcwS/5pM
-         /Mj9Pk7oEJxlRkjH2obg8eDWlOV1D+tF9Atnaq5H7kgBBTyI5YESlAeVedA9hWmT8Jxj
-         NKdeJdX9Sh8hsjv+a4hGGpwIzn5LXcO4D/uoDNTo+Y7m+0d3lIrGvlxp7MpRJV+47XGu
-         iAlrbxMkXUWlwC4baNfrdqmsOyiTvbMSpbb1YMpMhpMqERa6qfuqgZ2mmgCwvfZ31L9E
-         EqMDnCiXEteBYZEZ9p6a87JMWo7YagfZ/T36lVjEjphEimvPVf1xI/MiUcyG6lua22sH
-         88BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmAgNSMc8xDyGLeqXAfhzzh7cTwQNgkybEkfe3zQGTqS2GFbt2RgN1kCFpNLcazSvIpi4DH/wxueGrIK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn4rJWLF53y4B2jGQ2/Ll2K/9zBFWXNU5bRM18BlGujnbldMHz
-	62DhLkit94fSI+hwexz4J8itQCt0KwamdD9xooVyVjeoPJ5JcwaKc6BwbTTJSmEyxo4ln5kF3AS
-	50Q/6xF9T6zVcEnG/0qdC125DLlPe7KVSeBvhsM36c2n2OlH3dOSJxRk4s/vsYw==
-X-Received: by 2002:a05:6512:10d1:b0:536:55ae:7444 with SMTP id 2adb3069b0e04-539c4896eb7mr3177298e87.22.1728551499306;
-        Thu, 10 Oct 2024 02:11:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IExq3OJhlyNTGpjtR1+LjaW3R0iv5Mu7sB9drW/xRJaoCLaoe8gSPgF49M2/ruF8wr/J6TLJA==
-X-Received: by 2002:a05:6512:10d1:b0:536:55ae:7444 with SMTP id 2adb3069b0e04-539c4896eb7mr3177227e87.22.1728551498734;
-        Thu, 10 Oct 2024 02:11:38 -0700 (PDT)
-Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fdc2sm949476f8f.88.2024.10.10.02.11.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 02:11:38 -0700 (PDT)
-Message-ID: <f42bb5de4c9aca307a3431dd15ace4c9cade1cb9.camel@redhat.com>
-Subject: Re: [RFC PATCH 13/13] Remove devres from pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
- Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj Natikar
- <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
- Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Mario Limonciello <mario.limonciello@amd.com>, Chen
- Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Mostafa Saleh
- <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hannes Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
- Soumya Negi <soumya.negi97@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi
- Liu <yi.l.liu@intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
- Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Eric Auger
- <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>, Marek
- =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,  Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Rui Salvaterra <rsalvaterra@gmail.com>,
- Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-input@vger.kernel.org,
- netdev@vger.kernel.org,  linux-wireless@vger.kernel.org,
- ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
- linux-staging@lists.linux.dev, kvm@vger.kernel.org, 
- xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Date: Thu, 10 Oct 2024 11:11:36 +0200
-In-Reply-To: <7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
-References: <20241009083519.10088-1-pstanner@redhat.com>
-	 <20241009083519.10088-14-pstanner@redhat.com>
-	 <7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1728551522; x=1729156322;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Baa1CNuR+wNXGnAjKzqW4Zh2XNIJUVFwC7+X15892H0=;
+        b=SgjU5EDoNfpR6jWECmFutRZe5jPe2Mk1hEdevA4ZbS0givYDSjTQWGexjtJojI2nfn
+         t4F1dFSyySV3m23ppkM2zuYRLA00wW1p92pi/qTV/6rb9ZtODeHpT2KE+jVh/auPsVz0
+         B6xOje4Ls9IEjPNs5MWVlRCj3B7gjq5o4qGi3UBsb8eEV86iQ1A1XGlF+sktCsxaZGN2
+         mVDY7ctnRbzeo7hSs7MNx4aJHi6B2W2qvBSrIfTgo16ko3X2NjSe2BWuFC3pika0UwLE
+         ubSmANeuyRqj/njIxHCUaXE+Xvd7od2fAApnxOVpn2ngXtIN/dgkShOjccnQHQviOGJY
+         Mt0Q==
+X-Gm-Message-State: AOJu0YygbKH93lCulbpKt1ItPFoNewTihVIwxQvMhG16OgeM8RJH/IDa
+	ZUW3/hk70zpsqPnQSsOCoI6zG6eSpqByo1LQookDW4LJWGGD0A1Hgg0CzDIqtAw7z6cIqAVowEM
+	yZ9Jwu7HVGzWuR/3OC+4yotcAadfNwa1xEIpkQ/beYaJ7ees1/A4e4Lc=
+X-Google-Smtp-Source: AGHT+IFaKdWQgTqybtJvEbjsXxg98EIrKZW7ymE33gr5JNDcKswveOXhFq3BEQXWUhzZelJTtEy4rqmn0G6LlOIapydxGgjXbrNe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1c05:b0:3a0:a4ac:ee36 with SMTP id
+ e9e14a558f8ab-3a397ced8bfmr59276825ab.5.1728551522480; Thu, 10 Oct 2024
+ 02:12:02 -0700 (PDT)
+Date: Thu, 10 Oct 2024 02:12:02 -0700
+In-Reply-To: <000000000000657ecd0614456af8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67079a62.050a0220.8109b.0004.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-On Thu, 2024-10-10 at 11:50 +0300, Dan Carpenter wrote:
-> On Wed, Oct 09, 2024 at 10:35:19AM +0200, Philipp Stanner wrote:
-> > pci_intx() is a hybrid function which can sometimes be managed
-> > through
-> > devres. This hybrid nature is undesirable.
-> >=20
-> > Since all users of pci_intx() have by now been ported either to
-> > always-managed pcim_intx() or never-managed pci_intx_unmanaged(),
-> > the
-> > devres functionality can be removed from pci_intx().
-> >=20
-> > Consequently, pci_intx_unmanaged() is now redundant, because
-> > pci_intx()
-> > itself is now unmanaged.
-> >=20
-> > Remove the devres functionality from pci_intx(). Remove
-> > pci_intx_unmanaged().
-> > Have all users of pci_intx_unmanaged() call pci_intx().
-> >=20
-> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
->=20
-> I don't like when we change a function like this but it still
-> compiles fine.
-> If someone is working on a driver and hasn't pushed it yet, then it's
-> probably
-> supposed to be using the new pcim_intx() but they won't discover that
-> until they
-> detect the leaks at runtime.
-
-There wouldn't be any *leaks*, it's just that the INTx state would not
-automatically be restored. BTW the official documentation in its
-current state does not hint at pci_intx() doing anything automatically,
-but rather actively marks it as deprecated.
-
-But you are right that a hypothetical new driver and OOT drivers could
-experience bugs through this change.
-
->=20
-> Why not leave the pci_intx_unmanaged() name.=C2=A0 It's ugly and that wil=
-l
-> discorage
-> people from introducing new uses.
-
-I'd be OK with that. Then we'd have to remove pci_intx() as it has new
-users anymore.
-
-Either way should be fine and keep the behavior for existing drivers
-identical.
-
-I think Bjorn should express a preference
-
-P.
-
->=20
-> regards,
-> dan carpenter
->=20
-
+Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
+aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
+Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogUmU6IFtzeXpib3RdIFtuZXQ/XSBLQVNBTjogc2xh
+Yi11c2UtYWZ0ZXItZnJlZSBSZWFkIGluIF9fZXRodG9vbF9nZXRfbGlua19rc2V0dGluZ3MKQXV0
+aG9yOiBjbWVpb2hhc0BudmlkaWEuY29tCgojc3l6IHRlc3Q6IGh0dHBzOi8vZ2l0Lmtlcm5lbC5v
+cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3JkbWEvcmRtYS5naXQgZm9yLW5leHQNCg0KZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9jb3JlL2RldmljZS5jIGIvZHJpdmVycy9pbmZp
+bmliYW5kL2NvcmUvZGV2aWNlLmMNCmluZGV4IDkzYzZkMjdiNWQ4Zi4uZWFmZGYxNzQxNTgyIDEw
+MDY0NA0KLS0tIGEvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvZGV2aWNlLmMNCisrKyBiL2RyaXZl
+cnMvaW5maW5pYmFuZC9jb3JlL2RldmljZS5jDQpAQCAtMjA2MiwxOSArMjA2MiwxNCBAQCB2b2lk
+IGliX2Rpc3BhdGNoX2V2ZW50X2NsaWVudHMoc3RydWN0IGliX2V2ZW50ICpldmVudCkNCsKgwqDC
+oMKgIHVwX3JlYWQoJmV2ZW50LT5kZXZpY2UtPmV2ZW50X2hhbmRsZXJfcndzZW0pOw0KwqB9DQoN
+Ci1zdGF0aWMgaW50IGl3X3F1ZXJ5X3BvcnQoc3RydWN0IGliX2RldmljZSAqZGV2aWNlLA0KLcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdTMyIHBvcnRfbnVtLA0KLcKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgc3RydWN0IGliX3BvcnRfYXR0ciAqcG9ydF9hdHRyKQ0KK3N0YXRpYyBp
+bnQgaXdfcXVlcnlfcG9ydChzdHJ1Y3QgaWJfZGV2aWNlICpkZXZpY2UsIHUzMiBwb3J0X251bSwN
+CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBp
+Yl9wb3J0X2F0dHIgKnBvcnRfYXR0ciwNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBuZXRfZGV2aWNlICpuZXRkZXYpDQrCoHsNCsKgwqDCoMKg
+IHN0cnVjdCBpbl9kZXZpY2UgKmluZXRkZXY7DQotwqDCoMKgIHN0cnVjdCBuZXRfZGV2aWNlICpu
+ZXRkZXY7DQoNCsKgwqDCoMKgIG1lbXNldChwb3J0X2F0dHIsIDAsIHNpemVvZigqcG9ydF9hdHRy
+KSk7DQoNCi3CoMKgwqAgbmV0ZGV2ID0gaWJfZGV2aWNlX2dldF9uZXRkZXYoZGV2aWNlLCBwb3J0
+X251bSk7DQotwqDCoMKgIGlmICghbmV0ZGV2KQ0KLcKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU5P
+REVWOw0KLQ0KwqDCoMKgwqAgcG9ydF9hdHRyLT5tYXhfbXR1ID0gSUJfTVRVXzQwOTY7DQrCoMKg
+wqDCoCBwb3J0X2F0dHItPmFjdGl2ZV9tdHUgPSBpYl9tdHVfaW50X3RvX2VudW0obmV0ZGV2LT5t
+dHUpOw0KDQpAQCAtMjA5Nyw3ICsyMDkyLDYgQEAgc3RhdGljIGludCBpd19xdWVyeV9wb3J0KHN0
+cnVjdCBpYl9kZXZpY2UgKmRldmljZSwNCsKgwqDCoMKgwqDCoMKgwqAgcmN1X3JlYWRfdW5sb2Nr
+KCk7DQrCoMKgwqDCoCB9DQoNCi3CoMKgwqAgZGV2X3B1dChuZXRkZXYpOw0KwqDCoMKgwqAgcmV0
+dXJuIGRldmljZS0+b3BzLnF1ZXJ5X3BvcnQoZGV2aWNlLCBwb3J0X251bSwgcG9ydF9hdHRyKTsN
+CsKgfQ0KDQpAQCAtMjEzNSwxMyArMjEyOSwyNyBAQCBpbnQgaWJfcXVlcnlfcG9ydChzdHJ1Y3Qg
+aWJfZGV2aWNlICpkZXZpY2UsDQrCoMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgcG9ydF9udW0sDQrC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgaWJfcG9ydF9hdHRyICpwb3J0X2F0dHIpDQrCoHsN
+CivCoMKgwqDCoMKgwqAgc3RydWN0IG5ldF9kZXZpY2UgKm5ldGRldiA9IE5VTEw7DQorwqDCoMKg
+wqDCoMKgIGludCByZXQ7DQorDQrCoMKgwqDCoCBpZiAoIXJkbWFfaXNfcG9ydF92YWxpZChkZXZp
+Y2UsIHBvcnRfbnVtKSkNCsKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FSU5WQUw7DQoNCivCoMKg
+wqDCoMKgwqAgaWYgKHJkbWFfcHJvdG9jb2xfaXdhcnAoZGV2aWNlLCBwb3J0X251bSkgfHwNCivC
+oMKgwqDCoMKgwqDCoMKgwqDCoCByZG1hX3Byb3RvY29sX3JvY2UoZGV2aWNlLCBwb3J0X251bSkp
+IHsNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG5ldGRldiA9IGliX2RldmljZV9nZXRf
+bmV0ZGV2KGRldmljZSwgcG9ydF9udW0pOw0KK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+aWYgKCFuZXRkZXYpDQorwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgcmV0dXJuIC1FTk9ERVY7DQorwqDCoMKgwqDCoMKgIH0NCisNCsKgwqDCoMKgIGlmIChyZG1h
+X3Byb3RvY29sX2l3YXJwKGRldmljZSwgcG9ydF9udW0pKQ0KLcKgwqDCoMKgwqDCoMKgIHJldHVy
+biBpd19xdWVyeV9wb3J0KGRldmljZSwgcG9ydF9udW0sIHBvcnRfYXR0cik7DQorwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSBpd19xdWVyeV9wb3J0KGRldmljZSwgcG9ydF9udW0s
+IHBvcnRfYXR0ciwgbmV0ZGV2KTsNCsKgwqDCoMKgIGVsc2UNCi3CoMKgwqDCoMKgwqDCoCByZXR1
+cm4gX19pYl9xdWVyeV9wb3J0KGRldmljZSwgcG9ydF9udW0sIHBvcnRfYXR0cik7DQorwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSBfX2liX3F1ZXJ5X3BvcnQoZGV2aWNlLCBwb3J0
+X251bSwgcG9ydF9hdHRyKTsNCivCoMKgwqDCoMKgwqAgaWYgKG5ldGRldikNCivCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIGRldl9wdXQobmV0ZGV2KTsNCivCoMKgwqDCoMKgwqAgcmV0dXJu
+IHJldDsNCisNCsKgfQ0KwqBFWFBPUlRfU1lNQk9MKGliX3F1ZXJ5X3BvcnQpOw0KDQpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9pbmZpbmliYW5kL3N3L3J4ZS9yeGVfbmV0LmMgYi9kcml2ZXJzL2luZmlu
+aWJhbmQvc3cvcnhlL3J4ZV9uZXQuYw0KaW5kZXggNzVkMTQwN2RiNTJkLi5jNWQ0MzliZWJjMjQg
+MTAwNjQ0DQotLS0gYS9kcml2ZXJzL2luZmluaWJhbmQvc3cvcnhlL3J4ZV9uZXQuYw0KKysrIGIv
+ZHJpdmVycy9pbmZpbmliYW5kL3N3L3J4ZS9yeGVfbmV0LmMNCkBAIC02MDUsNiArNjA1LDcgQEAg
+c3RhdGljIGludCByeGVfbm90aWZ5KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbm90X2JsaywNCg0K
+wqDCoMKgwqAgc3dpdGNoIChldmVudCkgew0KwqDCoMKgwqAgY2FzZSBORVRERVZfVU5SRUdJU1RF
+UjoNCivCoMKgwqDCoMKgwqDCoCBpYl9kZXZpY2Vfc2V0X25ldGRldigmcnhlLT5pYl9kZXYsIE5V
+TEwsIDEpOw0KwqDCoMKgwqDCoMKgwqDCoCBpYl91bnJlZ2lzdGVyX2RldmljZV9xdWV1ZWQoJnJ4
+ZS0+aWJfZGV2KTsNCsKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQrCoMKgwqDCoCBjYXNlIE5FVERF
+Vl9VUDoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2luZmluaWJhbmQvc3cvc2l3L3Npd19tYWluLmMg
+Yi9kcml2ZXJzL2luZmluaWJhbmQvc3cvc2l3L3Npd19tYWluLmMNCmluZGV4IDE3YWJlZjQ4YWJj
+ZC4uMWI3ZDM0Nzk4NzgzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9pbmZpbmliYW5kL3N3L3Npdy9z
+aXdfbWFpbi5jDQorKysgYi9kcml2ZXJzL2luZmluaWJhbmQvc3cvc2l3L3Npd19tYWluLmMNCkBA
+IC00MDAsNiArNDAwLDcgQEAgc3RhdGljIGludCBzaXdfbmV0ZGV2X2V2ZW50KHN0cnVjdCBub3Rp
+Zmllcl9ibG9jayAqbmIsIHVuc2lnbmVkIGxvbmcgZXZlbnQsDQrCoMKgwqDCoMKgwqDCoMKgIGJy
+ZWFrOw0KDQrCoMKgwqDCoCBjYXNlIE5FVERFVl9VTlJFR0lTVEVSOg0KK8KgwqDCoMKgwqDCoMKg
+IGliX2RldmljZV9zZXRfbmV0ZGV2KCZzZGV2LT5iYXNlX2RldiwgTlVMTCwgMSk7DQrCoMKgwqDC
+oMKgwqDCoMKgIGliX3VucmVnaXN0ZXJfZGV2aWNlX3F1ZXVlZCgmc2Rldi0+YmFzZV9kZXYpOw0K
+wqDCoMKgwqDCoMKgwqDCoCBicmVhazsNCg0K
 
