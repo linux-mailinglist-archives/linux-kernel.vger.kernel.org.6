@@ -1,268 +1,134 @@
-Return-Path: <linux-kernel+bounces-359447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24977998BA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D21998BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E16E1F250ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE78F1F2439D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2F1191F65;
-	Thu, 10 Oct 2024 15:30:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817371CDA02;
+	Thu, 10 Oct 2024 15:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y28o5JOo"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE52441D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF221CCEDD
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574226; cv=none; b=Px34CcV1jEuUzikiZfyk4sTprNpbpg2QKmIXnEhs7rAXGPwDjlfuQ/5x5IVLhSXgdqGwZLw+BCisLl/DDlmDn31deV/pfRpb1X+aKK13Mk8ZnldrMY5FdaEujbN678XJLC/Rgvvv/9oMWtSCeXGZTIEUsekWizmAJ9/VnKdAmeY=
+	t=1728574241; cv=none; b=QAkc4GlafgTyIdvzvObCf9dFnHkzifCPqb+08xs6c9pTwEMH6k2R8PQELXV1KlAk/ewmMyzY6dqyeIDzOf7KExRuju9KipleAAs/kezLUX3OWpcrzAbZcoH1WBMiqASScFpStGQP9EKXwCcT2QoVCuqcCzK+clP4LRl1UV4HpV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574226; c=relaxed/simple;
-	bh=VUDWEFrc5drSt8vR2KliRaRHQH61de7guLqBvu/K+IU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P7VCwTw3ly6zJ7KYc6ZA2mCmTjeZjPsJIYL/8lni+TB/9yM5h+Hqt5Y0wCuPk4G/ZCNH9KELVoHDIjaZPc7rlp8xRJVVzZkS+NINfVohD43nvYGRvCiDzAtZNstUNocmcYzXUt/ro15Cm3c9APdBM48VwL8QaezApy2v9RlXaPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so16666085ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:30:24 -0700 (PDT)
+	s=arc-20240116; t=1728574241; c=relaxed/simple;
+	bh=5IOX7FxQwxjC3mvxRhvOYPkl5nm1OGYylQ14DBcLyLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=luFuxPEgzOtNq/zVVNZTjyVVMygAZkd6pXxgXUGhXyWcG8HcSIdYcVu4g2HAN/Fvj6fHdNLr9Tj4tHNOIVKCH2X85W/p0Hcf3o3zZmcwDfN86e9IjKV5R4AZrkd7bCIujlt8nVAFahksyagY8Xu/Ivlhd7Wgok/Z6NXhckrvukY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y28o5JOo; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c915308486so1421047a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:30:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728574238; x=1729179038; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8mwCSYpgr9vQNHEWealZYY4kqQDRjCOUEotDuCTgtRk=;
+        b=y28o5JOoz7Y1gS9ehOHx/vYTgnLHfW0x3mXCsxl2x3HZvTlQAs+luRtxOrcxqKZFq7
+         LhcI5wOZXkCEwUEhpnquU1lSBRgiJMZvq2K3zLCpe0qZtCIavBNxW6Rn8nmlf7JPpgDN
+         ixzSlx1YgxvlEASKassVQ3FsFazKFxpnAd/fN4mwMZ0I1iWlRu4bIFRtSazb7S/1IU/A
+         09bvUut3HHPE9pwl79kP+AxhuvEZvI4RFqkCCaZgAUrnxLRQ8LDCDyro9Ze++aRU1bZV
+         K6lYHVo3xXxE09EJv3Xp/JvbRtIhp7IY/KgVfjX8Chh6APAT/TrEfxXDbTeHxU2x0b4g
+         IZng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728574224; x=1729179024;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lOrtMOEl2/v4ljPvD1T5zRUPqcdaOPtsScL3OxMIEpE=;
-        b=URb9oTVrX1/1yR7L9hIhZMh81vOHvltDQ3kl2w2jtGWReW8Q4qdQOiHM1eJMQgo+vd
-         zW+yPfDPzmYRcruKr926IoURDM3jz/3/gacHZ36voew7mahnpRip1ZKIpTzDl3tw/KLA
-         yK6flwIqvZRR0dP/uBXIXNMKesd8FYtCE9alMTiiTSZvYaJqrxEac5zoQryLSPhobpN+
-         9qw0LdXK21hAWQLdC0v3Y9r4As2v+9GnjtfdDMQjU9j+J9FGl7CpNvd0enegwQMlUgEp
-         O2kKrquPKXIARBuEA1NNSh/HFbKvj+W5ErpvrWaus0X2yiFd1N90Tfry815WLDa1BPQg
-         M9Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAAcI9Z0FlgtiAcNcmu3kOr5bF8gU/qe9ht3Y27duq84vJYesgn3z16TUSF5qL4j4BCCAlZh9HMqhNehc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFg7AR2YTEdlCGpDYC61ECb4wLw3fralQPLgSvSnCsDhXKelHi
-	mi7cB9JofqyIdYydoBwnntaMye62lCgIXoKbRyyHfveZxosatzKLSu5BL6OesjVRmPZPHLR35ka
-	zTkk30G5GvrWvQR2aJPCUzU8+64ztVhZiSQiHPyHfsuRfGF2HsmD01f8=
-X-Google-Smtp-Source: AGHT+IE33Ptol93r2SXPC7HWoQpirh/0/J8ZyCt+2ni/kZTzF7ZvtN2D7IGcGgtbHIcA01GQObkQB4i0xkdPH9hDUr6WEyOhCdGA
+        d=1e100.net; s=20230601; t=1728574238; x=1729179038;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8mwCSYpgr9vQNHEWealZYY4kqQDRjCOUEotDuCTgtRk=;
+        b=DnlS0GfUdwf3pQ8vDYH5W6yjstvmAC2zJb/69KAQZKYIcslVMLnqkxX/Xm+gqNcBxw
+         cngCEeDeGGdALIFeU9KwSL5MppoGRgmiKzugdLNroGOBDCsKxe9sJAOI19VPAF5Nxq02
+         f2RjKG4EeiIJ7DMh7lrCaeFcib2FOy5ene3ep/OwD4zmDH/EHZfJpde6L5pQsDE8S2PU
+         b8o4ByCicQp2GiOJzjkL6zre4AoWYiPjsPBbE8NHIwXfGOhr3k8zmN6N9reqFieSjog5
+         kvV1itDNbcc1RG+Uf4LqD5Wui4bcuR2poTFt2QMLaQGlcvXtrUDrEalNlisJQhzv3dQh
+         02Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXxp0yV6DdJ/UR5xxw4iMNkZKhwJID2R9vuPVI0Xp5NxTXIxhIkR81pii61h4QpUPWIOnQgiPfxmGtto0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR3VYoiVpCK8I46p+ZtfOhrkubyQlDea++6B5HNT/kYJnpPoc/
+	I3H7wN1uI3ZTTe/pFoekskkBVdU86bCSGAfMg/RsFCn3bWYfhKzfjfcMAldn/RN11e2K50tWPXO
+	G3GziAigOZPvbVKXdohgQ5HxwkapoSkTROmeZ
+X-Google-Smtp-Source: AGHT+IGH92vSYq1uHIAbNQkPnhT529UhmqKl2DvtGKmBgkIU1jYDv20vl73weke8g55yaEyRykW4FbyfRWM+Ed6yq1E=
+X-Received: by 2002:a05:6402:4402:b0:5c9:1f1f:8317 with SMTP id
+ 4fb4d7f45d1cf-5c91f1f86ccmr5319668a12.26.1728574238326; Thu, 10 Oct 2024
+ 08:30:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fce:b0:3a3:3e17:994e with SMTP id
- e9e14a558f8ab-3a397cfc554mr72027075ab.9.1728574223820; Thu, 10 Oct 2024
- 08:30:23 -0700 (PDT)
-Date: Thu, 10 Oct 2024 08:30:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6707f30f.050a0220.64b99.001d.GAE@google.com>
-Subject: [syzbot] [block?] [bcachefs?] KASAN: slab-use-after-free Read in
- percpu_ref_put (2)
-From: syzbot <syzbot+905d719acdbd213bf67e@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-7-jdamato@fastly.com>
+ <CANn89iJ1=xA9WGhXAMcCAeacE3pYgqiWjcBdxiWjGPACP-5n_g@mail.gmail.com> <20241010081923.7714b268@kernel.org>
+In-Reply-To: <20241010081923.7714b268@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 10 Oct 2024 17:30:26 +0200
+Message-ID: <CANn89iK_iDY_nTCgqYUk7D_R8k_qu2qQrs2rUAxxAu_ufrzBnw@mail.gmail.com>
+Subject: Re: [net-next v5 6/9] netdev-genl: Support setting per-NAPI config values
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org, mkarsten@uwaterloo.ca, 
+	skhawaja@google.com, sdf@fomichev.me, bjorn@rivosinc.com, 
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com, 
+	willemdebruijn.kernel@gmail.com, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Mina Almasry <almasrymina@google.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    8f602276d390 Merge tag 'bcachefs-2024-10-05' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1033c7d0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba92623fdea824c9
-dashboard link: https://syzkaller.appspot.com/bug?extid=905d719acdbd213bf67e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131f307980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15148327980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-8f602276.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d7abbd2b0653/vmlinux-8f602276.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6a9f3d168828/bzImage-8f602276.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/184260729fa9/mount_8.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+905d719acdbd213bf67e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in __ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
-BUG: KASAN: slab-use-after-free in percpu_ref_put_many include/linux/percpu-refcount.h:332 [inline]
-BUG: KASAN: slab-use-after-free in percpu_ref_put+0xda/0x250 include/linux/percpu-refcount.h:351
-Read of size 8 at addr ffff8880364920b0 by task kworker/u4:8/1067
-
-CPU: 0 UID: 0 PID: 1067 Comm: kworker/u4:8 Not tainted 6.12.0-rc1-syzkaller-00349-g8f602276d390 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: loop0 loop_rootcg_workfn
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
- percpu_ref_put_many include/linux/percpu-refcount.h:332 [inline]
- percpu_ref_put+0xda/0x250 include/linux/percpu-refcount.h:351
- blk_update_request+0x5e5/0x1160 block/blk-mq.c:923
- blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1051
- loop_handle_cmd drivers/block/loop.c:1927 [inline]
- loop_process_work+0x1c10/0x2170 drivers/block/loop.c:1945
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5114:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- __bch2_dev_alloc+0x57/0xa60 fs/bcachefs/super.c:1289
- bch2_dev_alloc+0xd4/0x170 fs/bcachefs/super.c:1359
- bch2_fs_alloc fs/bcachefs/super.c:939 [inline]
- bch2_fs_open+0x2e3f/0x2f80 fs/bcachefs/super.c:2050
- bch2_fs_get_tree+0x738/0x1710 fs/bcachefs/fs.c:2067
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5114:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22f/0x480 lib/kobject.c:737
- bch2_fs_free+0x27b/0x3c0 fs/bcachefs/super.c:667
- bch2_fs_get_tree+0xd9f/0x1710 fs/bcachefs/fs.c:2175
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888036492000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 176 bytes inside of
- freed 4096-byte region [ffff888036492000, ffff888036493000)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x36490
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000040 ffff88801ac42140 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
-head: 04fff00000000040 ffff88801ac42140 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
-head: 04fff00000000003 ffffea0000d92401 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5114, tgid 5114 (syz-executor374), ts 95819092336, free_ts 95351745772
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
- mempool_init_node+0x1ee/0x4e0 mm/mempool.c:217
- mempool_init_noprof+0x3a/0x50 mm/mempool.c:246
- bch2_fs_btree_interior_update_init+0xca/0x100 fs/bcachefs/btree_update_interior.c:2706
- bch2_fs_alloc fs/bcachefs/super.c:919 [inline]
- bch2_fs_open+0x2af9/0x2f80 fs/bcachefs/super.c:2050
- bch2_fs_get_tree+0x738/0x1710 fs/bcachefs/fs.c:2067
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-page last free pid 5104 tgid 5104 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- mempool_exit+0xc7/0x1a0 mm/mempool.c:170
- bch2_fs_io_write_exit+0x19/0x40 fs/bcachefs/io_write.c:1673
- __bch2_fs_free fs/bcachefs/super.c:550 [inline]
- bch2_fs_release+0x1e1/0x7d0 fs/bcachefs/super.c:609
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22f/0x480 lib/kobject.c:737
- bch2_fs_get_tree+0xd9f/0x1710 fs/bcachefs/fs.c:2175
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888036491f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888036492000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888036492080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff888036492100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888036492180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+On Thu, Oct 10, 2024 at 5:19=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Thu, 10 Oct 2024 06:24:54 +0200 Eric Dumazet wrote:
+> > > +static const struct netlink_range_validation netdev_a_napi_defer_har=
+d_irqs_range =3D {
+> > > +       .max    =3D 2147483647ULL,
+> >
+> > Would (u64)INT_MAX  work ?
+>
+> I sent a codegen change for this. The codegen is a bit of a mess.
+>
+> > > +int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *i=
+nfo)
+> > > +{
+> > > +       struct napi_struct *napi;
+> > > +       unsigned int napi_id;
+> > > +       int err;
+> > > +
+> > > +       if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_NAPI_ID))
+> > > +               return -EINVAL;
+> > > +
+> > > +       napi_id =3D nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
+> > > +
+> > > +       rtnl_lock();
+> >
+> > Hmm.... please see my patch there :
+> >
+> >  https://patchwork.kernel.org/project/netdevbpf/patch/20241009232728.10=
+7604-2-edumazet@google.com/
+> >
+> > Lets not add another rtnl_lock() :/
+>
+> It's not as easy since NAPIs can come and go at driver's whim.
+> I'm quietly hoping we can convert all netdev-nl NAPI accesses
+> to use the netdev->lock protection I strong-armed Paolo into
+> adding in his shaper series. But perhaps we can do that after
+> this series? NAPI GET already takes RTNL lock.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+napi_by_id() is protected by rcu and its own spinlock ( napi_hash_lock )
+I do not see why rtnl is needed.
+This will also be a big issue with per netns-RTNL anyway.
 
