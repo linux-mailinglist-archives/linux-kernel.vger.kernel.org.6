@@ -1,180 +1,148 @@
-Return-Path: <linux-kernel+bounces-359220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5C89988D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C819C99889A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900481C23E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876D82895DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD991CB324;
-	Thu, 10 Oct 2024 14:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49FA1C9DFC;
+	Thu, 10 Oct 2024 14:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="oD7avbpK"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qd3BtDhu"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A651C9B67;
-	Thu, 10 Oct 2024 14:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB9D1C7B6A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569406; cv=none; b=N46pycW6V3VAqsABXMGIK5tLHHQNCqZS8FfEfAyW591asRiTaulvcdBzuE8otaoTrnw8h0e/8VewP804gV6OWdvSOtinIL23X9CSk9qS6XZe+OfuqduUcpEvSkfBXxsIQGToy7CNXfbI8y3KqMOiSTosYS6O3u+0TaUPYx1hfOI=
+	t=1728568907; cv=none; b=EQNWhEiFR1QTAH05KuKz/SmH+roFOwBfrHQVDNJ1Gm6jJI06hzKv1D26hZpiTvAeU5tjB1b5CXviJJxO4jCIx7EZB3ed5PN2TltxUoIInTE2EfZGLTEWWhGZZDc4bIa6yt3eZ2q8aXjP/M424VOSoRXcW0TSfLoRGZ2VJA74TIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569406; c=relaxed/simple;
-	bh=rbj8Ml5y0TZf+zBBpOdNUB0GBpgNqjOeQWMM1fIVEE8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ankt9jtCObK6wIDZ8Hf3ZNJgEUFmoW4RUwxres4MTKPUjc5JBAeRDCCV4jdY1cg2FMU51FnsLsMIdyM72fmh+gj0fSw5zzs+2EFsPEWDzy0KUNAKkwDOgT9+lX6QpfWS4FgEpSlRp6u8i/7uIeI/oCOk2TUQsX46yFBfi3EJT3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=oD7avbpK; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 4355AC0009;
-	Thu, 10 Oct 2024 17:02:21 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 4355AC0009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1728568941; bh=mTQWToLFTJPHNXH5pRrcnw/VZiXSpMsDPPC1XDk9tlU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=oD7avbpK1yQRZUz3zoMzLnagyTS6LacMWi6uIXfkUIPeezg1exNspSln79ObJlDev
-	 BogkCnD5JWoRJ3sFYvbKsN/MXKPGdm4F/n6uxDJNnwO3Gt4q+OrAOTweqLjNL61tAi
-	 tSdDXf3pMaEGNvHzipKrACViHrfxv7Lm9iKT1LE7SC8lEunZ24zHxJZqBgEF7+GDcg
-	 fMlCE50omIJ7huCXBc3O87r0SquYUmqS3O9FUXTtR0zRFEbjlJiszYxYvrdoLj5gCr
-	 X9JdzdvY30jqvesqR7rOkll5bIByJgl55y7VigrosZIaOpgjR/t9EcPBfiyU1VaM0j
-	 c9BErd69fOLgg==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Thu, 10 Oct 2024 17:02:21 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (10.0.247.250) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Thu, 10 Oct 2024 17:02:18 +0300
-From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Peter Ujfalusi
-	<peter.ujfalusi@linux.intel.com>, Ranjani Sridharan
-	<ranjani.sridharan@linux.intel.com>, Pierre-Louis Bossart
-	<pierre-louis.bossart@linux.intel.com>, Mark Brown <broonie@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>, Daniel Baluta
-	<daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, <sound-open-firmware@alsa-project.org>,
-	<alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH 6.1/6.6] ASoC: SOF: Fix runtime pm usage counter balance after fw exception
-Date: Thu, 10 Oct 2024 19:01:07 +0500
-Message-ID: <20241010140110.1153-3-v.shevtsov@maxima.ru>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728568907; c=relaxed/simple;
+	bh=kALkcQRrhntN1yB20faxRzZG0b1HvvZgGUychwJTUIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kNuim1Ffj3rKBXse+v2LQ10CO3+MNTVSLqPDiUhqf5sfKiBzLNmhpdb0VJrlSNJICvK3OshH6vfNFBRLpCIlzy3Yzi8rxYcke7pQogjvU5luUnVpFXM7mibWNJOSdAaU7mbXdMuJHgBwcT91WS949oNKi1VgLdEfkC/5MuLf9CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qd3BtDhu; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d47b38336so541081f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728568904; x=1729173704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B3CizW4u3+UrLWSR0ffHUPIJ13PdM9vRjZPunNir5Hg=;
+        b=qd3BtDhuhekoxfW5j979y9b73Q2YXdYrtICznhDXDyGu6kGBiDp/lMKBjRkOCXFihI
+         DLmT1vWo8ya+6qGSxeZKQo20Ju0Vv7hDNjW87xJMCR33PydrWe+fTPSLqv34UerLEDzv
+         6XYNJcc7fyT5J5QxhhuBjkgYyqRb6jHhcsUCG6TkzBqeZ9lRJOxz8FgPnZJE+U2HJq1v
+         zbdrqPA9cLGDJfHjyzPN6jujQV/prwuq2NxoJbyp4D6dMJNO5GmtG2+h6OSwUXoDGTK6
+         CaDEUoXLPnS6FU1VaautmTkDwQWQX1tldjmSJwKJn+Mymgc2j+PdbyBHkzgBM9sIX0Y5
+         ZRsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728568904; x=1729173704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B3CizW4u3+UrLWSR0ffHUPIJ13PdM9vRjZPunNir5Hg=;
+        b=JF9xFz5nFuNllFZLW5teUqsWXJzrFqrSF+Z6mMixw/7IT6AW67qzgt4esw7fezY6ba
+         UfB/Qo9oiCzKyntw9t0Bx7dui+dienEAvbaZYTRdIKz9eW2q8Ib/bp2uu6jAVC3awUEY
+         rxiLB0PrLovZpUPyWMol+zGLJwj+itK5KlAobGt5uJyCENO+Bi1pEi6rYd4/FPbCnek+
+         rJGhnY4gHDuEyASlJPMMOYgehg0Y/rIAyqvB+jeWmXmFjDUuhVOhIQD99sqbbRwZCk3V
+         OS268zkFOjXDyB3jZktDUp/Z47VasBe2kpv4O1TMJy//7BG79+A63GkTUcIondVuFrJZ
+         2w1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsHGWvIhEx+1gXVixm+8bRzGj/sxiZwEufd145nmRcSzYB2U4nTKNTD448RqEk/pLgZA2jJgFMN8YmS6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2RrXVvM/nAPFJ92lndwS0GsJf+/UjRmrfXXZukTd23ZKxV34S
+	UPp/i2hzChm6/cBdfqzNgGDIaGY+bAep9fDmA0qa4B54JsQ0yRaxmrjX9ZzAjTImcmBZqu5dlp/
+	LfYDBikh/yraXtAucYBJS6h0WUd/qQBMufS/g
+X-Google-Smtp-Source: AGHT+IGbl/myGulPH7utUVANwqGBZ1G1wJDyWXE9tQCoFt9Nv3IiGyF+ktDEcfU32Dohut4keUWPmBaXOt/2BJpg4ck=
+X-Received: by 2002:adf:e592:0:b0:37d:4956:b0b4 with SMTP id
+ ffacd0b85a97d-37d4956b4a4mr1614858f8f.59.1728568903205; Thu, 10 Oct 2024
+ 07:01:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188361 [Oct 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, maxima.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2;msgid.link:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/10 12:46:00
-X-KSMG-LinksScanning: Clean, bases: 2024/10/10 12:46:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/10 12:06:00 #26731330
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240930-static-mutex-v4-1-c59555413127@google.com> <87r08okqlp.fsf@kernel.org>
+In-Reply-To: <87r08okqlp.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 10 Oct 2024 16:01:29 +0200
+Message-ID: <CAH5fLghvZsU-rF+6hkOoiAOWhpiLJV1WJNPYCRWTq7cEW8UM1w@mail.gmail.com>
+Subject: Re: [PATCH v4] rust: add global lock support
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+On Thu, Oct 10, 2024 at 3:57=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> Hi Alice,
+>
+> Alice Ryhl <aliceryhl@google.com> writes:
+>
+> > Add support for creating global variables that are wrapped in a mutex o=
+r
+> > spinlock. Optionally, the macro can generate a special LockedBy type
+> > that does not require a runtime check.
+> >
+> > The implementation here is intended to replace the global mutex
+> > workaround found in the Rust Binder RFC [1]. In both cases, the global
+> > lock must be initialized before first use. The macro is unsafe to use
+> > for the same reason.
+> >
+> > The separate initialization step is required because it is tricky to
+> > access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
+> > require changes to the C side. That change will happen as a follow-up t=
+o
+> > this patch.
+>
+> Why is this a challenge? It seems to work with locks that are not
+> global.
 
-commit b30289e7fa927f921bfb4d0d04727461706ae822 upstream.
+Because normal locks are not initialized in a const expression.
 
-If the retain context is enabled we will unconditionally increment the
-device's pm use count on each exception and when the drivers are unloaded
-we do not correct this (as we don't know how many times we 'prevented
-d3 entry').
-Introduce a flag to make sure that we do not increment the use count more
-than once and on module unload decrement the use count if needed to
-balance it.
+> > diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/gl=
+obal.rs
+> > new file mode 100644
+> > index 000000000000..fc02fac864f6
+> > --- /dev/null
+> > +++ b/rust/kernel/sync/lock/global.rs
+> > @@ -0,0 +1,260 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2024 Google LLC.
+> > +
+> > +//! Support for defining statics containing locks.
+> > +
+> > +/// Defines a global lock.
+> > +///
+> > +/// Supports the following options:
+> > +///
+> > +/// * `value` specifies the initial value in the global lock.
+> > +/// * `wrapper` specifies the name of the wrapper struct.
+>
+> Could you add an example to demonstrate when using `wrapper` option
+> would be useful?
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://msgid.link/r/20240213114729.7055-1-peter.ujfalusi@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
----
- sound/soc/sof/core.c     | 10 ++++++++++
- sound/soc/sof/debug.c    |  8 +++++---
- sound/soc/sof/sof-priv.h |  1 +
- 3 files changed, 16 insertions(+), 3 deletions(-)
+Probably only guard and locked_by are useful, but I think you need to
+give the wrapper a name to reasonably use guard/locked_by.
 
-diff --git a/sound/soc/sof/core.c b/sound/soc/sof/core.c
-index 0938b259f703..cba0af5b86aa 100644
---- a/sound/soc/sof/core.c
-+++ b/sound/soc/sof/core.c
-@@ -477,6 +477,16 @@ int snd_sof_device_remove(struct device *dev)
- 	 */
- 	snd_sof_machine_unregister(sdev, pdata);
- 
-+	/*
-+	 * Balance the runtime pm usage count in case we are faced with an
-+	 * exception and we forcably prevented D3 power state to preserve
-+	 * context
-+	 */
-+	if (sdev->d3_prevented) {
-+		sdev->d3_prevented = false;
-+		pm_runtime_put_noidle(sdev->dev);
-+	}
-+
- 	if (sdev->fw_state > SOF_FW_BOOT_NOT_STARTED) {
- 		sof_fw_trace_free(sdev);
- 		ret = snd_sof_dsp_power_down_notify(sdev);
-diff --git a/sound/soc/sof/debug.c b/sound/soc/sof/debug.c
-index d547318e0d32..7c8aafca8fde 100644
---- a/sound/soc/sof/debug.c
-+++ b/sound/soc/sof/debug.c
-@@ -433,13 +433,15 @@ static void snd_sof_ipc_dump(struct snd_sof_dev *sdev)
- 
- void snd_sof_handle_fw_exception(struct snd_sof_dev *sdev, const char *msg)
- {
--	if (IS_ENABLED(CONFIG_SND_SOC_SOF_DEBUG_RETAIN_DSP_CONTEXT) ||
--	    sof_debug_check_flag(SOF_DBG_RETAIN_CTX)) {
-+	if ((IS_ENABLED(CONFIG_SND_SOC_SOF_DEBUG_RETAIN_DSP_CONTEXT) ||
-+	    sof_debug_check_flag(SOF_DBG_RETAIN_CTX)) && !sdev->d3_prevented) {
- 		/* should we prevent DSP entering D3 ? */
- 		if (!sdev->ipc_dump_printed)
- 			dev_info(sdev->dev,
- 				 "Attempting to prevent DSP from entering D3 state to preserve context\n");
--		pm_runtime_get_if_in_use(sdev->dev);
-+
-+		if (pm_runtime_get_if_in_use(sdev->dev) == 1)
-+			sdev->d3_prevented = true;
- 	}
- 
- 	/* dump vital information to the logs */
-diff --git a/sound/soc/sof/sof-priv.h b/sound/soc/sof/sof-priv.h
-index d4f6702e93dc..b27a5f9e1bc8 100644
---- a/sound/soc/sof/sof-priv.h
-+++ b/sound/soc/sof/sof-priv.h
-@@ -593,6 +593,7 @@ struct snd_sof_dev {
- 	struct list_head dfsentry_list;
- 	bool dbg_dump_printed;
- 	bool ipc_dump_printed;
-+	bool d3_prevented; /* runtime pm use count incremented to prevent context lost */
- 
- 	/* firmware loader */
- 	struct sof_ipc_fw_ready fw_ready;
--- 
-2.46.2
+> > +                    /// Lock this global lock.
+>
+> "Try to lock..." ?
 
+Thanks. Good point.
+
+Alice
 
