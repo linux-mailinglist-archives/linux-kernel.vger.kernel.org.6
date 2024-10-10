@@ -1,136 +1,259 @@
-Return-Path: <linux-kernel+bounces-358702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3BA998297
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:42:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F949982AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8DC285CE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:42:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 338FCB28FC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEE41BC097;
-	Thu, 10 Oct 2024 09:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4631BC9F6;
+	Thu, 10 Oct 2024 09:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zX9p2aZ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="H63Qc4Ou"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB77F1BC061;
-	Thu, 10 Oct 2024 09:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B21BC061;
+	Thu, 10 Oct 2024 09:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553324; cv=none; b=EMadXTwgb6FvIUG9M3Hy2G3wSfkXxv6JIp9wcIED7P/NZOOQ3FrHSJFKqSKgsggLOehUu/nEQw0M5XmWKn211r7m19lFM50XkV/DhALrZwU+txL5mUrNrb1ejugVWtoUyqLFmvTcBIueVycnM8yCB17j3SG1rbSLIYyMyR7IP6U=
+	t=1728553333; cv=none; b=U5HvSqzlUuj1yQo3WvnB2ehTewrsQbwkckkJRmA49qZmQZsjV9wiczLvD84DDcAajf5YXEMDQowiuEyRKTNSAOpcnXmEfBy/Rlv1OPnPKtsAIUFMkZTmytjZSXoKkMcmPcgnFSjCeZNyaLBPNSkC0Hjsoif28Ld0ZNrB6sHc3h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553324; c=relaxed/simple;
-	bh=GIEhwdto29dTIdh5H2EYdZNpFROtC3k9we0ptMpXhdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNVprvdOfBahhq50qunOvCDF92oJeWNzpbEowRc2KDLV0D+3R90t4fY7NeExG6z4tvBcUNpULTdRy455nsskURpmEu/tFejS7jfNLjLIeffuQs7Qu3szHGjkh0eh3CAgkiu0O5GiW98ivL/6Et0lyQdJ0CUBUfqo5fuv4NAOMGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zX9p2aZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B372C4CEC5;
-	Thu, 10 Oct 2024 09:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728553323;
-	bh=GIEhwdto29dTIdh5H2EYdZNpFROtC3k9we0ptMpXhdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zX9p2aZ6jrztUDxeBO52da8z69ZkOWyH9pv6vxWg6T7tWCsGzR0z72bv9P0pmiQIw
-	 wQYWZUvXzov9vBTtqAQcR3bdMZoum4WLSwGjC5STMy7KZsiCr6oH31B3SkXL+x3HOS
-	 AMpytUXLPJUQ+HvEJoX3uYanfLA+F572B+sKu0Oo=
-Date: Thu, 10 Oct 2024 11:41:59 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-Cc: Fabricio Gasperin <fgasperin@lkcamp.dev>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH] staging: sm750: Fix missing config in Kconfig
-Message-ID: <2024101036-footboard-stinger-9c03@gregkh>
-References: <20240921180612.57657-1-fgasperin@lkcamp.dev>
- <20240921180612.57657-2-fgasperin@lkcamp.dev>
- <2024100925-lend-aging-2ff3@gregkh>
- <b8c3c51e-375f-4139-8336-76b6df56e8ea@lkcamp.dev>
+	s=arc-20240116; t=1728553333; c=relaxed/simple;
+	bh=8lRmGtzpKCSbPzQOWXLMKG/S0oTwOaaGGVrYaPtPoSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XpQepd89AEFuRM5bjFOfSFfbDNY1RiLQgLyIEs5JNbRHIvAidYIC9NeEoKGKVKQ/QO7hIYl8VVZJJDBSaKfS8Vr0EGP2YkZ6Ki+A8oOhE3B0oT98HApvLZjRPAxqLePkgehNWu/DrAbdP+feICe8MGc7mfK+fFsM2pRBK3U+lqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=H63Qc4Ou; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728553329;
+	bh=8lRmGtzpKCSbPzQOWXLMKG/S0oTwOaaGGVrYaPtPoSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H63Qc4OuDKzaagf/6BEAZRRH+6/bh9qoTk5fwBELyvN7HuZ1N426BHSVDHjrMboVA
+	 jpQ6ynBGIqwoFtXp+/juLmnYn4gF+lYD3bljIxs7YAeAeSY2WEpPjUPPCkrI/vOs8K
+	 dARCVpxi71vTHCKJzHOxI4UcXUR4WkJNy0VAKHR+kRVJ0moftd2gNYGDvyTS5pWi8u
+	 MpsAO5QLTlZOGySic6Adqj46+cFkAl1alipi28pfxJzZT/a1OGQufUCiXuIwLuU4V4
+	 DdJUvuMMxakPt838tOflXlfXT5IYkksCYSSVaU1PG9pHXGPVXNYmYEB3C7LdKCSJMr
+	 tw5jTJUTHc0oQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E458717E120F;
+	Thu, 10 Oct 2024 11:42:08 +0200 (CEST)
+Message-ID: <ce926e0c-74f3-4c7b-987f-3dc50b81a3aa@collabora.com>
+Date: Thu, 10 Oct 2024 11:42:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8c3c51e-375f-4139-8336-76b6df56e8ea@lkcamp.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] pinctrl: mediatek: add support for
+ MTK_PULL_PD_TYPE
+To: Frank Wunderlich <linux@fw-web.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
+ eladwf@gmail.com
+References: <20241009165222.5670-1-linux@fw-web.de>
+ <20241009165222.5670-2-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241009165222.5670-2-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 10:44:38AM -0300, Vinicius Peixoto wrote:
-> Hi Greg,
+Il 09/10/24 18:52, Frank Wunderlich ha scritto:
+> From: Daniel Golle <daniel@makrotopia.org>
 > 
-> On 10/9/24 06:56, Greg Kroah-Hartman wrote:
-> > On Sat, Sep 21, 2024 at 03:06:09PM -0300, Fabricio Gasperin wrote:
-> > > Fixes the following compilation error:
-> > > 
-> > > ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-> > > ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-> > > ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-> > > 
-> > > Signed-off-by: Fabricio Gasperin <fgasperin@lkcamp.dev>
-> > > ---
-> > >   drivers/staging/sm750fb/Kconfig | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/staging/sm750fb/Kconfig b/drivers/staging/sm750fb/Kconfig
-> > > index 08bcccdd0f1c..eca1aa43d725 100644
-> > > --- a/drivers/staging/sm750fb/Kconfig
-> > > +++ b/drivers/staging/sm750fb/Kconfig
-> > > @@ -3,6 +3,7 @@ config FB_SM750
-> > >   	tristate "Silicon Motion SM750 framebuffer support"
-> > >   	depends on FB && PCI && HAS_IOPORT
-> > >   	select FB_MODE_HELPERS
-> > > +	select FB_IOMEM_FOPS
-> > >   	select FB_CFB_FILLRECT
-> > >   	select FB_CFB_COPYAREA
-> > >   	select FB_CFB_IMAGEBLIT
-> > > -- 
-> > > 2.46.1
-> > > 
-> > > 
-> > 
-> > What is causing this error? What commit created the problem, and why
-> > has no one reported it yet?
+> The MediaTek MT7988 SoC got some pins which only got configurable
+> pull-down but unlike previous designs there is no pull-up option.
+> Add new type MTK_PULL_PD_TYPE to support configuring such pins.
 > 
-> This happens because drivers/staging/sm750fb/sm750.c, defines an fb_ops
-> structure:
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>   .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  | 59 +++++++++++++++++++
+>   .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |  1 +
+>   2 files changed, 60 insertions(+)
 > 
-> static const struct fb_ops lynxfb_ops = {
-> 	.owner = THIS_MODULE,
-> 	FB_DEFAULT_IOMEM_OPS,
-> 	...
-> };
-> 
-> FB_DEFAULT_IOMEM_OPS expands to the fb_io_* helpers declared in
-> include/linux/fb.h and defined in drivers/video/fbdev/core/fb_io_fops.c;
-> however, the latter is gated by FB_IOMEM_FOPS, so when compiling a kernel
-> with CONFIG_STAGING=y + CONFIG_FB=m + CONFIG_FB_SM750=m, you get the
-> following error:
-> 
-> ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-> ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko]
-> undefined!
-> ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
-> make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
-> 
-> So in order to solve it we select FB_IOMEM_FOPS, much like the other FB_*
-> drivers do in drivers/video/fbdev/Kconfig.
-> 
-> Not entirely sure why this wasn't caught before, but the commit that broke
-> the build for sm750fb is 6b180f66c0dd ("fbdev: Provide I/O-memory helpers as
-> module"), which made the fb_io_* helpers be built as a separate module
-> instead of being bundled in fb.o (which is what sm750fb was relying on). I
-> think Fabricio can add a "Fixes:" tag in v2.
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> index 54301fbba524..eff2aecd31dd 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+> @@ -601,6 +601,30 @@ static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
+>   	return err;
+>   }
+>   
+> +static int mtk_pinconf_bias_set_pd(struct mtk_pinctrl *hw,
+> +				const struct mtk_pin_desc *desc,
+> +				u32 pullup, u32 arg)
+> +{
+> +	int err, pd;
+> +
+> +	if (arg == MTK_DISABLE)
 
-Ok, thanks for the explaination.  All of this should go into the
-changelog text, and yes, a Fixes: tag is also required.
+if (arg != MTK_DISABLE && arg != MTK_ENABLE)
+	return -EINVAL
 
-thanks,
+/* Either this */
+if (arg == MTK_DISABLE || pullup)
+	pd = 0;
+else if (!pullup)
+	pd = 1
 
-greg k-h
+/* Or this (but it's probably a bit too cryptic) */
+pd = !(arg == MTK_DISABLE || pullup);
+
+return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
+
+
+
+...but then, you could otherwise modify mtk_pinconf_bias_set_pu_pd(), so that
+
+static int mtk_pinconf_bias_set_pu_pd(struct mtk_pinctrl *hw,
+				const struct mtk_pin_desc *desc,
+				u32 pullup, u32 arg, bool pd_only)
+{
+	int err, pu, pd;
+
+	if (arg == MTK_DISABLE) {
+		pu = 0;
+		pd = 0;
+	} else if ((arg == MTK_ENABLE) && pullup) {
+		pu = 1;
+		pd = 0;
+	} else if ((arg == MTK_ENABLE) && !pullup) {
+		pu = 0;
+		pd = 1;
+	} else {
+		return -EINVAL;
+	}
+
+	if (!pd_only) {
+		err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PU, pu);
+		if (err)
+			return err;
+	}
+
+	return mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
+}
+
+> +		pd = 0;
+> +	else if ((arg == MTK_ENABLE) && pullup)
+> +		pd = 0;
+> +	else if ((arg == MTK_ENABLE) && !pullup)
+> +		pd = 1;
+> +	else {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_PD, pd);
+> +
+> +out:
+> +	return err;
+> +
+> +}
+> +
+>   static int mtk_pinconf_bias_set_pullsel_pullen(struct mtk_pinctrl *hw,
+>   				const struct mtk_pin_desc *desc,
+>   				u32 pullup, u32 arg)
+> @@ -758,6 +782,12 @@ int mtk_pinconf_bias_set_combo(struct mtk_pinctrl *hw,
+>   			return 0;
+>   	}
+>   
+> +	if (try_all_type & MTK_PULL_PD_TYPE) {
+> +		err = mtk_pinconf_bias_set_pd(hw, desc, pullup, arg);
+
+so if it is PD_TYPE, mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg, true);
+
+> +		if (!err)
+> +			return err;
+> +	}
+> +
+>   	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
+>   		err = mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg);
+
+mtk_pinconf_bias_set_pu_pd(hw, desc, pullup, arg, false);
+
+>   		if (!err)
+> @@ -878,6 +908,29 @@ static int mtk_pinconf_bias_get_pu_pd(struct mtk_pinctrl *hw,
+>   	return err;
+>   }
+>   
+> +static int mtk_pinconf_bias_get_pd(struct mtk_pinctrl *hw,
+> +				const struct mtk_pin_desc *desc,
+> +				u32 *pullup, u32 *enable)
+> +{
+
+this one you can keep it as it is, because I don't think that you can get
+the get_pu_pd function to work with pd_only without making it .. well, messy.
+
+> +	int err, pd;
+> +
+> +	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_PD, &pd);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (pd == 0) {
+> +		*pullup = 0;
+> +		*enable = MTK_DISABLE;
+> +	} else if (pd == 1) {
+> +		*pullup = 0;
+> +		*enable = MTK_ENABLE;
+> +	} else
+> +		err = -EINVAL;
+> +
+> +out:
+> +	return err;
+> +}
+> +
+>   static int mtk_pinconf_bias_get_pullsel_pullen(struct mtk_pinctrl *hw,
+>   				const struct mtk_pin_desc *desc,
+>   				u32 *pullup, u32 *enable)
+> @@ -947,6 +1000,12 @@ int mtk_pinconf_bias_get_combo(struct mtk_pinctrl *hw,
+>   			return 0;
+>   	}
+>   
+> +	if (try_all_type & MTK_PULL_PD_TYPE) {
+> +		err = mtk_pinconf_bias_get_pd(hw, desc, pullup, enable);
+> +		if (!err)
+> +			return err;
+> +	}
+> +
+>   	if (try_all_type & MTK_PULL_PU_PD_TYPE) {
+>   		err = mtk_pinconf_bias_get_pu_pd(hw, desc, pullup, enable);
+>   		if (!err)
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> index 23688ca6d04e..9c271dc2b521 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
+> @@ -24,6 +24,7 @@
+>    * turned on/off itself. But it can't be selected pull up/down
+>    */
+>   #define MTK_PULL_RSEL_TYPE		BIT(3)
+> +#define MTK_PULL_PD_TYPE        BIT(4)
+>   /* MTK_PULL_PU_PD_RSEL_TYPE is a type which is controlled by
+>    * MTK_PULL_PU_PD_TYPE and MTK_PULL_RSEL_TYPE.
+>    */
+
+
+Cheers,
+Angelo
+
+
 
