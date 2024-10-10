@@ -1,195 +1,249 @@
-Return-Path: <linux-kernel+bounces-359595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BFA998DB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:43:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88BF998DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDA428218C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1B06B2BDC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BA642A8C;
-	Thu, 10 Oct 2024 16:43:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA4C19923C;
+	Thu, 10 Oct 2024 16:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="Ms7Boc61"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D03F1957E4;
-	Thu, 10 Oct 2024 16:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F05126AFC;
+	Thu, 10 Oct 2024 16:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578585; cv=none; b=IQBP6BZVpstZbD1DAQfgFSSJqVmj5G1wrSH5oZxua/SLSqGbJxAQRw4HE4YZOlXKJs1RXNHFygHNQNLDE9jnJtHnxyFz6zYi7lqn0uzOkQgZUSQjR95Cq50C0TEONF+As9oQFjwmKCzli05qR8KhJNHMMT3zVsN1+X90gI2fd6w=
+	t=1728578691; cv=none; b=co1IOpQLSoqy4ZsN7oa1PnG5oTExvfHlz/0TpJkZK9HqHgC3U9Wq7UQJuEkEoFb/hHL37y26T8RTkaSVAbSPRDD6VSx0LIvKMRxoMRQzPtmG0gcm1vFNQ7Q7qO3TIULkOUYieXYPsjtSvPGhuxJZoVwAfMttvXKO5ZbkNX/QV6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578585; c=relaxed/simple;
-	bh=r4NtgP9B0pH09kJ7304ht3TV5b9FeLsxkrKrQhRaH1k=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=toS0ECZ0Ux8m3GPr6vSsplaWZUzzage7syugRwsplojxPK1DFvKEve87Wk/s3zLybozfc4uXxwJtMb4ELMNK7fgZbVONyhACjk0MFXGGmcXrrePnrY6eSBF0bOBeBql0/QwYyDBwrNC76RirY6JMcTLa4FOnV4cJIRErGP/Iz84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPbBC3w18z6K6t7;
-	Fri, 11 Oct 2024 00:41:39 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id EF2A6140C98;
-	Fri, 11 Oct 2024 00:43:00 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 18:43:00 +0200
-Date: Thu, 10 Oct 2024 17:42:59 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-CC: Jonathan Cameron <jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"dima.fedrau@gmail.com" <dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
-	<marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
-	<Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
-	<Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
-	<Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH v8 2/2] iio: imu: smi240: add driver
-Message-ID: <20241010174259.00003742@Huawei.com>
-In-Reply-To: <AM8PR10MB47213230C6E43976AF244587CD782@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20240923124017.43867-1-Jianping.Shen@de.bosch.com>
-	<20240923124017.43867-3-Jianping.Shen@de.bosch.com>
-	<20240928181121.0e62f0ad@jic23-huawei>
-	<AM8PR10MB47217960E30212DC62ED7821CD712@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-	<20241006121025.50802061@jic23-huawei>
-	<AM8PR10MB47213230C6E43976AF244587CD782@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728578691; c=relaxed/simple;
+	bh=3F8t5QLzmaWk/KQkP3a+lrUCDUuBtvcOCUDeU3Hj3Os=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QIYV8gAPJpAdsLeGeLH6h3BV9IvxiDXhGOGTDF4eFHhPAPNvZxEfg3YiEvtubCCbLovdCDorfVjSoi+UsUS12wM/O8zwijxVjgCcQP4iK05oI1aE4sD9vyJiKkfjdDp/AFAYodvJ8WA9Iusks4gu2OYZSZxK9JAYgN3M4dQgiro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=Ms7Boc61; arc=none smtp.client-ip=148.163.129.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 316E91C00BD;
+	Thu, 10 Oct 2024 16:44:46 +0000 (UTC)
+Received: from [192.168.100.159] (unknown [50.251.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 7731C13C2B0;
+	Thu, 10 Oct 2024 09:44:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 7731C13C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1728578685;
+	bh=3F8t5QLzmaWk/KQkP3a+lrUCDUuBtvcOCUDeU3Hj3Os=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Ms7Boc61Vrcjf1eHik20fqs83WnIBkn0VQxEnHcEaLNPqrt+98nred98TV+wip46p
+	 YL/FL8GoWNAmLUAhd4KAX+O8Ule8gq5MF9ytCAJgVR1lIzKBDU7mxW1jDeLna8YjZe
+	 fgFMwCfWw5RGf+e4OoRqVo0OvQZHQJguIEluhcmM=
+Message-ID: <05d3d02d-69c7-24a4-c2b2-26bdb53556db@candelatech.com>
+Date: Thu, 10 Oct 2024 09:44:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [syzbot] [wireless?] INFO: task hung in cfg80211_event_work (4)
+Content-Language: en-US
+To: syzbot <syzbot+5506b2556159a1ab6923@syzkaller.appspotmail.com>,
+ davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net,
+ kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com
+References: <6707f07f.050a0220.64b99.001b.GAE@google.com>
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <6707f07f.050a0220.64b99.001b.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-MDID: 1728578687-NdUd_waGqutT
+X-MDID-O:
+ us5;ut7;1728578687;NdUd_waGqutT;<greearb@candelatech.com>;b2ba5a57174c2712e3a528a5073252d4
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On Thu, 10 Oct 2024 15:02:18 +0000
-"Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com> wrote:
+On 10/10/24 08:19, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2a130b7e1fcd Merge tag 'kbuild-fixes-v6.12' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1206e79f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f38c36a955431c1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5506b2556159a1ab6923
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155b8327980000
 
-> >> >> +static int smi240_regmap_spi_read(void *context, const void *reg_buf,
-> >> >> +				  size_t reg_size, void *val_buf,
-> >> >> +				  size_t val_size)
-> >> >> +{
-> >> >> +	int ret;
-> >> >> +	u32 request, response;
-> >> >> +	u16 *val = val_buf;
-> >> >> +	struct spi_device *spi = context;
-> >> >> +	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
-> >> >> +	struct smi240_data *iio_priv_data = iio_priv(indio_dev);
-> >> >> +
-> >> >> +	if (reg_size != 1 || val_size != 2)
-> >> >> +		return -EINVAL;
-> >> >> +
-> >> >> +	request = FIELD_PREP(SMI240_WRITE_BUS_ID_MASK, SMI240_BUS_ID);
-> >> >> +	request |= FIELD_PREP(SMI240_WRITE_CAP_BIT_MASK, iio_priv_data-
-> >> >>capture);
-> >> >> +	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, *(u8 *)reg_buf);
-> >> >> +	request |= smi240_crc3(request, SMI240_CRC_INIT,
-> >> >> +SMI240_CRC_POLY);
-> >> >> +
-> >> >> +	iio_priv_data->spi_buf = cpu_to_be32(request);
-> >> >> +
-> >> >> +	/*
-> >> >> +	 * SMI240 module consists of a 32Bit Out Of Frame (OOF)
-> >> >> +	 * SPI protocol, where the slave interface responds to
-> >> >> +	 * the Master request in the next frame.
-> >> >> +	 * CS signal must toggle (> 700 ns) between the frames.
-> >> >> +	 */
-> >> >> +	ret = spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> >> >> +	if (ret)
-> >> >> +		return ret;
-> >> >> +
-> >> >> +	ret = spi_read(spi, &iio_priv_data->spi_buf, sizeof(response));
-> >> >> +	if (ret)
-> >> >> +		return ret;
-> >> >> +
-> >> >> +	response = be32_to_cpu(iio_priv_data->spi_buf);
-> >> >> +
-> >> >> +	if (!smi240_sensor_data_is_valid(response))
-> >> >> +		return -EIO;
-> >> >> +
-> >> >> +	*val = cpu_to_le16(FIELD_GET(SMI240_READ_DATA_MASK, response));  
-> >> >So this is line sparse doesn't like which is reasonable given you are
-> >> >forcing an le16 value into a u16.
-> >> >Minimal fix is just to change type of val to __le16 *
-> >> >
-> >> >I still find the endian handling in here mess and am not convinced
-> >> >the complexity is strictly necessary or correct.
-> >> >
-> >> >I'd expect the requirements of reordering to be same in read and
-> >> >write directions (unless device is really crazy), so why do we need a
-> >> >conversion to le16 here but not one from le16 in the write?  
-> >>
-> >> Hello Jonathan,
-> >>
-> >> yes, you are right. The "cpu_to_le16" is not required at all.  SMI240 does not use  
-> >the standard SPI protocol, on the other side the regmap is designed to use
-> >standard SPI protocol (by default) and may flip the register value dependent on
-> >"val_format_endian".
-> >
-> >It should still need to place the two bytes of that 16 bit value in the correct order to send to hardware.  That may be handled via a 32 bit word length on SPI though.  
-> 
-> 
-> This is the most confusing part.  During the request preparation, we focus on the bit order not the byte order. We need to bring the 16 bit value in the correct bit order, to the correct bit position in the 32 bit request. This is automatically guarantied using FIELD_PREP. FIELD_PREP shifts the data 15-0 to request 18-3. We shall never manually change the byte order of the 16 bit value. The byte order (of the whole request) becomes important when we send it over spi, which will be explained later.
-> 
-> 
-> >>When the both work together, it may lead to confusing.  Let me make it clear.
-> >>
-> >> In the SMI240, the register address is 8 bit and each register is 16 bit. We do not have any register value, which is bigger than 16 bit and need to be stored in multiple registers.  Therefore the device does not need endian. Neither big endian nor Little Endian.   To access the register, it is important to prepare the request frame according to the specification.
-> >>
-> >> A request is 32 bit
-> >>
-> >> 	ID	ADR	W	CAP	*	WDATA	CRC
-> >> 	31-30	29-22	21	20	19	18-3		2-0
-> >>
-> >> ID: device id (if more than 1 device)
-> >> ADR: reg address
-> >> W: write/read
-> >> CAP: capture mode on/off
-> >> *: reserved
-> >> WDATA : reg value bit 15-0 
-> >> CRC: check sum
-> >>
-> >> To prepare the request properly, the bit order is here critical. We need to put each part in its bit position. The request is created as a local u32, with help of FIELD_PREP, we put the value of each part to its bit position. FIELD_PREP will take care of the cpu endian and always put the value to the correct bit position. Before we send the request via SPI, a cpu endian to big endian conversion is required.  
-> >
-> >So there are two possibilities here.  Either the byte order is just reversed for the device in which case fine as you describe or perhaps the SPI transfers should be using a 32 bit word?  You'd do that by overriding the bits_per_word in the individual SPI transfers.
-> >
-> >  
-> >> Since the spi bus transfers data using big endian. When we get the response from spi, the response is big endian and need to be converted in cpu endian.  Any other manually endian conversion is not required.  
-> >
-> >The SPI bus itself has no real concept of endian as such. It just sends bits in the order it is fed them.  The device may require a particular ordering of course if we assume it makes sense to break the transfers up into byte size chnunks.  
-> 
-> 
-> Yes, the device expect that the 32 bit request will be sent from MSBit to LSBit. Which means the ID shall be sent firstly, followed by ADR, W, CAP, *, WDATA, CRC.  If we consider the 32 bit as 4 bytes , then the MSB need to sent firstly, and followed by the LSBs. From this perspective we can say that the SMI240 SPI protocol requires big endian. On the host side the request is a local u32 (4 bytes). To make sure that the MSB will be sent firstly we need to convert the request to big endian before sending it over spi.
+This looks like something I saw in 6.11 and 6.10.  My guess was that one of the
+running processes that lockdep does not print locks for is holding the wiphy mtx.
 
-Understood.  Try a 32 bit word size for the spi transfers.
-I think that should make everything work without any
-need to make it big endian.
+Maybe it would help if syzbot would use sysrq to dump all running tasks to the console, and maybe
+lockdep could print locks for running processes, even if they are marked as potentially
+unreliable?
 
-Jonathan
+Thanks,
+Ben
 
 > 
-> Best regards
-> Jianping Shen
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2a130b7e.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ea0b899b6053/vmlinux-2a130b7e.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4ef0bad329fe/bzImage-2a130b7e.xz
 > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5506b2556159a1ab6923@syzkaller.appspotmail.com
 > 
-> >See if setting the word size to 32 bits solves your issues without the need for any endian conversions.
-> >
-> >Jonathan
-> >
-> >  
+> INFO: task kworker/u4:4:5271 blocked for more than 143 seconds.
+>        Not tainted 6.12.0-rc1-syzkaller-00381-g2a130b7e1fcd #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/u4:4    state:D stack:25712 pid:5271  tgid:5271  ppid:2      flags:0x00004000
+> Workqueue: cfg80211 cfg80211_event_work
+> Call Trace:
+>   <TASK>
+>   context_switch kernel/sched/core.c:5315 [inline]
+>   __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
+>   __schedule_loop kernel/sched/core.c:6752 [inline]
+>   schedule+0x14b/0x320 kernel/sched/core.c:6767
+>   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>   __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>   __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>   wiphy_lock include/net/cfg80211.h:6014 [inline]
+>   cfg80211_event_work+0x27/0x40 net/wireless/core.c:334
+>   process_one_work kernel/workqueue.c:3229 [inline]
+>   process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+>   worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+>   kthread+0x2f0/0x390 kernel/kthread.c:389
+>   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>   </TASK>
 > 
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/25:
+>   #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>   #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>   #0: ffffffff8e937de0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
+> 1 lock held by kswapd0/73:
+> 3 locks held by kworker/0:3/909:
+> 3 locks held by kworker/u4:9/2509:
+> 3 locks held by kworker/u4:11/3318:
+> 1 lock held by dhcpcd/4814:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 2 locks held by getty/4897:
+>   #0: ffff88801dda90a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+>   #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+> 3 locks held by kworker/u4:0/5118:
+>   #0: ffff88803c425948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+>   #0: ffff88803c425948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+>   #1: ffffc90002d1fd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+>   #1: ffffc90002d1fd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+>   #2: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
+> 3 locks held by kworker/0:2/5170:
+> 2 locks held by kworker/u4:2/5176:
+> 3 locks held by kworker/u4:3/5211:
+> 1 lock held by syz-executor/5254:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
+> 1 lock held by syz-executor/5255:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
+> 1 lock held by syz-executor/5258:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
+> 1 lock held by syz-executor/5264:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
+> 3 locks held by kworker/u4:4/5271:
+>   #0: ffff88801ebdf948 ((wq_completion)cfg80211){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+>   #0: ffff88801ebdf948 ((wq_completion)cfg80211){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+>   #1: ffffc90002617d00 ((work_completion)(&rdev->event_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+>   #1: ffffc90002617d00 ((work_completion)(&rdev->event_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+>   #2: ffff888055538768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:6014 [inline]
+>   #2: ffff888055538768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: cfg80211_event_work+0x27/0x40 net/wireless/core.c:334
+> 1 lock held by syz-executor/5273:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
+> 3 locks held by kworker/u4:6/5278:
+> 4 locks held by kworker/0:6/5390:
+>   #0: ffff88801ac75948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+>   #0: ffff88801ac75948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+>   #1: ffffc90002adfd00 ((reg_check_chans).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+>   #1: ffffc90002adfd00 ((reg_check_chans).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+>   #2: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: reg_check_chans_work+0x99/0xfd0 net/wireless/reg.c:2480
+>   #3: ffff888055538768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:6014 [inline]
+>   #3: ffff888055538768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: reg_leave_invalid_chans net/wireless/reg.c:2468 [inline]
+>   #3: ffff888055538768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: reg_check_chans_work+0x164/0xfd0 net/wireless/reg.c:2483
+> 3 locks held by kworker/0:9/5444:
+> 3 locks held by kworker/0:10/5446:
+> 2 locks held by kworker/0:12/5449:
+> 3 locks held by kworker/0:14/5454:
+> 2 locks held by kworker/0:15/5455:
+> 3 locks held by kworker/0:16/5456:
+> 4 locks held by kworker/u4:10/5469:
+>   #0: ffff88801be8b148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+>   #0: ffff88801be8b148 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+>   #1: ffffc90002cafd00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+>   #1: ffffc90002cafd00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+>   #2: ffffffff8fcc51d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
+>   #3: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: wg_netns_pre_exit+0x1f/0x1e0 drivers/net/wireguard/device.c:414
+> 2 locks held by kworker/u4:13/5492:
+> 1 lock held by syz-executor/5502:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5515:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5522:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5526:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5534:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5535:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5550:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5553:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5557:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5562:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5569:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+> 1 lock held by syz-executor/5573:
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   #0: ffffffff8fcd1cc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
 > 
+> =============================================
+
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
+
 
 
