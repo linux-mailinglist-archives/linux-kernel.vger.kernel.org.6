@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-358757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B75499833E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:10:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1246D99834A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1355283729
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB1B283D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6EB1C2431;
-	Thu, 10 Oct 2024 10:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB981BE841;
+	Thu, 10 Oct 2024 10:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuLhCxS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hlE0sDg+"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A191BF300;
-	Thu, 10 Oct 2024 10:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B2F18C03D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554986; cv=none; b=rqE5vvcK1E0UYrSYKbxvHjZxaLQGRjcIV3NopUHG/D1dena7adKykfmeRtsuSUg6Pjl85Qs8x63MfQFqtVeuhkqTWEkPH3o91nsvxUusuZrv2JvOCW1FQtksDBulMVPyiB6YBX9XbyY0mxwSvLZ1H9vgRMoCl6zvzbb4YeRwYoM=
+	t=1728555150; cv=none; b=s02icvMTrZuQDDybz45WJ67u3+cn8yL6z9NQgQJMHjMM2yY9oJBk0dR1sbEdOEArPdzGNonk7DNR+y6ysOSglwOwv28veNsoE0y9FiWPyQl7GwuOL2sriIxAsYLFAb5W4DJDQgWoH2JP9lLsl3FM523EO+xwn1hfZlG+vvLwWuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554986; c=relaxed/simple;
-	bh=vCTqIl7jShZpEr0sVmMbfnvFvzmbv2n1ITL19Rj+AWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tNPXgGwsclvxdA2mNiBQxhqw3cDS9KeIr44T6nPMEgbTX4kQcFamBjwqKQIrOcUji9UH5Dj9uYxT7a+0q5aXWkVvR1CryhfCa560poHlrRIxq7q6pMLydESbx8mVWGiXDcPWwmbhX+KzP5/v1LHSK8RhFil4PT+p08f/1FUa0kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuLhCxS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CBDC4CECC;
-	Thu, 10 Oct 2024 10:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728554985;
-	bh=vCTqIl7jShZpEr0sVmMbfnvFvzmbv2n1ITL19Rj+AWQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TuLhCxS/kum3UUxI2LxetVqLBebi9ov//MNFTqAdCuXEOE2k5dBBp3lBbyLXKK1UD
-	 +JnBouAShZSx0FpbD1wRXccZwC6S5evYkUqXkmc3pb7TwrRkNF7XTFMW+9jA1xhz6g
-	 BEVS/dNs7+Th8yU89mXKH4GwQV8YO2J+M+WF1DMgtm8X1SWYEWhYQc4lKKF6iKH7JL
-	 Q3vQcsttS3UHj3CZ29aCP1vYw+sX2AYnz93OehQpgxoxdgBDmK3DxHAjkCMHCl6dNS
-	 elj6E5VT44QVNzgeYiHWSZQ2IAZpulbv1bkoWqGkYStFVgf0vu/R9VZZAjmsUtGr9O
-	 egsFyXIZheGog==
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: (subset) [PATCH RFC v3 03/10] openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-Date: Thu, 10 Oct 2024 12:09:35 +0200
-Message-ID: <20241010-pikant-neuer-4dbf48940683@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241010-extensible-structs-check_fields-v3-3-d2833dfe6edd@cyphar.com>
-References: <20241010-extensible-structs-check_fields-v3-0-d2833dfe6edd@cyphar.com> <20241010-extensible-structs-check_fields-v3-3-d2833dfe6edd@cyphar.com>
+	s=arc-20240116; t=1728555150; c=relaxed/simple;
+	bh=a99iXRhhwQCX97C4WjZOt4k6H+K32hGXT2WTg/adijE=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=GhTzt9cJpsvcJccBaGyAObsO1NgxR0xeywS8a1lr8OpjKm/41XG+o1zqTugAnb/zLRIZhfZ578UMl++BFAq5lBArwu8QUuiG9gE+lZZMRq0NUWndxhAwGmcFvBgCf6PBwaV+XEpgur1prN6eJKG/aHLHzod4BxtnSzNaGrJaJHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hlE0sDg+; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241010101224epoutp04fb4b4de5a3b3687eda270d3583a857b1~9D77VliwN0615606156epoutp04D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:12:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241010101224epoutp04fb4b4de5a3b3687eda270d3583a857b1~9D77VliwN0615606156epoutp04D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728555144;
+	bh=vkYFXGKNiColrpXd6ixUZhFEvJUwMzr2VH4kPcgNJCI=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=hlE0sDg++B0Fa25kwdl8Y7payai/VfYifWg8hOSXUwUW3IjHtwVo824vyJLbSgRQI
+	 U+dSHqK5OUk25lpQq8fIoMJ1jJtGa/uXTu1VSRjFuB1EAwOlK2XqidmwgAmhqE/VR4
+	 nwxf0qWLyk2KGXnhcKv0WJkMzjFg221zauBlyiIM=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241010101223epcas5p3f9cd0f9adec72e68e63b5e9131413e1f~9D76MiE_p0428304283epcas5p3x;
+	Thu, 10 Oct 2024 10:12:23 +0000 (GMT)
+X-AuditID: b6c32a49-33dfa700000024cc-8b-6707a8863100
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D4.00.09420.688A7076; Thu, 10 Oct 2024 19:12:22 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Subject: RE: [PATCH 1/1] sched.h: silent false ATOMIC_SLEEP warning from
+ cond_resched
+Reply-To: maninder1.s@samsung.com
+Sender: Maninder Singh <maninder1.s@samsung.com>
+From: Maninder Singh <maninder1.s@samsung.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Hariom Panthi <hariom1.p@samsung.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "rostedt@goodmis.org"
+	<rostedt@goodmis.org>, "bsegall@google.com" <bsegall@google.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
+	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rohit Thapliyal <r.thapliyal@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20241010092249.GD17263@noisy.programming.kicks-ass.net>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241010100940epcms5p2f7463014f1e1cb1b27a8da300b804e08@epcms5p2>
+Date: Thu, 10 Oct 2024 15:39:40 +0530
+X-CMS-MailID: 20241010100940epcms5p2f7463014f1e1cb1b27a8da300b804e08
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1115; i=brauner@kernel.org; h=from:subject:message-id; bh=vCTqIl7jShZpEr0sVmMbfnvFvzmbv2n1ITL19Rj+AWQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSzL3/gcn99iY5JAhOL4eyvLi/V4x5oM8gLr39yhtl0e 47m5MrMjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImI32X4K5d4O//zV+UpEjpp /sHnas908812W3pp/pJJfp53gmsuCTP84TN9cNBg4oRf+UorZZVbtjcUbzs4L+1Zj1eBQeMCj9y 3bAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxSURjGO/de4MKirmh1sjJztZRNkq2PW7PP5bqt1aq1WjorzBs6EQ2i
+	MluzTUndsKycjqFRmiaalYo6dEQUarnKclJqiiupTC3pi+w7vFL99+w5v73P+7w7OCqoZ/nj
+	8fJDtEIukQWxeVjd7ZCQUPUVjjTsSc9yMn/wJEY6zxhRckBtxcje03kY2WHSsclzb18C8rFF
+	j5AtGgtC3uhLIM2Z/QiZeeczShptbs6ayVRlUSWg0s3dHEpfraJqrgipZ/YmNvXO3MmmcmoN
+	gKppS6U+VAds5UbywmNpWfxhWrFo1T5eXFbaTyS5k3PUrmtjpYFcdjbg4pBYDF+53ahHC4hG
+	AId7g7MBjvMJH/ijwddj+xK74KU6DcYg82B7QSXwIL5EGPxqDPbYbEIEDaamccSPCIHlasef
+	6TwcJfIwaCl1IEwUHxaccmKMngXry4zAo7lEBNR/LGMx/jTYVTHC8ep3zRcAo/1gRt99lNE+
+	sH+sccKfDStqNBMzU6Fz6MF4MCTSATQ3eqFl8FqJgcP02gyrumQeGyMWwI5S3QSyHg7etY7v
+	gBJzYf2IDvXg6J8y10yLGGQOzLtXhTDIFKj5NvC3VkORVy+A6V3XWd6KH1yuidUoaCuzYJ7V
+	BMRNAC2dGs4ZEKj9d2ntf8naf8l6gBrATDpZmSillUuSxXL6iEgpSVSq5FLR/qTEajD+t4Qb
+	G0Bv/6jIChAcWAHE0SA/fuhFllTAj5WkHKMVSXsVKhmttIJZOBY0gz+UURgrIKSSQ3QCTSfT
+	Cu8rgnP90xDRmmDDjlGHduD8/Pgt4anuWNUQ+6YiRUB93h7xgi18TxR8hxv6qoYrOr6ua6v5
+	UvYr6Wnwyt2P7ItvHLwdHaAutJ23lWaLA0ukgQuX5laiWufauTszWmRy1TET9ThkbGV04EFB
+	c3RUgk/dWPHZRyV0mHWOv068zGRWxyR9mqS6q74ud/1sReY15bBiBq+Wru7JzRpYzo2oQtX5
+	Ca1RAWaRfngJ4YqwznQ12oRTeZzelr6MlEL6zR5hVvl0u/ZHgzttV0x3sSzxu+PA8UnNKzIf
+	bjOuax99bUkxnx7ZV+7knl3rYG0tsW+6HN9cG/7kebbwVn7kiYLanPxvqLj41vEgTBknEQtR
+	hVLyG5mgOubKAwAA
+X-CMS-RootMailID: 20241010032751epcas5p1154533995a184be3fea39325c4d33740
+References: <20241010092249.GD17263@noisy.programming.kicks-ass.net>
+	<20241010032653.1922214-1-hariom1.p@samsung.com>
+	<CGME20241010032751epcas5p1154533995a184be3fea39325c4d33740@epcms5p2>
 
-On Thu, 10 Oct 2024 07:40:36 +1100, Aleksa Sarai wrote:
-> While we do currently return -EFAULT in this case, it seems prudent to
-> follow the behaviour of other syscalls like clone3. It seems quite
-> unlikely that anyone depends on this error code being EFAULT, but we can
-> always revert this if it turns out to be an issue.
+Hi,
+
+> On Thu, Oct 10, 2024 at 08:56:53AM +0530, Hariom Panthi wrote:
+> > In case of (CONFIG_PREEMPTION && !CONFIG_PREEMPT_DYNAMIC),
+> > cond_reched() is not sleeping.
+> > 
+> > Thus remove __might_resched in that cases.
 > 
-> 
+> *why* ? It's still a valid site to do the atomic_sleep testing, no?
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+In our case there was a call to vunmap_pmd_range from __do_softirq,
+and vunmap_pmd_range is not actually sleeping call, but because of
+cond_resched it was giving warning with DEBUG_ATOMIC_SLEEP.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+and cond_resched in case of CONFIG_PREEMPTION is empty function with below change:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+commit 35a773a07926a22bf19d77ee00024522279c4e68
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Mon Sep 19 12:57:53 2016 +0200
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+    sched/core: Avoid _cond_resched() for PREEMPT=y
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+    On fully preemptible kernels _cond_resched() is pointless, so avoid
+    emitting any code for it.
 
-[03/10] openat2: explicitly return -E2BIG for (usize > PAGE_SIZE)
-        https://git.kernel.org/vfs/vfs/c/f92f0a1b0569
+
+So we thought it should not give warning also in this case.
+
+
+Thanks,
+Maninder Singh
 
