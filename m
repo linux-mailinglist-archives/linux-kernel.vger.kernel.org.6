@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-358078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11831997A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D97997A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D9A1C21768
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368981C219EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917672AD33;
-	Thu, 10 Oct 2024 01:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59782BD0E;
+	Thu, 10 Oct 2024 01:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsRzIAHF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fzv4DN2R"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD791E4AF;
-	Thu, 10 Oct 2024 01:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9E1179A3;
+	Thu, 10 Oct 2024 01:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728522628; cv=none; b=GHToK0YARy2+RTgpJyvUMCaYBqhMDfhB2ccnewpe5v5COELAtPKTpMiRxfu7dfdtB0tn5ISMVZ23+x12/UMC1JhWIvz75sn+ZpmhtIMsPifIjjrnsq6335PcjjaRFPW3NVC+5toO4TFDBlltqwJyKhdnZBqUQ9RI9VI5XrbswAc=
+	t=1728522728; cv=none; b=XV+DAFMvka6Q6orrD47/e5KplL+X4OPHKFYYi/5014MoO/GwsKiClCdLNucPR9ckMisAHc40o+Bp7Bc6uJ1BZ0uCAv1Db7jl0kJagKp93QZ/2EvyUTSLtZ3kMwTAwkCGBZw6jxtNMKWy9Mnatt8idivS/8J7YShN/Kxirr93eRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728522628; c=relaxed/simple;
-	bh=xhKT5vLVg/yu/vw1Ps/dpbK/Y6TaP32n38dOgdh7MOE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lCjIYU18l/Nwm19xcDm1JLxZUg8lVzpMUVMsEShi1QpHrW7t+1/DeRDyiS6+x6lE1tVADSJPGqFxFu8nGw/xpnSK8qjGL/fGObd6zBxqA2fKj+f6T7KBGbq12A6DpbZOfDqIRkSpptObMvMpBzBEZ2Yn+IeRJBTsyPfcM5HkI9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsRzIAHF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E6D7C4CECE;
-	Thu, 10 Oct 2024 01:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728522627;
-	bh=xhKT5vLVg/yu/vw1Ps/dpbK/Y6TaP32n38dOgdh7MOE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BsRzIAHFrIIH0MApQS3e64qrmGBQAJmvlTahMW6QMFsxk9YSBaJCXRJFe2mrF5hT1
-	 SqrJ/C1sDPzh5s3bG1e1twt+ztfMUK03tJGRCzg+Dft58lyQW/SQ7ZkexjNqOLk1bS
-	 8SvaKjU9ZXmT1wIUp/xYZ01H8T1nhAJYQcK6kPI1o1OcHjSEjyQbr8ioUyfAAbLtu1
-	 fwXrg/p1tWZROAP1LKqynlXWYrii+z4BzTzXDpc4lRoK03NMv/ziNfeDr2KAPK5FEM
-	 CvfF5sIHPEYfB+Egi438vcAvKiqIBCjD4CEOLOrc8cvV6Ge6AIZEhmHR5EjFcBPOlE
-	 hfZiYk42hsR5A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB40A3812FDB;
-	Thu, 10 Oct 2024 01:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728522728; c=relaxed/simple;
+	bh=sfTmi9bO+JsKHo8KbDH+whliHBSUn1Xnkn5TlzDEB9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M+arBE2O5rTHW/+7ZjBB4/QqFCd+U6YcR6jU/okkmV2cZOPxA8r1O1FbSEY+wP7fzBEaT0cmeNU43pztSxjUihy7GYtkdEwqQ0FtE3YxEc5LGaFoTUVay2YV4L9qcHpyV3x9QzBXnJbHbnRwvLI8RJmIOYWWKdMrOxqlNaWXtY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fzv4DN2R; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/vbsgdq8h70s6oV3b82YFlDBTjmMluLLdybnxWtRiWg=; b=fzv4DN2R5dh46hDCZHSxlm7eYc
+	di5Ks1VQOhz9Ar0y59Inp7LCIvkjcyBeSrcsyyoxrOLg9JNW2EAb7QkNkJt9fixSiGRl4hD0PoYY2
+	9z8pLPfnOolMSKc3s4mNRPstkSw0RkI/xzUpPS/dtnlmBceqCdKp5WAJS5uLSrSTtrgieKU79dLXr
+	8gZbzTFfOAy033SeAS0owzzzDq3qey2xuy+XGxrJEoNvyy3rp5afZJJyVauhKjNjdeO8j/Ll4J0pO
+	gVn0Et7Dv1jujN74Yn6vrSpR6iavyy0oYmz5CfF0lMTNmDtQI4adlxuZ0UYhVgDoScqzuw+oens/7
+	3iOcbuqA==;
+Received: from [187.57.199.212] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1syhiY-0079Wq-Es; Thu, 10 Oct 2024 03:11:50 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kernel-dev@igalia.com,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v3 0/2] selftests/futex: Create test for robust list
+Date: Wed,  9 Oct 2024 22:11:40 -0300
+Message-ID: <20241010011142.905297-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/2 net-next] qca_spi: Improvements to QCA7000 sync
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172852263176.1528050.13430064371202830414.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 01:10:31 +0000
-References: <20241007113312.38728-1-wahrenst@gmx.net>
-In-Reply-To: <20241007113312.38728-1-wahrenst@gmx.net>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- mhei@heimpold.de, chf.fritz@googlemail.com
 
-Hello:
+This patchset creates a selftest for the robust list interface, to track
+regressions and assure that the interface keeps working as expected.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+In this version I removed the kselftest_harness include, but I expanded the
+current futex selftest API a little bit with basic ASSERT_ macros to make the
+test easier to write and read. In the future, hopefully we can move all futex
+selftests to the kselftest_harness API anyway.
 
-On Mon,  7 Oct 2024 13:33:10 +0200 you wrote:
-> This series contains patches which improve the QCA7000 sync behavior.
-> 
-> Stefan Wahren (2):
->   qca_spi: Count unexpected WRBUF_SPC_AVA after reset
->   qca_spi: Improve reset mechanism
-> 
->  drivers/net/ethernet/qualcomm/qca_debug.c |  4 +--
->  drivers/net/ethernet/qualcomm/qca_spi.c   | 30 ++++++++++++++---------
->  drivers/net/ethernet/qualcomm/qca_spi.h   |  2 +-
->  3 files changed, 21 insertions(+), 15 deletions(-)
-> 
-> [...]
+Changes from v2:
+- Create ASSERT_ macros for futex selftests
+- Dropped kselftest_harness include, using just futex test API
+- This is the expected output:
+    
+TAP version 13
+1..6
+ok 1 test_robustness
+ok 2 test_set_robust_list_invalid_size
+ok 3 test_get_robust_list_self
+ok 4 test_get_robust_list_child
+ok 5 test_set_list_op_pending
+ok 6 test_robust_list_multiple_elements
+# Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
+https://lore.kernel.org/lkml/20240903134033.816500-1-andrealmeid@igalia.com
 
-Here is the summary with links:
-  - [1/2,net-next] qca_spi: Count unexpected WRBUF_SPC_AVA after reset
-    https://git.kernel.org/netdev/net-next/c/234b526896a9
-  - [2/2,net-next] qca_spi: Improve reset mechanism
-    (no matching commit)
+André Almeida (2):
+  selftests/futex: Add ASSERT_ macros
+  selftests/futex: Create test for robust list
 
-You are awesome, thank you!
+ .../selftests/futex/functional/.gitignore     |   1 +
+ .../selftests/futex/functional/Makefile       |   3 +-
+ .../selftests/futex/functional/robust_list.c  | 512 ++++++++++++++++++
+ .../testing/selftests/futex/include/logging.h |  28 +
+ 4 files changed, 543 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/futex/functional/robust_list.c
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
 
