@@ -1,213 +1,279 @@
-Return-Path: <linux-kernel+bounces-359176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5DB998860
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:53:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305AD998863
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E471288335
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:53:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 680D3B22D53
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9001C9DCB;
-	Thu, 10 Oct 2024 13:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCF61C9EBA;
+	Thu, 10 Oct 2024 13:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bb/8ib5b"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4jjvdjsy"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2046.outbound.protection.outlook.com [40.107.236.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FFE1BB6BA;
-	Thu, 10 Oct 2024 13:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568377; cv=none; b=uLp0lWLr+Lwhjj79/hZMqigFZFbRflQ86sc7/WpFXVTUiaFbAreOot9pqjVFU38H2AofRf9ESIfQpQ+HrkpRWWPjIgFaYLzDIqXJjDYzIMWhHw1CbGTR44dVWYYYVoYtDGGldaL1KLZvFsT8EnwmskWEsD+X97EYFtqa4k+IIuE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568377; c=relaxed/simple;
-	bh=YOeZq4gdp89ctDpF5WT2qnKvP3R2Vh4bvhExzfhY7Rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsvXkGV5hGE7VPdT/semMMwboTxsmPIQUE6CjSuQ9I6PeC/hsYzCT/Y0pMpGP8J2glr09u4w/7q4EmvpEfd0OlCj+T5OEW2C6G6i5V0Tns6AMfWZm9JPfq4T1bw5+hNh8BX2utbssGyiT1e1+CyI4uNv+Jd4VNzFoy11nRqeDJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bb/8ib5b; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fabe5c8c26so8987161fa.2;
-        Thu, 10 Oct 2024 06:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728568374; x=1729173174; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WOrxW89AILQk3udFAERN7y6AGGLIomslxo7RvrRZ38Y=;
-        b=Bb/8ib5bSm5a1CEi7+tUe2pSJAh6UbQ0ojXJJHfr1aIGpies8fhxyjWf2x8swftLAt
-         ncPjGv3HyD8NwOsdPt0pacTfSbagI0o/dvXrU5lodoGGJf+DwtbYq+I/rXiSFmmKSabb
-         VnvGNxNpXkvqt44HxHpPrvr39zmRPEV6M6qcQsmhmqJ0t/xC/AfRoD8bPAtP4zPcOC72
-         X5+L4GD3qDwQlvdnVwpdRsXFczEarn7qMSOiYUNzx4fVbbYVPIJvViIa5s2ZgNHmbZHe
-         UJPCrcFfLJvpGjsrH5LX7L97O9YbZoUzewhuLWwp4vnsSlnMVNuTm+MER3/5lifnXGPz
-         swHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568374; x=1729173174;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WOrxW89AILQk3udFAERN7y6AGGLIomslxo7RvrRZ38Y=;
-        b=p5/Zr1vFputDZ6Tr7lt1hl39bWxhhBryhwpRXYzP17ljpvE3ddQ8J7FYa9P1a9mpN/
-         5J7kabF3LLSQkK2UTwYouSOammhrwdNanRMAN/OCsY/gBX3g3LhRX/OUHHNcyzUhTLR/
-         OoqNNDQhDGjVIOjbswUePay01pEEaUFUgg0XKfYbTedZkfx3W029wvJjtbtlJyHBvkfa
-         hzTNVB4HypJDuakzMy2CkyfCV5KU1m46GGxY3etukkJKy/j0eVeFbJ2Ow7WQW51XAH54
-         yIH8YT4AYRWYeaJyLo9dPUilruPE+IUQ6+AR/EFcFPKwOSK/mQyFb4C5HSuJ2S6Hue1+
-         nInA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNRYDN6+MevRFklrqzIZ13wCRvIBCrEzv1upZ6mnlJMsxkH98yIWLPoYjP6oRdtZ0oN37cZpycUBEmS8g=@vger.kernel.org, AJvYcCXye+oIOApHVmE60Y2ecZa0RdQZ7z6+VqCcjrnb/toFOpSHKmjqOIq9Hnd+3xx/KRki7W63EizG1V80aiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfHlqcDNduBlk4Fdk+ytMHbQ84obcD8UcjoVqZ83AAUzQkp+OX
-	wvvqSjTyLudXTiyQkq4lyVlgZgZAY8aKbotT1RKbb3gG5CJ7hAU7WRZDzf1hP7WgR4sO3pFhl3W
-	HwVFPjGtcqRxHzQtbwmh95ARajm0=
-X-Google-Smtp-Source: AGHT+IFiV/oe6ftCSnrY7kyWamWo9/1u8Pum4SDAuMad0lrhvAfaM6nzggC3GCxiMPa8Ad+RAUbPvZr6tKLhuZDF7Vk=
-X-Received: by 2002:a2e:a545:0:b0:2fa:be5c:8ae8 with SMTP id
- 38308e7fff4ca-2fb187d2818mr41048491fa.41.1728568373219; Thu, 10 Oct 2024
- 06:52:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E811F1BB6BA;
+	Thu, 10 Oct 2024 13:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728568414; cv=fail; b=J3mb1QmAesMQ8q3oHSrML7pCCOQBL3+Yc5NJUmLSCG8ZDR638qNi1AGLaa49R7C2o0nRl6OIy1OWWbxNSPA/RhPq5KGZH/4in3cf9r/Q+8ddbg0GgTDlwjSgM958ylyrZ14+WT1Q4QuQwQS3b2Mw87wl6qaewvruQ48WW81IHuk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728568414; c=relaxed/simple;
+	bh=qYs25Vt4TsO7txtU4G9q6p54L1fmIS7QnIlPvQJ3zus=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P7H0I3/QPgz++hYiDv8pC4PS3ZMhCCs8/Nbb3YXDmBB8/nABzSsF38KRzYaLr5uc1Y9H+m7P/R9JqvMtGIefu/GA0Ttul3XFhDtg8yklm6oU8uiILhz7+8n6k+niyE4ZuWocSIX8POGX8oaOyosE8Z9RFbl0bppAAvGO3AvcpEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4jjvdjsy; arc=fail smtp.client-ip=40.107.236.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LH7pLh/aO4tn6O98XRleYr9eaTdvOY6JgACWliAmN7g9+8py7tTi4WtJTMNJZSDQk9rr9tjF7qDWBt+z9A/UXiMbIbcy+UPM92+/s+NFTELizTqXa4oD55310LpZLyszzmHG40pGubd9KNvcaYyNAkFcj8Foc+8tacgexYr4448IRkWdW1Iy6asMWwvNOiGGz1QGArJi+ccT99OvulKruhr5E5hU6cC4rj1MssxhKCQ/kxyfcQpwy1s1G7fhrzwGpVm0mwUepPeaokiL1i6nNV06/2CZUL44tZIJWi2Y3o8dGEm4FbLleGPCz2wKfVROUiUt5nOkcXWLzRUyF2Fljg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oLiZ7MQe/PzcYp5xVUJruO1Ipunw2PQQ5REc/IM1buU=;
+ b=C2VSKHgl+Bi2k9F4YVtcYAbl1PGFJ9/QoXOgbWIOmwZUZmTfSkqvFV0lBA7gX3hUx9H47BEUa+twmw8D760JIphmd5Q9TZDgr4dh25rAGsA46dE9YuKJZXic13QXu2PvQ+9wT70s1rT6a5qx9W9mAA6NsVPc92jnEwzqkq/NVOY0AQh+vDUUnAFdcCPuXF/9ZW2fPODWUW0gk5RXiIKn/atyzjIMycQosvE4jQWB4rdEybhiuCp/bQP0owlPopF5/o5L0CCDeJi8cY7QJmyFxW3d+Zt9rcdJGj/5XdWSMIF/0ag2r2XCbudnAi7e8re1TPY2hfiKNh/+bTaqFR9tow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oLiZ7MQe/PzcYp5xVUJruO1Ipunw2PQQ5REc/IM1buU=;
+ b=4jjvdjsy3dKgbnfD2zxHWcyo4uud5mJy5NsMbwj53hRjJXbLMIVJRS7MV3q+N8dCyRfeBvIP29SYKWq9ohzS2pkNFIG4EEh54YGOIhtTtVAY2jnsVpjXAIrT8CGBCd5tpiVsI0rurJJoOohReebNoKtmjPpOpiGspHuvbEJJDys=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5946.namprd12.prod.outlook.com (2603:10b6:208:399::8)
+ by SJ2PR12MB9242.namprd12.prod.outlook.com (2603:10b6:a03:56f::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 13:53:28 +0000
+Received: from BL1PR12MB5946.namprd12.prod.outlook.com
+ ([fe80::dd32:e9e3:564e:a527]) by BL1PR12MB5946.namprd12.prod.outlook.com
+ ([fe80::dd32:e9e3:564e:a527%5]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
+ 13:53:28 +0000
+Message-ID: <1450b6af-875d-4ee7-ae18-1f0a89e36345@amd.com>
+Date: Thu, 10 Oct 2024 19:23:16 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next 4/5] net: macb: Configure High Speed Mac for
+ given speed.
+To: maxime.chevallier@bootlin.com, vineeth.karumanchi@amd.com
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux@armlinux.org.uk, andrew@lunn.ch, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com
+References: <20241009053946.3198805-1-vineeth.karumanchi@amd.com>
+ <20241009053946.3198805-5-vineeth.karumanchi@amd.com>
+ <20241009083653.3b4ffd6d@device-21.home>
+Content-Language: en-US
+From: "Karumanchi, Vineeth" <vineeth@amd.com>
+In-Reply-To: <20241009083653.3b4ffd6d@device-21.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN0PR01CA0044.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:49::19) To BL1PR12MB5946.namprd12.prod.outlook.com
+ (2603:10b6:208:399::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009101807.1473-1-shenghao-ding@ti.com> <d1941b10-0549-4a0e-a3fe-a8d7c50c175b@gmail.com>
- <7e138a1c8b6d4ace8c759bb2266216da@ti.com> <3ef8a82f-5e71-4386-90e1-f34222a60bdf@gmail.com>
- <50daaa7a-d590-4ae5-b33f-8f51d0c2f457@gmail.com>
-In-Reply-To: <50daaa7a-d590-4ae5-b33f-8f51d0c2f457@gmail.com>
-From: Antheas Kapenekakis <antheas.dk@gmail.com>
-Date: Thu, 10 Oct 2024 15:52:41 +0200
-Message-ID: <CAGwozwFAK_8HVgfNok_6jcsNq2OVdNzTc+KotxF0vhPd+PJTHQ@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v1] Upload dsp firmware for ASUS laptop
- 1EB30 & 1EB31 and Update WHENCE for both
-To: Mario Limonciello <superm1@gmail.com>
-Cc: "Ding, Shenghao" <shenghao-ding@ti.com>, 
-	"linux-firmware@kernel.org" <linux-firmware@kernel.org>, "Xu, Baojun" <baojun.xu@ti.com>, 
-	"derekjohn.clark@gmail.com" <derekjohn.clark@gmail.com>, "13916275206@139.com" <13916275206@139.com>, 
-	"romangg@manjaro.org" <romangg@manjaro.org>, 
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, "Chen, Robin" <robinchen@ti.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yi, Ken" <k-yi@ti.com>, 
-	"philm@manjaro.org" <philm@manjaro.org>, "jlobue10@gmail.com" <jlobue10@gmail.com>, 
-	"luke@ljones.dev" <luke@ljones.dev>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5946:EE_|SJ2PR12MB9242:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f094f10-c3d3-439b-dbc7-08dce932eb0e
+X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MGoyaWh5WkdRUStSM2o4YVRvRnAvbHhweXhHaVJaWWlJSC9OdllCTGFMYW5O?=
+ =?utf-8?B?SzgwRE5veUg2bjJyaEdnOXN5bk4rdytHYkNwdE9lU3pnSXhMREhWcEFoQmJL?=
+ =?utf-8?B?Z3diWEtiWXNueHdGY2hERjA1YTc1SE43SFFvTWM1amRJYWRsQTdGbmNwakFa?=
+ =?utf-8?B?dGJQdG9WRHgvYm1nLzVORTB5emdmQ05aSDFLUER5eFpGMS9saDdGSmhlZXh1?=
+ =?utf-8?B?U0lPRURWTE1Db1lIcmtRdTVva1BvTVJSSk5Ld3ZEdUwvWURCek9HU015Zkho?=
+ =?utf-8?B?NlRuZVVrbDlPaUNpQm55b25uZmZETlM4YmVOckdUMG4yaS9jdkFiakxmMVo0?=
+ =?utf-8?B?cHdWME1XVFdwT3IwQzFIVDlDMzE2Qm1YR1dyV284VFJueHFra2pkeEQ4eTUy?=
+ =?utf-8?B?bGlLR3lxM0FRMVlGaENoZlhUWWdhUlQ1a1c4K0RHM2pzVkhNcy9GZWpmTUNE?=
+ =?utf-8?B?cTZLQ0k5SkRBaFd0cFgxR0xKMWJkUCtLVWtIcVBXalU5N1d1TVZaVzBRUG40?=
+ =?utf-8?B?MkJSV3MrWWgxNXZYQy9lbXNTdWhPcjVHd1NsekRheGpCNHZiVEJyQ3RZUFFN?=
+ =?utf-8?B?SUhobHhSOFRlMlNzZjJXOUlGUGpuS2FtQW1KVkpxNHNjNnFYMW01cmI2NGEy?=
+ =?utf-8?B?TmZndS9uYTB3cGJDUXpVcFBxZEU2MnVYeUlOSlFrb1JGa011OG1wblB4UE1D?=
+ =?utf-8?B?RnJuMkNLd1U2ajc5N3FpbmN0UUU2TXFhT3ZtMFdSdXpwUkhHRVlZVDIvZ3BG?=
+ =?utf-8?B?Zjh2RzdCNytDaDFHL2tCS2ptRy9MKy84SG9uVFVlaStXandSVWtzbkhFcXpi?=
+ =?utf-8?B?ZWY3US9vRlFyVnUrS1QzaU5pSk5WZFR2UVdKY1BTL3hVTCs1THZUaGord0xy?=
+ =?utf-8?B?enB6N1ZXZmQ3QTloQm1OLzVKenJSQnkrY01RUnFRQjdoL1lLaDB6NlVJcE80?=
+ =?utf-8?B?TWRYVThxeEhZWUJFWkc0NC9URjVRSHdGaXpGUGNGbUVjc1RuemFTS1BFSURL?=
+ =?utf-8?B?R2V2aTl3T2ZwMmNVNDlEV2d4VTNCQnN3Z29xQ2JYcG1tN2lJb2x3TFJjMkdE?=
+ =?utf-8?B?d0plOWd6QXdmSm11eEw5RU9rMVJKWVlwV2ViTUNKNFpXL29UNVNpU25DK0ZV?=
+ =?utf-8?B?Zm94OUVDNGphZ0EzbTFZNko4VGw5UW0vNEt1RG5xYnZscW0xMUhqWWx4MUZL?=
+ =?utf-8?B?SlFkN2hLSzJvYkVlY0RvNGRZOGFiZFc0MEZ4YXRTZDZEaXo0dlhmNWlSaUZ6?=
+ =?utf-8?B?ejhZODQrSXRpZ1R4azZVa2ZzeXB4MkJhUEpxUWUxUjNiUllYMjV3Z2lGZDcr?=
+ =?utf-8?B?Nm9KQ0JuN2U0ekp6S0h0UVlxdktkUFhwQk5WVkpFRjBWRHk1bXkxM0NqNU1Y?=
+ =?utf-8?B?blI5Q2lhT056cmFKMm5QZzc1WmxYclY5azN4a0tUdUd0aHNWZXhIMjVtbFc1?=
+ =?utf-8?B?UXA4c2V4M2daUEdXMFVPbEZtd3RreEdOYTgrMVc1RDhaR05tSVVrTnVVaEEz?=
+ =?utf-8?B?b01GcWRvSTk1MVJSR2Jyd1BnYVFmamNZOEgwcnNHTzlHOXJVSkxrS01vVXJx?=
+ =?utf-8?B?bW51VXR6V2ZJOEJDWE83ZnpjeTZnTHhPZTJEcldZRlBCR09pdTc3MnFSMWlO?=
+ =?utf-8?B?OTRtdCtXSDk1bmczczU2OXJXOSszWjlDdmE2MldiczZIejduSlVVdXQxb1BP?=
+ =?utf-8?B?MzI3OFZ6eUNUcStMRWdwWnlZbUE2RStXam5LYnZ2Mmc3VVRHK3FxZDBnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5946.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M1ZobXlPeHM4UVNBbEtleUpTMFQ1cHJMY1dDQVg1b0tFZEFTWFFBZlRlNXMz?=
+ =?utf-8?B?WDNNV0pZc1VWZ1l4R3F5WG1pQUdqdlZhNEpOZGw3cjlVSGlEblJrd2ViTVkr?=
+ =?utf-8?B?eTVSWXJqNGVVVUpna3FYcWR1VDlubUlYR3Z0dkNHWGNRMnJZUDZ4UUVLZnpM?=
+ =?utf-8?B?ZmpHQTFabXZ6dVhHRFFIOVR2VEFLdHRiMFlkNGNpcXJXNTVRVThpR2w5a0d0?=
+ =?utf-8?B?M09SNHQrU2FKeStQekh2SzZCUm5wOFB4WnBteHNGdkIvY0VzMTdQT3IwZWlE?=
+ =?utf-8?B?UGdTeTl3YmtPc2FjV2pMTVlsWFJJTTJIK0dnUnFjRmdiTWRRU3ZrOFVGb09w?=
+ =?utf-8?B?UWJ1bVR2N1I0ZVgwTk5rYStqVlp0TDZLSEREa1pVd25aOXM1dmVyWmcrL1RZ?=
+ =?utf-8?B?aktaaTlHVjRPSFlJWVBqY2lDQUpraUtKem94N0NXKy9GeVdVVlBuR0VCWk5J?=
+ =?utf-8?B?UUFpZkMxZ0RBVXJ6eUw0Nkk4Qlg1V0lCTDRvQWJSOWF6Wkd2bTBXaGZVQklm?=
+ =?utf-8?B?SVJablU0SWs2QXczMUVRek5QSDJ2Y0F4VFE5WDVqTElxQXR4S0RoQUZlQTlD?=
+ =?utf-8?B?OVYxdmRtMVhiMU1HT2dIdWQvQWJjbksrbTFWeVAvcEdQbWs1amJmc1BQTHBk?=
+ =?utf-8?B?Uk1hYVVuc0xpRmtlYWRVbDlLSVNFSVpuY2VNYmk5K3hSMEFVNHhvcFQ4TWN1?=
+ =?utf-8?B?RXhiRXJxelovQkN3ZmJ1T3RjQUhxWHdnMGhvYlJnU3k2VnBidUVISDRuRXFD?=
+ =?utf-8?B?K0pKN0xFNC9BWjQ1Sm85R3hDTENuSU55Qm90UGZMN04va0JPNFJxOEdaUlV5?=
+ =?utf-8?B?T0Rlc2lyVkVIMkpZMXlCUS9oQllmZWFmVC8yeXhaN1hmRjlGNmIvaGtMYS9m?=
+ =?utf-8?B?SmdKYjk4N1pucUdBRlNISFJwVFpQOVFwUFpkWmpQTlRveERoRnYxcEdMVFFV?=
+ =?utf-8?B?NTRQT1pkbjY2c1ZGTTZtWkpCUHcvWU9YRG9iY2ZVOGlzUWkwNG0wTnlYZGRv?=
+ =?utf-8?B?Y25VbnVpak56Mkd0UnJubVM5elNqQlpHcVQ0VExyVk9xU3lNRUw4b2xuN1Bq?=
+ =?utf-8?B?VkJ6dm9PcjJZK1Q2Uk1pbXg0alJ0aVEwVlJtTXRHZUMyayt6RHRnY1p4YkxR?=
+ =?utf-8?B?WkJ3MEUzN3g2ZTQxVHoyaisrb3p4MlNlZzJWRGxsMDhLVjJ6MFVzTGliaHdr?=
+ =?utf-8?B?dDZIV3A4N3RHY2hTUW4ycC8yVk9iaWYzbUZxa1FxVEhEc1huOEF4THl6Vms2?=
+ =?utf-8?B?K2o0YW10U2g4QitvZDBxY2FleWp2OFFWdWdZck04aXVPV3V1amNlTXVUOGFH?=
+ =?utf-8?B?R1RPejl6SWFVK2Y1Zm01L0tUUVpuc3VObjJOQnUxNmN5N3FwOTBsN2daNVBC?=
+ =?utf-8?B?eWtLT2E2NXhqOFN5UW5HdTU1bXg1bjcxemtISjVZMjhGemtyRkJpMmd5K1JR?=
+ =?utf-8?B?ZFNqUzNpWVpwQS8rYUtnUVYrbVRhb0RMODZBSmtaa2N4cmF3aGg2cmMvMWp4?=
+ =?utf-8?B?TmRlVHV6ZjFFWDYrVEtSS3dYVXM0QVpRTUxnVTBxQkwrWVAwOGVWVFJDQmVV?=
+ =?utf-8?B?SU9seVpFNXhlZDAzRHYycytaNVYra0ZQa3FOTlQzd1dJOVgrcGkyakR2SlFp?=
+ =?utf-8?B?OGkwc3V1dTYwaGZMU0diUVhtNjdxSDM4NW9qSG52eDhyY29kQU9rb21zTkpE?=
+ =?utf-8?B?ajRpQzlCMFg0amV1NmtkYktGaS9UWTBCa2dLMjEyQUlLTy9IYjhuWUk0SS82?=
+ =?utf-8?B?WDV2amRuaW53TlNSQ2s5ZjJicXVyVUg0bGZmSWxHZklQY0dCbng3YmVWR29Q?=
+ =?utf-8?B?aHVGN04xRGRKbDFVd3hpSlNLak5DMTQvN202UGtTMHBTRzNwV0pqOTU0NnBS?=
+ =?utf-8?B?cTZTcVJqeG1pOXFwLzh2NklPWGJPUis0dzVNN0xCQ2RMOXRvU0pBUzhVSUk5?=
+ =?utf-8?B?bWs3ODVHeFNoaHEzRFpQWi9wa2RIaDZZc1dqdDFFQ1lad3gvRWJpL1dFWjVw?=
+ =?utf-8?B?ZFp6ayt4ZzRSUFVGMmFneDl1cWkwYzd4ZStkWHVNUjlVbWhsNTNCaWdzSzE2?=
+ =?utf-8?B?V3dXVW9xajlna3g1RXA1ZUZuUHBGYTZTQks3bCtJbHU3NlczbXE5OWcxbElm?=
+ =?utf-8?Q?gFMAYNMz/c1nll97zfuPr1CKU?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f094f10-c3d3-439b-dbc7-08dce932eb0e
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5946.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 13:53:28.4350
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Js1RjzWNr+cK7HEMkU2wLZMso/DA8OKfZVIfUD6ny+bENdJ8I8CHl8ipDUwe7ulh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9242
 
-Hi Mario,
-as I am not logged in, kindly close
-https://gitlab.com/kernel-firmware/linux-firmware/-/merge_requests/272
+Hi Maxime,
 
-Then, while consulting it and
-https://gitlab.com/kernel-firmware/linux-firmware/-/commit/d65613ab8c480dec6d63733d3286451aa8b3795f
-, modify the whence so that 1EB3 points to 1EB30.
+On 10/9/2024 12:06 PM, Maxime Chevallier wrote:
+> Hello,
+>
+> On Wed, 9 Oct 2024 11:09:45 +0530
+> Vineeth Karumanchi <vineeth.karumanchi@amd.com> wrote:
+>
+>> HS Mac configuration steps:
+>> - Configure speed and serdes rate bits of USX_CONTROL register from
+>>    user specified speed in the device-tree.
+>> - Enable HS Mac for 5G and 10G speeds.
+>> - Reset RX receive path to achieve USX block lock for the
+>>    configured serdes rate.
+>> - Wait for USX block lock synchronization.
+>>
+>> Move the initialization instances to macb_usx_pcs_link_up().
+>>
+>> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+> [...]
+>
+>>   
+>>   /* DMA buffer descriptor might be different size
+>>    * depends on hardware configuration:
+>> @@ -564,14 +565,59 @@ static void macb_usx_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
+>>   				 int duplex)
+>>   {
+>>   	struct macb *bp = container_of(pcs, struct macb, phylink_usx_pcs);
+>> -	u32 config;
+>> +	u32 speed_val, serdes_rate, config;
+>> +	bool hs_mac = false;
+>> +
+>> +	switch (speed) {
+>> +	case SPEED_1000:
+>> +		speed_val = HS_SPEED_1000M;
+>> +		serdes_rate = MACB_SERDES_RATE_1G;
+>> +		break;
+>> +	case SPEED_2500:
+>> +		speed_val = HS_SPEED_2500M;
+>> +		serdes_rate = MACB_SERDES_RATE_2_5G;
+>> +		break;
+>> +	case SPEED_5000:
+>> +		speed_val = HS_SPEED_5000M;
+>> +		serdes_rate = MACB_SERDES_RATE_5G;
+>> +		hs_mac = true;
+>> +		break;
+> You support some new speeds and modes, so you also need to update :
+>
+>   - The macb_select_pcs() code, as right now it will return NULL for any
+> mode that isn't 10GBaseR or SGMII, so for 2500/5000 speeds, that
+> probably won't work. And for 1000, the default PCS will be used and not
+> USX
+>
+>   - the phylink mac_capabilities, so far 2500 and 5000 speeds aren't
+> reported as supported.
+>
+>   - the phylink supported_interfaces, I suppose the IP uses 2500BaseX
+> and 5GBaseT ? or maybe some usxgmii flavors ?
 
-Otherwise, your merge will not work with the current TAS driver, and
-we will have to do a second round of workarounds while it is the case.
-We have had that symlink for over 3 months now, and as Chen said,
-while not ideal, it will do for the time being.
+with 10GBaseR, ethtool is showing multiple speed support. ( 1G, 2.5G, 5G 
+and 10G )
+The only check I see with 10GbaseR is max speed shouldn't be greater 
+than 10G, which
+suits the IP requirement.
 
-You may add me as suggested-by using my lkml email signature
+>> +	case SPEED_10000:
+>> +		speed_val = HS_SPEED_10000M;
+>> +		serdes_rate = MACB_SERDES_RATE_10G;
+>> +		hs_mac = true;
+>> +		break;
+>> +	default:
+>> +		netdev_err(bp->dev, "Specified speed not supported\n");
+>> +		return;
+>> +	}
+>> +
+>> +	/* Enable HS MAC for high speeds */
+>> +	if (hs_mac) {
+>> +		config = macb_or_gem_readl(bp, NCR);
+>> +		config |= GEM_BIT(ENABLE_HS_MAC);
+>> +		macb_or_gem_writel(bp, NCR, config);
+>> +	}
+> It looks like you moved the MAC selection between HS MAC and non-HS MAC
+> from the phylink .mac_config to PCS config.
+>
+> This configuration is indeed a MAC-side configuration from what I
+> understand, you shouldn't need to set that in PCS code. Maybe instead,
+> check the interface mode in macb_mac_config, and look if you're in
+> 5GBaseR / 10GBaseR to select the MAC ?
 
-Antheas
+Yes, agreed!
 
-On Thu, 10 Oct 2024 at 15:39, Mario Limonciello <superm1@gmail.com> wrote:
->
->
->
-> On 10/10/24 08:30, Mario Limonciello wrote:
-> >> Although TAS2XXX1EB30.bin and TAS2XXX1EB31.bin are both in ti/tas2781,
-> >> yet it reported "does not exist".
-> >> I have no idea why the file is there while report "does not exist".
-> >> After I removed the newly-merged, no such report.
-> >
-> > I think you forgot to git add them to the commit?
-> >
-> >>
-> >> Following is the log.
-> >>
-> >> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new# make check
-> >> Check that executables have
-> >> shebangs.....................................Passed
-> >> Forbid new
-> >> submodules....................................................Passed
-> >> Check
-> >> Yaml...............................................................Passed
-> >> Check for broken symlinks............................(no files to
-> >> check)Skipped
-> >> Detect Destroyed
-> >> Symlinks................................................Passed
-> >> shellcheck...............................................................Passed
-> >> black....................................................................Passed
-> >> markdownlint.............................................................Failed
-> >> - hook id: markdownlint
-> >> - exit code: 1
-> >>
-> >> internal/modules/cjs/loader.js:818
-> >>    throw err;
-> >>    ^
-> >>
-> >> Error: Cannot find module 'node:fs'
-> >> Require stack:
-> >> - /root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/
-> >> node_modules/markdownlint-cli/markdownlint.js
-> >>      at Function.Module._resolveFilename (internal/modules/cjs/
-> >> loader.js:815:15)
-> >>      at Function.Module._load (internal/modules/cjs/loader.js:667:27)
-> >>      at Module.require (internal/modules/cjs/loader.js:887:19)
-> >>      at require (internal/modules/cjs/helpers.js:85:18)
-> >>      at Object.<anonymous> (/root/.cache/pre-commit/repoxl59c0uz/
-> >> node_env-system/lib/node_modules/markdownlint-cli/markdownlint.js:5:12)
-> >>      at Module._compile (internal/modules/cjs/loader.js:999:30)
-> >>      at Object.Module._extensions..js (internal/modules/cjs/
-> >> loader.js:1027:10)
-> >>      at Module.load (internal/modules/cjs/loader.js:863:32)
-> >>      at Function.Module._load (internal/modules/cjs/loader.js:708:14)
-> >>      at Function.executeUserEntryPoint [as runMain] (internal/modules/
-> >> run_main.js:60:12) {
-> >>    code: 'MODULE_NOT_FOUND',
-> >>    requireStack: [
-> >>      '/root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/
-> >> node_modules/markdownlint-cli/markdownlint.js'
-> >>    ]
-> >> }
-> >>
-> >
-> > This looks like you're missing some dependencie on you system for
-> > markdownlint. You need nodejs v18.
-> >
-> > If you can't install this you can skip this check when you commit by
-> > adding "SKIP=markdownlint" to your environment while running 'git commit'.
-> >
-> >> Check
-> >> whence.............................................................Failed
-> >> - hook id: check-whence
-> >> - exit code: 1
-> >>
-> >> E: ti/tas2781/TAS2XXX1EB30.bin listed in WHENCE does not exist
-> >> E: ti/tas2781/TAS2XXX1EB31.bin listed in WHENCE does not exist
-> >> E: target ti/tas2781/TAS2XXX1EB30.bin of link TAS2XXX1EB30.bin in
-> >> WHENCE does not exist
-> >> E: target ti/tas2781/TAS2XXX1EB31.bin of link TAS2XXX1EB31.bin in
-> >> WHENCE does not exist
-> >>
-> >
-> > These files are missing in your commit or they have broken links. Double
-> > check them.
-> >
-> >> make: *** [Makefile:10: check] Error 1
-> >> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new# ls ti/tas2781/TAS2XXX1* -al
-> >> -rw-r--r-- 1 root root 35220 Sep 28 21:54 ti/tas2781/TAS2XXX1EB30.bin
-> >> -rw-r--r-- 1 root root 35220 Sep 28 21:55 ti/tas2781/TAS2XXX1EB31.bin
-> >> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new#
-> >>>
-> >>> Thanks,
-> >
->
-> You know - as you've been having problems with git and at least I've got
-> the intent and your S-o-b for the firmware I've taken your MR and
-> rebased/squashed it for you here:
->
-> https://gitlab.com/kernel-firmware/linux-firmware/-/merge_requests/317
->
-> I'll merge this and if you have any follow ups you can do them on top as
-> future MR (preferred!) or patches to M/L.
->
-> Thanks!
->
+As our current HW setup doesn't have AN and PHY, to support speed change 
+using ethtool
+I have moved the above MAC config into PCS. I will explore on setting 
+MAC config based on speed
+instead of interface in  macb_mac_config().
+
+Please let me know your thoughts and comments.
+
+-- 
+🙏 vineeth
+
+[...]
+
 
