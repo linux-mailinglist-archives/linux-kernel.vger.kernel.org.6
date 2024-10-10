@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-358180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D5D997B1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BD7997B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC717B21702
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:10:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A8A8B22761
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4815191F88;
-	Thu, 10 Oct 2024 03:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8CD18CBE5;
+	Thu, 10 Oct 2024 03:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXPOjSUp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qCLl8TLK"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB618FDC5;
-	Thu, 10 Oct 2024 03:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089718A922
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728529835; cv=none; b=KZGCIf5nF7rr9nrwuFGC9ok7Hyaji9+gjRy2eOeUpQVZG1aIaC1Fyk33onWy63vARFBBu8IxYqk4+M031ymycAumi6TLPoLk4m5Qt+0RIwenEj7kJq3ovhLiJlmUQ4mZwuL1mB9NtWhWgTZdlPs5cD/u18kz234BYFa2UVuLw0s=
+	t=1728529943; cv=none; b=u0beWQwr1IoVXVF//B1xLnidbeTzTlWhnq2G7gMUXGF8Ts2nMeiwBtNd1QQT6tdTRQugaJlJr6LDNbgpf27+/W3cS3tg84UYlwqnN3aYRtG5U1K7oGj7rVtgDZQM//pmHvh6rWDlNSUNLNtMgOj1IpgZC+cpmRx0HXaxeCyavJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728529835; c=relaxed/simple;
-	bh=8Ci5zNUcKA9NA43M1XW8pQhIgCu8C1M9ht8lYmp7vdM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Eqz/frsV8VpBj6J6Kfyz6r6z7ad0gWvpq26PV1fwBSZAoF6f9jhuUlgFZ1YTGTrqLm1peMCG78Hh+guLxU9B9zyDKNgLl7Z7FgfUismuvh4FMtFWck5NrbL50HL4giQ9n1MpAkrh6tLa7oMzeoHJmKqrCmUGHaqGlQ05+W918+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXPOjSUp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF384C4CEC3;
-	Thu, 10 Oct 2024 03:10:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728529834;
-	bh=8Ci5zNUcKA9NA43M1XW8pQhIgCu8C1M9ht8lYmp7vdM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DXPOjSUpZbdXVe1vhA3dwchNkVKXCY6r00A1mJx7mDqx1Nj7N/PgWpaqwp1GJl3Pj
-	 LM0Z8RrYS3iNzLNe+cjWerdE2/f9W8MGfY0/mn5H16EocgNdhgr+6rue/4efhbkqIG
-	 Twjb9JjoNU613Kc6acFKrLUllsb92WsQntacYsQHl/Dduep0GLbSoghX+4rO5ksGD4
-	 88ybWeX2gHka+xr3vu3cDh77NoES7WwxfTjvDq4shzk1Tmb4p/+74gCYC5K6MMq8e8
-	 +/DDJeHHlpx7vsx42HjvX70osodt3zOnQFbYY3/VBciComBwisUKlMT2OEi11eb0tx
-	 qIB0GKHP+++uA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB03806644;
-	Thu, 10 Oct 2024 03:10:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728529943; c=relaxed/simple;
+	bh=lAbqfCPQQfFeQuynoLVMF5O4JD6JWC7CqCKpjDnsmY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAQhWflfIdOiDeP2Iqku1Pf4HRbItOfBoIcmpp+ORLGSrHj8WI//iNSmeOegsxXCiEzz9QOa9S4WKESoj3KH0Wy4Ow2A1EDEOICj7tN5XwCNa/As9GCcRwfjUfOX/dUFswfX3cH3Q37Jn24lbF9XwZbeDJvNirAZCRGZTJpDTwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qCLl8TLK; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728529932; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=jb7bt9OZa7KGHA5GLLFq9v1jebn/ZclID9+1AL5mJ88=;
+	b=qCLl8TLKMw7bhNm8kQRuQvHXM4LVzoiAcPULhGoOYpFO5kVg2CTvDnmWvhBZ5BzlRTnQJCbInIbGVpNt7gF0lXFcHOORb8WE3I6zNDhWu32rSADVKb4bgCqPde8cmVhm7tATiKawWRojS8J+2LaQN8YaafkY22CuPy0UBkjvZuo=
+Received: from 30.74.129.219(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WGksEzf_1728529929)
+          by smtp.aliyun-inc.com;
+          Thu, 10 Oct 2024 11:12:10 +0800
+Message-ID: <02bfe2cc-ee08-4c81-951f-9b7ab9de2b24@linux.alibaba.com>
+Date: Thu, 10 Oct 2024 11:12:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] Fix misspelling of "accept*" in net
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172852983923.1551072.5298388677604048288.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 03:10:39 +0000
-References: <20241008162756.22618-2-green@qrator.net>
-In-Reply-To: <20241008162756.22618-2-green@qrator.net>
-To: Alexander Zubkov <green@qrator.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org,
- linux@treblig.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
+Content-Language: en-US
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Ankur Arora <ankur.a.arora@oracle.com>, mingo@kernel.org,
+ linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20241007074609.447006177@infradead.org>
+ <20241008153232.YwZfzF0r@linutronix.de> <87wmihdh3u.fsf@oracle.com>
+ <20241009062019.1FJYnQL1@linutronix.de>
+ <20241009080202.GJ17263@noisy.programming.kicks-ass.net>
+ <20241009100133.2569e2a7@gandalf.local.home> <87h69lqbk0.ffs@tglx>
+ <20241009164355.1ca1d3d3@gandalf.local.home>
+From: Tianchen Ding <dtcccc@linux.alibaba.com>
+In-Reply-To: <20241009164355.1ca1d3d3@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On 2024/10/10 04:43, Steven Rostedt wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+[...]
 
-On Tue,  8 Oct 2024 18:27:57 +0200 you wrote:
-> Several files have "accept*" misspelled as "accpet*" in the comments.
-> Fix all such occurrences.
+> Hmm, but then again...
 > 
-> Signed-off-by: Alexander Zubkov <green@qrator.net>
-> ---
->  drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c | 4 ++--
->  drivers/net/ethernet/natsemi/ns83820.c                        | 2 +-
->  include/uapi/linux/udp.h                                      | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
+> Perhaps these cond_resched() is proper? That is, the need_resched() /
+> cond_resched() is not something that is being done for PREEMPT_NONE, but
+> for preempt/voluntary kernels too. Maybe these cond_resched() should stay?
+> If we spin in the loop for one more tick, that is actually changing the
+> behavior of PREEMPT_NONE and PREEMPT_VOLUNTARY, as the need_resched()/cond_resched()
+> helps with latency. If we just wait for the next tick, these loops (and
+> there's a lot of them) will all now run for one tick longer than if
+> PREEMPT_NONE or PREEMPT_VOLUNTARY were set today.
+> 
 
-Here is the summary with links:
-  - [net-next] Fix misspelling of "accept*" in net
-    https://git.kernel.org/netdev/net-next/c/80c549cd1ab0
+Agree.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+And for PREEMPT_LAZIEST, this becomes worse. The fair_class tasks will be 
+delayed more than 1 tick. They may be starved until a non-fair class task comes 
+to "save" them.
 
-
+cond_resched() is designed for NONE/VOLUNTARY to avoid spinning in kernel and 
+prevent softlockup. However, it is a nop in PREEMPT_LAZIEST, and things may be 
+broken...
 
