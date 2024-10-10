@@ -1,72 +1,114 @@
-Return-Path: <linux-kernel+bounces-359398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5130998CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:04:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07212998B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F5E9B38F9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA15291773
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426771D042C;
-	Thu, 10 Oct 2024 15:04:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA0F42A8C;
+	Thu, 10 Oct 2024 15:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Bs890czY"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EFB1CC88F;
-	Thu, 10 Oct 2024 15:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183941C3F28;
+	Thu, 10 Oct 2024 15:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572668; cv=none; b=cfDpSBMraTbMOyqjVHviV8wEJhN6SfoEf3TBrb8b/zXWo9XLLkm2Uwb/UrNVq1es/sfWU3ZBWNeD255f89xaNejP6I2JuCtIOYtLPARkcEotVdqjqx8rqDIelQKGJTR1cEV7XqROcoajgOs2Hjq84sCZpMTICpVzGSCMRbjkfF0=
+	t=1728572774; cv=none; b=JYU0e1jerOM2+RBAJNU1g1oQm2kBLRbpBKqLTLkLQ6CKoxvaS9HoYAYhbjPp6C6wLtTnJV8UjjLouAIdYAci/3HbOmmSmN8DI53iTfLrklIpB4I/dbmTAphK7A6HaeJBfqJMICVyqLvH/X2/PfqjAWAfyjzhtAyTR64SayEkt+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572668; c=relaxed/simple;
-	bh=PxJSLcImqknPFWiDqzRa1RiNEUEGebC6uzrqr1bbrtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y5zNsQYCjMMt+VtxUly7XAvVClxhbzVep+dLjz5iT/4oXJ9wGzphI1xmuCkq3YVV7Nk7pYRBaTaEMkZR6IZSKZZzQjQ3oeeQ0B7ajcvd5bEY5OJo0YKbpCYDnRPrJGvDALZO4GkA7+aRunqRYdwP+sI4RHacXe9rvcUrgrIEN6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99782C4CEC5;
-	Thu, 10 Oct 2024 15:04:26 +0000 (UTC)
-Date: Thu, 10 Oct 2024 11:04:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Masami Hiramatsu
- <mhiramat@kernel.org>, Zheng Yejian <zhengyejian@huaweicloud.com>, Donglin
- Peng <pengdonglin@xiaomi.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-Message-ID: <20241010110434.662595e2@gandalf.local.home>
-In-Reply-To: <CAErzpmv7qAAXLt+J8Kn0kSkJeu64eE1P8Yv-WgGxuuMMpwGUHQ@mail.gmail.com>
-References: <20241010134649.43ed357c@canb.auug.org.au>
-	<20241010092755.21874a9f@gandalf.local.home>
-	<CAErzpmv7qAAXLt+J8Kn0kSkJeu64eE1P8Yv-WgGxuuMMpwGUHQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728572774; c=relaxed/simple;
+	bh=m5uw3eXlhRpsgXeXdOs302gE4sX30libvcLIMVUcBAY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pSC0i+OOa5XxV5BiXcD6doO9b1yREPZbkH3wuCU59Y/ncsoUBus0UbjVyWfLS49YRS1tiAh3XtRRGijxV6RWdtthMfq5C80Yd7IVNPilm8Te3irvMaUGWNp0K/sAiG80WuK1PsFIv1n4IkFBIS5uGKiCqvucY4Adpv73xTMDYyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Bs890czY; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49AF5mdq037505;
+	Thu, 10 Oct 2024 10:05:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728572748;
+	bh=GqRZLvl2DjQ0upPJP7Y+Ph6GptippgBWVgGt23VlipY=;
+	h=From:To:CC:Subject:Date;
+	b=Bs890czYvAfOqPp1SIaX0SIVFs6r3JxXydwN/VqnhuhK6aMrRd5VadUtk6/X/VU0E
+	 yUQ30kPiG3+4byOuaH9CkEBGv3tFtzREVbFODtjfiOhJhfyj3FQYZaI9fyfie7oOiT
+	 Tu/iGRRRDmkhUsm7ylbzWAOGD2XKv8rY+ZB28EBk=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49AF5msw113165
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 10 Oct 2024 10:05:48 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
+ Oct 2024 10:05:47 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 10 Oct 2024 10:05:47 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49AF5hN1030739;
+	Thu, 10 Oct 2024 10:05:44 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <rogerq@kernel.org>, <dan.carpenter@linaro.org>,
+        <jpanis@baylibre.com>, <u.kleine-koenig@baylibre.com>,
+        <c-vankar@ti.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH net-next] net: ethernet: ti: am65-cpsw: Enable USXGMII mode for J7200 CPSW5G
+Date: Thu, 10 Oct 2024 20:35:43 +0530
+Message-ID: <20241010150543.2620448-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 10 Oct 2024 22:08:04 +0800
-Donglin Peng <dolinux.peng@gmail.com> wrote:
+TI's J7200 SoC supports USXGMII mode. Add USXGMII mode to the
+extra_modes member of the J7200 SoC data.
 
-> > Hmm, strange. This went through my tests that also does an allmodconfig build.
-> >
-> > I'll go investigate. Thanks for the report.  
-> 
-> I suspect that the configuration CONFIG_FUNCTION_GRAPH_RETADDR may be
->  disabled during testing. If this configuration is indeed disabled,
-> the function
-> __trace_graph_retaddr_entry will not invoke call_filter_check_discard.
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+---
 
-allmodconfig should enable it. Unless it's a tristate.
+Hello,
 
-I'll look at my tests to see if something else caused it to be disabled.
+This patch is based on commit
+16aef66643a2 net: phy: Validate PHY LED OPs presence before registering
+of the "main" branch of the net-next tree.
 
--- Steve
+Regards,
+Siddharth.
+
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index 12ccdd3f19aa..09e57e66ea48 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -3445,7 +3445,8 @@ static const struct am65_cpsw_pdata j7200_cpswxg_pdata = {
+ 	.quirks = 0,
+ 	.ale_dev_id = "am64-cpswxg",
+ 	.fdqring_mode = K3_RINGACC_RING_MODE_RING,
+-	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII),
++	.extra_modes = BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MODE_SGMII) |
++		       BIT(PHY_INTERFACE_MODE_USXGMII),
+ };
+ 
+ static const struct am65_cpsw_pdata j721e_cpswxg_pdata = {
+-- 
+2.40.1
+
 
