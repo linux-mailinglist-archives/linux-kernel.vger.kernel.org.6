@@ -1,107 +1,110 @@
-Return-Path: <linux-kernel+bounces-358262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC51997C27
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CA3997C4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5B32819FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090392831AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53DB196C86;
-	Thu, 10 Oct 2024 05:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8F519DFA7;
+	Thu, 10 Oct 2024 05:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kDddgVuL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNKXTbcN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E69F2F50;
-	Thu, 10 Oct 2024 05:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C803C443D;
+	Thu, 10 Oct 2024 05:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728536988; cv=none; b=tzFcoxilfxq3A4HQCIbYixqyr+UF98cpCiHpb0JqEs1Fao70CJCMHayS0N7hqkQ1TtQA0avkVzHGITQGLNOrsk1QQqVaUNfUujNeYo5FOrCMPnzgH1HDpD1uQR0sbd2rZoTxJovcRyMPYwnvrPX7RuKHdV2IbtSMCFYGsBWxH4w=
+	t=1728537381; cv=none; b=Qq/VidVyYUXae/zS5FF3/TJDGzmXmTfAgL9Zk3Q0brwSBX7KiSyOsIjLbrNJXqTWlWUQUykiLjnxnk6tp8+uguLWjvCVI4A8VIdvE8qmdDkHuC6LQgvO/gxMY6u63KLS2T0dNcyV8FXcBUe1gMqjQLy4Gv6lGHlQZmHDTpYER38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728536988; c=relaxed/simple;
-	bh=qAu/Es0EaUVjkoAkvaZAS/uo/DHjNOK/HTK+l/stnzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gtJvdFtScR9eVnwNIgbqLHcZPGMcYzTtHG00p+FEwW+/HThzTfW0MEV+zX5qui7VXis0PFx1pHAbRXD8+9DC/F3jIMV3Ux8r+c/ztaQhu17FpgmvyrgX6iTmROpd58MvVoLN7gDv6Fd8CSocs+8bAbV4cXkGUCpmOVbQ7r6WoBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kDddgVuL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728536983;
-	bh=l78YHDmJugQiujynpBuw1ZbiWPCE2LAycgeN/kNr1Wg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kDddgVuLjk6joM2ROVImGVtwMwqQ4RQHU2z24AZ9yL124Yt29OOZErsTwx0eNQMJo
-	 iw2tIzv3l+5I0F9BP57GhQw1MaLyMUw7VeJj5VCgl/taYMCDr8MQ1hVxi1PQjZyRrs
-	 xm1n/Xn/7ex8hYbk+AL//G6s0Ue3bqSMsgbkUASCuc3QG5IDPi3O2H5d4qmBsZXwW7
-	 q8L/3DzOLtZ9gQPVUtUyju/uLI62EbUV12cMTPvuQIghuGPo3iRSsS6ocqIeTQmH97
-	 kyi18MIlmnqDhwQvGsWYArhpqACe7K1NQyAcGPRC7EZnpSWv+v0zAjyh0cQxi6S6Sx
-	 w223a7ztW8JtA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPHqp286kz4wd0;
-	Thu, 10 Oct 2024 16:09:42 +1100 (AEDT)
-Date: Thu, 10 Oct 2024 16:09:42 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>,
- Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the drm-misc tree
-Message-ID: <20241010160942.192caf60@canb.auug.org.au>
+	s=arc-20240116; t=1728537381; c=relaxed/simple;
+	bh=LFAjTpAnqSocR1XUoKJ2dWiM2U5S2Ivu2fRF8V0aoJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MYbfGSufzky8pO0u4slQnvHbpxZPyDjF9c9CQL5ng/vCSBlDKXHQ/dq9vnRGqvIDBkcpSS4PrfsA9wcVU/dbw06fVikr/zyyhurWleXF2E2dO6wjnYtxOEFN9uit8bmbEGzeCtd3Jchg3bfyjHo+SrJACvfcDa36z9+g/HyHWtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNKXTbcN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9761C4CEC6;
+	Thu, 10 Oct 2024 05:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728537381;
+	bh=LFAjTpAnqSocR1XUoKJ2dWiM2U5S2Ivu2fRF8V0aoJQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KNKXTbcNQl5VNXrD9vUKHnLvvD+BJgU9Ti3eewyTuTgh4SEqBy2MXJmpTOCKMzfP1
+	 8unOT2oeL/YG2w8KAhzLZL9aWJpKMj3wxFmeyDJ+I3yfLou6KUe+7k0kcZcLGjJUW8
+	 +hhqd2v9y7jVwaQ3JX5gWbxbO9n/U1MIF8/f1zIMOlnia0BsDXqx1I07/YUYPsGLXf
+	 B9jPg+IJaw8GvTgbnjmo1PSMxOy7YtRwXb7Y9VwHrWCVZxa9lNh+kJ8jrmoo8eKLe9
+	 vh5C8DiLr5O14oOfUspbgUZCilvAdSFsNsz7dVoSx9f6dg54/SF8w8yLRrHeE+hobg
+	 SQY/ldeCWgwhA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>
+Subject: [PATCH] perf test: Fix probe testsuite with a new error message
+Date: Wed,  9 Oct 2024 22:16:20 -0700
+Message-ID: <20241010051620.1066407-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1l8H0U29nDHzadQ1jJRBArU";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/1l8H0U29nDHzadQ1jJRBArU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On my system, it's constantly failing because of new error message from
+perf probe.  It should update the regex pattern to match the message -
+"A function DIE doesn't have decl_line. Maybe broken DWARF?".
 
-Hi all,
+  $ sudo head -n 2 /sys/kernel/debug/kprobes/blacklist | cut -f2
+  warn_thunk_thunk
+  asm_exc_divide_error
 
-After merging the drm-misc tree, today's linux-next build (htmldocs)
-produced these warnings:
+  $ sudo perf probe warn_thunk_thunk
+  A function DIE doesn't have decl_line. Maybe broken DWARF?
+  A function DIE doesn't have decl_line. Maybe broken DWARF?
+  Probe point 'warn_thunk_thunk' not found.
+    Error: Failed to add events.
 
-include/drm/ttm/ttm_device.h:255: warning: Incorrect use of kernel-doc form=
-at:          * @unevictable Buffer objects which are pinned or swapped and =
-as such
-include/drm/ttm/ttm_device.h:270: warning: Function parameter or struct mem=
-ber 'unevictable' not described in 'ttm_device'
+  $ sudo perf probe asm_exc_overflow
+  Failed to find scope of probe point.
+    Error: Failed to add events.
 
-Introduced by commit
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Veronika Molnarova <vmolnaro@redhat.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  fc5d96670eb2 ("drm/ttm: Move swapped objects off the manager's LRU list")
+diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+index b5dc10b2a73810b3..01e5e09053c37e46 100755
+--- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
++++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
+@@ -42,7 +42,8 @@ REGEX_ERROR_MESSAGE="Error: Failed to add events."
+ REGEX_INVALID_ARGUMENT="Failed to write event: Invalid argument"
+ REGEX_SYMBOL_FAIL="Failed to find symbol at $RE_ADDRESS"
+ REGEX_OUT_SECTION="$BLACKFUNC is out of \.\w+, skip it"
+-../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
++REGEX_BROKEN_DWARF="A function DIE doesn\'t have decl_line\. Maybe broken DWARF\?"
++../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" "$REGEX_BROKEN_DWARF" < $LOGS_DIR/adding_blacklisted.err
+ CHECK_EXIT_CODE=$?
+ 
+ print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
+-- 
+2.47.0.rc0.187.ge670bccf7e-goog
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1l8H0U29nDHzadQ1jJRBArU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcHYZYACgkQAVBC80lX
-0GwE9gf/Qu9AW+zSWz0YqtAUkNgZO89GNECGlKn4CkYI8sdYm2TXnsOYwlZxOpvt
-Kc02dfQN7F9IDpRBFnp56st4GhYlz2bbnN8SkGTDpx0IcuP4tnRafsuVICQ1U0ah
-n/lfqjG+jZiz+GuHwUwc0HWA50xf8V8QAyuG/7WepRRF6Hek89VT0VjBt1lTADlN
-G7lZaqMZEG+rXZKtvLVdR4zShrJZJ3GL1M7tEIqZzk08EfWDqtoCBpViRqvMt8tt
-whEhsN09QoaZFvwpQ/YX0ALhXDp1+ORlS4WDoPDiKQdLtJa12h/XVrI+lj/KIaAK
-LFCaRcPHa2yuFAokv3I+kByBDRE+cA==
-=A4ko
------END PGP SIGNATURE-----
-
---Sig_/1l8H0U29nDHzadQ1jJRBArU--
 
