@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-359395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDB3998AF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:07:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FC5998AF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250871C257A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25D628D904
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA4F1E2821;
-	Thu, 10 Oct 2024 15:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="uqGxlpAF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pNFLBNyE"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575691CF5D4;
+	Thu, 10 Oct 2024 15:02:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0601CB528;
-	Thu, 10 Oct 2024 15:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB851CBEA8;
+	Thu, 10 Oct 2024 15:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572553; cv=none; b=jbQROzQuAim0D6C97FhXj3yzjXHhWpIWMrKrf0R+lYI3myCt3dSgrRfZHu8Hyl0o0ObT9Dw0O7qck/orc0zGzY5Vvb6qRkTYtqp+Ro5fy6LwL2POnC7Y/Q2KQafpcVFVXsaR7DFnmT/2XyQFYOZml/rN8+fAZ3OUD8sy3T9TpXg=
+	t=1728572547; cv=none; b=EfYIyfD5AVpX/7gRr3TtI7TBTjqXX1MsgpNIptwdvzLpuHv/fbP2P2MFF7JVt9x2C0F/fcNnWEVw0L8uOi5Bt06OYU/Jsgm2wPiCH00iJP9+F8PoXpqdDw2qiuVVkoFWjDN1H99VOpqvgYjcqYYXVCrgGvLXUPVoRZQ7Mig5NAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572553; c=relaxed/simple;
-	bh=l+0N738uJCBbVk2c08kZgZ7VPXycyMi0hzIG+DPeOvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KW/DDbYoC4Iv4TD6Tb41ELgHHRqJGfx+CpyTjrvF3vTKea9fXAAgjRvETsqBySy2+FyrcSwcf53QiraThGQHiahHYJL0whczoy4+qtwtlfoGt+7Q4LM/vBHc99dubbyhH0g1VoUQupFJ1yWGfwhq4z/U4FD4E3wPn3q28Tp3Er8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=uqGxlpAF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pNFLBNyE; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id DFBBE1380233;
-	Thu, 10 Oct 2024 11:02:27 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Thu, 10 Oct 2024 11:02:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728572547;
-	 x=1728658947; bh=0Scqs7bab56Uf9R67GJfqGE4WU4ZrJVXt3HS9FjofAE=; b=
-	uqGxlpAFbIFziENMEbvM9q6Wa3dBp68bHBy8vg1teCbYgKHrdoLFECvnKt8ixkzY
-	PCJrLVwdFtYnKcD4uNe4o6FQsAaAcu+CnKpFC8ooPxskWSOKwR+nyFde0CHtqvln
-	YiI9Yzz7u4AgiQp6DSy0O+NXoqWszmMRn/SkfdI2YIB5+yCCH45LWFRASrWWTpi4
-	Cq18iZvjsbYNZ58PadVQZlqQJUVeKJc0OanfawChsngJfRlzXzkdB1BFFrVevs+v
-	Y/3xw0himovJQj/pgbfQ/32JhV2fZVETLGXpFxAevwT5oJRrekM3IUXTGcr3Tsvg
-	MhbEwsEo7gK1XVNZiLZGVw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728572547; x=
-	1728658947; bh=0Scqs7bab56Uf9R67GJfqGE4WU4ZrJVXt3HS9FjofAE=; b=p
-	NFLBNyEp6VUFW6kxGw2Xl3zafDzKtc0uQWZkB1wuxYUwiXhicrgax7z5bp3pEeco
-	0XWyhu6uWuLA/HRCt/4Mk+FI4Z0M4rW+Edc62NOCoAHzeC8qxaFvxpZr7cRk/FtT
-	ZsPMhykH5ww/26agthGQWN0hRZOwUwoV+gHQZAaVRLqaZBvrHZ99Fi1c9YTGVze+
-	40TPkgOJDyBxYByD7KBKDCBHUszn6QvilW+rJbGX6lTH+0StJQP1gPfE5/iYBn4z
-	fAEPw/bZNN/FaVNcCB+wSSw/rwTg5Iv3QKqA0xg27F2sNMUwhl7GgnK/QXXv58eP
-	PdxhXxRtMF18NvzfblhlA==
-X-ME-Sender: <xms:g-wHZwoOnJ2Um_JAjbZYlIoJSLNBqb6HWjhpfBw29NklS-UJYZcyxQ>
-    <xme:g-wHZ2oSPTUite0sUqE4MJlOznq6Xc8izI4ZbJGJbeOYdQmE5KUZzxTUbmB_s7KUJ
-    4Ef1Zqrvz61Lk42vP0>
-X-ME-Received: <xmr:g-wHZ1NrpGZM8gznyUZzTMlrPme6J5cuW1mNm0PcQ8CEBPJIGFT7GinnR_9WlE9Otg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefhedgkeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpeforghtihgrshcuuehjpphrlhhinhhguceomhessghjohhrlhhinhhgrd
-    hmvgeqnecuggftrfgrthhtvghrnhepkeefieeutddvteeguedthedvudfggfevgeevkeeg
-    geefkeeufffffeelleevgefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepmhessghjohhrlhhinhhgrdhmvgdpnhgspghrtghpthhtohepledp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepugifrghgnhgvrhesshhushgvrdguvg
-    dprhgtphhtthhopehhtghhsehlshhtrdguvgdprhgtphhtthhopehksghushgthheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepughlvghmohgrlheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheptggrshhsvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhnvhhmvgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdgslhhotghksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epmhgrthhirghsrdgsjhhorhhlihhnghesfigutgdrtghomh
-X-ME-Proxy: <xmx:g-wHZ36w1ZtvHQRAz6wV-bNl21yCkN0-UYnDXYniZmYs263VDuxFjA>
-    <xmx:g-wHZ_4d-YqDMBDlbdNfqcFKxvP8TBlPdHR5tKcoEooXd2MTTqr9Cg>
-    <xmx:g-wHZ3iVEmhoM3ph89eYyxaT6jv7J5TKSICvQuIdOH-aL8biXCfJHg>
-    <xmx:g-wHZ54FcU8fX_YAbtorup20GXV-G13norbXxQutvPxj7L8kU8GoMg>
-    <xmx:g-wHZ8Hsz5J32hEkD7q6M0JOexE5O-tszx8hp1zpcAQ8hDa3wOW4osxc>
-Feedback-ID: if4314918:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 10 Oct 2024 11:02:26 -0400 (EDT)
-Message-ID: <535aa25d-eae0-40ad-a2f9-bdd72dbcd972@bjorling.me>
-Date: Thu, 10 Oct 2024 17:02:24 +0200
+	s=arc-20240116; t=1728572547; c=relaxed/simple;
+	bh=45YCwc//nGmPsU/f0Iqt9H9vI32dOjKX+gTMhd9p4wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lji3tJNc1LR6WtXXQnu9DtjC99pTB50f24lQ+hmzlh4nwDwTa2VAbx972mqh5DvpPvV68W4zO+UwfsX4CRWrWW/W9k978eEZJ7DJmexGJQkOHLbhmVbgSnr8AAF1TOyiyuOI/loQ52jbSK3/EvCQLxP+NVIq6OHg6reTOkhZfmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEACBC4CECE;
+	Thu, 10 Oct 2024 15:02:25 +0000 (UTC)
+Date: Thu, 10 Oct 2024 11:02:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tatsuya S <tatsuya.s2862@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: Fix function name for trampoline
+Message-ID: <20241010110233.4f9bdc34@gandalf.local.home>
+In-Reply-To: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
+References: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] nvme: make independent ns identify default
-To: Daniel Wagner <dwagner@suse.de>, Christoph Hellwig <hch@lst.de>,
- kbusch@kernel.org
-Cc: dlemoal@kernel.org, cassel@kernel.org, linux-nvme@lists.infradead.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>
-References: <20241008145503.987195-1-m@bjorling.me>
- <20241008145503.987195-2-m@bjorling.me> <20241009074611.GB16181@lst.de>
- <0076eb5e-6816-490e-abaf-a0a4a25a2915@bjorling.me>
- <d98d0311-b5a8-46f3-bdc2-6265ed00fb2e@flourine.local>
-Content-Language: en-US
-From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-In-Reply-To: <d98d0311-b5a8-46f3-bdc2-6265ed00fb2e@flourine.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 10-10-2024 16:47, Daniel Wagner wrote:
-> On Wed, Oct 09, 2024 at 03:19:59PM GMT, Matias Bjørling wrote:
->> On 09-10-2024 09:46, Christoph Hellwig wrote:
->>> On Tue, Oct 08, 2024 at 04:55:02PM +0200, Matias Bjørling wrote:
->>>> However, the independent namespace data structure
->>>> is mandatory for devices that implement features from the 2.0+
->>>> specification. Therefore, we can check this data structure first. If
->>>> unavailable, retrieve the generic attributes from the NVM command set
->>>> identify namespace data structure.
->>>
->>> I'm not a huge fan of this.  For pre-2.0 controllers this means
->>> we'll now send a command that will fail most of them time.  And for
->>> all the cheap low-end consumer device I'm actually worried that they'll
->>> get it wrong and break something.
->>>
->>
->> It's a good point. Damien, Keith, and I were debating it during ALPSS. They
->> preferred the "send command and see if it fails" approach over writing
->> specific conditions where it would apply. Note that Keith did suggest to
->> avoid the command on 1.0 and 1.1 devices, and they were known to fail with
->> unsupported CNS ids.
+On Thu, 10 Oct 2024 22:02:59 +0900
+Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+
+> The issue that unrelated function name is shown on stack trace like
+> following even though it should be trampoline code address is caused by
+> the creation of trampoline code in the area where .init.text section
+> of module was freed after module is loaded.
 > 
-> FWIW, there are some devices out there which will log these attempts and
-> spam their error logs. There were plenty of reports against nvme-cli
-> when nvme-cli issued a command which could fail.
+> bash-1344    [002] .....    43.644608: <stack trace>
+>   => (MODULE INIT FUNCTION)
+>   => vfs_write
+>   => ksys_write
+>   => do_syscall_64
+>   => entry_SYSCALL_64_after_hwframe  
+> 
+> To resolve this, when function address of stack trace entry is in
+> trampoline, output without looking up symbol name.
+> 
+> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+> ---
+>  kernel/trace/trace_output.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 868f2f912f28..32a0858373e2 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -1246,6 +1246,11 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+>  			break;
+>  
+>  		trace_seq_puts(s, " => ");
+> +		if (is_ftrace_trampoline((*p) + delta)) {
 
-Got it. So, given the feedback from you, Keith, and Christoph. It's safe 
-to say it needs to be a conditional check.
+This is not reliable. The output is called when the user reads the trace
+file and the ops may no longer exist.
 
-Would anyone object if the
+The only way to test this is if you call it during the trace. Yes it may
+slow things down a little, but it will be accurate.
 
-  if ((ctrl->cap & NVME_CAP_CRMS_CRIMS) ||
-      (info.ids.csi != NVME_CSI_NVM && info.ids.csi != NVME_CSI_ZNS))
+-- Steve
 
-statement would include a check for endurance group support?
 
-The idea being that it's mandatory for a device to implement an 
-endurance group in case it exposes the rotational flag. That check would 
-limit the failed command check to relatively new devices.
-
+> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
+> +			trace_seq_putc(s, '\n');
+> +			continue;
+> +		}
+>  		seq_print_ip_sym(s, (*p) + delta, flags);
+>  		trace_seq_putc(s, '\n');
+>  	}
 
 
