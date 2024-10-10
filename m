@@ -1,248 +1,232 @@
-Return-Path: <linux-kernel+bounces-359611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452A4998E0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:09:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F91998E14
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E143A283E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5DB81F24DF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1596A19CC32;
-	Thu, 10 Oct 2024 17:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D2C19B5B8;
+	Thu, 10 Oct 2024 17:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HmkCkVb5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G9+VaxTK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D00119ABC3;
-	Thu, 10 Oct 2024 17:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728580128; cv=fail; b=tqsObnOvHGAXgB7HaC+ogyPnluC4uTirVDDtGKZ1o+BZwjmkY8se0a7eu0aLL8FwokxVcB9FOdc9RUj1h/EVTNXgDEgo/9HExQ7ngKQl4HeodadDy1MHfEyxoJswCEspoREqye9KoY6ckjKOY9SnkgtVNu2HJ83RUUULVUDRiQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728580128; c=relaxed/simple;
-	bh=AO0jpHdTRCSyXzxtm0d5sycWQ/+dsNQ32+cto8QcM3w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=t+arV3JzRD+mmaKIYEl2YUNOY5P7AhG13pKLeidZBme7IElB+6BhLkB0jS0AxutxhvNn2EPVgqS593h4POtk3aaEuiRzWvMj5Nul7eeXNr5mPtgtYbaO+RHd7n6HEsbBFhIkGKZ7J4pZyH/899IddjyGZ5kewyd/2RjI5RmtyOs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HmkCkVb5; arc=fail smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7828519ABC3;
+	Thu, 10 Oct 2024 17:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728580234; cv=none; b=H4vte12PWd1YVzT5iWSxAOmppVJHSOc2LmFDtyV6vJcUBcV0cOag2N99QrmTbMmA7esJN6ylTFxJIdsCVts2/qUrtGI4W7jzZqtHTBz1q4m/ifyzGJUR//yqNDDNnRtNiXYNsm+3GAERZgLoB2UV74RH1TV4JrCfiYou/LO3pBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728580234; c=relaxed/simple;
+	bh=LKzg2xvYGT+aj/zGDlwFx/Y6GeQriTDfR72/HvFVDpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0JwiIUvRvdBpH+xNm9s18xIWM/86ojvQbvcQMMUnG0lfKxkQobJzX9ejf4vHuRpNItEfjtdrHPbrXKAlN7yZb307MXAbzZ3UFMNCvmK+m4ihI1ivR2PYnTlXZOhAe33jrudujb0akVVXuqLQV3icRs4/3HMWenR1DijeOR4SUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G9+VaxTK; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728580126; x=1760116126;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=AO0jpHdTRCSyXzxtm0d5sycWQ/+dsNQ32+cto8QcM3w=;
-  b=HmkCkVb59StV2coVKrMVl2PhDt5ybox3xp/g/Ub3xoSoI41Rw5gfbsNR
-   xetxSOw2wCJihr5tl4t6N591R2s+B3ObvrXVt0pE8qfCRNIqyu6WY8MIv
-   ErvJpewJBpxcLGqoR2IYUxzCq530xpJgKSn3cE9zD40wjXjRF6IMic6k7
-   SZp9E6+0NjV/Ke86aOcD3eSfXBkagIzQmAyVjJ8yt/C6U4RYoGoYmBmSF
-   JUWfzFT+NzCgQN9ZVzUQV/TzFtWYKig0KP9rWufj9OhsQCNrTcVtA0tvW
-   gNzcBHNOI4zc2QoNMaMQwIFoEfvTsTzPU9XuFckmznOhCT2aK2K5fm93D
-   Q==;
-X-CSE-ConnectionGUID: ejC/8ihkSTmtbhKcLW/iyQ==
-X-CSE-MsgGUID: J39ztDPIS9KSk6w7rmdO8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27405404"
+  t=1728580231; x=1760116231;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LKzg2xvYGT+aj/zGDlwFx/Y6GeQriTDfR72/HvFVDpk=;
+  b=G9+VaxTKUvRz4SR0R5umSQrD+nTR1azqccFXJlKT7w3di8NEonMW747z
+   yaK/JclbFpxWMgIOlnYkY9Dr8XK7QEEOGn2RF4+jkC9VK/TLLGCQUp7d2
+   qYmXt89dLvFla/zZbqPWeghLdTNigflgZtByNXAD9vQnXB1wxA4w2PVME
+   0cmi0k8bOicnyzCflWxy64O0YEUZTECegcKqknq7eXnA5rGg320oObdBf
+   N0q9gkLzm3Es+d4dZCjUS0OWv9qdCHlYWh84+bfAqMsNrHxTQP5pIcbfA
+   0Mz/ig/qTnb1zBHq9hzhfOYvEn7/n4gtFDaYzQldt9ONfBJzv2jdkHIco
+   w==;
+X-CSE-ConnectionGUID: wRc6fN0QQWy5e3I7z3rM+g==
+X-CSE-MsgGUID: 6xDsbrtWQYmmEfEjo/YGUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31750276"
 X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="27405404"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 10:08:46 -0700
-X-CSE-ConnectionGUID: SonDIWx8R/mXq9WTauPYqQ==
-X-CSE-MsgGUID: 6fji/r7RQSGle2xxHr1TjA==
+   d="scan'208";a="31750276"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 10:10:31 -0700
+X-CSE-ConnectionGUID: ithkfGpeTg+4UmbNz26Y9g==
+X-CSE-MsgGUID: W6eJiQsxQNCIh6d+i0WYow==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="77138863"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Oct 2024 10:08:45 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 10 Oct 2024 10:08:45 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 10 Oct 2024 10:08:45 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 10 Oct 2024 10:08:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZtH9MxEpHV4vCTsocJpD/fh4txpKJbPpYHI03vuikXK3F6Ml15f8CWjeP5APboV8Mu4GOSRxi3xHcVh/PLtlg33iMjQ4FlbkYdbOyLulvqmQp8BAlKZbf2hcgulhS0PLvrKIOo1gDMBpBo6LVsabXZfoSSEI7OZVl+AD18G2P5GzzGZM831jlq1PA0F3HQJ7c7jBa7bxds+qF6cSh2Vi9DOQWz/ZP08WPwZOuTw3yPOF/Lo+c/A+IcgbT3nnvoq3OxzTVR692TxdyIApXh977ifmYFxBIZXfxVtDXZktCD59XWCJC4hD9Aa/swBDiOQ7HQZF0SE+qZQMKBoR4XvvuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AO0jpHdTRCSyXzxtm0d5sycWQ/+dsNQ32+cto8QcM3w=;
- b=QYmRQXpV4KSvERVh5SmX5TfE/1pJS3s4v/Qdd0FJkp6J6SxQq+ymYBW1saiI5d+S5kLZwIYzR+s7MjlMVe2POeHFf089JlFaXpgm2vqiwYzPHobVG/7Ef5ttiwLf1nN7/w40hu5X/+zqxnuNIG87xi92wj/JXuVfsFR/J6Ses+54joz61awyJTEWaIF1VkAGBVhZR2EtWWLk0yght0VD0yR0+qXBHVSYIDvVcjgokGhTxNwgYHINxxLET0+DKzZfZTg1rcSkPDpJllTDB/2T9gUI8FQqOjXUnqujHNLhwuaywQNz/b0rW363+ytnOvBOBXTTmM1Ul9z3g5wdtMRlug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by MW4PR11MB7005.namprd11.prod.outlook.com (2603:10b6:303:22e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
- 2024 17:08:40 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
- 17:08:40 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "babu.moger@amd.com" <babu.moger@amd.com>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "Yu, Fenghua" <fenghua.yu@intel.com>,
-	"Chatre, Reinette" <reinette.chatre@intel.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>, "rdunlap@infradead.org"
-	<rdunlap@infradead.org>, "tj@kernel.org" <tj@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "yanjiewtw@gmail.com"
-	<yanjiewtw@gmail.com>, "kim.phillips@amd.com" <kim.phillips@amd.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>, "seanjc@google.com"
-	<seanjc@google.com>, "jmattson@google.com" <jmattson@google.com>,
-	"leitao@debian.org" <leitao@debian.org>, "jpoimboe@kernel.org"
-	<jpoimboe@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, "Joseph,
- Jithu" <jithu.joseph@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "sandipan.das@amd.com"
-	<sandipan.das@amd.com>, "ilpo.jarvinen@linux.intel.com"
-	<ilpo.jarvinen@linux.intel.com>, "peternewman@google.com"
-	<peternewman@google.com>, "Wieczor-Retman, Maciej"
-	<maciej.wieczor-retman@intel.com>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Eranian, Stephane" <eranian@google.com>,
-	"james.morse@arm.com" <james.morse@arm.com>
-Subject: RE: [PATCH v8 08/25] x86/resctrl: Introduce interface to display
- number of monitoring counters
-Thread-Topic: [PATCH v8 08/25] x86/resctrl: Introduce interface to display
- number of monitoring counters
-Thread-Index: AQHbGybdEonESjxpIEK+MSvEee6fXLKAG/3ggAAYpoCAAACqQA==
-Date: Thu, 10 Oct 2024 17:08:40 +0000
-Message-ID: <SJ1PR11MB6083FFA19F9387F21C058A09FC782@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <cover.1728495588.git.babu.moger@amd.com>
- <c79fdf4196d974325df995eb334221463747689e.1728495588.git.babu.moger@amd.com>
- <ZwcIkf_oy2oKByNu@agluck-desk3.sc.intel.com>
- <8ceeb50a-70d7-4467-b7c1-4f62b1a1eec8@amd.com>
- <SJ1PR11MB608381B9DA3AE26749070BE8FC782@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <0fedcbd4-487c-4d55-8151-69dc34f41f1d@amd.com>
-In-Reply-To: <0fedcbd4-487c-4d55-8151-69dc34f41f1d@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|MW4PR11MB7005:EE_
-x-ms-office365-filtering-correlation-id: dc74c1ff-222e-4db8-335c-08dce94e3055
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?bkpzazBtT2JoZGg2UmNIMU82SUN3OG1ZNVllQjhDdXVYa3JTMHBPUjRoTWhC?=
- =?utf-8?B?ZVJxVU4yNk5IT2lBZEFVdVR2ZThlSEhKL1lsRnc0dmtYOU0rdXhRVCtsWXkr?=
- =?utf-8?B?TGVJL3VEMjg5TUhBMkptM2x1UkZVemNZR2xxWDdTU0RYSmYwMlNyU3UxNU5a?=
- =?utf-8?B?VjJjOE9SS0lHY2RRTmJKQStodzdTbHhyM2VrTUZad1BTZTdscEZoZkxtVTZT?=
- =?utf-8?B?ak9IRFJOVlgxdEtsQjUxUCt6cjFjNmNGWlFiRFZQNEhmQUxzc2hyc0t0RDRJ?=
- =?utf-8?B?a3kwRXJCdGpyNng3ejE0VDN2T1dka1RnR0RnOXZVZWlJSFcxcnZTcWhkd2FV?=
- =?utf-8?B?TDFQSTk4T1VIQ1Z0dmtsRk5NK1NtbjhFSnA2VWVLMG40eGhlVU9UR0Y3Z3RQ?=
- =?utf-8?B?Rk5zMUJjNmpEdlplaVRLMnQzM1FMZkRBbkNNK1Z2dzM1WXVsR2lSUENNY2tS?=
- =?utf-8?B?ZWR3RW81aHRpd3hHd2FXYlVNRHhnTjRMZ052VlRTSGt4ZS93UDJKVUphcmRD?=
- =?utf-8?B?dE80c0FYMzhrUHV2cnVqSGFkQ1A4SFd5b3dHNEF3QmpGajVweUc0U1ExdnlJ?=
- =?utf-8?B?YnhVb29PSDIrcjlJUVluMmhUM3hUajJaaWNBVFlUZ1JWbUpXRHFXUCtQRTdR?=
- =?utf-8?B?WE5HTFBINER1ZzU5NHBObDE4TGI4VDI1RW5vWktvZDBreDA3ZWlEM09IVG9t?=
- =?utf-8?B?Sk9reDl1WFdGNSszSjNaR0lBYTVtalFqMXRFajlYaVNJSVpjV3FjbTBvaXNo?=
- =?utf-8?B?ajZwNlEwU3JZT05hSkJ2TlFVVGdNK0Y1dTlGWS9XNnljTGFWZHV1aWFUTUVS?=
- =?utf-8?B?ZitiRjUwNEtOd1dVUXNiT2I4b05KN3VKMTdqR2hhMThXVGNGMlNBUXRPWjdS?=
- =?utf-8?B?VVk2ZENJWmw0WGtFbGNYK0NOM0xXdy9nemFHSXUxRVZMTVFGRHFTZFdLRHky?=
- =?utf-8?B?K1c3QUJhdDFkY2JUbFdVVzNRL00zSk1GS01JS1RWNjNQR0pnaHN1VVhSbXVo?=
- =?utf-8?B?N255WlMrcnRwT2ZDZ085UytZSHZtU3lXa3dQdjhRSFVObTBMSTU3UksrM0Zr?=
- =?utf-8?B?aEZ5Nkd0UVMrcFBXOVBISVd5R2NmZk9QUVJlak9ONm4yK2ZKZVo0R1VNSDVB?=
- =?utf-8?B?MFpCb1BhS3I5anMvajRkTSsydDh0VWNyaUwwNmM3RXJKQWpzMlY2c0JiWnRQ?=
- =?utf-8?B?Wm1wWEsrUSs1dzl3Z1N1TWJNQitmZzU3U3NMVXkxMmNwc05Hb1RWMFJIMXlF?=
- =?utf-8?B?RzJyRnNiMkJvTzFZVitFencyL25pQWpFMVdLRnlqS201dVg4UEZkbFI2cno5?=
- =?utf-8?B?VmVRaFZtK1ZjcGJkbXhrRGwzUkc5c2ZGMzhWZjNPRkE4NSs2QmE0a3Q4WTRN?=
- =?utf-8?B?VEdWbkdEWWpJS0tjMkk3SVZKeDhZQnJXQWVoUXRkaFkreVNRQzVaejhCKzNU?=
- =?utf-8?B?RjNDUUgyZXdyUWJJYTBGdWpRdk1JVUNaRGdtc2pRb1NxMDFxU3NUK3NaVU8r?=
- =?utf-8?B?Zk9NVmhZZVIvd0RJTGpUQUd5Tk1SNFQ3VjFiTEl0eE11Z1k0Y1U3eVNrRGVT?=
- =?utf-8?B?b2hmOTdaRXNoand1L2lzQ1NUdDRlMEZzWE8vWGVRb0NORHEyWkVvOVdPS2t2?=
- =?utf-8?B?UVFlWlpzZGcwTmZncUNFa2FvelE0d3RoZzM0bElrcjRHdWhoSlkrdE51d0ZP?=
- =?utf-8?B?cnMvSWRtYkxLTFh5NWsxNmtSMkV2bGpMRnlNQUNJQ2x3TllhMGJsNXYyVS80?=
- =?utf-8?B?ckJtTU9JVjBLdC8wNGc0OTR6VTRJZ3JtMElzUXBaVUc4TEdTRmRyMVFJZ2xX?=
- =?utf-8?B?N0ljb0xBL1p1OEZENDJDUT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?amNid1BETzI0WXkwaTdpTnRSbTg3WFdQeGdGUHNYQ2VIOVI4Y09QSmRQVk1n?=
- =?utf-8?B?MTExRXNXYVIxQ1lzRFhWakVHNElUR0FueTZudk9lalMwSGRySkR1RXQ0TVJ5?=
- =?utf-8?B?T1dXK2M0R3hkZTRpdldBMGxMZEU3ZW5jbWxnSHdJQU93RWViYURLdEVtZCtk?=
- =?utf-8?B?d2dJYXdKQkxtRElLL2J2dTRIT0xIMjIwZjAwc285Y0Y3RzJPYVMyaXNiQVZu?=
- =?utf-8?B?OFB6aHVKS3A1N0FEWG5UUVd3Q3RFcWdKNllRM2x4SDhrZmtOZzdaaDdXRTlx?=
- =?utf-8?B?V2VxSmd4ZG5nV2E4Zks1KytsdDhzWC9NU21ablg4REs1OWZjVTJKM3RTbHVJ?=
- =?utf-8?B?VWEzNXl1Ky9qZmdqNjgzQThMMm9laGkwM2ZJRTlDQU1rSCtsZ3BTalVjRlU0?=
- =?utf-8?B?cDJlQTFtYzhHNXgwa3cvVGxsZHFlLzNiUHhIb1BKNllWd0liblpTNGlZcnlK?=
- =?utf-8?B?MkQ4ZXNIL2s3a2tWWnJxUGYrV3pVUWpoNmlHTGpoaTRLMytZTUQ2NitzbkNx?=
- =?utf-8?B?clg3VGY2cWJ2VUtTSi9BM2cyR0pxRUFuL1Izdmx6enc3Tm1SU3NPbFcwQk5C?=
- =?utf-8?B?d0dGYy9xeWlaeUE4VXQ4a2FSTkI3T0NQUm1qcWMxeGEvZXlaOW5vaVBJWTdM?=
- =?utf-8?B?K1RVWkRKUE0xQlMzM2xNR3crMTJOcnlYSFN2eVplNlJ5SWpXcGN1eFFMaG44?=
- =?utf-8?B?dEt4ZElpSmR5bFhrZTIyV1lEOGVLdkNLQ3ozdCtEOERsZlhuN3JrUi9VcFBV?=
- =?utf-8?B?TFFPcU5yY3FTMGlhdGdWMW1Gbyt1L3N1QjFyam5WUUpESlFVRnE4UG15a3RX?=
- =?utf-8?B?TS9hZVlqa1AzQnJsTVdXNlVVc054WnhEb0VBVTFmai9ONUI0MWFTWjVHNnkv?=
- =?utf-8?B?WXZzdy9HL2phVllMaThKWi8wUUdrOG1SRzBIM1BDbUtvYkFFbHMxVHlYN1Yz?=
- =?utf-8?B?WjIrZC9qRk5HdWRQWkVZYTRXNi96eVIzUnVnS2pZNkppMXFkQlZSNURHaU1p?=
- =?utf-8?B?TzdacGl1anM2THo3VmV2dnVkdTZkeDY0RGlQWXVwR25ETUcxT25maUlXa0RJ?=
- =?utf-8?B?eUlIVENDaWZSZTRUNWZ5Q1RJcTRkRTFINmNQZ05STU9HRk1nT2l4czdqcVVt?=
- =?utf-8?B?Z1hLQnU5ZzdGOEkwQjBNa2R1RCtaQ3p1M2VxaUNGcWlpMC84cGJDSWNzNFgy?=
- =?utf-8?B?OFN2OTlCQlFGSUVpL2pmNUZkMDUzT0hVaVZwd3IzczFzMmtaeTFIeHN3S1JS?=
- =?utf-8?B?ZGFmWkxMcFMrU3hVZVIyRFQzUEw4Nlh3eU1jQk5PZ2xPUGIzVjZqQm9lQ05P?=
- =?utf-8?B?cnVVZkt4eHFNcFZ6TFYweVorYWt5aEwzdFh5RC9YWGtlTjhsc1d4cExFOS91?=
- =?utf-8?B?dUtkZk5tbktVTEF6MUpFTzNVNEpRYmlPMURsVUJwdWdjYzBFVlNBREIrL0Rs?=
- =?utf-8?B?SGFVZ2J6M1h2NHlpZDdObDdaL01HOTEwWFA2eUVNS2s1L1RTRnZsY2UvRUZz?=
- =?utf-8?B?Q0dlLzBtVXQ5aWJaZTBCQkFJR1ZuY1NxbHE2S0NEdlowL3o3alFVWmRzakda?=
- =?utf-8?B?SGxvc1k2VnAxQ2dUWkpGb01KTXpncWFhY0JUMnFiZkdwM0d1MHBkRkU0Wkdo?=
- =?utf-8?B?SVN2R0d5NEhOZWpvOFpyUWs3bmNabDhCaDBxWFUzcEY2amZJYlcreXBPQUpi?=
- =?utf-8?B?MGpIT2Z5YU80eGl6MStJMEpMR3VTRG5GVi8yZ2lBTVpWdy9qMmZMeFJadUlV?=
- =?utf-8?B?U1VNdHpRYmRsZkRmZ2gxUEtaN1UvekxTNm9yWmVNSjRiYXVucmVxR0dhQzZi?=
- =?utf-8?B?aHFTS3VHTWs5WXJaeFhiZVFGaVNDK2xwb3c2MExCNjQvejNoekQ0Y01yaFNk?=
- =?utf-8?B?SW5yMGgzVkl5TFpFL1JkY1dESjBTRVVNZmxYUHIwaFJVL2pHQ3ZhUXR2azFO?=
- =?utf-8?B?Wnk2MURmdFBEV3crYVdPMlRIcVJSek1qUWNNdE1RV1Jpa0VQQkhMVGxSaERR?=
- =?utf-8?B?Nm5FNisvZHhsZDE4azhtaWpVME1YZkZmd09DQWdvSnlLZzYzZlF1MGVPU0dl?=
- =?utf-8?B?S1VtbjJnNUxVNEFCUGgwNkVzeFpIcEhQem5pZGxEbVRiVWZXUGRSSk53UTRj?=
- =?utf-8?Q?VGJG4WKwbZiTLXvFhKgDLEqIm?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+   d="scan'208";a="76581573"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 10 Oct 2024 10:10:26 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sywgB-000B3z-1r;
+	Thu, 10 Oct 2024 17:10:23 +0000
+Date: Fri, 11 Oct 2024 01:10:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next 05/11] net: enetc: add enetc-pf-common driver
+ support
+Message-ID: <202410110019.xUSLtcAC-lkp@intel.com>
+References: <20241009095116.147412-6-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc74c1ff-222e-4db8-335c-08dce94e3055
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2024 17:08:40.7227
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cR64uvEHdO5VUChfIiZnbNs0kGngsVmsCuRPhiXRULkeFnpnkRs07f66CIlTFX9P9fx4A5+Q055lzdjMWnR5MA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7005
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009095116.147412-6-wei.fang@nxp.com>
 
-QmFidSwNCg0KPiBXZSBoYXZlIHRoZSBpbmZvcm1hdGlvbiBhbHJlYWR5IGluIHItPm1vbi5tYm1f
-Y250cl9mcmVlX21hcC4NCj4NCj4gSG93IGFib3V0IGFkZGluZyBhbiBleHRyYSB0ZXh0IHdoaWxl
-IHByaW50aW5nIG51bV9tYm1fY250cnM/DQo+DQo+ICQgY2F0IC9zeXMvZnMvcmVzY3RybC9pbmZv
-L0wzX01PTi9udW1fbWJtX2NudHJzDQo+ICAgVG90YWwgMzIsIEF2YWlsYWJsZSAxNg0KDQpFaXRo
-ZXIgdGhhdCBvcjoNClRvdGFsIDMyDQpBdmFpbGFibGUgMTYNCg0Kd2hpY2ggbG9va3MgZnJhY3Rp
-b25hbGx5IHNpbXBsZXIgdG8gcGFyc2UuIEJ1dCBJIGRvbid0IGhhdmUgc3Ryb25nIGZlZWxpbmdz
-Lg0KDQo+IFRoZXJlIGFyZSBhbGwgZ2xvYmFsIGNvdW50ZXJzLCB3ZSBkb24ndCBkaWZmZXJlbnRp
-YXRlIGJldHdlZW4gc29ja2V0cyBqdXN0DQo+IGxpa2UgbnVtYmVyIG9mIENMT1NJRHMuDQoNCklu
-dGVyZXN0aW5nLiBTbyB0aGVyZSBpcyBubyByZWFsIGJlbmVmaXQgZnJvbSAiMD10bDsxPV8iIC4u
-LiB5b3UgYXJlIHVzaW5nDQp1cCB0d28gY291bnRlcnMsIGp1c3Qgbm90IHJlcG9ydGluZyB0aGVt
-IG9uIHNvY2tldCAxLg0KDQpXaHkgaGF2ZSB0aGlzIGNvbXBsZXhpdHkgaW4gbWJtX2Fzc2lnbl9j
-b250cm9sIHN5bnRheD8NCg0KWW91IGNvdWxkIGhhdmUganVzdCB7Z3JvdXBwYXRofS97YWxsb2Nh
-dGlvbn0NCg0Kd2hlcmUgYWxsb2NhdGlvbiBpcyBvbmUgb2YgXywgdCwgbCwgdGwNCg0KLVRvbnkN
-Cg==
+Hi Wei,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241009-181113
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241009095116.147412-6-wei.fang%40nxp.com
+patch subject: [PATCH net-next 05/11] net: enetc: add enetc-pf-common driver support
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241011/202410110019.xUSLtcAC-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410110019.xUSLtcAC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410110019.xUSLtcAC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:3:
+   In file included from include/linux/fsl/enetc_mdio.h:7:
+   In file included from include/linux/phy.h:16:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:3:
+   In file included from include/linux/fsl/enetc_mdio.h:7:
+   In file included from include/linux/phy.h:16:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:3:
+   In file included from include/linux/fsl/enetc_mdio.h:7:
+   In file included from include/linux/phy.h:16:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:3:
+   In file included from include/linux/fsl/enetc_mdio.h:7:
+   In file included from include/linux/phy.h:16:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:3:
+>> include/linux/fsl/enetc_mdio.h:62:18: warning: no previous prototype for function 'enetc_hw_alloc' [-Wmissing-prototypes]
+      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+         |                  ^
+   include/linux/fsl/enetc_mdio.h:62:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+         | ^
+         | static 
+   8 warnings generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/enetc_hw_alloc +62 include/linux/fsl/enetc_mdio.h
+
+6517798dd3432a Claudiu Manoil 2020-01-06  49  
+80e87442e69ba8 Andrew Lunn    2023-01-12  50  static inline int enetc_mdio_read_c22(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  51  				      int regnum)
+6517798dd3432a Claudiu Manoil 2020-01-06  52  { return -EINVAL; }
+80e87442e69ba8 Andrew Lunn    2023-01-12  53  static inline int enetc_mdio_write_c22(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  54  				       int regnum, u16 value)
+80e87442e69ba8 Andrew Lunn    2023-01-12  55  { return -EINVAL; }
+80e87442e69ba8 Andrew Lunn    2023-01-12  56  static inline int enetc_mdio_read_c45(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  57  				      int devad, int regnum)
+80e87442e69ba8 Andrew Lunn    2023-01-12  58  { return -EINVAL; }
+80e87442e69ba8 Andrew Lunn    2023-01-12  59  static inline int enetc_mdio_write_c45(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  60  				       int devad, int regnum, u16 value)
+6517798dd3432a Claudiu Manoil 2020-01-06  61  { return -EINVAL; }
+6517798dd3432a Claudiu Manoil 2020-01-06 @62  struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+6517798dd3432a Claudiu Manoil 2020-01-06  63  { return ERR_PTR(-EINVAL); }
+6517798dd3432a Claudiu Manoil 2020-01-06  64  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
