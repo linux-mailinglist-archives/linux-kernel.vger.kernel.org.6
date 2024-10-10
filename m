@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-358718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D1A9982C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B230B9982D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676AF1F222AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:50:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE7E1F216F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F2B1BD503;
-	Thu, 10 Oct 2024 09:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FC61BDAA8;
+	Thu, 10 Oct 2024 09:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fjtd1GYd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnoFtgwV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2901BD4FD;
-	Thu, 10 Oct 2024 09:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1684029AF;
+	Thu, 10 Oct 2024 09:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553764; cv=none; b=uIMFI0uZHP0zv5OKlgl40ExHJgv1tH69zpuGshsDniI7oht2zHMIoKGld+t2scVZ4liNV+Yc1hN5jIOY0Z6LTbhT72GOJENBrrUsiT4LtYQz/J+2A2h50Pj50dKlm81BGociWchvXMSVyL+jgRu+ri8xOyf1J6L3lAYBvO9XQoM=
+	t=1728553789; cv=none; b=rRxQRzRdTRJzOmfFob5S7ugvGnE8y7qyNTCCgwY+MOEhm8C4fLGjnEGr74bsmwkhFz725Bq89NHaF3bRjE6PeUd3Tv1hyCmSjvbm8wW9Yop8jzSqkcgs/XaGWE7/+VMvDmgS0G3o3ac07BGo4IAKtPN0MRYWcJ7FGOlZQ1z9QU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553764; c=relaxed/simple;
-	bh=YKwBaNRBcMS2JUEZSf0dCWw9etVXQcaFKd1Ay07y9YE=;
+	s=arc-20240116; t=1728553789; c=relaxed/simple;
+	bh=sOKlcUDcVIYv8es7Svh5TEbxwRfsmyZvU+K9y1sAGl4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGs0bMr5Cd3IQXV6x1QyUfsEbQAHVqkU9htzIELyiip6hwLlMnDDSktgdCNCI7as/IZ2ynF5uyjbyH/EXv5jmIaWgWRnUayyxKitIflKFV6xGWD2j+krOxOXtnPBcSt829tdc6wYEk0894Vf/nY/7LDXIh/QTFIlZ9ft+lLBV/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fjtd1GYd; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728553763; x=1760089763;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YKwBaNRBcMS2JUEZSf0dCWw9etVXQcaFKd1Ay07y9YE=;
-  b=Fjtd1GYd0eXRGZuwRmoGN6G/tf3emSx9JrrNmvs+oU15gK18Lb1IwPMu
-   ks2AcMgXze4I6Ro+MEusQHZDELT78GN9jh0pAtu3jpGVFS+nYbdac9P0n
-   4Z2ALKnusmdFuHO94LhnSued7bGs0EMj9BvZdvrNko+EXLjaYke2laBvq
-   R1qEwxMHCO4ASpBTapmkxqBOrr6queaXkdVsvtdpBHZt9+tL2vBwVKVji
-   VjmQu9pwqm9G93ayUW2e9G6In6TqGR4hJ4EDIujxXvkeZaK990//fL3W8
-   RbwE29OaKwkTvEub6hErKRpTGDdUtZZ9A4F/zkDH/UwBTgalP4AAktc5I
-   A==;
-X-CSE-ConnectionGUID: +lAWoJ5pRg+ZpSA4LWyj/w==
-X-CSE-MsgGUID: u4JlRoVbQ1uJm3Jz/0uL+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39265377"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="39265377"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:49:22 -0700
-X-CSE-ConnectionGUID: WTr7bdOISeOZ2Up/vEvgNQ==
-X-CSE-MsgGUID: EH9vSkLlSRm8b9lQnQPmQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="81538325"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.114])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:49:18 -0700
-Date: Thu, 10 Oct 2024 12:49:11 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	kvm@vger.kernel.org, kai.huang@intel.com, isaku.yamahata@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
- when module setup
-Message-ID: <ZwejF11FxumXLFFr@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-11-rick.p.edgecombe@intel.com>
- <b8ed694f-3ab1-453c-b14b-25113defbdb6@suse.com>
- <Zs_-YqQ-9MUAEubx@tlindgre-MOBL1>
- <b3a46758-b0ac-4136-934b-ec38fc845eeb@redhat.com>
- <ZuFPBPLy9MqgTsR1@tlindgre-MOBL1>
- <3275645a-ffd9-4dd4-bfa4-037186a989ae@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwvOEkQWPKe0qE5mq4ppCtMEwXpOGKIfaDcjXuLih/cyvXEAW6j2lacPkLatoofth4pUiB9nZ2jMbP8JPyYl/X05rA9apodz/IcxUSmNssuvg256QLh73pzCbGwy7880Viln8QOKfUgfvCsvm2dQXlQZYHZGKtHt0YHGUNl7m4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnoFtgwV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 503A7C4CEC5;
+	Thu, 10 Oct 2024 09:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728553788;
+	bh=sOKlcUDcVIYv8es7Svh5TEbxwRfsmyZvU+K9y1sAGl4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PnoFtgwVFP8jz1lqnlXqpRQFN9k9Gva+GButJXcoVLTcJa80vNNGkb9YtN5UCSFpY
+	 xuCbNx4zI7qvl6rHE/B7nZJCjjyNuCwwZ/2D8HUtGZkX39z18lrF6Tw5xWrRocr2lo
+	 FV0LgQDhc5U1igE2/UBjkLizAompnTYylpbPbf2TxZzS6DAoLsxVll2k81AVEOCZP4
+	 /8CqtbwhJZBH/gf6NeWOkoZEDrlhhTwZZYO8fTBosdytGk2S7IefQuEvpLs6g2QTvc
+	 smkCJ9sAUigCuCJAod5CZ/yLQdq9uwXHH2g0fLpV5KwNjyYsVMibdjGqh1MiCgR9+t
+	 MQs71v9bWMkjg==
+Date: Thu, 10 Oct 2024 10:49:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Tang Bin <tangbin@cmss.chinamobile.com>
+Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/2] ASoC: mediatek: mt8188: Remove unnecessary variable
+ assignments
+Message-ID: <ZwejOZQlSsWbAWBg@finisterre.sirena.org.uk>
+References: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k3nsdihw8mA/diZ8"
+Content-Disposition: inline
+In-Reply-To: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
+X-Cookie: Editing is a rewording activity.
+
+
+--k3nsdihw8mA/diZ8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3275645a-ffd9-4dd4-bfa4-037186a989ae@intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 04:25:30PM +0800, Xiaoyao Li wrote:
-> On 9/11/2024 7:04 PM, Tony Lindgren wrote:
-> > On Tue, Sep 10, 2024 at 07:15:12PM +0200, Paolo Bonzini wrote:
-> > > On 8/29/24 06:51, Tony Lindgren wrote:
-> > > > > nit: Since there are other similarly named functions that come later how
-> > > > > about rename this to init_kvm_tdx_caps, so that it's clear that the
-> > > > > functions that are executed ones are prefixed with "init_" and those that
-> > > > > will be executed on every TDV boot up can be named prefixed with "setup_"
-> > > > We can call setup_kvm_tdx_caps() from from tdx_get_kvm_supported_cpuid(),
-> > > > and drop the struct kvm_tdx_caps. So then the setup_kvm_tdx_caps() should
-> > > > be OK.
-> > > 
-> > > I don't understand this suggestion since tdx_get_capabilities() also needs
-> > > kvm_tdx_caps.  I think the code is okay as it is with just the rename that
-> > > Nik suggested (there are already some setup_*() functions in KVM but for
-> > > example setup_vmcs_config() is called from hardware_setup()).
-> > 
-> > Oh sorry for the confusion, looks like I pasted the function names wrong
-> > way around above and left out where setup_kvm_tdx_caps() can be called
-> > from.
-> > 
-> > I meant only tdx_get_capabilities() needs to call setup_kvm_tdx_caps().
-> > And setup_kvm_tdx_caps() calls tdx_get_kvm_supported_cpuid().
-> > 
-> > The data in kvm_tdx_caps is only needed for tdx_get_capabilities(). It can
-> > be generated from the data already in td_conf.
-> > 
-> > At least that's what it looks like to me, but maybe I'm missing something.
-> 
-> kvm_tdx_caps is setup in __tdx_bringup() because it also serves the purpose
-> to validate the KVM's capabilities against the specific TDX module. If KVM
-> and TDX module are incompatible, it needs to fail the bring up of TDX in
-> KVM. It's too late to validate it when KVM_TDX_CAPABILITIES issued.  E.g.,
-> if the TDX module reports some fixed-1 attribute bit while KVM isn't aware
-> of, in such case KVM needs to set enable_tdx to 0 to reflect that TDX cannot
-> be enabled/brought up.
+On Thu, Oct 10, 2024 at 03:35:47PM +0800, Tang Bin wrote:
+> In the function mtk_dai_hdmitx_dptx_hw_params, the variable
+> 'ret' is redundant, thus remove it.
 
-OK makes sense, thanks for clarifying the use case for __tdx_bringup().
+Please don't send patch serieses without cover letters, having a cover=20
+letter makes it easier to tell why the series is a series and makes it
+easier for tooling to work with the series.
 
-We can check the attributes_fixed1 and xfam_fixed1 also on __tdx_bringup()
-no problem.
+--k3nsdihw8mA/diZ8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
+-----BEGIN PGP SIGNATURE-----
 
-Tony
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcHozgACgkQJNaLcl1U
+h9BTrQf/dvyLMa5N8atLKqhwKgHzZbLbq3zfN9tjwPX11KsHTUv8NHPRtsBQWZCX
+89eRdk8SEXRIS82p5CCQU509DCJFSgzborbduFb7MDaI73hhopdRV2WLPPDMu5G6
+CNjjVHR9Lr3YgqDSR+D5vc5MvhRwnGd5rej2ymlPgvsGleSnseHtVqdzkD44tvJC
+CcZS8Rs2kaDF0hyqckQq6deQSivyJBTEaDNewRB89palzjMlmvFU/Q6FPv2aAY2O
+pZ1bXNci5zOYdSrALGKzCCzzpUA3REoyBwZjhoFqF6ujeCnYia4eUtsm0ZAOSzHs
+uGG0teM2LEb459x/lteK+r/WiCnrLg==
+=A4F3
+-----END PGP SIGNATURE-----
+
+--k3nsdihw8mA/diZ8--
 
