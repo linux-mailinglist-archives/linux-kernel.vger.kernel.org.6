@@ -1,157 +1,88 @@
-Return-Path: <linux-kernel+bounces-359008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F2C99863F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:38:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230F0998643
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62F021F21C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5183A1C2178A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D1E1C57A3;
-	Thu, 10 Oct 2024 12:38:43 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAC41C6F44;
+	Thu, 10 Oct 2024 12:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gToKVi6l"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9C81C460F;
-	Thu, 10 Oct 2024 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F3A1BD00B;
+	Thu, 10 Oct 2024 12:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563923; cv=none; b=h1I8vLCEpDnXtkWFJnS2ZNjH978LBQMaQQkw4HUEI8MD5nxP+QftI3WDJN5naUdLt80Ovu88G/LXwjZaT1rfGdBYJbc1XjDHv1MmNOZ3RINMvyecjAdSoWByJDZXYPztF8R2DlSSOfHSX3dJ7A21zqSnF8ync2aJENLAqpHnJYs=
+	t=1728563982; cv=none; b=pQH/V6QoLEgyMT2vtwQ/rPanH54tm0A4P8kbcjuVrZw3kx8vRq9apBnbo8JS9W2NDR5TvyoqZpL5sHa4yAzyl2AzmRc/LCXe3qD0HPKsGpkGiddjxFkz1iSpYYsxXC5d/78HMx/w8MZaUbau2Sf1kN6CIhD/GoMorbAX1nETYX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563923; c=relaxed/simple;
-	bh=Swsw14X74fndgEQG0s9is/8Fg8PAFlZhqVC6mxKKMGQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=k+LFZP/vHhJkvQkh3x8msAQSQJr4Oct7P0ItjfIn9omycTrjLisy+3+PBce07HPMTpNFr/RujBWLke3y6iLxsR6+NTmB77pE5Lrofn/02rhWvADF9VCz7j+oDCxn7cqMDbGT/0bzvQ7CE2sM/22LcUsZ7soBifOf/RMBziG4bWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPTnS2qcCz4f3jXX;
-	Thu, 10 Oct 2024 20:38:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 472E71A018D;
-	Thu, 10 Oct 2024 20:38:37 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMnLygdnN0vVDg--.51151S3;
-	Thu, 10 Oct 2024 20:38:37 +0800 (CST)
-Subject: Re: [PATCH md-6.12 0/7] md: enhance faulty chekcing for blocked
- handling
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: mariusz.tkaczyk@intel.com, song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
- <20241009091432.00001c26@linux.intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2c218cb8-c553-92f4-b203-54f02328d781@huaweicloud.com>
-Date: Thu, 10 Oct 2024 20:38:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1728563982; c=relaxed/simple;
+	bh=LD8P8MlsEVOTw05eZKCVdmZseYjr8X9zmHUiU67aA+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5yBtY91Oj85OYuMJqYQyb2oG8g6hDAfMLCDeLwcMiKOJaHKYynijjAgUBZ2pYLW12/0y2PM67mdqzPpAggjngmpSb99OY22tCTnSf0H5oghsW/BwrzbTXqKVmi2wz2fy753wyOf+vk0zIe71gkTF05oJGqOgXnIIBXORCCCdwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gToKVi6l; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xkDKvYgG1ZGbE9OZmdmZN6Uddg9Aj6h9bniy5gysQTY=; b=gToKVi6lxzjGuHvyqnPrbGWL1A
+	q/jFJjJD6k90RPTo9f0IZqNxVaBVWMXyOiE5whYGLurxFRjDWZwBAVYNGRiARf0VTR1QXH0bGYMg1
+	0cRbKKYPyV5t6aSqNlbIul1301twWLLQ7PAndqiULuU6ducugVA1ODRDhpO2PTBtdYkI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sysRu-009boT-SM; Thu, 10 Oct 2024 14:39:22 +0200
+Date: Thu, 10 Oct 2024 14:39:22 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v1] net: phy: aquantia: poll status register
+Message-ID: <0ab4a294-eaed-4dc6-acd0-391963b1f835@lunn.ch>
+References: <20241010004935.1774601-1-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241009091432.00001c26@linux.intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMnLygdnN0vVDg--.51151S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWDJrWrCF13JrWfCryfJFb_yoW8Kr13pw
-	sxJaya9r4UWr17Wasavr1UWryFgw4xJry3Jr9rJw18u34UZr1xAw4kt3WrWF98Zryavan0
-	vr15GFZxWFyrAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010004935.1774601-1-aryan.srivastava@alliedtelesis.co.nz>
 
-Hi,
+On Thu, Oct 10, 2024 at 01:49:34PM +1300, Aryan Srivastava wrote:
+> The system interface connection status register is not immediately
+> correct upon line side link up. This results in the status being read as
+> OFF and then transitioning to the correct host side link mode with a
+> short delay. This causes the phylink framework passing the OFF status
+> down to all MAC config drivers, resulting in the host side link being
+> misconfigured, which in turn can lead to link flapping or complete
+> packet loss in some cases.
+> 
+> Mitigate this by periodically polling the register until it not showing
+> the OFF state. This will be done every 1ms for 10ms, using the same
+> poll/timeout as the processor intensive operation reads.
+> 
+> If the phy is still expressing the OFF state after the timeout, then set
+> the link to false and pass the NA interface mode onto the phylink
+> framework.
+> 
+> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
 
-ÔÚ 2024/10/09 15:14, Mariusz Tkaczyk Ð´µÀ:
-> On Fri, 30 Aug 2024 15:27:14 +0800
-> Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> The lifetime of badblocks:
->>
->> - IO error, and decide to record badblocks, and record sb_flags;
->> - write IO found rdev has badblocks and not yet acknowledged, then this
->> IO is blocked;
->> - daemon found sb_flags is set, update superblock and flush badblocks;
->> - write IO continue;
->>
->> Main idea is that badblocks will be set in memory fist, before badblocks
->> are acknowledged, new write request must be blocked to prevent reading
->> old data after power failure, and this behaviour is not necessary if rdev
->> is faulty in the first place.
->>
->> Yu Kuai (7):
->>    md: add a new helper rdev_blocked()
->>    md: don't wait faulty rdev in md_wait_for_blocked_rdev()
->>    md: don't record new badblocks for faulty rdev
->>    md/raid1: factor out helper to handle blocked rdev from
->>      raid1_write_request()
->>    md/raid1: don't wait for Faulty rdev in wait_blocked_rdev()
->>    md/raid10: don't wait for Faulty rdev in wait_blocked_rdev()
->>    md/raid5: don't set Faulty rdev for blocked_rdev
->>
->>   drivers/md/md.c     |  8 +++--
->>   drivers/md/md.h     | 24 +++++++++++++++
->>   drivers/md/raid1.c  | 75 +++++++++++++++++++++++----------------------
->>   drivers/md/raid10.c | 40 +++++++++++-------------
->>   drivers/md/raid5.c  | 13 ++++----
->>   5 files changed, 92 insertions(+), 68 deletions(-)
->>
-> 
-> 
-> Hi,
-> We tested this patchset.
-> 
-> mdmon rework:
-> https://github.com/md-raid-utilities/mdadm/pull/66
-> 
-> Kernel build torvalds/linux.git master:
-> commit e32cde8d2bd7d251a8f9b434143977ddf13dcec6
-> 
-> I applied this patchset on top of that.
-> 
-> My tests proved that:
-> - If only mdmon PR is applied - hangs are reproducible.
-> - If only this patchset is applied - hangs are reproducible.
-> - If both kernel patchset and mdmon rework are applied- hangs are not
->    reproducible (at least until now).
-> 
-> It was tricky topic (I needed to deal with weird issues related to shared
-> descriptors in mdmon).
-> 
-> What the most important- there is no regression detected.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Good to here that, I'll send a V2 then. Usually this set will land in
-v6.13, because this doesn't look like a fix in kernel. :)
-
-Thanks,
-Kuai
-
-> 
-> Thanks,
-> Mariusz
-> 
-> .
-> 
-
+    Andrew
 
