@@ -1,203 +1,158 @@
-Return-Path: <linux-kernel+bounces-358061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529909979C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:47:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEB69979D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5191C2262F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:47:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F0C284820
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB5A1E4AB;
-	Thu, 10 Oct 2024 00:47:13 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928A92B9D2;
+	Thu, 10 Oct 2024 00:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="FatR5lce"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C05B224EF;
-	Thu, 10 Oct 2024 00:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A9125745
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728521232; cv=none; b=F0JWUjYmBSZRda2k3E06NHr7y6ZHEbz4bnVxK8BQ5UzMGpO1DNr6oBVU1vtcDtTCyZYb9Dq2eRMqaQvZv8s0onv4Aa3xQyvFarnFN6XokJZvzWH+Ht3C4LC55uQYP0UTao9ATwOjG5hgwHhJjCPN/to7UTi9J64z1VP0npccM4M=
+	t=1728521476; cv=none; b=EEiwZ6AFQUph4oAiEmPrCIax7+OiwDtNFixBgpfrXAzRofkvk1hhvzNzlJsIMy66s60ua/YqhxZumUTF1n9Npixh4LrqcoDbOGP8369A7PdzZ/rcpnyjwyezUecLKCVtH4o7QllLL6+R+fsqTOx0r970jpqGKNvT2lJi9yoFixE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728521232; c=relaxed/simple;
-	bh=XLoZVWOMfKt89VV8RNx0MGgo5pk6fXaVTBOOuuco2zI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KfvPSBjZsH3bj/D1N2YM1QJaqxs2EQbVxtAOoXs834anKDJMDRKt0x4s6qoEFfROu+mIdUBDVLaFkjogzQhx6BPyNgxLOZlYoIo0cSjd7JBETdFfnEOZEv7G2rNKDxfDGhoJ1D5LPkW+vqi8Q2IqkAr5n+vQXB0dj6D98IIXwIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 286df56086a111efa216b1d71e6e1362-20241010
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:0560a972-691e-4dee-a4f7-ce20381c9831,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:2,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-3
-X-CID-INFO: VERSION:1.1.38,REQID:0560a972-691e-4dee-a4f7-ce20381c9831,IP:0,URL
-	:0,TC:0,Content:0,EDM:0,RT:2,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:-3
-X-CID-META: VersionHash:82c5f88,CLOUDID:d228c99d6b4b369ec39ab1020f4ee98a,BulkI
-	D:240925144023207KTES0,BulkQuantity:21,Recheck:0,SF:19|64|66|38|17|102,TC:
-	nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,C
-	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_OBB
-X-UUID: 286df56086a111efa216b1d71e6e1362-20241010
-X-User: dengjie03@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <dengjie03@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1464132761; Thu, 10 Oct 2024 08:46:59 +0800
-From: Deng Jie <dengjie03@kylinos.cn>
-To: stern@rowland.harvard.edu,
-	rafael@kernel.org
-Cc: dengjie03@kylinos.cn,
-	gregkh@linuxfoundation.org,
-	len.brown@intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	pavel@ucw.cz,
-	xiehongyu1@kylinos.cn,
-	xiongxin@kylinos.cn,
-	duanchenghao@kylinos.cn
-Subject: Re: [PATCH v2] USB: Fix the issue of S4 wakeup queisce phase where task resumption fails due to USB status
-Date: Thu, 10 Oct 2024 08:46:55 +0800
-Message-Id: <20241010004655.9382-1-dengjie03@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <85105e45-3553-4a8c-b132-3875c4657c4b@rowland.harvard.edu>
-References: <85105e45-3553-4a8c-b132-3875c4657c4b@rowland.harvard.edu>
+	s=arc-20240116; t=1728521476; c=relaxed/simple;
+	bh=DZ1+Ni+zYQzQzWABkg+ZFJmTNb+vX7MUgbMJrlxAxOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k9RFIPDhKSl+9SrdTXYrQd9tN65YctrBqx8OM0L1kiPEeoXhhf6PpYWYC4Wf1BKSwSr3QAAGZMx3hkoamw8kCt8WgdWe2LnJYT45//W6k9X73yAL+5h/pArAXMEOIczAwMvl4Ef2xAEvmTVOHMuCcU8aqMkEgd7MIdcEgaLlrgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=FatR5lce; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id ECC4A2C01F6;
+	Thu, 10 Oct 2024 13:51:09 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1728521469;
+	bh=wFush8R/tfUQ876cxTMS5lnSrCNVewI9v7fOknWucnE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FatR5lce087PbElKHflBHo0ljlTEJ3++5Gg2rHf35wgLeY5HBXbq2blNgpunNifeq
+	 OwJ9XdcrAC40BFIcYJNZszDxB3E50+Thtqi6KAG2/3N+uJM8iWh7FqPqJIqAy4Uqe+
+	 bQIIKC5Teh45PdrpBv93fbb1Gy+li1KUC+dpIKkfPVpFAK1KBc6bRNa6+tB8mOUYca
+	 QIgDZws3StiMpQMx++stBGM0cLAYBtED2s5s6A6SPRVh1q90vLJIyaIOZA/L4tdt0C
+	 lAJqgUkUB8/crSBCgQTkv4T8YP4jwC4DV8Hq7xv6YdZcRU6FxmiLAyiM/tcyjrWgWt
+	 f3SQ38q1DOjZg==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B670724fd0000>; Thu, 10 Oct 2024 13:51:09 +1300
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id BCB7113ED7B;
+	Thu, 10 Oct 2024 13:51:09 +1300 (NZDT)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id B7C572A0BF8; Thu, 10 Oct 2024 13:51:09 +1300 (NZDT)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v1] net: phy: aquantia: poll status register
+Date: Thu, 10 Oct 2024 13:49:34 +1300
+Message-ID: <20241010004935.1774601-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670724fd a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=CGjx52yEnwgpAtm7to8A:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hi Alan
-  I'm thrilled to receive your reply. Thank you very much.
-Sorry for the late response due to the holiday.
->
->> Reproduction of the problem: During the S4 stress test, when a USB device is inserted or
->> removed, there is a probability that the S4 wakeup will turn into a reboot.The following
->> two points describe how to analyze and locate the problem points:
->>
->> 1. During the boot stage when S4 is awakened, after the USB RootHub is initialized,
->> it will enter the runtime suspend state. From then on, whenever an xhci port change
->> event occurs, it will trigger a remote wakeup request event and add wakeup_work
->> to pm_wq, where the subsequent RootHub runtime resume process will be handled by pm_wq.
->>
->> xhci runtime suspend flow：
->> S4 boot
->>    |->xhci init
->>        |->register_root_hub
->>         |->hub_probe
->>             |->callback = RPM_GET_CALLBACK(dev, runtime_suspend)   /* xhci RootHub runtime suspend */
->>
->> xhci runtime resume flow ：
->> xhci_irq()
->>     |->xhci_handle_event()
->>      |->handle_port_status()
->>          |->if(hcd->state == HC_STATE_SUSPENDED)
->>               |->usb_hcd_resume_root_hub()
->>                  |->set_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags)   /* wakeup pending signal to be set */
->>                  |->queue_work(pm_wq, &hcd->wakeup_work)
->>                      |->hcd_resume_work()                           /* hcd->wakeup_work */
->>                          |->usb_remote_wakeup()
->>                              |->callback = RPM_GET_CALLBACK(dev, runtime_resume)
->>                                  |->usb_runtime_resume()            /* usb runtime resume  */
->>                                      |->generic_resume()
->>                                          |->hcd_bus_resume()
->>                                              |->clear_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags);
->>                                                /* wakeup pending signal to be clear */
->>
->> 2. However, during the quiesce phase of S4 wakeup, freeze_kernel_threads() will freeze this pm_wq,
->> and between freeze_kernel_threads() and dpm_suspend_start(), there exists a very time-consuming
->> S4 image loading process. This leads to a situation where, if an xhci port change event occurs
->> after freeze_kernel_threads(), triggering the wakeup pending signal to be set,but it cannot
->> be processed by pm_wq to clear this wakeup_pending bit, it will result in a subsequent
->> dpm_suspend_start() where USB suspend_common() detects the wakeup pending signal being
->> set and returns an -EBUSY error, interrupting the S4 quiesce process and reverting to a reboot.
->>
->> S4 wakeup
->>     |->resume_store
->>      |->software_resume()
->>          |->freeze_kernel_threads()          /* will freeze pm_wq */
->>          |->load_image_and_restore()
->>                |->swsusp_read()              /* S4 image loading: time-consuming .
->> When an xhci port change event occurs at this point, it triggers the wakeup pending signal to be set.
->> However, since the pm_wq is in a frozen state, the wakeup_pending bit cannot be cleared.*/
->>                |->hibernation_restore
->>                      |->dpm_suspend_start(PMSG_QUIESCE)
->>                          |->hcd_pci_suspend()
->>                              |->suspend_common()
->>                                  |->if (do_wakeup && HCD_WAKEUP_PENDING(hcd))  return -EBUSY;
->
->At this point, do_wakeup is supposed to be 0 and so the "return -EBUSY"
->error should not occur.
->
->You can see that this is true by reading choose_wakeup() in
->drivers/usb/core/driver.c.  At the start of the function it says:
->
->       /*
->        * For FREEZE/QUIESCE, disable remote wakeups so no interrupts get
->        * generated.
->        */
->       if (msg.event == PM_EVENT_FREEZE || msg.event == PM_EVENT_QUIESCE) {
->               w = 0;
->
->and at the end it does:
->
->       udev->do_remote_wakeup = w;
->
->Therefore the problem you are describing should not happen and your
->patch should not be needed.
->
+The system interface connection status register is not immediately
+correct upon line side link up. This results in the status being read as
+OFF and then transitioning to the correct host side link mode with a
+short delay. This causes the phylink framework passing the OFF status
+down to all MAC config drivers, resulting in the host side link being
+misconfigured, which in turn can lead to link flapping or complete
+packet loss in some cases.
 
-1. Although during the S4 quiesce phase, the do_remote_wakeup flag is set
-to 0 within the usb_suspend->choose_wakeup function, the subsequent sequence
-of usb_suspend->usb_suspend_both->usb_suspend_device->hcd_bus_suspend->
-xhci_bus_suspend will disable remote wakeup for the RootHub port.
-2. However, during the loading image phase prior to the S4 quiesce phase,
-the USB device may have generated an interrupt, setting the WAKEUP_PENDING flag.
-Additionally, due to the execution of freeze_kernel_threads before the loading
-image phase, the USB interrupt generated during the loading image phase is
-unable to execute its interrupt handler's bottom half, resulting in the
-WAKEUP_PENDING flag remaining uncleared.
-3. Therefore, even though the remote wakeup for the RootHub is disabled in
-usb_suspend_both() during the quiesce phase, due to the WAKEUP_PENDING flag not
-being cleared, the xhci still believes that the RootHub has generated a wakeup
-event when it attempts to suspend. Consequently, the xhci suspend function
-returns an -EBUSY error and does not proceed with the suspend operation.
+Mitigate this by periodically polling the register until it not showing
+the OFF state. This will be done every 1ms for 10ms, using the same
+poll/timeout as the processor intensive operation reads.
 
->Now maybe things are't working the way they are supposed to.  If that's
->so then you should submit a patch fixing the code so that it _does_ work
->this way.
->
->For instance, in suspend_common(), do_wakeup is derived from
->device_may_wakeup(rhdev), which is determined by
->rhdev->power.should_wakeup -- see the definition in
->include/linux/pm_wakeup.h.  Maybe this flag isn't getting cleared
->properly.  (In fact, at the moment I don't see where that flag gets set
->or cleared at all...)
+If the phy is still expressing the OFF state after the timeout, then set
+the link to false and pass the NA interface mode onto the phylink
+framework.
 
-After configuring CONFIG_PM_SLEEP, the return value of device_may_wakeup
-should be equal to dev->power.can_wakeup && !!dev->power.wakeup.
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+---
+Changes in v1:
+- Ignore timeout error
+- Set link status to false in OFF case
 
-Thanks,
+ drivers/net/phy/aquantia/aquantia_main.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-Deng Jie
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
+quantia/aquantia_main.c
+index dcad3fa1ddc3..cad9ba4d4dbe 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -42,6 +42,7 @@
+ #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_XAUI	4
+ #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_SGMII	6
+ #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_RXAUI	7
++#define MDIO_PHYXS_VEND_IF_STATUS_TYPE_OFF	9
+ #define MDIO_PHYXS_VEND_IF_STATUS_TYPE_OCSGMII	10
+=20
+ #define MDIO_AN_VEND_PROV			0xc400
+@@ -348,9 +349,19 @@ static int aqr107_read_status(struct phy_device *phy=
+dev)
+ 	if (!phydev->link || phydev->autoneg =3D=3D AUTONEG_DISABLE)
+ 		return 0;
+=20
+-	val =3D phy_read_mmd(phydev, MDIO_MMD_PHYXS, MDIO_PHYXS_VEND_IF_STATUS)=
+;
+-	if (val < 0)
+-		return val;
++	/**
++	 * The status register is not immediately correct on line side link up.
++	 * Poll periodically until it reflects the correct ON state.
++	 * Only return fail for read error, timeout defaults to OFF state.
++	 */
++	ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_PHYXS,
++					MDIO_PHYXS_VEND_IF_STATUS, val,
++					(FIELD_GET(MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK, val) !=3D
++					MDIO_PHYXS_VEND_IF_STATUS_TYPE_OFF),
++					AQR107_OP_IN_PROG_SLEEP,
++					AQR107_OP_IN_PROG_TIMEOUT, false);
++	if (ret && ret !=3D -ETIMEDOUT)
++		return ret;
+=20
+ 	switch (FIELD_GET(MDIO_PHYXS_VEND_IF_STATUS_TYPE_MASK, val)) {
+ 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_KR:
+@@ -377,7 +388,9 @@ static int aqr107_read_status(struct phy_device *phyd=
+ev)
+ 	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_OCSGMII:
+ 		phydev->interface =3D PHY_INTERFACE_MODE_2500BASEX;
+ 		break;
++	case MDIO_PHYXS_VEND_IF_STATUS_TYPE_OFF:
+ 	default:
++		phydev->link =3D false;
+ 		phydev->interface =3D PHY_INTERFACE_MODE_NA;
+ 		break;
+ 	}
+--=20
+2.46.0
 
 
