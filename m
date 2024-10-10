@@ -1,237 +1,243 @@
-Return-Path: <linux-kernel+bounces-358033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EFE997976
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A48997974
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86888B20A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8AB61C21BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C623933E1;
-	Thu, 10 Oct 2024 00:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43EA79DE;
+	Thu, 10 Oct 2024 00:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ec3zuEJM";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pbC8u3WQ"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vuvB9ybR"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCD81CFB9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728518542; cv=fail; b=EH+O7pN/hbUxH/rBQyd/awqdq2ITI7ghvil2lGArtAzuR08Y4dyq/0BRc+eX9DSFNkeAMlxRK7+c/7KMcIqTKs5uhYpCNh2w6oyJ8YE6iTCEeRo4mICgwK06+V5vlUdJbD8DS+vm+iTfq0At49uZOjxzQg9ZNhdppDR9Ozi+PEQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728518542; c=relaxed/simple;
-	bh=4vixgW9NuqJG7uQkqD23kd2qeneqXCeOHvRm/dbYY1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Il2qD1uk9RSTo6Hd3mh6he1IbIpBJuxWZBVtuqK2xPdoY3olhWedA8Yu5j0jsLGf2OcW32Wewc+IlypgDpQSrpo9OQ+sNEMgtjd1Nai7aRjmYbxJSqo4mlht/WBDRgJxLj5QCcmpaBnVTFb8Lpknc7TID+l/t6U6ZjpEOQtLxUk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ec3zuEJM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pbC8u3WQ; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499Ltd8u028677;
-	Thu, 10 Oct 2024 00:02:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=VtnoyE+D5nOqpAZP0a
-	GAjz9h0bGLBtNz3/ywMHMaipk=; b=Ec3zuEJMCrOSCbkp6QDAvEhO7TeqTVPwS2
-	73aDHjO5JuiWsWFrSNsilQiUnWBDZwgE7EBEIJPItCqFFr0Y0MV1Hj4hDAgirZd+
-	p+zkSBGDvmUkaN1WFZWmNpKOIKPfNmIhs8oqDz10o4+EXb0caPTlY/z1yvq/Elg4
-	i0P7xV1+nQKgPm0wSjX8SZM5rWfMKroxBI9wPh6OIObtrhv8o8TxEjpwYg1NckhW
-	rHe/6LQayFSZxYA8ewvuBqWfEAEsVAzsXQNk3+4Fn4Fvv0kI/cH+aQgMAVMyQct9
-	XRObAKN8YYjQBOSr6gPVvP46X3CAr8Pv6AeFrKIbvWFNwy4U5PGA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 422yyv9ptk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 00:02:08 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 499MhuIv011526;
-	Thu, 10 Oct 2024 00:02:07 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2170.outbound.protection.outlook.com [104.47.58.170])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwfn49k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 00:02:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G19nnkQv32PwsPYG9S/Zt5o9FaFSt75P4ehTHDYIlE8a/ZkJwJEVwZJP3Co/I1Cg6oh/NZNDNUIIF0M13+4F/zvNaP3pEOgwcI8UDn7vn/sQ8sYN7JZPD2yNmZHRWmoZdeQVwi0zPwm29Aw3omIu91smlJSdDQ/OvwLX24wED4GVTURLDqyu9zaoPyVr7vkgf2gZ9wcqTDY9AVW4ccYTe5VtGN82bvK73qU3UEx6CKVYqtwFQv/4/81dzB1+6kWM4zZb3kfZ2z9VPNIF6D3vHFqvE4qC0hjP2ca8Y9Tm3LPn9c+3C9fWcdOUoLOUDVsyimyuW1pPjvJSkoRw2cB8bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VtnoyE+D5nOqpAZP0aGAjz9h0bGLBtNz3/ywMHMaipk=;
- b=PBSiKzAED37JidqjPvT5y6kJmg5+Fed1Xl/Nyh1UfAf0XWhmOc8G8qGKVtcJw631Ou6Io8m6StSy4vpiAlWlOBF0kj5uWTIlEvaieUERkFHB6rfCc1pzvcsLXN9ZSj1yM9inoH3NNPZNqDHn01OJtAy5alTiJ7qB93/rLkAyzVxpFUJKScYU7+jKaWyguXaTjVfVM9Plv6DwENgHCd2oO1pqM7GfSGhAEIZuC0Fw3IQRSDq6YqFvsGrA/juLcmuSkTTuAUgEjx4f3gk55C46zQ9/0Ewt0GZY8F8GrjnSg+C6YxlO5606kcCIiW7NbomCUEHGjB+YKsj6nAN3gW4kag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB026623
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728518536; cv=none; b=Jk+RAolZOa/y7A7R3XMGg3v27YMeBBXcxu1TvMsUc+cDCrSZbJVxF2KiVFbeLm5Ps40FKk2A5jU8Ab5ghBky/Wfq1MyrbGm+MDrvpZ6JI1doLTDJz9Zf2kOgUutpPgcUk1LSpojoowEmFqueTx15KHuJYv653IDQnVMCFuUeB6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728518536; c=relaxed/simple;
+	bh=ewGqRf1g6Sl7BxQGp08YR8W3r9FXfAEWp++dX7lyTMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKarUT4b6Ys8urd/cwhjxsCbgCftZ/hV3uymbp95X1cOS4Q0ieYFbOFZ+oSyb/Pi8zpTRQ65FOh3EuqI2NY53fsg1arwOM8xiJ/ZriQyjx1N29Vf878+1r+MqTuYAE3Ig5tyq/5JRkEbaya4Q0pqNsr6NGm29PS/t7AjJjsPwnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vuvB9ybR; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2bd347124so283554a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 17:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VtnoyE+D5nOqpAZP0aGAjz9h0bGLBtNz3/ywMHMaipk=;
- b=pbC8u3WQTEENrMkh9pVS63hSdM6g2HaNcsYfyMEQ4+g76q9kIaH+PdiD9CFaiivjSijavilFBq0hrP7AOfX44oKWN9hXCpAi1HdktYbzkc5OkCnWknA2nvtcyKfqjfUzBgHBow+TdguMaElADLVmWZriFPllFW62yx4vjf19pRE=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by PH7PR10MB6275.namprd10.prod.outlook.com (2603:10b6:510:211::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Thu, 10 Oct
- 2024 00:02:04 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%6]) with mapi id 15.20.8026.020; Thu, 10 Oct 2024
- 00:02:03 +0000
-Date: Wed, 9 Oct 2024 20:02:02 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org,
-        richard.weiyang@gmail.com
-Subject: Re: [PATCH] maple_tree: remove conditionals to detect wr_node_store
-Message-ID: <qevigth7doscc2kqdnrcagh4klgruehp3x4mwo2lc5c3qrey72@6omxfs7qhk45>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org, 
-	richard.weiyang@gmail.com
-References: <20241009152007.2096-1-sidhartha.kumar@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009152007.2096-1-sidhartha.kumar@oracle.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4PR01CA0477.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:d6::25) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728518533; x=1729123333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z81onnv7XmpsFKJJEJouk5fW7lC/eJB47z6sozvRnOU=;
+        b=vuvB9ybRThfOultl9MKUk74XHtLMYLSGysi4/XdZtFHACescnpiUWJodqvF1gCEshr
+         epG7YLP5ADOJukQ4lj/g5GvaKJw6A4GO3UhutTbN48Fg/Gng499b2OPL94jrgKPt45pE
+         fNomdr4+iSptDyfc93Erp34tfQ6lCa9LwhMm0W1Cmk8pyFYnfL7c8XFR4FH2izHoOJba
+         Lr2J3djRLveFmfBpzjAafxekAsQxClmYeMnFOl2a7flCsXq3aoRzdkxJfz0guWRPZ3uL
+         IqxcSKFrgY8WV6JDQ6dTFiXAJBHWxMZg8FugPOX3z0XN7ae1eurvLR68U4dkgfGlTWWV
+         4nuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728518533; x=1729123333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z81onnv7XmpsFKJJEJouk5fW7lC/eJB47z6sozvRnOU=;
+        b=d0CvuLHHwGT2AZY4JZzV+7jkBoopwtp3FjICaYyh0z22xQBQzfhPjXxP1BS1UFSCse
+         Ic5fIHMEDwXAV+pcVxr1BhbQFvbrri/PLKNrCDpwN1AbqDeqXt0qZuFV2kym1pT7xS8M
+         O5JB0zqyac7rvPgy1EctEYZ6Hzu5JJzIPrOpMQ6ttaHpjw+hRSlOnSjJ/MdjzqI/qpic
+         UYW6lM18cL8KdAwuZXujFcWVsAgR1uLstCQLTTGYlO+PEYRB0k2fF02JuL8o2Y/yYY3P
+         YW/uVpbepfcwwnaW28ssTq9q+zFthNoUPxxsR5HDs6dMLrBiZTOKQITXw3GIlZga5Mx6
+         LukQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKJxsLtZFpokCx2yVmMeCXE8lcieAbCl+UmV7HMNqGQBO/xkDPNz26tmzHtPF7RXybWx4kJNre/b0NnwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU1JxMwRm/Pfp5tK//vGWK4/dPG3HN+HZdj7CN/ZoyTv5ZzpTa
+	4h++Zm/rt3GHFEuAYIE8KbMVvMIDKdT4P9NJJdbOUXmrN329U8OPCbCszu/4NXU=
+X-Google-Smtp-Source: AGHT+IFZmP54aZT+PGhT0sMeks15kfczHLhKUFL1tfOl/r4KWZKd9Mj0XsQpQ7yVRv3lx6isgmniRg==
+X-Received: by 2002:a17:90b:4a42:b0:2e2:bad2:69ba with SMTP id 98e67ed59e1d1-2e2bad26afcmr3003723a91.14.1728518533102;
+        Wed, 09 Oct 2024 17:02:13 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5f0b03bsm22252a91.34.2024.10.09.17.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 17:02:12 -0700 (PDT)
+Date: Wed, 9 Oct 2024 17:02:08 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v6 11/33] riscv/mm : ensure PROT_WRITE leads to VM_READ |
+ VM_WRITE
+Message-ID: <ZwcZgKuOK5MpldDX@debug.ba.rivosinc.com>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+ <20241008-v5_user_cfi_series-v6-11-60d9fe073f37@rivosinc.com>
+ <22972e7b-0844-4ebc-8d82-a0838b83c3a0@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH7PR10MB6275:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0fe2243-f780-4ab7-27f4-08dce8bec5b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ya/9yrGhxwgs8OD5Ngalj/Q3JyKPCmWcu1G/12aUgnw7fyycIcKDUamix3f1?=
- =?us-ascii?Q?OEA1ZmLTtzlCHMqgbbAf5NSZdxSLrbUZGZn0xFucYZStNEZ8aeoEaN5QyyxW?=
- =?us-ascii?Q?zjH+itbCeU5v3bsxxYsWfo+NsDeIjJ6xStl9ybh+zQB8afjZg2eeAXJhUHgx?=
- =?us-ascii?Q?xObcLUeykR5qlBFwGWrAdTcEx2HPLe4qs/NyG/4XqsdQHqKbV9UCcCt+meWB?=
- =?us-ascii?Q?dlqzT+P5MmRBnNWQ3VHgvXC+rEjvBX2BjiVzFXF250XARuMe2u0lUkkspBzf?=
- =?us-ascii?Q?HjBFYofQnlAmmEV4/aQx5RKsZ5N3YFuGe8ci1HPSuMvvut2Fz86Uevebo5gQ?=
- =?us-ascii?Q?9eQIC2A+MJFcsvdjHv4e8Ow9LgnITmoi9A8AAcppiVcus0XiyLusL6rmfUK8?=
- =?us-ascii?Q?zYPzKrVt1xux3Hqx2W+vfQGr4TEFTLymED92lSsaWZ3RC6716L5b7XbJ65Mm?=
- =?us-ascii?Q?dH8bS3WVad8s5cD9rJMecnhtqQRSQKiO/O1Yvxs6UU8mqvcvpz5Yd89bQTb6?=
- =?us-ascii?Q?MQART3QWAYNuVtTJM+5tKocpX5jKMRDucDCuQpik7BXJiH+x8F9gBE11a+H9?=
- =?us-ascii?Q?8FPvYGiYfRhBJkLnFxlQqkPlaBbACtpNkJMCblC9URnMXFouKY8OmeQaLzDw?=
- =?us-ascii?Q?4nvXlq6WKL+KNUbLmuRqGSRI3lbYvbMuP6alEiCRBDnJs3qBsUgvEbo5blry?=
- =?us-ascii?Q?9AqMoZMPOEN32D4aCrp2mnrYXCygcQ5AWIfNM6umQEcNI0I3fbYiW57u3Rdq?=
- =?us-ascii?Q?VxUkCGk5Cab+YdMr0D6hM3S99pGPCKnu3LPC63mNbJaP7o+CF027nLAYcwMS?=
- =?us-ascii?Q?4L6F1H1cvCatArbigIVdbjUejnXIG5lMCb3KX17lnSF9W96omUeR8iKXd6YH?=
- =?us-ascii?Q?Fj7Uz/OxB0wTEm3/EIA4P5q8VTqfiaQMP4maCCDmDTC3qGeHIIJPvi47WSWP?=
- =?us-ascii?Q?I3KvEAp8oqFXeWQgNheDbLUP0yuTtowgStVtdtt6Rejgg70sQVJrUvAfwTTx?=
- =?us-ascii?Q?5EwejPPqFKyokQO/Q5tYDIkOqkFo54jpvzYOMmrSNrpmWQ9IQBDgtMAnXrYd?=
- =?us-ascii?Q?R8wRYMco9CqDaNBK9NVc04/Sl0Qlo6XHp+wNYPKnLuvhAxit+iIOxDUzyj1p?=
- =?us-ascii?Q?EnRsn93eWErs2o22hsWo8U7YJWs6hEN9LwqRyG5/1PUIgpvNmej9akoDFRmG?=
- =?us-ascii?Q?x8fX1Aqb41TwwQXUrytw9+PcMRSuXE/IuChQ+OC2DSwhcq4SyRgDm1kcgbXG?=
- =?us-ascii?Q?w6YA+s3Frigj2f6cUL4MG8I8hO2XcEc9I8P7VYH3iA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?IfOzlqZvz+HOoa1PYJZNDpCihrfrXHnVtZRZk5s8QQ3U2RwNwRlW+TPZWK+S?=
- =?us-ascii?Q?zeCW0EJcqqfrwJAL2KtrEZJ1Ivr7m5LmeACVU67kUkbM+AY4ZWOtmBrWLebw?=
- =?us-ascii?Q?wPvQln2MvLxyuRfnI9Nc7WBCSgjkconwH2QgGZP14zHSN+wsFM6qW2SJ5QOF?=
- =?us-ascii?Q?sdVHvQd297Vx0FeliIiV4HFGitkvXabqrbnrhgi6WcG2FXrTDaYye6Ef0ER4?=
- =?us-ascii?Q?Gtb2F9MScXYlXnzA/+xnX8p5YSX+dLKMpBaLuyYe/G4RH/NshP3XYX+UwN3t?=
- =?us-ascii?Q?jOQjJAKGarrgb7zB9eJPw+r6F9REzeSrkcHWtZW/jmwD99RtjgS19Qg5f67o?=
- =?us-ascii?Q?Nmid5PQtFi9zsFS0+wiMeRi+pFoyqeQVGDoS3+3Ct1HeDZVVqbd8BbdXcHd7?=
- =?us-ascii?Q?uBTxYkUepnNHJPiv+k2eOdvhacxeInpocBEvtfSbPRLHecFLYt7ifQZd8AkI?=
- =?us-ascii?Q?uwum5Mf8vM+ey3l6f/LDuvw0m+I0vSV8Pqqlrph5sjDTGKmwe5DlzY5qwflp?=
- =?us-ascii?Q?AIGEa259cOCu/m8RljsaNQlWmRY4Rndrx1J6U7xkGb5dSOzilh3b7bFDmXMQ?=
- =?us-ascii?Q?zG2CxU+On4AnOtWwpjKQ06eSqwJREDRuvqz/yKUsFa4qdeCLVp3mx7887yRn?=
- =?us-ascii?Q?0TmFYoqVLXqezMRxZnTCh2wKfhKofFqR1cQD/WdLzuHlLy8nLugXhA52BaPv?=
- =?us-ascii?Q?sgVvg91qCnJNt0G5CEjIhjXIKAgMz+RsfCQnn7uiXjH2kmsV7JcuR0TPZXw7?=
- =?us-ascii?Q?Gfg9vgjNTD3xtfRH4L3jy9mZjGy+oU85ikRn0efec2k9O5FjL0TD8TzK/69N?=
- =?us-ascii?Q?sYLSi9LGcROCzmkxCfmhK3TfKl5c7DyEQl/Qt232exTU7y2ZSLtL/o6QgKeE?=
- =?us-ascii?Q?nENMMys9dWtRb6idBtnAvk7wuJtQkd3Wyk4r/9WiWGtVZfVBNnmFBpXgRqkm?=
- =?us-ascii?Q?aDQSufaphanEMTU9BHKa/+ZsGo/c40MkuuYoXibCO+Px0SmppSqkB3ydh6WF?=
- =?us-ascii?Q?bq4l1pju+9EnsfT2FLEMS58FZ21qE3OjC4yYjdZcRdTvSlJ/IXOazdpQ5/s2?=
- =?us-ascii?Q?vUZ3RBOE8xmOcfI48Vu6Cw3xJ993V8Xa9NkQj+fj96gleJz4Wa9Tcl2KIyZe?=
- =?us-ascii?Q?aRO8tJ7Om9nW0l8tflsoVLN6jAsIbUuRTtSTemx9He5c0IMfj2QM54rlatRm?=
- =?us-ascii?Q?nRjrBiNRzj8JUikMLrwSzIXfBeEEbHUn7EFZZs/lHZwcgzoyjlCkWP4zd6M5?=
- =?us-ascii?Q?zt/WE40sNulLcuGrB6Dd4XdUYFyFwra6dhiMcZnVe+RrZUVyh7tl3rtMw27D?=
- =?us-ascii?Q?8W+ZTRKbwGR+f0qKeLRZSFz+CkvtpKkOwLHe42je4oQ2OAYZtQmUSCklZsuJ?=
- =?us-ascii?Q?exCUi57O3J904z8tfNLtw6Vunk+eXT4nd/aqiN2zaqHpUrBmFAnuOy0LIhN/?=
- =?us-ascii?Q?jUjXMAq4Fm40gWDXmTI/KkFox6pRrdf3jDLJoTII8VoarXn9o3rKVwHkWlUq?=
- =?us-ascii?Q?DeaAD5ewCQDM7f5FhpOT2lUSjVxnkQZM0UvhY6DqvW5TXeC20abFCgHfuhWF?=
- =?us-ascii?Q?1VcfZjORaTM2WN0LUS1aKDxliPJNS+4MWi8IfMsv?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	enfqJ8VL4NDPbWK9n9Hyaz8CdBAF+perHFDhtnqi2EvxN/13yhID17XijVkV+8RlhfvME/GKlEs+gCkyR0OLyU2sOQKJqhiWfwfO3Tk77t+pKL2lB+tx+gZ1k6PYSC2dn8i3JkzCZPsPKg1AMsQwJzBs/XnegOuYGtrz1mU50QM6tK+oIrZUgNU3DCfbMhG0LgaNE+ildLyue+iunas+JD3i5eCMx1WTuKbH4OQ2MtvSVTC+EZGz5Sp3Ce5jlbFS7a0hmEV3I0UTVMjX1PC1eiGlWS7c3b2XrnTVSlXn0EtcjdKQRd+knzabIfzk3n6S0iYWPBXsDAeuWL3vw+TknRlhd00FdpaE8eH4VyToUpnj2g2Q4ovYcB03H6kK9KqskkMD7uhKv3jtoyptTwJDZOTMGtmUTOBdchCeFICjfYL0BzsuMkkVv/y+MMFwZL8RbXkgYoywRkdvEQMgY5qCbphLEplMus5HNSveSpXeBCOeVMpB5FpIM4P8pXfn+eqT8W36ilgUheT3YzE6RfVgad3rJvzDwbF2N4aGlx98VEf44ra6EEb0BlsvVhOQfqvCPnKKPPWIENVvnbD+TuOPgJ7f9WVKWDnI/eoDER+gscs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0fe2243-f780-4ab7-27f4-08dce8bec5b4
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 00:02:03.9197
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KokkvE7iO8mGJ34hh1d6MgnSWyImXj9KAEMu+XAu1sX4ev2frjrT3O1ZDrtfs0/gZVu5yR+JyYR78iwBGjCxQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6275
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_21,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410090148
-X-Proofpoint-GUID: QfCOvfSxmrBDR2f7xhxZZ4CaVImj5cKA
-X-Proofpoint-ORIG-GUID: QfCOvfSxmrBDR2f7xhxZZ4CaVImj5cKA
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <22972e7b-0844-4ebc-8d82-a0838b83c3a0@lucifer.local>
 
-* Sidhartha Kumar <sidhartha.kumar@oracle.com> [241009 11:20]:
-> From: Sidhartha <sidhartha.kumar@oracle.com>
-> 
-> In mas_wr_store_type(), we check if new_end < mt_slots[wr_mas->type]. If
-> this check fails, we know that ,after this, new_end is >= mt_min_slots.
-> Checking this again when we detect a wr_node_store later in the function
-> is reduntant. Because this check is part of an OR statement, the statement
-> will always evaluate to true, therefore we can just get rid of it.
-> 
-> Suggested-by; Wei Yang <richard.weiyang@gmail.com>
-> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-> ---
->  lib/maple_tree.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 4b423330d83c..f5a12d37b352 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -4252,14 +4252,7 @@ static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
->  		return;
->  	}
->  
-> -	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
-> -		(mas->mas_flags & MA_STATE_BULK)) {
+On Wed, Oct 09, 2024 at 02:36:12PM +0100, Lorenzo Stoakes wrote:
+>On Tue, Oct 08, 2024 at 03:36:53PM -0700, Deepak Gupta wrote:
+>> `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+>> VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+>> updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+>> This is to make sure that any existing apps using PROT_WRITE still work.
+>>
+>> Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
+>> Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+>> encodings for shadow stack. Above changes ensure that existing apps
+>> continue to work because underneath kernel will be picking
+>> `protection_map[VM_WRITE|VM_READ]` PTE encodings.
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  arch/riscv/include/asm/mman.h    | 24 ++++++++++++++++++++++++
+>>  arch/riscv/include/asm/pgtable.h |  1 +
+>>  arch/riscv/kernel/sys_riscv.c    | 10 ++++++++++
+>>  arch/riscv/mm/init.c             |  2 +-
+>>  mm/mmap.c                        |  1 +
+>>  5 files changed, 37 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
+>> new file mode 100644
+>> index 000000000000..ef9fedf32546
+>> --- /dev/null
+>> +++ b/arch/riscv/include/asm/mman.h
+>> @@ -0,0 +1,24 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef __ASM_MMAN_H__
+>> +#define __ASM_MMAN_H__
+>> +
+>> +#include <linux/compiler.h>
+>> +#include <linux/types.h>
+>> +#include <uapi/asm/mman.h>
+>> +
+>> +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+>> +	unsigned long pkey __always_unused)
+>> +{
+>> +	unsigned long ret = 0;
+>> +
+>> +	/*
+>> +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
+>> +	 * Only VM_WRITE means shadow stack.
+>> +	 */
+>> +	if (prot & PROT_WRITE)
+>> +		ret = (VM_READ | VM_WRITE);
+>> +	return ret;
+>> +}
+>> +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+>> +
+>> +#endif /* ! __ASM_MMAN_H__ */
+>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> index e79f15293492..4948a1f18ae8 100644
+>> --- a/arch/riscv/include/asm/pgtable.h
+>> +++ b/arch/riscv/include/asm/pgtable.h
+>> @@ -177,6 +177,7 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
+>>  #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
+>>  #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
+>>  					 _PAGE_EXEC | _PAGE_WRITE)
+>> +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
+>>
+>>  #define PAGE_COPY		PAGE_READ
+>>  #define PAGE_COPY_EXEC		PAGE_READ_EXEC
+>> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+>> index d77afe05578f..43a448bf254b 100644
+>> --- a/arch/riscv/kernel/sys_riscv.c
+>> +++ b/arch/riscv/kernel/sys_riscv.c
+>> @@ -7,6 +7,7 @@
+>>
+>>  #include <linux/syscalls.h>
+>>  #include <asm/cacheflush.h>
+>> +#include <asm-generic/mman-common.h>
+>>
+>>  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>>  			   unsigned long prot, unsigned long flags,
+>> @@ -16,6 +17,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>>  	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
+>>  		return -EINVAL;
+>>
+>> +	/*
+>> +	 * If PROT_WRITE is specified then extend that to PROT_READ
+>> +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
+>> +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
+>> +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
+>> +	 */
+>> +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
+>> +		prot |= PROT_READ;
+>> +
+>>  	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
+>>  			       offset >> (PAGE_SHIFT - page_shift_offset));
+>>  }
+>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> index 0e8c20adcd98..964810aeb405 100644
+>> --- a/arch/riscv/mm/init.c
+>> +++ b/arch/riscv/mm/init.c
+>> @@ -326,7 +326,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>>  static const pgprot_t protection_map[16] = {
+>>  	[VM_NONE]					= PAGE_NONE,
+>>  	[VM_READ]					= PAGE_READ,
+>> -	[VM_WRITE]					= PAGE_COPY,
+>> +	[VM_WRITE]					= PAGE_SHADOWSTACK,
+>>  	[VM_WRITE | VM_READ]				= PAGE_COPY,
+>>  	[VM_EXEC]					= PAGE_EXEC,
+>>  	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index dd4b35a25aeb..b56f1e8cbfc6 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -47,6 +47,7 @@
+>>  #include <linux/oom.h>
+>>  #include <linux/sched/mm.h>
+>>  #include <linux/ksm.h>
+>> +#include <linux/processor.h>
+>
+>This seems benign enough, just wonder why you need it?
 
-Although this will be evaluated as true due to the new_end having at
-least the minimum data, it points out that MA_STATE_BULK is not being
-evaluated correctly in the new_end < min case.
+I think leftover from previous versions. Will remove it.
+Don't think its needed here anymore.
 
-That is, we will rebalance if we are in MA_STATE_BULK mode without
-meeting the sufficient data mark - which is not correct.
-
-> -		mas->store_type = wr_node_store;
-> -		return;
-> -	}
-> -
-> -	mas->store_type = wr_invalid;
-> -	MAS_WARN_ON(mas, 1);
-> +	mas->store_type = wr_node_store;
->  }
->  
->  /**
-> -- 
-> 2.43.0
-> 
+>
+>>
+>>  #include <linux/uaccess.h>
+>>  #include <asm/cacheflush.h>
+>>
+>> --
+>> 2.45.0
+>>
 
