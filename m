@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-359500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774C6998D7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:32:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B278998CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F88DB3BA49
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D50E4B2B4A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F9E1C460E;
-	Thu, 10 Oct 2024 15:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E3A1CCB41;
+	Thu, 10 Oct 2024 15:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eZJ+W72Q"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LApmEdBN"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCA31917FB;
-	Thu, 10 Oct 2024 15:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628CB77F1B;
+	Thu, 10 Oct 2024 15:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575618; cv=none; b=kmGoiEEXy3lVUbOPc781gQmjuSyFf5t3ZLSuvgp8XUH9gJ4ZwVgjk6y4noGp3C8hJUkgZEbESOHROsW8JU7IFM+nQYeleU9QnBiIrTTYShg0aY43jv7lsS81PadMQqqWInCRYj4HwzrwMxw9qH43cDqynX2PqR/CUtNJAig922s=
+	t=1728575745; cv=none; b=VpX3lJmpRpUEZSdqDSzUGG2JkFt1s7b7LYng/ToivPuATrJUij2NVc+qX08lbL4HsJ9niwLmFkC+C4ecCxYeZAKRx1wPicenezaLaw0aGkb2wP9w1I9cAhv4l8wqJ+RRFUPYggTaIm2HfeapAGj/aomy6flDWNRakpBhwMO7Zdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575618; c=relaxed/simple;
-	bh=b68TMNixbJy7Wtf4/eoCaCNV0RHGXTaO6jAyhchzRFk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Q0VT+mbwm6QMOjdxajeGZw0S8myUK/+q4QsGFobStKiEfmI6pWYzlOU1zQiTsWKUQuRa63oyEGjnoQQow7WFtwTc43xNJZYf1VYd5h0loYNy8TfVXkj8+GILeBbQVMii44cS8cBEP9FRQvWTKtQeC8lEDeGc143XWn3aZ3RDqbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eZJ+W72Q; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1728575745; c=relaxed/simple;
+	bh=Pp2wyt/ptr6Ycpfb65KUc+cKW7kGR88mHN8sOECc6TA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=MSiQ+t+a36PHOBAOPXCT4knjhEaoHqvK/ZC57WGOBCUqnFp3PIxCODIdL+avS05+z3gJ6SB5NdtMGVdeT+9TbPYLZDSiuUgfGIs+9bNddxHiOB24LasdOL/4qwE0q2oC9Qs8Dfmofz0Ugcer41yzdjcaIrqMRIteiVM/PoopzHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LApmEdBN; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728575617; x=1760111617;
-  h=from:to:cc:subject:date:message-id;
-  bh=b68TMNixbJy7Wtf4/eoCaCNV0RHGXTaO6jAyhchzRFk=;
-  b=eZJ+W72QPzG1N2tuaViiXW5xR3nGxdqWOTOCeuCFaAxEwXl5AIwK6djZ
-   8gxhNdDH0Ehsi/8aJKe3dtK4Sf2MWB1EYAPxb7ApAtbP/Ltogpf+GG2yq
-   3faapVUDMA9/xFfecRUl06bnSGlxsfUH+bPA7qqvGmZERBGVKrvAkKIV3
-   O+maqJsZcXGDek8xSTAnSZmRsxjECHLjDvJF1+LXb5GfZwGD3qwEEAOFA
-   62535AkymeWe3R4fwPPWc8RmVLBOA3u/psplUri6wTeQgx0j9guYEiHym
-   XxHRflLaQSUiJLyutgi5cVcwbOZx1Xq9OV94ZSHKhz90vNV0wnvMytCaI
-   Q==;
-X-CSE-ConnectionGUID: otw229xdQ+i91D7dygG0lg==
-X-CSE-MsgGUID: 2yi5AJ/hQO+qfEJN+5mY1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31643414"
+  t=1728575745; x=1760111745;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=Pp2wyt/ptr6Ycpfb65KUc+cKW7kGR88mHN8sOECc6TA=;
+  b=LApmEdBN6VE8O24AqBpp8u5US5b7c0bxfy3zEj6m2cscawZfuHJ6oo0V
+   5QqEVDY8M0wDMk1WxVp2bYw22f5b8DG6cWEcovLhJA5A20DFOsu0g5FNi
+   jeRn+An6i8oTscPO7ptzUKWTEYwsqqmiN1bRelWm+hhHQ2nGiX5uSWqMo
+   C+99cpKZy96JwP7PH0R9lW3gr7W2f71hP3vJSt/2kD5F5cYm4OwQKz+QW
+   bNn9EzSCufUEW7MRUMl0e9XDPkrAEAXmCYYLTVv9RtxSGCo7qB4AtwjHT
+   Mcl9O8V6fYcr8fogivLthA5JkrQCSbRZVoYVj0rPLqTFIVJS1PU8afqKU
+   w==;
+X-CSE-ConnectionGUID: cvCCBa/+TxCv+njKgoc7xw==
+X-CSE-MsgGUID: s4IdR0DWQmec+OTAE4taNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31643903"
 X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="31643414"
+   d="scan'208";a="31643903"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:53:37 -0700
-X-CSE-ConnectionGUID: Mt0Zb7ozRhGLwMLoG+5vuw==
-X-CSE-MsgGUID: Bai38vZrSU6/zkNvc+ntDA==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:55:44 -0700
+X-CSE-ConnectionGUID: FbdVvS/VRLqcxNJECJ3OtQ==
+X-CSE-MsgGUID: JNwyS6ScRlmJLlZicBkzgQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="81221635"
+   d="scan'208";a="81222472"
 Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:53:33 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:55:41 -0700
 From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 To: tony.luck@intel.com,
 	bp@alien8.de
@@ -66,63 +67,65 @@ Cc: tglx@linutronix.de,
 	linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	qiuxu.zhuo@intel.com
-Subject: [PATCH 00/10] Clean up some x86/mce code
-Date: Thu, 10 Oct 2024 23:31:52 +0800
-Message-Id: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+Subject: [PATCH 05/10] x86/mce/genpool: Make mce_gen_pool_create() return explicit error codes
+Date: Thu, 10 Oct 2024 23:31:57 +0800
+Message-Id: <20241010153202.30876-6-qiuxu.zhuo@intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-1. Clean up some x86/mce code as below. No functional changes intended.
+Make mce_gen_pool_create() return explicit error codes for better
+readability.
 
-    - Simplify some code.
+No functional changes intended.
 
-    - Remove some unnecessary code.
+Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+---
+ arch/x86/kernel/cpu/mce/genpool.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-    - Improve readability for some code.
-
-    - Fix some typos.
-
-    [ Reduce the text segment size by ~116 bytes. ]
-
-2. Pass the following basic tests:
-
-   - Compile test.
-
-   - Correctable/uncorrectable memory errors can be notified via CMCI/MCE interrupts.
-
-   - Correctable/uncorrectable memory errors can be dispatched to the mcelog daemon and the EDAC driver.
-
-   [ Tested on an Intel Sapphire Rapids server. ]
-
-3. This patch series is based on v6.12-rc2.
-
-Qiuxu Zhuo (10):
-  x86/mce/dev-mcelog: Use xchg() to get and clear the flags
-  x86/mce/intel: Use MCG_BANKCNT_MASK instead of 0xff
-  x86/mce: Make several functions return bool
-  x86/mce/threshold: Remove the redundant this_cpu_dec_return()
-  x86/mce/genpool: Make mce_gen_pool_create() return explicit error codes
-  x86/mce: Convert multiple if () statements into a switch() statement
-  x86/mce: Remove the unnecessary {}
-  x86/mce: Remove the redundant zeroing assignments
-  x86/mce/amd: Remove unnecessary NULL pointer initializations
-  x86/mce: Fix typos in comments
-
- arch/x86/include/asm/mce.h           |  4 +--
- arch/x86/kernel/cpu/mce/amd.c        | 18 +++++------
- arch/x86/kernel/cpu/mce/core.c       | 47 ++++++++++++++--------------
- arch/x86/kernel/cpu/mce/dev-mcelog.c | 11 ++-----
- arch/x86/kernel/cpu/mce/genpool.c    |  8 ++---
- arch/x86/kernel/cpu/mce/intel.c      | 11 ++++---
- arch/x86/kernel/cpu/mce/threshold.c  |  2 +-
- 7 files changed, 46 insertions(+), 55 deletions(-)
-
-
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+diff --git a/arch/x86/kernel/cpu/mce/genpool.c b/arch/x86/kernel/cpu/mce/genpool.c
+index 4284749ec803..ffa28769dea6 100644
+--- a/arch/x86/kernel/cpu/mce/genpool.c
++++ b/arch/x86/kernel/cpu/mce/genpool.c
+@@ -120,20 +120,20 @@ static int mce_gen_pool_create(void)
+ {
+ 	int mce_numrecords, mce_poolsz, order;
+ 	struct gen_pool *gpool;
+-	int ret = -ENOMEM;
+ 	void *mce_pool;
++	int ret;
+ 
+ 	order = order_base_2(sizeof(struct mce_evt_llist));
+ 	gpool = gen_pool_create(order, -1);
+ 	if (!gpool)
+-		return ret;
++		return -ENOMEM;
+ 
+ 	mce_numrecords = max(MCE_MIN_ENTRIES, num_possible_cpus() * MCE_PER_CPU);
+ 	mce_poolsz = mce_numrecords * (1 << order);
+ 	mce_pool = kmalloc(mce_poolsz, GFP_KERNEL);
+ 	if (!mce_pool) {
+ 		gen_pool_destroy(gpool);
+-		return ret;
++		return -ENOMEM;
+ 	}
+ 	ret = gen_pool_add(gpool, (unsigned long)mce_pool, mce_poolsz, -1);
+ 	if (ret) {
+@@ -144,7 +144,7 @@ static int mce_gen_pool_create(void)
+ 
+ 	mce_evt_pool = gpool;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ int mce_gen_pool_init(void)
 -- 
 2.17.1
 
