@@ -1,163 +1,163 @@
-Return-Path: <linux-kernel+bounces-359986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C04C999340
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D02DA999344
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0BC11C2160A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0277E1C2250B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C741CEE9B;
-	Thu, 10 Oct 2024 19:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E53B1CDFD8;
+	Thu, 10 Oct 2024 19:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIQw5q6T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TqNLRW7E"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A4F1990C1;
-	Thu, 10 Oct 2024 19:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EBC19B3CB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728590230; cv=none; b=NgSrlBVxfS1MFsOUodgTstgOChwOCtHE2E7meQZF2mCD7KHXVszlk0L2ewrLFVSQxvq9jM6KZUmull9Yr5v1jA0C3jttVc99+lyeBrH3kE9Riz/HK+sAbm380LVSFjYH/PL6V3EWpjZqJwZ4ih6QKPeM51yyv8tXkmpB9qTqIAA=
+	t=1728590349; cv=none; b=AaekFrOojOXglYbhpgyfaUJf57FWnAaCfbg7FX9q1vFQsbfauAe15z6r0/aqIEDj/EwLuN9jvc7tEWPpfm0tU0lK584MClrRP0D99zhywy/kee3ZPFnxcmrWXyidZ1aaELiAlLmHeAFjaEUo+nN5+YXpgv5A+fPdJRs3H5HDcRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728590230; c=relaxed/simple;
-	bh=q9Q/osgeAQXVfJAaHOfFlNollpmh1cJYbXNK0esuEbc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=emKoAMw7nOAPN4wiEwZ43OtFw5HxUPM8rJEcG4NrHkVQNcRVsuy7ubacxfm7/c5lXB7yWG9oTS/tuPWSGWEk+NxqD9ooBKCn4pprdRZyzITzun6iXuOQ7haWS4CO42DUA1nz+ToYkLMUcxBzBZSIhdv+QkSTnxYY4Zno4E8C8ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIQw5q6T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51A97C4CEC5;
-	Thu, 10 Oct 2024 19:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728590230;
-	bh=q9Q/osgeAQXVfJAaHOfFlNollpmh1cJYbXNK0esuEbc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZIQw5q6TCBLsIV2ZfkgA1p2lJofWPuOHM6Tt/ejVGH+5/vttDbyuK1tYkqCPOZoZb
-	 rdCYx+6hosSrDLlZFVSxCkcg91CzpdsG0o/qZ+piBwMbVzfGRgFkrKcellgoM0ijU2
-	 xBqUplGCOIferYXtpd1KY6lTtyQORUSLdULX0Lve1W293HbZtFutr9C0K3li3Oz9t+
-	 DfaiSKLNSXgKW3yAYGfF5xD8+slECYPZEKqdbQz7bTNw3T/uW1k5gRFL7mMNmMBz7R
-	 hEhggUb5N0GJrnIDQLatIHq1gLEJmZ3MgqgkpFDCp/ABHFK2/jYV3tXobHINCrSUX7
-	 i0yn/hBvCsAyA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 10 Oct 2024 15:56:55 -0400
-Subject: [PATCH] nfsd: handle OPEN_XOR_DELEGATION outside of st_mutex in
- open codepath
+	s=arc-20240116; t=1728590349; c=relaxed/simple;
+	bh=4yvNUNNfw+d1/ZXbpmqfonfdUaOLKiFzU12KeWjdtkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=erR76vecLq5ou9OCU4vwX2AUND6XLVPYUw5Oi+MBFhZ5w8N1o/Q9nCC94aIUiNQq0fQptx3VVETymKOhYoznf5A3Cxm7OAt4LlP5NmJZixw+pjM64SyOrl7XC9pZgJscoeqN5WWSFpv3YZ/Sr657dfLtwiwAj0FZbituTkprgBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TqNLRW7E; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e03caab48a2so1094547276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1728590347; x=1729195147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V/bc0MweznE39rPLaY3R7gQJcW93HabLZwOwmEd7zFU=;
+        b=TqNLRW7EbdeYPWpemaDDPYiokr43Lqd1Gog+pDgHn/KgquzqP4P5Ekxy7ufeIGqBty
+         LZ+r4ATahDWjfo2G9PL8C0AEBaGok0wROyDcg8gvU7nXNfrHDSSqn0XEONbeI5fZ7Glm
+         l9vb1970GaFqyvNzA+/kwC+WWQY4lIEsKIj5k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728590347; x=1729195147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V/bc0MweznE39rPLaY3R7gQJcW93HabLZwOwmEd7zFU=;
+        b=HCQyIjJuRutpJ0Gw52syNazLeqNkbfibwbth9glFpgE5CyV0Ah58EpvqeYpHl0Y8NZ
+         enCDJ9ILpEJgn3JNjzFzklz1/sHxbqupUiHeeR/QkXG8NUTCp0E+S6NlQY8Ya94D6ybT
+         Nz4po14y8v4RmXyUiJ6m4NWg5KqmZ6bM0H3has2pTG9u6FnD8AhZyP2s/YfMyLtCCbG0
+         QyRFfxnZGNv3CkNLN761RAe2T0ZxA7NGSNPoX9vTFzeuLT/GgzJHv1IiaOT0ptpSPewR
+         EKYDLEb9y0mX0UOy6OMDx3bfROpZWpRqWz3wmLI4ZD0bmccLVBTxZyTdUzhi6+kyTYI8
+         G7fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/+fn1vm+C+pqRjciwM/bViz+TogFyxvEl9uvUHlofXkf1W1LcfE56jsFB3lipotKHP62f8vwc3Swt6l4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySUaKdcQkCnh1sVaWTEdHmLuHVs469meZ7u/Va8Qry/GksAlu2
+	ZrSTzcwCa//LS+RrAOYA40LlE3w2bXVtrrx1yGv9VoKMQ6AVZwdY+vxyBSNgwSwcz6x6j03wVGG
+	qrCR4OWK/uE9crfPy6ugh7mgayv8oOgE88s4/
+X-Google-Smtp-Source: AGHT+IHKdWo0J63T55tb5EKx4BupQmJDilI5bVOOroBGaVlaETEhyAGnkCjAUbgUWNG8Bn6WSbZNfqyk9zmB7YHCnLg=
+X-Received: by 2002:a05:6902:2403:b0:e29:552:42a7 with SMTP id
+ 3f1490d57ef6-e2918379976mr312653276.13.1728590347036; Thu, 10 Oct 2024
+ 12:59:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-delstid-v1-1-1e0533c6617b@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIYxCGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDA0MD3ZTUnOKSzBTdlCSjREOjNCMTozRjJaDqgqLUtMwKsEnRsbW1AOm
- 3cEdZAAAA
-X-Change-ID: 20241010-delstid-db2a12f242f3
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel test robot <oliver.sang@intel.com>, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3225; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=q9Q/osgeAQXVfJAaHOfFlNollpmh1cJYbXNK0esuEbc=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnCDGN9sXfc5DauxclktLtMGkCH6tstpA0rcJWp
- Io/YqB/m0mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZwgxjQAKCRAADmhBGVaC
- FXIoEACI2vArBHpYfD5ZRa7SSQE7KeayjUjKJFCIYp+hvqbof7VzPDTU2j7e1lRd/Oj6ieHy3pG
- VLUtC8BIpyidJ03eyaOdNg9uH87WdFDUgvPEfy/yiKgZrZceper/66BDoB+x1+PtgCZ4QEABqMe
- bUDltrvBZfhC/+x2u9QeuEXssUjnPzX2dw3gSxc6L9+qyp+MaMiYhTOyRZXPu1LkhLK20WhUyfV
- NvcpfgKZOVyyxCqIyIjIxtlhZTHh9lZhm6kpk0azlQqrB1C7uX3heceswzAAnbs6alI8AF6vPe1
- XPHzbAptFv9yrWF1Vgd+W/wLiDeNVjmGnO24PzTi/3OD4+z9EtEwVwhmthLkK3VcG78CRBwqffJ
- ZNGzVl0KAD5CidMHhIZqUCozoiuFK2fIyI7bmXJNxpYxA8wbMCZNap8sQwi0WV4cDPr9Pikj+jA
- QPWhfVM1ilgMC+rHo6p4M036V9EFQSBqe9I2WeDg1+/QWe68ravqjtHztQPS6SwUzw4UmwsgIvz
- ucZUba59BSiJbBV4k9o6pABToX5lUEWVKNrQeIkMy7mCEoO9/tBv7eMjlOQ/Gk7Sb9ZdpMVzQXN
- GhU2Vu66xzpvxwDgrXjSTra10N8kwn84qpfb4WIZJZpPkDtK+eksZ2wyROJT0EwOto1Mk480QrD
- uYsF4LZSXGYS+hQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20241004205053.1068629-1-arnd@kernel.org>
+In-Reply-To: <20241004205053.1068629-1-arnd@kernel.org>
+From: Zack Rusin <zack.rusin@broadcom.com>
+Date: Thu, 10 Oct 2024 15:58:56 -0400
+Message-ID: <CABQX2QP49-KFTbtDkmR0qt_qFRAmCQ+4O7x3WON5P22S6Of1FQ@mail.gmail.com>
+Subject: Re: [PATCH] vmwgfx: allow building with CONFIG_HAS_IOPORT disabled
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Niklas Schnelle <schnelle@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Martin Krastev <martin.krastev@broadcom.com>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Ian Forbes <ian.forbes@broadcom.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When I originally wrote these patches, I was under the mistaken
-impression that I didn't need to increment the stateid in the case of an
-existing stateid (because we weren't returning it). After some
-discussion upstream, it turns out that the server should ignore the
-WANT_OPEN_XOR_DELEGATION flag if there is an outstanding open stateid.
+On Fri, Oct 4, 2024 at 4:50=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
+e:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The older version of the vmwgfx driver requires port I/O in order to work=
+:
+>
+> In file included from arch/arm64/include/asm/io.h:298,
+>                  from drivers/gpu/drm/vmwgfx/vmwgfx_kms.c:28:
+> drivers/gpu/drm/vmwgfx/vmwgfx_drv.h: In function 'vmw_read':
+> include/asm-generic/io.h:626:15: error: call to '_outl' declared with att=
+ribute error: outl() requires CONFIG_HAS_IOPORT
+>   626 | #define _outl _outl
+> include/asm-generic/io.h:663:14: note: in expansion of macro '_outl'
+>   663 | #define outl _outl
+>       |              ^~~~~
+> drivers/gpu/drm/vmwgfx/vmwgfx_drv.h:692:17: note: in expansion of macro '=
+outl'
+>   692 |                 outl(offset, dev_priv->io_start + SVGA_INDEX_PORT=
+);
+>       |                 ^~~~
+>
+> Change the version check to hardcode the v3 version and remove the PCI
+> ID for v2 in configurations that only support v3.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 2 ++
+>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h | 5 ++++-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx=
+/vmwgfx_drv.c
+> index 2825dd3149ed..dfb4b2ba23c6 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> @@ -262,7 +262,9 @@ static const struct drm_ioctl_desc vmw_ioctls[] =3D {
+>  };
+>
+>  static const struct pci_device_id vmw_pci_id_list[] =3D {
+> +#ifdef CONFIG_HAS_IOPORT
+>         { PCI_DEVICE(PCI_VENDOR_ID_VMWARE, VMWGFX_PCI_ID_SVGA2) },
+> +#endif
+>         { PCI_DEVICE(PCI_VENDOR_ID_VMWARE, VMWGFX_PCI_ID_SVGA3) },
+>         { }
+>  };
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h b/drivers/gpu/drm/vmwgfx=
+/vmwgfx_drv.h
+> index 3f4719b3c268..a2fda4d43b4e 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.h
+> @@ -655,8 +655,11 @@ static inline struct vmw_fpriv *vmw_fpriv(struct drm=
+_file *file_priv)
+>  /*
+>   * SVGA v3 has mmio register access and lacks fifo cmds
+>   */
+> -static inline bool vmw_is_svga_v3(const struct vmw_private *dev)
+> +static __always_inline bool vmw_is_svga_v3(const struct vmw_private *dev=
+)
+>  {
+> +       if (!IS_ENABLED(CONFIG_HAS_IOPORT))
+> +               return true;
+> +
+>         return dev->pci_id =3D=3D VMWGFX_PCI_ID_SVGA3;
+>  }
+>
+> --
+> 2.39.2
+>
 
-Given that, there is no need to expand the scope of the st_mutex to
-cover acquiring the delegation. The server may end up bumping the seqid
-in a brand new open stateid that it ends up discarding, but that's not a
-problem.
+Thanks! Looks good. Would you like me to push this through drm-misc-fixes?
 
-This also seems to lower the "App Overhead" on the fs_mark test that
-the kernel test robot reported.
+Reviewed-by: Zack Rusin <zack.rusin@broadcom.com>
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409161645.d44bced5-oliver.sang@intel.com
-Fixes: e816ca3f9ee0 ("nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-We had a report of a performance regression (in the form of higer "App
-Overhead") in fs_mark. After some experimentation, I found that the
-cause seemed to be the change in how the mutex is handled in e816ca3f9ee0.
-
-This patch restores the App Overhead back to its previous levels (and
-may even improve it a bit -- go figure). Chuck, this should probably be
-squashed into e816ca3f9ee0.
----
- fs/nfsd/nfs4state.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 9c2b1d251ab31b4e504cf301d1deaa4945bd244f..73c4b983c048c101d16ec146b3f80922bcca3c69 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6120,7 +6120,6 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	struct nfs4_delegation *dp = NULL;
- 	__be32 status;
- 	bool new_stp = false;
--	bool deleg_only = false;
- 
- 	/*
- 	 * Lookup file; if found, lookup stateid and check open request,
-@@ -6175,6 +6174,9 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 			open->op_odstate = NULL;
- 	}
- 
-+	nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
-+	mutex_unlock(&stp->st_mutex);
-+
- 	if (nfsd4_has_session(&resp->cstate)) {
- 		if (open->op_deleg_want & NFS4_SHARE_WANT_NO_DELEG) {
- 			open->op_delegate_type = NFS4_OPEN_DELEGATE_NONE_EXT;
-@@ -6194,17 +6196,12 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
- 	 * returned. Only respect WANT_OPEN_XOR_DELEGATION when a new
- 	 * open stateid would have to be created.
- 	 */
--	deleg_only = new_stp && open_xor_delegation(open);
--nodeleg:
--	if (deleg_only) {
-+	if (new_stp && open_xor_delegation(open)) {
- 		memcpy(&open->op_stateid, &zero_stateid, sizeof(open->op_stateid));
- 		open->op_rflags |= OPEN4_RESULT_NO_OPEN_STATEID;
- 		release_open_stateid(stp);
--	} else {
--		nfs4_inc_and_copy_stateid(&open->op_stateid, &stp->st_stid);
- 	}
--	mutex_unlock(&stp->st_mutex);
--
-+nodeleg:
- 	status = nfs_ok;
- 	trace_nfsd_open(&stp->st_stid.sc_stateid);
- out:
-
----
-base-commit: 144cb1225cd863e1bd3ae3d577d86e1531afd932
-change-id: 20241010-delstid-db2a12f242f3
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+z
 
