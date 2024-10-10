@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-360116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AD199949E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:48:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAD59994A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD502836C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1DD1C22CFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D1E1E231B;
-	Thu, 10 Oct 2024 21:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A601E47A1;
+	Thu, 10 Oct 2024 21:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sx1nSLzC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hvMGW1Y9"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD719A2A3;
-	Thu, 10 Oct 2024 21:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C624319A2A3;
+	Thu, 10 Oct 2024 21:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728596921; cv=none; b=bquTt1zPXO31rE1TFcuxhvSXWMYQ686tYnEQo0yOPDRMmxS2NQJl64WM4tvnRbVIf7K5fucPNcuac+8hdt+y6bBh+ogejo3XChLvR3wiI3v/bhfeyXqmThzfJc8mjf9OmHs7TmkN1gkJNA0FNkPLdXpUUezuoSGmWG4dtRUl4jM=
+	t=1728597034; cv=none; b=ZAkM+3j4rz/nIM1UsYRQmTatqlbENDOAY2eN5c6kg8l64fgKCLonBzn3THs8/Yj7/6BI/evXUVROkiHQfGNeMyQL7QAEXuTLdYp/ymcHKfYxwZqLpnwif9m4Jw4kWBOs7Ol/u032ZtXETRD34J/BBiJFqSbO34QmNyodo42xPjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728596921; c=relaxed/simple;
-	bh=yrGcbToO/wQ5cOvuutppQRUqlBhyFYBBk1mix09MZro=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kBUU3XuZY6o6r+HoBjdvvJFZQXNPEi1m3c1UO5FLrAMtYa0dmKYyzNsa/iqcGliXGBAQFDxyfzGwHQjojmCtuJhcvFVm92FAXFCg8TUnKEQOzI2ZTuocvzq5lSNhB168QrMU++NeDX+1Z0WP/LYxPJa5KXorrqkCdCvlju3cMig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sx1nSLzC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CB6C4CEC5;
-	Thu, 10 Oct 2024 21:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728596920;
-	bh=yrGcbToO/wQ5cOvuutppQRUqlBhyFYBBk1mix09MZro=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Sx1nSLzChLIagzSBRgsRR89iZcI/71SyY9dwEM1SPthQygVdPqjXIlZBX85lyovMY
-	 4uSj+0hSslIWxq3rcYzCxsexMBNBT928xFbX9sHb8iDFP3Ffcz46MV9bEeJ6ZPOOF2
-	 N4e30tTgDOuBWkrma6JWhgf2+lbFepDvJGiVD4ohH85DnPOFmX+CJrQYwUZ4B4RRPl
-	 krUYAYTK/NxAE3SZ5CYUbs015gwKvFwJzjCLkVWBUBwkkfa7zLzm65QJOj7ECJbU9W
-	 DNYqoggXyEW0g1/PWzV5jmsntzmDcHqQPy7QNGo2tAWCLH7s8XzpmPZuyqzhQ9Imoj
-	 WICABpMSAkklg==
-Message-ID: <17bc2c2193f9a909457466387a2a9b76.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728597034; c=relaxed/simple;
+	bh=CNPvI1N4Wcjl9PFS32qMlGlxyv1CESaoJiYlUz/BucU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mY+K/H6SraCyqnZAKjIEtZPmAm7nCXJnbNtywIaXq7XfDMDAqkf+Fbi2s4FpwhnSNUBmp2kMt2hWGQuXpRNjshPmLRA35OLg4UXKrRO6Z/s9DbR6KeM4cU+0V7aSS2XU7ip62eCVXkxJRvgy/j1XEW9znUYCKANC/moBtkrjosw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hvMGW1Y9; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=orMCFhyMJn782vmTUq+Q3NOxuHBE9KmJ0XirtiWn0Vs=; b=hvMGW1Y9QpQhvNCLn2WA02/5be
+	2gUb3UgensqSVz7kb0i08EJyuhHN6r+Z3hSrXWHdZupnEK9Cp5RD0aw6KvpSEDf+daiBqPHWN1EsK
+	y/tpuX2ZVQT+nkAVIaYKSgv+j6f587kGEgn4QLiBdLyNG/R8DBuh0mio1qfyISR7+TOle0WYcT49i
+	91tgXyFxczxkMMnFLRS2eNONNpu3IwZNr48odwXiVu50XTXY3bbMq2dq5jZvbBxaKAKxccBTS5K8e
+	BCAHqePY3iyJ8AaQPyXSxLfuAcpeICTyQ1aDEow8nSbjdVgSh5xB7y1kQHbANavbTPuo5w+gAuYHq
+	EjxyaVhA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sz13D-00000005gOY-0Dfh;
+	Thu, 10 Oct 2024 21:50:28 +0000
+Message-ID: <1f10bfa9-5a49-4f9b-bbbd-05c7c791684b@infradead.org>
+Date: Thu, 10 Oct 2024 14:50:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
-References: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL fixes] clk: samsung: fixes for v6.12
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 10 Oct 2024 14:48:38 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] XArray: minor documentation improvements
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CAJ-ks9mz5deGSA_GNXyqVfW5BtK0+C5d+LT9y33U2OLj7+XSOw@mail.gmail.com>
+ <20241010214150.52895-2-tamird@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241010214150.52895-2-tamird@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Krzysztof Kozlowski (2024-10-10 01:50:35)
-> Hi,
->=20
-> One patch with a fix for current RC.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-fixes-6.12
->=20
-> for you to fetch changes up to a03c246d4ec836ae5827a4a16f6b9e730ec5ee8c:
->=20
->   clk: samsung: Fix out-of-bound access of of_match_node() (2024-09-30 13=
-:10:11 +0200)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-fixes.
+
+On 10/10/24 2:41 PM, Tamir Duberstein wrote:
+> - Replace "they" with "you" where "you" is used in the preceding
+>   sentence fragment.
+> - Mention `xa_erase` in discussion of multi-index entries.  Split this
+>   into a separate sentence.
+> - Add "call" parentheses on "xa_store" for consistency and
+>   linkification.
+> - Add caveat that `xa_store` and `xa_erase` are not equivalent in the
+>   presence of `XA_FLAGS_ALLOC`.
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> ---
+> V3 -> V4: Remove latent sentence fragment.
+> V2 -> V3:
+>   - metion `xa_erase`/`xa_store(NULL)` in multi-index entry discussion.
+>   - mention non-equivalent of `xa_erase`/`xa_store(NULL)` in the
+>     presence of `XA_FLAGS_ALLOC`.
+> V1 -> V2: s/use/you/ (Darrick J. Wong)
+> 
+>  Documentation/core-api/xarray.rst | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+
+I'm satisfied with this change although obviously it's up to Matthew.
+Thanks.
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+-- 
+~Randy
 
