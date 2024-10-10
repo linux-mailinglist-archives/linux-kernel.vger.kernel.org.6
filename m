@@ -1,82 +1,80 @@
-Return-Path: <linux-kernel+bounces-359147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAAB99880B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E650998810
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 016B528942C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFBB1C228D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CCC1CB31A;
-	Thu, 10 Oct 2024 13:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEB11C9DF9;
+	Thu, 10 Oct 2024 13:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="G7stIzi/"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1647D1BDA90;
-	Thu, 10 Oct 2024 13:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2In1dVq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C157E1BC9EE;
+	Thu, 10 Oct 2024 13:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567710; cv=none; b=tg6khd/5zXNYL+MGOk5FGEq7TblrevYrMq1/tYUpO3tul178savv0OLvTj8Z4VQd09UGIeJugT/LG1jrr3JW5yuLBVGQZjPVRZkfMVIzGPE2s+GH8tQHCwtX/iXT54vVjtisu6DRJTmxpYfTFRqAlk0UjLLjfPBcgvLM4tmdHoY=
+	t=1728567765; cv=none; b=n8MZGly+zuU8ESVsSGqfprV1hoGHVJZkMwRV1jOotWQbBQxMTOm8/xpOEHJTQ3ihYw4epRVQNJ5qYIU74TEOqr+DNYm+UTOFH6XR29lFi+3COECEzC4LYjMMqXMtp79U3aNXLUGeQKbeF//AT0BiOfmCyPqGmMAqUbtY+/FOT0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567710; c=relaxed/simple;
-	bh=wrInKrhNB5L++HzSMy95BJXqnxEX0ZmYh/OxC2V09FQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JpNRagdpwlKHo1szbGHHHSb3K0cMGZGyvOmuL8gca3uicqBz43zxNMQFcdw6b+PNSCXC3IdaTRiFzFFixBIhRaGiFB/eiClyMCmGn35jQUaB8BYfpljb1VGOsuUevP41yYKQpfU+jtiYEIFa5XBB+DOxrhpBx/9ZeHotqNX/kY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=G7stIzi/; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=1SRIN9/0TR2RG12zPpqOAV/SRSFtH+cmc/UM365JbN8=;
-	b=G7stIzi/d3H+GZQpe99KXII6BLfmIT0NhPA+8mAncd1g5E8xnCLZBGK5H66HXA
-	zXyKaacNmA+3PEGqnO9NgiDD91zFPndasSOQCyN02YFJJQh5hBo6nwNFtVPA0baI
-	iQJnLtrYH9ynHnpC3C6m1e1Dm7tBp6vkdpJSGdVIaI9vI=
-Received: from localhost (unknown [120.26.85.94])
-	by gzsmtp4 (Coremail) with SMTP id sygvCgA3ljWS2Qdn1Mq8BA--.33798S2;
-	Thu, 10 Oct 2024 21:41:39 +0800 (CST)
-Date: Thu, 10 Oct 2024 21:41:38 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-Message-ID: <ZwfZkr_27ycafr7F@iZbp1asjb3cy8ks0srf007Z>
-References: <66fbc081.050a0220.6bad9.0056.GAE@google.com>
+	s=arc-20240116; t=1728567765; c=relaxed/simple;
+	bh=QcT8ic8mTYdXmuI1an47O3S3l/JVKAa+7uNOyp7K+zM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RwKxlACMAmyZ4KBCpYTtnvY0x0Mh3+/d8mE8pRgZCIv9TySmxy9Ades5fNBA7QP3wNHr65v1wRy3IBaYlvqvdwC/dvQFlf5QXnl3R6811eARWDt/K7y0MLTsFvUMzj6Pgk0u0U+3Tov8E0H27iOQZ42GB18k3ih1gEMEGRBDC4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2In1dVq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F433C4CECC;
+	Thu, 10 Oct 2024 13:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728567764;
+	bh=QcT8ic8mTYdXmuI1an47O3S3l/JVKAa+7uNOyp7K+zM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=o2In1dVqrRkxVu5KdltbBWjqdUAvSZwqWfv83RmSdFp3j4VMMIqLAocRTB7oT67tG
+	 jLd/knq/Bl4tahGDrYSs0/VBHfo9UNsIXXE0rZNGd/kmPsrUTk3qGwLIFvEjs58MKW
+	 khqgSeKQ3zQlH/wZ5lflSbwlbMn2C+bqrSE5ZvoVC/0SiQOj7a0KR7ITq352Kx5mQQ
+	 V/w7MvLZbs2jPKknGotr313KiMMKv7lFWUGUjN62MrIn4nXaS0xWMj9aHV9dIpmsRn
+	 WDRrmC0xmZNhOXcgoHv6CeFaJZRsGrrt17ir4Ph1KYfOrIBEVlZMvkXs+QJXEfzgVA
+	 PKkJGdAzW9EWg==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240930112121.95324-8-Julia.Lawall@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+ <20240930112121.95324-8-Julia.Lawall@inria.fr>
+Subject: Re: (subset) [PATCH 07/35] leds: leds-gpio-register: Reorganize
+ kerneldoc parameter names
+Message-Id: <172856776277.2578206.11758617889948299526.b4-ty@kernel.org>
+Date: Thu, 10 Oct 2024 14:42:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66fbc081.050a0220.6bad9.0056.GAE@google.com>
-X-CM-TRANSID:sygvCgA3ljWS2Qdn1Mq8BA--.33798S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RCzuADUUUU
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRRN0amcH1OdN1QAAsD
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-#syz test
+On Mon, 30 Sep 2024 13:20:53 +0200, Julia Lawall wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> 
 
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index ef9498a6e88a..e66cb6e9f1fa 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -18,7 +18,7 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
- 
- 	fd->tree = tree;
- 	fd->bnode = NULL;
--	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-+	ptr = kcalloc(tree->max_key_len * 2 + 4, 1, GFP_KERNEL);
- 	if (!ptr)
- 		return -ENOMEM;
- 	fd->search_key = ptr;
+Applied, thanks!
 
--- 
-Best,
-Qianqiang Liu
+[07/35] leds: leds-gpio-register: Reorganize kerneldoc parameter names
+        commit: 42507413bb32666dcbb19a876e4b73419b05a0d1
+
+--
+Lee Jones [李琼斯]
 
 
