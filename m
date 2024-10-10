@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-358043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE4C997989
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:15:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FC399798E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601A1283924
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:15:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33CDAB2165E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C3928F1;
-	Thu, 10 Oct 2024 00:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2078C11;
+	Thu, 10 Oct 2024 00:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="aeZiy1SU"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="CyV8pAek"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865863D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC4163D;
+	Thu, 10 Oct 2024 00:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728519300; cv=none; b=LVmb0tHjspy32GWZWxHLqoOSZGYuYsQdBVOF0gdsH5cTFV82hfv2wW7z12/yXric4cOWryfeqcS4Pajzis7oajkh2olSwfep8SQlcrQdSZP7XT03pZDOQsVDdKADJCb3hIgjDIsmbPAj8FtTGBUkMqLJ8jaU7JsvS78TAvct9q8=
+	t=1728519491; cv=none; b=jQ49PleyGREsUhEMnprUDhNhTp7pIwH0Ca6CVpMgD+HrnMQSAvawpqmVFq1OohHWam1kZ/1ioEEL9yXfERKsd3ODmcvOuqjFu/ZvEg32RX+lPGgMARiLwHmmUMFpXsSLflfjjqtyG9yVRWog5IhPYer44/O2Z4RzOarDf6iYt6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728519300; c=relaxed/simple;
-	bh=MetQIlVErqyCaeKy4Og15EKwEngtHD3WHSWtUIdWuYQ=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=FNYonqt8dA+ODP0mW/USzHFe7T3gJXQpICMc5Eqsd3WVvVhPhbYU41O7TGTSaa8PzmQQxIY5SMpxH8BYz6TssZ5ckrxKe3pqemkZQagdab5VD7yS2tufxhFJdgKlMUJKsReSybHgJSljZjYdGKKj9qPZo5jtmfAM1BXpmjxvZJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=aeZiy1SU; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
-	by cmsmtp with ESMTPS
-	id ydTZsGl5Kg2lzygpQs58fz; Thu, 10 Oct 2024 00:14:52 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id ygpPs0PfGxS8LygpQsJdf8; Thu, 10 Oct 2024 00:14:52 +0000
-X-Authority-Analysis: v=2.4 cv=Wa4KaVhX c=1 sm=1 tr=0 ts=67071c7c
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lemu//ZBsQxi9QpD8FpQiJb5bAyX7XGQCvz/q/ffwgY=; b=aeZiy1SUjflW5zkDOzzyGeT2zE
-	uYPI0VlhKWyRNdqENkKQgHlYlklRF1J12H3cMOfYL0Zt1TaYd2BBqnwuWWwAkm9KH8D38IolRZT7/
-	ZiZl+5pA2JUn5sVs8ZKSGFDza9XzA/Jt4F0YYwdFb7qCeYgjuzKciJiR/dXxfbWiQ9BdF20N9YypG
-	+Y8BmRVO4q5LAEEE2o4s+TWnGKj91ZQavUXuQ8XNzPrh4k/vPPUzGyNLxgagDUXSw48FM9OdzUGNx
-	2HhVL++rG43V6sg5+TkHIGIRpK0rJ5FdqSqDA5Fwik02rfJLJzWqIa4b2cOlyKYBmLMpHLcvfYSx6
-	R9BHOlvQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46234 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sygpN-002rlw-2t;
-	Wed, 09 Oct 2024 18:14:49 -0600
-Subject: Re: [PATCH 6.6 000/386] 6.6.55-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241008115629.309157387@linuxfoundation.org>
-In-Reply-To: <20241008115629.309157387@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <041eedae-37f7-4d55-63c9-5429ff0d625e@w6rz.net>
-Date: Wed, 9 Oct 2024 17:14:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1728519491; c=relaxed/simple;
+	bh=O9xG58odvWsucqMWWVo7YHR3ZrvcTUfms9diIUAGq/w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ftq4gSHAytbaTnKWfmZKfd/yHVQyN6LUxGN7kF+zBhXzxGQUpDqVsSMSYDbWUKEfwNs7clhpA1Ex4txSBfkw4D1o50Z4wOezQsjr9pgpRUyWiB1RZ25ZTDz2xXa6VZ+a4lJqkKljPaEWJH9RJKeS5eKIqZRUV9V2qgmXw1TiRyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=CyV8pAek; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1728519486;
+	bh=JCKWnvIHgN7NeIxYtThHAhakmq8YAiBt/o4wQGaz8/w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CyV8pAekV/TOve0+yV3IEThJzCD8ee59ddQlBIzCCvWemKc/ImFTYPHIm8jTvew0E
+	 2RDGh4pbUM9m9Jzk1MkSVWzDUKNAGDraYErd4MKcPTf3w8FQhfsKQgv0LWZqH3dPKo
+	 2q+ccE1Ic0uxYQmUxGLyQjXJb9JhGNC9Dc4D/BDfGj7yEuPzFZ7oCUBMNUYklrervk
+	 0rsMC99cZxcDUj+/f+cIqfFiu9qKdmuQGB3SO3eu6awPx3tiAQUhtP+Zq6bQ9xbrH+
+	 Yk3vNRNh4aceCVyFBzMhabgs3VMdOh1hhQtkbXYZ3SxHW966Il1rAHeSFno4GT2GT/
+	 g4EPuh3btN2Mw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XP9MK39qRz4wnw;
+	Thu, 10 Oct 2024 11:18:05 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Hari Bathini
+ <hbathini@linux.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, bpf <bpf@vger.kernel.org>,
+ linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Linux Kbuild
+ mailing list <linux-kbuild@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "Naveen N. Rao" <naveen@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nicholas Piggin
+ <npiggin@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Andrii Nakryiko <andrii@kernel.org>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Vishal Chourasia
+ <vishalc@linux.ibm.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v5 17/17] powerpc64/bpf: Add support for bpf trampolines
+In-Reply-To: <CAADnVQJjqnSVqq2n70-uqfrYRHH3n=5s9=t3D2AMooxxAHYfJQ@mail.gmail.com>
+References: <20240915205648.830121-1-hbathini@linux.ibm.com>
+ <20240915205648.830121-18-hbathini@linux.ibm.com>
+ <CAADnVQL60XXW95tgwKn3kVgSQAN7gr1STy=APuO1xQD7mz-aXA@mail.gmail.com>
+ <32249e74-633d-4757-8931-742b682a63d3@linux.ibm.com>
+ <CAADnVQKfSH_zkP0-TwOB_BLxCBH9efot9mk03uRuooCTMmWnWA@mail.gmail.com>
+ <7afc9cc7-95cd-45c7-b748-28040206d9a0@linux.ibm.com>
+ <CAADnVQJjqnSVqq2n70-uqfrYRHH3n=5s9=t3D2AMooxxAHYfJQ@mail.gmail.com>
+Date: Thu, 10 Oct 2024 11:18:05 +1100
+Message-ID: <875xq07qv6.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sygpN-002rlw-2t
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:46234
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfCu+cGVieKcJeGAbkF2Ku0X0rJa4JIS1NFsz1WeBXsa/c68hSjr5WlkccJ3+RtuCEd5PmF4h4A51dbWi6xQZl0etpnxdPj2CoDl5ISpa7ynBHI6kfA7v
- UAfgKrHuvN5bVRGUQJ6aJjawxgeyTBAMbnSqqNnMbQQpd0d3V0Fsr+e7jagTFcd0HwEuG/K8eiKOnBTR48LLo+G8wPYuEGzhoyQ=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/24 5:04 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.55 release.
-> There are 386 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> On Tue, Oct 1, 2024 at 12:18=E2=80=AFAM Hari Bathini <hbathini@linux.ibm.=
+com> wrote:
+>> On 30/09/24 6:25 pm, Alexei Starovoitov wrote:
+>> > On Sun, Sep 29, 2024 at 10:33=E2=80=AFPM Hari Bathini <hbathini@linux.=
+ibm.com> wrote:
+>> >> On 17/09/24 1:20 pm, Alexei Starovoitov wrote:
+>> >>> On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Hari Bathini <hbathini@linu=
+x.ibm.com> wrote:
+>> >>>>
+>> >>>> +
+>> >>>> +       /*
+>> >>>> +        * Generated stack layout:
+>> >>>> +        *
+>> >>>> +        * func prev back chain         [ back chain        ]
+>> >>>> +        *                              [                   ]
+>> >>>> +        * bpf prog redzone/tailcallcnt [ ...               ] 64 by=
+tes (64-bit powerpc)
+>> >>>> +        *                              [                   ] --
+>> >>> ...
+>> >>>> +
+>> >>>> +       /* Dummy frame size for proper unwind - includes 64-bytes r=
+ed zone for 64-bit powerpc */
+>> >>>> +       bpf_dummy_frame_size =3D STACK_FRAME_MIN_SIZE + 64;
+>> >>>
+>> >>> What is the goal of such a large "red zone" ?
+>> >>> The kernel stack is a limited resource.
+>> >>> Why reserve 64 bytes ?
+>> >>> tail call cnt can probably be optional as well.
+>> >>
+>> >> Hi Alexei, thanks for reviewing.
+>> >> FWIW, the redzone on ppc64 is 288 bytes. BPF JIT for ppc64 was using
+>> >> a redzone of 80 bytes since tailcall support was introduced [1].
+>> >> It came down to 64 bytes thanks to [2]. The red zone is being used
+>> >> to save NVRs and tail call count when a stack is not setup. I do
+>> >> agree that we should look at optimizing it further. Do you think
+>> >> the optimization should go as part of PPC64 trampoline enablement
+>> >> being done here or should that be taken up as a separate item, maybe?
+>> >
+>> > The follow up is fine.
+>> > It just odd to me that we currently have:
+>> >
+>> > [   unused red zone ] 208 bytes protected
+>> >
+>> > I simply don't understand why we need to waste this much stack space.
+>> > Why can't it be zero today ?
+>>
+>> The ABI for ppc64 has a redzone of 288 bytes below the current
+>> stack pointer that can be used as a scratch area until a new
+>> stack frame is created. So, no wastage of stack space as such.
+>> It is just red zone that can be used before a new stack frame
+>> is created. The comment there is only to show how redzone is
+>> being used in ppc64 BPF JIT. I think the confusion is with the
+>> mention of "208 bytes" as protected. As not all of that scratch
+>> area is used, it mentions the remaining as unused. Essentially
+>> 288 bytes below current stack pointer is protected from debuggers
+>> and interrupt code (red zone). Note that it should be 224 bytes
+>> of unused red zone instead of 208 bytes as red zone usage in
+>> ppc64 BPF JIT come down from 80 bytes to 64 bytes since [2].
+>> Hope that clears the misunderstanding..
 >
-> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.55-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> I see. That makes sense. So it's similar to amd64 red zone,
+> but there we have an issue with irqs, hence the kernel is
+> compiled with -mno-red-zone.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+I assume that issue is that the interrupt entry unconditionally writes
+some data below the stack pointer, disregarding the red zone?
 
-Tested-by: Ron Economos <re@w6rz.net>
+> I guess ppc always has a different interrupt stack and
+> it's not an issue?
 
+No, the interrupt entry allocates a frame that is big enough to cover
+the red zone as well as the space it needs to save registers.
+
+See STACK_INT_FRAME_SIZE which includes KERNEL_REDZONE_SIZE:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
+rch/powerpc/include/asm/ptrace.h?commit=3D8cf0b93919e13d1e8d4466eb4080a4c4d=
+9d66d7b#n165
+
+Which is renamed to INT_FRAME_SIZE in asm-offsets.c and then is used in
+the interrupt entry here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
+rch/powerpc/kernel/exceptions-64s.S?commit=3D8cf0b93919e13d1e8d4466eb4080a4=
+c4d9d66d7b#n497
+
+cheers
 
