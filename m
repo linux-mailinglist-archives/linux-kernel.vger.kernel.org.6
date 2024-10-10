@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-358547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD849980B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:49:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9F89980B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D5C1F293EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BBD28319B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BE21EBA04;
-	Thu, 10 Oct 2024 08:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6182C1EF089;
+	Thu, 10 Oct 2024 08:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIE9QQNy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cSQnIDXY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331D61D0DEE;
-	Thu, 10 Oct 2024 08:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9CE1EBFEC;
+	Thu, 10 Oct 2024 08:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728549324; cv=none; b=uAUVrCMvfK8ie4UkZfjXaj0snk5vxBbZH63c+AelayF2wxXtFJWL+mcaQ9/xj241E3O3pHdE7Q8yRgYvG2m+pZQj99U0O4nS9lnvk3Ku6Iu9wQ7oGaEiKTLSRco5ax60yW88NEjUUNYpXOZ5Zy+jsJky9yXN+CHqUyL4F+xA91c=
+	t=1728549366; cv=none; b=TAcs8gWzxXHVPX6ga0Mcj3kZs5oL+PBavMXISwxd8cSG0rwjYGgW59di4zOq+T+kVoU5T613XFldVKPcOVt0RPpPMpiJWqvu+tsw/JEJaL6DW2maIEDIvELwC4FGmfPEI9DCewYzrjMrKyLNag7egZi7rxLZiyjYMZ7i2WULNkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728549324; c=relaxed/simple;
-	bh=FjCpKQcHBq2MJTA4mu6vcvwD0kBtWsw1rr0lcV+7Ufc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xs8kwp5GmNU2G1+EySgXRoGRjK362IB+VALV6LgXdwvEv9uE5ZsMPacgu3TsO/RmpkrJDsVPoic5Kt0H4qCbOLsz1BLKGcTQCf5fLmQRSWBd/JD/YkQHlcTUGvEcOSIoj/4SjbMJTqKi/l3902XiMOR1Mj0mmgqf/jS455tAcv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIE9QQNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F119C4CEC5;
-	Thu, 10 Oct 2024 08:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728549323;
-	bh=FjCpKQcHBq2MJTA4mu6vcvwD0kBtWsw1rr0lcV+7Ufc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XIE9QQNyqADo/J6Gxhu5plzKAWPpHqsa44BkDiMJG8M8AEH2P03egxD5l7jvHTALo
-	 /cZWE8YCexg1qK8jrT9idOSMHi9O3ok8u37oBKoKIu3o9/S7IsrKe2Bbf53Q5+jn9L
-	 7cq8ewKBA9cxrZ/S0Kmht9ZvTppc2uqRCu1iRg106+I4YFcfql7vLFyuNhpA5yUuhL
-	 /qTD/+Q75nx2VmJMilyE3t2IHNWkmpyuoVvaIaOkg/YCpBi1RR4GRAsI8ciR7GVkh6
-	 QgONw4jBF6jAo0VlvuW9tWsChnYcrGPJh0tCyKLBa2Xq1N7z6qDNIVE2+QWioYHfUC
-	 ivXaRgAjJTe3Q==
-Date: Thu, 10 Oct 2024 09:35:19 +0100
-From: Lee Jones <lee@kernel.org>
-To: Karel Balej <balejk@matfyz.cz>
-Cc: duje.mihanovic@skole.hr, phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: (subset) [RFC PATCH 1/2] mfd: 88pm886: add the RTC cell and
- relevant definitions
-Message-ID: <20241010083519.GC661995@google.com>
-References: <20240920161518.32346-1-balejk@matfyz.cz>
- <172846840369.471299.4136306941601177946.b4-ty@kernel.org>
- <D4RIBTPD0W5Y.198XNBY2OIDGL@matfyz.cz>
- <20241010083100.GB661995@google.com>
+	s=arc-20240116; t=1728549366; c=relaxed/simple;
+	bh=Nu4V4rdQkj/etExAZDDXgmSW97mar0xJ3yyTz/OsU3M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ONTmZZ9ZjPpVyv/XxN6JYfCiPyQtjMFRQg36ZAUzjELkn7D4MkWYB/vaCEJLLDaRHVTWTCYlQU87V1Az9tjilGpBGyn+m7mCb/8YYwq/r6SddUfF/k8B1CTQa2FNvJmldxK/s0YldE9J5/8nEoy6h0swR/ZHubrU1HnKCWudUiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cSQnIDXY; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728549365; x=1760085365;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=Nu4V4rdQkj/etExAZDDXgmSW97mar0xJ3yyTz/OsU3M=;
+  b=cSQnIDXYMwMNPz/4EMQoARR98KE084TOtyCo/OyLke+yejst0b17a/cI
+   Ww8io3OxBLaiFYlSGCOZTQjqYSIhHuYRryphni8QGiHF+uc6OS6rh+Vg4
+   jg4BsFxtRa0ihkZLmi8+TGklPWdvi8rwqbB6z43z9TBStl8Yr9v/WXZo5
+   MjCnsKW9rH3LhBkCMfd8qR8LTDVHlYmuHw08f/S5wmdvnvfBQEZQ+NVsT
+   LuElu63fRtC5XudduS+9XMYTsMW+IMgIjFlzdQSU6/HfjCEY29/KHWuDL
+   5IKoGZOqyg4Qt9xMrVlCIURk5qRNtgcVpf649sz9gj339MsAkrZi0yEQx
+   Q==;
+X-CSE-ConnectionGUID: tm72l7r/S++94b+34SdklA==
+X-CSE-MsgGUID: 1kikX7aRT4eU9LpppoeZgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27366487"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="27366487"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 01:36:04 -0700
+X-CSE-ConnectionGUID: t/Y2GDwWTQ6Y8q0gdwPfWA==
+X-CSE-MsgGUID: 8UjZd63hSDybLOGpHzQ5yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="80523723"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.244.227]) ([10.245.244.227])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 01:36:02 -0700
+Message-ID: <97e9ec29a9b7b670bb15e12c45efec73fa0a1ff9.camel@linux.intel.com>
+Subject: Re: linux-next: build warnings after merge of the drm-misc tree
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Simona Vetter
+	 <simona.vetter@ffwll.ch>
+Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+	 <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	 <linux-next@vger.kernel.org>
+Date: Thu, 10 Oct 2024 10:35:50 +0200
+In-Reply-To: <20241010160942.192caf60@canb.auug.org.au>
+References: <20241010160942.192caf60@canb.auug.org.au>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241010083100.GB661995@google.com>
 
-On Thu, 10 Oct 2024, Lee Jones wrote:
+On Thu, 2024-10-10 at 16:09 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the drm-misc tree, today's linux-next build (htmldocs)
+> produced these warnings:
+>=20
+> include/drm/ttm/ttm_device.h:255: warning: Incorrect use of kernel-
+> doc format:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * @unev=
+ictable Buffer objects which are pinned
+> or swapped and as such
+> include/drm/ttm/ttm_device.h:270: warning: Function parameter or
+> struct member 'unevictable' not described in 'ttm_device'
+>=20
+> Introduced by commit
+>=20
+> =C2=A0 fc5d96670eb2 ("drm/ttm: Move swapped objects off the manager's LRU
+> list")
+>=20
 
-> On Wed, 09 Oct 2024, Karel Balej wrote:
-> 
-> > Lee Jones, 2024-10-09T11:06:43+01:00:
-> > > On Fri, 20 Sep 2024 18:12:34 +0200, Karel Balej wrote:
-> > > > RTC lives on the base register page of the chip. Add definitions of the
-> > > > registers needed for a basic set/read time functionality.
-> > > > 
-> > > > 
-> > >
-> > > Applied, thanks!
-> > 
-> > Thank you, however I'm a little perplexed.
-> > 
-> > It was my understanding that RFC patches should not be applied without
-> > further agreement, is that not the case? Obviously this patch was very
-> > simple and I used RFC mainly because of the RTC driver itself, but I'm
-> > curious to know for future submissions.
-> 
-> I missed the fact that this was an RFC.  I can unapply it if you like?
-> 
-> > Also, I expected the entire series to go at once through the rtc tree
-> > with your ack as while it is not a strict dependency in terms of
-> > breakage, the first patch seems rather pointless without the follow-up
-> > which could theoretically take a long time to get applied and even some
-> > requested changes could require changes to this patch. Could you please
-> > explain what the policy is on this?
-> 
-> The policy is flexible.  However, the generally accepted rule is that if
-> there are build-time dependencies between patches, then one maintainer
-> (usually me since MFD is usually at the centre of these cross-subsystem
-> patch-sets) takes them and sends out a pull-request for an immutable
-> branch for the other maintainers to pull from.
-> 
-> However in this case, there are no build-time dependencies so the
-> patches are able to and therefore should go in via their respective
-> repos.
+Thanks. Will provide a fix asap.
 
-Actually, it looks like there are build-time deps between them.
+/Thomas
 
-Please break out the inclusion of the additional defines and place them
-into the RTC patch.  I will then Ack that one.  The patch making changes
-to driver/mfd will still go in via the MFD repo.
-
--- 
-Lee Jones [李琼斯]
 
