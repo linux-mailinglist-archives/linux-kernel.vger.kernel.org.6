@@ -1,87 +1,134 @@
-Return-Path: <linux-kernel+bounces-359573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A12998D77
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:31:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46619998DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E66C28AA57
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9583CB2C2C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F364198E99;
-	Thu, 10 Oct 2024 16:31:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B43192D9C;
+	Thu, 10 Oct 2024 16:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFmGEv4C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ABF27468
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BC926AFC;
+	Thu, 10 Oct 2024 16:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728577866; cv=none; b=vBff+U4wVYuJszcjon2jhIt7mHSpxkNvAS+iqor85w76UFOZtujeCwmJnlOftgnqWwSZJYzvjv9WJlF0PVCTw08KebVvgfhnh+caEyxyYfZtrdSFewAAaWNtM405oSDdVF9CFMnbo04Uc+vM4K3VHCn0J3biuZOKFsHKhdRKtCE=
+	t=1728577916; cv=none; b=HBAn7qWe90rVxkqtqM/AylZWIb/fYe+xTqn/5t+hHNWX+bBudB/906pH4GNab8mvAtzSYKZL7BKKE0i5BA23Qtlievy2nxd22KwOz8Sd2StB/THKTSXOz4A6aQ+cZma7u+6g9WtjV0nx+B777BC9nt3Cm/knxMZ6aBHlvsDYtqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728577866; c=relaxed/simple;
-	bh=+Qo+YBHn2VNH/t9MDCAP14amx2/10qq4PTlcGIVOTBA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=soFF1T09GHlfS/e3LxAFQmVX2V4sF3tpantCYGc6mFtsjb8IDdaEAU0zOvDkkR2r4V1N9GpfVtgAozFBNXDbNKZ2OqfZfioDrKwVKiZCUf/GieiLeKw4YypKp9Fl0wFKOY8P5VpZsflaIZ4KeYPFdsdcOvQeznnJ/KXcvF37Ync=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a388c0e4b9so9308185ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:31:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728577864; x=1729182664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CSEtDGtKGKfRAVymeFsb/DlzbnmKSMYSkSFMLVpW310=;
-        b=a/9LZKzNTMgomZtB2jp9luTntL5awRJ4jFwjpti6g6SO8mew7jBzJcY6yJ1jCOjtIh
-         IrOXEofyElP+642NvfkfopNANcKBwHYMBM4gNVnwezfkpOqOkIXTKt8Qc3xG2vXb6XkF
-         ZAFZ3L8Qvs0KC7IlvE1scAisYP9/7T8iFSAsla0gUDNmS/nVyAQv6Pgbpvxrm7GJf1Ks
-         JjaH1kcVH9RJrnzWNwugPa89MtPygWjqkEcktS0+3DyMTesrSZk3PR9OG14nOamyJ9Pb
-         3BhFB5qayeeLDG8SJHbcor9PRbfQSvUCiLN9otkYy93TYezxCjCZDUAavRPTE3FjwOLk
-         L93w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpKlXdy/OOJoOK1F99VW/qhmHs7DPBmXYu+aAhhDuPBNyIcvzOLgoKqxsFhqGmDW2+7W5E6TCrEY7wr4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxOYQf8IziPoVMTdIzK/Sfd6u25FTrccmlvfWQN+evDurr0vED
-	MZFVpUGn7U7HHa5CjyouxFkuf2K4xBwIY3uKrLoHAS9J1xk8ZILOx0NHLvikwqL7330g82LqFNb
-	UzQLL5AIt6Ajs/BSenSIawtD+Pra8t21h/4+DQ0bXG9HAg1TXxCiaJcI=
-X-Google-Smtp-Source: AGHT+IFaNpMXfWDNlI8t1SUGy8LcJi9+AtGykueHA0LHPxfLhsx91w0eLbOOSFg0TpCNQH00tXUXgFEaolv4IiaKzA+ziIu31dnG
+	s=arc-20240116; t=1728577916; c=relaxed/simple;
+	bh=ISMg2hg05B+ooD5IxBVrLLWhhuz9hf2nRGppEGJnpSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elVDjaVh1sxPWSqUgOVglVOkUsr5fEO9A/2GVvSRRVPcNxvCKWgbPgo0ozp6crxixQpK5+PF66CwxuVjrgCZBaIX0hI7XccJNlF+UI5yrHuaBhQvhdBnJnF84iYnjsJqF6YCA8qp/p1P6CK++GGEc/jmTzwX0Z8ZcxP7/0pADIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFmGEv4C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95A3C4CEC5;
+	Thu, 10 Oct 2024 16:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728577916;
+	bh=ISMg2hg05B+ooD5IxBVrLLWhhuz9hf2nRGppEGJnpSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gFmGEv4CSUPv+/iN9dxYJZpRvvY3XTdVtztb2t9+gC4DyKnJm2eNnR3HT3hTcpfdm
+	 wIA7vdfVueibSQLFxNBy8LneDggdPv5Ig/NEPWOH8ghO2715ERPLcDMT+X8MPPwF9B
+	 2Tej5WED9MCzRTmu/7iS3sqCs7j5X+CL9TvJ280VmhWc3L+luq6yCgHluYzLGoGwXv
+	 ND1KQ5s2dJLo9HfG4mmOZtfo6SD74KqDme3lEm+CYU59JW/wmX73RBl6z/kSWa51SP
+	 fXFMQW8OyZ/sbA5RG/e+kEGceOwrPMDP2QJOwN3O7GgNY/kVwEO6O9PtdKmdk1u01p
+	 4gYyKCiuDz6dw==
+Date: Thu, 10 Oct 2024 09:31:54 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Jiri Slaby <jirislaby@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+Message-ID: <ZwgBenahw7EImQLk@google.com>
+References: <ZtJWEVn8-w07Wm0q@x1>
+ <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org>
+ <ZtYJ0z8f-1jwYSbV@x1>
+ <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
+ <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
+ <ZwYbQswnGHSstClc@google.com>
+ <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
+ <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
+ <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
+ <ZwgAzde-jVyo4cSu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164b:b0:3a0:533e:3c0a with SMTP id
- e9e14a558f8ab-3a3a5cc19d5mr44216485ab.7.1728577863681; Thu, 10 Oct 2024
- 09:31:03 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:31:03 -0700
-In-Reply-To: <tencent_31E392D2C64C4983AEF8EED04C8CA7C8C606@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67080147.050a0220.3e960.0001.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_inline
-From: syzbot <syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZwgAzde-jVyo4cSu@google.com>
 
-Hello,
+On Thu, Oct 10, 2024 at 09:29:01AM -0700, Namhyung Kim wrote:
+> On Thu, Oct 10, 2024 at 10:22:12AM +0200, Jiri Slaby wrote:
+> > From 3d4f06d79c949a8f155c20652b4f685540899ad4 Mon Sep 17 00:00:00 2001
+> > From: Jiri Slaby <jslaby@suse.cz>
+> > Date: Thu, 10 Oct 2024 09:57:07 +0200
+> > Subject: [PATCH] perf: fix non-listed archs
+> > 
+> > Suggested-by: Howard Chu <howardchu95@gmail.com>
+> > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> 
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Also with,
 
-Reported-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
-Tested-by: syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
+Fixes: 7a2fb5619cc1fb53 ("perf trace: Fix iteration of syscall ids in syscalltbl->entries")
 
-Tested on:
-
-commit:         d3d15566 Merge tag 'mm-hotfixes-stable-2024-10-09-15-4..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1683cb27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
-dashboard link: https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17c36fd0580000
-
-Note: testing is done by a robot and is best-effort only.
+> 
+> Arnaldo, can you please pick this up for v6.12?
+> 
+> Thanks,
+> Namhyung
+> 
+> > ---
+> >  tools/perf/util/syscalltbl.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> > index 7c15dec6900d..6c45ded922b6 100644
+> > --- a/tools/perf/util/syscalltbl.c
+> > +++ b/tools/perf/util/syscalltbl.c
+> > @@ -46,6 +46,11 @@ static const char *const *syscalltbl_native = syscalltbl_mips_n64;
+> >  #include <asm/syscalls.c>
+> >  const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
+> >  static const char *const *syscalltbl_native = syscalltbl_loongarch;
+> > +#else
+> > +const int syscalltbl_native_max_id = 0;
+> > +static const char *const syscalltbl_native[] = {
+> > +	[0] = "unknown",
+> > +};
+> >  #endif
+> >  
+> >  struct syscall {
+> > @@ -182,6 +187,11 @@ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+> >  	return audit_name_to_syscall(name, tbl->audit_machine);
+> >  }
+> >  
+> > +int syscalltbl__id_at_idx(struct syscalltbl *tbl __maybe_unused, int idx)
+> > +{
+> > +	return idx;
+> > +}
+> > +
+> >  int syscalltbl__strglobmatch_next(struct syscalltbl *tbl __maybe_unused,
+> >  				  const char *syscall_glob __maybe_unused, int *idx __maybe_unused)
+> >  {
+> > -- 
+> > 2.46.1
+> > 
+> 
 
