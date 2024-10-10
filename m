@@ -1,92 +1,144 @@
-Return-Path: <linux-kernel+bounces-359166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F9D998840
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:50:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A80599884A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D646BB22583
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C93288EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEE01CB527;
-	Thu, 10 Oct 2024 13:49:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8AD1CBEAF;
+	Thu, 10 Oct 2024 13:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTVXmcbk"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A3B1CB309;
-	Thu, 10 Oct 2024 13:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E49A1C3F15;
+	Thu, 10 Oct 2024 13:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568161; cv=none; b=bVsH8g0JvvAVMk1tHhhC/zEXjIYQsqT/Hf33RC/QV3YsQzgXhUDBNUcfq/xMZFteBf01gyTSbfqjt5YsMXA4FWkKmEmEEJie6sjbyZum+6bHuo6t/nkEji3imoqcBpjLKQUd2jbxdXsKcKtbJMJFW0GeUPINoR0VZ/RZoo+g/DY=
+	t=1728568184; cv=none; b=T2NYjBU+40bQ4bgeHPyr+F4RHwrYCrTbrwYpLUYHuKx5LI67eaSO3/WnVUx9TB2hE7fpyjYzDnDFqa6zROgbwvN53a6qDJljIPsYpVs6PeLGsCTh+vNGUXL76sgmQdIGaJ0McJ8O+JGqzSLP1H3MHDuBNeSn5XY0YrBiM3GAdQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568161; c=relaxed/simple;
-	bh=MUZDI/UFfGGECYVXxsnrqEk2MO969Rn+aKLck0TcTks=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PBzueg39O0Dpn7JB4PaE0uhCCfiYAs12tr/Wn8V5bDezADE/GghD42L0czE5yICS8ucID1M7njX3SAb4MOyQlQBu/qm0dUCWxwsAItnpqxDTxoeyH+b7947jWxoGKDsxagtBfmSysPuxtY4zaonyQQb4EE8rsvUOVeIXZrUcEow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE263C4CEC5;
-	Thu, 10 Oct 2024 13:49:19 +0000 (UTC)
-Date: Thu, 10 Oct 2024 09:49:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, bpf
- <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Jose E.
- Marchesi" <jose.marchesi@oracle.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: NULL pointer deref when running BPF monitor program
- (6.11.0-rc1)
-Message-ID: <20241010094926.146c6b38@gandalf.local.home>
-In-Reply-To: <ZweXrhopOmEb9rMx@krava>
-References: <ZsMwyO1Tv6BsOyc-@krava>
-	<20240819113747.31d1ae79@gandalf.local.home>
-	<ZsRtOzhicxAhkmoN@krava>
-	<20240820110507.2ba3d541@gandalf.local.home>
-	<Zv11JnaQIlV8BCnB@krava>
-	<Zwbqhkd2Hneftw5F@krava>
-	<20241010003331.gsanhvqyl5g2kgiq@treble.attlocal.net>
-	<20241009205647.1be1d489@gandalf.local.home>
-	<20241009205750.43be92ad@gandalf.local.home>
-	<20241010031727.zizrnubjrb25w4ex@treble.attlocal.net>
-	<ZweXrhopOmEb9rMx@krava>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728568184; c=relaxed/simple;
+	bh=jn2RooPNXmgTDD5nIoEy4n56E66iZkcNlGqDzw8cRWY=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=tLE4CWMG6CJZOUIEMFjGZmWYo2dkXBy62qwpunmV1rigIvVQ7UzqQc91nO7KRIRFe69oOPlhKrMwJgt9FgbNHQcYXVZXPfacK2WtXv8GyfK+XH1zVBTn2VuwNQsB1hVFUlYVwPvQWH3RVsob05/Fny7R6Z2Omzin8/fTr9Bx+ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTVXmcbk; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b1109e80f8so72239785a.0;
+        Thu, 10 Oct 2024 06:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728568181; x=1729172981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pXLiO6qkoJeOcErPn/djUkD/ECKE7VT5hL4zWbkdbOk=;
+        b=BTVXmcbkIF4y3MKzshu8AYn4D++D29OXlVmnRyIgyawmpwudu770Ncl7JWt8/czICJ
+         zmo0sDYpynhPARTWcFQUa2Na5FdnK0IOc8ooGcd2vpbk0zb3CnczTZ0PkMXnseLCfFa4
+         fYL6FqS7T/3OlX/37fAsD5ko1RWe+USXPdyQtHt+51wctVtBig/Db6fyotHPsQntHwvR
+         9O5TcXPhYzc1d6ZLNK3PYsk/F+EEMOpx3uYDo4Tr2m+wxhO8w1qk57uQdiOoGXgfYLO8
+         P24/RoMxd0MFwY0Z6dD1JVgvGnaIQaFm4JVG6N5dPgQy+gc8oYXRW1UfZCfX4yvgTNcP
+         hbQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728568181; x=1729172981;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pXLiO6qkoJeOcErPn/djUkD/ECKE7VT5hL4zWbkdbOk=;
+        b=UHT+m3s7tVxPwrVAmoBPGZX+lBMkAwMgLq+P4LKXiQJJmq7BgGV6s6+QdNUAqxa6Vc
+         ZVSXtVTYGLaKI6vH/ZX8CPmQ0H3ZeVZi3RO4WrFYRaW7ro9X3rXamBG/qB93WU8ik163
+         zip6xJZglFBHZpg0n7C78QT8MpDg47dIybkGvNoYPEv9G4qdwWRr2CFG4j0EWh5u6JZi
+         DW+5ZXhjLetVnIdcCN5qFCZbBecXdb2MT/9W+FqgoykKCX1lPXVsqdyNEVQtuRaFW82b
+         GnE2dBEEX7anuso7gN1XtA7J6EOXye7hByhuCd/NvMHEoipPTA+CQKBiTaSdGBo9mkxJ
+         DciA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdiJGr2CbHKgGrnqPb6CgdiXxJ0X51572RwtSOuqir+bbOMdTtBmRb4RRlCflpPxv9MOxlUQaONqUGnPE=@vger.kernel.org, AJvYcCXvdxs52j83/EUqjC4Kn9OcXDz1yJk5rb8abIohiNABnxpiWUwHBt2OtMfnO6ETakxdKXg2jZQY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJowRRhDC5soqycc9UlC4wallSTSThzBSfkQctruJ9JQHevthq
+	1VivvNQT6ZtbPn/7nFLQTGl+ci2oQAQaEJOF/H7qQ6sx/SPYWyF+
+X-Google-Smtp-Source: AGHT+IHzDkiwrF2qh78n4PZUaabIUExAI/FprABZIDlaS1EjniG4iFCy9aluFfxpKdrQ/i3bmj7gpw==
+X-Received: by 2002:a05:620a:2416:b0:7a9:a1f4:d4e1 with SMTP id af79cd13be357-7b079551686mr926669085a.39.1728568181319;
+        Thu, 10 Oct 2024 06:49:41 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11497adb8sm47536685a.121.2024.10.10.06.49.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 06:49:40 -0700 (PDT)
+Date: Thu, 10 Oct 2024 09:49:40 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Philo Lu <lulie@linux.alibaba.com>, 
+ netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ dsahern@kernel.org, 
+ antony.antony@secunet.com, 
+ steffen.klassert@secunet.com, 
+ linux-kernel@vger.kernel.org, 
+ dust.li@linux.alibaba.com, 
+ jakub@cloudflare.com, 
+ fred.cc@alibaba-inc.com, 
+ yubing.qiuyubing@alibaba-inc.com
+Message-ID: <6707db74601d9_20292129449@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241010090351.79698-4-lulie@linux.alibaba.com>
+References: <20241010090351.79698-1-lulie@linux.alibaba.com>
+ <20241010090351.79698-4-lulie@linux.alibaba.com>
+Subject: Re: [PATCH v3 net-next 3/3] ipv4/udp: Add 4-tuple hash for connected
+ socket
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Oct 2024 11:00:30 +0200
-Jiri Olsa <olsajiri@gmail.com> wrote:
-
-> > Unfortunately it's not that simple, the args could be moved around to
-> > other registers.  And objtool doesn't have an emulator.
-> > 
-> > Also it's not clear how that would deal with >6 args, or IS_ERR() as
-> > Jirka pointed out upthread.  
-
-For the >6 args, I would say that the verifier just says any arg greater
-than 6 can be NULL. There's not many trace events that have that (if any).
-
+Philo Lu wrote:
+> Currently, the udp_table has two hash table, the port hash and portaddr
+> hash. Usually for UDP servers, all sockets have the same local port and
+> addr, so they are all on the same hash slot within a reuseport group.
 > 
-> another complication might be that the code in tracepoint's fast assign
-> can potentially call global function (?), that could do the argument NULL
-> check and we won't have its code at objtool invocation time
+> In some applications, UDP servers use connect() to manage clients. In
+> particular, when firstly receiving from an unseen 4 tuple, a new socket
+> is created and connect()ed to the remote addr:port, and then the fd is
+> used exclusively by the client.
+> 
+> Once there are connected sks in a reuseport group, udp has to score all
+> sks in the same hash2 slot to find the best match. This could be
+> inefficient with a large number of connections, resulting in high
+> softirq overhead.
+> 
+> To solve the problem, this patch implement 4-tuple hash for connected
+> udp sockets. During connect(), hash4 slot is updated, as well as a
+> corresponding counter, hash4_cnt, in hslot2. In __udp4_lib_lookup(),
+> hslot4 will be searched firstly if the counter is non-zero. Otherwise,
+> hslot2 is used like before. Note that only connected sockets enter this
+> hash4 path, while un-connected ones are not affected.
+> 
+> Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+> Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
+> Signed-off-by: Fred Chen <fred.cc@alibaba-inc.com>
+> Signed-off-by: Yubing Qiu <yubing.qiuyubing@alibaba-inc.com>
 
-I'm starting to think that the best thing to do is to have the verifier add
-exception code in the bpf program that just kills the task if it faults on
-reading a tracepoint parameter.
+> diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+> index bbf3352213c4..4d3dfcb48a39 100644
+> --- a/net/ipv6/udp.c
+> +++ b/net/ipv6/udp.c
+> @@ -111,7 +111,7 @@ void udp_v6_rehash(struct sock *sk)
+>  					  &sk->sk_v6_rcv_saddr,
+>  					  inet_sk(sk)->inet_num);
+>  
+> -	udp_lib_rehash(sk, new_hash);
+> +	udp_lib_rehash(sk, new_hash, 0); /* 4-tuple hash not implemented */
 
-This all started because it was assumed (incorrectly, and I was never
-asked) that trace point args can't be NULL. It was always the case that
-they could be. This was not a regression.
+What is the plan for IPv6?
 
-Now that there's existing BPF programs that assume that tracepoint
-arguments are not NULL, is a bug in user space. Not the kernel.
 
--- Steve
+
 
