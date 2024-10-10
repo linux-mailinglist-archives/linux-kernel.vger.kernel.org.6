@@ -1,88 +1,76 @@
-Return-Path: <linux-kernel+bounces-359010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230F0998643
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:40:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0E4998640
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5183A1C2178A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5702B225C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAC41C6F44;
-	Thu, 10 Oct 2024 12:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gToKVi6l"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797271C463A;
+	Thu, 10 Oct 2024 12:39:37 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F3A1BD00B;
-	Thu, 10 Oct 2024 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6F41C1AD9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563982; cv=none; b=pQH/V6QoLEgyMT2vtwQ/rPanH54tm0A4P8kbcjuVrZw3kx8vRq9apBnbo8JS9W2NDR5TvyoqZpL5sHa4yAzyl2AzmRc/LCXe3qD0HPKsGpkGiddjxFkz1iSpYYsxXC5d/78HMx/w8MZaUbau2Sf1kN6CIhD/GoMorbAX1nETYX8=
+	t=1728563977; cv=none; b=ZnqUM3mjKwzWc3w1GU2cPOJnBjo2rq0Nq+MqmYEIJsDYf8OkYxLUr3peuyOp/7VIQOhU57Z4ydJ8EzXLB12b1ltlTmO2Mqzj02pnmChzxFQQsrC0JBnbEcsqfDKdfC2wCShXCWGrTZCtE3ZPPmISI08N6PStkTSfteFmPT6Q/lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563982; c=relaxed/simple;
-	bh=LD8P8MlsEVOTw05eZKCVdmZseYjr8X9zmHUiU67aA+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5yBtY91Oj85OYuMJqYQyb2oG8g6hDAfMLCDeLwcMiKOJaHKYynijjAgUBZ2pYLW12/0y2PM67mdqzPpAggjngmpSb99OY22tCTnSf0H5oghsW/BwrzbTXqKVmi2wz2fy753wyOf+vk0zIe71gkTF05oJGqOgXnIIBXORCCCdwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gToKVi6l; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xkDKvYgG1ZGbE9OZmdmZN6Uddg9Aj6h9bniy5gysQTY=; b=gToKVi6lxzjGuHvyqnPrbGWL1A
-	q/jFJjJD6k90RPTo9f0IZqNxVaBVWMXyOiE5whYGLurxFRjDWZwBAVYNGRiARf0VTR1QXH0bGYMg1
-	0cRbKKYPyV5t6aSqNlbIul1301twWLLQ7PAndqiULuU6ducugVA1ODRDhpO2PTBtdYkI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sysRu-009boT-SM; Thu, 10 Oct 2024 14:39:22 +0200
-Date: Thu, 10 Oct 2024 14:39:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1] net: phy: aquantia: poll status register
-Message-ID: <0ab4a294-eaed-4dc6-acd0-391963b1f835@lunn.ch>
-References: <20241010004935.1774601-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1728563977; c=relaxed/simple;
+	bh=uJgwS+EYHWGuZMYuGhsSHk/r40QmgerLLW822ZRQwaY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GIsxZj+tAs1kOTRAnIAWmZIdB8u1Vr6ACGNIYlVVqWR8qaVwFR2NKgl1HpGcE65hz82cyyfS66gzsp04XV4EGjhTVhbpRNq+YDdNRcqc2bOM70ccXBoqhtbnWeeVTzdIAlORpQgomO3V8cHvcSSuBqV/P67hvSE+/rbzYeo02RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a1925177fdso10520125ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:39:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728563975; x=1729168775;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uJgwS+EYHWGuZMYuGhsSHk/r40QmgerLLW822ZRQwaY=;
+        b=P87djbbcMytTOe7VPLlN5jqVvAxSDqhDPqkc7xhDkfulR2hE1Jz+Gw4nfMXSr//Tqv
+         LQQGFsb6JqebkralHwVfHTVWhQTNeXZxActhXf1DeA3hWmQunp4nPzyUzn4d7DpBk0O7
+         NHI+6uMiDXWmunfOLJ3+1bbQIHSDKwhR5ix8sB9OhGBUgVBt5bWlEsDZvX4z4nz9mbgw
+         SDr6zNhSoM0N3Ng+mM0JpLqb9fnYdx2rU45n5Gj/QtWxqMRbeB90M+1Nj8FlQpoTB8HM
+         VSH2llmWW5I8PZyqz6KUZuXnkU3rzxtmzgjeP+bqMXfe6ZbjLVHrS8uB2FVWNgMSMd4G
+         j5RA==
+X-Gm-Message-State: AOJu0Yzur2whTZSWumplt6M9m0DoUJ2KbmLZ9yqrJPiedcbbnuutGQd7
+	7oQzV3NzKu9lbLzgLnbCT1oYzJMAzkd7tvZCSnyGrfDNwGpBt5bGBVvnEDSjXIncepcm4JijdIS
+	m8u5UI+fWAFD85yy1Vv09rpls9K33wrjG9NnzsyuAoFQ8L+73XEL6F7g=
+X-Google-Smtp-Source: AGHT+IHOshf0CXFaKnrYsH45V2T/BIubZ81pkMIKvtSeQj4rkiVNrtVsWqvoKVOqW1JQ+lb7veY7E2WuMUJcENYPn0MDRXVEeGi7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010004935.1774601-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Received: by 2002:a05:6e02:1c8a:b0:3a3:778e:45cd with SMTP id
+ e9e14a558f8ab-3a397d17988mr68615455ab.21.1728563974855; Thu, 10 Oct 2024
+ 05:39:34 -0700 (PDT)
+Date: Thu, 10 Oct 2024 05:39:34 -0700
+In-Reply-To: <67014df7.050a0220.49194.04c0.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6707cb06.050a0220.8109b.0007.GAE@google.com>
+Subject: Re: [syzbot] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 10, 2024 at 01:49:34PM +1300, Aryan Srivastava wrote:
-> The system interface connection status register is not immediately
-> correct upon line side link up. This results in the status being read as
-> OFF and then transitioning to the correct host side link mode with a
-> short delay. This causes the phylink framework passing the OFF status
-> down to all MAC config drivers, resulting in the host side link being
-> misconfigured, which in turn can lead to link flapping or complete
-> packet loss in some cases.
-> 
-> Mitigate this by periodically polling the register until it not showing
-> the OFF state. This will be done every 1ms for 10ms, using the same
-> poll/timeout as the processor intensive operation reads.
-> 
-> If the phy is still expressing the OFF state after the timeout, then set
-> the link to false and pass the NA interface mode onto the phylink
-> framework.
-> 
-> Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+***
 
-    Andrew
+Subject: KMSAN: uninit-value in __exfat_get_dentry_set
+Author: niharchaithanya@gmail.com
+
+#syz test
 
