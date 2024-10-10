@@ -1,203 +1,273 @@
-Return-Path: <linux-kernel+bounces-358348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DE9997D79
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44962997D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24DD61C230C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:39:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2FE1F24601
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B44F1A00F8;
-	Thu, 10 Oct 2024 06:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F8Gl6vXL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986201A304A;
+	Thu, 10 Oct 2024 06:40:03 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06DB1A4E70;
-	Thu, 10 Oct 2024 06:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6081B3725
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728542371; cv=none; b=ldlc/WIzwpcsWWtz3Ai6Olm0S20UohYbXB5NcrLm6L7aJvYEyGBSFiK+uEi9pSO97cxIj0mox3Trc5Cs0ueYepsZI1tbqzoT2qgpi9rsiIdiJ8UvwQ2lCqdL5vd5pyQgdNTlK2og7kKIi1lR2r7D4hMP1mgrkxuP4lAXzOBpvAc=
+	t=1728542403; cv=none; b=rtBolbj1vfGby81HABKlPGA5nMQxWO6eRQTbgLUKkmBC03RpgXNjo+xptg/1OAbZ89Wfe+761eAjuhuMoZSOpgtfz6UJ8rJTqAOOQpKcRR14PTpbU517SvyoQmqPVwS63g4ZQmdXqQRMR/3NPE8bo3mcSIsrkkwR/0wOFknpeWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728542371; c=relaxed/simple;
-	bh=t2ACQLeshRvb78xLPQ6LJeesmOpr30HiZoM3f7n/5+E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Y1j6+9Z2sy9pAgbWhOmLuDO2KrVM0zLakCNU5Wq5v5tdLyAjDdA/otxgKMqkqZouqaIghKThctqK5702+RIQanoUwWUlwIv7mOc0s/VenLnucsAYhbsd6dcJUFTi8q2qwab28mxwSBmeEZVNGhfPL6bk/BlXsGAOWXWzOTckpak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F8Gl6vXL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1cqtn029507;
-	Thu, 10 Oct 2024 06:39:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9LSjW72loJMXVUAFNiqbxL485PUaQA935T6aBJpGXmI=; b=F8Gl6vXLqTVRIRmT
-	tFNbqXrQGUwYLikEdewMkxzzO+I9FM6XnMkTJUcIcD9cwt+b1UkBlKI/j5iYK7ub
-	DWZGf5v2DsQkyK8WPqNITnwgnyVM1dMt1ItCn8H/kDFN50Yonck8ukZKqe/4J/xZ
-	OcgSEQtXrWtKzJo1IuE4jhpIOVOafk+E9eVzuNN1+F86nWWK3MxqFeD1TNgxtYQb
-	gPzz6CmB1URnOVcLPuXUL9b72kNs0Z/0pFT18z7FcKtXkeQkOEaTRjPrAHZu0xK1
-	xZGPBmMD5g+ssIIyJdqALsuC3kSHwJAxOp9u9AMoDygFPKaKuiTS95uY/P7/gpDt
-	vRMlqA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425c8qvuh3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 06:39:26 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A6dPA3003645
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 06:39:25 GMT
-Received: from songxue-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+	s=arc-20240116; t=1728542403; c=relaxed/simple;
+	bh=XipN3XuCesUMl0TDbbTMyiwQPzzn4zV7Y6A8SAS1Bgo=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=W6F5CT96XG0ljA0A0D9p46m6qyz9iEd8o9mGiaL+6ENj7reUKydns1kva81DmArNBtCwhIxV2mM7tgRwEy6xYBbPZwhD1L9vnT4rnMof6kPLqVndTrfsERuZJQQJM0hLNOGFlEFGomC3NqWbtLsC1r92J+N21ZH7H5Fjcewjt74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XPKqD0znXz20pfq;
+	Thu, 10 Oct 2024 14:39:20 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8EEAB1400D2;
+	Thu, 10 Oct 2024 14:39:57 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 23:39:19 -0700
-From: Song Xue <quic_songxue@quicinc.com>
-Date: Thu, 10 Oct 2024 14:38:40 +0800
-Subject: [PATCH v2 2/2] soc: qcom: llcc: Add configuration data for QCS615
+ 15.2.1544.11; Thu, 10 Oct 2024 14:39:57 +0800
+Subject: Re: [patch 15/25] debugobjects: Rework object allocation
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+CC: Waiman Long <longman@redhat.com>
+References: <20241007163507.647617031@linutronix.de>
+ <20241007164913.893554162@linutronix.de>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <289c3e15-77ea-edb6-7485-5b2f8ce66db5@huawei.com>
+Date: Thu, 10 Oct 2024 14:39:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20241007164913.893554162@linutronix.de>
 Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241010-add_llcc_support_for_qcs615-v2-2-044432450a75@quicinc.com>
-References: <20241010-add_llcc_support_for_qcs615-v2-0-044432450a75@quicinc.com>
-In-Reply-To: <20241010-add_llcc_support_for_qcs615-v2-0-044432450a75@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Song Xue
-	<quic_songxue@quicinc.com>
-X-Mailer: b4 0.15-dev-88a27
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728542354; l=2739;
- i=quic_songxue@quicinc.com; s=20240911; h=from:subject:message-id;
- bh=t2ACQLeshRvb78xLPQ6LJeesmOpr30HiZoM3f7n/5+E=;
- b=KgbhkRTqQQKECJ+n10aXds5Ruifk95HgGecA1qBAY58QJo7fw07N1q2xO87CtJ9B3ZkNVdgNq
- bE8Tz3O7kPJDAEuUEisPeAl1WM5xm1nRdx+kKjuFqvOLTSU3vgBtA/R
-X-Developer-Key: i=quic_songxue@quicinc.com; a=ed25519;
- pk=Z6tjs+BBbyg1kYqhBq0EfW2Pl/yZdOPXutG9TOVA1yc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vrKDx-A-1xrcED925gX-3duts8ZfmaUX
-X-Proofpoint-ORIG-GUID: vrKDx-A-1xrcED925gX-3duts8ZfmaUX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 clxscore=1015
- bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410100042
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-Add LLCC configuration support for the QCS615 platform.
 
-Signed-off-by: Song Xue <quic_songxue@quicinc.com>
----
- drivers/soc/qcom/llcc-qcom.c | 55 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index a470285f54a875bf2262aac7b0f84ed8fd028ef1..3dcbad0c662d3e4458044c168ed619d31b2b57be 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -2225,6 +2225,45 @@ static const struct llcc_slice_config sm8650_data[] = {
- 	},
- };
- 
-+static const struct llcc_slice_config qcs615_data[] = {
-+	{
-+		.usecase_id = LLCC_CPUSS,
-+		.slice_id = 1,
-+		.max_cap = 128,
-+		.priority = 1,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+		.write_scid_en = true,
-+	}, {
-+		.usecase_id = LLCC_MDM,
-+		.slice_id = 8,
-+		.max_cap = 256,
-+		.priority = 0,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_GPUHTW,
-+		.slice_id = 11,
-+		.max_cap = 128,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_GPU,
-+		.slice_id = 12,
-+		.max_cap = 128,
-+		.priority = 1,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	},
-+};
-+
- static const struct llcc_slice_config qdu1000_data_2ch[] = {
- 	{
- 		.usecase_id = LLCC_MDMHPGRW,
-@@ -2646,6 +2685,16 @@ static const u32 llcc_v2_1_reg_offset[] = {
- 	[LLCC_COMMON_STATUS0]	= 0x0003400c,
- };
- 
-+static const struct qcom_llcc_config qcs615_cfg[] = {
-+	{
-+		.sct_data	= qcs615_data,
-+		.size		= ARRAY_SIZE(qcs615_data),
-+		.need_llcc_cfg	= true,
-+		.reg_offset	= llcc_v1_reg_offset,
-+		.edac_reg_offset = &llcc_v1_edac_reg_offset,
-+	},
-+};
-+
- static const struct qcom_llcc_config qdu1000_cfg[] = {
- 	{
- 		.sct_data       = qdu1000_data_8ch,
-@@ -2829,6 +2878,11 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
- 	},
- };
- 
-+static const struct qcom_sct_config qcs615_cfgs = {
-+	.llcc_config	= qcs615_cfg,
-+	.num_config	= ARRAY_SIZE(qcs615_cfg),
-+};
-+
- static const struct qcom_sct_config qdu1000_cfgs = {
- 	.llcc_config	= qdu1000_cfg,
- 	.num_config	= ARRAY_SIZE(qdu1000_cfg),
-@@ -3484,6 +3538,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id qcom_llcc_of_match[] = {
-+	{ .compatible = "qcom,qcs615-llcc", .data = &qcs615_cfgs},
- 	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
- 	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
- 	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
+On 2024/10/8 0:50, Thomas Gleixner wrote:
+> The current allocation scheme tries to allocate from the per CPU pool
+> first. If that fails it allocates one object from the global pool and then
+> refills the per CPU pool from the global pool.
+> 
+> That is in the way of switching the pool management to batch mode as the
+> global pool needs to be a strict stack of batches, which does not allow
+> to allocate single objects.
+> 
+> Rework the code to refill the per CPU pool first and then allocate the
+> object from the refilled batch. Also try to allocate from the to free pool
+> first to avoid freeing and reallocating objects.
+
+Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
+
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  lib/debugobjects.c |  144 +++++++++++++++++++++++++----------------------------
+>  1 file changed, 69 insertions(+), 75 deletions(-)
+> 
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -141,6 +141,64 @@ static __always_inline bool pool_must_re
+>  	return pool_count(pool) < pool->min_cnt / 2;
+>  }
+>  
+> +static bool pool_move_batch(struct obj_pool *dst, struct obj_pool *src)
+> +{
+> +	if (dst->cnt + ODEBUG_BATCH_SIZE > dst->max_cnt || !src->cnt)
+> +		return false;
+> +
+> +	for (int i = 0; i < ODEBUG_BATCH_SIZE && src->cnt; i++) {
+> +		struct hlist_node *node = src->objects.first;
+> +
+> +		WRITE_ONCE(src->cnt, src->cnt - 1);
+> +		WRITE_ONCE(dst->cnt, dst->cnt + 1);
+> +
+> +		hlist_del(node);
+> +		hlist_add_head(node, &dst->objects);
+> +	}
+> +	return true;
+> +}
+> +
+> +static struct debug_obj *__alloc_object(struct hlist_head *list)
+> +{
+> +	struct debug_obj *obj;
+> +
+> +	if (unlikely(!list->first))
+> +		return NULL;
+> +
+> +	obj = hlist_entry(list->first, typeof(*obj), node);
+> +	hlist_del(&obj->node);
+> +	return obj;
+> +}
+> +
+> +static struct debug_obj *pcpu_alloc(void)
+> +{
+> +	struct obj_pool *pcp = this_cpu_ptr(&pool_pcpu);
+> +
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	for (;;) {
+> +		struct debug_obj *obj = __alloc_object(&pcp->objects);
+> +
+> +		if (likely(obj)) {
+> +			pcp->cnt--;
+> +			return obj;
+> +		}
+> +
+> +		guard(raw_spinlock)(&pool_lock);
+> +		if (!pool_move_batch(pcp, &pool_to_free)) {
+> +			if (!pool_move_batch(pcp, &pool_global))
+> +				return NULL;
+> +		}
+> +		obj_pool_used += pcp->cnt;
+> +
+> +		if (obj_pool_used > obj_pool_max_used)
+> +			obj_pool_max_used = obj_pool_used;
+> +
+> +		if (pool_global.cnt < obj_pool_min_free)
+> +			obj_pool_min_free = pool_global.cnt;
+> +	}
+> +}
+> +
+>  static void free_object_list(struct hlist_head *head)
+>  {
+>  	struct hlist_node *tmp;
+> @@ -158,7 +216,6 @@ static void free_object_list(struct hlis
+>  static void fill_pool_from_freelist(void)
+>  {
+>  	static unsigned long state;
+> -	struct debug_obj *obj;
+>  
+>  	/*
+>  	 * Reuse objs from the global obj_to_free list; they will be
+> @@ -180,17 +237,11 @@ static void fill_pool_from_freelist(void
+>  	if (test_bit(0, &state) || test_and_set_bit(0, &state))
+>  		return;
+>  
+> -	guard(raw_spinlock)(&pool_lock);
+> -	/*
+> -	 * Recheck with the lock held as the worker thread might have
+> -	 * won the race and freed the global free list already.
+> -	 */
+> -	while (pool_to_free.cnt && (pool_global.cnt < pool_global.min_cnt)) {
+> -		obj = hlist_entry(pool_to_free.objects.first, typeof(*obj), node);
+> -		hlist_del(&obj->node);
+> -		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt - 1);
+> -		hlist_add_head(&obj->node, &pool_global.objects);
+> -		WRITE_ONCE(pool_global.cnt, pool_global.cnt + 1);
+> +	/* Avoid taking the lock when there is no work to do */
+> +	while (pool_should_refill(&pool_global) && pool_count(&pool_to_free)) {
+> +		guard(raw_spinlock)(&pool_lock);
+> +		/* Move a batch if possible */
+> +		pool_move_batch(&pool_global, &pool_to_free);
+>  	}
+>  	clear_bit(0, &state);
+>  }
+> @@ -251,74 +302,17 @@ static struct debug_obj *lookup_object(v
+>  	return NULL;
+>  }
+>  
+> -/*
+> - * Allocate a new object from the hlist
+> - */
+> -static struct debug_obj *__alloc_object(struct hlist_head *list)
+> +static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
+> +				      const struct debug_obj_descr *descr)
+>  {
+> -	struct debug_obj *obj = NULL;
+> -
+> -	if (list->first) {
+> -		obj = hlist_entry(list->first, typeof(*obj), node);
+> -		hlist_del(&obj->node);
+> -	}
+> -
+> -	return obj;
+> -}
+> -
+> -static struct debug_obj *
+> -alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *descr)
+> -{
+> -	struct obj_pool *percpu_pool = this_cpu_ptr(&pool_pcpu);
+>  	struct debug_obj *obj;
+>  
+> -	if (likely(obj_cache)) {
+> -		obj = __alloc_object(&percpu_pool->objects);
+> -		if (obj) {
+> -			percpu_pool->cnt--;
+> -			goto init_obj;
+> -		}
+> -	} else {
+> +	if (likely(obj_cache))
+> +		obj = pcpu_alloc();
+> +	else
+>  		obj = __alloc_object(&pool_boot);
+> -		goto init_obj;
+> -	}
+> -
+> -	raw_spin_lock(&pool_lock);
+> -	obj = __alloc_object(&pool_global.objects);
+> -	if (obj) {
+> -		obj_pool_used++;
+> -		WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
+> -
+> -		/*
+> -		 * Looking ahead, allocate one batch of debug objects and
+> -		 * put them into the percpu free pool.
+> -		 */
+> -		if (likely(obj_cache)) {
+> -			int i;
+> -
+> -			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
+> -				struct debug_obj *obj2;
+> -
+> -				obj2 = __alloc_object(&pool_global.objects);
+> -				if (!obj2)
+> -					break;
+> -				hlist_add_head(&obj2->node, &percpu_pool->objects);
+> -				percpu_pool->cnt++;
+> -				obj_pool_used++;
+> -				WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
+> -			}
+> -		}
+> -
+> -		if (obj_pool_used > obj_pool_max_used)
+> -			obj_pool_max_used = obj_pool_used;
+> -
+> -		if (pool_global.cnt < obj_pool_min_free)
+> -			obj_pool_min_free = pool_global.cnt;
+> -	}
+> -	raw_spin_unlock(&pool_lock);
+>  
+> -init_obj:
+> -	if (obj) {
+> +	if (likely(obj)) {
+>  		obj->object = addr;
+>  		obj->descr  = descr;
+>  		obj->state  = ODEBUG_STATE_NONE;
+> 
+> .
+> 
 
 -- 
-2.25.1
-
+Regards,
+  Zhen Lei
 
