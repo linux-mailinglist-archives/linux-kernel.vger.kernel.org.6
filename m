@@ -1,149 +1,152 @@
-Return-Path: <linux-kernel+bounces-358292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49433997CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF2D997CCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785031C22127
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74E81F23648
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8418919EED3;
-	Thu, 10 Oct 2024 06:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE6D1A01D4;
+	Thu, 10 Oct 2024 06:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRcaVMNu"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FvEBTza4"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3431618A6D4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648F819ABD8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728540375; cv=none; b=pKeMcyJiVY43NdWhXllLTHpA1qgzBfmxipt2P6gafWitiVt4ZdckXRbVZqn1HdAXBTvHd/fCwCyK3yQD7E/C9qlDWSY4sNDYi2LgA40eKwBsq8PzkFRodQkgQ+efP8xYXQkNgY3lRaycdHkmzMVYtJkx98+G9pFZWcnU2Yg0lpI=
+	t=1728540538; cv=none; b=I+e6g48+bZJbI9CaSY+90utU1OwRse7HsRc1At7a1i1mQosBuqmpO19NDFt9+oC9iJsNn68WlY0fXbKpFSTiznXl8jNb+cXNu5CBv/SZpxIKaMatZXaBb3nTl8LSMS/76I1tXWPWyZ4VpjUS7kM3+XaQFxylCNCuZc7sOZ+WXZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728540375; c=relaxed/simple;
-	bh=wDI9M0VUTK2V07yTXbkJn/eodimdWecJgH31V1EdOjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ucKNogjGI5kJj07UwV42oLLhOv22ApklvAyvojlLSDkHaihkO148HlzmwstjSp59Nz306rNsyiZbwKjZHz+NoJbN1TdF+J8OJlT73A/n7UsRNABeKbM4cIaeFvppOcv6KCeAb8XYsLfe865aAqhqbz32/eZX6/K2QQN9m9v0wEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRcaVMNu; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so547509e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:06:13 -0700 (PDT)
+	s=arc-20240116; t=1728540538; c=relaxed/simple;
+	bh=0OgbtqLlAbN1z9OYA94xJ5Sh/iz8vI/2Qy/cvuRnLhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKS9Ry2/Hb7JiPPF1UYcz4BA/IxweUsK4Ai2N4lh87ZMmgPuCLmLXaQfLJ4avID2wSvhbpd5o+oM6HACIF12dHrlh80ARzHHLVXRb/CbieCWYYpc54v2TPiRiL+Dy/wIftDqBbj44spkXgw4dzDWJW1KW5HCrkPcJLoZrXJKtQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FvEBTza4; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db908c9c83so358906a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:08:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728540372; x=1729145172; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SDmfkcHsaZoE+Z/j0j3jVrFX1zabGcs5ByvLRQ2W7IY=;
-        b=NRcaVMNuxFI4TGhxiBpc8yHXoOM56RmdaTV/c8vFdUm41uDxjf4vRwr3Sx+RMLujYf
-         Nt2smPKg4uwid28GX72lZwgmxn6C1ExPQy87Z4KjNeBE0E9CwAiNqW8Kb+vHmly+Bz8s
-         7HEUZpbf8XzM7DSsFh4QxGHx6ryCvi3/b/eGho8q10jc5x+rVifdEQ2u+qfgNbguqqVP
-         WFkhqtC80oV//RvodfXN789ThWC52tXd6anr7chz4GWJW4o6E+c3EVuk35RfFcaR01Cb
-         gVuh93okMYAOcvlPqYVXN8W03mM5z5sWfo4msaLZi2QDQpd8e39FkbCAvGEz6zes+bC9
-         L/iA==
+        d=linaro.org; s=google; t=1728540537; x=1729145337; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AaPggIK+kjDlsf6IsGWVxs3sFhGqqFMMOjs0GcEV8bY=;
+        b=FvEBTza4U6AwN52MzBVlh3/hOlDpY16sNcI2WjzytZzzhL5K5iZQOp6GCulgymgRUB
+         5fSbSbJEJC4WzAlXMUQ8TDywrhNn6zyCKnvvc/O9MgDHcYgO7JZxbB8n7SSsWFTRkAfX
+         KpNQjX3JiQuWyyqlOoSVfRrpiIXOCs8NYo5lBTRD9aE+4S9p2Cf1lUk0T5u856lxD3JB
+         tWzBqvCUpgkaKhr6zsEonS8fYr0krR+WFweafK/GP9fKTWMGA8o/xsNnzteqMK1Mrlq8
+         pHzG0wpJB4suiNjSHLljYVTND4Eo5JTGkspBNe04oHUqG1SfzB6zfpx6aJTFgj0emgg/
+         U6rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728540372; x=1729145172;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728540537; x=1729145337;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SDmfkcHsaZoE+Z/j0j3jVrFX1zabGcs5ByvLRQ2W7IY=;
-        b=alnO780fxdwux36iT4yq2vp6XuFFK7eZsFAgB3jM6ia7FED8/9IteRfapECt5qTCpS
-         M1rT8vAqh+/slilzXwuPaN05ns9URiu/se/g3pCA0aJz1bMdcjLt2ZYpokPYcfi5xmxZ
-         cB745VgUUtMRMz+B7F4Vx4eVRyh4R2kBsqgTgRnHhENDEH2TcCCbLApeGqwRjW7Hkf9Q
-         QA/MdLhfQaRhziMfLWZtig4HGNZnNnLPynTesR8S4Y0kaEclk/6dOoEvPe7pRBoUo2RU
-         m71UeMp+sgyM6qwkTRGMJ1U4cAp3pxeIMjDKv3zHNhU60il73BOra8MqfC3yh+CSUBRb
-         kpiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9pLJa0OKIvUBD88Mn/WD0772WqbzKu//NOmrp1IzbxsiC4qvQCuNV7uZZNpT4BQBAuhsSEFZlrQ8Ogv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGA5uI/AnDxNFT5WfQ+vYMWDuvFrx1jz+18emlLw5YZDh7in3j
-	vbbKuVXukws0f1LSXgmV58ZzNvI1LhznGjuhUzow4KpwdXAPECi4
-X-Google-Smtp-Source: AGHT+IF6IqkDzrfo7ZML+sPDXjd4gGptwZ3UgFrYw2RAuo5wopw6fuzvOt0tKS4XDgclnGrkqczkQg==
-X-Received: by 2002:a05:6512:230a:b0:52f:c5c0:2879 with SMTP id 2adb3069b0e04-539c92b1adfmr1540595e87.41.1728540371982;
-        Wed, 09 Oct 2024 23:06:11 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c8711sm114848e87.88.2024.10.09.23.06.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 23:06:11 -0700 (PDT)
-Message-ID: <786b739c-8f4a-4222-bfa3-68b2ff26bf6c@gmail.com>
-Date: Thu, 10 Oct 2024 09:06:08 +0300
+        bh=AaPggIK+kjDlsf6IsGWVxs3sFhGqqFMMOjs0GcEV8bY=;
+        b=u0Pgasi5Cw80RJuwI77EMUNcCW1lBF3JF7W/KUOGh7eqWsq1DJDc8d4m0zthfJ4wy2
+         rJe4vV5ugZQtFMK0cRofctaBFJzNs2mTc6PTCFhFJol444fKm2ry+J+m6WRorqW6u2Hq
+         LLu0gOP/CEoJZlT2cnwO/rzt7fX0m5E5/gpE3W4EW/dCojT6VL2mS495J7LYFnUGaqMZ
+         ok/y6LL9vkQTDuVeGXpfNIxH5GMcQn77nXBRF6iK91lg2tKWXOq4XDL6D8NTN3j8S0jd
+         rUc9fyClrmCxvaCD0QEQPo0f7YINAMVEm+ToRC9NtGonzepDBxGjFxVbl5JFRTM9ltnQ
+         fYMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVkt+bVUe7RUqQIsPA84ZlI9AP0AkQfl8oyQCGwHno0Hxchpx2BFcas/9wlaYwfV97RKkaKyEP6ILIJrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3QiTs8weRJuKG5sASxs/eaAVX+n8JV5SMsoE8ArMmre7PcLTI
+	1wB3l+wX+qP/2soTgGx0pFfT6oTmwXcPfZ1EjU+Bw44R1ryeXgp/duV625FhIw==
+X-Google-Smtp-Source: AGHT+IHJpYGRJTHFQXTthKewIrwQapdvb4GxGEdi12sQvxgsVegfawgotyn03GV9XW3NMfSHpGpZzw==
+X-Received: by 2002:a05:6a20:c791:b0:1d2:e94d:45a6 with SMTP id adf61e73a8af0-1d8a3bfec45mr9343196637.14.1728540536767;
+        Wed, 09 Oct 2024 23:08:56 -0700 (PDT)
+Received: from thinkpad ([220.158.156.184])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa0a645sm384131b3a.94.2024.10.09.23.08.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 23:08:56 -0700 (PDT)
+Date: Thu, 10 Oct 2024 11:38:50 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Mayank Rana <quic_mrana@quicinc.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Markus.Elfring@web.de,
+	rafael@kernel.org, linux-pm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com
+Subject: Re: [PATCH v5] PCI: Enable runtime pm of the host bridge
+Message-ID: <20241010060850.4j4r75yaigzjwuk5@thinkpad>
+References: <20241003-runtime_pm-v5-1-3ebd1a395d45@quicinc.com>
+ <CGME20241009181035eucas1p1410785aa81c9ec764c44d3f6eea940ed@eucas1p1.samsung.com>
+ <6d438995-4d6d-4a21-9ad2-8a0352482d44@samsung.com>
+ <03aa3a08-735d-4a6d-ae6d-e2887ae36840@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mfd: bd96801: Add ERRB IRQ
-To: Lee Jones <lee@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <cover.1727931468.git.mazziesaccount@gmail.com>
- <dda4464443fba81f79d5f8d73947dbd63083cff2.1727931468.git.mazziesaccount@gmail.com>
- <20241009161113.GA661995@google.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241009161113.GA661995@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <03aa3a08-735d-4a6d-ae6d-e2887ae36840@quicinc.com>
 
-On 09/10/2024 19:11, Lee Jones wrote:
-> On Thu, 03 Oct 2024, Matti Vaittinen wrote:
+On Wed, Oct 09, 2024 at 03:20:25PM -0700, Mayank Rana wrote:
+> Hi
 > 
->> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
->> handling can in many cases be omitted because it is used to inform fatal
->> IRQs, which usually kill the power from the SOC.
->>
->> There may however be use-cases where the SOC has a 'back-up' emergency
->> power source which allows some very short time of operation to try to
->> gracefully shut down sensitive hardware. Furthermore, it is possible the
->> processor controlling the PMIC is not powered by the PMIC. In such cases
->> handling the ERRB IRQs may be beneficial.
->>
->> Add support for ERRB IRQs.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> ---
->> Revision history:
->> New series (only ERRB addition)
->> v2:
->> 	- Suffle local variables in probe()
->> 	- Unify and improve the error prints when adding regmap IRQ chip for
->> 	  INTB or ERRB fails.
->> v1:
->> 	- use devm allocation for regulator_res
->> 	- use goto skip_errb instead of an if (errb)
->> 	- constify immutable structs
->>
->> Old series (All BD96801 functionality + irqdomain and regmap changes)
->> v2 => v3:
->> 	- No changes
->> v1 => v2:
->> 	- New patch
->> ---
->>   drivers/mfd/rohm-bd96801.c | 275 ++++++++++++++++++++++++++++++++-----
->>   1 file changed, 241 insertions(+), 34 deletions(-)
-> 
-> Are the 2 patches tied together or can they be taken separately?
+> It seems that PCIe controller (pcie-starfive.c driver,
+> starfive_pcie_probe()) is setting (child device) PCIe host bridge device's
+> runtime state as active going through plda_pcie_host_init() ->
+> pci_host_probe() before parent i.e. PCIe controller device itself is being
+> mark as active.
 > 
 
-I tried compiling the commits individually, and there should be no 
-compilation dependencies between them. The MFD commit introduces the 
-IRQs the regulator commit is using - but the regulator code should not 
-abort if getting the ERRB IRQs fails - assuming I read the code right. I 
-don't have the BD96801 at my hands to test right now (I'm not in the 
-office).
+Actually the pcie-starfive driver is enabling the runtime PM status of the PCIe
+controller (parent) *after* its child host bridge. It should be done other way
+around as like other PCIe controller drivers and hence the warning. It was not
+triggered earlier because the host bridge (child) PM state was inactive. Since
+it becomes active after this patch, the warning is getting triggered.
 
-Also, the ERRB IRQ registration is only attempted if ERRB IRQs are given 
-in device-tree. I don't think we have users who run the bleeding-edge 
-upstream and I'd be _very_ surprized if there are users who run newest 
-upstream (or subsystem trees) AND have added ERRBs to device-tree.
+> log is showing below error from pm_runtime_enable() context:
+> dev_warn(dev, "Enabling runtime PM for inactive device with active
+> children\n");
+> 
+> Is it possible to try below change to see if it helps ?
+> ======
+> diff --git a/drivers/pci/controller/plda/pcie-starfive.c
+> b/drivers/pci/controller/plda/pcie-starfive.c
+> index 0567ec373a3e..10bcd7e2e958 100644
+> --- a/drivers/pci/controller/plda/pcie-starfive.c
+> +++ b/drivers/pci/controller/plda/pcie-starfive.c
+> @@ -404,6 +404,9 @@ static int starfive_pcie_probe(struct platform_device
+> *pdev)
+>         if (ret)
+>                 return ret;
+> 
+> +       pm_runtime_enable(&pdev->dev);
+> +       pm_runtime_get_sync(&pdev->dev);
+> +
+>         plda->host_ops = &sf_host_ops;
+>         plda->num_events = PLDA_MAX_EVENT_NUM;
+>         /* mask doorbell event */
+> @@ -416,8 +419,6 @@ static int starfive_pcie_probe(struct platform_device
+> *pdev)
+>         if (ret)
+>                 return ret;
+> 
+> -       pm_runtime_enable(&pdev->dev);
+> -       pm_runtime_get_sync(&pdev->dev);
+>         platform_set_drvdata(pdev, pcie);
+> 
+>         return 0;
+> 
 
-So, I'd say it should be safe to take em separately, but sure it'd be 
-nice to have them landing in same release.
+Thanks Mayank for the fix. This should fix the warning (and hopefully the
+lockdep splat). Marek, please let us know if this helps or not.
 
-Yours,
-	-- Matti
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
