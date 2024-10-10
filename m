@@ -1,160 +1,238 @@
-Return-Path: <linux-kernel+bounces-359171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224D9998857
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:51:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB6C998832
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DC31C20E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F233CB27E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A571CB323;
-	Thu, 10 Oct 2024 13:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACAE1CB326;
+	Thu, 10 Oct 2024 13:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFry+cLB"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GqpPwiEp"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238E51BB6BA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DFD1C1AD9;
+	Thu, 10 Oct 2024 13:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568267; cv=none; b=mbSxwUHjWbA50BoxBljrQfHwBfT1BIbnsGx2yp3nGZ41nkjF9zQeiXLzhmN+QptTorJjrKEOGHPBbwYUsdqG8i97nTt+xsg9B7IwI4mSooYYt097C7VpHVgCQtGuudt63Y6brpZP2+dyK/vZ010gWt80fKTDVPFcYSoVddISr+U=
+	t=1728568034; cv=none; b=k00ppDaud20ISRHM9+RAVq88/CS9b/YXpmbfaEC+JDvz4BpHr5yeRIl0G/zXxnv7sxR8Bacd6ORLdp7OQrhqRQjV3PXH6A5gzOf54OdT7wCrSMdJm+Uk70IRU+eEI62y+WdQ0sOT5tRTiOgt9QQhKaD12cmVTrlWmyuSISapmbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568267; c=relaxed/simple;
-	bh=kC64z7GxA0jcH+ebK2cfoqjQcd3boIqK8A9Vfxm2t10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WM829E4BfsjP2PtAeGBSw/X/91CPbXt+ghUtJIgofIYai0CtOUvFl9GaCXXmOAQJK+rQ8ko57Kwr2ZS1y8eke2fZKhD+2vAnJ2Q0qRtSn8D7k1cPfjJB/lxnJaxuM2IAMv9JkgoGatSX0m2mrp8348ta3J2dKnLONRT8VnI6QZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CFry+cLB; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398a26b64fso930221e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:51:04 -0700 (PDT)
+	s=arc-20240116; t=1728568034; c=relaxed/simple;
+	bh=8h/6BRj1/qFeM41n0i3fXU8KQPXHbTSbHhc7eX0HScE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i3WngrLmXH8kh2ZnsMHebDuA/Xfov9HL5anAi1w5mcO7ycBDVF37lCO1X1APMCqTtrp1qy4S/3YagYmdXzFuap3FRvZprczlPGXlBKNNrDK4FyKqv2nzMpiTP+g24GNWNDdIctYpUeB2rnsWzroeaAEoLgM5ZYPFk0gt1CgcBPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GqpPwiEp; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d3ae4a048so589352f8f.3;
+        Thu, 10 Oct 2024 06:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728568263; x=1729173063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMqw76UFr3KyOj7RnEC3aqiu0YdHjPevmACOjAMgttE=;
-        b=CFry+cLBW8JFX42tNBJE3JkhTXRuwaKmhH/uz+IXr9WY3yojCpJWO0+zu27MOucocf
-         qJYjugOJjHMo4hz42JCV5lyc9vpyT8E5Vjg5GOZno/kNAVTXaymUC0PRnVWnRXPnQGuC
-         Xd6/ztzgHpYtmTG+FTQldcgu83fuesmTOZH6p5Nj3sAlBfnnd3DTyCXus/MV96EvmNOZ
-         cL4RfQghWq0uc+4ayS8WXinXKqhMsm1UsmxAjKvOM9DR8JTClAVSayDhYs3xgWI5iHgw
-         I29Kbf2bvCHAUzj4NVlpaOrzNieRtWXDsEkYCc1Jlwz/CWkgm7wIqKzvN7jIA3/GJm0y
-         fpsA==
+        d=gmail.com; s=20230601; t=1728568030; x=1729172830; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PnnrcASqTD7cUC0GU+w1CNWKJYemmBY7IAu+q3FusQ8=;
+        b=GqpPwiEpUKBd9Ql/zmGFN5Y9YwhMMXRU6sVkGiwgH0Hhv65NpuVOfKxDpvEkWfmjIi
+         inIOkQWxgc2tgoHDhIs6ocWJWnpjiKs8tTyJb9RAn+hF4K1s13qxTcO7JH9/18dW9DLi
+         2Yp6wRer0F2LH4CjG9nOLIiy3NZj5qih0NTXM3RuKn4W9xQn0KDZzIAgvQho6wU2ACS8
+         nUflvJsg/NXAEZg6DMoyTGBly2Fjr0W7wSjfsu9BIrQNMpCEF++9Ottzfn8UDqK6679n
+         FuXvIuuUxqeGrPtwcRQKXzpv1qoZbEuJmghGRvAKGayKHQswVkb7U1soTwII8UTotp9Y
+         xNjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568263; x=1729173063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cMqw76UFr3KyOj7RnEC3aqiu0YdHjPevmACOjAMgttE=;
-        b=n5j1T6Mdn6ImwOjSHG526UEtHJtT0aYUuGmr5LlcrXV4lTMk/G25EhYYGaL32RCMEh
-         ENgM5REAFhQvI8FnYK6iXey8E4aLrTSnLzY+NMGYROzyfY42uAhh5phi0y3PNiwFxAfB
-         R+OcZZAMgbEfoQjeyaBBpMc13N9zTLjkQFgL+pS4XQK606JqktlB4jd2mfVsL7uy5VuD
-         yMG1PvF5SWggxWLjrWpixt2UD7rGyf4uPOpUFpAjIsGJa2HBScaXkCcoHAqj4mfI2rZ4
-         F+qZAkwrZi/ehyWJdxuCwjacDPVPxbA1UVe31qB/DO9uHiFGKNCQsfd3ItU7ZS6Sftm7
-         srRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfK++cBimr4fosHNTN1ti4oztJLq1JqBtfuM7HzYTF9KDqxII/rClI5Yw/ZqQn9hisidJkaffadXVdULk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNoyWZF2lOGe2NPufs97sItlxcn32HEjynRPXa1D0MPaWScutD
-	CU5GF62PPwlelYvX8zF5KiP+3FjB+Rg4AYInTI0eNCgtdooOqu89FHSNRRDnKX0=
-X-Google-Smtp-Source: AGHT+IEdFN6tHEPOV5BGfgasm+djxDl4woP34V2NNtQEEnSKQjbMo5AzUtpP2ZOqLjKUa8VMlGqcng==
-X-Received: by 2002:a05:6512:2808:b0:536:54fd:275b with SMTP id 2adb3069b0e04-539c4967edemr4294135e87.54.1728568263124;
-        Thu, 10 Oct 2024 06:51:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c863bsm258410e87.87.2024.10.10.06.51.00
+        d=1e100.net; s=20230601; t=1728568030; x=1729172830;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PnnrcASqTD7cUC0GU+w1CNWKJYemmBY7IAu+q3FusQ8=;
+        b=NElWBv3o4sCkuIktNgQWE+NJXLfTYNImZ0sdGfi7TCYw0H3fo/kWBzENfUsO4ycY8w
+         E32v/wcVKBEMv4chcG1ajWTPPsRXNeczPSl68SUz0i2e6Da2WIU1JsYvXADoTA2BULIu
+         JyVytEMw5u24zRQqvN3WKCMWhcwAKSYmci9AJIaUYcImj+m95WHmFeQwcJAAR7Ml5Ayl
+         +svpbAQWsJui4Mk1npRqNNswzPBDZoGtXQ4XQy7sHsHSrkwRpJsuGl3uW9bMK9lFiOUN
+         fC3vQoiL12cWLLlVgH8xcGVSoQlujyzq7NYT0LfJBtUovOpqZc8DQRRYB4JwJqH9J86n
+         nQhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF1LPUzW3e9oKNqh5g28+obiSK5oN738GYZ2vFqe7ssW2bOouD2eWjYY7JRynJKOm+pvn9ELmZzUS3@vger.kernel.org, AJvYcCVArZ8dm/DxUzjVKtzUF7Qj5cJuBZ7jGNjjtu/Xp/9cmNl63+dlEsod1IcvrGtjBgukPlFGBUvb3fYf@vger.kernel.org, AJvYcCXW81pD9gX2XIdwc2dId+vcScSLjxXwXp820m96YQ/4e5mv/cLHVP7o1uuWz5nLXrYff/Wl3NVfLo6WX4pS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy//doo14j8wu9fLGd3P5JcxL/Ou4XEqbm7cPHsgLSXrPv8yPc2
+	Y7nMuEm0sJKurKm7c3Lj06BHwuH5aEZD0aRKt0qU3quKuRIzFnFb
+X-Google-Smtp-Source: AGHT+IElBNS3GT9WdEzTxZBoFtZBLLR5J8k3tDFpw4HvJRXU1Nz8AuUZuM363Sh01v9kgMfa5y4ojQ==
+X-Received: by 2002:a5d:47ab:0:b0:37d:5282:1339 with SMTP id ffacd0b85a97d-37d52821440mr249473f8f.22.1728568030217;
+        Thu, 10 Oct 2024 06:47:10 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8a7fsm1615913f8f.15.2024.10.10.06.47.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:51:01 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:50:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, 
-	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] PCI: qcom: Fix the ops for X1E80100 and SC8280X
- family SoC
-Message-ID: <otipwbhacorpdyjlhvf4g3tpg7ymtqmcuzjirewhkmwv3gbpka@2urxbhufrveb>
-References: <20241009091540.1446-1-quic_qianyu@quicinc.com>
- <20241009091540.1446-7-quic_qianyu@quicinc.com>
+        Thu, 10 Oct 2024 06:47:09 -0700 (PDT)
+Message-ID: <b2687edd2cf4d0bfcd070e87971778ea72a59074.camel@gmail.com>
+Subject: Re: [PATCH v5 10/10] iio: dac: adi-axi-dac: add registering of
+ child fdt node
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen	
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ Sa	 <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dletchner@baylibre.com,  Mark Brown
+ <broonie@kernel.org>
+Date: Thu, 10 Oct 2024 15:51:25 +0200
+In-Reply-To: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-10-3d410944a63d@baylibre.com>
+References: 
+	<20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
+	 <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-10-3d410944a63d@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009091540.1446-7-quic_qianyu@quicinc.com>
 
-On Wed, Oct 09, 2024 at 02:15:39AM GMT, Qiang Yu wrote:
-> On X1E80100 and SC8280X family SoC, PCIe controllers are connected to
-> SMMUv3, hence they don't need the config_sid() callback in ops_1_9_0
-> struct. Fix it by introducing a new ops struct, namely ops_1_21_0, so
-> that BDF2SID mapping won't be configured during init.
-
-Fixes tag missing. Cc:stable if required.
-
-> 
-> In addition, since it is recommended to disable ASPM L0s on X1E80100 as
-> same as SC8280X, hence X1E80100 can simply reuse cfg_sc8280xp as its
-> config.
-
-Separate commit, please with its own description and Fixes tag.
-
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+On Tue, 2024-10-08 at 17:43 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Change to obtain the fdt use case as reported in the
+> adi,ad3552r.yaml file in this patchset.
+>=20
+> The DAC device is defined as a child node of the backend.
+> Registering the child fdt node as a platform devices.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 88a98be930e3..c533e6024ba2 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1367,6 +1367,16 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
->  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->  };
->  
-> +/* Qcom IP rev.: 1.21.0 */
-> +static const struct qcom_pcie_ops ops_1_21_0 = {
-> +	.get_resources = qcom_pcie_get_resources_2_7_0,
-> +	.init = qcom_pcie_init_2_7_0,
-> +	.post_init = qcom_pcie_post_init_2_7_0,
-> +	.host_post_init = qcom_pcie_host_post_init_2_7_0,
-> +	.deinit = qcom_pcie_deinit_2_7_0,
-> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-> +};
+> =C2=A0drivers/iio/dac/adi-axi-dac.c | 61
+> +++++++++++++++++++++++++++++++++++++++++++
+> =C2=A01 file changed, 61 insertions(+)
+>=20
+> diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.=
+c
+> index e43d0ecccb50..754c4061d0e3 100644
+> --- a/drivers/iio/dac/adi-axi-dac.c
+> +++ b/drivers/iio/dac/adi-axi-dac.c
+> @@ -18,6 +18,7 @@
+> =C2=A0#include <linux/module.h>
+> =C2=A0#include <linux/mod_devicetable.h>
+> =C2=A0#include <linux/mutex.h>
+> +#include <linux/platform_data/ad3552r-hs.h>
+> =C2=A0#include <linux/platform_device.h>
+> =C2=A0#include <linux/property.h>
+> =C2=A0#include <linux/regmap.h>
+> @@ -108,6 +109,8 @@ struct axi_dac_info {
+> =C2=A0struct axi_dac_state {
+> =C2=A0	struct regmap *regmap;
+> =C2=A0	struct device *dev;
+> +	/* Target DAC platform device */
+> +	struct platform_device *dac_pdev;
+> =C2=A0	/*
+> =C2=A0	 * lock to protect multiple accesses to the device registers and
+> global
+> =C2=A0	 * data/variables.
+> @@ -750,6 +753,44 @@ static int axi_dac_bus_reg_read(struct iio_backend *=
+back,
+> u32 reg, u32 *val,
+> =C2=A0	return regmap_read(st->regmap, AXI_DAC_CUSTOM_RD_REG, val);
+> =C2=A0}
+> =C2=A0
+> +static void axi_dac_child_remove(void *data)
+> +{
+> +	struct axi_dac_state *st =3D data;
 > +
->  static const struct qcom_pcie_cfg cfg_1_0_0 = {
->  	.ops = &ops_1_0_0,
->  };
-> @@ -1405,7 +1415,7 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
->  };
->  
->  static const struct qcom_pcie_cfg cfg_sc8280xp = {
-> -	.ops = &ops_1_9_0,
-> +	.ops = &ops_1_21_0,
->  	.no_l0s = true,
->  };
->  
-> @@ -1837,7 +1847,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &cfg_1_9_0 },
->  	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &cfg_1_9_0 },
->  	{ .compatible = "qcom,pcie-sm8550", .data = &cfg_1_9_0 },
-> -	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_1_9_0 },
-> +	{ .compatible = "qcom,pcie-x1e80100", .data = &cfg_sc8280xp },
->  	{ }
->  };
->  
-> -- 
-> 2.34.1
-> 
+> +	platform_device_unregister(st->dac_pdev);
+> +}
+> +
+> +static int axi_dac_create_platform_device(struct axi_dac_state *st,
+> +					=C2=A0 struct fwnode_handle *child)
+> +{
+> +	struct ad3552r_hs_platform_data pdata =3D {
+> +		.bus_reg_read =3D axi_dac_bus_reg_read,
+> +		.bus_reg_write =3D axi_dac_bus_reg_write,
+> +	};
+> +	struct platform_device_info pi =3D {
+> +		.parent =3D st->dev,
+> +		.name =3D fwnode_get_name(child),
+> +		.id =3D PLATFORM_DEVID_AUTO,
+> +		.fwnode =3D child,
+> +		.data =3D &pdata,
+> +		.size_data =3D sizeof(pdata),
+> +	};
+> +	struct platform_device *pdev;
+> +	int ret;
+> +
+> +	pdev =3D platform_device_register_full(&pi);
+> +	if (IS_ERR(pdev))
+> +		return PTR_ERR(pdev);
+> +
+> +	st->dac_pdev =3D pdev;
 
--- 
-With best wishes
-Dmitry
+Don't need to save it in the state struct. Pass it directly to
+devm_add_action_or_reset()
+
+> +
+> +	ret =3D devm_add_action_or_reset(st->dev, axi_dac_child_remove, st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+return devm_add_action_or_reset();
+
+> +}
+> +
+> =C2=A0static const struct iio_backend_ops axi_dac_generic_ops =3D {
+> =C2=A0	.enable =3D axi_dac_enable,
+> =C2=A0	.disable =3D axi_dac_disable,
+> @@ -886,6 +927,26 @@ static int axi_dac_probe(struct platform_device *pde=
+v)
+> =C2=A0		return dev_err_probe(&pdev->dev, ret,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to register iio backend\n");
+> =C2=A0
+> +	if (st->info->bus_controller) {
+
+I guess for now all child nodes that the IP has are for this usecase so I w=
+ould
+just assume it and drop the bus_controller. Let's deal with something diffe=
+rent
+when the usecase for it pops up. In any case, the flag is only needed in th=
+is
+patch so it should only be introduced now.
+
+> +		device_for_each_child_node_scoped(&pdev->dev, child) {
+> +			int val;
+> +
+> +			/* Processing only reg 0 node */
+> +			ret =3D fwnode_property_read_u32(child, "reg", &val);
+> +			if (ret || val !=3D 0)
+> +				continue;
+
+The conditions are not really related so I would not mix them:
+if (ret)
+	return dev_err_probe(); // some logs might be helpful...
+if (val > 0)
+	return dev_err_probe();
+> +
+> +			ret =3D fwnode_property_read_u32(child, "io-backends",
+> +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &val);
+> +			if (ret)
+> +				continue;
+
+The above looks redundant...
+> +
+> +			ret =3D axi_dac_create_platform_device(st, child);
+> +			if (ret)
+> +				continue;
+
+Should we really ignore all errors?
+> +		}
+> +	}
+> +
+> =C2=A0	dev_info(&pdev->dev, "AXI DAC IP core (%d.%.2d.%c) probed\n",
+> =C2=A0		 ADI_AXI_PCORE_VER_MAJOR(ver),
+> =C2=A0		 ADI_AXI_PCORE_VER_MINOR(ver),
+>=20
+
 
