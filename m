@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-360056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA4D9993F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:54:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B259993FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF731284DCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E401F23F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9F51E2858;
-	Thu, 10 Oct 2024 20:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433961E231A;
+	Thu, 10 Oct 2024 20:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="LWrS50by"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwEBw6JN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD341E2317;
-	Thu, 10 Oct 2024 20:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD261CF5C5;
+	Thu, 10 Oct 2024 20:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593626; cv=none; b=N3sX9vYZ3vpHxwEZ6Dt4WABW5b++SCJu0nAFXWo7wVusJ3zgfsBiTfUmIHSEqGx9lkRppC3OTQgDirMYrjR7b01hLMrZhVwnzPv2PwDEH6UGKv9thekYTR3/f2tOlG605iSvAlz6clNebySW+2cJgAepZg06fxYESKLGPlzwui4=
+	t=1728593807; cv=none; b=Ej62bq6h9wah1ED1xDIDElWI+zD6cbIahBL5E5lBidkLwpiX0DZn6SuZdBRDA/sNBYpVmKizGba35T6tNGwEfByKiJeA1iGe/q2bxqKxCKX+ns7LYsOwZ7uLD2bRNXzWV1Bx7K3VDxSBdll8S6wfVAWLbvLVkj2ckJ9Sa6Ao8KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593626; c=relaxed/simple;
-	bh=/tCyP/0YdcXRjDmegk+9uAFckzniZ+ognS0EA1OnMWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R7+ktFGc4a/7usV3PhPEfovyNtbfJXwdUTOOz9B4BG/Fc1lND04yHBRhEkHOy6DbmQJfEKJV73vHVlOlWAh8BkmPj2cr9DZwX6l2MD00I8swDHTiiQ97EkJkP/xdAPOeTtFlAvNjworxqYQZqE1muIcZvkVGEjnfjOjDQXeQplM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=LWrS50by; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=dIN9SUDcVwpX/Crm33XSbiqwhkhMRMTPoIouQU+F9jw=; b=LWrS50byN0vrA+to
-	oENAABUyZr+mMgZOQWKJNwWNouAZvusVr42HedSIRCKC8tcHLgpTk8fuDRtfi0vEXKceCC41Yl9Yo
-	acBWpnu+5/7otkTEEl6go/dYuT+9/rzkgwxkKtczhrkeFFtutSIGXkpX1fjk3eCQ8AOT4XhF1xKoQ
-	y7UvWrRAJYO8YjB4K/5EwvUdL9g9YYj5A2ZiDcXA/usOxNtOXM3Kgtdeu4n23eQsir03KcysmIGEA
-	HYwCqHN4ZpjNwAOOZIXrAirwD4hwMuERsFXD6U96IpfBX5uGPrSNzwbJFY1gRYvP8r2TH3UehrM6d
-	fBBOQFc1SRXwMrQZMA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sz0AH-00AMqJ-19;
-	Thu, 10 Oct 2024 20:53:41 +0000
-From: linux@treblig.org
-To: perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1728593807; c=relaxed/simple;
+	bh=tH2HcY6rQCU/6gQa+L+AuOeDayO0u2RWtUN85rJcHWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=si7DD8OmpBQ07BKfAfvcfHOrMuMyIcMShRON24NwNF43UE9v6RNyI7pmqJnHJY/XhGPStEUbvVMmcWQ7vjFeA6fMsBKG7UnvNHsRFq0XjpKuZ0c40Eiga07QU7RJEvOVq2xL9AfAXl/uUKj1C0QNMVWqHY5xUPMrsb/lHOrGjCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwEBw6JN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E578C4CEC5;
+	Thu, 10 Oct 2024 20:56:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728593807;
+	bh=tH2HcY6rQCU/6gQa+L+AuOeDayO0u2RWtUN85rJcHWQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jwEBw6JNnDAvo+Nn7aTkh4T4g/t7dFkecxwENqt8tBspsVmoIQTPH3Rj5ZaGeD2ot
+	 4lAzUUe+VjltpHrOZU71opy9pNO5sNyn+b0u3HoQwz/RQfipK/pTVW6tfk5Jqns/Kx
+	 ZdJFic+C1Nk0/Mr+xyWEeeHVC9M5Rt7PnkxRsl2ISKWs12ze4cbX4UuzP7XQsz9LJ+
+	 dXIpCOMOmFendm65S9btudipga7Azw1ppGlX8zAjhS8SDwBV2wy8PLGlQoIGraiFQZ
+	 o5Sqovdcm72UElzAyvgM7DaE2c3Nc/YOi2LyTGNLI8NzKCTc4YdsbDQr1rOkYnf/Bl
+	 IDN3rQK9H5Ogg==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	peterz@infradead.org
+Cc: oleg@redhat.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] ALSA: core: Remove unused copy_from_user_toio
-Date: Thu, 10 Oct 2024 21:53:40 +0100
-Message-ID: <20241010205340.278133-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	willy@infradead.org,
+	surenb@google.com,
+	akpm@linux-foundation.org,
+	mjguzik@gmail.com,
+	brauner@kernel.org,
+	jannh@google.com,
+	mhocko@kernel.org,
+	vbabka@suse.cz,
+	shakeel.butt@linux.dev,
+	hannes@cmpxchg.org,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v3 tip/perf/core 0/4] uprobes,mm: speculative lockless VMA-to-uprobe lookup
+Date: Thu, 10 Oct 2024 13:56:40 -0700
+Message-ID: <20241010205644.3831427-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Implement speculative (lockless) resolution of VMA to inode to uprobe,
+bypassing the need to take mmap_lock for reads, if possible. Patch #1 by Suren
+adds mm_struct helpers that help detect whether mm_struct was changed, which
+is used by uprobe logic to validate that speculative results can be trusted
+after all the lookup logic results in a valid uprobe instance. Patch #2
+follows to make mm_lock_seq into 64-bit counter (on 64-bit architectures), as
+requested by Jann Horn.
 
-copy_from_user_toio() has been unused since commit
-ce2d8ed8d809 ("ASoC: qcom: Convert to generic PCM copy ops")
+Patch #3 is a simplification to uprobe VMA flag checking, suggested by Oleg.
 
-Remove it.
+And, finally, patch #4 is the speculative VMA-to-uprobe resolution logic
+itself, and is the focal point of this patch set. It makes entry uprobes in
+common case scale very well with number of CPUs, as we avoid any locking or
+cache line bouncing between CPUs. See corresponding patch for details and
+benchmarking results.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/sound/core.h |  1 -
- sound/core/memory.c  | 20 --------------------
- 2 files changed, 21 deletions(-)
+Note, this patch set assumes that FMODE_BACKING files were switched to have
+SLAB_TYPE_SAFE_BY_RCU semantics, which was recently done by Christian Brauner
+in [0]. This change can be pulled into perf/core through stable
+tags/vfs-6.13.for-bpf.file tag from [1].
 
-diff --git a/include/sound/core.h b/include/sound/core.h
-index 1f3f5dccd736..b5a6f3d2bff5 100644
---- a/include/sound/core.h
-+++ b/include/sound/core.h
-@@ -267,7 +267,6 @@ static inline int snd_minor_info_oss_init(void) { return 0; }
- /* memory.c */
- 
- int copy_to_user_fromio(void __user *dst, const volatile void __iomem *src, size_t count);
--int copy_from_user_toio(volatile void __iomem *dst, const void __user *src, size_t count);
- 
- /* init.c */
- 
-diff --git a/sound/core/memory.c b/sound/core/memory.c
-index 2d2d0094c897..8222a851da87 100644
---- a/sound/core/memory.c
-+++ b/sound/core/memory.c
-@@ -63,26 +63,6 @@ int copy_to_iter_fromio(struct iov_iter *dst, const void __iomem *src,
- }
- EXPORT_SYMBOL(copy_to_iter_fromio);
- 
--/**
-- * copy_from_user_toio - copy data from user-space to mmio-space
-- * @dst: the destination pointer on mmio-space
-- * @src: the source pointer on user-space
-- * @count: the data size to copy in bytes
-- *
-- * Copies the data from user-space to mmio-space.
-- *
-- * Return: Zero if successful, or non-zero on failure.
-- */
--int copy_from_user_toio(volatile void __iomem *dst, const void __user *src, size_t count)
--{
--	struct iov_iter iter;
--
--	if (import_ubuf(ITER_SOURCE, (void __user *)src, count, &iter))
--		return -EFAULT;
--	return copy_from_iter_toio((void __iomem *)dst, &iter, count);
--}
--EXPORT_SYMBOL(copy_from_user_toio);
--
- /**
-  * copy_from_iter_toio - copy data from iov_iter to mmio-space
-  * @dst: the destination pointer on mmio-space
+  [0] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.13.for-bpf.file&id=8b1bc2590af61129b82a189e9dc7c2804c34400e
+  [1] git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+
+v2->v3:
+- dropped kfree_rcu() patch (Christian);
+- added data_race() annotations for fields of vma and vma->vm_file which could
+  be modified during speculative lookup (Oleg);
+- fixed int->long problem in stubs for mmap_lock_speculation_{start,end}(),
+  caught by Kernel test robot;
+v1->v2:
+- adjusted vma_end_write_all() comment to point out it should never be called
+  manually now, but I wasn't sure how ACQUIRE/RELEASE comments should be
+  reworded (previously requested by Jann), so I'd appreciate some help there
+  (Jann);
+- int -> long change for mm_lock_seq, as agreed at LPC2024 (Jann, Suren, Liam);
+- kfree_rcu_mightsleep() for FMODE_BACKING (Suren, Christian);
+- vm_flags simplification in find_active_uprobe_rcu() and
+  find_active_uprobe_speculative() (Oleg);
+- guard(rcu)() simplified find_active_uprobe_speculative() implementation.
+
+Andrii Nakryiko (3):
+  mm: switch to 64-bit mm_lock_seq/vm_lock_seq on 64-bit architectures
+  uprobes: simplify find_active_uprobe_rcu() VMA checks
+  uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
+
+Suren Baghdasaryan (1):
+  mm: introduce mmap_lock_speculation_{start|end}
+
+ include/linux/mm.h        |  6 ++--
+ include/linux/mm_types.h  |  7 ++--
+ include/linux/mmap_lock.h | 72 ++++++++++++++++++++++++++++++++-------
+ kernel/events/uprobes.c   | 52 +++++++++++++++++++++++++++-
+ kernel/fork.c             |  3 --
+ 5 files changed, 119 insertions(+), 21 deletions(-)
+
 -- 
-2.47.0
+2.43.5
 
 
