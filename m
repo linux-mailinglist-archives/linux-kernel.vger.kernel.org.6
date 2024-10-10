@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-359697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04549998F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:01:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5305D998F35
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC4A1F25E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:01:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829D41C240C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E40A1CEE85;
-	Thu, 10 Oct 2024 18:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA04F1CF2A8;
+	Thu, 10 Oct 2024 18:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebwvrfhy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etvIoIqg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045B819B3EE;
-	Thu, 10 Oct 2024 18:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F202C19D880;
+	Thu, 10 Oct 2024 18:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583223; cv=none; b=tlehbmJ8ZbWATd3pbl2jUDGfgk6VHMH2spAGOoSNqAy1ehMDX5BiWEvcTdKhyU++9l134bEUxbCo3OSr0sWYOa5Q+KjCQPJfGTLyB4Ercs9gQl1rcckXuuMlFhmWRENR2fAbKGdfVkCJxf956p79okKmF5QLiuxs/JOFHGnM2BA=
+	t=1728583237; cv=none; b=gAdw8bKGVz5wbT6/cZP4b7E71c8luwCcmrJGh6vnm+/R5svqpriF9Cvxt60xeA4kmRs9qec+ZUNbNo0xQ5nJj1rutI7/MwB+pq4DUKJM7sFd4VZs291l42wbfMC9gydYEWr7CvhZE05GWIw6vbop+1rZf5k3QU6SwWb8Zx+z5F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583223; c=relaxed/simple;
-	bh=M03HvDIvoBZcMXsv4bbTfZHLxqsuwYaDsKHJPKdP8xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P85aUPYHmsPO6bpZC9rbTDAj3jSnKZLg0wdwdA1qK+JLfZkULY+Frd17IIgpfzc1f3Yt8I+SfPoYqCwEs6ZtDCSMfGywCSPuNmIrYeFxVu5BkEp+XkbFNZzI73tc/y6/qAYz/o9QezY2SegHJ94C84P6A1HXhe4Rsr3vm71iDwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebwvrfhy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6206EC4CEC5;
-	Thu, 10 Oct 2024 18:00:16 +0000 (UTC)
+	s=arc-20240116; t=1728583237; c=relaxed/simple;
+	bh=vnXCeY/eIb6pDREyFMJGaK+pFEB8fxIiROrKc/YO4eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pf+mF3g9lSddpT3y+98wFwOI39x+Zbeb9OQlnwZnYqe3Fwxq8E2TGjTcmiYHZVL1HTsvZv4TBFHFs+qmB4axekhOY9tW7vzPORH/Mwdx6FauqNRuA7Y99gl6erAOPMo5a1FtduwxbOSCbZuG4RXRXy5D5txykY3OsG3rxjPeg4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=etvIoIqg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE7AAC4CEC6;
+	Thu, 10 Oct 2024 18:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728583222;
-	bh=M03HvDIvoBZcMXsv4bbTfZHLxqsuwYaDsKHJPKdP8xo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ebwvrfhyTL5Ze9UAHtaJg9q7n2/xnjxQKrk4QP2JhvnFVMOTkMcUzQ9nt6TYbNGcl
-	 gGpG6vI5L2LoY2ryPjtZ5g9w1TWhhWhaE8ELLRTvDympq23WwwDRIERPCmZjmrZuAS
-	 buHQ0JjrYN0D4r2B6MVKHCPeZbO75KvWIBTEdye8jQVn7g1Zt2fCagOKv2aFoikSr+
-	 2/hQSo7n15rIjFsJvOgksy66flfM5EROIovUswcHFy4dEjSp2lKPUteMimYjQ97AeQ
-	 1iZfUQ0agtlAbsuaOkfppuQB3+2NtS/bVy/pLqW7N0N9s0WyUVjcFsbzsWrEz58YOu
-	 AvckdtKtFXvKg==
-Date: Thu, 10 Oct 2024 19:00:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, David Lechner <dlechner@baylibre.com>,
- Nuno Sa <nuno.sa@analog.com>, Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer
- <sean@geanix.com>, Leonard =?UTF-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>,
- Mihail Chindris <mihail.chindris@analog.com>, Alexandru Ardelean
- <ardeleanalex@gmail.com>, Gustavo Silva <gustavograzs@gmail.com>, Shoji
- Keita <awaittrot@shjk.jp>, Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>, Andreas
- Klinger <ak@it-klinger.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Jirman
- <megi@xff.cz>
-Subject: Re: [PATCH 04/13] iio: adc: ti-ads8688: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-Message-ID: <20241010190012.42401d09@jic23-huawei>
-In-Reply-To: <34f22420-ec6b-438e-9edb-1aa7a837eb98@gmail.com>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
-	<20241003-iio-select-v1-4-67c0385197cd@gmail.com>
-	<20241005184018.6b06e850@jic23-huawei>
-	<34f22420-ec6b-438e-9edb-1aa7a837eb98@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728583236;
+	bh=vnXCeY/eIb6pDREyFMJGaK+pFEB8fxIiROrKc/YO4eo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=etvIoIqgciTpA/ZXHpxMX1IfEQEmJV86AHXQPf+6ONCaV6uR9nNqfWhTsGrbM9R/8
+	 qvrsieY4P+Bt8l7BFMdxjSNKLI93qigtaFV1/fdH4VcSwAEtugBWeGgIPJtTx5zKVy
+	 6GWYd32euVFTKwvdgJxCB6581EoEOUPnXNCQOH7CT/Zoy5jY7J4AQXdk5XDRkDrFm0
+	 xbwmhgb0l+ozeMtEKbsCzyIDj0LBCkSQgvBzjZ93upXBahY/xREpjhrI62Agt1WSZq
+	 EJbQ+TEEy5tkpFhhoIFCbSzvRPhGZOAbM/Fd2nwpSdoVDPsWn8SmIbXic5pJMBtC6R
+	 fKXVP7Ej4jLYg==
+Date: Thu, 10 Oct 2024 13:00:34 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+	conor+dt@kernel.org, krzk+dt@kernel.org, andrew@lunn.ch,
+	andrei.botila@oss.nxp.com, horms@kernel.org,
+	devicetree@vger.kernel.org, kuba@kernel.org, imx@lists.linux.dev,
+	davem@davemloft.net, pabeni@redhat.com, hkallweit1@gmail.com,
+	edumazet@google.com, netdev@vger.kernel.org, f.fainelli@gmail.com
+Subject: Re: [PATCH v5 net-next 1/2] dt-bindings: net: tja11xx: add
+ "nxp,rmii-refclk-out" property
+Message-ID: <172858323378.2094687.9350859179293389445.robh@kernel.org>
+References: <20241010061944.266966-1-wei.fang@nxp.com>
+ <20241010061944.266966-2-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010061944.266966-2-wei.fang@nxp.com>
 
-On Sat, 5 Oct 2024 20:21:06 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-> On 05/10/2024 19:40, Jonathan Cameron wrote:
-> > On Thu, 03 Oct 2024 23:04:50 +0200
-> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> >   
-> >> This driver makes use of triggered buffers, but does not select the
-> >> required modules.
-> >>
-> >> Fixes: 2a86487786b5 ("iio: adc: ti-ads8688: add trigger and buffer support")
-> >> Add the missing 'select IIO_BUFFER' and 'select IIO_TRIGGERED_BUFFER'.  
-> > Fixes tag must be part of the tag block.
-> > 
-> > Also this one looks to be a false positive. The driver includes
-> > buffer.h but doesn't actually have buffered support.
-> >   
+On Thu, 10 Oct 2024 14:19:43 +0800, Wei Fang wrote:
+> Per the RMII specification, the REF_CLK is sourced from MAC to PHY
+> or from an external source. But for TJA11xx PHYs, they support to
+> output a 50MHz RMII reference clock on REF_CLK pin. Previously the
+> "nxp,rmii-refclk-in" was added to indicate that in RMII mode, if
+> this property present, REF_CLK is input to the PHY, otherwise it
+> is output. This seems inappropriate now. Because according to the
+> RMII specification, the REF_CLK is originally input, so there is
+> no need to add an additional "nxp,rmii-refclk-in" property to
+> declare that REF_CLK is input.
+> Unfortunately, because the "nxp,rmii-refclk-in" property has been
+> added for a while, and we cannot confirm which DTS use the TJA1100
+> and TJA1101 PHYs, changing it to switch polarity will cause an ABI
+> break. But fortunately, this property is only valid for TJA1100 and
+> TJA1101. For TJA1103/TJA1104/TJA1120/TJA1121 PHYs, this property is
+> invalid because they use the nxp-c45-tja11xx driver, which is a
+> different driver from TJA1100/TJA1101. Therefore, for PHYs using
+> nxp-c45-tja11xx driver, add "nxp,rmii-refclk-out" property to
+> support outputting RMII reference clock on REF_CLK pin.
 > 
-> Are you sure? These are the errors I get when I compile the ti-ads8688.c:
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+> V2 changes:
+> 1. Change the property name from "nxp,reverse-mode" to
+> "nxp,phy-output-refclk".
+> 2. Simplify the description of the property.
+> 3. Modify the subject and commit message.
+> V3 changes:
+> 1. Keep the "nxp,rmii-refclk-in" property for TJA1100 and TJA1101.
+> 2. Rephrase the commit message and subject.
+> V4 changes:
+> 1. Change the property name from "nxp,phy-output-refclk" to
+> "nxp,rmii-refclk-out", which means the opposite of "nxp,rmii-refclk-in".
+> 2. Refactor the patch after fixing the original issue with this YAML.
+> V5 changes:
+> 1. Reword the description of "nxp,rmii-refclk-out" property.
+> ---
+>  .../devicetree/bindings/net/nxp,tja11xx.yaml     | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> ld: drivers/iio/adc/ti-ads8688.o: in function `ads8688_probe':
-> ti-ads8688.c:(.text+0x1cf): undefined reference to
-> `devm_iio_triggered_buffer_setup_ext'
-> ld: drivers/iio/adc/ti-ads8688.o: in function `ads8688_trigger_handler':
-> ti-ads8688.c:(.text+0x3be): undefined reference to `iio_push_to_buffers'
-> ld: ti-ads8688.c:(.text+0x3c9): undefined reference to
-> `iio_trigger_notify_done'
-> make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-> make[1]: *** [/home/jc/pw/linux/linux-next/Makefile:1173: vmlinux] Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
-> 
-> And I see the offending functions in its code. Am I missing something
-> here or are we talking about different drivers?
-Miss read by me.  I picked up on the 8344 in diff.
-That does have a spurious include so I stopped looking closer!
 
-Anyhow, now applied to the fixes-togreg branch of iio.git and
-marked for stable.
-
-Sorry about that!
-
-Thanks,
-
-Jonathan
-
-> 
-> >>
-> >> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> >> ---
-> >>  drivers/iio/adc/Kconfig | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> >> index 45872a4e2acf..e6be1f1ec79f 100644
-> >> --- a/drivers/iio/adc/Kconfig
-> >> +++ b/drivers/iio/adc/Kconfig
-> >> @@ -1483,6 +1483,8 @@ config TI_ADS8344
-> >>  config TI_ADS8688
-> >>  	tristate "Texas Instruments ADS8688"
-> >>  	depends on SPI
-> >> +	select IIO_BUFFER
-> >> +	select IIO_TRIGGERED_BUFFER
-> >>  	help
-> >>  	  If you say yes here you get support for Texas Instruments ADS8684 and
-> >>  	  and ADS8688 ADC chips
-> >>  
-> >   
-> 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
