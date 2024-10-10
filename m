@@ -1,72 +1,64 @@
-Return-Path: <linux-kernel+bounces-358807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897E5998413
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:44:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BEB998414
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2F2283B79
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B37651F25264
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F411C0DC2;
-	Thu, 10 Oct 2024 10:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fsqfkYFi"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A2518C03D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945731BF818;
+	Thu, 10 Oct 2024 10:45:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F3418DF62;
+	Thu, 10 Oct 2024 10:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557089; cv=none; b=ECK0oNGHnprL0GkdP92xfYrokAoA4jbwA+pe1AsENgvCTC7VrHFar+lacZee0BLuIp9hpZA91U0mDWMcz/rm/IhLtUqGSM+HGuzSfpfm4v/+Izwi1CGiqGZpnDlOkSWGE/fuU+NOX0lAyT1kcl2EUmWQuLvAVSP1rfVOomvhym4=
+	t=1728557119; cv=none; b=JCq8efy5UCiFt4lq1/GhJJhk8C34RI+fOdX3hc6h1TXtK2+HSfySvCZMQfKICbHw/lMI24eMnWvgkDH+tDZbkyvVZMWw+gF1XhttgihRaU/XUi5CruprrYC9Fjj0zj0kqeZxDZOnVUelfSMcxRrJetMwF7Fk5cQI7pY3wOcWXMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557089; c=relaxed/simple;
-	bh=HwXtcBfZ9skqTUUIvL6qjtFcMbgAVYIzdtNQEETd01c=;
+	s=arc-20240116; t=1728557119; c=relaxed/simple;
+	bh=JcYGggWCVH3dTIk5TqTj9id32NOF4sFLETCNsN9i/v8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CyteEF/bXvQ8UqfKeAxbi/cXER7ZW1HS7IfkVF2obuY0P3c4tHLZUPUeD6V0nLqYc6A1CkdhCfAP6RhZekfmKPfBABzfzuDrsHMlhtZvLnzqgH2XAuy0Bq0Be1GCcymLY446A8q3jqRP87uyfG9s9gIoqTiWYtexvGw8e87Mka8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fsqfkYFi; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=wt3+UwGS92R+4Ox5ks/fZ0imxBx7Ykqt9KCdpyt4ijs=; b=fsqfkYFi3gwqCB6JIpMC5OY+hp
-	dQ07ZLxCK7nJNO325BO9qC+wrd8Gj754eZB2Pfi5xjt/4B7dOY/AHxaqQT+xcDOPowG/sZ1U0dMVh
-	5do7dDgErsY7ln6LD3OJSNE9cfWs4D5wdL/upgH3MbCrxjqxk87DlbkCqwrFDpXqcKGfh3Jtf6IAz
-	GtZxlGV8AdFVulLMwEUiJxGapnWaKLW3/JQoC0IggJvc8lvfIg0NogXaCN8B3vnBrXPD5ayVEIO9w
-	HfuSprPUSuYHI0YaZtY7VPlVdcxH/YlspMabBK+Q3YaurgtknePPZ02Vl5YU7610D0p00Ce+txH1W
-	rNlCGeWA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syqes-00000005Lbn-3or9;
-	Thu, 10 Oct 2024 10:44:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8A92B30088D; Thu, 10 Oct 2024 12:44:38 +0200 (CEST)
-Date: Thu, 10 Oct 2024 12:44:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <20241010104438.GJ14587@noisy.programming.kicks-ass.net>
-References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
- <20241009165411.3426937-3-ankur.a.arora@oracle.com>
- <20241009180117.GS17263@noisy.programming.kicks-ass.net>
- <37af80bd-a54f-4ee4-9175-6f0f27b685a0@paulmck-laptop>
- <20241010063207.xIrynIqO@linutronix.de>
- <20241010081032.GA17263@noisy.programming.kicks-ass.net>
- <20241010091326.nK71dG4b@linutronix.de>
- <20241010100308.GE17263@noisy.programming.kicks-ass.net>
- <20241010102657.H7HpIbVp@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDRFBxKlmvlbQ8zqguYBPOYolTMRjgsepRpIl5IRtHlcOPTTbbD8MUTYsWmLluw9MEJewQCAYpxHTSXhmLOgtfviUCOGwbFsNvf2mbOS4H3O/vB2omLxHL5de/CHbq0lJ3rtEP1zbW0jtxSpzKdo4MC2Uk5BwLFuk30RkqrUQ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31F8B497;
+	Thu, 10 Oct 2024 03:45:46 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1225C3F58B;
+	Thu, 10 Oct 2024 03:45:11 -0700 (PDT)
+Date: Thu, 10 Oct 2024 11:45:07 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Matthew Maurer <mmaurer@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Kees Cook <kees@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] cfi: rust: pass -Zpatchable-function-entry on all
+ architectures
+Message-ID: <ZwewMw8jBh6OU-L_@J2N7QTR9R3>
+References: <20241008-cfi-patchable-all-v1-1-512481fd731d@google.com>
+ <ZwbAvEnrzu6UUgGl@J2N7QTR9R3>
+ <CAH5fLgipBfd5pNKqniXqFudruyGaJG=LDc5MEf3Yxq1yRMmQcw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,30 +68,92 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241010102657.H7HpIbVp@linutronix.de>
+In-Reply-To: <CAH5fLgipBfd5pNKqniXqFudruyGaJG=LDc5MEf3Yxq1yRMmQcw@mail.gmail.com>
 
-On Thu, Oct 10, 2024 at 12:26:57PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2024-10-10 12:03:08 [+0200], Peter Zijlstra wrote:
-> > > 
-> > > I can't deselect CONFIG_PREEMPT_RCU=y. This is because LAZY selects
-> > > PREEMPT_BUILD and PREEMPT_RCU selects itself once PREEMPTION is on.
-> > 
-> > Oh, the entry isn't user selectable? Fix that perhaps?
-> > 
-> > -	bool
-> > +	bool "Use preemptible RCU"
-> > 
-> > Or something along those lines -- I forever forget how Kconfig works.
+On Wed, Oct 09, 2024 at 10:15:35PM +0200, Alice Ryhl wrote:
+> On Wed, Oct 9, 2024 at 7:43 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > Hi Alice,
+> >
+> > On Tue, Oct 08, 2024 at 05:37:16PM +0000, Alice Ryhl wrote:
+> > > The KCFI sanitizer stores the CFI tag of a function just before its
+> > > machine code. However, the patchable-function-entry flag can be used to
+> > > introduce additional nop instructions before the machine code, taking up
+> > > the space that normally holds the CFI tag.
+> >
+> > To clarify, when you say "before the machine code", do you mean when
+> > NOPs are placed before the function entry point? e.g. if we compiled
+> > with -fpatchable-function-entry=M,N where N > 0? I'll refer tho this as
+> > "pre-function NOPs" below.
+> >
+> > There's an existing incompatibility between CFI and pre-function NOPs
+> > for C code, because we override -fpatchable-function-entry on a
+> > per-function basis (e.g. for noinstr and notrace), and we don't
+> > currently have a mechanism to ensure the CFI tag is in the same place
+> > regardless. This is why arm64 has CONFIG_DYNAMIC_FTRACE_WITH_CALL_OPS
+> > depend on !CFI.
+> >
+> > For C code at least, just using regular -fpatchable-function-entry=M or
+> > -fpatchable-function-entry=M,0 shouldn't change the location of the CFI
+> > tag relative to the function entrypoint, and so should have no adverse
+> > effect on CFI.
+> >
+> > Is Rust any different here?
 > 
-> Oh. Well, yes. If we do this then it becomes suddenly selectable and
-> half of the series makes sense…
-> But as you said, this complicates things. 
+> Ah, no it shouldn't be. Sami can you confirm?
+> 
+> > > In this case, a backwards offset is applied to the CFI tag to move
+> > > them out of the way of the nop instructions. To ensure that C and Rust
+> > > agree on the offset used by CFI tags, pass the
+> > > -Zpatchable-function-entry to rustc whenever it is passed to the C
+> > > compiler.
+> >
+> > As above, I suspect this isn't necessary to make CFI work, for any case
+> > that works with C today, due to -fpatchable-funtion-entry being
+> > overridden on a per-function basis. Are you seeing a problem in
+> > practice, or was this found by inspection?
+> >
+> > However IIUC this will allow rust to be traced via ftrace (assuming rust
+> > records the instrumented locations as gcc and clang do); is that the
+> > case? Assuming so, is there any ABI difference that might bite us? On
+> > arm64 we require that anything marked instrumented with
+> > patchable-function-entry strictly follows the AAPCS64 calling convention
+> > and our ftrace trampolines save/restore the minimal set of necessary
+> > registers, and I don't know how rust whether rust will behave the same
+> > or e.g. use specialized calling conventions internally.
+> 
+> Well, I was told that it's a problem and was able to trigger a failure
+> on x86. I didn't manage to trigger one on arm64, but I wasn't sure
+> whether that was me doing something wrong, or whether the problem only
+> exists on x86. We already have the flag on x86 for FINEIBT, 
 
-But then you leave it up to the user, instead of doing something quite
-random. This would allow you to configure PREEMPT_RCU=n despite also
-using PREEMPT_DYNAMIC if that is your thing.
+I believe that hte problem only exists on x86, becaause they use 
+patchable-function-entry for their FINEIBT patching (and use -mfentry
+for ftrace), whereas everyone else uses patchable-function-entry for
+ftrace.
 
-I fundamentally hate the whole randomness of the earlier proposed
-selection criteria. It only disables PREEMPT_RCU if you use LAZY and not
-also have PREEMPT_RT or PREEMPT_DYNAMIC.
+> but I thought on the off chance that it's not a problem in practice on
+> arm, it still doesn't hurt to add the flag.
+
+It won't adversely affect CFI, but it will open up rust code for ftrace,
+so I'm not sure that "it doesn't hurt".
+
+AFAICT at the moment this isn't necessary for CFI, so can we drop this
+patch for now?
+
+If we want to pass these flags for !x86, the justification should be to
+enable ftrace for rust code, and we should test that actually works
+(e.g. by testing ftrace with rust code).
+
+What happens on x86 for ftrace and rust?
+
+> Regarding the AAPCS64 calling convention thing ... rustc uses the Rust
+> calling convention for functions internally in Rust code and I don't
+> know whether that changes anything relevant for what you mention.
+> Matthew/Sami do you know?
+
+From their replies it sounds like that happens to be true in practice
+today, but as above I think we should go test this actually works.
+
+Mark.
 
