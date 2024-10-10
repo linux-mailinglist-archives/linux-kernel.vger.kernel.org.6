@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-358131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E644F997A8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:29:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A284997A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C6CDB214CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6985E1C21631
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F42139D07;
-	Thu, 10 Oct 2024 02:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGvJ0mLD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C1913D8B2;
+	Thu, 10 Oct 2024 02:30:20 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AD3B646;
-	Thu, 10 Oct 2024 02:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0350438396
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728527336; cv=none; b=gkjl92UrC2kMhAckaIVNvTyOP106+oFp8nHLewlzmUu3howCcuUt2rij3VqcXp1TlSWg1feBEoh+gB/1mVHs/9d8adP/i8tBJ18HSho55u9zBWZo/T673iDT127x7GWXEQvFEA7QAJHd1CNixoTj521DCPWzR9ghM6uSIzULp4o=
+	t=1728527419; cv=none; b=AMWjE4lbAGfT/6yGed8e4JuXSh3Mf0XxCprIppJ3+Mrmca540GA41mEME378DxN9L4lsz7pcL/sqW9x2G8dY/w+3H4A58/u6Qu9cQ1P7Q5IqntYOR9+MXBg+2uuw4kATwmLjPOopgCk943SyVOsWGoia7NQ7D6hei3Trqcvyn4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728527336; c=relaxed/simple;
-	bh=5BzC8lqasY+MJL/iRnRtGdNnIQG08XRDajBe4Cza2mU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A6ieeuaNjesTYt5O+zFxrTYIT4qcCmNVW79yUlGQa6c4m9vAXD7Jw0t5MCLXrMa1Q2ZPDHdh2PCjA7t5MRKTh9MnJIAO48qTaeszyJHEnk+3chTncoVoP9uo8MrYGpUxhV8BqYI1Rl7utApagClleO5Fg5bYIU1GB0FDUVVpZ70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGvJ0mLD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4239BC4CEC3;
-	Thu, 10 Oct 2024 02:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728527335;
-	bh=5BzC8lqasY+MJL/iRnRtGdNnIQG08XRDajBe4Cza2mU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YGvJ0mLD5f+y3UWjYOAWfhOKNZO+1D9bZnoejivjIa2J+LMSXKRnsbtn8tLxmWwUb
-	 jv9vtSF7N3KXRRSa9+2LGFXEicSgVRFuvTGB852JmT1OOAK7pv/NzKuaL7U3Sj31/o
-	 QUVZP0aNKZSRGXOVLnVaeMIHcYxOhaz/PWQDI067irDnW1A51cGyx7jGAht1qLyMmR
-	 wO/b8lg5/TwadTEL4cz7QRRPVb1RIZw3zl1KmadoqjhHDsTXSOcQ0UOnTWQGSKbilw
-	 QmTZ+ZeFt9QBeVMM+LkgUSJ5gGB2k5xltjpUcZxtoOr5vYevrNd1P19X1o8gCX0nMz
-	 HzL/oOF9PEiFg==
-Date: Wed, 9 Oct 2024 19:28:54 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Jeff Johnson <quic_jjohnson@quicinc.com>,
- Christian Marangi <ansuelsmth@gmail.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5p?=
- =?UTF-8?B?Zw==?= <u.kleine-koenig@baylibre.com>, David Gibson
- <david@gibson.dropbear.id.au>, Jeff Garzik <jeff@garzik.org>, open list
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 net] net: ibm: emac: mal: add dcr_unmap to _remove
-Message-ID: <20241009192854.28fb1f41@kernel.org>
-In-Reply-To: <20241009-precise-wasp-from-ganymede-defeeb@leitao>
-References: <20241008233050.9422-1-rosenp@gmail.com>
-	<20241009-precise-wasp-from-ganymede-defeeb@leitao>
+	s=arc-20240116; t=1728527419; c=relaxed/simple;
+	bh=jQHLJebipjWC3RG6zINB7NPrCE3n4F4AfAURhsXbxxE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ftO4sJj5/sGxwE7CmCOQBY2u+Ihvw4VrPalZbTEsyNPXDAuKfBitwKYbepiDqWxFQh6pDJFYbRPSdwxpX8S2RFv9sLhFdb5aWUFqEQ2rHMlwrPKWGZctGHy3293FvDzIQUJgMdse3poiNeKQaCXlAWBxMInJ5t5FokDG20V4Tqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XPDGQ38Tyz2DdJt;
+	Thu, 10 Oct 2024 10:29:02 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 85D871A016C;
+	Thu, 10 Oct 2024 10:30:08 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 10:30:07 +0800
+Subject: Re: [PATCH 1/1] ubifs: Try to recover from missing znode
+To: Benedikt Spranger <b.spranger@linutronix.de>
+CC: Richard Weinberger <richard@nod.at>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>
+References: <20241008133342.1937674-1-b.spranger@linutronix.de>
+ <0840be30-63bc-449d-a9a4-c4e6b54c8885@huawei.com>
+ <883601802.30668.1728453832223.JavaMail.zimbra@nod.at>
+ <351bdd98-98ac-036f-4685-56e88a102cf3@huawei.com>
+ <20241009144900.367f9cb4@mitra>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <fe73967e-875b-590b-946d-33028cd43c9d@huawei.com>
+Date: Thu, 10 Oct 2024 10:30:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20241009144900.367f9cb4@mitra>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On Wed, 9 Oct 2024 01:23:02 -0700 Breno Leitao wrote:
-> Hello Rosen,
+在 2024/10/9 20:49, Benedikt Spranger 写道:
+> On Wed, 9 Oct 2024 18:46:43 +0800
+> Zhihao Cheng <chengzhihao1@huawei.com> wrote:
 > 
-> On Tue, Oct 08, 2024 at 04:30:50PM -0700, Rosen Penev wrote:
-> > It's done in probe so it should be done here.
-> > 
-> > Fixes: 1d3bb996 ("Device tree aware EMAC driver")
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  v2: Rebase and add proper fixes line.
-> >  drivers/net/ethernet/ibm/emac/mal.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/ibm/emac/mal.c b/drivers/net/ethernet/ibm/emac/mal.c
-> > index a93423035325..c634534710d9 100644
-> > --- a/drivers/net/ethernet/ibm/emac/mal.c
-> > +++ b/drivers/net/ethernet/ibm/emac/mal.c
-> > @@ -742,6 +742,8 @@ static void mal_remove(struct platform_device *ofdev)
-> >  
-> >  	free_netdev(mal->dummy_dev);
-> >  
-> > +	dcr_unmap(mal->dcr_host, 0x100);
-> > +
-> >  	dma_free_coherent(&ofdev->dev,
-> >  			  sizeof(struct mal_descriptor) *
-> >  			  (NUM_TX_BUFF * mal->num_tx_chans +  
+>> 在 2024/10/9 14:03, Richard Weinberger 写道:
+>>> ----- Ursprüngliche Mail -----
+>>>> Von: "chengzhihao1" <chengzhihao1@huawei.com>
+>>>> An: "Benedikt Spranger" <b.spranger@linutronix.de>, "linux-kernel"
+>>>> <linux-kernel@vger.kernel.org> CC: "linux-mtd"
+>>>> <linux-mtd@lists.infradead.org>, "richard" <richard@nod.at>
+>>>> Gesendet: Mittwoch, 9. Oktober 2024 04:23:02 Betreff: Re: [PATCH
+>>>> 1/1] ubifs: Try to recover from missing znode
+>>>
+>>>> 在 2024/10/8 21:33, Benedikt Spranger 写道:
+>>>>> After powercut on a system using ubifs mounting failed:
+>>>>>
+>>>>> 2024-09-30T12:38:26.880487+02:00 sonja kernel: UBIFS error
+>>>>> (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node type (255
+>>>>> but expected 9) 2024-09-30T12:38:26.880506+02:00 sonja kernel:
+>>>>> UBIFS error (ubi0:0 pid 2178): ubifs_read_node [ubifs]: bad node
+>>>>> at LEB 103:46920, LEB mapping status 0
+>>>>> 2024-09-30T12:38:26.880509+02:00 sonja kernel: Not a node, first
+>>>>> 24 bytes: 2024-09-30T12:38:26.880510+02:00 sonja kernel:
+>>>>> 00000000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>>>>> ff ff ff ff ff ff ........................
+>>>>>
+>>>>> While traversing over zbranches during the journal replay one
+>>>>> zbranch points to a znode, which was not written to the flash and
+>>>>> therefore the flash is empty.
+>>>>
+>>>> UBIFS guarantees two things for znodes:
+>>>> 1) all index nodes(in commit seq N) are written on flash before
+>>>> master nodes(for commit seq N) are written.
+>>>> 2) all index nodes(in commit seq N) won't be erased from flash
+>>>> before master nodes(for commit seq N+1) are written.
+>>>> So, I don't understand that why znodes not exist during journal
+>>>> replaying?
+>>>
+>>> In addition to that, is just one znode missing or are larger parts
+>>> of the flash empty?
 > 
-> The fix per see seems correct, but, there are a few things you might
-> want to improve:
+> Some background:
+> The system producing the broken image runs on an older kernel version
+> (4.9.286-rt189). Attaching UBI performs without any error. It seems,
+> that there is only one znode missing. There are empty parts on the
+> flash, but as far as I can see all PEBs have UBI header Information.
+> The missing znode is somewhere in th middle of an PEB and other znodes
+> are in that PEB.
 > 
-> 1) Fixes: format
-> Your "Fixes:" line does not follow the expected format, as detected by
-> checkpatch. you might want something as:
-> 
-> 	Fixes: 1d3bb996481e ("Device tree aware EMAC driver")
-> 
-> 
-> 2) The description can be improved. For instance, you say it is done in
-> probe but not in remove. Why should it be done in remove instead of
-> removed from probe()? That would help me to review it better, instead of
-> going into the code and figure it out.
-> 
-> Once you have fixed it, feel free to add:
-> 
-> Reviewed-by: Breno Leitao <leitao@debian.org>
+>> After reviewing the TNC related code, I cannot find out any illegal
+>> behaviors to make znode lost or valid index LEB erased.
+> OK. Is it possible, that this behaviour is caused by a already fixed
+> bug? This happend on a system running 4.9.286-rt189.
 
-Good points, I'll fix when applying - I want to make sure this gets
-into tomorrow's PR 'cause Rosen has patches for net-next depending 
-on it.
+I found one patch [1], which fixes a data lost problem while writing failed.
+
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.12-rc2&id=31a149d5c13c4cbcf97de3435817263a2d8c9d6e
+> 
+>> Hi Benedikt, could you provide a corrupted UBIFS image? Let me try
+>> getting more information.
+> I need to clarify this.
+> 
+> Regards
+>      Benedikt Spranger
+> .
+> 
+
 
