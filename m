@@ -1,77 +1,127 @@
-Return-Path: <linux-kernel+bounces-358691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CA999827F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:38:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E41998295
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2E71F24CEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCCEAB28919
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177D21BDA8D;
-	Thu, 10 Oct 2024 09:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084471BE22D;
+	Thu, 10 Oct 2024 09:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vwCWLzJi"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t3mjSE3A"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F6533CE8;
-	Thu, 10 Oct 2024 09:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48C01BC9E3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553096; cv=none; b=fFxkjLaHw+szKU45p+/ITsr97qnZbDk8vN1sq9dsUntNUulCsMOWbRxqetx96BqMyijyWuKqiOvVnQc376XA5NdYFfsaWwj6rfWU6raFnuOTmzJ+yofzjlOKnZ08Engl6DNJNsGM0JX/hI7fH6JuyFUOB/vZzmZqwJ91l6XlfZQ=
+	t=1728553118; cv=none; b=qlORoy313vQqnCCPjoGKjpCL52AHClrIwd7azIefHiLANSDdpzXxOfrOTNwbWq3kk+N4C6GCV/dLtljaGhhcDCToyDK2Z7bgrTfIkvx6oNN/HcBzCEcxReQTJBkS4dLH+apUXGZYBy4Yc8H5mo4g4vypeyjOhPKiZKi7I2YqRlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553096; c=relaxed/simple;
-	bh=aMN5PPq8edkNLETTrxOcDfcm/ZlHG3Ys4u3m6eBXZIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7Q4opDObRKhG5ZeX3KSeq/A+vvSfPRb6SB3LC3iMW8g+DHR9UmAcYQO5eXcCF1a1yQArRlOAysK2FvZp0e+3HG3UhnY6g6DtdPZ2mgesL3oYs8XKM6/1pVZm4u59fu5ThSK+1J8cJUzaeNeCBO+xgm6WTSafKLK9HLd/W0WjNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vwCWLzJi; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0j3RYOglfCg2sEcOjPn//O8q7Addcfgji0Dp6Ll4I1c=; b=vwCWLzJi89834zxBJGLRcndOtU
-	4tRIJqLS/4Ext8O7jjJJsiTAC87rheppx1xCaGlX/VbEhtBqSvpd6WMN58uR/Qrx+koDsfhG1SI0e
-	8NaLKmpqcUH+6wtp4PzbUJs9x7BLuFBD/em6VomIcejxUNJu1gXAHuOcoz6ABOIhlGp2oBS14c14k
-	C9wSvhbMO2YWvgFCzKBj3/DFOpr0kpmBA6pCT3tmc96zpjeEbMpjGt4ZiQb4fIlhskj7r8nWqQI16
-	XmJFqlMDSIOoJWnYPYN6tWcbGwjdH4L9e3LQhbSmIufed+SMwPu8dMJt2EcwK36IYeR75IhOmp367
-	plu7MruA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sypcX-0000000CGF5-16JU;
-	Thu, 10 Oct 2024 09:38:09 +0000
-Date: Thu, 10 Oct 2024 02:38:09 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: akpm@linux-foundation.org, hch@infradead.org, llong@redhat.com,
-	xavier_qy@163.com, lizefan.x@bytedance.com, tj@kernel.org,
-	hannes@cmpxchg.org, mkoutny@suse.com, jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH] lib/Makefile: Make union-find compilation conditional on
- CONFIG_CPUSETS
-Message-ID: <ZweggYOQtt5OUgHJ@infradead.org>
-References: <20241009154022.2432662-1-visitorckw@gmail.com>
+	s=arc-20240116; t=1728553118; c=relaxed/simple;
+	bh=LGl5v64OdaSMCvZyhXlX9gOE4oO4AJVSVwQjgTem8xY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tydjNSssu2n+O72gxsXcmh6SugUeaHThVqmqWzftaNIw5extgTXLby31TQU2+ygoB+nB+YUgVJZTnwuv9Ui2qJ7Cd/AgstJ3VpXDW+130aUbsDf4gim2M1K+esqDcy0GcKRqoAAEfcps4nXagROOAsXSG433uj0Cge+aLmo6jBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t3mjSE3A; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e284982a31so13687057b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728553116; x=1729157916; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3JrvS7ZL7zZ+JbiSh4qJJvQSqhwC8oRf994IWaVyGGc=;
+        b=t3mjSE3Ac+b8952KtzLouD8WZaPGF6gxc81LV/7KXPcWAKkqzraaBBDe7YQjG0TXkT
+         /faZNahhlM/cIwt3keP0wSULlGaNTPLh4ehUwPfBuksj9Md61T5mwtzDg/Ng5IYClTp+
+         oc1mt4twiywuiJ2QTfAt0mFUWwF3Ew41n+ZzJBNKZYhq+FeHlRhzMLisnA93r+tZf0C+
+         w0uUwn+Jdp6mDNEIt//q0Z6+fhwGe1QQOqsLlE6OEjEYMNvf1RBthDLbq11R4SthXeYw
+         g69ysgfaJ9g1csDBo0tBePQcJulpyOVeNZl5unXGrCiyP7VnSQmrD61TV4KpR2AU5uRH
+         pe+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728553116; x=1729157916;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3JrvS7ZL7zZ+JbiSh4qJJvQSqhwC8oRf994IWaVyGGc=;
+        b=MU7ctv6NT3iHfEJsqNWqW57sJYeltFJFSlL3dZtTwD1dQzRWsrpbsWsgtde6AtK4dD
+         7oPRr9ivaEuBoSUWEAsB46MsQQU5e+8XgbU+fk/u9Rgk2ZEX8XGvI76ZGNXX4P+aQAY1
+         H/Tn5I1B1cerkgLXa6oBogQ9ACGCfEvgqtGsHUwmcW5MeOiHQ25D/4w9JqXsg1VAB8F2
+         I2TrB8e2HeCzicsy9YJoGRogcAmmtFi353MDnSXuG5p1X7O0ssJiZ80vAaZpKoTpSIs4
+         cGl24AtkN7gbmF/USdeq3qEUz3JJAd00tVq6bcJRGxf6pKMPOaAl5Tq6a5g5P/3E2/6C
+         CAMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVej9QJY9pb1Lixpuht8swKilXV6AIG+MZLhaxQfYp25XL+zHhC8EFB8Ftie/Biz9El8aoY3lLnKBnE45I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb4sEY2VewLQuUhcT900AJnjpLC0l4eWXj4qnWLdB+NfrNIfk3
+	21HVuHYVOOAdZI+VNinohTQknP/xfQUp+bS+qlUTbzKqgrBt2dIkZebd/wJ2b9cIJYxZwHMQNKn
+	GtKfKAxQNC5FGMA==
+X-Google-Smtp-Source: AGHT+IFhzGY5t3RkyXoIJV0d1EOFgaxtw5njawDVgbAaGCAdITCJbDElc3h7tzDkVGhbspHmhomdM4Hhz71cxBg=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:4281:b0:6e3:2bc1:da17 with SMTP
+ id 00721157ae682-6e32bc1dc1amr499067b3.4.1728553115778; Thu, 10 Oct 2024
+ 02:38:35 -0700 (PDT)
+Date: Thu, 10 Oct 2024 09:38:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009154022.2432662-1-visitorckw@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAJGgB2cC/x3MMQqAMAxA0auUzAbaKoheRRwkiRooVVoRoXh3i
+ +Mb/i+QJalkGE2BJLdmPWKFawzQvsRNULkavPWds86i0hICslxCF96SMvYDeaaWuHMMtTuTrPr 8z2l+3w91fDo+YwAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=778; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=LGl5v64OdaSMCvZyhXlX9gOE4oO4AJVSVwQjgTem8xY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnB6CXpiAgpO06WePqhI7wIEZSiscJcvGy/If/7
+ 3KVs6ACM5aJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZweglwAKCRAEWL7uWMY5
+ RktWD/9SpAYXqZHXhNSIniY2ws6yScZqR5wRrCqUJtVHBNLOKqw4Dp8vAwve/18pzRMmPpvwx1p
+ 2QO8gShh0uMKct8VIDW2QuGZqRNolmlOZ9+kIvPqA+b3mApSnwI7a8uCX6a+3d/TI3S+ExTN4hw
+ bSW6UdpqsOzsiPIb27tkLIm1Em5LPF44KqZ6xhhFvVNrJsAKyv9iaDRsVTjqwJ9dImdqPoDj/5R
+ LRVyoilklHhQvsAMPDkMGzMYC4XQTmqmLhWoSiPTKJXRvvkG0WlLr+8mjlfipLvv6mXdT53LqAK
+ Zz7f964P3L+33xB1Ul6y555EBO2YTVf0uuEYx99UTcDM9tmL6ytSv8lkR1hqk/nCR+xwHUaAqKJ
+ OsW5xXbQayaohCFTi1B3XdmhpSy+3hWyLuL9rOagP5ARsWHRT7rZtscahS5hCI+MGz369cbkkQL
+ fTk6O+SmRru522Dfk8ZBzReicGS8ZHO27uN/bONlWvi4URRhzndjPel09OQlBWbj98UZgfbQ+cm
+ BPVIEGrUJEZCJ58976wM0fmsr5IKGwFK4tlpUBp1Bx/G0FkvdCVo/54tuMSNPy44GIK7D2dmHa8
+ HP+PMTc/gZYzoZEtkxnUz3Xlom4hJxSqJ+Luxldj9EymFzNWVcaLf30ts5LS4nOw/HPZfe94Ldj UZKkGoV0asyqb1A==
+X-Mailer: b4 0.13.0
+Message-ID: <20241010-icall-detect-vers-v1-0-8f114956aa88@google.com>
+Subject: [PATCH 0/2] Normalized CFI integer tags Kconfig fixes
+From: Alice Ryhl <aliceryhl@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 09, 2024 at 11:40:22PM +0800, Kuan-Wei Chiu wrote:
->  	 nmi_backtrace.o win_minmax.o memcat_p.o \
-> -	 buildid.o objpool.o union_find.o
-> +	 buildid.o objpool.o
->  
-> +lib-$(CONFIG_CPUSETS) += union_find.o
+This series adds a config option for the LLVM version in rustc and uses
+it to fix the detection for the CFI integer tags constructors bugfix.
 
-The usual way would be to have a new symbol selected by
-CPUSETS rather than hardcoding the user here in lib/
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (1):
+      cfi: fix conditions for HAVE_CFI_ICALL_NORMALIZE_INTEGERS
+
+Gary Guo (1):
+      kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`
+
+ arch/Kconfig             | 26 ++++++++++++--------------
+ init/Kconfig             |  8 ++++++--
+ scripts/Kconfig.include  |  4 ++++
+ scripts/rustc-version.sh | 31 +++++++++++++++++++++++++------
+ 4 files changed, 47 insertions(+), 22 deletions(-)
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20241010-icall-detect-vers-79c2dc3cd41d
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
