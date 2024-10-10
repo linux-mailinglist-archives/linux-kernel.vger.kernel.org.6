@@ -1,124 +1,158 @@
-Return-Path: <linux-kernel+bounces-358373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069CD997E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2863997E0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B3F1C2400C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CB772869CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E691B78E7;
-	Thu, 10 Oct 2024 06:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6371B533F;
+	Thu, 10 Oct 2024 06:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PB60Rs8V"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TYir694c"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C400E18C03D;
-	Thu, 10 Oct 2024 06:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D623E1B3B2E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728543529; cv=none; b=ZauAZH052+2SqOn/la25W+B7STVCQfUw0AKFV7LYX5Mx1dqCkyoWF0RRetNBJL/lpFYzCSjccD8htekOeqJph5xq+Zhkbg24xZ2HRCcXywqKAVehzs3r7EPREwXWKcsdqLG/wzBT1fNYZtr9+AIPuLdb6oKb1pJxt0DO3eAx36E=
+	t=1728543549; cv=none; b=dRMHJe2lWo+J43LJy4Hd/Ala7p0key5rOjDvmdE8tLrgOV+eqs9AZ6Iw2F9qKvHvzAifnDffN8LxpbGqkFeaqlNkafVBGnglc3gU1mfjdUzuQSlDDk+3zSFVIgKrAa3E5Qict67QbWH1fjW/NHobc1nerGtRQIXes0hDoPUA4Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728543529; c=relaxed/simple;
-	bh=caS8dejioNQ8618OBctl8+vfCDRZ5qvkd9Pb2QUU3UQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQ8OaElbafoDoX1MyInZ7MSbp3GegmZiUIemQZy8XH72rl2QZM5wy6SljryJKi92LMfb+qkinGZvAPooy8MzV3odBSinWtm2g352BdAPIt1FOEdGVkwngKpzLimf1+DJ0OzU5yocN6wphllEjwsEstT4q+dynndenuDOz4pjQeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PB60Rs8V; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/zbTLmbbuRlkbkFfWpl8colo1jSJ9uliQf2rR8cRNA4=; b=PB60Rs8VG5047EKu2IWcGim4xN
-	3i0Qw7RPRAIsO66mh9xdAfrSun/MIch91MkwMfhqOKDb/wKvMQW97oFm92kvVqhUytRW4JhxHN5jH
-	hmtDCrppcP6A5fT/VMKL2AwR/GEGHHTNyfGcu6VpMaWhVFgYathFFZvP2aBhwpbe9mt1F27jNJHAe
-	DM0dvoT7U+kwu/MXVo2HF92AZLf51MJWArXM4URUWYfk4GTWuKsXLZ3eVcaFjhOQ+bJZmsEgB7Afw
-	RsxTevrbhGUTDv6C9ObIW+MRmnJJoHX+q3zSnaEBWcNH/CJhNwv/13LMWnt8QDpqRzQrwpLLFX/ky
-	bpMsfU6Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1syn85-0000000BlEq-1dyW;
-	Thu, 10 Oct 2024 06:58:33 +0000
-Date: Wed, 9 Oct 2024 23:58:33 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
-Message-ID: <Zwd7GRyBtCwiAv1v@infradead.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
- <20241009180816.83591-8-rppt@kernel.org>
+	s=arc-20240116; t=1728543549; c=relaxed/simple;
+	bh=mQX9jQU0DPHWRiNPFczNQNp6e4J+Co2WY0aP+fHFmFw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZazNF8nvJScQWyZEH3rM8Gde88eBfoJL5I9KK5vJ7jW5GZZu5V2rqcwa+Bd4F7xzPa59d8jXIjzvJPD7WsduyK+r1mvG1g3/HZSvv/VqOEpbR7aGvsVfB22KXXIkJmfQLuWlq6Qth4LfURXD2JDwugchTjtMA4hUqYViefUS/UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TYir694c; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4c482844so143637f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728543546; x=1729148346; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fu5UKmO88VBg+uZPHlg4bMbsMyVFn+ft6QBZVzUL7Tc=;
+        b=TYir694c/weWob2Ry5hIRZKqGHm/RPxblpDNPQQrmeENNcdum3xmaQyCJiKOwTKjzl
+         ULvap9HQ+O0JZVqyGo7frOaFeWNYFEG6nTnTHPIKliR4zaeF2c6xLraDGPWYQuumD+gh
+         2s/GsPR5KlVZKu3GvLUEHWttlptYvhTZZOokMicvaGTa2O8EDHciTUV7IUdU4MkaMywo
+         /pMyJuwJvd4HSzWVDQbhWOqEPWAniBiszQcR4GPRQTW1LNhWER9Qwh88J1mVnil2hkbw
+         gsZTrkrbDcNuIM58vspS2SCy95bKbnrsOEDyE16f9pykSvTNrdzwdQx2Tjd7m/payMma
+         c74w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728543546; x=1729148346;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Fu5UKmO88VBg+uZPHlg4bMbsMyVFn+ft6QBZVzUL7Tc=;
+        b=AgOJ510rGb+zU/2jRV7Phq9sIMvoQC4fSVmn7+oLbz8tgOn+8g/herYZntQx/G9Ugu
+         ZAJqe8P+fXLuxuU00x9z0Oa0b2U8J8AJgBphh4kRiOTe/ehaH3BX0zoCl7NWYBuES6w2
+         MtX0zaPcGh9hg3GSJmKrfVFQfWseykdQeJ2s1TYhtDy1ZLgjB6bXKDuFBPXyRY8S8cT9
+         BIeolfkStxifY1YnQZAXXmj9kHIgLjlS1Yq7Ep2oR/aXXBwzxfeXvRjvm2nw/YRFBCEg
+         70238/xrzmVbDtRo2bNhcvJfPn9qAyCVdDefKuEiIoB1aRkYtTFFAQOq0AAaD3STGqxa
+         5kgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/nG/ts4jemd5re5Um99d3gn2Q5JUbeK6y0+PThZCVdW5xtxCBqZteCBhS2u/2D1ZGi5tzBqfebFScwC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOvQxh4kT1B6maGJ7MG6b3MQHb5pFxmSmBNRXw1QJq+WHEWJ60
+	X1DG806L66fGiSgf0nCiZPQFB2Ny+lk4P3su646WXgk95sghajqMCMqEfIqepBY=
+X-Google-Smtp-Source: AGHT+IHuGKmwEjsezbeyACGUv6HYsE4XqNQZhrvfZtA6jtX0+67T0GwfuToRr3c9bzLP77yPOnCRsw==
+X-Received: by 2002:a5d:490f:0:b0:37d:49cd:7b46 with SMTP id ffacd0b85a97d-37d49cd7e80mr834783f8f.27.1728543546142;
+        Wed, 09 Oct 2024 23:59:06 -0700 (PDT)
+Received: from [192.168.7.189] ([212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b9190f7sm654282f8f.114.2024.10.09.23.59.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 23:59:05 -0700 (PDT)
+Message-ID: <5fc9d581-14a6-45e8-8eda-4df49b81f15d@linaro.org>
+Date: Thu, 10 Oct 2024 08:59:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009180816.83591-8-rppt@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/6] remoteproc: qcom: Add helper function to support
+ IOMMU devmem translation
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shiraz Hashim <quic_shashim@quicinc.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-4-quic_mojha@quicinc.com>
+ <83e23090-0390-4c2e-91e3-e222baaa889a@linaro.org>
+ <ZwPyE/rQOH181rqz@hu-mojha-hyd.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <ZwPyE/rQOH181rqz@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 09, 2024 at 09:08:15PM +0300, Mike Rapoport wrote:
->  /**
->   * struct execmem_info - architecture parameters for code allocations
-> + * @fill_trapping_insns: set memory to contain instructions that will trap
->   * @ranges: array of parameter sets defining architecture specific
->   * parameters for executable memory allocations. The ranges that are not
->   * explicitly initialized by an architecture use parameters defined for
->   * @EXECMEM_DEFAULT.
->   */
->  struct execmem_info {
-> +	void (*fill_trapping_insns)(void *ptr, size_t size, bool writable);
->  	struct execmem_range	ranges[EXECMEM_TYPE_MAX];
+Hi,
 
-Why is the filler an indirect function call and not an architecture
-hook?
+On 07/10/2024 16:37, Mukesh Ojha wrote:
+> On Mon, Oct 07, 2024 at 10:08:16AM +0200, neil.armstrong@linaro.org wrote:
+>> On 04/10/2024 23:23, Mukesh Ojha wrote:
+>>> From: Shiraz Hashim <quic_shashim@quicinc.com>
+>>>
+>>> Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+>>> translation set up for remote processors is managed by QHEE itself
+>>> however, for a case when these remote processors has to run under KVM
+>>
+>> This is not true, KVM is a Linux hypervisor, remote processors have
+>> nothing to do with KVM, please rephrase.
+> 
+> Thanks, perhaps something like this,
+> 
+> "However, when same SoC runs with KVM configuration, remoteproc IOMMU
+> translation needs to be set from Linux host running remoteproc PAS
+> driver"
+
+Thanks but I still don't see what KVM has to do here, KVM is an an optional
+Linux kernel feature, Linux can be configured without KVM and still perfectly
+startup those remoteprocs.
+
+Neil
+
+> 
+> -Mukesh
+> 
 
 
