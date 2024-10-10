@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-358301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F69D997CDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA47C997CE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC831C21790
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62313282B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D511A0715;
-	Thu, 10 Oct 2024 06:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0205E1A070D;
+	Thu, 10 Oct 2024 06:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvHEwupo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="G3VESp9x"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F2F3A268;
-	Thu, 10 Oct 2024 06:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C711A01B8
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728540766; cv=none; b=lLoe9OYfKIE5Fnss3OIBIaFY1hzzVtFO4b6f3jBiYenPbSiBEiSd8U1WnLHKnb89RftWX5ds3h3PnVz/jTuF/RBw4XHl0MAVuoUBlBBL0bM7Ln7eJGNi3qNLtCshURM6l4QqYTb2KmThAOMpGFp5/Wwmw0P6XlXhUYhUZNHSWWo=
+	t=1728540894; cv=none; b=gYSjxWyvBCkipkBYYDZ/bydB59pfCXF5ph2TD/HY3iMPHAHJOW+baLKbbItEpYz2NdRCHM1JzLGk3HVKJvnymBUqxHRA2qPFBhFWnrazjRf4xUsHSDZFRNozKP95uibFW0YMi4hiInboH0wGmPw/OCqP9K49QshFzrCZzQhTGJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728540766; c=relaxed/simple;
-	bh=RSlw7l0cabl6wOx55r750YjZqE2kSodlcvE52712u28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHbzmol7bXaGfajGBhQqP7UNWROJKcAQoGWFEoeHfcRZ5c/o8zYHBlIK3RR4OnB13SE2S9MHykYpJTTEP4ONqujOFS8Vtl1bEpUo1vW9Q4gUmTF1ro9G+RZOWFrkhr9v5FtWGnIR3dalX72AnbxomU9UQvZwMpsqh7I8+FL3UDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvHEwupo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2074DC4CEC6;
-	Thu, 10 Oct 2024 06:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728540766;
-	bh=RSlw7l0cabl6wOx55r750YjZqE2kSodlcvE52712u28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KvHEwupoOFlkFA68blGTmEGN9C3ieIL7cXJpRAw/wiNTPuE9CGVqfJkoAJYuiH+AV
-	 dWqXFnLrvM1do3roPxoAJKdAbFYXoTSiK/bTVNFkGfkF5CQd5QibZfYHZB7LbUhpEq
-	 YxsZ8a4tOk9KnP7lYnaf6Kf95QWgxkp6+FjvZ3ILGIeAm3mND/3NFwFMlj+tfTlLrh
-	 eKeUjc0bs6WV4icQyYco+cM7XrBASA3gEv92Nv8au4q+DN4L2+nXooH7DrNJdWVkzh
-	 nU7eTKZmh+E4rnqD2Ai1hmvZxez6RbAfqlLgU4rGEM6ZrfmdxbQ8tArq4k+FnnfS3k
-	 rEaI4/y/Mx9sg==
-Date: Thu, 10 Oct 2024 08:12:41 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <oyvqsywyznanpx5oflnemcsrk7r7nnhvxl6ly7b55oan2boi5d@kobrtldqbj6m>
-References: <20241009233908.153188-1-inochiama@gmail.com>
- <20241009233908.153188-2-inochiama@gmail.com>
+	s=arc-20240116; t=1728540894; c=relaxed/simple;
+	bh=cn5vK56jOcjlo9XJzP5uTQcE5ndRjUdaHxqRUbU1430=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ug2G2emRUyEnQcIZEPOWC65ljWmb0vwGyardtzVzhN42/z+3OReGvkbd9eL64LGRxu9ej8OpJSsgdMYagbxe6qUO+60P6IrWurxaAlLjUTHFlnG4WI8icBuizlQVMEt04VkKq2piBcRZFipV3r5oUNcjuIGgZ6rWOMVAoitabcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=G3VESp9x; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
+	by cmsmtp with ESMTPS
+	id yAahs4PoivH7lymRms9jCn; Thu, 10 Oct 2024 06:14:50 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id ymRksuB2ZmNYjymRlsnti6; Thu, 10 Oct 2024 06:14:50 +0000
+X-Authority-Analysis: v=2.4 cv=fb9myFQF c=1 sm=1 tr=0 ts=670770da
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=DAUX931o1VcA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8 a=VwQbUJbxAAAA:8
+ a=CWmjl8rzmKzYHtF8YhwA:9 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=u9n22b7xqMqkSOr8GxS5T3m6uq+qCh+LjINZHSI03K4=; b=G3VESp9xxKglmfRxhSHl5KZ1Yt
+	uZifip06lQ2SBcofq6IZpS8OtgTb7qlA/HSPm8/DOVxwm/DkZ1IQgJW4O5XNC2bII+rv5M1Aa760e
+	NAW1hy+FZpVHLEcakSFVk6dYrv6EqzDbKh/iMv1nSubfWt/jZa9LAFWJmGUM0rLiknpc6T2ABYIj2
+	s9FNzpFwErmEgXiRTgOlL8oZ8KX+qcH409uenFQcWJhhxKLLlm3qGJYpl5kb+U9jvzk0hrsRAhrMe
+	ewE2mL1b3tBAAL03t3OoIrdLuTPprc3PSSsLceXBVi+y+HE0jjpSEPw08Xcj9hslNEuhnsDmLbJAg
+	8DuQN2eg==;
+Received: from [122.165.245.213] (port=36152 helo=localhost.localdomain)
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <karthikeyan@linumiz.com>)
+	id 1symRi-001l4I-25;
+	Thu, 10 Oct 2024 11:44:46 +0530
+From: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Subject: [PATCH 0/1] Add RV1126 compatible watchdog string
+Date: Thu, 10 Oct 2024 11:44:07 +0530
+Message-Id: <20241010061408.1351865-1-karthikeyan@linumiz.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241009233908.153188-2-inochiama@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1symRi-001l4I-25
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [122.165.245.213]:36152
+X-Source-Auth: karthikeyan@linumiz.com
+X-Email-Count: 2
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKCbpOv/P4ymvDpfDed5aFTg4mjAtO11Ju6prW5KZzv8PdGwS+wvIByPh6vO7bGSPFNKZCpL9UiNJyqThIonjr75bUxBzU2n0YMZBOOTZUF9RRrAL3R4
+ Xq6CiuwMt6R3bMIqp5rSarm/gJtpUvYID1vo6uVCZf9ykHennZwRPSaJdLMlzOzw5iRGCh6PoXDsalnHxGpNBFeLRDdbtbwcpY0xB6+ZYk1go44mDF2FQa6l
 
-On Thu, Oct 10, 2024 at 07:39:05AM +0800, Inochi Amaoto wrote:
-> Add compatibles string for the Sophgo SG2044 uarts.
+This patch is introduces a watchdog compatible string for rockchip's
+RV1126. I have already send this patch[1] in the series[2] but somehow
+missed watchdog maintainers and list. So resending this patch alone
+again from the series[2].
 
-This we see from the diff, say something about hardware.
+Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+---
 
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> index 4cdb0dcaccf3..6963f89a1848 100644
-> --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> @@ -58,6 +58,10 @@ properties:
->                - brcm,bcm11351-dw-apb-uart
->                - brcm,bcm21664-dw-apb-uart
->            - const: snps,dw-apb-uart
-> +      - items:
-> +          - enum:
-> +              - sophgo,sg2044-uart
+- Link to patch: [1]. https://lore.kernel.org/all/20240912142451.2952633-2-karthikeyan@linumiz.com 
+- Link to series: [2]. https://lore.kernel.org/all/20240912142451.2952633-1-karthikeyan@linumiz.com
 
-I would just add it to starfive enum, but this is fine as well.
+Karthikeyan Krishnasamy (1):
+  dt-bindings: watchdog: rockchip: Add rockchip,rv1126-wdt string
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
-Krzysztof
+-- 
+2.39.2
 
 
