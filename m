@@ -1,60 +1,98 @@
-Return-Path: <linux-kernel+bounces-359719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332F7998F7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:11:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497BE998F84
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDD41F25BC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF52B264BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EBF1CB33E;
-	Thu, 10 Oct 2024 18:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876231C9ECA;
+	Thu, 10 Oct 2024 18:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkLoNcUh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GHIKNQ2S";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R/uGGF6O";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GHIKNQ2S";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R/uGGF6O"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DBE1C9B64;
-	Thu, 10 Oct 2024 18:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2F4198831;
+	Thu, 10 Oct 2024 18:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583884; cv=none; b=CN7iq0ef3nDp+CNstgCBJN393QALnCgmtfDRbt5+CpYaCZCCnPAqEq7pcEd1Cc7pBcj2/mDbZYBmU1uxAR8SHVXdvuvTbAxPM70OXm/c/hw3ScwifYOJVvvvFobx96MIYa2AmR4OOb0tF60Fx7HJCRKWnEhds4VJaZuev+M4oac=
+	t=1728583970; cv=none; b=nIUYr/IpH1nSUrm6AJWPWLmBvai6qucS/hMBDDxIGKGuT3ynFbHtDWuxLIvJxgF3fgyrG5oMHSnD1sr0QOHl2jRbL0tkoXoT5qEOqRFcYEvo8qpyaE9kfEthw4b/foh6cZhK3ErgWH4ROOXgBiXov1+TF8Cjw9RF3vNbOm1b/ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583884; c=relaxed/simple;
-	bh=9eB11WqtyHOt+MBm/RTQKveBaJUUL+c2eHCqHHpop84=;
+	s=arc-20240116; t=1728583970; c=relaxed/simple;
+	bh=MeLT9On91Emxdpz2vM4qOLD/wTXoFMl1V2LZJC5eFEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jt3YUou3oW9PZReLTdUJtdeMVqAg8U7d7amDlQs6UFRUWippvYS6nMcm6F75UOeU3zmePP6ePrV+0/W5y1NuZCRTap6CoviUDDTPGcwRU0HG9Tw1CrhmuJCpIuHdeAFVEo2iegP/gbYGOh8iv8T50t0cEk0QkCgaJsDJwxM8x0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkLoNcUh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50672C4CEC5;
-	Thu, 10 Oct 2024 18:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728583883;
-	bh=9eB11WqtyHOt+MBm/RTQKveBaJUUL+c2eHCqHHpop84=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rkLoNcUhN4Nhu8seaL5Sq3HThSd9JqrmwB8zT4kdzEx9wZC/Ao/cVGvsFyliBue6C
-	 EMYHnrxHWWB90dzEd+iww7ivqMpPgHi6lbXY4GIX8ALUync3fsCvkCBmj/zxpW8qQY
-	 Wbnkr50JnbaaALbFPhzd/VzAFQlNnXF+/NvnEPvcoM5oCtk9LnS/72lCZXObY5DANn
-	 gN8/EwrvK5ZbAtaE0HGT7Iv9lcc98yrIp9nOW8RemMErjoxWJ/W7QX+B71ai8JRWdt
-	 k1jlSHzlkurbAziPrUN0g/gadXnOJFv5haDAJUXQCBQteBCvLgslnYAor7EkpLsN7v
-	 IZGiSvg1cu3Yw==
-Date: Thu, 10 Oct 2024 13:11:21 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, dmaengine@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 01/11] dt-bindings: dma: stm32-dma3: prevent
- packing/unpacking mode
-Message-ID: <172858388128.2107709.9101314940508767335.robh@kernel.org>
-References: <20241010-dma3-mp25-updates-v1-0-adf0633981ea@foss.st.com>
- <20241010-dma3-mp25-updates-v1-1-adf0633981ea@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/kVahQoXCwWEAQPIrbvljHBAlHldU4ND8jmgJYaeT9yfs3UREIRSJ4rzJMxfwWrFETiZOA82I+rnuiDFkBW/jS3L3sywGMyFUBzzA3tfNEEDiYNOdH4nHAoOp4iX0Bsr5xcNZ8xvHKyzXH35ZdVpddnb/9HQ0iGMS6AtLcb1cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GHIKNQ2S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R/uGGF6O; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GHIKNQ2S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R/uGGF6O; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 37D9D1F7CA;
+	Thu, 10 Oct 2024 18:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728583964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=GHIKNQ2SSSEv8P6wDvwVxbKIlYNa2QC7Rx7308haSY1Ac60eOzlINNouJruR6Cero/Xcgj
+	7QX++4UtfHrNtzDeJ2bdW+hCM3c8WRCsZKE60bdelZNdDYDjEJUIyd7Wt1Ld6ZkUjvCupZ
+	OP93e50VavKs/5tkvx7sRHITEtOUdPs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728583964;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=R/uGGF6Oa8Lh7abi4sgTD5cnmC8gDZFwfba+AddlwfkXD0rwu+H4FRtaGA4bDoOSrHEMDi
+	z6U/gpOcqC+MWACA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=GHIKNQ2S;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="R/uGGF6O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728583964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=GHIKNQ2SSSEv8P6wDvwVxbKIlYNa2QC7Rx7308haSY1Ac60eOzlINNouJruR6Cero/Xcgj
+	7QX++4UtfHrNtzDeJ2bdW+hCM3c8WRCsZKE60bdelZNdDYDjEJUIyd7Wt1Ld6ZkUjvCupZ
+	OP93e50VavKs/5tkvx7sRHITEtOUdPs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728583964;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jA41+oHeNzNXX8wZAt3OyU0/Uvd/fsqUXfwDVqkoiaU=;
+	b=R/uGGF6Oa8Lh7abi4sgTD5cnmC8gDZFwfba+AddlwfkXD0rwu+H4FRtaGA4bDoOSrHEMDi
+	z6U/gpOcqC+MWACA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 03B061370C;
+	Thu, 10 Oct 2024 18:12:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id PUK1NhsZCGdCLQAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 18:12:43 +0000
+Date: Thu, 10 Oct 2024 14:12:38 -0400
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/12] iomap: include iomap_read_end_io() in header
+Message-ID: <6zrqn4wicahjhfig6mgs45f3c7qq4xh3z7l5hgux6nmcf6w3gs@obvj4myhvavd>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <b608329aef0841544f380acede9252caf10a48c6.1728071257.git.rgoldwyn@suse.com>
+ <20241007170217.GD21836@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,32 +101,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010-dma3-mp25-updates-v1-1-adf0633981ea@foss.st.com>
+In-Reply-To: <20241007170217.GD21836@frogsfrogsfrogs>
+X-Rspamd-Queue-Id: 37D9D1F7CA
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-On Thu, 10 Oct 2024 16:27:51 +0200, Amelie Delaunay wrote:
-> When source data width/burst and destination data width/burst are
-> different, data are packed or unpacked in DMA3 channel FIFO.
-> Data are pushed out from DMA3 channel FIFO when the destination burst
-> length (= data width * burst) is reached.
-> If the channel is stopped before the transfer end, and if some bytes are
-> packed/unpacked in the DMA3 channel FIFO, these bytes are lost.
-> Indeed, DMA3 channel FIFO has no flush capability, only reset.
-> To avoid potential bytes lost, pack/unpack must be prevented by setting
-> memory data width/burst equal to peripheral data width/burst.
-> Memory accesses will be penalized. But it is the only way to avoid bytes
-> lost.
+On 10:02 07/10, Darrick J. Wong wrote:
+> On Fri, Oct 04, 2024 at 04:04:31PM -0400, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > iomap_read_end_io() will be used BTRFS after it has completed the reads
+> > to handle control back to iomap to finish reads on all folios.
 > 
-> Some devices (e.g. cyclic RX like UART) need this, so add the possibility
-> to prevent pack/unpack feature, by setting bit 16 of the 'DMA transfer
-> requirements' bit mask.
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> ---
->  Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+> That probably needs EXPORT_SYMBOL_GPL if btrfs is going to use it,
+> right?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Yes! I got a warning from kernel test robot as well!
 
+Note to self: Stop building all modules in the kernel for testing.
+
+-- 
+Goldwyn
 
