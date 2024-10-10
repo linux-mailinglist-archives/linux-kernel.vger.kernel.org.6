@@ -1,170 +1,142 @@
-Return-Path: <linux-kernel+bounces-359876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A3B9991DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:09:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C493E99922E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A0B1C252ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B0C9B2F833
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C21E00BB;
-	Thu, 10 Oct 2024 19:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDBF1DF997;
+	Thu, 10 Oct 2024 19:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ijy9bFwY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eFx2z6uy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0919C188A08;
-	Thu, 10 Oct 2024 19:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279C21C8FBC;
+	Thu, 10 Oct 2024 19:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728587017; cv=none; b=fKTWsziKamJi0S81oFTviGKcOIN4ysPe+kuNC0WXy0Xh8rrgHlFyZ1R1EfoW9QblcUyMVn75UyV5vJT7g3KCP+6vOzYrtdO7ggYY/0TMFZGTWuZA2CiD+kZyfuwlcBL75sfKTSHZmksufgTxDj99MIOcn2Pr0tu5AAODnZtMZBE=
+	t=1728587103; cv=none; b=RDjxSf8hFAM9YG22zHTajn34nq5RSAtyv+RtbLCFzwgI9Cwb/prl7ui3+hXx2zaxuJjfty0ZNj0OXIfFSSCKLgyhbemml0e8GLYtPkpp2tjKi7uNs43whFuCPQXf0IzRSKT+mJBqfph/abLApjABcpLI29RQQKPXTiyYtC7KLNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728587017; c=relaxed/simple;
-	bh=Y16JbD2tTLMVZ+XQHkqkCO/EcAcy4g8c84gyNLuC2Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUeDZ3b5unJ1M1cPWFKADjUmHjqWd0I5OO3tJY60WC0djtj/ELOciwOjGDGX3mpuJcENK0Qc2E6mswLMu3B1AP17dIFLDsLsrOW+DdHvHE5ABR8f28DiQNVNKVtQfzYb1+uDBCXjoUPocrsd5JtTSkaxbho0s6BMqLg3rSg7t9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ijy9bFwY; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728587016; x=1760123016;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Y16JbD2tTLMVZ+XQHkqkCO/EcAcy4g8c84gyNLuC2Ok=;
-  b=Ijy9bFwYUn1zkDi1HgmVCQnYX08g0Eg+llbN1wqvlLHSLIOW1eOFPAmj
-   MLyljcvkRmntuSM3zB74gUwdfKORhYix5O4q93s3V1UtWq7vBHpfU6Lye
-   et82PDcBVU6km+nKUmcMaP4Um7/6UfOBKUOYWMlOnDlAwoACevOGemy6B
-   C1RlKmDS9tHtcW+rMWv00QGFcQGT7l7/kpAJpL8G0n+o4slLUvOcFZEYg
-   52kawSMlNsO8A8jSqok+IJgx8+tDhuY8aiDIKe+9Ut8xwm+eBArD9jMI2
-   TwJvCdecqTSxMZkkfQU8zKj176IadS4TikHi/rMHQamuh3DdlZ1Bn/pCd
-   w==;
-X-CSE-ConnectionGUID: esA8UI+iTiqWcJGnXSxD6Q==
-X-CSE-MsgGUID: zEQVmTkSRfasQMXtPCow8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31664562"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="31664562"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 12:03:35 -0700
-X-CSE-ConnectionGUID: ehKnKpFWST6T8cGjMdRl8w==
-X-CSE-MsgGUID: W0m087IXRB2TQuPrC2Zyxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="76337924"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Oct 2024 12:03:28 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1syyRa-000B9h-2L;
-	Thu, 10 Oct 2024 19:03:26 +0000
-Date: Fri, 11 Oct 2024 03:03:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <202410110257.OAO10pXN-lkp@intel.com>
-References: <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1728587103; c=relaxed/simple;
+	bh=phoNZa9//6972a7VEYUPTIF2z9sXR02KuJ191yz9DBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nb40NE9PLvpWSgqPumthpFedExwT9vOato42CQ1AFSFRGkaa1DI9fGrXiNQYOyYgmPsUdh4gL5DvZ6hGNUTgHI6bN5MEI2gpSTaaBFZcocGqrFlIWUnL5g+sV0HRtc9l6oSfrY9TgoQ7lJ46pf9cZC4LKyJPzpPFZPLxh19PgSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eFx2z6uy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACSV1i022390;
+	Thu, 10 Oct 2024 19:04:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	phoNZa9//6972a7VEYUPTIF2z9sXR02KuJ191yz9DBY=; b=eFx2z6uycYzWp2CK
+	tW49HvuK4Bf19WTfXoQHcI0bc/bl6jmPca5DMV0/fWH0ruG8DQPu1OPfVumWCa5Y
+	fE7QpXzO0xxAjn/D5MCClT0RKT+SCXR29DKtxty7wED5OJ+e0SzInq63PK7TTP2O
+	uZOkJpVlSpP4Qnf9P58aX6IfOxgFulLAVTAgHBVYwTUVWOMXAsEdxCVK8xj2sNDD
+	heAEL+FkajMbxZjsyvg4G0HhvjppZl9E7Rt2EyJ/xuVXWXg6KctFkAhJk2Mm9tl3
+	cGszKB+qZ7F5avYcbG3WgI3q46IcdE5og5sjLUIB5XfEd5pTw+QI026K6A53co4m
+	qlIZoQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xptugpe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 19:04:45 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AJ4gER027564
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 19:04:42 GMT
+Received: from [10.71.109.85] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
+ 2024 12:04:39 -0700
+Message-ID: <94b7090d-583e-4008-acc3-1aa87d2fe6fa@quicinc.com>
+Date: Thu, 10 Oct 2024 12:04:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
-
-Hi Andrea,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on clk/clk-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.12-rc2 next-20241010]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20241007-204440
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta%40suse.com
-patch subject: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
-config: alpha-randconfig-r061-20241011 (https://download.01.org/0day-ci/archive/20241011/202410110257.OAO10pXN-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410110257.OAO10pXN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410110257.OAO10pXN-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/misc/rp1/rp1_pci.c: In function 'rp1_mask_irq':
->> drivers/misc/rp1/rp1_pci.c:139:9: error: implicit declaration of function 'pci_msi_mask_irq'; did you mean 'pci_msix_free_irq'? [-Werror=implicit-function-declaration]
-     139 |         pci_msi_mask_irq(pcie_irqd);
-         |         ^~~~~~~~~~~~~~~~
-         |         pci_msix_free_irq
-   drivers/misc/rp1/rp1_pci.c: In function 'rp1_unmask_irq':
->> drivers/misc/rp1/rp1_pci.c:147:9: error: implicit declaration of function 'pci_msi_unmask_irq' [-Werror=implicit-function-declaration]
-     147 |         pci_msi_unmask_irq(pcie_irqd);
-         |         ^~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] sh: Restructure setup code to reserve memory
+ regions earlier
+To: Artur Rojek <contact@artur-rojek.eu>
+CC: <dalias@libc.org>, <glaubitz@physik.fu-berlin.de>,
+        <ysato@users.sourceforge.jp>, <kernel@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+        <robh+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
+ <20240718021822.1545976-3-quic_obabatun@quicinc.com>
+ <aba64912a7cf700fd281016d4a2ad82d@artur-rojek.eu>
+Content-Language: en-US
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <aba64912a7cf700fd281016d4a2ad82d@artur-rojek.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 83left3nMHHMzBaLqF--RnitoKgAqkGt
+X-Proofpoint-GUID: 83left3nMHHMzBaLqF--RnitoKgAqkGt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=703 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100126
 
 
-vim +139 drivers/misc/rp1/rp1_pci.c
+On 9/29/2024 2:15 PM, Artur Rojek wrote:
+> On 2024-07-18 04:18, Oreoluwa Babatunde wrote:
+>> The unflatten_device_tree() function contains a call to
+>> memblock_alloc(). This is a problem because this allocation is done
+>> before any of the reserved memory regions are set aside in
+>> paging_init().
+>> As a result, there is a possibility for memblock to unknowingly allocate
+>> from any of the memory regions that are meant to be reserved.
+>>
+>> Hence, restructure the setup code to reserve the memory regions before
+>> any allocation is done by the unflatten_devicetree*() using memblock.
+>>
+>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+>
+> Hi Oreoluwa,
+>
+>> ---
+>>  arch/sh/mm/init.c | 15 +++++++--------
+>>  1 file changed, 7 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+>> index 643e3617c6a6..857ce8cc84bd 100644
+>> --- a/arch/sh/mm/init.c
+>> +++ b/arch/sh/mm/init.c
+>> @@ -249,6 +249,7 @@ void __init early_reserve_mem(void)
+>>      u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
+>>      u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
+>>
+>> +    sh_mv.mv_mem_init();
+>
+> One side effect of moving mv_mem_init here is that it makes cache
+> operations available earlier. But I see no harm in doing that.
+>
+> Otherwise the patch is looking good. Verified on J2 Turtle Board.
+>
+> Reviewed-by: Artur Rojek <contact@artur-rojek.eu>
+>
+ack.
 
-   133	
-   134	static void rp1_mask_irq(struct irq_data *irqd)
-   135	{
-   136		struct rp1_dev *rp1 = irqd->domain->host_data;
-   137		struct irq_data *pcie_irqd = rp1->pcie_irqds[irqd->hwirq];
-   138	
- > 139		pci_msi_mask_irq(pcie_irqd);
-   140	}
-   141	
-   142	static void rp1_unmask_irq(struct irq_data *irqd)
-   143	{
-   144		struct rp1_dev *rp1 = irqd->domain->host_data;
-   145		struct irq_data *pcie_irqd = rp1->pcie_irqds[irqd->hwirq];
-   146	
- > 147		pci_msi_unmask_irq(pcie_irqd);
-   148	}
-   149	
+Thank you for the review Artur!
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Oreoluwa
+
 
