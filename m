@@ -1,201 +1,152 @@
-Return-Path: <linux-kernel+bounces-359725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CE4998F90
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:15:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67CFB998F93
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F201F21E63
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158D72820A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5D819CCFC;
-	Thu, 10 Oct 2024 18:15:23 +0000 (UTC)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523211CCEF4;
+	Thu, 10 Oct 2024 18:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cx+eS+vk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8CC19AA75
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C88B19AA75;
+	Thu, 10 Oct 2024 18:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584123; cv=none; b=HM11QybpvmoyhPq386tGvGaIzNLBIEIEg2V91Ke1wUG+BG3C5NRfcBHj6d3GPQMhS4+P3mwJTFQpZwkllxIoNIY+NBYp+3JlRO7V0jKAoSU3lVyhe4FEeZTu18czaAXdFiYoGuyYLnyYe4h6A4+xdPtERjocVadNjqMJgTwXaPc=
+	t=1728584146; cv=none; b=fiM5p8zDQiyVVaY+FLaN/RH/KuQWKfeN2H3inj37ZKTy+t8MopCpo1B3ewOJVX+ijyy+5D33+5bJQvwo/ICcX4u+Yv4kwviB8DE2aTV4cWhHfnGwJ24thcNCztlz4zcykV+g/BzcfWSL8Od2zvW0YvxUtS7AsXnWOoefG8Tzj+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584123; c=relaxed/simple;
-	bh=9YXtJpCzg7TYAqmRxaWm3Xw2EuZaVbDK4L2lI5hflEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AaLYMPVA6CEWb/AqKl02h+7w5IHLC0Aq5NhHPvf8ay2oMXkuAJPDqO2EvpCbs3dGkRGqsx4KBpWCrurWfe+/FyN+4kob0wo687yw2qwuwr/Zgs4OvLIIGDoAvK3uPGboMChvvH2PlAk9UldXJ+gscUM1wvO8MTLU4ptfPAvguos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso1262345276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:15:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728584120; x=1729188920;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rwrn2Xy/aMgvLrxIFg3g/ca8md4MEfLanoKvVzTiBKk=;
-        b=Vqm9LmUxXaQyR5tac8GBytROyMp/uNqaR4AdJo0cDZCQcJoQAGYUKiXSK9NXvSSBHn
-         Sz3UtCtkGWdScjqa27XwyzX1ZAnySe5a7+fl0lPmyMveeVoy1kAg6I7HGLSfZgwirsAF
-         5nHRgL5ltC6a2X9Zvj5gJ/cq+uwW1TQn1INcZdP9lxAHWEUror/jarkRfsJhKlkpK8tT
-         naHkoVJR8sbewEp00EwO5S7JN+y1aE+F5d4DBmm4z3Hap1yjdD000JRoXdM0LdusDVtV
-         ec4l3lpmy5vWwAPenNCRFdSFQLZRbNdeqWBrfKXXVREPu2dIfC4qp8EZRmpvXtqxJakD
-         ZiCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3FKss/5+SVTTzVvvScT70NczoZdFtDDUf6ngWFC44P1ljTFxHmkDmgvDfCYsOt7nmNX6JseHrD0C/XfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNtQMdIIPrP/nPVIgJnoBkq1pDLLKo1APID0msRQeJQxHZklJB
-	30JpVkorUGhpIGVkoWC+da/oUj5sryueHxkkOZlPXGQwsrMvZFjn
-X-Google-Smtp-Source: AGHT+IHMFzyiQKZfd6SfVyA36Z2swrAYkkMV6LkY+UaLlgCB3U3n5CFt7Sp4pJV9C8ICmMjdV45oQw==
-X-Received: by 2002:a05:6902:707:b0:e26:7e1:5c09 with SMTP id 3f1490d57ef6-e28fe45342emr6497083276.27.1728584120206;
-        Thu, 10 Oct 2024 11:15:20 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290edf217csm399392276.6.2024.10.10.11.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 11:15:19 -0700 (PDT)
-Date: Thu, 10 Oct 2024 13:15:17 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
-Subject: Re: [PATCH 4/6] sched_ext: bypass mode shouldn't depend on
- ops.select_cpu()
-Message-ID: <20241010181517.GC28209@maniforge>
-References: <20241009214411.681233-1-tj@kernel.org>
- <20241009214411.681233-5-tj@kernel.org>
+	s=arc-20240116; t=1728584146; c=relaxed/simple;
+	bh=Sa7h91+6d1o7OSMAqD81PIFnEOb4b5qX62U+JceZIL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kTfTyORAuZHjY/D2hC3tko7Wq/mUKkmCHngsXiTY4RrtFqREM60VIcvZ/SuTu87U4YaagZSctaDaDQn7CMdPXj+hH0O9aH18mv1eQnaSRq3/K+9vi7evrimKTI1qEp1qAipD9PN698iYHvBoOtwEhK/8Qb5U0SwQ/+ORKDYnn9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cx+eS+vk; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728584145; x=1760120145;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Sa7h91+6d1o7OSMAqD81PIFnEOb4b5qX62U+JceZIL8=;
+  b=Cx+eS+vkLsIUQ33m0IdFIpPihQUbNtAjZrdN+UJnZEbbeVCeTHf7PE2T
+   Z9aavdRYt3tHfgO1+2YqNn7ZKM+m1HcTMVidnVyw3IxSydvwgQe06gv1K
+   siz/76J3nP7eej2U5SwsdHtZDZwYPD6Vqr9SnjnINREX5Npbcp1ibdY+I
+   S3ikdUt7TQz8dFY44NZpfRw1gA71wW+HI1rh/vxheOO/ToBAt2gIE/x9y
+   gJGYUg/MxGjlDX+qBKite0rmdBM6uC8w2z8vOSsNzlZcqYW4pLKMcOJ8j
+   JWy/HhKjyL4/6Maj+cVZHpTUh2yPVsfBDmY3Y86hD5iywAu/DD90pzVXY
+   w==;
+X-CSE-ConnectionGUID: eFJWUTNFQECgojKZ2Li/qg==
+X-CSE-MsgGUID: 8+Y/5LPfQOeSEusLC/Rc8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="28076474"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="28076474"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 11:15:42 -0700
+X-CSE-ConnectionGUID: ldJPhoapTX2Sdt8Z53xf+A==
+X-CSE-MsgGUID: dzC4wgKTSoiec32kVkl+tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="80675975"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 10 Oct 2024 11:15:38 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0E52B1BD; Thu, 10 Oct 2024 21:15:36 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v1 1/1] iio: Convert unsigned to unsigned int
+Date: Thu, 10 Oct 2024 21:15:35 +0300
+Message-ID: <20241010181535.3083262-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BQwlaxrXEd1HS7zv"
-Content-Disposition: inline
-In-Reply-To: <20241009214411.681233-5-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Content-Transfer-Encoding: 8bit
 
+Simple type conversion with no functional change implied.
 
---BQwlaxrXEd1HS7zv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/iio/iio-opaque.h |  2 +-
+ include/linux/iio/iio.h        | 20 ++++++++++----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-On Wed, Oct 09, 2024 at 11:41:00AM -1000, Tejun Heo wrote:
+diff --git a/include/linux/iio/iio-opaque.h b/include/linux/iio/iio-opaque.h
+index 5aec3945555b..a89e7e43e441 100644
+--- a/include/linux/iio/iio-opaque.h
++++ b/include/linux/iio/iio-opaque.h
+@@ -70,7 +70,7 @@ struct iio_dev_opaque {
+ 
+ #if defined(CONFIG_DEBUG_FS)
+ 	struct dentry			*debugfs_dentry;
+-	unsigned			cached_reg_addr;
++	unsigned int			cached_reg_addr;
+ 	char				read_buf[20];
+ 	unsigned int			read_buf_len;
+ #endif
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 18779b631e90..3a9b57187a95 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -282,11 +282,11 @@ struct iio_chan_spec {
+ 	const struct iio_chan_spec_ext_info *ext_info;
+ 	const char		*extend_name;
+ 	const char		*datasheet_name;
+-	unsigned		modified:1;
+-	unsigned		indexed:1;
+-	unsigned		output:1;
+-	unsigned		differential:1;
+-	unsigned		has_ext_scan_type:1;
++	unsigned int		modified:1;
++	unsigned int		indexed:1;
++	unsigned int		output:1;
++	unsigned int		differential:1;
++	unsigned int		has_ext_scan_type:1;
+ };
+ 
+ 
+@@ -541,13 +541,13 @@ struct iio_info {
+ 	int (*update_scan_mode)(struct iio_dev *indio_dev,
+ 				const unsigned long *scan_mask);
+ 	int (*debugfs_reg_access)(struct iio_dev *indio_dev,
+-				  unsigned reg, unsigned writeval,
+-				  unsigned *readval);
++				  unsigned int reg, unsigned int writeval,
++				  unsigned int *readval);
+ 	int (*fwnode_xlate)(struct iio_dev *indio_dev,
+ 			    const struct fwnode_reference_args *iiospec);
+-	int (*hwfifo_set_watermark)(struct iio_dev *indio_dev, unsigned val);
++	int (*hwfifo_set_watermark)(struct iio_dev *indio_dev, unsigned int val);
+ 	int (*hwfifo_flush_to_buffer)(struct iio_dev *indio_dev,
+-				      unsigned count);
++				      unsigned int count);
+ };
+ 
+ /**
+@@ -609,7 +609,7 @@ struct iio_dev {
+ 	int				scan_bytes;
+ 
+ 	const unsigned long		*available_scan_masks;
+-	unsigned			__private masklength;
++	unsigned int			__private masklength;
+ 	const unsigned long		*active_scan_mask;
+ 	bool				scan_timestamp;
+ 	struct iio_trigger		*trig;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Hi Tejun,
-
-> Bypass mode was depending on ops.select_cpu() which can't be trusted as w=
-ith
-> the rest of the BPF scheduler. Always enable and use scx_select_cpu_dfl()=
- in
-> bypass mode.
-
-Could you please clarify why we can't trust ops.select_cpu()? Even if it
-returns a bogus, offline, etc, CPU, shouldn't core.c take care of
-finding a valid CPU for us in select_fallback_rq()?
-
-Assuming we really do require a valid CPU here in bypass mode, do we
-need to reset the state of the idle masks for the case of
-!scx_builtin_idle_enabled? The masks won't necessarily reflect the set
-of online CPUs if we haven't been updating it, right?
-
-Thanks,
-David
-
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> ---
->  kernel/sched/ext.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
->=20
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 1cae18000de1..c5cda7368de5 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -3126,7 +3126,7 @@ static int select_task_rq_scx(struct task_struct *p=
-, int prev_cpu, int wake_flag
->  	if (unlikely(wake_flags & WF_EXEC))
->  		return prev_cpu;
-> =20
-> -	if (SCX_HAS_OP(select_cpu)) {
-> +	if (SCX_HAS_OP(select_cpu) && !scx_rq_bypassing(task_rq(p))) {
->  		s32 cpu;
->  		struct task_struct **ddsp_taskp;
-> =20
-> @@ -3191,7 +3191,7 @@ void __scx_update_idle(struct rq *rq, bool idle)
->  {
->  	int cpu =3D cpu_of(rq);
-> =20
-> -	if (SCX_HAS_OP(update_idle)) {
-> +	if (SCX_HAS_OP(update_idle) && !scx_rq_bypassing(rq)) {
->  		SCX_CALL_OP(SCX_KF_REST, update_idle, cpu_of(rq), idle);
->  		if (!static_branch_unlikely(&scx_builtin_idle_enabled))
->  			return;
-> @@ -4254,21 +4254,23 @@ bool task_should_scx(struct task_struct *p)
->   * the DISABLING state and then cycling the queued tasks through dequeue=
-/enqueue
->   * to force global FIFO scheduling.
->   *
-> - * a. ops.enqueue() is ignored and tasks are queued in simple global FIF=
-O order.
-> - *    %SCX_OPS_ENQ_LAST is also ignored.
-> + * - ops.select_cpu() is ignored and the default select_cpu() is used.
->   *
-> - * b. ops.dispatch() is ignored.
-> + * - ops.enqueue() is ignored and tasks are queued in simple global FIFO=
- order.
-> + *   %SCX_OPS_ENQ_LAST is also ignored.
->   *
-> - * c. balance_scx() does not set %SCX_RQ_BAL_KEEP on non-zero slice as s=
-lice
-> - *    can't be trusted. Whenever a tick triggers, the running task is ro=
-tated to
-> - *    the tail of the queue with core_sched_at touched.
-> + * - ops.dispatch() is ignored.
->   *
-> - * d. pick_next_task() suppresses zero slice warning.
-> + * - balance_scx() does not set %SCX_RQ_BAL_KEEP on non-zero slice as sl=
-ice
-> + *   can't be trusted. Whenever a tick triggers, the running task is rot=
-ated to
-> + *   the tail of the queue with core_sched_at touched.
->   *
-> - * e. scx_bpf_kick_cpu() is disabled to avoid irq_work malfunction durin=
-g PM
-> - *    operations.
-> + * - pick_next_task() suppresses zero slice warning.
->   *
-> - * f. scx_prio_less() reverts to the default core_sched_at order.
-> + * - scx_bpf_kick_cpu() is disabled to avoid irq_work malfunction during=
- PM
-> + *   operations.
-> + *
-> + * - scx_prio_less() reverts to the default core_sched_at order.
->   */
->  static void scx_ops_bypass(bool bypass)
->  {
-> @@ -4338,7 +4340,7 @@ static void scx_ops_bypass(bool bypass)
-> =20
->  		rq_unlock_irqrestore(rq, &rf);
-> =20
-> -		/* kick to restore ticks */
-> +		/* resched to restore ticks and idle state */
->  		resched_cpu(cpu);
->  	}
->  }
-> --=20
-> 2.46.2
->=20
-
---BQwlaxrXEd1HS7zv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZwgZtQAKCRBZ5LhpZcTz
-ZBGFAPwJbzrGDeHE8JzNrhtv4lQHB3JskJazMmVzaF+gFWtPLQD9EhoeJ5MZCsHi
-GecKch+BmExSPQfbubu/BcZhqmo0Cw8=
-=qcL6
------END PGP SIGNATURE-----
-
---BQwlaxrXEd1HS7zv--
 
