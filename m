@@ -1,180 +1,213 @@
-Return-Path: <linux-kernel+bounces-359175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB88D99885F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:52:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5DB998860
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF69E1C20BF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E471288335
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEF01C9DDB;
-	Thu, 10 Oct 2024 13:52:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9001C9DCB;
+	Thu, 10 Oct 2024 13:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bb/8ib5b"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3A91BE245
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FFE1BB6BA;
+	Thu, 10 Oct 2024 13:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568325; cv=none; b=luUl91e18Z/vf44KsY0UNpIWPTPdJ7SdybZ7L61VtszHHwmkN89HaWanx8DRX70hCTEakzV2dr4NjqgVR7I+Fgc0MsF94rgodZ1Ye6q+qO+M0bOpR59e2H4KzgFXsIxkYDdWnQJvtxr+RQvBCDRPexdSCP7+pv1L2tYyfWPEmpE=
+	t=1728568377; cv=none; b=uLp0lWLr+Lwhjj79/hZMqigFZFbRflQ86sc7/WpFXVTUiaFbAreOot9pqjVFU38H2AofRf9ESIfQpQ+HrkpRWWPjIgFaYLzDIqXJjDYzIMWhHw1CbGTR44dVWYYYVoYtDGGldaL1KLZvFsT8EnwmskWEsD+X97EYFtqa4k+IIuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568325; c=relaxed/simple;
-	bh=OZbz7IC7dsUdD0E1AZprNhGnLi/QO5IpcF8a4O1ybsE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=D0QIPDlEseGWK+jbXeOmUCRs1pTZy0xSKIyXx2vzxcbPlHIeUzzP1q+PD8rkOIIqkyK/ZW9m+YixhaAKYFmTtx0typGOp0bDC7Wkvl0S/L+CK8Rthnup5e7M/kmTQBccs19++cMObUp5B9Be5aD7/VqTcby/GJSMam5iJfAeMM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso7607515ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:52:03 -0700 (PDT)
+	s=arc-20240116; t=1728568377; c=relaxed/simple;
+	bh=YOeZq4gdp89ctDpF5WT2qnKvP3R2Vh4bvhExzfhY7Rw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qsvXkGV5hGE7VPdT/semMMwboTxsmPIQUE6CjSuQ9I6PeC/hsYzCT/Y0pMpGP8J2glr09u4w/7q4EmvpEfd0OlCj+T5OEW2C6G6i5V0Tns6AMfWZm9JPfq4T1bw5+hNh8BX2utbssGyiT1e1+CyI4uNv+Jd4VNzFoy11nRqeDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bb/8ib5b; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fabe5c8c26so8987161fa.2;
+        Thu, 10 Oct 2024 06:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728568374; x=1729173174; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOrxW89AILQk3udFAERN7y6AGGLIomslxo7RvrRZ38Y=;
+        b=Bb/8ib5bSm5a1CEi7+tUe2pSJAh6UbQ0ojXJJHfr1aIGpies8fhxyjWf2x8swftLAt
+         ncPjGv3HyD8NwOsdPt0pacTfSbagI0o/dvXrU5lodoGGJf+DwtbYq+I/rXiSFmmKSabb
+         VnvGNxNpXkvqt44HxHpPrvr39zmRPEV6M6qcQsmhmqJ0t/xC/AfRoD8bPAtP4zPcOC72
+         X5+L4GD3qDwQlvdnVwpdRsXFczEarn7qMSOiYUNzx4fVbbYVPIJvViIa5s2ZgNHmbZHe
+         UJPCrcFfLJvpGjsrH5LX7L97O9YbZoUzewhuLWwp4vnsSlnMVNuTm+MER3/5lifnXGPz
+         swHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568323; x=1729173123;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BtpZDYqc7s+BkIGQxmtAgX5/um79Ae61BRNUrf8RmGE=;
-        b=A6DbUM5hLMouDhDt9G9gbQgBfo8RIj4nvt/fBmniUwCgagHOHrIHfpowVLqRG54l65
-         rR0/qWVi9DeRV+38kgPi1CbVy692VbK7EFpavy96aoVVO2EDUKmosXQl4xfs7i5wNkC8
-         2RRIVSPh8Khr/9btgkCdGr6aEfJSJ1rsI1PGFX+6Qm8YoohXFmnWhqOu6FjwwHM5JxzZ
-         lIIhjV+EOSDTcP1Y0OgZo7nkxQLsv1dGiI5SXg7faqEj8e7Q0o3F9guasY8W1+Y4VLJH
-         BsYPHQdak4L4BaYYLd+ZrVBL6TbS2ZTNXE8zgBalqA/JOdRlnfiS+p3KDFalNY/URqqd
-         qsew==
-X-Gm-Message-State: AOJu0YyQNcdHPJ0mBeaVe+pDRNoBEKYZxU7ERjiRu/FLQ5J4uwqeZuQu
-	/xzobWvERTtKAPBfgRymYq8HjtUuHpRh6LYjkdsoBvisGfWutBYwHj+q6k/Kgr5kpFBNI0xPqrt
-	T6UNdozdatwxlbDyJKFxoiot4AqiZrUaXK/AeiG9K/b/olZ9A21LaZys=
-X-Google-Smtp-Source: AGHT+IFMKy/cU3LfzQpKrW7q/t64alexTbtfKjqxDmGGOqrNnNOU4+0ci24nnpmBucMnQiELFlbeWReGcNa3/mngecbPsP73QlC5
+        d=1e100.net; s=20230601; t=1728568374; x=1729173174;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WOrxW89AILQk3udFAERN7y6AGGLIomslxo7RvrRZ38Y=;
+        b=p5/Zr1vFputDZ6Tr7lt1hl39bWxhhBryhwpRXYzP17ljpvE3ddQ8J7FYa9P1a9mpN/
+         5J7kabF3LLSQkK2UTwYouSOammhrwdNanRMAN/OCsY/gBX3g3LhRX/OUHHNcyzUhTLR/
+         OoqNNDQhDGjVIOjbswUePay01pEEaUFUgg0XKfYbTedZkfx3W029wvJjtbtlJyHBvkfa
+         hzTNVB4HypJDuakzMy2CkyfCV5KU1m46GGxY3etukkJKy/j0eVeFbJ2Ow7WQW51XAH54
+         yIH8YT4AYRWYeaJyLo9dPUilruPE+IUQ6+AR/EFcFPKwOSK/mQyFb4C5HSuJ2S6Hue1+
+         nInA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNRYDN6+MevRFklrqzIZ13wCRvIBCrEzv1upZ6mnlJMsxkH98yIWLPoYjP6oRdtZ0oN37cZpycUBEmS8g=@vger.kernel.org, AJvYcCXye+oIOApHVmE60Y2ecZa0RdQZ7z6+VqCcjrnb/toFOpSHKmjqOIq9Hnd+3xx/KRki7W63EizG1V80aiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfHlqcDNduBlk4Fdk+ytMHbQ84obcD8UcjoVqZ83AAUzQkp+OX
+	wvvqSjTyLudXTiyQkq4lyVlgZgZAY8aKbotT1RKbb3gG5CJ7hAU7WRZDzf1hP7WgR4sO3pFhl3W
+	HwVFPjGtcqRxHzQtbwmh95ARajm0=
+X-Google-Smtp-Source: AGHT+IFiV/oe6ftCSnrY7kyWamWo9/1u8Pum4SDAuMad0lrhvAfaM6nzggC3GCxiMPa8Ad+RAUbPvZr6tKLhuZDF7Vk=
+X-Received: by 2002:a2e:a545:0:b0:2fa:be5c:8ae8 with SMTP id
+ 38308e7fff4ca-2fb187d2818mr41048491fa.41.1728568373219; Thu, 10 Oct 2024
+ 06:52:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1523:b0:3a1:a163:ba64 with SMTP id
- e9e14a558f8ab-3a397cd8be5mr50510755ab.3.1728568323053; Thu, 10 Oct 2024
- 06:52:03 -0700 (PDT)
-Date: Thu, 10 Oct 2024 06:52:03 -0700
-In-Reply-To: <234e554c-a93a-4a88-9d4f-6773cfc5057f@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6707dc03.050a0220.8109b.000d.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
-From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, niharchaithanya@gmail.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20241009101807.1473-1-shenghao-ding@ti.com> <d1941b10-0549-4a0e-a3fe-a8d7c50c175b@gmail.com>
+ <7e138a1c8b6d4ace8c759bb2266216da@ti.com> <3ef8a82f-5e71-4386-90e1-f34222a60bdf@gmail.com>
+ <50daaa7a-d590-4ae5-b33f-8f51d0c2f457@gmail.com>
+In-Reply-To: <50daaa7a-d590-4ae5-b33f-8f51d0c2f457@gmail.com>
+From: Antheas Kapenekakis <antheas.dk@gmail.com>
+Date: Thu, 10 Oct 2024 15:52:41 +0200
+Message-ID: <CAGwozwFAK_8HVgfNok_6jcsNq2OVdNzTc+KotxF0vhPd+PJTHQ@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1] Upload dsp firmware for ASUS laptop
+ 1EB30 & 1EB31 and Update WHENCE for both
+To: Mario Limonciello <superm1@gmail.com>
+Cc: "Ding, Shenghao" <shenghao-ding@ti.com>, 
+	"linux-firmware@kernel.org" <linux-firmware@kernel.org>, "Xu, Baojun" <baojun.xu@ti.com>, 
+	"derekjohn.clark@gmail.com" <derekjohn.clark@gmail.com>, "13916275206@139.com" <13916275206@139.com>, 
+	"romangg@manjaro.org" <romangg@manjaro.org>, 
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, "Chen, Robin" <robinchen@ti.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Yi, Ken" <k-yi@ti.com>, 
+	"philm@manjaro.org" <philm@manjaro.org>, "jlobue10@gmail.com" <jlobue10@gmail.com>, 
+	"luke@ljones.dev" <luke@ljones.dev>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hi Mario,
+as I am not logged in, kindly close
+https://gitlab.com/kernel-firmware/linux-firmware/-/merge_requests/272
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __exfat_get_dentry_set
+Then, while consulting it and
+https://gitlab.com/kernel-firmware/linux-firmware/-/commit/d65613ab8c480dec6d63733d3286451aa8b3795f
+, modify the whence so that 1EB3 points to 1EB30.
 
-=====================================================
-BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
- __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
- exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
- __exfat_write_inode+0x3d3/0xe40 fs/exfat/inode.c:46
- __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
- exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
- exfat_write_failed fs/exfat/inode.c:421 [inline]
- exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
- generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
- __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
- exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Otherwise, your merge will not work with the current TAS driver, and
+we will have to do a second round of workarounds while it is the case.
+We have had that symlink for over 3 months now, and as Chen said,
+while not ideal, it will do for the time being.
 
-Uninit was stored to memory at:
- memcpy_to_iter lib/iov_iter.c:65 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
- copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
- shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_read+0x278/0x760 fs/read_write.c:923
- lo_read_simple drivers/block/loop.c:283 [inline]
- do_req_filebacked drivers/block/loop.c:516 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+You may add me as suggested-by using my lkml email signature
 
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
- copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
- generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
- shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Antheas
 
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof mm/mempolicy.c:2345 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
- __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
- block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
- exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
- exfat_extend_valid_size fs/exfat/file.c:553 [inline]
- exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 6060 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00074-gd3d1556696c1-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
-Tested on:
-
-commit:         d3d15566 Merge tag 'mm-hotfixes-stable-2024-10-09-15-4..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12785040580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
-dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13e16fd0580000
-
+On Thu, 10 Oct 2024 at 15:39, Mario Limonciello <superm1@gmail.com> wrote:
+>
+>
+>
+> On 10/10/24 08:30, Mario Limonciello wrote:
+> >> Although TAS2XXX1EB30.bin and TAS2XXX1EB31.bin are both in ti/tas2781,
+> >> yet it reported "does not exist".
+> >> I have no idea why the file is there while report "does not exist".
+> >> After I removed the newly-merged, no such report.
+> >
+> > I think you forgot to git add them to the commit?
+> >
+> >>
+> >> Following is the log.
+> >>
+> >> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new# make check
+> >> Check that executables have
+> >> shebangs.....................................Passed
+> >> Forbid new
+> >> submodules....................................................Passed
+> >> Check
+> >> Yaml...............................................................Passed
+> >> Check for broken symlinks............................(no files to
+> >> check)Skipped
+> >> Detect Destroyed
+> >> Symlinks................................................Passed
+> >> shellcheck...............................................................Passed
+> >> black....................................................................Passed
+> >> markdownlint.............................................................Failed
+> >> - hook id: markdownlint
+> >> - exit code: 1
+> >>
+> >> internal/modules/cjs/loader.js:818
+> >>    throw err;
+> >>    ^
+> >>
+> >> Error: Cannot find module 'node:fs'
+> >> Require stack:
+> >> - /root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/
+> >> node_modules/markdownlint-cli/markdownlint.js
+> >>      at Function.Module._resolveFilename (internal/modules/cjs/
+> >> loader.js:815:15)
+> >>      at Function.Module._load (internal/modules/cjs/loader.js:667:27)
+> >>      at Module.require (internal/modules/cjs/loader.js:887:19)
+> >>      at require (internal/modules/cjs/helpers.js:85:18)
+> >>      at Object.<anonymous> (/root/.cache/pre-commit/repoxl59c0uz/
+> >> node_env-system/lib/node_modules/markdownlint-cli/markdownlint.js:5:12)
+> >>      at Module._compile (internal/modules/cjs/loader.js:999:30)
+> >>      at Object.Module._extensions..js (internal/modules/cjs/
+> >> loader.js:1027:10)
+> >>      at Module.load (internal/modules/cjs/loader.js:863:32)
+> >>      at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+> >>      at Function.executeUserEntryPoint [as runMain] (internal/modules/
+> >> run_main.js:60:12) {
+> >>    code: 'MODULE_NOT_FOUND',
+> >>    requireStack: [
+> >>      '/root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/
+> >> node_modules/markdownlint-cli/markdownlint.js'
+> >>    ]
+> >> }
+> >>
+> >
+> > This looks like you're missing some dependencie on you system for
+> > markdownlint. You need nodejs v18.
+> >
+> > If you can't install this you can skip this check when you commit by
+> > adding "SKIP=markdownlint" to your environment while running 'git commit'.
+> >
+> >> Check
+> >> whence.............................................................Failed
+> >> - hook id: check-whence
+> >> - exit code: 1
+> >>
+> >> E: ti/tas2781/TAS2XXX1EB30.bin listed in WHENCE does not exist
+> >> E: ti/tas2781/TAS2XXX1EB31.bin listed in WHENCE does not exist
+> >> E: target ti/tas2781/TAS2XXX1EB30.bin of link TAS2XXX1EB30.bin in
+> >> WHENCE does not exist
+> >> E: target ti/tas2781/TAS2XXX1EB31.bin of link TAS2XXX1EB31.bin in
+> >> WHENCE does not exist
+> >>
+> >
+> > These files are missing in your commit or they have broken links. Double
+> > check them.
+> >
+> >> make: *** [Makefile:10: check] Error 1
+> >> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new# ls ti/tas2781/TAS2XXX1* -al
+> >> -rw-r--r-- 1 root root 35220 Sep 28 21:54 ti/tas2781/TAS2XXX1EB30.bin
+> >> -rw-r--r-- 1 root root 35220 Sep 28 21:55 ti/tas2781/TAS2XXX1EB31.bin
+> >> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new#
+> >>>
+> >>> Thanks,
+> >
+>
+> You know - as you've been having problems with git and at least I've got
+> the intent and your S-o-b for the firmware I've taken your MR and
+> rebased/squashed it for you here:
+>
+> https://gitlab.com/kernel-firmware/linux-firmware/-/merge_requests/317
+>
+> I'll merge this and if you have any follow ups you can do them on top as
+> future MR (preferred!) or patches to M/L.
+>
+> Thanks!
+>
 
