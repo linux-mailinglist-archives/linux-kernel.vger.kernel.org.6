@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-359020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA79799865C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:43:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17124998661
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82798B22030
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3D21C214E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586C1C57BA;
-	Thu, 10 Oct 2024 12:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CrHXBqDr"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2814D1C4629;
+	Thu, 10 Oct 2024 12:45:06 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF921C57A3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEAE1C6882;
+	Thu, 10 Oct 2024 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564116; cv=none; b=tlFXSscyVJIovrwqaNv94uG5S5nyip//Rzv5UimJ5MZS1EE8NavcQ4YPoAPdXLOMaEpPCv2jnUNH9rhwZvXLJkfOBIyT8zso9E5RHhrA2fkYeoRGcov9y2SSRMNQ9oATJvsznkSs97XPVrlVXkQjWwe8YraFRu9HzNb65fgxxdg=
+	t=1728564305; cv=none; b=AGVtCdhsFSsPyHo8dscikXIKhNmJKHZT4pHZ6mODigIlkIuSmFJF8SqRw+yqXPPux2AUcSkqcx8iftUwFtUFXob0OOBny7K4YOPpkYhvWuxXLTw4nWqvdHsFNMQJrGuipleJnFLWdhPJ1r34q2Q0tMm6kqFqsl6HVNgIUoOZgK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564116; c=relaxed/simple;
-	bh=WLqZDrSYW+WetA6c31VliZ+hc6ox/PCcc9Js0qtVKn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObYatyLjwHE47cnjjn7GjKbuMpcGZQuAchyqoZqQqziCNWT3C+c2zz1uYP41sT/V2Tb+RPx4AYI9ox2ru5RdDfLICbzYO3YJqkDlssPZkLw6G9vshjpJ7zwgaymAYeG6zWZ4sjnIXZ6bLwKvCzGKGzjCYJ3INS/w51HeLOHdjao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CrHXBqDr; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539d0929f20so73278e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:41:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728564113; x=1729168913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4hH54g7776gCYVY8urOB6qAJvXyK9fVwOb//sgz1sSQ=;
-        b=CrHXBqDrgbS5mhfQNs2kaGkzAJ3elzC8F1mBZT4qdI+WiFZbOeQZlsq9bYDQW97HRa
-         +K+/aCzF/UKjSojEbWmJ5oYOBOgG7kaNiYb0XFWKpKdPVLNXVo5qNG1uFZL7isplY5ZQ
-         s4N5cazmDlj2z03piiSqojdJz6HhdMIa1+ZV+kP61EMkOA2l1npw7Ppvl8j1Omkcpt2I
-         mHWYkWf447YyMuuomjhQmVtOqK5GSvQMrCS4e2i4Ldk6YBoqNylkQI22LVTIKtL1yUzJ
-         KRapQOF4gTAQ0P7gQZHbp5OK1gR/8jQdkOJs+lKHU1afMZTkf5cfjblYNWi0tENxIdt8
-         xnDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728564113; x=1729168913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4hH54g7776gCYVY8urOB6qAJvXyK9fVwOb//sgz1sSQ=;
-        b=qV5PIKatSrSaLLjxqrtv+hROYezsNJ+0/vd42dG3M4/Xqip7UeYftCHPnCV20Avdxz
-         xPF+KNJ8Vj7TIz5zZedTfHwqHBz+QQCzqShlGO9X0T+pNL8dto719XHvSMsDMVt9qN+d
-         Bfmcd+Knm+OQoS7VNpPrIhDb9z0ldWoEdWJT4sOFzMU88MqcZYsZms1laVJSioAA2ujU
-         8PPPuOA77TpsvqQPTAULmlJxXUUZEz9shJwAkTNpruEYj+IYGIG5NpIb4VcpfF6dVHyU
-         VH5yP5YITGSQJb1s0KImxhWjtzYUNG8wCSL/YLH2aBtFq8LESPc9UwoBuOLEBtpjx1tJ
-         /Ayg==
-X-Forwarded-Encrypted: i=1; AJvYcCXme+6wBkSMJlSLV/WtMMSeWoWEG5feaNvJdhz7J7bRWM3e6nE/b309SarZg6XTkDj3zCxpls1Regel6qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdUC6SHqIMDuYCdPkCdAsablsnj386Xqo2/WIE+r4Xi276Vvd5
-	UdRKzQkJmVCSrsdOp29C4z83V0I92q1gTytONmeTSXR5ZTvCSclO/qf/CYp9LZE=
-X-Google-Smtp-Source: AGHT+IEFKgLpasP0gVcJUzeb9+3RF13OHVEn722a/Yk0fUFVhkS2KwI3JLtqwkDQXkOHM1LhnYI+YA==
-X-Received: by 2002:a05:6512:130f:b0:539:918c:5132 with SMTP id 2adb3069b0e04-539c981da6amr1141321e87.0.1728564113214;
-        Thu, 10 Oct 2024 05:41:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8d7f0fsm235415e87.146.2024.10.10.05.41.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 05:41:52 -0700 (PDT)
-Date: Thu, 10 Oct 2024 15:41:50 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, quic_mohamull@quicinc.com, 
-	quic_hbandi@quicinc.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] arm64: dts: qcom: qcm6490-idp: enable Bluetooth
-Message-ID: <uefit6yg4wl3tockznodkph6g34zocw3hgdrafgnhsmpol5t5x@jybqavdbhtaj>
-References: <20241010110456.829-1-quic_janathot@quicinc.com>
+	s=arc-20240116; t=1728564305; c=relaxed/simple;
+	bh=xCFgAuZiiogFYGmAMETQx/sjqDPkGLWs2cFFKREAYNU=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=c3XLcZKly+5X1gykQJAT5aV/OK3fw4xDhB0RaME46yU0poqD2OqLaHmZTV8WTnYMmDg+++wFHG+v9NKjb+kE18AmuLsVcio6YyOcrwrdb2LtsyxgwNEVbSQNWQJZmJSFx819SY9VPVWgPxW0WVZYed40zuufpo2SVjdWgOFf5Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XPTvs2gKnz1SCQ8;
+	Thu, 10 Oct 2024 20:43:53 +0800 (CST)
+Received: from kwepemd200022.china.huawei.com (unknown [7.221.188.232])
+	by mail.maildlp.com (Postfix) with ESMTPS id 948651A0190;
+	Thu, 10 Oct 2024 20:45:00 +0800 (CST)
+Received: from [10.174.178.185] (10.174.178.185) by
+ kwepemd200022.china.huawei.com (7.221.188.232) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 20:44:59 +0800
+Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
+ filesystem
+To: Jan Kara <jack@suse.cz>, Ye Bin <yebin@huaweicloud.com>
+References: <20241010112543.1609648-1-yebin@huaweicloud.com>
+ <20241010112543.1609648-3-yebin@huaweicloud.com>
+ <20241010121607.54ttcmdfmh7ywho7@quack3>
+CC: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhangxiaoxu5@huawei.com>
+From: "yebin (H)" <yebin10@huawei.com>
+Message-ID: <6707CC10.2020007@huawei.com>
+Date: Thu, 10 Oct 2024 20:44:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010110456.829-1-quic_janathot@quicinc.com>
+In-Reply-To: <20241010121607.54ttcmdfmh7ywho7@quack3>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200022.china.huawei.com (7.221.188.232)
 
-On Thu, Oct 10, 2024 at 04:34:56PM GMT, Janaki Ramaiah Thota wrote:
-> Add Bluetooth and UART7 support for qcm6490-idp.
-> 
-> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 123 ++++++++++++++++++++++-
->  1 file changed, 122 insertions(+), 1 deletion(-)
 
-All the comments as for the RB3gen2 patch also apply here.
 
--- 
-With best wishes
-Dmitry
+On 2024/10/10 20:16, Jan Kara wrote:
+> On Thu 10-10-24 19:25:42, Ye Bin wrote:
+>> From: Ye Bin <yebin10@huawei.com>
+>>
+>> In order to better analyze the issue of file system uninstallation caused
+>> by kernel module opening files, it is necessary to perform dentry recycling
+> I don't quite understand the use case you mention here. Can you explain it
+> a bit more (that being said I've needed dropping caches for a particular sb
+> myself a few times for debugging purposes so I generally agree it is a
+> useful feature).
+Well, I'm analyzing what files are still open and the file system can't 
+be unmounted.
+The process occupied by the opened file cannot be found through the 
+fuser. That is,
+the file may be occupied by the kernel mode. You can insert a module or 
+use kprobe
+to obtain all cached files of the corresponding file system. But there 
+can be a lot of
+files, so I want to clean up irrelevant files first.
+>> on a single file system. But now, apart from global dentry recycling, it is
+>> not supported to do dentry recycling on a single file system separately.
+>> This feature has usage scenarios in problem localization scenarios.At the
+>> same time, it also provides users with a slightly fine-grained
+>> pagecache/entry recycling mechanism.
+>> This patch supports the recycling of pagecache/entry for individual file
+>> systems.
+>>
+>> Signed-off-by: Ye Bin <yebin10@huawei.com>
+>> ---
+>>   fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/mm.h |  2 ++
+>>   kernel/sysctl.c    |  9 +++++++++
+>>   3 files changed, 54 insertions(+)
+>>
+>> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+>> index d45ef541d848..99d412cf3e52 100644
+>> --- a/fs/drop_caches.c
+>> +++ b/fs/drop_caches.c
+>> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>>   	}
+>>   	return 0;
+>>   }
+>> +
+>> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
+>> +				  void *buffer, size_t *length, loff_t *ppos)
+>> +{
+>> +	unsigned int major, minor;
+>> +	unsigned int ctl;
+>> +	struct super_block *sb;
+>> +	static int stfu;
+>> +
+>> +	if (!write)
+>> +		return 0;
+>> +
+>> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
+>> +		return -EINVAL;
+> I think specifying bdev major & minor number is not a great interface these
+> days. In particular for filesystems which are not bdev based such as NFS. I
+> think specifying path to some file/dir in the filesystem is nicer and you
+> can easily resolve that to sb here as well.
+>
+> 								Honza
+That's a really good idea. I think by specifying bdev "major & minor", 
+you can reclaim
+the file system pagecache that is not unmounted due to "umount -l" mode. 
+In this
+case, the sb of the corresponding file system cannot be found in the 
+specified path.
+So I think we can support both ways. I look forward to your opinion.
+
 
