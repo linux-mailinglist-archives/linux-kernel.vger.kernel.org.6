@@ -1,81 +1,98 @@
-Return-Path: <linux-kernel+bounces-359426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43153998B46
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:20:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717FD998B6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DEE295A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E6B2862D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFD91CC174;
-	Thu, 10 Oct 2024 15:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811991CC8BC;
+	Thu, 10 Oct 2024 15:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="isyhRglW"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekagPdIZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39FE1BD018
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAC71CC146;
+	Thu, 10 Oct 2024 15:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728573642; cv=none; b=hDqaHKjKPEk1xDX7+I8gfqnCEXFbXzH1XGLJ0k93Ts1UnxUjRXj4svuegn+0x0guwHl8cXmk/AeXFAK3AtpSpT3V3ZGPnPuxOzW9Ddyn2Yi2bM2+6m0jeGy0bDw85C4t9COn5zAWwqoInx//BiD4HE3GDmLgvpykSOHqKOeHEFM=
+	t=1728573883; cv=none; b=eGuiKwfNt5EeK2L+p3GpJvpvhjOCDQd8f2FvlFZK+oNh6Yyln98htJS7xhllkqSK96MDO4RVrPLnCQ3OODE0JJVEzvBzmprYJu0twqWeUnMj8pCVx13Gvwzcwiq1XVzh8w8FnvRojIvtjGcgpXVyMlNOh65ay4RZEsRP0EJPI2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728573642; c=relaxed/simple;
-	bh=bBl/8kLn3PMgofJWXoRDcak4u44INDe+5nr3slY9Rag=;
+	s=arc-20240116; t=1728573883; c=relaxed/simple;
+	bh=gnTehr7qrLMKw/pUpKhTMaCY3tpDIt6F6aFobT96HoY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOR9xZTsaeNPzo5xvriOa0Qy/bHSzJTKpGHXp4PDSG2U/2kH1dkdgk5boztrxL+sJDSjVeg6B5QUD+ghrCDQI6iwJ89UnozlqJ5blpVmB8B3P0T6EBfr31ml6eVon0UlWtF552RSjL058GJeB2jMqm778q5fyv1X++9HnJic4rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=isyhRglW; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539885dd4bcso1422516e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:20:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728573639; x=1729178439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yl+AJ7lyFwjwDvwphBTlSXLZHqolk5S2mucilQyKVTA=;
-        b=isyhRglWpvkyu3Ci3+LSBZsQVMxL6rsmfguP0dtkongfYWduhQ6UIqcwUpS7meJqR3
-         TUtDI/vB/uQOC2bRt9Bna9f+46vXhbiM+8HLMVnSgPBZsi8RsGcYVUn9J2Q39oavlMjt
-         WBIQgvTaB78139WJ80dKYax9nGBuzVz4jcP0UX5e2va2216aX3Pnw4KTpBAfkGJm1DOu
-         kly3Kz5pyGPHQF9U/u+gyjhSldGVleFkjMyla1HkFArnA6lsSqXTmHBgIylb28YYXy1D
-         Z871g64FbGB22XWcPXyho5WvobYWzpi6/47XJEFFrbkbeR/lXiUCR1SFepNaS5TcNG2n
-         R1AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728573639; x=1729178439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yl+AJ7lyFwjwDvwphBTlSXLZHqolk5S2mucilQyKVTA=;
-        b=vsZP0xThk95k0R/RALR6Evk/GwS1sSVn3TlSjjAPIGlAo2xq7CYo1WiXg67h3cVkuJ
-         Wufi+xKcIMK7ohGOkIZ+nnBWfhQ2R2qBAbcHAYwaVdsDTQZkXPfxIGOJtlWXttVljeUg
-         O1wvx7G09ciXHihhyBSgIM4nW9KYexFlaHofIgxtxfyNTNzH4RRwicZGtJy/L50w0Jnk
-         W1awsmamUlA4gQ3/AdGPWryehbqYxH+ObEEszfYnXT0Wiho8eLr3cw3aWMkP/Xrckf4h
-         X4Mcs0BpUNXccdqS4eEWz2kpgC2CxlEAnQFsZGo1L1uFhUmY7pKXASGWx52bJDcUSi2U
-         BWUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfNoQSfA50uUmsBEhBGAx6rDaHKCruUxHu0SGgAKRtoAx2jnCtm/tcYb8tF3akcYYs5wvPurTXzhm5Mmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypiUbydDxmKLI8aV6+IRR83ndSWm/S0tWOfm16NVXNbH9TGyx/
-	w6YeAVsLPNa/Sy/DTLnMT+I8QKDrQEeJEDuMauzPsyUdtYKaZp+ya2w9Gsedu0Y=
-X-Google-Smtp-Source: AGHT+IH/AhoqLxAeDa8GrTS+pYtnDRk05gpq3mqxJbZBvTFUqCKS16r2AzappociNsYeq9ZA5HsNug==
-X-Received: by 2002:a05:6512:3195:b0:535:3ca5:daa with SMTP id 2adb3069b0e04-539c488d6f3mr4627086e87.7.1728573638749;
-        Thu, 10 Oct 2024 08:20:38 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb905182sm287086e87.258.2024.10.10.08.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 08:20:37 -0700 (PDT)
-Date: Thu, 10 Oct 2024 18:20:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH] drm/msm/dpu: Don't always set merge_3d pending flush
-Message-ID: <5scqahnsr5i26rkumg5eqdiwrg5n7rrnrp5642c6moxucf6w3r@xcgrxtjhj3pz>
-References: <20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jH4/QwYdMYSRHgNrkotABtQpbYoq36PP1zZrVAMHMH/BrigC0mQ3WPBRfCDGKC5uYCSHibLw6MWil3ENOwGHkkXp3Ab0iCgO/KFE4EQtoEUIjSS8aVxYFfcXRyklCG/w8YapZ65fM/iUqWy6hXh+0kxtuuILYCj6NtnWD0M86os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekagPdIZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D86C4CEC5;
+	Thu, 10 Oct 2024 15:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728573883;
+	bh=gnTehr7qrLMKw/pUpKhTMaCY3tpDIt6F6aFobT96HoY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ekagPdIZxqT4SWWRuS6VjAHAzc6oWKEW/4hsSTRm4pLygcR/K/5nYo1MRhIB1W8Bi
+	 WhUInbNKfRaSZHzNuMbNo/gh/Dm11IzVkhHlBcuZvhkOJMQBELbJP+QR/GYDeVHSby
+	 +1ODj4I12HqiH5y8g34fzvrSEzf2u/HDRwYAX/nNnTn9iTEhJxcxooLVqAwIKD6FZv
+	 b3fbK7YHQj8tX05PEVkLu2GJn3pxXz8GTYW1p2sF1xOis1mXNPjG1oTG9dYByuOZVe
+	 q0nYNSfpcIxt1MrmJaX80Vmf5bsmJaexf7/nT75nIm1VGT6H7a1RxSwQLd/ELhYVan
+	 63H6TXss7XvhQ==
+Date: Thu, 10 Oct 2024 18:20:53 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: Bisected: [PATCH v5 8/8] x86/module: enable ROX caches for
+ module text
+Message-ID: <Zwfw1bC-muLe6I9-@kernel.org>
+References: <20241009180816.83591-1-rppt@kernel.org>
+ <20241009180816.83591-9-rppt@kernel.org>
+ <20241010083033.GA1279924@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,39 +101,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009-mode3d-fix-v1-1-c0258354fadc@quicinc.com>
+In-Reply-To: <20241010083033.GA1279924@google.com>
 
-On Wed, Oct 09, 2024 at 08:41:13PM GMT, Jessica Zhang wrote:
-> Don't set the merge_3d pending flush bits if the mode_3d is
-> BLEND_3D_NONE.
+On Thu, Oct 10, 2024 at 05:30:33PM +0900, Sergey Senozhatsky wrote:
+> On (24/10/09 21:08), Mike Rapoport wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > Enable execmem's cache of PMD_SIZE'ed pages mapped as ROX for module
+> > text allocations.
+> > 
 > 
-> Always flushing merge_3d can cause timeout issues when there are
-> multiple commits with concurrent writeback enabled.
+> With this modprobe disappoints kmemleak
 > 
-> This is because the video phys enc waits for the hw_ctl flush register
-> to be completely cleared [1] in its wait_for_commit_done(), but the WB
-> encoder always sets the merge_3d pending flush during each commit
-> regardless of if the merge_3d is actually active.
-> 
-> This means that the hw_ctl flush register will never be 0 when there are
-> multiple CWB commits and the video phys enc will hit vblank timeout
-> errors after the first CWB commit.
+> [   12.700128] kmemleak: Found object by alias at 0xffffffffa000a000
+> [   12.702179] CPU: 5 UID: 0 PID: 410 Comm: modprobe Tainted: G                 N 6.12.0-rc2+ #760
+> [   12.704656] Tainted: [N]=TEST
+> [   12.705526] Call Trace:
+> [   12.706250]  <TASK>
+> [   12.706888]  dump_stack_lvl+0x3e/0xdb
+> [   12.707961]  __find_and_get_object+0x100/0x110
+> [   12.709256]  kmemleak_no_scan+0x2e/0xb0
+> [   12.710354]  kmemleak_load_module+0xad/0xe0
+> [   12.711557]  load_module+0x2391/0x45a0
+> [   12.712507]  __se_sys_finit_module+0x4e0/0x7a0
+> [   12.713599]  do_syscall_64+0x54/0xf0
+> [   12.714477]  ? irqentry_exit_to_user_mode+0x33/0x100
+> [   12.715696]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> [   12.716931] RIP: 0033:0x7fc7af51f059
+> [   12.717816] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 8f 1d 0d 00 f7 d8 64 89 01 48
+> [   12.722324] RSP: 002b:00007ffc1d0b0c18 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> [   12.724173] RAX: ffffffffffffffda RBX: 00005618a9439b20 RCX: 00007fc7af51f059
+> [   12.725884] RDX: 0000000000000000 RSI: 000056187aea098b RDI: 0000000000000003
+> [   12.727617] RBP: 0000000000000000 R08: 0000000000000060 R09: 00005618a943af60
+> [   12.729361] R10: 0000000000000038 R11: 0000000000000246 R12: 000056187aea098b
+> [   12.731101] R13: 0000000000040000 R14: 00005618a9439ac0 R15: 0000000000000000
+> [   12.732814]  </TASK>
 
-From this description, wouldn't it be more correct to always set
-intf_cfg.merge_3d in WB code (even if mode_3d is NONE)?
+Below is a quick fix, I'll revisit module - kmemleak interaction in v6
 
-> [1] commit fe9df3f50c39 ("drm/msm/dpu: add real wait_for_commit_done()")
-> 
-> Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
-> Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for writeback")
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 5 ++++-
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c  | 5 ++++-
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
+
+diff --git a/kernel/module/debug_kmemleak.c b/kernel/module/debug_kmemleak.c
+index b4cc03842d70..df873dad049d 100644
+--- a/kernel/module/debug_kmemleak.c
++++ b/kernel/module/debug_kmemleak.c
+@@ -14,7 +14,8 @@ void kmemleak_load_module(const struct module *mod,
+ {
+ 	/* only scan writable, non-executable sections */
+ 	for_each_mod_mem_type(type) {
+-		if (type != MOD_DATA && type != MOD_INIT_DATA)
++		if (type != MOD_DATA && type != MOD_INIT_DATA &&
++		    !mod->mem[type].is_rox)
+ 			kmemleak_no_scan(mod->mem[type].base);
+ 	}
+ }
 
 -- 
-With best wishes
-Dmitry
+Sincerely yours,
+Mike.
 
