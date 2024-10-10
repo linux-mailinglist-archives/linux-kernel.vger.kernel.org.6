@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-358114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FA5997A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31406997A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B474D1F23F7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EEAA1C22C23
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8003C1CFB9;
-	Thu, 10 Oct 2024 02:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1819115B54C;
+	Thu, 10 Oct 2024 02:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bA2yEOS9"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PucWOVUe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64D814293
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E232B14293;
+	Thu, 10 Oct 2024 02:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728525841; cv=none; b=tW6P9Z/tuYJUqiI+IxH3vS/I33Q5MlLjSgFzukkaKIPC3BFp6pDPaLMkqNQaHYw3CMD/XdPHtqQPf7bUn6Zi8gy7lzn0ku2O9ECyDZXSixoHS2ebC9DsicX5O+kXaz8pbjKewBQ5nLP/StDf8Wnf7yusbuvr7KZWaUrjwOZJCrc=
+	t=1728525944; cv=none; b=XxB91ghpg7xF1UsAUy3fzD1gpKR0D3Uyk/VwEN8d/VuFcN3EHYzi0ubU9jxNwnaDWyUG03NQyJanaSD+fbtRsQS3qqfKzQWWc62n5Dc5rAKEd/zDFpgwGQpvfFtnZ6h2wuDt1ijmkvCkAiQM9QDWG1H/EBKixkLg9+WzDqkMI3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728525841; c=relaxed/simple;
-	bh=BDjxCKFfyLilIFJFYy6/pxzquUHxABEXXsUrxbro9vE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qz4XRbo+uNFU+1eplSz7OUK8L3EUQE6RrphDPui3HOqxDlCRn9T7s85sWr/51CT36sQqQ3RSzHXGQchoJs6BuOovJe69+E/+WI4H9xz4OMUv35BLkp3RPIhZEe+69C7qF//mZ88lXK5bRXkygJvgmRkkbylKBEKfFk3Cs+DeXgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bA2yEOS9; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 9 Oct 2024 22:03:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728525837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQLc8O+ab0p95H3jJhE8eF6aq82ovQFxvMQYryqmvSY=;
-	b=bA2yEOS9bmkh2ml8BexztiznNDsCJd0kgGNykZsrxz7I9U2g2Y7dHb+D9G1CeMOWV0GXGL
-	a+wSnToBW/fuTjcnVNhk8Ju8GYacMYFrbHQhn2Ofopio6evpqJPOUza+cO6eDCckbgA1NX
-	QFffIlSnOPoYtZwW30EABR8+a8uYceU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Zhao Mengmeng <zhaomzhao@126.com>
-Cc: zhaomengmeng@kylinos.cn, lihongbo22@huawei.com, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] bcachefs: Fix shift-out-of-bounds in
- bch2_stripe_to_text
-Message-ID: <jvqgq5ekxbeims7qolka5xewgwwsdo5okkxvjfkbyenr6rk2r3@qbrg2klzzutp>
-References: <20241009140755.725629-1-zhaomzhao@126.com>
+	s=arc-20240116; t=1728525944; c=relaxed/simple;
+	bh=8zg7uqJ9F9dHFV5MUGZbEkc0C4syuarZNtsPZdOTC1w=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=iwJDdq105JrbZDUnknxWCFKxw7iDFZcVjRqoTxF7fGob/A3dpswEM7gVIJx2X6tgdu9Zy82oUEM3j+5Ld94HIGn7uDm0vvraomf3RL3PumdvIvPTzaeeXClBUivRdgcm53nKOwGSvmSJ/bDwTtkM6fEpsiznIAzy1AjZerU+LRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PucWOVUe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1b1xH026795;
+	Thu, 10 Oct 2024 02:05:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PwguU8K9q4ElaypTqADSdE
+	jaBpITo1N/cE2UK0wTvlo=; b=PucWOVUectwALyJK6+gH3sMjq8crcTSDQ/4iHJ
+	O+ZWIWIQLkH8210u7bEFFNS0QeUtC7ldmBj6mWjq9k3n9gVAfTZQLVBvCk4D68UR
+	BW0zakZkBuLDKzFh7cM44huQdvjJ0nJrREflhPNUmHXvmsnBoADORLen9fjgVUPw
+	1OYKmUjo8e8K6i5WjL0FWmKj2Lp0jlQvY7pNi6txM7c65qYWiIi11QehEhkHqVZP
+	sgyZ0qGUjjs1aS/5U181yK3eUqusMGvwy3ljVBVaxVb/3mR0bna5Usv2vghWaPjB
+	00hbhbCoc/FUDaHOZ6FrNmKEQ66H/xrDVqk7f9jffhE7s4nA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425c8qvaqa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 02:05:24 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A25NNa000712
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 02:05:23 GMT
+Received: from yijiyang-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 9 Oct 2024 19:05:17 -0700
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+Subject: [PATCH 0/3] Add ethernet dts schema for qcs615/qcs8300
+Date: Thu, 10 Oct 2024 10:03:42 +0800
+Message-ID: <20241010-schema-v1-0-98b2d0a2f7a2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009140755.725629-1-zhaomzhao@126.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP41B2cC/x3MQQrDIBCF4avIrCuMkmDIVUoXjpnEWcQWp5SA5
+ O6xWX7wv9dAuQorzKZB5Z+ovEuHexhIOZaNrSzd4NEPDh1aTZn3aEckpBBC8hNBjz+VVznuo+e
+ rm6KypRpLyv85fzOc5wXYMImIbgAAAA==
+To: Vinod Koul <vkoul@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        "Paolo
+ Abeni" <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bhupesh
+ Sharma <bhupesh.sharma@linaro.org>,
+        Kishon Vijay Abraham I
+	<kishon@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC: <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, Yijie Yang <quic_yijiyang@quicinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728525916; l=1227;
+ i=quic_yijiyang@quicinc.com; s=20240408; h=from:subject:message-id;
+ bh=8zg7uqJ9F9dHFV5MUGZbEkc0C4syuarZNtsPZdOTC1w=;
+ b=oCL7TZG9kQ4YdHZE+54xecj+BYNcwqM1fbzZOQRtv0td5mOVAR6MWjiS6we9TuVamgVX6wdPD
+ tTxcPcMK/VRC4VBiKOeWRGbwVp7XBEEtfx+c7dJFNtYvjR0hMDDFTXJ
+X-Developer-Key: i=quic_yijiyang@quicinc.com; a=ed25519;
+ pk=XvMv0rxjrXLYFdBXoFjTdOdAwDT5SPbQ5uAKGESDihk=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kp9LMD8qygJjScGPbJUJBEvHuHGfvBuv
+X-Proofpoint-ORIG-GUID: kp9LMD8qygJjScGPbJUJBEvHuHGfvBuv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 clxscore=1011
+ bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100012
 
-On Wed, Oct 09, 2024 at 10:07:55PM GMT, Zhao Mengmeng wrote:
-> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-> 
-> syzbot report a shift-out-of-bounds issue:
-> ------------[ cut here ]------------
-> UBSAN: shift-out-of-bounds in fs/bcachefs/ec.c:147:2
-> shift exponent 108 is too large for 32-bit type 'unsigned int'
-> ----
-> Here s.csum_granularity_bits = 108, so shift is impossible for unsigned
-> int. To fix, add a check in bch2_stripe_validate() to bail out, it has
-> same checking logic with ec_stripe_key_init().
-> 
-> Reported-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-> Tested-by: syzbot+f8c98a50c323635be65d@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=f8c98a50c323635be65d
-> Suggested-by: Hongbo Li <lihongbo22@huawei.com>
-> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-> ---
->  fs/bcachefs/ec.c      | 6 ++++++
->  fs/bcachefs/errcode.h | 4 +++-
->  2 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/bcachefs/ec.c b/fs/bcachefs/ec.c
-> index 564841e5a24b..f6a02123144d 100644
-> --- a/fs/bcachefs/ec.c
-> +++ b/fs/bcachefs/ec.c
-> @@ -114,6 +114,12 @@ int bch2_stripe_validate(struct bch_fs *c, struct bkey_s_c k,
->  	const struct bch_stripe *s = bkey_s_c_to_stripe(k).v;
->  	int ret = 0;
->  
-> +	if (s->csum_granularity_bits >= ilog2(le16_to_cpu(s->sectors))) {
-> +		bch_err_ratelimited(c, "stripe csum gran bits %u too big",
-> +				    s->csum_granularity_bits);
-> +		return -BCH_ERR_stripe_csum_granularity_bits_too_big;
-> +	}
-> +
+Document the ethernet and SerDes compatible for qcs8300. This platform
+shares the same EMAC and SerDes as sa8775p, so the compatible fallback to
+it.
+Document the ethernet compatible for qcs615. This platform shares the
+same EMAC as sm8150, so the compatible fallback to it.
+Document the compatible for revision 2 of the qcs8300-ride board.
 
-that should be a bkey_fsck_err_on(), and you'll add to the enum in
-sb-errors_format.h
+Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+---
+This patch series depends on below patch series:
+https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
 
->  	bkey_fsck_err_on(bkey_eq(k.k->p, POS_MIN) ||
->  			 bpos_gt(k.k->p, POS(0, U32_MAX)),
->  			 c, stripe_pos_bad,
-> diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
-> index 26990ad584d5..83659cdb93c8 100644
-> --- a/fs/bcachefs/errcode.h
-> +++ b/fs/bcachefs/errcode.h
-> @@ -270,7 +270,9 @@
->  	x(BCH_ERR_nopromote,		nopromote_enomem)			\
->  	x(0,				invalid_snapshot_node)			\
->  	x(0,				option_needs_open_fs)			\
-> -	x(0,				remove_disk_accounting_entry)
-> +	x(0,				remove_disk_accounting_entry)		\
-> +	x(EINVAL,			stripe_csum_granularity_bits_too_big)
-> +
->  
->  enum bch_errcode {
->  	BCH_ERR_START		= 2048,
-> -- 
-> 2.43.0
-> 
+---
+Yijie Yang (3):
+      dt-bindings: net: qcom,ethqos: add description for qcs615
+      dt-bindings: phy: describe the Qualcomm SGMII PHY
+      dt-bindings: net: qcom,ethqos: add description for qcs8300
+
+ .../devicetree/bindings/net/qcom,ethqos.yaml          | 19 ++++++++++++++-----
+ .../bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml    |  7 ++++++-
+ 2 files changed, 20 insertions(+), 6 deletions(-)
+---
+base-commit: 70c6ab36f8b7756260369952a3c13b3362034bd1
+change-id: 20241010-schema-50b0b777c28b
+
+Best regards,
+-- 
+Yijie Yang <quic_yijiyang@quicinc.com>
+
 
