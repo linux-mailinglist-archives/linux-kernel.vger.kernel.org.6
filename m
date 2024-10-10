@@ -1,93 +1,82 @@
-Return-Path: <linux-kernel+bounces-359386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A381B998BF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:43:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E403C998AE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88363B2DDC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3E9E286641
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F911E00B6;
-	Thu, 10 Oct 2024 15:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420DC1E1A2C;
+	Thu, 10 Oct 2024 15:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E1pqjfce"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbvDQqSt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874B41CCEFC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1573019E7D3;
+	Thu, 10 Oct 2024 15:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572404; cv=none; b=Cr3/a1fT4lFxgCyPYV5MxQIFL7kM+c+x6sHoBscTJEBQlzXV7fXptq9TV7eJUwwyNxGMVUGkgf0qzu5xnEwWmXrQbOiiimMEO1414guD6jMxC3+wh1t51C3sCOcc7m2yXAYNt9FOPskNDdMhzCuaHLCNzXR5vZX/n1CbiQJrT/Q=
+	t=1728572451; cv=none; b=d8gxx/rPvHwPn12oXTNsaeYSuYfpug8vzR42Zu1IhZjqY5xGHy/6KM81CF24BjE8MK6nMr5Igo+BIUfOwm1Q9QH2IetuESesBinUgw1sZa68WqDoR0p9yUzli4SNPgPAWGLLnX8YwVxT1Bd6kMICqFncCdjDVSOXzxZofbu95d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572404; c=relaxed/simple;
-	bh=b7V2f907wC3gpJZSILtBNClfTtCPhHfEFBQrnjR7EFA=;
+	s=arc-20240116; t=1728572451; c=relaxed/simple;
+	bh=z47HeD9ahRKP+YVSP51eG5FY2Y0Loe0o9seT+rV1wSQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LlsSyRHU7FODIr5vi40N0yAXa1l1YHjHcX96W4SWBYZFYX+ZeQMJ/c+9rSjtUQvlhkxGUGJyxMsLo4Liu5OwGh11VEj0gB5rfLFfGY+PFPoE9LyaTpvSBNdORl18j0e4V2Nn+TAWxC34VqOWV9YbaGS4VNUcBUYqxCF6tbhMhe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E1pqjfce; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9960371b62so114993866b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:00:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728572401; x=1729177201; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQuFIVPgcDNzzP5dDQ9aPllAbgUFYGZeYMdHPf9KucI=;
-        b=E1pqjfcekZD+wFAqLPzmveISV4CLHLku4vJY01Ee0LDYYpBb6O1o95TKO1rJ2Ve6Jh
-         mkcU9/pCYYlowq1eId62oV/ID8wzNHB2MTbdiaIop2jOgaEa39il8Srg3QnXCNhqDUMr
-         lDvLgn64PMRL44oc2Hd6XyUIKt3m64VqK1ApX5+4CWxW1g1pkQtgn/e72o70j+17LaiZ
-         izUycG/p9vpR3fhL9EMl/TTbVhnlttapPsL+6H4wuRdWecn6d5DHoJE7wJyTR/i2XTqO
-         FTVXlXdRZu9mYsxJ4EW+iaJUIFprW4nr3nz+BEFtoVn7GB1Dk+AdTtYtL7cLEDoa/HcX
-         M2ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728572401; x=1729177201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XQuFIVPgcDNzzP5dDQ9aPllAbgUFYGZeYMdHPf9KucI=;
-        b=UpueKF16/LkKiX5mwVdjR1Qajd7VEB13x59mO0/vaLoX0vf2XxnuwxsrhUzy8j+FNt
-         UZp0frtf8QW2UHSFXw4KfRyotXNF1XxPg7c/UzJZR2oOA4JRym2KrwkS2kaPLgL6I8vu
-         2LIGF4HaeSjezSTLINL2ZXbdT4Oid6q84vjAWzTs6+f3O8Aq8Wa8eTuzpis5P0Lbctlt
-         q1Py+1MJeetCVEkiYJzGmP1KqGPwweScABHtTmROst4vGUIqSUd89xh7Ayh049jmxZNa
-         vrIyRFWZhHtM77Ib/gZgQ34uImEIdSc+xioJs1QAPZlAd3IkcUvH+gappNkbgbcM4SnK
-         hgEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnofvnMU95Y6QcMySgFNmuJG3o867YdiR/F5CyhL9kCLwtep2tP3Gy64/aUM7NIo4BNPspikqF9vqvFgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygG7osz68b9CjvMQsl53zwiQfY73kN8TkfPnBebKBsakNmTuZE
-	KGR482bYV/db/DQ/i4xyIDGCyV28L6d6sBmZQsP4M+vpyq2GPeH9uaLy0H+0swY=
-X-Google-Smtp-Source: AGHT+IGW2A85HxaygCEijBG35Zwt3g08r3KbMHbf8XGM1RPwC0Ld8GCukhWd13kxEHGSwGXTGCl7Iw==
-X-Received: by 2002:a17:907:e654:b0:a99:585a:42a9 with SMTP id a640c23a62f3a-a998d117cb5mr585547666b.9.1728572400859;
-        Thu, 10 Oct 2024 08:00:00 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80ef972sm98465166b.193.2024.10.10.08.00.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 08:00:00 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:59:58 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v4 01/28] test printk: Add very basic struct resource
- tests
-Message-ID: <Zwfr7na62OKIlN8b@pathway.suse.cz>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObgfzJM2j5HFxSjiXUCc6c+fRzFnZxQT27w2QdnZA3Fu2NGOxsTUE58E16iq5Hg/Dkal5DKdYaC2m9CUnckHp5zRnL1oWq39PtzvcvcGZxpRoXwQq9uu913BHHEr9gm/5EZs9q7JkviJ5SGY75J+iw//YcSnWhlLz7nAI6E8w7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbvDQqSt; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728572450; x=1760108450;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=z47HeD9ahRKP+YVSP51eG5FY2Y0Loe0o9seT+rV1wSQ=;
+  b=lbvDQqStpY0c3dlhp5UyyRSjYfc6vIwrXPrS2u8PY+Z7+VsaR27dUj/P
+   m4ePowmmMq5D3QZ0RQ5DXghCMQFKbGZpZBUCBfemdh/RevRBlulLNShha
+   ADkVihZmMjtvxed6F2P88VfNuh0ibjexUIIMG/ljknb3ZIs4vlKeeiCm4
+   CDSMebRwuRTaDfBSvu9Ej4vTxvTvbhWqjhVwzlbOR25UylxWsPnn8zWnA
+   080e4zVqZK7qWdxNKK1Ea87DNCo1VNfu8veIBtre5AYcU0TZZZ53F9xoa
+   aLS8u27E7QmNauHDby5sXxfUAtP5+v3KpRBk5qyNNFEknui007DtJnDlJ
+   Q==;
+X-CSE-ConnectionGUID: I48N6zjyTH+ExuwMuo3mqw==
+X-CSE-MsgGUID: GSluXrUsQEOX4c01pDtCXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27808478"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="27808478"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:00:41 -0700
+X-CSE-ConnectionGUID: 7RkOvKm2SMGzGkgpdfxOEA==
+X-CSE-MsgGUID: gilISOZ9Rx6UmZst3O9khg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="76229673"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:00:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1syueZ-00000001ZUI-0tSd;
+	Thu, 10 Oct 2024 18:00:35 +0300
+Date: Thu, 10 Oct 2024 18:00:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] serial: 8250_dw: Add Sophgo SG2044 quirk
+Message-ID: <ZwfsEpqgi9zH9P_t@smile.fi.intel.com>
+References: <20241009233908.153188-1-inochiama@gmail.com>
+ <20241009233908.153188-3-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,26 +85,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-1-c261ee6eeded@intel.com>
+In-Reply-To: <20241009233908.153188-3-inochiama@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon 2024-10-07 18:16:07, Ira Weiny wrote:
-> The printk tests for struct resource were stubbed out.  struct range
-> printing will leverage the struct resource implementation.
-> 
-> To prevent regression add some basic sanity tests for struct resource.
-> 
-> To: Petr Mladek <pmladek@suse.com>
-> To: Steven Rostedt <rostedt@goodmis.org>
-> To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> To: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Cc: linux-doc@vger.kernel.org
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+On Thu, Oct 10, 2024 at 07:39:06AM +0800, Inochi Amaoto wrote:
+> SG2044 relys on an internal divisor when calculating bitrate, which
+> means a wrong clock for the most common bitrates. So add a quirk for
+> this uart device to skip the set rate call and only relys on the
+> internal UART divisor.
 
-Thanks for adding them. They look good:
+...
 
-Acked-by: Petr Mladek <pmladek@suse.com>
+> +static const struct dw8250_platform_data dw8250_sophgo_sg2044_data = {
+> +	.usr_reg = DW_UART_USR,
+> +	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
+> +};
+> +
+>  static const struct dw8250_platform_data dw8250_starfive_jh7100_data = {
+>  	.usr_reg = DW_UART_USR,
+>  	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
 
-Best Regards,
-Petr
+For the bare minimum this should be deduplicated as to have one record for now.
+
+static const struct dw8250_platform_data dw8250_skip_set_rate_data = {
+	.usr_reg = DW_UART_USR,
+	.quirks = DW_UART_QUIRK_SKIP_SET_RATE,
+};
+
+If we need different quirks in the future, they can be split again.
+Or, if you certain that new quirks will come, mention this in
+the commit message.
+
+...
+
+>  	{ .compatible = "cavium,octeon-3860-uart", .data = &dw8250_octeon_3860_data },
+>  	{ .compatible = "marvell,armada-38x-uart", .data = &dw8250_armada_38x_data },
+>  	{ .compatible = "renesas,rzn1-uart", .data = &dw8250_renesas_rzn1_data },
+> +	{ .compatible = "sophgo,sg2044-uart", .data = &dw8250_sophgo_sg2044_data },
+>  	{ .compatible = "starfive,jh7100-uart", .data = &dw8250_starfive_jh7100_data },
+
+I think my proposal for having a common compatible for those two is a no-go
+as compatible strings are for the (unique) hardware and shouldn't be abstracted
+based on some Linux or other OS shortcuts / quirks.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
