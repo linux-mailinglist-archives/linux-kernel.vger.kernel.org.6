@@ -1,137 +1,190 @@
-Return-Path: <linux-kernel+bounces-359164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6531299883C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A02A99883E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DC93288298
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062F01F22940
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB331C9ED3;
-	Thu, 10 Oct 2024 13:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92ED1CBEAE;
+	Thu, 10 Oct 2024 13:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUYm15EJ"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="AkfI5ZuF"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659AF1C9EA6;
-	Thu, 10 Oct 2024 13:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF60E1CB505;
+	Thu, 10 Oct 2024 13:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568133; cv=none; b=rW57xrTRpeQ+bs+0OQ4hb5X5GFAvMbfVdMT3iYG/CAwrlEGIVV5Z8f9ETMKvLMYK7cwHHH3HS5IdGXvDE1R9pZCjlqabSTWMoZSc/U4fmEarKqrtl6p8Spi5sUkPhQwqiWkBC+QCSLsO0gBMvDHbH4Cs+FU43jADL4EsDqSjo4M=
+	t=1728568139; cv=none; b=qVjUU1RHb/+IazxtjLfmm4h4iMAok99CGDa8OmJ/n7NoK+JWnsY9tCydSEN2dsSxPrHc9OljDLrk21Qss/bfSjOcVvFVX+k0x8P8arkaeTWqJl7TUZhAQ7e9iaBC1Zx6ObDKoxPPZ7V2AZiZ14K7jbS2XomCM/v9/eec+nTa/Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568133; c=relaxed/simple;
-	bh=q88PaOXxlyLikiecdx9tJqSk2/WmYt2SNfx/eL4fEtc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=b+2dH7Z68A7+YonipviWCSc+AhGnpULrFy7SeKNe70VPV0uCwzXporS6jM+cAc8LtuU+tByAhYaG8TGz8wbpiREKk2rifotq8/a4Mcy32EgT4+Uu2QraZpRjJq8q5+AyENhlvyXITQaVve6ZpSyd7OXM7xb66165KeOuDYnvxAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUYm15EJ; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460371bfda4so7604971cf.2;
-        Thu, 10 Oct 2024 06:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728568131; x=1729172931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YDE361x27Fkhh98NbTeMg0ri1vOug4Eeh4i7aXvOKX4=;
-        b=hUYm15EJSta4bmrS4GaSDCH8fi+9HpwRncBw8h/si8+Jo7jB5/hVvMBI9Ty2MERsJM
-         O94T7yKMHYZZcPRk2gfIWser/kyRQ/J2OrOUT/c4WpVJ8yHgh5KsIVp1imZxLq3CYgeK
-         SDFDIpKkrWPCPYva0acYhnzJ2jVjsOIOvW5LLbWPF6RHs3NT0ezIrLF+XMGn4CsszJLs
-         v+ajiap6ORxSxT7OovH2lAxTsUT3gCFwWHXszAWaXCvh2CtwSY+ZXWEx6eoxC/PTETFF
-         utkjCpQOTiyk1oiVBG/3o1Ne+FZuocInh52gxjk6wQFhDXzsOuM29/yk2LTxXSlh3Rp6
-         sYkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568131; x=1729172931;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YDE361x27Fkhh98NbTeMg0ri1vOug4Eeh4i7aXvOKX4=;
-        b=aQmSK/CqJGsQxKel6XcmaGNYpyjqqyD4fPIG89HvrNpErw64AVjCE5f9wiLgmgsvVG
-         3XbLaGssofb5aBZJsL+64iv9xNiB7wllbZrq9YAoJUN54lMVmsFrHE8JqyMWe/1hVyqu
-         NVlN7zm9DvY0rlJH5WA5yJm4li1AfAqm07ok1h8YqUlaSz2vK1vxedqq2K4DIDQDSwVM
-         MQusEN8+gHFdGZDUJiayXNFRvxUUZVnrVGuYEWxKpZaPmrYDHw/1jBzYoXZ9KnCUFnfG
-         +Wf1vJVb4591pT9pyJcfbsOhDI970SmaUCXQfqwHOJ5MdhrgaXgalMQy+UNXzjVtqI87
-         8Lbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbVGqs/K8rznGaEPs+s1Q4+lVmEVKPTmdo7B7PIjylhm/jS6kU5cnFJk5E/PZ3FWEp7BMmwZsK@vger.kernel.org, AJvYcCX4JFfgC4GKqtQg3pU03HfrT7sGrY8oYQOUXslw6nOYY9olA0i7D93C9PvR2xog6jzKwfYLGvGC7dpfMfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya1ofK75/Tk5fmg2M4iO3LXubAaPQocLBlOfdlbE66P4ZnTWyz
-	Iheajw8ctEIBhmkBDxnuRQEdh0hOOVQWtlBrApNd22xCsTnAcmR1
-X-Google-Smtp-Source: AGHT+IGAhm/q7RCDbWtzdnKOWVcL+Gow0s3PGkI5q0W2fQOP8gDRcELKuNq1CEQ0JZB81+1u2Sxhxg==
-X-Received: by 2002:a05:6214:5bc7:b0:6c7:50bf:a443 with SMTP id 6a1803df08f44-6cbe4ab2cdamr37935986d6.30.1728568131209;
-        Thu, 10 Oct 2024 06:48:51 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85a5b8asm5579586d6.14.2024.10.10.06.48.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:48:50 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:48:50 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Philo Lu <lulie@linux.alibaba.com>, 
- netdev@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- dsahern@kernel.org, 
- antony.antony@secunet.com, 
- steffen.klassert@secunet.com, 
- linux-kernel@vger.kernel.org, 
- dust.li@linux.alibaba.com, 
- jakub@cloudflare.com, 
- fred.cc@alibaba-inc.com, 
- yubing.qiuyubing@alibaba-inc.com
-Message-ID: <6707db425cc49_202921294a9@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20241010090351.79698-3-lulie@linux.alibaba.com>
-References: <20241010090351.79698-1-lulie@linux.alibaba.com>
- <20241010090351.79698-3-lulie@linux.alibaba.com>
-Subject: Re: [PATCH v3 net-next 2/3] net/udp: Add 4-tuple hash list basis
+	s=arc-20240116; t=1728568139; c=relaxed/simple;
+	bh=BDfG6D0k6mhhOha80lUom77pONcFISv/QfpRGpLmDLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTffwwox7H3CmWvrrH5k3Xuc83pI2843KDk91FfXG4me320eo726+HwgALw/JJ98v6iMNjpbYN89DB9xG7fmoEIqL0FxdyMJCdqBzuULzeIfgrBW8rFjWDQwjHyfSNLHwHbSRYIbzvzF1SbpwPFuYHr7ATXWXzM2Tqu0ryvDKgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=AkfI5ZuF; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1728568133; bh=BDfG6D0k6mhhOha80lUom77pONcFISv/QfpRGpLmDLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AkfI5ZuFr1kcOFVXosMGDjM89nA+MiJCWYydEfmoSytStXkam7GJkVpylQgO4dUbT
+	 V4nmESJbA5Jp31b0Ks8HwCBFLJDIrPD4l99hVfD/wZCFm4/G2NYH1PzWEfCPNfsxQK
+	 1CA0s0tZ/vGTR7MjQmaPFq2DQrli+0atq6x0sJNQ=
+Date: Thu, 10 Oct 2024 15:48:52 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Ye Bin <yebin@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, yebin10@huawei.com, 
+	zhangxiaoxu5@huawei.com
+Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
+ filesystem
+Message-ID: <11fb0b59-64e1-4f11-8ffb-03537be5fa36@t-8ch.de>
+References: <20241010112543.1609648-1-yebin@huaweicloud.com>
+ <20241010112543.1609648-3-yebin@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010112543.1609648-3-yebin@huaweicloud.com>
 
-Philo Lu wrote:
-> Add a new hash list, hash4, in udp table. It will be used to implement
-> 4-tuple hash for connected udp sockets. This patch adds the hlist to
-> table, and implements helpers and the initialization. 4-tuple hash is
-> implemented in the following patch.
+On 2024-10-10 19:25:42+0800, Ye Bin wrote:
+> From: Ye Bin <yebin10@huawei.com>
 > 
-> Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
-> Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
-> Signed-off-by: Fred Chen <fred.cc@alibaba-inc.com>
-> Signed-off-by: Yubing Qiu <yubing.qiuyubing@alibaba-inc.com>
+> In order to better analyze the issue of file system uninstallation caused
+> by kernel module opening files, it is necessary to perform dentry recycling
+> on a single file system. But now, apart from global dentry recycling, it is
+> not supported to do dentry recycling on a single file system separately.
+> This feature has usage scenarios in problem localization scenarios.At the
+> same time, it also provides users with a slightly fine-grained
+> pagecache/entry recycling mechanism.
+> This patch supports the recycling of pagecache/entry for individual file
+> systems.
+> 
+> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> ---
+>  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mm.h |  2 ++
+>  kernel/sysctl.c    |  9 +++++++++
+>  3 files changed, 54 insertions(+)
+> 
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index d45ef541d848..99d412cf3e52 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  	}
+>  	return 0;
+>  }
+> +
+> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
+> +				  void *buffer, size_t *length, loff_t *ppos)
+> +{
+> +	unsigned int major, minor;
+> +	unsigned int ctl;
+> +	struct super_block *sb;
+> +	static int stfu;
+> +
+> +	if (!write)
+> +		return 0;
+> +
+> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
+> +		return -EINVAL;
+> +
+> +	if (ctl < *((int *)table->extra1) || ctl > *((int *)table->extra2))
+> +		return -EINVAL;
+> +
+> +	sb = user_get_super(MKDEV(major, minor), false);
+> +	if (!sb)
+> +		return -EINVAL;
+> +
+> +	if (ctl & 1) {
 
-> @@ -3480,16 +3486,15 @@ static struct udp_table __net_init *udp_pernet_table_alloc(unsigned int hash_ent
->  	if (!udptable)
->  		goto out;
+BIT(0)
+
+> +		lru_add_drain_all();
+> +		drop_pagecache_sb(sb, NULL);
+> +		count_vm_event(DROP_PAGECACHE);
+> +	}
+> +
+> +	if (ctl & 2) {
+> +		shrink_dcache_sb(sb);
+> +		shrink_icache_sb(sb);
+> +		count_vm_event(DROP_SLAB);
+> +	}
+> +
+> +	drop_super(sb);
+> +
+> +	if (!stfu)
+> +		pr_info("%s (%d): drop_fs_caches: %u:%u:%d\n", current->comm,
+> +			task_pid_nr(current), major, minor, ctl);
+> +	stfu |= ctl & 4;
+
+This looks very weird. I guess it's already in the original
+drop_caches_sysctl_handler().
+
+> +
+> +	return 0;
+> +}
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 344541f8cba0..43079478296f 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3788,6 +3788,8 @@ extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
+>  extern int sysctl_drop_caches;
+>  int drop_caches_sysctl_handler(const struct ctl_table *, int, void *, size_t *,
+>  		loff_t *);
+> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
+> +				  void *buffer, size_t *length, loff_t *ppos);
+>  #endif
 >  
-> -	slot_size = sizeof(struct udp_hslot) + sizeof(struct udp_hslot_main);
-> +	slot_size = 2 * sizeof(struct udp_hslot) + sizeof(struct udp_hslot_main);
->  	udptable->hash = vmalloc_huge(hash_entries * slot_size,
->  				      GFP_KERNEL_ACCOUNT);
->  	if (!udptable->hash)
->  		goto free_table;
->  
->  	udptable->hash2 = UDP_HSLOT_MAIN(udptable->hash + hash_entries);
-> -	udptable->mask = hash_entries - 1;
-> +	udptable->hash4 = (struct udp_hslot *)(udptable->hash2 + hash_entries);
+>  void drop_slab(void);
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 79e6cb1d5c48..d434cbe10e47 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2101,6 +2101,15 @@ static struct ctl_table vm_table[] = {
 
-Unintentional removal of the mask assignment?
+Sooner or later this table should move out of kernel/sysctl.c and into a
+subsystem-specific file.
+This also means the handler doesn't need to be exported.
 
->  	udptable->log = ilog2(hash_entries);
-> -
+>  		.extra1		= SYSCTL_ONE,
+>  		.extra2		= SYSCTL_FOUR,
+>  	},
+> +	{
+> +		.procname	= "drop_fs_caches",
+> +		.data		= NULL,
 
-Unnecessary whitespace line removal
+NULL is already the default.
 
->  	for (i = 0; i < hash_entries; i++) {
->  		INIT_HLIST_HEAD(&udptable->hash[i].head);
->  		udptable->hash[i].count = 0;
+> +		.maxlen		= 256,
+
+The maxlen field refers to the data field.
+As there is no data, there should be no maxlen.
+
+> +		.mode		= 0200,
+> +		.proc_handler	= drop_fs_caches_sysctl_handler,
+> +		.extra1         = SYSCTL_ONE,
+> +		.extra2         = SYSCTL_FOUR,
+
+These extras are meant as parameters for generic handlers.
+Inlining the limits into your hander makes it much clearer.
+
+> +	},
+>  	{
+>  		.procname	= "page_lock_unfairness",
+>  		.data		= &sysctl_page_lock_unfairness,
+> -- 
+> 2.31.1
+> 
 
