@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-358487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9B6997FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D046997FF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74A81F24A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:34:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5081C24078
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ECB204F7D;
-	Thu, 10 Oct 2024 08:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6023204944;
+	Thu, 10 Oct 2024 08:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ODlnf31z"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smfaReOH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6011CF29D;
-	Thu, 10 Oct 2024 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1087A28F1;
+	Thu, 10 Oct 2024 08:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728547300; cv=none; b=jpFZlz1kXSlmsw79/W643lgJafpBJPFv3zCGdbpTIyVaj/hpAt6SxnvtPCpE6o5eqSexuLY8uDO0L8zRPmQxGKtQP7cYEZteaor6dcxLv2SwJpH37ZWcR/AE5RINx2Miq9SjCSTyYtorTbeF+ThBjRCmuMnjdLtqhN9ZCetYW2U=
+	t=1728547414; cv=none; b=CDDs7Rb2BP+4dU05258bVp7LWE44xzdFJEPt5Mgk34hqIAajjH/DO3VbXcqMgWKWs5pLT0kZfi3d7B60x0h/Sl53Qx3G/Ho+NBK0uLblH9JHjJXoYcJctCd3f/J5x6s4QoTi9w2gvD8zWVkGV4AAHi0b/pHqadSofkxFz7A91PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728547300; c=relaxed/simple;
-	bh=SPNWE67wljUpgDt6cdCP1UZ5g+mrt3I94xuS2flkUjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zz+/MQz+F7wq5DSsLk8j0MN0HLmpgJviH+fMuQj6U6caEL21wUbRxWR/S9zam6Q+KVvUNh31oLUk10k1znjEIIcPjSh+bQGPviG+PlY/sMfw6PQzfcXdRB0d6WxIzsZft7NGrANlhHlphKabAZeZet/mu+nsCMELp/Y22WsT7lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ODlnf31z; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3M9KdA8DamcHX+t4Rs6QLSY8A6xBoeXjIByTZaRvvrw=; b=ODlnf31zkBA60pAMsLKUz4NwQA
-	0d1+qf2OpwXb5xM7RrOyWLDPmzgckueE+AckkkbX9AeLzNNKH9DDQ20L3tNKen95IQxJ4AaT1NaDk
-	2rt9oonqWGhcxNDoPLDPP3VzdqkNfjEiI2U9f7Hq+xSMWHk2PfvhbyqeEYvcmasG3J7l7Rxr46mcv
-	lpM0TA1sM5LlScvxNz87yz3ey/jdIwfJh7YL7E1yumpCqhm//sWjUujlYuKyb6xyScH/hQD9Z9H/w
-	E7hZ09vvysbAVWRm1tkP+SLzPEm544ZxZ82wA5c4jRZLGqPSkMMvLItACcRiBNMUyNY6nDlkpN83W
-	H3CaLIVg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1syo77-0000000BtRj-1dcm;
-	Thu, 10 Oct 2024 08:01:37 +0000
-Date: Thu, 10 Oct 2024 01:01:37 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	syzbot <syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com>,
-	chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-	Vlastimil Babka <vbabka@suse.cz>, Feng Tang <feng.tang@intel.com>
-Subject: Re: [syzbot] [xfs?] KFENCE: memory corruption in xfs_idata_realloc
-Message-ID: <ZweJ4UiFpOtxyeB-@infradead.org>
-References: <6705c39b.050a0220.22840d.000a.GAE@google.com>
- <Zwd4vxcqoGi6Resh@infradead.org>
- <CANpmjNMV+KfJqwTgV9vZ_JSwfZfdt7oBeGUmv3+fAttxXvRXhg@mail.gmail.com>
+	s=arc-20240116; t=1728547414; c=relaxed/simple;
+	bh=rjfKk6/QYrRyVSayAlToLVMphmXCkVpLEhaPG9+49x8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPP20dOtlUmU6PzrEz+XuDagVZsP652TDc6nM4AwReReS9UVNx0XNSNA3RpRxd7Zxs6G8coGMkWDBTC6NYMxxQPGUf1z8b5AKhp5eY51nSuVY/Uw1P3A1TvDZb9Dd3/w58j0oR4ia5iW8XBEo0+fKCZH7R83nZVBb+LG9bw7+u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smfaReOH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4FACC4CEC5;
+	Thu, 10 Oct 2024 08:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728547413;
+	bh=rjfKk6/QYrRyVSayAlToLVMphmXCkVpLEhaPG9+49x8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=smfaReOHsOVU7qKCrJ2Lgwo++Udq/GzHyoXI0fraGafgEPn9cpb0t2WBZzyJeTREa
+	 AciG3G/JY6BHLVcLQfvwzlhKXnTR6C1zzZBEmy3KU1cIAuy3v04zY02yftmlpl5Fdg
+	 NN6ZE04pdBEsV9VNTtbAoXzz/PZvsZDSuxLs+t8C4gK/vIQRyrVsVngaIJHFI80yTr
+	 ftLRnJyhFsGet6ehm9hr0lmdagfYHDpPBTFw2DkPAMsQkueYh4jUozPbHWyE7wrRrn
+	 VJ6GkU52tZOmqCFpC83X2EePIMvQuHe2el+InZfW3j9q62EodeN44iE8kReJIC9xbB
+	 eJmiNzXmah+jg==
+Message-ID: <29ff8cda-3a4d-4605-8441-5db4e7c59894@kernel.org>
+Date: Thu, 10 Oct 2024 10:03:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNMV+KfJqwTgV9vZ_JSwfZfdt7oBeGUmv3+fAttxXvRXhg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: cache: qcom,llcc: Document the QCS615
+ LLCC
+To: Song Xue <quic_songxue@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241010-add_llcc_support_for_qcs615-v2-0-044432450a75@quicinc.com>
+ <20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 09:50:06AM +0200, Marco Elver wrote:
-> > I've tried to make sense of this report and failed.
-> >
-> > Documentation/dev-tools/kfence.rst explains these messages as:
-> >
-> > KFENCE also uses pattern-based redzones on the other side of an object's guard
-> > page, to detect out-of-bounds writes on the unprotected side of the object.
-> > These are reported on frees::
-> >
-> > But doesn't explain what "the other side of an object's guard page" is.
+On 10/10/2024 08:38, Song Xue wrote:
+> Document the LLCC on the QCS615 platform.
 > 
-> Every kfence object has a guard page right next to where it's allocated:
+> The QCS615 platform has LLCC as the system cache controller. It
+> includes 1 LLCC instance and 1 broadcast interface.
 > 
->   [ GUARD | OBJECT + "wasted space" ]
-> 
-> or
-> 
->   [ "wasted space" + OBJECT | GUARD ]
-> 
-> The GUARD is randomly on the left or right. If an OOB access straddles
-> into the GUARD, we get a page fault. For objects smaller than
-> page-size, there'll be some "wasted space" on the object page, which
-> is on "the other side" vs. where the guard page is. If a OOB write or
-> other random memory corruption doesn't hit the GUARD, but the "wasted
-> space" portion next to an object that would be detected as "Corrupted
-> memory" on free because the redzone pattern was likely stomped on.
+> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
 
-Thanks!  Searching kfence.txt for random I find that explaination in
-the intro now.  Can you maybe expand the section I quoted to make
-this more clear, by saying something like:
+<form letter>
+This is a friendly reminder during the review process.
 
-KFENCE also uses pattern-based redzones on the side of the object that
-is not covered by the GUARD (which is randomly allocated to either the
-left or the right), to detect out-of-bounds writes there as well.
-These are reported on frees::
+It looks like you received a tag and forgot to add it.
 
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-> 
-> > Either way this is in the common krealloc code, which is a bit special
-> > as it uses ksize to figure out what the actual underlying allocation
-> > size of an object is to make use of that.  Without understanding the
-> > actual error I wonder if that's something kfence can't cope with?
-> 
-> krealloc + KFENCE broke in next-20241003:
-> https://lore.kernel.org/all/CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com/T/#u
-> It's been removed from -next since then.
-> 
-> It's safe to ignore.
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
-Thanks!
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Your internal guideline tells you this, so please read it before posting
+any further patches.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
