@@ -1,88 +1,179 @@
-Return-Path: <linux-kernel+bounces-359742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A643998FD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:24:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508D8999148
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEC5284C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7411F237C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A71CEAAC;
-	Thu, 10 Oct 2024 18:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C9621BB0D;
+	Thu, 10 Oct 2024 18:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W09yPTrs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AchV74I+"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892B21C9B93;
-	Thu, 10 Oct 2024 18:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BD221B455
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584664; cv=none; b=CQeWpu6qeSfhkIgmi0XyYLOGeRAisbwBAa4P/Svtv1J7tesyQsQ5Tk45+RQhU9zetUAMERJrzAAE5FoJUQiQax2+BaiWgBi0DMgqSV34VjwA+aS/IbDB4Ia4JCWrhwi/CXyZ/g4+34lW8yPEIyEe6XMH8PWnMi0Wws6eUzVLBQ8=
+	t=1728584869; cv=none; b=DoPjOZSumicjAIvSRpkagNqyqtAVCtfqKRavLyBhRjLkPvg8+FXe9o0PArrGPx5+PlqxUg5cgcZquLfhqQu3oN95czw8FlFkydmJY3ERY0ED9lWV5zgCZwOcHZQQZz0oY8dlwwD3pmYegkk7AQKaHb8YUl/AWDuRgDWunHpCcFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584664; c=relaxed/simple;
-	bh=LXWRpUCFEW0Rx04S04rSJW8bkwD7Sr+8cSNN1CAscBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qcV1fSgegJeLCN00Dv8fFGIYF70nbynNXqE6rGAAR1qjofii5RHQxdZZC8oc9rhKVIVJCXDJj5RafoQPZNZw/veNgRcL7Di3N87fvyqHw9EeG59QrdgiI8V55K5HA8nfG6P64YymTBTFFbhK+QswjOZxAO38vL8OTzbN+/jbyIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W09yPTrs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9EFC4CEC5;
-	Thu, 10 Oct 2024 18:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728584664;
-	bh=LXWRpUCFEW0Rx04S04rSJW8bkwD7Sr+8cSNN1CAscBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W09yPTrsAR0lHYNUF/tBo+WwwUzmSF3X/IPDGqlWqiO7J5dM9dmuHlI8bv8C30/NJ
-	 W3wRi4K5Y4dEfXG7JJQgL5s91rSZtBQM/xooGHy6CLEVXDJudAeToRi0/2LSU9A/Ym
-	 zyTJYO55nf/irDzKi+8GceKbR5rmjS1+ziMG+Ymr9dgRSKWpdwN3uuiLlAYjnr9TGb
-	 WNzqgARb+3h8JGXwcQt7nceDb7BMKPSrXXch7fIZi/SPu3tZcR0YIS2aKY/8nN3tcb
-	 RhRuFtxc+PshCMxIAif3BUwwY6nlO3CtGk0G2K7PDOURkcNJQ8JMaeycZG3PZT68HN
-	 P9CtfTVDaWkrQ==
-Date: Thu, 10 Oct 2024 13:24:23 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-watchdog@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-leds@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-input@vger.kernel.org,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: input: convert
- zii,rave-sp-pwrbutton.txt to yaml
-Message-ID: <172858466263.2206934.3878201862515578388.robh@kernel.org>
-References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
- <20241010-zii_yaml-v2-1-0ab730607422@nxp.com>
+	s=arc-20240116; t=1728584869; c=relaxed/simple;
+	bh=PnrPzaCfKEgiP1btOoqWv8SGAKP2OnxCXZvE+imIcuc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Vt9kouPJy7S6NYYDPehzF7xGccgoPmEyu75gaL2LXgF71vj0PjpMxJQnWe/mUh43Ht6h0Q3yci4OGIFBXhFbEPkQbiu92UvVTUNR7+ehfVX7tl57sm2IbEg3Zk4SOEqtGbQ4FocWl8f9RCHRnKIvU8JGCn/C7Z4uaKM8c7b+nps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AchV74I+; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e2e5e376fcso26578417b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728584866; x=1729189666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l0R/snR1lBsefu+Gd9v26W9gBjpskR/lINZXMlcZUSs=;
+        b=AchV74I+JHnLrzKw1CnNCcRL41wNv//gHQc4NBTbfpjxRDy9PpJE1B/SqMD9myx1R0
+         mVHR+P8bSOu3/Oz7lQ1hgUtN9RY36X8gOczJcSEzTD6A4XAuLIdAiocO1EWVeSzm/4NK
+         iNG3yhnElAt6f+kb1qQgRYpbE90dKeTPD0ImYwKFpZwH+xttYCi4J3DbFBX+y8+g6m/J
+         qSa67DktV6zF5OIY/4SFr42+hJi/UbFrb3E+c81xKI47QPmXP/2WartrnYvjKaDYHUd5
+         jRzI+lw3Ax3tYbLNUtXYTLdiL9GbDm/+hYmfVoG+Cx077QveQVOlUtcb0lxUp1GhD1cL
+         Ji/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728584866; x=1729189666;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=l0R/snR1lBsefu+Gd9v26W9gBjpskR/lINZXMlcZUSs=;
+        b=NLy5BHLpCBe41c2QRehRseQPsJIhc+KKYoGdlUjiC02Lu9qwUIcQE0D3jzzC6QLVSd
+         oLYVs2bDXV/zNnkrURahy+2bwPn2VSq2EMVzkbPBANgA+cGPhcF3W6mk5ozqrncRT3Q3
+         boWnHruEhxS9Ifmj0EtMJNzTRs1WwAXZQTCh+wnIdtx1xANYZYL4BwFDzkqCY8hvcvAW
+         3hk1BjIoaSGZCuxztgeMoXMCU2t9xUf7E9lguWn1Wb93jO2YDsufJSIlZvgdB+DcjVvX
+         /eB83+rwJ9sYvxpbOVVncY01Kb8+FgXHrVwY/Qq0Osk3zFS3vFAmv64fuY2RDsa7TiO5
+         CPEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJpTKhZLm40vuthqEI9T/zPl5E6qw9xFl+xZcmm78gUSGl7TKagAX+T9VJ84tOvdWStHfe/GqQidxGF/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx25FbjdlSRFGVVN7hYIJD8G5CmKeLGgvQbN4vNGqZVPpApiLZq
+	dtl6wrePGDXpynDYAHDUmbQe4OhWoXp5j0PmHzINV9lKHswKNdOk8onueV2WGbgjPdNkWTtTaKE
+	ApA==
+X-Google-Smtp-Source: AGHT+IE49fRlqLzz+ddXUJ4fW719WQNIEaF+exc+KxAZEodOOT6YKCh59uZdX+xzyPwnVHJ15Mb6QwFZ+jU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:470f:b0:6e3:39e5:f0e8 with SMTP id
+ 00721157ae682-6e339e5f461mr119227b3.6.1728584866570; Thu, 10 Oct 2024
+ 11:27:46 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 10 Oct 2024 11:24:24 -0700
+In-Reply-To: <20241010182427.1434605-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010-zii_yaml-v2-1-0ab730607422@nxp.com>
+Mime-Version: 1.0
+References: <20241010182427.1434605-1-seanjc@google.com>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241010182427.1434605-83-seanjc@google.com>
+Subject: [PATCH v13 82/85] KVM: x86/mmu: Don't mark "struct page" accessed
+ when zapping SPTEs
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"=?UTF-8?q?Alex=20Benn=C3=A9e?=" <alex.bennee@linaro.org>, Yan Zhao <yan.y.zhao@intel.com>, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>, 
+	Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Don't mark pages/folios as accessed in the primary MMU when zapping SPTEs,
+as doing so relies on kvm_pfn_to_refcounted_page(), and generally speaking
+is unnecessary and wasteful.  KVM participates in page aging via
+mmu_notifiers, so there's no need to push "accessed" updates to the
+primary MMU.
 
-On Thu, 10 Oct 2024 11:42:38 -0400, Frank Li wrote:
-> Convert device tree binding doc zii,rave-sp-pwrbutton.txt to yaml format.
-> Additional changes:
-> - add ref to input.yaml.
-> - remove mfd node in example.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/input/zii,rave-sp-pwrbutton.txt       | 22 -------------
->  .../bindings/input/zii,rave-sp-pwrbutton.yaml      | 36 ++++++++++++++++++++++
->  2 files changed, 36 insertions(+), 22 deletions(-)
-> 
+And if KVM zaps a SPTe in response to an mmu_notifier, marking it accessed
+_after_ the primary MMU has decided to zap the page is likely to go
+unnoticed, i.e. odds are good that, if the page is being zapped for
+reclaim, the page will be swapped out regardless of whether or not KVM
+marks the page accessed.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Dropping x86's use of kvm_set_pfn_accessed() also paves the way for
+removing kvm_pfn_to_refcounted_page() and all its users.
+
+Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/mmu/mmu.c     | 17 -----------------
+ arch/x86/kvm/mmu/tdp_mmu.c |  3 ---
+ 2 files changed, 20 deletions(-)
+
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 5acdaf3b1007..55eeca931e23 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -559,10 +559,8 @@ static bool mmu_spte_update(u64 *sptep, u64 new_spte)
+  */
+ static u64 mmu_spte_clear_track_bits(struct kvm *kvm, u64 *sptep)
+ {
+-	kvm_pfn_t pfn;
+ 	u64 old_spte =3D *sptep;
+ 	int level =3D sptep_to_sp(sptep)->role.level;
+-	struct page *page;
+=20
+ 	if (!is_shadow_present_pte(old_spte) ||
+ 	    !spte_has_volatile_bits(old_spte))
+@@ -574,21 +572,6 @@ static u64 mmu_spte_clear_track_bits(struct kvm *kvm, =
+u64 *sptep)
+ 		return old_spte;
+=20
+ 	kvm_update_page_stats(kvm, level, -1);
+-
+-	pfn =3D spte_to_pfn(old_spte);
+-
+-	/*
+-	 * KVM doesn't hold a reference to any pages mapped into the guest, and
+-	 * instead uses the mmu_notifier to ensure that KVM unmaps any pages
+-	 * before they are reclaimed.  Sanity check that, if the pfn is backed
+-	 * by a refcounted page, the refcount is elevated.
+-	 */
+-	page =3D kvm_pfn_to_refcounted_page(pfn);
+-	WARN_ON_ONCE(page && !page_count(page));
+-
+-	if (is_accessed_spte(old_spte))
+-		kvm_set_pfn_accessed(pfn);
+-
+ 	return old_spte;
+ }
+=20
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index 8aa0d7a7602b..91caa73a905b 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -861,9 +861,6 @@ static bool tdp_mmu_zap_leafs(struct kvm *kvm, struct k=
+vm_mmu_page *root,
+=20
+ 		tdp_mmu_iter_set_spte(kvm, &iter, SHADOW_NONPRESENT_VALUE);
+=20
+-		if (is_accessed_spte(iter.old_spte))
+-			kvm_set_pfn_accessed(spte_to_pfn(iter.old_spte));
+-
+ 		/*
+ 		 * Zappings SPTEs in invalid roots doesn't require a TLB flush,
+ 		 * see kvm_tdp_mmu_zap_invalidated_roots() for details.
+--=20
+2.47.0.rc1.288.g06298d1525-goog
 
 
