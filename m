@@ -1,86 +1,162 @@
-Return-Path: <linux-kernel+bounces-359709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC6D998F63
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:08:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A57998F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CBF41C23D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2401F25832
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9001D1CDA31;
-	Thu, 10 Oct 2024 18:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C171CC8BB;
+	Thu, 10 Oct 2024 18:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fByw2uCd"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="esg1u4VQ"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64B71E22E3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200E24A15
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583619; cv=none; b=JGv8wLE5ecA5+LOBeXiDUJxcz+PjZo53G2E9RijBzkEEobiKPxMgRB/fsPhn3B1aWQ4bdQDiuf+sp265yUnHcY8H/m6jCIX3YLqPlaMZZsT5L6UYOiGqBBpNbFBYlfdQEdXZdXKlXjMfa7yBc49pyRVg1cMVafgn0G7ju2hTekg=
+	t=1728583597; cv=none; b=XOX1vDmprckpQPuddn2BUmUkMtxEVw+a0etpbkiW0LJnlJjieKW3lAIrQSSJODQuDy7dpTwR8bopehZCUFRXCK8Vn5Esx4LJ3rUSMsJcxZErXE7Bb3x+JaCIOkA4CGl60hmVspy9CWcLgqETtDIwE6ccFKkCh1z2cPGclnBdJdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583619; c=relaxed/simple;
-	bh=6MsBGtNkdC9fBTbiWSrFtxWvfPXwMPK9K04yhvsvUI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dukj2poTyu9j6yNAEJEf6pAo7xKyP79MiqtwmSAZ1SdKqmTA0X47pcp6F67B/0EGvMQCwvZ1OdXYwdRCm+UctRCZBWD8iAEW79oZ/F+5zRjZj2R5LCeP+VzAz6CNKzhfBlDPW4iaZMfXVvky7oGZntFJtgU+DLAlPatWykrfkME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fByw2uCd; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PCF5tWgmHAb+hKF0MKw05oZojZksbtFsgk0xGK2TXI8=; b=fByw2uCdnoLBo/272ybMYvaODA
-	UW4OPxiEayY+0LzPdpb6QUtVhopyp2LkehvbaRfqPSt/i5oKU8rInWNBqV+FMWuglQbwxl8MvNwy2
-	g+mELD0lD9TOaRh2fuil9okS5vfCsLK2oPL1PX+Av7p013bHFGrahp0Qpd5kIVxmHnBo/PYVIKGDl
-	MeNykp3a0rBPDhM2WuNJTpMj/anQ2JvoqSS/SDxB37ApTyLqOsBsrRomZf/s2pfG85X/6ewdNXnkO
-	9WMCdSKkdyep59OTBPwuxFUxxGNzCwx/GYHQBSdDzoZj3sA5l1uOfIvyuxKbkNvd1prn1Mci5FDr5
-	BOkKnkiw==;
-Received: from [187.57.199.212] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1syxXw-007QUl-Vt; Thu, 10 Oct 2024 20:05:57 +0200
-Message-ID: <f8db7927-cbbe-4cf9-bab5-4bf4465a637f@igalia.com>
-Date: Thu, 10 Oct 2024 15:05:53 -0300
+	s=arc-20240116; t=1728583597; c=relaxed/simple;
+	bh=6/5CsTtyk8qtgKNWYxi/reJinJ1vnuHa20F1dTWzvi8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UAykJCyYJp7gZFaTVgL5edXF1ff3t7ML3DYNdTlsLunkUsgqyPRYZ+0GMwZOpe7KHAaqGLXjS5JGi8ebJV+gHW/KAySnmwAzDSyowMP/BJNS4br9Eg+X5SKY1Kf9E+2Z/g2mab1NvYFzd+aQk3Bizrlvjhd01t8a72RGU9VP7nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=esg1u4VQ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99409f1cc7so17515566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728583592; x=1729188392; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dh9jzHed4iHtpNT+mC29RrRHw87Tek3l7JegVCBCiTc=;
+        b=esg1u4VQJf5EIIp6crpMUelsAguNDzQJjmen252jNwYgww7pqQoZY0kkr+E2tZrWLd
+         pDevWZjFwduLuikiYb+vsHY8qV9C9nmCRn81UPYStMD4aMoibw7izrJogXgwbzcNknt8
+         ubfiW3jDtfqKzJw9xgckuZVEmWoor3fM7KZsw0pk6NGHYUECu6XQn/gD7qtl/utFXRgK
+         o0kmCg1XNvFZkilnTPj1iuhVOuBDs4FpI2HBWd81F8wZu6YZ4XqqHLFJyYMtQghcDVu9
+         eFwUm5ZegK/YHdhxcBIRPc2Uju5e0nJ9BWf2hAq7SHKDIjfNIIDNrHNsxtZX1wozzN3l
+         Ce8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728583592; x=1729188392;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dh9jzHed4iHtpNT+mC29RrRHw87Tek3l7JegVCBCiTc=;
+        b=UwRRpBRf3BVfYY4VgcXMMl3HRQlj4XxqgWd/g3OdwjdkpcH3WwxFVQHJq1XO4SFjnW
+         Lz5FnD4KoIbiatAxURqxo5q7jtTQlNGfN/DCqzt2jp8EtM77FPE7eew4gpBDQAqYII1k
+         HrhUIdjcJsF6C0HigL4qnK8cc/CVA78aEhiPGM2muH/Pk/E2urGADL4iTWfQah3rJ46P
+         8P24ES48tLPOHymtEepkgEKksZjJUWlM/UjFo70TeM4BFZzjk+Ubq+ub50lmA0VTWzPC
+         xD7del1H/Ujwyt8E3jfLE39TY3/kzYRk8X5Lp97H+XM4VmerIdMMcx59kOGaxhSlnsdm
+         DNlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvghgC5ZL1KtAlp42iotc9RIpwqK9Jv8ceqQkcw7rf9hnxELMmBtB2u3PN7jZ7MbCB+r7tFtSR3fwKzLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBDCQkvsQSZmAWegGLsBR5Dmu/+KPCtsdGOmaAyQe4ClLruY7L
+	i7c5YT0KRFzQlzAdmwVfJspiLThLkvMJfV6+eISrJ9eHky7oAZOOj25hGpiEOfI=
+X-Google-Smtp-Source: AGHT+IH/q1rHxvsZeQmLwazysGoC8juCGw68dQcOWNtm8WqXVECTje8OvwIdl4Y4sFrXwSXOeWUKVQ==
+X-Received: by 2002:a17:907:72c7:b0:a8d:2623:dd17 with SMTP id a640c23a62f3a-a998d330186mr252167366b.12.1728583592409;
+        Thu, 10 Oct 2024 11:06:32 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80c1b8asm119757966b.116.2024.10.10.11.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 11:06:30 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 0/6] thermal: scope/cleanup.h improvements
+Date: Thu, 10 Oct 2024 20:06:16 +0200
+Message-Id: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] futex: Use atomic64_inc_return() in
- get_inode_sequence_number()
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
-References: <20241010071023.21913-1-ubizjak@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241010071023.21913-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJgXCGcC/5XNy27CMBCF4VdBXneQZ2JihxXvgbpwnTGxlNqRc
+ 1ErlHevyaICsYHlfxbfuYqRc+BRHHdXkXkJY0ixhPrYCdfZeGEIbWlBkpQ0qOBLgevZxnmADpK
+ HmFqGYZ5g6jh/2x6IaqOUdK72WhRmyOzDz3Zx/izdhXFK+Xd7XPC2voEvCBK0xcogY02aT32IN
+ qd9yhdx0xe6F+sXRCqiY268U41U2jyJ1b+IUpoXxKqIhg5IVDXGa3wQ13X9AzMRbRR1AQAA
+X-Change-ID: 20240814-b4-cleanup-h-of-node-put-thermal-2268440cc6f7
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1960;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=6/5CsTtyk8qtgKNWYxi/reJinJ1vnuHa20F1dTWzvi8=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnCBecegjeWQzb4Wc3laTEoQi3P+jonW7yoXgKr
+ +TB1cu12a+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZwgXnAAKCRDBN2bmhouD
+ 1zYXD/9d658iajlkuA112erKf0/OWS5ZPlV8YRK8ApQxwvDX8eNX7zrw523JpvHOZ2DE18Bg/au
+ KoLleXvg3uZEdBmoCtnq0dC1YFqb9rwpuV+vmfZIJcRz7c1X814BDf8+c0vgoxtyhljZSeU+iIH
+ POWEvuw67FX4F9mzGCHo+3C25jPDuu19AFRn00BW6UXTr7++go/YVgdQ+zQoNyKWV5aOJAlgx02
+ HfmWsKK9CaW4biER+OqXEeIqLfIbTGoyC1ZJMsyjvifWNOEMedG4RIaqAxj45wyVxg0Dz4SIyMY
+ ZRPUy2BjO/wthtglxFmiGsT4jaYqhcVHE+JvdzK9ZVAoQxvPZYJp8vGF08CwpNhwm07uxZDvCkg
+ OnrlO3qm4MUJE3/dzbOQi0AVjlhBH3ngx2cXYr0/fvRhz0DHzd8bG4oCEbsOePN0/3QA+u3T8mi
+ gfwUB1cF/tSrx9/DXwI2Dj72tPGwDPr7Eaf/6pu3SkK9ROCGkSTZwndQfEDySVemhuVD5LXKSd6
+ AaRdwhMi8pkZiqMqOc+UdWAP16mlGiVLZTOxwZQFKoGMl1cSM/+atj9Aoebvv4CUb8uR3hxvy2D
+ YdeD9KSNebbSbSd+P0ba3BvsP74nPgZAze4TQIagMq3dCkWb4hYAqlhajfSXgVYK8/pdiEnE0CO
+ 9Cg4BN6G1tcTEhg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Em 10/10/2024 04:10, Uros Bizjak escreveu:
-> Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-> to use optimized implementation and ease register pressure around
-> the primitive for targets that implement optimized variant.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Darren Hart <dvhart@infradead.org>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: "André Almeida" <andrealmeid@igalia.com>
-> ---
+Changes in v4:
+- Patch 2: rewrite, significant change: kzalloc() also with
+  scoped-handling so the entire error handling could be removed.
+  Due to above, drop review-tags (Chen-Yu, Jonathan).
+- Add Rb tags for other patches.
+- Link to v3: https://lore.kernel.org/r/20241008-b4-cleanup-h-of-node-put-thermal-v3-0-825122398f71@linaro.org
 
-Reviewed-by: André Almeida <andrealmeid@igalia.com>
+Changes in v3:
+- Rebase, because there was bigger rework in thermal code.
+  This made two patches obsolete, but brought new one:
+  1/6: thermal: of: Simplify thermal_of_should_bind with scoped for each OF child
+- Link to v2: https://lore.kernel.org/r/20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org
+
+Changes in v2:
+- Drop left-over of_node_put in regular exit path (Chen-Yu)
+- Link to v1: https://lore.kernel.org/r/20240814-b4-cleanup-h-of-node-put-thermal-v1-0-7a1381e1627e@linaro.org
+
+Few code simplifications with scope/cleanup.h.
+
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (6):
+      thermal: of: Simplify thermal_of_should_bind with scoped for each OF child
+      thermal: of: Use scoped memory and OF handling to simplify thermal_of_trips_init()
+      thermal: of: Use scoped device node handling to simplify of_thermal_zone_find()
+      thermal: qcom-spmi-adc-tm5: Simplify with scoped for each OF child loop
+      thermal: tegra: Simplify with scoped for each OF child loop
+      thermal: sun8i: Use scoped device node handling to simplify error paths
+
+ drivers/thermal/qcom/qcom-spmi-adc-tm5.c |  7 ++---
+ drivers/thermal/sun8i_thermal.c          | 11 +++----
+ drivers/thermal/tegra/soctherm.c         |  5 ++-
+ drivers/thermal/thermal_of.c             | 54 ++++++++++----------------------
+ 4 files changed, 25 insertions(+), 52 deletions(-)
+---
+base-commit: 33ce24234fca4c083e6685a18b460a18ebb5d5c1
+change-id: 20240814-b4-cleanup-h-of-node-put-thermal-2268440cc6f7
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
