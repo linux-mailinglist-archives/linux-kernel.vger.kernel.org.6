@@ -1,203 +1,151 @@
-Return-Path: <linux-kernel+bounces-359460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B627998BCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3C5998BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBFF1C235EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938921F25AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E1E1CCB46;
-	Thu, 10 Oct 2024 15:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1570C1CCB38;
+	Thu, 10 Oct 2024 15:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1wHW9/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="WG3dY42F"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAE1CDFC3;
-	Thu, 10 Oct 2024 15:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0150E1C9ED3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574453; cv=none; b=csHS+TrXR36koNVkWapqpoW5wnAxshgn03N1twCTD3yMASVcPnKxehHY8CQANPuBt0gyCYAXSO+LdI0N7obG0ASumHNBFErxesbmJdO0kchOsTQKMifv1+aCvX2Cd7LDThcwmMPr1lyHpBe0TdsYB6vxTeMAMEzIqt6vYFd/SCo=
+	t=1728574495; cv=none; b=EVuPaN+1a2DI4hrvIch6DkKVEL08iVcBKD4baqX1hjzvRqmNPy+XRlQZ8x+Cxe5WHk3sTWj301rBsjC+jMkwtWEUFw7CotWXcmQcMXvp/44jTETqd5DIxeRM+K/4T6jZsfqj39rg5rh3PBZAT+fi67pxlJ1PVTwA0CvyWar7rHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574453; c=relaxed/simple;
-	bh=/rdx2lmHwXayLf3Xya3v9K3O6//R9jM089t+Y/bxExM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OdXzUTlueUrjXQ+U4dfdB2T2p0ei2fdMW70sh/gfQ/ZKbU9ME+BzmTHnD6efK8OavCcXAAc/QTj/v8rqKMl5tiGxQnoQugkmEXSaQR9AWrFcHKh6Dkdg9om2OPeF2tp2lLGq0H4ILgH042jG4AOYhwd0mVmSFU1RjoMikZEWYig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1wHW9/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56ECEC4CEC5;
-	Thu, 10 Oct 2024 15:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728574453;
-	bh=/rdx2lmHwXayLf3Xya3v9K3O6//R9jM089t+Y/bxExM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O1wHW9/SCg7bA6jlVYcbaMhZXzHM9quTw0U8tEj5Q8jv9dyhFPXh33G2ovYXPF+s4
-	 6Ds+2+gXeIyBFtqbj4Ake38O1t5qw7TtgK0M+pxzRCg475S2ESPS6lHpV8TMe/FFPf
-	 uvJf/Y5hh22pp76Ezac+d+ePebg6UCmgnpGl0UKy6RKFl4hb/sCvDGRATxiAsFMcFP
-	 VCjvx+tpixJvLlJbCChfRUZRNx51bH85JqbCOnLt/TWhhxcijYt717zMDtAIY4g765
-	 pdXqTL3OBQ/RgtrWqm/XPuHjZ+fKtwbljHxlGpOVHM+nweld2ib+rH169s58xGGd7b
-	 F1z5BqYTeVZ/w==
-Date: Fri, 11 Oct 2024 00:34:08 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Dima
- Kogan <dima@secretsauce.net>, james.clark@linaro.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] perf probe: Generate hash event for long symbol
-Message-Id: <20241011003408.f9bacf4e5899e88a94c3d7cd@kernel.org>
-In-Reply-To: <20241007141116.882450-4-leo.yan@arm.com>
-References: <20241007141116.882450-1-leo.yan@arm.com>
-	<20241007141116.882450-4-leo.yan@arm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728574495; c=relaxed/simple;
+	bh=IHfGFVFpzeyoiNdlI+PDUKGy8fv4i/qhh73fARwIQwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QaUgHA7cMxTbX1uLFO2qqKY+zqHpqVd0L2WAEseagpZrWcZQUPLmNP+wKuFdaRMvHxOD6elQSulhabKNKjfI4Y5vdBdRVkOZ4MagOKFnx/ci9UqGgCRCqvTBBY0sRIgRtMIa98GH/zD7pX4EKM3E7n/Oh9K4cdXrDOpgAMHbAzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=WG3dY42F; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
+	by cmsmtp with ESMTPS
+	id yl93sfupUVpzpyvBfsPlks; Thu, 10 Oct 2024 15:34:47 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id yvBbsBzjaGNqByvBdsYXP8; Thu, 10 Oct 2024 15:34:46 +0000
+X-Authority-Analysis: v=2.4 cv=cqidkU4i c=1 sm=1 tr=0 ts=6707f416
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
+ a=VwQbUJbxAAAA:8 a=DPoJn4Cox0Z2GlYLnjEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7ZILJKIEXwoz7iU/aC8w4Ldjs73VMDFGeUrEw/ggIFw=; b=WG3dY42FXgb4GhOYql7yfdHP+W
+	tPu1de5GiommDcEFZCPNZu2aG4O+raWfJc5Bq+SuCzlDW0QCFbupMvGWBRrkO4nbDdVvpJXoJB3s9
+	ismHonGBfGZpubIDz5BPUKNacB8GFD1ZB9BvMpQ3oUeAavMykAGqXjmNrdyg62Zkv41G0J6H0ss8C
+	LlgLp/T6M0AgBjw+xCpoeuNO6kI6L8Zd5nJFKJ5gC+zuSbiR7759LdM7JjA4oCBxsvEqVQYMUpljg
+	d98CKSHj+r9ZpmHzwQUn7gkzLMJsSHFGEeE+RZdBxqwdEyqL2iFmbHyZv2uiy+8gQ0pLtZ3sO4BjW
+	OvkqgiHA==;
+Received: from [122.165.245.213] (port=36630 helo=[192.168.1.106])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <karthikeyan@linumiz.com>)
+	id 1syvBa-000Y39-0Z;
+	Thu, 10 Oct 2024 21:04:42 +0530
+Message-ID: <6dd5f092-1711-4fd5-baac-f66edf74842d@linumiz.com>
+Date: Thu, 10 Oct 2024 21:04:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon,  7 Oct 2024 15:11:16 +0100
-Leo Yan <leo.yan@arm.com> wrote:
-
-> If a symbol name is longer than the maximum event length (64 bytes),
-> generate an new event name with below combination:
-> 
->   TruncatedSymbol + '_' + HashString + '__return' + '\0'
->     `> 46B        + 1B  +   8B       +    8B      + 1B   = 64 Bytes.
-> 
-> With this change, a probe can be injected for long symbol.
-> 
-> Before:
-> 
->   # nm test_cpp_mangle | grep -E "print_data|Point"
->   0000000000000cac t _GLOBAL__sub_I__Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi
->   0000000000000b50 T _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzR5Point
->   0000000000000b14 T _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi
-> 
->   # perf probe -x test_cpp_mangle --add \
->         "_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi"
->   snprintf() failed: -7; the event name nbase='_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi' is too long
->   Error: Failed to add events.
-> 
-> After:
-> 
->   # perf probe -x test_cpp_mangle --add \
-> 	"_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi"
-> 
->   Probe event='_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi' is too long (>= 64 bytes).
->   Generate hashed event name='_Z62this_is_a_very_very_long_print_data_abcdef_91f40679'
-> 
->   Added new event:
->     probe_test_cpp_mangle: _Z62this_is_a_very_very_long_print_data_abcdef_91f40679
->     (on _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi in /mnt/test_cpp_mangle)
-> 
->   You can now use it in all perf tools, such as:
-> 
->       perf record -e probe_test_cpp_mangle: _Z62this_is_a_very_very_long_print_data_abcdef_91f40679 -aR sleep 1
-
-OK, personally, I recommend you to specify event name instead of generating
-long event name in this case. But I understand sometimes this kind of feature
-is good for someone.
-
-BTW, I would like to confirm. Can't we demangle the symbol name and parse it?
-
-Thank you,
-
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/perf/util/probe-event.c | 42 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 41 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> index 71acea07cb46..bacd29b95c75 100644
-> --- a/tools/perf/util/probe-event.c
-> +++ b/tools/perf/util/probe-event.c
-> @@ -2837,6 +2837,32 @@ static void warn_uprobe_event_compat(struct probe_trace_event *tev)
->  /* Defined in kernel/trace/trace.h */
->  #define MAX_EVENT_NAME_LEN	64
->  
-> +static char *probe_trace_event__hash_event(const char *event)
-> +{
-> +	char *str = NULL;
-> +	size_t hash;
-> +
-> +	str = malloc(MAX_EVENT_NAME_LEN);
-> +	if (!str)
-> +		return NULL;
-> +
-> +	hash = str_hash(event);
-> +
-> +	/*
-> +	 * Reserve characters for the "__return" suffix for the return probe.
-> +	 * Thus the string buffer (64 bytes) are used for:
-> +	 *   Truncated event:  46 bytes
-> +	 *   '_'            :   1 byte
-> +	 *   hash string    :   8 bytes
-> +	 *   reserved       :   8 bytes (for suffix "__return")
-> +	 *   '\0'           :   1 byte
-> +	 */
-> +	strncpy(str, event, 46);
-> +	/* '_' + hash string + '\0' */
-> +	snprintf(str + 46, 10, "_%lx", hash);
-> +	return str;
-> +}
-> +
->  /* Set new name from original perf_probe_event and namelist */
->  static int probe_trace_event__set_name(struct probe_trace_event *tev,
->  				       struct perf_probe_event *pev,
-> @@ -2844,7 +2870,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
->  				       bool allow_suffix)
->  {
->  	const char *event, *group;
-> -	char *buf;
-> +	char *buf, *hash_event = NULL;
->  	int ret;
->  
->  	buf = malloc(MAX_EVENT_NAME_LEN);
-> @@ -2864,6 +2890,19 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
->  			event = pev->point.function;
->  		else
->  			event = tev->point.realname;
-> +
-> +		if (strlen(event) >= MAX_EVENT_NAME_LEN) {
-> +			pr_warning("Probe event='%s' is too long (>= %d bytes).\n",
-> +				   event, MAX_EVENT_NAME_LEN);
-> +
-> +			hash_event = probe_trace_event__hash_event(event);
-> +			if (!hash_event) {
-> +				ret = -ENOMEM;
-> +				goto out;
-> +			}
-> +			pr_warning("Generate hashed event name='%s'\n", hash_event);
-> +			event = hash_event;
-> +		}
->  	}
->  	if (pev->group && !pev->sdt)
->  		group = pev->group;
-> @@ -2903,6 +2942,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
->  		strlist__add(namelist, event);
->  
->  out:
-> +	free(hash_event);
->  	free(buf);
->  	return ret < 0 ? ret : 0;
->  }
-> -- 
-> 2.34.1
-> 
-> 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] Add RV1126 compatible watchdog string
+To: Guenter Roeck <linux@roeck-us.net>, wim@linux-watchdog.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241010061408.1351865-1-karthikeyan@linumiz.com>
+ <20141056-15a3-4e4b-9100-d1a570f39e83@roeck-us.net>
+Content-Language: en-US
+From: karthikeyan <karthikeyan@linumiz.com>
+In-Reply-To: <20141056-15a3-4e4b-9100-d1a570f39e83@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1syvBa-000Y39-0Z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.106]) [122.165.245.213]:36630
+X-Source-Auth: karthikeyan@linumiz.com
+X-Email-Count: 1
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPSi5J5XZJUcNolMv0mALKetlPbYWdzveDEjNEc2KVVfy7mSd24ezrKwFxn/ghLSPEHTrJzkZNqix+8POguCWrEwxIAlXGLT+zLVK7rOeiez1zhBohw9
+ F7j124HE3cHC7sUl4yNy44xTM38KRy+LZI+ZcB1IyUhx1rGIH0utrkSehaUBtQQhH9tQvtAOmbk5OCF8ukHAF4dIWnX0SNCvYDA9y4lktNdjeoQtNVAF8as2
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+On 10/10/24 19:44, Guenter Roeck wrote:
+> On 10/9/24 23:14, Karthikeyan Krishnasamy wrote:
+>> This patch is introduces a watchdog compatible string for rockchip's
+>> RV1126. I have already send this patch[1] in the series[2] but somehow
+>> missed watchdog maintainers and list. So resending this patch alone
+>> again from the series[2].
+>>
+>> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+>> ---
+>>
+>> - Link to patch: [1]. 
+>> https://lore.kernel.org/all/20240912142451.2952633-2-karthikeyan@linumiz.com
+>> - Link to series: [2]. 
+>> https://lore.kernel.org/all/20240912142451.2952633-1-karthikeyan@linumiz.com
+>>
+>> Karthikeyan Krishnasamy (1):
+>>    dt-bindings: watchdog: rockchip: Add rockchip,rv1126-wdt string
+>>
+>>   Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+> 
+> I am curious: More and more people send introduction patches for individual
+> patches. I don't see any value in it, the intro patch is not available
+> in patchwork, and thus the context is missing when trying to review the
+> patch from there. This makes reviews much more difficult if one doesn't
+> reply directly to the patch. It doesn't make any sense to me, yet people
+> do it more and more.
+> 
+> Where is it suggested to send introduction patches for single-patch series,
+> and what is the rationale ?
+> 
+> Thanks,
+> Guenter
+> 
+
+Hi,
+
+I had missed watchdog maintainers in previous patch series, and received 
+a tag for this patch from the one of the maintainer. So i thought, 
+mention this make sense and added this info in introduction patch. That 
+is the reason. Looks like i made a mistake.
+
+Best Regards,
+Karthikeyan
 
