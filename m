@@ -1,115 +1,153 @@
-Return-Path: <linux-kernel+bounces-359151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FFB998815
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29638998822
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A5B1C213F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4AE21F24587
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F21BDA90;
-	Thu, 10 Oct 2024 13:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E051CB338;
+	Thu, 10 Oct 2024 13:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iaCDxwLd"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="HgRtuZwh";
+	dkim=permerror (0-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="oR70C1Fc"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6134A1BC9EE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567850; cv=none; b=eneekY8g8DwwKX1+hsB/bXBQUXMqiYTfT3Jk0+RDRCCi5tktsjnVfsGZX5HeGZZi6LZbz6B3YcqoIVWMASM1mSlJc0UFO4H2eOqjHt/0LUGoZ7a9l2cCJRrSU7dDkOhoRcobwFOpvWlVnwkZXDR8idVBuxULJBHc/sZVxsWmqcs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567850; c=relaxed/simple;
-	bh=xaGjUnViZSpjo8sq0YQ3PVO4ibwxxVApYoNjX9S4dwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V8dHDA3LNnCshy+t4aom/RctuGcwFrsoB4g9+BUsVsQfShW9+om0yqLHx92eyO/d4WsgYzAenW15bBpDHlxRMcNmFokOuFM7PjeGA49z3rWxH/3QX1zgRYmBeXvTIlsMWLT+2JivQyZIVY7lf6uaxZMdqJ0uaE36OB474qjsqe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iaCDxwLd; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e01eff831so712458b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728567849; x=1729172649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZYsBI4rHRPGslnn0OIAOPnwZIxsjJhLtfW4Z5UU62w=;
-        b=iaCDxwLdBB2+XEZvwhRrskc5NzMNP078ci5vLkMHLYmlWa9qY+KfJoz8bgOTOSnl3M
-         T4p3sFGdqlxvLOAZ2d9WEmcRqG5q2VYJsJLbBOuDL2VAi8FClUSDFF0AJZ+2QOKhKAOp
-         19GuePhOBK4uTOal3o78gOASNmOO2swPTwpXR9q6354+2MndSaE7ScBG2JdfL55YjtOd
-         J7GsKzy9oEx0h5pDpNGEb6siyxjt7XbOs2ZsRBQ1psdaryvuSoAfySiHjXxlpTRbt0J2
-         Zee0ETc/LHZdlllcxcGVBVu7s5hdThxu6SqzVkeWt4usJygwf3ZE3vvYIU6GMt/PdbyA
-         gS4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728567849; x=1729172649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NZYsBI4rHRPGslnn0OIAOPnwZIxsjJhLtfW4Z5UU62w=;
-        b=oQRsfQdyYCym/Q5Nkm+WTA+yXU5Sf2FPssZAsGpW0Os4FX3KDGBxLX4Bj22pmiUSPL
-         LA6CU7kiWhK/iqCOkieITkmYlm7VE7vp6HlWmj2HY/jK+/cke1PfAu4IvpljhWqR0+wY
-         Y17IIGwvfO2jCyxac9FPR+YzaKyEEZlrOPsFcZ6AW2PqEDw7QS9qi1tKT/yYsaAzA40E
-         KRY3I9AVOhNkaFXwjvHxGqcuzHjDK9Cr64Ry5WxwabsQen4I0nwMhTm/aK+3Q5qwi+s+
-         MJINBvLhwgX2Th4Jqw5sitC0/p+xhc92thQhuev9+hoZg2NdY5m/HjFRXJg//vkctxkK
-         GfSA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+tRbodniiBnAQz9uPI/syDTzISv9dIx/h8wyO2T7N18tQN6ZUtXbrhPGUrTO6HwrFYxoErXSWsKpD0J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHW9RxGTeRHP//pmf+6G81+ThT1o/5R2lpPW9qgAenBnVPK6hy
-	u/sUXG/xyAkRz3tz3uPwit1PZGYRdOdOvJprUcfynzjpBSrlHKUx
-X-Google-Smtp-Source: AGHT+IFDRhRD26iK9dbGob0ICijU5Wrp2L8RYyhXI1JN9HjKNoxD2M9E1WTsM6tZ6EDS/EKycS/+Og==
-X-Received: by 2002:a05:6a00:cc2:b0:71e:a3:935b with SMTP id d2e1a72fcca58-71e1dbcab26mr10435507b3a.25.1728567848504;
-        Thu, 10 Oct 2024 06:44:08 -0700 (PDT)
-Received: from dell-xps.. ([2405:201:3036:a902:cb38:efef:96cc:3acf])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9e95f9sm1034508b3a.39.2024.10.10.06.44.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:44:08 -0700 (PDT)
-From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-To: shaggy@kernel.org,
-	osmtendev@gmail.com,
-	ghandatmanas@gmail.com,
-	eadavis@qq.com,
-	ghanshyam1898@gmail.com
-Cc: jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
-Subject: [PATCH] jfs: fix array-index-out-of-bounds in dtInsertEntry
-Date: Thu, 10 Oct 2024 19:13:51 +0530
-Message-Id: <20241010134351.1884580-1-ghanshyam1898@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA5E1CB302;
+	Thu, 10 Oct 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728567973; cv=pass; b=FhDdfyFk9asubKECecDwMQF2L6iUJ7o7u0CNC1FqrQt48b/+ve2kNjGjxtOMoz5hY2FJWuRCncZnHpNVgJVuvyF6MugevFYpwx7hZv7iWG4+3E4lHQKLbBJrNTJQ0r4VyP4JDpw7rkaYz4In8cGi8vlR6jJeB1SCf/3Oh1M15ww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728567973; c=relaxed/simple;
+	bh=HVZjHWLh6w7DVjdC0TJHjvM0h4Xpgg9eAuCCRfCzSW8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BzBPBEb6g6uUb7TCFMKN2FbuKMvLy5cGUf44XDucYFctkH8x/weJta1fYlFAhZRJvKrSXHdmJNy99pw3zOcKBEgNmRcyiqJLWw0fkkVve5xBWTxvbNExgiJ8L1WcilybL2YzDnw17gfelENvtuoxRg/976J9jRaTgH0LnwEu7rI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net; spf=none smtp.mailfrom=gerhold.net; dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=HgRtuZwh; dkim=permerror (0-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=oR70C1Fc; arc=pass smtp.client-ip=81.169.146.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=gerhold.net
+ARC-Seal: i=1; a=rsa-sha256; t=1728567944; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=YmgwRZ2ldTSU/22i5Osqg1a3zPnLC3SF7IsBWltegf3zQ/1PFfDVI+CqnA+uhDi8Ym
+    wY1XJDeAbFP/g+TLT01imM5WpoJOQ4DqpRKU2bm20xV9CVXe2Omk0ogs1MwugSpHo0CG
+    chtCU5dPQiPbk7sQNE4sJP/exJ+rNIHD0BThkrOI+LerV5QYgJqLyed8WI7aF5jGOfa8
+    ERRGg+LyJe9rWdeaFGst/HMT/uifUZweO6sT8TXxCxvqXeeEohgz/mOYZ2JG491aR1gI
+    Rn148npFyKirYFuCcblpZ4joR+9ASeNByZE5MCttJo4dEUfkXJLSJpdjTWa5cXQCdysv
+    exMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1728567944;
+    s=strato-dkim-0002; d=strato.com;
+    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
+    bh=ThM8N/y8RVlQfAjUYQQhET5l1auwZ3h1kIYVJ/ZsmeI=;
+    b=gb+yc9T7Idz8tjkaEJ014a8azYYtCdwO0gZfTrGG963MoxiXabdb/HJlxWCJTlsAvp
+    kVjSHVkKzlFT7h1/q4zZR6O1Z+j+iUymh8LobAu4taDMVEa3ZpyLjy9vzC5RyJNYUYKz
+    /eF0YSbAR13BDGveValgyFwLbQ0Cgz03SuPlu1rYuRVqWjukOKiaVx3aD8bHJQ+DicAM
+    ejODaikd9od6auppwqQBjU+d7HkgkofKYz5WZ++WGycmLWIsq9owJ7bLyB8vRJAXW9sL
+    WIblijmNFjfjnQjy+l8wKLORlruxmsKfRLppip6GYcCXyN30Rgn/YGHYuSG50mttU9K4
+    xlPg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1728567944;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
+    bh=ThM8N/y8RVlQfAjUYQQhET5l1auwZ3h1kIYVJ/ZsmeI=;
+    b=HgRtuZwhqFFIb1KD5chMHmEwZl2A/kc1/q9/jZI0vMe9hCAcKr425dv2nRvOjCbvL9
+    B4bXPse+gO3dJuYLW0bFxhQuiVtpKBs50I/rSqUo3gkpS887A3ABqJVv+OCk1EVOrEGa
+    AExlI4R8O0qfdhAbnKH+BPx0x/B69/HdSihAYcIWcJrJJOP8WanW9Io+RAoCwHVNImXB
+    BDJlMz1rCZIfvmaEVy8qI+Bg9kSAo/+pRohXxebzSsYFHcKlfEOoq2FgjUJSciOK8Q9c
+    HTtrtpJQDyveE9u96mwdAW54/zMeFjFE6EPYUXHAk844MCJLCU2HrmtBRv0FtpJdlmZy
+    nzcQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1728567943;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
+    bh=ThM8N/y8RVlQfAjUYQQhET5l1auwZ3h1kIYVJ/ZsmeI=;
+    b=oR70C1FcncAgd1gxdieaQ31OQiMGSa2r09M+ahkJwOEb6u6xIabPF7QeZqoEerjDi+
+    QotKBfXjSAtjRhCmaTAw==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXSOYQGpRtZhZnncGoRCMF/3aEZ/InzRrReCnzIuT5eMHSlE941iZFlw=="
+Received: from [127.0.0.2]
+    by smtp.strato.de (RZmta 51.2.8 AUTH)
+    with ESMTPSA id R0d46809ADjhxFZ
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 10 Oct 2024 15:45:43 +0200 (CEST)
+From: Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH v4 0/2] Input: add Himax HX852x(ES) touchscreen driver
+Date: Thu, 10 Oct 2024 15:45:31 +0200
+Message-Id: <20241010-hx852x-v4-0-7e6a20177938@gerhold.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHvaB2cC/2XOTQ6CMBCG4auYrq3pzFBoXXkP44KfAZoYMIU0G
+ MLdLRiJxuU36fOmsxjYOx7E+TALz8ENru/iSI4HUbZ517B0VdwCFZIykMp2MhonSYlVFWYZEaK
+ Ijx+eazdtoest7tYNY++fWzfAen0nLNAnEUAqaUvgoq41pVxcGvZtf69OHY9ijQT8gqR2iBGW2
+ iDYJCsQ9T+kHYLCZIcUYQ4mfp1yA2x/4bIsL3sje/cQAQAA
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, 
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Jonathan Albrieux <jonathan.albrieux@gmail.com>, 
+ Stephan Gerhold <stephan@gerhold.net>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
 
-The value of p->header.freelist can be less than zero which
-causes an error in dtInsertEntry. Added a check in dtInsert
-to address it.
+Add DT schema and driver for the Himax HX852x(ES) touch panel 
+controller, with support for multi-touch and capacitive touch keys.
 
-Reported-by: syzbot+5f7f0caf9979e9d09ff8@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5f7f0caf9979e9d09ff8
-Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- fs/jfs/jfs_dtree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v4:
+- Fix asm/unaligned.h -> linux/unaligned.h include renamed in
+  commit 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
+- Slightly increase delay after reset to fix init issues on some devices
+- Link to v3: https://lore.kernel.org/r/20231024-hx852x-v3-0-a1890d3a81e9@gerhold.net
 
-diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-index 5d3127ca68a4..51bb3e14551b 100644
---- a/fs/jfs/jfs_dtree.c
-+++ b/fs/jfs/jfs_dtree.c
-@@ -834,7 +834,7 @@ int dtInsert(tid_t tid, struct inode *ip,
- 	 * the full page.
- 	 */
- 	DT_GETSEARCH(ip, btstack->top, bn, mp, p, index);
--	if (p->header.freelist == 0)
-+	if (p->header.freelist <= 0)
- 		return -EINVAL;
- 
- 	/*
+Changes in v3:
+- Fix device_property_count_u32() error handling (Jeff)
+- Properly handle errors in hx852x_suspend (Jeff)
+- Simplify error handling in hx852x_read_config() (Jeff)
+- Close i2c_msg array with trailing comma (Jeff)
+- Clean up error handling in hx852x_power_off()
+- Link to v2: https://lore.kernel.org/r/20230930-hx852x-v2-0-c5821947b225@gerhold.net
+
+Changes in v2:
+- dt-bindings: Swap required:/additionalProperties: (Krzysztof)
+- Use dev_err_ratelimited() for error in IRQ thread (Christophe)
+- Use dev_err_probe() consistently (Christophe)
+- Improve error handling of hx852x_power_off()/hx852x_stop() (Jeff)
+- Add linux/of.h and linux/mod_devicetable.h include (Jeff)
+- Fix %d -> %u in some format strings (Jeff)
+- Fix other small comments from Jeff
+- Link to v1: https://lore.kernel.org/r/20230913-hx852x-v1-0-9c1ebff536eb@gerhold.net
+
+---
+Stephan Gerhold (2):
+      dt-bindings: input: touchscreen: document Himax HX852x(ES)
+      Input: add Himax HX852x(ES) touchscreen driver
+
+ .../bindings/input/touchscreen/himax,hx852es.yaml  |  81 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/input/touchscreen/Kconfig                  |  10 +
+ drivers/input/touchscreen/Makefile                 |   1 +
+ drivers/input/touchscreen/himax_hx852x.c           | 500 +++++++++++++++++++++
+ 5 files changed, 599 insertions(+)
+---
+base-commit: 0cca97bf23640ff68a6e8a74e9b6659fdc27f48c
+change-id: 20230816-hx852x-3490d2773322
+
+Best regards,
 -- 
-2.34.1
+Stephan Gerhold <stephan@gerhold.net>
 
 
