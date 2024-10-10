@@ -1,205 +1,157 @@
-Return-Path: <linux-kernel+bounces-358111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440A6997A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001D8997A4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D4D1C22393
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:53:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895A9283E0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B8A3D966;
-	Thu, 10 Oct 2024 01:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BC437708;
+	Thu, 10 Oct 2024 01:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="qFJcoNgQ"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G5a4jOf3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918422094
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9774922094;
+	Thu, 10 Oct 2024 01:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728525228; cv=none; b=hZ4hLgEBk0i/+RGF9m9+c4E6SpFAan1gFoOYcNPlSr2RULOuuIEHb0tWIuITe1y9KVpsCIfnjNU1LiOP71pHUWsevrU2T4gDqZr7lenE0E4IuPXi2vNxCYH6rv9XMz44xrss0cnfTTwEWIlQ6Yt350w3h+ZmmQ+s96+k9zxeR6g=
+	t=1728525163; cv=none; b=NIRfxeNcVlrBBi86O2EMj80ZhOQjQM8TuJ289IEOGYUMZzHL9yDuCM/vTq2Y9RBdqbcR/UfNmHMVL321m/S2fAi89XeWHU1DNkKJWfpp7J1HqkrEtCa1UV8RR/mI9mqMvAGFLSQ6YsLMRAJjePw9M4enWP7dw9J1taSbClKXtOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728525228; c=relaxed/simple;
-	bh=QSInXO+U0seyV0C6xm7vE0MTCG7cJRNiR2Djzcn3jKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pKXSPbb1ITKxoHe9WvOCbcJ4c/4v6Z+I4GtKHJdDtAsRlESe8mgimqusqY42KFAfzNKsbNDOcuksx6bl+GgDViEX57DBxiA+7BtNx8lN7C5KxFax3hrXRK7VBsNGzJfRPnzYljg/HdXEhxjLvp3k6BTDRxzMQzyoGxQxf/T3URI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=qFJcoNgQ; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 297C82C02A5;
-	Thu, 10 Oct 2024 14:53:43 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728525223;
-	bh=cLjR3dzs+5jR/Vs6gfSc3iv275Ynq5LY3yeQ+MH/VIQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qFJcoNgQhb7ysx3HJSLKV119Zzq11TWOr81Sby1R0/nT3GbBfIJOGYG0+tryqk2So
-	 a1ImAjda7sreFh9vTDnqkLrtrkW0TxWtOwNwD7Gr79hAN+/BObFRzzZzJxeV0S3lAX
-	 Gyuur6jgaXt3iElAZoTM3V+VwUKKSJebrOUKn+dI9sqapKxQRrvoXqF1FU5ANkaU5s
-	 Pp/d5Jhh9jhTUAtPVSZ1h6c0A2Hh2OBIvLPzAxJ3k1nw6ui07Q6UEM8FOiEbjRNEIX
-	 kJmgQ8k/0jRIOeH6ydNogvgI0olq/7vnq8kvze1SH887/bTSU6AXYLrkVsbECaxnNN
-	 s/jdpppG/JtUA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670733a60000>; Thu, 10 Oct 2024 14:53:42 +1300
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
-	by pat.atlnz.lc (Postfix) with ESMTP id EA78513ED7B;
-	Thu, 10 Oct 2024 14:53:42 +1300 (NZDT)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id E765B2A0BF8; Thu, 10 Oct 2024 14:53:42 +1300 (NZDT)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v0] net: mvpp2: Add parser configuration for DSA tags
-Date: Thu, 10 Oct 2024 14:51:04 +1300
-Message-ID: <20241010015104.1888628-1-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728525163; c=relaxed/simple;
+	bh=TxwA0eE9KGa5lvsSq3UjTZHMUp9hR+VTBKfALSwxPz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRheWWa8DZCsW+gIR0YkHTG7kT2UiR6Y/dN7DV60vHSOkV6C18BK20WzawMnLLrIhBLKJqFeGgPKe4JMCc1RpqInxJoedSNyyQ7NlYLsdIMaJp4H/OV/Y2qWAdgAm6nbR4JBK0dtxJfbD9t2xzK/3rqRS2q4qlnYEyvRKUdTSBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G5a4jOf3; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728525162; x=1760061162;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TxwA0eE9KGa5lvsSq3UjTZHMUp9hR+VTBKfALSwxPz0=;
+  b=G5a4jOf3WxFsGpU1u1/xMLZgGGctYfYCOyktPpiJaBVQBPg9Bdmd2+Z/
+   G0zv0xtCWRnQUj+Bbk0mEO81r/SrAhzseRupkzp4TAZt3+Kky9GQhdiOg
+   zdha95rl5G4vCJRpsV3+rkgfY571l9fGkx8bYheoYeMsRa2no5Kk4Phup
+   p0XY1tpJYnV+uic8HLPcYHvKT6dA1wPgYI41RvcbSv4ZRPatNkVzyHzOW
+   /QZK/hQTLgV34pW7CneAjePL2y+UPtej57ZahimAGAHDVbShV3q63abHE
+   8XQvg6/WA4fsNucgr5N8OI0gvG5L8zr4zmUL+t5n6LjrssrF1ddSqCGn/
+   w==;
+X-CSE-ConnectionGUID: pcetyHw+SQOgme3oUSTcIA==
+X-CSE-MsgGUID: P5HDlLcaS3C9zqL79AbkWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27738739"
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="27738739"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 18:52:41 -0700
+X-CSE-ConnectionGUID: 0YyTf1CNTlu4ZftiYsLTOg==
+X-CSE-MsgGUID: QFQbsZe1T02kmrWs9KM8Tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
+   d="scan'208";a="76906214"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 09 Oct 2024 18:52:39 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syiM0-000A2u-2O;
+	Thu, 10 Oct 2024 01:52:36 +0000
+Date: Thu, 10 Oct 2024 09:51:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Markus Elfring <Markus.Elfring@web.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, aryan.srivastava@alliedtelesis.co.nz,
+	Robert Richter <rric@kernel.org>
+Subject: Re: [PATCH v9 1/2] i2c: octeon: refactor common i2c operations
+Message-ID: <202410100921.WVORo97f-lkp@intel.com>
+References: <20241007023900.3924763-2-aryan.srivastava@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670733a6 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=bwvKFnaZSXCItuFZI_oA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007023900.3924763-2-aryan.srivastava@alliedtelesis.co.nz>
 
-Allow the header parser to consider DSA and EDSA tagging. Currently the
-parser is always configured to use the MH tag, but this results in poor
-traffic distribution across queues and sub-optimal performance (in the
-case where DSA or EDSA tags are in the header).
+Hi Aryan,
 
-Add mechanism to check for tag type in use and then configure the
-parser correctly for this tag. This results in proper traffic
-distribution and hash calculation.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |  2 +
- .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 37 ++++++++++++++++++-
- .../net/ethernet/marvell/mvpp2/mvpp2_prs.c    |  4 ++
- 3 files changed, 42 insertions(+), 1 deletion(-)
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on linus/master v6.12-rc2 next-20241009]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/eth=
-ernet/marvell/mvpp2/mvpp2.h
-index 9e02e4367bec..6ebed21a7af3 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-@@ -59,6 +59,8 @@
-=20
- /* Top Registers */
- #define MVPP2_MH_REG(port)			(0x5040 + 4 * (port))
-+#define MVPP2_MH_EN				BIT(0)
-+#define MVPP2_DSA_NON_EXTENDED			BIT(4)
- #define MVPP2_DSA_EXTENDED			BIT(5)
- #define MVPP2_VER_ID_REG			0x50b0
- #define MVPP2_VER_PP22				0x10
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
-t/ethernet/marvell/mvpp2/mvpp2_main.c
-index 103632ba78a2..8f865fddc8c1 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -38,6 +38,7 @@
- #include <net/page_pool/helpers.h>
- #include <net/tso.h>
- #include <linux/bpf_trace.h>
-+#include <net/dsa.h>
-=20
- #include "mvpp2.h"
- #include "mvpp2_prs.h"
-@@ -4782,6 +4783,36 @@ static bool mvpp22_rss_is_supported(struct mvpp2_p=
-ort *port)
- 		!(port->flags & MVPP2_F_LOOPBACK);
- }
-=20
-+static int mvpp2_get_tag(struct net_device *dev)
-+{
-+	int tag;
-+	int dsa_proto =3D DSA_TAG_PROTO_NONE;
-+
-+#if IS_ENABLED(CONFIG_NET_DSA)
-+	if (netdev_uses_dsa(dev))
-+		dsa_proto =3D dev->dsa_ptr->tag_ops->proto;
-+#endif
-+
-+	switch (dsa_proto) {
-+	case DSA_TAG_PROTO_DSA:
-+		tag =3D MVPP2_TAG_TYPE_DSA;
-+		break;
-+	case DSA_TAG_PROTO_EDSA:
-+	/**
-+	 * DSA_TAG_PROTO_EDSA and MVPP2_TAG_TYPE_EDSA are
-+	 * referring to separate things. MVPP2_TAG_TYPE_EDSA
-+	 * refers to extended DSA, while DSA_TAG_PROTO_EDSA
-+	 * refers to Ethertype DSA. Ethertype DSA requires no
-+	 * setting in the parser.
-+	 */
-+	default:
-+		tag =3D MVPP2_TAG_TYPE_MH;
-+		break;
-+	}
-+
-+	return tag;
-+}
-+
- static int mvpp2_open(struct net_device *dev)
- {
- 	struct mvpp2_port *port =3D netdev_priv(dev);
-@@ -4801,7 +4832,11 @@ static int mvpp2_open(struct net_device *dev)
- 		netdev_err(dev, "mvpp2_prs_mac_da_accept own addr failed\n");
- 		return err;
- 	}
--	err =3D mvpp2_prs_tag_mode_set(port->priv, port->id, MVPP2_TAG_TYPE_MH)=
-;
-+
-+	if (netdev_uses_dsa(dev))
-+		err =3D mvpp2_prs_tag_mode_set(port->priv, port->id, mvpp2_get_tag(dev=
-));
-+	else
-+		err =3D mvpp2_prs_tag_mode_set(port->priv, port->id, MVPP2_TAG_TYPE_MH=
-);
- 	if (err) {
- 		netdev_err(dev, "mvpp2_prs_tag_mode_set failed\n");
- 		return err;
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c b/drivers/net=
-/ethernet/marvell/mvpp2/mvpp2_prs.c
-index 9af22f497a40..7cc42e22ed92 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-@@ -2393,6 +2393,8 @@ int mvpp2_prs_tag_mode_set(struct mvpp2 *priv, int =
-port, int type)
- 				      MVPP2_PRS_TAGGED, MVPP2_PRS_DSA);
- 		mvpp2_prs_dsa_tag_set(priv, port, false,
- 				      MVPP2_PRS_UNTAGGED, MVPP2_PRS_DSA);
-+		/* Set Marvell Header register for Ext. DSA tag */
-+		mvpp2_write(priv, MVPP2_MH_REG(port), MVPP2_DSA_EXTENDED);
- 		break;
-=20
- 	case MVPP2_TAG_TYPE_DSA:
-@@ -2406,6 +2408,8 @@ int mvpp2_prs_tag_mode_set(struct mvpp2 *priv, int =
-port, int type)
- 				      MVPP2_PRS_TAGGED, MVPP2_PRS_EDSA);
- 		mvpp2_prs_dsa_tag_set(priv, port, false,
- 				      MVPP2_PRS_UNTAGGED, MVPP2_PRS_EDSA);
-+		/* Set Marvell Header register for DSA tag */
-+		mvpp2_write(priv, MVPP2_MH_REG(port), MVPP2_DSA_NON_EXTENDED);
- 		break;
-=20
- 	case MVPP2_TAG_TYPE_MH:
---=20
-2.46.0
+url:    https://github.com/intel-lab-lkp/linux/commits/Aryan-Srivastava/i2c-octeon-refactor-common-i2c-operations/20241007-104113
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20241007023900.3924763-2-aryan.srivastava%40alliedtelesis.co.nz
+patch subject: [PATCH v9 1/2] i2c: octeon: refactor common i2c operations
+config: x86_64-allmodconfig (https://download.01.org/0day-ci/archive/20241010/202410100921.WVORo97f-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410100921.WVORo97f-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410100921.WVORo97f-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/i2c/busses/i2c-octeon-core.c:517:3: warning: variable 'cmd' is uninitialized when used here [-Wuninitialized]
+     517 |                 cmd |= SW_TWSI_OP_10_IA;
+         |                 ^~~
+   drivers/i2c/busses/i2c-octeon-core.c:514:9: note: initialize the variable 'cmd' to silence this warning
+     514 |         u64 cmd;
+         |                ^
+         |                 = 0
+   1 warning generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+
+
+vim +/cmd +517 drivers/i2c/busses/i2c-octeon-core.c
+
+ad83665b4687f5 Jan Glauber      2016-08-24  509  
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  510  /* Generic consideration for extended internal addresses in i2c hlc r/w ops */
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  511  static bool octeon_i2c_hlc_ext(struct octeon_i2c *i2c, struct i2c_msg msg, u64 *cmd_in, u64 *ext)
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  512  {
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  513  	bool set_ext = false;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  514  	u64 cmd;
+ad83665b4687f5 Jan Glauber      2016-08-24  515  
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  516  	if (msg.flags & I2C_M_TEN)
+ad83665b4687f5 Jan Glauber      2016-08-24 @517  		cmd |= SW_TWSI_OP_10_IA;
+ad83665b4687f5 Jan Glauber      2016-08-24  518  	else
+ad83665b4687f5 Jan Glauber      2016-08-24  519  		cmd |= SW_TWSI_OP_7_IA;
+ad83665b4687f5 Jan Glauber      2016-08-24  520  
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  521  	if (msg.len == 2) {
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  522  		cmd |= SW_TWSI_EIA;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  523  		*ext = (u64)msg.buf[0] << SW_TWSI_IA_SHIFT;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  524  		cmd |= (u64)msg.buf[1] << SW_TWSI_IA_SHIFT;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  525  		set_ext = true;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  526  	} else {
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  527  		cmd |= (u64)msg.buf[0] << SW_TWSI_IA_SHIFT;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  528  	}
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  529  
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  530  	*cmd_in |= cmd;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  531  	return set_ext;
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  532  }
+dcdb10ccc89293 Aryan Srivastava 2024-10-07  533  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
