@@ -1,112 +1,255 @@
-Return-Path: <linux-kernel+bounces-360049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8D39993E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:48:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DA79993E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738811F23252
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF40283DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AD31E04B5;
-	Thu, 10 Oct 2024 20:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6345B1E1330;
+	Thu, 10 Oct 2024 20:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbJIU2X+"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1U47rMnY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="snAXz/cP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1U47rMnY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="snAXz/cP"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6B11991B8;
-	Thu, 10 Oct 2024 20:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0A01991B8;
+	Thu, 10 Oct 2024 20:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593273; cv=none; b=VKaWm4C9Ikvo5SpIebBTOW2tj3RoJUldZBMknSne9XgI92bs7J2JhPgl33a83cRCP+D4M5Ycqy3XE2UZsEmGbEi2oB6wcTES9QacYnLf7WYebtnVpvOHCFbdaGVnqJiE0RttqSLTqM/foL41jfUR94rSPQARf6jtzEKiIyG7SH4=
+	t=1728593363; cv=none; b=dnLaVLj2ycXxCXiSP2OX4AcdjIvSYiIbJbE+W6wocXkEQBc/nGT/0F+ePr4uCs/iwhV137LuxsUH8fY5WBHLseBpVa72aB5yzr+NuiT7SfZjDUfuhwn66TZGP3+xlxO9f2lKdPH60gVtw1mSE4vfm0EfOAlMvRa1Kv+k9OGGN0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593273; c=relaxed/simple;
-	bh=aCVOEle/nrcFdPay/HXhhs2Addnk0zRr5lvJtCyqmhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L22l48WLLV7UFmT8FH0TYxiK5QGU7qSQRnLunru/G5K8lKhWiuvswKBJ4Kg7IozgaeYyEwzJnTTjpIBvotbE8VisbVwTCEAEtA/QqNnyTPa0bq0M30ok4IuIWOPp4ruLnqQchJ5TLOsqV7a8AaYXwEy140DVh3MpG+uYlrbhMIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbJIU2X+; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e330b7752cso8743137b3.1;
-        Thu, 10 Oct 2024 13:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728593271; x=1729198071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yJdEK/5lylYtZJKp3NRDscz1EgkpSNgnT2es2wz3zug=;
-        b=nbJIU2X+KkfSx/wFyaJH9RfICNMDxOCp7MixXgLWMS5J5Cn0m2JnNt3l2pC6zv8VGa
-         t85a0e2QYjOAYVcPvWy8ieBjexs3roMPqCr7ybgaHA4StwIfeon0WZyhrtSJ3xbbgcjI
-         LbK63HJy9S9l02rZl5vUne+Cd/LwsCcNZD3IC3TzPwih2znxb08LQjgWpUTvXqrN4hW0
-         YktK1G0ZtC0299mC2cRWfuhqYjfWcrW+ZEGxGLr9BUrUe3kF7YkSSldhMG8M3G9lNxJY
-         aZrTR+pvemN1+RpVh1iPwPluqQI/0aqcKIKkaWgnyZJZvW3MX+aUcF2TzlxM4mvZJDyC
-         I4DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728593271; x=1729198071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJdEK/5lylYtZJKp3NRDscz1EgkpSNgnT2es2wz3zug=;
-        b=Dyd4y8MkWR92OpdsKlB4Y2Jin3r8E86peO3rWGoUIx7pr3ztxNCEpKUUL06SIZsOLL
-         FANlxgHZfE6n0w9Q06U3qycIxO7rFb07N8S2xxRi99u+AquxO5zFbZoi8ZosSHkGF4ZP
-         2kZrsZ53UNnxurTswDdWMxWlgPy/JfMzMV1FR8z/qCsBaENp5PTds3KUGhW4Z9PrfcJm
-         HhoaSm/b8JVj3ILGKh9b2A00j8F+AXPeUCNnpXrHQq9c3IdxjOOUl6tPvorG3fT6tYdk
-         eJ2KN5HUv9pq0RDDA/18jIJO/s/TyywOs/NiYCDdOMicL76+Hk7EPbB+9fLYlK+IjOKN
-         ZnDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIqSNbpfewmHp4XWoVB7imKSE3Ha8lqu90MXFRLwpMtBV89eHf9Q6yhnmCJIcNo2Vx0FMnC3BetbPxT0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGdP6gY55OtUApkAzV6+oInZtq4ZK4aDZZwr44RLoXU9nyB/om
-	I91Go5zxCSsrXtIw1x+BhgCS//pvPyZwoqAE/iTloIkKwK77i8U9
-X-Google-Smtp-Source: AGHT+IEFTYM2CADzrcPW9+7HM/Ju/J731XgBQEVXow4kT6U2HeDxaBvg62z+KthZg/C8L2w2mde4dQ==
-X-Received: by 2002:a05:690c:60c1:b0:6e2:451c:df02 with SMTP id 00721157ae682-6e344ccac20mr4048817b3.16.1728593271189;
-        Thu, 10 Oct 2024 13:47:51 -0700 (PDT)
-Received: from ?IPV6:2600:1700:6165:1c10:b99e:4710:9fa7:9721? ([2600:1700:6165:1c10:b99e:4710:9fa7:9721])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332b83ea0sm3504067b3.34.2024.10.10.13.47.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 13:47:50 -0700 (PDT)
-Message-ID: <4a75418f-2a7e-48ca-9e05-089e57de8b49@gmail.com>
-Date: Thu, 10 Oct 2024 16:47:47 -0400
+	s=arc-20240116; t=1728593363; c=relaxed/simple;
+	bh=4WwtzshnrUnW4OWWNGPeLR+yfu/8AIRhKqf10LmJaBc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=p9GSKOHDvVQlMx03mhKUBlPUeWmWnjpyAHBeWMdQQLyPDaNX8FYLIG7DxUmNh2qfLCNOeW91WnCwvZAV+u7zvYvmxc3ZsKa02PpEj179l8tYRqlaP7H2ZSzF8XY+gXfBHDJ6XG/qnf2Yoqu31MKf+KZalL1UxivDrQZOYt1WRVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1U47rMnY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=snAXz/cP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1U47rMnY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=snAXz/cP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C0DE221DAD;
+	Thu, 10 Oct 2024 20:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728593359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
+	b=1U47rMnYDDdowt/gTJVQrbf1xE4lPaYP5ofP6yc9uanrNHgMrYNqd5K6s8K1+AV6XBh5ym
+	fohGli5wLRAofGn4JUoG4unwS5VbcxVSms7x9D45OVETFKQ67U7Xm1Et6ZRB0v74Gkb/Nu
+	7av4gRsZkjOPsVwcccsy6h4O5uhHI88=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728593359;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
+	b=snAXz/cPeY0u3NTwDyJJQJOr+AmjIR29yWiZvi0SPzFrIAqljPMGvNQsbeVUiJvqrHsJkF
+	D9/CVjeynuwxOtDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728593359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
+	b=1U47rMnYDDdowt/gTJVQrbf1xE4lPaYP5ofP6yc9uanrNHgMrYNqd5K6s8K1+AV6XBh5ym
+	fohGli5wLRAofGn4JUoG4unwS5VbcxVSms7x9D45OVETFKQ67U7Xm1Et6ZRB0v74Gkb/Nu
+	7av4gRsZkjOPsVwcccsy6h4O5uhHI88=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728593359;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
+	b=snAXz/cPeY0u3NTwDyJJQJOr+AmjIR29yWiZvi0SPzFrIAqljPMGvNQsbeVUiJvqrHsJkF
+	D9/CVjeynuwxOtDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22E3D1370C;
+	Thu, 10 Oct 2024 20:49:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id H9XDMsw9CGepWAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 10 Oct 2024 20:49:16 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] linux-kbuild: fix: process config options set to "y"
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org, javier.carrasco.cruz@gmail.com
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
- <20240913171205.22126-8-david.hunter.linux@gmail.com>
- <CAK7LNATf=1WD5a8azGZGJ73-irm8uvBZujvuW3CUncXbix+10w@mail.gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <CAK7LNATf=1WD5a8azGZGJ73-irm8uvBZujvuW3CUncXbix+10w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Chuck Lever" <chuck.lever@oracle.com>
+Cc: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>,
+ "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <dai.ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject:
+ Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
+In-reply-to: <ZwcSC4ZWihv/PyV2@tissot.1015granger.net>
+References: <>, <ZwcSC4ZWihv/PyV2@tissot.1015granger.net>
+Date: Fri, 11 Oct 2024 07:49:13 +1100
+Message-id: <172859335340.444407.11709415196743389823@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Thu, 10 Oct 2024, Chuck Lever wrote:
+> On Thu, Oct 10, 2024 at 07:14:07AM +1100, NeilBrown wrote:
+> > On Thu, 10 Oct 2024, Chuck Lever wrote:
+> > > On Tue, Oct 08, 2024 at 05:47:55PM -0400, NeilBrown wrote:
+> > > > And NFSD_MAY_LOCK should be discarded, and nlm_fopen() should set
+> > > > NFSD_MAY_BYPASS_SEC.
+> > >=20
+> > > 366         /*                                                         =
+            =20
+> > > 367          * pseudoflavor restrictions are not enforced on NLM,      =
+            =20
+> > >=20
+> > > Wrt the mention of "NLM", nfsd4_lock() also sets NFSD_MAY_LOCK.
+> >=20
+> > True, but it shouldn't.  NFSD_MAY_LOCK is only used to bypass the GSS
+> > requirement.  It must have been copied into nfsd4_lock() without a full
+> > understanding of its purpose.
+>=20
+> nfsd4_lock()'s use of MAY_LOCK goes back before the git era, so it's
+> difficult to say with certainty.
+>=20
+> I would like to keep such subtle changes bisectable. To me, it seems
+> like it would be a basic first step to change the fh_verify() call
+> in nfsd4_lock() to use (NFSD_MAY_READ | NFSD_MAY_OWNER_OVERRIDE)
+> instead of NFSD_MAY_LOCK, as a separate patch.
 
-> Is there any case when this condition is met?
-> 
-> 
-On my computer, there are no cases where this condition is met. I am 
-aware of config options that are numbers or are strings; however, I am 
-unsure if any of them are dependencies for another config.
+Yes, that is sensible ...  though lockd used NFSD_MAY_WRITE for write
+locks.
+So if a process doesn't have read access to a file but does have write
+access, and isn't the owner, then NLM would grant a write lock, but
+NFSv4 would not.  check_fmode_for_setlk() makes the same choice, so a
+local user could also get the lock.  Only NFSv4 would reject it.
 
-If you would like me to, I can make a script that can figure this out. 
-Even if there are config options like this, though, I am not sure that 
-skipping them would be the right thing to do. I think the best thing to 
-do would be to remove this condition.
+>=20
+>=20
+> > > 368          * which clients virtually always use auth_sys for,        =
+            =20
+> > > 369          * even while using RPCSEC_GSS for NFS.                    =
+            =20
+> > > 370          */                                                        =
+            =20
+> > > 371         if (access & NFSD_MAY_LOCK)                                =
+            =20
+> > > 372                 goto skip_pseudoflavor_check;                      =
+            =20
+> > > 373         if (access & NFSD_MAY_BYPASS_GSS)                          =
+            =20
+> > > 374                 may_bypass_gss =3D true;
+> > > 375         /*                                                         =
+            =20
+> > > 376          * Clients may expect to be able to use auth_sys during mou=
+nt,         =20
+> > > 377          * even if they use gss for everything else; see section 2.=
+3.2         =20
+> > > 378          * of rfc 2623.                                            =
+            =20
+> > > 379          */                                                        =
+            =20
+> > > 380         if (access & NFSD_MAY_BYPASS_GSS_ON_ROOT                   =
+            =20
+> > > 381                         && exp->ex_path.dentry =3D=3D dentry)      =
+                =20
+> > > 382                 may_bypass_gss =3D true;                           =
+              =20
+> > > 383                                                                    =
+            =20
+> > > 384         error =3D check_nfsd_access(exp, rqstp, may_bypass_gss);   =
+              =20
+> > > 385         if (error)                                                 =
+            =20
+> > > 386                 goto out;                                          =
+            =20
+> > > 387                                                                    =
+            =20
+> > > 388 skip_pseudoflavor_check:                                           =
+            =20
+> > > 389         /* Finally, check access permissions. */                   =
+            =20
+> > > 390         error =3D nfsd_permission(cred, exp, dentry, access);    =20
+> > >=20
+> > > MAY_LOCK is checked in nfsd_permission() and __fh_verify().
+> > >=20
+> > > But MAY_BYPASS_GSS is set in loads of places that use those two
+> > > functions. How can we be certain that the two flags are equivalent?=20
+> >=20
+> > We can be certain by looking at the effect.  Before a recent patch they
+> > both did "goto skip_pseudoflavor_check" and nothing else.
+>=20
+> I'm still not convinced MAY_LOCK and MAY_BYPASS_GSS are 100%
+> equivalent.  nfsd_permission() checks for MAY_LOCK, but does not
+> check for MAY_BYPASS_GSS:
+>=20
+>         if (acc & NFSD_MAY_LOCK) {
+>                 /* If we cannot rely on authentication in NLM requests,
+>                  * just allow locks, otherwise require read permission, or
+>                  * ownership
+>                  */
+>                 if (exp->ex_flags & NFSEXP_NOAUTHNLM)
+>                         return 0;
+>                 else=20
+>                         acc =3D NFSD_MAY_READ | NFSD_MAY_OWNER_OVERRIDE;
+>         }=20
+>=20
+> The only consumer of MAY_BYPASS_GSS seems to be OP_PUTFH, now that
+> I'm looking closely for it. But I don't think we want the
+> no_auth_nlm export option to modify the way PUTFH behaves.
 
-Let me know if you would like me to make a script to find out how many 
-config entries are simultaneously not tristate and dependencies for 
-other config entries. Also let me know if you think that I should leave 
-the condition in.
+Thanks for fact-checking my claim!  I had forgotten about noauthnlm.
 
-My version 2 of this patch will not have the condtion in it.
+I'll suggest a patch which might make it all a bit clearer.
+
 Thanks,
-David Hunter
+NeilBrown
+
+
+>=20
+>=20
+> --=20
+> Chuck Lever
+>=20
+
 
