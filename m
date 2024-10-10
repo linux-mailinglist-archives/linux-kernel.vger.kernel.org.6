@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-359031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0E299869A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:49:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A761599869E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF951F22262
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:49:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3671AB23571
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EA31C6F4D;
-	Thu, 10 Oct 2024 12:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A178E1C68B2;
+	Thu, 10 Oct 2024 12:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oz1mEWob"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG18FaHC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165C61C3F26;
-	Thu, 10 Oct 2024 12:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2511C232C;
+	Thu, 10 Oct 2024 12:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564564; cv=none; b=ZrChTgdTpoyK4cyRI779H4WHx5fHLdQjGTrForGKI1seiKgXckz8yqmp6qJ9f/p81hpjOquQVEvV4k7ZCjREAx2V90yPIt2wBbx6VYpNaeiD8WPTZMpNWXPCAs0JzJR7ivFFx2LpNHxDO67d0+8KP3U+RsIhxaCOtqapr28KehA=
+	t=1728564637; cv=none; b=P+bowF08sxnkxSVAbfvidDkJkPxy+mQyUPJckmPzQFE3CmPHVopI395EvnBLDJ4GaDpOE6aylNkvGtTDFTqzuPevd3iaBp789xbWvTrO4lHgJe0+7jCD5DKreEG6jd1qy1Twu2tKh4UetjDSDxvbLsgsoGTc2OVEceo3bGFRmr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564564; c=relaxed/simple;
-	bh=peJCajT9JrXEyFW7QG0r6H6LQ1MBhLze2K+6buEL3xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J+o58NTSaWiK1A7PbQyB97jHcOMIOvRo30IUQ/tNrNmSmSq1EMSokXnfGocKpxk5czt9tbKcBdP4WQlItOfz9gXMCGVViYdQXC439nramoLAdE5hWiF3GEXlDuUolqpjV/MCNML4wdSk6DcneKbXXTSfwd9cmXcC9GoXCLoFRgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oz1mEWob; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728564560;
-	bh=peJCajT9JrXEyFW7QG0r6H6LQ1MBhLze2K+6buEL3xw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oz1mEWob0bLo3tFj/UZ1xluxr6hYvEq4h1UspMdA6+l+A/m1HNWUQmfOSVlR6ttGy
-	 J3KCM9lroR2SFR+3TRZIFhBXmr9xEU+BNp7FZCwQQcI+dsB5AlPRSzna/Ke6ZrOZGT
-	 N1nSislJSTMtsj0d9UjBkvkWaaIdXhgSzWfQ2UGfmuWe6TWU0cmeJ3w7PI9K6JoOEh
-	 AqYzvkgywv4D4j1thdPHBA2OL8UlI1H0iXXsZGdhNxdxGuA2wGqRJL/l+Eaw4uCGTe
-	 U05rr0cvsUZk/TUARKVnMyn4W8DqOOwQ72WkeMgJ7KGAmAf3YVDlU3Yv37WOjhKHF9
-	 mN+/9pAZy5EFA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7C6F217E35EA;
-	Thu, 10 Oct 2024 14:49:19 +0200 (CEST)
-Message-ID: <93234ce4-e831-41aa-9485-53997b5cacaf@collabora.com>
-Date: Thu, 10 Oct 2024 14:49:19 +0200
+	s=arc-20240116; t=1728564637; c=relaxed/simple;
+	bh=aBExbcoJgvgk8QWms6jdMkorwsq2eYAQQrGI5zjZuCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuvF7BUmMUN3yIy+shgmCpBiZwC1gQ9F+MGw9F++u01HFu+Q3kfuj81PCTkHFsACSzvtu42JF3CsrjEMzg3APJpAAbfM+oRnsLy2r4cK8/pv4o9M6hLz0r9xZcZFA2inZe9/qZ9HRGciWuCNsIJCG6tgonVExpwbaE4fbXmpJ8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG18FaHC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C9D5C4CECC;
+	Thu, 10 Oct 2024 12:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728564636;
+	bh=aBExbcoJgvgk8QWms6jdMkorwsq2eYAQQrGI5zjZuCM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oG18FaHCExOHblK6VAouDGXsV4pgotZCSfgH3heCemomG97ePUgjp/0wg9NUwIq5K
+	 hyfScTWkt7bgOZQsIx+TUOHasdy8HSCTNkwwtnsWCVR05JpOBSp7qElPxQ1YNa9jRb
+	 bH250KB6X5WmGdiz912w3rW3IG2bzgXekYcPKd0FYwW4G4P6YcLZayKMV2l9eWePKB
+	 8unxRfFPh+FVdg1Z3DqVpeDXFFBRoI41SSjZAe/BEAdOWqOzyd8uIfpuf4f9brdx5t
+	 xqynoYd403UArbJ0bE+mKy7rY/T4/I7J3u/QP94VahhStOxnXJ2W/e5QvOd/gdlz0N
+	 kPjvI0y5Vx5Eg==
+Date: Thu, 10 Oct 2024 09:50:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>
+Subject: Re: [PATCH] perf test: Fix probe testsuite with a new error message
+Message-ID: <ZwfNmDNzQAXf0ZQV@x1>
+References: <20241010051620.1066407-1-namhyung@kernel.org>
+ <ZwfNL2sLL8cDy2au@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/10] media: platform: mediatek: add isp_7x cam-raw
- unit
-To: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Christian Konig <christian.koenig@amd.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com, yaya.chang@mediatek.com,
- teddy.chen@mediatek.com, hidenorik@chromium.org, yunkec@chromium.org,
- shun-yi.wang@mediatek.com
-References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
- <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwfNL2sLL8cDy2au@x1>
 
-Il 09/10/24 13:15, Shu-hsiang Yang ha scritto:
-> Introduces the ISP pipeline driver for the MediaTek ISP raw and yuv
-> modules. Key functionalities include data processing, V4L2 integration,
-> resource management, debug support, and various control operations.
-> Additionally, IRQ handling, platform device management, and MediaTek
-> ISP DMA format support are also included.
+On Thu, Oct 10, 2024 at 09:48:52AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Oct 09, 2024 at 10:16:20PM -0700, Namhyung Kim wrote:
+> > On my system, it's constantly failing because of new error message from
+> > perf probe.  It should update the regex pattern to match the message -
+> > "A function DIE doesn't have decl_line. Maybe broken DWARF?".
+> > 
+> >   $ sudo head -n 2 /sys/kernel/debug/kprobes/blacklist | cut -f2
+> >   warn_thunk_thunk
+> >   asm_exc_divide_error
+> > 
+> >   $ sudo perf probe warn_thunk_thunk
+> >   A function DIE doesn't have decl_line. Maybe broken DWARF?
+> >   A function DIE doesn't have decl_line. Maybe broken DWARF?
+> >   Probe point 'warn_thunk_thunk' not found.
+> >     Error: Failed to add events.
+> > 
+> >   $ sudo perf probe asm_exc_overflow
+> >   Failed to find scope of probe point.
+> >     Error: Failed to add events.
 > 
-> Signed-off-by: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>
-> ---
->   .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.c  | 5359 +++++++++++++++++
->   .../mediatek/isp/isp_7x/camsys/mtk_cam-raw.h  |  325 +
->   .../isp/isp_7x/camsys/mtk_cam-raw_debug.c     |  403 ++
->   .../isp/isp_7x/camsys/mtk_cam-raw_debug.h     |   39 +
->   .../isp_7x/camsys/mtk_camera-v4l2-controls.h  |   65 +
->   5 files changed, 6191 insertions(+)
->   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
->   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.h
->   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw_debug.c
->   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw_debug.h
->   create mode 100644 drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_camera-v4l2-controls.h
+> We discussed this in the past, I came up with a similar patch, Veronika
+> rightly pointed out that this may point to a real problem, Masami said
+> that since these are for DWARF from assembly those are known issues, I
+> suggested Veronika checked if the CU where the function came from was
+> generated from Assembly (there are DWARF tags that have that info), IIRC
+> she said she would try to do it.
 > 
-> diff --git a/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
-> new file mode 100644
-> index 000000000000..c025f53c952d
-> --- /dev/null
-> +++ b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam-raw.c
-> @@ -0,0 +1,5359 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright (c) 2022 MediaTek Inc.
-> +
-> +#include <linux/clk.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/videodev2.h>
-> +#include <linux/suspend.h>
-> +#include <linux/rtc.h>
-> +
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-event.h>
-> +#include <media/v4l2-ioctl.h>
-> +#include <media/v4l2-subdev.h>
-> +
-> +#include <soc/mediatek/smi.h>
-> +
-> +#include "mtk_cam.h"
-> +#include "mtk_cam-feature.h"
-> +#include "mtk_cam-raw.h"
-> +
-> +#include "mtk_cam-regs-mt8188.h"
-> +
-> +#include "mtk_cam-video.h"
-> +#include "mtk_cam-seninf-if.h"
-> +#include "mtk_camera-v4l2-controls.h"
-> +
-> +#include "mtk_cam-dmadbg.h"
-> +#include "mtk_cam-raw_debug.h"
-> +
-> +static unsigned int debug_raw;
-> +module_param(debug_raw, uint, 0644);
-> +MODULE_PARM_DESC(debug_raw, "activates debug info");
-> +
-> +static int debug_raw_num = -1;
-> +module_param(debug_raw_num, int, 0644);
-> +MODULE_PARM_DESC(debug_raw_num, "debug: num of used raw devices");
-> +
-> +static int debug_pixel_mode = -1;
-> +module_param(debug_pixel_mode, int, 0644);
-> +MODULE_PARM_DESC(debug_pixel_mode, "debug: pixel mode");
-> +
-> +static int debug_clk_idx = -1;
-> +module_param(debug_clk_idx, int, 0644);
-> +MODULE_PARM_DESC(debug_clk_idx, "debug: clk idx");
-> +
-> +static int debug_dump_fbc;
-> +module_param(debug_dump_fbc, int, 0644);
-> +MODULE_PARM_DESC(debug_dump_fbc, "debug: dump fbc");
-> +
-In addition to the first review that I gave you on patch [02/10]: please drop
-all those module parameters. If you want debug switches, use debugfs instead.
+> I'll try to find out the threads and see what happened.
 
-Regards,
-Angelo
+https://lore.kernel.org/all/ZvXhJLkJcR99Y2sF@google.com/T/#u
+
+Veronika, was there a v3?
+
+Thanks,
+
+- Arnaldo
 
