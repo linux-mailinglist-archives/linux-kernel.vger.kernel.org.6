@@ -1,85 +1,202 @@
-Return-Path: <linux-kernel+bounces-358991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31B6998610
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:32:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0704C998616
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860C62831A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A461C203A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8511B1C462A;
-	Thu, 10 Oct 2024 12:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AEB1C6882;
+	Thu, 10 Oct 2024 12:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="IL1Z8WQW"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UyGIy24A"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA8329AF;
-	Thu, 10 Oct 2024 12:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0731BD00B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563569; cv=none; b=EOwUPNn7zL7fd2nSOyEb0ahFUh/EOqexUQGZC0HqMGUlobq2Vb7/AMSGmzZz+6t2w9nexNXH0ai4v7xP8eNC26tClMvxIVxyhkkn42LpgNd9IvP+VRVCsy3qMrVLOUKisrwpr4XDedhll4/ROaco29t9tOQ+3FTr0271fFR6LfI=
+	t=1728563603; cv=none; b=k1MyBe+sT9dLyIoZgEdnYaV2ovuNlyM1CjeFqMTBJgX6EiIe44foq/VXTugpwbi9KRb84klENdOAlfNr08cm7E1vhRXH5V8Swl8F6JUsIdGEqSoPA260XgWFAZ2r/DzocroHlGMOjqK6CcjII25zhDZrxOg5N8FiBRYssRLWfxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563569; c=relaxed/simple;
-	bh=vbKGLYhtExLWQh/Nx4lqMelQEMIeC1Uii8AopS84Egs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dtMco76tD/mVNfTaw7neWIxz+9HATw7uMiT7lEDHgWfjNJe/b5s2EtwR4tFDJHEfDxKokhTKL5YXSWpdEqZdOCtb81d6VZdgTei7Iuh9U0JDTwzKwbtDydZZPgm9X3Lgza3utc60SaYUFtqv42Kcmt+/4uJtJfDxPmIYamuBogw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=IL1Z8WQW; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=FHEQgOFTcCkuIA9f7U4xbHHDt594S7u1HPmb6cwzMS0=; b=IL1Z8WQWnHbXNfb3PSy7pm1/Sf
-	R1mfPx5Nmnr3astSAgj3X/0r87XK3eQA+mbAHbDmi8pl/7ixMUcmUvgn3bj1NDd+2Y6q9PcVT6Ypb
-	sbuLnvoCygtlxSbAAB4qGqnHPJGZomt0NFj91ZHpC7s1XKng8Cg6N/TvMW48S/UZuIEAKySBOrgKv
-	kFWlGAE3C8z4df/HVu6OXlDbP58DcuvBhyMRFSk9gENP+rCc2A/E2L5xQbn6EdZ9Nike+EdfEegbr
-	p1sPSq3Uu1gsobN+PXMMsPNcbFip3QIyyb8sQ+jS04pLDjOXyjBoKOo3ORqvEDz1NlRf5v0qz9YV5
-	mCRr95tg==;
-Date: Thu, 10 Oct 2024 14:32:41 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Michael Turquette
- <mturquette@baylibre.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
- linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
- linux-clk@vger.kernel.org, Lee Jones <lee@kernel.org>, Stephen Boyd
- <sboyd@kernel.org>, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] clk: twl: add TWL6030 support
-Message-ID: <20241010143241.2f126066@akair>
-In-Reply-To: <901ab11e-bfe3-487c-9867-53289c848792@kernel.org>
-References: <20241010074355.58161-1-andreas@kemnade.info>
-	<20241010074355.58161-4-andreas@kemnade.info>
-	<901ab11e-bfe3-487c-9867-53289c848792@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728563603; c=relaxed/simple;
+	bh=cqUIEZnP0kL01BfU5rc437FLEoImXfFTjUHqR5eNwnc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uxUAig9bMbVdCofm+LPTzdl0T6cOZt7KpAdUwCsox8mI0E2gstiGQsxhDNsaEH0jxEP5J1QcJcne2ReXwO4dyBaA2G85gSxJj2tsqPoY52Mqipnvlc6KNu9LLvu/dnDKbf6VYdPdcsQA0PYYuaLZwQYHssvUie6l9uB517Jo2mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UyGIy24A; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aa086b077so123082466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728563599; x=1729168399; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LHEYoeUaJm+TRJH4Wo52sajQiBiRG5cOqZEQNQXLqhE=;
+        b=UyGIy24A3qQrFnMa8rC11b/fiAGz8l5i85X1jXxTeE7/zf/DBlThT7UOTqQr5M1DgS
+         2ro3YZ2osGj2/qsuA1Uo7GFS7WGkOAXoPP8PZszCqGcL9TIrhB2QaXX4mdGU2uEJOvoF
+         wwQZcO2K+oXjUdcoZNsX5Y/HXIWVL45jlE4nD9tnZQfsi9zVd+3xTWU97QpLNwagQ/Eu
+         JjgF8bLj8ReD8ypboDtq5HUuJ5oEwHKkFdrox/Y9dZLqkB7zRpxGOzct73xDmzOnsKHa
+         TU3WuJ77MpfyfU8x/QRfkUEILxd8ZoiwlFkcFCHB3fa8/6izVbi/gjR1cDEZG02mock2
+         lyfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728563599; x=1729168399;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LHEYoeUaJm+TRJH4Wo52sajQiBiRG5cOqZEQNQXLqhE=;
+        b=I8riczXPMVpvYmcbK/+d/5srRrVqRAUTPI1tY4fkJNzb6TElAqnaIoYgPQnqBO5A7a
+         OlxG73R/1TNhvChc1TxA7YgbgMOKXwU+gTp+SQUxXzjDHNmRK7z0vDy3U4+02+TzCMRF
+         ayzy6W4F2Myl6Ug87uwVCmZJsN+J9A28W9BKDp7oYrLtrEdX4v4bnUfdZU6mAMJ/6Dxk
+         plow8ZvnUvX9PB7oTm3H6EN1hNqzF8NfghBlRbzzE2vdMKuyZXbzqK3TVEhLFR1p4ZOV
+         eOMGHB/0fgp4tSBpyyFx4zTfEcDUlUcmlpHmxg4JghyDSywiAW88stdPs9A2xdUszzUD
+         efFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVo9UzfHqLuAPHg2+tS3TTU/E9KTiVGNjdC704d5Dwl+lHttWMxyT5q8lFaBpElA6NZgYuLsVvHtEQRBd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBkpIuYMCYQC3NzQ7ta2/LY7K0FuN2lo88V3dZz9n1xs9nl9fA
+	0drdkEFhJGTuk/8kLWzpxNaPxQJrs9Dfeumuxcg4ZQCBkm79ymiRnUnbKePkdE8=
+X-Google-Smtp-Source: AGHT+IE3EaoE2Q5bVEVX836O7f7bjOsfm+ZSuY6FRgsn43+zdF7F8MeYUKtUO4lxln2Fdct5qoME/g==
+X-Received: by 2002:a17:907:94d5:b0:a99:6036:8d9 with SMTP id a640c23a62f3a-a999e693f75mr365791866b.15.1728563599332;
+        Thu, 10 Oct 2024 05:33:19 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80c0723sm82416666b.135.2024.10.10.05.33.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 05:33:18 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v6 0/4] ov08x40: Enable use of ov08x40 on Qualcomm X1E80100
+ CRD
+Date: Thu, 10 Oct 2024 13:33:16 +0100
+Message-Id: <20241010-b4-master-24-11-25-ov08x40-v6-0-cf966e34e685@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIzJB2cC/43Oy2rDMBCF4VcJWldFGo0u6arvUbLQZZQIWqvIw
+ SQEv3sVL4qLwXT5z+I782AjtUIjezs8WKOpjKUOPczLgcWLH87ES+rNQACKIxgekH/58UqNA3I
+ pOWheJ+FuKHg0Ga313huPrAPfjXK5LfjHqfeljNfa7svWJJ/Xf7GT5IITJp1DUkE7//5ZBt/qa
+ 21n9nQn+LWkEHLXgsWy7mhNABHlxlJrC3Yt1S10KsQUs3PObCxcW2rXwm5ZIoioc4oubiy9tvS
+ upbuls6QAJKVQf/+a5/kHZLWEf/UBAAA=
+X-Change-ID: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jason Chen <jason.z.chen@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dedf8
 
-Am Thu, 10 Oct 2024 14:36:58 +0300
-schrieb Roger Quadros <rogerq@kernel.org>:
+Changes in v6:
+- As I was applying a suggested fix from V5 of this series to other yaml
+  schema in media/i2c it seemed to me that there were a number of
+  properties that would be affected by converting properites: endpoint:
+  additionalProperties: false to unevaluatedProperites: false
+  I pinged Laurent, Sakari, Rob and Krsysztof about that leading to:
 
-> > +	if (cinfo->type == TWL_TYPE_6032)  
-> 
-> Shouldn't this be done for TWL_TYPE_6030?
-> 
-oops, that flipped through. Well, prepare() works seamlessly...
+  link-frequencies: true is considered a valid hardware description.
+  
+  We don't want everything in /schemas/media/video-interfaces.yaml
+  to be valid for each of the port{} descriptions for sensors so:
 
-> > +		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER,
-> > VREG_STATE,
-> > +				   ALL_GRP <<
-> > TWL6030_CFG_STATE_GRP_SHIFT |
-> > +				   TWL6030_CFG_STATE_OFF);
-> > +	else> +		ret = twlclk_write(cinfo,
-> > TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> > +				   TWL6030_CFG_STATE_OFF);
-> > +
+  a) use additionalProperties: false listing valid properties directly.
+  b) Fixup various schema to list the valid properties in line with above.
+
+- Convert unevaluatedProperites: false to additionalProperties: false
+  Laurent
+
+- This isn't exactly what Krsysztof gave his RB for so, I've omitted that
+
+- Add remote-endpoint: true to port{} - required as result of additionalProperties: false
+
+- I'll still follow up this series with a more general fix in-line with the
+  above as TBH I just copy/pasted from some upstream yaml so it looks like
+  a more general remediation is warranted, saving someone else from
+  repeating my mistake.
+
+- Add remote-endpoint: true to port{} - required as result of additionalProperties: false
+
+- Use schemas/media/video-interface-devices.yaml# with unevaluatedProperites: false
+  So that rotation and orientation are valid - bod
+
+- Link to v5: https://lore.kernel.org/r/20241005-b4-master-24-11-25-ov08x40-v5-0-5f1eb2e11036@linaro.org
+
+Changes in v5:
+- Fixes smatch CI splat
+- Link to v4: https://lore.kernel.org/r/20241003-b4-master-24-11-25-ov08x40-v4-0-7ee2c45fdc8c@linaro.org
+
+Changes in v4:
+- Drops link-frequencies from properties: as discussed here:
+  https://lore.kernel.org/r/Zv6STSKeNNlT83ux@kekkonen.localdomain
+- Link to v3: https://lore.kernel.org/r/20241002-b4-master-24-11-25-ov08x40-v3-0-483bcdcf8886@linaro.org
+
+Changes in v3:
+- Drops assigned-clock-* from description retains in example - Sakari,
+  Krzysztof
+- Updates example fake clock names to ov08x40_* instead of copy/paste
+  ov9282_clk -> ov08x40_clk, ov9282_clk_parent -> ov08x40_clk_parent - bod
+- Link to v2: https://lore.kernel.org/r/20241001-b4-master-24-11-25-ov08x40-v2-0-e478976b20c1@linaro.org
+
+Changes in v2:
+- Drops "-" in ovti,ov08x40.yaml after description: - Rob
+- Adds ":" after first line of description text - Rob
+- dts -> DT in commit log - Rob
+- Removes dependency on 'xvclk' as a name in yaml
+  and driver - Sakari
+- Uses assigned-clock, assigned-clock-parents and assigned-clock-rates -
+  Sakari
+- Drops clock-frequency - Sakarai, Krzysztof
+- Drops dovdd-supply, avdd-supply, dvdd-supply and reset-gpios
+  as required, its perfectly possible not to have the reset GPIO or the
+  power rails under control of the SoC. - bod
+
+- Link to v1: https://lore.kernel.org/r/20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org
+
+V1:
+This series brings fixes and updates to ov08x40 which allows for use of
+this sensor on the Qualcomm x1e80100 CRD but also on any other dts based
+system.
+
+Firstly there's a fix for the pseudo burst mode code that was added in
+8f667d202384 ("media: ov08x40: Reduce start streaming time"). Not every I2C
+controller can handle an arbitrary sized write, this is the case on
+Qualcomm CAMSS/CCI I2C sensor interfaces which limit the transaction size
+and communicate this limit via I2C quirks. A simple fix to optionally break
+up the large submitted burst into chunks not exceeding adapter->quirk size
+fixes.
+
+Secondly then is addition of a yaml description for the ov08x40 and
+extension of the driver to support OF probe and powering on of the power
+rails from the driver instead of from ACPI.
+
+Once done the sensor works without further modification on the Qualcomm
+x1e80100 CRD.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      media: ov08x40: Fix burst write sequence
+      media: dt-bindings: Add OmniVision OV08X40
+      media: ov08x40: Rename ext_clk to xvclk
+      media: ov08x40: Add OF probe support
+
+ .../bindings/media/i2c/ovti,ov08x40.yaml           | 120 ++++++++++++++
+ drivers/media/i2c/ov08x40.c                        | 181 ++++++++++++++++++---
+ 2 files changed, 277 insertions(+), 24 deletions(-)
+---
+base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
+change-id: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
