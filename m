@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-358485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EC1997FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:34:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9B6997FED
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94423282216
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74A81F24A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CFD2040B1;
-	Thu, 10 Oct 2024 07:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ECB204F7D;
+	Thu, 10 Oct 2024 08:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP9OunQk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ODlnf31z"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B349F1C9EB9;
-	Thu, 10 Oct 2024 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6011CF29D;
+	Thu, 10 Oct 2024 08:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728547187; cv=none; b=iz23qndNC/1XSDVd3IqcGONe1JL/vScmqpueSCPs17APN365BS9l8XOpqk3391ZNywUk/7Xuy6528NDgBU3qUBvvSepAKCy88sB/XdTRqfZwtLxGcR8XqGOpzUVnYQNs3xaHXgLhmjVqZqlvVoArDHq9XzweRJpsmwVNWk7Wllw=
+	t=1728547300; cv=none; b=jpFZlz1kXSlmsw79/W643lgJafpBJPFv3zCGdbpTIyVaj/hpAt6SxnvtPCpE6o5eqSexuLY8uDO0L8zRPmQxGKtQP7cYEZteaor6dcxLv2SwJpH37ZWcR/AE5RINx2Miq9SjCSTyYtorTbeF+ThBjRCmuMnjdLtqhN9ZCetYW2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728547187; c=relaxed/simple;
-	bh=muAZMRI2tDj1V89m2T/NIkcrnu4Jh9FJ/nPtQfwy6IU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TIUYYdNwVsFBVE9Qdyi3U38+9JffLo4MCkTYPEujwn8UHJRRiWnNqUAdh22fVUzF2S9P5kLWe/47dCeRIztDGqzrZSu1vstaOIvUtO9HbMCds1SXQys93YJZvWN7HYW4vszV1VIvQDjH5RpIEzQk/zhtOcqdY0Jo6rpEIhdlYr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP9OunQk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF73C4CEC6;
-	Thu, 10 Oct 2024 07:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728547186;
-	bh=muAZMRI2tDj1V89m2T/NIkcrnu4Jh9FJ/nPtQfwy6IU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uP9OunQkBW/U65qnU87GN4IQbU7KnkafbVL2ig6xHssv99uGSyDFSgu2cGdMmNwsp
-	 9ySfQEhzPlSTVyCnIg+/SF/HPUfOaNrKM5qqTSXV1hCQqLyFtThxZl49hFG5Pym7gY
-	 0OtG/XC12H+GF5VZAHAc2lOgqXi3rNdw/ogRAIMctKBoC5kKyr8j0eKHarO3RiDl8b
-	 KzUBRVjYP1zVFRk59CFKgPYvYlgiruzlAkZFn1oQgJl9TN8wwT5WlkaxtOlzautaIZ
-	 gPl5eUDDyMV/fNL33HgY1U67C3KdZ0Awdi2La52Xr4H5xQ0TZCp7rMCY7zzWLuoq2x
-	 E93e8j6d8S2iA==
-Message-ID: <9d8fe284-a746-4dfe-aab0-37c6b151f216@kernel.org>
-Date: Thu, 10 Oct 2024 10:59:40 +0300
+	s=arc-20240116; t=1728547300; c=relaxed/simple;
+	bh=SPNWE67wljUpgDt6cdCP1UZ5g+mrt3I94xuS2flkUjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zz+/MQz+F7wq5DSsLk8j0MN0HLmpgJviH+fMuQj6U6caEL21wUbRxWR/S9zam6Q+KVvUNh31oLUk10k1znjEIIcPjSh+bQGPviG+PlY/sMfw6PQzfcXdRB0d6WxIzsZft7NGrANlhHlphKabAZeZet/mu+nsCMELp/Y22WsT7lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ODlnf31z; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3M9KdA8DamcHX+t4Rs6QLSY8A6xBoeXjIByTZaRvvrw=; b=ODlnf31zkBA60pAMsLKUz4NwQA
+	0d1+qf2OpwXb5xM7RrOyWLDPmzgckueE+AckkkbX9AeLzNNKH9DDQ20L3tNKen95IQxJ4AaT1NaDk
+	2rt9oonqWGhcxNDoPLDPP3VzdqkNfjEiI2U9f7Hq+xSMWHk2PfvhbyqeEYvcmasG3J7l7Rxr46mcv
+	lpM0TA1sM5LlScvxNz87yz3ey/jdIwfJh7YL7E1yumpCqhm//sWjUujlYuKyb6xyScH/hQD9Z9H/w
+	E7hZ09vvysbAVWRm1tkP+SLzPEm544ZxZ82wA5c4jRZLGqPSkMMvLItACcRiBNMUyNY6nDlkpN83W
+	H3CaLIVg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1syo77-0000000BtRj-1dcm;
+	Thu, 10 Oct 2024 08:01:37 +0000
+Date: Thu, 10 Oct 2024 01:01:37 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	syzbot <syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com>,
+	chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+	Vlastimil Babka <vbabka@suse.cz>, Feng Tang <feng.tang@intel.com>
+Subject: Re: [syzbot] [xfs?] KFENCE: memory corruption in xfs_idata_realloc
+Message-ID: <ZweJ4UiFpOtxyeB-@infradead.org>
+References: <6705c39b.050a0220.22840d.000a.GAE@google.com>
+ <Zwd4vxcqoGi6Resh@infradead.org>
+ <CANpmjNMV+KfJqwTgV9vZ_JSwfZfdt7oBeGUmv3+fAttxXvRXhg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/5] firmware: ti_sci: Introduce system suspend
- support
-To: Markus Schneider-Pargmann <msp@baylibre.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Kamlesh Gurudasani <kamlesh@ti.com>,
- Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
- Vishal Mahaveer <vishalm@ti.com>, Akashdeep Kaur <a-kaur@ti.com>
-References: <20241007-tisci-syssuspendresume-v13-0-ed54cd659a49@baylibre.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241007-tisci-syssuspendresume-v13-0-ed54cd659a49@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMV+KfJqwTgV9vZ_JSwfZfdt7oBeGUmv3+fAttxXvRXhg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Markus
+On Thu, Oct 10, 2024 at 09:50:06AM +0200, Marco Elver wrote:
+> > I've tried to make sense of this report and failed.
+> >
+> > Documentation/dev-tools/kfence.rst explains these messages as:
+> >
+> > KFENCE also uses pattern-based redzones on the other side of an object's guard
+> > page, to detect out-of-bounds writes on the unprotected side of the object.
+> > These are reported on frees::
+> >
+> > But doesn't explain what "the other side of an object's guard page" is.
+> 
+> Every kfence object has a guard page right next to where it's allocated:
+> 
+>   [ GUARD | OBJECT + "wasted space" ]
+> 
+> or
+> 
+>   [ "wasted space" + OBJECT | GUARD ]
+> 
+> The GUARD is randomly on the left or right. If an OOB access straddles
+> into the GUARD, we get a page fault. For objects smaller than
+> page-size, there'll be some "wasted space" on the object page, which
+> is on "the other side" vs. where the guard page is. If a OOB write or
+> other random memory corruption doesn't hit the GUARD, but the "wasted
+> space" portion next to an object that would be detected as "Corrupted
+> memory" on free because the redzone pattern was likely stomped on.
 
-On 07/10/2024 09:08, Markus Schneider-Pargmann wrote:
-> Abstract
-> ********
-> 
-> This series introduces necessary ti_sci driver functionality to support
-> various Suspend-to-RAM modes on TI AM62 family of devices. These Low
-> Power Modes include Deep Sleep and MCU Only as described in section
-> "6.2.4 Power Modes" of the AM62P Technical Reference Manual [0].
-> 
-> Summary
-> *******
-> 
-> This series is a restructuring and rebase of the patch series by
-> Dave Gerlach [1] and Dhruva Gole [2]. It applies on top of Linux
-> 6.12-rc1.
-> 
-> The kernel triggers entry to Low Power Mode through the mem suspend
-> transition with the following:
-> 
-> * At the  bootloader stage, one is  expected to package the  TIFS stub
->   which then gets  pulled into the Tightly coupled memory  of the Device
->   Mgr  (DM) R5  when it  starts up.  If using  U-Boot, then  it requires
->   tispl.bin to contain the TIFS stub. Refer to documentation in upstream
->   u-boot[3] for further details. The  supported firmware version is from
->   TI Processor SDK >= 10.00 ie. tag 10.00.04 from ti-linux-firmware [4].
-> 
-> * Use a TF-A binary that supports PSCI_SYSTEM_SUSPEND call. This causes
->   system to use PSCI system suspend as last step of mem sleep.
-> 
-> * We add support for the TISCI_MSG_QUERY_FW_CAPS message, used to retrieve
->   the firmware capabilities of the currently running system firmware [6].
->   Sysfw version >= 10.00.04 support LPM_DM_MANAGED capability, where
->   Device Mgr firmware now manages which low power mode is chosen. Going
->   forward, this is the default configuration supported for TI AM62 family
->   of devices. The state chosen by the DM can be influenced by sending
->   constraints using the new LPM constraint APIs. (Patch 1)
-> 
-> * The firmware requires that the OS sends a TISCI_MSG_PREPARE_SLEEP
->   message in order to provide details about suspend. The ti_sci driver
->   must send this message to firmware with the above information
->   included, which it does during the driver suspend handler when
->   PM_MEM_SUSPEND is the determined state being entered. The mode being
->   sent depends on whether firmware capabilities have support for
->   LPM_DM_MANAGED feature. Legacy firmware or those supporting other
->   modes can extend the mode selection logic as needed. (Patch 2)
-> 
-> * We also add the remaining TISCI Low Power Mode messages required for
->   inquiring wake reason and managing LPM constraints as part of a new PM
->   ops. These messages are part of the TISCI PM Low Power Mode API [5].
->   (Patch 3)
-> 
-> * Finally if any CPUs have PM QoS resume latency constraints set, we
->   aggregate these and set the TISCI system-wide latency constraint.
->   (Patch 4)
-> 
-> Testing
-> *******
-> 
-> This series can for example be tested with a am62a-lp-sk board.
+Thanks!  Searching kfence.txt for random I find that explaination in
+the intro now.  Can you maybe expand the section I quoted to make
+this more clear, by saying something like:
 
-Tested on am62-sk.
+KFENCE also uses pattern-based redzones on the side of the object that
+is not covered by the GUARD (which is randomly allocated to either the
+left or the right), to detect out-of-bounds writes there as well.
+These are reported on frees::
 
-Tested-by: Roger Quadros <rogerq@kernel.org>
 
 > 
-> For am62a-lp-sk all usb nodes have to be disabled at the moment (usbss0,
-> usb0, usbss1 and usb1). There is currently an issue with USB Link Power
-> Management and turning off the USB device which is being worked on.
+> > Either way this is in the common krealloc code, which is a bit special
+> > as it uses ksize to figure out what the actual underlying allocation
+> > size of an object is to make use of that.  Without understanding the
+> > actual error I wonder if that's something kfence can't cope with?
+> 
+> krealloc + KFENCE broke in next-20241003:
+> https://lore.kernel.org/all/CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com/T/#u
+> It's been removed from -next since then.
+> 
+> It's safe to ignore.
 
-Or you can this patch [1].
+Thanks!
 
-[1] https://lore.kernel.org/all/20241009-am62-lpm-usb-v2-1-da26c0cd2b1e@kernel.org/
-
-cheers,
--roger
--- 
-cheers,
--roger
 
