@@ -1,169 +1,147 @@
-Return-Path: <linux-kernel+bounces-359260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8AB998978
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:27:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F7998981
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C82A1C24B88
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83F5282500
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804DC1CC15B;
-	Thu, 10 Oct 2024 14:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UDy+P/gm"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295311CDA3C;
+	Thu, 10 Oct 2024 14:24:22 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1405C1CB511
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45C21CB527;
+	Thu, 10 Oct 2024 14:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570170; cv=none; b=LILrhEOWWUtdD90WEfmD8GztsawZAZRtWGu12cBT61D++AcTIxIMJCFInoYoR4erbPmorkglDfWJdSPoBP7QlvRSXRhnmEIgBQ0blRvC2d8UrNgO9gP8CZBXEc9fNXeoBnEmbAhf2YDaCe0oeGYIX3VF/Y0xEe6dBf3YyLF1iU0=
+	t=1728570261; cv=none; b=i97XTm91mcKhuHhQjGHpYbjqy46sbC82czPdyUKH139814KQgKjrdQ9UgmBs0IC+SBfp/RIz5K3yvTEK0NrKb6B9RatMFAKjAxBhBTRzbLcd9Han1BAnPtv/XJ1fpBzcJ3jJgQVeVosLqf33MsWxb5NMhuTcqe9oCo+DUwS3OA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570170; c=relaxed/simple;
-	bh=pc8gV4huGZDoUca8YffQfxAWHm148iLaPYTVWk1l2jA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgXK3ruPCNitDywlTxiiBu49U1I4RR0fz7IXCFNmyUlgwOUvXuoxGGMm85VqcN5ZMrK+Hf+h5yip+FFSg5fUoMjScbW3kehFoTYXKBZ4WnRknbcwq8DEovpdAJiqRpfqvDU5dxJX4dn0s+nw9bjqyIuy0zP9lp2UA4wBuhDZohw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UDy+P/gm; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fac787f39fso10600801fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728570167; x=1729174967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T9AJcZVNqCADPxVrB/UoMC81RGbypBJxweSdqf11Fz4=;
-        b=UDy+P/gmM3DlA9/uyy+ivLTEbKxgexXSBHV3yKb8r0nZjcOFsz0rj4jA+pAJAPskYD
-         U3bOLH+N913gviSD0KOZXH9AnBISVxaKRs3daqwBRJLuZ+q4U9Dwo1sYTLkn1GMkQdtl
-         B4ze5wsciOOLXMECnyNcqMBOLPHpi2+1zLPfyL7au3Dz4DOTK385WRAVPvQE34OLgizp
-         Rr/LTUpUzCN5jzvPKdXgFvNAfG9y252bnc8yJYmlN10LMM69sCV+s7eBfmWoi2L4jtif
-         5qmZNYK+sMvK1mFIVrGMA2FG4CzA/v/YlI/aCC51gHPy4GK7s+SBqDFIuKSLO2AxbFZN
-         6nfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728570167; x=1729174967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T9AJcZVNqCADPxVrB/UoMC81RGbypBJxweSdqf11Fz4=;
-        b=NaLTThvapmVA3Ukd6+nFEfttNtFsmzDHPjrVx0osCOI0eLOU4yHMT/pxJEAoF141NN
-         8nu0w1xYhon4kXCN57mGZT2xzL2lIjVoRc2kQRY0s/ru23sZWWZiJmOBvZdN+JbJMZYT
-         Ms4s48GunpnBkupL5Uoa4HLxlI1opH9M5MnT4HZ/Qsb40V0z2e2EoCOBDkBqE62jou/Q
-         28oM01zAIoYz/LebDXahUVi/thDlUfoScZGsTSlPKdeWkjn9pzKSRt/fEq25BsMBb7Cd
-         /hvtgcDTCatmtMB2b5uUFQAfH/Ava7V2B5qalKgHaGkF8gNSZTrl1zitiLIn0lVVBmvR
-         ZxMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWs+C4B0wQbtG4njGFX4Xmuc8OwcDGAyL1s4ZR4KdzXWk+7nWJSskPMJGEGIeEv2AHdakuCEA3DEZi24Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu/pS+rcNpWYZ79JD/MHWf/K8nubij5QbaKg/jlCr3uKLc4BjW
-	E3PO90mFG/5FhOVdRZ0uzsQ2LvzB0WIFLjGjvK9PDC4db6rh4UpaQaak0M/GhdU=
-X-Google-Smtp-Source: AGHT+IF6rZ3MD8nH2vuXY8H2os5uX0/oGgjx49wYPUe6Dm++/RdT24HNnJYcg/TCT0rhnTNfVYjUEg==
-X-Received: by 2002:a2e:b8c1:0:b0:2fa:fe0c:4967 with SMTP id 38308e7fff4ca-2fb1873e465mr41125211fa.20.1728570167037;
-        Thu, 10 Oct 2024 07:22:47 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb2474c85esm2097331fa.115.2024.10.10.07.22.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 07:22:45 -0700 (PDT)
-Date: Thu, 10 Oct 2024 17:22:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_ppratap@quicinc.com, 
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: Add support for usb nodes on
- QCS8300
-Message-ID: <xwidjnw3fqc2slwl3vftw7yi4j7juiw6rwszjhtxepqd6zz33s@ncoi4aikbb4e>
-References: <20241009195636.2649952-1-quic_kriskura@quicinc.com>
- <20241009195636.2649952-2-quic_kriskura@quicinc.com>
+	s=arc-20240116; t=1728570261; c=relaxed/simple;
+	bh=AVk0rOcfLhGJPiyPs34UfJ4+w3gZGPNHVE7VgsbwGds=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Dc+50gz4plVjTeXhFFE9HpJgaXSw0dXwTVaaQ9tHhKwIvk0TVm8B4547vk+OBnlxg+CYwHNrgnGlj2KowVuNQvANKmNw/ZYECbBIvej+8U4M4OK7znnnr5zv9VoLD5No8ry3fZEaP982PzpEAvMlWskp04Twcnolt2HGfzo69KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPX6C1KPzzySYV;
+	Thu, 10 Oct 2024 22:22:59 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id B538F140157;
+	Thu, 10 Oct 2024 22:24:16 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 10 Oct 2024 22:24:15 +0800
+Message-ID: <b66e0400-a95b-476d-b571-4e595127ef80@huawei.com>
+Date: Thu, 10 Oct 2024 22:24:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009195636.2649952-2-quic_kriskura@quicinc.com>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<kalesh-anakkur.purayil@broadcom.com>, <christophe.jaillet@wanadoo.fr>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V11 net-next 04/10] net: hibmcge: Add interrupt supported
+ in this module
+To: Simon Horman <horms@kernel.org>
+References: <20241008022358.863393-1-shaojijie@huawei.com>
+ <20241008022358.863393-5-shaojijie@huawei.com>
+ <20241010102201.GG1098236@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20241010102201.GG1098236@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Thu, Oct 10, 2024 at 01:26:35AM GMT, Krishna Kurapati wrote:
-> Add support for USB controllers on QCS8300. The second
-> controller is only High Speed capable.
-> 
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 165 ++++++++++++++++++++++++++
->  1 file changed, 165 insertions(+)
 
-[...]
+on 2024/10/10 18:22, Simon Horman wrote:
+> On Tue, Oct 08, 2024 at 10:23:52AM +0800, Jijie Shao wrote:
+>> The driver supports four interrupts: TX interrupt, RX interrupt,
+>> mdio interrupt, and error interrupt.
+>>
+>> Actually, the driver does not use the mdio interrupt.
+>> Therefore, the driver does not request the mdio interrupt.
+>>
+>> The error interrupt distinguishes different error information
+>> by using different masks. To distinguish different errors,
+>> the statistics count is added for each error.
+>>
+>> To ensure the consistency of the code process, masks are added for the
+>> TX interrupt and RX interrupt.
+>>
+>> This patch implements interrupt request, and provides a
+>> unified entry for the interrupt handler function. However,
+>> the specific interrupt handler function of each interrupt
+>> is not implemented currently.
+>>
+>> Because of pcim_enable_device(), the interrupt vector
+>> is already device managed and does not need to be free actively.
+>>
+>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> ...
+>
+>> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
+> ...
+>
+>> +static const char *irq_names_map[HBG_VECTOR_NUM] = { "tx", "rx", "err", "mdio" };
+>> +
+>> +int hbg_irq_init(struct hbg_priv *priv)
+>> +{
+>> +	struct hbg_vector *vectors = &priv->vectors;
+>> +	struct device *dev = &priv->pdev->dev;
+>> +	int ret, id;
+>> +	u32 i;
+>> +
+>> +	/* used pcim_enable_device(),  so the vectors become device managed */
+>> +	ret = pci_alloc_irq_vectors(priv->pdev, HBG_VECTOR_NUM, HBG_VECTOR_NUM,
+>> +				    PCI_IRQ_MSI | PCI_IRQ_MSIX);
+>> +	if (ret < 0)
+>> +		return dev_err_probe(dev, ret, "failed to allocate MSI vectors\n");
+>> +
+>> +	if (ret != HBG_VECTOR_NUM)
+>> +		return dev_err_probe(dev, -EINVAL,
+>> +				     "requested %u MSI, but allocated %d MSI\n",
+>> +				     HBG_VECTOR_NUM, ret);
+>> +
+>> +	/* mdio irq not requested, so the number of requested interrupts
+>> +	 * is HBG_VECTOR_NUM - 1.
+>> +	 */
+>> +	for (i = 0; i < HBG_VECTOR_NUM - 1; i++) {
+>> +		id = pci_irq_vector(priv->pdev, i);
+>> +		if (id < 0)
+>> +			return dev_err_probe(dev, id, "failed to get irq number\n");
+>> +
+>> +		snprintf(vectors->name[i], sizeof(vectors->name[i]), "%s-%s-%s",
+>> +			 dev_driver_string(dev), pci_name(priv->pdev),
+>> +			 irq_names_map[i]);
+>> +
+>> +		ret = devm_request_irq(dev, id, hbg_irq_handle, 0,
+>> +				       vectors->name[i], priv);
+>> +		if (ret)
+>> +			return dev_err_probe(dev, ret,
+>> +					     "failed to requset irq: %s\n",
+> nit: request
+>
+ok，I will fix all misspellings  detected by checkpatch.
+   ./scripts/checkpatch.pl --strict --codespell --max-line-length=80
 
-> +
-> +		usb_2: usb@a4f8800 {
-> +			compatible = "qcom,qcs8300-dwc3", "qcom,dwc3";
-> +			reg = <0x0 0x0a4f8800 0x0 0x400>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +
-> +			clocks = <&gcc GCC_CFG_NOC_USB2_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB20_MASTER_CLK>,
-> +				 <&gcc GCC_AGGRE_USB2_PRIM_AXI_CLK>,
-> +				 <&gcc GCC_USB20_SLEEP_CLK>,
-> +				 <&gcc GCC_USB20_MOCK_UTMI_CLK>;
-> +			clock-names = "cfg_noc",
-> +				      "core",
-> +				      "iface",
-> +				      "sleep",
-> +				      "mock_utmi";
-> +
-> +			assigned-clocks = <&gcc GCC_USB20_MOCK_UTMI_CLK>,
-> +					  <&gcc GCC_USB20_MASTER_CLK>;
-> +			assigned-clock-rates = <19200000>, <120000000>;
-> +
-> +			interrupts-extended = <&intc GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&intc GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>,
-> +					      <&pdc 10 IRQ_TYPE_EDGE_BOTH>,
-> +					      <&pdc 9 IRQ_TYPE_EDGE_BOTH>;
-> +			interrupt-names = "pwr_event",
-> +					  "hs_phy_irq",
-> +					  "dp_hs_phy_irq",
-> +					  "dm_hs_phy_irq";
-> +
-> +			power-domains = <&gcc GCC_USB20_PRIM_GDSC>;
-> +			required-opps = <&rpmhpd_opp_nom>;
-> +
-> +			resets = <&gcc GCC_USB20_PRIM_BCR>;
-> +
-> +			interconnects = <&aggre1_noc MASTER_USB2 0 &mc_virt SLAVE_EBI1 0>,
-> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB2 0>;
-> +			interconnect-names = "usb-ddr", "apps-usb";
+Thanks,
+   Jijie Shao
 
-As this is a USB2-only host, shouldn't it also have qcom,select-utmi-as-pipe-clk ?
-
-> +
-> +			status = "disabled";
-> +
-> +			usb_2_dwc3: usb@a400000 {
-> +				compatible = "snps,dwc3";
-> +				reg = <0x0 0x0a400000 0x0 0xe000>;
-> +				interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
-> +				iommus = <&apps_smmu 0x20 0x0>;
-> +				phys = <&usb_2_hsphy>;
-> +				phy-names = "usb2-phy";
-> +				snps,dis_u2_susphy_quirk;
-> +				snps,dis_enblslpm_quirk;
-> +			};
-> +		};
->  	};
->  
->  	arch_timer: timer {
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
 
