@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-358144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D83997AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:44:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA95997AAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4985D1F23ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:44:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8AFB21FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F38F17BEC5;
-	Thu, 10 Oct 2024 02:44:37 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EB5170A14;
+	Thu, 10 Oct 2024 02:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DDdWD1hm"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07FE6BB5B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19139179A3;
+	Thu, 10 Oct 2024 02:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728528277; cv=none; b=fjhRNkI8ggSCS2xnOpuY0RX/+Z7mBE8K7cn+9DljXPK/dc8s43a/D20Rao8gSZny6JdoL0BV1PUWnr65SSo/P2pOaZ0yR0VVbzJSM9wENPnH1QSBL62VJiYakjJ6dkfmD6NhFEraj5OSyR1J93nCtRY+M4B1/jyP2iH5ZPnaONk=
+	t=1728528425; cv=none; b=mTr5PFV/xnOR6Gt2T2Z2GUirsKqQm3vsmkdG2wkJOq7t18dfXwPfJCD22hBj6jC1nHHEd+xfLPNlbEeh3lWwZwBpJYUB8yPxjgtME8KIcQ6kuwmTT3E1k2C1tI5C+TxGclHfeUuLLjMxEpN4qsSPKmoBYCYXYY5bT8yAGqh9uIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728528277; c=relaxed/simple;
-	bh=KbeMLDT+ohFiaGGCHH+fKWYl0ycZ5R2cZMVKUMWxUH4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Ow5up7eDUj6JzOE2kcm6mMBzx56iJp6RpnbIYfExr4KEQbolkdSUiqp6aQIDfz8iZvV97AQFEFb8YEUKyppGJMR5pYNX6v+AqhuhracL/bbaR4B3gLvt1IgSDOaoVn3scxSBHzbaEefm+E232Mov6kPPUSRlBwpelgsOnh5PjEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPDZ02pP7zpWZb;
-	Thu, 10 Oct 2024 10:42:32 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id 12F4F18010F;
-	Thu, 10 Oct 2024 10:44:32 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 10:44:31 +0800
-Subject: Re: [patch 07/25] debugobjects: Remove pointless debug printk
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Waiman Long <longman@redhat.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.390511021@linutronix.de>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <13ecf970-6a0a-544c-6528-78a0ceedc2d3@huawei.com>
-Date: Thu, 10 Oct 2024 10:44:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1728528425; c=relaxed/simple;
+	bh=qvEppdChzo6d4DK4Jtu9arnULPkfDSE2/tuQQu+gygM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XpPoOvsOBgncPOpRde3NCcM+dO4nxWuVCcMiK3BnMcMpmbvoxXXLKbY5qx+pGpixR2Fv/6skj+o2J3g1burOFTncaYwLHX6DMieNy9L6rU7KecNx59wRURgsVY5IqSaYbDSryY9KXPkzGtVM2Fj7WyfPZ70bMT/zY5Bs8647+GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DDdWD1hm; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728528411;
+	bh=jiKO6ddxp5fsBj5ocwQwlayWkPopjw0WxHYfCI40KRk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DDdWD1hmfHTZCbHELXNziBd+R0VPL0Z3fGWbJd01IagS0w5Y35BdiPd+w7aoenvbF
+	 20j65MUbdRRHEyS4GKQOE5kgpswvyfZ5gRd0ajlF5IGtwhfsj59nqwxo+603Q8F6YZ
+	 0FvFaicIYOYqwtBVE347g3z+ovc6vGXRDr1mjmdcO9hfFu0BFStSCd/ugPvIYaVo/q
+	 erUYU7hBHpPLsVRiZs9JjkgcqkeT2e1bkw5B0wKX3BoXcaWvMXTOCHFucKpzmabJf7
+	 axmzASD+lI8ftq6KYvFwkqn5Xb1xF1M6AB7Vght+2SSMzApGlomSbfgVDlhmX5nXw9
+	 r4JyrUrbzvWEQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPDfy6G6hz4wxm;
+	Thu, 10 Oct 2024 13:46:49 +1100 (AEDT)
+Date: Thu, 10 Oct 2024 13:46:49 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Cc: Zheng Yejian <zhengyejian@huaweicloud.com>, Donglin Peng
+ <dolinux.peng@gmail.com>, Donglin Peng <pengdonglin@xiaomi.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the ftrace tree
+Message-ID: <20241010134649.43ed357c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241007164913.390511021@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Type: multipart/signed; boundary="Sig_/6.keqUnW2nI81eHysddd_Cm";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/6.keqUnW2nI81eHysddd_Cm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/10/8 0:49, Thomas Gleixner wrote:
-> It has zero value.
+After merging the ftrace tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
+kernel/trace/trace_functions_graph.c: In function '__trace_graph_retaddr_en=
+try':
+kernel/trace/trace_functions_graph.c:151:14: error: implicit declaration of=
+ function 'call_filter_check_discard' [-Wimplicit-function-declaration]
+  151 |         if (!call_filter_check_discard(call, entry, buffer, event))
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  lib/debugobjects.c |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -1303,7 +1303,7 @@ static bool __init debug_objects_replace
->  	struct debug_obj *obj, *new;
->  	struct hlist_node *tmp;
->  	HLIST_HEAD(objects);
-> -	int i, cnt = 0;
-> +	int i;
->  
->  	for (i = 0; i < ODEBUG_POOL_SIZE; i++) {
->  		obj = kmem_cache_zalloc(cache, GFP_KERNEL);
-> @@ -1330,11 +1330,8 @@ static bool __init debug_objects_replace
->  			/* copy object data */
->  			*new = *obj;
->  			hlist_add_head(&new->node, &db->list);
-> -			cnt++;
->  		}
->  	}
-> -
-> -	pr_debug("%d of %d active objects replaced\n", cnt, obj_pool_used);
->  	return true;
->  free:
->  	hlist_for_each_entry_safe(obj, tmp, &objects, node) {
-> 
-> .
-> 
+Caused by commit
 
--- 
-Regards,
-  Zhen Lei
+  21e92806d39c ("function_graph: Support recording and printing the functio=
+n return address")
+
+interacting with commit
+
+  49e4154f4b16 ("tracing: Remove TRACE_EVENT_FL_FILTERED logic")
+
+I have used the ftrace tree from next-20241009 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6.keqUnW2nI81eHysddd_Cm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcHQBkACgkQAVBC80lX
+0Gy6Iwf/QqU+hpihRFU9kFKsIkpTMCzbtansHRKJB6y9R3/6a1V8PLZvXWdSuRxt
+5E8t5UgFZu9xVeZ4NDB5GXmgb+4xpjibYGXCmSsrEUMLEkcragu7ggVFKUdoLl0d
+wcUsbuKUq8H/J8zRG/HSfk1Yagmv6fWa9wAnFakJVh7iZBRzw2Lx7TjTIkumCyc2
+nySD1QvF8XO98VxQzeMGtbqLKEKdso06KO2MCkWO+RaJx/qv99iNw9HeBrT2ZIy4
+W55ls+S7n6M5O4z7KC3UzqPq7/0p0QeJreaiMY1rF0oZHBx7tf+pBis32ZatJ6cG
+D1vkXlTSSFeYqe5BuNrBtMnh350M0A==
+=EY0s
+-----END PGP SIGNATURE-----
+
+--Sig_/6.keqUnW2nI81eHysddd_Cm--
 
