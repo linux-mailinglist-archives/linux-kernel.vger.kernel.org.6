@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-358775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E3699837C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D46F998383
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BBB1F21C1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068FB1F22FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B521BFDE7;
-	Thu, 10 Oct 2024 10:24:00 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD58D1BF818;
+	Thu, 10 Oct 2024 10:26:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992D51BF7E5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FFE1A00ED;
+	Thu, 10 Oct 2024 10:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728555840; cv=none; b=I8GbJCoPC6B//Sy68x7U0IJUFkIXg+aSykfPdiaSex9yIj23CbGK19C1QBqwtji3IGwH1p/G2ibp6rWGy87Xsr66MP8PWOb6lg1NkylL44vdnB+8/BLBQEvtUD3CF+bX7zplhdTSqOTdZB3f9sBJEA0k+qC6RXy0x2ebqapZIuM=
+	t=1728556002; cv=none; b=DBBpbuw9fJbja46jYmTt7E8uQrHKO1yeEMir/eF5o7uLLXVl+yqj81H8g0N5nnUZw8U5zRhFaV5dbP9//9ecv3D5yYuKNrxFf2RpYftSGU+GEbwVvIa+e4GYtriytSRX1Dp25A8DEaFxmLu6sNn2LiwVqDA2VvG9fE3AC81jmEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728555840; c=relaxed/simple;
-	bh=h1R63jixfSue3R7Ieez3jUjailTzjr2SNM0L2a+aAIY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=F1CTY21Io5Kcy0uixCyx6PayERoe8vpulmRXolP+urN9M/cC86OrfpfNe9cQWSsN6v/DCHw2zz5VY/VEm/XSmM9JWFYRYeROLD3H0JUqeN/3/I70O+bXrXc9XabloOgn+0M6DmbDpoKL+q/PWjXHsepaDlRsxCOBIr/ob6t7eRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-31-zFKabjwrN-S-U-Z5gNyBvg-1; Thu, 10 Oct 2024 11:23:55 +0100
-X-MC-Unique: zFKabjwrN-S-U-Z5gNyBvg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 10 Oct
- 2024 11:23:54 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 10 Oct 2024 11:23:54 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Thomas Gleixner' <tglx@linutronix.de>, Steven Rostedt
-	<rostedt@goodmis.org>
-CC: Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, Ankur Arora <ankur.a.arora@oracle.com>,
-	"mingo@kernel.org" <mingo@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "juri.lelli@redhat.com"
-	<juri.lelli@redhat.com>, "vincent.guittot@linaro.org"
-	<vincent.guittot@linaro.org>, "dietmar.eggemann@arm.com"
-	<dietmar.eggemann@arm.com>, "bsegall@google.com" <bsegall@google.com>,
-	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
-	<vschneid@redhat.com>, "efault@gmx.de" <efault@gmx.de>
-Subject: RE: [PATCH 0/5] sched: Lazy preemption muck
-Thread-Topic: [PATCH 0/5] sched: Lazy preemption muck
-Thread-Index: AQHbGo8XexbPsuHzxEm33+r9fps+rbJ/xYLA
-Date: Thu, 10 Oct 2024 10:23:54 +0000
-Message-ID: <ea496d1ea02049e88a701f984b0f2a6b@AcuMS.aculab.com>
-References: <20241007074609.447006177@infradead.org>
- <20241008153232.YwZfzF0r@linutronix.de> <87wmihdh3u.fsf@oracle.com>
- <20241009062019.1FJYnQL1@linutronix.de>
- <20241009080202.GJ17263@noisy.programming.kicks-ass.net>
- <20241009100133.2569e2a7@gandalf.local.home> <87h69lqbk0.ffs@tglx>
- <20241009164355.1ca1d3d3@gandalf.local.home> <87ed4pq953.ffs@tglx>
-In-Reply-To: <87ed4pq953.ffs@tglx>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1728556002; c=relaxed/simple;
+	bh=pT4X5NIIqRyYvomMIPc9xAQxol7NIw83QUZsWL2HaU8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QN0udxNLlcpYVn8i6LlFHcEJmn3mwAKTqzWf210SDmnJTZU/QVdHpIILn0nIr27OfVFQ9Mru7J8b/kHeq+Ov8Zr0w1B64u2ZWEY42EauGR1ItU911yq17NDC6GiIEJoz5UL/gprGkVXx0lR8sMxhnWowPIZnR9sBfodD6dYKXUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPQmS26NNz6L7Cb;
+	Thu, 10 Oct 2024 18:22:16 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id E58321400D9;
+	Thu, 10 Oct 2024 18:26:36 +0800 (CST)
+Received: from china (10.200.201.82) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 12:26:31 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: Gur Stavi <gur.stavi@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+	<shuah@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	<linux-kselftest@vger.kernel.org>
+Subject: [PATCH net-next v03 0/3] net: af_packet: allow joining a fanout when link is down
+Date: Thu, 10 Oct 2024 13:25:11 +0300
+Message-ID: <cover.1728555449.git.gur.stavi@huawei.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-...
-> And once all the problems with LAZY are sorted then this cond_resched()
-> line just goes away and the loop looks like this:
->=20
->     while ($cond) {
->           spin_lock(L);
->           do_stuff();
->           spin_unlock(L);
->     }
+PACKET socket can retain its fanout membership through link down and up
+and leave a fanout while closed regardless of link state.
+However, socket was forbidden from joining a fanout while it was not
+RUNNING.
 
-The problem with that pattern is the cost of the atomics.
-Thay can easily be significant especially if there are
-a lot of iterations and do_stuff() is cheap;
+This scenario was identified while studying DPDK pmd_af_packet_drv.
+Since sockets are only created during initialization, there is no reason
+to fail the initialization if a single link is temporarily down.
 
-If $cond needs the lock, the code is really:
-=09spin_lock(L);
-=09while ($cond) {
-=09=09do_stuff();
-=09=09spin_unlock(L);
-=09=09spin_lock(L);
-=09}
-=09spin_unlock(L);
-which make it even more obvious that you need a cheap
-test to optimise away the unlock/lock pair.
+This patch allows PACKET socket to join a fanout while not RUNNING.
 
-Perhaps it could be wrapped inside a spin_relax(L)?
+Selftest psock_fanout is extended to test this "fanout while link down"
+scenario.
 
-=09David
+Selftest psock_fanout is also extended to test fanout create/join by
+socket that did not bind or specified a protocol, which carries an
+implicit bind.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+This is the only test that was performed.
+
+Changes:
+
+V03:
+* psock_fanout: add test for joining fanout with unbound socket.
+* Test that socket can receive packets before adding it to a fanout match.
+  This is kind of replaces the RUNNING test that was removed.
+* Initialize po->ifindex in packet_create. To -1 if no protocol is specified
+  and add an explicit initialization to 0 if protocol is specified.
+* Refactor relevant code in fanout_add within bind_lock, as a sequence of
+  if {} else if {}, in order to reduce indentation of nested if statements and
+  provide specific error codes.
+
+V02: https://lore.kernel.org/netdev/cover.1728382839.git.gur.stavi@huawei.com
+* psock_fanout: use explicit loopback up/down instead of toggle.
+* psock_fanout: don't try to restore loopback state on failure.
+* Rephrase commit message about "leaving a fanout".
+
+V01: https://lore.kernel.org/netdev/cover.1728303615.git.gur.stavi@huawei.com/
+
+Gur Stavi (3):
+  af_packet: allow fanout_add when socket is not RUNNING
+  selftests: net/psock_fanout: socket joins fanout when link is down
+  selftests: net/psock_fanout: unbound socket fanout
+
+ net/packet/af_packet.c                     | 35 ++++++----
+ tools/testing/selftests/net/psock_fanout.c | 78 +++++++++++++++++++++-
+ 2 files changed, 96 insertions(+), 17 deletions(-)
+
+
+base-commit: 36efaca9cb28a893cad98f0448c39a8b698859e2
+-- 
+2.45.2
 
 
