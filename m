@@ -1,45 +1,71 @@
-Return-Path: <linux-kernel+bounces-358195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A967D997B48
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:31:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76203997B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F2D2860CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:31:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE17B227CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDB8191478;
-	Thu, 10 Oct 2024 03:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B24A191F81;
+	Thu, 10 Oct 2024 03:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fDcQIfq4"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FuGyOqjb"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE287EADB;
-	Thu, 10 Oct 2024 03:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2CCEADB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728531084; cv=none; b=b5k+LWOYbMJr32rEqG+Q60o5iQqTiUq2IZitCI7HvsE4yzKBE7aIRWQioUKz9JRvYX8dbvanaBX4vSKU2CEqPTtZL/DEY68LNWnCpzNF9j6ZQ6VPdZTspbDT5/c7TzNncY8fi/0q9Y61+WZxEYIsvG2ba3PNycgz1vAWKsB7ZGs=
+	t=1728531124; cv=none; b=lzeIux/MSxTQWjP9LP8HCLETJ4aE3FhjiUlFjtko/CP6T1aDC+oBhL/wjAH4n0t5D/jekduraK08tCuys9Dxw72m5f51gn2d0/00d9I5RqhxoKUvvyEg2bDvxMKONONVQfIbh/CYrDFG+q+uD7OvicCh4p3MN27/hMGT9hxSmkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728531084; c=relaxed/simple;
-	bh=lKlY6LrzcbOuR5HpOg7+tmkpr/RbcYJrHU7j49Hg9as=;
+	s=arc-20240116; t=1728531124; c=relaxed/simple;
+	bh=+rKsWQlC/9foTiupKbQYmt4owVMp3eooARZcLkCwRH8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nhfTqCiWHE+OrV78ZSdPq7NtW5gamVUoADBA7W4CkplX2rKNeB2gfxme/Ez9FJJsKumgUSc4Ia4+j4Mqq0M0okxngxEhxxtvkG8aUWLS+pRknfzBsNMupeI4KWDGUezE/YVRNbJKaThE+HDHmpD/Mz6aUeBhgrP3dd63WG3iw+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fDcQIfq4; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728531074; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=wvKYRrPMNqDfmQ/O3t8Xbz15qAUDwoPYqCFME5Mo35Q=;
-	b=fDcQIfq45L3wEK7lpzXP/Tj3QeNzcSv90fO4bF3gIijrU9usEzn81XjH89V/IxBsy0f6rvRXnmbwEAS3KSDrBHHvT975r9j53fPErLxskEVogBVot6nViBmJj20WDwM9YKYfQx3SoYA3Wjb3y8ViYUxXYIYClQ6Xl6Fq9pCICgs=
-Received: from 30.221.129.194(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGkt5uu_1728531072)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Oct 2024 11:31:13 +0800
-Message-ID: <15a74197-9b84-4d73-a770-8bfc2fde7742@linux.alibaba.com>
-Date: Thu, 10 Oct 2024 11:31:12 +0800
+	 In-Reply-To:Content-Type; b=r0tA7lziE1sBW4ppanWG0m7ZoAAFKD10AAvbNQY1EuQviZ+ylYTBMoGqSaykYXDbTWnd7xC3yJuQJpgr5l9uRpPHhfhO11XgC/1eHNWK+Sa9GP9aEscHq/Cqd1soNkQZSrPe8xs+IiZZl8dOsMv+NohHVWupXopbvTBcesuQ0Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FuGyOqjb; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so310521a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 20:32:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1728531122; x=1729135922; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=FjZ6mbxujCYVMKpD16K8ip+pq8xVGdkNv9oHtyqdf/U=;
+        b=FuGyOqjbMrz5QidYQUYYG6J5oMkeCSU508CZu0mO4uPocCgTHYmsusnCtuy0eQ0V/H
+         H/hUaCDRj0fXtIo9yOYrJb8P4HR9Jp9ss1XEaodMGhHgzeHEYfUaJSj7GoM2GEszIgkg
+         i+avNhqczyp7ucC6EeH3zDpc3CgEa9Eqk24qQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728531122; x=1729135922;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FjZ6mbxujCYVMKpD16K8ip+pq8xVGdkNv9oHtyqdf/U=;
+        b=xDeRLUQSmw+o/XwLqW7k8O2Xt9lh/mnLvkxJlM4ycNpOOR3/yNmEOEL7s6Oi+YC2Cp
+         Ar/pVthGQW3nrdNR4Q8S7AFsVx22D7MrNmaJAukQrQdyo+Js1bGnQ08fJQwDqyefUGnk
+         HCa8QYE8+q7iGSwgqI4aCb08eDsflQlq7ykQ1oOZ1D8Uwgj32L5usjf8tF+Js1ynsQ56
+         9nUDvbGGeJBnuxn1j4eFH/SDt1JN57kXNVbwCQMUcHYu2NHThKSlOnGyQrW3iecxCX4P
+         fZdQXXw8ZaFTLK0r1rmHR0rOv4VsgRD0DM8fGda9G7ANxqnhh8nQb15iNXDnvcfUKTzq
+         0ghg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAFKI4Hhlhx41xFTyjwlK3Nnw4IlKS1saWQrfDUSn4QzdR6WusuMJFP52pwKUbiwTw4bbRXaaeguPSSwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqkmMZoka+4OXJuAHimV9hz5NZ3HgVIN775UzVhgdYRJrxrV5l
+	K+dMLAlS6w4CuGhXSWgGw9q/SpKn9MFISlZr00vyOAFfKNLF5enwrWJuv05lBA==
+X-Google-Smtp-Source: AGHT+IE5vYxfUpaLpcmrVzzEv1OTQAEkV0E1yEnFjCuxChrickZfPC0nDMTBzza9z6O19DmWeKECBA==
+X-Received: by 2002:a05:6a20:c797:b0:1d8:ad79:e096 with SMTP id adf61e73a8af0-1d8ad79f5b8mr3081677637.32.1728531122210;
+        Wed, 09 Oct 2024 20:32:02 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0a617sm157983b3a.192.2024.10.09.20.32.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2024 20:32:01 -0700 (PDT)
+Message-ID: <6e633389-c6bf-41a3-99ee-1cf07e24a6a4@broadcom.com>
+Date: Wed, 9 Oct 2024 20:32:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,101 +73,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] netfs/cachefiles: Some bugfixes
-To: Zizhi Wo <wozizhi@huawei.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org, brauner@kernel.org
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, libaokun1@huawei.com, yangerkun@huawei.com,
- houtao1@huawei.com, yukuai3@huawei.com
-References: <20240821024301.1058918-1-wozizhi@huawei.com>
- <827d5f2e-d6a7-43ca-8034-5e2508d89f22@huawei.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <827d5f2e-d6a7-43ca-8034-5e2508d89f22@huawei.com>
+Subject: Re: [PATCH] net: bgmac: use devm for register_netdev
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241006013937.948364-1-rosenp@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241006013937.948364-1-rosenp@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Zizhi,
 
-On 2024/10/10 11:08, Zizhi Wo wrote:
-> Hi!
-> 
-> This patchset involves some general cachefiles workflows and the on-
-> demand loading process. For example, the eighth patch fixes a memory
-> ordering issue in cachefiles, and the fifth patch includes some cleanup.
-> These all related to changes in the general cachefiles workflow, and I
-> think these deserve some attention.
-> 
-> Additionally, although the current EROFS on-demand loading mode based on
-> cachefiles interaction might be considered for switching to the fanotify
-> mode in the future, I believe the code based on the current cachefiles
-> on-demand loading mode still requires maintenance. The first few patches
-> here are bugfixes specifically for that.
 
-Yes, I also agree with you.  I pinged David weeks ago, because many
-bugfixes are not only impacted to cachefiles on-demand feature but
-also generic cachefiles, hopefully they could be addressed upstream.
+On 10/5/2024 6:39 PM, Rosen Penev wrote:
+> Removes need to unregister in _remove.
+> 
+> Tested on ASUS RT-N16. No change in behavior.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-Thanks,
-Gao Xiang
-
-> 
-> Therefore, I would greatly appreciate it if anyone could take some time
-> to review these patches. So friendly ping.
-> 
-> Thanks,
-> Zizhi Wo
-> 
-> 
-> 在 2024/8/21 10:42, Zizhi Wo 写道:
->> Hi!
->>
->> We recently discovered some bugs through self-discovery and testing in
->> erofs ondemand loading mode, and this patchset is mainly used to fix
->> them. These patches are relatively simple changes, and I would be excited
->> to discuss them together with everyone. Below is a brief introduction to
->> each patch:
->>
->> Patch 1: Fix for wrong block_number calculated in ondemand write.
->>
->> Patch 2: Fix for wrong length return value in ondemand write.
->>
->> Patch 3: Fix missing position update in ondemand write, for scenarios
->> involving read-ahead, invoking the write syscall.
->>
->> Patch 4: Previously, the last redundant data was cleared during the umount
->> phase. This patch remove unnecessary data in advance.
->>
->> Patch 5: Code clean up for cachefiles_commit_tmpfile().
->>
->> Patch 6: Modify error return value in cachefiles_daemon_secctx().
->>
->> Patch 7: Fix object->file Null-pointer-dereference problem.
->>
->> Patch 8: Fix for memory out of order in fscache_create_volume().
->>
->>
->> Zizhi Wo (8):
->>    cachefiles: Fix incorrect block calculations in
->>      __cachefiles_prepare_write()
->>    cachefiles: Fix incorrect length return value in
->>      cachefiles_ondemand_fd_write_iter()
->>    cachefiles: Fix missing pos updates in
->>      cachefiles_ondemand_fd_write_iter()
->>    cachefiles: Clear invalid cache data in advance
->>    cachefiles: Clean up in cachefiles_commit_tmpfile()
->>    cachefiles: Modify inappropriate error return value in
->>      cachefiles_daemon_secctx()
->>    cachefiles: Fix NULL pointer dereference in object->file
->>    netfs/fscache: Add a memory barrier for FSCACHE_VOLUME_CREATING
->>
->>   fs/cachefiles/daemon.c    |  2 +-
->>   fs/cachefiles/interface.c |  3 +++
->>   fs/cachefiles/io.c        | 10 +++++-----
->>   fs/cachefiles/namei.c     | 23 +++++++++++++----------
->>   fs/cachefiles/ondemand.c  | 38 +++++++++++++++++++++++++++++---------
->>   fs/netfs/fscache_volume.c |  3 +--
->>   6 files changed, 52 insertions(+), 27 deletions(-)
->>
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
