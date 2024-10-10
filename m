@@ -1,249 +1,201 @@
-Return-Path: <linux-kernel+bounces-359718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DBC998F7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:11:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFEF998F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78EC1F24106
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEBDBB25EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A01CDA05;
-	Thu, 10 Oct 2024 18:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E3A1CEAC7;
+	Thu, 10 Oct 2024 18:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T0OIBMTD";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lN56mJ85"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKTsfTw2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EhLUcAjR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKTsfTw2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EhLUcAjR"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985CA1CEEA1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583840; cv=fail; b=L/BsZ71sR65l32oBW29UApZA+irO+oCTqi/fNTdUG9U1AA8W7Tjorm6JY2vImSZYnK6u1jjKEXybSiRRrWm6yDxuBC5zb/sZsKXQgADKTPU731hnpqfycBRJ0uevz3Veok0ggQ/BhGG5mCfcs7/+34aIzP3U5ldqWSjOIKv6liw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583840; c=relaxed/simple;
-	bh=1EUG0vR9DP3IQC7F9WArfJREOXgua4QevntDxiszUkc=;
-	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
-	 Content-Type:MIME-Version; b=onz/jbGD0dfRdQvkcPI1yxqbKC9trmdEtOQr8AJ6l0Y66lGCSbI8DhfTchv6Gup2J1SJ4eqDqKFBcZOGu8SJl//x4/RzeXsfONna/58/1UoVzhaxK5RS5X/qR3xpeqvSuvXYhvAHjgeqs1lSDqOax4y2AFh91pgm3HTHY64ei58=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T0OIBMTD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lN56mJ85; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AHtdUw008799;
-	Thu, 10 Oct 2024 18:10:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=WhcZxzQtaNbWiQptrM
-	yfESk43wdrpS/KBqABqFmttoo=; b=T0OIBMTDtEX7Occ5iMN38nVuyKbPLfaif4
-	UeiHaa8X5WcoQitxhLn4m2kfGVY7c0TQmmxSXfr2HGpJqeE3Dd7VEMZvyO3k14P2
-	vq8jlpD1xN/NmWMSCGdTccNGjLAYoJ+N6NM1szWRyWW0/bSyGBq79g/BJE5v00mt
-	i415NvrCd1pqmUcqoDueUq3nPzZ+57iHYdypV2YoJBLt6LgzXfQ9ZcAlOje9011+
-	Ja0lK4Rba+xkWGe5Ix7E43LWCP31imc4ibwkiuGUojQcuOhzQw3F7zZ9NRahRqPb
-	S+bTeGM4FiwjuVZSLsT1N92T15tJVBeGPiOWxi2r7aSTTSbU2FXQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42303ykd4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 18:10:11 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49AHItqu027716;
-	Thu, 10 Oct 2024 18:10:11 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2045.outbound.protection.outlook.com [104.47.55.45])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uwae361-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 18:10:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d7dcAAeka0m8zh9nq2uBobnLCj7wZ2QieXUy5IPD/YpJ1y2zvPCTXnn6ewlt78sLxCMASCIyUSjQJqfoY+mjkeN4BpCmr2pftYbnbgWvJ4AQdQpmAanXkkWLIUyKST9HfgrYPwcbrahR/JL/livDpPwviNbYFA9zC39toFBhnbYFovixEKTL6hYg5dEwH2XXofDzXYlAwgrynNFYiMh3StNRrGYYr6i3DuVE0GGAo0eL3bSVZMcPocds9uggJcQDQzb6IbaX4wLrbItKvmuSaEzK6fIxpsppw/iyGlbwTd3uCv5jAPjwVCcMk7tgBIXQV2tPBVZ7ga5DQ4bAzphQOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WhcZxzQtaNbWiQptrMyfESk43wdrpS/KBqABqFmttoo=;
- b=jrKpkun0M+cI9IgZsFZzw8vwtdI++7bbeorkECTOaaHntKRe9JxELt8gIdk7rQcGFDW7X6aj0joASh7gHAiodFo3zk9ClPGde3GAlsyfRetRkYYB24twTnAfdiTRv9DvwcFUAGXLwOhiAppYtWurch360z/Z9IVz9vHFehaRg4sB2aM2OEZ5migYc8pVK0iCZVmoauhUSq2uKkE8HuYBEwJU8V8jXHdBjmkayBgcXGC9WvZEVYHZpgtIlx57TDoC8oLFX13Kg8w/4NQ6XeFAQUsuNztblFSKjrtWwMPRmKpwf6ilENLHdH3TOAHiGoiK4E9PDZhHr+D4QNKQH65hGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WhcZxzQtaNbWiQptrMyfESk43wdrpS/KBqABqFmttoo=;
- b=lN56mJ85itJRc8NiWerxDnUBozohkZZroD4UcttoQIwCn/2yxnIlQPchdMvJACDxJ0k/LBttGVfZ5f5F0SEGorgEqOwq0r/hxIvGMfcluGlQWCCJjF3OmyzSST82p1YXYWQvqqY8JfPif0WgOGOL8QDz+nZt+xNKLqiSgdINO/Q=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by DS0PR10MB7173.namprd10.prod.outlook.com (2603:10b6:8:dc::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 18:10:08 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e%4]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
- 18:10:08 +0000
-References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
- <20241009165411.3426937-8-ankur.a.arora@oracle.com>
- <20241010072221.48wfFV7I@linutronix.de>
-User-agent: mu4e 1.4.10; emacs 27.2
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, paulmck@kernel.org,
-        mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-        efault@gmx.de, sshegde@linux.ibm.com
-Subject: Re: [PATCH 7/7] powerpc: add support for PREEMPT_LAZY
-In-reply-to: <20241010072221.48wfFV7I@linutronix.de>
-Date: Thu, 10 Oct 2024 11:10:06 -0700
-Message-ID: <87jzef7rsx.fsf@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0111.namprd04.prod.outlook.com
- (2603:10b6:303:83::26) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328D91CDA05;
+	Thu, 10 Oct 2024 18:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728583835; cv=none; b=hIOI0H4cwjnwLCyFlASjM2vpzABrvMkb1lTr/ct0QTulqTiMLQO/b9G/PF0p4UD/RF6Cs/1D6JaLT9HrE8Edmms5G+eoJgAu+YYldOLTwZax9Uha3UHrCJD95kcFGok+Vg6GTjz1CS8KlJOIyoHeuJVfR3hVB2Sn5IHd9mxRyeU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728583835; c=relaxed/simple;
+	bh=WScZ9gq/uZQUaKbsgB0PN31XOdwUs4XfUekePpZN2fY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgbozSvMSJS4/jzXTUbMX37tQDZyAhr38FeQ8PQ4DZ0QsJEwpcsvjzYnLShgy+bKBQXcNDotL9IiTf++ls2fqKhKuNP9ZrOxh7DK4xkkdl5f9xlWU6ZNnUxF+533trLfe2K0DLIcRfnV9MDmoFpyl+BQ8rarTgnZWoHfDG251OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKTsfTw2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EhLUcAjR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKTsfTw2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EhLUcAjR; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 412711F7CA;
+	Thu, 10 Oct 2024 18:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728583831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
+	b=qKTsfTw2UaJ520My6r5itapGVInZVHvK+oVNFp8Zb8u3v8oMnYla61bDwT1QFqjHK6WXYB
+	DDWlD1Tuq0/wDgZ5je0bT96exJRVtFXgJ2TssraeUS1Mxq75p8ljLtciHEUfkulI108WeG
+	PjOzYSgbqPVXKzG6OrLYMJhID3AiOK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728583831;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
+	b=EhLUcAjRDuCDdHdeJBGdr/MNWvzfDvogbwbNVD+pItwHzw3FOO08IFQvasysE4TfaL8kLv
+	IDov1PixDNtUu+Ag==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728583831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
+	b=qKTsfTw2UaJ520My6r5itapGVInZVHvK+oVNFp8Zb8u3v8oMnYla61bDwT1QFqjHK6WXYB
+	DDWlD1Tuq0/wDgZ5je0bT96exJRVtFXgJ2TssraeUS1Mxq75p8ljLtciHEUfkulI108WeG
+	PjOzYSgbqPVXKzG6OrLYMJhID3AiOK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728583831;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycKanNyFQrEkpBWNHjK8KxZCy6yCD8panKmPRnODdpI=;
+	b=EhLUcAjRDuCDdHdeJBGdr/MNWvzfDvogbwbNVD+pItwHzw3FOO08IFQvasysE4TfaL8kLv
+	IDov1PixDNtUu+Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 050A71370C;
+	Thu, 10 Oct 2024 18:10:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id J2PYNpYYCGdyLAAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 18:10:30 +0000
+Date: Thu, 10 Oct 2024 14:10:25 -0400
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
+Message-ID: <kplkze6blu5pmojn6ikv65qdsccyuxg4yexgkrmldv5stn2mr4@w6zj7ug63f3f>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+ <ZwCk3eROTMDsZql1@casper.infradead.org>
+ <20241007174758.GE21836@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS0PR10MB7173:EE_
-X-MS-Office365-Filtering-Correlation-Id: b03cbd34-7eb9-42cd-94a0-08dce956c604
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7agNGuuhC99IOuI4j0BQ2N5ZhlzjuC+UF0y9j28r5LfaZ1kOSnk7zh4K32jW?=
- =?us-ascii?Q?gG5SrJIfYdOoB/nZOzs52KoTKxwpKSfqYf4HG6zWY9vZAyftT1KIxjyKXmSg?=
- =?us-ascii?Q?soJuk5/GCIKJ2GF5i3G4KJsstchnT4VpkUvvuFCpMtfW/bV78SL16DDKnchW?=
- =?us-ascii?Q?/n+w3+Z3LZUXssn6ZYWO2woam38no/ihIlE/IdS4DOQ9ytdq7CPV1FeVd64H?=
- =?us-ascii?Q?L3oq3TSGGZvvz33gButXzIgyWVqnFl4akxgD8cekw/J+4q3cn5Nau659yDaV?=
- =?us-ascii?Q?/WqaaNVeyQDrOpe79jeHi6JzM7iFWv9qw4Rbh3M/PD+IupEjoEVT5ebPMVOW?=
- =?us-ascii?Q?fXZycK3fqUjflGEy6c0sHYFwxXanRcBbQsza/vbIaMaMAUhHh/Qm5OF189v6?=
- =?us-ascii?Q?bOxSfAauo3Bi/rr6V1eczpwfd9GBJ0vOsXQ36ktB2VzJj1moqH/4GdyhIqlZ?=
- =?us-ascii?Q?zAiefkMZvL1O7JECoVTfYn4wY1MbF8jIiqAe1dRU3Li4rwi2RdR+yofKQKRx?=
- =?us-ascii?Q?rbb08rX92+XiLso1V1ECrDi/t293HOFFh1TiKpgdDKxXQH8kX3pKMd6tI6Fo?=
- =?us-ascii?Q?AnQDVa2AoO4PzHyOpQbFG8WBDQIv+lIDMOnfVscn8Wi+9GQdKLPMkfW/3olc?=
- =?us-ascii?Q?QOPFiv7vCrcAictVe+G5ztp7UWuYUeZVyeeK9zkkEUmltvumqF8+NI7wTIiU?=
- =?us-ascii?Q?ipBCzPwB7Ot+P4vPH/1HejgS6yJYQ1lGcUSBzGSJMI0IKbPLGBJT9M5Gi7oF?=
- =?us-ascii?Q?3oaYCJVqeWcifKeyeDTmVGAx8z9kpre1k9biRYMQlFKHa/PchtHsS5vuNN82?=
- =?us-ascii?Q?B7c2EaokHSOW9g07E72Zmo1r8cltFF40ae8M+XANVMC203f3k0DcEAzyNfuq?=
- =?us-ascii?Q?t8zjdWr32MECcN7Uerg/qVWi3MutQErxreKVanI1vOri8MAiYm5aa/8RS2L4?=
- =?us-ascii?Q?OFRiKPNyGGaj+oZN5ttssaCLT5/e1FvADru7Tc3uIJBRMngtPVDEuEnBvOC/?=
- =?us-ascii?Q?jdaLed+4Zx1D25smMzvtBwvTbYnqRFux62BsBqX1FQP5XmP3c0RczAurDs8N?=
- =?us-ascii?Q?VbrPdu38ToDa4ulbmo7j8OWHSqUVKkD7F6rHSC9MJpwVmD+1fXIN1keA4HDu?=
- =?us-ascii?Q?yQdnum7PfDnlGvCxejRBdFpjZxWRq0S1F3xk6fy+tkL0MGPs3YyzY745hQhA?=
- =?us-ascii?Q?RQbRg0SA0VYNw0s5+FivFR6Q5TBFQ9pufZ1ujLIW1OXcyGCLQ73K8huoXiAt?=
- =?us-ascii?Q?BbxvvYwqRSLDHv0642CEhV9IedVk67qyS1CR9hWIfQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Fl/Iik1mRWFbwyaBdkngojja89eyJoVDFmCJgYf3yVNCxE8qbaS4XEE20eRO?=
- =?us-ascii?Q?kZsuy66cVwJXGlqVUt3G+tmv1DfzpkvGC2BglZz13qQmoL6TuJGEARuq8bkH?=
- =?us-ascii?Q?nYj0DWmODTtQnHhIR3+Tj5nVgdgFOcKrJ6JrWM22ZNWC4p3nvCZs3VvKQ5cV?=
- =?us-ascii?Q?9uQSG1+tJVLEharQZWzU630HXki6MHNOCXPAzr9R8u3FxgpUejdOGBvsPN6y?=
- =?us-ascii?Q?zEgt6svwVdAINVaZI5G3JNtyV1jbgc3Q9k7QNn1i2sWpzOd4wu+3VuQNU6It?=
- =?us-ascii?Q?zrhIEP2s0Oqz1GbkbTg4pzog9KjOEdK4By0XI204LL0corPKSmup/ja5c6sc?=
- =?us-ascii?Q?pPDB+U+lFsVNya9j/wvoCJSb4xptITks7/bL3p1rKB/BlpZEiHWSJWXfXWTf?=
- =?us-ascii?Q?7ufK3jeozhL7nDf3c66rpLnn4USDzgIQUwrCnRF1m1zZJ5uEqG9kiieFsGxf?=
- =?us-ascii?Q?G4fla5ENkKbRQRthLKSv3sXpFdCrKuX5dIWTJF8mD5X4GGVaI3FFOGDuB1Cg?=
- =?us-ascii?Q?aDDDdb4lpv0w8n6MyuhJcrB5B/is9wx7ET3QI9t+sxoPR7B65p0wd/FevAQ7?=
- =?us-ascii?Q?Ii3lovJdbHYOlJ0XAO6JLOZocz/oQYlZ53c4IvJr/yVQE5C3FJ9z0ySPvx6w?=
- =?us-ascii?Q?esEL2wpG6TSQKmw7pqaiws2JRhpqF39LS3vA2/CawD5a2flEJmD+h5OabsLg?=
- =?us-ascii?Q?P6TbAkbipWt/mQLYVVuNKwJXRX+P1zqpLP55Rq+05IqhL/jJ7BODcfvDuF+B?=
- =?us-ascii?Q?DWSaidFZ+D4rTeTNMNJJViRSkCPbE/DY1Z4S8NzWK9rUSYblaix13SkLY8r0?=
- =?us-ascii?Q?BPncCd5JjXEdZXiCuCDgmIU1D4H8h3e2ITC2Dmx3J98D3uQC0ez8ts4V2LNL?=
- =?us-ascii?Q?BBdFovYnqBbJX7NMpszEKH6tdd4tJfM7EMXwKJLHY3XRKIggkNUMtvBnFVKy?=
- =?us-ascii?Q?JSeQMVt9VtCGGTjrhZXrSRHZnRAmCfSBz1rg/oSa4OyKoc+QO64l71TT9f5j?=
- =?us-ascii?Q?9STHcPMebzbOTjA4GymoLRZVDGEXDqCIcwzmR1KJD2zt+F8xnqkfaEmh93Wf?=
- =?us-ascii?Q?Shud5grghDL0kvBcCiJ3CQ6TpEhouL5kImK438NAY4cRXO2Zahlnk6ktWHY2?=
- =?us-ascii?Q?Ar6BcPCW9jfGSB8LeAhs511I0yFEc56UNwcJZpiN2Ng2+pscIZ0/Wp6NZ41B?=
- =?us-ascii?Q?RQJe8cd9Bteijn0O3tFA7brudklJOaZ+FB024RMA4Ysi1giPLttjVAkS3Yak?=
- =?us-ascii?Q?qBGupLLhJfpCR0T532pQ1/7v+iB2+dgctySalpMfCipV6sPA1WGHORCI3n5U?=
- =?us-ascii?Q?OTUkplMHFlEd6rYCDZFaBr1Nx/WgiVpeKbw4Jex+FJDM1PgsLNS2OiB6hvCg?=
- =?us-ascii?Q?eQ5pkiN5C2QvIa4+UqGJBf0UxBHdv0tL/iNfqqhwCU9d3KUwDQQncWkib0OF?=
- =?us-ascii?Q?LLuGnSpFiGG/7vsBIRHyUE0cu50MfCVNb5kRlc1KttcJ4TXjlyyYem0LYh/Z?=
- =?us-ascii?Q?Sh7IrG+yf97aPlznGLGGpF2CF9dvplrJsakwlmzzAxLHgKEsLY6dCnRT4aer?=
- =?us-ascii?Q?7CzigkaRGuU11DivntNdbXahyCT23rF2xOq9CDMZ?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	1LDZ4Q37JmKgixH25pnqr0bB3xm21HXEfukxoBUckD1ZLC2wm/7yP2GFTdktxzsU+3wcjH9LMusqnyTyks1nRAx5eznoFfmNVa4dWRbSMH6DBETo4PBA5mvejXFYuIyp8owvgafKzRifhipGmgfBBFdelfJGbXbNGwV0cuQanw++m6aVgGObulgep0322ksQgCZPs0tKk+BItfd2C71VBzZYVO+1TquCS+ZmuISjuXdEhjZnRL+5H3NCFR7gqYv7UymP5bBEHptZYVrn8K1hV0W0SGYABLg2KGhFrtHH7dOMncvSf4TuS44wTOsdQ9k6RF7a1/ElL4Rm8vEMnaP5M0XV052jh9xtTe84rVfCTrywWYM27OxpbRbMMrYgiAS51dQg6Oy3zQ/E9FGOZldmoBmcI1UNk0rauMx0HvnLVoaxmLOuvD4BrrPBap0XlLQS0QL30wqLE1L9OA9r5RuYuk9J6h8gn+VU12o/oDe2rtuoLz4pg9VwRrjF5CbwktKaBAh+L/TLuuOrP8lWwcvjJ/JWQQFlvnzN3y8O+97gbuCwDN/ZsiQPfOv1wuHJAfA05DRlKJI3fO1lisOjJz+L0Gg1dOsjcKuWby7KpnFMXBg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b03cbd34-7eb9-42cd-94a0-08dce956c604
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 18:10:07.9825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +a7A///mO1lh18SHueWN4l8D4Fd0ggSmtsIIvP9Ce9NFcvI6XFbaS7mcrEdtCgD+pqqb/MZQcf9OxEiBQisKR4Zvja9sf6JtMEDtBDKK1W4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7173
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_13,2024-10-10_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410100120
-X-Proofpoint-ORIG-GUID: nLtCtLQQH0Qco_Ve41Xp4xM9_leFMigq
-X-Proofpoint-GUID: nLtCtLQQH0Qco_Ve41Xp4xM9_leFMigq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007174758.GE21836@frogsfrogsfrogs>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_THREE(0.00)[4]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
+On 10:47 07/10, Darrick J. Wong wrote:
+> On Sat, Oct 05, 2024 at 03:30:53AM +0100, Matthew Wilcox wrote:
+> > On Fri, Oct 04, 2024 at 04:04:33PM -0400, Goldwyn Rodrigues wrote:
+> > > Introduce read_inline() function hook for reading inline extents. This
+> > > is performed for filesystems such as btrfs which may compress the data
+> > > in the inline extents.
+> 
+> Why don't you set iomap->inline_data to the uncompressed buffer, let
+> readahead copy it to the pagecache, and free it in ->iomap_end?
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+This will increase the number of copies. BTRFS uncompresses directly
+into pagecache. Yes, this is an option but at the cost of efficiency.
 
-> On 2024-10-09 09:54:11 [-0700], Ankur Arora wrote:
->> From: Shrikanth Hegde <sshegde@linux.ibm.com>
->>
->> Add PowerPC arch support for PREEMPT_LAZY by defining LAZY bits.
->>
->> Since PowerPC doesn't use generic exit to functions, check for
->> NEED_RESCHED_LAZY when exiting to user or to the kernel from
->> interrupt routines.
->>
->> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
->> [ Changed TIF_NEED_RESCHED_LAZY to now be defined unconditionally. ]
->> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
->> ---
->>  arch/powerpc/Kconfig                   | 1 +
->>  arch/powerpc/include/asm/thread_info.h | 5 ++++-
->>  arch/powerpc/kernel/interrupt.c        | 5 +++--
->>  3 files changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index 8094a01974cc..593a1d60d443 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -270,6 +270,7 @@ config PPC
->>  	select HAVE_PERF_REGS
->>  	select HAVE_PERF_USER_STACK_DUMP
->>  	select HAVE_RETHOOK			if KPROBES
->> +	select ARCH_HAS_PREEMPT_LAZY
->>  	select HAVE_REGS_AND_STACK_ACCESS_API
->>  	select HAVE_RELIABLE_STACKTRACE
->>  	select HAVE_RSEQ
->
-> I would move this up to the ARCH_HAS_ block.
+> 
+> > This feels like an attempt to work around "iomap doesn't support
+> > compressed extents" by keeping the decompression in the filesystem,
+> > instead of extending iomap to support compressed extents itself.
+> > I'd certainly prefer iomap to support compressed extents, but maybe I'm
+> > in a minority here.
+> 
+> I'm not an expert on fs compression, but I get the impression that most
+> filesystems handle reads by allocating some folios, reading off the disk
+> into those folios, and decompressing into the pagecache folios.  It
+> might be kind of amusing to try to hoist that into the vfs/iomap at some
+> point, but I think the next problem you'd run into is that fscrypt has
+> similar requirements, since it's also a data transformation step.
+> fsverity I think is less complicated because it only needs to read the
+> pagecache contents at the very end to check it against the merkle tree.
+> 
+> That, I think, is why this btrfs iomap port want to override submit_bio,
+> right?  So that it can allocate a separate set of folios, create a
+> second bio around that, submit the second bio, decode what it read off
+> the disk into the folios of the first bio, then "complete" the first bio
+> so that iomap only has to update the pagecache state and doesn't have to
+> know about the encoding magic?
 
-Makes sense.
+Yes, but that is not the only reason. BTRFS also calculates and checks
+block checksums for data read during bio completions.
 
->> diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
->> index 6ebca2996f18..ae7793dae763 100644
->> --- a/arch/powerpc/include/asm/thread_info.h
->> +++ b/arch/powerpc/include/asm/thread_info.h
->> @@ -117,11 +117,14 @@ void arch_setup_new_exec(void);
->>  #endif
->>  #define TIF_POLLING_NRFLAG	19	/* true if poll_idle() is polling TIF_NEED_RESCHED */
->>  #define TIF_32BIT		20	/* 32 bit binary */
->> +#define TIF_NEED_RESCHED_LAZY	21	/* Lazy rescheduling */
->
-> I don't see any of the bits being used in assembly anymore.
-> If you group the _TIF_USER_WORK_MASK bits it a single 16 bit block then
-> the compiler could issue a single andi.
+> 
+> And then, having established that beachhead, porting btrfs fscrypt is
+> a simple matter of adding more transformation steps to the ioend
+> processing of the second bio (aka the one that actually calls the disk),
+> right?  And I think all that processing stuff is more or less already in
+> place for the existing read path, so it should be trivial (ha!) to
+> call it in an iomap context instead of straight from btrfs.
+> iomap_folio_state notwithstanding, of course.
+> 
+> Hmm.  I'll have to give some thought to what would the ideal iomap data
+> transformation pipeline look like?
 
-I don't know power asm at all, but this seems like a good idea.
+The order of transformation would make all the difference, and I am not
+sure if everyone involved can come to a conclusion that all
+transformations should be done in a particular decided order.
 
-Shrikanth?
+FWIW, checksums are performed on what is read/written on disk. So
+for writes, compression happens before checksums.
 
---
-ankur
+> 
+> Though I already have a sneaking suspicion that will morph into "If I
+> wanted to add {crypt,verity,compression} to xfs how would I do that?" ->
+> "How would I design a pipeine to handle all three to avoid bouncing
+> pages between workqueue threads like ext4 does?" -> "Oh gosh now I have
+> a totally different design than any of the existing implementations." ->
+> "Well, crumbs. :("
+> 
+> I'll start that by asking: Hey btrfs developers, what do you like and
+> hate about the current way that btrfs handles fscrypt, compression, and
+> fsverity?  Assuming that you can set all three on a file, right?
+
+-- 
+Goldwyn
 
