@@ -1,91 +1,105 @@
-Return-Path: <linux-kernel+bounces-359691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BDF5998F20
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBD1998F21
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A46928A0BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9128C28A2CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182FD19CD1D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9626219D083;
 	Thu, 10 Oct 2024 17:59:32 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872D419C57D;
-	Thu, 10 Oct 2024 17:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65A81CBEA7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583171; cv=none; b=NuTQEdwKFwh3Yprl+2M2mlxwO3wCu8d3p+uzkw2uk7ZVC9Fy6WZkcIIq5Fao7R6K+9CqgjnHzRItF+btaiT92VvFFIe7XcrxkBiuaOd5BafYmMSP9XaNWU2ZMGCqm17ePKqzEuChDaI35qUlCVeaPVNVuOOr+UQwgLh6CtnX4bU=
+	t=1728583172; cv=none; b=Z/rObURx51VKA1AdhX4tyqgn+rBJVovbALZFIfQvaV5m92iDot86KshxKG+L3DeOlN3jLsYH6txrLQt7FGX6UQJw5oVmKKQyrgG4QFkPIiE5tfpptEGpb3TtWWD1ODvspSt9twb0QucwbUC3AYleoS9EBdqBadhiuvwRy03emxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583171; c=relaxed/simple;
-	bh=qfykBgfbtJOYVMCMJ6rPDAFl8steKNqmHZFQMQv+e9Y=;
+	s=arc-20240116; t=1728583172; c=relaxed/simple;
+	bh=RlqVEm7hlQ7c1Xw9SH/CMR5gdNLZRgvV2Xm8S+4w9cc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tZmNtWCmaVrXbz0E5pf6Hq1teB19UUdEEdo0wfTDxVT05fm91fKLsdH6fH2uG/LkchhVo2+Za8gr+Ar7SdVIWk0btROCd7KdFdQuRPUtokRuKMj6rWTr2QVyJhos9SmPBWRaKq4psCMbtIiUssJGldS0GtfU95mMSVZEzGRM7jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1syxRd-0003Og-C8; Thu, 10 Oct 2024 19:59:25 +0200
-Date: Thu, 10 Oct 2024 19:59:25 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Florian Westphal <fw@strlen.de>, Richard Weinberger <richard@nod.at>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, kadlec@netfilter.org, pablo@netfilter.org,
-	rgb@redhat.com, upstream+net@sigma-star.at
-Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
-Message-ID: <20241010175925.GA11964@breakpoint.cc>
-References: <20241009203218.26329-1-richard@nod.at>
- <20241009213345.GC3714@breakpoint.cc>
- <CAHC9VhSFHQtg357WLoLrkN8wpPxDRmD_qA55NHOUEwFpE_pbrg@mail.gmail.com>
- <20241009223409.GE3714@breakpoint.cc>
- <CAHC9VhTC=KAXe6w9xTG_rY4zAnNvPv-brQ7cTYftcty866inCw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCUnmHTf535CXUJ9cTdx2KfVsi89tP/+Z6bJyXXukvXfxUM6T6RC9e8y+NEiWe2S5Q5XlHivLZYdKaRy3eQ7ASS2z1p+RTNLeijK33Qcgczip/5txYXNSXL4/Pn/SDG3mgfG2SLZZvgpjkuPkLq9imKQ7sWyvNBAAPm0BQT+lTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6dbb24ee2ebso14685457b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:59:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728583170; x=1729187970;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RlqVEm7hlQ7c1Xw9SH/CMR5gdNLZRgvV2Xm8S+4w9cc=;
+        b=Wbd4i/UFNCJti+z3laOYXmUQURQXX/wqt+uxV5FS/JPJpJqRN9aeEw+qY9QFke+Gob
+         Hlxa9nb3oDm18i7qhwhJ+/ksMwoxocyhFy/VxBbyls/VFWRMcqHd5axiG3Wr7FNGhZ18
+         hd7+vFlXWP0Za+f8sLcbGSvTLxcvlUacp5hWI+ChD8kKCzH+AneHrhk41uW8ihTIN7R6
+         32YO7V3d1ddHNOCQrd3d0j+hIeiGR19zz2oIvY51cYgapMgHshFA6qeTZR2mPgXqrvoZ
+         rMHNH9uhDqEfzd/1EK7j+tfdQgwoNamZHxWo8h/eCsDa8FLV3sOC2KWnCiSPNufUXoGf
+         nIqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Pu+6l/89xyjTl0UYBEfrTFKhe6XdC+4jRFE5j1/bwXcih43yKNgCZf7EHHBsYhufrYzt8qDTeCrCWxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHLoEe0grRnX1u5gSZKUhbs6MHksIgUF9Qu/eJO0FJaQmpgIaq
+	pZSsMVOuQ5hqCJILbGqFikbKY4AE7cKU5RcCf8oV0Y+7Y8d/KuqKx3nwJw==
+X-Google-Smtp-Source: AGHT+IE8sGUf8UIPdtWOz0Zt0mAyMT54y/HhHTp1i9gpw4d9tOPqGUWU+US7JZLp0K1XwYuWFtx6HQ==
+X-Received: by 2002:a05:690c:3082:b0:6e3:4190:ab45 with SMTP id 00721157ae682-6e343cbc0e9mr2033797b3.15.1728583169281;
+        Thu, 10 Oct 2024 10:59:29 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332bad8afsm2916797b3.59.2024.10.10.10.59.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 10:59:28 -0700 (PDT)
+Date: Thu, 10 Oct 2024 12:59:26 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: kernel-team@meta.com, linux-kernel@vger.kernel.org, sched-ext@meta.com
+Subject: Re: [PATCH 1/6] Revert "sched_ext: Use shorter slice while bypassing"
+Message-ID: <20241010175926.GA28209@maniforge>
+References: <20241009214411.681233-1-tj@kernel.org>
+ <20241009214411.681233-2-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J8HuaA2LTHU5Ag/W"
+Content-Disposition: inline
+In-Reply-To: <20241009214411.681233-2-tj@kernel.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+
+
+--J8HuaA2LTHU5Ag/W
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTC=KAXe6w9xTG_rY4zAnNvPv-brQ7cTYftcty866inCw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
 
-Paul Moore <paul@paul-moore.com> wrote:
-> Correct me if I'm wrong, but by using from_kXid(&init_user_ns, Xid) we
-> get the ID number that is correct for the init namespace, yes?  If so,
-> that's what we want as right now all of the audit records, filters,
-> etc. are intended to be set from the context of the initial namespace.
+On Wed, Oct 09, 2024 at 11:40:57AM -1000, Tejun Heo wrote:
+> This reverts commit 6f34d8d382d64e7d8e77f5a9ddfd06f4c04937b0.
+>=20
+> Slice length is ignored while bypassing and tasks are switched on every t=
+ick
+> and thus the patch does not make any difference. The perceived difference
+> was from test noise.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Seems to be the case, from_kuid() kdoc says
-'There is always a mapping into the initial user_namespace.'.
+Acked-by: David Vernet <void@manifault.com>
 
-I'm confused because of the various means of dealing with this:
-9847371a84b0 ("netfilter: Allow xt_owner in any user namespace")
+--J8HuaA2LTHU5Ag/W
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Does: make_kgid(net->user_ns, ... and also rejects rule-add if
-net->user_ns != current_user_ns().  As this is for matching userids,
-this makes sense to me, any userns will 'just work' for normal uid/gid
-matching.
+-----BEGIN PGP SIGNATURE-----
 
-a6c6796c7127 ("userns: Convert cls_flow to work with user namespaces enabled")
-Does: from_kuid(&init_user_ns, ... and rejects rule adds if sk_user_ns(NETLINK_CB(in_skb).ssk) != &init_user_ns)
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZwgV/gAKCRBZ5LhpZcTz
+ZKPVAQD2tmekeuF69Lm2YD51JbYkQLAX0dd/8Hrabsze2u5oogD8C7J1yvLLDBPV
+Ea56LXAXwEU3re4kAaUSxW7sZuuewgw=
+=w7LJ
+-----END PGP SIGNATURE-----
 
-Seems just a more conservative solution to the former one.
-
-8c6e2a941ae7 ("userns: Convert xt_LOG to print socket kuids and kgids as uids and gids")
-... which looks like the proposed xt_AUDIT change.
-
-As I do not know what the use case is for xt_AUDIT rules residing in
-another, possibly unprivileged network namespace not managed by root-root user,
-I can't say if its right, but it should do the right thing.
-
-Sorry for the noise.
+--J8HuaA2LTHU5Ag/W--
 
