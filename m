@@ -1,289 +1,174 @@
-Return-Path: <linux-kernel+bounces-360105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C335999476
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:28:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AAE99947A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2E81F246F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E31EBB220A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2020B1E3773;
-	Thu, 10 Oct 2024 21:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63BC1C9EBB;
+	Thu, 10 Oct 2024 21:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B54KG3J9"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IGD8/3X/"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFB51E2841
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 21:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1DB1BC077
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 21:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728595703; cv=none; b=ghybKYaax0v0+F5bwaQucA1omISitGtvhCxigZi9vXWOlZzK4nukJzj6qLH4pwaomNXJFCXWZAH/ZKvGsNmek31aF3nSuHvdpQ/tplnH2gykoMOOdxXolEXeV6XlK2ZZLuwMqI1RMfb2iyMnJEThO3UJKzYEFoAo82j2E6VZK+I=
+	t=1728595907; cv=none; b=BuovmvdRBlRUGAyVZTZJQYPfA2jth+klONX5D3GTiaq68WYKLZaNnXqN8MxhBcc2ZanTz/ci5Q4rkQIkjusfT+UUvcYpM4n2cvSE8H5NOtSx7i4FZFHZllGCPr9zUGZMvMf1KOcdYhR6Oh89SpuF533K43wCCGQR0kPGY6pfXMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728595703; c=relaxed/simple;
-	bh=psNcz1hzx4eVjeh0OKKrjZTxBlu4CJaYduRwBIFql8M=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JAomY34CMEJZ5npuQB+Qy5mN3ZaJPu+gXhft/kF7J0y4ioHR8gUpgDbZbDO7g/ZNQXLYOhk+N2AW064XZSxrup6SewKPt3FxVOcSqxakz5hOK8nG6ytygwP7TRxpI7WpScOQcbNwN1OAbZenp44duhgZuGAkXGGYiM62w2g5ifQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B54KG3J9; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1728595907; c=relaxed/simple;
+	bh=Yzqo2EvRl/hAMy9921B1F/vlHog+5QKQvX4eo6xSj5A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZvurH0D6fOjJs51iQnf/Olv9vAWehBHgXk0L+QLrrx/7m/GqHM8BE4lKNqAX3+s2eblM9vaHC8NCH747nUBgSvn/QP7n71Qtksu5ES8+oGrHB+ECi9j6UjmV+LLEcsPUjVAD1WR3uezai461jQIcjttShadYt4dUfQNJ4pmyTIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IGD8/3X/; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6dbbeee08f0so37246907b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:28:21 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e2d287f944so27167067b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:31:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728595701; x=1729200501; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QlhYD6q9NouOCiJ7DjFXx6k51jTyDvbLVUqRaotVSIs=;
-        b=B54KG3J9Une7vD7Vv0xeUE7bhI7vtYKkLyHpFN1kiJ2YVUs5dKU6HxlSdJsIwOYbvC
-         1plF0+UKMy9DnBGxqLXC0GVpkxv13CXU75zGtr/mnXbqonyK9L2mOQ9WphtY3NdnL8kP
-         dL3C67fLjm349LuvP1vJzu9riqfBGWUZLby33liVR8f7Iu5k//1JZU/qcJ+8ZoPjAmP3
-         jRwig7ujvZqoQNtURFRU9hBxBcoUZZ4sbZXd+gw03psfqpathBXTfBl5NWa1IgzC07DY
-         A8NhUtCZ+40+gG2sq4EqkbUZ/DIsQQzMljd/DeceG5dMebC5AbwibQl2Zk1BD05ptS3e
-         wxCQ==
+        d=google.com; s=20230601; t=1728595904; x=1729200704; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJHAgR8eOYnfYjnDH+Ke7REFFOpEvhduZdZs2oNUNrQ=;
+        b=IGD8/3X/ciWjjAl1QsnWRuxJc0PxewqEr4rcm/D3kShmy2R8Fbj6jFXYvgsWpzt5KC
+         xb1XV/BhDo/Ucj3PCHY3ApcBzbbiK1kKmsaW6gvq+D96EbdcO+sILsnNodrIqOEx2il7
+         hVbjD2QaO3TZ2GU/up4MviwEXlyXokRb7NqmVvwRghzGo0tTH8uROofnqhMjL4+ms584
+         0KpumhkQuIt8coBDgpG4oAfgLMO8kqJOXPNhrqIlVz86a7BH2WquD0wYhcsN2+wX0ywy
+         otAnzNs9PfkJbdi5zNUk3B9seNuKuxYQc13XOM8E9Juvgg8SfoiHe5hCu1s4oxjAI4tB
+         kfSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728595701; x=1729200501;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QlhYD6q9NouOCiJ7DjFXx6k51jTyDvbLVUqRaotVSIs=;
-        b=P/cyaFTPqmESLgwsPY7XBoMBMPXZxvhQl3Ne3VkqKiWk0dGz2MSJTls50zr09/PqfK
-         1n6cLycWz6Rj49Kd/uvU1WlXyq0NPOt85F1FGBJHzQ5tLgDp4RH7KJ0xWnNhKeTQmTth
-         Zmn+JV3MWl9C6PdUO+kNEkew7y7hTaMCvq8U//CnwbFOWvSKRL+u9H+ycaHdg/E2MZWv
-         vWzhfesCo/axhbIHf4ZPPA0jsr+qU7e9yK6UIGchkCA1wb3AskQy0ucbHC+fkXiaNw4H
-         m23SzqOSqegEcTNDAQwyjH/YMWDNUDPey4/a6s6ymHoNa4ACkh02jL8lMF7Gz1OUILur
-         ZIxQ==
-X-Gm-Message-State: AOJu0YyZAgx0BtVKq1HLJjybHNNbs6Teoamh8KrNKn92GhLT6sNwybCa
-	KWACBdMwHvW+3F6KmUhwfUSKA4yo3HpwiJSRaD6luL3HEIgk2hZfcqBcawJog5806+wnGdBZ8ej
-	teKutT5iQKkWMnzmTNYfD00kJFav0uXka+u4Ffjkg5bWotQ7+gcpLyZuNiR8XuoO5dptk/HCBBF
-	SzgdT60Yz7u3A9seDS2x8ZL/2NMLnJZbiTgCrkvi+EzNll
-X-Google-Smtp-Source: AGHT+IGSsxuFu0sH6JPJFBG2daeJ2pbCAf/cUJF+sY7MH4hVll61k4ev/eRQqgqRT6q9FI8EAPr5iB5NQiwk
-X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
- (user=jstultz job=sendgmr) by 2002:a25:b228:0:b0:e28:e8c4:923c with SMTP id
- 3f1490d57ef6-e291840ddd7mr13191276.4.1728595700383; Thu, 10 Oct 2024 14:28:20
- -0700 (PDT)
-Date: Thu, 10 Oct 2024 14:28:05 -0700
+        d=1e100.net; s=20230601; t=1728595904; x=1729200704;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJHAgR8eOYnfYjnDH+Ke7REFFOpEvhduZdZs2oNUNrQ=;
+        b=jjBhSafy29iMmP7xwgJ9aK6O1HWJbY0qG6/YrwPi1mSsg+xH9iU6kTTYeSN1+HIiPt
+         En0RCwXqZuizJ9ikYaW8ylLNRpheK/sjoeaoaNBZn5KVu0czzMr8vyCcaYgAung0Kje5
+         fDb/Ib72P0y9deVraRC7eONc56qPfX5Dn/eubWdS3BiCY8Tde5kdNNDp56jkcFw39VVc
+         LMjCiiRk0MmtkboMHN/lKAnvZw5MjjlQmAsEwCV4TyL2f4JyOyqkXhCHkeiUiOJTGb91
+         UtNPLvYpiZte94MXZ/NqDFpZxX/VabdbUyYv/hx1gm4gchdENq3SJvwL0QsKO1K4IIVH
+         I61Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7VTRGpRfmfapCscRxMcD0G1abNehiaTb8nvceryjLDtatjc4AWFIa1YIpNmgTmB82Bf3uIMdtppdyw0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO41omTo3uHkW/luClSvz9HOw0DuoaIln4atDmdS171v5ywDVu
+	MM4WXwweQb4wNl+OWncnVVLZWhjHQ3scV4460w0JtTP6Hg+dBezF0ia0TYWjF0il7BMxjGJ/9PK
+	tBajgUXkgTQ==
+X-Google-Smtp-Source: AGHT+IFlkqx3xD0Q33jhVUIr5iUteh4Yw48/PxVPDblQ90mLsIhhb+hEXTRk5UZ9znbyyum31yvdj2omH/gr5Q==
+X-Received: from loggerhead.c.googlers.com ([fda3:e722:ac3:cc00:f3:525d:ac13:60e1])
+ (user=jmattson job=sendgmr) by 2002:a05:690c:48c1:b0:6e3:14c3:379f with SMTP
+ id 00721157ae682-6e3471eaeb7mr201857b3.0.1728595904524; Thu, 10 Oct 2024
+ 14:31:44 -0700 (PDT)
+Date: Thu, 10 Oct 2024 14:31:36 -0700
+In-Reply-To: <20230702162802.344176-1-rui.zhang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20230702162802.344176-1-rui.zhang@intel.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241010212813.2125851-1-jstultz@google.com>
-Subject: [RFC][PATCH] lib: stacklog_debug: Introduce helper tool for
- collecting and displaying stacktraces
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, kernel-team@android.com
+Message-ID: <20241010213136.668672-1-jmattson@google.com>
+Subject: Re: [RFC PATCH] x86/acpi: Ignore invalid x2APIC entries
+From: Jim Mattson <jmattson@google.com>
+To: rui.zhang@intel.com
+Cc: bp@alien8.de, feng.tang@intel.com, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, peterz@infradead.org, 
+	rafael.j.wysocki@intel.com, tglx@linutronix.de, x86@kernel.org, 
+	jay.chen@amd.com, jon.grimm@amd.com, vladteodor@google.com, 
+	ajorgens@google.com, myrade@google.com, Jim Mattson <jmattson@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When debugging, its often useful to understand how a function is
-called and the different paths taken to get there. Usually
-dump_stack() can be used for this purpose. However there are a
-number of cases where a function is called very frequently,
-making dump_stack far too noisy to be useful.
+> Currently, kernel enumerates the possible CPUs by parsing both ACPI MADT
+> Local APIC entries and x2APIC entries. So CPUs with "valid" APIC IDs,
+> even if they have duplicated APIC IDs in Local APIC and x2APIC, are
+> always enumerated.
+> 
+> Below is what ACPI MADT Local APIC and x2APIC describes on an
+> Ivebridge-EP system,
+> 
+> [02Ch 0044   1]                Subtable Type : 00 [Processor Local APIC]
+> [02Fh 0047   1]                Local Apic ID : 00
+> ...
+> [164h 0356   1]                Subtable Type : 00 [Processor Local APIC]
+> [167h 0359   1]                Local Apic ID : 39
+> [16Ch 0364   1]                Subtable Type : 00 [Processor Local APIC]
+> [16Fh 0367   1]                Local Apic ID : FF
+> ...
+> [3ECh 1004   1]                Subtable Type : 09 [Processor Local x2APIC]
+> [3F0h 1008   4]                Processor x2Apic ID : 00000000
+> ...
+> [B5Ch 2908   1]                Subtable Type : 09 [Processor Local x2APIC]
+> [B60h 2912   4]                Processor x2Apic ID : 00000077
+> 
+> As a result, kernel shows "smpboot: Allowing 168 CPUs, 120 hotplug CPUs".
+> And this wastes significant amount of memory for the per-cpu data.
+> Plus this also breaks https://lore.kernel.org/all/87edm36qqb.ffs@tglx/,
+> because __max_logical_packages is over-estimated by the APIC IDs in
+> the x2APIC entries.
+> 
+> According to https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html#processor-local-x2apic-structure,
+> "[Compatibility note] On some legacy OSes, Logical processors with APIC
+> ID values less than 255 (whether in XAPIC or X2APIC mode) must use the
+> Processor Local APIC structure to convey their APIC information to OSPM,
+> and those processors must be declared in the DSDT using the Processor()
+> keyword. Logical processors with APIC ID values 255 and greater must use
+> the Processor Local x2APIC structure and be declared using the Device()
+> keyword.".
+> 
+> Enumerate CPUs from x2APIC enties with APIC ID values 255 or greater,
+> when valid CPU from Local APIC is already detected.
+> 
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> ---
+> I didn't find any clear statement in the ACPI spec about if a mixture of
+> Local APIC and x2APIC entries is allowed or not. So it would be great if
+> this can be clarified.
 
-This is a little debug tool that utilizes stackdepot to capture
-unique stack traces and store them in a circular buffer.
+Has this been clarified?
 
-In the code, the developer adds: stacklog_debug_save() calls
-at points of interest (as they might with stack_dump()).
+The reason that I ask is that Google Cloud has a 360 vCPU Zen4 VM
+occupying two virtual sockets, and the corresponding MADT table has a
+mixture of Local APIC and X2APIC entries.
 
-Then after running the kernel, the developer can dump the unique
-stack traces from the buffer via:
-   cat /sys/kernel/debug/stacklog_debug
+All of the LPUs in virtual socket 0 have extended APIC IDs below 255,
+and they have Local APIC entries. All of the LPUs in virtual socket 1
+have extended APIC IDs above 255, and they have X2APIC entries.
 
-This is pretty trivial, but I've had this hanging around for
-awhile and recently hit another case where it was helpful, so I
-figured it would be worth sending it out for feedback as to if
-others thought it would be useful enough to merge upstream or to
-possibly rework into stackdepot itself? 
+Prior to this change, Linux assigned CPU numbers to all even-numbered
+LPUs on virtual socket 0, followed by all even-numbered LPUs on
+virtual socket 1, followed by all odd-numbered LPUs on virtual socket
+0, followed by all odd-numbered LPUs on virtual socket 1.
 
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-team@android.com
-Signed-off-by: John Stultz <jstultz@google.com>
----
- include/linux/stacklog_debug.h |  13 ++++
- lib/Kconfig                    |   8 +++
- lib/Makefile                   |   1 +
- lib/stacklog_debug.c           | 110 +++++++++++++++++++++++++++++++++
- 4 files changed, 132 insertions(+)
- create mode 100644 include/linux/stacklog_debug.h
- create mode 100644 lib/stacklog_debug.c
+node  #0, CPUs:          #1   #2  ...   #87  #88  #89
+node  #1, CPUs:    #90  #91  #92  ...  #177 #178 #179
+node  #0, CPUs:   #180 #181 #182  ...  #267 #268 #269
+node  #1, CPUs:   #270 #271 #272  ...  #357 #358 #359
 
-diff --git a/include/linux/stacklog_debug.h b/include/linux/stacklog_debug.h
-new file mode 100644
-index 000000000000..d88f05d7000a
---- /dev/null
-+++ b/include/linux/stacklog_debug.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+
-+#ifndef _LINUX_STACKLOG_DEBUG_H
-+#define _LINUX_STACKLOG_DEBUG_H
-+
-+#ifdef CONFIG_STACKLOG_DEBUG
-+void stacklog_debug_save(void);
-+#else
-+static inline void stacklog_debug_save(void)
-+{
-+}
-+#endif
-+#endif
-diff --git a/lib/Kconfig b/lib/Kconfig
-index b38849af6f13..3a90b9d4f8de 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -725,6 +725,14 @@ config REF_TRACKER
- 	depends on STACKTRACE_SUPPORT
- 	select STACKDEPOT
- 
-+config STACKLOG_DEBUG
-+	bool "Debug tool for logging and later displaying stacktraces"
-+	select STACKDEPOT
-+	select STACKDEPOT_ALWAYS_INIT
-+	help
-+	  Enables debug infrastructure for logging unique stack traces at
-+	  a specific point, which can be later displayed from userland.
-+
- config SBITMAP
- 	bool
- 
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..5a07573be73c 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -264,6 +264,7 @@ obj-$(CONFIG_IRQ_POLL) += irq_poll.o
- 
- obj-$(CONFIG_POLYNOMIAL) += polynomial.o
- 
-+obj-$(CONFIG_STACKLOG_DEBUG) += stacklog_debug.o
- # stackdepot.c should not be instrumented or call instrumented functions.
- # Prevent the compiler from calling builtins like memcmp() or bcmp() from this
- # file.
-diff --git a/lib/stacklog_debug.c b/lib/stacklog_debug.c
-new file mode 100644
-index 000000000000..72ffbacee4b7
---- /dev/null
-+++ b/lib/stacklog_debug.c
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-+#include <linux/sched.h>
-+#include <linux/vmalloc.h>
-+#include <linux/stackdepot.h>
-+#include <linux/debugfs.h>
-+#include <linux/stacklog_debug.h>
-+
-+#define STACKDEPTH 32
-+#define BUFSZ 4096
-+
-+#define LIST_ENTRIES 512
-+DEFINE_SPINLOCK(stack_lock);
-+depot_stack_handle_t stack_list[LIST_ENTRIES];
-+int head, tail;
-+
-+void stacklog_debug_save(void)
-+{
-+	unsigned long entries[STACKDEPTH];
-+	depot_stack_handle_t stack_hash;
-+	unsigned long flags;
-+	unsigned int n;
-+	int i;
-+
-+	n = stack_trace_save(entries, ARRAY_SIZE(entries), 1);
-+	stack_hash = stack_depot_save(entries, n, GFP_NOWAIT);
-+	if (!stack_hash)
-+		return;
-+
-+	spin_lock_irqsave(&stack_lock, flags);
-+	for (i = head; i < tail; i++)
-+		if (stack_list[i % LIST_ENTRIES] == stack_hash)
-+			goto out;
-+
-+	stack_list[(tail++ % LIST_ENTRIES)] = stack_hash;
-+
-+	if (tail % LIST_ENTRIES == head % LIST_ENTRIES)
-+		head++;
-+
-+	if (tail >= 2 * LIST_ENTRIES) {
-+		head %= LIST_ENTRIES;
-+		tail %= LIST_ENTRIES;
-+		if (tail < head)
-+			tail += LIST_ENTRIES;
-+	}
-+out:
-+	spin_unlock_irqrestore(&stack_lock, flags);
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static int stacklog_stats_show(struct seq_file *s, void *unused)
-+{
-+	char *buf = kmalloc(BUFSZ, GFP_NOWAIT);
-+	unsigned int nr_entries;
-+	unsigned long flags;
-+	int i, start, stop;
-+
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	spin_lock_irqsave(&stack_lock, flags);
-+	start = head;
-+	stop = tail;
-+	spin_unlock_irqrestore(&stack_lock, flags);
-+
-+	if (start == stop)
-+		goto out;
-+
-+	for (i = start; i < stop; i++) {
-+		unsigned long *ent;
-+		u32 hash;
-+
-+		/*
-+		 * We avoid holdings the lock over the entire loop
-+		 * just to be careful as we don't want to trip a
-+		 * call path that calls back into stacklog_debug_save
-+		 * which would deadlock, so hold the lock minimally
-+		 * (and be ok with the data changing between loop
-+		 * iterations).
-+		 */
-+		spin_lock_irqsave(&stack_lock, flags);
-+		hash = stack_list[i % LIST_ENTRIES];
-+		spin_unlock_irqrestore(&stack_lock, flags);
-+
-+		nr_entries = stack_depot_fetch(hash, &ent);
-+		stack_trace_snprint(buf, BUFSZ, ent, nr_entries, 0);
-+		seq_printf(s, "[idx: %i hash: %ld]====================\n%s\n\n",
-+			   i - start, (long)hash, buf);
-+	}
-+out:
-+	kfree(buf);
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(stacklog_stats);
-+
-+static int __init stacklog_debug_init(void)
-+{
-+	debugfs_create_file("stacklog_debug", 0400, NULL, NULL,
-+			    &stacklog_stats_fops);
-+	return 0;
-+}
-+
-+late_initcall(stacklog_debug_init);
-+#endif
--- 
-2.47.0.rc1.288.g06298d1525-goog
+After this change, however, Linux assigns CPU numbers to all LPUs on
+virtual socket 0 before assigning any CPU numbers to LPUs on virtual
+socket 1.
 
+node  #0, CPUs:          #1   #2  ...   #87  #88  #89
+node  #1, CPUs:   #180 #181 #182  ...  #267 #268 #269
+node  #0, CPUs:    #90  #91  #92  ...  #177 #178 #179
+node  #1, CPUs:   #270 #271 #272  ...  #357 #358 #359
+
+I suspect that this is because all Local APIC MADT entries are now
+processed before all X2APIC MADT entries, whereas they may have been
+interleaved before.
+
+TBH, I'm not sure that there is actually anything wrong with the new
+numbering scheme. The topology is reported correctly (e.g. in
+/sys/devices/system/cpu/cpu0/topology/thread_siblings_list). Yet, the
+new enumeration does seem to contradict user expectations.
+
+Thanks,
+
+--jim
 
