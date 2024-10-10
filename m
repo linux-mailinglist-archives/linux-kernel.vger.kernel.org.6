@@ -1,101 +1,86 @@
-Return-Path: <linux-kernel+bounces-359700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B83A998F40
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:04:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC6D998F63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2724D1F22B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CBF41C23D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC951C9B64;
-	Thu, 10 Oct 2024 18:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9001D1CDA31;
+	Thu, 10 Oct 2024 18:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6E+4EKk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fByw2uCd"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE67188A08;
-	Thu, 10 Oct 2024 18:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64B71E22E3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583456; cv=none; b=tq+ctl9rUdzNB0J1apXMVUDc61p+OiqpmcVmLKHbGbCZJ8vyS+S+lOu97sZLrFp67MpjTv3+jdPyFyVI+ZJbhXZ6fv9c5WyfQmj+azg/DimrTZuf/RV1UGzao0y+zBj/kDfEoiSU7CSUQk9Aq3XKw6D/Wf/toKdTU/WG1C1SGVQ=
+	t=1728583619; cv=none; b=JGv8wLE5ecA5+LOBeXiDUJxcz+PjZo53G2E9RijBzkEEobiKPxMgRB/fsPhn3B1aWQ4bdQDiuf+sp265yUnHcY8H/m6jCIX3YLqPlaMZZsT5L6UYOiGqBBpNbFBYlfdQEdXZdXKlXjMfa7yBc49pyRVg1cMVafgn0G7ju2hTekg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583456; c=relaxed/simple;
-	bh=bXzsja91oxEK7A4oh7gQhxbPTPspC3mQheHfMkv4M1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rI+5axm9lr+pp0y64+CJ5xgxc1ST/sKGxHHxKc1gblocSR5Ta44t461yd4X+qvCQaXog+EZLO+sB/PSmXy7gbgkLTFENyL6Dgk/bVRqud8NcxEk5ED3B2VEhJzaJFd72VvOmsQr41QGdF4wK/00yGTlCcdsGcEZngLyUNpXJV5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6E+4EKk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060D5C4CEC5;
-	Thu, 10 Oct 2024 18:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728583455;
-	bh=bXzsja91oxEK7A4oh7gQhxbPTPspC3mQheHfMkv4M1w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X6E+4EKkTEMnER0y7X54Q3GxgUBkzewVbE3MXRvQtspaT4h78hayMtoHIGHBci/LL
-	 4KEoRBTA+l0HbHxU41XeTv8irhEHDzDelj4tLjNW5maFYy4WG+bBG114rOW1iOsYvH
-	 7NprZ/c5JHnuq7bu6wh3VHxdCSSQHJouefMj2VGlGZhxkUPtv4JTbdae82UmHndgTX
-	 3n3cL+NDYGzce4oti1RYMtA902XEQf6hX+QBEjNy8bfOkJnKBA82lRTA6Jx5KDIJzE
-	 fU09cG9jEYkBr28dHdwo6H6/nrZ3HY5Tb326w6lm1jB06NsihJLFnhJSS5ZK3a53BC
-	 WaBcVY5O2poTA==
-Date: Thu, 10 Oct 2024 19:04:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
- Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, dlechner@baylibre.com, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v3 09/10] iio: adc: ad7606: Add iio-backend support
-Message-ID: <20241010190400.34905ab2@jic23-huawei>
-In-Reply-To: <ac765343-7804-4bd5-8057-d67fec2f17b1@baylibre.com>
-References: <20241004-ad7606_add_iio_backend_support-v3-0-38757012ce82@baylibre.com>
-	<20241004-ad7606_add_iio_backend_support-v3-9-38757012ce82@baylibre.com>
-	<20241005125318.0c4a7bc8@jic23-huawei>
-	<ac765343-7804-4bd5-8057-d67fec2f17b1@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728583619; c=relaxed/simple;
+	bh=6MsBGtNkdC9fBTbiWSrFtxWvfPXwMPK9K04yhvsvUI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dukj2poTyu9j6yNAEJEf6pAo7xKyP79MiqtwmSAZ1SdKqmTA0X47pcp6F67B/0EGvMQCwvZ1OdXYwdRCm+UctRCZBWD8iAEW79oZ/F+5zRjZj2R5LCeP+VzAz6CNKzhfBlDPW4iaZMfXVvky7oGZntFJtgU+DLAlPatWykrfkME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fByw2uCd; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PCF5tWgmHAb+hKF0MKw05oZojZksbtFsgk0xGK2TXI8=; b=fByw2uCdnoLBo/272ybMYvaODA
+	UW4OPxiEayY+0LzPdpb6QUtVhopyp2LkehvbaRfqPSt/i5oKU8rInWNBqV+FMWuglQbwxl8MvNwy2
+	g+mELD0lD9TOaRh2fuil9okS5vfCsLK2oPL1PX+Av7p013bHFGrahp0Qpd5kIVxmHnBo/PYVIKGDl
+	MeNykp3a0rBPDhM2WuNJTpMj/anQ2JvoqSS/SDxB37ApTyLqOsBsrRomZf/s2pfG85X/6ewdNXnkO
+	9WMCdSKkdyep59OTBPwuxFUxxGNzCwx/GYHQBSdDzoZj3sA5l1uOfIvyuxKbkNvd1prn1Mci5FDr5
+	BOkKnkiw==;
+Received: from [187.57.199.212] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1syxXw-007QUl-Vt; Thu, 10 Oct 2024 20:05:57 +0200
+Message-ID: <f8db7927-cbbe-4cf9-bab5-4bf4465a637f@igalia.com>
+Date: Thu, 10 Oct 2024 15:05:53 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] futex: Use atomic64_inc_return() in
+ get_inode_sequence_number()
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
+References: <20241010071023.21913-1-ubizjak@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241010071023.21913-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-> >> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> >> index 3666a58f8a6f..d86eb7c3e4f7 100644
-> >> --- a/drivers/iio/adc/ad7606.c
-> >> +++ b/drivers/iio/adc/ad7606.c
-> >> @@ -21,6 +21,7 @@
-> >> @@ -737,6 +773,10 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
-> >>   			return ret;
-> >>   
-> >>   		return 0;
-> >> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> >> +		if (val < 0 && val2 != 0)
-> >> +			return -EINVAL;
-> >> +		return ad7606_set_sampling_freq(st, val);  
-> > Currently I think  for the !backend + pwm case this can go out of
-> > range for which that code works (fsleep removed in next patch).
-> > Perhaps delay adding this until after that patch.  
+Em 10/10/2024 04:10, Uros Bizjak escreveu:
+> Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+> to use optimized implementation and ease register pressure around
+> the primitive for targets that implement optimized variant.
 > 
-> Hi Jonathan,
-> 
-> The sampling frequency can be adjusted only for the backend version, 
-> otherwise (including pwm+interrupt), there is no sysfs access to the 
-> sampling frequency (only available for AD7606_BI_CHANNEL).
-Ah! That makes sense.
-Thanks,
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Darren Hart <dvhart@infradead.org>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: "André Almeida" <andrealmeid@igalia.com>
+> ---
 
-J
+Reviewed-by: André Almeida <andrealmeid@igalia.com>
 
