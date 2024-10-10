@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-359462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0152D998BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0331F998BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 304B91C20E05
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82832916F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371B11CDA39;
-	Thu, 10 Oct 2024 15:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F31C1CEADB;
+	Thu, 10 Oct 2024 15:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G6GOVFPU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdldYPFs"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472A1CCB45;
-	Thu, 10 Oct 2024 15:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A21CDFD1;
+	Thu, 10 Oct 2024 15:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574510; cv=none; b=my3C0is79O4OrTFxfjQfLK7odcFJ7bI766xRfls/ZI2clZStse7r0UgV1fqv41vDIeGtkORGVLfzAiSlLCZXlwMjcl7ujfKrtQBtaIqcpaW95eGjcEngjaaveE5uy1QfJE1gW2YnGsOtr7r8UOyXqQdWvDGN5y4MJIkkdwtC92M=
+	t=1728574526; cv=none; b=P2TVeSvUMzjhlFfxk/NPMrdH0WcdS4RRY02YZwQh1MLqmEfaBucNRKZYukbEizcWFZmo9NFwQDbGLZSxcZL370mOtGb+gXRah1hg9ubLjxBeWnpNzSw9sByO62+ImzTiY5xEywzjesziCCW3i5FAlJW0gFytgXJpnLXV6mNJS3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574510; c=relaxed/simple;
-	bh=M6ArSolFyRhvgkpKBLV7GgtTxF0gj+vbVhIhSxcQfz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oU+VdF/qpLPtrTw33TqPW24/y8QS0fPt7BzBaj1FVi0I5gSinWcXSo9Nq+de5TeneD8AgccNqOL6+YZomDxSi7BYVhC1lTLC8eU54/w1nP37UQYiwKGQ/OsSYh4YtUhCk6ACOGySvi2/6WGR9hacXNutX08EFHBzrfMhQxLYyPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G6GOVFPU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACUXAm011324;
-	Thu, 10 Oct 2024 15:35:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xhv5/1S/V1CCa4a0mCm7Uj1o1bdgK4qmxRkHgQo8kPM=; b=G6GOVFPUj4kQEOl2
-	vFVBryxGsrCCUHTrghdSdPAkb4C2RceiiOOua7u6TSsCGKuBV7FI4dHIuIwrojD4
-	Nk1j5n1gvRmHUh3s1lOe1Uwjzdo/Svx2jUBxLaErUfMoO+rTrDwuRgVEHOLRN8Pp
-	pVenwF7LN7rLrTgA/T5k9oUogzIF6eWLCShrHp1c6nnyazwb666P0DoHBgkAHGJ5
-	clJmzMy3wUe0TRMi9IfMdFnYmLiIRhFqBn8uZ4UYqVZovVIloI+CyitV4umhoPbm
-	vOjbxcsyLo0NdL1pufAPQODg68mDmMQN11/GArhEXh57MeFvd5ivz/i2+yQi/ays
-	plWe0Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xthu0ng-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 15:35:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AFZ3oR004477
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 15:35:03 GMT
-Received: from [10.216.26.125] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
- 2024 08:34:59 -0700
-Message-ID: <b03d111c-7e58-4320-b909-becb35f53767@quicinc.com>
-Date: Thu, 10 Oct 2024 21:04:55 +0530
+	s=arc-20240116; t=1728574526; c=relaxed/simple;
+	bh=lK/FbI9rhoOQXQ66duEZbVUorkX3hB2FZo+hDnhn3ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ip4Iu2e2IDPEiDLBFxl5/RyPQrixh8LP2Q8GyBEMjbEXf1DlCllVDuGujteZFXfZW/fI0VPhtxEOXrmB+tXBpDATDpGcpbi5zFJcna6D6rVfPv+KthCxjsPf0MaPuS2RQTPp9QRpeSHZU9s6TCcXFS5rsvDdK74GWGQFz2or4C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdldYPFs; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c42e7adbddso1306041a12.2;
+        Thu, 10 Oct 2024 08:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728574523; x=1729179323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ha1p6oZOz4NV9Kh6FmrRkFkknVIK2uehqmbeLM8+Rs=;
+        b=QdldYPFsf64lKRpiiRz8dn82YZPJU43bgCddQbYJhZmdBNm5m84kzepY/u4D+JevaB
+         jkdoTtb3Fl5p2BTWx4rqd5gAev3VhtJKJV3cdsjw/+dBDynoRaruG3F2ZKHVzvDPTruO
+         TZ6zgfLMM0bpxKcVpiSASNoFAKFJjZ0DgQ7AneAkamPwxq/9ud2qFC16Pij/S9qbXjmu
+         puFwzFlBlEXdxnRb/epnjwPspmDwvWqrqCddp8hKUNspVQyeyVvLrtMnn02t5Bttea2u
+         rJqc+NAJmtHZizjiZ8c9P1vGW8McS9l43pe4/q0KByt8CXzXC/Z+YB4BFXzJqg2TTbg0
+         1T3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728574523; x=1729179323;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ha1p6oZOz4NV9Kh6FmrRkFkknVIK2uehqmbeLM8+Rs=;
+        b=o6m38RBDKCmblhGYSEwOLLllLkhkVX+yUFWP4e6P0UXGgV1C+AzeBNFhrFzz3sFDHq
+         xtwF6SaQO2V4gjknVs7Iq2VlyxPQIW4uZ+7KkW8KxtZd9uKIupA/fMqn7M9+9o56ZrVt
+         V886VTgAWPKzzHqQsS9zm4OFdYYQDhpw2bFSVgbqkvfyiLih9/vFlIrfD1D8ib77Q8TY
+         9imlVa1yHVSdg1y3oY4xOxoRn5+zLII+ahAMXHV+Z1osJ23W9IbgvV/zY9PIDpVAHGsB
+         Rfv5uxRy3hy5HHaKPYkZXaWuC5z4+K7Tk8feAh8gLoGUufluUmOqILAyXp5q+2UytAPS
+         8pOA==
+X-Forwarded-Encrypted: i=1; AJvYcCULH5FRnhdw3VHS1Nl8qBO2m9NaXi0of9BtxRrtR29k1RBRuM/A3FTcCB00Q116XeeMY1X4pteBklZF9t8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjrk4AKGLgSeaeRe8v4QvhH+h1M0gE0otMhQiR1mdO6iL7KNVE
+	99HFlnlnehcFsQLlvDLKk9n6XJdo1cPh2rXXzfN9ptAup+azVUaJ
+X-Google-Smtp-Source: AGHT+IGy0n4mXRI86DwVdcVDYHqAOk08VGEGFrTrc0R72zh/i9vwKAdgBzONBdcoCZt75ayW5CCF+w==
+X-Received: by 2002:a05:6402:26cf:b0:5c8:a92b:b0a with SMTP id 4fb4d7f45d1cf-5c91d53c982mr5579708a12.1.1728574523269;
+        Thu, 10 Oct 2024 08:35:23 -0700 (PDT)
+Received: from [192.168.42.29] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93715159csm921751a12.42.2024.10.10.08.35.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 08:35:23 -0700 (PDT)
+Message-ID: <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
+Date: Thu, 10 Oct 2024 16:35:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,108 +75,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: Add support for usb nodes on
- QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
-References: <20241009195636.2649952-1-quic_kriskura@quicinc.com>
- <20241009195636.2649952-2-quic_kriskura@quicinc.com>
- <xwidjnw3fqc2slwl3vftw7yi4j7juiw6rwszjhtxepqd6zz33s@ncoi4aikbb4e>
- <fe3ebd31-946c-499f-ac96-2cf71c6752e6@quicinc.com>
- <CAA8EJpojz9-xhoxdp78b5=6R8gpjjHQgjb_P0LGfHs4PsdS3vA@mail.gmail.com>
+Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
+To: Ruyi Zhang <ruyi.zhang@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peiwei.li@samsung.com
+References: <1f21a22b-e5a7-48bd-a1c8-b9d817b2291a@gmail.com>
+ <CGME20241010092012epcas5p2bc333a1f880209003523e71d97ba3298@epcas5p2.samsung.com>
+ <20241010092003.2894-1-ruyi.zhang@samsung.com>
 Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <CAA8EJpojz9-xhoxdp78b5=6R8gpjjHQgjb_P0LGfHs4PsdS3vA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20241010092003.2894-1-ruyi.zhang@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 75O4s2h5osZLlMSJgUpzP-Rv_2rt-VyH
-X-Proofpoint-GUID: 75O4s2h5osZLlMSJgUpzP-Rv_2rt-VyH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 clxscore=1015 mlxlogscore=959 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410100103
 
-
-
-On 10/10/2024 8:42 PM, Dmitry Baryshkov wrote:
-> On Thu, 10 Oct 2024 at 17:57, Krishna Kurapati
-> <quic_kriskura@quicinc.com> wrote:
->>
-
-[...]
-
->>>> +                    resets = <&gcc GCC_USB20_PRIM_BCR>;
->>>> +
->>>> +                    interconnects = <&aggre1_noc MASTER_USB2 0 &mc_virt SLAVE_EBI1 0>,
->>>> +                                    <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB2 0>;
->>>> +                    interconnect-names = "usb-ddr", "apps-usb";
->>>
->>> As this is a USB2-only host, shouldn't it also have qcom,select-utmi-as-pipe-clk ?
->>>
->>
->> Hi Dmitry,
->>
->> Thanks for the catch. You are right, it needs to be added according to
->> bindings. Since I would be sending another patch after this series to
->> enable the second controller, would it be fine if I add it in that patch
->> or do you suggest updating this one.
+On 10/10/24 10:20, Ruyi Zhang wrote:
+> ---
+> On 25 Sep 2024 12:58 Pavel Begunkov wrote
+>> On 9/25/24 09:58, Ruyi Zhang wrote:
+>>> io_uring fdinfo contains most of the runtime information,which is
+>>> helpful for debugging io_uring applications; However, there is
+>>> currently a lack of timeout-related information, and this patch adds
+>>> timeout_list information.
 > 
-> I think it's better to fix it from the beginning.
->
+>> Please refer to unaddressed comments from v1. We can't have irqs
+>> disabled for that long. And it's too verbose (i.e. depends on
+>> the number of timeouts).
+> 
+> Two questions:
+> 
+> 1. I agree with you, we shouldn't walk a potentially very long list
+> under spinlock. but i can't find any other way to get all the timeout
 
-Ok, Will send a v2 adding this quirk.
-Can you also help review the DTS change. So that I can carry forward and 
-RB Tags I get to v2.
+If only it's just under the spin, but with disabled irqs...
 
-Regards,
-Krishna,
+> information than to walk the timeout_list. Do you have any good ideas?
 
->>
->> Also I see some others are not using it as well, like sc7280 which also
->> might need to be updated.
-> 
-> Interesting enough I don't see this option being enabled on SC7280 platforms.
-> 
->>
->> Regards,
->> Krishna,
->>
->>>> +
->>>> +                    status = "disabled";
->>>> +
->>>> +                    usb_2_dwc3: usb@a400000 {
->>>> +                            compatible = "snps,dwc3";
->>>> +                            reg = <0x0 0x0a400000 0x0 0xe000>;
->>>> +                            interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
->>>> +                            iommus = <&apps_smmu 0x20 0x0>;
->>>> +                            phys = <&usb_2_hsphy>;
->>>> +                            phy-names = "usb2-phy";
->>>> +                            snps,dis_u2_susphy_quirk;
->>>> +                            snps,dis_enblslpm_quirk;
->>>> +                    };
->>>> +            };
->>>>       };
->>>>
->>>>       arch_timer: timer {
->>>> --
->>>> 2.34.1
->>>>
->>>
-> 
-> 
-> 
+In the long run it'd be great to replace the spinlock
+with a mutex, i.e. just ->uring_lock, but that would might be
+a bit involving as need to move handling to the task context.
+
+> 2. I also agree seq_printf heavier, if we use seq_put_decimal_ull and
+> seq_puts to concatenate strings, I haven't tested whether it's more
+> efficient or not, but the code is certainly not as readable as the
+> former. It's also possible that I don't fully understand what you mean
+> and want to hear your opinion.
+
+I don't think there is any difference, it'd be a matter of
+doubling the number of in flight timeouts to achieve same
+timings. Tell me, do you really have a good case where you
+need that (pretty verbose)? Why not drgn / bpftrace it out
+of the kernel instead?
+
+-- 
+Pavel Begunkov
 
