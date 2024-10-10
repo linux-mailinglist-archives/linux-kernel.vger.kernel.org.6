@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-358442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C82997F75
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:22:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B0A997F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406BA1F24B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C12AB24818
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310081EABB5;
-	Thu, 10 Oct 2024 07:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A3F1E8855;
+	Thu, 10 Oct 2024 07:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="UjJUKCqM"
-Received: from smtpcmd11117.aruba.it (smtpcmd11117.aruba.it [62.149.156.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VZaX7XK9"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DB719AD73
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0DC1E7C35
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728545353; cv=none; b=ESboDl3PC94whFOKPF2eJFINyWY15I8oJlOBigC4XQUxMCcX6kBbk05SuwqLI74nJOwAY2MYeqoBz0CsmYlbBjsFdaYpRIolRGU4+6jYlbRvfmKrbuU/vh0/MdIqxRksX2xp3ODSPTsApfXUjN0bA2wEgSvS0zGGn6W1jg/Qddw=
+	t=1728545176; cv=none; b=DY9LxG7C9K9iWF02HjDUkI2D4ErFoPg57Ie/qF1kAy60jIcqHFp91vjUuLulhsaFaHK4jfqGldtZdBVRXey3yXXTTaTg5oCHeL88Fj2dbVweSEWXpBK38nvVidcqfK1uMvuc/xm4WWPWQC08Epk/MYHP559OSvubOGpbBj3jkus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728545353; c=relaxed/simple;
-	bh=bQ1iSUwJzTr3VrEef8bPG0Zt6AQ6fVnnO+sar11PSgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RInoQE27212D2uQE2TWWRpkkAKsAUnwNKgcmDpLd4kX/BK8g6RzWH0blCQMtbP0lLN2diaAESiQV+ovCf9rchugKKhBzUdLzHxjPAUXOr1VgFJLo8SuFJq/9iFnTQ2AdLpUfli9vvoBPn1bESsM6Y3RmR0vf+tAjK21u4VKuQgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=UjJUKCqM; arc=none smtp.client-ip=62.149.156.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba Outgoing Smtp  with ESMTPSA
-	id ynYdsm3VA7AmWynYdsLL4v; Thu, 10 Oct 2024 09:26:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1728545160; bh=bQ1iSUwJzTr3VrEef8bPG0Zt6AQ6fVnnO+sar11PSgY=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=UjJUKCqMeAa0MwXs3t0mx3oLtXGfiRm0USiGCvjP8Y6linHoj0fH6lWHQzv0JeWd1
-	 8bfIpd1tCASizMTD/VnfWE9YNjhP4nwVt23jyrDUz9kuFPE6o1xTVCNqsYzVCp5Hws
-	 U8q6EXOHUlcoFW0lSVKdtxhcev+gELnnLOQTsWx38YQNHcTaZ6d6Dk7iH3ercaOcZR
-	 hD/vXXCwcDcptMbYfcFoAAE/c+luXKVllqTmxP8vHzzRclxCe6ySuZMXZJ5UaxJM8r
-	 iB/UnJvAR0TMXqaE/J3LmEyTUMyec4BLiM7umNnLgFNUmh7TMFSEDxk1S+433ALlQW
-	 NP1AFAQ33/8sg==
-Message-ID: <7158028e-e516-4eb6-b207-eb8c2d92fd39@enneenne.com>
-Date: Thu, 10 Oct 2024 09:25:58 +0200
+	s=arc-20240116; t=1728545176; c=relaxed/simple;
+	bh=Ybyjz5wLM3aHT8F6ATfkr4+lUHihxrdhi5y3HEe8Rf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcIISZ0AGNI64UrJzBr/2XZwbcxPkw6jvPE//Ju3j479toJY1Au/rwMkQ+cEKzyzTwJUQeDwzatqgTnVofVbQ4rKoBgt3VE+c/hopcKvX82QV4WivdpCOOAVFOb5NKrgDdTBdRhwPfixeMELs98upxxPWiVeabffF1uEl82fvEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VZaX7XK9; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7db1f13b14aso514523a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:26:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728545175; x=1729149975; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xn2CpKlZpFw1JRm5bw+GBM6CWvyGFQrA2wcnRi6mHVc=;
+        b=VZaX7XK9hEMAEuhwMwp+J++wgdGB2ZjqYPjUs9+h4SZ9IVng5KX0dlnhwcFzUoF0qk
+         IUR6LE2J854ELhUS7bdCPbinPmSfUQFbJxTK34UInsceiBKt1jGUBeWBhcj50AhrB+bz
+         wnOZSWXwF0+QfHjMwPYqtnpcFJBvedDRU+FbIXCrwS1A7KGWShLtarNEzUtbmIMvmPfA
+         NA7Cs89Nu3CZrWSLrNt+spH1VNCp9RKIMwIeiwtz/h9PZZF6Li/3eiL/oi+/VlDkDlOI
+         PiG5S22U344jSz114JaZuN2CAJwBWy5PhiwjL++VG1fQTDcB3ZU4PUwMYi71BEa78dtY
+         pZ4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728545175; x=1729149975;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xn2CpKlZpFw1JRm5bw+GBM6CWvyGFQrA2wcnRi6mHVc=;
+        b=AofyR4CKG83r/cXTqnlEQXDtyIMdQKgA6ktVocJZmKUDe8jgmDkntEMRjOez2edPa3
+         5QQbRUu9gJM69X6C1WRr9Bxa1BA4bFPTJHPRxBnIlwpPDZFQTViP7RDqleYlP/nLJw7x
+         hzs66KZs/6Qx07FQpcykQG6CxOZltK9ST0V2F1JLrnv7Tb8oyb0JroZvqUDxf6Mk8dwd
+         3SXNoaSPLkMsGdrwqjdOnelfwwB7P0VWURAFXOt+/cAj48VGc61edT86pFdlkNJfbHCr
+         ZnIhc5wCxnStO1aHJzuF0bQNPou465aBVTw8Yt8Ci2TegtGNHH5LRZZSwiICc3h/X26b
+         gApw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ2S10UP5O49eKss+tq+AtsWaAZFk9nke7eC1OB/7qb7AFygvGqKyvOlCKyOvaaD4NmLTSN87pxUHIrD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJoxbvisdqrtljCy1FObrX9rs/BZvGvNWvcOVJa1y94KQugiEZ
+	xXOgapK5uEM8xwMDpY7oyyyAYGdHJFM3v0FezJCY6AvkOiwxwodBbzD64rTt410=
+X-Google-Smtp-Source: AGHT+IFiZBkiSEtr5BZMJYQw0D6nBM1UrBhV66yt3kBIZCsjkzkw2a8Xy80d3TuxRDf5FdXMq5NK9A==
+X-Received: by 2002:a17:90b:198e:b0:2e2:af57:37eb with SMTP id 98e67ed59e1d1-2e2af5748ffmr4687096a91.41.1728545174723;
+        Thu, 10 Oct 2024 00:26:14 -0700 (PDT)
+Received: from localhost ([122.172.84.231])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2b9483328sm2086035a91.44.2024.10.10.00.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 00:26:14 -0700 (PDT)
+Date: Thu, 10 Oct 2024 12:56:11 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Dhruva Gole <d-gole@ti.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Bryan Brattlof <bb@ti.com>,
+	Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>
+Subject: Re: [PATCH 0/2] ti-cpufreq: AM62: Backward compatibility for syscon
+ and update offsets
+Message-ID: <20241010072611.5zpp2tmf6jidko5d@vireshk-i7>
+References: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/3] drivers pps: add PPS generators support
-To: Greg KH <greg@kroah.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net,
- Hall Christopher S <christopher.s.hall@intel.com>,
- Mohan Subramanian <subramanian.mohan@intel.com>, tglx@linutronix.de,
- andriy.shevchenko@linux.intel.com, Dong Eddie <eddie.dong@intel.com>,
- N Pandith <pandith.n@intel.com>,
- T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
- Zage David <david.zage@intel.com>,
- Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>
-References: <20241008135033.3171915-1-giometti@enneenne.com>
- <20241008135033.3171915-2-giometti@enneenne.com>
- <2024100855-unsecured-mammogram-001a@gregkh>
- <541eb5c6-5546-4170-9e8b-d421d55822a1@enneenne.com>
- <2024100917-daybed-suffering-7367@gregkh>
-From: Rodolfo Giometti <giometti@enneenne.com>
-Content-Language: en-US
-In-Reply-To: <2024100917-daybed-suffering-7367@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfMovEkJirDeIFPRfqGHWgUK1T7K7szP+CmR0YPO1yusObFLFvawUZjIdqY8KMkBQCoAElOj4d6SclKPyisnDeXEZRclrFcAvaqZaBaJkNvqsyVNiySEt
- KCJb5GtJXlpj/SYO/3nAF1OKbpV2yN4idgA95kRZPRKJm8Jo/opvuyNVmC60w46+vdgKMLj2cfeAgDZNYOqLiCj7BQvco9dr3RA0Kc0txrMbv/6tZ43Rmukh
- qVEKIjJNrqvXB7tEDETbmEsf9MUTd7fOGjhuM57PIofIKrqtwWk7BpM0y2TGqdUW2gj3j+waqrluIMTpLoD6CSV2Omx8EBGyqDRUcSH/T32x/1hCav5SomsX
- f58qUDT6Un0RFWYDbDxyHuOXtNeMGj+Fv70Vk9zOSrjqpE0qvyMvtEXzBdYvcUmksK3uoLGSdccwtgf+psrJHOjFu7jj5rZ6sPf/gnrn8ixUpxPnqm7/NS9M
- clNUA2NP65OJcs7h0KiO/AwFZPLNvLl7sdat2WSeSotGBNpMSDTzz+BUAlE3B263pokXsl3ioeJI6WzMzMoRG/onkjW+5YRWBY36sY9uHzZdqNrnOMSKxiKq
- 5qLL3s6Ym3Vo2YGo5gm1Hl1ic5cLHiF0WXl4/KQcrCBjTYh1EmcEoHNkX3k8xhnkwhGuYYx2+LjqNMHkjcY/yYTp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
 
-On 09/10/24 11:19, Greg KH wrote:
-> On Wed, Oct 09, 2024 at 10:48:14AM +0200, Rodolfo Giometti wrote:
->>>> +	kobject_put(&pps_gen->dev->kobj);
->>>
->>> Messing with a kobject reference directly from a device feels wrong and
->>> should never be done.
->>
->> I followed the suggestions in this patch whose look sane to me:
->>
->> https://lore.kernel.org/lkml/fc5fe55c-422d-4e63-a5bd-8b6b2d3e6c62@enneenne.com/T/
+On 30-09-24, 15:02, Dhruva Gole wrote:
+> With the Silicon revision being taken directly from socinfo, there's no
+> longer any need for reading any SOC register for revision from this driver.
+> Hence, we do not require any rev_offset for AM62 family of devices.
 > 
-> That patch is wrong.
-
-:(
-
->>>   Please use the proper apis.
->>
->> Which API are you talking about? Can you please provide some advice?
+> Also, maintain the backward compatibility with old devicetree, and hence
+> add condition to handle the case where we have the zero offset such that we
+> don't end up reading the wrong register offset in new AM625 DTs whenever we fix
+> them up.
 > 
-> get_device()
+> These patches have been in discussion as part of another series, which is now
+> being split up as per discussions with Nishanth. Ref. the following link for
+> more context on the same:
+> https://lore.kernel.org/all/20240926-ti-cpufreq-fixes-v5-v7-0-3c94c398fe8f@ti.com/
 > 
-> You are working on devices, NOT a raw kobject, no driver should EVER be
-> calling into a kobject function or a sysfs function, there should be
-> driver core functions for everything you need to do.
+> **DEPENDS ON:**
+> "mfd: syscon: Use regmap max_register_is_0 as needed"
+> https://lore.kernel.org/linux-arm-kernel/20240903184710.1552067-1-nm@ti.com/
 
-OK, I'm going to provide a new RFC taking in account what you suggest.
-
-Thanks,
-
-Rodolfo
+Applied. Thanks.
 
 -- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
-
+viresh
 
