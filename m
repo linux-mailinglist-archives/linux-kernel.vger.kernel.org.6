@@ -1,83 +1,100 @@
-Return-Path: <linux-kernel+bounces-359347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14455998A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073F5998A7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAD1A2816E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2DC61F27951
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D021D0F56;
-	Thu, 10 Oct 2024 14:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCC11E3DFD;
+	Thu, 10 Oct 2024 14:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBrfrGOO"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oMM+hHbx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180691D07A1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84901D318A;
+	Thu, 10 Oct 2024 14:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728571255; cv=none; b=SW851EfnCDMP2jwXWe9Vei9Pedkc3ylQPfdknq0Wz6KFNmlprjj/KbwYOtYwZ1vcBfEK8wuxEKWJ8TYodK34pnhSKGQDQMkm3rYK/JXcf4I4AStlDZ3XZzoEQg8+qNJQVAI9opSwu/3LD85/yzg8k8ZKvDm3UgaJkBRutumzG24=
+	t=1728571274; cv=none; b=clGsCr8+QByIXFl7bkhxkhxxWXPqBb+iDNWjXpteykJwGB1QNIJ1fN+vqx6fb+zEY0Lse2er3CEdmxg6pEtgUTRpD0KGVOufptZuvd4K+19PSeJR4WJOQlmhyijqZSOG2yRuYd1+ZlZCvKhYNCdIZtyUkM/elt5YlswgRx4znk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728571255; c=relaxed/simple;
-	bh=fHaTG50T+XNNagn5TCtb74sk7q6Zn6Tnl5l5AASz3rw=;
+	s=arc-20240116; t=1728571274; c=relaxed/simple;
+	bh=lz71XzaNG0yVrDt1WTunslV5rf5BbFvnhf2NJVOJ3ro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZbscz1MiIdF9zfhQGjS2cK2bj99xJmn1XSoaXGiFDIDgus3br9EeUeMMBHnjEEMdUnas3dugaaXtldEpfP315dGxFRxWs4kRYovJviypqU6E1JOQC2aKEaPE3tIEbc9HtFABuZIryvEIXWQGHnuhQFHLl12Zc1HQcCf7kMpZsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IBrfrGOO; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398e53ca28so1093477e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728571252; x=1729176052; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mtk3swPKSpsu2qGiM0596EX3cWtxyHnGiYTHhFIO7M=;
-        b=IBrfrGOOn6WYdK8I0pcRITxvW73FhdwJN9XxPwuEJtqQVhfMw6y1vq66Jg2Z9dqlNV
-         Cd2NXlLfkDlYcyvaVnuPWGWVLK61Nc5897p6eBGzmoNQeEyaApSYOX1zF6P19hoiLVkX
-         eBzR8oMgCwxch4J5DSP23+8NopHr5yBV+RlvlmwcDHscL6pl+5y07s5cyVcwjoSD+eSM
-         n1qAKQz9Q+OFcBKTue6VBwPM1nfWTpNCSvLlt+xgVVsH1uvYrUE5sDVkxTutELtPVCZ8
-         Fph5tk/T9bDI80Xyxm5UEJg4ySOrtyHMZZ7BY5nUNxc11MA8RJ4Nd+Aqv8IlZq6iYp3F
-         BfBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728571252; x=1729176052;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1mtk3swPKSpsu2qGiM0596EX3cWtxyHnGiYTHhFIO7M=;
-        b=H64pEQetn1y85KBo8xflnG4/bAUMKwtvhlmoGDmdc09hOJrzcqWw300w6qelIOSJdQ
-         bW9V/L5j1Z7ITb2GWXYA7Zgksus5+0+ju9K8P3mYUdDA1uX8PvTU2o3tDZ7Tm2brKI1d
-         K91tMXqXKOf33u6JCcOlEuHBRTSpSKZcMXTF7Js6AS6QehMWSpvWL9s6Kc7iKuW5iL9Z
-         djSDvzXchqhNsifZrsiMxZS6KYxEzQcL1oNErMPEUClGeO2a0Nv0EcNt7jgkQHsOs9jR
-         TcMYgyIRRyv+lsbZtrS6JOjmVKZMjRCmi0ncwIHPO6zKf0qE6bg+6YTzX1OnrQ0FSamv
-         OTiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMCqefxpQ3Pds7JcGyij0c8JRi71tIOMn1ZtYREUmimwVGHPjxhXv3UUw/DnV+wexwdA/qkdaagiCFyw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYcWQJfBcY21ArwrXsExdZsKs4Wx6hXhwoxUUbn+k1aFxNWUK8
-	TINOpAhzvOkxfRRmu2kxRg8ZnstvLg3t9HPDz0mjIVy0LMBQc78wr6hnbTAjRL8=
-X-Google-Smtp-Source: AGHT+IFUFKq0lYxlNzsXXq0fVnKrrxCKW8Nx3h/E3Xc0xNLj22cjL5q4txAh0aZwNXPW20/Wr1C2qg==
-X-Received: by 2002:a05:6512:2348:b0:52e:9b9e:a6cb with SMTP id 2adb3069b0e04-539c4899755mr4276741e87.15.1728571252194;
-        Thu, 10 Oct 2024 07:40:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c8a54sm273302e87.115.2024.10.10.07.40.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 07:40:49 -0700 (PDT)
-Date: Thu, 10 Oct 2024 17:40:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
-	agross@kernel.org, andersson@kernel.org, linux-kernel@vger.kernel.org, 
-	konrad.dybcio@linaro.org, mchehab@kernel.org, quic_vgarodia@quicinc.com, 
-	stanimir.k.varbanov@gmail.com, kvalo@kernel.org, quic_jjohnson@quicinc.com, 
-	ath11k@lists.infradead.org
-Subject: Re: [PATCH v4] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-Message-ID: <3giotvkrwailt75gndhup7xhqvlc3vdowdoypi5vaeebuojp45@vkqxbtjsbksf>
-References: <20241010132902.2882939-1-quic_miaoqing@quicinc.com>
- <asvhh4kzq6s6yz3wrqfmuolcnlonoobogoh45pnq4zdr44lpxs@zgarzpduk2sk>
- <cc8358b1-2442-4a40-8eb3-0912423db554@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvGSSPy5z9K8VlYXnXWCajfomBwITrMGa6jhqd4DCkaeG5vvrArsB1OMm+xlbExM2hqQrCrT2Ax1QnbRBusb5X/1ACVCDCPLWEKtI+GV+ahXE8R581vJkT4Kem3uMHGHGIvFLGM9druVkcFoWm2I9gOoMMhnOipLey/Sm6ZB8zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oMM+hHbx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ADKFFj031559;
+	Thu, 10 Oct 2024 14:41:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=KJ7obiUQsc0gi7rSB7YbRqDTUNO
+	qFh295ecCfP3r4I8=; b=oMM+hHbxJFu0iKt3zidRaax35B+5x8abmMvcNFO+Krh
+	I8lKdN9A51Y4+ki5aCJg3tgn6U5h8e+fU4OqO1J4W9hNX31R725fxL2Rsj2+aBm5
+	l+5g2suew6UiCHmqxgVjPWPKuVOgxBoTsXqfcl9VjQZkUyEQkgzS1AWo63c8hru2
+	QI1sBnOd93B6kb61ffyHeFh1yF9HQh8+SZWGF4LJ3dWPxZ1EZQ3YSZ4qap7sIf5r
+	pVvOccAm6SxBx41nBCZhNtnRHsDJQzRmETlX8J0vi/9Qt2uEJ2WOmfu/7TAlLvgQ
+	jYIefjS30z6jbVLg2bOrLHqcdAZN1THeYdwFoRMJSag==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426fqk8er7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 14:41:07 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49AEbb81000832;
+	Thu, 10 Oct 2024 14:41:07 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426fqk8eqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 14:41:07 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49AE1d5O022867;
+	Thu, 10 Oct 2024 14:41:06 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg17yug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 14:41:06 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49AEf3nj20906356
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 14:41:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 003EE2004B;
+	Thu, 10 Oct 2024 14:41:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AD11620040;
+	Thu, 10 Oct 2024 14:41:02 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 10 Oct 2024 14:41:02 +0000 (GMT)
+Date: Thu, 10 Oct 2024 16:41:01 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Mario Casquero <mcasquer@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-s390@vger.kernel.org,
+        virtualization@lists.linux.dev, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 0/5] virtio-mem: s390x support
+Message-ID: <20241010144101.15346-C-hca@linux.ibm.com>
+References: <20240910191541.2179655-1-david@redhat.com>
+ <CAMXpfWvRy_fpNUXeVO_-0O9WXDYY8f+cBEQQvsqZD2g2043LaA@mail.gmail.com>
+ <e0e13b95-bc9a-4f4b-a721-379676725525@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,57 +103,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cc8358b1-2442-4a40-8eb3-0912423db554@quicinc.com>
+In-Reply-To: <e0e13b95-bc9a-4f4b-a721-379676725525@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EE3Dkc8rCcd301tXUOjUXD5mTbEF83eP
+X-Proofpoint-ORIG-GUID: tuVe5hxUbXesJKRGXR5xf0cDEAn-KsaD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ impostorscore=0 clxscore=1011 adultscore=0 mlxlogscore=713 bulkscore=0
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100097
 
-On Thu, Oct 10, 2024 at 09:59:11PM GMT, Miaoqing Pan wrote:
-> 
-> 
-> On 10/10/2024 9:47 PM, Dmitry Baryshkov wrote:
-> > On Thu, Oct 10, 2024 at 09:29:02PM GMT, Miaoqing Pan wrote:
-> > > Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
-> > > board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
-> > > 
-> > > Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-> > > ---
-> > > v2:
-> > >    - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
-> > >    - relocate pcieport0 node in alphabetical order.
-> > > v3:
-> > >    - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
-> > > v4:
-> > >    - update 'ath11k-calibration-variant' to "Ride".
+On Thu, Oct 10, 2024 at 02:31:31PM +0200, David Hildenbrand wrote:
+> On 10.10.24 10:41, Mario Casquero wrote:
+> > This series has been successfully tested along with the QEMU's series.
+> > Virtio-mem devices could be resized, plugged and unplugged seamlessly.
+> > The memory information displayed is correct and reboot doesn't cause
+> > any issue.
 > > 
-> > What exactly is Ride? Is there just one Ride board? I thought it's a
-> > board family name.
+> > Tested-by: Mario Casquero <mcasquer@redhat.com>
 > 
-> I just follow the existing boards, 'Ride' is a board name. Both 'Ride' and
-> 'Ride r3' boards are attached with WCN6855 WLAN chip.
+> Thanks a bunch for testing!
 > 
-> arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts:1112:
-> qcom,ath11k-calibration-variant = "Fairphone_5";
-> arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts:958:
-> qcom,ath11k-calibration-variant = "SHIFTphone_8";
-> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts:879:	
-> qcom,ath11k-calibration-variant = "LE_X13S";
+> If there are no more comments, I'll add the in-tree kernel update for the
+> new diag500 subcall and resend.
 
-There definitely are other Ride boards. I see patches related to
-qcs8300-ride. Does that board use the same BDF file?  If not,
-Qualcomm_SA8775P_Ride or QC_SA8775P_Ride sounds like a better approach.
+Sorry that you haven't seen any review from here yet, but... :)
 
-> > 
-> > Also, could you please extend the commit message with messages from the
-> > ath11k driver, showing the chip_id / board_id ?
-> 
-> The board-id is non 0xff, do you still think we need to add
-> 'qcom,ath11k-calibration-variant', following is the WLAN chip board data
-> info,
-> 
-> bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=519.bin
-
-I'd ask Kalle / Jeff to answer this question. Are we sure that this
-board-id won't be reused by any else device?
-
--- 
-With best wishes
-Dmitry
+Please also change all usages of "s390x" to "s390" before you resend.
+Within the kernel usage of s390x is not common and there shouldn't be
+anything like this added.
 
