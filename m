@@ -1,158 +1,203 @@
-Return-Path: <linux-kernel+bounces-359459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178D4998BCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B627998BCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28CCB1C232D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBFF1C235EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC301CDA3B;
-	Thu, 10 Oct 2024 15:34:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E1E1CCB46;
+	Thu, 10 Oct 2024 15:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1wHW9/S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BCB1CCB46;
-	Thu, 10 Oct 2024 15:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAE1CDFC3;
+	Thu, 10 Oct 2024 15:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574452; cv=none; b=K6TlV8pzkgu1FVAeCCtFMde2ff1xL3oTs+RwctzFHFPNLGzaORNIJvQwBCT5zgrbYFDihWfDyvNTXllZ26PK4zuZ0t6ziqQ5Ji7GNG4LmngP1HmJnyb8U8OWZcPRVhDVonLwH7juIn1pfmcggAbFKJpCB9EfNr6Aw1Sq005YeXE=
+	t=1728574453; cv=none; b=csHS+TrXR36koNVkWapqpoW5wnAxshgn03N1twCTD3yMASVcPnKxehHY8CQANPuBt0gyCYAXSO+LdI0N7obG0ASumHNBFErxesbmJdO0kchOsTQKMifv1+aCvX2Cd7LDThcwmMPr1lyHpBe0TdsYB6vxTeMAMEzIqt6vYFd/SCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574452; c=relaxed/simple;
-	bh=EllmNvsh7fQqqPvaUW4yCBiPLtpI7eF8Gz+UCBruqL8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bivXNt5Sj70gs9fG/MaeIUtKVXZ3GXKG3xYUu21aALynV3Coc9Qz89qJ3LvvsS9JU61DERcuVSJilBfn6L/I2PD/jmM4mZ9WNrTMLavKT/sHgrI4jaj6NwdtUl2bdC3bA45t3RBUePsnk4/Ru05l75P4kC1AgMoxw2FoXFgHYNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPYgs73r8z6HJyK;
-	Thu, 10 Oct 2024 23:33:45 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E4DCF140CB1;
-	Thu, 10 Oct 2024 23:34:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 17:34:00 +0200
-Date: Thu, 10 Oct 2024 16:33:59 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 25/28] cxl/region: Read existing extents on region
- creation
-Message-ID: <20241010163359.000001f7@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-25-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-25-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728574453; c=relaxed/simple;
+	bh=/rdx2lmHwXayLf3Xya3v9K3O6//R9jM089t+Y/bxExM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=OdXzUTlueUrjXQ+U4dfdB2T2p0ei2fdMW70sh/gfQ/ZKbU9ME+BzmTHnD6efK8OavCcXAAc/QTj/v8rqKMl5tiGxQnoQugkmEXSaQR9AWrFcHKh6Dkdg9om2OPeF2tp2lLGq0H4ILgH042jG4AOYhwd0mVmSFU1RjoMikZEWYig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1wHW9/S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56ECEC4CEC5;
+	Thu, 10 Oct 2024 15:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728574453;
+	bh=/rdx2lmHwXayLf3Xya3v9K3O6//R9jM089t+Y/bxExM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=O1wHW9/SCg7bA6jlVYcbaMhZXzHM9quTw0U8tEj5Q8jv9dyhFPXh33G2ovYXPF+s4
+	 6Ds+2+gXeIyBFtqbj4Ake38O1t5qw7TtgK0M+pxzRCg475S2ESPS6lHpV8TMe/FFPf
+	 uvJf/Y5hh22pp76Ezac+d+ePebg6UCmgnpGl0UKy6RKFl4hb/sCvDGRATxiAsFMcFP
+	 VCjvx+tpixJvLlJbCChfRUZRNx51bH85JqbCOnLt/TWhhxcijYt717zMDtAIY4g765
+	 pdXqTL3OBQ/RgtrWqm/XPuHjZ+fKtwbljHxlGpOVHM+nweld2ib+rH169s58xGGd7b
+	 F1z5BqYTeVZ/w==
+Date: Fri, 11 Oct 2024 00:34:08 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
+ <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Dima
+ Kogan <dima@secretsauce.net>, james.clark@linaro.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] perf probe: Generate hash event for long symbol
+Message-Id: <20241011003408.f9bacf4e5899e88a94c3d7cd@kernel.org>
+In-Reply-To: <20241007141116.882450-4-leo.yan@arm.com>
+References: <20241007141116.882450-1-leo.yan@arm.com>
+	<20241007141116.882450-4-leo.yan@arm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 07 Oct 2024 18:16:31 -0500
-ira.weiny@intel.com wrote:
+On Mon,  7 Oct 2024 15:11:16 +0100
+Leo Yan <leo.yan@arm.com> wrote:
 
-> From: Navneet Singh <navneet.singh@intel.com>
+> If a symbol name is longer than the maximum event length (64 bytes),
+> generate an new event name with below combination:
 > 
-> Dynamic capacity device extents may be left in an accepted state on a
-> device due to an unexpected host crash.  In this case it is expected
-> that the creation of a new region on top of a DC partition can read
-> those extents and surface them for continued use.
+>   TruncatedSymbol + '_' + HashString + '__return' + '\0'
+>     `> 46B        + 1B  +   8B       +    8B      + 1B   = 64 Bytes.
 > 
-> Once all endpoint decoders are part of a region and the region is being
-> realized, a read of the 'devices extent list' can reveal these
-> previously accepted extents.
+> With this change, a probe can be injected for long symbol.
 > 
-> CXL r3.1 specifies the mailbox call Get Dynamic Capacity Extent List for
-> this purpose.  The call returns all the extents for all dynamic capacity
-> partitions.  If the fabric manager is adding extents to any DCD
-> partition, the extent list for the recovered region may change.  In this
-> case the query must retry.  Upon retry the query could encounter extents
-> which were accepted on a previous list query.  Adding such extents is
-> ignored without error because they are entirely within a previous
-> accepted extent.
+> Before:
 > 
-> The scan for existing extents races with the dax_cxl driver.  This is
-> synchronized through the region device lock.  Extents which are found
-> after the driver has loaded will surface through the normal notification
-> path while extents seen prior to the driver are read during driver load.
+>   # nm test_cpp_mangle | grep -E "print_data|Point"
+>   0000000000000cac t _GLOBAL__sub_I__Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi
+>   0000000000000b50 T _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzR5Point
+>   0000000000000b14 T _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi
 > 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+>   # perf probe -x test_cpp_mangle --add \
+>         "_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi"
+>   snprintf() failed: -7; the event name nbase='_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi' is too long
+>   Error: Failed to add events.
 > 
-One buglet, and a request for an error message.
-With those.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> After:
+> 
+>   # perf probe -x test_cpp_mangle --add \
+> 	"_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi"
+> 
+>   Probe event='_Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi' is too long (>= 64 bytes).
+>   Generate hashed event name='_Z62this_is_a_very_very_long_print_data_abcdef_91f40679'
+> 
+>   Added new event:
+>     probe_test_cpp_mangle: _Z62this_is_a_very_very_long_print_data_abcdef_91f40679
+>     (on _Z62this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyzi in /mnt/test_cpp_mangle)
+> 
+>   You can now use it in all perf tools, such as:
+> 
+>       perf record -e probe_test_cpp_mangle: _Z62this_is_a_very_very_long_print_data_abcdef_91f40679 -aR sleep 1
 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index d66beec687a0..6b25d15403a3 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -1697,6 +1697,111 @@ int cxl_dev_dynamic_capacity_identify(struct cxl_memdev_state *mds)
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_dev_dynamic_capacity_identify, CXL);
+OK, personally, I recommend you to specify event name instead of generating
+long event name in this case. But I understand sometimes this kind of feature
+is good for someone.
+
+BTW, I would like to confirm. Can't we demangle the symbol name and parse it?
+
+Thank you,
+
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/probe-event.c | 42 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 41 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 71acea07cb46..bacd29b95c75 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -2837,6 +2837,32 @@ static void warn_uprobe_event_compat(struct probe_trace_event *tev)
+>  /* Defined in kernel/trace/trace.h */
+>  #define MAX_EVENT_NAME_LEN	64
 >  
-> +/* Return -EAGAIN if the extent list changes while reading */
-> +static int __cxl_process_extent_list(struct cxl_endpoint_decoder *cxled)
+> +static char *probe_trace_event__hash_event(const char *event)
 > +{
-> +	u32 current_index, total_read, total_expected, initial_gen_num;
-> +	struct cxl_memdev_state *mds = cxled_to_mds(cxled);
-> +	struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
-> +	struct device *dev = mds->cxlds.dev;
-> +	struct cxl_mbox_cmd mbox_cmd;
-> +	u32 max_extent_count;
-> +	bool first = true;
+> +	char *str = NULL;
+> +	size_t hash;
 > +
-> +	struct cxl_mbox_get_extent_out *extents __free(kfree) =
-
-__free(kvfree)
-
-> +				kvmalloc(cxl_mbox->payload_size, GFP_KERNEL);
-> +	if (!extents)
-> +		return -ENOMEM;
-
-...
-
-
+> +	str = malloc(MAX_EVENT_NAME_LEN);
+> +	if (!str)
+> +		return NULL;
+> +
+> +	hash = str_hash(event);
+> +
+> +	/*
+> +	 * Reserve characters for the "__return" suffix for the return probe.
+> +	 * Thus the string buffer (64 bytes) are used for:
+> +	 *   Truncated event:  46 bytes
+> +	 *   '_'            :   1 byte
+> +	 *   hash string    :   8 bytes
+> +	 *   reserved       :   8 bytes (for suffix "__return")
+> +	 *   '\0'           :   1 byte
+> +	 */
+> +	strncpy(str, event, 46);
+> +	/* '_' + hash string + '\0' */
+> +	snprintf(str + 46, 10, "_%lx", hash);
+> +	return str;
 > +}
-
->  static void cxlr_dax_unregister(void *_cxlr_dax)
->  {
->  	struct cxl_dax_region *cxlr_dax = _cxlr_dax;
-> @@ -3224,6 +3233,9 @@ static int devm_cxl_add_dax_region(struct cxl_region *cxlr)
->  	dev_dbg(&cxlr->dev, "%s: register %s\n", dev_name(dev->parent),
->  		dev_name(dev));
->  
-> +	if (cxlr->mode == CXL_REGION_DC)
-> +		cxlr_add_existing_extents(cxlr);
-
-Whilst there isn't a whole lot we can do if this fails, I'd like an error
-print to indicate something odd is going on.  Probably pass any error
-up to here then print a message before carrying on.
-
 > +
->  	return devm_add_action_or_reset(&cxlr->dev, cxlr_dax_unregister,
->  					cxlr_dax);
->  err:
+>  /* Set new name from original perf_probe_event and namelist */
+>  static int probe_trace_event__set_name(struct probe_trace_event *tev,
+>  				       struct perf_probe_event *pev,
+> @@ -2844,7 +2870,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
+>  				       bool allow_suffix)
+>  {
+>  	const char *event, *group;
+> -	char *buf;
+> +	char *buf, *hash_event = NULL;
+>  	int ret;
+>  
+>  	buf = malloc(MAX_EVENT_NAME_LEN);
+> @@ -2864,6 +2890,19 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
+>  			event = pev->point.function;
+>  		else
+>  			event = tev->point.realname;
+> +
+> +		if (strlen(event) >= MAX_EVENT_NAME_LEN) {
+> +			pr_warning("Probe event='%s' is too long (>= %d bytes).\n",
+> +				   event, MAX_EVENT_NAME_LEN);
+> +
+> +			hash_event = probe_trace_event__hash_event(event);
+> +			if (!hash_event) {
+> +				ret = -ENOMEM;
+> +				goto out;
+> +			}
+> +			pr_warning("Generate hashed event name='%s'\n", hash_event);
+> +			event = hash_event;
+> +		}
+>  	}
+>  	if (pev->group && !pev->sdt)
+>  		group = pev->group;
+> @@ -2903,6 +2942,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
+>  		strlist__add(namelist, event);
+>  
+>  out:
+> +	free(hash_event);
+>  	free(buf);
+>  	return ret < 0 ? ret : 0;
+>  }
+> -- 
+> 2.34.1
+> 
+> 
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
