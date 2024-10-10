@@ -1,306 +1,122 @@
-Return-Path: <linux-kernel+bounces-358800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D19E9983FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:39:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 167739983FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0151F27622
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C10281668
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BECD1C2308;
-	Thu, 10 Oct 2024 10:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AF11BF818;
+	Thu, 10 Oct 2024 10:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="QTVi215i"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YMROIh92"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023E61C1AB3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00D319E7D0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728556778; cv=none; b=rkpFNxpIs9hIsGtY4optf0S10bFpKo50v7nkiEYfylH/BPmLzwv1LMnrKFwuY82LIEs+xl9vx8qqEMRwkCGz6NFcbOx0VKUIwQDt7xp2CfQilq7rtml7ViA6h2pgJTQy4+syc4U9BfQXuQF2/YWkXDzOby03rHt3CXcGkhA9Vgc=
+	t=1728556833; cv=none; b=gFS3wKKU/Bh3zOJRzBFcVghLbM5g5ilK7myAoO95mUlHERGr4/Xzl+1kuc46k8yb97DbG7pwWSkxoeKB4WYn40Ep5KtuKxnAU/P8agrA8czrllMxsrlmWbB+/RHQLnJjqCSLOKCNfaF/7Qe/F3O8HuJlbDX2a/glc8oztlp00qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728556778; c=relaxed/simple;
-	bh=unWCd8Bj7m5kV38bwAaZ3iSQ42tE4Qa+3WqM5c4Oq40=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=McTfNNEpAJLoOVhHbMEyEKd3CwBMgxlRBjP3GRVYdPAXtJ8g9Q9nItcEMCmPVILfuCIoIY21joPoGqF1/xUpFiKlqcZuquYn1W38loE3rvutfNc72PUkUJ4bFz3oCuUTpAJekYiPNumDLIFtH+d1+//qRuR7nVdX42q3Z2Vuy3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=QTVi215i; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=jqhjdjlg5vhhpffs2lm7ksfmp4.protonmail; t=1728556773; x=1728815973;
-	bh=8Zf+6OnIHBMtlXd7FzOuX7ORu081uulAtd21bEUsr2c=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=QTVi215iA8LsutOzi6GKPp9pTSVybknFvKR5OCEBCbFu8lS5kmvabZzwD/NnQw2X9
-	 YTzuS2/iNPQhiYUfJEB+q9c9j/iojAYh70XfKjGRUav0jzwdbt5GriAQYMt2wvNtkK
-	 N7QrDlgLYUb+cpWgfuP0FCWAIMWRy+HjCInmC5hkBL2Xzat9IyAhFDOzcLUCYeRdrr
-	 36R06mAHAsV9v+Bu2T7iif2jS5PnZSgOppSc97240cTC7PPFCSAqdcNDz6b/uGiUKf
-	 X2YjBFggWmncxoaeuI2cxjoppwsziq7A5OAZapb2LWjSvpyRMLwX1v18/RmPJrE9EB
-	 Psk7OJxDPbi1g==
-Date: Thu, 10 Oct 2024 10:39:27 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v4] rust: add global lock support
-Message-ID: <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me>
-In-Reply-To: <20240930-static-mutex-v4-1-c59555413127@google.com>
-References: <20240930-static-mutex-v4-1-c59555413127@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 0bb8459485997070a8fe7cd17fff164fccb4da71
+	s=arc-20240116; t=1728556833; c=relaxed/simple;
+	bh=6IZ/lCHicleSJFqXu6KLb1FlJSmDUPAbcpMj5ss5U8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KY8yyCXpn9CsAnuRLT1bgtOqsTiRP6O+Y2uhDtU8Pvz3IpYIRlUItUSI4OTnWsbkkcbXuJQ+h/H7jTxKIcdHJYrzWQcFfN862wZ9abtBEMm6Rcbq62FZkfQsfY6CD6IAq9zZwN6voNDYey5f/wrwaWtTp8LtH2VbfVVA5kpM0Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YMROIh92; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d39d9f782so429088f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728556830; x=1729161630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EBHWiktfVYlgbYifeV/Ct3rZTbpPbZ7HKtEDGENAOyk=;
+        b=YMROIh92o6gbrMISiQEWnoTF+fAPEk4mztfh5XdIIofEx9pgjfm8AfPXQtTrIcF7g7
+         BEdUgI6xK+d/YfSisJoG46bpKZjVh8E5lBychBE0vkq/a/xPMvJfTedJACMr6cvR5Q94
+         iDuNdn9F3dgqzfiiei+Df3TylC0cyqRtqFn9KJQj8G3/Nt9LcVVtqP4bcwwrSd5ukLov
+         413EtHTjcSjlVXFUcl2sM/pGhNhF7WV0qps33abKdUlWkkFJgVpWHPdiIHbQsg9eiMjD
+         NjypqyMSd4bZWHcF4ukm0IgYO4uh4dHQSwZXFi7pcAqCMDcZFO9QgNCd21BkWzA9C7Vf
+         Z+Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728556830; x=1729161630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EBHWiktfVYlgbYifeV/Ct3rZTbpPbZ7HKtEDGENAOyk=;
+        b=w6gr8LQLXBsT8t594QjXp1SYbQLz2hey9LSdiKguYzmEclWW3tBrbFx86IgJnMBilT
+         MXpRrFutCteZRz0QqofLM70xNqsnMErpYLp8pbrFx6gyP9ilYkVcA7gnXV5UTLZS+nAP
+         fdqKn9k4srz3x4E5iltOf0mbjKke/yWr0XQuSok28G7Nb8XNDK5n+cPuv39k5nJ34ZoY
+         q3hQLNoZbcSGqrt9uYzP6VsBxCNH6MuMdmo1quAc+4Rn0lTvMi6t6fHhn4GMNLcpmFFO
+         D69/sjYswNiA2OsoFJW1WLOd5sHGjI3Ost3TIBhC1vy8VSMTqTJT2AVW1IQYhqCrH7Fm
+         EYbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWXkBkXeJ1CksRjGALDc44yjcsdGcIwyhmxHCMtLt1uRRxqD0qWW1NU8qGlPD+a8nv4u2xv2DOPF8iWB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh/gEC67dU7KaBGtjUJehDUx/+d4iiHsNZQNYhZNv7gbnNj2EV
+	wPJeMMnV2PljKJ01DtCAF+sfrkuzxpy5j11BjWnPcmN4iGkD9hyaugZRNWHIRg==
+X-Google-Smtp-Source: AGHT+IFO5jDd08ddK1X0YjR9dIy7JGWXcVcRqZfK2+MjUcvEOY5tKA5RJvpLtMudOT6lSTGNeMHZZQ==
+X-Received: by 2002:adf:ecca:0:b0:37d:4a68:61a1 with SMTP id ffacd0b85a97d-37d4a68621cmr1116060f8f.56.1728556829836;
+        Thu, 10 Oct 2024 03:40:29 -0700 (PDT)
+Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8269sm1183712f8f.1.2024.10.10.03.40.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 03:40:29 -0700 (PDT)
+Date: Thu, 10 Oct 2024 10:40:25 +0000
+From: Aleksei Vetrov <vvvvvv@google.com>
+To: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	akpm@linux-foundation.org, vbabka@suse.cz, willy@infradead.org,
+	hannes@cmpxchg.org, anna-maria@linutronix.de, tglx@linutronix.de,
+	arnd@arndb.de, llvm@lists.linux.dev
+Subject: Re: [PATCH] mm/vmstat: Fix -Wenum-enum-conversion warning in vmstat.h
+Message-ID: <ZwevGZHiXOBqoslA@google.com>
+References: <20240621111604.25330-1-shivamurthy.shastri@linutronix.de>
+ <ZwRA9SOcOjjLJcpi@google.com>
+ <20241008005136.GA241099@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008005136.GA241099@thelio-3990X>
 
-On 30.09.24 15:11, Alice Ryhl wrote:
-> diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/glob=
-al.rs
-> new file mode 100644
-> index 000000000000..fc02fac864f6
-> --- /dev/null
-> +++ b/rust/kernel/sync/lock/global.rs
-> @@ -0,0 +1,260 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! Support for defining statics containing locks.
-> +
-> +/// Defines a global lock.
-> +///
-> +/// Supports the following options:
-> +///
-> +/// * `value` specifies the initial value in the global lock.
-> +/// * `wrapper` specifies the name of the wrapper struct.
-> +/// * `guard` specifies the name of the guard type.
-> +/// * `locked_by` specifies the name of the `LockedBy` type.
-> +///
-> +/// # Examples
-> +///
-> +/// A global counter.
-> +///
-> +/// ```
-> +/// # mod ex {
-> +/// # use kernel::prelude::*;
-> +/// kernel::sync::global_lock! {
-> +///     // SAFETY: Initialized in module initializer before first use.
-> +///     static MY_COUNTER: Mutex<u32> =3D unsafe { uninit };
-> +///     value: 0;
-> +/// }
-> +///
-> +/// fn increment_counter() -> u32 {
-> +///     let mut guard =3D MY_COUNTER.lock();
-> +///     *guard +=3D 1;
-> +///     *guard
-> +/// }
-> +///
-> +/// impl kernel::Module for MyModule {
-> +///     fn init(_module: &'static ThisModule) -> Result<Self> {
-> +///         // SAFETY: called exactly once
-> +///         unsafe { MY_COUNTER.init() };
-> +///
-> +///         Ok(MyModule {})
-> +///     }
-> +/// }
-> +/// # struct MyModule {}
-> +/// # }
-> +/// ```
-> +///
-> +/// A global mutex used to protect all instances of a given struct.
-> +///
-> +/// ```
-> +/// # mod ex {
-> +/// # use kernel::prelude::*;
-> +/// kernel::sync::global_lock! {
-> +///     // SAFETY: Initialized in module initializer before first use.
-> +///     static MY_MUTEX: Mutex<()> =3D unsafe { uninit };
-> +///     value: ();
-> +///     guard: MyGuard;
-> +///     locked_by: LockedByMyMutex;
-> +/// }
-> +///
-> +/// /// All instances of this struct are protected by `MY_MUTEX`.
-> +/// struct MyStruct {
-> +///     my_counter: LockedByMyMutex<u32>,
-> +/// }
-> +///
-> +/// impl MyStruct {
-> +///     /// Increment the counter in this instance.
-> +///     ///
-> +///     /// The caller must hold the `MY_MUTEX` mutex.
-> +///     fn increment(&self, guard: &mut MyGuard) -> u32 {
-> +///         let my_counter =3D self.my_counter.as_mut(guard);
-> +///         *my_counter +=3D 1;
-> +///         *my_counter
-> +///     }
-> +/// }
-> +///
-> +/// impl kernel::Module for MyModule {
-> +///     fn init(_module: &'static ThisModule) -> Result<Self> {
-> +///         // SAFETY: called exactly once
-> +///         unsafe { MY_MUTEX.init() };
-> +///
-> +///         Ok(MyModule {})
-> +///     }
-> +/// }
-> +/// # struct MyModule {}
-> +/// # }
-> +/// ```
+Hi Nathan,
 
-The docs here don't mention that you still need to call `.init()`
-manually (though the examples show it nicely). I don't know if we want
-macros to have a `# Safety` section.
+On Mon, Oct 07, 2024 at 05:51:36PM -0700, Nathan Chancellor wrote:
+> For what it's worth, I never really saw Matthew's comment around what
+> value does this warning provide addressed. I was the one who originally
+> moved it into W=1 at the request of Arnd because he felt that instances
+> of this warning could be bugs and they should be audited.  However, I
+> have not seen many instances of this warning pop up in new code through
+> 0day build reports and the ones that I have seen seem to be intentional,
+> as they are using enums like integral values, such as here. If that is
+> just going to result in a bunch of patches like this adding unnecessary
+> casts, I think it would just be better to consider disabling this
+> warning altogether or at the very least, moving it to W=2 (which is for
+> warnings that are noisy but might contain bugs), since more people are
+> using W=1 as their normal build configuration nowadays.
 
-> +#[macro_export]
-> +macro_rules! global_lock {
-> +    {
-> +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valu=
-ety:ty> =3D unsafe { uninit };
-> +        value: $value:expr;
+If time has proven that this warning has never found an unintended enum
+conversion, then it is worth to disable it for everyone. As you said in
+the original thread ([PATCH] kbuild: Disable two Clang specific
+enumeration warnings), W=2 is not run by any CI, so I would prefer to
+disable it completely.
 
-I would find it more natural to use `=3D` instead of `:` here, since then
-it would read as a normal statement with the semicolon at the end.
-Another alternative would be to use `,` instead of `;`, but that doesn't
-work nicely with the static keyword above (although you could make the
-user write it in another {}, but that also isn't ideal...).
+Alternatives considered:
 
-Using `=3D` instead of `:` makes my editor put the correct amount of
-indentation there, `:` adds a lot of extra spaces.
+* Enable -Wenum-enum-conversion only for 0day build reports through
+  KCFLAGS. It will eliminate noise for regular users while keeping
+  developers informed about new instances of this warning.
+* -Wno-error=enum-enum-conversion to keep warning but don't block
+  compilation for CONFIG_WERROR users.
 
-> +        wrapper: $wrapper:ident;
-> +        $( name: $lname:literal; )?
-> +        $(
-> +            guard: $guard:ident;
-> +            locked_by: $locked_by:ident;
-> +        )?
-> +    } =3D> {
-> +        $crate::macros::paste! {
-> +            type [< __static_lock_ty_ $name >] =3D $valuety;
-> +            const [< __static_lock_init_ $name >]: [< __static_lock_ty_ =
-$name >] =3D $value;
-
-Why are these two items outside of the `mod` below?
-Also why do you need to define the type alias? You could just use
-`$valuety`, right?
-
-Also,
-
-    error: type `__static_lock_ty_VALUE` should have an upper camel case na=
-me
-       --> rust/kernel/sync/lock/global.rs:100:18
-        |
-    100 |               type [< __static_lock_ty_ $name >] =3D $valuety;
-        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert th=
-e identifier to upper camel case: `StaticLockTyValue`
-
-The same error affects the `wrapper` type forwarding below.
-
-
-> +
-> +            #[allow(unused_pub)]
-
-    error: unknown lint: `unused_pub`
-       --> rust/kernel/sync/lock/global.rs:103:21
-        |
-    103 |               #[allow(unused_pub)]
-        |                       ^^^^^^^^^^ help: did you mean: `unused_mut`
-
-Though I also get
-
-    error: methods `init` and `lock` are never used
-       --> rust/kernel/sync/lock/global.rs:128:42
-        |
-    122 | /                 impl $wrapper {
-    123 | |                     /// Initialize the global lock.
-    124 | |                     ///
-    125 | |                     /// # Safety
-    ...   |
-    128 | |                     pub(crate) unsafe fn init(&'static self) {
-        | |                                          ^^^^
-    ...   |
-    142 | |                     pub(crate) fn lock(&'static self) -> $crate=
-::global_lock_inner!(guard $kind, $valuety $(, $guard)?) {
-        | |                                   ^^^^
-    ...   |
-    146 | |                     }
-    147 | |                 }
-        | |_________________- methods in this implementation
-
-But that is governed by the `dead_code` lint.
-
-> +            mod [< __static_lock_mod_ $name >] {
-> +                use super::[< __static_lock_ty_ $name >] as Val;
-> +                use super::[< __static_lock_init_ $name >] as INIT;
-> +                type Backend =3D $crate::global_lock_inner!(backend $kin=
-d);
-> +                type GuardTyp =3D $crate::global_lock_inner!(guard $kind=
-, Val $(, $guard)?);
-
-`GuardTyp` is only used once, so you should be able to just inline it.
-`Backend` is used twice, but I don't know if we need a type alias for
-it.
-
-> +
-> +                /// # Safety
-> +                ///
-> +                /// Must be used to initialize `super::$name`.
-> +                pub(super) const unsafe fn new() -> $wrapper {
-
-Why is this function not associated to `$wrapper`?
-
-> +                    let state =3D $crate::types::Opaque::uninit();
-
-Why not add
-
-    const INIT: $valuety =3D $value;
-
-here instead of outside the mod.
-
-> +                    $wrapper {
-> +                        // SAFETY: The user of this macro promises to ca=
-ll `init` before calling
-> +                        // `lock`.
-> +                        inner: unsafe {
-> +                            $crate::sync::lock::Lock::global_lock_helper=
-_new(state, INIT)
-> +                        }
-> +                    }
-> +                }
-> +
-> +                /// Wrapper type for a global lock.
-> +                pub(crate) struct $wrapper {
-
-How can the wrapper struct be `pub(crate)` when the constant might be
-global `pub`?
-
-    error: type `__static_lock_wrapper_INIT` is more private than the item =
-`INIT`                                                                     =
-                                                                           =
-          =20
-       --> rust/kernel/sync/lock/global.rs:206:14
-        |                                   =20
-    206 |               };                      =20
-        |                ^ static `INIT` is reachable at visibility `pub`
-        |                =20
-
-The functions should probably just be `pub`.
-
----
-Cheers,
-Benno
-
-> +                    inner: $crate::sync::lock::Lock<Val, Backend>,
-> +                }
-> +
-> +              =20
-
+Arnd Bergmann, what do you think? Have you found it useful after all?
 
