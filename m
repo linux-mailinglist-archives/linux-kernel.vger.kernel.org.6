@@ -1,155 +1,109 @@
-Return-Path: <linux-kernel+bounces-359455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13F5998C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31065998BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08A84B328DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:33:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4184C1C24F6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1741CCB41;
-	Thu, 10 Oct 2024 15:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB99F1CEACB;
+	Thu, 10 Oct 2024 15:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hdlIpHYg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1HtouqW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822131CC89F;
-	Thu, 10 Oct 2024 15:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3331CCB49;
+	Thu, 10 Oct 2024 15:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574352; cv=none; b=UmhjaEjRA9jwksCgxQaPDVbjd9s22kz+JJltsdb0q1M8jd6LqUhyvTFWdPFixohFIB8thFZu+kOCx82Vj0cUxphg0Tpby7kCZWoC8G9eig1wMrShlSgmPHZxCql/xLzFEwa9JICryAJxHpW9nlYeUkv4+YFGv91hTe8VRM/X+X8=
+	t=1728574357; cv=none; b=lJtrh8wtLDcP9yE4DQHLMMczLUTXfLcHKob23FZi8LBO1Q8N4ZtmHillVyvhnKeoeK+35PvjtrUP3EmYk8e1l6lHLzeG6Ezf6CXuGJhCKD/joJSgb/hrAm3aDVUUVfoO857cPvjZv7IJckXdVdLQJw5VyU7q/Fy0hfXG/ArPZgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574352; c=relaxed/simple;
-	bh=MP15bS4w3vSqH5JjlnyEj+lJuyt5Y2WkrfBOlfGovZ8=;
+	s=arc-20240116; t=1728574357; c=relaxed/simple;
+	bh=vRYCLDUt3fbfr8Wex+GsOxts4nMwV0QgXj5YSyO5tFg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uERW7ymBYAR8nYsS/M12IgcmfYvDIglfT3yeItYEES/QPNfcspBoTNbYYrhFwAEdn/6w6CiW8bdFJOAeG/iPI1Nuy6OhdKU+XfMxNP+1z3IEeGz1dlhLmJaPTZIkOd9PlzbRyclHI+Ubpie4fXBmZ594m3mGVEjkdcX7Uky/GB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdlIpHYg; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728574351; x=1760110351;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MP15bS4w3vSqH5JjlnyEj+lJuyt5Y2WkrfBOlfGovZ8=;
-  b=hdlIpHYgrQ5JkCQACO2Ob6IQdjxn8egWXqagEB4ep1hdTH/modk9ua6z
-   8q8Ffoq3tzp0rWyXhTF2RJUewYxdSVBOBJP8aWI4YD6ktgViumHnJNA2w
-   m/632BPozGF7kh0P4/NjzUQdbIXX7gqmlrk9/8iBjv+PKsewEXTkZXkLO
-   DlR6NJHDZ8Y2jpvDhsIaqFYkDwANFYxP0XR35TTh3oWFN5xN/ylSxGwra
-   0Rg559p0uCUHmbtmA3/nkv63lBDI6VLwM8tRNLKZy/NpUthmHRQdoq+WD
-   vUB7fi4u5VmrURzWB8dVJL34I9SCHzo+XRJfLssM9+IXhyKtQK4i50tvW
-   Q==;
-X-CSE-ConnectionGUID: EYRAZESpQ5CXqn3EW0rFgw==
-X-CSE-MsgGUID: JptM8s08StyxFOj1vOPBsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45456275"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="45456275"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:32:30 -0700
-X-CSE-ConnectionGUID: 8qbP8zovS+qEoDxs1TzEVw==
-X-CSE-MsgGUID: BDJjDco/TJayOTFrgGJreA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="76828992"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:32:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1syv9K-00000001Zwx-1c2G;
-	Thu, 10 Oct 2024 18:32:22 +0300
-Date: Thu, 10 Oct 2024 18:32:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware
- prober
-Message-ID: <ZwfzhsvlPrxMi61j@smile.fi.intel.com>
-References: <20241008073430.3992087-1-wenst@chromium.org>
- <20241008073430.3992087-8-wenst@chromium.org>
- <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftU1syqvvCpGYW9dA8jqZUs3YP6RC+Y3fyBezZo/KZ03ZmkFna1sGq+hInqOv0gNGDZvUfWh4K2xRzobWb0BaHIjAmSL75kbUYXjmdhFnE010u/cfXRxMS8zdeoUzOre5Wyj/XhVQ8AxjfgD0rjrLflAn5OmdnqbUOZKlml2qX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1HtouqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 464FFC4CEC5;
+	Thu, 10 Oct 2024 15:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728574356;
+	bh=vRYCLDUt3fbfr8Wex+GsOxts4nMwV0QgXj5YSyO5tFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c1HtouqWok067LX1rL2gOxi64ae5k3JjMp6Qk0rRs7MIPDRGjL9zipOfdFw1zLnbh
+	 3Hn8D3P7/TZf1/h5zF9mEj7hQ0g9CPzHwwE6fa9Or+eYjoO5YS5mnexEo3Dno0No7u
+	 Y/J3cmPngv6/iWIU++ns+zhbwaM3tXk36H63HzjR+xumVxz1FTa0FNRda763jgAGPj
+	 zUW1CwsoiiOeyhTRuZh1TZflOR6in1r3XrIMPl0EFDsJch+FQSArnyMr0O7u7199xi
+	 E7BrAwvY61SJilWCOdoEcNtUY2hrjHkFtCayi5b7dtSL2X4fbHHwMz9NBmvKn9dnCx
+	 zFLeg7Ppiz3Jg==
+Date: Thu, 10 Oct 2024 08:32:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Ard Biesheuvel <ardb+git@google.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	keescook@chromium.org, linux-hardening@vger.kernel.org,
+	nathan@kernel.org, Jan Beulich <jbeulich@suse.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v2 1/5] objtool: Deal with relative jump tables correctly
+Message-ID: <20241010153234.646lb24sp5uy27hn@treble.attlocal.net>
+References: <20241010122801.1321976-7-ardb+git@google.com>
+ <20241010122801.1321976-8-ardb+git@google.com>
+ <20241010132623.GI17263@noisy.programming.kicks-ass.net>
+ <CAMj1kXFg+JWMrfw40y2=0f9jr-3ebUxsFPprAK5diK4GQke_4A@mail.gmail.com>
+ <20241010140745.GK17263@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241010140745.GK17263@noisy.programming.kicks-ass.net>
 
-On Thu, Oct 10, 2024 at 06:29:44PM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
+On Thu, Oct 10, 2024 at 04:07:45PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 10, 2024 at 03:59:43PM +0200, Ard Biesheuvel wrote:
+> > On Thu, 10 Oct 2024 at 15:26, Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Thu, Oct 10, 2024 at 02:28:03PM +0200, Ard Biesheuvel wrote:
+> > > > diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> > > > index 3cb3e9b5ad0b..7f7981a93535 100644
+> > > > --- a/tools/objtool/check.c
+> > > > +++ b/tools/objtool/check.c
+> > > > @@ -2101,6 +2101,8 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+> > > >  {
+> > > >       struct symbol *pfunc = insn_func(insn)->pfunc;
+> > > >       struct reloc *table = insn_jump_table(insn);
+> > > > +     unsigned int rtype = reloc_type(table);
+> > > > +     bool pcrel = rtype == R_X86_64_PC32;
+> > >
+> > > R_DATA32 or R_TEXT32 please, the budding cross arch stuff has their own
+> > > names for all that.
+> > >
+> > 
+> > #define R_DATA32        R_X86_64_PC32
+> > #define R_DATA64        R_X86_64_PC32
+> > #define R_TEXT32        R_X86_64_PC32
+> > #define R_TEXT64        R_X86_64_PC32
+> > 
+> > Clear as mud.
 
-...
+Yep... :-/
 
-> > +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_dumb_touchscreen = {
-> > +	.cfg = &(const struct i2c_of_probe_cfg) {
-> 
-> Perhaps you can introduce something like
-> 
-> #define DEFINE_I2C_OF_PROBE_CFG(_type_, _ops_)		\
-> 	(struct ...) {					\
-> 		.ops = _ops_,				\
-> 		.type = #_type_,			\
-> 	}
-> 
-> and use it here as
-> 
-> 	.cfg = DEFINE_I2C_OF_PROBE_CFG(touchscreen, NULL),
-> 
-> > +		.type = "touchscreen"
-> 
-> Ditto.
+> > 
+> > I'd guess we need the '64' variant here, but I'm not sure which one to
+> > use for a .rodata relocation pointing to .text. Any hints?
 
-This was for leaving trailing comma.
+This should be R_TEXT64.
 
-> > +	}
-> 
-> Ditto.
-> 
-> > +};
-> > +
-> > +static const struct i2c_of_probe_cfg chromeos_i2c_probe_simple_trackpad_cfg = {
-> > +	.ops = &i2c_of_probe_simple_ops,
-> > +	.type = "trackpad"
-> 
-> Leave a comma.
-> 
-> > +};
+> Josh? do R_{DATA,TEXT}64 want to be _PC64 ?
 
-...
-
-> > +	.cfg = &chromeos_i2c_probe_simple_trackpad_cfg,
-> 
-> 	.cfg = DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_ops),
-> 
-> Or even
-> 
-> #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)			\
-> 	DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
-
-With that also looking at the above
-
-#define DEFINE_I2C_OF_PROBE_CFG_NONE(_type_)				\
-	DEFINE_I2C_OF_PROBE_CFG(type, NULL)
+Actually, R_{DATA,TEXT}32 should be R_386_PC32.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Josh
 
