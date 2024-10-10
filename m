@@ -1,294 +1,186 @@
-Return-Path: <linux-kernel+bounces-359066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C83E998709
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:02:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A37F99871F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9162833D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB64D28124C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10921C8FC4;
-	Thu, 10 Oct 2024 13:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBF41C9DD2;
+	Thu, 10 Oct 2024 13:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lcCj1dfG"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dPjJ4sQ1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F3D1C330C;
-	Thu, 10 Oct 2024 13:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39BF1C6F45
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565354; cv=none; b=LC7bMUKfurkHYRYFyc2C4U++vPtNYFf1ghPaIXlYRTuY8G9BFOmhr5LE7DtAtPzRVAtmkFRdoie7FR8HBuHJdUL1QcdO7DK11GgbhfZIybxg1T/cwsppxa+/zA9e4iziRVo0Nf4nL+wsfdsUETGENwfl8JlQCANd/r8MM4RMhFg=
+	t=1728565624; cv=none; b=bYBxRvbzVpUT4i1wUcQ9zBx8lq62OXCGDSYNy59bAkhD1H5NhTFdl/BsPHBDxY8v+EkhErbFgYeEDEeuNItEhWkyZ36XKCpR/W9N4tUEKwEPzdyr/eQEzrrr4bmMfGEtgzq6YNCPoC1W4aTOiS2NbeH0SnWf1MLq53K0oqi1exI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565354; c=relaxed/simple;
-	bh=PA+AyIK6HVAOwxFW+cad6bDe4pCNTmVuDFKilUPqNfQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rQvH9YpMPrS+CZ8bk9dw3Wwi2ndsB9sXL5JPbJUM55F4j3v/L1jrdUkAJoY9j5+D63z1Ihuy3RK8JLyvb5Xuzkvyzvtuex131iedn/0v6WrY7l6u1HeAQ0mwzxCcc+l0zAb5EEEif9Omq54IKnpDTC6HB6ok7sJC2YP7JwqcFH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lcCj1dfG; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-430558cddbeso5851005e9.1;
-        Thu, 10 Oct 2024 06:02:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728565350; x=1729170150; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9DiEWt7hAhyZIjlst2WRz52IU6Lfsq/DckUi49+8mp8=;
-        b=lcCj1dfGefBBT+mhFstlXNKhdj3sLimG0PpF/UUBFoVQOGMXdaRHiisRPiQeAWARwy
-         2pM4vDR8QI6TYeXVIvsPo8WwCC53oTrzog0/WXJd//r7TweltKZa2BtuyDmbbBDBva+X
-         1IAAcYukl16TUe3Wz2HDdV8qoH4jwA86w5boUA3iK/CK0/wY++/zEMfnHmfI2SzPP/+X
-         3ASF0enJ6YivRGpIxEB4ZghhvvFqoUnh3CzgrPHxPcAF3pTESLOBpqbV6r2Nz3mSgrMI
-         Da9CgWzJClFwR23hMZVjblOX8Al9ZWR+6OmzkZ0nwp3TKuNwtehCd23cpmHMjn2/ljP6
-         zcFQ==
+	s=arc-20240116; t=1728565624; c=relaxed/simple;
+	bh=HTl9HFpdB2/qe9PUDd7JdAXui/SzZDH+2S6ISMBA44w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZoXw2Sv4JKQAsdME7Niu1AkzNA4+xXs1HpeNW6Ghjq4m9hwax+gyyWa7pWog5nXDX/YTOMVgKrvEnqfu43fOUgyVLCjn2wywZL4AuI1HhPZvd4lrBua3hy18mv/DfRBWeQ1XVs0WCq1YkrTs3SGBvGlk/0QzQwU+VxtbUa2eRX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dPjJ4sQ1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728565621;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3S+oamyBTgQALvkkGGJvlMZ/KB7mDQf9V7pRgoE4S2Q=;
+	b=dPjJ4sQ18ZNQisNc4iG5S32HyL1Al18AuR7wUjMw0XirmWiWYs9nnzjS4aqOAhpvoVEREY
+	0FXd94CATXPWxe4zQVgFWNvlMvqomW1O9rV9EdhY12NVfjdQDkYNWrfpEtnPHwXQK3u4OW
+	ZuGPrcMFDmQ9mIGzlxOiIVUGAFkzYMU=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-411-8LbRbRlsOK2ekhQXC5QmPw-1; Thu, 10 Oct 2024 09:07:00 -0400
+X-MC-Unique: 8LbRbRlsOK2ekhQXC5QmPw-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9960ef689dso67552966b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:07:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728565350; x=1729170150;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9DiEWt7hAhyZIjlst2WRz52IU6Lfsq/DckUi49+8mp8=;
-        b=az8JHC4bM4D7TuBGH1/7G9XTtqE1CJzMLlKuz5i5mITBAu0GnzU3Ab3Q8OkMia8n6C
-         vdAfszu00mKQ815pRbVLdsrOkM4Ge7VVGXFHtihtxQKsIfdKxkbvQLFdX/qxWFXjBTM9
-         LNdZfU+kmNYlGZKPqcJ96LCNl31sAS+ckHTXPVfKiN6GLbajvfjSOeNPYUj0mDy43/Yy
-         /FJ/Lb0y6TbzNqEqfHAK2iViLGWLaBZ9jjj3TdRrw9OjjclsX2XVT4pP220C7C+8HS55
-         2TmSVXc3Uk1zoqZQXX8zUCN2V/VNu+to+EmLhZzJS7A1Us6cSJgecXCjJDjOwKJhSToz
-         ZE4w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+gLZs8fbd6lmnE6HTw9MwDo5m3H0b8sDKFHdt9h+HryFy2UUZzupSElMmqvYuhlBwZ+8n73dqQdBn@vger.kernel.org, AJvYcCVufyEK9dWYdLMIfu1RSoumh1jWM5weEwADYhCAnKXNtEkJ/d5QEgsHhahmxetAJFjYJOguIhSPo/mKIm+Z@vger.kernel.org, AJvYcCXP3sl+9W0+aKg1pJKDqwdkEO/BomH1hSq7flKf8++7Ban1oyBg1AJXxZllad5sDEnwCwWH1bZIpmof@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLaSkTAIlq46AArKiwMQC+f32uloqz5iZXHCs5USBEE6WqNSu5
-	L5DvTw8JrKsz37agD7Vue18F/84Sc/O/b8IGTfsy1ySBdBZwaD18
-X-Google-Smtp-Source: AGHT+IF6RO41Rjx/vUobowbOd+q5scv4tWrSd4h8e52DT+yh1za2AXX5MpDhjrkqKjLJtKkyRynMCw==
-X-Received: by 2002:a05:600c:1911:b0:426:5b17:8458 with SMTP id 5b1f17b1804b1-43115abf3b6mr27344335e9.12.1728565349621;
-        Thu, 10 Oct 2024 06:02:29 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff6d3sm15935925e9.12.2024.10.10.06.02.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:02:29 -0700 (PDT)
-Message-ID: <6570aa7415aa0ad212259e0007928ad2c6bcfe1d.camel@gmail.com>
-Subject: Re: [PATCH v5 05/10] iio: backend: extend features
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen	
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- Sa	 <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring	
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dletchner@baylibre.com,  Mark Brown
- <broonie@kernel.org>
-Date: Thu, 10 Oct 2024 15:06:44 +0200
-In-Reply-To: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-5-3d410944a63d@baylibre.com>
-References: 
-	<20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
-	 <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-5-3d410944a63d@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+        d=1e100.net; s=20230601; t=1728565618; x=1729170418;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3S+oamyBTgQALvkkGGJvlMZ/KB7mDQf9V7pRgoE4S2Q=;
+        b=vU0E+MXE0yMRZR9Tf3puhjlD6tBctK+Dp+1mah0jTf/Wc8h8xMcJtw3hajEUkn6iOY
+         h0dE4TwNTeJ8cbAf4ai59cWwWC2gewwh0b7DCRHO16ElzcsvdgYWWAnfxdCbtHOk8P6S
+         fW8pnACWdMgGBiYLigkm55eFVy1STpoxkCR2DCjjKjQRf6x7mCHNWG7tgcZ+Bfus7xjo
+         34w5RuRCrnNabhQAOmUxBFi9mMqjHJ6/J31IPvSxIUFxEI1eUZbxREj1V6AEQ9/Iur+X
+         tvPNT50ELA+nXv4HDydh3CrXTsmmgcegFvplg3Dw0HSYJiHUi+QZqGvvdkbFUZtjcxIk
+         R5Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Ut8yEz5ZB7/Hek6aII7u8kpQe2QNTE5GLJ0kyYu9Lt0OFrvlmtm16cADCl2/YnV8NaS+gJE/9Oy10AY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGwcnl4xo5eFNUdP0LMKRu7BrV4bTzL1OTRhaAEKy94POkNBHo
+	4isTzZDYhAKPId4mHYC4sGKYYMGX7tvNWGba9mf8MyXDO0asVvGBOYHvDDr1NX13kTSgMVCrb3p
+	hcCpPs7B5uPRcJ6NlXJO8equG5ATkgWrVt7ZHbM1ZsYHShvGZk2VkbggJp0ym0W9WdLIbj/+a
+X-Received: by 2002:a17:906:6a18:b0:a99:60da:9de0 with SMTP id a640c23a62f3a-a998d10e578mr618955466b.6.1728565618242;
+        Thu, 10 Oct 2024 06:06:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSubTy4g+6wssGJNWcbSS2UjbdGvWhuJrPmXEkhU6Di11h5GbfFkqgtAPEzoqIEZuRrMGUaw==
+X-Received: by 2002:a17:906:6a18:b0:a99:60da:9de0 with SMTP id a640c23a62f3a-a998d10e578mr618951166b.6.1728565617799;
+        Thu, 10 Oct 2024 06:06:57 -0700 (PDT)
+Received: from [192.168.10.81] ([151.81.124.37])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a99a80f245csm85668666b.212.2024.10.10.06.06.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 06:06:57 -0700 (PDT)
+Message-ID: <dade78b3-81b1-45fb-8833-479f508313ac@redhat.com>
+Date: Thu, 10 Oct 2024 15:06:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] KVM: x86: Fix and harden reg caching from !TASK
+ context
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Maxim Levitsky <mlevitsk@redhat.com>
+References: <20241009175002.1118178-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20241009175002.1118178-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-10-08 at 17:43 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Extend backend features with new calls needed later on this
-> patchset from axi version of ad3552r.
->=20
-> The follwoing calls are added:
->=20
-> iio_backend_ddr_enable
-> 	enable ddr bus transfer
-> iio_backend_ddr_disable
-> 	disable ddr bus transfer
-> iio_backend_data_stream_enable
-> 	enable data stream over bus interface
-> iio_backend_data_stream_disable
-> 	disable data stream over bus interface
-> iio_backend_data_transfer_addr
-> 	define the target register address where the DAC sample
-> 	will be written.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
+On 10/9/24 19:49, Sean Christopherson wrote:
+> Fix a (VMX only) bug reported by Maxim where KVM caches a stale SS.AR_BYTES
+> when involuntary preemption schedules out a vCPU during vmx_vcpu_rest(), and
+> ultimately clobbers the VMCS's SS.AR_BYTES if userspace does KVM_GET_SREGS
+> => KVM_SET_SREGS, i.e. if userspace writes the stale value back into KVM.
+> 
+> v4, as this is a spiritual successor to Maxim's earlier series.
+> 
+> Patch 1 fixes the underlying problem by avoiding the cache in kvm_sched_out().
 
-nit: On the commit message you could properly name functions like=20
-iio_backend_ddr_enable() etc... If you need a v6, please have that in mind.
-Anyways:
+I think we want this one in stable?
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Thanks,
 
-> =C2=A0drivers/iio/industrialio-backend.c | 78
-> ++++++++++++++++++++++++++++++++++++++
-> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 17 +++++++++
-> =C2=A02 files changed, 95 insertions(+)
->=20
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
-o-
-> backend.c
-> index 20b3b5212da7..81f3d24f0c50 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -718,6 +718,84 @@ static int __devm_iio_backend_get(struct device *dev=
-,
-> struct iio_backend *back)
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> +/**
-> + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
-> + * @back: Backend device
-> + *
-> + * Enable DDR, data is generated by the IP at each front (raising and
-> falling)
-> + * of the bus clock signal.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_ddr_enable(struct iio_backend *back)
-> +{
-> +	return iio_backend_op_call(back, ddr_enable);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
-> +
-> +/**
-> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mo=
-de
-> + * @back: Backend device
-> + *
-> + * Disable DDR, setting into SDR mode (Single Data Rate).
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_ddr_disable(struct iio_backend *back)
-> +{
-> +	return iio_backend_op_call(back, ddr_disable);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
-> +
-> +/**
-> + * iio_backend_data_stream_enable - Enable data stream
-> + * @back: Backend device
-> + *
-> + * Enable data stream over the bus interface.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_data_stream_enable(struct iio_backend *back)
-> +{
-> +	return iio_backend_op_call(back, data_stream_enable);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_stream_enable, IIO_BACKEND);
-> +
-> +/**
-> + * iio_backend_data_stream_disable - Disable data stream
-> + * @back: Backend device
-> + *
-> + * Disable data stream over the bus interface.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_data_stream_disable(struct iio_backend *back)
-> +{
-> +	return iio_backend_op_call(back, data_stream_disable);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_stream_disable, IIO_BACKEND);
-> +
-> +/**
-> + * iio_backend_data_transfer_addr - Set data address.
-> + * @back: Backend device
-> + * @address: Data register address
-> + *
-> + * Some devices may need to inform the backend about an address
-> + * where to read or write the data.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address=
-)
-> +{
-> +	return iio_backend_op_call(back, data_transfer_addr, address);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_transfer_addr, IIO_BACKEND);
-> +
-> =C2=A0static struct iio_backend *__devm_iio_backend_fwnode_get(struct dev=
-ice *dev,
-> const char *name,
-> =C2=A0							 struct fwnode_handle
-> *fwnode)
-> =C2=A0{
-> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-> index 37d56914d485..10be00f3b120 100644
-> --- a/include/linux/iio/backend.h
-> +++ b/include/linux/iio/backend.h
-> @@ -14,12 +14,14 @@ struct iio_dev;
-> =C2=A0enum iio_backend_data_type {
-> =C2=A0	IIO_BACKEND_TWOS_COMPLEMENT,
-> =C2=A0	IIO_BACKEND_OFFSET_BINARY,
-> +	IIO_BACKEND_DATA_UNSIGNED,
-> =C2=A0	IIO_BACKEND_DATA_TYPE_MAX
-> =C2=A0};
-> =C2=A0
-> =C2=A0enum iio_backend_data_source {
-> =C2=A0	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
-> =C2=A0	IIO_BACKEND_EXTERNAL,
-> +	IIO_BACKEND_INTERNAL_RAMP_16BIT,
-> =C2=A0	IIO_BACKEND_DATA_SOURCE_MAX
-> =C2=A0};
-> =C2=A0
-> @@ -89,6 +91,11 @@ enum iio_backend_sample_trigger {
-> =C2=A0 * @read_raw: Read a channel attribute from a backend device
-> =C2=A0 * @debugfs_print_chan_status: Print channel status into a buffer.
-> =C2=A0 * @debugfs_reg_access: Read or write register value of backend.
-> + * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
-> + * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
-> + * @data_stream_enable: Enable data stream.
-> + * @data_stream_disable: Disable data stream.
-> + * @data_transfer_addr: Set data address.
-> =C2=A0 **/
-> =C2=A0struct iio_backend_ops {
-> =C2=A0	int (*enable)(struct iio_backend *back);
-> @@ -129,6 +136,11 @@ struct iio_backend_ops {
-> =C2=A0					 size_t len);
-> =C2=A0	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int r=
-eg,
-> =C2=A0				=C2=A0 unsigned int writeval, unsigned int
-> *readval);
-> +	int (*ddr_enable)(struct iio_backend *back);
-> +	int (*ddr_disable)(struct iio_backend *back);
-> +	int (*data_stream_enable)(struct iio_backend *back);
-> +	int (*data_stream_disable)(struct iio_backend *back);
-> +	int (*data_transfer_addr)(struct iio_backend *back, u32 address);
-> =C2=A0};
-> =C2=A0
-> =C2=A0/**
-> @@ -164,6 +176,11 @@ int iio_backend_data_sample_trigger(struct iio_backe=
-nd
-> *back,
-> =C2=A0int devm_iio_backend_request_buffer(struct device *dev,
-> =C2=A0				=C2=A0=C2=A0=C2=A0 struct iio_backend *back,
-> =C2=A0				=C2=A0=C2=A0=C2=A0 struct iio_dev *indio_dev);
-> +int iio_backend_ddr_enable(struct iio_backend *back);
-> +int iio_backend_ddr_disable(struct iio_backend *back);
-> +int iio_backend_data_stream_enable(struct iio_backend *back);
-> +int iio_backend_data_stream_disable(struct iio_backend *back);
-> +int iio_backend_data_transfer_addr(struct iio_backend *back, u32 address=
-);
-> =C2=A0ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr=
-_t
-> private,
-> =C2=A0				 const struct iio_chan_spec *chan,
-> =C2=A0				 const char *buf, size_t len);
->=20
+Paolo
+
+> Patch 2 fixes vmx_vcpu_reset() to invalidate the cache _after_ writing the
+> VMCS, which also fixes the VMCS clobbering bug, but isn't as robust of a fix
+> for KVM as a whole, e.g. any other flow that invalidates the cache too "early"
+> would be susceptible to the bug, and on its own doesn't allow for the
+> hardening in patch 3.
+> 
+> Patch 3 hardens KVM against using the register caches from !TASK context.
+> Except for PMI callbacks, which are tightly bounded, i.e. can't run while
+> KVM is modifying segment information, using the register caches from IRQ/NMI
+> is unsafe.
+> 
+> Patch 4 is a tangentially related cleanup.
+> 
+> v3: https://lore.kernel.org/all/20240725175232.337266-1-mlevitsk@redhat.com
+> 
+> Maxim Levitsky (1):
+>    KVM: VMX: reset the segment cache after segment init in
+>      vmx_vcpu_reset()
+> 
+> Sean Christopherson (3):
+>    KVM: x86: Bypass register cache when querying CPL from kvm_sched_out()
+>    KVM: x86: Add lockdep-guarded asserts on register cache usage
+>    KVM: x86: Use '0' for guest RIP if PMI encounters protected guest
+>      state
+> 
+>   arch/x86/include/asm/kvm-x86-ops.h |  1 +
+>   arch/x86/include/asm/kvm_host.h    |  1 +
+>   arch/x86/kvm/kvm_cache_regs.h      | 17 +++++++++++++++++
+>   arch/x86/kvm/svm/svm.c             |  1 +
+>   arch/x86/kvm/vmx/main.c            |  1 +
+>   arch/x86/kvm/vmx/vmx.c             | 29 +++++++++++++++++++++--------
+>   arch/x86/kvm/vmx/vmx.h             |  1 +
+>   arch/x86/kvm/x86.c                 | 15 ++++++++++++++-
+>   8 files changed, 57 insertions(+), 9 deletions(-)
+> 
+> 
+> base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
 
 
