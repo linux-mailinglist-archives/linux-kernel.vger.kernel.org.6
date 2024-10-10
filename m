@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-359348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073F5998A7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D9A998A7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2DC61F27951
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE341F24C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCC11E3DFD;
-	Thu, 10 Oct 2024 14:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729DC1CEAD8;
+	Thu, 10 Oct 2024 14:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oMM+hHbx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sFwvTDLR"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84901D318A;
-	Thu, 10 Oct 2024 14:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3198D1E3766
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728571274; cv=none; b=clGsCr8+QByIXFl7bkhxkhxxWXPqBb+iDNWjXpteykJwGB1QNIJ1fN+vqx6fb+zEY0Lse2er3CEdmxg6pEtgUTRpD0KGVOufptZuvd4K+19PSeJR4WJOQlmhyijqZSOG2yRuYd1+ZlZCvKhYNCdIZtyUkM/elt5YlswgRx4znk0=
+	t=1728571333; cv=none; b=D97A+IXTcG0tABWjo8XehFOVTTwL0d/koihQZcrRSO5CQSVQ+rP5KJSLU14YR3KfVG8sTuTkbf0qltsahY1ggoh+y/UWVVJ+8zL0t7djo9Ai86bu7BdJUDz/5FdzmgNhKqToUMWObcK2sqqZlqOstkbFRyg58iJiZ96kIxx2oC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728571274; c=relaxed/simple;
-	bh=lz71XzaNG0yVrDt1WTunslV5rf5BbFvnhf2NJVOJ3ro=;
+	s=arc-20240116; t=1728571333; c=relaxed/simple;
+	bh=J8h7ZogSRVYi3JZp242VuIB8P5Hx5C5R4FBhWsIGOgc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvGSSPy5z9K8VlYXnXWCajfomBwITrMGa6jhqd4DCkaeG5vvrArsB1OMm+xlbExM2hqQrCrT2Ax1QnbRBusb5X/1ACVCDCPLWEKtI+GV+ahXE8R581vJkT4Kem3uMHGHGIvFLGM9druVkcFoWm2I9gOoMMhnOipLey/Sm6ZB8zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oMM+hHbx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ADKFFj031559;
-	Thu, 10 Oct 2024 14:41:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=KJ7obiUQsc0gi7rSB7YbRqDTUNO
-	qFh295ecCfP3r4I8=; b=oMM+hHbxJFu0iKt3zidRaax35B+5x8abmMvcNFO+Krh
-	I8lKdN9A51Y4+ki5aCJg3tgn6U5h8e+fU4OqO1J4W9hNX31R725fxL2Rsj2+aBm5
-	l+5g2suew6UiCHmqxgVjPWPKuVOgxBoTsXqfcl9VjQZkUyEQkgzS1AWo63c8hru2
-	QI1sBnOd93B6kb61ffyHeFh1yF9HQh8+SZWGF4LJ3dWPxZ1EZQ3YSZ4qap7sIf5r
-	pVvOccAm6SxBx41nBCZhNtnRHsDJQzRmETlX8J0vi/9Qt2uEJ2WOmfu/7TAlLvgQ
-	jYIefjS30z6jbVLg2bOrLHqcdAZN1THeYdwFoRMJSag==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426fqk8er7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 14:41:07 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49AEbb81000832;
-	Thu, 10 Oct 2024 14:41:07 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426fqk8eqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 14:41:07 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49AE1d5O022867;
-	Thu, 10 Oct 2024 14:41:06 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg17yug-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 14:41:06 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49AEf3nj20906356
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 14:41:03 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 003EE2004B;
-	Thu, 10 Oct 2024 14:41:03 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AD11620040;
-	Thu, 10 Oct 2024 14:41:02 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 10 Oct 2024 14:41:02 +0000 (GMT)
-Date: Thu, 10 Oct 2024 16:41:01 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Mario Casquero <mcasquer@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-s390@vger.kernel.org,
-        virtualization@lists.linux.dev, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 0/5] virtio-mem: s390x support
-Message-ID: <20241010144101.15346-C-hca@linux.ibm.com>
-References: <20240910191541.2179655-1-david@redhat.com>
- <CAMXpfWvRy_fpNUXeVO_-0O9WXDYY8f+cBEQQvsqZD2g2043LaA@mail.gmail.com>
- <e0e13b95-bc9a-4f4b-a721-379676725525@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Npqm0cNYlAo1WN2Ip8SXCzXkk7WIbwgqSTUtVQGbVwBbSJ9o0Bv5X9v4NPtD1bd45WDGb+y0cW5fDdKGjMRI62e67lgQ9lMcU4bsXTkoqjnOK7XpCOpSh+WKn00rM2h9sZF2/MqDhjz1ol6mxXGAS4SG1hAL0lWZqL5x8kRWEBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sFwvTDLR; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so15904851fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728571330; x=1729176130; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSCYi8JcMLXDaF73CrzXwPeVuGXfVTJYUL9WPyu/FF4=;
+        b=sFwvTDLRAUoUFyGMt2lhgs0iOLJL8JKxM/29HP3LIkkwC1lvLo4hcExukLDQqOVAuf
+         GfnINho++2kGxZwwAWCLLEDZAGPARBdPetTTsz7BL479RaJHfeG/KT1RmQ95av20eQgf
+         D4xG/XXcw6QZQhwaYJmZJ64d5D8LSsOGe0KiHBYR2KCIp7nsttZ3OKaFeekT6QvOQ6tr
+         DMCp1idfFO2mrqYFwazzrOft5p3CBxvXhA7eTNXpOdCSakU6D7+h5Gh8gAA5Lbfrgs36
+         WugVMPPXgXcLGA+oY2dm4V3476VvctmoUYpQghM4VoR5hrTfHFSE3oqcKWzyfuZl1jEY
+         Otvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728571330; x=1729176130;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSCYi8JcMLXDaF73CrzXwPeVuGXfVTJYUL9WPyu/FF4=;
+        b=VH1s+AAFPxDXdNdHPKLO6HT6OX1v3f1FyDSm6SlZ34d6hj8oguyZoQaqa8ETFVFYnI
+         oF3JKFVZbwIsy8Qwiq1mB1z3z2jUyS2VOJ5OuWPyoAhDA2qga9Aq/joOmZpIZbkz3zv0
+         SmyFqoTuAWDCWvuDt3lApU07GExE4/u9bcAE+WzkPZohfZ+Ep11u3wLvt0lfGuQ24Zzb
+         4R6l0suytOzJhIxFO10xVxZucZwG08cPeLAIRMbpgiY2d53TLFuq4DMNvhJVYDso69hk
+         Eq0oM/zhoR6UF6JyNaxK+mae8bZCUr21ahcCe7xhCoOIZfTNB+6MTveQKrsRBRWl7Nhe
+         a/SA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiONsTyOK5xp7i5JGyus3QBBl+cd2wW3hpq2OyvTgm6z9MhudGSZKlfongUXX4Oq6UgdzR5n+ClOpU7w4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXU9cnoPGEhjP58/WE287MOtxs52RGxKK4gfNkgNiZo5VSY4Qz
+	qQS8t/Az6AOdkbbc9WxRX1W6XFx9kP1E01KeqhFLQlzRcfmC8A21gAg5+1ihamI=
+X-Google-Smtp-Source: AGHT+IHTXbpgPQx1CNya5s++GATNvkC8R0h710vIpZWBj7Fxa5x0RbTR+gUaQHMlnVb3y0lAfmds6g==
+X-Received: by 2002:a2e:be23:0:b0:2ef:1b1b:7f42 with SMTP id 38308e7fff4ca-2fb187e7de2mr63367001fa.36.1728571330142;
+        Thu, 10 Oct 2024 07:42:10 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb2459c93esm2249621fa.55.2024.10.10.07.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 07:42:08 -0700 (PDT)
+Date: Thu, 10 Oct 2024 17:42:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: neil.armstrong@linaro.org, Johan Hovold <johan+linaro@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Chris Lew <quic_clew@quicinc.com>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: mark pd-mapper as broken
+Message-ID: <2fqd3hkj7j2lppxzfl2fjfzrik3jql2gk7chexaajeybcrz3kc@rvx565zzmlmp>
+References: <CAA8EJpoiu2hwKWGMTeA=Kr+ZaPL=JJFq1qQOJhUnYz6-uTmHWw@mail.gmail.com>
+ <ZweoZwz73GaVlnLB@hovoldconsulting.com>
+ <CAA8EJprg0ip=ejFOzBe3iisKHX14w0BnAQUDPqzuPRX6d8fvRA@mail.gmail.com>
+ <Zwe-DYZKQpLJgUtp@hovoldconsulting.com>
+ <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
+ <ZwfVg89DAIE74KGB@hovoldconsulting.com>
+ <jtxci47paynh3uuulwempryixgbdvcnx3fhtkru733s6rkip7l@jxoaaxdxvp3d>
+ <Zwffi40TyaMZruHj@hovoldconsulting.com>
+ <CAA8EJppWgcyzS14rY2TfX2UNR1iqKBo1=qxHAbwkbeXLrZ2MPw@mail.gmail.com>
+ <ZwfiuJW1gkYPFic1@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,36 +93,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e0e13b95-bc9a-4f4b-a721-379676725525@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EE3Dkc8rCcd301tXUOjUXD5mTbEF83eP
-X-Proofpoint-ORIG-GUID: tuVe5hxUbXesJKRGXR5xf0cDEAn-KsaD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxscore=0
- impostorscore=0 clxscore=1011 adultscore=0 mlxlogscore=713 bulkscore=0
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410100097
+In-Reply-To: <ZwfiuJW1gkYPFic1@hovoldconsulting.com>
 
-On Thu, Oct 10, 2024 at 02:31:31PM +0200, David Hildenbrand wrote:
-> On 10.10.24 10:41, Mario Casquero wrote:
-> > This series has been successfully tested along with the QEMU's series.
-> > Virtio-mem devices could be resized, plugged and unplugged seamlessly.
-> > The memory information displayed is correct and reboot doesn't cause
-> > any issue.
+On Thu, Oct 10, 2024 at 04:20:40PM GMT, Johan Hovold wrote:
+> On Thu, Oct 10, 2024 at 05:13:44PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, 10 Oct 2024 at 17:07, Johan Hovold <johan@kernel.org> wrote:
+> 
+> > > Yes, Chris's analysis of the ECANCELED issue suggests that this is not
+> > > SoC specific.
 > > 
-> > Tested-by: Mario Casquero <mcasquer@redhat.com>
+> > "When the firmware implements the glink channel this way...", etc.
+> > Yes, it doesn't sound like being SoC-specific, but we don't know which
+> > SoC use this implementation.
 > 
-> Thanks a bunch for testing!
+> So let's err on the safe side until we have more information and avoid
+> having distros drop the user-space daemon until these known bugs exposed
+> by the in-kernel pd-mapper have been fixed.
+
+Then default n + revert X1E sounds like a better approach?
+
 > 
-> If there are no more comments, I'll add the in-tree kernel update for the
-> new diag500 subcall and resend.
+> Johan
 
-Sorry that you haven't seen any review from here yet, but... :)
-
-Please also change all usages of "s390x" to "s390" before you resend.
-Within the kernel usage of s390x is not common and there shouldn't be
-anything like this added.
+-- 
+With best wishes
+Dmitry
 
