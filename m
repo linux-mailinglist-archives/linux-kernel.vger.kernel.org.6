@@ -1,118 +1,76 @@
-Return-Path: <linux-kernel+bounces-359158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0441A99882C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:47:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF625998826
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD841F23DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA63728B5AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D31C9EBA;
-	Thu, 10 Oct 2024 13:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ewn3faXq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C8F1C9ED1;
+	Thu, 10 Oct 2024 13:46:23 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C59D1CB304;
-	Thu, 10 Oct 2024 13:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27AD1C9EB5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567990; cv=none; b=V4X6IN7NMNxeVm9WH28wjcWIUM/I/H3gA0YK7yc2oSiXxk/+gMhqEPPtFYQLqPhK98ehrEhfsf9a3/Z5qKLbvil2sXmjnHUjWjkWgNeWvb5M92PxEtjzJ1Yz14RQWxPnE65lzGmwSokPRxLGEFX24vy5D5L9MLgY3wMF/2/C6VE=
+	t=1728567983; cv=none; b=IIQK/zg+ZsMFc9rz8yHdgJirXTnFUOl9CpVDRsMALWWUknfufs9gevBeUW2RcMjotMZ4Qw4/06ouAyxFatZ7fMYu/7SU2n4UIpXQO6btw0rMfKxuD34vhDsAzZ8blHz11lmGxizjwtNXT7/7qcebn74H7UPW20TXf0M63oDYBUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567990; c=relaxed/simple;
-	bh=Zv36Sz4kmZesLSQInOSEBvZIeQ+0R6ln789nlNcRn1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBJittKdYCv+dZanApzLgnJo7HGTAKesb6SbzH/gC8ufvTD0GCxqo62xa+QBvEiil66Q0MK/pfmkCefwqyCNX1x7ngGD6eDgjzrPHD3QtPNbM9AVAYbZOylDlk19LCvsLAhhfWc4byU7T19oUkuEY3+dGKZd92mdG4v4ZOXbRH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ewn3faXq; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728567989; x=1760103989;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zv36Sz4kmZesLSQInOSEBvZIeQ+0R6ln789nlNcRn1w=;
-  b=Ewn3faXq+s/Vo+fLSIL1zlhOZ60WEVCICyQcvIqbFdAaJQRZ/c4TiVcy
-   b2MNfEp2KMzXztvAXovwZFXsRWlKEe2nlEfsglpr2J+D8nfKdpWKjN7MQ
-   SrbAwfyy1kDBaWNzhzHecOfAGAtj9+1Nt6VNlJCHdsn1UNnHtkbqA1M1a
-   zMAhZC01Kufo+DjuCqtCTY6/48F3/9RaNZbGkPYf6qQ1kW7SNVVJixqV6
-   WDLtUq/JJ5YAka7AsqskoS2rTKLAMZWyWaXAx3Q9fFNipe3KqFa1mjWvx
-   nrYKYW6LXzggrJhwl+zisobrmia+BaR0EfoQXeMAiJF0UGEMe6bmerJYF
-   g==;
-X-CSE-ConnectionGUID: NbZRYQfyTBi31PBKmaAuYQ==
-X-CSE-MsgGUID: jNc43U0RQFuAJH0/qT8Jhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28039270"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="28039270"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:46:28 -0700
-X-CSE-ConnectionGUID: 43kSRddNQ1mwdZClHH19OQ==
-X-CSE-MsgGUID: B1Nue7CTTCyNbpnF5WxeOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="76253153"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:46:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sytUh-00000001YBT-2LVL;
-	Thu, 10 Oct 2024 16:46:19 +0300
-Date: Thu, 10 Oct 2024 16:46:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	David Lechner <dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>,
-	Dan Murphy <dmurphy@ti.com>, Sean Nyekjaer <sean@geanix.com>,
-	Leonard =?iso-8859-1?Q?G=F6hrs?= <l.goehrs@pengutronix.de>,
-	Mihail Chindris <mihail.chindris@analog.com>,
-	Alexandru Ardelean <ardeleanalex@gmail.com>,
-	Gustavo Silva <gustavograzs@gmail.com>,
-	Shoji Keita <awaittrot@shjk.jp>,
-	Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Dalton Durst <dalton@ubports.com>, Icenowy Zheng <icenowy@aosc.io>,
-	Andreas Klinger <ak@it-klinger.de>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ondrej Jirman <megi@xff.cz>
-Subject: Re: [PATCH 12/13] iio: pressure: bu1390: add missing select
- IIO_(TRIGGERED_)BUFFER in Kconfig
-Message-ID: <Zwfaq4GlYtQV3TTs@smile.fi.intel.com>
-References: <20241003-iio-select-v1-0-67c0385197cd@gmail.com>
- <20241003-iio-select-v1-12-67c0385197cd@gmail.com>
- <20241005190147.084dd468@jic23-huawei>
+	s=arc-20240116; t=1728567983; c=relaxed/simple;
+	bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=p5dgHEIj/bto8M46KuCbxAuqYDG/Vjvvhd6XN1tcgi7o30gIq88LeHYX9tR0LWd+g7Ke2n9b2Rnhue+EyeoBMg/TLftMfcdet6U+DLCQEFVagcgTJCuLqThWH9hhiVAIo3p+Z528mcXNxUx0V5LTD9GMMxog6zy/w7NbSKQROTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so7327265ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:46:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728567981; x=1729172781;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
+        b=vuVZH7kZFlaz8bOmR3kwDhRaCMcCNSXEFiFFmM9kRmpTiuNCIn5DJlCTY69s51ZdqX
+         1yoyNyCfW6JvJEsBqnp5bbafZ5nrDbwCLMO9cJO3Y/VIPQl4WhP1ysrzNFL/aTUUUFpS
+         zYAdlZf3pwNeQGsnBjId2AzArMI00wvLjszrF+VZ7owFr/Hh6DkGn5ivI0sK5kS4vwMa
+         gOUaQJ12hWWNMKE9nyLXJQPoniW5lBfXm0b/3grLc9I5FQnBsw7LGPNBRGKxU2zZ4tWu
+         kEiXFOgjFavz+9WIfEs43hPmWcxrongYTdmUAbxGcf72g3UfWmLHmdkPhmT8UtJTCGUI
+         miug==
+X-Gm-Message-State: AOJu0YwNSe7TFEeoLgyiD9pPEI5BpOZTmzl6JCtdtWmo1FVgbGbFfy8z
+	4KLvjZovSzSoQOiNS7fYAJpytAPskbvawDO5DHnNDgwcwyfWxI7v/nFm/JUKb8PGui5xxnkyVtZ
+	Fy32XJAQub+t+SzwFLlKigWSBHat6TjnsOPGyuhyMxlk18QQX+mIW3OY=
+X-Google-Smtp-Source: AGHT+IGBlC6Y2UQsEwfDA57JKD4pHglmmmqBIvrxBzH7yvvCoYCOkibokaBzhQ0H82LbPFI6VU7u6+Vy6+qupuksR0kfTti7gs25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241005190147.084dd468@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a92:c26b:0:b0:3a0:a71b:75e5 with SMTP id
+ e9e14a558f8ab-3a397cf6a12mr57290815ab.7.1728567980764; Thu, 10 Oct 2024
+ 06:46:20 -0700 (PDT)
+Date: Thu, 10 Oct 2024 06:46:20 -0700
+In-Reply-To: <000000000000657ecd0614456af8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6707daac.050a0220.8109b.000c.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Oct 05, 2024 at 07:01:47PM +0100, Jonathan Cameron wrote:
-> On Thu, 03 Oct 2024 23:04:58 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-...
+***
 
-> > Fixes: 81ca5979b6ed ("iio: pressure: Support ROHM BU1390")
-> Seems unlikely in the bm1390 driver. Huh. It is accurate, but I'll fix the
-> patch description to refer to the bm1390 which seems to be the right
-> name and add a note on this as it looks suspect otherwise.
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+Author: cmeiohas@nvidia.com
 
-Fixes tag shouldn't be mangled, even if it has a typo.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
 
