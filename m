@@ -1,561 +1,167 @@
-Return-Path: <linux-kernel+bounces-358576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBF3998103
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B62998107
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFCF21F27539
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E1A1C2A862
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCEA1CB337;
-	Thu, 10 Oct 2024 08:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83101CBEA7;
+	Thu, 10 Oct 2024 08:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nigauri-org.20230601.gappssmtp.com header.i=@nigauri-org.20230601.gappssmtp.com header.b="OiS/7bZQ"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y7rHUI8D"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800E41CB515
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDA11CBE96
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728550205; cv=none; b=Krryz8zL8EAsgVtmvOH+M0+H40m3gyIvHwh5DP3vDojyFz3gbm8uPQ8Vdhpe+sLtQj+gHbkbBkLnSiepS/f+OuHjvkYiEwdRsdivQ/uvDPgQB5ShYlWrj06my1MRYwH5QsScZ5Zmpajs6E0FXyRTThVAME24Z0RHssu+CEqoP/s=
+	t=1728550215; cv=none; b=VMIirgIKemRjrfBRQSjHgHQnJnmKbxkEv4osx3Ztpv4YRTcQDx/ZADKoEqIz9Lm4F1YUgOvObGW0R7USh3TUiYtUb3wFXNvsq4uvYU3Qfx5By6PZdOmNkQfRDKRvQhxBu3n+o0yDFXWO/KWeN2JCF/q1EozhyZF4Nbiclw2/7q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728550205; c=relaxed/simple;
-	bh=DUPx7+6PyBbpHV1F9gXZQQ3JX90R9/TBX/a5+0Fe91g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c+mfE5Dh2Hz82zFOooulseFDA7TrdtMACuVgXauGOyCVrUJa+SFXK5aXpd0siTDlAEj9bva0sgxAJIUiZ6oAhiaJFg1pnt5glxLohWaoreal8CbsMKDP1aedF6RDilaZxm8fWc5EV8gV+d38+StdI1LqUjLhv2AkNxWCNfASng8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org; spf=none smtp.mailfrom=nigauri.org; dkim=pass (2048-bit key) header.d=nigauri-org.20230601.gappssmtp.com header.i=@nigauri-org.20230601.gappssmtp.com header.b=OiS/7bZQ; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nigauri.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2916a92ffso681353a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:50:03 -0700 (PDT)
+	s=arc-20240116; t=1728550215; c=relaxed/simple;
+	bh=5P2PH/oY2rjXr+pjKB8ZtV9oiV2N7F1zJjEPh3Cadzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gl8kmcAFV3sjoa6qzByjy+1Qx/IT92O51d5L0joTmWOg86YFG60AzjYIJmZMKjYUqFUDrZ9LXrOhseqoqqyrSbXFSvy9zw16wtb1ZK5cC3v0qK+enrQGvSWj13fsDh2+rmWyn+MlQTSF6tn/tHV3ODYWldZw4VtrvSEGDmVL3AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y7rHUI8D; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43117917eb9so3615405e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:50:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nigauri-org.20230601.gappssmtp.com; s=20230601; t=1728550203; x=1729155003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6rI7kXSkKdbmWWOMICXxBlMd8CC6HZSiwxpsKC34uXQ=;
-        b=OiS/7bZQCnLnpHDkQo8bdOVwP3TyidIOSbJwSt+E6MEojZqIbmwCIlzAwlRiPEgvyI
-         BfRvWsnG9MKSwJVH79floUXRFzQonRhXF0XZ50LnKAAO5iAojV8DOB0Sg8w/qawJC4ut
-         ej2dh9nr18F1KyVcLTRoiFuhZQkhIcJasMmwin/fpLf4540ZJ5LRHVj/bRhGPpmT83D/
-         R9vTNiT4MTAjAbYtrZ0Miv+BR4fmm/W8fVtng+pl3qTDwsg7B3BTQvE/XK4bYrSHuzrX
-         30Nohs95aJMDTe4Bm1ptSLL9Pu1It/Necyz3RZnwUr1YQM3/4t69OrWBZBrQ2TIVyNNc
-         bF+g==
+        d=linaro.org; s=google; t=1728550211; x=1729155011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C28wmYcjpWumVpaF4ufJJPgnJaeWt/0xGrgSlXatWFI=;
+        b=Y7rHUI8DGsR8kdC+otSD3I1BDaoUJUGWMMXLr6ZEVxhkvQdUp1auB1Edn4anMo7GnR
+         dyOTmGTrwIsdANSmPYm5HayxHF76118n8uuieZSc3W6//oSFUMreIiYsLMglRkzX0RbT
+         KAIGJGiG6MZw6ks+I279HPQvGSDzI+cvIgnfQ90erHsH9VZNgIMZ5koXyjn3AY0GlJqr
+         m0U2X4IlsQZ68U037M8u925gcWI8rO/Pxhz68DtDsz67QHXHUcv2ON35jLwyTuBlGbDr
+         jwcOKZPvGrVRvCFGfnRia8chvU0zxWMVU3txFRglUcB/Yb2YmMKwd13uRzLzuImk4q+k
+         tEDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728550203; x=1729155003;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6rI7kXSkKdbmWWOMICXxBlMd8CC6HZSiwxpsKC34uXQ=;
-        b=SaTf6qk82dY7LG2ye6MrfyPLooD4ZFksWAkKOL3ktUynUdkRt6Mf3URmUXrzez+aeA
-         LUGkRi6oCYmZOPdy2IsPgHnkPId0RTdNbitbLfdZrq8wuS4SdD+FAMcKlAZpd2WxWxqE
-         lDx15Mi4CA41wyDYVsB+ZR+7h1RPf9BHEpdETcuVG0yipIOJ3ZBXCL1sokvs0hP6aOYE
-         LnlJ6WcH+5byYce/BdUQoWB6rxBYBVmUH0KhwF8I3UF0TqY+nywQZHlWfF/Ki0HjdLgU
-         A/PpCoVsE/DuVg7iU9hEczdUz/7fPyTkeT7W0FEyBj+klDE+WbHSQ82t9tdgdZV+2Mrl
-         XGrg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2sEZHf9proQTSiln+fHyfkV8+XsGRiXz6LdDPMDCME0mLtoxnY7QEkiv3+UkpFWYfx+4wRNQG6WMfV4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJIe8JrJj4bMa+zJOi/gMJLnZCPkhZrkyr7knFs4gSop7Qx1Of
-	6RYTlY3iNx8yI5VFaOK048HsuoFCgC5etra8QPaw8B4BcDVlfWRXwI7XvF7U
-X-Google-Smtp-Source: AGHT+IGAPcc620EhjS3AniDGQlHwii8T/lhe1slawVI9rv/BpEyiQlbfNe1ebhwYwWmWwEaJC3ilHw==
-X-Received: by 2002:a17:90a:740c:b0:2e2:d82b:d144 with SMTP id 98e67ed59e1d1-2e2d82bd29amr1439802a91.37.1728550202705;
-        Thu, 10 Oct 2024 01:50:02 -0700 (PDT)
-Received: from localhost ([2405:6581:5360:1800:beed:8ae1:b5d8:8b56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5fc4764sm763257a91.47.2024.10.10.01.50.01
+        d=1e100.net; s=20230601; t=1728550211; x=1729155011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C28wmYcjpWumVpaF4ufJJPgnJaeWt/0xGrgSlXatWFI=;
+        b=nl85RAGujTlzQpTTpJcKBbjuljVYIwhMyODH5+Ycmwxp+o7RocuMGj+g0DFQNLjyMO
+         fY2+q0EKgCOlT381PW/2Zh/cferW9KHVMuc+G5NGrfKDWolV0BHhISK+c9CG8XqAdEWJ
+         r/sSNjOYtoc1DcntL31EtsF7+1PqlMMJQP60fMHSTM4bB9o7qbZOrFHpMhJULDtKHi1M
+         mY+4OGA0qCLO0nv/sez/ljdQGO4dvJWMq6Cb+BAZzV/8sPyWNd3z1EZF0q/Wr7KWvaMh
+         qoQ/BJULP6zKWk2rM9lfURndMnRTTToXpwGgRQz3p8AtHW8rE84AbazgdH7psT1W5NSP
+         KdmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnTZIUf3tZJpKpotJmLIntomNWG95+CVHKyiGzft95lRVD2fRcvWZzQ6hJovKozn9ifbz7HXwGHy3qZaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLa5oqYSF6pi9jUkraIFLzsFygJyhhiB9iNomtHxBntYXmrdVq
+	WSbJzjpQQxpMhS/iFbUSoqIL4/f13HOUw5B3XKeE3MJhahBy17y8DtdINBtiIHI=
+X-Google-Smtp-Source: AGHT+IFucfSES3j62KAzEm41LuUqQRM3VySAkjPe4+iZpB8R8Lb977wIeQTSTeOu3TgGseFk0hICSw==
+X-Received: by 2002:a05:600c:4b95:b0:431:1a98:cb40 with SMTP id 5b1f17b1804b1-4311a98cc3dmr1671235e9.18.1728550211283;
+        Thu, 10 Oct 2024 01:50:11 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43117ff5930sm9483515e9.0.2024.10.10.01.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 01:50:02 -0700 (PDT)
-From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-To: alexandre.belloni@bootlin.com,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Subject: [PATCH 2/2] rtc: pcf8563: Switch to regmap
-Date: Thu, 10 Oct 2024 17:49:49 +0900
-Message-ID: <20241010084949.3351182-3-iwamatsu@nigauri.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241010084949.3351182-1-iwamatsu@nigauri.org>
-References: <20241010084949.3351182-1-iwamatsu@nigauri.org>
+        Thu, 10 Oct 2024 01:50:10 -0700 (PDT)
+Date: Thu, 10 Oct 2024 11:50:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Soumya Negi <soumya.negi97@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
+	Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-staging@lists.linux.dev, kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Subject: Re: [RFC PATCH 13/13] Remove devres from pci_intx()
+Message-ID: <7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+ <20241009083519.10088-14-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009083519.10088-14-pstanner@redhat.com>
 
-Switch the i2c_transfer methods to regmap APIs.
+On Wed, Oct 09, 2024 at 10:35:19AM +0200, Philipp Stanner wrote:
+> pci_intx() is a hybrid function which can sometimes be managed through
+> devres. This hybrid nature is undesirable.
+> 
+> Since all users of pci_intx() have by now been ported either to
+> always-managed pcim_intx() or never-managed pci_intx_unmanaged(), the
+> devres functionality can be removed from pci_intx().
+> 
+> Consequently, pci_intx_unmanaged() is now redundant, because pci_intx()
+> itself is now unmanaged.
+> 
+> Remove the devres functionality from pci_intx(). Remove pci_intx_unmanaged().
+> Have all users of pci_intx_unmanaged() call pci_intx().
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
----
- drivers/rtc/Kconfig       |   1 +
- drivers/rtc/rtc-pcf8563.c | 204 +++++++++++++++-----------------------
- 2 files changed, 82 insertions(+), 123 deletions(-)
+I don't like when we change a function like this but it still compiles fine.
+If someone is working on a driver and hasn't pushed it yet, then it's probably
+supposed to be using the new pcim_intx() but they won't discover that until they
+detect the leaks at runtime.
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 66eb1122248b65..6bcd5e447b74cf 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -496,6 +496,7 @@ config RTC_DRV_PCF85363
- 
- config RTC_DRV_PCF8563
- 	tristate "Philips PCF8563/Epson RTC8564"
-+	select REGMAP_I2C
- 	help
- 	  If you say yes here you get support for the
- 	  Philips PCF8563 RTC chip. The Epson RTC8564
-diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
-index 4c375e8694da4e..5a084d426e58d0 100644
---- a/drivers/rtc/rtc-pcf8563.c
-+++ b/drivers/rtc/rtc-pcf8563.c
-@@ -17,6 +17,7 @@
- #include <linux/i2c.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/regmap.h>
- #include <linux/rtc.h>
- #include <linux/slab.h>
- 
-@@ -77,64 +78,18 @@ struct pcf8563 {
- 	 */
- 	int c_polarity;	/* 0: MO_C=1 means 19xx, otherwise MO_C=1 means 20xx */
- 
--	struct i2c_client *client;
-+	struct regmap *regmap;
- #ifdef CONFIG_COMMON_CLK
- 	struct clk_hw		clkout_hw;
- #endif
- };
- 
--static int pcf8563_read_block_data(struct i2c_client *client, unsigned char reg,
--				   unsigned char length, unsigned char *buf)
-+static int pcf8563_set_alarm_mode(struct pcf8563 *pcf8563, bool on)
- {
--	struct i2c_msg msgs[] = {
--		{/* setup read ptr */
--			.addr = client->addr,
--			.len = 1,
--			.buf = &reg,
--		},
--		{
--			.addr = client->addr,
--			.flags = I2C_M_RD,
--			.len = length,
--			.buf = buf
--		},
--	};
--
--	if ((i2c_transfer(client->adapter, msgs, 2)) != 2) {
--		dev_err(&client->dev, "%s: read error\n", __func__);
--		return -EIO;
--	}
--
--	return 0;
--}
--
--static int pcf8563_write_block_data(struct i2c_client *client,
--				   unsigned char reg, unsigned char length,
--				   unsigned char *buf)
--{
--	int i, err;
--
--	for (i = 0; i < length; i++) {
--		unsigned char data[2] = { reg + i, buf[i] };
--
--		err = i2c_master_send(client, data, sizeof(data));
--		if (err != sizeof(data)) {
--			dev_err(&client->dev,
--				"%s: err=%d addr=%02x, data=%02x\n",
--				__func__, err, data[0], data[1]);
--			return -EIO;
--		}
--	}
--
--	return 0;
--}
--
--static int pcf8563_set_alarm_mode(struct i2c_client *client, bool on)
--{
--	unsigned char buf;
-+	u32 buf;
- 	int err;
- 
--	err = pcf8563_read_block_data(client, PCF8563_REG_ST2, 1, &buf);
-+	err = regmap_read(pcf8563->regmap, PCF8563_REG_ST2, &buf);
- 	if (err < 0)
- 		return err;
- 
-@@ -145,23 +100,17 @@ static int pcf8563_set_alarm_mode(struct i2c_client *client, bool on)
- 
- 	buf &= ~(PCF8563_BIT_AF | PCF8563_BITS_ST2_N);
- 
--	err = pcf8563_write_block_data(client, PCF8563_REG_ST2, 1, &buf);
--	if (err < 0) {
--		dev_err(&client->dev, "%s: write error\n", __func__);
--		return -EIO;
--	}
--
--	return 0;
-+	return regmap_write(pcf8563->regmap, PCF8563_REG_ST2, buf);
- }
- 
--static int pcf8563_get_alarm_mode(struct i2c_client *client, unsigned char *en,
-+static int pcf8563_get_alarm_mode(struct pcf8563 *pcf8563, unsigned char *en,
- 				  unsigned char *pen)
- {
--	unsigned char buf;
-+	u32 buf;
- 	int err;
- 
--	err = pcf8563_read_block_data(client, PCF8563_REG_ST2, 1, &buf);
--	if (err)
-+	err = regmap_read(pcf8563->regmap, PCF8563_REG_ST2, &buf);
-+	if (err < 0)
- 		return err;
- 
- 	if (en)
-@@ -174,17 +123,17 @@ static int pcf8563_get_alarm_mode(struct i2c_client *client, unsigned char *en,
- 
- static irqreturn_t pcf8563_irq(int irq, void *dev_id)
- {
--	struct pcf8563 *pcf8563 = i2c_get_clientdata(dev_id);
--	int err;
-+	struct pcf8563 *pcf8563 = dev_id;
- 	char pending;
-+	int err;
- 
--	err = pcf8563_get_alarm_mode(pcf8563->client, NULL, &pending);
-+	err = pcf8563_get_alarm_mode(pcf8563, NULL, &pending);
- 	if (err)
- 		return IRQ_NONE;
- 
- 	if (pending) {
- 		rtc_update_irq(pcf8563->rtc, 1, RTC_IRQF | RTC_AF);
--		pcf8563_set_alarm_mode(pcf8563->client, 1);
-+		pcf8563_set_alarm_mode(pcf8563, 1);
- 		return IRQ_HANDLED;
- 	}
- 
-@@ -197,22 +146,22 @@ static irqreturn_t pcf8563_irq(int irq, void *dev_id)
-  */
- static int pcf8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
- {
--	struct i2c_client *client = to_i2c_client(dev);
--	struct pcf8563 *pcf8563 = i2c_get_clientdata(client);
-+	struct pcf8563 *pcf8563 = dev_get_drvdata(dev);
- 	unsigned char buf[9];
- 	int err;
- 
--	err = pcf8563_read_block_data(client, PCF8563_REG_ST1, 9, buf);
--	if (err)
-+	err = regmap_bulk_read(pcf8563->regmap, PCF8563_REG_ST1, buf,
-+			       sizeof(buf));
-+	if (err < 0)
- 		return err;
- 
- 	if (buf[PCF8563_REG_SC] & PCF8563_SC_LV) {
--		dev_err(&client->dev,
-+		dev_err(dev,
- 			"low voltage detected, date/time is not reliable.\n");
- 		return -EINVAL;
- 	}
- 
--	dev_dbg(&client->dev,
-+	dev_dbg(dev,
- 		"%s: raw data is st1=%02x, st2=%02x, sec=%02x, min=%02x, hr=%02x, "
- 		"mday=%02x, wday=%02x, mon=%02x, year=%02x\n",
- 		__func__,
-@@ -220,7 +169,6 @@ static int pcf8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 		buf[4], buf[5], buf[6], buf[7],
- 		buf[8]);
- 
--
- 	tm->tm_sec = bcd2bin(buf[PCF8563_REG_SC] & 0x7F);
- 	tm->tm_min = bcd2bin(buf[PCF8563_REG_MN] & 0x7F);
- 	tm->tm_hour = bcd2bin(buf[PCF8563_REG_HR] & 0x3F); /* rtc hr 0-23 */
-@@ -232,7 +180,7 @@ static int pcf8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	pcf8563->c_polarity = (buf[PCF8563_REG_MO] & PCF8563_MO_C) ?
- 		(tm->tm_year >= 100) : (tm->tm_year < 100);
- 
--	dev_dbg(&client->dev, "%s: tm is secs=%d, mins=%d, hours=%d, "
-+	dev_dbg(dev, "%s: tm is secs=%d, mins=%d, hours=%d, "
- 		"mday=%d, mon=%d, year=%d, wday=%d\n",
- 		__func__,
- 		tm->tm_sec, tm->tm_min, tm->tm_hour,
-@@ -243,11 +191,10 @@ static int pcf8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 
- static int pcf8563_rtc_set_time(struct device *dev, struct rtc_time *tm)
- {
--	struct i2c_client *client = to_i2c_client(dev);
--	struct pcf8563 *pcf8563 = i2c_get_clientdata(client);
-+	struct pcf8563 *pcf8563 = dev_get_drvdata(dev);
- 	unsigned char buf[9];
- 
--	dev_dbg(&client->dev, "%s: secs=%d, mins=%d, hours=%d, "
-+	dev_dbg(dev, "%s: secs=%d, mins=%d, hours=%d, "
- 		"mday=%d, mon=%d, year=%d, wday=%d\n",
- 		__func__,
- 		tm->tm_sec, tm->tm_min, tm->tm_hour,
-@@ -270,22 +217,24 @@ static int pcf8563_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 
- 	buf[PCF8563_REG_DW] = tm->tm_wday & 0x07;
- 
--	return pcf8563_write_block_data(client, PCF8563_REG_SC,
--				9 - PCF8563_REG_SC, buf + PCF8563_REG_SC);
-+	return regmap_bulk_write(pcf8563->regmap, PCF8563_REG_SC,
-+				buf + PCF8563_REG_SC,
-+				sizeof(buf) - PCF8563_REG_SC);
- }
- 
- static int pcf8563_rtc_ioctl(struct device *dev, unsigned int cmd, unsigned long arg)
- {
--	struct i2c_client *client = to_i2c_client(dev);
-+	struct pcf8563 *pcf8563 = dev_get_drvdata(dev);
- 	int ret;
- 
- 	switch (cmd) {
- 	case RTC_VL_READ:
--		ret = i2c_smbus_read_byte_data(client, PCF8563_REG_SC);
-+		ret = regmap_test_bits(pcf8563->regmap, PCF8563_REG_SC,
-+				       PCF8563_SC_LV);
- 		if (ret < 0)
- 			return ret;
- 
--		return put_user(ret & PCF8563_SC_LV ? RTC_VL_DATA_INVALID : 0,
-+		return put_user(ret ? RTC_VL_DATA_INVALID : 0,
- 				(unsigned int __user *)arg);
- 	default:
- 		return -ENOIOCTLCMD;
-@@ -294,15 +243,16 @@ static int pcf8563_rtc_ioctl(struct device *dev, unsigned int cmd, unsigned long
- 
- static int pcf8563_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *tm)
- {
--	struct i2c_client *client = to_i2c_client(dev);
-+	struct pcf8563 *pcf8563 = dev_get_drvdata(dev);
- 	unsigned char buf[4];
- 	int err;
- 
--	err = pcf8563_read_block_data(client, PCF8563_REG_AMN, 4, buf);
--	if (err)
-+	err = regmap_bulk_read(pcf8563->regmap, PCF8563_REG_AMN, buf,
-+			       sizeof(buf));
-+	if (err < 0)
- 		return err;
- 
--	dev_dbg(&client->dev,
-+	dev_dbg(dev,
- 		"%s: raw data is min=%02x, hr=%02x, mday=%02x, wday=%02x\n",
- 		__func__, buf[0], buf[1], buf[2], buf[3]);
- 
-@@ -312,11 +262,11 @@ static int pcf8563_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *tm)
- 	tm->time.tm_mday = bcd2bin(buf[2] & 0x3F);
- 	tm->time.tm_wday = bcd2bin(buf[3] & 0x7);
- 
--	err = pcf8563_get_alarm_mode(client, &tm->enabled, &tm->pending);
-+	err = pcf8563_get_alarm_mode(pcf8563, &tm->enabled, &tm->pending);
- 	if (err < 0)
- 		return err;
- 
--	dev_dbg(&client->dev, "%s: tm is mins=%d, hours=%d, mday=%d, wday=%d,"
-+	dev_dbg(dev, "%s: tm is mins=%d, hours=%d, mday=%d, wday=%d,"
- 		" enabled=%d, pending=%d\n", __func__, tm->time.tm_min,
- 		tm->time.tm_hour, tm->time.tm_mday, tm->time.tm_wday,
- 		tm->enabled, tm->pending);
-@@ -326,7 +276,7 @@ static int pcf8563_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *tm)
- 
- static int pcf8563_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *tm)
- {
--	struct i2c_client *client = to_i2c_client(dev);
-+	struct pcf8563 *pcf8563 = dev_get_drvdata(dev);
- 	unsigned char buf[4];
- 	int err;
- 
-@@ -335,17 +285,20 @@ static int pcf8563_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *tm)
- 	buf[2] = bin2bcd(tm->time.tm_mday);
- 	buf[3] = tm->time.tm_wday & 0x07;
- 
--	err = pcf8563_write_block_data(client, PCF8563_REG_AMN, 4, buf);
-+	err = regmap_bulk_write(pcf8563->regmap, PCF8563_REG_SC, buf,
-+				sizeof(buf));
- 	if (err)
- 		return err;
- 
--	return pcf8563_set_alarm_mode(client, !!tm->enabled);
-+	return pcf8563_set_alarm_mode(pcf8563, !!tm->enabled);
- }
- 
- static int pcf8563_irq_enable(struct device *dev, unsigned int enabled)
- {
-+	struct pcf8563 *pcf8563 = dev_get_drvdata(dev);
-+
- 	dev_dbg(dev, "%s: en=%d\n", __func__, enabled);
--	return pcf8563_set_alarm_mode(to_i2c_client(dev), !!enabled);
-+	return pcf8563_set_alarm_mode(pcf8563, !!enabled);
- }
- 
- #ifdef CONFIG_COMMON_CLK
-@@ -366,10 +319,10 @@ static unsigned long pcf8563_clkout_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
- 	struct pcf8563 *pcf8563 = clkout_hw_to_pcf8563(hw);
--	struct i2c_client *client = pcf8563->client;
--	unsigned char buf;
--	int ret = pcf8563_read_block_data(client, PCF8563_REG_CLKO, 1, &buf);
-+	u32 buf;
-+	int ret;
- 
-+	ret = regmap_read(pcf8563->regmap, PCF8563_REG_CLKO, &buf);
- 	if (ret < 0)
- 		return 0;
- 
-@@ -393,11 +346,10 @@ static int pcf8563_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 				   unsigned long parent_rate)
- {
- 	struct pcf8563 *pcf8563 = clkout_hw_to_pcf8563(hw);
--	struct i2c_client *client = pcf8563->client;
--	unsigned char buf;
--	int ret = pcf8563_read_block_data(client, PCF8563_REG_CLKO, 1, &buf);
--	int i;
-+	int i, ret;
-+	u32 buf;
- 
-+	ret = regmap_read(pcf8563->regmap, PCF8563_REG_CLKO, &buf);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -405,10 +357,10 @@ static int pcf8563_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- 		if (clkout_rates[i] == rate) {
- 			buf &= ~PCF8563_REG_CLKO_F_MASK;
- 			buf |= i;
--			ret = pcf8563_write_block_data(client,
--						       PCF8563_REG_CLKO, 1,
--						       &buf);
--			return ret;
-+			return regmap_update_bits(pcf8563->regmap,
-+					    PCF8563_REG_CLKO,
-+					    PCF8563_REG_CLKO_F_MASK,
-+					    buf);
- 		}
- 
- 	return -EINVAL;
-@@ -417,10 +369,10 @@ static int pcf8563_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
- static int pcf8563_clkout_control(struct clk_hw *hw, bool enable)
- {
- 	struct pcf8563 *pcf8563 = clkout_hw_to_pcf8563(hw);
--	struct i2c_client *client = pcf8563->client;
--	unsigned char buf;
--	int ret = pcf8563_read_block_data(client, PCF8563_REG_CLKO, 1, &buf);
-+	u32 buf;
-+	int ret;
- 
-+	ret = regmap_read(pcf8563->regmap, PCF8563_REG_CLKO, &buf);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -429,8 +381,8 @@ static int pcf8563_clkout_control(struct clk_hw *hw, bool enable)
- 	else
- 		buf &= ~PCF8563_REG_CLKO_FE;
- 
--	ret = pcf8563_write_block_data(client, PCF8563_REG_CLKO, 1, &buf);
--	return ret;
-+	return regmap_update_bits(pcf8563->regmap, PCF8563_REG_CLKO,
-+				  PCF8563_REG_CLKO_FE, buf);
- }
- 
- static int pcf8563_clkout_prepare(struct clk_hw *hw)
-@@ -446,10 +398,10 @@ static void pcf8563_clkout_unprepare(struct clk_hw *hw)
- static int pcf8563_clkout_is_prepared(struct clk_hw *hw)
- {
- 	struct pcf8563 *pcf8563 = clkout_hw_to_pcf8563(hw);
--	struct i2c_client *client = pcf8563->client;
--	unsigned char buf;
--	int ret = pcf8563_read_block_data(client, PCF8563_REG_CLKO, 1, &buf);
-+	u32 buf;
-+	int ret;
- 
-+	ret = regmap_read(pcf8563->regmap, PCF8563_REG_CLKO, &buf);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -467,16 +419,14 @@ static const struct clk_ops pcf8563_clkout_ops = {
- 
- static struct clk *pcf8563_clkout_register_clk(struct pcf8563 *pcf8563)
- {
--	struct i2c_client *client = pcf8563->client;
--	struct device_node *node = client->dev.of_node;
--	struct clk *clk;
-+	struct device_node *node = pcf8563->rtc->dev.of_node;
- 	struct clk_init_data init;
-+	struct clk *clk;
- 	int ret;
--	unsigned char buf;
- 
- 	/* disable the clkout output */
--	buf = 0;
--	ret = pcf8563_write_block_data(client, PCF8563_REG_CLKO, 1, &buf);
-+	ret = regmap_clear_bits(pcf8563->regmap, PCF8563_REG_CLKO,
-+				PCF8563_REG_CLKO_FE);
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
-@@ -491,7 +441,7 @@ static struct clk *pcf8563_clkout_register_clk(struct pcf8563 *pcf8563)
- 	of_property_read_string(node, "clock-output-names", &init.name);
- 
- 	/* register the clock */
--	clk = devm_clk_register(&client->dev, &pcf8563->clkout_hw);
-+	clk = devm_clk_register(&pcf8563->rtc->dev, &pcf8563->clkout_hw);
- 
- 	if (!IS_ERR(clk))
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
-@@ -509,11 +459,16 @@ static const struct rtc_class_ops pcf8563_rtc_ops = {
- 	.alarm_irq_enable = pcf8563_irq_enable,
- };
- 
-+static const struct regmap_config regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = 0xF,
-+};
-+
- static int pcf8563_probe(struct i2c_client *client)
- {
- 	struct pcf8563 *pcf8563;
- 	int err;
--	unsigned char buf;
- 
- 	dev_dbg(&client->dev, "%s\n", __func__);
- 
-@@ -525,20 +480,23 @@ static int pcf8563_probe(struct i2c_client *client)
- 	if (!pcf8563)
- 		return -ENOMEM;
- 
-+	pcf8563->regmap = devm_regmap_init_i2c(client, &regmap_config);
-+	if (IS_ERR(pcf8563->regmap))
-+		return PTR_ERR(pcf8563->regmap);
-+
- 	i2c_set_clientdata(client, pcf8563);
--	pcf8563->client = client;
-+	device_set_wakeup_capable(&client->dev, 1);
- 
- 	/* Set timer to lowest frequency to save power (ref Haoyu datasheet) */
--	buf = PCF8563_TMRC_1_60;
--	err = pcf8563_write_block_data(client, PCF8563_REG_TMRC, 1, &buf);
-+	err = regmap_set_bits(pcf8563->regmap, PCF8563_REG_TMRC,
-+			      PCF8563_TMRC_1_60);
- 	if (err < 0) {
- 		dev_err(&client->dev, "%s: write error\n", __func__);
- 		return err;
- 	}
- 
- 	/* Clear flags and disable interrupts */
--	buf = 0;
--	err = pcf8563_write_block_data(client, PCF8563_REG_ST2, 1, &buf);
-+	err = regmap_write(pcf8563->regmap, PCF8563_REG_ST2, 0);
- 	if (err < 0) {
- 		dev_err(&client->dev, "%s: write error\n", __func__);
- 		return err;
--- 
-2.45.2
+Why not leave the pci_intx_unmanaged() name.  It's ugly and that will discorage
+people from introducing new uses.
+
+regards,
+dan carpenter
 
 
