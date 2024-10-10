@@ -1,253 +1,232 @@
-Return-Path: <linux-kernel+bounces-359467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AD7998BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5544998BEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA691C24AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:39:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FCE1F21FCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6269B1CCEF9;
-	Thu, 10 Oct 2024 15:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L2mmwB5X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D021CC89F;
+	Thu, 10 Oct 2024 15:41:01 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907621CCB2E;
-	Thu, 10 Oct 2024 15:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F13188CAD;
+	Thu, 10 Oct 2024 15:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574763; cv=none; b=at8SGK+Ge4l2CdaeGzC/ZRzrxC0uDWOcgdDb3TSZe93+fYCUd1x2guKnwUD6dke0NK0TNFfxrTXJJeMaxMLqPfq26pngR8XJVmbhdqJIu1BTQDfwc5avgX/VUX26fsaoFiJANRcrqxMzIbn77q89w+2U4fqR5ZmfjRl/C7d0GsQ=
+	t=1728574860; cv=none; b=HSiFOWNYQIgPMXqACAPE4EBZXrCsQ/5OGI+/+32vNGmDMUA3bRrUt91uklXZQpj9gBd/Cdrt80/YgnkQeYAmIe1UreWFhp9fOoAM0lnLSb8Goap3HsBnxFS+bpn84tz+8Ozr3hecLuOWlJa/btCC5g+qqTBCPyJoqHdbLxeDZh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574763; c=relaxed/simple;
-	bh=OKZM64W2/1goUfn9zpZk+nrafJl+gGzMnyjh3GoRC7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5Bb2COs79OiV80n1L2Vy51i/TTrR7DFRIfPdjEc9PXEYtbb/yFTfDR8BZxoSDl3J8BXsHNP7AzzaJIS2CKBjKWLXXcev/IsBbhqjVitJgbSiM/TOEFQ+RIp2O/oAAk5D0Q7LJ4JdkrMle5C3SJXA0D1pb3yOFflvlNNuzWABco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L2mmwB5X; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728574762; x=1760110762;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OKZM64W2/1goUfn9zpZk+nrafJl+gGzMnyjh3GoRC7Q=;
-  b=L2mmwB5XAHT8FXs/oVTyK79unVybIdMQE2V4hqOTYONvbSbTwNYrTBPC
-   851Hfc8pt7EPQCokopwqL2TYzDjQXqEylvGHlrCxuX9uwdrOTH3tAYNpu
-   wV20rDJYTjhe9G0fVJ6jfsZQp0ZXjmDH9qL2S5bFmzwlMVsiTY590YCQd
-   UCXQGidLQFfLcU030pjtW+yo98hGYW6TJX8TV/ABRRJEkxr65N63iybaq
-   6qwQYTj4fhob9vckSGsq96ngbNEFAzzkeBM03QcPv2DLja1llZ7xmF7Hs
-   euj3MV0B6Vkgu/VpIyHbCBNxZWqN8a507dnwOXdCYGq4mG/2EnENsfyJ4
-   Q==;
-X-CSE-ConnectionGUID: zLiurKvyTcqn1Ty1sfnnTQ==
-X-CSE-MsgGUID: vs764LOiQHW5gIqIYIYn+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31736772"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="31736772"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:39:21 -0700
-X-CSE-ConnectionGUID: pfr2fdPsTgiJOjd3/2PF8Q==
-X-CSE-MsgGUID: x3yuQj0aSsa6TZ/FIAjH5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="81637488"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 Oct 2024 08:39:18 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1syvFz-000AwT-2N;
-	Thu, 10 Oct 2024 15:39:15 +0000
-Date: Thu, 10 Oct 2024 23:38:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Golle <daniel@makrotopia.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
-Message-ID: <202410102342.H7m4WFQ5-lkp@intel.com>
-References: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1728574860; c=relaxed/simple;
+	bh=Ema+f7OxkHzYngA/e7dmo+PAXT5IYRXJkiSuCkFyKDQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=chvJ/zSds6UqUe/aU3l/QflJWekDfj5161909e97GY5ZqwzM9XvId27ewgt7UKtXoVHHtlnsKpNIlCs4jZkF4xYTRRgx4dahIfSJ58rZUOv/vrAGnn33o0SJ+Yf+aQf6OfjSMO12lGVOBsvTF1i5H+rt+Qmb5w0aligshJmCXnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPYnl5nDpzpWbs;
+	Thu, 10 Oct 2024 23:38:51 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id 586251800CF;
+	Thu, 10 Oct 2024 23:40:51 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
+ (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 10 Oct
+ 2024 23:40:50 +0800
+From: Li Zetao <lizetao1@huawei.com>
+To: <dmitry.torokhov@gmail.com>, <oliver.graute@kococonnector.com>,
+	<u.kleine-koenig@pengutronix.de>, <felix@kaechele.ca>,
+	<ye.xingchen@zte.com.cn>, <joelselvaraj.oss@gmail.com>,
+	<andreas@kemnade.info>, <viro@zeniv.linux.org.uk>,
+	<dario.binacchi@amarulasolutions.com>
+CC: <lizetao1@huawei.com>, <linux-input@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] Input: edt-ft5x06 - fix memleak when rmmod edt_ft5x06
+Date: Thu, 10 Oct 2024 23:40:10 +0800
+Message-ID: <20241010154010.3228450-1-lizetao1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
-Hi Daniel,
+When insmod and rmmod the edt_ft5x06 driver, kmemleak reported a
+memory leak issue:
+  $ modprobe edt-ft5x06
+    edt_ft5x06 0-0004: touchscreen probe failed
+  $ modprobe -r edt-ft5x06
 
-kernel test robot noticed the following build errors:
+  unreferenced object 0xffff88810b38c8a0 (size 8):
+    comm "modprobe", pid 23672, jiffies 4295355205
+    hex dump (first 8 bytes):
+      93 00 00 00 00 00 00 00                          ........
+    backtrace (crc a10fb312):
+      [<ffffffff81e12f70>] __kmalloc_noprof+0x2f0/0x3d0
+      [<ffffffff8368c3b6>] __regmap_init+0x2d26/0x4810
+      [<ffffffffc06b4875>] __regmap_init_i2c+0x65/0x80 [regmap_i2c]
+      [<ffffffffc07108a6>] edt_ft5x06_ts_probe+0xd6/0x3410 [edt_ft5x06]
+      [<ffffffff83bd85d1>] i2c_device_probe+0x3c1/0x8b0
+	...
 
-[auto build test ERROR on net-next/main]
+This is caused by not releasing the tsdata->regmap resource in time on
+the probe failure path. By adding the err_regmap_exit label, execute
+regmap_exit on the error path to release map resources. However, it
+should be noted that during the ts identify stage, regmap_exit may be
+performed first and then regmap may be reinitialized, so when
+edt_ft5x06_ts_identify() returns an error, it need to check whether the
+regmap initialization failed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Golle/net-phy-intel-xway-add-support-for-PHY-LEDs/20241009-103036
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel%40makrotopia.org
-patch subject: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241010/202410102342.H7m4WFQ5-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410102342.H7m4WFQ5-lkp@intel.com/reproduce)
+Fixes: 9dfd9708ffba ("Input: edt-ft5x06 - convert to use regmap API")
+Signed-off-by: Li Zetao <lizetao1@huawei.com>
+---
+ drivers/input/touchscreen/edt-ft5x06.c | 40 ++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 15 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410102342.H7m4WFQ5-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/net/phy/intel-xway.c:7:
-   In file included from include/linux/mdio.h:9:
-   In file included from include/uapi/linux/mdio.h:15:
-   In file included from include/linux/mii.h:13:
-   In file included from include/linux/linkmode.h:5:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/net/phy/intel-xway.c:7:
-   In file included from include/linux/mdio.h:9:
-   In file included from include/uapi/linux/mdio.h:15:
-   In file included from include/linux/mii.h:13:
-   In file included from include/linux/linkmode.h:5:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/net/phy/intel-xway.c:7:
-   In file included from include/linux/mdio.h:9:
-   In file included from include/uapi/linux/mdio.h:15:
-   In file included from include/linux/mii.h:13:
-   In file included from include/linux/linkmode.h:5:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/net/phy/intel-xway.c:7:
-   In file included from include/linux/mdio.h:9:
-   In file included from include/uapi/linux/mdio.h:15:
-   In file included from include/linux/mii.h:13:
-   In file included from include/linux/linkmode.h:5:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/net/phy/intel-xway.c:518:8: error: use of undeclared identifier 'PHY_LED_ACTIVE_HIGH'; did you mean 'PHY_LED_ACTIVE_LOW'?
-     518 |                 case PHY_LED_ACTIVE_HIGH:
-         |                      ^~~~~~~~~~~~~~~~~~~
-         |                      PHY_LED_ACTIVE_LOW
-   include/linux/phy.h:880:2: note: 'PHY_LED_ACTIVE_LOW' declared here
-     880 |         PHY_LED_ACTIVE_LOW = 0,
-         |         ^
->> drivers/net/phy/intel-xway.c:518:8: error: duplicate case value 'PHY_LED_ACTIVE_LOW'
-     518 |                 case PHY_LED_ACTIVE_HIGH:
-         |                      ^
-   drivers/net/phy/intel-xway.c:515:8: note: previous case defined here
-     515 |                 case PHY_LED_ACTIVE_LOW:
-         |                      ^
-   7 warnings and 2 errors generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +518 drivers/net/phy/intel-xway.c
-
-   503	
-   504	static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
-   505					      unsigned long modes)
-   506	{
-   507		bool active_low = false;
-   508		u32 mode;
-   509	
-   510		if (index >= XWAY_GPHY_MAX_LEDS)
-   511			return -EINVAL;
-   512	
-   513		for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
-   514			switch (mode) {
-   515			case PHY_LED_ACTIVE_LOW:
-   516				active_low = true;
-   517				break;
- > 518			case PHY_LED_ACTIVE_HIGH:
-   519				break;
-   520			default:
-   521				return -EINVAL;
-   522			}
-   523		}
-   524	
-   525		return phy_modify(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index),
-   526				  active_low ? XWAY_GPHY_LED_INV(index) : 0);
-   527	}
-   528	
-
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index fda49b2fe088..c2004f6e2317 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -1159,15 +1159,18 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 		chip_data = (const struct edt_i2c_chip_data *)id->driver_data;
+ 	if (!chip_data || !chip_data->max_support_points) {
+ 		dev_err(&client->dev, "invalid or missing chip data\n");
+-		return -EINVAL;
++		error = -EINVAL;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	tsdata->max_support_points = chip_data->max_support_points;
+ 
+ 	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
+-	if (IS_ERR(tsdata->vcc))
+-		return dev_err_probe(&client->dev, PTR_ERR(tsdata->vcc),
+-				     "failed to request regulator\n");
++	if (IS_ERR(tsdata->vcc)) {
++		error = dev_err_probe(&client->dev, PTR_ERR(tsdata->vcc),
++				      "failed to request regulator\n");
++		goto err_regmap_exit;
++	}
+ 
+ 	tsdata->iovcc = devm_regulator_get(&client->dev, "iovcc");
+ 	if (IS_ERR(tsdata->iovcc)) {
+@@ -1175,13 +1178,13 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 		if (error != -EPROBE_DEFER)
+ 			dev_err(&client->dev,
+ 				"failed to request iovcc regulator: %d\n", error);
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	error = regulator_enable(tsdata->iovcc);
+ 	if (error < 0) {
+ 		dev_err(&client->dev, "failed to enable iovcc: %d\n", error);
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	/* Delay enabling VCC for > 10us (T_ivd) after IOVCC */
+@@ -1191,14 +1194,14 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 	if (error < 0) {
+ 		dev_err(&client->dev, "failed to enable vcc: %d\n", error);
+ 		regulator_disable(tsdata->iovcc);
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	error = devm_add_action_or_reset(&client->dev,
+ 					 edt_ft5x06_disable_regulators,
+ 					 tsdata);
+ 	if (error)
+-		return error;
++		goto err_regmap_exit;
+ 
+ 	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
+ 						     "reset", GPIOD_OUT_HIGH);
+@@ -1206,7 +1209,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 		error = PTR_ERR(tsdata->reset_gpio);
+ 		dev_err(&client->dev,
+ 			"Failed to request GPIO reset pin, error %d\n", error);
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	tsdata->wake_gpio = devm_gpiod_get_optional(&client->dev,
+@@ -1215,7 +1218,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 		error = PTR_ERR(tsdata->wake_gpio);
+ 		dev_err(&client->dev,
+ 			"Failed to request GPIO wake pin, error %d\n", error);
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	/*
+@@ -1246,7 +1249,8 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 	input = devm_input_allocate_device(&client->dev);
+ 	if (!input) {
+ 		dev_err(&client->dev, "failed to allocate input device.\n");
+-		return -ENOMEM;
++		error = -ENOMEM;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	mutex_init(&tsdata->mutex);
+@@ -1258,7 +1262,9 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 	error = edt_ft5x06_ts_identify(client, tsdata);
+ 	if (error) {
+ 		dev_err(&client->dev, "touchscreen probe failed\n");
+-		return error;
++		if (IS_ERR(tsdata->regmap))
++			return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	/*
+@@ -1311,7 +1317,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 				    INPUT_MT_DIRECT);
+ 	if (error) {
+ 		dev_err(&client->dev, "Unable to init MT slots.\n");
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	irq_flags = irq_get_trigger_type(client->irq);
+@@ -1324,12 +1330,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 					  client->name, tsdata);
+ 	if (error) {
+ 		dev_err(&client->dev, "Unable to request touchscreen IRQ.\n");
+-		return error;
++		goto err_regmap_exit;
+ 	}
+ 
+ 	error = input_register_device(input);
+ 	if (error)
+-		return error;
++		goto err_regmap_exit;
+ 
+ 	edt_ft5x06_ts_prepare_debugfs(tsdata, dev_driver_string(&client->dev));
+ 
+@@ -1340,6 +1346,10 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 		tsdata->reset_gpio ? desc_to_gpio(tsdata->reset_gpio) : -1);
+ 
+ 	return 0;
++
++err_regmap_exit:
++	regmap_exit(tsdata->regmap);
++	return error;
+ }
+ 
+ static void edt_ft5x06_ts_remove(struct i2c_client *client)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
