@@ -1,309 +1,193 @@
-Return-Path: <linux-kernel+bounces-358404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867A1997E95
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:52:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0370997E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA71CB20A39
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1740D1F26D49
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7521C9EB5;
-	Thu, 10 Oct 2024 07:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EAF1A2540;
+	Thu, 10 Oct 2024 07:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wU9epZns";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8lghaYE2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RXk2xC9u"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD211C9B66;
-	Thu, 10 Oct 2024 07:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47299433C9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728543744; cv=none; b=cPO0VoJzSZZhEw4g62V5l5tkSsJB3WlfJFkeRGG/o1zTAOrfpoyB6UMSe9a7Em3J8ik4066j/llzP6a03JbJa4srRYGYfJirZjPRP4WSP7ug0ZtgZGKei2b6Zh0ZA73wBkWD0PxFEsTG4D3orOb4sl4HOZIwwXTmpw4yorYTpus=
+	t=1728543719; cv=none; b=BGuDhJDsv2qEQGTKEKvDiN0teXPl395cDC10upc7yWPbYGf7Apiuf6jujgJ7eQblhJEFh1PLJ9ySS+O3ChjcwXvonwm6VyoDUxTbNb+vZpjAy8SW8W/tBLi+qRc94VTd7TQp1XfDN23OXxXkgno4sT5skyhOLtYl5nweRnIp3Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728543744; c=relaxed/simple;
-	bh=yNJj26tJsjc+mxczFd91wneA+G5AUhG1qynicaUOvCU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RFGBt0i0wf9rDrNTHZU6AJs2cmNELJxbSLvedtPo1HXLkEmQWuMQ2872FwuBYSuTQil0z/mH0hMm4oHxw4Fg2bCqf2yQ+z3cE86gEhOwxPbJrxXf7RYKV2v3b794HlsKZVqDoaP0brZWNmqGFX2VnsOjCV3bGLGSYvCXKehS/5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wU9epZns; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8lghaYE2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728543736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XgNqPrqTfzE/nrwDzxpoMeBypcAJxCtM0sTQTc7P/sg=;
-	b=wU9epZnsfrpzNFO+fzyusZ4op8eCsVICWYnnzOS6Q/CFu8t1sDiTxogdYYJeFx7i87f6hW
-	b7znkXHrks9a10ItUOf4ojO/2bPzBrYaLOWb7G60PV16jMfzGSPrUGxOlLz26Q3xQjp8xV
-	8GdUeZa2jFMU90wPzlRhnnE1IxMdmVjhkClOTpHSoTNmzk3tJR2dVeeSkdakJephza6Pt1
-	VQnFRrwhwvs9pmHKVha3pPxt1Nxdb/O2XNaIkACwSvORgr53IGYe1dvcvXADwRU/72rTxR
-	tD1ImfS0ZTer3dahy/P5mSKsjLl2D2YkDlW5v15sTHKH6QJy80jsGcl70g0yew==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728543736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XgNqPrqTfzE/nrwDzxpoMeBypcAJxCtM0sTQTc7P/sg=;
-	b=8lghaYE26ry3lrwI3DqFKFYDGEeWUmAwJ53eesaFeTGKFndo006oWnBPca8hmvSD+MNVvz
-	CHa8CO4DchrHUTAA==
-Date: Thu, 10 Oct 2024 09:01:29 +0200
-Subject: [PATCH 27/28] powerpc: Split systemcfg struct definitions out from
- vdso
+	s=arc-20240116; t=1728543719; c=relaxed/simple;
+	bh=VpvFAPhJp/M1wupE23iYOYNMxGD6SmZw+rhsGW6fNg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sZIsiWU8aNgf3LrzBOjjzQEdYD+4Dh/BW5bI4lHxsuFs4X2HI3Y/DwRHj+uV5//I8teRjhUZFP36OB1Y5v6XziQ7Fh58i/parcdkcZ92u2SDuSOzovjZaT4aRjp4pmv9EsWIOfzYfRc9SnLEoTiSQotPp498CqDDnlOTXUJFSfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RXk2xC9u; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c918c067a1so597227a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1728543715; x=1729148515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=sZt+XJYSdwYln561BuqB+yeUg38/33FYKTH8R/LAnPQ=;
+        b=RXk2xC9uaceVVJkM/VHlSjnhL8nxrRhbW2CwR5ig+QVrRAisV/+MQ5GZBLTn8DsTnY
+         cXFWMvfHvTsD8RbljWOhOqDTY4rUGmv28yIceqDRGFPNpRJtwH5D0E+rjNfQMoMfYTve
+         abQDxEN5Rs+VLRuenuIloCXdsfzrr8qA4mICHmGJ1PzRTo7xeUx+PuHW6tkG5wUdDaWy
+         qv9tBLFnOdXOZMQa+4KxQhoKKbznGRqC8S2zC+HlDp1wCXlUiYJeoZIx0bb2bVuTaOEo
+         qI6Jf4vMm4PQOos4DCONLPrZCxA1jh/xN81/p482WHFvdMwhj2hGdgBnTHwgpMJnYqFt
+         aWBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728543715; x=1729148515;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sZt+XJYSdwYln561BuqB+yeUg38/33FYKTH8R/LAnPQ=;
+        b=c9vbfvlWpf7A5Cz9jsALzeu8RlpUDCaItu9vSc599Eg/R3o6UmVhaqVclug5ZBTwU1
+         U1ayEmXozjEbZhIjmxGv6xQJDfu+QcNrs6P/WRQxp9cQZrCkdT6Q9nQWxHknd/wqG621
+         V3cbreHL8gceXvX/1iCF5ZD49BBpNNFlMU+GrrjpaLWHFk4XbSxhk0wKrTBlr/7An1HU
+         0fHZ9hbdIquZOsQbF0LXmX3ACyrRSnQJTOjuw/+/kO6MkUUoczFr8S4WlX8o7cm7XYq5
+         BmJt85Wswi7HWjduEnM7+TmfdqwZKq8v6Q93VU4KDdvdDy3rNSAIURcjLHNCDjr4lv2y
+         XCcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmqOsNzCQ4V3qc7WEe7noIk9ACpMI7JQKHUBUjUWCPZXotFQNh28DLlzvHfWmXWVzHVWE+k3xnz3Wlc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynUKhDyDJv5PoHf2JOeyLZ2I1d37BnV60Gqx2RUHLoKo9GGTZu
+	+/DmcI/guSU6gqROrFMXe3dyesYekgsKySDd7HqeqHbyY4oVE23KBStbs6VC7w==
+X-Google-Smtp-Source: AGHT+IFaW38MP0jnIfnVt55M9aG5wz4Bk+QoZFc2vIZ6r2o4BcPZnjYn6x2Qoefq32VwnIcR6ZTwBA==
+X-Received: by 2002:a17:907:60d6:b0:a99:4982:da46 with SMTP id a640c23a62f3a-a998d3299a8mr377605666b.63.1728543715487;
+        Thu, 10 Oct 2024 00:01:55 -0700 (PDT)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ec549csm44046766b.27.2024.10.10.00.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 00:01:55 -0700 (PDT)
+Message-ID: <756dc3d5-48fd-429f-a5eb-6cb8e99dfe6f@suse.com>
+Date: Thu, 10 Oct 2024 09:01:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen: Remove config dependency in XEN_PRIVCMD definition
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+ Stefano Stabellini <sstabellini@kernel.org>
+Cc: Jiqian Chen <Jiqian.Chen@amd.com>, xen-devel@lists.xenproject.org,
+ linux-kernel@vger.kernel.org,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Marek Marczykowski <marmarek@invisiblethingslab.com>
+References: <20241009062014.407310-1-Jiqian.Chen@amd.com>
+ <73174eb0-380d-4f95-a2c3-097b86fac8db@suse.com>
+ <alpine.DEB.2.22.394.2410091539260.471028@ubuntu-linux-20-04-desktop>
+ <8bfaa6cc-2cf1-48e4-828b-e4d356f0b3fc@suse.com>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <8bfaa6cc-2cf1-48e4-828b-e4d356f0b3fc@suse.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241010-vdso-generic-base-v1-27-b64f0842d512@linutronix.de>
-References: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
-In-Reply-To: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
-To: Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Russell King <linux@armlinux.org.uk>, Huacai Chen <chenhuacai@kernel.org>, 
- WANG Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>, 
- "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, 
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
- linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-riscv@lists.infradead.org, loongarch@lists.linux.dev, 
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728543717; l=7462;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=yNJj26tJsjc+mxczFd91wneA+G5AUhG1qynicaUOvCU=;
- b=ye4bvn06ziioQWEwHInA8TCQjz/vGUSBKcbszX6pxWLGUoAdN8oTviJO71DzcWGG2o6WiAPSq
- MpW5Jway+KJCf0rMgplhNrfWg4Q1bwSsiaRNld8cC3UHkTfgcrC5ymF
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The systemcfg data has nothing to do anymore with the vdso.
-Split it into a dedicated header file.
+On 10.10.2024 07:39, Jürgen Groß wrote:
+> On 10.10.24 00:46, Stefano Stabellini wrote:
+>> On Wed, 9 Oct 2024, Jan Beulich wrote:
+>>> On 09.10.2024 08:20, Jiqian Chen wrote:
+>>>> Commit 2fae6bb7be32 ("xen/privcmd: Add new syscall to get gsi from dev")
+>>>> adds a weak reverse dependency to the config XEN_PRIVCMD definition, its
+>>>> purpose is to pass the combination of compilation that CONFIG_XEN_PRIVCMD=y
+>>>> and CONFIG_XEN_PCIDEV_BACKEND=m, because in that combination, xen-pciback
+>>>> is compiled as a module but xen-privcmd is built-in, so xen-privcmd can't
+>>>> find the implementation of pcistub_get_gsi_from_sbdf.
+>>>>
+>>>> But that dependency causes xen-privcmd can't be loaded on domU, because
+>>>> dependent xen-pciback is always not be loaded successfully on domU.
+>>>>
+>>>> To solve above problem and cover original commit's requirement, just remove
+>>>> that dependency, because the code "IS_REACHABLE(CONFIG_XEN_PCIDEV_BACKEND)"
+>>>> of original commit is enough to meet the requirement.
+>>>>
+>>>> Fixes: 2fae6bb7be32 ("xen/privcmd: Add new syscall to get gsi from dev")
+>>>> Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
+>>>
+>>> This lacks a Reported-by:.
+>>>
+>>>> --- a/drivers/xen/Kconfig
+>>>> +++ b/drivers/xen/Kconfig
+>>>> @@ -261,7 +261,6 @@ config XEN_SCSI_BACKEND
+>>>>   config XEN_PRIVCMD
+>>>>   	tristate "Xen hypercall passthrough driver"
+>>>>   	depends on XEN
+>>>> -	imply XEN_PCIDEV_BACKEND
+>>>>   	default m
+>>>>   	help
+>>>>   	  The hypercall passthrough driver allows privileged user programs to
+>>>
+>>> The report wasn't about a build problem, but a runtime one. Removing the
+>>> dependency here doesn't change anything in the dependency of xen-privcmd
+>>> on xen-pciback, as the use of pcistub_get_gsi_from_sbdf() continues to
+>>> exist.
+>>>
+>>> Consider the case of XEN_PCIDEV_BACKEND=m and XEN_PRIVCMD=m, which
+>>> I guess is what Marek is using in his config. Both drivers are available
+>>> in such a configuration, yet loading of xen-privcmd then requires to
+>>> load xen-pciback first. And that latter load attempt will fail in a DomU.
+>>> The two drivers simply may not have any dependency in either direction.
+>>
+>> The idea is that there should be no hard dependency on
+>> pcistub_get_gsi_from_sbdf(). If it is available, the service will be
+>> used, otherwise an error will be reported.
+>>
+>> The problem is that IS_REACHABLE is a compile-time check. What we need
+>> is a runtime check instead. Maybe symbol_get or try_module_get ?
+> 
+> This is a rather clumsy solution IMO.
+> 
+> I'm seeing the following solutions:
+> 
+> 1. Don't fail to to load the pciback driver in a DomU, but only disable
+>     any functionality.
+> 
+> 2. Move the drivers/xen/xen-pciback/pci_stub.c functionality in a module
+>     of its own, allowing the privcmd driver to be loaded without needing
+>     the rest of pciback.
+> 
+> 3. Add a hook to e.g. drivers/xen/pci.c instead for calling of
+>     pcistub_get_gsi_from_sbdf() directly. pciback could register the real
+>     call address. If pciback isn't loaded, the hook can return an error.
+>     This would remove the explicit dependency of privcmd on pciback.
+> 
+> I'd prefer the 3rd variant.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- arch/powerpc/include/asm/systemcfg.h         | 52 ++++++++++++++++++++++++++++
- arch/powerpc/include/asm/vdso_datapage.h     | 37 --------------------
- arch/powerpc/kernel/proc_powerpc.c           |  1 +
- arch/powerpc/kernel/setup-common.c           |  1 +
- arch/powerpc/kernel/smp.c                    |  1 +
- arch/powerpc/kernel/time.c                   |  1 +
- arch/powerpc/platforms/powernv/smp.c         |  1 +
- arch/powerpc/platforms/pseries/hotplug-cpu.c |  1 +
- 8 files changed, 58 insertions(+), 37 deletions(-)
+Same here - order of preference backwards in the set presented above.
+In the meantime the original change may simply need reverting?
 
-diff --git a/arch/powerpc/include/asm/systemcfg.h b/arch/powerpc/include/asm/systemcfg.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..2f9b1d6a5c98d10469f8533fe6781be437712eff
---- /dev/null
-+++ b/arch/powerpc/include/asm/systemcfg.h
-@@ -0,0 +1,52 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _SYSTEMCFG_H
-+#define _SYSTEMCFG_H
-+
-+/*
-+ * Copyright (C) 2002 Peter Bergner <bergner@vnet.ibm.com>, IBM
-+ * Copyright (C) 2005 Benjamin Herrenschmidy <benh@kernel.crashing.org>,
-+ * 		      IBM Corp.
-+ */
-+
-+#ifdef CONFIG_PPC64
-+
-+/*
-+ * If the major version changes we are incompatible.
-+ * Minor version changes are a hint.
-+ */
-+#define SYSTEMCFG_MAJOR 1
-+#define SYSTEMCFG_MINOR 1
-+
-+#include <linux/types.h>
-+
-+struct systemcfg {
-+	__u8  eye_catcher[16];		/* Eyecatcher: SYSTEMCFG:PPC64	0x00 */
-+	struct {			/* Systemcfg version numbers	     */
-+		__u32 major;		/* Major number			0x10 */
-+		__u32 minor;		/* Minor number			0x14 */
-+	} version;
-+
-+	/* Note about the platform flags: it now only contains the lpar
-+	 * bit. The actual platform number is dead and buried
-+	 */
-+	__u32 platform;			/* Platform flags		0x18 */
-+	__u32 processor;		/* Processor type		0x1C */
-+	__u64 processorCount;		/* # of physical processors	0x20 */
-+	__u64 physicalMemorySize;	/* Size of real memory(B)	0x28 */
-+	__u64 tb_orig_stamp;		/* (NU) Timebase at boot	0x30 */
-+	__u64 tb_ticks_per_sec;		/* Timebase tics / sec		0x38 */
-+	__u64 tb_to_xs;			/* (NU) Inverse of TB to 2^20	0x40 */
-+	__u64 stamp_xsec;		/* (NU)				0x48 */
-+	__u64 tb_update_count;		/* (NU) Timebase atomicity ctr	0x50 */
-+	__u32 tz_minuteswest;		/* (NU) Min. west of Greenwich	0x58 */
-+	__u32 tz_dsttime;		/* (NU) Type of dst correction	0x5C */
-+	__u32 dcache_size;		/* L1 d-cache size		0x60 */
-+	__u32 dcache_line_size;		/* L1 d-cache line size		0x64 */
-+	__u32 icache_size;		/* L1 i-cache size		0x68 */
-+	__u32 icache_line_size;		/* L1 i-cache line size		0x6C */
-+};
-+
-+extern struct systemcfg *systemcfg;
-+
-+#endif /* CONFIG_PPC64 */
-+#endif /* _SYSTEMCFG_H */
-diff --git a/arch/powerpc/include/asm/vdso_datapage.h b/arch/powerpc/include/asm/vdso_datapage.h
-index 8b91b1d34ff639a0efb80b9cdd7274f785643153..a9686310be2cb8c8229d67fed31f332d04919557 100644
---- a/arch/powerpc/include/asm/vdso_datapage.h
-+++ b/arch/powerpc/include/asm/vdso_datapage.h
-@@ -9,14 +9,6 @@
-  * 		      IBM Corp.
-  */
- 
--
--/*
-- * If the major version changes we are incompatible.
-- * Minor version changes are a hint.
-- */
--#define SYSTEMCFG_MAJOR 1
--#define SYSTEMCFG_MINOR 1
--
- #ifndef __ASSEMBLY__
- 
- #include <linux/unistd.h>
-@@ -27,35 +19,6 @@
- 
- #ifdef CONFIG_PPC64
- 
--struct systemcfg {
--	__u8  eye_catcher[16];		/* Eyecatcher: SYSTEMCFG:PPC64	0x00 */
--	struct {			/* Systemcfg version numbers	     */
--		__u32 major;		/* Major number			0x10 */
--		__u32 minor;		/* Minor number			0x14 */
--	} version;
--
--	/* Note about the platform flags: it now only contains the lpar
--	 * bit. The actual platform number is dead and buried
--	 */
--	__u32 platform;			/* Platform flags		0x18 */
--	__u32 processor;		/* Processor type		0x1C */
--	__u64 processorCount;		/* # of physical processors	0x20 */
--	__u64 physicalMemorySize;	/* Size of real memory(B)	0x28 */
--	__u64 tb_orig_stamp;		/* (NU) Timebase at boot	0x30 */
--	__u64 tb_ticks_per_sec;		/* Timebase tics / sec		0x38 */
--	__u64 tb_to_xs;			/* (NU) Inverse of TB to 2^20	0x40 */
--	__u64 stamp_xsec;		/* (NU)				0x48 */
--	__u64 tb_update_count;		/* (NU) Timebase atomicity ctr	0x50 */
--	__u32 tz_minuteswest;		/* (NU) Min. west of Greenwich	0x58 */
--	__u32 tz_dsttime;		/* (NU) Type of dst correction	0x5C */
--	__u32 dcache_size;		/* L1 d-cache size		0x60 */
--	__u32 dcache_line_size;		/* L1 d-cache line size		0x64 */
--	__u32 icache_size;		/* L1 i-cache size		0x68 */
--	__u32 icache_line_size;		/* L1 i-cache line size		0x6C */
--};
--
--extern struct systemcfg *systemcfg;
--
- struct vdso_arch_data {
- 	__u64 tb_ticks_per_sec;			/* Timebase tics / sec */
- 	__u32 dcache_block_size;		/* L1 d-cache block size     */
-diff --git a/arch/powerpc/kernel/proc_powerpc.c b/arch/powerpc/kernel/proc_powerpc.c
-index e8083e05a1d03f74d9f24bac99e3ab526368c8e2..3816a2bf2b844ff49f6fd22cc42e733d5ef72b36 100644
---- a/arch/powerpc/kernel/proc_powerpc.c
-+++ b/arch/powerpc/kernel/proc_powerpc.c
-@@ -13,6 +13,7 @@
- #include <asm/machdep.h>
- #include <asm/vdso_datapage.h>
- #include <asm/rtas.h>
-+#include <asm/systemcfg.h>
- #include <linux/uaccess.h>
- 
- #ifdef CONFIG_PPC64_PROC_SYSTEMCFG
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index d0b32ff2bc8dedc5aa7afce17f07a5c7c255387c..0b732d3b283b199b19e078d45ffe4cb0325b7e63 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -67,6 +67,7 @@
- #include <asm/cpu_has_feature.h>
- #include <asm/kasan.h>
- #include <asm/mce.h>
-+#include <asm/systemcfg.h>
- 
- #include "setup.h"
- 
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 87ae45bf1045d8974e3eed09e284bc582310f3e2..5ac7084eebc0b8c5ab16d96c89cadde953003431 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -61,6 +61,7 @@
- #include <asm/ftrace.h>
- #include <asm/kup.h>
- #include <asm/fadump.h>
-+#include <asm/systemcfg.h>
- 
- #include <trace/events/ipi.h>
- 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 6c53a0153c0d1c7cd74017a4dadb09ba149e456f..f959f4bdde2f5cd886bf7db1f9f65366775f94c7 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -71,6 +71,7 @@
- #include <asm/vdso_datapage.h>
- #include <asm/firmware.h>
- #include <asm/mce.h>
-+#include <asm/systemcfg.h>
- 
- /* powerpc clocksource/clockevent code */
- 
-diff --git a/arch/powerpc/platforms/powernv/smp.c b/arch/powerpc/platforms/powernv/smp.c
-index 672209428b98459ef0a5595c0ec7128a5c5f17a2..2e9da58195f51ccfc13b5e0b95d2626937186a3e 100644
---- a/arch/powerpc/platforms/powernv/smp.c
-+++ b/arch/powerpc/platforms/powernv/smp.c
-@@ -36,6 +36,7 @@
- #include <asm/kexec.h>
- #include <asm/reg.h>
- #include <asm/powernv.h>
-+#include <asm/systemcfg.h>
- 
- #include "powernv.h"
- 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-cpu.c b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-index 7b80d35d045dc9d947c0b512a58a82ef7398150d..bc6926dbf14890881eacf4eb8df010d2f465c79f 100644
---- a/arch/powerpc/platforms/pseries/hotplug-cpu.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-cpu.c
-@@ -33,6 +33,7 @@
- #include <asm/xive.h>
- #include <asm/plpar_wrappers.h>
- #include <asm/topology.h>
-+#include <asm/systemcfg.h>
- 
- #include "pseries.h"
- 
-
--- 
-2.47.0
-
+Jan
 
