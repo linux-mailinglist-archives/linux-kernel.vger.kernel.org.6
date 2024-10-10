@@ -1,76 +1,103 @@
-Return-Path: <linux-kernel+bounces-359156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF625998826
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:47:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B679998829
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA63728B5AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219B428B7FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C8F1C9ED1;
-	Thu, 10 Oct 2024 13:46:23 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DF41CB30D;
+	Thu, 10 Oct 2024 13:46:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27AD1C9EB5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CF81C9EDC;
+	Thu, 10 Oct 2024 13:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567983; cv=none; b=IIQK/zg+ZsMFc9rz8yHdgJirXTnFUOl9CpVDRsMALWWUknfufs9gevBeUW2RcMjotMZ4Qw4/06ouAyxFatZ7fMYu/7SU2n4UIpXQO6btw0rMfKxuD34vhDsAzZ8blHz11lmGxizjwtNXT7/7qcebn74H7UPW20TXf0M63oDYBUg=
+	t=1728567989; cv=none; b=XX1KYRNPY1nrsGC+LmzzpBdI/Wu+k3jQ+HslFMA59camc0a+gH7A3UX/R2CYofpQ2xrey4xJCJUQztLUWzx4b5mEZt1hBplRBS3ys85TAQ1qj3gFW5N1X1VTxlOsqEtltfxzukRbq3rYSFm6WBJceE8OJNp/jxvO6VAq5fzFfKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567983; c=relaxed/simple;
-	bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p5dgHEIj/bto8M46KuCbxAuqYDG/Vjvvhd6XN1tcgi7o30gIq88LeHYX9tR0LWd+g7Ke2n9b2Rnhue+EyeoBMg/TLftMfcdet6U+DLCQEFVagcgTJCuLqThWH9hhiVAIo3p+Z528mcXNxUx0V5LTD9GMMxog6zy/w7NbSKQROTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so7327265ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:46:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728567981; x=1729172781;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
-        b=vuVZH7kZFlaz8bOmR3kwDhRaCMcCNSXEFiFFmM9kRmpTiuNCIn5DJlCTY69s51ZdqX
-         1yoyNyCfW6JvJEsBqnp5bbafZ5nrDbwCLMO9cJO3Y/VIPQl4WhP1ysrzNFL/aTUUUFpS
-         zYAdlZf3pwNeQGsnBjId2AzArMI00wvLjszrF+VZ7owFr/Hh6DkGn5ivI0sK5kS4vwMa
-         gOUaQJ12hWWNMKE9nyLXJQPoniW5lBfXm0b/3grLc9I5FQnBsw7LGPNBRGKxU2zZ4tWu
-         kEiXFOgjFavz+9WIfEs43hPmWcxrongYTdmUAbxGcf72g3UfWmLHmdkPhmT8UtJTCGUI
-         miug==
-X-Gm-Message-State: AOJu0YwNSe7TFEeoLgyiD9pPEI5BpOZTmzl6JCtdtWmo1FVgbGbFfy8z
-	4KLvjZovSzSoQOiNS7fYAJpytAPskbvawDO5DHnNDgwcwyfWxI7v/nFm/JUKb8PGui5xxnkyVtZ
-	Fy32XJAQub+t+SzwFLlKigWSBHat6TjnsOPGyuhyMxlk18QQX+mIW3OY=
-X-Google-Smtp-Source: AGHT+IGBlC6Y2UQsEwfDA57JKD4pHglmmmqBIvrxBzH7yvvCoYCOkibokaBzhQ0H82LbPFI6VU7u6+Vy6+qupuksR0kfTti7gs25
+	s=arc-20240116; t=1728567989; c=relaxed/simple;
+	bh=tduX1cVH5cRmQ/zb5Aub7C4XL6iKaXBAoe6tGLPwXWE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pV+i7cF7EHP4zVeR9dpFxGygy7PoLSvEO+MjRMpOUFfBPH9M4eY5QeXeApzvKt5p4iwIFCAuPgi9ZjvKIHeOGdNtber93dSq+bLsnQ6pNKRpZng+DVWywagFC8acoUqbxeAOelqw0q7T4yMNg/boZUETsJENjDTRab/mFq2jD8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPWBz1K6Hz6LDG5;
+	Thu, 10 Oct 2024 21:42:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 06F93140AE5;
+	Thu, 10 Oct 2024 21:46:24 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 15:46:23 +0200
+Date: Thu, 10 Oct 2024 14:46:22 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 16/28] cxl/region: Add sparse DAX region support
+Message-ID: <20241010144622.00000afe@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-16-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-16-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26b:0:b0:3a0:a71b:75e5 with SMTP id
- e9e14a558f8ab-3a397cf6a12mr57290815ab.7.1728567980764; Thu, 10 Oct 2024
- 06:46:20 -0700 (PDT)
-Date: Thu, 10 Oct 2024 06:46:20 -0700
-In-Reply-To: <000000000000657ecd0614456af8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6707daac.050a0220.8109b.000c.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, 07 Oct 2024 18:16:22 -0500
+ira.weiny@intel.com wrote:
 
-***
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> Dynamic Capacity CXL regions must allow memory to be added or removed
+> dynamically.  In addition to the quantity of memory available the
+> location of the memory within a DC partition is dynamic based on the
+> extents offered by a device.  CXL DAX regions must accommodate the
+> sparseness of this memory in the management of DAX regions and devices.
+> 
+> Introduce the concept of a sparse DAX region.  Add a create_dc_region()
+> sysfs entry to create such regions.  Special case DC capable regions to
+> create a 0 sized seed DAX device to maintain compatibility which
+> requires a default DAX device to hold a region reference.
+> 
+> Indicate 0 byte available capacity until such time that capacity is
+> added.
+> 
+> Sparse regions complicate the range mapping of dax devices.  There is no
+> known use case for range mapping on sparse regions.  Avoid the
+> complication by preventing range mapping of dax devices on sparse
+> regions.
+> 
+> Interleaving is deferred for now.  Add checks.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Looks fine to me, though the DAX bit is not an area I know enough about.
 
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-Author: cmeiohas@nvidia.com
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
 
