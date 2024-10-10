@@ -1,255 +1,405 @@
-Return-Path: <linux-kernel+bounces-360050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DA79993E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:49:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BF69993EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF40283DBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3018B219A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6345B1E1330;
-	Thu, 10 Oct 2024 20:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D611E102C;
+	Thu, 10 Oct 2024 20:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1U47rMnY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="snAXz/cP";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1U47rMnY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="snAXz/cP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZlfqnJDz"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0A01991B8;
-	Thu, 10 Oct 2024 20:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB971925A3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593363; cv=none; b=dnLaVLj2ycXxCXiSP2OX4AcdjIvSYiIbJbE+W6wocXkEQBc/nGT/0F+ePr4uCs/iwhV137LuxsUH8fY5WBHLseBpVa72aB5yzr+NuiT7SfZjDUfuhwn66TZGP3+xlxO9f2lKdPH60gVtw1mSE4vfm0EfOAlMvRa1Kv+k9OGGN0Y=
+	t=1728593523; cv=none; b=FHi00rqTgLSdLBacJQQQVFoo4IJwIoALKn00qXX82qQf7X8KeZ5bFtqRa9pTEdHxsPlqKfoaErKYhOy5En4nKa88Rgvs93acbnGQ3Xp/w9QEe0M8leFaUD53cyxjC81CW7/IfdqbhOz+1vpTIE0YJULnBWK4tDK5va0BGEi6xoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593363; c=relaxed/simple;
-	bh=4WwtzshnrUnW4OWWNGPeLR+yfu/8AIRhKqf10LmJaBc=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=p9GSKOHDvVQlMx03mhKUBlPUeWmWnjpyAHBeWMdQQLyPDaNX8FYLIG7DxUmNh2qfLCNOeW91WnCwvZAV+u7zvYvmxc3ZsKa02PpEj179l8tYRqlaP7H2ZSzF8XY+gXfBHDJ6XG/qnf2Yoqu31MKf+KZalL1UxivDrQZOYt1WRVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1U47rMnY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=snAXz/cP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1U47rMnY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=snAXz/cP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C0DE221DAD;
-	Thu, 10 Oct 2024 20:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728593359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
-	b=1U47rMnYDDdowt/gTJVQrbf1xE4lPaYP5ofP6yc9uanrNHgMrYNqd5K6s8K1+AV6XBh5ym
-	fohGli5wLRAofGn4JUoG4unwS5VbcxVSms7x9D45OVETFKQ67U7Xm1Et6ZRB0v74Gkb/Nu
-	7av4gRsZkjOPsVwcccsy6h4O5uhHI88=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728593359;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
-	b=snAXz/cPeY0u3NTwDyJJQJOr+AmjIR29yWiZvi0SPzFrIAqljPMGvNQsbeVUiJvqrHsJkF
-	D9/CVjeynuwxOtDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728593359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
-	b=1U47rMnYDDdowt/gTJVQrbf1xE4lPaYP5ofP6yc9uanrNHgMrYNqd5K6s8K1+AV6XBh5ym
-	fohGli5wLRAofGn4JUoG4unwS5VbcxVSms7x9D45OVETFKQ67U7Xm1Et6ZRB0v74Gkb/Nu
-	7av4gRsZkjOPsVwcccsy6h4O5uhHI88=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728593359;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JRDEvICaEzdwrIe0rqzexW7NqQ5hp8fC4bwRuxky4Bo=;
-	b=snAXz/cPeY0u3NTwDyJJQJOr+AmjIR29yWiZvi0SPzFrIAqljPMGvNQsbeVUiJvqrHsJkF
-	D9/CVjeynuwxOtDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22E3D1370C;
-	Thu, 10 Oct 2024 20:49:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H9XDMsw9CGepWAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 10 Oct 2024 20:49:16 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1728593523; c=relaxed/simple;
+	bh=2Pj6WsbimA+tU1vI/asNWiZIIqgmwTtTDuQD7mOR71s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJQXZ4hCwI7sDLtcQjtrYH5kT+btqNF6I7AvJ6LWpee0Q2uJ5yvjWtfPxUBogtPt3irWRUaLSD07y3vibcBtbiYaI0WVJThvZB5NTWYFgxFpBmIWZNcsYjXa6UeD0TfVUwYZWxsgTCpLOyvWv4SGROsDKOVyURw7dpZIr9l/3AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZlfqnJDz; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=apBr0YVBrYSBLoAiu9geWWGw2/zqj9BmdsgyRZdVTi0=; b=ZlfqnJDzOB8U/xKh
+	pjmGW2IHVwcoGbqAniaSgbCxzgWId7e6yPl9PkUjf3koHKgGHCrZG0lFeLhnsq8N0bJQSdHn4r6H6
+	38b4LTpSccS+kXIxHTxx7jON/Furbm3MxKnDUegCI8aCE7VZqv1o1x6S2LqRyAyJrzq1sSY++YZvM
+	BUQsvy+b6VvzHjBcLM+GnDniVyGzb4qh4/asCg1Eyrob0MYcd6ca7lJSzmbmq+JVn6dtDBaFT2wyT
+	E7W8xkD+zf3eulYux5QiC8XFPvRyxalsg0ZdYqWgdQ7XgBQGgce2SrAiXZQ/KXLmeY953ljqHgTbI
+	sJYax3wpDVPrVYCe2A==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sz08a-00AMmW-16;
+	Thu, 10 Oct 2024 20:51:56 +0000
+From: linux@treblig.org
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/amd/display: Remove last parts of timing_trace
+Date: Thu, 10 Oct 2024 21:51:54 +0100
+Message-ID: <20241010205154.278023-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever" <chuck.lever@oracle.com>
-Cc: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>,
- "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <dai.ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-In-reply-to: <ZwcSC4ZWihv/PyV2@tissot.1015granger.net>
-References: <>, <ZwcSC4ZWihv/PyV2@tissot.1015granger.net>
-Date: Fri, 11 Oct 2024 07:49:13 +1100
-Message-id: <172859335340.444407.11709415196743389823@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Oct 2024, Chuck Lever wrote:
-> On Thu, Oct 10, 2024 at 07:14:07AM +1100, NeilBrown wrote:
-> > On Thu, 10 Oct 2024, Chuck Lever wrote:
-> > > On Tue, Oct 08, 2024 at 05:47:55PM -0400, NeilBrown wrote:
-> > > > And NFSD_MAY_LOCK should be discarded, and nlm_fopen() should set
-> > > > NFSD_MAY_BYPASS_SEC.
-> > >=20
-> > > 366         /*                                                         =
-            =20
-> > > 367          * pseudoflavor restrictions are not enforced on NLM,      =
-            =20
-> > >=20
-> > > Wrt the mention of "NLM", nfsd4_lock() also sets NFSD_MAY_LOCK.
-> >=20
-> > True, but it shouldn't.  NFSD_MAY_LOCK is only used to bypass the GSS
-> > requirement.  It must have been copied into nfsd4_lock() without a full
-> > understanding of its purpose.
->=20
-> nfsd4_lock()'s use of MAY_LOCK goes back before the git era, so it's
-> difficult to say with certainty.
->=20
-> I would like to keep such subtle changes bisectable. To me, it seems
-> like it would be a basic first step to change the fh_verify() call
-> in nfsd4_lock() to use (NFSD_MAY_READ | NFSD_MAY_OWNER_OVERRIDE)
-> instead of NFSD_MAY_LOCK, as a separate patch.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Yes, that is sensible ...  though lockd used NFSD_MAY_WRITE for write
-locks.
-So if a process doesn't have read access to a file but does have write
-access, and isn't the owner, then NLM would grant a write lock, but
-NFSv4 would not.  check_fmode_for_setlk() makes the same choice, so a
-local user could also get the lock.  Only NFSv4 would reject it.
+Commit c2c2ce1e9623 ("drm/amd/display: Optimize passive update planes.")
+removed the last caller of context_timing_trace.
+Remove it.
 
->=20
->=20
-> > > 368          * which clients virtually always use auth_sys for,        =
-            =20
-> > > 369          * even while using RPCSEC_GSS for NFS.                    =
-            =20
-> > > 370          */                                                        =
-            =20
-> > > 371         if (access & NFSD_MAY_LOCK)                                =
-            =20
-> > > 372                 goto skip_pseudoflavor_check;                      =
-            =20
-> > > 373         if (access & NFSD_MAY_BYPASS_GSS)                          =
-            =20
-> > > 374                 may_bypass_gss =3D true;
-> > > 375         /*                                                         =
-            =20
-> > > 376          * Clients may expect to be able to use auth_sys during mou=
-nt,         =20
-> > > 377          * even if they use gss for everything else; see section 2.=
-3.2         =20
-> > > 378          * of rfc 2623.                                            =
-            =20
-> > > 379          */                                                        =
-            =20
-> > > 380         if (access & NFSD_MAY_BYPASS_GSS_ON_ROOT                   =
-            =20
-> > > 381                         && exp->ex_path.dentry =3D=3D dentry)      =
-                =20
-> > > 382                 may_bypass_gss =3D true;                           =
-              =20
-> > > 383                                                                    =
-            =20
-> > > 384         error =3D check_nfsd_access(exp, rqstp, may_bypass_gss);   =
-              =20
-> > > 385         if (error)                                                 =
-            =20
-> > > 386                 goto out;                                          =
-            =20
-> > > 387                                                                    =
-            =20
-> > > 388 skip_pseudoflavor_check:                                           =
-            =20
-> > > 389         /* Finally, check access permissions. */                   =
-            =20
-> > > 390         error =3D nfsd_permission(cred, exp, dentry, access);    =20
-> > >=20
-> > > MAY_LOCK is checked in nfsd_permission() and __fh_verify().
-> > >=20
-> > > But MAY_BYPASS_GSS is set in loads of places that use those two
-> > > functions. How can we be certain that the two flags are equivalent?=20
-> >=20
-> > We can be certain by looking at the effect.  Before a recent patch they
-> > both did "goto skip_pseudoflavor_check" and nothing else.
->=20
-> I'm still not convinced MAY_LOCK and MAY_BYPASS_GSS are 100%
-> equivalent.  nfsd_permission() checks for MAY_LOCK, but does not
-> check for MAY_BYPASS_GSS:
->=20
->         if (acc & NFSD_MAY_LOCK) {
->                 /* If we cannot rely on authentication in NLM requests,
->                  * just allow locks, otherwise require read permission, or
->                  * ownership
->                  */
->                 if (exp->ex_flags & NFSEXP_NOAUTHNLM)
->                         return 0;
->                 else=20
->                         acc =3D NFSD_MAY_READ | NFSD_MAY_OWNER_OVERRIDE;
->         }=20
->=20
-> The only consumer of MAY_BYPASS_GSS seems to be OP_PUTFH, now that
-> I'm looking closely for it. But I don't think we want the
-> no_auth_nlm export option to modify the way PUTFH behaves.
+With that gone, no one is now looking at the 'timing_trace' flag, remove
+it and all the places that set it.
 
-Thanks for fact-checking my claim!  I had forgotten about noauthnlm.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../gpu/drm/amd/display/dc/core/dc_debug.c    | 42 -------------------
+ drivers/gpu/drm/amd/display/dc/dc.h           |  1 -
+ .../dc/resource/dcn10/dcn10_resource.c        |  2 -
+ .../dc/resource/dcn20/dcn20_resource.c        |  1 -
+ .../dc/resource/dcn201/dcn201_resource.c      |  1 -
+ .../dc/resource/dcn21/dcn21_resource.c        |  1 -
+ .../dc/resource/dcn30/dcn30_resource.c        |  1 -
+ .../dc/resource/dcn301/dcn301_resource.c      |  1 -
+ .../dc/resource/dcn302/dcn302_resource.c      |  1 -
+ .../dc/resource/dcn303/dcn303_resource.c      |  1 -
+ .../dc/resource/dcn31/dcn31_resource.c        |  1 -
+ .../dc/resource/dcn314/dcn314_resource.c      |  1 -
+ .../dc/resource/dcn315/dcn315_resource.c      |  1 -
+ .../dc/resource/dcn316/dcn316_resource.c      |  1 -
+ .../dc/resource/dcn32/dcn32_resource.c        |  1 -
+ .../dc/resource/dcn321/dcn321_resource.c      |  1 -
+ .../dc/resource/dcn35/dcn35_resource.c        |  1 -
+ .../dc/resource/dcn351/dcn351_resource.c      |  1 -
+ .../dc/resource/dcn401/dcn401_resource.c      |  1 -
+ .../amd/display/include/logger_interface.h    |  4 --
+ 20 files changed, 65 deletions(-)
 
-I'll suggest a patch which might make it all a bit clearer.
-
-Thanks,
-NeilBrown
-
-
->=20
->=20
-> --=20
-> Chuck Lever
->=20
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_debug.c b/drivers/gpu/drm/amd/display/dc/core/dc_debug.c
+index 801cdbc8117d..0bb25c537243 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_debug.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_debug.c
+@@ -46,11 +46,6 @@
+ 			DC_LOG_IF_TRACE(__VA_ARGS__); \
+ } while (0)
+ 
+-#define TIMING_TRACE(...) do {\
+-	if (dc->debug.timing_trace) \
+-		DC_LOG_SYNC(__VA_ARGS__); \
+-} while (0)
+-
+ #define CLOCK_TRACE(...) do {\
+ 	if (dc->debug.clock_trace) \
+ 		DC_LOG_BANDWIDTH_CALCS(__VA_ARGS__); \
+@@ -306,43 +301,6 @@ void post_surface_trace(struct dc *dc)
+ 
+ }
+ 
+-void context_timing_trace(
+-		struct dc *dc,
+-		struct resource_context *res_ctx)
+-{
+-	int i;
+-	int h_pos[MAX_PIPES] = {0}, v_pos[MAX_PIPES] = {0};
+-	struct crtc_position position;
+-	unsigned int underlay_idx = dc->res_pool->underlay_pipe_index;
+-	DC_LOGGER_INIT(dc->ctx->logger);
+-
+-
+-	for (i = 0; i < dc->res_pool->pipe_count; i++) {
+-		struct pipe_ctx *pipe_ctx = &res_ctx->pipe_ctx[i];
+-		/* get_position() returns CRTC vertical/horizontal counter
+-		 * hence not applicable for underlay pipe
+-		 */
+-		if (pipe_ctx->stream == NULL || pipe_ctx->pipe_idx == underlay_idx)
+-			continue;
+-
+-		pipe_ctx->stream_res.tg->funcs->get_position(pipe_ctx->stream_res.tg, &position);
+-		h_pos[i] = position.horizontal_count;
+-		v_pos[i] = position.vertical_count;
+-	}
+-	for (i = 0; i < dc->res_pool->pipe_count; i++) {
+-		struct pipe_ctx *pipe_ctx = &res_ctx->pipe_ctx[i];
+-
+-		if (pipe_ctx->stream == NULL || pipe_ctx->pipe_idx == underlay_idx)
+-			continue;
+-
+-		TIMING_TRACE("OTG_%d   H_tot:%d  V_tot:%d   H_pos:%d  V_pos:%d\n",
+-				pipe_ctx->stream_res.tg->inst,
+-				pipe_ctx->stream->timing.h_total,
+-				pipe_ctx->stream->timing.v_total,
+-				h_pos[i], v_pos[i]);
+-	}
+-}
+-
+ void context_clock_trace(
+ 		struct dc *dc,
+ 		struct dc_state *context)
+diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/display/dc/dc.h
+index 3992ad73165b..eb00ee73a8f2 100644
+--- a/drivers/gpu/drm/amd/display/dc/dc.h
++++ b/drivers/gpu/drm/amd/display/dc/dc.h
+@@ -862,7 +862,6 @@ struct dc_debug_options {
+ 	bool sanity_checks;
+ 	bool max_disp_clk;
+ 	bool surface_trace;
+-	bool timing_trace;
+ 	bool clock_trace;
+ 	bool validation_trace;
+ 	bool bandwidth_calcs_trace;
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c
+index 563c5eec83ff..0098b3e72e85 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c
+@@ -533,7 +533,6 @@ static const struct dc_debug_options debug_defaults_drv = {
+ 		.sanity_checks = true,
+ 		.disable_dmcu = false,
+ 		.force_abm_enable = false,
+-		.timing_trace = false,
+ 		.clock_trace = true,
+ 
+ 		/* raven smu dones't allow 0 disp clk,
+@@ -563,7 +562,6 @@ static const struct dc_debug_options debug_defaults_drv = {
+ static const struct dc_debug_options debug_defaults_diags = {
+ 		.disable_dmcu = false,
+ 		.force_abm_enable = false,
+-		.timing_trace = true,
+ 		.clock_trace = true,
+ 		.disable_stutter = true,
+ 		.disable_pplib_clock_request = true,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c
+index eea2b3b307cd..46c38fd9288d 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c
+@@ -706,7 +706,6 @@ static const struct resource_caps res_cap_nv14 = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 		.disable_dmcu = false,
+ 		.force_abm_enable = false,
+-		.timing_trace = false,
+ 		.clock_trace = true,
+ 		.disable_pplib_clock_request = true,
+ 		.pipe_split_policy = MPC_SPLIT_AVOID_MULT_DISP,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c
+index fc54483b9104..5b87dfea62e4 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c
+@@ -600,7 +600,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 		.disable_dmcu = true,
+ 		.force_abm_enable = false,
+-		.timing_trace = false,
+ 		.clock_trace = true,
+ 		.disable_pplib_clock_request = true,
+ 		.pipe_split_policy = MPC_SPLIT_DYNAMIC,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c
+index 347e6aaea582..135671d12c45 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c
+@@ -610,7 +610,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 		.disable_dmcu = false,
+ 		.force_abm_enable = false,
+-		.timing_trace = false,
+ 		.clock_trace = true,
+ 		.disable_pplib_clock_request = true,
+ 		.min_disp_clk_khz = 100000,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
+index 5040a4c6ed18..28c4ad289e54 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
+@@ -711,7 +711,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true, //No DMCU on DCN30
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = true,
+ 	.pipe_split_policy = MPC_SPLIT_DYNAMIC,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c
+index 7d04739c3ba1..b82a0559531a 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c
+@@ -682,7 +682,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_dpp_power_gate = false,
+ 	.disable_hubp_power_gate = false,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
+index 5791b5cc2875..f272665aa6a8 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
+@@ -81,7 +81,6 @@
+ static const struct dc_debug_options debug_defaults_drv = {
+ 		.disable_dmcu = true,
+ 		.force_abm_enable = false,
+-		.timing_trace = false,
+ 		.clock_trace = true,
+ 		.disable_pplib_clock_request = true,
+ 		.pipe_split_policy = MPC_SPLIT_DYNAMIC,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
+index 63f0f882c861..ee9bc725a30e 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
+@@ -82,7 +82,6 @@
+ static const struct dc_debug_options debug_defaults_drv = {
+ 		.disable_dmcu = true,
+ 		.force_abm_enable = false,
+-		.timing_trace = false,
+ 		.clock_trace = true,
+ 		.disable_pplib_clock_request = true,
+ 		.pipe_split_policy = MPC_SPLIT_AVOID,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
+index ac8cb20e2e3b..95213c7160c6 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
+@@ -858,7 +858,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_DYNAMIC,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
+index 169924d0a839..44c52fcfc87d 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
+@@ -876,7 +876,6 @@ static const struct dc_debug_options debug_defaults_drv = {
+ 	.replay_skip_crtc_disabled = true,
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_dpp_power_gate = false,
+ 	.disable_hubp_power_gate = false,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
+index 3f4b9dba4112..432af4fabdb2 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
+@@ -858,7 +858,6 @@ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_z10 = true, /*hw not support it*/
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_DYNAMIC,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
+index 5fd52c5fcee4..295065b1f206 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
+@@ -853,7 +853,6 @@ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_z10 = true, /*hw not support it*/
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_DYNAMIC,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
+index a124ad9bd108..01cc6b76cd0e 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
+@@ -689,7 +689,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_AVOID, // Due to CRB, no need to MPC split anymore
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
+index 827a94f84f10..9da8e4579f91 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
+@@ -686,7 +686,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_AVOID,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+index 893a9d9ee870..5a275883c144 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+@@ -712,7 +712,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_AVOID,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+index 70abd32ce2ad..51070b09a831 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+@@ -692,7 +692,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_AVOID,
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
+index 9d56fbdcd06a..cfc1b77f5460 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
+@@ -685,7 +685,6 @@ static const struct dc_plane_cap plane_cap = {
+ static const struct dc_debug_options debug_defaults_drv = {
+ 	.disable_dmcu = true,
+ 	.force_abm_enable = false,
+-	.timing_trace = false,
+ 	.clock_trace = true,
+ 	.disable_pplib_clock_request = false,
+ 	.pipe_split_policy = MPC_SPLIT_AVOID,
+diff --git a/drivers/gpu/drm/amd/display/include/logger_interface.h b/drivers/gpu/drm/amd/display/include/logger_interface.h
+index 02c23b04d34b..058f882d5bdd 100644
+--- a/drivers/gpu/drm/amd/display/include/logger_interface.h
++++ b/drivers/gpu/drm/amd/display/include/logger_interface.h
+@@ -52,10 +52,6 @@ void update_surface_trace(
+ 
+ void post_surface_trace(struct dc *dc);
+ 
+-void context_timing_trace(
+-		struct dc *dc,
+-		struct resource_context *res_ctx);
+-
+ void context_clock_trace(
+ 		struct dc *dc,
+ 		struct dc_state *context);
+-- 
+2.47.0
 
 
