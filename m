@@ -1,94 +1,149 @@
-Return-Path: <linux-kernel+bounces-358616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8795E99819F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:10:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8021E9981AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CBB1C2477D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:10:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0A6B2A148
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B5D188CCA;
-	Thu, 10 Oct 2024 09:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9B61BBBF8;
+	Thu, 10 Oct 2024 09:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pkd5mj41"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="SSvtHdQT"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC0A8F6A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D9C1A0AF5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551405; cv=none; b=j4dtJ5IWZv2fcmrHjKxX0AOglemQJu9wezRGJNZK65rQOBxSyuLk5aEU1As79bvfEQIxKREvmr+usC+tDUVYBi/+uusFfB21GjrZU66Tevj3TAEmzG3CLzWVr9LYXzrgzT6pxYtsUgH2apOJpjrzGO6fROx/+EAwoB1l0QZ5KRA=
+	t=1728551438; cv=none; b=PsenT7qhq+bzBZCn5CvjE2ZNIqstGHt9OSx6ejSLKyexWM5pnLvPlqG7lJEyvMfvsf2nzfUL9hbcVKlDEhMdTRTOtNNWhm85hapFzDdI21aGEdS/HF5cPM3oClxEk6eU7t/4xgkow0oyVMeoGIJMUkkIxXeDrVvOFvGQCBvKcy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551405; c=relaxed/simple;
-	bh=17AwFvAkvJTc4jkkwP9uZww1kD3c4XBeoOsTn5Mu1W4=;
-	h=From:Message-ID:To:Subject:Date:MIME-Version:Content-Type; b=qPVFyLcwPPWtpZlEncUYsjmLaoqe0l08sqIAp0JMSPfWNxDPk/Unz+SdvGgBXY0zzwBD0KSLx5ZqLwu0BnOGNd1edoG0VpegPLmObniqCc69k83lQupxmBuMTKc3hu0sYFZJ5KEvmlY6bNpLVU/CO5Q9PBxl5p7rnLLGAdXxZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pkd5mj41; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a3a7d5a156so2398665ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:10:03 -0700 (PDT)
+	s=arc-20240116; t=1728551438; c=relaxed/simple;
+	bh=udk9y/O8V02u/vCjHKVVxLkTtQRErg2Z8TgeAW54YtE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mmgQA14RdG0uuC5DqdxTPO3CutKQw9bYBOPP5iShGmziKXeMIRNhUhXryb7YXT3A0RtwJLM4tJnrKN8azn0mtEXTKhqpK9UfGSUH0NrKRogZJz/JHavlgZQUq5WzATyEnpFXRBATdUqcFEEAAR945uAGm0SJYGJHvMIWUvI0fb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=SSvtHdQT; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-430ee5c9570so7357135e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728551403; x=1729156203; darn=vger.kernel.org;
-        h=mime-version:date:subject:to:reply-to:message-id:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=17AwFvAkvJTc4jkkwP9uZww1kD3c4XBeoOsTn5Mu1W4=;
-        b=Pkd5mj41OIhW7/aHzef4sfcHIEodrgf7cyjUTL4ycz/ZdCb0J4Pw5l/AV9n4haYypr
-         lat37sUa01x7CsAN8axc5QZ9LnXDBZdydRca5tixtJ18lVFTXadZo7MJue+8UX6H+zkX
-         G8VQ9aUv53eDX+q5xz2RlTKx70sKASRRVgeNCNrAF4C56GvB+72IE9AorFecI4qh4U+V
-         voXfLJWLM54iL+9H5Ncv5mYKbV6/r6xeVTUXD4++rOfyeN1+xcSRTcdhm6Tz0NcXbnnF
-         tALsXE1fbjjLKIPXGbsejDxc+v7ZFt/1HQVnSsJyvPn6rlKTRGTHaV4JMUenm04F87PZ
-         vuSQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728551432; x=1729156232; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KTZy4wu7THoYqheJxll/SRxwuoHsbsskuawnum59xEs=;
+        b=SSvtHdQTLAai2H1vUvjooxXvKPhLLC1eiGqjNsj8DO+i39R/tTxROdU5LSYUflUD6i
+         iE7x6gGiqp73uCv7dcih3c7M0udcs1Ko26cAxDWqOsLh/GtsvFdt3PgCK3vWviKQ9Vcl
+         P68uSDKt6Zl8JnHKmIbHtMisbr82YDZf6NjWdh7J0cuiMdUZ0MsL6zXTXpMl7HGpkV7J
+         FSigWMXUtSspti3ZvCUf7oO2JkGJHEISWFXv4EVffmbnV96FjZvcHvcM9lGm5BJuYTv9
+         n5pyMyhPHffbL3k5weagBnMHpCY4WbOWsixdpGGNKJ2Tsq1HQyXS/Pjj4FppYsQdK0qw
+         0wiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728551403; x=1729156203;
-        h=mime-version:date:subject:to:reply-to:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=17AwFvAkvJTc4jkkwP9uZww1kD3c4XBeoOsTn5Mu1W4=;
-        b=kDZnSBkLHCxKzFsSFUrTs9HSgfHionfSnxCkxGHCpsKWVryld+QaCIiHSZaLVbjY9E
-         3rJOclFtRTVPHGpEwvia2gbqebAJdyx7rc1nj27KJlm3tp+VDtybQhBgCJuGEv6X/k9S
-         Ow5zKRmwX0LDGpHkEuGzL6Bw22j62jc+yLrI64K/wLvdlNkAcERshJ1S3KJHVjs1YAdM
-         GtnjTxb+qco9Lz7q3omElKsZnz5nEBSWxBrF64FiZZPpPu2kM9Trgi6AYrzWJlG+nAhO
-         cXfHFI3p/gttiJxAnd9WcwvWEV2w0W6ywAW7tCFf9FhsXAS7dSF/bbsXN4bvSZ2Njwf5
-         I8MQ==
-X-Gm-Message-State: AOJu0YynQS7EJaqGyE2FPvjwmcxSF4hgOZOWJQJ+Ov+dO/NTpREnTprF
-	Ir+gv/wXmjZd4TomajbXsIksWqDNCk3JUelGVKcdKA5kXp/LSOqxfjXxsw==
-X-Google-Smtp-Source: AGHT+IEYvR/SWTY2ycTkVmcfq8Cgxvg0fFVjprNRsOJue3VsXeHZa28+2MdzUhvbXPV33cGsg5GdmQ==
-X-Received: by 2002:a05:6e02:158b:b0:399:4535:b66e with SMTP id e9e14a558f8ab-3a397ce5711mr43787815ab.9.1728551402957;
-        Thu, 10 Oct 2024 02:10:02 -0700 (PDT)
-Received: from [178.236.246.42] ([178.236.246.42])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afdbcfe6sm1831615ab.50.2024.10.10.02.10.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Oct 2024 02:10:02 -0700 (PDT)
-From: Barr John Marsha <johnathonholsingerjf783@gmail.com>
-X-Google-Original-From: Barr John Marsha <info@lancastermoveable.com>
-Message-ID: <5874850bfdd2face81a0adad16446ee7f5464b50b7c0b9558a711c943fcb2d2b@mx.google.com>
-Reply-To: johnmarsha@arnoldporrter.com
-To: linux-kernel@vger.kernel.org
-Subject: Vendor Invitation
-Date: Thu, 10 Oct 2024 11:10:02 +0200
+        d=1e100.net; s=20230601; t=1728551432; x=1729156232;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KTZy4wu7THoYqheJxll/SRxwuoHsbsskuawnum59xEs=;
+        b=uRZhES80hdlWGjDNzqnWaJEidskVqhqYYf3KmQ9AVhLpBq/yZoLmTh8qf6kq+MXx5g
+         y6OsN8LPr0y8nwcnX3mRK4/xWd9ogDfaG2jR9tX2iH0xWFDfS3ZiQatQxcosSll+0q/9
+         yxa9jzCEsxdu8IgCf0qUz6iw67y7CZWx864hi2R+JH3UU9COQ/PVoz2ZCv5w8NL+1KfI
+         Wk9KIZsL4GJGzEyitHVUI/HE/qhrN/XRJJCMV3Idjk9ZjYe4fve+nRm7TEvktTC2Qx/e
+         xxYv0x0gqs42NRTQUPNxaI/KIZjrX7A7j5NthSCgMrGyg5QkLh/ZRrTkZeq9T/uxRpEm
+         xndw==
+X-Forwarded-Encrypted: i=1; AJvYcCWW98hW+b9qkc6z7D2HIKg2HVdklkPDzfF38QrAZNcFeHIcfgclI/ChbPAIOb6Mza+ueGstOhMZcxlLDDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXmzZWW8Z4Vrf4NmYlN37mdbLosQLUpcnzUKV7dUKMEnruoL2c
+	hH8Rgb0tq+1FQIl/QvO6ppbz8ufeSNzQJqS9dkciq3VXuX2TKwlOfjq7c2upS4s=
+X-Google-Smtp-Source: AGHT+IGYR1TmjfARCuic2apkZ85FkFzCbDKq6kY5yiqHSOUJwSw7Pfvnk1rj4Pks14M1aEdpnlmkIA==
+X-Received: by 2002:a05:600c:3b0d:b0:42f:8229:a09e with SMTP id 5b1f17b1804b1-430d748c6fdmr59762215e9.29.1728551432638;
+        Thu, 10 Oct 2024 02:10:32 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:5e5d:bfca:20cc:60ae])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff785sm9913305e9.13.2024.10.10.02.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 02:10:32 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/6] gpio: notify user-space about config changes in the
+ kernel
+Date: Thu, 10 Oct 2024 11:10:21 +0200
+Message-Id: <20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP6ZB2cC/4XNQQ6CMBCF4auQWTumrRjBFfcwLAhMYSKZkilpJ
+ IS7W7mAy/8tvrdDJGWK8Cx2UEocOUgOdymgnzoZCXnIDc640tSuxHHhgBJW9huy4JtUaEZKJGt
+ E8+iH2jp7v1EFmViUPH9O/tXmnjiuQbfzLdnfesLWmD9wsmiw6npXkx186amZWToN16AjtMdxf
+ AGMItrgyQAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1883;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=udk9y/O8V02u/vCjHKVVxLkTtQRErg2Z8TgeAW54YtE=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnB5oCANeial/2/ppQ8Kb2nEGg+TV5wnsxl4y7C
+ qKlPpOUtSOJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZweaAgAKCRARpy6gFHHX
+ cgmCEAC2P0vpQUdaQ4dvkd2DAbxRNH3qEx1gA14cd099PIziYBMX36S6nt5EGeAIVfeU+Z2Fl/i
+ PJeYXtd4NDNBkOm2xe1muBzm2Yag6jZA4zpHB0P/7Tgnjv7I4rquuYtnlgJfJJ+6MarN3jqUuhG
+ 5F2fUCmzUmLYTFYK3bRFxaGZyNR2cTQByvcre+q+JHkVOxk0vA+Y6aYs2NTqdud54TmdS8Mpkkh
+ WkCwKwi2REng5PyDnnGqCnehXOiAYFzPrCIfpFeZQiLEue2IvmWoURiwi7CrQqMRNFyPI/IyLNq
+ AIvrfI36z9ZaJPbpIPkF9N+2tAES+S2YXHjjlKhedzP9gyrhQJr2PvvWqWuBLL/34omusM2oDsP
+ 0hf+CqMNeEznaNcu0pzsw7aI6G3jBFUW4wy91RzNTLlahxFYRaZInuOG7EEN861i4sDKLhfhlZW
+ 6NOs8oj4fwA+j7UeJ6nq7Zbon+mT9hxEEHA5FjglhymYMNIjNdNvholFlEhQx6Lt5lPEff4Fovs
+ sfiZUIcoAAhSH5NzwlPI/6EzzFl1UT/ou62NNRP7BssRq/3IpHGhOu5x/Y4cGDe5KzZYHKVBW2C
+ i6n3aPJWdyV5HuN+M7zDj5EhJrVMKhhGMG9w5YMYdtt2uh7Q815nzOriMISOSSiOrs3EyXEMUZY
+ UsVw446c26plpmA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Attn: Sir,
-I am Barrister John marshal (ARNOLD AND PORTER LAW FIrm)
+We currently only emit events on changed line config to user-space on
+changes made from user-space. Users have no way of getting notified
+about in-kernel changes. This series improves the situation and also
+contains a couple other related improvements.
 
-British Petroleum (BP) has invited your company to participate in our 2024/2025 Vendor/Contractor Partnership registration projects.
+This is a reworked approach which gets and stores as much info (all of
+it actually, except for the pinctrl state) the moment the event occurrs
+but moves the actual queueing of the event on the kfifo to a dedicated
+high-priority, ordered workqueue.
 
-These projects are open for all companies around the world. If you have intention to participate in the process, please confirm your interest by asking for Vendor Questionnaire and EOI.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- put all line-info events emitting on a workqueue to allow queueing
+  them from atomic context
+- switch the notifier type used for emitting info events to atomic
+- add a patch notifying user-space about drivers requesting their own
+  descs
+- drop patches that were picked up
+- Link to v1: https://lore.kernel.org/r/20241004-gpio-notify-in-kernel-events-v1-0-8ac29e1df4fe@linaro.org
 
-Your prompt response would be greatly appreciated as it will help us expedite the vendor/contractor selection process.
+---
+Bartosz Golaszewski (6):
+      gpiolib: notify user-space when a driver requests its own desc
+      gpio: cdev: prepare gpio_desc_to_lineinfo() for being called from atomic
+      gpiolib: add a per-gpio_device line state notification workqueue
+      gpio: cdev: put emitting the line state events on a workqueue
+      gpiolib: switch the line state notifier to atomic
+      gpiolib: notify user-space about in-kernel line state changes
 
-We look forward to working with you!
+ drivers/gpio/gpiolib-cdev.c | 126 +++++++++++++++++++++++++++++++++-----------
+ drivers/gpio/gpiolib.c      |  79 +++++++++++++++++++++++----
+ drivers/gpio/gpiolib.h      |   8 ++-
+ 3 files changed, 171 insertions(+), 42 deletions(-)
+---
+base-commit: b7adfb6076ff0c1ebbde56d1903daa3d07db92c5
+change-id: 20240924-gpio-notify-in-kernel-events-07cd912153e8
 
-Best Regard,
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
