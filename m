@@ -1,123 +1,78 @@
-Return-Path: <linux-kernel+bounces-358182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9466E997B22
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2F7997B24
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D1A1C22818
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C061F23043
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D384A18DF76;
-	Thu, 10 Oct 2024 03:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BF918E02D;
+	Thu, 10 Oct 2024 03:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0iWbq72"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dredr+ZY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A7418A922;
-	Thu, 10 Oct 2024 03:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E8918A922;
+	Thu, 10 Oct 2024 03:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728530018; cv=none; b=m880p8Msy9QLlDwfuoZDonm7fpR2tdZj//vysX9fBFtaC95fiFSynNGqnZUFCWw1DdX2ONoRCn7TvQlZ8lZYB3opnh4wUcRKov+JVULh7avVuUMGsmuvu0xnNQEcJg1G6/NN5HURKmj5uPOGLYSwcJ7m8f5ksloOJoEcA6mTTtU=
+	t=1728530082; cv=none; b=sx4yk5aT8MhGVFiNzedzLIFp7ZahlkM3fsp3XboQKGqbUwGKVVTw5m5M79M/KOOJkHV9dKQuVc1kTezMqMhLPXQGdgypWnbc+IL211ONHkgy+tmj7/jqdPVRdGfNqvJXpnT3zblGsNhkCOIdLsgH8c6MSMIBAFxkM+j14Q4XmAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728530018; c=relaxed/simple;
-	bh=yITfe85jaoLxYA3zudaR2qKeCMjLHSbWJ8AfccKSkTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kcey7EMq7DcpYvqaO1ZczeGwJx14x8Tng4TXLh+8Nzr7GAIGJboudBQlf0eQqxwjI7RlcN1jxQeb0GymEuH+BQUf6tDg2WiBKa5S1GCbA99oTS9Be2xHPHXIElszRQk2FK3VfQJYsZiPwHSvWxQrSnO1LZkHsShyQhkWS1ZE6JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0iWbq72; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9957588566so53206266b.3;
-        Wed, 09 Oct 2024 20:13:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728530015; x=1729134815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J49sxM6+AA9blNJBGlsPfl45wZPG51/lvoP4Pvlv2mo=;
-        b=S0iWbq72hiRtpxt6AG5sUbNJoQxUyGkUPQkWrKj2Y9UIRo6eP3EwjVTznDaTLG9wll
-         9r8sQ8nGoKEDpztowtFalkD/bUru4oqIHc62PMSBzWYWTvP7KdB2veY3t9RhlVA67INt
-         jJiiw017iPjIWyrGULFwrgTEAW3S7jNFj/PPvU3HIftDXW9O9AX0zIHBe5JdzeTWqZbP
-         arf8/39ZuDnxOQh4U7ei1SsFpfG75+G9RSbdaP63k9Bzq70pb+BduJ+5jFVjveNN7LnH
-         FKelWb4nQlUHdppzd+bOsXHmuCou/ox+UOqyzDmp8W0MtnECIw5lpwxm0LybI7Hn/UoG
-         LUow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728530015; x=1729134815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J49sxM6+AA9blNJBGlsPfl45wZPG51/lvoP4Pvlv2mo=;
-        b=mNocOmQL7BHR7nrt/OJSEpXsMkru5lI+Yrxbc6nSPxNEw8zn80BfI0OEiA736ToBLh
-         4NH790ojzh6Bf1trO9cCblQyW2LdgNVhZlJFo2bmx0gAgfoqpvR5ZMnS8z3fprS6G+wp
-         2t1U8XuJpsbZJmFCGs/wcQkZq5tKF9y1HJ3z4tXLANE8+PxMDXty+Ntf3KV3LU3kr7Jf
-         vDVvxW5IQ+f9XPyoTELeTeY1Yb0cOcSMfmjiju1ow146444srTd8r4EbLOiy67WdYn8E
-         9uUwPmBokeQZdNm/BcSa4Z2hFP8xpCIoOCpJXLccNhqYg4O5XQfsSrymRzitcOwE3eO+
-         0eQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWocCQBnNVzkFCnItPkj9s2U+To/a22xnfuiHHkfNOo7k6kqy6Lkl57fLBLy2xN9o7OZtoeFtMNRQiRtA4=@vger.kernel.org, AJvYcCXK5P2ZeMQ9csTtexU6C4WmHs+RiNjk2YybH7MmrgO/4zqxQNkdNWU+j0Av/1tbmXBJiakGMi8y8ZvvwA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL0Gbc4bFYAZc8AV4nDFfdr9fwv7M9uk9pEfYqBeFOrbZaZtEi
-	u85zox0hX6DMzSJfEKy1y9osip2lv9kquu9pfhONk1CDZA+LAarp3JVrJ3MfeP79EQ6ppRmQ/1o
-	Gk3jxfPxTaNs3qGdKdDmi7iTshDQqHTar3N9svA==
-X-Google-Smtp-Source: AGHT+IGVjmxLnlQkMtSaFwnNOIqOy1/H4OrCqDgz63Jm0YHaO4a1CcxlNJD693m83cpf2fhRiwCphXsovlA67CcPGb0=
-X-Received: by 2002:a17:907:6e92:b0:a99:529d:81ae with SMTP id
- a640c23a62f3a-a998d348518mr345006566b.55.1728530014735; Wed, 09 Oct 2024
- 20:13:34 -0700 (PDT)
+	s=arc-20240116; t=1728530082; c=relaxed/simple;
+	bh=+v3HaTqzIfswAN88MhGiwgigMsy9+bix6EonG+bPB1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oDrvUvKn36cOhy1DRJrMWIwdLpuyx1DP0XXtsEZwdaXnVBL7q0Z5EHfZXS4UhCvvfjHjBFNXLOIE+0QQTL/q/amDI/jnBNUSg5CdRwq6vnYhlqms5ff0rJ8x4VobTw1eiuF/ri+NjAm3aO6w95elK9d7+8Or+apPQuFsVoJjI3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dredr+ZY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A10DEC4CEC3;
+	Thu, 10 Oct 2024 03:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728530082;
+	bh=+v3HaTqzIfswAN88MhGiwgigMsy9+bix6EonG+bPB1U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Dredr+ZY7fSrDDEoVg8iFW16tJpfUTVPRucBkXwfCoz3VKfGm0CNDExy1OO8oCLme
+	 UZq3x6K+aqY+MpU34E/hHCenrFOjXdf52OPmHask0n5Ocs3ifFpKoDe2yq9gdUMQn1
+	 A1if+GAfzgGk/MLKxOhjrRpznXVbVdwKVZafydagMkeJ+6yg77Kd2gXgtmhthZGvdD
+	 x6uZ2Wu+e6VjH3rxT4ggoI2+a1x2T+lqntrYRq7ruXhT9a5/wNXud6Es20jElTs7wq
+	 DY9OkT7lyuFePs5r7CHKk8pCYYsa3Y0VgDDTW5jSXTEedb9CyAOZb3lgIdRAx8X6uY
+	 RqHjBUY0YtMlg==
+Date: Wed, 9 Oct 2024 20:14:40 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+ sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Mina Almasry <almasrymina@google.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org (open
+ list)
+Subject: Re: [net-next v5 4/9] netdev-genl: Dump gro_flush_timeout
+Message-ID: <20241009201440.418e21de@kernel.org>
+In-Reply-To: <20241009005525.13651-5-jdamato@fastly.com>
+References: <20241009005525.13651-1-jdamato@fastly.com>
+	<20241009005525.13651-5-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010134649.43ed357c@canb.auug.org.au>
-In-Reply-To: <20241010134649.43ed357c@canb.auug.org.au>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Thu, 10 Oct 2024 11:13:20 +0800
-Message-ID: <CAErzpmu9VAWwGu_0W-sM=hf5j1dO+U9qLcRNUhb8m8D7qSUfBg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Zheng Yejian <zhengyejian@huaweicloud.com>, Donglin Peng <pengdonglin@xiaomi.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 10:46=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Hi all,
->
-> After merging the ftrace tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> kernel/trace/trace_functions_graph.c: In function '__trace_graph_retaddr_=
-entry':
-> kernel/trace/trace_functions_graph.c:151:14: error: implicit declaration =
-of function 'call_filter_check_discard' [-Wimplicit-function-declaration]
->   151 |         if (!call_filter_check_discard(call, entry, buffer, event=
-))
->       |              ^~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   21e92806d39c ("function_graph: Support recording and printing the funct=
-ion return address")
->
-> interacting with commit
->
->   49e4154f4b16 ("tracing: Remove TRACE_EVENT_FL_FILTERED logic")
->
-> I have used the ftrace tree from next-20241009 for today.
->
+On Wed,  9 Oct 2024 00:54:58 +0000 Joe Damato wrote:
+> +        name: gro-flush-timeout
+> +        doc: The timeout, in nanoseconds, of when to trigger the NAPI
+> +             watchdog timer and schedule NAPI processing.
 
-The function call_filter_check_discard was removed in commit
-49e4154f4b16 ("tracing: Remove TRACE_EVENT_FL_FILTERED logic"),
-but the function __trace_graph_retaddr_entry still invoke it. I will
-submit a patch to address this issue.
+You gotta respin because we reformatted the cacheline info.
 
-> --
-> Cheers,
-> Stephen Rothwell
+So while at it perhaps throw in a sentence here about the GRO effects?
+The initial use of GRO flush timeout was to hold incomplete GRO
+super-frames in the GRO engine across NAPI cycles.
 
