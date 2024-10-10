@@ -1,83 +1,69 @@
-Return-Path: <linux-kernel+bounces-359117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811DF9987B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:29:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962FA9987B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1531F248D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:29:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 177ACB219D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA381C9EC6;
-	Thu, 10 Oct 2024 13:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206171C9B9B;
+	Thu, 10 Oct 2024 13:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ojjqJL/q"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DTLmjqxT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC3B1C9DC1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E61D1CB315;
+	Thu, 10 Oct 2024 13:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566973; cv=none; b=lDTMH5/twAiwPMeAD1VTA1zDmvZJ8CPzyk0YfXa8Q8PvpH4OcbGIOh6txqfUAUw4Lru3P31vs1d2UhKI/yKFer8A4wsKTKE8myNnk2g1Cr1xI7EMjszYKSCG4XKY/JpIZD9RUAEZKNfTNP+gVghV9RBmY4lUGJx4OcfNuIpWNrk=
+	t=1728566982; cv=none; b=ARzv73UYmj7N4/qgWaO8me0m5DHeJSd4Yrs3wp1QjQYNG8ijS4DwbYM+CrL0EZSYcW+AtaYj8m7+Wcyy4IO/PAQifmI8czXYnSx/8x/9c+vJbapSKE5IqE7zrigbIBGKgRzvqQk1D9V67xn8zBoAsXj1hhlxiGkQ8w43yhF+QtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566973; c=relaxed/simple;
-	bh=8O3bS7Nh8L1/0UqHv7/Np2KbSxTu/gTSt7f9I6tsAhg=;
+	s=arc-20240116; t=1728566982; c=relaxed/simple;
+	bh=xHqG4InBXnZvDj8emKP4KA5JTJ1It4rddbTOZz+OF0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+FQaO3QYTr/CT6RoNLq7xryDxU9k7hENRel6b+zr3LgrddyE2w5lwNUS03CUaBxwFgLh3uJDIRbKMDmfZI9y69AHqsmjmf56nILV8jBGyNlPakVUgN+RCC4XTB1xvlLoEfVA2KFr/QI5Xv05/nHC93BSD3AR6r2G3MiWnZM3RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ojjqJL/q; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fada911953so17858471fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:29:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728566968; x=1729171768; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aIRrb2wEe1hj9N3JMi3Dpdq5hzianelOOR87NEysFh8=;
-        b=ojjqJL/qzVrPhjX7n9x+6IDZuREVHkwZbuGLU4EMVUTfFN1c88vWPCBUbPMeti+pgM
-         94DYSCcQ3doCpGhiCnOAxJ//4he3boXxsZTH9rzSEsbiCUKjIxn2lLr3OLMx8IT+THs1
-         ds3W3AAyssECIGc7LrKVrBp48RzR0yptGAc7MJYh4n+tHFepk1xkGbMenvlNJAQizNga
-         dVNF0m5r3AZObCeoK511xPJRjhprlKQhKY65OEysr28lwclauClzo9sGfg+pdgezAcl0
-         WUXiV/njJc0QsTHnKyCgzuB0iH9cgnbzplqVbWxv1oiQNx241+Ud2an9JsGvYMRpieqz
-         2Igg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728566968; x=1729171768;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aIRrb2wEe1hj9N3JMi3Dpdq5hzianelOOR87NEysFh8=;
-        b=ECImihvrM+jAf2Jn8ip/85ED0LgRZRyfHFdvRAw2LH4d04ju+dclfn/qhgqzM/0yv/
-         Y3V90b0xLIRecZDB/XcPj0G40NWM5a1ABdmJHdkPvQa1guoOOeTRfQMwQ8KdjP/lBkmf
-         pGYAJ7u9IawEYDPcVt98GyHKNkL6L8RUN1Q4S/702AJxqC7y13MKIPj2Ihe9AVcXuTgR
-         TsvNlIMHnQjQ7zNMaN/AYqE+RFMxY5f7mBmK/PAn8n2pJNrVF/fH47veZvVXfc/9IzYW
-         sbqHm0zDoyUIl6e3OJSdHVNTcOiYIP2pgmdF3uP2QgTok6B3iNAwYxZKoy0d9GAa/ZpK
-         RcvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgd0sr5ktUOSTPSQwBn1FI4+m+WexhvnGGHuE1UUnF/962daXy0jGAFG8G3fgoytJZj04OrC69kizXNvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsfX2Z9tjEt3zfjFd4TxXLRJ4A62BH7nlX58v8RkPZOuXkYk2v
-	OmRZwCRweoSecnNe7qZ/g9jSeEJVvHNet3jlpcW1fWnUygAxkU8yGSUlOnzVC6U=
-X-Google-Smtp-Source: AGHT+IGMe8PYLFKDdJ+rZpvGWnekbe6xbW3i8IXiFfzFUZoZ5UqBHRrrc/oUIH85ZxmH4Lx2PbhaBQ==
-X-Received: by 2002:a05:6512:10c9:b0:539:a2e0:4e94 with SMTP id 2adb3069b0e04-539c98964afmr997624e87.30.1728566967869;
-        Thu, 10 Oct 2024 06:29:27 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb905177sm253339e87.250.2024.10.10.06.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:29:26 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:29:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/14] drm/msm/dpu: support plane splitting in
- quad-pipe case
-Message-ID: <fbqhq7zvusll377oxi4tcr4bpgwhab2xbnfw2izotua5me4ufe@syy4jundvccf>
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-12-76d4f5d413bf@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTD570PxteDPEmIMoouCcabWO8TbCdZ78nlBOqUR4w4hkjzhUtZMJ18hl6kzonby2+4U7saK9lLNVuQ3TGYIXe8eGmCz8D4V5n8VyfNmzShtNe80+nkYle5Ge2SJzLQ5u1iyUNCR+RA8cY3QBo2Kkzfawv7/ZpF84Ceh0S4OroU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DTLmjqxT; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HDLFWEm6yHMNFBa77x6Y8xTBBp+QWOFLt9inajnXMFc=; b=DTLmjqxTSs6pto7fnJJwCbCa9a
+	ICj+MO7TCk2zFxbITkWRWJWQMlxUU6oLH+4mzzqy79ysVshQ9lSfX+y8oE/attj5ca0JbTxHI3ktL
+	rCVtz0kQNvmYPWmKLaOmFoDPCnSFzs+ovlV05FAgbBMqmROlooGXlvvS5YdGXVYylEXxxbTIGIT7L
+	a+7CMQlOAZdpOLGcFxGOnP/ZVU/hWSAqmnOU2SSrQHfk1ZF/6SiC288AFrW/r6CjutMszHmewoYnB
+	vZNOaneVAMjMVieZ+M+WgF481u8ect8FiISf7bAjxy+U1b/W36X/yj0HVecEENBuKLO7gthBIYLwQ
+	Gvasc5gw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39942)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sytES-0002TO-19;
+	Thu, 10 Oct 2024 14:29:31 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sytEQ-0007Lu-0d;
+	Thu, 10 Oct 2024 14:29:30 +0100
+Date: Thu, 10 Oct 2024 14:29:30 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phylink: allow half-duplex modes with
+ RATE_MATCH_PAUSE
+Message-ID: <ZwfWuiCmlOzQGww_@shell.armlinux.org.uk>
+References: <d6c1a15cdf2596c2f68eab912c79635854cede9b.1728566181.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,214 +72,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-12-76d4f5d413bf@linaro.org>
+In-Reply-To: <d6c1a15cdf2596c2f68eab912c79635854cede9b.1728566181.git.daniel@makrotopia.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Oct 09, 2024 at 04:50:25PM GMT, Jun Nie wrote:
-> Clip plane into pipes per left and right half screen ROI if topology
-> is quad pipe.
-
-Why? Please provide an explanation for the reviewers not knowing the
-details.
-
-> Then split the clipped rectangle by half if the rectangle
-> width still exceeds width limit.
+On Thu, Oct 10, 2024 at 02:17:53PM +0100, Daniel Golle wrote:
+> PHYs performing rate-matching using MAC-side flow-control always
+> perform duplex-matching as well in case they are supporting
+> half-duplex modes at all.
+> No longer remove half-duplex modes from their capabilities.
 > 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  |  7 +++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h  |  6 ++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 99 ++++++++++++++++++++++---------
->  3 files changed, 84 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 66f745399a602..d2aca0a9493d5 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -1310,6 +1310,13 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool en)
->  	return 0;
->  }
->  
-> +unsigned int dpu_crtc_get_lm_num(const struct drm_crtc_state *state)
+> Suggested-by: Russell King <linux@armlinux.org.uk>
 
-I think the DPU driver uses num_foo rather than foo_num
+Please change this to:
 
-> +{
-> +	struct dpu_crtc_state *cstate = to_dpu_crtc_state(state);
-> +
-> +	return cstate->num_mixers;
-> +}
-> +
->  #ifdef CONFIG_DEBUG_FS
->  static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
->  {
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> index 5260e2440f059..ee7cf71f89fc7 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-> @@ -304,4 +304,10 @@ static inline enum dpu_crtc_client_type dpu_crtc_get_client_type(
->  
->  void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event);
->  
-> +/**
-> + * dpu_crtc_get_lm_num - Get mixer number in this CRTC pipeline
-> + * state: Pointer to drm crtc state object
-> + */
-> +unsigned int dpu_crtc_get_lm_num(const struct drm_crtc_state *state);
-> +
->  #endif /* _DPU_CRTC_H_ */
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> index 898fc2937954e..480a1b46aba72 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> @@ -837,10 +837,12 @@ static int dpu_plane_atomic_check_nopipe(struct drm_plane *plane,
->  	struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
->  	u64 max_mdp_clk_rate = kms->perf.max_core_clk_rate;
->  	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
-> -	struct dpu_sw_pipe_cfg *pipe_cfg;
-> -	struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> +	struct dpu_sw_pipe_cfg pipe_cfg;
->  	struct drm_rect fb_rect = { 0 };
-> +	const struct drm_display_mode *mode = &crtc_state->adjusted_mode;
->  	uint32_t max_linewidth;
-> +	u32 lm_num;
-> +	int lmcfg_id, lmcfg_num;
->  
->  	min_scale = FRAC_16_16(1, MAX_UPSCALE_RATIO);
->  	max_scale = MAX_DOWNSCALE_RATIO << 16;
-> @@ -863,13 +865,10 @@ static int dpu_plane_atomic_check_nopipe(struct drm_plane *plane,
->  		return -EINVAL;
->  	}
->  
-> -	/* move the assignment here, to ease handling to another pairs later */
-> -	pipe_cfg = &pstate->pipe_cfg[0];
-> -	r_pipe_cfg = &pstate->pipe_cfg[1];
-> -	/* state->src is 16.16, src_rect is not */
-> -	drm_rect_fp_to_int(&pipe_cfg->src_rect, &new_plane_state->src);
-> +	lm_num = dpu_crtc_get_lm_num(crtc_state);
->  
-> -	pipe_cfg->dst_rect = new_plane_state->dst;
-> +	/* state->src is 16.16, src_rect is not */
-> +	drm_rect_fp_to_int(&pipe_cfg.src_rect, &new_plane_state->src);
->  
->  	fb_rect.x2 = new_plane_state->fb->width;
->  	fb_rect.y2 = new_plane_state->fb->height;
-> @@ -884,34 +883,78 @@ static int dpu_plane_atomic_check_nopipe(struct drm_plane *plane,
->  
->  	max_linewidth = pdpu->catalog->caps->max_linewidth;
->  
-> -	drm_rect_rotate(&pipe_cfg->src_rect,
-> +	drm_rect_rotate(&pipe_cfg.src_rect,
->  			new_plane_state->fb->width, new_plane_state->fb->height,
->  			new_plane_state->rotation);
->  
-> -	if ((drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) ||
-> -	     _dpu_plane_calc_clk(&crtc_state->adjusted_mode, pipe_cfg) > max_mdp_clk_rate) {
-> -		if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewidth) {
-> -			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u\n",
-> -					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> -			return -E2BIG;
-> +	/*
-> +	 * We have 1 mixer pair cfg for 1:1:1 and 2:2:1 topology, 2 mixer pair
-> +	 * configs for left and right half screen in case of 4:4:2 topology.
-> +	 * But we may have 2 rect to split plane with 1 config for 2:2:1.
-> +	 * So need to handle super wide plane splitting, and plane on right half
-> +	 * for quad-pipe case. Check dest rectangle left/right clipping
-> +	 * first, then check super wide rectangle splitting in every half next.
-> +	 */
-> +	lmcfg_num = (lm_num + 1) / 2;
+Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-num_stages?
+It's important to get at least the () bit in there.
 
-> +	/* iterate mixer configs for this plane, to separate left/right with the id */
-> +	for (lmcfg_id = 0; lmcfg_id < lmcfg_num; lmcfg_id++) {
-> +		struct drm_rect mixer_rect = {lmcfg_id * mode->hdisplay / lmcfg_num, 0,
-> +					(lmcfg_id + 1) * mode->hdisplay / lmcfg_num, mode->vdisplay};
-> +		int cfg_idx = lmcfg_id * PIPES_PER_LM_PAIR;
-> +		struct dpu_sw_pipe_cfg *cur_pipecfg = &pstate->pipe_cfg[cfg_idx];
-> +
-> +		drm_rect_fp_to_int(&cur_pipecfg->src_rect, &new_plane_state->src);
-> +		cur_pipecfg->dst_rect = new_plane_state->dst;
-> +
-> +		DPU_DEBUG_PLANE(pdpu, "checking src " DRM_RECT_FMT
-> +				" vs clip window " DRM_RECT_FMT "\n",
-> +				DRM_RECT_ARG(&cur_pipecfg->src_rect),
-> +				DRM_RECT_ARG(&mixer_rect));
-> +
-> +		/* If this plane does not fall into mixer rect, check next mixer rect */
-> +		if (!drm_rect_clip_scaled(&cur_pipecfg->src_rect, &cur_pipecfg->dst_rect, &mixer_rect)) {
-> +			memset(&pstate->pipe_cfg[cfg_idx], 0, 2 * sizeof(struct dpu_sw_pipe_cfg));
-> +			memset(&pstate->pipe[cfg_idx], 0, 2 * sizeof(struct dpu_sw_pipe));
-> +			continue;
->  		}
->  
-> -		*r_pipe_cfg = *pipe_cfg;
-> -		pipe_cfg->src_rect.x2 = (pipe_cfg->src_rect.x1 + pipe_cfg->src_rect.x2) >> 1;
-> -		pipe_cfg->dst_rect.x2 = (pipe_cfg->dst_rect.x1 + pipe_cfg->dst_rect.x2) >> 1;
-> -		r_pipe_cfg->src_rect.x1 = pipe_cfg->src_rect.x2;
-> -		r_pipe_cfg->dst_rect.x1 = pipe_cfg->dst_rect.x2;
-> -	} else {
-> -		memset(r_pipe_cfg, 0, sizeof(*r_pipe_cfg));
-> -	}
-> +		cur_pipecfg->valid = true;
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-... and checks have been broken up to now. This isn't good.
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-> +		cur_pipecfg->dst_rect.x1 -= mixer_rect.x1;
-> +		cur_pipecfg->dst_rect.x2 -= mixer_rect.x1;
-> +
-> +		DPU_DEBUG_PLANE(pdpu, "Got clip src:" DRM_RECT_FMT " dst: " DRM_RECT_FMT "\n",
-> +				DRM_RECT_ARG(&cur_pipecfg->src_rect), DRM_RECT_ARG(&cur_pipecfg->dst_rect));
-> +
-> +		/* Split super wide rect into 2 rect */
-> +		if ((drm_rect_width(&cur_pipecfg->src_rect) > max_linewidth) ||
-> +		     _dpu_plane_calc_clk(mode, cur_pipecfg) > max_mdp_clk_rate) {
-> +			struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->pipe_cfg[cfg_idx + 1];
-> +
-> +			if (drm_rect_width(&cur_pipecfg->src_rect) > 2 * max_linewidth) {
-> +				DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u\n",
-> +						DRM_RECT_ARG(&cur_pipecfg->src_rect), max_linewidth);
-> +				return -E2BIG;
-> +			}
-> +
-> +			memcpy(r_pipe_cfg, cur_pipecfg, sizeof(struct dpu_sw_pipe_cfg));
-> +			cur_pipecfg->src_rect.x2 = (cur_pipecfg->src_rect.x1 + cur_pipecfg->src_rect.x2) >> 1;
-> +			cur_pipecfg->dst_rect.x2 = (cur_pipecfg->dst_rect.x1 + cur_pipecfg->dst_rect.x2) >> 1;
-
-pipe_cfg. If you need, rename the topmost var name.
-
-> +			r_pipe_cfg->src_rect.x1 = cur_pipecfg->src_rect.x2;
-> +			r_pipe_cfg->dst_rect.x1 = cur_pipecfg->dst_rect.x2;
-> +			r_pipe_cfg->valid = true;
-> +			DPU_DEBUG_PLANE(pdpu, "Split super wide plane into:"
-> +					DRM_RECT_FMT " and " DRM_RECT_FMT "\n",
-> +					DRM_RECT_ARG(&cur_pipecfg->src_rect),
-> +					DRM_RECT_ARG(&r_pipe_cfg->src_rect));
-> +		} else {
-> +			memset(&pstate->pipe_cfg[cfg_idx + 1], 0, sizeof(struct dpu_sw_pipe_cfg));
-> +			memset(&pstate->pipe[cfg_idx + 1], 0, sizeof(struct dpu_sw_pipe));
-
-Please keep using r_pipe_cfg here.
-
-> +		}
->  
-> -	drm_rect_rotate_inv(&pipe_cfg->src_rect,
-> -			    new_plane_state->fb->width, new_plane_state->fb->height,
-> -			    new_plane_state->rotation);
-> -	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0)
-> -		drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
-> +		drm_rect_rotate_inv(&cur_pipecfg->src_rect,
->  				    new_plane_state->fb->width, new_plane_state->fb->height,
->  				    new_plane_state->rotation);
-> +	}
->  
->  	pstate->needs_qos_remap = drm_atomic_crtc_needs_modeset(crtc_state);
->  
-> 
-> -- 
-> 2.34.1
-> 
+Thanks!
 
 -- 
-With best wishes
-Dmitry
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
