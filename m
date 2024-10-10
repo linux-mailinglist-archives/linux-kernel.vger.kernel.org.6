@@ -1,187 +1,92 @@
-Return-Path: <linux-kernel+bounces-358955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C097C9985B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:16:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E25C9985B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB94283304
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:16:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB151C21BE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BC61C3F34;
-	Thu, 10 Oct 2024 12:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dV8gNvvL"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2461C1757;
-	Thu, 10 Oct 2024 12:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615071C3F3B;
+	Thu, 10 Oct 2024 12:17:33 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C961BD00C;
+	Thu, 10 Oct 2024 12:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728562610; cv=none; b=qatPeQ4YGBTQnzTuYOEdi2r18iqnjDrtDQEkLzF7NN87AjcP2UtHs44wNczMa0M4gKPGL+5IH6OEa8MOlLw1qottwsO2N00OBu2Mg/Qf7spaza4bqqG2b6A+ZsjPN+2orhU9MFobPwG7dnibCftoaYXbZ4Ss34h44xmHM/dJRyA=
+	t=1728562653; cv=none; b=i8B4o8DCjJSLm1G/lCpu95nH2mG6mDbqqjNu4K4haDuDx+IxMapi1OZZnEUh5lsxeFJXuie7lJhznMqXg3/RO1OXqU6MbWv9YU11QIzDP32gm5u4yBU4pcDNt0d1qB5xs9Ivka4Tg6Eq/tOI9Uxe/aWnBFJ/nX/4iNHlPXrfSGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728562610; c=relaxed/simple;
-	bh=JlN+IEE8f60b5rmJlRrq0+QGyCcqd8Nbz8qgQGAtDis=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fpb1tLA27QajygPq0skR+oV/84IBrl1wybHj+2vVJ5tbV/pDzkouZg2fzJkNxZD9b3VkzMSEN5Xq6mvp5ByJuZk96qgZO4BCWznDqJG/pc9ML13srPW66w2MQXy8qJOInHIeWyEiEmVQEMCVA5Q36quuKecW5O3k+9Q4Y7cWi0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dV8gNvvL; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=FwZEo
-	Qbh7XIcVq3Cr34Mkf7BD6LjFols82/8TIr1Bas=; b=dV8gNvvL44yT3nR0ZhWn7
-	+hWIrSo4pub3hJwdtetI/8gor+7JReK3yF73UiltbW64oTUNjo/KvqS27bQMQ4wC
-	jk/1niM0Rjj4YMU/tTcUS+WOWswaU1osxAdZTs3PbX6XumIVVhsSYFmnp6TjdAZy
-	VYBRmhWWbiGz/025GK29uE=
-Received: from localhost.localdomain (unknown [111.48.69.246])
-	by gzsmtp1 (Coremail) with SMTP id sCgvCgDHC0GZxQdntQ3_AA--.42378S2;
-	Thu, 10 Oct 2024 20:16:26 +0800 (CST)
-From: zhouyuhang <zhouyuhang1010@163.com>
-To: brauner@kernel.org,
-	shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: [PATCH] selftests: clone3: Use the capget and capset syscall directly
-Date: Thu, 10 Oct 2024 20:16:12 +0800
-Message-Id: <20241010121612.2601444-1-zhouyuhang1010@163.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1728562653; c=relaxed/simple;
+	bh=VsRAS0pMW9QEFEGhtZrE8/hrQkXl1KS0owvA6HihTWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s5umSyjSUfuGMwq7hQiGzoWrrc7aQwhUuwpJ3N7fKamWXCh7DLyt6CihbUrKpmFMVU5bKsM0t/9w5RtM33VCgJ4HHvaWutFPEoEu3PjAWkvNZICW2zN0vVdVKyPrb3uZ9LtTWRgkUBA5VNcKctlgvVgWGduSqM44wfq4ynGHVVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPTH452PPzpWjL;
+	Thu, 10 Oct 2024 20:15:28 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4619C18007C;
+	Thu, 10 Oct 2024 20:17:28 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 20:17:27 +0800
+Message-ID: <32717f03-634a-4f39-9f46-e73cca8da46d@huawei.com>
+Date: Thu, 10 Oct 2024 20:17:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] cachefiles: Fix incorrect block calculations in
+ __cachefiles_prepare_write()
+To: David Howells <dhowells@redhat.com>
+CC: <netfs@lists.linux.dev>, <jlayton@kernel.org>,
+	<hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
+	<zhujia.zj@bytedance.com>, <linux-erofs@lists.ozlabs.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<libaokun1@huawei.com>, <yangerkun@huawei.com>, <houtao1@huawei.com>,
+	<yukuai3@huawei.com>
+References: <e94a52d9-ded4-4a22-90d5-18cb7665607b@huawei.com>
+ <20240821024301.1058918-2-wozizhi@huawei.com>
+ <20240821024301.1058918-1-wozizhi@huawei.com>
+ <302546.1728556499@warthog.procyon.org.uk>
+ <304311.1728560215@warthog.procyon.org.uk>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <304311.1728560215@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:sCgvCgDHC0GZxQdntQ3_AA--.42378S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4kWr4kGFW3Wr4fZw1xuFg_yoWrGr1xpa
-	4kAr45KFs5Wr1xGFW8C39ruFn5KFWkXw48Xr1UAw1jkr13Krn7tr4IkFyvg3Wj93yDu3y5
-	ua10gFWfZFWkJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jMBTOUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiYBB0JmcHuwrGngAAsr
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-From: zhouyuhang <zhouyuhang@kylinos.cn>
 
-The libcap commit aca076443591 ("Make cap_t operations thread safe.") added a
-__u8 mutex at the beginning of the struct _cap_struct,it changes the offset of
-the members in the structure that breaks the assumption made in the "struct libcap"
-definition in clone3_cap_checkpoint_restore.c.So use the capget and capset syscall
-directly and remove the libcap library dependency like the commit 663af70aabb7
-("bpf: selftests: Add helpers to directly use the capget and capset syscall") does.
 
-Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
----
- tools/testing/selftests/clone3/Makefile       |  1 -
- .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
- 2 files changed, 28 insertions(+), 33 deletions(-)
+在 2024/10/10 19:36, David Howells 写道:
+> Zizhi Wo <wozizhi@huawei.com> wrote:
+> 
+>> For scenarios such as nfs/cifs, the corresponding bsize is PAGE_SIZE aligned
+> 
+> cache->bsize is a property of the cache device, not the network filesystems
+> that might be making use of it (and it might be shared between multiple
+> volumes from multiple network filesystems, all of which could, in theory, have
+> different 'block sizes', inasmuch as network filesystems have block sizes).
+> 
+> David
+> 
+> 
 
-diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
-index 84832c369a2e..59d26e8da8d2 100644
---- a/tools/testing/selftests/clone3/Makefile
-+++ b/tools/testing/selftests/clone3/Makefile
-@@ -1,6 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
--LDLIBS += -lcap
- 
- TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
- 	clone3_cap_checkpoint_restore
-diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-index 3c196fa86c99..111912e2aead 100644
---- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-+++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-@@ -15,7 +15,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <stdbool.h>
--#include <sys/capability.h>
-+#include <linux/capability.h>
- #include <sys/prctl.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
-@@ -27,6 +27,13 @@
- #include "../kselftest_harness.h"
- #include "clone3_selftests.h"
- 
-+#ifndef CAP_CHECKPOINT_RESTORE
-+#define CAP_CHECKPOINT_RESTORE 40
-+#endif
-+
-+int capget(cap_user_header_t header, cap_user_data_t data);
-+int capset(cap_user_header_t header, const cap_user_data_t data);
-+
- static void child_exit(int ret)
- {
- 	fflush(stdout);
-@@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
- 	return ret;
- }
- 
--struct libcap {
--	struct __user_cap_header_struct hdr;
--	struct __user_cap_data_struct data[2];
--};
--
- static int set_capability(void)
- {
--	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
--	struct libcap *cap;
--	int ret = -1;
--	cap_t caps;
--
--	caps = cap_get_proc();
--	if (!caps) {
--		perror("cap_get_proc");
-+	struct __user_cap_data_struct data[2];
-+	struct __user_cap_header_struct hdr = {
-+		.version = _LINUX_CAPABILITY_VERSION_3,
-+	};
-+	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
-+	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
-+	int ret;
-+
-+	ret = capget(&hdr, data);
-+	if (ret) {
-+		perror("capget");
- 		return -1;
- 	}
- 
- 	/* Drop all capabilities */
--	if (cap_clear(caps)) {
--		perror("cap_clear");
--		goto out;
--	}
-+	memset(&data, 0, sizeof(data));
- 
--	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
--	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-+	data[0].effective |= cap0;
-+	data[0].permitted |= cap0;
- 
--	cap = (struct libcap *) caps;
-+	data[1].effective |= cap1;
-+	data[1].permitted |= cap1;
- 
--	/* 40 -> CAP_CHECKPOINT_RESTORE */
--	cap->data[1].effective |= 1 << (40 - 32);
--	cap->data[1].permitted |= 1 << (40 - 32);
--
--	if (cap_set_proc(caps)) {
--		perror("cap_set_proc");
--		goto out;
-+	ret = capset(&hdr, data);
-+	if (ret) {
-+		perror("capset");
-+		return -1;
- 	}
--	ret = 0;
--out:
--	if (cap_free(caps))
--		perror("cap_free");
- 	return ret;
- }
- 
--- 
-2.25.1
+Then I was wrong. Thank you for pointing it out. I'll be thinking about
+new solutions for non-PAGE_SIZE scenarios.
 
+Thanks,
+Zizhi Wo
 
