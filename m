@@ -1,102 +1,306 @@
-Return-Path: <linux-kernel+bounces-358799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5732C9983FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D19E9983FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CD2281AF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:39:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0151F27622
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC201BFE0E;
-	Thu, 10 Oct 2024 10:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BECD1C2308;
+	Thu, 10 Oct 2024 10:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VnkQN21E"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="QTVi215i"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08891BBBE5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023E61C1AB3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728556773; cv=none; b=o1HNXa4kH/5ZEGWZJjSuHZD/zkQoCoPIDVck7SB+GkvJ3z1RlFvpYbZmojPUsY549GnYuJFS1yLhLbyg5QX8Q13Zrl/JjKreXX33/4cALtpbq5+lSrSjKmDEnZnB8jhOkgfi0ADFm1T6BVnyPqUjSjDoxph2EPMstREZAmqHyP0=
+	t=1728556778; cv=none; b=rkpFNxpIs9hIsGtY4optf0S10bFpKo50v7nkiEYfylH/BPmLzwv1LMnrKFwuY82LIEs+xl9vx8qqEMRwkCGz6NFcbOx0VKUIwQDt7xp2CfQilq7rtml7ViA6h2pgJTQy4+syc4U9BfQXuQF2/YWkXDzOby03rHt3CXcGkhA9Vgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728556773; c=relaxed/simple;
-	bh=YFyxu7cbFv7b+4OEqrYpCc4DsCGgzwgTOlX0AT7XbDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAcXfFoXOx3OAiNdV+0IpVypfjA8StxRV4UbtzEVXbdFW6KVA1hDaGGucTmB3+jI0W0BDpnFMEvtafSRpz4lHvx3YXC3sBTgBAkMWp1FSjFOOWfxvPMFEBLivCDNzTb1CsQ9AGSchWquPBu/aiByIC3BWJ6yhjasrNlmbU2Tj8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VnkQN21E; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rsTU2pvlmrMY35YXdLMqCuS2aHcDBAtxiQd0kVRv+us=; b=VnkQN21EDDuvCwXtIVZfJrRRAG
-	SuyE6FWZRkDPGJuHDXyEz1JTXQRSk6bOlGL9qeiDk+9MfwIamBUJazg+jwdkHA+j51sUtXVXeTlgD
-	kBBrlSAqaOueHIOxFgp7Cj5utGTKLt/QiqyXz/7AUCaZYmXKuVKcNIyYf9gSL9ylkiEKbmcKJJAtR
-	EqwflgPF2l28IVU2yb9gmMf1a7HI9qnywEkBmpgPRC6leccPcBj0XYpGh9JV+ei8q4f1HeamCgCBw
-	a1kevzft5+xLV9DI+gg6seXY4Tb6/x7m0PetzmjfCR+QCjljINGZLmQNJ31w2HSs4P0HIaVOBIXyl
-	mtnyu/dQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syqZm-00000005LTY-3FSd;
-	Thu, 10 Oct 2024 10:39:22 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2D2A030088D; Thu, 10 Oct 2024 12:39:22 +0200 (CEST)
-Date: Thu, 10 Oct 2024 12:39:21 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Maninder Singh <maninder1.s@samsung.com>
-Cc: Hariom Panthi <hariom1.p@samsung.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"bsegall@google.com" <bsegall@google.com>,
-	"mgorman@suse.de" <mgorman@suse.de>,
-	"vschneid@redhat.com" <vschneid@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Rohit Thapliyal <r.thapliyal@samsung.com>
-Subject: Re: [PATCH 1/1] sched.h: silent false ATOMIC_SLEEP warning from
- cond_resched
-Message-ID: <20241010103921.GI14587@noisy.programming.kicks-ass.net>
-References: <20241010092249.GD17263@noisy.programming.kicks-ass.net>
- <20241010032653.1922214-1-hariom1.p@samsung.com>
- <CGME20241010032751epcas5p1154533995a184be3fea39325c4d33740@epcms5p2>
- <20241010100940epcms5p2f7463014f1e1cb1b27a8da300b804e08@epcms5p2>
+	s=arc-20240116; t=1728556778; c=relaxed/simple;
+	bh=unWCd8Bj7m5kV38bwAaZ3iSQ42tE4Qa+3WqM5c4Oq40=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=McTfNNEpAJLoOVhHbMEyEKd3CwBMgxlRBjP3GRVYdPAXtJ8g9Q9nItcEMCmPVILfuCIoIY21joPoGqF1/xUpFiKlqcZuquYn1W38loE3rvutfNc72PUkUJ4bFz3oCuUTpAJekYiPNumDLIFtH+d1+//qRuR7nVdX42q3Z2Vuy3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=QTVi215i; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=jqhjdjlg5vhhpffs2lm7ksfmp4.protonmail; t=1728556773; x=1728815973;
+	bh=8Zf+6OnIHBMtlXd7FzOuX7ORu081uulAtd21bEUsr2c=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=QTVi215iA8LsutOzi6GKPp9pTSVybknFvKR5OCEBCbFu8lS5kmvabZzwD/NnQw2X9
+	 YTzuS2/iNPQhiYUfJEB+q9c9j/iojAYh70XfKjGRUav0jzwdbt5GriAQYMt2wvNtkK
+	 N7QrDlgLYUb+cpWgfuP0FCWAIMWRy+HjCInmC5hkBL2Xzat9IyAhFDOzcLUCYeRdrr
+	 36R06mAHAsV9v+Bu2T7iif2jS5PnZSgOppSc97240cTC7PPFCSAqdcNDz6b/uGiUKf
+	 X2YjBFggWmncxoaeuI2cxjoppwsziq7A5OAZapb2LWjSvpyRMLwX1v18/RmPJrE9EB
+	 Psk7OJxDPbi1g==
+Date: Thu, 10 Oct 2024 10:39:27 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v4] rust: add global lock support
+Message-ID: <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me>
+In-Reply-To: <20240930-static-mutex-v4-1-c59555413127@google.com>
+References: <20240930-static-mutex-v4-1-c59555413127@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 0bb8459485997070a8fe7cd17fff164fccb4da71
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010100940epcms5p2f7463014f1e1cb1b27a8da300b804e08@epcms5p2>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 03:39:40PM +0530, Maninder Singh wrote:
-> Hi,
-> 
-> > On Thu, Oct 10, 2024 at 08:56:53AM +0530, Hariom Panthi wrote:
-> > > In case of (CONFIG_PREEMPTION && !CONFIG_PREEMPT_DYNAMIC),
-> > > cond_reched() is not sleeping.
-> > > 
-> > > Thus remove __might_resched in that cases.
-> > 
-> > *why* ? It's still a valid site to do the atomic_sleep testing, no?
-> 
-> In our case there was a call to vunmap_pmd_range from __do_softirq,
-> and vunmap_pmd_range is not actually sleeping call, but because of
-> cond_resched it was giving warning with DEBUG_ATOMIC_SLEEP.
-> 
-> and cond_resched in case of CONFIG_PREEMPTION is empty function with below change:
+On 30.09.24 15:11, Alice Ryhl wrote:
+> diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/glob=
+al.rs
+> new file mode 100644
+> index 000000000000..fc02fac864f6
+> --- /dev/null
+> +++ b/rust/kernel/sync/lock/global.rs
+> @@ -0,0 +1,260 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2024 Google LLC.
+> +
+> +//! Support for defining statics containing locks.
+> +
+> +/// Defines a global lock.
+> +///
+> +/// Supports the following options:
+> +///
+> +/// * `value` specifies the initial value in the global lock.
+> +/// * `wrapper` specifies the name of the wrapper struct.
+> +/// * `guard` specifies the name of the guard type.
+> +/// * `locked_by` specifies the name of the `LockedBy` type.
+> +///
+> +/// # Examples
+> +///
+> +/// A global counter.
+> +///
+> +/// ```
+> +/// # mod ex {
+> +/// # use kernel::prelude::*;
+> +/// kernel::sync::global_lock! {
+> +///     // SAFETY: Initialized in module initializer before first use.
+> +///     static MY_COUNTER: Mutex<u32> =3D unsafe { uninit };
+> +///     value: 0;
+> +/// }
+> +///
+> +/// fn increment_counter() -> u32 {
+> +///     let mut guard =3D MY_COUNTER.lock();
+> +///     *guard +=3D 1;
+> +///     *guard
+> +/// }
+> +///
+> +/// impl kernel::Module for MyModule {
+> +///     fn init(_module: &'static ThisModule) -> Result<Self> {
+> +///         // SAFETY: called exactly once
+> +///         unsafe { MY_COUNTER.init() };
+> +///
+> +///         Ok(MyModule {})
+> +///     }
+> +/// }
+> +/// # struct MyModule {}
+> +/// # }
+> +/// ```
+> +///
+> +/// A global mutex used to protect all instances of a given struct.
+> +///
+> +/// ```
+> +/// # mod ex {
+> +/// # use kernel::prelude::*;
+> +/// kernel::sync::global_lock! {
+> +///     // SAFETY: Initialized in module initializer before first use.
+> +///     static MY_MUTEX: Mutex<()> =3D unsafe { uninit };
+> +///     value: ();
+> +///     guard: MyGuard;
+> +///     locked_by: LockedByMyMutex;
+> +/// }
+> +///
+> +/// /// All instances of this struct are protected by `MY_MUTEX`.
+> +/// struct MyStruct {
+> +///     my_counter: LockedByMyMutex<u32>,
+> +/// }
+> +///
+> +/// impl MyStruct {
+> +///     /// Increment the counter in this instance.
+> +///     ///
+> +///     /// The caller must hold the `MY_MUTEX` mutex.
+> +///     fn increment(&self, guard: &mut MyGuard) -> u32 {
+> +///         let my_counter =3D self.my_counter.as_mut(guard);
+> +///         *my_counter +=3D 1;
+> +///         *my_counter
+> +///     }
+> +/// }
+> +///
+> +/// impl kernel::Module for MyModule {
+> +///     fn init(_module: &'static ThisModule) -> Result<Self> {
+> +///         // SAFETY: called exactly once
+> +///         unsafe { MY_MUTEX.init() };
+> +///
+> +///         Ok(MyModule {})
+> +///     }
+> +/// }
+> +/// # struct MyModule {}
+> +/// # }
+> +/// ```
 
-By still having that warning we helpfully tell you your code is broken
-for that other .config. Code should be good irrespective of the .config
-used, right?
+The docs here don't mention that you still need to call `.init()`
+manually (though the examples show it nicely). I don't know if we want
+macros to have a `# Safety` section.
 
+> +#[macro_export]
+> +macro_rules! global_lock {
+> +    {
+> +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valu=
+ety:ty> =3D unsafe { uninit };
+> +        value: $value:expr;
+
+I would find it more natural to use `=3D` instead of `:` here, since then
+it would read as a normal statement with the semicolon at the end.
+Another alternative would be to use `,` instead of `;`, but that doesn't
+work nicely with the static keyword above (although you could make the
+user write it in another {}, but that also isn't ideal...).
+
+Using `=3D` instead of `:` makes my editor put the correct amount of
+indentation there, `:` adds a lot of extra spaces.
+
+> +        wrapper: $wrapper:ident;
+> +        $( name: $lname:literal; )?
+> +        $(
+> +            guard: $guard:ident;
+> +            locked_by: $locked_by:ident;
+> +        )?
+> +    } =3D> {
+> +        $crate::macros::paste! {
+> +            type [< __static_lock_ty_ $name >] =3D $valuety;
+> +            const [< __static_lock_init_ $name >]: [< __static_lock_ty_ =
+$name >] =3D $value;
+
+Why are these two items outside of the `mod` below?
+Also why do you need to define the type alias? You could just use
+`$valuety`, right?
+
+Also,
+
+    error: type `__static_lock_ty_VALUE` should have an upper camel case na=
+me
+       --> rust/kernel/sync/lock/global.rs:100:18
+        |
+    100 |               type [< __static_lock_ty_ $name >] =3D $valuety;
+        |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert th=
+e identifier to upper camel case: `StaticLockTyValue`
+
+The same error affects the `wrapper` type forwarding below.
+
+
+> +
+> +            #[allow(unused_pub)]
+
+    error: unknown lint: `unused_pub`
+       --> rust/kernel/sync/lock/global.rs:103:21
+        |
+    103 |               #[allow(unused_pub)]
+        |                       ^^^^^^^^^^ help: did you mean: `unused_mut`
+
+Though I also get
+
+    error: methods `init` and `lock` are never used
+       --> rust/kernel/sync/lock/global.rs:128:42
+        |
+    122 | /                 impl $wrapper {
+    123 | |                     /// Initialize the global lock.
+    124 | |                     ///
+    125 | |                     /// # Safety
+    ...   |
+    128 | |                     pub(crate) unsafe fn init(&'static self) {
+        | |                                          ^^^^
+    ...   |
+    142 | |                     pub(crate) fn lock(&'static self) -> $crate=
+::global_lock_inner!(guard $kind, $valuety $(, $guard)?) {
+        | |                                   ^^^^
+    ...   |
+    146 | |                     }
+    147 | |                 }
+        | |_________________- methods in this implementation
+
+But that is governed by the `dead_code` lint.
+
+> +            mod [< __static_lock_mod_ $name >] {
+> +                use super::[< __static_lock_ty_ $name >] as Val;
+> +                use super::[< __static_lock_init_ $name >] as INIT;
+> +                type Backend =3D $crate::global_lock_inner!(backend $kin=
+d);
+> +                type GuardTyp =3D $crate::global_lock_inner!(guard $kind=
+, Val $(, $guard)?);
+
+`GuardTyp` is only used once, so you should be able to just inline it.
+`Backend` is used twice, but I don't know if we need a type alias for
+it.
+
+> +
+> +                /// # Safety
+> +                ///
+> +                /// Must be used to initialize `super::$name`.
+> +                pub(super) const unsafe fn new() -> $wrapper {
+
+Why is this function not associated to `$wrapper`?
+
+> +                    let state =3D $crate::types::Opaque::uninit();
+
+Why not add
+
+    const INIT: $valuety =3D $value;
+
+here instead of outside the mod.
+
+> +                    $wrapper {
+> +                        // SAFETY: The user of this macro promises to ca=
+ll `init` before calling
+> +                        // `lock`.
+> +                        inner: unsafe {
+> +                            $crate::sync::lock::Lock::global_lock_helper=
+_new(state, INIT)
+> +                        }
+> +                    }
+> +                }
+> +
+> +                /// Wrapper type for a global lock.
+> +                pub(crate) struct $wrapper {
+
+How can the wrapper struct be `pub(crate)` when the constant might be
+global `pub`?
+
+    error: type `__static_lock_wrapper_INIT` is more private than the item =
+`INIT`                                                                     =
+                                                                           =
+          =20
+       --> rust/kernel/sync/lock/global.rs:206:14
+        |                                   =20
+    206 |               };                      =20
+        |                ^ static `INIT` is reachable at visibility `pub`
+        |                =20
+
+The functions should probably just be `pub`.
+
+---
+Cheers,
+Benno
+
+> +                    inner: $crate::sync::lock::Lock<Val, Backend>,
+> +                }
+> +
+> +              =20
 
 
