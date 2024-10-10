@@ -1,158 +1,114 @@
-Return-Path: <linux-kernel+bounces-359137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38EC9987EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27619987F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82A34B2710B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB6D1F21705
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C601C9DFB;
-	Thu, 10 Oct 2024 13:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KRVXh6co"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ACC1C9EDE;
+	Thu, 10 Oct 2024 13:37:37 +0000 (UTC)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DCA1C9DEA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4C1BC9EE;
+	Thu, 10 Oct 2024 13:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567360; cv=none; b=tL3v+ZCNnPg7ZX/JSpy+xgZeR+66w5OM0oV8tWpk4zUmG6wU6ZXDm1KwOkFsJQJjXzpqvkD3TuoApDKJYX7zFwFTu2fDN72f1KyEvsmPwnpkq+TDKm0veB5kv1UzktR5A1JhTzb+mAensXNh94e2loLa+zVKNWKaScd4ThS9VNY=
+	t=1728567456; cv=none; b=aLt4WniN5Ruhsmal9/hIklZeSvOEm31s+0gGtr7hOL/OZhl0EwGfl6ykELx3TjJVX8HH0Pw9Z8NpawSc85ENDc+tk8hwkKjJxU1+NApUbJMizqyb9i95AJ8xCBMi6F6OhwQ+24dT2VF5iHwGGQqVpex8YgaSd0M6E4+VSPCqDnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567360; c=relaxed/simple;
-	bh=cWoxMYwouaWii08puJZXUqyXaUlP+sbTkbJwaLhvTsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AKfkhqi9afe4SNuod2R0uGRpUP+TSF5LlOLNOO9x4BEy12SzlouXRBnYHtLqZVWFdAGsEiveGu+QB2nJBLDs+++yzD3CozxiK/uS65Ccj4HBJfWsc6g60rNUxpIUZfx4ZyIpbvDsC7rU7v8WS3h2VLWyJqGsFidP8ZrfNkEKpg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KRVXh6co; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728567357;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JLWSdhm4cWTI/JECrdxeIVeuumDvtSKGj0GSu8fNSOg=;
-	b=KRVXh6coDP7O+uvwj/ZDuBa/wzWRkR7dUJYki1TwjGJcusO8JxWpKXdBpuKIkv84542m8D
-	XGTowTU+tPwEBodDLOkMXK6IE1x27c5KnHIHnX0SB3zyOl8528miLOtawQnqKSeeoOSY5L
-	ZRYQCneVVsg2TOhLpZ6/03+/9RFsJrw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-496-PFTnS5JvPJaBuq8QEBPi4A-1; Thu,
- 10 Oct 2024 09:35:54 -0400
-X-MC-Unique: PFTnS5JvPJaBuq8QEBPi4A-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D9A5919560B6;
-	Thu, 10 Oct 2024 13:35:51 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.48.10])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3DABE19560A2;
-	Thu, 10 Oct 2024 13:35:49 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yebin10@huawei.com, zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
- filesystem
-Date: Thu, 10 Oct 2024 09:35:46 -0400
-Message-ID: <5A1217C0-A778-4A9A-B9D8-5F0401DC1013@redhat.com>
-In-Reply-To: <20241010121607.54ttcmdfmh7ywho7@quack3>
-References: <20241010112543.1609648-1-yebin@huaweicloud.com>
- <20241010112543.1609648-3-yebin@huaweicloud.com>
- <20241010121607.54ttcmdfmh7ywho7@quack3>
+	s=arc-20240116; t=1728567456; c=relaxed/simple;
+	bh=SIKjiEYlDDDOqLRf8TeBLmmvdWfnUp8Y2f7+7Cs8lGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4DLj5ZDXxGa/ekisfu9PrDZH1cwPb5+ionA4javngn5y8iIOPOwTnVH0E/byx+ab00ZFBLaU6kah1cAAkrONB2CpZhPth/9LeoT0GKXyY2ZsiQ1owqCOMe4/32wu2I4d+aMyUiiHsJH10yIEtEBPeGckxSgZX8GTT8NzWxQqPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539885dd4bcso1246077e87.0;
+        Thu, 10 Oct 2024 06:37:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728567452; x=1729172252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZzwzKkCp6jPszo6ZyDDEvEEJi7wd/je50oKdYYshjiU=;
+        b=cnD5/3xkP4d93Uudyvc9IVJodBzVtp/xwEsb73MdELH8T/qWM3ja46Vj6FR2TzgBu2
+         vTFDM31MOoebJYydp9u4B1rK+mUhxmi7ucw6A1bw/4TUon60/oDfinWQF2tf7aAv+YzH
+         egNaVHd+j7ippJIKVEu7F75orFkhez1x3U4qvVnz6CdLxuhw7OkdVeJ341OIu8Pf336r
+         e6/2Z0decytz+UoawLfvAzu5kj6VMPRe3h4I7ObX5zloSEq4cKW7vLeVJoRiEp8O5qPI
+         pt89s/5kJbyd5vCDtfShL4YpYqy1ZccMbV+kSRIW7beTaB73LnJ6RAsgq1ef9LffFTi5
+         D66g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVcjBTI54+mrfHO/BmaCdQ5bXspDad0gcSITHaWgaMQV03cUwE+o0/Vq22QOjZ3NVqM5AFloUnHjLLJzee@vger.kernel.org, AJvYcCXsFaliWiYWecl9n+ZTXP8QEy2Lgvr8IiSoX/OjYAryKpSjqsS+2nvXT6hQgx+4V2r6J1hlNq9iQRpCMmPrtJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1Mv/2UCdGKy3w1WeWosH7l4u2Mb5H8N4Vt+p7tBHwfyu7SdOK
+	l1JfLy2i9r+eF/2MZUxUaLM/qJN5ffdTtIvNRWN9lXCbKTw94/xtcytNVMgY
+X-Google-Smtp-Source: AGHT+IEcoh2RQaSNRbeOOEMIpz6chBIsW5POZgHXcJIevZqUWxi1khYXg/UiWN/+93yD3ZacmtUVfQ==
+X-Received: by 2002:a05:6512:3054:b0:539:8ad5:5093 with SMTP id 2adb3069b0e04-539c48e4746mr3735271e87.35.1728567451633;
+        Thu, 10 Oct 2024 06:37:31 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb9053c2sm255644e87.282.2024.10.10.06.37.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 06:37:30 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso10028321fa.3;
+        Thu, 10 Oct 2024 06:37:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfvcykOVSZeZYzHxNTZtyf4O9hP5sY88sQV/0t8D4yWfkHtIqvj6N8vmFXuFBOAedTRSVG/ljTAmEqMQ1g3Ms=@vger.kernel.org, AJvYcCVkfL2cB8MpP6P5FHGXuCS3kAw3L91sdX1OGX1+po+1fQIDxGnjWW50Pt0PgOD3SGyucNyjmtx8HYANNbcU@vger.kernel.org
+X-Received: by 2002:a2e:f19:0:b0:2fa:c57a:3b1c with SMTP id
+ 38308e7fff4ca-2fb1873eca8mr32339161fa.17.1728567450394; Thu, 10 Oct 2024
+ 06:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241010091355.8271-1-algonell@gmail.com>
+In-Reply-To: <20241010091355.8271-1-algonell@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 10 Oct 2024 22:37:16 +0900
+X-Gmail-Original-Message-ID: <CAGb2v64=WSCyKVyMtUv1d_WoLLnJjEx4WzC3mmF2uB+6O+0oZQ@mail.gmail.com>
+Message-ID: <CAGb2v64=WSCyKVyMtUv1d_WoLLnJjEx4WzC3mmF2uB+6O+0oZQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: sun4i-usb: Fix a typo
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 10 Oct 2024, at 8:16, Jan Kara wrote:
-
-> On Thu 10-10-24 19:25:42, Ye Bin wrote:
->> From: Ye Bin <yebin10@huawei.com>
->>
->> In order to better analyze the issue of file system uninstallation cau=
-sed
->> by kernel module opening files, it is necessary to perform dentry recy=
-cling
+On Thu, Oct 10, 2024 at 6:14=E2=80=AFPM Andrew Kreimer <algonell@gmail.com>=
+ wrote:
 >
-> I don't quite understand the use case you mention here. Can you explain=
- it
-> a bit more (that being said I've needed dropping caches for a particula=
-r sb
-> myself a few times for debugging purposes so I generally agree it is a
-> useful feature).
+> Fix a typo in comments: wether -> whether.
 >
->> on a single file system. But now, apart from global dentry recycling, =
-it is
->> not supported to do dentry recycling on a single file system separatel=
-y.
->> This feature has usage scenarios in problem localization scenarios.At =
-the
->> same time, it also provides users with a slightly fine-grained
->> pagecache/entry recycling mechanism.
->> This patch supports the recycling of pagecache/entry for individual fi=
-le
->> systems.
->>
->> Signed-off-by: Ye Bin <yebin10@huawei.com>
->> ---
->>  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/mm.h |  2 ++
->>  kernel/sysctl.c    |  9 +++++++++
->>  3 files changed, 54 insertions(+)
->>
->> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
->> index d45ef541d848..99d412cf3e52 100644
->> --- a/fs/drop_caches.c
->> +++ b/fs/drop_caches.c
->> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_tab=
-le *table, int write,
->>  	}
->>  	return 0;
->>  }
->> +
->> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int =
-write,
->> +				  void *buffer, size_t *length, loff_t *ppos)
->> +{
->> +	unsigned int major, minor;
->> +	unsigned int ctl;
->> +	struct super_block *sb;
->> +	static int stfu;
->> +
->> +	if (!write)
->> +		return 0;
->> +
->> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) !=3D 3)
->> +		return -EINVAL;
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+
+> ---
+>  include/linux/phy/phy-sun4i-usb.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> I think specifying bdev major & minor number is not a great interface t=
-hese
-> days. In particular for filesystems which are not bdev based such as NF=
-S. I
-> think specifying path to some file/dir in the filesystem is nicer and y=
-ou
-> can easily resolve that to sb here as well.
-
-Slight disagreement here since NFS uses set_anon_super() and major:minor
-will work fine with it.  I'd prefer it actually since it avoids this
-interface having to do a pathwalk and make decisions about what's mounted=
-
-where and in what namespace.
-
-Ben
-
+> diff --git a/include/linux/phy/phy-sun4i-usb.h b/include/linux/phy/phy-su=
+n4i-usb.h
+> index 91eb755ee73b..f3e7b13608e4 100644
+> --- a/include/linux/phy/phy-sun4i-usb.h
+> +++ b/include/linux/phy/phy-sun4i-usb.h
+> @@ -11,7 +11,7 @@
+>  /**
+>   * sun4i_usb_phy_set_squelch_detect() - Enable/disable squelch detect
+>   * @phy: reference to a sun4i usb phy
+> - * @enabled: wether to enable or disable squelch detect
+> + * @enabled: whether to enable or disable squelch detect
+>   */
+>  void sun4i_usb_phy_set_squelch_detect(struct phy *phy, bool enabled);
+>
+> --
+> 2.39.5
+>
 
