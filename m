@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-359098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE57998768
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:18:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D387998771
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD16289739
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C81B91C21B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED61C9DEB;
-	Thu, 10 Oct 2024 13:18:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316071C9DE6;
+	Thu, 10 Oct 2024 13:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qGlJF3OJ";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qGlJF3OJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5881C9B6D;
-	Thu, 10 Oct 2024 13:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4121BE245;
+	Thu, 10 Oct 2024 13:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566312; cv=none; b=fCFPtkVGtT0dqsdYv6ktW2rx0vW7ivnNclrJUSRPkIV1nPe6X9ooYmtFky1CEl9XMUB5lBz90IgAtGzIhZrMoqQ4yCKsQyZe1RJZ64oO1PBmFL8/VjsAyM8ha9ioh7KWQ4VchdRirHJabuvTC0KP60+UoiJOe5F53Dlu0aELKf4=
+	t=1728566382; cv=none; b=k9QDPWWISJLsPVaAuhKtRTjrWNTOd2t2SP0IOReZPFFO3yacAnWxuIYAYaeHq0NdJ0FuqDV3AgymqqGlWuadB/mP2NtLmu+ObxNesLumRE1dmTVlFSx0NZFIHT1QW619R7fiAOeouCsbOdQNJpOef2dD/X4mIfUmQlNdvIh6lAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566312; c=relaxed/simple;
-	bh=3P18k/5s2T2XN83f+l8l3JR3wPxdW5ngjbiPxFBvjaA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cy2kChD83eNcWdqstmnaw5/jIi87qq6VZzhiozUFih+NkzyLZBOtKc2jYKxD5XOHOtYNJ1ghfPwnfzE8XSNWE5O/NT2D1cQQvOV3HLXpXGSTfhm4Y8NGDRDeJTAXnhZeIp9f7rknPJ/uBc69gQWq2J3SdQFrzIZ/m8szOVmKFuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPVZl2rx8z6LDJY;
-	Thu, 10 Oct 2024 21:14:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2174914011A;
-	Thu, 10 Oct 2024 21:18:28 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 15:18:27 +0200
-Date: Thu, 10 Oct 2024 14:18:26 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 15/28] cxl/region: Refactor common create region code
-Message-ID: <20241010141826.0000796e@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-15-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-15-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728566382; c=relaxed/simple;
+	bh=Kip+g3NUeabI/R2YzpRmlSwA0m5LSlFdee3BzrAlaPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWIYCwZ9VnzHixNQfTtjDWyNjvmeuWoPT/VpXYOY/C1ck2nOHlM+akn2Kdsus2QmJzdPN1mdriiH289kJLjPZ1FdpBQxzUgCbYajZq8PUYShuJJoFglNPIHhmIlKJYtnc+3X5JEsR686gGho5LpqPpGABhqmacpi+o81dfRL5gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qGlJF3OJ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qGlJF3OJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B996C1F45A;
+	Thu, 10 Oct 2024 13:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728566377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yDqItrqmUk+6wjzIhXJNTmX7NNV0awuFoUw0XQgqWkA=;
+	b=qGlJF3OJVLrfjXd/fKZcRjIFd6h7nIqFcznaYFxHs7Z+pDNfo5wi5XmkjT4hiY4llslFa2
+	zZJouCZplHfuW8eTgamjVa4FlOL/UBp8KWHPsdcZS3LcTzQxWC3jC0NiZBCZMnbfwtPQNv
+	LgPmYLM2kWdFMcXzSAO4TFxerD5XTCU=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=qGlJF3OJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728566377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yDqItrqmUk+6wjzIhXJNTmX7NNV0awuFoUw0XQgqWkA=;
+	b=qGlJF3OJVLrfjXd/fKZcRjIFd6h7nIqFcznaYFxHs7Z+pDNfo5wi5XmkjT4hiY4llslFa2
+	zZJouCZplHfuW8eTgamjVa4FlOL/UBp8KWHPsdcZS3LcTzQxWC3jC0NiZBCZMnbfwtPQNv
+	LgPmYLM2kWdFMcXzSAO4TFxerD5XTCU=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 791F213A6E;
+	Thu, 10 Oct 2024 13:19:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id c8JkHGnUB2fvUQAAD6G6ig
+	(envelope-from <oneukum@suse.com>); Thu, 10 Oct 2024 13:19:37 +0000
+From: Oliver Neukum <oneukum@suse.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH net] net: usb: usbnet: fix race in probe failure
+Date: Thu, 10 Oct 2024 15:19:14 +0200
+Message-ID: <20241010131934.1499695-1-oneukum@suse.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B996C1F45A
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, 07 Oct 2024 18:16:21 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+The same bug as in the disconnect code path also exists
+in the case of a failure late during the probe process.
+The flag must also be set.
 
-> create_pmem_region_store() and create_ram_region_store() are identical
-> with the exception of the region mode.  With the addition of DC region
-> mode this would end up being 3 copies of the same code.
-> 
-> Refactor create_pmem_region_store() and create_ram_region_store() to use
-> a single common function to be used in subsequent DC code.
-> 
-> Suggested-by: Fan Ni <fan.ni@samsung.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Nice.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+---
+ drivers/net/usb/usbnet.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Is it worth dragging out cleanup like this to the start of the series so
-Dave can queue it up as 'good to have whatever' and reduce this set
-a bit?
-
-Jonathan
-
-> ---
->  drivers/cxl/core/region.c | 28 +++++++++++-----------------
->  1 file changed, 11 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index ab00203f285a..2ca6148d108c 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2552,9 +2552,8 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
->  	return devm_cxl_add_region(cxlrd, id, mode, CXL_DECODER_HOSTONLYMEM);
->  }
->  
-
-> +
-> +static ssize_t create_pmem_region_store(struct device *dev,
-> +					struct device_attribute *attr,
-> +					const char *buf, size_t len)
-> +{
-> +	return create_region_store(dev, buf, len, CXL_REGION_PMEM);
-> +}
->  DEVICE_ATTR_RW(create_pmem_region);
->  
->  static ssize_t create_ram_region_store(struct device *dev,
->  				       struct device_attribute *attr,
->  				       const char *buf, size_t len)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev);
-> -	struct cxl_region *cxlr;
-> -	int rc, id;
-> -
-> -	rc = sscanf(buf, "region%d\n", &id);
-> -	if (rc != 1)
-> -		return -EINVAL;
-> -
-> -	cxlr = __create_region(cxlrd, CXL_REGION_RAM, id);
-> -	if (IS_ERR(cxlr))
-> -		return PTR_ERR(cxlr);
-> -
-> -	return len;
-> +	return create_region_store(dev, buf, len, CXL_REGION_RAM);
->  }
->  DEVICE_ATTR_RW(create_ram_region);
->  
-> 
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 2506aa8c603e..ee1b5fd7b491 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1870,6 +1870,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
+ 	 * may trigger an error resubmitting itself and, worse,
+ 	 * schedule a timer. So we kill it all just in case.
+ 	 */
++	usbnet_mark_going_away(dev);
+ 	cancel_work_sync(&dev->kevent);
+ 	del_timer_sync(&dev->delay);
+ 	free_netdev(net);
+-- 
+2.46.1
 
 
