@@ -1,114 +1,154 @@
-Return-Path: <linux-kernel+bounces-359428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F19998B4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:22:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DE599897E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05848295A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:22:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD63B28489
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE321CBEBB;
-	Thu, 10 Oct 2024 15:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zdv/01Fj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A661CF282;
+	Thu, 10 Oct 2024 14:11:58 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9E9B646;
-	Thu, 10 Oct 2024 15:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8A91CB518;
+	Thu, 10 Oct 2024 14:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728573732; cv=none; b=CLqbrOPaV7j/4+jb8UxyY4guyHeKn+80lfzVA5g1zFIzwXn2lsBTsJxbYYSAt3bpiNuRmuLbZYfxIJ1cFEh2YQndFnMRgi1zeA8i1N+vZcwk+jVpf+K4/NJQ+s7oBUeNatjSLvMfafxBz88wYY/+nV8uRl49p1iXvvq5CEBpRqk=
+	t=1728569517; cv=none; b=TZulgkrIeRif4qvbBE+T68F769KmiKcf/8A9gIZ2hjQ01HOmV0vGW7THus1WhQcxRzOgs6WXTIskp5TRBeIv0bsdHlhscWZHjWuxKusB3PE37W+vbEYzaex85hujN6r4wiK7fXzqNxAAaM2Q2puaskVW2VG8PgfKAyiK1Btm7b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728573732; c=relaxed/simple;
-	bh=TbuQCBi8yqP6ZJapCJwVDes4UUQTN5uMPU/g2lkkzbA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TGBrzkq/T7EvYoZp1imkHAX85VpDLXBPVpTh00Cd39no4Hm4yVf4V1QySLt9bwMIcLPn6od49G8DvlqYbq3eZMP0CG/OTLw46gg60J5ffWMiWxNt5b6cwO4xBSOThHVlqiJfZHWHIwBtcJQcjM1TZ3hJhn9sQ57RV8mRsGGxuXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zdv/01Fj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 510AAC4CEC5;
-	Thu, 10 Oct 2024 15:22:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728573731;
-	bh=TbuQCBi8yqP6ZJapCJwVDes4UUQTN5uMPU/g2lkkzbA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Zdv/01FjRjitSE8eD5INYrhD6NouyR7vQDSoxAOkU6gLmJ87+nmYPSGQ0pkFrb9Jz
-	 oSTSfF0AnnvPyvY4+zhwZrZBtvE5WZQuZFnUbwSu0yKRNQmby3UN2prq2IMc8XJdXs
-	 SYA4XkvOnTsGeRr/tvcFh4N3M9mPgpJFiTcchrccrFmFap9k7mtrUNWwoe6ekO26fO
-	 7n+aqMwP7RMQK0Yre529Nwr9SlEL+eJlsCKlG+WFCOnxF9Yoe+Od0bsuEBxfGX/N+u
-	 ntmfZosxdTAbF7/0lAoAo+3xehjJ0wzynS5iJIh+DDoPX09XL9AUjvaFoUBHesCo7u
-	 e1CwDxBrGilFQ==
-Date: Fri, 11 Oct 2024 00:22:06 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Dima
- Kogan <dima@secretsauce.net>, james.clark@linaro.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] perf probe: Check group string length
-Message-Id: <20241011002206.85960dfa895badd6136453ae@kernel.org>
-In-Reply-To: <20241007141116.882450-3-leo.yan@arm.com>
-References: <20241007141116.882450-1-leo.yan@arm.com>
-	<20241007141116.882450-3-leo.yan@arm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728569517; c=relaxed/simple;
+	bh=MWbkokKMy/fY6oBSoA2n/4kx6pYPHx/UhzHKigiT8jQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QvcelegKb5k0AZWi8lQrlw6eXvKsDk4XKfh0545bUYApHbTq7hxby3SlQ1pGK6DcrBVYn4Pcfan4iLltHIRUl/d/xT/lO8eoM2lzojx+82WSrAYy9EstbrsUt0WFH+lo+nFrsEHNCzyEI33sIcgBMWR8e0e7gWgXdH9NMuQA3+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPWsT6mQjz2KXx6;
+	Thu, 10 Oct 2024 22:11:57 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3D1631A016C;
+	Thu, 10 Oct 2024 22:11:53 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
+ 2024 22:11:49 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+Subject: [PATCH v3 -next 07/15] security: min_addr: move sysctl to security/min_addr.c
+Date: Thu, 10 Oct 2024 23:22:07 +0800
+Message-ID: <20241010152215.3025842-8-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
+References: <20241010152215.3025842-1-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On Mon,  7 Oct 2024 15:11:15 +0100
-Leo Yan <leo.yan@arm.com> wrote:
+The dac_mmap_min_addr belongs to min_addr.c, move it to
+min_addr.c from /kernel/sysctl.c. In the previous Linux kernel
+boot process, sysctl_init_bases needs to be executed before
+init_mmap_min_addr, So, register_sysctl_init should be executed
+before update_mmap_min_addr in init_mmap_min_addr. And according
+to the compilation condition in security/Makefile:
 
-> In the kernel, the probe group string length is limited up to
-> MAX_EVENT_NAME_LEN (including the NULL terminator).
+      obj-$(CONFIG_MMU)            += min_addr.o
 
-This looks good to me.
+if CONFIG_MMU is not defined, min_addr.c would not be included in the
+compilation process. So, drop the CONFIG_MMU check.
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
+---
+v3:
+ - change the title
+v2:
+ - update the changelog to explain why drop CONFIG_MMU check.
+---
+ kernel/sysctl.c     |  9 ---------
+ security/min_addr.c | 11 +++++++++++
+ 2 files changed, 11 insertions(+), 9 deletions(-)
 
-Thank you,
-
-> 
-> Check for this limitation and report an error if it is exceeded.
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/perf/util/probe-event.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> index cad11d95af4f..71acea07cb46 100644
-> --- a/tools/perf/util/probe-event.c
-> +++ b/tools/perf/util/probe-event.c
-> @@ -2872,6 +2872,13 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
->  	else
->  		group = PERFPROBE_GROUP;
->  
-> +	if (strlen(group) >= MAX_EVENT_NAME_LEN) {
-> +		pr_err("Probe group string='%s' is too long (>= %d bytes)\n",
-> +			group, MAX_EVENT_NAME_LEN);
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
->  	/* Get an unused new event name */
->  	ret = get_new_event_name(buf, MAX_EVENT_NAME_LEN, event, namelist,
->  				 tev->point.retprobe, allow_suffix);
-> -- 
-> 2.34.1
-> 
-> 
-
-
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 41d4afc978e6..0c0bab3dad7d 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2059,15 +2059,6 @@ static struct ctl_table vm_table[] = {
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO,
+ 	},
+-#ifdef CONFIG_MMU
+-	{
+-		.procname	= "mmap_min_addr",
+-		.data		= &dac_mmap_min_addr,
+-		.maxlen		= sizeof(unsigned long),
+-		.mode		= 0644,
+-		.proc_handler	= mmap_min_addr_handler,
+-	},
+-#endif
+ #if (defined(CONFIG_X86_32) && !defined(CONFIG_UML))|| \
+    (defined(CONFIG_SUPERH) && defined(CONFIG_VSYSCALL))
+ 	{
+diff --git a/security/min_addr.c b/security/min_addr.c
+index 0ce267c041ab..b2f61649e110 100644
+--- a/security/min_addr.c
++++ b/security/min_addr.c
+@@ -44,8 +44,19 @@ int mmap_min_addr_handler(const struct ctl_table *table, int write,
+ 	return ret;
+ }
+ 
++static struct ctl_table min_addr_sysctl_table[] = {
++	{
++		.procname	= "mmap_min_addr",
++		.data		= &dac_mmap_min_addr,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0644,
++		.proc_handler	= mmap_min_addr_handler,
++	},
++};
++
+ static int __init init_mmap_min_addr(void)
+ {
++	register_sysctl_init("vm", min_addr_sysctl_table);
+ 	update_mmap_min_addr();
+ 
+ 	return 0;
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
