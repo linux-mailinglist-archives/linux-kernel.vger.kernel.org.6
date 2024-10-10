@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-359034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB1E9986A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:51:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E379986A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24CF81F220DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724D92812F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6121C6F69;
-	Thu, 10 Oct 2024 12:51:22 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A221C2DC0;
+	Thu, 10 Oct 2024 12:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vpy3bAOV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A8A1C232C;
-	Thu, 10 Oct 2024 12:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522F11C68AE;
+	Thu, 10 Oct 2024 12:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564681; cv=none; b=M9IxCZr19B3RIfQuUb9QXzXDyg5aPCqW1WR87MsaRhI4wEks7cFmEHB84akHh/i1kKKV90Ij3nd4teDDimvQlO0zt3mHCmIxJFLJtrVa9Bo1xElJ9zGm3AHALKLhaKNDhn/MlI5KJqMNhBNYhkK7bu9QO4mYSvRTswOaTab/1Nw=
+	t=1728564693; cv=none; b=CJMLkuH8JAy3CMinhC5Eet+1afLYSN/EyinvLPlpL6TWHsYKTqsr8xdV+DkNrOofMjwFlpm5Zp82HU+uFJKGuqY41efStTXtDupZRnww3Rfa7DwyTesROE3jRWFXZ1qbBMcjxQt/TX/kovdVhru26Mu/chaoked2txFqbutQA3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564681; c=relaxed/simple;
-	bh=kuek4LvQty7bWRHjQpDSPPA/0p7libjuJtkPrGUM6ZA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XfeiyqxZAbxOFC5vnjZr8vAtwAmBGqZPOoredMYkTNMjBVuL4hCxyfRGOeu1AF+wanThzWalHmjeUUaain2zB5ARxTdaGL8v8gGxs2gziZKv3WLj5dLxuptf6H66/dPnj30M6dHXGEezTlOR5lj1zD10NTha0tIhG8e7ciinWqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPV2q1smPz6K6yr;
-	Thu, 10 Oct 2024 20:49:55 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B02B1400D9;
-	Thu, 10 Oct 2024 20:51:16 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 14:51:15 +0200
-Date: Thu, 10 Oct 2024 13:51:13 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Robert Moore <robert.moore@intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Len Brown
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH v4 12/28] cxl/cdat: Gather DSMAS data for DCD regions
-Message-ID: <20241010135113.00001135@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-12-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-12-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728564693; c=relaxed/simple;
+	bh=lGOOf4EC0zuu8RbnWw3xaV6uo8zy6H9y8REmnoNyEFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQQKvrTIjoPFmElgWFmCBNexJtpCIsuoGUJuVnPjxlVlGCLrqdf0TJ6Z8Ew4G5jLUcet07UnJf5pLvlnkH/6mp+tW4P5i9r1cG6BcC1qF5XMq6Dgrl0shXm1Ngpgm9HC3NLhoIMx1fi/2CqH4G7cU7oVi2SRrcrtm0ytmCfrop4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vpy3bAOV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64228C4CEC5;
+	Thu, 10 Oct 2024 12:51:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728564692;
+	bh=lGOOf4EC0zuu8RbnWw3xaV6uo8zy6H9y8REmnoNyEFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vpy3bAOVBMeKkTsyW7LZGM3ZBkabxx8Cr6HvGiGdW90KonyFWY3QULsvObyP+miH0
+	 O1+cTJU0HSZJTbMMeT+FguCjUNCB3zq2PlpDiWGnashDkXNSPpSKZaYgaliSq88U4J
+	 5O5KyqgaRf85iRqn9TdnEl7EiJGAXOCbPPmyWS39Yyiiee/sZXBvBdax38olpqePAt
+	 9/CxjMhz3TOPRBqALJtnjEVqgStcZoVj1vFf3to+8myoKMPJ3h6lVBAr8ZR/9uC4pE
+	 P3epQ/30pRNkxE9bmlraepYOoa7s2oZ9B1hn0Mf+gYzQaZB66d72GlT27n39y4zL6N
+	 gO/3oLetcbKSQ==
+Date: Thu, 10 Oct 2024 13:51:29 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?utf-8?B?5ZSQ5b2s?= <tangbin@cmss.chinamobile.com>
+Cc: lgirdwood <lgirdwood@gmail.com>, perex <perex@perex.cz>,
+	tiwai <tiwai@suse.com>, "matthias.bgg" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno" <angelogioacchino.delregno@collabora.com>,
+	linux-sound <linux-sound@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Subject: Re: Re: [PATCH 1/2] ASoC: mediatek: mt8188: Remove unnecessary
+ variable assignments
+Message-ID: <ZwfN0XMKXiHdQ9Pg@finisterre.sirena.org.uk>
+References: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
+ <ZwejOZQlSsWbAWBg@finisterre.sirena.org.uk>
+ <202410101755089538782@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IVUJFxDf0VwMWooe"
+Content-Disposition: inline
+In-Reply-To: <202410101755089538782@cmss.chinamobile.com>
+X-Cookie: Editing is a rewording activity.
 
-On Mon, 07 Oct 2024 18:16:18 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
 
-> Additional DCD region (partition) information is contained in the DSMAS
-> CDAT tables, including performance, read only, and shareable attributes.
-> 
-> Match DCD partitions with DSMAS tables and store the meta data.
-> 
-> To: Robert Moore <robert.moore@intel.com>
-> To: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> To: Len Brown <lenb@kernel.org>
-> Cc: linux-acpi@vger.kernel.org
-> Cc: acpica-devel@lists.linux.dev
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-One trivial comment from me.
-As Rafael has raised, the ACPICA dependency in here is
-going to be the blocker :(
+--IVUJFxDf0VwMWooe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+On Thu, Oct 10, 2024 at 05:55:09PM +0800, =E5=94=90=E5=BD=AC wrote:
 
-> +static void update_dcd_perf(struct cxl_dev_state *cxlds,
-> +			    struct dsmas_entry *dent)
-> +{
-> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlds);
-> +	struct device *dev = cxlds->dev;
-> +
-> +	for (int i = 0; i < mds->nr_dc_region; i++) {
-> +		/* CXL defines a u32 handle while cdat defines u8, ignore upper bits */
+> I am sorry, it's my mistake. I know the rule, just mistake.
 
-CDAT
+That's fine, could you confirm what the situation is with the second
+patch - is there a dependency between the two?
 
-> +		u8 dc_handle = mds->dc_region[i].dsmad_handle & 0xff;
-> +
-> +		if (resource_size(&cxlds->dc_res[i])) {
-> +			struct range dc_range = {
-> +				.start = cxlds->dc_res[i].start,
-> +				.end = cxlds->dc_res[i].end,
-> +			};
-> +
-> +			if (range_contains(&dent->dpa_range, &dc_range)) {
-> +				if (dent->handle != dc_handle)
-> +					dev_warn(dev, "DC Region/DSMAS mis-matched handle/range; region %pra (%u); dsmas %pra (%u)\n"
-> +						      "   setting DC region attributes regardless\n",
-> +						&dent->dpa_range, dent->handle,
-> +						&dc_range, dc_handle);
-> +
-> +				mds->dc_region[i].shareable = dent->shareable;
-> +				mds->dc_region[i].read_only = dent->read_only;
-> +				update_perf_entry(dev, dent, &mds->dc_perf[i]);
-> +			}
-> +		}
-> +	}
-> +}
+--IVUJFxDf0VwMWooe
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcHzc4ACgkQJNaLcl1U
+h9DrHAf9FM3gWVAWg+opww6HBSJ+X8+j0aNNvgwBkAgULdM8skCLi0W9mNH1z39m
+sGUfwYUTg2li+Q9nnHk/+WonVAByplp7pT/utIxuck44kFyFw1BWxmxbUdnR80al
+au8TgWuQ7MalsggRGMOgLh+DmaF8mZXW/29hME5ecMRXm062mghN8T0dAEioxkp+
+9J3ItMbFnRltia7+5bF/jY2aLC3DkYxjcmTkDK2hC3hvSG+YsiE+QOGb16EIvHWq
+mxBXuNY4IptvkNHYqkk1WlhQ/JxvRwgkNrIEovYDeas7S0+nakOSyzvwi+DJVnVG
+1RCHTnxXxbvSxMMlu+FS0HeYkiIW2g==
+=FQKz
+-----END PGP SIGNATURE-----
+
+--IVUJFxDf0VwMWooe--
 
