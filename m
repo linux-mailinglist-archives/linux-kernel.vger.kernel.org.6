@@ -1,184 +1,171 @@
-Return-Path: <linux-kernel+bounces-359457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD52998BC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:34:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58759998C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264432866A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:34:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E6E9B3577D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22611CCB50;
-	Thu, 10 Oct 2024 15:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E90D1CCB3B;
+	Thu, 10 Oct 2024 15:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="luh/PgWO"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IE0oEvRc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8CE1BFDEB
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7131CC140;
+	Thu, 10 Oct 2024 15:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574372; cv=none; b=AyvXlU7U782sdD8nKTAMkfOI8jLqMOIAx4bFFGGy8MY0PXd9rL+lKA83cAsuOQjOgoZN1YK+XloKvaZZgryNiSesDJysNU49VLVY4ONCWs9LVuziFl6lH/IVdRulBb7nUUdGWciSegv9rJ81VvvBVkVn4FW8ANM1MyK21JSEyo4=
+	t=1728574435; cv=none; b=uq5y6jgeEmt6xDTxLpNJ4YERL3Bt3daRyp18WwQkP5ZZz+ySIwaYAeH4Ai39xGW4UuIVPlt0Qyx70MKxAauE3HNUsHgPVpdrrckZ3hPHr9Df5BLQIQnYN7Q4z3En0xmqbVWMzm1k49fWmifCRLeWOYDSQAJo31LWUWAs/84nwdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574372; c=relaxed/simple;
-	bh=0qRq6GLRROiieAAtLUvv4MImLCc+TYAbMc5Likzwm5o=;
+	s=arc-20240116; t=1728574435; c=relaxed/simple;
+	bh=dlxa8WkgVla/y46rnMys2EnNObaeLNp/NdzuivF7Pd4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUS8oTxxoXxPXPPbPXjgUGskZimdmOKpmfQUAqF5Os4yVUnG2UqOev3OsG5jvMPsRBUb8KXrP/CRiRi9Jo3yxqlsRKF6KbhwJ6xgoPn/RxjdLnljGeHvZiTDLa5UfVxD5w4Kk53ESSPogjCww9SBy6Cq/atLxEOqUMWOg+iZWt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=luh/PgWO; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5e7ae4c504fso479461eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:32:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1728574370; x=1729179170; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSULaLo7bx82nTcyVbVqGRizSGyTmlxCBPKO2rG1izk=;
-        b=luh/PgWOPaEBXlJbjChOjfobtgEouvEePsjxFpAC/kzKO6jAt0XEefUB5XAqlmvqfe
-         OYD7z5tMhQJbSsPiGMrMfeZOlFQXtkD2hwETJtV8KhMJG/bhwb9QIp3AoZyS0vba2SUw
-         gbl+/n9jfqcRm39nFmPTidlWkBnt5HEOnLQdBd6FCtDNF13icMO/xlLvMxNNbogKZe7p
-         lG7/phn7QY5IvC4FhcHIy/WLGDNolFkd5cRksX+iobn89jPzlqvTOOnAapJc2z6JLtoJ
-         zus82sqHTN/12ON5RzsGO/rodNjlnl7sBTDFbD9exjDHfvl1Yf8SrvV/h3Ubp0dLApFP
-         4qiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728574370; x=1729179170;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JSULaLo7bx82nTcyVbVqGRizSGyTmlxCBPKO2rG1izk=;
-        b=cliBz3EzDQ0ak1EsbcOProd99ExsnFrw3ZWc+UebQzDMeDIInSiO10F3+sWC2UT9RJ
-         a9R0pEGxOz5X6r+XebWCuENd4+NdUs43+W4RXoVzI2SJdEbWQox4ue4TmjNst1psKHJE
-         TusO4mJMC3LjNzEYtdjQCVa3pnIomusAF5czNlRHbTZ5tnVl0Sn6v+2IaRjv1h8RWyIj
-         pTTNaCTnmabBsuPiSpKZzYOVUDjXkITDMxFGsDf6IYjVY4ElVD+FaiYRYS/fNZ/LFfxq
-         NZ7u2o7sEfWqUqBeGQ8TUtNhLIkhm0RAzhhIZ21ewZGN6/prhY10pLsMCHyAZBI4bjKI
-         n/4A==
-X-Forwarded-Encrypted: i=1; AJvYcCX0K5BFG4IkiFYp/t8nme6UMM6ljgLfzAzCAJTA2Qe+QHe7XhHRV0lTH5tC4B+z3DhxqM12tD13wOnKGZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbF3LTkidi8idwxWaoabpyI6oNKmVkmvue6FN0f5fK8hjidrv6
-	2BFF6h5hweggShuh7EeC4thAZiF29O7CCOrsCFl5qM7yNHSP/ihBP3Dm7WtRCPw=
-X-Google-Smtp-Source: AGHT+IEo+4uPxrqwFzTBdQMNuBXazTiZjFczZi3xfkmJGwDNGM0oEJ3Dpqs7IWLoU8PX7kF2Wo4uAg==
-X-Received: by 2002:a05:6358:e4a2:b0:1aa:a01a:23dc with SMTP id e5c5f4694b2df-1c30811ae44mr195185455d.15.1728574369566;
-        Thu, 10 Oct 2024 08:32:49 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe862fe87sm6186216d6.106.2024.10.10.08.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 08:32:48 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1syv9k-000zwn-5N;
-	Thu, 10 Oct 2024 12:32:48 -0300
-Date: Thu, 10 Oct 2024 12:32:48 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Gowans, James" <jgowans@amazon.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"rppt@kernel.org" <rppt@kernel.org>, "kw@linux.com" <kw@linux.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"dwmw2@infradead.org" <dwmw2@infradead.org>,
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-	"Graf (AWS), Alexander" <graf@amazon.de>,
-	"will@kernel.org" <will@kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"maz@kernel.org" <maz@kernel.org>
-Subject: Re: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and ioas
-Message-ID: <20241010153248.GH762027@ziepe.ca>
-References: <20240916113102.710522-1-jgowans@amazon.com>
- <20240916113102.710522-6-jgowans@amazon.com>
- <20241002185520.GL1369530@ziepe.ca>
- <d6328467adc9b7512f6dd88a6f8f843b8efdc154.camel@amazon.com>
- <e458d48a797043b7efc853fc65b9c4d043b12ed4.camel@infradead.org>
- <1d331c55a299d414e49ba5eb6f46dccb525bf788.camel@amazon.com>
- <20241007150138.GM2456194@ziepe.ca>
- <b76aa005c0fb75199cbb1fa0790858b9c808c90a.camel@amazon.com>
- <20241009122830.GF762027@ziepe.ca>
- <673df8a09723d3398ca9e9c638893547b0b0ec63.camel@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjVH4jiHL+KfdxGGTJ/b/uoLlQtneO1KwET7QUzOjEn+tcS3Y1Hx7O1KO5OMmIC3bcKOF1irH0bIdBaZz783zlLP3IiMeWzB9W9r4eqcvWiABla0mEo+ZcjcK3Maat9Rk9xZNL7w4kcraJ1keqQQQhkAeg/ULQJbWJq4tzpnRF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IE0oEvRc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 32F3B40E021E;
+	Thu, 10 Oct 2024 15:33:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id g5_EAXIcqA5L; Thu, 10 Oct 2024 15:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1728574425; bh=39uKMYCT3KgVkd7t9Lsq2trDmnvk6X8UkIGf6ni2s3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IE0oEvRcw/fymvusQ6smbGe9aC7VD/KGoZOlSrkR801eqGnvTbvr2DsGU6LwNvF9N
+	 icMEnhv9+gOqKejIQf3Qy62RZreAFqfygkHuXJDHCHMzlaiP5LYhJohYKRS8Mg29Qo
+	 bzpxiLs+3/u2WA4fiAuvaHZk2lt399iMQEdOwRlXgBG5Vm/8unHGfllvXV8SnN6r5N
+	 Pj/85Gy0c5MllbXDLZkLb6OKdebErRjtFoahP5d/riBEWVoSRLgobRWNnv7SrPWXG3
+	 po3Zqn4v/EI5XO++JdFqpYAbV5XASZ62iPyQu2vL88YFwl5tH7iACKkffsiNergudP
+	 79FOsNy8Qo5Knzu0Q2oa2CIexOBcogmParbbbBp5twTotq/U1eTghtYkTsvB0/67fn
+	 dt5sZcfqHAciIIPNFDnRwXZ7SuuLXr3qwApishqOt47xpjnZO8QeIjY80/BTRIzfeH
+	 rzW2sp+jBas495rT2eyjnZRip3Jpt9TUEpzuKsfqYGf2sj5K0cGkc5cXXT5BnQ4wQL
+	 29jHnxntodS0b4poIVB5FvOrQCVcLJ1FkY9DQUZqDmYbW5fY774TAm3mCvgLJtsJLy
+	 WxpzoqDGdwmJFla0DsRpAYwxnzT2R0/vH6su9Q3p5NUtUI2rWvFUZGTmxX4/R242eE
+	 Kaib41+hzx+f0kHe/k2gdCts=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 18BD740E0163;
+	Thu, 10 Oct 2024 15:33:26 +0000 (UTC)
+Date: Thu, 10 Oct 2024 17:33:20 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/6] EDAC: fsl_ddr: Pass down fsl_mc_pdata in ddr_in32()
+ and ddr_out32()
+Message-ID: <20241010153320.GPZwfzwGeFF1cz4arw@fat_crate.local>
+References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
+ <20240709-imx95_edac-v1-1-3e9c146c1b01@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <673df8a09723d3398ca9e9c638893547b0b0ec63.camel@amazon.com>
+In-Reply-To: <20240709-imx95_edac-v1-1-3e9c146c1b01@nxp.com>
 
-On Thu, Oct 10, 2024 at 03:12:09PM +0000, Gowans, James wrote:
-> > If this little issue already scares you then I don't think I want to
-> > see you serialize anything more complex, there are endless scenarios
-> > for compatibility problems :\
-> 
-> The things that scare me is some subtle page table difference which
-> causes silent data corruption... This is one of the reasons I liked re-
-> using the existing tables, there is no way for this sort of subtle bug
-> to happen.
+On Tue, Jul 09, 2024 at 04:23:02PM -0400, Frank Li wrote:
+Subject: Re: [PATCH 1/6] EDAC: fsl_ddr: Pass down fsl_mc_pdata in ddr_in32() and ddr_out32()
 
-> > > If we say that to be safe/correct in the general case then it is
-> > > necessary for the translations to be *exactly* the same before and after
-> > > kexec, is there any benefit to building new translation tables and
-> > > switching to them? We may as well continue to use the exact same page
-> > > tables and construct iommufd objects (IOAS, etc) to match.
-> > 
-> > The benifit is principally that you did all the machinery to get up to
-> > that point, including re-pinning and so forth all the memory, instead
-> > of trying to magically recover that additional state.
-> > 
-> > This is the philosophy that you replay instead of de-serialize, so you
-> > have to replay into a page table at some level to make that work.
-> 
-> We could have some "skip_pgtable_update" flag which the replay machinery
-> sets, allowing IOMMUFD to create fresh objects internally and leave the
-> page tables alone?
+The subject prefixes in the EDAC subsystem have the following format:
 
-The point made before was that iommufd hard depends on the content of
-the iommu_domain for correctness since it uses it as the storage for
-the PFNs.
+"EDAC/driver: <Sentence starting with a capital letter"
 
-Making an assumption that the prior kernle domain matches what iommufd
-requires opens up the easy possibility of hypervisor kernel
-corruption.
+> Pass down fsl_mc_data in help function ddr_in32() and ddr_out32() to
+> prepare add iMX9 support. iMX9 have a little difference register layout.
 
-I think this is a bad direction..
+Since everyone is using AI nowadays, you could have it verify your commit
+messages. I did this:
 
-You have to at least validate that userspace has set things up in a
-way that is consistent with the prior domain before adopting it.
+| ChatGPT, Please verify and correct the grammar in this english text: "Pass
+| down fsl_mc_data in help function ddr_in32() and ddr_out32() to prepare add
+| iMX9 support. iMX9 have a little difference register layout."
 
-It would be easier to understand this if the performance costs of
-doing such a validation was more understood. Perhaps it can be
-optimized somehow.
+It replied with:
 
-> > > then it would be useful to avoid rebuilding identical tables. Maybe it
-> > > ends up being in the "warm" path - the VM can start running but will
-> > > sleep if taking a page fault before IOMMUFD is re-initalised...
-> > 
-> > I didn't think you'd support page faults? There are bigger issues here
-> > if you expect to have a vIOMMU in the guest.
-> 
-> vIOMMU is one case, but another is memory oversubscription. With PRI/ATS
-> we can oversubscribe memory which is DMA mapped. In that case a page
-> fault would be a blocking operation until IOMMUFD is all set up and
-> ready to go. I suspect there will be benefit in getting this fast, but
-> as long as we have a path to optimise it in future I'm totally fine to
-> start with re-creating everything.
+| "Pass down fsl_mc_data in the helper functions ddr_in32() and ddr_out32() to
+| prepare for adding iMX9 support. The iMX9 has a slightly different register
+| layout."
+| 
+| Changes made:
+| 1. "help function" changed to "helper functions" for clarity.
+| 
+| 2. "prepare add iMX9 support" changed to "prepare for adding iMX9 support" for
+|    grammatical correctness.
+| 
+| 3. "iMX9 have a little difference register layout" changed to "The iMX9 has
+|    a slightly different register layout" for subject-verb agreement and
+|    smoother phrasing.
 
-Yes, this is true, but if you intend to do this kind of manipulation
-of the page table then it really should be in the exact format the new
-kernel is tested to understand. Expecting the new kernel to interwork
-with the old kernel's page table is likely to be OK, but also along
-the same lines of your fear there could be differences :\
+And this all looks good to me.
 
-Still, PRI/ATS for backing guests storage is a pretty advanced
-concept, we don't have support for that yet.
+With all the cringe we all get from AI, I think it is very useful for
+verifying commit messages.
 
-Jason
+Do that for all your commit messages pls.
+
+Thx.
+
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/edac/fsl_ddr_edac.c | 62 ++++++++++++++++++++++++---------------------
+>  1 file changed, 33 insertions(+), 29 deletions(-)
+
+How did you test these patches of yours?
+
+They don't even build!
+
+drivers/edac/fsl_ddr_edac.c: In function 'fsl_mc_err_probe':
+drivers/edac/fsl_ddr_edac.c:538:21: error: too few arguments to function 'ddr_in32'
+  538 |         sdram_ctl = ddr_in32(pdata->mc_vbase + FSL_MC_DDR_SDRAM_CFG);
+      |                     ^~~~~~~~
+drivers/edac/fsl_ddr_edac.c:38:19: note: declared here
+   38 | static inline u32 ddr_in32(struct fsl_mc_pdata *pdata, unsigned int off)
+      |                   ^~~~~~~~
+make[4]: *** [scripts/Makefile.build:229: drivers/edac/fsl_ddr_edac.o] Error 1
+make[3]: *** [scripts/Makefile.build:478: drivers/edac] Error 2
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [scripts/Makefile.build:478: drivers] Error 2
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1936: .] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+Before you submit next time, build-test *every* *single* patch of yours and
+test the driver with all of them.
+
+This should not ever happen in submission.
+
+Stopping review here.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
