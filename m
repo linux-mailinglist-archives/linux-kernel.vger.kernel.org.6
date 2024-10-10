@@ -1,93 +1,76 @@
-Return-Path: <linux-kernel+bounces-358658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25144998213
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5FC998217
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364171C20B8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6391F253CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435A01A072A;
-	Thu, 10 Oct 2024 09:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FC51A264C;
+	Thu, 10 Oct 2024 09:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xqruXXH4"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fu5s6DNf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23B929AF;
-	Thu, 10 Oct 2024 09:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE761922DD;
+	Thu, 10 Oct 2024 09:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552283; cv=none; b=PeYgZUN89SWkiB/KW9kN9IlASyACpc3qp6HP9KuzpbqWh2oxoWcwQMk8xV/N2nmWpjGPnBF1aIVW7GJzylmnYsrVh9jDNFtf1Am+3nsa9mbCj3fEiNMfyHaIhjXUN3z114eTn7xv/hlwaWdzbu4w4042OvPHPns5Fm3eNbO+w3c=
+	t=1728552368; cv=none; b=jHuBdd3dXlGxVejIiJ3dsI3ghpWPS0y8GFtHPzWJag1zSjU16YadXZ+hfJd5w8kEvF3eLYrNIj/LEzUD1Q/4u4ZFiZ0UVnzjMLfj8h6diwpW/+fherh71hb+rFl5g41Q9rj2CkQlTPZOAijvZHieB54RhTI1DD5vQLbdSQdP7eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552283; c=relaxed/simple;
-	bh=hseCQCzg/iK8Z2QQD5BUnyWBcmUEyGFcrwJob9Lhu7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j7tqT2tuh+uSyMD6nqgttuKaK4BgVj8hAeBsfk7XjiMtp/r37SVNiAY6ekcbddumefdSY7g8wYlF50EIJqYx6oWL0mslkeQ1fnaRhmWY3oLrdFz10ZIb7ff302r2L+qaLgX5PwB5SMFwYZGTge1KAc9Vf0pZJzbC4qiSsWuSDwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xqruXXH4; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728552273; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=cB8bmbKiNFQ+Vlam+82SOQQqBd6BsBuQZpjxFRkIpOg=;
-	b=xqruXXH4AeW5R74skKpUXoIw/YOJ84cierKcMnsJNH5wgturz/z8lj997Q5lE9yZNSAbZaX9QONMcfjI5oqVTFFZjp8gA14XrBYTLjtInaoIiAa1QAARo6a+mHVayV91zcLKeO0WnwnsPRvX3dEvNiV1oMnmlEUleS6Lnp/LR5Y=
-Received: from 30.74.144.160(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WGlzF5b_1728552272 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Oct 2024 17:24:32 +0800
-Message-ID: <7e6434ad-e9bc-4e9a-b540-654852cebf07@linux.alibaba.com>
-Date: Thu, 10 Oct 2024 17:24:31 +0800
+	s=arc-20240116; t=1728552368; c=relaxed/simple;
+	bh=MUNnJAfZBwiGRUv3CoIf4POyn7nVfA36YbnFb7U/+4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdXtUr+9i/EkVIuNbxLO5n5S92xxPXm8zo+5do9dKTgnHHnnDiemzh8M3aJnTz0nzAz/OgSAiefim0p+hMQsgIhHktUxzbLHEhVTi4ZEuP76GXMlH773L5CcvGadeSmedf47nnk8L2TS3bJ8E3zcPvn8DR4cY1sMrEnzxPl49bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fu5s6DNf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD39DC4CEC5;
+	Thu, 10 Oct 2024 09:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728552368;
+	bh=MUNnJAfZBwiGRUv3CoIf4POyn7nVfA36YbnFb7U/+4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fu5s6DNf+1ARrhLwLE/vGfJoYMJjs1sM3qq/UNwrvFkVIeIrvyYTEbLzDjCLl4uGm
+	 uFptnniGCFFZuYT5JMqB/nmgOCpqNwbXFtmLTrEvQmKoIjieZuqWTAHJPch2pODdFE
+	 Lvd5xB74Y4eFe1eHpiUBif5iGCGmOJL2DP60QEAOXRZy1TQll5DZ6XSeABb5/EK16o
+	 gplsihkjLuTSldp6xWy/bAARRZnoqA4TdfQWNHiJcrlzlkA2UT7IaGit5o6wKabZKx
+	 nOM+etq+FDjaptgPVcab46mrm5kGqSf/z+LeuQtR99qiq0YBiPgwo3Crnhyo4jXAaz
+	 f4F4g2cn08UYg==
+Date: Thu, 10 Oct 2024 11:26:04 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241010-nahtlos-erproben-27bf691dcc06@brauner>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <87msjd9j7n.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] power: supply: sc27xx: use const reference to ocv
- table
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Sebastian Reichel <sre@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241005-power-supply-battery-const-v1-0-c1f721927048@weissschuh.net>
- <20241005-power-supply-battery-const-v1-4-c1f721927048@weissschuh.net>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20241005-power-supply-battery-const-v1-4-c1f721927048@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87msjd9j7n.fsf@trenco.lwn.net>
 
-
-
-On 2024/10/5 18:04, Thomas Weißschuh wrote:
-> The table is not modified, so constify the reference.
-> This enables a constification in the power supply core.
+> > +	/*
+> > +	 * If userspace and the kernel have the same struct size it can just
+> > +	 * be copied. If userspace provides an older struct, only the bits that
+> > +	 * userspace knows about will be copied. If userspace provides a new
+> > +	 * struct, only the bits that the kernel knows about will be copied and
+> > +	 * the size value will be set to the size the kernel knows about.
+> > +	 */
+> > +	if (copy_to_user(uinfo, &kinfo, min(usize, sizeof(kinfo))))
+> > +		return -EFAULT;
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Which "size value" are you referring to here; I can't see it.
 
-Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> ---
->   drivers/power/supply/sc27xx_fuel_gauge.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
-> index bd23c4d9fed43482e972ccc086311e7bfcec2d54..426d423b935b581a7673be076ae71b8899f17e2e 100644
-> --- a/drivers/power/supply/sc27xx_fuel_gauge.c
-> +++ b/drivers/power/supply/sc27xx_fuel_gauge.c
-> @@ -992,7 +992,7 @@ static int sc27xx_fgu_calibration(struct sc27xx_fgu_data *data)
->   static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
->   {
->   	struct power_supply_battery_info *info;
-> -	struct power_supply_battery_ocv_table *table;
-> +	const struct power_supply_battery_ocv_table *table;
->   	int ret, delta_clbcnt, alarm_adc;
->   
->   	ret = power_supply_get_battery_info(data->battery, &info);
-> 
+Luca did just copy my comment from another interface which has a
+separate size parameter. This should indeed be fixed.
 
