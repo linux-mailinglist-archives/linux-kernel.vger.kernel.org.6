@@ -1,84 +1,97 @@
-Return-Path: <linux-kernel+bounces-359981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEF5999334
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:53:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FBF7999336
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E62F1C22C34
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448DA1F2240A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D751CF5C5;
-	Thu, 10 Oct 2024 19:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8A01CF5C3;
+	Thu, 10 Oct 2024 19:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HFaHqye8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="KV/XNnqj"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17461CBEAB;
-	Thu, 10 Oct 2024 19:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847BB19B3CB;
+	Thu, 10 Oct 2024 19:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728589998; cv=none; b=CnGx/1d/XW1rVArpsm+yfKIzulCMC2lYYAcushFlDJ8VYqX9kq1lB7SXb0n9aPqPS65HQNaNuxKw9Tum8RQ+bbriFPGzIcsUaHeyuVX4xIyRjeJ4Qu86V5CpaYHxGuuGDP3IezHiX3LVuEppUBYX4sjvFZhnbHdyhjM3eySazJI=
+	t=1728590068; cv=none; b=surGdjtxLfrXWJdE79c/KCHL4hQcD/tKyBCERkeygPca2x6aX9WsiEBzyqd3tTzYz8jBdFZE6XG49iN5TkuAjbTzElyJ64uPB+KNhYc89LgeL9JdcU8MU/UIpJq+i1DxKoWvXH5jQf7rhBlzDLhxm9crZ+vNx9Bx7bfNSWTq62g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728589998; c=relaxed/simple;
-	bh=gLLejnF18JRaBdqLMMz0kV/sqCjBfUTWGoq1CF3hyso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuvH+wlfxQLEJ17l1aRIskwiSOJWuGQxM+w41taZXWHYJOdkGbjhwq3PHelZHo1p6kUhTHXd4tPgbpxUU5LDMU2kdHtgTte1LoOKvo9KP9z6H7mh2MUPzAOCV+9QezKnw7LIoba/sYZlhcrzcV3/Q8FKkm2xPciEHcc6AqQnFR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HFaHqye8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=oPrHANtDfaFu++DyXSV355UVRr83DEBqjiYMk9rKCkk=; b=HFaHqye8gT7FD1vFqxAaukg2ij
-	OGo85Yu7PRdhCVVbXMx0lu6YUYURb+nG4LaY1duqe5AWsCxD+Moe6nE7ax1Yg6vGX6b+1CBWb09Rv
-	m7lRHcEUujVeKsgCQ7GFvQ3Yg1QA//JbZIG366o+QSvBtm+6AMuq7CjYDU9c1Qvmkl4M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1syzDb-009eKH-4z; Thu, 10 Oct 2024 21:53:03 +0200
-Date: Thu, 10 Oct 2024 21:53:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Iulian Gilca <igilca1980@gmail.com>
-Cc: igilca@outlook.com, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of: net: Add option for random mac address
-Message-ID: <b4d4090a-2197-40ce-9bb5-1d651496d414@lunn.ch>
-References: <20241010190508.196894-1-igilca1980@gmail.com>
+	s=arc-20240116; t=1728590068; c=relaxed/simple;
+	bh=Mp+NSHuQ3PaW2Ut+1wNtbzV8zGtQDEkTebMOTQDXOrI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YIfo7mtM1N2jbzaSO7iuFNmV5qYVNyCc3UhHtU9ei8N4A9dwF+zUI6ZACJ+rGz4H4pOREq9Nln/PJw8Yr/GSyEIMjUr/IY/FAOmr1TM5yx9rWt9j0WYmCmGFuDz6EgeBV4MbJpXWOlWZAR1gflp2IyRoYXOUKJQ2w8/AFdcmp6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=KV/XNnqj; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=jXk5N6BqpmRr9oTzuzv1AOIztPQsWeFIkvJ+kq0iaUg=;
+  b=KV/XNnqjtAF1i6hGzxFDIkPwYbo4ovPr+cUw9ioiS3K76Nby/N9JQVSx
+   4o2MoGyw9dOxzUaBtp9l/9n0iV/b+D5j7LZNaZdi84MUi4JgOs++hfR8W
+   4UmTuUYj3M+eyZunWOULYd6kYjBFRZ4/jlERfZBQWTDYf7xRMgj90lsdf
+   M=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,194,1725314400"; 
+   d="scan'208";a="98793900"
+Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 21:54:15 +0200
+Date: Thu, 10 Oct 2024 21:54:14 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To: Steven Rostedt <rostedt@goodmis.org>
+cc: kernel-janitors@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
+    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+    linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 21/35] ring-buffer: Reorganize kerneldoc parameter
+ names
+In-Reply-To: <20241010153653.1809bca9@gandalf.local.home>
+Message-ID: <alpine.DEB.2.22.394.2410102153540.3363@hadrien>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-22-Julia.Lawall@inria.fr> <20240930111431.258b72d1@gandalf.local.home> <20241010153653.1809bca9@gandalf.local.home>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010190508.196894-1-igilca1980@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Oct 10, 2024 at 03:05:03PM -0400, Iulian Gilca wrote:
-> Embedded devices that may not have fixed mac address
-> may want to use a randomly generated one.
-> DSA switch ports are some of these.
 
-Sorry, i don't follow what this patch is doing. You are looking in DT
-for a property "random-address". DT is static, so how is it going to
-be random?
 
-I also don't understand you use case. Generally, a MAC driver will try
-to find a fixed MAC address. If one cannot be found, it generates a
-random one.
+On Thu, 10 Oct 2024, Steven Rostedt wrote:
 
-For DSA, it takes the MAC address from the conduit interface for the
-user interfaces. If userspace whats to use come other MAC address on
-user ports, it can change the MAC address in the usual way.
+> On Mon, 30 Sep 2024 11:14:31 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> > On Mon, 30 Sep 2024 13:21:07 +0200
+> > Julia Lawall <Julia.Lawall@inria.fr> wrote:
+> >
+> > > Reorganize kerneldoc parameter names to match the parameter
+> > > order in the function header.
+> > >
+> > > Problems identified using Coccinelle.
+> > >
+> > > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> >
+> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+>
+> This is part of a series, but do you want me to take it through my tree, or
+> is this going though another tree?
 
-	Andrew
+Please take it.  Thanks.
+
+julia
+
+>
+> -- Steve
+>
 
