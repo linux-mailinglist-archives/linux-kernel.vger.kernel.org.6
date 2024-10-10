@@ -1,71 +1,93 @@
-Return-Path: <linux-kernel+bounces-359372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C42F998B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:30:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C457998AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E869B2ECA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2074288E31
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622F21CEABD;
-	Thu, 10 Oct 2024 14:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970131CF29F;
+	Thu, 10 Oct 2024 14:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvL4wljr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A7B1CC8A4;
-	Thu, 10 Oct 2024 14:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ED81CEAD8;
+	Thu, 10 Oct 2024 14:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572134; cv=none; b=gK02gSQUatboAP2RYvJfYuDVbjHSxeqV4sHVqOmmyogFvJK/6D5KLWdneX2qssM3ji4w9bgWyRv+21Q7/Rp/GjkxCuXrcVE6L0f+wl7Xiz/n9fej2Kox+ow7yS+KlC2cfK0r0tPRoEMhxKqI/c33DCqxMtENmd9yER/N5KztdtM=
+	t=1728572144; cv=none; b=FKTiuUzIdyIyfYxtH7HP9r0n8D8Ne+09XMXk+7V6VrmZgfMBFcuKOuJofVNd2dGvnJuBZGeYJl5ygHeFo4m4E8UycQWVEaT5m0fBEuazY26bXkPJI0SqEDlBzv4ShDCYStUrnnPDMtRwoM08b9Jbxg7Ke6V0SkgZAGCtBr0tQAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572134; c=relaxed/simple;
-	bh=pQ3bY1ztqpkxEH+mo0S9kpQtrgDuV1YUKiqilJydXf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m/XieTOc5Ko3P+e1KYxhPHnmnG0ktYQl/pxmoaZpt3uiZqjVnYCauSeExWpx81Zk5cyvH6ufRluGK+uq2n5usZmybLCV28T1+cuGioy59Gh7Dib8gRfOPQ0qhFSJ0ez/Z1RtT22MRE4wqX+dXQxb5vz3B7FvtKsihyPDpUaCdLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EDDC4CEC5;
-	Thu, 10 Oct 2024 14:55:32 +0000 (UTC)
-Date: Thu, 10 Oct 2024 10:55:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Jan Stancek <jstancek@redhat.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, jforbes@redhat.com, ezulian@redhat.com
-Subject: Re: [PATCH 2/2] tools/rtla: fix collision with glibc
- sched_attr/sched_set_attr
-Message-ID: <20241010105539.5b5aa41f@gandalf.local.home>
-In-Reply-To: <CAP4=nvRLgwu3y_c_m-SdPxaWm6rO_LVFKK98pkjFiLJ42LqhpQ@mail.gmail.com>
-References: <c355dc9ad23470098d6a8d0f31fbd702551c9ea8.1728552769.git.jstancek@redhat.com>
-	<45c1f78d4f0e7f1b786443ffdd462d7670ec1634.1728552769.git.jstancek@redhat.com>
-	<CAP4=nvRLgwu3y_c_m-SdPxaWm6rO_LVFKK98pkjFiLJ42LqhpQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728572144; c=relaxed/simple;
+	bh=w5s9c0gsUyZAb1duuICYtgix8lgm5eDU7I4/CwJW6Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbYnTdyV41+g+IaLfwtSSZs9sjIkgBV048SAtNCEcLlnsL0+GUXIJE+gZCwvX1DklIlxRlYQuclhFOFxxT/900pMf1pAs//euU1zlYTHAzUOwNJQoc6bVEp3oOt3jwkMizZFC2gF5F4RakSdluU30JWA6Y2zEXmiDWXOs6g2HIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvL4wljr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6876DC4CEC5;
+	Thu, 10 Oct 2024 14:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728572143;
+	bh=w5s9c0gsUyZAb1duuICYtgix8lgm5eDU7I4/CwJW6Kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tvL4wljrUPmcLEINB9jWM9y3BseA1V5ZXHgtB69KejDi2iJg+PscHYMxEUjmE3p54
+	 jSKKIQISe+YUh8Cm+isA+mVA9GsZaJbNTc4QuxEwdcRs9s2rPrxT4I1O8JPGqEmUTb
+	 0gMk5Yk0Ah6UquDUsxZIapMSWe8cRDVlC9a2XSNbWKmhNL1+yIKG/jQY9j84e8JIJL
+	 5d6lX6appzVPcDKIrTHzSZTNcX+Peb1CCUGgoSN9thX+nzNpNp3x0mlquCE+Q1EqnS
+	 zRI6CgCQK1mlC3KftfmnmI04vpcmm/OQgQ3JHvlxQCRGIP/zrp9cj6iuML0VM1HeSN
+	 +GghxeTXPDLew==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syuZw-000000007yi-1IRM;
+	Thu, 10 Oct 2024 16:55:48 +0200
+Date: Thu, 10 Oct 2024 16:55:48 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org,
+	jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
+	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH V3 1/4] firmware: arm_scmi: Ensure that the message-id
+ supports fastchannel
+Message-ID: <Zwfq9KYi04QkZBp1@hovoldconsulting.com>
+References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+ <20241007060642.1978049-2-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007060642.1978049-2-quic_sibis@quicinc.com>
 
-On Thu, 10 Oct 2024 14:25:11 +0200
-Tomas Glozar <tglozar@redhat.com> wrote:
+On Mon, Oct 07, 2024 at 11:36:39AM +0530, Sibi Sankar wrote:
+> Currently the perf and powercap protocol relies on the protocol domain
+> attributes, which just ensures that one fastchannel per domain, before
+> instantiating fastchannels for all possible message-ids. Fix this by
+> ensuring that each message-id supports fastchannel before initialization.
 
-> > --- a/tools/tracing/rtla/src/utils.c
-> > +++ b/tools/tracing/rtla/src/utils.c
-> > @@ -229,7 +229,7 @@ long parse_ns_duration(char *val)
-> >
-> >  #define SCHED_DEADLINE         6
-> >
-> > -static inline int sched_setattr(pid_t pid, const struct sched_attr *attr,
-> > +static inline int rtla_sched_setattr(pid_t pid, const struct sched_attr *attr,  
-> 
-> Hmm, rtla_sched_attr sounds to me like the function does something
-> specific to rtla. Maybe syscall_sched_attr would be a better name?
+Perhaps you could include the error message I reported here so that
+anyone searching for that error will find this fix more easily.
 
-Should I be waiting for a v2 with this addressed?
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 
--- Steve
+Do we want this to be backported as well so that you should add a
+CC-stable tag?
+
+Either way, this does seem to address the FC errors I reported:
+
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
