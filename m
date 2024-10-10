@@ -1,85 +1,129 @@
-Return-Path: <linux-kernel+bounces-359960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7033099930B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 966E4999311
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A03ED1C23DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5DE1C222D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4751CF5C5;
-	Thu, 10 Oct 2024 19:47:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3381E377A;
+	Thu, 10 Oct 2024 19:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="daz+EY9q"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737E6188A08;
-	Thu, 10 Oct 2024 19:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2241CDFD8;
+	Thu, 10 Oct 2024 19:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728589622; cv=none; b=CJGQRO3XVyo4l4uX5gqawDBYwj6WVac/UWQ/i3IMBWok+cayOBfg+YbeM5yj+D1f0REs02yjhwKdMwTt5SoDrXQx2Nni2Td9eyGrjgRwmuMCHmVRmssJALlIrS5CngmF5k9XxB5Xf7VbxwS3LhBYnkV5NMFytvCtKUBbLVageZk=
+	t=1728589658; cv=none; b=s9H7eBUsk8Ta0eWaFdkVHmH+wHXGNh2IgvFm5rG0sPsoxIbQaMsn63lqJUXG4gp1O+58TlXtgVPDDAP+ZCoI2DVUpwzW34pNB1RHx/Z3S+hBa/rRgY5AExbCrguTPR0TmsXhw1zMzQ4Ye4qwO0sYZSJU4JdqbsdpWQHj2MTXATM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728589622; c=relaxed/simple;
-	bh=0g6m73T0hJa5hZI3IQpeokaC+/DYe4Y8vBDk9aKE+9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0sLMNCwv4KQA/r+HswJdJsOFCYAPkKUO6y21uQGh/C/n4sqgKcS3J/PC2Njd0/JG95Lz+MFxHMIA6mewRlyzYa+d5b+i/EDrbCJoJTbI99xTHqnysG7Tir1JkTJCa4EXU9z5iUKFPMmW05fxBkihiaKqGFWbx7mbJY31NOUEc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2588BC4CED0;
-	Thu, 10 Oct 2024 19:47:01 +0000 (UTC)
-Date: Thu, 10 Oct 2024 15:47:08 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: SurajSonawane2415 <surajsonawane0215@gmail.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: fix WARNING document not included in any toctree
-Message-ID: <20241010154708.0bf658a3@gandalf.local.home>
-In-Reply-To: <20241002195817.22972-1-surajsonawane0215@gmail.com>
-References: <20241002195817.22972-1-surajsonawane0215@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728589658; c=relaxed/simple;
+	bh=KqB8wmAe7duo/DZOH0JJvhfzDNd5IcOJIMTB8psapyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hg75D3bVnYmLUsNAWnnwg1XbQiDvXFZ/NIarnnUIsce9g/vl6otRftEmV5XE74ZQaihaPx6yJU4Arfyn9mJzS1fgFhXuH397RtaAX52KP/6TjCUakxsApjo2effGfnhhiXW60lg1ZhErH8XSmSS5FNnrvzFP3n0zLfRxgjHM8wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=daz+EY9q; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so636796f8f.1;
+        Thu, 10 Oct 2024 12:47:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728589655; x=1729194455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pcVsSlgkx44oFHxxeXyOibtQ59FLjGADOzZNhPSr9x4=;
+        b=daz+EY9q9oh1uoVy+ZWKxMq5O3FMuSlcvJDy1v627XAmDb6y/ELTBnG4Lt5IqaujeR
+         dJf+tK7RugmLYfOspBv6kRIxVl1/whFGl7T2LWOL0fjaeDHZDxX55ZZ8dGYqk1xAcFvs
+         ofpdLMHJ2aH13K+IdaOgFHLxZ+LGVvUcx+r/O9ElwGKKoZMvSC8nqJH+lWP/LvaA30Yz
+         6L+V5V9NTSRvvcAZjLcZ2K+bqvG8m7H7FMUU0PnCn3JQky+uJUW1npDQ/MWawEtVS1cl
+         Lm1No4Ca8syp4P7GAy9JhteC+2bNOFVAPMzee2XrzXRBs0WRssUXdGepjS3YxOWyuMXD
+         ceIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728589655; x=1729194455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pcVsSlgkx44oFHxxeXyOibtQ59FLjGADOzZNhPSr9x4=;
+        b=Xf/T3/Zo0I8Tuks7TC0GtdHwZWKVtYjzJG7HZLd2MCNT0qqgzGSzm2jP7sj/bnw4qe
+         jYjeeNKFFB8W9yX1dd9iVfXW3otozNG70ZLg7xlQu7yA8esXS2jAdbSnCECbuv4sGF0f
+         zftPFEoDL8TagUEyte/yayjnaWuMXpTn5ceK3TL02muVW7Jyljn5z9ItFrIj9G6yJ3Cx
+         9whUbexiLslN+BbcS9ABVUQmXNSBytmmONduTevQxXlddo3rZR93oU0jYNajI18bBUPU
+         HumqGNIS4JRHk96Gu+oHTIh05Wo+u63SNgZVnGl0KQXIctX2CGgBYSWXZwze963jIG/v
+         drJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpyRvz3v7DTZWY/aBnAsSl1toDdohFeCxykFnOB2XLWhgSwFddtiOOvvsk4GcLl382+lBV+2rlfkH19Gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQMFh3bmHQKRH62DKwBgvANQwqmiXAPSkAIc5Sw08AaBfwxJDh
+	dR4xDyltUI+7luee5TfN0v6a818DrypDZad5fUiFguaOYfUHrwxF
+X-Google-Smtp-Source: AGHT+IHpPALSlaU26S1/b/Y8vsgOfeAUtCwow+Dx+j9ExXzmnuNrX6Q2I1NT1cZBfMK9kV0pc+EHwg==
+X-Received: by 2002:a5d:548e:0:b0:37d:5436:4a1 with SMTP id ffacd0b85a97d-37d551ab394mr150965f8f.3.1728589654795;
+        Thu, 10 Oct 2024 12:47:34 -0700 (PDT)
+Received: from localhost ([84.79.205.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf46e96sm57124605e9.18.2024.10.10.12.47.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 12:47:34 -0700 (PDT)
+From: Roi Martin <jroi.martin@gmail.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Roi Martin <jroi.martin@gmail.com>
+Subject: [PATCH] btrfs: fix uninit pointer free on read_alloc_one_name error
+Date: Thu, 10 Oct 2024 21:47:17 +0200
+Message-ID: <20241010194717.1536428-1-jroi.martin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu,  3 Oct 2024 01:28:17 +0530
-SurajSonawane2415 <surajsonawane0215@gmail.com> wrote:
+The read_alloc_one_name function does not initialize the name field of
+the passed fscrypt_str struct if kmalloc fails to allocate the
+corresponding buffer.  Thus, it is not guaranteed that
+fscrypt_str.name is initialized when freeing it.
 
-> Add debugging.rst to the relevant toctree to fix warning
-> about missing documentation inclusion in toctree.
-> 
-> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
-> ---
->  Documentation/trace/index.rst | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-> index 0b300901f..2c991dc96 100644
-> --- a/Documentation/trace/index.rst
-> +++ b/Documentation/trace/index.rst
-> @@ -24,6 +24,7 @@ Linux Tracing Technologies
->     histogram
->     histogram-design
->     boottime-trace
-> +   debugging
+This is a follow-up to the linked patch that fixes the remaining
+instances of the bug introduced by commit e43eec81c516 ("btrfs: use
+struct qstr instead of name and namelen pairs").
 
-If order matters here, I'd like the debugging to be at the top. As I plan
-on it being more of a tutorial for using tracing, and should be the first
-document people see.
+Link: https://lore.kernel.org/linux-btrfs/20241009080833.1355894-1-jroi.martin@gmail.com/
+Fixes: e43eec81c516 ("btrfs: use struct qstr instead of name and namelen pairs")
+Signed-off-by: Roi Martin <jroi.martin@gmail.com>
+---
+ fs/btrfs/tree-log.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I need to take some time out and start filling it up!
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index e2ed2a791f8f..d2e5781701f9 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -1845,7 +1845,7 @@ static noinline int replay_one_name(struct btrfs_trans_handle *trans,
+ 				    struct btrfs_dir_item *di,
+ 				    struct btrfs_key *key)
+ {
+-	struct fscrypt_str name;
++	struct fscrypt_str name = { 0 };
+ 	struct btrfs_dir_item *dir_dst_di;
+ 	struct btrfs_dir_item *index_dst_di;
+ 	bool dir_dst_matches = false;
+@@ -2125,7 +2125,7 @@ static noinline int check_item_in_log(struct btrfs_trans_handle *trans,
+ 	struct extent_buffer *eb;
+ 	int slot;
+ 	struct btrfs_dir_item *di;
+-	struct fscrypt_str name;
++	struct fscrypt_str name = { 0 };
+ 	struct inode *inode = NULL;
+ 	struct btrfs_key location;
+ 
 
--- Steve
-
-
->     hwlat_detector
->     osnoise-tracer
->     timerlat-tracer
+base-commit: eb952c47d154ba2aac794b99c66c3c45eb4cc4ec
+-- 
+2.46.0
 
 
