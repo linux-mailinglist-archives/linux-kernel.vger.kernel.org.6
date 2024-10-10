@@ -1,104 +1,153 @@
-Return-Path: <linux-kernel+bounces-358425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63016997F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:17:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5737997F44
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1549B1F22398
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:17:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9076D287554
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEFF1CDFA4;
-	Thu, 10 Oct 2024 07:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35011CF29F;
+	Thu, 10 Oct 2024 07:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="btSHV4JP"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="SI6mWdQM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SSjI/laH"
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569121C1AC9;
-	Thu, 10 Oct 2024 07:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BFA195390;
+	Thu, 10 Oct 2024 07:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728544353; cv=none; b=FFLpwC/jl4s9EMPmY9m8rnyTJJYHNkoEjwO/fVYaBDm2qheD877eGzVYe4A0EJa6k4kLgWRneZzg9s92lNcxhFMd3MoQNzK+8sLGwAihuUdRsvm3GdDXij9uKSCNR+nQXJvhFMa0ZmA3P1i6M9RMj0r3BnOgErDr6QniQu8fDOI=
+	t=1728544558; cv=none; b=HzFK0lXz4+w6EpvLJpdCb/k9S5fxVMqS9DqecWloWHTNT3zb7xsUETYftpCAyKCKBzXrk5cUy9QP19qTdzGGpwhRH9rNqo7ciJ4YRhA5EwBSKcnMAX7lT9Mi0ZM9dhdhLA7i8fUrA9pOrgcrSPhEI5d6IBH3yD93Yi8KBcuNXAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728544353; c=relaxed/simple;
-	bh=Cn4B1F4k0S5ou9J1Z37x5AXecRflwso2j6cZdMR+zes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BM7L60Fk5NFGL4fsVN5Gbt3zb0tph3S/yoCqetbFDWDwdJuPOmQwJlA2BOqHiw7oh0+wdOrnvSdXhGjGhYIuWWIEsFyokLOAFOV7ZMoX37fXAG6+imNYEA1fPMne7pSzWVAYX2mkPFDk8s958w+UrNk8p1xqyY6egRloTW9mrBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=btSHV4JP; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AB8161C0006;
-	Thu, 10 Oct 2024 07:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728544349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eZhJCmqORkBi7oe0upO8alJrZ9x/l0/NdakZ2rFJ6Nk=;
-	b=btSHV4JPklv8RMfZ2wfFB3tKpMR4PyGYB3cKus0VrB2MvhLr9/AaCB/9112DxD9gBMUJB4
-	uiMZM5BFgcKec9iA1PEaMrCyEbd5w61aylY8Yn5BsFocOWTBmUPfnTMQa3MsJtC2h3FnRb
-	FnxDfG3lM3q7m3nIlpA/DK8jMI9ZD+ZJyMwg4Ct9BWpUxmDAy4nXAKCuFf95fveHwnQfvi
-	WBM+KcUH/8ATrOvOEBysNb6X2efRUO24kviJKPRIg/35nVWNjLlMKL6PhZ82Nd+fwP38Fb
-	QErayO7QEZpQfRU/yQ+lOd4bG7VRNBGFvf/r70PX9FAR/arBwS8+bgB8EYM/cg==
-Message-ID: <fc2c103c-f113-4eca-91fb-3b9904d31d67@bootlin.com>
-Date: Thu, 10 Oct 2024 09:12:28 +0200
+	s=arc-20240116; t=1728544558; c=relaxed/simple;
+	bh=4zOm3NrvPceLo4LJ7wkkEBczbuXaU7Gu8QZaHmfIkMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwCVPaxdB2RAZr49vkRghBl+1mFqEFnSJXnBiYdz0Ixu+5lz5OrZBLTm99WUGF6aRqDekhXxq8HAiHXuNDG//6UvHkGA8l1a61IRPFBzOTesDMtJfy7V9DzyPL9MO0Eat8dEjL4zACYCqR7lzIZufeNWuWJvzFTBNpqd94k82rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=SI6mWdQM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SSjI/laH; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailflow.phl.internal (Postfix) with ESMTP id 79F042005DD;
+	Thu, 10 Oct 2024 03:15:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Thu, 10 Oct 2024 03:15:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1728544554; x=1728551754; bh=DNOQJ3Sz0W
+	HdMvTNFyIEo98WwfiiCPVYUsNx4PLXHtI=; b=SI6mWdQMTBSwwS6or9XVnuJJsp
+	10uH1V6g4kPSyc/PFKJXkuWiZXg07f7Vra5nd8RZ69aoyNSI/X0c/2HPFiThbZ8z
+	WbE2wQisu88Yfi2hxeDJrw2fLUBY/cI45AGeVFUst73BkRHAay6a4zHvkq1JCDWO
+	VKNlpTE8cYTXq87xhR2CVdklQos9V8HmMpDkclsgxSyNjOkdzu9MKq2gZTp6Ven/
+	1gm3ktzSqC5IHUYF2a5XfILMY33eLHAGAosU6bwn3ZmAg4hbBOt7kPadbedACBUE
+	xt8nJYhM7AaiLaov9O4rgldl5vrJ8SZuGeT+B9dgnWcWkJ0CLpe23cV7A49Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728544554; x=1728551754; bh=DNOQJ3Sz0WHdMvTNFyIEo98Wwfii
+	CPVYUsNx4PLXHtI=; b=SSjI/laHUfd3fWDjv/F+8IGvY909bQLuleQWWUg4a/+I
+	060H7/+MraDrYFg297onBCmeXP3WMv1F2B8lfRDvsdvKeh4zP4pqf2ngjDc0t2qV
+	ESERFL04o4yLXXrCmVakfh9Q/8Rie8tMTkwyULEReyG0Zy27WqmGxAFnRqz406lq
+	4YJny0ovsA+itXeNh+Qx2LtvhFbC50WV449MuoKiQFEJOWUb9qk5LwZ9CfrybBs4
+	l//i8JE/jALbbQJ0UTivDmtTYPBPInaWhY4Pj6TmKFumxPVKbnuZ/eugkE5Quz9+
+	Ptjfi9O8Q2c0+VnIEPsrsYZDzGLcLVAa/WR1KV4amw==
+X-ME-Sender: <xms:KX8HZ56hTwJ0SzAWzge0QyU-e2V2vwYw788Gh7YlDLLEA6P9ciAiPA>
+    <xme:KX8HZ27gudDB54GAFU4j3tyfkte2pTk0uNpcDHipG2ZEI14HgPy1gZBZDQVDGbrpb
+    y1zY037Fpi2vA>
+X-ME-Received: <xmr:KX8HZwe7jx-dbD7qlc2HiUJu9TOEwyODgd2nbK1-hajxa4uwp4aBhRDzLCuXwe8UJEYCnxxokmQcsWrsafwcAQqy1IEzi8LIuk0GNg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefgedguddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeegheeuhefgtdeluddtleekfeegjeetgeeikeehfeduieffvddufeef
+    leevtddtvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+    pdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepgh
+    hiohhmvghtthhisegvnhhnvggvnhhnvgdrtghomhdprhgtphhtthhopehlihhnuhigqdgu
+    ohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
+    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhn
+    uhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegtohhrsggvtheslhifnh
+    drnhgvthdprhgtphhtthhopegthhhrihhsthhophhhvghrrdhsrdhhrghllhesihhnthgv
+    lhdrtghomhdprhgtphhtthhopehsuhgsrhgrmhgrnhhirghnrdhmohhhrghnsehinhhtvg
+    hlrdgtohhmpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghp
+    thhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtg
+    homh
+X-ME-Proxy: <xmx:KX8HZyJYklPD3IKzbMaVTlL1MIMq7SbQz8hQ2aKqIke8tfUZMgfJgg>
+    <xmx:KX8HZ9LWGQjIr3eFni6UxD1zGjQgJaUD5-sXGJyuZAPKpERFSkWrFA>
+    <xmx:KX8HZ7y_f1CZc3397lIXNTw077wWhiviZJlxwtui6EgZI1538U0IFw>
+    <xmx:KX8HZ5IclUi1P673fkx7SBWeTJvlZKLHcMFl6DLUbvrWJD1KVIh3AQ>
+    <xmx:Kn8HZxCXeiX8W-kOFChGLVU2Jlvf4wZv2vJSUrCV4R3nonMZ3VhelkPq>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Oct 2024 03:15:52 -0400 (EDT)
+Date: Thu, 10 Oct 2024 09:15:50 +0200
+From: Greg KH <greg@kroah.com>
+To: Rodolfo Giometti <giometti@enneenne.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>, corbet@lwn.net,
+	Hall Christopher S <christopher.s.hall@intel.com>,
+	Mohan Subramanian <subramanian.mohan@intel.com>, tglx@linutronix.de,
+	andriy.shevchenko@linux.intel.com,
+	Dong Eddie <eddie.dong@intel.com>, N Pandith <pandith.n@intel.com>,
+	T R Thejesh Reddy <thejesh.reddy.t.r@intel.com>,
+	Zage David <david.zage@intel.com>,
+	Chinnadurai Srinivasan <srinivasan.chinnadurai@intel.com>
+Subject: Re: [RFC 1/3] drivers pps: add PPS generators support
+Message-ID: <2024101013-reputably-skid-9e01@gregkh>
+References: <20241008135033.3171915-1-giometti@enneenne.com>
+ <20241008135033.3171915-2-giometti@enneenne.com>
+ <2024100855-unsecured-mammogram-001a@gregkh>
+ <541eb5c6-5546-4170-9e8b-d421d55822a1@enneenne.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] pmdomain: ti-sci: set the GENPD_FLAG_ACTIVE_WAKEUP
- flag for all PM domains
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, u-kumar1@ti.com, tony@atomide.com,
- khilman@kernel.org, gregory.clement@bootlin.com,
- thomas.petazzoni@bootlin.com, theo.lebrun@bootlin.com,
- richard.genoud@bootlin.com
-References: <20241008-8250-omap-no-console-suspend-v1-0-e7f0365c02f0@bootlin.com>
- <20241008-8250-omap-no-console-suspend-v1-1-e7f0365c02f0@bootlin.com>
- <CAPDyKFroumouYavhaHp=aSh=0WsDO=_4kbVgS-+Y7CADyO-Kmg@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <CAPDyKFroumouYavhaHp=aSh=0WsDO=_4kbVgS-+Y7CADyO-Kmg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <541eb5c6-5546-4170-9e8b-d421d55822a1@enneenne.com>
 
-On 10/9/24 15:17, Ulf Hansson wrote:
-> On Tue, 8 Oct 2024 at 11:34, Thomas Richard <thomas.richard@bootlin.com> wrote:
->>
->> With this flag, if a device is marked on the wakeup path, the corresponding
->> PM domain is kept powered on.
+On Wed, Oct 09, 2024 at 10:48:14AM +0200, Rodolfo Giometti wrote:
+> > > +#ifdef CONFIG_COMPAT
+> > > +static long pps_gen_cdev_compat_ioctl(struct file *file,
+> > > +		unsigned int cmd, unsigned long arg)
+> > > +{
+> > > +	cmd = _IOC(_IOC_DIR(cmd), _IOC_TYPE(cmd), _IOC_NR(cmd), sizeof(void *));
+> > > +	return pps_gen_cdev_ioctl(file, cmd, arg);
+> > > +}
+> > > +#else
+> > > +#define pps_gen_cdev_compat_ioctl	NULL
+> > > +#endif
+> > > +
+> > > +static struct pps_gen_device *pps_gen_idr_get(unsigned long id)
+> > > +{
+> > > +	struct pps_gen_device *pps_gen;
+> > > +
+> > > +	mutex_lock(&pps_gen_idr_lock);
+> > > +	pps_gen = idr_find(&pps_gen_idr, id);
+> > > +	if (pps_gen)
+> > > +		kobject_get(&pps_gen->dev->kobj);
+> > > +
+> > > +	mutex_unlock(&pps_gen_idr_lock);
+> > 
+> > Doesn't an idr have a lock in it?  I can never remember...
 > 
-> Perhaps extend this with some more information that it fixes a problem
-> for the uart console too?
+> As far as I know we must use a mutex...
 
-Yes, I'll send a v2 (only the patch 1/2) with a more verbose commit message.
+If you do, someone will come along and remove it, please see:
+	https://lore.kernel.org/r/b1fcc6707ec2b6309d50060fa52ccc2c892afde2.1728507153.git.christophe.jaillet@wanadoo.fr
+as an example (with links that show it is not needed).
 
-> 
->>
->> Suggested-by: Théo Lebrun <theo.lebrun@bootlin.com>
->> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> 
-> Should we add a stable/fixes tag?
+thanks,
 
-I guess no.
-The first implementation, which was reverted, didn't have a stable/fixes
-tag.
-
-Regards,
-
-Thomas
-
+greg k-h
 
