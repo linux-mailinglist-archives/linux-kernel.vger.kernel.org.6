@@ -1,110 +1,137 @@
-Return-Path: <linux-kernel+bounces-358263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CA3997C4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014FB997C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090392831AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46FD1F24BAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8F519DFA7;
-	Thu, 10 Oct 2024 05:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2286119F42D;
+	Thu, 10 Oct 2024 05:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNKXTbcN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTLBtOAq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C803C443D;
-	Thu, 10 Oct 2024 05:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B6119EED2;
+	Thu, 10 Oct 2024 05:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728537381; cv=none; b=Qq/VidVyYUXae/zS5FF3/TJDGzmXmTfAgL9Zk3Q0brwSBX7KiSyOsIjLbrNJXqTWlWUQUykiLjnxnk6tp8+uguLWjvCVI4A8VIdvE8qmdDkHuC6LQgvO/gxMY6u63KLS2T0dNcyV8FXcBUe1gMqjQLy4Gv6lGHlQZmHDTpYER38=
+	t=1728537412; cv=none; b=VxXNsbiwG7uv1sZD9LpnH4boR0VMNHdwFCykuKhN5Nyjq6g3eaRq+EVsGk2pRcSSwGuR1ImcOJButBO6U+X7mPM92cWR947UoKlwNNpJyJPf94CbN2AUkbf+x1u2GUackTzoo5D7cnAW+uAE0cwJYMHw/KHo1pzgUG/ynzN8FVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728537381; c=relaxed/simple;
-	bh=LFAjTpAnqSocR1XUoKJ2dWiM2U5S2Ivu2fRF8V0aoJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MYbfGSufzky8pO0u4slQnvHbpxZPyDjF9c9CQL5ng/vCSBlDKXHQ/dq9vnRGqvIDBkcpSS4PrfsA9wcVU/dbw06fVikr/zyyhurWleXF2E2dO6wjnYtxOEFN9uit8bmbEGzeCtd3Jchg3bfyjHo+SrJACvfcDa36z9+g/HyHWtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNKXTbcN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9761C4CEC6;
-	Thu, 10 Oct 2024 05:16:20 +0000 (UTC)
+	s=arc-20240116; t=1728537412; c=relaxed/simple;
+	bh=D70Tpo7J0ELsOQK1iTdNFGcuQuvS73KEkDWu/V0PAnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZqLQmqqzN95z9q/lvLVlqL0dyI501dioXm6iEirNs7A0hVLLRvrMPdi/33qIg7UG8EhCeLc4TbBZ9WWoiKszpCNj6Ap29JGZ0ASiihCJFsNo1wJul/7gBFjQDIys0bQBo02t6sBcIWYnIVVjXQdMhoOGNYM1YGfMoQ74R+mw3Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTLBtOAq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5139C4CECD;
+	Thu, 10 Oct 2024 05:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728537381;
-	bh=LFAjTpAnqSocR1XUoKJ2dWiM2U5S2Ivu2fRF8V0aoJQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KNKXTbcNQl5VNXrD9vUKHnLvvD+BJgU9Ti3eewyTuTgh4SEqBy2MXJmpTOCKMzfP1
-	 8unOT2oeL/YG2w8KAhzLZL9aWJpKMj3wxFmeyDJ+I3yfLou6KUe+7k0kcZcLGjJUW8
-	 +hhqd2v9y7jVwaQ3JX5gWbxbO9n/U1MIF8/f1zIMOlnia0BsDXqx1I07/YUYPsGLXf
-	 B9jPg+IJaw8GvTgbnjmo1PSMxOy7YtRwXb7Y9VwHrWCVZxa9lNh+kJ8jrmoo8eKLe9
-	 vh5C8DiLr5O14oOfUspbgUZCilvAdSFsNsz7dVoSx9f6dg54/SF8w8yLRrHeE+hobg
-	 SQY/ldeCWgwhA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
+	s=k20201202; t=1728537412;
+	bh=D70Tpo7J0ELsOQK1iTdNFGcuQuvS73KEkDWu/V0PAnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kTLBtOAq9at/hSE+ju6P4QsGJNViociNZEAtqRzwXeW4jIqk1ldrQRExatEsx+yRV
+	 junTv8y0ZHgtpdeoQjElDKIt8gZ8ob15YCmUhKEumytg2PB7v+LdLqyUfl8Z/g+xas
+	 n9CcjeBDIhMpFrg3pEmJ4kJyQH3BIJCbvZ/l+LOnJVBfltn2wv5BqP8+QBmH0hh5Sn
+	 lpxbyR1bzGnQW8wjM9cBf57DmUeJMHF88OEG3M1EZdaykJAN6E7W7z77TFmeU6jgZb
+	 p1g4UyYjr5iovjOoVb7VFIS6WhKImZfzACCm2k1RQ0V/ZfEEeUc21WJYCr7DfNNBhx
+	 ufS4z+kLconPA==
+Date: Wed, 9 Oct 2024 22:16:49 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
 	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>
-Subject: [PATCH] perf test: Fix probe testsuite with a new error message
-Date: Wed,  9 Oct 2024 22:16:20 -0700
-Message-ID: <20241010051620.1066407-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+	linux-hardening@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>
+Subject: Re: [PATCH] objtool: Deal with relative jump tables correctly
+Message-ID: <20241010051649.wtarneasz7x7anaj@treble.attlocal.net>
+References: <20241007224747.3973322-2-ardb+git@google.com>
+ <20241008174201.b23zrrvqv26ihq4t@treble>
+ <CAMj1kXHBccOwtLWuT9P1ozpVm7bTcfPfjfXTVzJnCzsCYm1RfQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHBccOwtLWuT9P1ozpVm7bTcfPfjfXTVzJnCzsCYm1RfQ@mail.gmail.com>
 
-On my system, it's constantly failing because of new error message from
-perf probe.  It should update the regex pattern to match the message -
-"A function DIE doesn't have decl_line. Maybe broken DWARF?".
+[ Adding Jan and Jose for the jump table annotation discussion below ]
 
-  $ sudo head -n 2 /sys/kernel/debug/kprobes/blacklist | cut -f2
-  warn_thunk_thunk
-  asm_exc_divide_error
+On Wed, Oct 09, 2024 at 05:18:36PM +0200, Ard Biesheuvel wrote:
+> On Tue, 8 Oct 2024 at 19:42, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > On Tue, Oct 08, 2024 at 12:47:48AM +0200, Ard Biesheuvel wrote:
+> > > -     /*
+> > > -      * Use of RIP-relative switch jumps is quite rare, and
+> > > -      * indicates a rare GCC quirk/bug which can leave dead
+> > > -      * code behind.
+> > > -      */
+> > > -     if (reloc_type(text_reloc) == R_X86_64_PC32)
+> > > -             file->ignore_unreachables = true;
+> > > -
+> >
+> > I'm not sure if this bug still exists on current GCC versions.  If so,
+> > it will start reporting "unreachable instruction" warnings again and
+> > we'll have to figure out a way to resolve that.
+> >
+> 
+> Ah, I mistook this for a check against the first entry in the table,
+> but it is the reference *to* the table from the code.
+> 
+> So I'll just leave this alone.
 
-  $ sudo perf probe warn_thunk_thunk
-  A function DIE doesn't have decl_line. Maybe broken DWARF?
-  A function DIE doesn't have decl_line. Maybe broken DWARF?
-  Probe point 'warn_thunk_thunk' not found.
-    Error: Failed to add events.
+But then with -fpie, unreachable instructions would always be ignored,
+which is not ideal as those warnings are actually very useful and often
+point to bigger problems.
 
-  $ sudo perf probe asm_exc_overflow
-  Failed to find scope of probe point.
-    Error: Failed to add events.
+> Thanks. I've added another tweak locally so validate_ibt_data_reloc()
+> uses the corrected offset as well, or I end up with !ENDBR warnings.
+> So with that in place, objtool can decipher the jump table if it
+> manages to recognize it as one.
+> 
+> However, there are pathological cases (see one below) where the LEA
+> that takes the address of the jump table is ridiculously far away from
+> the indirect jump, resulting in a warning like
+> 
+> vmlinux.o: warning: objtool: fdt_pmu_probe_pmu_dev.isra.0+0x229:
+> sibling call from callable instruction with modified stack frame
+> 
+> 
+> This is with GCC 14 (it is the only warning introduced by PIC codegen
+> in an allmodconfig build), and I suspect that this might happen with
+> non-PIC codegen too, right?
+> 
+> So how important is jump table support now that it is turned off in
+> most cases?
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Veronika Molnarova <vmolnaro@redhat.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+For x86 I believe -fjump-tables is still a possibility in some configs,
+so it still needs to work.  That said we may be behind on keeping up
+with all the latest warnings.  Jump table detection has always been
+whack-a-mole hacks.
 
-diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-index b5dc10b2a73810b3..01e5e09053c37e46 100755
---- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-+++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-@@ -42,7 +42,8 @@ REGEX_ERROR_MESSAGE="Error: Failed to add events."
- REGEX_INVALID_ARGUMENT="Failed to write event: Invalid argument"
- REGEX_SYMBOL_FAIL="Failed to find symbol at $RE_ADDRESS"
- REGEX_OUT_SECTION="$BLACKFUNC is out of \.\w+, skip it"
--../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
-+REGEX_BROKEN_DWARF="A function DIE doesn\'t have decl_line\. Maybe broken DWARF\?"
-+../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" "$REGEX_BROKEN_DWARF" < $LOGS_DIR/adding_blacklisted.err
- CHECK_EXIT_CODE=$?
- 
- print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
+And we'd want to support it for other arches as well.
+
+> And has there been any movement on compiler annotations?
+> If this is worth while, it is something I could look into: Kees and I
+> work very closely with both the GCC and the Clang folks, and have
+> contributed other features that are specific to the kernel.
+
+I spoke with several people about this at GNU Cauldron last month and
+there is definitely interest in helping out.  If you and Kees also want
+to help out, that would be awesome.
+
+Jan proposed an idea to apply a R_*_NONE relocation at the indirect
+branch instruction which references the jump table address.  And then
+emit a sized ELF symbol for each jump table entry.  That would be all we
+need.
+
 -- 
-2.47.0.rc0.187.ge670bccf7e-goog
-
+Josh
 
