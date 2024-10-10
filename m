@@ -1,76 +1,60 @@
-Return-Path: <linux-kernel+bounces-358512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCFF998042
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:40:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24F7998030
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B824B1F22011
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:40:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2AB4B2680D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F3E1C68B2;
-	Thu, 10 Oct 2024 08:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CimbOIqv"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9633A1BFE1A;
+	Thu, 10 Oct 2024 08:11:53 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B57C1BE87C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800C01BF7F8;
+	Thu, 10 Oct 2024 08:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728548301; cv=none; b=OkLJJgQ2U4zPizRoagt8gfR/TrpZCUPFp5iwtWUi7mVNc/NWuyyiB3QfOpex3BWA4GakjKpZrQ+DirImCzT2BwaTTlWy+18hItLqCzwPQPwxJ5inUlzkq3SCLtuGs2ytY/0ismwFQ0o/3Lie6/HWG+2+pLRQm53HCdaJgvDTxN8=
+	t=1728547913; cv=none; b=QCaHe9crxwDLLBlhJs4Co+Hp5eRmZhDabnC1YY9s8AISYQ6gar9abFuwfJKprnV6oEGPcZO4/iFL045QuekvjDWFdUKFScbZ535CyU91RGQnYFzc2crJJYTbkDaHLfKDuJDVELMRHOP8SgyICP65lNa6B4x1Wv+vzZyyEeupbZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728548301; c=relaxed/simple;
-	bh=TcJ5+2LaQQs9+ImR2/sH4Y2jPimbS3tuvApgYbaH/no=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r1UeQFzSji3DRHipWU89sidN68XmfyshO6Cl1jMSXIaFErLrdiuLb6/lFUSK2GTOK1r3i4Pp0INo2wFhEGETnU7OkyvODvcBQhcd/cvZ6H3fiM3KEbmGPiwHrUTfnrSTd6tN2XCpp4touMkR8m45cFUeeOnKlH5n693lQzhD1cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CimbOIqv; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53993c115cfso814020e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728548297; x=1729153097; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wZzMUO86Zz4fUOgYhmVPC3Kj9INqhNmxL/uh1WoR0Is=;
-        b=CimbOIqv2jLZ9w/spzrS+lbuRGigGS82NlN+HlM95tpglccubJMBlmmDZ/JeYHCFqW
-         xiHW/Xr5avF70rMSNnEe3x46yWN4rW3kOBsDAdJCfDlyw1Amz4V0Pko7MGgkC69rfD80
-         tke9/3J5O/ngDbd/UG/KIi5DdcczPzVw+VKTXXdmvRhBeVK84H/t3MHR5ikDqkI5nGCP
-         A2Dze20WHX6rOkyW1c3eh7WBCr+/xRks9P6mt07K474t5FjVHt08Lvi1+C7o1BGSqJ7Z
-         12TgSs1to8HrcWMIDSE9F9UF9EkOeq3m+hQ8T6bqalqEVBap+PY5/wv3hKMWSeIoGu59
-         y0Cg==
+	s=arc-20240116; t=1728547913; c=relaxed/simple;
+	bh=RonZ3hSjGgshuYkoxdbMPh4vHd+Rs00t1uKRillG9SE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YUis6qQU6LCiTJUhBKx7mmGn0K4EHWvbVGW/6MSXuQooyK+5rqKjNmFlL1F7kU+pAYNbmpjeRmRUSeF+uOOJtb+QzJzgKuP98MIsIWNNrwpqiHeh4rf4e5qwVRQGcvSUAWzHqUQRk1b80VjTyjZzYFX++Pbtk+arzEs/RVwLWok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c883459b19so657059a12.2;
+        Thu, 10 Oct 2024 01:11:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728548297; x=1729153097;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wZzMUO86Zz4fUOgYhmVPC3Kj9INqhNmxL/uh1WoR0Is=;
-        b=RpNE5mQxhFYkUXr8c+XGh7ISmGfxKMMtcGoQdvtQyZ0bPikuumGwCsjylKgeb38DAn
-         ZfNjBIa7kZ/UlOwfNzBlI2BjGfyMaWO0rKa5S4+4ltR+vGwM4ZzoiFc+pBFPNSaSnNCK
-         DGkHY9HAuP2QfYk6E3NJBF0az9ZvbzNO0RuFel4ZUwN05f3HI/shZLV7q2ZqR3639t1W
-         1qf3Tyi0Ek+FBsrj0VlxLUm0AKYLjiGtzwOYSDORDHjCsV4pMnuUSonVqEjPs/lHLOWZ
-         q+kMzicv9+WKul6zFQ1EHN4+m8KHNL9RoIv/rmj5j3svjvNlAURBeRHNYs69ioAxM7O1
-         8++Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFqVGcADCvOVxqBprjsVpbayKs6aizh7gyt0guaodQYjSTh/NX4nBkdP3xrIkwPMvjDy7eOJnQsmjPxn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6zKUd+DBdHf2sNSUfIIFmUvc+NhVPlC8XfXnUSQ614XDOrXQE
-	B2qKBwmHfQdksEYSPzM+fpXfu6PLQbbcjuiM/Iw2XQoExPbB8iosUvYI1swhSBDZ1M7hix0YRZi
-	nXLI=
-X-Google-Smtp-Source: AGHT+IGXdHfmbOwGrStXoJgSkAMDQ50vDCsNy5fzTXsxYb5fCw/hrr+pMzPE0BvRi8UgjlYLEFSfkA==
-X-Received: by 2002:a5d:5e12:0:b0:37d:4527:ba1c with SMTP id ffacd0b85a97d-37d4527bbd6mr1876589f8f.49.1728547903108;
-        Thu, 10 Oct 2024 01:11:43 -0700 (PDT)
-Received: from [192.168.7.189] ([212.114.21.58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fd90sm791241f8f.79.2024.10.10.01.11.42
+        d=1e100.net; s=20230601; t=1728547910; x=1729152710;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OfqMeH+J/4r/lnn561HWP5i9jaarFNaeoldpWmQw6AE=;
+        b=KWUoRWf1LYCSf5XkFBPEkm2iKhrZukf1Qzv9RsyMdMrEgEh/Vfyw+MVHhmRGb6M1ns
+         B2TSOB+bsmO5N5RExJCD5dq8pMbiTD9d0GBaEPDdVtOrVzoIGKGusFGBwgEmDOwD+/dG
+         yVXkjDkBa181qTioSf6VVVtDZlmGCJaVtdtgQkGc9HNNejBzI8kwe85X4kBxEjalA6ih
+         l0w+d7VgsQDrrhuFhFVNue8AddU2MEX4Gq4PxOq7d2ZhahdXkWHR69etjY5jYj9m9jh/
+         b6NfBxzPFJCuOaLiFvMTwP/AoeR27hfWgm0ffRWw0nn9xNmL6CQ5MXkENcJjwS2vL7E5
+         3LIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqIThouFvXgz2Y5skn3vZUj+Hbq9v/ylm54TcKIGnApHX6Ub20JBl8x1qu7mKMdYzmg5qsJ9eN0F46Vkyb5lzhNA==@vger.kernel.org, AJvYcCVc3b20KcmkRhgTH4ybLLMc2EvAbKrkeCqNFmP2cTasBkw3Dh9gqa7MPTapFn3wRYc8JosTFCF/VS9BVJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4JQhvdW79cH+hl2nhUeG4Cf+b8BhHYUYvQUcgOhtuGIQHcnGn
+	CEFvLAZH+xG3mIGlygTA/ln2v65PliUwOBTdwCwiy+earSga9yon
+X-Google-Smtp-Source: AGHT+IE45JzFAPGR+1CywK5sIXQ9jFrkH0H+cfgQldddNMLQx2kLoYPs7eWuXVImDy6JrwargYLhvg==
+X-Received: by 2002:a05:6402:1f0f:b0:5c9:3ff:1cca with SMTP id 4fb4d7f45d1cf-5c91d5a0a01mr4264386a12.16.1728547909545;
+        Thu, 10 Oct 2024 01:11:49 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93726036esm434263a12.74.2024.10.10.01.11.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 01:11:42 -0700 (PDT)
-Message-ID: <9e36fd62-0511-4d3f-9f18-9c8188b52e07@linaro.org>
-Date: Thu, 10 Oct 2024 10:11:41 +0200
+        Thu, 10 Oct 2024 01:11:48 -0700 (PDT)
+Message-ID: <271cde84-26f5-4e51-8cf4-2aa45a220025@kernel.org>
+Date: Thu, 10 Oct 2024 10:11:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,113 +62,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v7 1/3] drm/mipi-dsi: add mipi_dsi_compression_mode_multi
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241009-starqltechn_integration_upstream-v7-0-9967bd15c7c5@gmail.com>
- <20241009-starqltechn_integration_upstream-v7-1-9967bd15c7c5@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241009-starqltechn_integration_upstream-v7-1-9967bd15c7c5@gmail.com>
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Howard Chu <howardchu95@gmail.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20240705132059.853205-1-howardchu95@gmail.com>
+ <20240705132059.853205-2-howardchu95@gmail.com>
+ <6fe63fa3-6c63-4b75-ac09-884d26f6fb95@kernel.org> <ZtJWEVn8-w07Wm0q@x1>
+ <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org> <ZtYJ0z8f-1jwYSbV@x1>
+ <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
+ <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
+ <ZwYbQswnGHSstClc@google.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <ZwYbQswnGHSstClc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 09. 10. 24, 7:57, Namhyung Kim wrote:
+> diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> index 7c15dec6900d8aaa..b7465a879d8bf416 100644
+> --- a/tools/perf/util/syscalltbl.c
+> +++ b/tools/perf/util/syscalltbl.c
+> @@ -46,6 +46,11 @@ static const char *const *syscalltbl_native = syscalltbl_mips_n64;
+>   #include <asm/syscalls.c>
+>   const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
+>   static const char *const *syscalltbl_native = syscalltbl_loongarch;
+> +#else
+> +const int syscalltbl_native_max_id = 1;
+> +static const char *const syscalltbl_native[] = {
+> +       [0] = "unknown",
+> +};
+
 Hi,
 
-On 09/10/2024 17:09, Dzmitry Sankouski wrote:
-> mipi_dsi_compression_mode_multi can help with
-> error handling.
-> 
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
-> Changes in v7:
-> - fix kernel doc
+provided the error was:
+undefined reference to `syscalltbl__id_at_idx'
 
-The v6 patch was already merged to drm-misc-next, like the following ones,
-cold you send a fixup patch to only fix the kernel doc ?
+this cannot help on its own, obviously.
 
-Thanks,
-Neil
+Checking with the other diff.
 
-> ---
->   drivers/gpu/drm/drm_mipi_dsi.c | 16 ++++++++++++++++
->   include/drm/drm_mipi_dsi.h     |  2 ++
->   2 files changed, 18 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-> index 2bc3973d35a1..5e5c5f84daac 100644
-> --- a/drivers/gpu/drm/drm_mipi_dsi.c
-> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
-> @@ -1520,6 +1520,22 @@ void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
->   }
->   EXPORT_SYMBOL(mipi_dsi_compression_mode_ext_multi);
->   
-> +/**
-> + * mipi_dsi_compression_mode_multi() - enable/disable DSC on the peripheral
-> + * @ctx: Context for multiple DSI transactions
-> + * @enable: Whether to enable or disable the DSC
-> + *
-> + * Enable or disable Display Stream Compression on the peripheral using the
-> + * default Picture Parameter Set and VESA DSC 1.1 algorithm.
-> + */
-> +void mipi_dsi_compression_mode_multi(struct mipi_dsi_multi_context *ctx,
-> +				     bool enable)
-> +{
-> +	return mipi_dsi_compression_mode_ext_multi(ctx, enable,
-> +						   MIPI_DSI_COMPRESSION_DSC, 0);
-> +}
-> +EXPORT_SYMBOL(mipi_dsi_compression_mode_multi);
-> +
->   /**
->    * mipi_dsi_dcs_nop_multi() - send DCS NOP packet
->    * @ctx: Context for multiple DSI transactions
-> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-> index f725f8654611..94400a78031f 100644
-> --- a/include/drm/drm_mipi_dsi.h
-> +++ b/include/drm/drm_mipi_dsi.h
-> @@ -280,6 +280,8 @@ void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
->   					 bool enable,
->   					 enum mipi_dsi_compression_algo algo,
->   					 unsigned int pps_selector);
-> +void mipi_dsi_compression_mode_multi(struct mipi_dsi_multi_context *ctx,
-> +				     bool enable);
->   void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
->   					  const struct drm_dsc_picture_parameter_set *pps);
->   
-> 
+thanks,
+-- 
+js
+suse labs
 
 
