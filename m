@@ -1,122 +1,224 @@
-Return-Path: <linux-kernel+bounces-358801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167739983FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C709983FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C10281668
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E662E282A7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AF11BF818;
-	Thu, 10 Oct 2024 10:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763B11BE251;
+	Thu, 10 Oct 2024 10:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YMROIh92"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GX5kUoT0"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2079.outbound.protection.outlook.com [40.107.93.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00D319E7D0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728556833; cv=none; b=gFS3wKKU/Bh3zOJRzBFcVghLbM5g5ilK7myAoO95mUlHERGr4/Xzl+1kuc46k8yb97DbG7pwWSkxoeKB4WYn40Ep5KtuKxnAU/P8agrA8czrllMxsrlmWbB+/RHQLnJjqCSLOKCNfaF/7Qe/F3O8HuJlbDX2a/glc8oztlp00qY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728556833; c=relaxed/simple;
-	bh=6IZ/lCHicleSJFqXu6KLb1FlJSmDUPAbcpMj5ss5U8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KY8yyCXpn9CsAnuRLT1bgtOqsTiRP6O+Y2uhDtU8Pvz3IpYIRlUItUSI4OTnWsbkkcbXuJQ+h/H7jTxKIcdHJYrzWQcFfN862wZ9abtBEMm6Rcbq62FZkfQsfY6CD6IAq9zZwN6voNDYey5f/wrwaWtTp8LtH2VbfVVA5kpM0Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YMROIh92; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d39d9f782so429088f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728556830; x=1729161630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EBHWiktfVYlgbYifeV/Ct3rZTbpPbZ7HKtEDGENAOyk=;
-        b=YMROIh92o6gbrMISiQEWnoTF+fAPEk4mztfh5XdIIofEx9pgjfm8AfPXQtTrIcF7g7
-         BEdUgI6xK+d/YfSisJoG46bpKZjVh8E5lBychBE0vkq/a/xPMvJfTedJACMr6cvR5Q94
-         iDuNdn9F3dgqzfiiei+Df3TylC0cyqRtqFn9KJQj8G3/Nt9LcVVtqP4bcwwrSd5ukLov
-         413EtHTjcSjlVXFUcl2sM/pGhNhF7WV0qps33abKdUlWkkFJgVpWHPdiIHbQsg9eiMjD
-         NjypqyMSd4bZWHcF4ukm0IgYO4uh4dHQSwZXFi7pcAqCMDcZFO9QgNCd21BkWzA9C7Vf
-         Z+Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728556830; x=1729161630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EBHWiktfVYlgbYifeV/Ct3rZTbpPbZ7HKtEDGENAOyk=;
-        b=w6gr8LQLXBsT8t594QjXp1SYbQLz2hey9LSdiKguYzmEclWW3tBrbFx86IgJnMBilT
-         MXpRrFutCteZRz0QqofLM70xNqsnMErpYLp8pbrFx6gyP9ilYkVcA7gnXV5UTLZS+nAP
-         fdqKn9k4srz3x4E5iltOf0mbjKke/yWr0XQuSok28G7Nb8XNDK5n+cPuv39k5nJ34ZoY
-         q3hQLNoZbcSGqrt9uYzP6VsBxCNH6MuMdmo1quAc+4Rn0lTvMi6t6fHhn4GMNLcpmFFO
-         D69/sjYswNiA2OsoFJW1WLOd5sHGjI3Ost3TIBhC1vy8VSMTqTJT2AVW1IQYhqCrH7Fm
-         EYbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWXkBkXeJ1CksRjGALDc44yjcsdGcIwyhmxHCMtLt1uRRxqD0qWW1NU8qGlPD+a8nv4u2xv2DOPF8iWB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh/gEC67dU7KaBGtjUJehDUx/+d4iiHsNZQNYhZNv7gbnNj2EV
-	wPJeMMnV2PljKJ01DtCAF+sfrkuzxpy5j11BjWnPcmN4iGkD9hyaugZRNWHIRg==
-X-Google-Smtp-Source: AGHT+IFO5jDd08ddK1X0YjR9dIy7JGWXcVcRqZfK2+MjUcvEOY5tKA5RJvpLtMudOT6lSTGNeMHZZQ==
-X-Received: by 2002:adf:ecca:0:b0:37d:4a68:61a1 with SMTP id ffacd0b85a97d-37d4a68621cmr1116060f8f.56.1728556829836;
-        Thu, 10 Oct 2024 03:40:29 -0700 (PDT)
-Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8269sm1183712f8f.1.2024.10.10.03.40.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 03:40:29 -0700 (PDT)
-Date: Thu, 10 Oct 2024 10:40:25 +0000
-From: Aleksei Vetrov <vvvvvv@google.com>
-To: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	akpm@linux-foundation.org, vbabka@suse.cz, willy@infradead.org,
-	hannes@cmpxchg.org, anna-maria@linutronix.de, tglx@linutronix.de,
-	arnd@arndb.de, llvm@lists.linux.dev
-Subject: Re: [PATCH] mm/vmstat: Fix -Wenum-enum-conversion warning in vmstat.h
-Message-ID: <ZwevGZHiXOBqoslA@google.com>
-References: <20240621111604.25330-1-shivamurthy.shastri@linutronix.de>
- <ZwRA9SOcOjjLJcpi@google.com>
- <20241008005136.GA241099@thelio-3990X>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1021B19E7D0;
+	Thu, 10 Oct 2024 10:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728556852; cv=fail; b=ZrXnB2kkD7gu3YUouGR6HnUIVgIjXii4bztYgfxlNPvuJzioQLfhjudsJqHy0qRXF7ztF5pEIQSfiPuxSUuyEKWGxcSp+Foesn4DzHjX83uvAnBCThpnw/gN8DdQ5UoCoCg6VoSiCQGxXfLMc72WWt68DAwi5Rl1eva0Jmcm/74=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728556852; c=relaxed/simple;
+	bh=fup/uH5L/m65+xYIkDfqXr3K1CUNqV61cpf14gyOzcg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=D/GyD5I2nVb9foog6tNCh8xWoT98Fg1ONHWj4eohu5S5VcK6rPe1xdpBv9afZSG3arqHC+IMgA4KTeY4c3QDNy9VIChifD0ed7KfvSuu6NPEywtInq6NTZ2ao6HwaqGPgOmWF0uUJ0XPf8zovL6GouPfPGgn0sY+JPL/28ZR8IY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GX5kUoT0; arc=fail smtp.client-ip=40.107.93.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i+hqcYdJ+sS6LdSRasdrQ7D5BiLXlXzwBu47Oa5tImhwuk/o3MfrTFGyLnh5/droBABtNSYyDz8f4U0VC0O4uQFpmYBnRdEspAQxZDWnzbJGbtO3yJ1QR5Af9W3x5xA18AUHPr9hV+v3Ey/YafBgkrEhOWg0GA5SYInnbOefWczNz4laP+ZP9G5n4UtoHVJNlY8++QbyCqEsdSNlf9ztBvjrvl0Ri7ePxPfyTNFHeNweLtroEwD5LhY3lk6jCFyC0sgT7H2CBtWa2itfmSEEkSNmqU8t4YSzHZFT2GOSVC6Kt0rDXqXp5xZHwhKD9GHvtNqYTs7cCQAP3kc4Rb2XKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dEqUttHxMCtyGB8bIzNaaDG1qRNay5lYLuJZa1cF5PY=;
+ b=w1agm5BNZIBFw27L1DteqS2DuEync6QE4UNm8SnWbHJ+4LOZYErV4Qj/VpoGoWI9z49Tg/sSGUqIf6rFBZZrBPgFqILp6WnCL/VuaHxrYQsBQIX3ebi0HSVUWCxEO6eyFlNAKDE3PW9pkwgYYEC4eem4GBwahLFxCXD8xOwbd2FoZEgjxF3Z+LOMhRGQJ1fAbLVKlmHpaRVMH8Sm1DFl3Vsgb4wD7rIbacop6ihfJjmfqQCVKaG4u48ofJNF0qalY9GjOioZs/0/C1d9lmCafmjfsjSkaFtpBU+foN/da0VWXxNAGLHo8Ei4X6/2SrHqj9lDrSy0cUaeXyecongrdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dEqUttHxMCtyGB8bIzNaaDG1qRNay5lYLuJZa1cF5PY=;
+ b=GX5kUoT0f6gt47sroYArmkzDWn1NOGd+ZCReU/DCyn+R4a/8wwX6fCZHgBnD/8pqVf2UNdIoStecjSeQbGkDnPJO281xTyrgOp9l9OUc0XKoAp1bSmNoE7HRoZlYiippniE791DBwzbK6oULQRWjsJ32KN9pgbekuIV1Xhv2Tv5SaK7+AtEa+TG12r5R56qkijME5wsPBK70/1f9FaaPqd08bPr8XLH+f5h9unFdpiF6EHvP0x6T76fQ/NWPHsBWvx5lTSV8Ms//A6aPBOAIxlUSiRzsQEFmc6zoze0se/uCRrsB4G/RIN9M/qrOREhQnFZ9/Ch2VVloKO/YyBbrGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by DS0PR12MB8072.namprd12.prod.outlook.com (2603:10b6:8:dd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
+ 2024 10:40:48 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
+ 10:40:47 +0000
+Message-ID: <125a37ba-095e-4149-b65d-f318fc45a085@nvidia.com>
+Date: Thu, 10 Oct 2024 11:40:40 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
+To: Sasha Levin <sashal@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ linux-tegra@vger.kernel.org, stable@vger.kernel.org
+References: <20241008115648.280954295@linuxfoundation.org>
+ <50b64beb-ba52-4238-a916-33f825c751d9@rnnvmail201.nvidia.com>
+ <Zwb8t7ngmnVYV9_m@sashalap>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <Zwb8t7ngmnVYV9_m@sashalap>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO6P123CA0060.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:310::20) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008005136.GA241099@thelio-3990X>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS0PR12MB8072:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05f1a1bf-8b7a-4da2-cf72-08dce9180058
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MmplRWdSbGlBcXphcFRUTUZ1ZXc3TUZ6S3RXamZ3QVJsMm5DbHE5cC9PbGRN?=
+ =?utf-8?B?QUtTV0drTXFQWTFTcFdab1hSMURGSm9rZWo5T1ZKcFF5ZEtKQy9hUERld0g0?=
+ =?utf-8?B?TzkxdmcraGV4TEx6NGY4eklTY0ZlSHE5aTNCOEVuNEtwQ3VMWFlkbVRyWThZ?=
+ =?utf-8?B?ck9rdVowYVdMaUM1bU9kSVVuL2tJSDUwTzJSRVVzc2JVcFVuejR5aVdyTmxT?=
+ =?utf-8?B?YlI0YWxvQWRoNXRUUTZmTS9HTGVjbzRNM2ZPYi8zaUcrU0wvYkJTNFkyaVhm?=
+ =?utf-8?B?dmJhb0lzekhEUnhxa1UvMHh1Tk1NL0dUVFVNWFRxYTE5SktrUHFUTVprRnN4?=
+ =?utf-8?B?T3B6R25UOVRmRkNXL0wybjgraUZGakRGKzE0eHNTTnE1b2Y5ajRqdFpiSHlh?=
+ =?utf-8?B?SE80b0lQZ2JUVGp2NFBjUXVFUW9lNjAxWUpKWG1hZ3JNajdhSUlXMkNibmZq?=
+ =?utf-8?B?bENUTlVRZGVtN2UvT29IRCtMVmF6Ni9tVDl6ekE4TlFXVHFBdzFUeExoMVM5?=
+ =?utf-8?B?bkNDelF3R0JZbUN2K1EvdU5pamY2ekRqWmcyc1hOV1RiVjYxNll2QVJrMUlm?=
+ =?utf-8?B?L2ZHVVVJdmVQbGFWSndSa1dTUkVqL2c5NC9WZjJuRndPQ0x0WWxGY3BWV1ZT?=
+ =?utf-8?B?TUc1QnppOVdvby96VE9CMmxjTkpNMVAvbkErTnhBa3cwOU1GRU9QVSs5c1Ax?=
+ =?utf-8?B?dU11TUlzbWJUYUduS2ZuVDAyU2pvRXgrZGZFVlVXMjBuZEtWOUZpTVZ0QmJD?=
+ =?utf-8?B?NG5UbkIwTFJoZyttckp1OGE5TjEyeFpZMnFIVDlHNC9rZUtaTm50ak1UVTdO?=
+ =?utf-8?B?WlNWc24zTkVud1ZMNEs3MjIreldVUFpXYjYrZnlweE9GbzYwODE2VTlLNWxS?=
+ =?utf-8?B?QXp1RnJ6Zk9YZVh3R2RYT3pmeXFVeFNTNlVwWjVjZStZU2drRHFzK1Q5bjRN?=
+ =?utf-8?B?cjcvdlZXZWhCMmtyYnBDalRnZUtSeG5nV0NEMnZFa1V2RVJBd2ZUT1BLanZH?=
+ =?utf-8?B?R0QvcTdOb2J2alVPNmFEbDZhSm9IdmN1SFltN2I2K1lIazl4VlY3Ykh1ODFn?=
+ =?utf-8?B?QmhEajVtR1VqMXloYllnbDlVVG4xc2xXM0xXeW01cDBQMlZ5N05PdStxcC9E?=
+ =?utf-8?B?eHNncUtYbnRweVR5aUtzS2E1c2dUS0tjMVhXc1ZkTmpVU3lwSE1GQ1dnQXFv?=
+ =?utf-8?B?Tms2ZExuUDExdFJLcmc1Y24xc3lnT2t1S0Y2RmZHaHkxZzNwSnloRUwzL0dC?=
+ =?utf-8?B?REtKRWM2Q1pETmFYUEcxVzVYOS9WMTlnMzFmaGtSSDJpUUxNQTV2cFpkTUtt?=
+ =?utf-8?B?UzZ4Y3FFK0k4M1h2NGJ0UVF2WVpOZ3NabW5tTmo0L0ZFUFltRjJDallHakUw?=
+ =?utf-8?B?ZmNvMTRiL2tsMmZmaDJRODRoUC9tOHhmY25nUEZGRm1FRStMdGZZeXNmb096?=
+ =?utf-8?B?YjR2VXRFUkEvc3dGd01kOWxNS0J4dFNiM1hZakJmcGlVT3dKQmROaGdrVWdQ?=
+ =?utf-8?B?VEI2bi9jMnJDdzludmlqamxVZzVDeml3bmpWaUZuTVF1VU5kWUltNGlNQWdN?=
+ =?utf-8?B?ZkpVOFpGWFArRlVTRHRVN2N6cVU4NG1xd1Y2RUpUVWV3MnYydS95ejNBL0ty?=
+ =?utf-8?B?OXl1YlhURlJrNW1MVkY2Uzl2cnFnUFRONzVRS0Iya0FROTYzYlYyVG80MFM5?=
+ =?utf-8?B?c1lBbmpxbU9EYnJBbGk2RWk0VlAwUDFjTVZ4N2dDdFN3WFlJMWkycDJBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1BPQmQ4MzNyR1RSTDVNVnkvS3EyTjgrU1FzeEZxZkVtZHVzSFpZUmdVeHFW?=
+ =?utf-8?B?anZzcmZTVGN5RmZYRmRkMTFoWW1hVG9sSURmNHhEMnZtOUVJLzhqai9Ta0dz?=
+ =?utf-8?B?Tkd3TUlac3EvTXVscUpleVU2cDFOZFJqZXFycXNXV0VBR04yVEY0eWJkUWpD?=
+ =?utf-8?B?dXZPZUltaXFLQWlJUHo0M2U5ZXUwRktOcWFjNlIzbmltcWdYSHNUK0UrLzJq?=
+ =?utf-8?B?U3NSUlAwRHVmQ3d6QUpWdkcvUFlaa1ZReWQxSWk2NCswbHNuZEIzbm5FMkRk?=
+ =?utf-8?B?VGoxcUExenVLcFpJRkVkRWpjL3prZTdKYStkMWdPYkw3S2xpWUUxcnpETzFo?=
+ =?utf-8?B?dW9lZlN1Z01wMmdSSi9Sc0xYRUZKU1J5eWxnTGlPeElxTEwzbGUwaUt2SVFv?=
+ =?utf-8?B?eDZWVGo3dW9wWE14MUZzZ2dTeG9QQWh0VWM5N2tVUjdadGluZzZaZm1FU2lQ?=
+ =?utf-8?B?NjdHYVpCYTRZVU56Rlc4OGpPSTFMRldibkxMSmRzbTJYRTFuV2poV00wU014?=
+ =?utf-8?B?YzRNRGJpRG1uSkVpVUJFc3hTeEJxQy9aQjF5ME05b2JkMkszVFBWTUxlcFFM?=
+ =?utf-8?B?eFEya0NFREhZdU5vaXRGU0I1aUtNNVQxN3hVVFU2SEMrL1pSSXZSRy9ldXR4?=
+ =?utf-8?B?cklSMFphbXRtTWZPaGtMd1pHS09Ja3o0MWFDZE1LcXZEaWdCZGRTVWljQnB6?=
+ =?utf-8?B?ZmZnSnpzcS9DQmREcCtHMDRnTDVEOG9VMmNqczNENTBCM2V3YUtSZ1dmWTlV?=
+ =?utf-8?B?VEg5eHlRSEVnZjNVOWU5OUFZTTNuTWZseG80SU9Oc1JHWDc0aVV4UUNLOTNl?=
+ =?utf-8?B?L05idklHTjdqd28rYzFVMjhkbzEyNGxOVGh4NkdvSEJDVGZmNEFxL2htUE9I?=
+ =?utf-8?B?Szg1a1I1TWJiNkg5VGVFbVV4elJwbjY5Um1WTWFrV0xPNzMwQWJmcTduLzU1?=
+ =?utf-8?B?OVY5cFVkZnBYUXNiTVNQQklVSG5mTTFKQnA0RmNSaDBTc1Fqc2p3NG9kMFFO?=
+ =?utf-8?B?YVRzcndYbE5aME90WUUzMzl1NWtQcDZISHB2VnNSNS8xTElPNTY5dGNTNWd4?=
+ =?utf-8?B?ZXh4Yk93dnJwNy9mQm8xeGg2UjF4Q2VLVlNmRVJDc1JZSDQ0eUxxN3M2aDJK?=
+ =?utf-8?B?SHFTaExmbDJiTy9POHJoR1gzNUxWY1RuR3N3UE9iSEhhN2JqUEc4dlA4dDhs?=
+ =?utf-8?B?NC9adHVKYzliTm1IQ3gvREU2ekVOSnZpeGVoditLZUxGYm1FM29pWHZoV0Nq?=
+ =?utf-8?B?anZvUFJPWVhwUC85RmFmeG9kMUw4WnpvdlRVcUV1cEJvR2wzRm9LYjlKb25a?=
+ =?utf-8?B?L0JMblhkd1F0Zk9WVk9NQWhwd1M2TERhODBDdy9tbDdqTDRabmV5SENUQito?=
+ =?utf-8?B?T2FqeElWbmwrRkt2S2dTYjJ2RExKNm1QQ1ZkTDBsUnREMGNVZ05Wb3ZZMFRy?=
+ =?utf-8?B?ci9GVUk4WnRJZkVDWm1ld29FMG93MzJ5UnZyNUxUSUJxNnkwVUdET1JveDl3?=
+ =?utf-8?B?NXhCMTJ0blU5WS9uVXI0RldwZ3huS3ZYcTNLU3ZtTnFlSVloZi96S3d6RFZx?=
+ =?utf-8?B?V2VVemRBbkRyNWFZcVZFYXhHK0FqajVCUGx6aFI0VXMzK1E1SkduTDNyZ2la?=
+ =?utf-8?B?bmgxRVF3YXBkUHdlSk9VQ2FaVi9vWFJUTWNDR29HVlU0UVNvb3FWMVlsSUJX?=
+ =?utf-8?B?WEhKbXpkSE96dmMzVEl2QWlsNktMZ0VjeDhYcUZJdjVFc3krcDdodTllRzhu?=
+ =?utf-8?B?b0pOemJnMVBmNjZPTHhSd2tLRnBIakRseUFXRTN3Wmo3c3JhNWJnbE13MzU3?=
+ =?utf-8?B?THV3dWpzd0hlT2dIL3RCUjRpcFVDN2dGd0FKZlBabElFMWhLNUlpWUFpc3lN?=
+ =?utf-8?B?MHdodWN0ZXAwUy9vSEJzSDFIbVM5TmFpbzNzYUlmUkFJZ2x4T2d3YnUrWGx6?=
+ =?utf-8?B?UFBKaVVrWHhISUEwVjk4N21BL0FEWUVvNld4YkJDMEpwZ0IrTW9QbndFQmtV?=
+ =?utf-8?B?UmdlUlBxU3ovNkZ6VXVqQXY4Y3RoZmFDb2VaRlQvVkNQZXlaeHVUM2hpTGxP?=
+ =?utf-8?B?cUVGRUVsSW9LcXBXRERMY1BKY29zbUMzZzIzcW9KSnpYa2NvRlJ2cVp5VW9J?=
+ =?utf-8?Q?GMowssVT5NLuDd3waZZnr2njL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05f1a1bf-8b7a-4da2-cf72-08dce9180058
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 10:40:47.6578
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: R2UmxSJ/YZrcPNiLaiGT8QUToX2TqkZM573CTpKwKZmnkDeaLA3oXU0VhPPgCJgDxjvWOED9IdXkhO6m6DWrYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8072
 
-Hi Nathan,
 
-On Mon, Oct 07, 2024 at 05:51:36PM -0700, Nathan Chancellor wrote:
-> For what it's worth, I never really saw Matthew's comment around what
-> value does this warning provide addressed. I was the one who originally
-> moved it into W=1 at the request of Arnd because he felt that instances
-> of this warning could be bugs and they should be audited.  However, I
-> have not seen many instances of this warning pop up in new code through
-> 0day build reports and the ones that I have seen seem to be intentional,
-> as they are using enums like integral values, such as here. If that is
-> just going to result in a bunch of patches like this adding unnecessary
-> casts, I think it would just be better to consider disabling this
-> warning altogether or at the very least, moving it to W=2 (which is for
-> warnings that are noisy but might contain bugs), since more people are
-> using W=1 as their normal build configuration nowadays.
+On 09/10/2024 22:59, Sasha Levin wrote:
+> On Wed, Oct 09, 2024 at 07:58:55AM -0700, Jon Hunter wrote:
+>> On Tue, 08 Oct 2024 14:01:03 +0200, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 6.10.14 release.
+>>> There are 482 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>>     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
+>>> or in the git tree and branch at:
+>>>     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> All tests passing for Tegra ...
+>>
+>> Test results for stable-v6.10:
+>>    10 builds:    10 pass, 0 fail
+>>    26 boots:    26 pass, 0 fail
+>>    116 tests:    116 pass, 0 fail
+>>
+>> Linux version:    6.10.14-rc1-gd44129966591
+>> Boards tested:    tegra124-jetson-tk1, tegra186-p2771-0000,
+>>                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>>                tegra20-ventana, tegra210-p2371-2180,
+>>                tegra210-p3450-0000, tegra30-cardhu-a04
+>>
+>> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Did this one not fail on the same cgroup issue as 6.11? we had the
+> offending commit in all trees.
 
-If time has proven that this warning has never found an unintended enum
-conversion, then it is worth to disable it for everyone. As you said in
-the original thread ([PATCH] kbuild: Disable two Clang specific
-enumeration warnings), W=2 is not run by any CI, so I would prefer to
-disable it completely.
 
-Alternatives considered:
+I did not see any failure there. However, same tests are run and so it 
+should have. I can run it again to double check.
 
-* Enable -Wenum-enum-conversion only for 0day build reports through
-  KCFLAGS. It will eliminate noise for regular users while keeping
-  developers informed about new instances of this warning.
-* -Wno-error=enum-enum-conversion to keep warning but don't block
-  compilation for CONFIG_WERROR users.
+Jon
 
-Arnd Bergmann, what do you think? Have you found it useful after all?
+-- 
+nvpublic
 
