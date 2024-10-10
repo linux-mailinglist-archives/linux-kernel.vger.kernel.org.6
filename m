@@ -1,93 +1,90 @@
-Return-Path: <linux-kernel+bounces-359095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D8D99875A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:16:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56225998763
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CF2DB213A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01E1C1F234D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267611C9B70;
-	Thu, 10 Oct 2024 13:16:26 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7921C9B88;
+	Thu, 10 Oct 2024 13:18:03 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C471DA5E
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889ED19E7D0;
+	Thu, 10 Oct 2024 13:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566185; cv=none; b=ddn6GnZnt7oR5SkiraNybwl5PzwWT44K7AzO1OB02dUqxkgZM2wHJrjiOnv+oKLuP3u5f9JUo5AMIWAk/7k8jSPqFhS9KEz1hCjd48bngu9JC3HrqjHFCbXFRouLEe6FQOf1+ymUd1tBygNrBQfk5f1Ur8O1/GHk7W8JqYxn/co=
+	t=1728566283; cv=none; b=pSheX+/pSTz24+dbnVCWMmjJWtPIx769diJy2QMCzMGWht+j3Cb1HDv9TWMFJXWW2Dg9H+1QEitAt3NG8q9nLczomtaFWL8eI+U1+F0BgCZ7iKWTlsMgK4LIfs3GtSdQ1mQNGAC8Ec/pKbE8KJYOLuVYnt1JR9Xh7Ilfka29zIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566185; c=relaxed/simple;
-	bh=E6uacqeixF45ugdAtEZs4daBmux+J2KkjiO1aT6eHNc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=nodudeJY+J8c8JgsMHns8q+DvcKkSibN8BB+a9QPyqY8qXHGhuAxqnsTiIIFDDqGh3OT9yL7/sbSy1gvto8ijWSuV8bWoJbfuEy4NOZ/XnS6HTzC7i9OEM73d8S9eRhamHW9Dt6UkKJlVgd3f3DqZyX9gfldWRMe84f4uHNxraw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-285-fnxVz_etOa6u0sBWrM1T3Q-1; Thu, 10 Oct 2024 14:16:21 +0100
-X-MC-Unique: fnxVz_etOa6u0sBWrM1T3Q-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 10 Oct
- 2024 14:16:20 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Thu, 10 Oct 2024 14:16:20 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Christian Brauner' <brauner@kernel.org>, Aleksa Sarai
-	<cyphar@cyphar.com>, Jonathan Corbet <corbet@lwn.net>
-CC: "luca.boccassi@gmail.com" <luca.boccassi@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"christian@brauner.io" <christian@brauner.io>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "oleg@redhat.com" <oleg@redhat.com>
-Subject: RE: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Thread-Topic: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Thread-Index: AQHbGvgfBXWpIVKuzEWs5ASg60jgibJ/9Svg
-Date: Thu, 10 Oct 2024 13:16:20 +0000
-Message-ID: <f25c1e8cbad04c4fbc5b2f5e41ea6a59@AcuMS.aculab.com>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <87msjd9j7n.fsf@trenco.lwn.net>
- <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
- <20241010-bewilligen-wortkarg-3c1195a5fb70@brauner>
-In-Reply-To: <20241010-bewilligen-wortkarg-3c1195a5fb70@brauner>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1728566283; c=relaxed/simple;
+	bh=pmZkziTP4H04NCTyV/VABVeRU1eoGGt+z+UFFzzgfWs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R+j8yMM/jOct6Pib/H6tqk8m7aew92NhOtI7rnDEL+mrzkCZJ0nUs4ck7+TksrXik3XNQD7PEvZxB8c1/QN7Re1NV0knLrQMcbl2E9CgAcDOD9GDwdIxk9pKMha4JKL+oLKMfXXhBHCa9KmmivMi9k5sksgPQ709QU84OKJisOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1syt3E-000000003Js-3884;
+	Thu, 10 Oct 2024 13:17:56 +0000
+Date: Thu, 10 Oct 2024 14:17:53 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: phylink: allow half-duplex modes with RATE_MATCH_PAUSE
+Message-ID: <d6c1a15cdf2596c2f68eab912c79635854cede9b.1728566181.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Li4uDQo+IHBpZGZkX2luZm8gb3ZlcndyaXRlcyB0aGUgcmVxdWVzdF9tYXNrIHdpdGggd2hhdCBp
-cyBzdXBwb3J0ZWQgYnkgdGhlDQo+IGtlcm5lbC4gSSBkb24ndCB0aGluayB1c2Vyc3BhY2Ugc2V0
-dGluZyByYW5kb20gc3R1ZmYgaW4gdGhlIHJlcXVlc3RfbWFzaw0KPiBpcyBhIHByb2JsZW0uIEl0
-IHdvdWxkIGFscmVhZHkgYmUgYSBwcm9ibGVtIHdpdGggc3RhdHgoKSBhbmQgd2UgaGF2ZW4ndA0K
-PiBzZWVuIHRoYXQgc28gZmFyLg0KDQpJIGRvbid0IHRoaW5rIGl0IGlzIHdpc2UvbmVjZXNzYXJ5
-IGZvciB0aGUga2VybmVsIHRvIHNldCBiaXRzIHRoYXQNCndlcmVuJ3Qgc2V0IGluIHRoZSByZXF1
-ZXN0IChmb3IgdmFsdWVzIHRoYXQgYXJlbid0IGJlaW5nIHJldHVybmVkKS4NCg0KVGhhdCB3b3Vs
-ZCBsZXQgeW91IGFkZCBzb21lIG11dHVhbGx5IGV4Y2x1c2l2ZSBvcHRpb25zIHRoYXQgdXNlDQp0
-aGUgc2FtZSBwYXJ0IG9mIHRoZSBidWZmZXIgYXJlYS4NCg0KPiBJZiB1c2Vyc3BhY2UgaGFwcGVu
-cyB0byBzZXQgYSBzb21lIHJhbmRvbSBiaXQgaW4gdGhlIHJlcXVlc3RfbWFzayBhbmQNCj4gdGhh
-dCBiaXQgZW5kcyB1cCBiZWluZyB1c2VkIGEgZmV3IGtlcm5lbCByZWxlYXNlcyBsYXRlciB0byBl
-LmcuLA0KPiByZXRyaWV2ZSBhZGRpdGlvbmFsIGluZm9ybWF0aW9uIHRoZW4gYWxsIHRoYXQgaGFw
-cGVucyBpcyB0aGF0IHVzZXJzcGFjZQ0KPiB3b3VsZCBub3cgcmVjZWl2ZSBpbmZvcm1hdGlvbiB0
-aGV5IGRpZG4ndCBuZWVkLiBUaGF0J3Mgbm90IGEgcHJvYmxlbS4NCg0KRXNwZWNpYWxseSBzaW5j
-ZSB0aGUgYnVmZmVyIGlzIHVubGlrZWx5IHRvIGJlIGxhcmdlIGVub3VnaC4NCg0KCURhdmlkDQoN
-Ci0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJt
-LCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChX
-YWxlcykNCg==
+PHYs performing rate-matching using MAC-side flow-control always
+perform duplex-matching as well in case they are supporting
+half-duplex modes at all.
+No longer remove half-duplex modes from their capabilities.
 
+Suggested-by: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/phy/phylink.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 4309317de3d1..24a3144e870a 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -599,15 +599,8 @@ static unsigned long phylink_get_capabilities(phy_interface_t interface,
+ 		 * max speed at full duplex.
+ 		 */
+ 		if (mac_capabilities &
+-		    phylink_cap_from_speed_duplex(max_speed, DUPLEX_FULL)) {
+-			/* Although a duplex-matching phy might exist, we
+-			 * conservatively remove these modes because the MAC
+-			 * will not be aware of the half-duplex nature of the
+-			 * link.
+-			 */
++		    phylink_cap_from_speed_duplex(max_speed, DUPLEX_FULL))
+ 			matched_caps = GENMASK(__fls(caps), __fls(MAC_10HD));
+-			matched_caps &= ~(MAC_1000HD | MAC_100HD | MAC_10HD);
+-		}
+ 		break;
+ 	}
+ 	case RATE_MATCH_CRS:
+-- 
+2.47.0
 
