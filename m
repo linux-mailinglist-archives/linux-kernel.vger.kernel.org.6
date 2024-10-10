@@ -1,155 +1,182 @@
-Return-Path: <linux-kernel+bounces-360040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03F99993C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2ED9993CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9EE91C231E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713151C231C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52ED1E1A10;
-	Thu, 10 Oct 2024 20:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374561E1A33;
+	Thu, 10 Oct 2024 20:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b/UnzDlh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lqxbGS6T";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b/UnzDlh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lqxbGS6T"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MKWXOq6M"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7CC1D041A;
-	Thu, 10 Oct 2024 20:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AED1D31BB;
+	Thu, 10 Oct 2024 20:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728592739; cv=none; b=ENQy7sk493RewpcMyq+Rt0sPrJXUkDIWNwBJ+DyVk9FDyyAl+WCfD0JzUrPXzubVrdqbFEneTmrNjYnKefbtKJqXw94GVpSKePpPdYuov/L6NifzUHT30i6YDkLJRS+SEHPqKcYFA7qfXQ/dTKPLVUA08XQ8g/TV74ecYFSIRHk=
+	t=1728592800; cv=none; b=g+yiAPDy17VwreJJ7PqtUOFXGZ31vyi9620ZrfWu+ZgVVofXyZ7Y/8sTBy3mQKNgKQUNRWXDzQf6ArjRo6PjibMaqPVVnkqpofart9d/Dmte/uBUAc8UaYj+o921xYlAe6y7vKZwE+lzzWf4Cf2wALMGPNuNILw0s8Hl6b9Ginc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728592739; c=relaxed/simple;
-	bh=tAzSba8fi0vSD9nfCa0OsDhhkMUxr+cxCTAKKbZbKAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3LISwWuA5bAyFduFYt+bvt1wOU5+bErziTtvcM/NJknQBClVeckKNdxkBR53vDoXOVa1VRewVjzqD6/yDlqL7Qnor4h/xcoVOGzrNrXWgC+yIuy3Bvbw51IVtsMluunmDO6/P5vlNjGnBDbnDlvKaokCUdZDeDSRENRIRjfNuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b/UnzDlh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lqxbGS6T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b/UnzDlh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lqxbGS6T; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ACFB521A90;
-	Thu, 10 Oct 2024 20:38:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728592734;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PQ6HQ25L3Z5f5L0A1ffhLg/EnLPyof/1Rm2rAB6KxaA=;
-	b=b/UnzDlhqh3WSFCPYWPJH5Oog6B/yTI3hunC97q2E05N7JWeukDOZjCZIHILDIDCMtGDOd
-	F4HVQtP7i0MQGD1KTQhK76e4xgQUFb10PCtrBk95oRz4PAPuyKEbLgBWFqs9orZFjmiN3+
-	vc9Yoats6htjaESCdzl7y35qKCpqG7g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728592734;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PQ6HQ25L3Z5f5L0A1ffhLg/EnLPyof/1Rm2rAB6KxaA=;
-	b=lqxbGS6TwHLVcnPweL/Q3mi1UTyQbUyPDxqcKeukBOGj+yMhMVirDt+WXiETmmg2O6l7df
-	nyjfOr5UrKVZikBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="b/UnzDlh";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=lqxbGS6T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728592734;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PQ6HQ25L3Z5f5L0A1ffhLg/EnLPyof/1Rm2rAB6KxaA=;
-	b=b/UnzDlhqh3WSFCPYWPJH5Oog6B/yTI3hunC97q2E05N7JWeukDOZjCZIHILDIDCMtGDOd
-	F4HVQtP7i0MQGD1KTQhK76e4xgQUFb10PCtrBk95oRz4PAPuyKEbLgBWFqs9orZFjmiN3+
-	vc9Yoats6htjaESCdzl7y35qKCpqG7g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728592734;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PQ6HQ25L3Z5f5L0A1ffhLg/EnLPyof/1Rm2rAB6KxaA=;
-	b=lqxbGS6TwHLVcnPweL/Q3mi1UTyQbUyPDxqcKeukBOGj+yMhMVirDt+WXiETmmg2O6l7df
-	nyjfOr5UrKVZikBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89DE01370C;
-	Thu, 10 Oct 2024 20:38:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PqAZIV47CGefVQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 10 Oct 2024 20:38:54 +0000
-Date: Thu, 10 Oct 2024 22:38:52 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Sterba <dsterba@suse.cz>
-Subject: Re: [PATCH] kernel/range: Const-ify range_contains parameters
-Message-ID: <20241010203852.GU1609@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241010-const-range-v1-1-afb6e4bfd8ce@intel.com>
+	s=arc-20240116; t=1728592800; c=relaxed/simple;
+	bh=gvg/+uA28ZLCDxBOzLVIsehg+7tsWeOs9wRkN5pt4cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ib8gUo8fCdxXNjvTodGuinl0w6refd3Yrw+8rPY295kyTyn8mc/m1YRI5gqtz6gil4o6KEBRWuVHHV6MUeGCDjxVpCsSXuL2KiQlVDComHw2wmkz1oYaL35Fd4q7Bhox/EFcarbpsJhuiIjN1lETQ8UO12MiaNcDN1LjpAXOwhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MKWXOq6M; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AC8lBe022368;
+	Thu, 10 Oct 2024 20:39:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZeSNBww/XXF1XIhKa7vJtp6lzRT7/TSjC/iLBaxRmCM=; b=MKWXOq6MUPH2GzoJ
+	T7n1GaCYoDV+VUQRQ+CqZIuMFybXojGy92tRS5yRYeNotcAXPrxsl64UqbHA5wcm
+	klz5hBZ3GFa6RxAeZIhdQ1SlYHqMqJ11jbr/HGUcmat7rsCcn5BCgwIBJaxxNlYm
+	4qWJwC5s4KukaLiY0/Ld+4gx/nMLm4jJWA0lnnhfsAl0Yi1idfnmGXl46V/m/8h0
+	A219vdQZ4wubvjyvZc86erOIdEqANUZk3PTwxwsZ7ICRlzf5rz4/qY1ES57lb5yK
+	TUfiIq5g0MTCXlaipeFBwqjk74bJIplFjhIL3HC83/EQD/0pHH58TB8H3cgkQub7
+	o1Dimg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xptupe5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 20:39:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AKdovH023358
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 20:39:50 GMT
+Received: from [10.110.112.240] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
+ 2024 13:39:49 -0700
+Message-ID: <1ca7b2e0-b479-4987-bce2-60208a917b8e@quicinc.com>
+Date: Thu, 10 Oct 2024 13:39:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010-const-range-v1-1-afb6e4bfd8ce@intel.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: ACFB521A90
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:replyto,suse.cz:dkim,suse.cz:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] PCI: Enable runtime pm of the host bridge
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Marek Szyprowski
+	<m.szyprowski@samsung.com>
+CC: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        Bjorn Helgaas
+	<bhelgaas@google.com>,
+        <manivannan.sadhasivam@linaro.org>, <Markus.Elfring@web.de>,
+        <rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_vbadigan@quicinc.com>, <quic_ramkri@quicinc.com>
+References: <20241010192553.GA574352@bhelgaas>
+Content-Language: en-US
+From: Mayank Rana <quic_mrana@quicinc.com>
+In-Reply-To: <20241010192553.GA574352@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _4Gapw19vlxi7ou0gaE5lSOKVKvK3K1L
+X-Proofpoint-GUID: _4Gapw19vlxi7ou0gaE5lSOKVKvK3K1L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100135
 
-On Thu, Oct 10, 2024 at 10:24:42AM -0500, Ira Weiny wrote:
-> range_contains() does not modify the range values.  David suggested it
-> is safer to keep those parameters as const.[1]
+Hi Bjorn
+
+On 10/10/2024 12:25 PM, Bjorn Helgaas wrote:
+> On Wed, Oct 09, 2024 at 08:10:32PM +0200, Marek Szyprowski wrote:
+>> On 03.10.2024 08:02, Krishna chaitanya chundru wrote:
+>>> The Controller driver is the parent device of the PCIe host bridge,
+>>> PCI-PCI bridge and PCIe endpoint as shown below.
+>>>
+>>>           PCIe controller(Top level parent & parent of host bridge)
+>>>                           |
+>>>                           v
+>>>           PCIe Host bridge(Parent of PCI-PCI bridge)
+>>>                           |
+>>>                           v
+>>>           PCI-PCI bridge(Parent of endpoint driver)
+>>>                           |
+>>>                           v
+>>>                   PCIe endpoint driver
+>>>
+>>> Now, when the controller device goes to runtime suspend, PM framework
+>>> will check the runtime PM state of the child device (host bridge) and
+>>> will find it to be disabled. So it will allow the parent (controller
+>>> device) to go to runtime suspend. Only if the child device's state was
+>>> 'active' it will prevent the parent to get suspended.
+>>>
+>>> It is a property of the runtime PM framework that it can only
+>>> follow continuous dependency chains.  That is, if there is a device
+>>> with runtime PM disabled in a dependency chain, runtime PM cannot be
+>>> enabled for devices below it and above it in that chain both at the
+>>> same time.
+>>>
+>>> Since runtime PM is disabled for host bridge, the state of the child
+>>> devices under the host bridge is not taken into account by PM framework
+>>> for the top level parent, PCIe controller. So PM framework, allows
+>>> the controller driver to enter runtime PM irrespective of the state
+>>> of the devices under the host bridge. And this causes the topology
+>>> breakage and also possible PM issues like controller driver goes to
+>>> runtime suspend while endpoint driver is doing some transfers.
+>>>
+>>> Because of the above, in order to enable runtime PM for a PCIe
+>>> controller device, one needs to ensure that runtime PM is enabled for
+>>> all devices in every dependency chain between it and any PCIe endpoint
+>>> (as runtime PM is enabled for PCIe endpoints).
+>>>
+>>> This means that runtime PM needs to be enabled for the host bridge
+>>> device, which is present in all of these dependency chains.
+>>>
+>>> After this change, the host bridge device will be runtime-suspended
+>>> by the runtime PM framework automatically after suspending its last
+>>> child and it will be runtime-resumed automatically before resuming its
+>>> first child which will allow the runtime PM framework to track
+>>> dependencies between the host bridge device and all of its
+>>> descendants.
+>>>
+>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>
+>> This patch landed in today's linux-next as commit 02787a3b4d10 ("PCI/PM:
+>> Enable runtime power management for host bridges"). In my tests I found
+>> that it triggers a warning on StarFive VisionFive2 RISC-V board. It
+>> looks that some more changes are needed in the dwc-pci driver or so.
+>> There is a message from runtime pm subsystem about inactive device with
+>> active children and suspicious locking pattern. Here is the log I
+>> observed on that board:
+>> ...
 > 
-> Make range parameters const
+> Thanks very much for the testing and report, Marek!
 > 
-> Link: https://lore.kernel.org/all/20241008161032.GB1609@twin.jikos.cz/ [1]
-> Suggested-by: David Sterba <dsterba@suse.cz>
+> I dropped this patch from the PCI -next for now.  We can add it back
+> with the fix squashed into it after the complete patch is posted and
+> tested.
 
-You can drop the above line.
+I just sent fix for above issue as
+https://patchwork.kernel.org/project/linux-pci/patch/20241010202950.3263899-1-quic_mrana@quicinc.com/
 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Can you please consider to include both changes if proposed fix looks 
+good and if feasible ?
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Regards,
+Mayank
+
+> 
+> Bjorn
 
