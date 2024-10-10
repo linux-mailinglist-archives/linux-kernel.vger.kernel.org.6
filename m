@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-359601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE74998DDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:54:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F6C998DDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528D51F24D1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 667D1282861
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C0A199939;
-	Thu, 10 Oct 2024 16:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6882219994D;
+	Thu, 10 Oct 2024 16:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="WU/QxFGQ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="UdBpcmcH"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F519924E;
-	Thu, 10 Oct 2024 16:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7368719924E;
+	Thu, 10 Oct 2024 16:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728579288; cv=none; b=B4+X6LIf5er7m/acUM+Fy0C8KH8H4Tom9QNDJo1MtXPE8BTZV0ufYnAeu9H1rZo1JXMBPC67ahESDqGnzRW7M3inG4pZ6tAuYu736txaMN6WdO0fb77u/aL6VjL53mABACiK/wBSuz2RHYKjd7J9m/oxN98dwFhWgUkKapQ7pSM=
+	t=1728579345; cv=none; b=Kil4bvkwuBHSXODVI1p7Evm+wt2JVjIUw2OCc3AQ5DRjbZrRkezXgOxqwk4IT+c4hPbpdFeQ9Nyy6m/2xUpKdXHeI4Ec9kKnxeceQjyvDOBR12cm0kmF/0e9RiusknbCGaYf9+T/svVySAookBF5kkCnRpP1X7IN+DF/tsBzjDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728579288; c=relaxed/simple;
-	bh=W7Ll6piEDyX0bG2FVgt0Bklhp0ipwm36D8XfHAUQ+V4=;
+	s=arc-20240116; t=1728579345; c=relaxed/simple;
+	bh=jXgeeFd/l8SrKbOPXwTEPBZaNtNSE0z5v0EY1LXyEVc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lVL4IQhVmHSLxbYUWsn7E98dmLoeHZ3UDUOnAHuEHm3mv2WBTCeN4CPQwtA3mnCRWLV3YVhKPZu2bsOkZvcYltz1AWQLUrQpbeXTI7RrxQpmg4DiykVzTGwcNEF6TZOwgomhTxA8u12tGl7AvKN3mmWsGW8Mj0L5PgLS361iHnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=WU/QxFGQ; arc=none smtp.client-ip=212.227.17.21
+	 In-Reply-To:Content-Type; b=B003ErrRvdt0RHew/3rAOqlne4tkplBstmylsjMrTJ4twjTvw2YLzljijt+V1TOQjGL2bD7DiNyv7+s0F3IXZnODh7I1MVY3ZZoZkWd3yyhJ9NLJCQukgFbXGWHNGpR5+0Ar8MKJFS27CWIadd2/ib62kFiKBVg7QML6zqUO1jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=UdBpcmcH; arc=none smtp.client-ip=212.227.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1728579275; x=1729184075; i=wahrenst@gmx.net;
-	bh=W7Ll6piEDyX0bG2FVgt0Bklhp0ipwm36D8XfHAUQ+V4=;
+	s=s31663417; t=1728579336; x=1729184136; i=wahrenst@gmx.net;
+	bh=jXgeeFd/l8SrKbOPXwTEPBZaNtNSE0z5v0EY1LXyEVc=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=WU/QxFGQDQvsLIQdMcvZWC5rlDJ2mMde/DmSIeJevpNqMkMmfs0QGKZ5ohzjT9jA
-	 MnDy3ky1k+sMTZNeplAe/BTSWzbG/fUmQHljHgQj0Fm9nju8hk+xQQK45ndOE1LiV
-	 U54h9M2MsObEdk6AvPVYcdjwdMMlnmwiUSIx2UpfYUe7J6ST3SBkdeksRVu36WN85
-	 0yih6oFB4qqn2hzl0gJBKtrfCXw4t7K16PLjWARmxt8+tdChOgrBZ7POqd6Ffsw5h
-	 86VELK4VVayinb/M+E1fNGNt6cs71FLO3liWWqQth4K+dy8H2dSyGjeIXdiEEB/Vj
-	 LsCZT/46OirYVlTenA==
+	b=UdBpcmcH5FvNYm7GpaJAhiAn5IQi4QS1liHx6PMRdVV+AuF0fD4GuXm6OZ+K8B0x
+	 ZJYG81GDQ+rB54WoWyoaE6v1Nef93FklqDcPvnh8SrbUwS2TUCGQDKmenXn0SZ2Sl
+	 rVhCxYWBQw24Sfo8qNg5NMxsQPIDzZnnNqzVMJETTnURuyCLi1Nn0pcqo/rfmKFZk
+	 K0rcKd+CdtTNWFIsgmUNMa9cau0be8R/ap2ZLJ4grSF9vKQm3LEg9d1TbQAuMQZqU
+	 TN3VGMrBkcd41VXE5AE05iF3G7oKnuZqnyY9apORT2b83D7nreejFYQwUQF549/zy
+	 akbcllepzYjT1NX7VA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MKsnF-1tFmze0USD-00Q5ul; Thu, 10
- Oct 2024 18:54:35 +0200
-Message-ID: <420fbb40-db13-4907-b1b8-c0755fd0c2b2@gmx.net>
-Date: Thu, 10 Oct 2024 18:54:34 +0200
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N5mGB-1u1pJr0JB5-0134uJ; Thu, 10
+ Oct 2024 18:55:36 +0200
+Message-ID: <7ff068d6-dcf3-44a3-895b-2db713a08f45@gmx.net>
+Date: Thu, 10 Oct 2024 18:55:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,8 +57,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] staging: vchiq_core: Fix white space indentation
- error
+Subject: Re: [PATCH 2/5] staging: vchiq_core: Indent static_assert on single
+ line
 To: Umang Jain <umang.jain@ideasonboard.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
@@ -67,42 +67,40 @@ Cc: linux-rpi-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org,
  Kieran Bingham <kieran.bingham@ideasonboard.com>,
  Dan Carpenter <dan.carpenter@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hridesh MG <hridesh699@gmail.com>
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 References: <20241010102250.236545-1-umang.jain@ideasonboard.com>
- <20241010102250.236545-2-umang.jain@ideasonboard.com>
+ <20241010102250.236545-3-umang.jain@ideasonboard.com>
 Content-Language: en-US
 From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241010102250.236545-2-umang.jain@ideasonboard.com>
+In-Reply-To: <20241010102250.236545-3-umang.jain@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:mAO10tJjaFCmfWAL0RYsUIwNm2/QIvRg9zXrbsffzxZLnzgbU92
- 9AeNBz1zQXd4b23/6uHL/TPyAZ3yXFp9601ZKuDPaa7FgydPVPE8P6fREl0IlkTr0UzkhWm
- YrgrQvqnGaYjJjZ0xEZf6/KPQx51N6ca0+syYCoIinUIBfysBsIaBh4VeJTta0felkvNnBf
- EQUyfjGpkpmPdOmHijztA==
+X-Provags-ID: V03:K1:9kK3cj56LUbhohT0D/NWyMwK69NabAAbgPGQyes2mNjjRkAT4LR
+ yb1mhIdFD8H04NXbW7eu9UlYohgThjlhAJ1SCIUlR3i+xj8qGVTxQEb3kYkBA5KBX76zwZN
+ gljEzJZV6a2GEUJ2Dmt8HhCUgPbk12kOLjXn3LxRMWYvT0oeLv+rI+fO1dg3ijpg7r8HDsp
+ hMgEByqBEpyX2yKkxuC7w==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pavCPIc6qE0=;kb+dhRaVh2GZZYKPRBjMb/Te/Kc
- uBTNRFUpNPBET2XVEpfRH+6bJYBKdA0wO/MM307EJJqTihF9uoky8LBHS+/BDtpbg13CHl8Od
- ZjEnKV35zzYrPwznJnkhgyZnaxlhT9vMwqyjtROHIygN6DT5l0ucBStk/gE7LYWndTUkJSBkx
- Yz1XFomnM6hJDZ2hHZnqoUPQa5S6n+cXfBD7fnFpoNvv1pv4nRZihiuTZIGtoilT/kYj3MNzS
- Mdw4b8J0hYdAgxuthRPeG91FlLphrEFIEKkF4Sa04BQOHpBAh26fEUtHMsYq4Ix2mmsQ1T5Vy
- dHQr3Uhes8tfzw3ve+vFjSdAr+W0zCqIvdAvOHxa8BWQNxCImjfISy187mduNOCM9leDlv9Ot
- OdHf5NZS/cLFjF028eESccjsuL7yas7vh47Kt00YVva5EVshrGrpTP3lFhyVMkbDaQ+vxPFT0
- X2mKjaV1F3RqEqatdtlrNw6fm5LBPW5Eb7y5YYM6APfK7jZFVhg4ZOjiqIVs6ObCSnHz4RHVS
- vxxju75U0pSUyAvNBS9rpNwkm/arc1lsOpBeoV/SVmEDSMp3UH7NZCXyUL+L/f62Xn2bNevzL
- dqw2hxvgaKRmzVfEN0GUuoUi8hGiSGJWt3KteXda59JWPzQcyf8knw9CohhYBuHN8knvq/W2s
- y/IbmJqbLi56Ox4IfgadWGiPFjTtdTkAFHe0YhgEabA8IPGyloGmCPF8fa0TcCE0pffcgKD3t
- nrnpCPK98caRlbVuPUQ3Gtp6kZaYj5TgZXw4fkamfSfGwTCEe9xdtuKIJPyQDXyx7orSmdNTG
- rbalXW+YDvZo4d33kU8X1rsQ==
-
+UI-OutboundReport: notjunk:1;M01:P0:BaBhNsfMP7E=;cap1PfBWWRqlrro2m1VJQH6QblY
+ PA2EiId/2NEFv5aN0MQ+jaN0qW178DCFyvxn8FKuDE5QvXlOq03xllVYGtTn2YKyeve+I9WUY
+ RzsMcR3EBJ+Tl2XVMsG+55p86ICR6r3jJJ+SL3uBsZo9F0vnHoGCvk33Ph6gqTht8FweDAbw5
+ 8xNI7G5/iZKNWnzKhvkh3NmDiAariV7SSZ8kugyIIWZYgzY7ibGCqxgEtyhxB/5cfA/3nZTUK
+ LG5WI3ahSMgxGWtpDaRWq0lWVhOYpeqRe/E2rq7fsoHb4Lzw2WADhzw2FcIWXsA5p5TlFw2iS
+ elV+fk7WMDwP6PQ76aeMozXJlJzxYjfqwHir/zgts2MwaWA6pVmNd94xb7GKl3sSR784uDS2l
+ ib3gjdwdm62ly3kWDWQQml05ykwOCxl6+IiPAIkFXPAMVSG6JhzMgu4ZQdWAfRHdw+d9LFlF9
+ hVzCuQQJ7wfsfizu0g8jEmTKVR8aAWQjKKxaM/59ljJXZX3WA1aagOjV/kz4mNXsRtwOHAEyr
+ k0F4gSyrBF4R4Rsgl2C9O9zMJkEDP7XL2NeJeGPNyjXkwRcYwN9ulwFAtVYn4LCEWtj0oAvee
+ qRMyLbYkixEVprvkXgGBSjvZZGee0+zp3Jpt1PzWenTjJiBeMKzy1Fncmr75opCemIJZ+lurC
+ qrcMSu/X9AQ/Ab/deyQe+aYA5PoY1a8EHRc2FNcgIaY2k7isssrbhXmkDDBLtfSxmfIYC9q9q
+ UU4n0ia4s8qSNX4p+WaHyhtslPj4EPwplybjK6KZL9Kq+GIyTBV626c6CJdE3QDOtXTsClCpS
+ nETWXYyJUjFG5XwKpb91zhgg==
 
 Am 10.10.24 um 12:22 schrieb Umang Jain:
-> From: Hridesh MG <hridesh699@gmail.com>
+> The two static asserts are under 80 columns width, hence indent them
+> on the same line.
 >
-> Replace spaces with tabs to adhere to kernel coding style. No
-> functional changes intended in this patch.
->
-> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
 > Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+> ---
+Nice
+
 Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
