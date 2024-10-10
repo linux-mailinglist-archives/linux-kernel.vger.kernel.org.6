@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-360145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34248999520
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:23:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33066999503
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E58A9282335
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:23:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6981F246E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFDB1EBFF8;
-	Thu, 10 Oct 2024 22:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB7E1E2839;
+	Thu, 10 Oct 2024 22:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="p6vxYdUn"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOjDNuJb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3E01E2029;
-	Thu, 10 Oct 2024 22:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6573719A2A3;
+	Thu, 10 Oct 2024 22:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598959; cv=none; b=BZegMlteA1X9MCJjQkEWT+ZE9C83dOAA3eDAGCMnavb/sbWbe71aT8YH3T6+Vx6JAVXWkuiCs99qnaGtTeTfIxQCk8iyRB+1YxiL1FN38NGWo5ffob61nEQn7koiU6drBOelP7xb+QXCKlMGYGtQNAcAeOXqunIjQs8xPQ1bJ8c=
+	t=1728598592; cv=none; b=HdOGsLMgD1/iR+bWJZxHqumrd1o9Z3TrUr5aZVoWQ/r32oegNgZIkHvFFnkOoICIFMgGn29eMr7BeaLfqgMK7bEerjPOFYjStt7wmnrRiPjsLFsjLJYSFi0Bba7/nShircNGaMRPD7nTNb+Qqw4rViD0XnrAkePy2lsGupDaEiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598959; c=relaxed/simple;
-	bh=xjilEsLX+G8kf8JRPFeXyzM3RwuC/YiY5ih1BDEWdZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IlB2V7NPCPma6ZlME0vDvUkDkbHKwd0u4RUQ5OzBDZMvsFuSNE/Bkh7TSEtSYsJAIri1nRYGi6bHRWta0i7reilAXdK3g+FLyLnQDNpXvuoZmWHzIKgiy8KyOlrVNzo0AVMyAnH+8aJznP5VuiBoXkp3myeiDwlzwxU/ECfDoo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=p6vxYdUn; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id c8883fc4938e307c; Fri, 11 Oct 2024 00:22:27 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id DED5C69EF02;
-	Fri, 11 Oct 2024 00:22:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728598947;
-	bh=xjilEsLX+G8kf8JRPFeXyzM3RwuC/YiY5ih1BDEWdZ0=;
-	h=From:Subject:Date;
-	b=p6vxYdUnrVEzbz4V31Kv3NQtX+8J6yRyETKOqnwQho8ukgmFBm6vKaVPJRs2OrEde
-	 99eEJHq1+7CTE6Cm+pf1R2dWMUbTbKFKmtZVkmqJj+PI1kqpNiPr+Gzh6FT3aRMF6N
-	 YyYmQ4NaEb2zHnGQfSPNI3mJsHHQnoho0vKBTQnDjuMUyNbQzbEEoYQpi1WymRvcP8
-	 fECHN3ucBI0hDUxu4EZsOTfx3nrAzhjktPCVxHuTSjPR8P92xisROM0PSNozWRdPNv
-	 zAYfcTVp1cij6XGtwlXLWofBLdElCAEpFOaKopPB62H3CPC1pW1wlk5zzrwc2q2O0n
-	 UGOmJUgUo7w9Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v2 07/11] thermal: core: Introduce thermal_instance_delete()
-Date: Fri, 11 Oct 2024 00:15:22 +0200
-Message-ID: <3275745.5fSG56mABF@rjwysocki.net>
-In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1728598592; c=relaxed/simple;
+	bh=/fSUe/XuT4djq6U2zM2gzmBo0xFuuCYD1/zFnLdp/QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YRshi/AN7o4onSPp5SG7VJ4iEEuGVFIToean06fX97KAFtJskKfiix9Qfu38U5I/CdRtSPQuEtJGRDZTKpYCv7eCyUsFuDd3x0HXlXi9YrYPfCz5tJtjfnM2D/+gbAASKUm4xWpF/3cLlCW38xWB3Ivorl/5pUw/qMCQrKvBAdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOjDNuJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5136C4CEC5;
+	Thu, 10 Oct 2024 22:16:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728598591;
+	bh=/fSUe/XuT4djq6U2zM2gzmBo0xFuuCYD1/zFnLdp/QU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ZOjDNuJbForY00J9ZrwYA99p1VYOnT3JUgWwXgRVQ+fBnZSIImFd/K5x70FlGYEes
+	 wxEgP7tEOGaV6XBtHdmT9Wmr+22/QRGErM6dJHTul27R+qBAZdP0FuJh3u+6JUtF9V
+	 DH5nuDkADPqJIhdVztudOAEOJnYXxfQojAf4LS0/T/nBYEY4pnWfKesRyHZWlTofXM
+	 hLHC+etVaffbIFf1e5ig9awUHBcozyvz0Qunn+jvE/JHfmAzUOrHbHa80HDzwrryAy
+	 rPaHfkMotx9Shw+x8Fdj8iOoWejgiINbyZt1xoL64kOllpaxC8LahQftjfSmT/Nw3c
+	 wCPSNp9T/68mQ==
+Date: Thu, 10 Oct 2024 17:16:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lukas@wunner.de,
+	dan.j.williams@intel.com, bhelgaas@google.com, dave@stgolabs.net,
+	dave.jiang@intel.com, vishal.l.verma@intel.com,
+	Jonathan.Cameron@huawei.com
+Subject: Re: [PATCH] PCI/DOE: Poll DOE Busy bit for up to 1 second in
+ pci_doe_send_req
+Message-ID: <20241010221628.GA580128@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedguddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriih
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004162828.314-1-gourry@gourry.net>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Oct 04, 2024 at 12:28:28PM -0400, Gregory Price wrote:
+> During initial device probe, the PCI DOE busy bit for some CXL
+> devices may be left set for a longer period than expected by the
+> current driver logic. Despite local comments stating DOE Busy is
+> unlikely to be detected, it appears commonly specifically during
+> boot when CXL devices are being probed.
+> 
+> This was observed on a single socket AMD platform with 2 CXL memory
+> expanders attached to the single socket. It was not the case that
+> concurrent accesses were being made, as validated by monitoring
+> mailbox commands on the device side.
+> 
+> This behavior has been observed with multiple CXL memory expanders
+> from different vendors - so it appears unrelated to the model.
+> 
+> In all observed tests, only a small period of the retry window is
+> actually used - typically only a handful of loop iterations.
+> 
+> Polling on the PCI DOE Busy Bit for (at max) one PCI DOE timeout
+> interval (1 second), resolves this issues cleanly.
+> 
+> Per PCIe r6.2 sec 6.30.3, the DOE Busy Bit being cleared does not
+> raise an interrupt, so polling is the best option in this scenario.
+> 
+> Subsqeuent code in doe_statemachine_work and abort paths also wait
+> for up to 1 PCI DOE timeout interval, so this order of (potential)
+> additional delay is presumed acceptable.
 
-It is not necessary to walk the thermal_instances list in a trip
-descriptor under a cooling device lock, so acquire that lock only
-for deleting the given thermal instance from the list of thermal
-instances in the given cdev.
+I provisionally applied this to pci/doe for v6.13 with Lukas and
+Jonathan's reviewed-by.  
 
-Moreover, in analogy with the previous change that introduced
-thermal_instance_add(), put the code deleting the given thermal
-instance from the lists it is on into a separate new function
-called thermal_instance_delete().
+Can we include a sample of any dmesg logging or other errors users
+would see because of this problem?  I'll update the commit log with
+any of this information to help users connect an issue with this fix.
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This is a resend of
-
-https://lore.kernel.org/linux-pm/2224279.Mh6RI2rZIc@rjwysocki.net/
-
----
- drivers/thermal/thermal_core.c |   17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -866,6 +866,17 @@ free_mem:
- 	return result;
- }
- 
-+static void thermal_instance_delete(struct thermal_instance *instance)
-+{
-+	list_del(&instance->trip_node);
-+
-+	mutex_lock(&instance->cdev->lock);
-+
-+	list_del(&instance->cdev_node);
-+
-+	mutex_unlock(&instance->cdev->lock);
-+}
-+
- /**
-  * thermal_unbind_cdev_from_trip - unbind a cooling device from a thermal zone.
-  * @tz:		pointer to a struct thermal_zone_device.
-@@ -882,16 +893,12 @@ static void thermal_unbind_cdev_from_tri
- {
- 	struct thermal_instance *pos, *next;
- 
--	mutex_lock(&cdev->lock);
- 	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
- 		if (pos->cdev == cdev) {
--			list_del(&pos->trip_node);
--			list_del(&pos->cdev_node);
--			mutex_unlock(&cdev->lock);
-+			thermal_instance_delete(pos);
- 			goto unbind;
- 		}
- 	}
--	mutex_unlock(&cdev->lock);
- 
- 	return;
- 
-
-
-
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/pci/doe.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
+> index 652d63df9d22..27ba5d281384 100644
+> --- a/drivers/pci/doe.c
+> +++ b/drivers/pci/doe.c
+> @@ -149,14 +149,26 @@ static int pci_doe_send_req(struct pci_doe_mb *doe_mb,
+>  	size_t length, remainder;
+>  	u32 val;
+>  	int i;
+> +	unsigned long timeout_jiffies;
+>  
+>  	/*
+>  	 * Check the DOE busy bit is not set. If it is set, this could indicate
+>  	 * someone other than Linux (e.g. firmware) is using the mailbox. Note
+>  	 * it is expected that firmware and OS will negotiate access rights via
+>  	 * an, as yet to be defined, method.
+> +	 *
+> +	 * Wait up to one PCI_DOE_TIMEOUT period to allow the prior command to
+> +	 * finish. Otherwise, simply error out as unable to field the request.
+> +	 *
+> +	 * PCIe r6.2 sec 6.30.3 states no interrupt is raised when the DOE Busy
+> +	 * bit is cleared, so polling here is our best option for the moment.
+>  	 */
+> -	pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
+> +	timeout_jiffies = jiffies + PCI_DOE_TIMEOUT;
+> +	do {
+> +		pci_read_config_dword(pdev, offset + PCI_DOE_STATUS, &val);
+> +	} while (FIELD_GET(PCI_DOE_STATUS_BUSY, val) &&
+> +		 !time_after(jiffies, timeout_jiffies));
+> +
+>  	if (FIELD_GET(PCI_DOE_STATUS_BUSY, val))
+>  		return -EBUSY;
+>  
+> -- 
+> 2.43.0
+> 
 
