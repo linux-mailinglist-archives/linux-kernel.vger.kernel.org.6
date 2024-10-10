@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-358141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01C5997AA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:39:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF6D997A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8003B1F23CA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E271C21791
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A81187352;
-	Thu, 10 Oct 2024 02:38:47 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216E116F0E8;
+	Thu, 10 Oct 2024 02:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tr4IhFG5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936BABE57
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1D738DD3;
+	Thu, 10 Oct 2024 02:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728527927; cv=none; b=LjFN8eDtUx+YRDqBIB/0SYAbZXCMdgtvWfMe4zZuGc0wfEfZabYXKrnvJYXx1Q2mvSce7X8oDFflMNCeCgAmt+j0AJEKFTWCOeSkHqVgoZrRcbmGA+7qS2kmXVuYptZMAnPRlNkwhK2g2eycryJ13ba1D4hdYs9QRzlA069I/wY=
+	t=1728527925; cv=none; b=ZH2hut8XMW3eWYTXiYyYescjH1oETh2h1vAwE6hQ9JGOBqr6WK6nEphWEhw2kSu/8ZqMoU2UjmA76nlCWodob36ojpF0pa3WNwR+qHhT4rAiB+iC7DS7f7mYvi8Kzlj92q0xiZv5WqwHAfeR+rH565Zyk+OXFDIgQn0IAeSpvw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728527927; c=relaxed/simple;
-	bh=oMNXi33nq/miGXCp0L3JhJV+hdbwp2htfmg1QZBpvpI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=khB/8S3dYH/9j2qdsoOaruscp8cRu2wtYm6gdspDyLZAZkx76W4YC9RlC4s7g2kIcskGn5B0NY2VWaU07YDMn1WKin5qcKx3a2cOzqo4U6Jytxzn9pbbi4CrLX69/GOuP3MlgLTG+rI1bpjPZ8XIxW/UIlOHNz47uE06J/o079E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPDQl5f5QzfdCK;
-	Thu, 10 Oct 2024 10:36:15 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id D71B81402CA;
-	Thu, 10 Oct 2024 10:38:39 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 10:38:39 +0800
-Subject: Re: [patch 06/25] debugobjects: Reuse put_objects() on OOM
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Waiman Long <longman@redhat.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.326834268@linutronix.de>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <d17d3c50-0488-7013-29bc-d5a8d3cb06c2@huawei.com>
-Date: Thu, 10 Oct 2024 10:38:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1728527925; c=relaxed/simple;
+	bh=XSqV1wjym/BTCByLYqeAc8YnSkVJbWfKB90sYm5ZI6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZEieOcYMSVZC71vq19EezrAy++ZJ7Vb/8uNly/PbLW9UpzG7J15wE2cZOqgUyt03T1wwCw5K7r+FALouN9N5xmsSISpxeeJeYgBxheAACG6f5dije1bNiZeo4rMjP93h+Cc/bK7ZbIKmlfQuJ3L7RQezB+7Lng//Ec/bZz93cSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tr4IhFG5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB315C4CECD;
+	Thu, 10 Oct 2024 02:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728527925;
+	bh=XSqV1wjym/BTCByLYqeAc8YnSkVJbWfKB90sYm5ZI6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tr4IhFG5Il4IDdo8ruej3COzjOfe4HCbPvg8KUuVBKDg5wjsme33eoLyr92sskJNl
+	 YxLW0JlKY9HMHREtxElrUYtRkC/0jzw4QZNr/EaYb3cBtpOe+9lQ5i5VHCnRRkUN4i
+	 PZTOLQjWBXan9zDFu7ACxtgcK+AuubT3J0eBrP+IUO+to4ip60quEjvJQHq+6mAPNa
+	 hB1d3L6TJXtHntA12oZnh5+1frnOy1n0pEjvIwASM+y8/e/QE884DHwbvD6SlPSMFM
+	 WqVq503RWkU3gymFVcwN1Px5hVJ3FiwWayZWriSR8e+bY/dVaaT/r7dISPoUdceXlG
+	 ZO8E1ENZPnjNQ==
+Date: Wed, 9 Oct 2024 21:38:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	William Zhang <william.zhang@broadcom.com>,
+	Anand Gore <anand.gore@broadcom.com>,
+	Kursad Oney <kursad.oney@broadcom.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: mtd: Relax BCM4908 partition schema
+Message-ID: <20241010023844.GA968160-robh@kernel.org>
+References: <20241009215046.1449389-1-CFSworks@gmail.com>
+ <20241009215046.1449389-2-CFSworks@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241007164913.326834268@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009215046.1449389-2-CFSworks@gmail.com>
 
-
-
-On 2024/10/8 0:49, Thomas Gleixner wrote:
-> Reuse the helper function instead of having a open coded copy.
-
-Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-
+On Wed, Oct 09, 2024 at 02:50:44PM -0700, Sam Edwards wrote:
+> The BCM4908 partition "parser" is really just a fixed partitions table,
+> with a special partition compatible (`brcm,bcm4908-firmware`) that
+> automatically labels the partition as "firmware" or "backup" depending
+> on what CFE is communicating as the selected active partition.
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> The bcm4908-partitions schema is currently too restrictive, requiring
+> that all child nodes use this special compatible or none at all. This
+> not only contracits what is allowed by the "parser" but also causes
+> warnings for an existing file ("bcm4908-asus-gt-ac5300.dts").
+> 
+> Modify the schema to be strict only for child partitions that use the
+> -firmware compatible. Also update the child name regex to agree with
+> fixed-partitions, so that these differences apply consistently.
+> 
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
 > ---
->  lib/debugobjects.c |   26 +++++++-------------------
->  1 file changed, 7 insertions(+), 19 deletions(-)
+>  .../mtd/partitions/brcm,bcm4908-partitions.yaml | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
 > 
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -429,7 +429,6 @@ static void free_object(struct debug_obj
->  	}
->  }
+> diff --git a/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml
+> index 94f0742b375c..aed37922a5fc 100644
+> --- a/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/partitions/brcm,bcm4908-partitions.yaml
+> @@ -30,12 +30,17 @@ properties:
+>      enum: [ 1, 2 ]
 >  
-> -#ifdef CONFIG_HOTPLUG_CPU
->  static void put_objects(struct hlist_head *list)
->  {
->  	struct hlist_node *tmp;
-> @@ -445,6 +444,7 @@ static void put_objects(struct hlist_hea
->  	}
->  }
->  
-> +#ifdef CONFIG_HOTPLUG_CPU
->  static int object_cpu_offline(unsigned int cpu)
->  {
->  	/* Remote access is safe as the CPU is dead already */
-> @@ -456,31 +456,19 @@ static int object_cpu_offline(unsigned i
->  }
->  #endif
->  
-> -/*
-> - * We run out of memory. That means we probably have tons of objects
-> - * allocated.
-> - */
-> +/* Out of memory. Free all objects from hash */
->  static void debug_objects_oom(void)
->  {
->  	struct debug_bucket *db = obj_hash;
-> -	struct hlist_node *tmp;
->  	HLIST_HEAD(freelist);
-> -	struct debug_obj *obj;
-> -	unsigned long flags;
-> -	int i;
->  
->  	pr_warn("Out of memory. ODEBUG disabled\n");
->  
-> -	for (i = 0; i < ODEBUG_HASH_SIZE; i++, db++) {
-> -		raw_spin_lock_irqsave(&db->lock, flags);
-> -		hlist_move_list(&db->list, &freelist);
-> -		raw_spin_unlock_irqrestore(&db->lock, flags);
-> -
-> -		/* Now free them */
-> -		hlist_for_each_entry_safe(obj, tmp, &freelist, node) {
-> -			hlist_del(&obj->node);
-> -			free_object(obj);
-> -		}
-> +	for (int i = 0; i < ODEBUG_HASH_SIZE; i++, db++) {
-> +		scoped_guard(raw_spinlock_irqsave, &db->lock)
-> +			hlist_move_list(&db->list, &freelist);
-> +
-> +		put_objects(&freelist);
->  	}
->  }
->  
-> 
-> .
-> 
+>  patternProperties:
+> -  "^partition@[0-9a-f]+$":
+> -    $ref: partition.yaml#
+> -    properties:
+> -      compatible:
+> -        const: brcm,bcm4908-firmware
+> -    unevaluatedProperties: false
+> +  "^partition(-.+|@[0-9a-f]+)$":
+> +    type: object
+> +    if:
+> +      properties:
+> +        compatible:
+> +          const: brcm,bcm4908-firmware
 
--- 
-Regards,
-  Zhen Lei
+What schema applies to the node if this is not true? That needs to be 
+addressed. You should be able to use oneOf here rather than if/then 
+schema.
+
+> +    then:
+> +      $ref: partition.yaml#
+> +      properties:
+> +        compatible: true
+> +      unevaluatedProperties: false
+>  
+>  required:
+>    - "#address-cells"
+> -- 
+> 2.44.2
+> 
 
