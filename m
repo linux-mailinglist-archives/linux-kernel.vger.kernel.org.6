@@ -1,271 +1,140 @@
-Return-Path: <linux-kernel+bounces-360124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895C39994C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:57:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D5F9994E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28AD1C22E86
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D631F23FCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D36B1E47B2;
-	Thu, 10 Oct 2024 21:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB911E47B9;
+	Thu, 10 Oct 2024 22:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcMXFIVQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfRIo8xV"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78516199FC5;
-	Thu, 10 Oct 2024 21:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E07188CAE;
+	Thu, 10 Oct 2024 22:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728597467; cv=none; b=HaNuRqley1t7+LD5DW5BfQj0EFPj7mkwBwMUtCkTO9hzlBfz0CMYNVSKp0ynktbjENeb9qOmrxPY9lQ7GrjL5CKWjL2ssJfuP8BYm0aYWUndIqivGHJpAVgug9pIEuVD4spo2UH5bAPchnBaJ9VPBQELQFI9vcBYqyi+IRBo+8E=
+	t=1728597674; cv=none; b=B2vZ0H2bCQ801bqzerC63G+BJezt+2phfQIiC0Y+oGPSAounms/dx5BzniI7+OnJU3G1HBCuiRnHBgzr81KFYP/ikPlQfbx1mX16Ob0PPgebeQu/wTz0qTpihftIBU4jEk7Ni8RIkYMjmTBuYwvycWGMinYIAeXtInC7PKtHWwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728597467; c=relaxed/simple;
-	bh=PIg4rNjufMm0ZXzR/fwAAp4m5dnCGXTZBr3gt2g4Pw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=vGmHoHNFqFzZkTcOPNYRfpWTL8PH2at5US8sfOV5D8CJnW5t5/WTVkkCCkGZSzt7gPShSNcd0rHA49ePl53j3NE1zoVtHkd5IjLwsDwK9OkenP2Zk2hzOtxxXlQvh5itepWGnG88BssDu8tmBeXSM8uEbpsZMyn4Pv3SQlvs60k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcMXFIVQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9B6C4CEC5;
-	Thu, 10 Oct 2024 21:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728597467;
-	bh=PIg4rNjufMm0ZXzR/fwAAp4m5dnCGXTZBr3gt2g4Pw8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KcMXFIVQ8jv/XVpwyJ6PfMLyO3SBOCQsoT8JT0jtn2DpAldU8zDYPEFsnLtYIqJx9
-	 yh9aKP+gmrcbuJxajxFCDJYbXGwsglKbK6wAKGGVgw9oG2nNO01Geb9UQDm/dbDKWe
-	 ItptgUPOAAs7OAUkSG2q2WTlr0mUYDSFslLbijURTxYOAltBOZKNfoMoVis6ILQnvy
-	 NFJjIXmZOk0tNaH0cIZ2bNEQ3SziYA+Ponv8xvrFwVfaBrtk0316cftOnh8fS4cZGo
-	 7RV01NjlibYg+772jlQwd23RdSMmpH2M3QcDTIhHuWG5vuOtZqBN6gTuZWRUR1GxzO
-	 ofMm+nMwk4v6w==
-Date: Thu, 10 Oct 2024 16:57:45 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
-Subject: Re: [PATCH v4 1/3] of: address: Add parent_bus_addr to struct
- of_pci_range
-Message-ID: <20241010215745.GA575297@bhelgaas>
+	s=arc-20240116; t=1728597674; c=relaxed/simple;
+	bh=IqrqVRAGWmUTngX9JyJMpYS2/1LzBtHqam0T8qPIgNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bW4xIOJHhnv340atmvUSRna1t4RMAFH79vxFQKG0WtzYkuV1KtbaJhv7Wq9JFpIbJCLCdelx37jAjlCkd74Z+gTAPrcqeGLu+Q9DlUSgUtvtlfuYHhxRmg0xEpxms9HX+Lqur7A/CmoBrnfJrcTDgYg6w3EXzbbnBIhiECO4F04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfRIo8xV; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1166331a12.0;
+        Thu, 10 Oct 2024 15:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728597672; x=1729202472; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WLcwOUla2fi4WryQZC9pITLT3xq49m68i6L5ryo+y5s=;
+        b=NfRIo8xViwuO3JUVi7JjR9HDghFI8DjV6w7O5j6u0TzQwT7YikUD58F0A8rDhbnRqX
+         r1D1rR0FY+JLS7q3rzRJ1uo8Y7OQ3vQycnuscZ+AhtQfN13O5T6GgAPEugkja5KTFQdG
+         CNxs4qV2ffOWnVQ913ljVUdgfR8/P137uPIz6OfT4GMs/+wt1veg0O+17tMzLNemjxV/
+         +TigNCm6pAJ42ULcP1097oT6kY7LnReLbE6LIE3msbU4/2klZTrqghtmYWarqsT/QoQp
+         Gq6boDb8bl4cTvIZc6e2oW4gFcHII2bQcMDqo1/J+ercvCWjmQrP1n7umezbnCwGBrv7
+         K27Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728597672; x=1729202472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WLcwOUla2fi4WryQZC9pITLT3xq49m68i6L5ryo+y5s=;
+        b=vCGZz2rlbdqdBEKxX+LKiQMCoewnpfRHj5i63VIkWKFdLIeEZ0KHOWaQnX7P42y0s+
+         9d6tUTn/Uag7kOm19bTMR4gQ3zQH4MuMpv3kz3a0NsiF/rySaWpQPi5jkiE/HjKzz1gZ
+         OjzImM+rLcN2QUmt6oC62HrnLCDWggm00xc7rRdXfZVhI5P3e/8uAe7XzWpb/ASsDuEN
+         pJsdyBl8a/jE/yXbZjrvJMu6XPE+NFzvbFLBYWqnKlnplbyAEyiotrGblK3FQgoktbCK
+         1LG3qnAeeC8FJewYOSX0nsegnThMyaJAgByybF1cpYDCfmBpn7xJxQMRoTyZcQ8x3rgJ
+         FQ/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsdjBdQD5nkSzlXDhQlFz4rHKTGfuJGJNJrWi5hJ1PwPNbfFO6/fQO9bVJWRRlcnwUhVStAlIn5s/dTX++6XKs@vger.kernel.org, AJvYcCW2NyGSCtSXvwGFA0r6mRldoYyygod6h6vhIpzOoliQNbKyF85ChDnsxg2yuvIJxqpXudihQBjg6CRAV9k/eHLgXUWJ@vger.kernel.org, AJvYcCXd6cpMrRWL2QciEEf3m5nNn4HGHSTx9OmMGWbpLCYHK1H+ILTCX0+SbXlpWPD40w2cXjac4pvbvshXdVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr0uTEQLzyn2ySlR/KaEeOVFZS0aeUZyCrJKULWv5XhQwBraVf
+	EUvy10LlX37eR7vU5XHl0L4B7/9pwmm8294VJFEBQXuForA06f3dKTNO5dLOVtwqyt8bbHKwIzm
+	pKtbxsvKS2ObbTS+T6il0vSSqmwBS9QjP
+X-Google-Smtp-Source: AGHT+IHWqBnwD9Qz9bUKjePD4Lcw9JynVMvCGdfFK2afXtJlMLe+UYYEUJ2v1N1JhWUHdofyf/tHHrKSHl0k8vTVypk=
+X-Received: by 2002:a17:90a:bc97:b0:2e2:cd22:b092 with SMTP id
+ 98e67ed59e1d1-2e2f0a6e9cdmr866900a91.16.1728597672490; Thu, 10 Oct 2024
+ 15:01:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241008-pci_fixup_addr-v4-1-25e5200657bc@nxp.com>
+References: <20241009220638.333429-1-wudevelops@gmail.com> <20241009220638.333429-2-wudevelops@gmail.com>
+In-Reply-To: <20241009220638.333429-2-wudevelops@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 10 Oct 2024 15:01:00 -0700
+Message-ID: <CAEf4BzYo12vao0GPYPC=3SMTzc5c8kZSFCE+D63ACgtjs7QhVw@mail.gmail.com>
+Subject: Re: [PATCH bpf v1 2/2] selftests/bpf: assert link info uprobe_multi
+ count & path_size if unset
+To: Tyrone Wu <wudevelops@gmail.com>
+Cc: bpf@vger.kernel.org, kpsingh@kernel.org, mattbobrowski@google.com, 
+	song@kernel.org, jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, sdf@fomichev.me, 
+	haoluo@google.com, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, mykolal@fb.com, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-patches-bot@fb.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 08, 2024 at 03:53:58PM -0400, Frank Li wrote:
-> Introduce field 'parent_bus_addr' in of_pci_range to retrieve untranslated
-> CPU address information.
-
-s/in of_pci_range/in struct of_pci_range/
-
-s/CPU address information/parent bus information/ ?
-
-This patch adds "parent_bus_addr" (not "cpu_addr", which already
-exists), and if I understand the example below correctly, it says
-parent_bus_addr will be 0x8..._.... (an internal address), not a CPU
-address, which would be 0x7..._....
-
-I guess "parent_bus_addr" would be a CPU address for the bus@5f000000
-ranges, but an IA address for the pcie@5f010000 ranges?
-
-> Refer to the diagram below to understand that the bus fabric in some
-> systems (like i.MX8QXP) does not use a 1:1 address map between input and
-> output.
-> 
-> Currently, many controller drivers use .cpu_addr_fixup() callback hardcodes
-> that translation in the code, e.g., "cpu_addr & CDNS_PLAT_CPU_TO_BUS_ADDR"
-> (drivers/pci/controller/cadence/pcie-cadence-plat.c),
-> "cpu_addr + BUS_IATU_OFFSET"(drivers/pci/controller/dwc/pcie-intel-gw.c),
-> etc, even though those translations *should* be described via DT.
-> 
-> The .cpu_addr_fixup() can be eliminated if DT correct reflect hardware
-> behavior and driver use 'parent_bus_addr' in of_pci_range.
-> 
->             ┌─────────┐                    ┌────────────┐
->  ┌─────┐    │         │ IA: 0x8ff0_0000    │            │
->  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
->  └─────┘    │   │     │ IA: 0x8ff8_0000 │  │            │
->   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
-> 0x7ff0_0000─┼───┘  │  │             │   │  │            │
->             │      │  │             │   │  │            │   PCI Addr
-> 0x7ff8_0000─┼──────┘  │             │   └──► CfgSpace  ─┼────────────►
->             │         │             │      │            │    0
-> 0x7000_0000─┼────────►├─────────┐   │      │            │
->             └─────────┘         │   └──────► IOSpace   ─┼────────────►
->              BUS Fabric         │          │            │    0
->                                 │          │            │
->                                 └──────────► MemSpace  ─┼────────────►
->                         IA: 0x8000_0000    │            │  0x8000_0000
->                                            └────────────┘
-
-Thanks for this diagram.  I think it would be nice if the ranges were
-in address order, e.g.,
-
-  0x7000_0000
-  0x7ff0_0000
-  0x7ff8_0000
-
-(or the reverse).  But it's a little confusing that 0x7ff8_0000 is in
-the middle because that's the highest address range of the picture.
-
-> bus@5f000000 {
->         compatible = "simple-bus";
->         #address-cells = <1>;
->         #size-cells = <1>;
->         ranges = <0x5f000000 0x0 0x5f000000 0x21000000>,
->                  <0x80000000 0x0 0x70000000 0x10000000>;
-> 
->         pcie@5f010000 {
->                 compatible = "fsl,imx8q-pcie";
->                 reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
->                 reg-names = "dbi", "config";
->                 #address-cells = <3>;
->                 #size-cells = <2>;
->                 device_type = "pci";
->                 bus-range = <0x00 0xff>;
->                 ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
->                          <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
-
-I'm still learning to interpret "ranges", so bear with me and help me
-out a bit.
-
-IIUC, "ranges" consists of (child-bus-address, parent-bus-address,
-length) triplets.  child-bus-address requires #address-cells of THIS
-node, parent-bus-address requires #address-cells of the PARENT, and
-length requires #size-cells of THIS node.
-
-I guess bus@5f000000 "ranges" describes the translation from CPU to IA
-addresses, so the triplet format would be:
-
-  (1-cell IA child addr, 2-cell CPU parent addr, 1-cell IA length)
-
-and this "ranges":
-
-  ranges = <0x5f000000 0x0 0x5f000000 0x21000000>,
-           <0x80000000 0x0 0x70000000 0x10000000>;
-
-means:
-
-  (IA 0x5f000000, CPU 0x0 0x5f000000, length 0x21000000)
-  (IA 0x80000000, CPU 0x0 0x70000000, length 0x10000000)
-
-which would mean:
-
-  CPU 0x0_5f000000-0x0_7fffffff -> IA 0x5f000000-0x7fffffff
-  CPU 0x0_70000000-0x0_7fffffff -> IA 0x80000000-0x8fffffff
-
-I must be misunderstanding something because this would mean CPU addr
-0x70000000 would translate to IA addr 0x70000000 via the first range
-and to IA addr 0x80000000 via the second range, which doesn't make
-sense.
-
-0x0_5f000000 doesn't appear in the diagram.  If it's not relevant, can
-you just omit it from the bus@5f000000 "ranges" and just say something
-like this?
-
-  ranges = <0x80000000 0x0 0x70000000 0x10000000>, ...;
-
-Then pcie@5f010000 describes the translations from IA to PCI bus
-address?  These triplets would be:
-
-  (3-cell PCI child addr, 1-cell IA parent addr, 2-cell PCI length)
-
-  ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
-           <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
-
-which would mean:
-
-  (IA 0x8ff80000, PCI 0x81000000 0 0x00000000, length 0 0x00010000)
-  (IA 0x80000000, PCI 0x82000000 0 0x80000000, length 0 0x0ff00000)
-
-  IA 0x8ff80000-0x8ff8ffff -> PCI 0x0_00000000-0x0_0x0008ffff (I/O)
-  IA 0x80000000-0x8fefffff -> PCI 0x0_80000000-0x0_0x8fefffff (32-bit mem)
-
-The diagram shows the address translations for all three address
-spaces (config, I/O, memory).  If we ignore the 0x5f000000 range, the
-mem and I/O paths through the diagram make sense to me:
-
-  CPU 0x0_7ff80000 -> IA 0x8ff80000 -> PCI   0x00000000 I/O
-  CPU 0x0_70000000 -> IA 0x80000000 -> PCI 0x0_80000000 mem
-
-I guess config space handled separately from "ranges"?  The diagram
-suggests that it's something like this:
-
-  CPU 0x0_7ff00000 -> IA 0x8ff00000 -> PCI 0x00000000 config
-
-which looks like it would match the "reg" property.
-
-> 	};
-> };
-> 
-> 'parent_bus_addr' in of_pci_range can indicate above diagram internal
-> address (IA) address information.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On Wed, Oct 9, 2024 at 3:07=E2=80=AFPM Tyrone Wu <wudevelops@gmail.com> wro=
+te:
+>
+> Add assertions in `bpf_link_info.uprobe_multi` test to verify that
+> `count` and `path_size` fields are correctly populated when the fields
+> are unset.
+>
+> This tests a previous bug where the `path_size` field was not populated
+> when `path` and `path_size` were unset.
+>
+> Signed-off-by: Tyrone Wu <wudevelops@gmail.com>
 > ---
-> Change from v3 to v4
-> - improve commit message by driver source code path.
-> 
-> Change from v2 to v3
-> - cpu_untranslate_addr -> parent_bus_addr
-> - Add Rob's review tag
->   I changed commit message base on Bjorn, if you have concern about review
-> added tag, let me know.
-> 
-> Change from v1 to v2
-> - add parent_bus_addr in of_pci_range, instead adding new API.
-> ---
->  drivers/of/address.c       | 2 ++
->  include/linux/of_address.h | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index 286f0c161e332..1a0229ee4e0b2 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -811,6 +811,8 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
->  	else
->  		range->cpu_addr = of_translate_address(parser->node,
->  				parser->range + na);
+>  tools/testing/selftests/bpf/prog_tests/fill_link_info.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/to=
+ols/testing/selftests/bpf/prog_tests/fill_link_info.c
+> index f3932941bbaa..a38cf2a999fe 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
+> @@ -417,6 +417,13 @@ verify_umulti_link_info(int fd, bool retprobe, __u64=
+ *offsets,
+>         if (!ASSERT_NEQ(err, -1, "readlink"))
+>                 return -1;
+>
+> +       memset(&info, 0, sizeof(info));
+> +       err =3D bpf_link_get_info_by_fd(fd, &info, &len);
+
+if (!ASSERT_OK(err, "link_get_info"))
+    return -1;
+
+?
+
+Other than this, LGTM.
+
+pw-bot: cr
+
 > +
-> +	range->parent_bus_addr = of_read_number(parser->range + na, parser->pna);
->  	range->size = of_read_number(parser->range + parser->pna + na, ns);
->  
->  	parser->range += np;
-> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
-> index 26a19daf0d092..13dd79186d02c 100644
-> --- a/include/linux/of_address.h
-> +++ b/include/linux/of_address.h
-> @@ -26,6 +26,7 @@ struct of_pci_range {
->  		u64 bus_addr;
->  	};
->  	u64 cpu_addr;
-> +	u64 parent_bus_addr;
->  	u64 size;
->  	u32 flags;
->  };
-> 
-> -- 
-> 2.34.1
-> 
+> +       ASSERT_EQ(info.uprobe_multi.count, 3, "info.uprobe_multi.count");
+> +       ASSERT_EQ(info.uprobe_multi.path_size, strlen(path) + 1,
+> +                 "info.uprobe_multi.path_size");
+> +
+>         for (bit =3D 0; bit < 8; bit++) {
+>                 memset(&info, 0, sizeof(info));
+>                 info.uprobe_multi.path =3D ptr_to_u64(path_buf);
+> --
+> 2.43.0
+>
 
