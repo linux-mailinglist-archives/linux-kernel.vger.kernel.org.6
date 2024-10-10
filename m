@@ -1,241 +1,188 @@
-Return-Path: <linux-kernel+bounces-359744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C762998FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C14998FCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7874281A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A5C1F25000
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7541CEEB0;
-	Thu, 10 Oct 2024 18:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1821CEAAC;
+	Thu, 10 Oct 2024 18:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c6ulq1H/"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Kteyca3v"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9D41CEAD8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC241C8FBC;
+	Thu, 10 Oct 2024 18:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584693; cv=none; b=adJL5rfLgOAJSeHM+qdvAgy3GUJK4GLOCFJDT6tJbeOM4bhfi8hELdcAy1HTOEfGKqkWo1KP2tztPC+yDS+mvjD7PNd1HZgqVWaZOvdio6iEjCBFd8GSnu6A0KQbXCgBVlOudsOorf4Z32e87crx8MX3MOvoQWY+W4BSWRNWc74=
+	t=1728584594; cv=none; b=uccU65H6gn2DeE2Uklb1gH2Fi/+U/c9WTu8hy5TuwUiQgHIASJCY88rmaMiVNsOpwQJYH89i4h7si/ttUXsr+UXOkat7rCovtRw15CPKfN/rMyCfNmvKbGFpYcoQkYjRSshiKybgjUlJ6ZGwCagPbPcCetMBEln2zlZETkD2V2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584693; c=relaxed/simple;
-	bh=VeqAt9xsRyQYjwTyqnYEHFfSJqQO2zWoId1ssBiaEMk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JnCCt7zIB1e1jz15QP05RZX0DAewyf5YMAw4+VkeEXkNKaSPZ4zNXirKsd0mFIM8tWcnktAcztFuQMBpAZCoASG4TgB4AdRUsxcfHaynwNTkUaOY0S+E9xCSABZiAMJv+zONcNDa+zRUEBh3nX4VHjGRtG64Dncjv94tEJ9VX2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c6ulq1H/; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e2de6496easo620780a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728584691; x=1729189491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Om/x5O1cFoCu45xFQlZl7muX4OGvvwFhFfu/OqGssvQ=;
-        b=c6ulq1H/+SVkO3snwnEpIDv6c51AZwFPT1LwqFNCVv4NoGTlUIwMtlx2CGv4OolC4z
-         5koadCL6jvV5FKPkcR7h2EcqLSGLIrxPFSpXWBBtr1Q7Qs67rbWfXAkZuygIXztR30jX
-         vinelIxIHIA9mCJvKaK123LtWbg1NOboLMeiKUh0EpYwOSI95YlMnIXDtfqepFmlcWAS
-         CnV3G1l9SuTBGmxsijDu+22rWmksmHX3fhLSJfqBck7S6jAczfD9MKD7ErhknpjpLCXD
-         TxRiyYgzfFwgfGEmjn40VJXaAyNZX1rswlRL/erQ/34CTu9kx47GkXzSb8i1IPcncetk
-         Akrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728584691; x=1729189491;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Om/x5O1cFoCu45xFQlZl7muX4OGvvwFhFfu/OqGssvQ=;
-        b=S5djvTD61pbQ7k41sDISzPMKujwE4kgI9AjHiBP6VrCoHsfRvZkDhvIBhzZCqWdgYv
-         B+rlYktrE9adOv0OjgSjjBIYn7Ud3udh9C0XAj35eqISmROmpzO/9valsJBHzLgAT2Rf
-         n3yGt0SQD7jJokXnC0l1UyRaeUpU++JcIgCsPOyWc+jEXKv/VU0CMYxyFkD1MJknOVjo
-         CSyl0LqbyAKByxf/hrM8shISKe3TZGIECIVXNDyaI7EX6Z5wzbWNAW9mPeu4dmxDgKUt
-         EYgIV4uJpWFWnwc/dKKGfjnnvBpWOfBlbeIh7cvgmIYMurTwpMAm0cP+hOnLan/cKCjb
-         qqKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4VMR5NXcDAZQyve3Ai8rrv/hj9P+hxgkjyUrEiw8mSrzSkEr4iEzWMrwZ4nqasJSSjoeN3LIsGAm35wA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG6HHC7RypE/3FfJbt++3G3XHkzwW32Uzt10jctWQgxsPhM6rG
-	wx0wRQrqhFDqK/lXObOIHQEXSw/nvzl9N1b20pwSiwpNFbE2TMxhBTK3FwJtRNgnFeE1/ggfzE2
-	RTg==
-X-Google-Smtp-Source: AGHT+IG89v4lIFRhnNqxe9hFvIIxqDvldHGwH//6ib2L4odxYyk8SJA2JGOjXIHuxBeh8ylp7HgA6abaBbM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90a:eac4:b0:2e2:8f4d:457 with SMTP id
- 98e67ed59e1d1-2e2c80b5015mr7266a91.2.1728584689990; Thu, 10 Oct 2024 11:24:49
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 11:23:03 -0700
-In-Reply-To: <20241010182427.1434605-1-seanjc@google.com>
+	s=arc-20240116; t=1728584594; c=relaxed/simple;
+	bh=AscWi9RP1jHmah3MNWifDwaGE9XCaCtZPJboK93sVmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWEi0vWB5moqxeQGcRttdVWrqXe9NRPPjmM5XENx81OOL736TK9XrI55vCWWJ6YVlyLMWAvOwKG1mRmctPapYnRU3W444rRt2U0/4Z3GjoHrMsDztoxBurBHeub1S9U95VDTtEM0tZL92eCHFKCsZUGckk/z0216B9kIax+IzVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Kteyca3v; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [132.205.230.15])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74B014D4;
+	Thu, 10 Oct 2024 20:21:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728584491;
+	bh=AscWi9RP1jHmah3MNWifDwaGE9XCaCtZPJboK93sVmw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kteyca3vr2mYgCGHO4wpcPjUEig+S+Qf4r927SKeh5I+nB2UyXREy4jIqYszT+vOF
+	 oOtFfZURO5w6xB+psDnurzuJexq1gzTux3POgZ2wWgl04RvAwE5msopGhS2YvoZ9j8
+	 TI3m6dUHIocjTa/MUxOa/0DMNcboqajewRPiqPi4=
+Date: Thu, 10 Oct 2024 21:23:04 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Stop stream during unregister
+Message-ID: <20241010182304.GF32107@pendragon.ideasonboard.com>
+References: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
+ <80f800c8-46e0-47bb-8a7b-1566e5eed91a@xs4all.nl>
+ <20241007144401.GE6403@pendragon.ideasonboard.com>
+ <799ce9ae-bdb4-4fcf-be33-a40a7c746705@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241010182427.1434605-1-seanjc@google.com>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241010182427.1434605-2-seanjc@google.com>
-Subject: [PATCH v13 01/85] KVM: Drop KVM_ERR_PTR_BAD_PAGE and instead return
- NULL to indicate an error
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"=?UTF-8?q?Alex=20Benn=C3=A9e?=" <alex.bennee@linaro.org>, Yan Zhao <yan.y.zhao@intel.com>, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>, 
-	Andrew Jones <ajones@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <799ce9ae-bdb4-4fcf-be33-a40a7c746705@xs4all.nl>
 
-Remove KVM_ERR_PTR_BAD_PAGE and instead return NULL, as "bad page" is just
-a leftover bit of weirdness from days of old when KVM stuffed a "bad" page
-into the guest instead of actually handling missing pages.  See commit
-cea7bb21280e ("KVM: MMU: Make gfn_to_page() always safe").
+Hi Hans,
 
-Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
-Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/powerpc/kvm/book3s_pr.c          |  2 +-
- arch/powerpc/kvm/book3s_xive_native.c |  2 +-
- arch/s390/kvm/vsie.c                  |  2 +-
- arch/x86/kvm/lapic.c                  |  2 +-
- include/linux/kvm_host.h              |  7 -------
- virt/kvm/kvm_main.c                   | 15 ++++++---------
- 6 files changed, 10 insertions(+), 20 deletions(-)
+On Mon, Oct 07, 2024 at 04:53:30PM +0200, Hans Verkuil wrote:
+> On 07/10/2024 16:44, Laurent Pinchart wrote:
+> > On Mon, Oct 07, 2024 at 09:46:47AM +0200, Hans Verkuil wrote:
+> >> Hi Laurent,
+> >>
+> >> Just a reminder: I have extensively reviewed this patch here:
+> >>
+> >> https://lore.kernel.org/linux-media/f4c49ccf-9dc9-475a-8fc9-4ef4c85a729a@xs4all.nl/
+> >>
+> >> and here (specifically checking for mmap() races):
+> >>
+> >> https://lore.kernel.org/linux-media/1a10530f-b4bb-4244-84ff-1f2365ae9b23@xs4all.nl/
+> >>
+> >> To the best of my ability I believe this patch is correct.
+> >>
+> >> Unless you have any additional concerns I plan to take this patch as a fix for
+> >> v6.12 on Monday next week.
+> > 
+> > I thought we had an agreement that I could submit an alternative fix for
+> > v6.12. Can you therefore delay merging this patch until v6.12-rc6 ?
+> 
+> Correct, if there is indeed something wrong with this patch and an alternative
+> fix is needed (or at least should be considered).
+> 
+> But I see nothing wrong with this patch after careful analysis. If you disagree
+> with my analysis, and you think I missed a possible race condition, then that's
+> a reason to wait for a better fix. Otherwise there is no point in waiting any longer.
 
-diff --git a/arch/powerpc/kvm/book3s_pr.c b/arch/powerpc/kvm/book3s_pr.c
-index 7b8ae509328f..d7721297b9b6 100644
---- a/arch/powerpc/kvm/book3s_pr.c
-+++ b/arch/powerpc/kvm/book3s_pr.c
-@@ -645,7 +645,7 @@ static void kvmppc_patch_dcbz(struct kvm_vcpu *vcpu, st=
-ruct kvmppc_pte *pte)
- 	int i;
-=20
- 	hpage =3D gfn_to_page(vcpu->kvm, pte->raddr >> PAGE_SHIFT);
--	if (is_error_page(hpage))
-+	if (!hpage)
- 		return;
-=20
- 	hpage_offset =3D pte->raddr & ~PAGE_MASK;
-diff --git a/arch/powerpc/kvm/book3s_xive_native.c b/arch/powerpc/kvm/book3=
-s_xive_native.c
-index 6e2ebbd8aaac..d9bf1bc3ff61 100644
---- a/arch/powerpc/kvm/book3s_xive_native.c
-+++ b/arch/powerpc/kvm/book3s_xive_native.c
-@@ -654,7 +654,7 @@ static int kvmppc_xive_native_set_queue_config(struct k=
-vmppc_xive *xive,
- 	}
-=20
- 	page =3D gfn_to_page(kvm, gfn);
--	if (is_error_page(page)) {
-+	if (!page) {
- 		srcu_read_unlock(&kvm->srcu, srcu_idx);
- 		pr_err("Couldn't get queue page %llx!\n", kvm_eq.qaddr);
- 		return -EINVAL;
-diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-index 89cafea4c41f..763a070f5955 100644
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -661,7 +661,7 @@ static int pin_guest_page(struct kvm *kvm, gpa_t gpa, h=
-pa_t *hpa)
- 	struct page *page;
-=20
- 	page =3D gfn_to_page(kvm, gpa_to_gfn(gpa));
--	if (is_error_page(page))
-+	if (!page)
- 		return -EINVAL;
- 	*hpa =3D (hpa_t)page_to_phys(page) + (gpa & ~PAGE_MASK);
- 	return 0;
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 2098dc689088..20526e4d6c62 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2664,7 +2664,7 @@ int kvm_alloc_apic_access_page(struct kvm *kvm)
- 	}
-=20
- 	page =3D gfn_to_page(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
--	if (is_error_page(page)) {
-+	if (!page) {
- 		ret =3D -EFAULT;
- 		goto out;
- 	}
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index db567d26f7b9..ee186a1fbaad 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -153,13 +153,6 @@ static inline bool kvm_is_error_gpa(gpa_t gpa)
- 	return gpa =3D=3D INVALID_GPA;
- }
-=20
--#define KVM_ERR_PTR_BAD_PAGE	(ERR_PTR(-ENOENT))
--
--static inline bool is_error_page(struct page *page)
--{
--	return IS_ERR(page);
--}
--
- #define KVM_REQUEST_MASK           GENMASK(7,0)
- #define KVM_REQUEST_NO_WAKEUP      BIT(8)
- #define KVM_REQUEST_WAIT           BIT(9)
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 05cbb2548d99..4b659a649dfa 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3078,19 +3078,14 @@ EXPORT_SYMBOL_GPL(gfn_to_page_many_atomic);
-  */
- struct page *gfn_to_page(struct kvm *kvm, gfn_t gfn)
- {
--	struct page *page;
- 	kvm_pfn_t pfn;
-=20
- 	pfn =3D gfn_to_pfn(kvm, gfn);
-=20
- 	if (is_error_noslot_pfn(pfn))
--		return KVM_ERR_PTR_BAD_PAGE;
-+		return NULL;
-=20
--	page =3D kvm_pfn_to_refcounted_page(pfn);
--	if (!page)
--		return KVM_ERR_PTR_BAD_PAGE;
--
--	return page;
-+	return kvm_pfn_to_refcounted_page(pfn);
- }
- EXPORT_SYMBOL_GPL(gfn_to_page);
-=20
-@@ -3184,7 +3179,8 @@ static void kvm_set_page_accessed(struct page *page)
-=20
- void kvm_release_page_clean(struct page *page)
- {
--	WARN_ON(is_error_page(page));
-+	if (WARN_ON(!page))
-+		return;
-=20
- 	kvm_set_page_accessed(page);
- 	put_page(page);
-@@ -3208,7 +3204,8 @@ EXPORT_SYMBOL_GPL(kvm_release_pfn_clean);
-=20
- void kvm_release_page_dirty(struct page *page)
- {
--	WARN_ON(is_error_page(page));
-+	if (WARN_ON(!page))
-+		return;
-=20
- 	kvm_set_page_dirty(page);
- 	kvm_release_page_clean(page);
---=20
-2.47.0.rc1.288.g06298d1525-goog
+I'm in Montréal this week for the GStreamer conference and XDC. I'll
+reply to your last e-mail early next week, let's make a decision then.
+Surely this can wait until -rc4 before being merged ?
 
+> >> Alternatively, you can make a PR for 6.12 with this patch that I can pull from.
+> >>
+> >> Regards,
+> >>
+> >> 	Hans
+> >>
+> >> On 26/09/2024 07:59, Ricardo Ribalda wrote:
+> >>> uvc_unregister_video() can be called asynchronously from
+> >>> uvc_disconnect(). If the device is still streaming when that happens, a
+> >>> plethora of race conditions can occur.
+> >>>
+> >>> Make sure that the device has stopped streaming before exiting this
+> >>> function.
+> >>>
+> >>> If the user still holds handles to the driver's file descriptors, any
+> >>> ioctl will return -ENODEV from the v4l2 core.
+> >>>
+> >>> This change makes uvc more consistent with the rest of the v4l2 drivers
+> >>> using the vb2_fop_* and vb2_ioctl_* helpers.
+> >>>
+> >>> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> >>> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> >>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> >>> ---
+> >>> This patch was part of the series:
+> >>> https://patchwork.linuxtv.org/project/linux-media/list/?series=13064
+> >>>
+> >>> Moved out from it to ease the review.
+> >>> ---
+> >>>  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
+> >>>  1 file changed, 31 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> >>> index f0febdc08c2d..bee150b852e4 100644
+> >>> --- a/drivers/media/usb/uvc/uvc_driver.c
+> >>> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> >>> @@ -1919,11 +1919,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
+> >>>  	struct uvc_streaming *stream;
+> >>>  
+> >>>  	list_for_each_entry(stream, &dev->streams, list) {
+> >>> +		/* Nothing to do here, continue. */
+> >>>  		if (!video_is_registered(&stream->vdev))
+> >>>  			continue;
+> >>>  
+> >>> +		/*
+> >>> +		 * For stream->vdev we follow the same logic as:
+> >>> +		 * vb2_video_unregister_device().
+> >>> +		 */
+> >>> +
+> >>> +		/* 1. Take a reference to vdev */
+> >>> +		get_device(&stream->vdev.dev);
+> >>> +
+> >>> +		/* 2. Ensure that no new ioctls can be called. */
+> >>>  		video_unregister_device(&stream->vdev);
+> >>> -		video_unregister_device(&stream->meta.vdev);
+> >>> +
+> >>> +		/* 3. Wait for old ioctls to finish. */
+> >>> +		mutex_lock(&stream->mutex);
+> >>> +
+> >>> +		/* 4. Stop streaming. */
+> >>> +		uvc_queue_release(&stream->queue);
+> >>> +
+> >>> +		mutex_unlock(&stream->mutex);
+> >>> +
+> >>> +		put_device(&stream->vdev.dev);
+> >>> +
+> >>> +		/*
+> >>> +		 * For stream->meta.vdev we can directly call:
+> >>> +		 * vb2_video_unregister_device().
+> >>> +		 */
+> >>> +		vb2_video_unregister_device(&stream->meta.vdev);
+> >>> +
+> >>> +		/*
+> >>> +		 * Now both vdevs are not streaming and all the ioctls will
+> >>> +		 * return -ENODEV.
+> >>> +		 */
+> >>>  
+> >>>  		uvc_debugfs_cleanup_stream(stream);
+> >>>  	}
+> >>>
+> >>> ---
+> >>> base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+> >>> change-id: 20240926-uvc_stop_streaming-6e9fd20e97bc
+
+-- 
+Regards,
+
+Laurent Pinchart
 
