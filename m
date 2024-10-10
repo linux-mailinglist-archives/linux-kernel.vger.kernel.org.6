@@ -1,107 +1,246 @@
-Return-Path: <linux-kernel+bounces-359103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB05998786
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:22:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F36199877A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:20:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715201C20FE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:22:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6C0DB223EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295BC1C9DC0;
-	Thu, 10 Oct 2024 13:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399DD1C9B6D;
+	Thu, 10 Oct 2024 13:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xdy6LJKZ"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yTqAhBRF"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB7A1C3316;
-	Thu, 10 Oct 2024 13:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967E81C7B84
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566561; cv=none; b=owSjsZjz+ttcTw+dfbrOnfLoYhilP56NHLG7m6welUVnfdn2fsZX3jb2ImylLQMdEmZ3NRaZUuWiatywbPCbPs1JYEt+OAsQrfyQXKmfX/WJkvZ6rzGx6g49nB4WLUlwKLoc21/eyY7L0leWuppvYotZrfchsaXjxOh1fX9ChFA=
+	t=1728566425; cv=none; b=F8aoWvUNV7D4bBAnuBJMjt3cv+kyFYzfjWc6DN2phmMburiKtRs0Bz2ONVtHT27OLr2wmS4GhXtUCVzEltQjS1bavKSLZljnSonOTBwj4gJwpFeEaHav74wptgx7QXbffNICmIv78cYpI/Sq8IYPoRnLbbDqn1DQsqQsC6yn/1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566561; c=relaxed/simple;
-	bh=zU4OHd4fqQutU5LKhoOEeIxeaA4fdDxhCxQBuGiHw7Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQz42fOL0Cst9ARD2hX1VtmibL8kaz8mMvdmKMVVfH7Cmx0Tzsq73qMWHf2ceUtMdF9DCqx5Yo+3RH53nrD4BRSNOHij/UNVYP/Wgdnsfl6XQZeHkioXUSozxZQ9CJGnvpedVguXj05vXLTnSYhX88OMCKnWIdQ3wPPTxuv371w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xdy6LJKZ; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A8iLrg000495;
-	Thu, 10 Oct 2024 15:22:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=selector1; bh=Ccn+f/QO1SGOWh5NjiitG2bf
-	+psS5zLHBT5PvfxdYR8=; b=xdy6LJKZivFTdUh1VV1XDLky5AuuZTcrXAWwIwsO
-	xTDkhIVExC/Q0Tc5IPCvrDtczIXuyTotXmE5JDF6Z3ut433A1hs1hKYWg6B2x6p7
-	4iMon06BvLBivZOY0doHSLiNagHWbGlaD7Kh9/LJH9byEg8ll9GONLBWHTsA9SX5
-	abVuehsNY/FqSJqmR3tlxicJ7/MYbfL75u/OECm2Jz14ChQtjllpRIcqFfyJmJ5U
-	oFgZbhyXaXXAhq9czU7KQTV3g+K81baE6TEZQj2dZ0tjaZ+WR3SxdlyviILpudra
-	2GhehTbDClUyxmZyQ+YHZb1bdFzWlI3iq2NYlu1Q0pj6fw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423f1173q1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 15:22:09 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AD4B54004C;
-	Thu, 10 Oct 2024 15:21:17 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9A59E23CB43;
-	Thu, 10 Oct 2024 15:19:34 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 10 Oct
- 2024 15:19:34 +0200
-Date: Thu, 10 Oct 2024 15:19:29 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: Mark Brown <broonie@kernel.org>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Valentin Caron <valentin.caron@foss.st.com>,
-        <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH] spi: stm32: fix missing device mode capability in
- stm32mp25
-Message-ID: <20241010131929.GA3275914@gnbcxd0016.gnb.st.com>
-References: <20241009-spi-mp25-device-fix-v1-1-8e5ca7db7838@foss.st.com>
- <ZwavaP0QHQCyDbtB@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1728566425; c=relaxed/simple;
+	bh=sTYwBdVyW82zjeklkFZu2GucilWszQtZTJ++Duz9sAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3WuZI7XhGBSXFDRQEU0pjExulGt7ZtsHGOS1THl3gAWaYKGFAwEHmxJKlKNWPNjkYDhObwJY9ots6+zdHmjG3QG0l5vpdS87bh7kHlP3vec5gyfcZJzY3+shIl9AU10ujZxuvzqcUetDQe5dL9ESf6wP2omMwqIRKCEooJfiVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yTqAhBRF; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so1259710e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728566422; x=1729171222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=afwhwANrqqjIZBXW8NL/Qic7KEaJJJJRdGp7JOpIUIo=;
+        b=yTqAhBRFCBF0JkO42THpZDiGCWMVgjIsYNsHg+3mvhaKZtlUUdIqRIGyYRu1I/3z9a
+         0D4uCBTi5BOjxTwuuXMCHovz9IEihJFGt53jUgAb0c7007XaCsuSjovCA8qTPcwpFxMu
+         /1rfbI9idEXvIg1ufRs9+5vFyrtsPVdA5wTkSgQZHVbm4YSpEczZvM8nEUnp6sfF/6UI
+         EjozCgLXEL4tFkz5WlOvDg1K7KoZHWg0KHDUzbYTgNI6iLLt8QbXLLk9ctBBLFnftp1a
+         23R9S6zDQZMbTxQo4e+4xCDVB240FRo9VxqdTtf3AjT8QlxK9IxB1CwN9xSbDLjOdoOT
+         qEbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728566422; x=1729171222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afwhwANrqqjIZBXW8NL/Qic7KEaJJJJRdGp7JOpIUIo=;
+        b=OD2YWYzWeaSBgIv3cVLaGXVp/H2G71p9h0fwhblPXqqV4C/xngW+nq2UNVe/hp/AW7
+         BwkH4AGsrlj1vZIMTNLQT9dOHkjouaNu+YXGRP1HDmj+UtCjZNEBHAD7+K5JqeBD061U
+         HE7q//Ic1jKIy8WnFqjswlPbsOYoOXsVUGnmi/ecAIj4VvfXgw49gqp5OZVquzSkvg7w
+         LT5kmy1Bo0dxWAip0zIac6f5j7aoo18ncOX6kHt9cVz8BQmXIJ3nWpHVP4iWr7Yilr7i
+         nEF6E5wstjz241aVtqS+cvkrtGyuGEFwV9riWCemhyeAU4J8dn4dH68y7ktA2nWc7YzJ
+         CZsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUa9ZYIQDDteGKol0eUw0S5j0UK9ZbgcNStj6XttmVCaz1sBCCBjUPagD99FyTohsZUV4ppUptb3wnf7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9+a7a8zp1Mz+oNkC/3Yo6Zy+5etlrIJskBmzf9312rcNI8PdM
+	E2e5di22fon2N8sR8L9/c/sY1hkeT2PB1VxFTLZ5lARbomMTi1VoQfuUVD+ILOg=
+X-Google-Smtp-Source: AGHT+IE/rgqAiHR9MVe1Z5kBE+dVl8tJdx0Xano7R9HQucKZllTMG/aWC2ImiYcthp5VhrcRP6uTWA==
+X-Received: by 2002:a05:6512:220d:b0:539:9f3c:3bfd with SMTP id 2adb3069b0e04-539c497050dmr4024250e87.58.1728566421692;
+        Thu, 10 Oct 2024 06:20:21 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8f0f9csm250105e87.189.2024.10.10.06.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 06:20:21 -0700 (PDT)
+Date: Thu, 10 Oct 2024 16:20:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/14] drm/msm/dpu: Support quad-pipe in SSPP checking
+Message-ID: <j2ws4q45uwmk4anzgz32ckzsbuc32zngmnybynxoyvgtezu6kr@5e2hxhfsmbtf>
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-10-76d4f5d413bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwavaP0QHQCyDbtB@finisterre.sirena.org.uk>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-10-76d4f5d413bf@linaro.org>
 
-Hi Mark,
+On Wed, Oct 09, 2024 at 04:50:23PM GMT, Jun Nie wrote:
+> Move requreiment check to routine of every pipe check. Because there is
 
-On Wed, Oct 09, 2024 at 05:29:28PM +0100, Mark Brown wrote:
-> On Wed, Oct 09, 2024 at 06:15:52PM +0200, Alain Volmat wrote:
+s/Because there is/There will be/
+
+> multiple SSPPs for quad-pipe case in future.
 > 
-> > Fixes: a4e7908abf0c ("spi: stm32: add st,stm32mp25-spi compatible supporting STM32MP25 soc")
-> > Cc: stable@vger.kernel.org
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h |  2 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c   | 86 ++++++++++++++---------------
+>  2 files changed, 44 insertions(+), 44 deletions(-)
 > 
-> That SHA1 doesn't exist...
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
+> index fc54625ae5d4f..05b92ff7eb529 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
+> @@ -143,11 +143,13 @@ struct dpu_hw_pixel_ext {
+>   *             such as decimation, flip etc to program this field
+>   * @dest_rect: destination ROI.
+>   * @rotation: simplified drm rotation hint
+> + * @valid: notify that this pipe and config is in use
 
-Oups, sorry about that.  Sending a v2 with correct SHA1.
+This is not related to code move, is it? And if it is, it should be
+described in the commit message.
 
-Regards,
-Alain
+>   */
+>  struct dpu_sw_pipe_cfg {
+>  	struct drm_rect src_rect;
+>  	struct drm_rect dst_rect;
+>  	unsigned int rotation;
+> +	bool valid;
+>  };
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> index 9a8fbeec2e1e8..904ebec1c8a18 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> @@ -739,12 +739,40 @@ static int dpu_plane_check_inline_rotation(struct dpu_plane *pdpu,
+>  static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
+>  		struct dpu_sw_pipe *pipe,
+>  		struct dpu_sw_pipe_cfg *pipe_cfg,
+> -		const struct msm_format *fmt,
+> -		const struct drm_display_mode *mode)
+> +		const struct drm_display_mode *mode,
+> +		struct drm_plane_state *new_plane_state)
+>  {
+>  	uint32_t min_src_size;
+>  	struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
+>  	int ret;
+> +	const struct msm_format *fmt;
+> +	uint32_t supported_rotations;
+> +	const struct dpu_sspp_cfg *pipe_hw_caps;
+> +	const struct dpu_sspp_sub_blks *sblk;
+> +
+> +	pipe_hw_caps = pipe->sspp->cap;
+> +	sblk = pipe->sspp->cap->sblk;
+> +
+> +	/*
+> +	 * We already have verified scaling against platform limitations.
+> +	 * Now check if the SSPP supports scaling at all.
+> +	 */
+> +	if (!sblk->scaler_blk.len &&
+> +	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
+> +	      drm_rect_width(&new_plane_state->dst)) ||
+> +	     (drm_rect_height(&new_plane_state->src) >> 16 !=
+> +	      drm_rect_height(&new_plane_state->dst))))
+> +		return -ERANGE;
+> +
+> +	fmt = msm_framebuffer_format(new_plane_state->fb);
+> +
+> +	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
+> +
+> +	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
+> +		supported_rotations |= DRM_MODE_ROTATE_90;
+> +
+> +	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
+> +						   supported_rotations);
+>  
+>  	min_src_size = MSM_FORMAT_IS_YUV(fmt) ? 2 : 1;
+>  
+> @@ -920,49 +948,19 @@ static int dpu_plane_atomic_check_pipes(struct drm_plane *plane,
+>  		drm_atomic_get_new_plane_state(state, plane);
+>  	struct dpu_plane *pdpu = to_dpu_plane(plane);
+>  	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
+> -	const struct msm_format *fmt;
+> -	struct dpu_sw_pipe *pipe = &pstate->pipe[0];
+> -	struct dpu_sw_pipe *r_pipe = &pstate->pipe[1];
+> -	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg[0];
+> -	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->pipe_cfg[1];
+> -	uint32_t supported_rotations;
+> -	const struct dpu_sspp_cfg *pipe_hw_caps;
+> -	const struct dpu_sspp_sub_blks *sblk;
+> -	int ret = 0;
+> -
+> -	pipe_hw_caps = pipe->sspp->cap;
+> -	sblk = pipe->sspp->cap->sblk;
+> -
+> -	/*
+> -	 * We already have verified scaling against platform limitations.
+> -	 * Now check if the SSPP supports scaling at all.
+> -	 */
+> -	if (!sblk->scaler_blk.len &&
+> -	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
+> -	      drm_rect_width(&new_plane_state->dst)) ||
+> -	     (drm_rect_height(&new_plane_state->src) >> 16 !=
+> -	      drm_rect_height(&new_plane_state->dst))))
+> -		return -ERANGE;
+> -
+> -	fmt = msm_framebuffer_format(new_plane_state->fb);
+> -
+> -	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
+> -
+> -	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
+> -		supported_rotations |= DRM_MODE_ROTATE_90;
+> -
+> -	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
+> -						   supported_rotations);
+> -	r_pipe_cfg->rotation = pipe_cfg->rotation;
+> -
+> -	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
+> -					  &crtc_state->adjusted_mode);
+> -	if (ret)
+> -		return ret;
+> +	struct dpu_sw_pipe *pipe;
+> +	struct dpu_sw_pipe_cfg *pipe_cfg;
+> +	int ret = 0, i;
+>  
+> -	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
+> -		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
+> -						  &crtc_state->adjusted_mode);
+> +	for (i = 0; i < PIPES_PER_PLANE; i++) {
+> +		pipe = &pstate->pipe[i];
+> +		pipe_cfg = &pstate->pipe_cfg[i];
+> +		if (!pipe_cfg->valid || !pipe->sspp)
+> +			break;
 
+And... this check broke display support at this point, didn't it? It's
+never set, so none of the pipes are going to be checked.
 
+> +		DPU_DEBUG_PLANE(pdpu, "pipe %d is in use, validate it\n", i);
+> +		ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
+> +						  &crtc_state->adjusted_mode,
+> +						  new_plane_state);
+>  		if (ret)
+>  			return ret;
+>  	}
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
