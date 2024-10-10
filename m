@@ -1,295 +1,236 @@
-Return-Path: <linux-kernel+bounces-358406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB452997F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 833DA997EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE4281180
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A25280E67
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703121BBBF7;
-	Thu, 10 Oct 2024 07:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAEB1BC9F3;
+	Thu, 10 Oct 2024 07:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fWbAj6SK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ksIzw7DM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RkoZy2FQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2851B86E9;
-	Thu, 10 Oct 2024 07:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728543745; cv=none; b=jSXnoHotCf0sD6CGF5QAorbljaPEgWhm8PZFviDjFYKEbNBolkbCcezF+BR2qTNYsUqmJxXe9EGT9P8QvMiCG3rdBhpAH4XdATrx9bt2HSnLn5ITgVURWP7OyLGQ1d9YMUWQu3/6YJ4d5fGEbh6IGDxuy1UttvAV/9gAv40ezBg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728543745; c=relaxed/simple;
-	bh=u6pUdextyUUiD6HDgNJaE0gAH3sutanC7wWTXNvnTJ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B397FywDOcCevaiq6cdxMnDOSVPWJyLVBdNf1kmMLv86zbCO9BrkyGRwzKv1UrSkqUSW4i0D+elHxMucaT0NZNw+t8oasO6AeOY57IaK0roA7w4koYWe8e5TzNummHT1EuzG2JO62asn6zLpA5m89y75HYFItHWfzAjWfU6XKOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fWbAj6SK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ksIzw7DM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728543736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J6B4IeG8b5QcjhSj/+p4Domwg1/4XtpjyB0sq6j0/Js=;
-	b=fWbAj6SKPmJMSqAA+na8CcrjolRy8rvILXwN2NxnjkEzIbVEB5CYlexodSUjhG/Q8Xm2+4
-	aLE//zeul/XMtt1d/zrVwqXDslhmJV0ztaBLNOayxJ+LdmdHQ4690B5+F97s172+Iih41f
-	+uTS+I4LcGjdJwpZy12nBkb5UCbzfTCNgfKfpGQf+PMIAP4ej0rtOXR9E2hy1n4SKanLu+
-	6uEDB7z7Lio87aSGfEdjEIQU4tKX1asAPwE0HVFgDX/K4EpWRItQrZjbCkwZ/8Jo8tviZt
-	q4ZTwa+cJsA1lehTHFk/Ip+YwuAZIFJWbZohxGDOi/x+Avxk9koRe8VT+942Kg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728543736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J6B4IeG8b5QcjhSj/+p4Domwg1/4XtpjyB0sq6j0/Js=;
-	b=ksIzw7DMfxsbzKHYfd2j/mNmq8rqLf2y/uNmpD/tzB9ukTW5uKJuQ2FAIinnIWUrCVEyO3
-	UBfqLVYPow0S08CQ==
-Date: Thu, 10 Oct 2024 09:01:30 +0200
-Subject: [PATCH 28/28] vdso: Rename struct arch_vdso_data to
- arch_vdso_time_data
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4A31B5EB0;
+	Thu, 10 Oct 2024 07:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728543861; cv=fail; b=U+eE4ZnhH+5TWz3NJw46FCmaXnrUeTpy3xK0SSBK7X7i10q484A7YNTydTckC2F08XcB1laYxAJmW13OCJweTiLGHDgn9HFdo/42n0mJmI3Ct6db2xkHqssnW35BQIcl2HTOPxyVZkOMMW1rE7P23Zr7mdmfquRtyNX5X8CZnGw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728543861; c=relaxed/simple;
+	bh=MdWwN7N+ZNRFrLXmz4PuS2q1oFMdMdY4M7xGmlRZ3Q0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HtO1xswZ1gIlGVK6mihHnFJONR0JpzK/5HWO6yuyJmqPwt8N0VXC4H3hJdVuiBa+dk79MdCBICp5zEMQTIo0aQkJ/EOtRR+2ougZVBpkxylDpQJMOHMC6Yr3OTy6lwMBgZbY2thJ1H9WjZCdDJdvv4TfJXAIFwO1/LM9227kJiE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RkoZy2FQ; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728543860; x=1760079860;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=MdWwN7N+ZNRFrLXmz4PuS2q1oFMdMdY4M7xGmlRZ3Q0=;
+  b=RkoZy2FQP52KgBtDxPzPBWPBR7zV6QGW65EhYQKM2Nbiqf+cmqrTshCX
+   RYpMEL2B4PT6+2GEV8mIlgfeTNDdU/DEr/rfIcmZ8XlcdIaGexZAUMPEx
+   OUCVnLElt+b5NQRkwqctwHj8BmRTMpnfvRj3tgyPGkNenEc5BtCmwOqHM
+   6b3ezhv4k5EYrMT+9VyAaOa6MdhSELNN3UhTYJSBvwzRqHF2WntDMMdly
+   o+tR9q2lA9xgpcPZe+s1qFHkb4o/c1j8O94d9pRWaJ2kk9uwznNb1idUX
+   h6WQxz2fiEqL66ep/okOgWgs2iRZ7AyUdKp3As4zn2V/3VZUpILJiTpMX
+   Q==;
+X-CSE-ConnectionGUID: 59u7RtQuTmqR5M01Q3e3GQ==
+X-CSE-MsgGUID: FPMfm6G6TmyOc/PiiOhj4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38452534"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="38452534"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 00:04:13 -0700
+X-CSE-ConnectionGUID: xLupigWuSMuKnASLD3mKOQ==
+X-CSE-MsgGUID: ueX31y0PSE2aQyBrH5Ujhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="76976017"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Oct 2024 00:04:13 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 10 Oct 2024 00:04:12 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 10 Oct 2024 00:04:11 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 10 Oct 2024 00:04:11 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.171)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 10 Oct 2024 00:04:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fXCSlDK0CslK2gk+GCYZNcSjbzIL0eAUBYXCzmWaRFdv71tqGMk10Ru0VMqUzx8RDlIOFqX2cKTXZnr5b4y2YAPa59mYo3mkwd6hi8jW3hKWcFIHd3qa7W64V2UQTVAWqEyeUYhA6eCYYi16wO97+ss/D8yBFeht9q4P9dv+zLMBUNl8neVwwWrTsq5m/fZEmo4wEfKAYIkCCkgfpiMJadDNy6ygYJaz8nl48Vc1mt1PxAL7jiU6iim53FnxOX13pJXY8SmWiyTR7m2O064T/b/o59TmwWkeo0Ts0mZiMBfQQSacICbYldoxrPkTkwAmbr8eOL5KshtCHwvZjSlFLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ItsBRqjxhZLoZUgl3no4wtlGqQrnI5SGpgKl2H/NuJk=;
+ b=M9gGspyW74dVuKNVIr3vEpZ43zDd9QQ8Hzd/LN8THke1ZB90axszvSQ/TyUkZHXjwqjUDebi4vQrHwaPa+DxZmghVhEWV3v+L1sYg85HW1L/IIFz+FSoTUAMtDs24M4yoUmAZ9SeGK/RIERaHaylHLCPqS/qe0g/S8mKrqwRs7uGvK/wKaPsuRJATKFlShIruT7j5wNjlktvOQSToAAdpnGhIeMLpPHhxVULA0vke7MPZggL8a6I5NpM7nk5cALDU1G+tJcs/56iDqjakOSklBOgF6SOxcVIXGmXaw+HjH5ti17Xo2qFBzYKJcOxNvHlLvSeURj9kr9WQwO3oK1oQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ PH7PR11MB5983.namprd11.prod.outlook.com (2603:10b6:510:1e2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 07:04:09 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
+ 07:04:09 +0000
+Date: Thu, 10 Oct 2024 15:01:56 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] KVM: x86/mmu: Add lockdep assert to enforce safe
+ usage of kvm_unmap_gfn_range()
+Message-ID: <Zwd75Nc8+8pIWUGm@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20241009192345.1148353-1-seanjc@google.com>
+ <20241009192345.1148353-3-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241009192345.1148353-3-seanjc@google.com>
+X-ClientProxiedBy: SG2P153CA0036.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::23)
+ To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-vdso-generic-base-v1-28-b64f0842d512@linutronix.de>
-References: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
-In-Reply-To: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
-To: Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Russell King <linux@armlinux.org.uk>, Huacai Chen <chenhuacai@kernel.org>, 
- WANG Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>, 
- "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, 
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, 
- linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-riscv@lists.infradead.org, loongarch@lists.linux.dev, 
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
- Nam Cao <namcao@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728543717; l=7074;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=bmLr9bltMVHizIeVDqLzj2HqsQpWocRWT4+kR/T19ag=;
- b=N3HFGRCOhFBmFayrQto6v2sWiZPZyyxCoZ6rc+97KQn8YQbzqhCmMvQaJzGUe9ZcpAV+Vk3+G
- VNSUB6zxS7JBUKO30Jn44YK6Zc/Ft0AJW8nj8jbQNCMTG/nweeZhxMs
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH7PR11MB5983:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91c012df-4d52-41d7-3793-08dce8f9bca1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?45Li5IhfNUS1pRX5PX9ibsxdGpL2gXYbt6Rl0E/bAmRQGYRMmUmIBM02xiz2?=
+ =?us-ascii?Q?KmxyXiJdni81MmrX9sXpHfK9xWhHEJSMLAeBmdBw310wFt3f+4addgVASBMf?=
+ =?us-ascii?Q?Ad3vnBMdEnuJNdk+LRQaJci3bEsDuJ5fNQe20DSFAIZhM3OciXWZuqnRS3Ta?=
+ =?us-ascii?Q?xWbdxV0JHPFgol306MV6jxkloZPiUmfs+yv1YQUWwnSrTQ0xHxhM2W12pLR8?=
+ =?us-ascii?Q?xzO6j5VHmh4MsF/ZyiR0JnG3OmgjDl+IZdk+M8VhHKiaw+nSobszxYy6PUw8?=
+ =?us-ascii?Q?vVJFTgrbX7S+EUUQn4ozXTIzZeWm6gGu541QLuXPmLjxmCA/8nP0GqvBIdQS?=
+ =?us-ascii?Q?bY2XWJs9TqtF7ZIg186OjD0uqxBj/2jF9qpdKl+mKzqLGmceAFur4qwZXP86?=
+ =?us-ascii?Q?Nq0ANhj+HMSR4gLkHvraeeljwcLziqij2KtBjvamdk7EOFa+e1xVVAtyQuk1?=
+ =?us-ascii?Q?RWBCopTA88PtJA/L0jkqLt1aFIoccz9LxDDbkGbcfFN8F5akj4HxYts1yHuH?=
+ =?us-ascii?Q?JdGe0n3aqLcWpKIKoMnWp4QkOT7SCGsBgv3Q+ZO7//xwibKFRAWEnGKl+V0Q?=
+ =?us-ascii?Q?lo0QkQGCnILSVEAbSpOriV0P3J2xL3XwpLVpw6sIr+CeD7rJReAv/epQhuIQ?=
+ =?us-ascii?Q?yYMCfnDwN6coAGLmNyQic2iNvtqNGuuNnDbnpDJTxL83jvnlCuXcAfVxVEUN?=
+ =?us-ascii?Q?8xZNzzH7L54Y0fbyYTsIyV/o+cMWo5h3l/bqiUd1tdFszGDeNzDK76Sh+9fR?=
+ =?us-ascii?Q?ghF2Ln4+bf8h+BmCye1x1LyZI6HTgXHdtybIHY9GjJMOHX5hbh/2K67yO6yr?=
+ =?us-ascii?Q?ys0MyLKgAEZ7jb0SZDHVts3IP7+eKeWLOBjxyKA0n1upee98knOe8dv1pOND?=
+ =?us-ascii?Q?7dqKbVm7jcsso78PRGLhP839amgQ3AB3Aki64+XbOrr4Gqc3Zw+kVZvpYX9b?=
+ =?us-ascii?Q?ozHHjAd5YNzety6aLwXHKsNtYQbXUB9ceoFHFvP4OR1SbN/nVZzxFIaurUs+?=
+ =?us-ascii?Q?cIpUvaA0P6GH+ANiWzMRqGMYTSKcvfVtZzqPdfRY73ITFRnRfIsNgfERkTSf?=
+ =?us-ascii?Q?KYa1sf5EbRFbcQbO+w2SZ5zZmlemXJwOP7WwDPhtrUpge2JB0FzASv8U35Fe?=
+ =?us-ascii?Q?TE5J52X36iEYAzZqlGXFtKTPBu/TB1Dyq48yf+FL0rHiL/Gixu8AjzGrqYh3?=
+ =?us-ascii?Q?J4eqT5zzLgo1GVqbSaKT69goBXVkWSriuLuXeL9YibLGcnPsXnsfIa9EaEpo?=
+ =?us-ascii?Q?B/zjKqy0QKh1+yXkdllFWTuKCA0FUMI+MEHIvmlllw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EukjgEZ16oHyuVYs0adhtBKoNjSeYBgotrwcSAj58InsxIAKgfv6GbpKqd7A?=
+ =?us-ascii?Q?2yCvaPmp0UZawNKbO5nT7wydOemqnymflRFnkk1xHywe0bCCy1uzQ04meGpn?=
+ =?us-ascii?Q?YdZRtJVmhgX9KPCbaIVE7zSOC0mvWh3dJ6kR8PWEm7ucZ9bSql5GlJ1orXLK?=
+ =?us-ascii?Q?GA0MAfHd2ffZPhFn9L+dylaXJ3aH4VF9lJcsG8h6yxlDa47isMtIELk8aUhN?=
+ =?us-ascii?Q?qh0nvQwRUul84/sMTcD9O4cpdIwRJA2upAm2u4dh0WlWqOXwyR0AR9Uawjig?=
+ =?us-ascii?Q?ATSzzwK5swib2QJoVaNDRoENWtVO7pbCwEb9GYjWk7BgA4IwIYB/kEqWxI4S?=
+ =?us-ascii?Q?JJBbucWdG/5pnEdEFuobS9gI9Hnb8ApGHPUSJ8u8scrQOs3NBSd6LMx0DwaT?=
+ =?us-ascii?Q?ylTsBwXuq92pnrGpMHkDx9J00iXiEqELWOvH1T045cBwLRCsFLE0XYTZXXHe?=
+ =?us-ascii?Q?2/QyHSsJ98JwMHw548y+GVDsXoRu5468wIfIBqPR3NLonlUrsPI1MrL8r8zh?=
+ =?us-ascii?Q?9seARYuVdz1ru/QW/F/b0/OUPYcaqMELCS77GQrxsV2pC0EHVn/6Xze4/5iC?=
+ =?us-ascii?Q?6IRY2hOaYRooG5+1V16pvhZydtLcbENCJyvtqBfG7vhVAkRHEnNhk8JdlOlD?=
+ =?us-ascii?Q?+B207ZrtZb0KKWVkLDi7xR9xSgDPw9jSGJnxmjiLnPXbrnVb4d23m6f4OZOe?=
+ =?us-ascii?Q?2OP4/nNHJhnQ8XPJ81U3Ji8GWBk7CxrIoXHb7wXzb8dQd1YLIpVWrTfzB7uu?=
+ =?us-ascii?Q?NdDBHZwkAJbHQ84lM5AziaLEAZGCMCtaXV0Ef0fa2XHgyQ0Wc9aJDZg18icN?=
+ =?us-ascii?Q?LXEWOOET6fg+DESNo15drEBMoe6Jj2M584QtOcQotITVXxCX1LoqqoMFYnFN?=
+ =?us-ascii?Q?myYExKXIs5ycKqpxS+W6MCkMLyQRLI2Q7W0R3J3B5ZbpM/pkZ0cLa6KnTdGb?=
+ =?us-ascii?Q?6yKEWbu++FF0eJUYLSqTvVoKt2JCk93WPDh/E1Mwk6jYrqo5iw6bUW4+Fpse?=
+ =?us-ascii?Q?tZLWoMFPsinW3K9ige7BbS4kwBy3lqYxSvTMygRKS2F9BESSUF6lXTlpb9jw?=
+ =?us-ascii?Q?LlA3eBcNvspP+/35S3Na9xLq9/3yOQo94QqHcsnyDcIbzvt0JPubaA2dIJVN?=
+ =?us-ascii?Q?uqsYpZu4GgHDEfLptnKyZD0D69f5qCZj79JpsRggarnqOQE5hUApHQKwRxyv?=
+ =?us-ascii?Q?9dwBkjVxVzPWjCJr27lDHl2uuFyHf2pzwL+vHzhB2DxV8ieRChO+bvy/MH88?=
+ =?us-ascii?Q?Q0qLAxp7sJNzlin498v5D2GZm84PCL4oU2AmmJRe+phkmV/gYmKHouUM34PO?=
+ =?us-ascii?Q?xPfxiEwND4qN/AKQMwygC83JGCWDriLB9pnOmjL/BDVjpFlu1O/JkSFqVJn3?=
+ =?us-ascii?Q?38hVFnIfJI+7uBrgIKZgPna895b0D2i9mMOphDkiP+y5diALd3WzbqinPfPf?=
+ =?us-ascii?Q?KfTiTWm/WnhS4s37sS/rkcOAw4QrvGWOaBztEWLR9/408a0DR8F0pxUvX1lR?=
+ =?us-ascii?Q?p6t8TjZ7O0tIrhTX66DMl0e3FTEGWgtA5Hu83r4V8aiTufjVDBXZSP6u4CHe?=
+ =?us-ascii?Q?7xoCzNmsK9+pBWOzbIxegQ2bOctR4v9+A/eVqlbj?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91c012df-4d52-41d7-3793-08dce8f9bca1
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 07:04:09.0193
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MD8qdPCXSDETcYnrkCYa9HEBGnHaqY/99Affso/1sCEme8Hiow1fUmxyfEoZOlF8LxFm8TxwDmUK9/KI66PIuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5983
+X-OriginatorOrg: intel.com
 
-From: Nam Cao <namcao@linutronix.de>
+On Wed, Oct 09, 2024 at 12:23:44PM -0700, Sean Christopherson wrote:
+> Add a lockdep assertion in kvm_unmap_gfn_range() to ensure that either
+> mmu_invalidate_in_progress is elevated, or that the range is being zapped
+> due to memslot removal (loosely detected by slots_lock being held).
+> Zapping SPTEs without mmu_invalidate_{in_progress,seq} protection is unsafe
+> as KVM's page fault path snapshots state before acquiring mmu_lock, and
+> thus can create SPTEs with stale information if vCPUs aren't forced to
+> retry faults (due to seeing an in-progress or past MMU invalidation).
+> 
+> Memslot removal is a special case, as the memslot is retrieved outside of
+> mmu_invalidate_seq, i.e. doesn't use the "standard" protections, and
+> instead relies on SRCU synchronization to ensure any in-flight page faults
+> are fully resolved before zapping SPTEs.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/mmu/mmu.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 09494d01c38e..c6716fd3666f 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -1556,6 +1556,16 @@ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+>  {
+>  	bool flush = false;
+>  
+> +	/*
+> +	 * To prevent races with vCPUs faulting in a gfn using stale data,
+> +	 * zapping a gfn range must be protected by mmu_invalidate_in_progress
+> +	 * (and mmu_invalidate_seq).  The only exception is memslot deletion,
+> +	 * in which case SRCU synchronization ensures SPTEs a zapped after all
+> +	 * vCPUs have unlocked SRCU and are guaranteed to see the invalid slot.
+> +	 */
+> +	lockdep_assert_once(kvm->mmu_invalidate_in_progress ||
+> +			    lockdep_is_held(&kvm->slots_lock));
+> +
+Is the detection of slots_lock too loose?
+If a caller just holds slots_lock without calling
+"synchronize_srcu_expedited(&kvm->srcu)" as that in kvm_swap_active_memslots()
+to ensure the old slot is retired, stale data may still be encountered. 
 
-The struct arch_vdso_data is only about vdso time data. So rename it to
-arch_vdso_time_data to make it obvious.
-Non time-related data will be migrated out of these structs soon.
-
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- arch/Kconfig                                        |  2 +-
- arch/riscv/Kconfig                                  |  2 +-
- arch/riscv/include/asm/vdso/{data.h => time_data.h} |  8 ++++----
- arch/riscv/kernel/sys_hwprobe.c                     |  2 +-
- arch/riscv/kernel/vdso/hwprobe.c                    |  4 ++--
- arch/s390/Kconfig                                   |  2 +-
- arch/s390/include/asm/vdso/data.h                   | 12 ------------
- arch/s390/include/asm/vdso/time_data.h              | 12 ++++++++++++
- include/vdso/datapage.h                             |  8 ++++----
- 9 files changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 8af374ea1adc245b3aa341314a1dcb51865d03d1..7f1ec327b587c90f02e63edea19ce65c56505b9b 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -1530,7 +1530,7 @@ config HAVE_SPARSE_SYSCALL_NR
- 	  entries at 4000, 5000 and 6000 locations. This option turns on syscall
- 	  related optimizations for a given architecture.
- 
--config ARCH_HAS_VDSO_DATA
-+config ARCH_HAS_VDSO_TIME_DATA
- 	bool
- 
- config HAVE_STATIC_CALL
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 62545946ecf432df5b41e235ba66438cd3743c06..c278280c134f78d5a1f89199bdb85ad362aa5436 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -50,7 +50,7 @@ config RISCV
- 	select ARCH_HAS_SYSCALL_WRAPPER
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAS_UBSAN
--	select ARCH_HAS_VDSO_DATA
-+	select ARCH_HAS_VDSO_TIME_DATA
- 	select ARCH_KEEP_MEMBLOCK if ACPI
- 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
- 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-diff --git a/arch/riscv/include/asm/vdso/data.h b/arch/riscv/include/asm/vdso/time_data.h
-similarity index 71%
-rename from arch/riscv/include/asm/vdso/data.h
-rename to arch/riscv/include/asm/vdso/time_data.h
-index dc2f76f58b7632f0392af6aaf475076203f1a54a..dfa65228999bed41dfd6c5e36cb678e1e055eec8 100644
---- a/arch/riscv/include/asm/vdso/data.h
-+++ b/arch/riscv/include/asm/vdso/time_data.h
-@@ -1,12 +1,12 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __RISCV_ASM_VDSO_DATA_H
--#define __RISCV_ASM_VDSO_DATA_H
-+#ifndef __RISCV_ASM_VDSO_TIME_DATA_H
-+#define __RISCV_ASM_VDSO_TIME_DATA_H
- 
- #include <linux/types.h>
- #include <vdso/datapage.h>
- #include <asm/hwprobe.h>
- 
--struct arch_vdso_data {
-+struct arch_vdso_time_data {
- 	/* Stash static answers to the hwprobe queries when all CPUs are selected. */
- 	__u64 all_cpu_hwprobe_values[RISCV_HWPROBE_MAX_KEY + 1];
- 
-@@ -14,4 +14,4 @@ struct arch_vdso_data {
- 	__u8 homogeneous_cpus;
- };
- 
--#endif /* __RISCV_ASM_VDSO_DATA_H */
-+#endif /* __RISCV_ASM_VDSO_TIME_DATA_H */
-diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-index cea0ca2bf2a25ecc671e31b141e84c6d1977da25..711a31f27c3d051476dd46afa51e6d33cd2fdffa 100644
---- a/arch/riscv/kernel/sys_hwprobe.c
-+++ b/arch/riscv/kernel/sys_hwprobe.c
-@@ -402,7 +402,7 @@ static int do_riscv_hwprobe(struct riscv_hwprobe __user *pairs,
- static int __init init_hwprobe_vdso_data(void)
- {
- 	struct vdso_data *vd = __arch_get_k_vdso_data();
--	struct arch_vdso_data *avd = &vd->arch_data;
-+	struct arch_vdso_time_data *avd = &vd->arch_data;
- 	u64 id_bitsmash = 0;
- 	struct riscv_hwprobe pair;
- 	int key;
-diff --git a/arch/riscv/kernel/vdso/hwprobe.c b/arch/riscv/kernel/vdso/hwprobe.c
-index 1e926e4b5881b6b2c44ec8438870809539f773c5..a158c029344f60c022e7565757ff44df7e3d89e5 100644
---- a/arch/riscv/kernel/vdso/hwprobe.c
-+++ b/arch/riscv/kernel/vdso/hwprobe.c
-@@ -17,7 +17,7 @@ static int riscv_vdso_get_values(struct riscv_hwprobe *pairs, size_t pair_count,
- 				 unsigned int flags)
- {
- 	const struct vdso_data *vd = __arch_get_vdso_data();
--	const struct arch_vdso_data *avd = &vd->arch_data;
-+	const struct arch_vdso_time_data *avd = &vd->arch_data;
- 	bool all_cpus = !cpusetsize && !cpus;
- 	struct riscv_hwprobe *p = pairs;
- 	struct riscv_hwprobe *end = pairs + pair_count;
-@@ -52,7 +52,7 @@ static int riscv_vdso_get_cpus(struct riscv_hwprobe *pairs, size_t pair_count,
- 			       unsigned int flags)
- {
- 	const struct vdso_data *vd = __arch_get_vdso_data();
--	const struct arch_vdso_data *avd = &vd->arch_data;
-+	const struct arch_vdso_time_data *avd = &vd->arch_data;
- 	struct riscv_hwprobe *p = pairs;
- 	struct riscv_hwprobe *end = pairs + pair_count;
- 	unsigned char *c = (unsigned char *)cpus;
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index d339fe4fdedf881fd9224020381a1c7f62998d59..8cdd8359e00c3e383aaf5116f557203b59b065c3 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -88,7 +88,7 @@ config S390
- 	select ARCH_HAS_STRICT_MODULE_RWX
- 	select ARCH_HAS_SYSCALL_WRAPPER
- 	select ARCH_HAS_UBSAN
--	select ARCH_HAS_VDSO_DATA
-+	select ARCH_HAS_VDSO_TIME_DATA
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	select ARCH_INLINE_READ_LOCK
- 	select ARCH_INLINE_READ_LOCK_BH
-diff --git a/arch/s390/include/asm/vdso/data.h b/arch/s390/include/asm/vdso/data.h
-deleted file mode 100644
-index 0e2b40ef69b049c5e79ab2e31811e1e6e6ef2475..0000000000000000000000000000000000000000
---- a/arch/s390/include/asm/vdso/data.h
-+++ /dev/null
-@@ -1,12 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __S390_ASM_VDSO_DATA_H
--#define __S390_ASM_VDSO_DATA_H
--
--#include <linux/types.h>
--
--struct arch_vdso_data {
--	__s64 tod_steering_delta;
--	__u64 tod_steering_end;
--};
--
--#endif /* __S390_ASM_VDSO_DATA_H */
-diff --git a/arch/s390/include/asm/vdso/time_data.h b/arch/s390/include/asm/vdso/time_data.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..8a08752422e609d925c87ba5aafd1bbb6fef57e7
---- /dev/null
-+++ b/arch/s390/include/asm/vdso/time_data.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __S390_ASM_VDSO_TIME_DATA_H
-+#define __S390_ASM_VDSO_TIME_DATA_H
-+
-+#include <linux/types.h>
-+
-+struct arch_vdso_time_data {
-+	__s64 tod_steering_delta;
-+	__u64 tod_steering_end;
-+};
-+
-+#endif /* __S390_ASM_VDSO_TIME_DATA_H */
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index b85f24cac3f564d8b3c25c6ce86d2527af0e1e0b..d967baa0cd0c65784e38dc4fcd7b9e8273923947 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -19,10 +19,10 @@
- #include <vdso/time32.h>
- #include <vdso/time64.h>
- 
--#ifdef CONFIG_ARCH_HAS_VDSO_DATA
--#include <asm/vdso/data.h>
-+#ifdef CONFIG_ARCH_HAS_VDSO_TIME_DATA
-+#include <asm/vdso/time_data.h>
- #else
--struct arch_vdso_data {};
-+struct arch_vdso_time_data {};
- #endif
- 
- #define VDSO_BASES	(CLOCK_TAI + 1)
-@@ -114,7 +114,7 @@ struct vdso_data {
- 	u32			hrtimer_res;
- 	u32			__unused;
- 
--	struct arch_vdso_data	arch_data;
-+	struct arch_vdso_time_data arch_data;
- };
- 
- /**
-
--- 
-2.47.0
-
+>  	if (kvm_memslots_have_rmaps(kvm))
+>  		flush = __kvm_rmap_zap_gfn_range(kvm, range->slot,
+>  						 range->start, range->end,
+> -- 
+> 2.47.0.rc1.288.g06298d1525-goog
+> 
 
