@@ -1,109 +1,71 @@
-Return-Path: <linux-kernel+bounces-359373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6E6998ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:01:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C42F998B9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13FA21F21FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:01:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E869B2ECA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F47E1CC174;
-	Thu, 10 Oct 2024 14:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k1s96HPh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u9xdIvwl"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622F21CEABD;
+	Thu, 10 Oct 2024 14:55:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E60C1CEAD8;
-	Thu, 10 Oct 2024 14:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A7B1CC8A4;
+	Thu, 10 Oct 2024 14:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572138; cv=none; b=oykpiEukgLrqvQzyHLzo6hYxwJbsiMwnvSWMsqarR5GuVaSy9oNmxjJT4JkPjZYhJrJTr8WYGMka7zNoU/OrFTyfP3yeylPZtnWU20xrXgR21Mok3zuooPERp9P0U5E4/87H0EcTJIIJE8+wdL0G64++8SmhTcXarsLFoDwQvI8=
+	t=1728572134; cv=none; b=gK02gSQUatboAP2RYvJfYuDVbjHSxeqV4sHVqOmmyogFvJK/6D5KLWdneX2qssM3ji4w9bgWyRv+21Q7/Rp/GjkxCuXrcVE6L0f+wl7Xiz/n9fej2Kox+ow7yS+KlC2cfK0r0tPRoEMhxKqI/c33DCqxMtENmd9yER/N5KztdtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572138; c=relaxed/simple;
-	bh=VaKy3/SYsBJIOkT4AZRE2/1NOauMYryXBe8mPgSv6mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4nW3VV7vrkekZ8EYnB0+89AG8D15klDxmPSIfM2vh+IAzzHMmvtP44IejLWJRWzpoEyFpS9BQMtY1wcrV3MlxmzKN4B24tqlkJEbVhrBAHY5dRmFnqsTOhzmWbio/qvnE740AE9i6Ycmz/67lSjCtevB29XNnEND3s562VfemQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k1s96HPh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u9xdIvwl; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 10 Oct 2024 16:55:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728572134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z62FhbIDGnDEM0JzTHpSQ5bTUtwOmOam/JPhtFyeT0U=;
-	b=k1s96HPhvHH+MVDWbeM91SI3Xr1WCEAcHZcC5ktchhqSnb6v37biafjJBDTddbIwacvfsj
-	DeHKa0saPnC77Il9oNFTYfJczRFIXo4X4v4URhYoRH9rYZcM2P3+s13ZOLZx/J9S16UBfl
-	LjqKIV4mmi1K/kcFnGNlK1wNVfdxHBlQ8ymwuMUnu7lw7zHrYFQAmL/P/mDDK3h0zgbj7N
-	dicI+HBRkjvspfgqH4N+wifdt8bjGEAr63lAik/Alw7TiIiR4vBGQzVoOtSm2EUhbhkbaY
-	gD9pIn7OcYM3zooQEqxy3HO1zbTUorTP1h9kwM8fHBnuzQ7ANiX8V9cQ+I5/WA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728572134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z62FhbIDGnDEM0JzTHpSQ5bTUtwOmOam/JPhtFyeT0U=;
-	b=u9xdIvwlTzOl6UHMmGKrXMFwPH/POsfVxZPkmpNVffJNU8kC1pQrs49CsjzLQbdoMq42nA
-	oBc3qirx0+Pd+1AQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
-	mingo@kernel.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, efault@gmx.de,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 2/3] tracing: Record task flag NEED_RESCHED_LAZY.
-Message-ID: <20241010145533.koFksAZb@linutronix.de>
-References: <20241009105709.887510-1-bigeasy@linutronix.de>
- <20241009105709.887510-3-bigeasy@linutronix.de>
- <87iku1b2vf.fsf@oracle.com>
- <20241009133328.23fc671c@gandalf.local.home>
- <87bjztaz7e.fsf@oracle.com>
- <20241010105611.VArhcxcr@linutronix.de>
- <20241010105214.0b8f4375@gandalf.local.home>
+	s=arc-20240116; t=1728572134; c=relaxed/simple;
+	bh=pQ3bY1ztqpkxEH+mo0S9kpQtrgDuV1YUKiqilJydXf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m/XieTOc5Ko3P+e1KYxhPHnmnG0ktYQl/pxmoaZpt3uiZqjVnYCauSeExWpx81Zk5cyvH6ufRluGK+uq2n5usZmybLCV28T1+cuGioy59Gh7Dib8gRfOPQ0qhFSJ0ez/Z1RtT22MRE4wqX+dXQxb5vz3B7FvtKsihyPDpUaCdLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4EDDC4CEC5;
+	Thu, 10 Oct 2024 14:55:32 +0000 (UTC)
+Date: Thu, 10 Oct 2024 10:55:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Jan Stancek <jstancek@redhat.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jforbes@redhat.com, ezulian@redhat.com
+Subject: Re: [PATCH 2/2] tools/rtla: fix collision with glibc
+ sched_attr/sched_set_attr
+Message-ID: <20241010105539.5b5aa41f@gandalf.local.home>
+In-Reply-To: <CAP4=nvRLgwu3y_c_m-SdPxaWm6rO_LVFKK98pkjFiLJ42LqhpQ@mail.gmail.com>
+References: <c355dc9ad23470098d6a8d0f31fbd702551c9ea8.1728552769.git.jstancek@redhat.com>
+	<45c1f78d4f0e7f1b786443ffdd462d7670ec1634.1728552769.git.jstancek@redhat.com>
+	<CAP4=nvRLgwu3y_c_m-SdPxaWm6rO_LVFKK98pkjFiLJ42LqhpQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241010105214.0b8f4375@gandalf.local.home>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-10 10:52:14 [-0400], Steven Rostedt wrote:
-> On Thu, 10 Oct 2024 12:56:11 +0200
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+On Thu, 10 Oct 2024 14:25:11 +0200
+Tomas Glozar <tglozar@redhat.com> wrote:
+
+> > --- a/tools/tracing/rtla/src/utils.c
+> > +++ b/tools/tracing/rtla/src/utils.c
+> > @@ -229,7 +229,7 @@ long parse_ns_duration(char *val)
+> >
+> >  #define SCHED_DEADLINE         6
+> >
+> > -static inline int sched_setattr(pid_t pid, const struct sched_attr *attr,
+> > +static inline int rtla_sched_setattr(pid_t pid, const struct sched_attr *attr,  
 > 
-> > +++ b/kernel/trace/trace.c
-> > @@ -2544,6 +2544,8 @@ unsigned int tracing_gen_ctx_irq_test(unsigned int irqs_status)
-> >  		trace_flags |= TRACE_FLAG_NEED_RESCHED;
-> >  	if (test_preempt_need_resched())
-> >  		trace_flags |= TRACE_FLAG_PREEMPT_RESCHED;
-> > +	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && tif_test_bit(TIF_NEED_RESCHED_LAZY))
-> > +		trace_flags |= TRACE_FLAG_NEED_RESCHED_LAZY;
-> >  	return (trace_flags << 16) | (min_t(unsigned int, pc & 0xff, 0xf)) |
-> >  		(min_t(unsigned int, migration_disable_value(), 0xf)) << 4;
-> >  }
-> 
-> This is the only update you made from your previous version right?
+> Hmm, rtla_sched_attr sounds to me like the function does something
+> specific to rtla. Maybe syscall_sched_attr would be a better name?
 
-Yes.
+Should I be waiting for a v2 with this addressed?
 
-> If so, my reviewed-by stands.
-
-Let me add your's and Ankur's.
-
-> -- Steve
-
-Sebastian
+-- Steve
 
