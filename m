@@ -1,120 +1,183 @@
-Return-Path: <linux-kernel+bounces-360093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5655C99945E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E6E999461
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C701C214B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13713284A4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D321E2858;
-	Thu, 10 Oct 2024 21:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CDB1E3773;
+	Thu, 10 Oct 2024 21:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a3AkH2dR"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzqHEcie"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867B61CDFD4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 21:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8A61CDFD4;
+	Thu, 10 Oct 2024 21:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728595462; cv=none; b=dDL574uBGZ3vuHTysEi3L8AcTz9uDMRX0S+gxAr+zqkyefnyqkPIpUidXHYngG5QC9fgkMKCoeHrPn/excwc2wv1fZUbZ2ISWO/TVqbcUB10XVl2FI4IHGoiRrBRFqgo4gPhw2H7aGYDqCmaBgqcbKI5mrwlG91U9hrAWJH+g4s=
+	t=1728595561; cv=none; b=jIc/aNE5ruo6duu0lR/kcLsLUGd7dp2b5nFuIaTdjfq3M2F9GU4dhvc+x1UzbZJZVn4FfzbK29VO3T8Yd1/nMTomL65PQiFm6JLrk0FsNHs56wFfIlI4TD32/w7caWIDyRyfGe7mMtSOUHaRUIiZhIb/UCqvIZ9pmVVGSnm+Gxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728595462; c=relaxed/simple;
-	bh=IvXBq22p6qcwQpaq5eTge6FDXANkdgf7r8d8TkHkgHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sp00FYabFBO4eaElbQ/y+NHI4qsUxVocErxSewsMTCVLtqBhnktp3vmekWNxufVoGNmnAfoYiZD/9OmQyRUYOJEbHhHZvPoAT4Zf14my8oKihwlg75yrValbnxHV55/zX4d9e4fA6k+nuPRSlXWOlB1mdQy4hkmOqul+I2dn8x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a3AkH2dR; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-832525e7449so82002939f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:24:20 -0700 (PDT)
+	s=arc-20240116; t=1728595561; c=relaxed/simple;
+	bh=H3QCDpR4l7Ykj3GCahYdrBiVlspqgJ1J9/SZlkURrtU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Zdb8cMjMwk2Vr7ZQ1my/Mo60qP3ikuSzl7EZuVdWIcsp3QnI7Avgh2inPeAkp/oSNMbT+hG/QYtKvNWABtb+LORRU9qgqXc1L8sGu0cMVujIedyP2NEnDIa2l3ataBYXaRxQUXIE0BIzLnXosftY2uGx4UiG4FQN9VC9Vmdckp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzqHEcie; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4311420b63fso10118055e9.2;
+        Thu, 10 Oct 2024 14:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728595459; x=1729200259; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tnFmO+JO0vAHh3WQGgxd4V2TgjaB2XL1XQA6JbK9oG4=;
-        b=a3AkH2dRu5bBnfgc1V8oAhte1wIURt1DzWv5DLVaj0VHLi18xY1OAqOJFYVHTsFzp4
-         RiCGH8ZmxHJMKslrf727pIFtVI6vGy5ziIoydridCa6qMvMLsjT6uodrHYCEa10hlZ9n
-         8cx28NejJZDLqdU2StoKIjiUTDWvnELyenrPE=
+        d=gmail.com; s=20230601; t=1728595558; x=1729200358; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eJW7O5XKUbOuuqLLX5pzcTQ1E4Av2AR4QeFhDmOQC8k=;
+        b=RzqHEcievD+eBz5fdSKmSAJ9M4YsdM7AqT+1j+VVNhY8dqayqHRLL1ztdIrq0N7lCH
+         2uS0iSJ587HZbi+dP2TQ49EsiTwHK+HkE9+zzMBEtkX3tnK0PW6K6zc+m7kQMuhiRHq5
+         Jdr+EoY/UPDOzqvlTw2CxYK8IpihAlyGqzmBS60j853ysr9CwFcZAwoY4okw/KkTDkor
+         qVUUryWuOXqre23ypcTcPiqs22EggS5AcYoWxKeeGItqGLLmUOWW42BGuhkp0r3P/v5s
+         EWgAvE6avHNqCzIs5gsKyUwB8YtAsU8ZcXznR+mUy2UFdudn8NrD6vH6h2brg/xmrFED
+         y0+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728595459; x=1729200259;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnFmO+JO0vAHh3WQGgxd4V2TgjaB2XL1XQA6JbK9oG4=;
-        b=Scr8hC1zNyGUCA3+Wm1pE7YmqqqkEl1v9agaP0cLauQ6WAJmYsxpr0qjrDPWeW9xwD
-         ry/a6YaA5Udl41C+4kmZd9ne7QB7xhBrhT8ZqR6EBGRxQBDcM4q7ylWUlKuA5b/cSJUJ
-         ibMGYmBJg3u5Ug9sum6gBQb0vwoMFWd9uw86HFPsChCTSMYJPzIFFbN1uqwGP3JZ+SgZ
-         PUh0grHJrmro8IFz3YbsSKXH6CRRgvre4Jcc/M/F4ht4cV3oMcxlIHiRuKcGtKqRrNCB
-         HWyLUxOOVonCKPuc5rIHbC9aVfDfsH6cuWFxJ6E1jgWf8/Zs6rRUfa161GNNlU8eOuUE
-         i0Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNleVkG8h4aiiRyZVWed1FbcYucM1iMUkSWeuIOtTVUje7ie82sHXLeKSwC/NAp3Ihg3xvNvvAWY+yj6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznR1kYXumaA6SAaLHQXS4YSC0Zu1YjT5/+dK8WI22A9jdWnEEX
-	m0gHRXurG7UhBhsDxsujTVRifm6/PLNAE+WjaDeZxWTATbCCk6nj/1hflBrLcx7Uycnh8+4dAes
-	2
-X-Google-Smtp-Source: AGHT+IGd8YjULQ5BgNmgPudrci6pRddPv1aAy6Zho1lX9ktZjptVS9rb0mbIN/F9nZopayfpk8di4Q==
-X-Received: by 2002:a92:ca4c:0:b0:3a2:aed1:1285 with SMTP id e9e14a558f8ab-3a3b5c7bd20mr4241855ab.0.1728595459638;
-        Thu, 10 Oct 2024 14:24:19 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbadaa8cb2sm387245173.123.2024.10.10.14.24.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 14:24:19 -0700 (PDT)
-Message-ID: <0ba33212-d38d-42f1-9864-010e1802a7ac@linuxfoundation.org>
-Date: Thu, 10 Oct 2024 15:24:18 -0600
+        d=1e100.net; s=20230601; t=1728595558; x=1729200358;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eJW7O5XKUbOuuqLLX5pzcTQ1E4Av2AR4QeFhDmOQC8k=;
+        b=Humoy/sB132aFsDGK49xRFJcQGabIVD5fHSWWb7dBYOeBO5HZDKVpv1r9QSUdiVckR
+         R1D2Nm7v2AKNNQMdSFZeTEVvgNJqmwTN2UCP23CLqup2zc/mycSppffbs3p5L1ozf6Ic
+         cibFV4R5Hk7wWJMq9wD615eQom/vldCgbLN1YqlqpKTJAddxrXpOB0wySC1sNvuK00QV
+         3KNfrq/ubqRrUFAExkP3+C4tddGMNdw3bCmH72zCJz42UWa5ja63vaPgfrsi5FN1BvNd
+         wCdvWvV7PIhSV/ZjYHtwYONxp8AsEFlruEY7NUIAO8jK2wJz8O9KOtX1OVYKkKmjPPdc
+         gSIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvAvKkgaeW1StW3GiDbmvC3+dFuChUzCLS2loYmf6vFMLwogmzD0L2j1l0FdDR0fmTJotz2sPNb3Uu9fA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxaQ8FqFVRbDVAz+0SHdNmlRUfpEXqaNhCn3hvZk5LOaOrMZPE
+	0YFQ6GF4SlvZZpXYaTU9KoxReu5x3CQuVbnmCA5jfImrzsPn0jM5
+X-Google-Smtp-Source: AGHT+IGjhjvs23XBaF9qo7yUB6Onp+okLGqfHWsTl1zeKUZJoKhghxIMshywkcca8h+/0cILKz7jtQ==
+X-Received: by 2002:a5d:5641:0:b0:37d:4a2d:6948 with SMTP id ffacd0b85a97d-37d552375b6mr274533f8f.33.1728595557711;
+        Thu, 10 Oct 2024 14:25:57 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-3d08-841a-0562-b7b5.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:3d08:841a:562:b7b5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8940sm2402083f8f.6.2024.10.10.14.25.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 14:25:56 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 00/10] input: automate of_node_put() calls for device_node
+Date: Thu, 10 Oct 2024 23:25:50 +0200
+Message-Id: <20241010-input_automate_of_node_put-v1-0-ebc62138fbf8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ftrace/selftest: Test combination of function_graph
- tracer and function profiler
-To: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241010165235.35122877@gandalf.local.home>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241010165235.35122877@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF5GCGcC/x3MQQqAIBBA0avErBNUamFXiRDTsWaRhloE0t2Tl
+ u8vfoWMiTDD1FVIeFOmGBpE34HdTdiQkWsGyeUgOFeMwnkVba4SD1NQR69DdKhbZGI1qPxouXQ
+ K2uBM6On55/Pyvh//OD7kbAAAAA==
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728595555; l=3941;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=H3QCDpR4l7Ykj3GCahYdrBiVlspqgJ1J9/SZlkURrtU=;
+ b=ts+Lle7wL/NftURW4LFEavUzl5GrcOSKdRmgSDAOu1aMNej5jIzm2CTRgJNXE6hx7mfQRYjjT
+ +ApNZbKfUf5BWFg+9nvAGVEh/pTZoGKhLCO94Qdp2GRbQN2Bm16D02B
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On 10/10/24 14:52, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Masami reported a bug when running function graph tracing then the
-> function profiler. The following commands would cause a kernel crash:
-> 
->    # cd /sys/kernel/tracing/
->    # echo function_graph > current_tracer
->    # echo 1 > function_profile_enabled
-> 
-> In that order. Create a test to test this two to make sure this does not
-> come back as a regression.
-> 
-> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
-> 
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v2: https://lore.kernel.org/20241004145618.18436d7e@gandalf.local.home
-> 
-> - Fixed grammar of comment
-> 
+This series removes the explicit calls to 'of_node_put()' from the input
+subsystem, either by switching from 'for_each_child_of_node()' to its
+scoped variant 'for_each_child_of_node_scoped()', or by adding the
+cleanup attribute to the device_node by means of the '__free()' macro.
 
-Thank you. Applied to linux-kselftest fixes for next rc.
+This series simplifies the code in some cases, and it makes it in
+general more robust, as it will avoid memory leaks if early returns are
+added without the required call to 'of_node_put()', which is a rather
+common issue.
 
-thanks,
--- Shuah
+The following drivers unconditionally release the device node after
+using it:
+
+  - misc/twl4030-vibra.c ('of_node_put()' under an if, but only if the
+    node received a valid value).
+  - misc/sparcspkr.c
+  - serio/i8042-sparcio.h
+  - touchscreen/raspberrypi-ts.c
+  - touchscreen/ts4800-ts.c
+
+The usage of the cleanup faciliy for these drivers offers no real gain
+at the moment, but as soon as an error path is added to them, things can
+go wrong, as it has happened multiple times with such nodes. I intended
+to remove this error-prone pattern from the subsystem, so it is not
+"borrowed" by new users. But if someone has strong feelings about the
+automatic cleanup for those drives, I will not complain if they are left
+as they are (at least until a new buggy error path is introduced ;)).
+
+The approach for the variable declaration is the one that has been
+followed in previous clean ups: as near as possible to its usage,
+instead of at the top. I have no strong feelings about that either, but
+I would prefer it that way for consistency and to have a common pattern
+for future additions.
+
+A single call to 'of_node_put()' has been left behind in rmi4/rmi_bus.c,
+as it is used to release a node passed as a parameter, which would make
+the use of the cleanup attribute too cumbersome for no real gain. It is
+called unconditionally, and it will probably not be used as a common
+pattern for new users of a device_node.
+
+There has been some previous work from Dmitry to use the cleanup
+facilities for 'fwnode_handle' and mutexes[1][2], which this series
+aims to complement for 'device_node'.
+
+Link: https://lore.kernel.org/linux-input/20240904044244.1042174-1-dmitry.torokhov@gmail.com/ [1]
+Link: https://lore.kernel.org/linux-input/20240825051627.2848495-1-dmitry.torokhov@gmail.com/ [2]
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (10):
+      Input: cap11xx - switch to for_each_child_of_node_scoped
+      Input: mtk-pmic-keys - switch to for_each_child_of_node_scoped
+      Input: sun4i-lradc-keys - switch to for_each_child_of_node_scoped
+      Input: twl6040-vibra - use cleanup facility for device_node
+      Input: twl4030-vibra - use cleanup facility for device_node
+      Input: sparcspkr - use cleanup facility for device_node
+      Input: 88pm860x - use cleanup facility for device_node
+      Input: i8042 - use cleanup facility for device_node
+      Input: raspberrypi-ts - use cleanup facility for device_node
+      Input: ts4800-ts - use cleanup facility for device_node
+
+ drivers/input/keyboard/cap11xx.c           | 12 ++++--------
+ drivers/input/keyboard/mtk-pmic-keys.c     | 17 +++++------------
+ drivers/input/keyboard/sun4i-lradc-keys.c  |  7 ++-----
+ drivers/input/misc/sparcspkr.c             |  4 +---
+ drivers/input/misc/twl4030-vibra.c         | 11 +++--------
+ drivers/input/misc/twl6040-vibra.c         |  8 ++------
+ drivers/input/serio/i8042-sparcio.h        |  6 +-----
+ drivers/input/touchscreen/88pm860x-ts.c    | 20 +++++++-------------
+ drivers/input/touchscreen/raspberrypi-ts.c |  4 +---
+ drivers/input/touchscreen/ts4800-ts.c      |  5 ++---
+ 10 files changed, 28 insertions(+), 66 deletions(-)
+---
+base-commit: 515ef92b4939fa51f9f1ee278618e2d419b0b8b0
+change-id: 20241009-input_automate_of_node_put-1bae9f5c02d9
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
