@@ -1,86 +1,162 @@
-Return-Path: <linux-kernel+bounces-358730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3527F9982E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:55:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9209982EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D988E1F21811
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8614282788
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36BA1BD4FD;
-	Thu, 10 Oct 2024 09:55:17 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F788191F62;
-	Thu, 10 Oct 2024 09:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCE91BE251;
+	Thu, 10 Oct 2024 09:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKOee0Fa"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9671BC9E3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554117; cv=none; b=ija3nJCa6gRO6j+aR0EGGxIpH/z1rhrUfcdQ+Cv6SB3eLtubmGOIJvkJI3e+yyswEo9HiVS09Xaam6K0kHFHOY57o/C2yZDsgv02M/omZAC8hjTRTfCRABY4J3Y5uART0UFuhLq5HraQ7CrQ99Bxm5SlF79qYMn3cM0QPEPA81M=
+	t=1728554161; cv=none; b=uMQWs3qVa4OQ+PLmhF1P0QERGyvwOySfvuhP+3xFCRqkBksS4T+GEbx1/0CKZuDJ9cbI9D3TL7ZNgR+GNcKy9fOE0Z+xRWB/7XxCrOgu3Gb47rFsDujLxCpwypOAbTETelWZ+BmD5VU2g/iLmYu4W5+Zt3xu+67G2rkNvzwm7pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554117; c=relaxed/simple;
-	bh=gz2smKnkk2RNcrj6xuDZIDac9lwnTzKH5lj78bfhCoc=;
-	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
-	 Content-Type; b=DrEMFU1upTj8j9pxwYLRuyBrHx4hgzDTx94MEN40xXuObzZqP/EX2bNT69hQowoEogxut9U/Kzrw5rKko19FTMvK2OfHlhJ2jG07pX6I/vBAXrn0QUemf5PNkfBe1H7w+irpgLD4Jrejh67F8NY6rwxUN2KExREQJeoNW0N5Qqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee16707a47d7ca-c80d8;
-	Thu, 10 Oct 2024 17:55:10 +0800 (CST)
-X-RM-TRANSID:2ee16707a47d7ca-c80d8
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from Honor (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee56707a47d9cd-49527;
-	Thu, 10 Oct 2024 17:55:10 +0800 (CST)
-X-RM-TRANSID:2ee56707a47d9cd-49527
-Date: Thu, 10 Oct 2024 17:55:09 +0800
-From: =?utf-8?B?5ZSQ5b2s?= <tangbin@cmss.chinamobile.com>
-To: broonie <broonie@kernel.org>
-Cc: lgirdwood <lgirdwood@gmail.com>, 
-	perex <perex@perex.cz>, 
-	tiwai <tiwai@suse.com>, 
-	matthias.bgg <matthias.bgg@gmail.com>, 
-	angelogioacchino.delregno <angelogioacchino.delregno@collabora.com>, 
-	linux-sound <linux-sound@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Subject: Re: Re: [PATCH 1/2] ASoC: mediatek: mt8188: Remove unnecessary variable assignments
-References: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>, 
-	<ZwejOZQlSsWbAWBg@finisterre.sirena.org.uk>
-X-Priority: 3
-X-Has-Attach: no
-X-Mailer: Foxmail 7.2.25.213[cn]
+	s=arc-20240116; t=1728554161; c=relaxed/simple;
+	bh=XopSwLBUnKMXMFt2QF9TxC6ddo9IsvZRHm1kfbjdsR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pfp7DBRPw48RrKWQlDKncv8LFToddP+7766BBleveTEHgBs5H37I4bMqkzSUA9rxAP3OBvGaf35XTh+t9jOHa9FVDqMuDvHQ+mEl+28ur9HjItVh8/Ddmklmit7O0XYX3gT0PGcaujrd3wjlwVuvnwvF7i2kPNkDItTj1/GF+QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PKOee0Fa; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e28fe07e97dso689525276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728554159; x=1729158959; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LOxBidp2LwpSxAPZkgwnhCDQ++zAlIni8FAvSy37V9Y=;
+        b=PKOee0FanXR78U8uzaXTGICADQho+Maf6NiPaSKMo/svmaCa0hfIfTB6pafuAmns/9
+         Qoz8jncV6dlVndVZWCxqI/PUSZ3+Aos3fYDHzDS+bKZqZBcpAK8Pg5FYJHKpRqY1h51v
+         BJWplOrcBCVJxV+XhYYR+Dg3hYZgXV76kwNKhSb3KmLaADsjZ9xM0b8YwhZS2dLwfiZ9
+         /RjTg2hfVrZa587JynC/T4ocdJRQFQnU0WSXWRwJyxS9okQdXO/KWLYjRmOvjkKixvLc
+         uKjLuCMgWMQIPwZv1PL4XwwE4EjsGyLp/M17Cl/8GngV0Mh6cyLkTtVK2QEGDIPQjPBl
+         F8UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728554159; x=1729158959;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LOxBidp2LwpSxAPZkgwnhCDQ++zAlIni8FAvSy37V9Y=;
+        b=DYK7+qqsF84DbUSsa3BHtveokqOYQPsOPdptR+wnZ6i7NQQ/g7RA6QQyUIvJOUXY9k
+         CaBgv2FHeVUxc6juS7fDNV+LSMKiWdEb++GFJ8dAEuA4B8yTYwOVgNLdD6T+0sqv5NL3
+         QErp0b8I0h5/SzdR/nvYpExjLh7+XN1TlyAT5VJYkl4HuS14Y0Sglw5SR5hQUx7uYsDS
+         yq/8+cneq57lSi2I8qBypepjs85zcDEnLo8c4ztoQ5VKh4qNFl3hAgV6ejB8ITitptho
+         qq+TBAzhdZDjZQ/CWTSJFQHiXFvLILjgZuEM8mSfUEyoxiBs0Bn4xOl3GCFmhOkVZ1Hp
+         Lb9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXPPpXaHduKQ/aIH3pLBHkt4ABByXRFsPezosA+M7FXEm79WqE4yyNT8ROfOsMbdeMGyLuztu0+VbNg/2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI5DDb41HceEiTYKL4KBWsyzcboOacrZSd9bbrM9hbhifyx2F4
+	h/HnYgMJKKrchzeVcZKb62Xl8FaAFphuDjeZUUwsFf0THyVb1yGDlWCIETCIGziz0ALVT78hgcl
+	vSKxY6fIhVs0tLOZJshT7QilM6pZOuddD6daxrQ==
+X-Google-Smtp-Source: AGHT+IHQZs+aj47vmsFfuBifBBcYuqtrZOQCAYpL4cJf6+m/xMJish6M+co6AowbOJStpK58DqwxzTCpkJFzob0nWP4=
+X-Received: by 2002:a05:690c:7690:b0:6e3:39b6:5370 with SMTP id
+ 00721157ae682-6e339b65672mr605897b3.24.1728554158835; Thu, 10 Oct 2024
+ 02:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <202410101755089538782@cmss.chinamobile.com>
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+References: <20241010074246.15725-1-johan+linaro@kernel.org>
+In-Reply-To: <20241010074246.15725-1-johan+linaro@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 10 Oct 2024 12:55:48 +0300
+Message-ID: <CAA8EJpoiu2hwKWGMTeA=Kr+ZaPL=JJFq1qQOJhUnYz6-uTmHWw@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: mark pd-mapper as broken
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Chris Lew <quic_clew@quicinc.com>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-SSBhbSBzb3JyeSwgaXQncyBteSBtaXN0YWtlLiBJIGtub3cgdGhlIHJ1bGUsIGp1c3QgbWlzdGFr
-ZS4KCgoKCgoKCkZyb206wqBNYXJrIEJyb3duCgoKCkRhdGU6wqAyMDI0LTEwLTEwwqAxNzo0OQoK
-CgpUbzrCoFRhbmcgQmluCgoKCkNDOsKgbGdpcmR3b29kOyBwZXJleDsgdGl3YWk7IG1hdHRoaWFz
-LmJnZzsgYW5nZWxvZ2lvYWNjaGluby5kZWxyZWdubzsgbGludXgtc291bmQ7IGxpbnV4LWtlcm5l
-bDsgbGludXgtYXJtLWtlcm5lbDsgbGludXgtbWVkaWF0ZWsKCgoKU3ViamVjdDrCoFJlOiBbUEFU
-Q0ggMS8yXSBBU29DOiBtZWRpYXRlazogbXQ4MTg4OiBSZW1vdmUgdW5uZWNlc3NhcnkgdmFyaWFi
-bGUgYXNzaWdubWVudHMKCgoKT24gVGh1LCBPY3QgMTAsIDIwMjQgYXQgMDM6MzU6NDdQTSArMDgw
-MCwgVGFuZyBCaW4gd3JvdGU6CgoKCj4gSW4gdGhlIGZ1bmN0aW9uIG10a19kYWlfaGRtaXR4X2Rw
-dHhfaHdfcGFyYW1zLCB0aGUgdmFyaWFibGUKCgoKPiAncmV0JyBpcyByZWR1bmRhbnQsIHRodXMg
-cmVtb3ZlIGl0LgoKCgrCoAoKCgpQbGVhc2UgZG9uJ3Qgc2VuZCBwYXRjaCBzZXJpZXNlcyB3aXRo
-b3V0IGNvdmVyIGxldHRlcnMsIGhhdmluZyBhIGNvdmVyCgoKCmxldHRlciBtYWtlcyBpdCBlYXNp
-ZXIgdG8gdGVsbCB3aHkgdGhlIHNlcmllcyBpcyBhIHNlcmllcyBhbmQgbWFrZXMgaXQKCgoKZWFz
-aWVyIGZvciB0b29saW5nIHRvIHdvcmsgd2l0aCB0aGUgc2VyaWVzLgoKCgo=
+On Thu, 10 Oct 2024 at 10:44, Johan Hovold <johan+linaro@kernel.org> wrote:
+>
+> When using the in-kernel pd-mapper on x1e80100, client drivers often
+> fail to communicate with the firmware during boot, which specifically
+> breaks battery and USB-C altmode notifications. This has been observed
+> to happen on almost every second boot (41%) but likely depends on probe
+> order:
+>
+>     pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+>     pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+>
+>     ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+>
+>     qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+>
+> In the same setup audio also fails to probe albeit much more rarely:
+>
+>     PDR: avs/audio get domain list txn wait failed: -110
+>     PDR: service lookup for avs/audio failed: -110
+>
+> Chris Lew has provided an analysis and is working on a fix for the
+> ECANCELED (125) errors, but it is not yet clear whether this will also
+> address the audio regression.
+>
+> Even if this was first observed on x1e80100 there is currently no reason
+> to believe that these issues are specific to that platform.
+>
+> Disable the in-kernel pd-mapper for now, and make sure to backport this
+> to stable to prevent users and distros from migrating away from the
+> user-space service.
+>
+> Fixes: 1ebcde047c54 ("soc: qcom: add pd-mapper implementation")
+> Cc: stable@vger.kernel.org      # 6.11
+> Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+
+Please don't break what is working. pd_mapper is working on all
+previous platforms. I suggest reverting commit bd6db1f1486e ("soc:
+qcom: pd_mapper: Add X1E80100") instead.
+
+> ---
+>
+> It's now been over two months since I reported this regression, and even
+> if we seem to be making some progress on at least some of these issues I
+> think we need disable the pd-mapper temporarily until the fixes are in
+> place (e.g. to prevent distros from dropping the user-space service).
+>
+> Johan
+>
+>
+> #regzbot introduced: 1ebcde047c54
+>
+>
+>  drivers/soc/qcom/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 74b9121240f8..35ddab9338d4 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -78,6 +78,7 @@ config QCOM_PD_MAPPER
+>         select QCOM_PDR_MSG
+>         select AUXILIARY_BUS
+>         depends on NET && QRTR && (ARCH_QCOM || COMPILE_TEST)
+> +       depends on BROKEN
+>         default QCOM_RPROC_COMMON
+>         help
+>           The Protection Domain Mapper maps registered services to the domains
+> --
+> 2.45.2
+>
 
 
-
+-- 
+With best wishes
+Dmitry
 
