@@ -1,135 +1,207 @@
-Return-Path: <linux-kernel+bounces-359906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C476C999247
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:27:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F50E999249
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EB4284EB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DD61C2414B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF01F1CEE85;
-	Thu, 10 Oct 2024 19:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24F91CEAD5;
+	Thu, 10 Oct 2024 19:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Rt9yiVke"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G7RQTQWN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AFE199FA2;
-	Thu, 10 Oct 2024 19:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2E9198E75
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728588436; cv=none; b=dOdlnEAVl65Sf3ajTLMXnNkAOD7kUu7QCSqjVa4ooaN8FR8qw5KGXRR+8zpjFedLSS1ihEvJAuY1Ijiitl6WG0mes+KhwIjhsod2zpWzM34UEQM+5ACI9GJFjmn2Cb501nM1jFRRaaBaQW9R1F+PVLJasxlU1pClhIjFEiITG2s=
+	t=1728588454; cv=none; b=nJ/tGFNWYoj65Qa0Rfft5qwF+3oCLJLd3gPBXE4+8f5A5DuYGtlTa6Q7L0mYiKJDHpIfECtV92UmzaqOWwFvDqVKoAaLJogN7/7uyh0eiquX7R72uv7SabcohjlFNU8zmMM/NE0iQ1CkLo3Tjr2N5u+Q/7Vghra/fZJT18YmHSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728588436; c=relaxed/simple;
-	bh=OEH00vqI9ntRyA4QhbqwFD2+B7TmPgXstqQdwdzNaqg=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=QWP9VkPvLxhbNtfNIhumbEZPt94wk2iRCgp9hW3dIvMFDiHWVEQ8ZZ0wuGyXNfiJbbCJY7u7xKBRtB241bSS0dKljlah2cPGM0k2tv0PgWVcgF8flAE3N2cvM+Y/jt5DlJXFTADQOTDyMi62SZY44GBWkVRXuM4iEmD7otBLpCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Rt9yiVke; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1728588434; x=1760124434;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OEH00vqI9ntRyA4QhbqwFD2+B7TmPgXstqQdwdzNaqg=;
-  b=Rt9yiVkedjhe9I8qUO1Ug5fu4aUxlJ07mCwLapCqDEQg1szsHJAmkJ7s
-   VdlfGeDvIerxR7pHljqDAo/Olferm8+iiakfFE3hzoeVB/qXs+VBo3I02
-   sxC88pbitrxUBRDkdEtzwPfR77WsHwNTAZ1nKbYhh9YtAHFqmxe9lWxk2
-   0=;
-X-IronPort-AV: E=Sophos;i="6.11,193,1725321600"; 
-   d="scan'208";a="137549306"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 19:27:14 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:4948]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.26:2525] with esmtp (Farcaster)
- id f363ef87-207c-439a-bf2e-f001afa02b30; Thu, 10 Oct 2024 19:27:13 +0000 (UTC)
-X-Farcaster-Flow-ID: f363ef87-207c-439a-bf2e-f001afa02b30
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 10 Oct 2024 19:27:13 +0000
-Received: from [192.168.208.61] (10.106.101.38) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Thu, 10 Oct 2024 19:27:10 +0000
-Message-ID: <7aca068b-5332-41b4-a06d-fd21b4a715f9@amazon.com>
-Date: Thu, 10 Oct 2024 12:27:09 -0700
+	s=arc-20240116; t=1728588454; c=relaxed/simple;
+	bh=60jWUxNJOImmNhqqihV7Nrwm8WDVjLhwppouxmKslPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kut5Ade9y8dyZ8BHSi1Jro5LbUFj0zyq7fhAGpkUXB7URuSljWe9JsAcC/xSwYZzk3DXgUhmvM0WCb/Uq7K86UFsA/SsLp85k/gKTHyn1FEwowAdvuooPx0j9L5upssaCpf40/Z+mwnMNq2lR6EPRD2hKlAQk7dRcIye11nYnRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G7RQTQWN; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728588452; x=1760124452;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=60jWUxNJOImmNhqqihV7Nrwm8WDVjLhwppouxmKslPc=;
+  b=G7RQTQWNKgLXUKGB8DCzwXIm++e0bNIyXB2Aj2Xf754mHb7yekkGGDb6
+   8l3myn+RBH79ZZqM5vcqTyc/cjFc+fqVaCA5Efg0Jd0Ix9aNoTpayQm19
+   +XL4hWm+S8QEdsFTee25l7EOHkIUsXn3DEuKcf1u68EalZUpUVpx0eZW9
+   wBcnWBf2aT+02DwXlnXB4Qwjb7gbVJoj5gXlc2DuxuIwT628R16L22o8y
+   e9F08Anjy7r1NTnc9enQAZkZXru46w2G9C/ZhpZIz7EtnXxQ1+epdO7A5
+   mXqr6/CL8DpHLeRmX++IrAd5SunnOoQenolz2v/QZ8t+TLmpbbW0TbcvQ
+   w==;
+X-CSE-ConnectionGUID: 3Dyq57zuSnWEnRhwZArJoQ==
+X-CSE-MsgGUID: jJIwl1V9S1+rNWIkdRfKuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31870229"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="31870229"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 12:27:31 -0700
+X-CSE-ConnectionGUID: 5bgkQ1JETg6fbgiC+wUN6w==
+X-CSE-MsgGUID: kphbZT94SemJrAfUAbwKoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="76614753"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa010.jf.intel.com with ESMTP; 10 Oct 2024 12:27:31 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@kernel.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	ak@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Cc: eranian@google.com,
+	thomas.falcon@intel.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 0/3] Support auto counter reload
+Date: Thu, 10 Oct 2024 12:28:41 -0700
+Message-Id: <20241010192844.1006990-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <roypat@amazon.co.uk>
-CC: <ackerleytng@google.com>, <ajones@ventanamicro.com>,
-	<anup@brainfault.org>, <bfoster@redhat.com>, <brauner@kernel.org>,
-	<david@redhat.com>, <derekmn@amazon.com>, <erdemaktas@google.com>,
-	<fan.du@intel.com>, <fvdl@google.com>, <haibo1.xu@intel.com>,
-	<isaku.yamahata@intel.com>, <jgg@nvidia.com>, <jgowans@amazon.com>,
-	<jhubbard@nvidia.com>, <jthoughton@google.com>, <jun.miao@intel.com>,
-	<kalyazin@amazon.co.uk>, <kent.overstreet@linux.dev>, <kvm@vger.kernel.org>,
-	<linux-fsdevel@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-mm@kvack.org>,
-	<maciej.wieczor-retman@intel.com>, <mike.kravetz@oracle.com>,
-	<muchun.song@linux.dev>, <oliver.upton@linux.dev>, <pbonzini@redhat.com>,
-	<peterx@redhat.com>, <pgonda@google.com>, <pvorel@suse.cz>,
-	<qperret@google.com>, <quic_eberman@quicinc.com>,
-	<richard.weiyang@gmail.com>, <rientjes@google.com>, <rppt@kernel.org>,
-	<seanjc@google.com>, <shuah@kernel.org>, <tabba@google.com>,
-	<vannapurve@google.com>, <vkuznets@redhat.com>, <willy@infradead.org>,
-	<zhiquan1.li@intel.com>, <mlipp@amazon.at>, <canellac@amazon.at>,
-	<dave.hansen@linux.intel.com>, <andrew.cooper3@citrix.com>
-References: <6bca3ad4-3eca-4a75-a775-5f8b0467d7a3@amazon.co.uk>
-Subject: Re: [RFC PATCH 30/39] KVM: guest_memfd: Handle folio preparation for
- guest_memfd mmap
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <6bca3ad4-3eca-4a75-a775-5f8b0467d7a3@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D037UWC003.ant.amazon.com (10.13.139.231) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-On 2024-10-10 at 16:21+0000 Patrick Roy wrote:
-> On Tue, 2024-10-08 at 20:56 +0100, Sean Christopherson wrote:
-> > Another (slightly crazy) approach would be use protection keys to provide the
-> > security properties that you want, while giving KVM (and userspace) a quick-and-easy
-> > override to access guest memory.
-> >
-> >  1. mmap() guest_memfd into userpace with RW protections
-> >  2. Configure PKRU to make guest_memfd memory inaccessible by default
-> >  3. Swizzle PKRU on-demand when intentionally accessing guest memory
-> >
-> > It's essentially the same idea as SMAP+STAC/CLAC, just applied to guest memory
-> > instead of to usersepace memory.
-> >
-> > The benefit of the PKRU approach is that there are no PTE modifications, and thus
-> > no TLB flushes, and only the CPU that is access guest memory gains temporary
-> > access.  The big downside is that it would be limited to modern hardware, but
-> > that might be acceptable, especially if it simplifies KVM's implementation.
->
-> Mh, but we only have 16 protection keys, so we cannot give each VM a
-> unique one. And if all guest memory shares the same protection key, then
-> during the on-demand swizzling the CPU would get access to _all_ guest
-> memory on the host, which "feels" scary. What do you think, @Derek?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Yes I am concerned about this. I don't see a way to use protection keys
-that would ensure the host kernel cannot be tricked by one guest into
-speculatively accessing another guest's memory (unless we do a key per
-vm, which like you say severely limits how many guests you can host).
+Changes since V1:
+- Add a check to the reload value which cannot exceeds the max period
+- Avoid invoking intel_pmu_enable_acr() for the perf metrics event.
+- Update comments explain to case which the event->attr.config2 exceeds
+  the group size
 
-> Does ARM have something equivalent, btw?
+The relative rates among two or more events are useful for performance
+analysis, e.g., a high branch miss rate may indicate a performance
+issue. Usually, the samples with a relative rate that exceeds some
+threshold are more useful. However, the traditional sampling takes
+samples of events separately. To get the relative rates among two or
+more events, a high sample rate is required, which can bring high
+overhead. Many samples taken in the non-hotspot area are also dropped
+(useless) in the post-process.
 
-Yes - Permission Overlay Extension [1]. Although even the most recent
-parts don't offer it. I don't see it in Neoverse V3 or Cortex-X4.
+Auto Counter Reload (ACR) provides a means for software to specify that,
+for each supported counter, the hardware should automatically reload the
+counter to a specified initial value upon overflow of chosen counters.
+This mechanism enables software to sample based on the relative rate of
+two (or more) events, such that a sample (PMI or PEBS) is taken only if
+the rate of one event exceeds some threshold relative to the rate of
+another event. Taking a PMI or PEBS only when the relative rate of
+perfmon events crosses a threshold can have significantly less
+performance overhead than other techniques.
 
-Derek
+The details can be found at Intel Architecture Instruction Set
+Extensions and Future Features (053) 8.7 AUTO COUNTER RELOAD.
 
+Examples:
 
-[1] https://lore.kernel.org/all/20240822151113.1479789-1-joey.gouly@arm.com/
+Here is the snippet of the mispredict.c. Since the array has random
+numbers, jumps are random and often mispredicted.
+The mispredicted rate depends on the compared value.
+
+For the Loop1, ~11% of all branches are mispredicted.
+For the Loop2, ~21% of all branches are mispredicted.
+
+main()
+{
+...
+        for (i = 0; i < N; i++)
+                data[i] = rand() % 256;
+...
+        /* Loop 1 */
+        for (k = 0; k < 50; k++)
+                for (i = 0; i < N; i++)
+                        if (data[i] >= 64)
+                                sum += data[i];
+...
+
+...
+        /* Loop 2 */
+        for (k = 0; k < 50; k++)
+                for (i = 0; i < N; i++)
+                        if (data[i] >= 128)
+                                sum += data[i];
+...
+}
+
+Usually, a code with a high branch miss rate means a bad performance.
+To understand the branch miss rate of the codes, the traditional method
+usually sample both branches and branch-misses events. E.g.,
+perf record -e "{cpu_atom/branch-misses/ppu, cpu_atom/branch-instructions/u}"
+               -c 1000000 -- ./mispredict
+
+[ perf record: Woken up 4 times to write data ]
+[ perf record: Captured and wrote 0.925 MB perf.data (5106 samples) ]
+The 5106 samples are from both events and spread in both Loops.
+In the post process stage, a user can know that the Loop 2 has a 21%
+branch miss rate. Then they can focus on the samples of branch-misses
+events for the Loop 2.
+
+With this patch, the user can generate the samples only when the branch
+miss rate > 20%.
+perf record -e "{cpu_atom/branch-misses,period=200000,acr_mask=0x2/ppu,
+                 cpu_atom/branch-instructions,period=1000000,acr_mask=0x3/u}"
+                -- ./mispredict
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.098 MB perf.data (2498 samples) ]
+
+ $perf report
+
+Percent       │154:   movl    $0x0,-0x14(%rbp)
+              │     ↓ jmp     1af
+              │     for (i = j; i < N; i++)
+              │15d:   mov     -0x10(%rbp),%eax
+              │       mov     %eax,-0x18(%rbp)
+              │     ↓ jmp     1a2
+              │     if (data[i] >= 128)
+              │165:   mov     -0x18(%rbp),%eax
+              │       cltq
+              │       lea     0x0(,%rax,4),%rdx
+              │       mov     -0x8(%rbp),%rax
+              │       add     %rdx,%rax
+              │       mov     (%rax),%eax
+              │    ┌──cmp     $0x7f,%eax
+100.00   0.00 │    ├──jle     19e
+              │    │sum += data[i];
+
+The 2498 samples are all from the branch-misses events for the Loop 2.
+
+The number of samples and overhead is significantly reduced without
+losing any information.
+
+Kan Liang (3):
+  perf/x86/intel: Fix ARCH_PERFMON_NUM_COUNTER_LEAF
+  perf/x86/intel: Add the enumeration and flag for the auto counter
+    reload
+  perf/x86/intel: Support auto counter reload
+
+ arch/x86/events/intel/core.c       | 262 ++++++++++++++++++++++++++++-
+ arch/x86/events/perf_event.h       |  21 +++
+ arch/x86/events/perf_event_flags.h |   2 +-
+ arch/x86/include/asm/msr-index.h   |   4 +
+ arch/x86/include/asm/perf_event.h  |   4 +-
+ include/linux/perf_event.h         |   2 +
+ 6 files changed, 288 insertions(+), 7 deletions(-)
+
+-- 
+2.38.1
+
 
