@@ -1,90 +1,226 @@
-Return-Path: <linux-kernel+bounces-360027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D719993A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE8F99937B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1376A1F23028
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0E7A1F25254
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9C61DFD84;
-	Thu, 10 Oct 2024 20:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C371E2839;
+	Thu, 10 Oct 2024 20:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="bIMaU8TE"
-Received: from mx04lb.world4you.com (mx04lb.world4you.com [81.19.149.114])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRp0S40x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE791D0E10
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EB61CFECC;
+	Thu, 10 Oct 2024 20:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728591919; cv=none; b=S5bHYN9EIQcBT8g+TLkLGu6RxTku83ltXosTTMyQdMHulKyx1pFGRm4CE9BWt060sLtLySF6zHYP19kbsTiDOsk+Ia/qYBQllvoJGhm4h7pci/nrsXfV8oSTVqfIbvOffFP+/Tr3AI7p0KLFphaaJf0ywnlIJrh54uCM8PucmxQ=
+	t=1728591123; cv=none; b=RPRWqGNLqpsQOkuYJZUqCSlHNXEwy9dqPxRgqReiwzHR7qLKnwXyuG3swige97NroJiULQ4EjrZlgnIimD0OXgcaXtHlkBb/Lb+Hix4kZsWuj/zOghusQIjTkinvGnrpy8smYdNZJLG68+Ogdm8x8WKcCHil/n1ZLlQBcf9vLuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728591919; c=relaxed/simple;
-	bh=5qc2uLKtcng0Pbn4QgiTyzAIaDW5ySBZ4olEDvBdt8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doaeyoIjFITWmHkysx0ASGBLPGeLqie9S+gkMkofIyOncLI0Tx0m8lc/pdUL8p5pFpQ1J1lFvLX42NGlJDk3/5bkS5eBXBqYRiCM/eo/Xo/aayt+/PEdMU2nKpppgWQMydGDXyBx5cQ4BRO8HdV0J3TQLJ3UKdCwlVCKe2snpd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=bIMaU8TE; arc=none smtp.client-ip=81.19.149.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WIszEjML8mTs5AA53t+/xCrTzFI6TfvvQCFOYTlehB0=; b=bIMaU8TEvyrFU+JMrk7ZQGq626
-	5NRsVJf4spONbLzBcfHdUQRdltmXaXvs6vzw7r37wvlAfykl+S75MJw/gJeviFo3ezaTQdmCmMsQN
-	tmOLIJDSEFjNbj8vgx7PSfsXjUG57MeSGM1MDQyjG7d5RDLzqcX7Y3B9lm8DN9ReCui8=;
-Received: from [88.117.56.173] (helo=[10.0.0.160])
-	by mx04lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1syzEV-000000003dn-3QQK;
-	Thu, 10 Oct 2024 21:53:59 +0200
-Message-ID: <fdd45a82-bf05-4e03-bac2-cb670bbf5200@engleder-embedded.com>
-Date: Thu, 10 Oct 2024 21:53:58 +0200
+	s=arc-20240116; t=1728591123; c=relaxed/simple;
+	bh=e/JgbYiCi/7UBhwN/I0I8AkHVXsJpTb8JQnSwgJINjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VhcXOZ2apfUZ0AQGhc5Q8BtE8kKoYtCCGc0eVLnegrsu9z7ZYoxRzE9UCc2JgLl5VWoWwhTMYrOec/il5Yqzc2UHYK2EXICkI9h3HeiFuaYFwZnn1eMaMo6frjK/1P0Uhm0JnhbMQPBZ3vUsyMXkxCB9Gzbwcc0Fya0yclPquok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRp0S40x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E8DDC4CEC5;
+	Thu, 10 Oct 2024 20:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728591123;
+	bh=e/JgbYiCi/7UBhwN/I0I8AkHVXsJpTb8JQnSwgJINjw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZRp0S40xqNZg4jd57AO5bUhsl49zeNyptCQfzVk13Euv5RP2VtvPweli/qxGktfKx
+	 DbZ1brhvGcjuURcDRNVJb9saA3gGRa2MeMu4J0Jw2YKr50VMamvPr3426CPQDy0zBK
+	 W5MCnDO8QP+MQ/d7mA01xMYqUVYSY746Cg9BWV3aqui+2vIUVMWYdpgRsYIntBZPrI
+	 KEk+WjC13PJABXSKNMbyfXlNyv+Dq7IDXqjPCITBVB2b5lLeHd13MkvL9BuWavGSiy
+	 YQPdf0vQePh0A8kB14XRAFOcmSYJpyWbn8Yx1YAzS4k/jK91jVZOoEaE3blx77H+Qy
+	 H3YbbvTWGlncA==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCHv6 bpf-next 10/16] selftests/bpf: Add uprobe session recursive test
+Date: Thu, 10 Oct 2024 22:09:51 +0200
+Message-ID: <20241010200957.2750179-11-jolsa@kernel.org>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241010200957.2750179-1-jolsa@kernel.org>
+References: <20241010200957.2750179-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] misc: keba: Add SPI controller device
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de,
- Gerhard Engleder <eg@keba.com>
-References: <20241009202949.20164-1-gerhard@engleder-embedded.com>
- <20241009202949.20164-2-gerhard@engleder-embedded.com>
- <2024101026-scoured-conductor-c92e@gregkh>
-Content-Language: en-US
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <2024101026-scoured-conductor-c92e@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
+Content-Transfer-Encoding: 8bit
 
-On 10.10.24 09:12, Greg KH wrote:
-> On Wed, Oct 09, 2024 at 10:29:44PM +0200, Gerhard Engleder wrote:
->>   static void cp500_register_auxiliary_devs(struct cp500 *cp500)
->>   {
->>   	struct device *dev = &cp500->pci_dev->dev;
->>   
->>   	if (cp500_register_i2c(cp500))
->> -		dev_warn(dev, "Failed to register i2c!\n");
->> +		dev_warn(dev, "Failed to register I2C!\n");
-> 
-> Nit, this doesn't have anything to do with the original commit message,
-> please be more careful when splitting patches up into a series.
+Adding uprobe session test that verifies the cookie value is stored
+properly when single uprobe-ed function is executed recursively.
 
-Yes, I also did some variable renaming, which should be moved to a
-separate commit. I will be more strict in the future.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ .../bpf/prog_tests/uprobe_multi_test.c        | 57 +++++++++++++++++++
+ .../progs/uprobe_multi_session_recursive.c    | 44 ++++++++++++++
+ 2 files changed, 101 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
 
-Thanks!
+diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+index cc9030e86821..284cd7fce576 100644
+--- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
++++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+@@ -10,6 +10,7 @@
+ #include "uprobe_multi_pid_filter.skel.h"
+ #include "uprobe_multi_session.skel.h"
+ #include "uprobe_multi_session_cookie.skel.h"
++#include "uprobe_multi_session_recursive.skel.h"
+ #include "bpf/libbpf_internal.h"
+ #include "testing_helpers.h"
+ #include "../sdt.h"
+@@ -36,6 +37,12 @@ noinline void usdt_trigger(void)
+ 	STAP_PROBE(test, pid_filter_usdt);
+ }
+ 
++noinline void uprobe_session_recursive(int i)
++{
++	if (i)
++		uprobe_session_recursive(i - 1);
++}
++
+ struct child {
+ 	int go[2];
+ 	int c2p[2]; /* child -> parent channel */
+@@ -1089,6 +1096,54 @@ static void test_session_cookie_skel_api(void)
+ 	uprobe_multi_session_cookie__destroy(skel);
+ }
+ 
++static void test_session_recursive_skel_api(void)
++{
++	struct uprobe_multi_session_recursive *skel = NULL;
++	int i, err;
++
++	skel = uprobe_multi_session_recursive__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "uprobe_multi_session_recursive__open_and_load"))
++		goto cleanup;
++
++	skel->bss->pid = getpid();
++
++	err = uprobe_multi_session_recursive__attach(skel);
++	if (!ASSERT_OK(err, "uprobe_multi_session_recursive__attach"))
++		goto cleanup;
++
++	for (i = 0; i < ARRAY_SIZE(skel->bss->test_uprobe_cookie_entry); i++)
++		skel->bss->test_uprobe_cookie_entry[i] = i + 1;
++
++	uprobe_session_recursive(5);
++
++	/*
++	 *                                         entry uprobe:
++	 * uprobe_session_recursive(5) {             *cookie = 1, return 0
++	 *   uprobe_session_recursive(4) {           *cookie = 2, return 1
++	 *     uprobe_session_recursive(3) {         *cookie = 3, return 0
++	 *       uprobe_session_recursive(2) {       *cookie = 4, return 1
++	 *         uprobe_session_recursive(1) {     *cookie = 5, return 0
++	 *           uprobe_session_recursive(0) {   *cookie = 6, return 1
++	 *                                          return uprobe:
++	 *           } i = 0                          not executed
++	 *         } i = 1                            test_uprobe_cookie_return[0] = 5
++	 *       } i = 2                              not executed
++	 *     } i = 3                                test_uprobe_cookie_return[1] = 3
++	 *   } i = 4                                  not executed
++	 * } i = 5                                    test_uprobe_cookie_return[2] = 1
++	 */
++
++	ASSERT_EQ(skel->bss->idx_entry, 6, "idx_entry");
++	ASSERT_EQ(skel->bss->idx_return, 3, "idx_return");
++
++	ASSERT_EQ(skel->bss->test_uprobe_cookie_return[0], 5, "test_uprobe_cookie_return[0]");
++	ASSERT_EQ(skel->bss->test_uprobe_cookie_return[1], 3, "test_uprobe_cookie_return[1]");
++	ASSERT_EQ(skel->bss->test_uprobe_cookie_return[2], 1, "test_uprobe_cookie_return[2]");
++
++cleanup:
++	uprobe_multi_session_recursive__destroy(skel);
++}
++
+ static void test_bench_attach_uprobe(void)
+ {
+ 	long attach_start_ns = 0, attach_end_ns = 0;
+@@ -1189,4 +1244,6 @@ void test_uprobe_multi_test(void)
+ 		test_session_skel_api();
+ 	if (test__start_subtest("session_cookie"))
+ 		test_session_cookie_skel_api();
++	if (test__start_subtest("session_cookie_recursive"))
++		test_session_recursive_skel_api();
+ }
+diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+new file mode 100644
+index 000000000000..8fbcd69fae22
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/uprobe_multi_session_recursive.c
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/bpf.h>
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include <stdbool.h>
++#include "bpf_kfuncs.h"
++#include "bpf_misc.h"
++
++char _license[] SEC("license") = "GPL";
++
++int pid = 0;
++
++int idx_entry = 0;
++int idx_return = 0;
++
++__u64 test_uprobe_cookie_entry[6];
++__u64 test_uprobe_cookie_return[3];
++
++static int check_cookie(void)
++{
++	__u64 *cookie = bpf_session_cookie();
++
++	if (bpf_session_is_return()) {
++		if (idx_return >= ARRAY_SIZE(test_uprobe_cookie_return))
++			return 1;
++		test_uprobe_cookie_return[idx_return++] = *cookie;
++		return 0;
++	}
++
++	if (idx_entry >= ARRAY_SIZE(test_uprobe_cookie_entry))
++		return 1;
++	*cookie = test_uprobe_cookie_entry[idx_entry];
++	return idx_entry++ % 2;
++}
++
++
++SEC("uprobe.session//proc/self/exe:uprobe_session_recursive")
++int uprobe_recursive(struct pt_regs *ctx)
++{
++	if (bpf_get_current_pid_tgid() >> 32 != pid)
++		return 1;
++
++	return check_cookie();
++}
+-- 
+2.46.2
 
-Gerhard
 
