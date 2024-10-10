@@ -1,138 +1,196 @@
-Return-Path: <linux-kernel+bounces-358631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A60F9981C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:15:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A869981C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C944E1F277DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5961C24472
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F131BDA80;
-	Thu, 10 Oct 2024 09:12:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24221BBBE4;
+	Thu, 10 Oct 2024 09:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LbLzXC0Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rhnbZ+GF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B461A0AF5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E70EBE6F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551524; cv=none; b=IHuUEx8k14nJQ7WIuWQu0Q1TxtC/1yWYcFeLz+rGDqTvQRHyF8AYqcMeYidmuerB787dkgmk6UlUE/Obp1Okfa8HqDUwlKGogTgHsJHZtPSKHQQveBRjRBdIlYWoHMCV1jSCGaLnFtnwKspwE6HiDOxmNmMvWM8++empxvQXDz8=
+	t=1728551551; cv=none; b=aa3lU4dITNC3f257iFCDl0F8l03taPOyq93iVfnQoXdi5uQZK34aZ0yPiH1eB/4TO3HA9qNfimNEqtIzRIFKWXJQDm5+zyZM14lEMP+q4BmlJnKMYE0UY6tbi8+mEMmQEgX+kijq62Tv0FfDdoIiWAGTLx8AfUfQiGGKwqRzNH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551524; c=relaxed/simple;
-	bh=Baa1CNuR+wNXGnAjKzqW4Zh2XNIJUVFwC7+X15892H0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=W3L55K7PajU21QdRcbHQha5YZE+bwhXvNJZnDf1qvZzm4um0fk8J3Jcw4qETfhfqq2b8ksALUY8a1c8dZeIdclQ0uQBD33r4sBBN9a7W8eoeTa8socVwTsfwaBLS09b2gQ0yBWIjC5jSY/nuV2AG0FGiyC33ItuuY59TzYd2o0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a363981933so10069485ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:12:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728551522; x=1729156322;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Baa1CNuR+wNXGnAjKzqW4Zh2XNIJUVFwC7+X15892H0=;
-        b=SgjU5EDoNfpR6jWECmFutRZe5jPe2Mk1hEdevA4ZbS0givYDSjTQWGexjtJojI2nfn
-         t4F1dFSyySV3m23ppkM2zuYRLA00wW1p92pi/qTV/6rb9ZtODeHpT2KE+jVh/auPsVz0
-         B6xOje4Ls9IEjPNs5MWVlRCj3B7gjq5o4qGi3UBsb8eEV86iQ1A1XGlF+sktCsxaZGN2
-         mVDY7ctnRbzeo7hSs7MNx4aJHi6B2W2qvBSrIfTgo16ko3X2NjSe2BWuFC3pika0UwLE
-         ubSmANeuyRqj/njIxHCUaXE+Xvd7od2fAApnxOVpn2ngXtIN/dgkShOjccnQHQviOGJY
-         Mt0Q==
-X-Gm-Message-State: AOJu0YygbKH93lCulbpKt1ItPFoNewTihVIwxQvMhG16OgeM8RJH/IDa
-	ZUW3/hk70zpsqPnQSsOCoI6zG6eSpqByo1LQookDW4LJWGGD0A1Hgg0CzDIqtAw7z6cIqAVowEM
-	yZ9Jwu7HVGzWuR/3OC+4yotcAadfNwa1xEIpkQ/beYaJ7ees1/A4e4Lc=
-X-Google-Smtp-Source: AGHT+IFaKdWQgTqybtJvEbjsXxg98EIrKZW7ymE33gr5JNDcKswveOXhFq3BEQXWUhzZelJTtEy4rqmn0G6LlOIapydxGgjXbrNe
+	s=arc-20240116; t=1728551551; c=relaxed/simple;
+	bh=LSKVmkXpP5GXmWjHNG72Tg6s7mGs2ymCpdDE52Zim/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LY/dOJ9ouG+Ty9bJevTh5O2SWV/hH49zV3Vf9Bltjghbo7yQkeHOnjuYqXpcvBQSe54ZjRsRK1Va/cfb/80OR7UMq5GmofQnwJjtu42TZn5+7xML+grKp5ufePMAxSiN51LkxoyMvqql5jTOLkbOwixHG8dbSnAyERCKUG6kazo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LbLzXC0Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rhnbZ+GF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Oct 2024 11:12:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728551547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B9WvqSSuYngn3X8rooA70RyvWXYKx86qbC9FBxuI7Xw=;
+	b=LbLzXC0YXMyWzsBumaCTMWHZ/56y8B/zeoF8uML7fGq2ZQQP+yMhFykhySr/gC6VkgO0y1
+	B4juL1gyKX7KfSrl90xPE8t7/P1W4GPxHOTt4omAhnzlQdSzo+eWeZn1XjFzoPK8OGQ7Qa
+	U3pCRH/8T0DBJW2FIHlofLDwNlbJ+ttss2a5XjnKaev9RYxNt4IvcLgnzMmb6ESu/SFdGa
+	Bpvr5eIenVnajVUxFEnqXhDrUvV48B7+1cwwmU2rL4HHEY6jvX1cfzqxBRETTJWzrLohut
+	okG9tWgFseXy4HK2bST0Uafusd1/iASAFAE/wUgacOJP6oAZFPY+gu8SVcle2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728551547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B9WvqSSuYngn3X8rooA70RyvWXYKx86qbC9FBxuI7Xw=;
+	b=rhnbZ+GFZTsNP1JMG0bcENLcS/PXk6kQ9VYiZwjF7VweMLYCZluTySEF+7ZQcy8CeS+tyB
+	MSihMSUEStHx3aDA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, Jason@zx2c4.com
+Subject: Re: [PATCH 2/2] powerpc/vdso: Implement __arch_get_vdso_rng_data()
+Message-ID: <20241010110927-9688b27e-6048-48ac-a908-5b80ba8da63e@linutronix.de>
+References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
+ <a1a9bd0df508f1b5c04684b7366940577dfc6262.1727858295.git.christophe.leroy@csgroup.eu>
+ <20241010101449-007991a0-f7c7-4f76-a6cc-413c474b9219@linutronix.de>
+ <0a3d0813-e44f-45be-8b9a-957c75aa26cb@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c05:b0:3a0:a4ac:ee36 with SMTP id
- e9e14a558f8ab-3a397ced8bfmr59276825ab.5.1728551522480; Thu, 10 Oct 2024
- 02:12:02 -0700 (PDT)
-Date: Thu, 10 Oct 2024 02:12:02 -0700
-In-Reply-To: <000000000000657ecd0614456af8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67079a62.050a0220.8109b.0004.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a3d0813-e44f-45be-8b9a-957c75aa26cb@csgroup.eu>
 
-Rm9yIGFyY2hpdmFsIHB1cnBvc2VzLCBmb3J3YXJkaW5nIGFuIGluY29taW5nIGNvbW1hbmQgZW1h
-aWwgdG8KbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xl
-Z3JvdXBzLmNvbS4KCioqKgoKU3ViamVjdDogUmU6IFtzeXpib3RdIFtuZXQ/XSBLQVNBTjogc2xh
-Yi11c2UtYWZ0ZXItZnJlZSBSZWFkIGluIF9fZXRodG9vbF9nZXRfbGlua19rc2V0dGluZ3MKQXV0
-aG9yOiBjbWVpb2hhc0BudmlkaWEuY29tCgojc3l6IHRlc3Q6IGh0dHBzOi8vZ2l0Lmtlcm5lbC5v
-cmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3JkbWEvcmRtYS5naXQgZm9yLW5leHQNCg0KZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9jb3JlL2RldmljZS5jIGIvZHJpdmVycy9pbmZp
-bmliYW5kL2NvcmUvZGV2aWNlLmMNCmluZGV4IDkzYzZkMjdiNWQ4Zi4uZWFmZGYxNzQxNTgyIDEw
-MDY0NA0KLS0tIGEvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvZGV2aWNlLmMNCisrKyBiL2RyaXZl
-cnMvaW5maW5pYmFuZC9jb3JlL2RldmljZS5jDQpAQCAtMjA2MiwxOSArMjA2MiwxNCBAQCB2b2lk
-IGliX2Rpc3BhdGNoX2V2ZW50X2NsaWVudHMoc3RydWN0IGliX2V2ZW50ICpldmVudCkNCsKgwqDC
-oMKgIHVwX3JlYWQoJmV2ZW50LT5kZXZpY2UtPmV2ZW50X2hhbmRsZXJfcndzZW0pOw0KwqB9DQoN
-Ci1zdGF0aWMgaW50IGl3X3F1ZXJ5X3BvcnQoc3RydWN0IGliX2RldmljZSAqZGV2aWNlLA0KLcKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdTMyIHBvcnRfbnVtLA0KLcKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgc3RydWN0IGliX3BvcnRfYXR0ciAqcG9ydF9hdHRyKQ0KK3N0YXRpYyBp
-bnQgaXdfcXVlcnlfcG9ydChzdHJ1Y3QgaWJfZGV2aWNlICpkZXZpY2UsIHUzMiBwb3J0X251bSwN
-CivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBp
-Yl9wb3J0X2F0dHIgKnBvcnRfYXR0ciwNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIHN0cnVjdCBuZXRfZGV2aWNlICpuZXRkZXYpDQrCoHsNCsKgwqDCoMKg
-IHN0cnVjdCBpbl9kZXZpY2UgKmluZXRkZXY7DQotwqDCoMKgIHN0cnVjdCBuZXRfZGV2aWNlICpu
-ZXRkZXY7DQoNCsKgwqDCoMKgIG1lbXNldChwb3J0X2F0dHIsIDAsIHNpemVvZigqcG9ydF9hdHRy
-KSk7DQoNCi3CoMKgwqAgbmV0ZGV2ID0gaWJfZGV2aWNlX2dldF9uZXRkZXYoZGV2aWNlLCBwb3J0
-X251bSk7DQotwqDCoMKgIGlmICghbmV0ZGV2KQ0KLcKgwqDCoMKgwqDCoMKgIHJldHVybiAtRU5P
-REVWOw0KLQ0KwqDCoMKgwqAgcG9ydF9hdHRyLT5tYXhfbXR1ID0gSUJfTVRVXzQwOTY7DQrCoMKg
-wqDCoCBwb3J0X2F0dHItPmFjdGl2ZV9tdHUgPSBpYl9tdHVfaW50X3RvX2VudW0obmV0ZGV2LT5t
-dHUpOw0KDQpAQCAtMjA5Nyw3ICsyMDkyLDYgQEAgc3RhdGljIGludCBpd19xdWVyeV9wb3J0KHN0
-cnVjdCBpYl9kZXZpY2UgKmRldmljZSwNCsKgwqDCoMKgwqDCoMKgwqAgcmN1X3JlYWRfdW5sb2Nr
-KCk7DQrCoMKgwqDCoCB9DQoNCi3CoMKgwqAgZGV2X3B1dChuZXRkZXYpOw0KwqDCoMKgwqAgcmV0
-dXJuIGRldmljZS0+b3BzLnF1ZXJ5X3BvcnQoZGV2aWNlLCBwb3J0X251bSwgcG9ydF9hdHRyKTsN
-CsKgfQ0KDQpAQCAtMjEzNSwxMyArMjEyOSwyNyBAQCBpbnQgaWJfcXVlcnlfcG9ydChzdHJ1Y3Qg
-aWJfZGV2aWNlICpkZXZpY2UsDQrCoMKgwqDCoMKgwqDCoMKgwqDCoCB1MzIgcG9ydF9udW0sDQrC
-oMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgaWJfcG9ydF9hdHRyICpwb3J0X2F0dHIpDQrCoHsN
-CivCoMKgwqDCoMKgwqAgc3RydWN0IG5ldF9kZXZpY2UgKm5ldGRldiA9IE5VTEw7DQorwqDCoMKg
-wqDCoMKgIGludCByZXQ7DQorDQrCoMKgwqDCoCBpZiAoIXJkbWFfaXNfcG9ydF92YWxpZChkZXZp
-Y2UsIHBvcnRfbnVtKSkNCsKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FSU5WQUw7DQoNCivCoMKg
-wqDCoMKgwqAgaWYgKHJkbWFfcHJvdG9jb2xfaXdhcnAoZGV2aWNlLCBwb3J0X251bSkgfHwNCivC
-oMKgwqDCoMKgwqDCoMKgwqDCoCByZG1hX3Byb3RvY29sX3JvY2UoZGV2aWNlLCBwb3J0X251bSkp
-IHsNCivCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG5ldGRldiA9IGliX2RldmljZV9nZXRf
-bmV0ZGV2KGRldmljZSwgcG9ydF9udW0pOw0KK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-aWYgKCFuZXRkZXYpDQorwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgcmV0dXJuIC1FTk9ERVY7DQorwqDCoMKgwqDCoMKgIH0NCisNCsKgwqDCoMKgIGlmIChyZG1h
-X3Byb3RvY29sX2l3YXJwKGRldmljZSwgcG9ydF9udW0pKQ0KLcKgwqDCoMKgwqDCoMKgIHJldHVy
-biBpd19xdWVyeV9wb3J0KGRldmljZSwgcG9ydF9udW0sIHBvcnRfYXR0cik7DQorwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSBpd19xdWVyeV9wb3J0KGRldmljZSwgcG9ydF9udW0s
-IHBvcnRfYXR0ciwgbmV0ZGV2KTsNCsKgwqDCoMKgIGVsc2UNCi3CoMKgwqDCoMKgwqDCoCByZXR1
-cm4gX19pYl9xdWVyeV9wb3J0KGRldmljZSwgcG9ydF9udW0sIHBvcnRfYXR0cik7DQorwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSBfX2liX3F1ZXJ5X3BvcnQoZGV2aWNlLCBwb3J0
-X251bSwgcG9ydF9hdHRyKTsNCivCoMKgwqDCoMKgwqAgaWYgKG5ldGRldikNCivCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIGRldl9wdXQobmV0ZGV2KTsNCivCoMKgwqDCoMKgwqAgcmV0dXJu
-IHJldDsNCisNCsKgfQ0KwqBFWFBPUlRfU1lNQk9MKGliX3F1ZXJ5X3BvcnQpOw0KDQpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9pbmZpbmliYW5kL3N3L3J4ZS9yeGVfbmV0LmMgYi9kcml2ZXJzL2luZmlu
-aWJhbmQvc3cvcnhlL3J4ZV9uZXQuYw0KaW5kZXggNzVkMTQwN2RiNTJkLi5jNWQ0MzliZWJjMjQg
-MTAwNjQ0DQotLS0gYS9kcml2ZXJzL2luZmluaWJhbmQvc3cvcnhlL3J4ZV9uZXQuYw0KKysrIGIv
-ZHJpdmVycy9pbmZpbmliYW5kL3N3L3J4ZS9yeGVfbmV0LmMNCkBAIC02MDUsNiArNjA1LDcgQEAg
-c3RhdGljIGludCByeGVfbm90aWZ5KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbm90X2JsaywNCg0K
-wqDCoMKgwqAgc3dpdGNoIChldmVudCkgew0KwqDCoMKgwqAgY2FzZSBORVRERVZfVU5SRUdJU1RF
-UjoNCivCoMKgwqDCoMKgwqDCoCBpYl9kZXZpY2Vfc2V0X25ldGRldigmcnhlLT5pYl9kZXYsIE5V
-TEwsIDEpOw0KwqDCoMKgwqDCoMKgwqDCoCBpYl91bnJlZ2lzdGVyX2RldmljZV9xdWV1ZWQoJnJ4
-ZS0+aWJfZGV2KTsNCsKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7DQrCoMKgwqDCoCBjYXNlIE5FVERF
-Vl9VUDoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2luZmluaWJhbmQvc3cvc2l3L3Npd19tYWluLmMg
-Yi9kcml2ZXJzL2luZmluaWJhbmQvc3cvc2l3L3Npd19tYWluLmMNCmluZGV4IDE3YWJlZjQ4YWJj
-ZC4uMWI3ZDM0Nzk4NzgzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9pbmZpbmliYW5kL3N3L3Npdy9z
-aXdfbWFpbi5jDQorKysgYi9kcml2ZXJzL2luZmluaWJhbmQvc3cvc2l3L3Npd19tYWluLmMNCkBA
-IC00MDAsNiArNDAwLDcgQEAgc3RhdGljIGludCBzaXdfbmV0ZGV2X2V2ZW50KHN0cnVjdCBub3Rp
-Zmllcl9ibG9jayAqbmIsIHVuc2lnbmVkIGxvbmcgZXZlbnQsDQrCoMKgwqDCoMKgwqDCoMKgIGJy
-ZWFrOw0KDQrCoMKgwqDCoCBjYXNlIE5FVERFVl9VTlJFR0lTVEVSOg0KK8KgwqDCoMKgwqDCoMKg
-IGliX2RldmljZV9zZXRfbmV0ZGV2KCZzZGV2LT5iYXNlX2RldiwgTlVMTCwgMSk7DQrCoMKgwqDC
-oMKgwqDCoMKgIGliX3VucmVnaXN0ZXJfZGV2aWNlX3F1ZXVlZCgmc2Rldi0+YmFzZV9kZXYpOw0K
-wqDCoMKgwqDCoMKgwqDCoCBicmVhazsNCg0K
+On Thu, Oct 10, 2024 at 11:00:15AM +0200, Christophe Leroy wrote:
+> Hi Thomas,
+> 
+> Le 10/10/2024 à 10:20, Thomas Weißschuh a écrit :
+> > On Wed, Oct 02, 2024 at 10:39:29AM +0200, Christophe Leroy wrote:
+> > > VDSO time functions do not call any other function, so they don't
+> > > need to save/restore LR. However, retrieving the address of VDSO data
+> > > page requires using LR hence saving then restoring it, which can be
+> > > heavy on some CPUs. On the other hand, VDSO functions on powerpc are
+> > > not standard functions and require a wrapper function to call C VDSO
+> > > functions. And that wrapper has to save and restore LR in order to
+> > > call the C VDSO function, so retrieving VDSO data page address in that
+> > > wrapper doesn't require additional save/restore of LR.
+> > > 
+> > > For random VDSO functions it is a bit different. Because the function
+> > > calls __arch_chacha20_blocks_nostack(), it saves and restores LR.
+> > > Retrieving VDSO data page address can then be done there without
+> > > additional save/restore of LR.
+> > > 
+> > > So lets implement __arch_get_vdso_rng_data() and simplify the wrapper.
+> > > 
+> > > It starts paving the way for the day powerpc will implement a more
+> > > standard ABI for VDSO functions.
+> > > 
+> > > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > > ---
+> > >   arch/powerpc/include/asm/vdso/getrandom.h | 15 +++++++++++++--
+> > >   arch/powerpc/kernel/asm-offsets.c         |  1 -
+> > >   arch/powerpc/kernel/vdso/getrandom.S      |  1 -
+> > >   arch/powerpc/kernel/vdso/vgetrandom.c     |  4 ++--
+> > >   4 files changed, 15 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/arch/powerpc/include/asm/vdso/getrandom.h b/arch/powerpc/include/asm/vdso/getrandom.h
+> > > index 501d6bb14e8a..4302e7c67aa5 100644
+> > > --- a/arch/powerpc/include/asm/vdso/getrandom.h
+> > > +++ b/arch/powerpc/include/asm/vdso/getrandom.h
+> > > @@ -7,6 +7,8 @@
+> > >   #ifndef __ASSEMBLY__
+> > > +#include <asm/vdso_datapage.h>
+> > > +
+> > >   static __always_inline int do_syscall_3(const unsigned long _r0, const unsigned long _r3,
+> > >   					const unsigned long _r4, const unsigned long _r5)
+> > >   {
+> > > @@ -43,11 +45,20 @@ static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsig
+> > >   static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+> > >   {
+> > > -	return NULL;
+> > > +	struct vdso_arch_data *data;
+> > > +
+> > > +	asm(
+> > > +		"	bcl	20, 31, .+4\n"
+> > > +		"0:	mflr	%0\n"
+> > > +		"	addis	%0, %0, (_vdso_datapage - 0b)@ha\n"
+> > > +		"	addi	%0, %0, (_vdso_datapage - 0b)@l\n"
+> > > +	: "=r" (data) :: "lr");
+> > > +
+> > > +	return &data->rng_data;
+> > >   }
+> > 
+> > Did you also try something like this:
+> > 
+> > extern struct vdso_arch_data _vdso_datapage __attribute__((visibility("hidden")));
+> > 
+> > static __always_inline struct vdso_rng_data *__arch_get_vdso_rng_data(void)
+> > {
+> >         return &_vdso_datapage.rng_data;
+> > }
+> > 
+> > Not knowing much about ppc asm the resulting assembly looks simpler.
+> > And it would be more in line with what other archs are doing.
+> 
+> Did you build it ?
+
+Yes, I couldn't have looked at the asm otherwise.
+
+> I get :
+> 
+>   VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
+>   VDSO32L arch/powerpc/kernel/vdso/vdso32.so.dbg
+> arch/powerpc/kernel/vdso/vdso32.so.dbg: dynamic relocations are not
+> supported
+> make[2]: *** [arch/powerpc/kernel/vdso/Makefile:75:
+> arch/powerpc/kernel/vdso/vdso32.so.dbg] Error 1
+
+I forgot to enable CONFIG_COMPAT.
+It's only broken for the 32 bit case.
+
+> Current solution gives:
+> 
+>   24:	42 9f 00 05 	bcl     20,4*cr7+so,28 <__c_kernel_getrandom+0x28>
+>   28:	7e a8 02 a6 	mflr    r21
+>   2c:	3e b5 00 00 	addis   r21,r21,0
+> 			2e: R_PPC_REL16_HA	_vdso_datapage+0x6
+>   30:	3a b5 00 00 	addi    r21,r21,0
+> 			32: R_PPC_REL16_LO	_vdso_datapage+0xa
+> 
+> 
+> Your solution gives:
+> 
+>   60:	3e e0 00 00 	lis     r23,0
+> 			62: R_PPC_ADDR16_HA	_vdso_datapage
+>   64:	3a f7 00 00 	addi    r23,r23,0
+> 			66: R_PPC_ADDR16_LO	_vdso_datapage
+> 
+> 
+> So yes your solution looks simpler, but relies on absolute addresses set up
+> through dynamic relocation which is not possible because different processes
+> map the same VDSO datapage at different addresses.
+
+Due to visibility("hidden"), the compiler should not emit absolute
+references but PC-relative ones.
+This is how it works for most other architectures, see
+include/vdso/datapage.h.
+
+I'll try to see why this doesn't work for ppc32.
+
+
+Thomas
 
