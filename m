@@ -1,136 +1,86 @@
-Return-Path: <linux-kernel+bounces-359847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4AD99916E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:59:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C2C999172
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF611C22316
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13DB6282B5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B071F4704;
-	Thu, 10 Oct 2024 18:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6A31F4736;
+	Thu, 10 Oct 2024 18:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SbJseFfK"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v48goLmr"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096F21F12F8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD231D318A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728585301; cv=none; b=k/yv2Vc/MPA1w/9CSqEqk57hhHyO7jtkzBrki5ig/6DWMnV9EZFVSzGjX42PsCF/UH2rIhhRaWf4ACUfbJ5efKui5PBPZ40czNjAtbo1jET6JYC80liY0jsxSY8AjTU+jQX8Q3bVKSCRGIz8Q3/I1MvXfiZgWK0RuiU+PJMNaCg=
+	t=1728585343; cv=none; b=L8h/1JrHIcWQGSDI5Nkxb7Qa6lYVse2qVESpdNZ52GymuQ3aWuRbH6rlDLMllMYlXe4Wapfn6gXIvQKHlPQFdxVAJz/8nWESCvyFfwiEJBLEAqwSDKyeASnrvIi/+RXU9cg2oMBW1/5k8ZK51vvguzvN0ch8X0ZeA1ijKxV3RKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728585301; c=relaxed/simple;
-	bh=5H0TXKb7vdMMBfioB1w565xsNdpUuNNsw5k1MJOU+qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bmzxj0FXZ9V6mwh872FfukrNJJ90PMnCtcGkuUSip9VjgIefU9z384C+Msv1SCvetVwtlw4KofpLqz6KMNegQppPivz7Q/kfoiJyUUa+KLaY4sqcIv6/tUcGelaf9jnVVCoL1eUHNAfwGMu6gJl0x7hmzschlgE7BFANbxBDnzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SbJseFfK; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1728585343; c=relaxed/simple;
+	bh=Qg0cyUVyy1O4wW+CdehmC7fuPIH0q34vLfKIH8t65f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AjBnzALCdSx3fyIB22lDBdlI9R7cCSwQEguQSm3a54JNOlaOaLt+f6mWToMEviVyFW+/GoKd5r5Ig5v5VJvpnxWFzXRnkakEoQxybE8WzxbmDToWDtSq3Y1og/HBmb9ZYAn2w+nUwkRqcjHLeJAWC1a4vWmug72Fg/bn6loeSpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v48goLmr; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43057f4a16eso10494625e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:34:58 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cae102702so9390265e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:35:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728585297; x=1729190097; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ytCziD1c5I5FhCXF5EK5g0FeePvbLPZ6YQt0NDF0j9M=;
-        b=SbJseFfKB5iTfiX6Q+huR0onyNzE3nj9ar6pMNaTyUeaj1Ukm2/6KVHBPIbpbhefdN
-         FCaJnJ0XXcGNZb9WnyKF+dygNphBCMKUjYJKEVanq4IiL6QEjfOWDdVXXVgr7AhbHxkt
-         shZ5Uc50rQp22ihdNjuzJaRvHxATDoi7NLjUeFKqN/3U+euQhEU3jnZ811Ah77r9RnhJ
-         1r+5G7E0OWJNSNGAbZ/f9BkGV8BjrhCvo10KO/KeYVhyNgL0ZHw5vAP/6rLjJ2/bU4+c
-         G9E772X9u7u1UVpu7ERvlJIKkuj5jpjSi2l6KrK3O+M4rqUnhpypLMlp/c2ADJlHdgMQ
-         VBTw==
+        d=linaro.org; s=google; t=1728585341; x=1729190141; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Iy+C4p8CaCgRadOFK5HsELQcw6dO91MMQyaigcmnelk=;
+        b=v48goLmrRGH14F3dYLjYrvUFJ+OyOPVxCx/h2OIsgwC2dwwUo8B/rPYQKS6l01BxVC
+         1F8aQOKh3qZLtFpm7TF8k3KgnMELajOuLyMEKgOAEvYHj1txiRFL42MdIvZupot8vAgC
+         1dELv+1e8plB14yhSqOQdy6QdJA83/872teLoQgSVrujbfj8rR6dI4k1XyOsicjeKTo1
+         muBJlGdBoMtlN9mt9T2jeC2oqRM4XTmhPKJETGkLw+5GxeRWn5aktRCpM9uWvOtrKVJt
+         avu/hQX1m34Q3RiB21eJ29ODkbeVByXr9V9yJ77aMCbXTacq99VqUUL2ka/Ew+UUQ977
+         82sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728585297; x=1729190097;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ytCziD1c5I5FhCXF5EK5g0FeePvbLPZ6YQt0NDF0j9M=;
-        b=qBAa9iyvgqRwWonovRy2mE2ajlMD4z5r59r/wD94qrw1PXvZ3Eje7AV1u6zaxCFsNR
-         ll7efGn+XprQqXHZCCwl3VP/j0F+MCoCg7ephMgjMp1OVOT2GYzupY6rasJm0ms4m6D9
-         niPEHSjOUpWxKEZ5BaESi6PdiqfnCJwpkb1jbzAWaspaW6gf6CojP3S9tnEFyN3zEbMP
-         Ngsz7Kxk7ZIalzvkqoMtYsjo6ZN2/ie8mHixWJ3ZbR8D/V8+9q2b1azlL8DbXkZRrXXO
-         +u811U+QdgMZcTn+IxSKmDh1L5ahKfmQjRg6plbOJpFnTaJpbyTvYcObaAM49BIAYZP4
-         TrVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQpJihhiz0WzydwVxt5WTX6ZchmekGyXh43QJWWK38Hz3cOeAyAhIGXhSbZ8g6ayIp1J4vk9UE9VeiUBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEC5bmPjhlEIJBRHbmLpjL8L3zGSQ4+drQ5aw9pBS81EAnOOGk
-	LKcGBGHb01yC3Ioqi9UI/JbQuERsVegnhIB1sCS0vyYt6KnJb6SCfyTC30yNr8Q=
-X-Google-Smtp-Source: AGHT+IGrQtiU9KkPJvVdlsqZUQMKOCUeX11EZAgMHCeWVATX5aFzmtkTu4Efnh91V5tJdIM1vfefqw==
-X-Received: by 2002:a05:600c:46c9:b0:42c:c401:6d86 with SMTP id 5b1f17b1804b1-431157e56e5mr37151355e9.27.1728585297410;
-        Thu, 10 Oct 2024 11:34:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728585341; x=1729190141;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iy+C4p8CaCgRadOFK5HsELQcw6dO91MMQyaigcmnelk=;
+        b=LiLGYvileZdcPhioCoEs62pZKSdVzVbTVXfAFQQY6Cj/Dm4GnoyAgE7LHYnBvfkyJN
+         1YObFQSlFylwRVxOuoZnM5vhegNBG0gefthnvZCjmj9Y4x9rdPkJrUX2A1SctcQASCUT
+         4K8ZDae+hj96Gs0Tk7VLd9swG2H0jZlFH8mHX8YYT0trRUXTUMYvRiBLbul0IHvvJllz
+         qfbl1DPBcj7IGJeibPgn1wGDG6vTNIDm65aG02R3UPWAqQW61pGwzTYJ+P8+UIWQiPAn
+         ep9CsvnoWsSmlkXVRP2X94TjK1WUXHfEi79MwnTrrsFMtiOANNJxZJQR21RcKX/RY37c
+         dYsA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5Fn/lTwTwu1lF1NvnMB17w7CCqa7XB882A6FnVt6ouDiRa0H0lZSMLa9Wlm9f0Ixh3Bhj4gArFi4yHWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqxl9sV0gzQZ1zOLmw2OXmBeRMVznPFWi4yMCnyw30V2fUt+Rb
+	aa5d2EFAI4KN9bDDdBgROBxxCjFFxWkjypzqpyCjVR5vfrQPnNVXnZxnqCO/2Xc=
+X-Google-Smtp-Source: AGHT+IEG5XeqWq0+eyA+3/83jP6vMylO+zmJtnB5SbNtZ56GnxMRoNYSys5K69hCWruqjJKATBUPqg==
+X-Received: by 2002:a05:600c:3b9b:b0:430:5846:7582 with SMTP id 5b1f17b1804b1-430ccf1b335mr57690205e9.7.1728585340737;
+        Thu, 10 Oct 2024 11:35:40 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835696esm23005225e9.37.2024.10.10.11.34.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43118305ab8sm22967065e9.21.2024.10.10.11.35.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 11:34:56 -0700 (PDT)
-Date: Thu, 10 Oct 2024 21:34:53 +0300
+        Thu, 10 Oct 2024 11:35:40 -0700 (PDT)
+Date: Thu, 10 Oct 2024 21:35:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Philipp Stanner <pstanner@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Basavaraj Natikar <basavaraj.natikar@amd.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Dubov <oakad@yahoo.com>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
-	Igor Mitsyanko <imitsyanko@quantenna.com>,
-	Sergey Matyukevich <geomatsi@gmail.com>,
-	Kalle Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Chen Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	John Garry <john.g.garry@oracle.com>,
-	Soumya Negi <soumya.negi97@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+To: Lijo Lazar <lijo.lazar@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Yunxiang Li <Yunxiang.Li@amd.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
 	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
-	Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>,
-	Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ntb@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-staging@lists.linux.dev, kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Subject: Re: [RFC PATCH 13/13] Remove devres from pci_intx()
-Message-ID: <0990d9f9-cab9-44c2-b2e3-bd8fa556cc02@stanley.mountain>
-References: <20241009083519.10088-1-pstanner@redhat.com>
- <20241009083519.10088-14-pstanner@redhat.com>
- <7f624c83-115b-4045-b068-0813a18c8200@stanley.mountain>
- <f42bb5de4c9aca307a3431dd15ace4c9cade1cb9.camel@redhat.com>
- <20241010114314.296db535.alex.williamson@redhat.com>
+	Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/amdgpu: Fix off by one in
+ current_memory_partition_show()
+Message-ID: <f3cf409f-2b04-444f-88f0-9b4cfe290667@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -139,17 +89,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010114314.296db535.alex.williamson@redhat.com>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Oct 10, 2024 at 11:43:14AM -0600, Alex Williamson wrote:
-> FWIW, I think pcim_intx() and pci_intx() align better to our naming
-> convention for devres interfaces.  Would it be sufficient if pci_intx()
-> triggered a WARN_ON if called for a pci_is_managed() device?  Thanks,
-> 
+The >= ARRAY_SIZE() should be > ARRAY_SIZE() to prevent an out of
+bounds read.
 
-To be honest, I also don't mind if you also just merge the patchset as-is.  I
-was mostly just throwing out ideas.
+Fixes: 012be6f22c01 ("drm/amdgpu: Add sysfs interfaces for NPS mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+index ddf716d27f3a..75c9291ac3eb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+@@ -1199,7 +1199,7 @@ static ssize_t current_memory_partition_show(
+ 	enum amdgpu_memory_partition mode;
+ 
+ 	mode = adev->gmc.gmc_funcs->query_mem_partition_mode(adev);
+-	if ((mode > ARRAY_SIZE(nps_desc)) ||
++	if ((mode >= ARRAY_SIZE(nps_desc)) ||
+ 	    (BIT(mode) & AMDGPU_ALL_NPS_MASK) != BIT(mode))
+ 		return sysfs_emit(buf, "UNKNOWN\n");
+ 
+-- 
+2.45.2
+
 
