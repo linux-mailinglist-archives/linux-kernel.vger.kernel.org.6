@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-359667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D95998EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:52:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794EF998EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45881B28DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A684281C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3F11CEE83;
-	Thu, 10 Oct 2024 17:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225EC1C9EBB;
+	Thu, 10 Oct 2024 17:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5IMkH7K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhpIXSva"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD261CEAA6;
-	Thu, 10 Oct 2024 17:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A841C8FB9;
+	Thu, 10 Oct 2024 17:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582632; cv=none; b=T+ttgQmrMmeAn/Z6MdFaDxBXi88Bkh19IV6EVwUhFOeqKQ75XYdpmir/KJ+0tbcE82XHxPAKGxa6TIOb0ZD7FYZH1AsC/2a0IeVZ0Of3n0N86LDmcyIsTKv484goKTIMKA4UzoJcSoxlwKkAsk+pSBdNdys4BFMy/gNIuQgWaC0=
+	t=1728582629; cv=none; b=YAQpMCuVE+ewmXmyePe7zgrRvmXrER9Z/iyn/kdBmNszB79LIl+6wWM4Bo1Wyc+fDCsJ7u6ZEjdU6D3XIuJm4JnQRswMJlaaZ5sj1uw13VJVPtBEJFsc1tBau3DV15UdUjvWkDj3cDt5cfOhJPjR6owz1BbYHuSF82rCkn4i6rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582632; c=relaxed/simple;
-	bh=xsHdyUJogwWtEbbTNwx1Iy9nsDjG8JJvO4lc/VxzJDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QQbDMbkN9CRGkkMA4FF8USMQVKEXl9YzPNHnU+D4Qiwe79fydxkSpHg1TJnQ1ODs0DqLEU7V+ugpcMPwr034oiijCQFlmNPilq39QIK+els2MHR38QYOCm/OZfCd9d/lHni3uPod0o8aas0wbOqGKm9q/FEZiSwkQceVrbHuE9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5IMkH7K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B5DC4CEC6;
+	s=arc-20240116; t=1728582629; c=relaxed/simple;
+	bh=7drw4WHctnYvbMoyySTq1OnS4EX6OsZuazvZDG0donI=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Gicu8rvfYiouQRsNlFIdxKL569M75a+AXIgUrrRTh1VvOD/fDRtJyVrwkE0+FJ9Bg3THE2DzHFa/uCDlDon+ZmIy6+MYOnq+aizqfA9dsHO4t+snHgTOl/20YxBCYwfOC83e/IympYPn/+Rsu2bSzxLNW+A4c+41ku13W5Lg9nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhpIXSva; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C937C4CEC5;
 	Thu, 10 Oct 2024 17:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728582631;
-	bh=xsHdyUJogwWtEbbTNwx1Iy9nsDjG8JJvO4lc/VxzJDM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r5IMkH7KWM5Xl3hCXpxlOHe01c/eWII5kvstSXQVk5UwsNKsChE/TIu4cE8X9a0mR
-	 G5tps9qRq/pIa6fEBNoaJHn2VKe++F30YV+Ij0EX8K3OcX6tfjWyjMjM/B1zZX6Caf
-	 qzS814IbUCivXTYWR4HTb7+wOaAzqGCBVyZijZllL5GzmNYSfd5spH/5oSt5tduhmN
-	 WYTHAxUR0kF8pZXidWaqbCXExaHMUPkWURLb/38gXHpER2LZz54qt8ETHhTBSvugaG
-	 FrfUHvI0SPVlHf5v/tz8UHm6i+sI8dqBWp65qSK+GPnEQ/jvaI7PcBVpf92bl7eIhs
-	 O/ZAYAAB3dnhg==
-Date: Thu, 10 Oct 2024 18:50:24 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Christophe JAILLET  <christophe.jaillet@wanadoo.fr>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: hid-sensors: Fix an error handling path in
- _hid_sensor_set_report_latency()
-Message-ID: <20241010185017.0163a5b8@jic23-huawei>
-In-Reply-To: <f099a9e8e0651a8599d09a5c98f2f960f0bb3d61.camel@linux.intel.com>
-References: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
-	<20241005190620.5f8633a9@jic23-huawei>
-	<f099a9e8e0651a8599d09a5c98f2f960f0bb3d61.camel@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728582628;
+	bh=7drw4WHctnYvbMoyySTq1OnS4EX6OsZuazvZDG0donI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=uhpIXSva0fcCHHS8aktFQSRnAlUGi+FKDeTeYIhopreh67zdnQGGY3vC/Gyw9D1el
+	 Mb1mtMrvMBqJLSlwZ7J8JW16voggmzt3r2qNj2JoM0oaLN8ccRcjTNyBR2M7165eqB
+	 DgLqVDD6EFCBOzBFyP8g0FsoA54C6LuUHaXBfBEVdihzNw30DY+urazJ2BXwQgpNiP
+	 exwav4uzQETi74D4xSn4T9cWhfGYeZ4ZwDWjEoIOrkcPz9Mlbf1dJF7uU/6X4Ya0E7
+	 8yC0wXaC75/pIDyiv4eInjBNV4bxIan142srcJbyZ215s+RRX/QtQgYUBwC5IwJ8s2
+	 dLSdckL1VGTNA==
+Date: Thu, 10 Oct 2024 12:50:27 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: linux-input@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, 
+ devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ Jingoo Han <jingoohan1@gmail.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Daniel Thompson <daniel.thompson@linaro.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-leds@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org
+In-Reply-To: <20241010-zii_yaml-v2-1-0ab730607422@nxp.com>
+References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
+ <20241010-zii_yaml-v2-1-0ab730607422@nxp.com>
+Message-Id: <172858262296.2080831.11191926901477789932.robh@kernel.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: input: convert
+ zii,rave-sp-pwrbutton.txt to yaml
 
-On Tue, 08 Oct 2024 10:21:50 -0700
-srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
 
-> On Sat, 2024-10-05 at 19:06 +0100, Jonathan Cameron wrote:
-> > On Thu,=C2=A0 3 Oct 2024 20:41:12 +0200
-> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> >  =20
-> > > If hid_sensor_set_report_latency() fails, the error code should be
-> > > returned
-> > > instead of a value likely to be interpreted as 'success'.
-> > >=20
-> > > Fixes: 138bc7969c24 ("iio: hid-sensor-hub: Implement batch mode")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > This patch is speculative.
-> > >=20
-> > > The code just *looks* wrong to me. No strong opinion, if it is done
-> > > on
-> > > purpose or not. =20
-> > Agreed it smells :)=C2=A0 But I'd like more eyes on this before I take =
-the
-> > fix
-> > as maybe there is something subtle going on.
-> >  =20
-> The original HID sensor spec HUTRR39 didn't have this property (usage
-> ID 0x31B). This was added by update "HUTRR59" to support batch mode to
-> improve power.=C2=A0
-> This attribute will not be present on non batch mode supported system
-> and on supported system this attribute writes will not fail unless some
-> hardware error.
->=20
-> Returning error is fine.
->=20
->     Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
->=20
-> Thanks,
-> Srinivas
->=20
-Thanks and applied to the fixes-togreg branch of iio.git + marked
-for stable.
+On Thu, 10 Oct 2024 11:42:38 -0400, Frank Li wrote:
+> Convert device tree binding doc zii,rave-sp-pwrbutton.txt to yaml format.
+> Additional changes:
+> - add ref to input.yaml.
+> - remove mfd node in example.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/input/zii,rave-sp-pwrbutton.txt       | 22 -------------
+>  .../bindings/input/zii,rave-sp-pwrbutton.yaml      | 36 ++++++++++++++++++++++
+>  2 files changed, 36 insertions(+), 22 deletions(-)
+> 
 
-Jonathan
+My bot found errors running 'make dt_binding_check' on your patch:
 
->=20
->=20
->=20
->=20
-> > J =20
-> > > ---
-> > > =C2=A0drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
-> > > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> > > b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> > > index ad8910e6ad59..abb09fefc792 100644
-> > > --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> > > +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> > > @@ -32,7 +32,7 @@ static ssize_t
-> > > _hid_sensor_set_report_latency(struct device *dev,
-> > > =C2=A0	latency =3D integer * 1000 + fract / 1000;
-> > > =C2=A0	ret =3D hid_sensor_set_report_latency(attrb, latency);
-> > > =C2=A0	if (ret < 0)
-> > > -		return len;
-> > > +		return ret;
-> > > =C2=A0
-> > > =C2=A0	attrb->latency_ms =3D hid_sensor_get_report_latency(attrb);
-> > > =C2=A0 =20
-> >  =20
->=20
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
+Documentation/devicetree/bindings/input/zii,rave-sp-pwrbutton.yaml: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241010-zii_yaml-v2-1-0ab730607422@nxp.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
