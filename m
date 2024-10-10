@@ -1,176 +1,105 @@
-Return-Path: <linux-kernel+bounces-358467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BD0997FBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:29:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBE0997FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB1F1C23A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:29:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3C11C2299D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09131FB3E6;
-	Thu, 10 Oct 2024 07:44:35 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB1A1FBCAD;
+	Thu, 10 Oct 2024 07:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oVa0KA5/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AD81C5796;
-	Thu, 10 Oct 2024 07:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56C81C5796;
+	Thu, 10 Oct 2024 07:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728546275; cv=none; b=rvAaTSNq9JtC4XNSydIN2NPd6V5IkYaZ7xBHxdwr0OQ9aSIbngAI8vONRZSHM2N5/CK8VcHHzMGJTV+zyg8zT89GuohJt3hDBdjLCR/2r0sjGiKvRq9kTL7Kk24PhNa5RBnM9oBvosjw5IIc6MIrYxrWFu68k/ue5nutprQHcog=
+	t=1728546286; cv=none; b=WS2wlJd7mtwwvmWbvVkVL3viO6mfxhZ4spsVbhsDfRzaJCMpcnqb6NZSylpFjmyEoET3ANAVU/h+1WnQu64ZHmAX4y2BdtrV7Siu6MUqUlugZGzIKoe2YirI3DUPZg5oB3Mvs6UuRInGjsXrTHlHTssXVqj4wuRpdl7Dws4NkQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728546275; c=relaxed/simple;
-	bh=xW9Aem4bT3xdvCkS27khxSn+XWTR/JYMW/swhyA+2fc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XqYWSU9YXC6zE9Rr/CW09j+05R6LlHRl19bgS+Xx95tzQuTb146O/Efrv2yZM9RqJU5cpM8ZYLhv7hUsZh365veCgvoQni2Ukut1VtBm9lxMuSY6YMyR2gPvlJhRgvzpfAJ8AmkZc78EMjChAAQD4dgLzlBlv5QhUocqvS9Ocmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XPMF63p3Zz2DcwW;
-	Thu, 10 Oct 2024 15:43:22 +0800 (CST)
-Received: from dggpeml500002.china.huawei.com (unknown [7.185.36.158])
-	by mail.maildlp.com (Postfix) with ESMTPS id E2C611400D2;
-	Thu, 10 Oct 2024 15:44:28 +0800 (CST)
-Received: from ubuntu.huawei.com (10.69.192.56) by
- dggpeml500002.china.huawei.com (7.185.36.158) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 10 Oct 2024 15:44:28 +0800
-From: Junhao He <hejunhao3@huawei.com>
-To: <irogers@google.com>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
-	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>, <hejunhao3@huawei.com>
-Subject: [PATCH v2] perf metrics: Support parsing metrics if platforms only have json table of system PMU
-Date: Thu, 10 Oct 2024 15:44:30 +0800
-Message-ID: <20241010074430.16685-1-hejunhao3@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1728546286; c=relaxed/simple;
+	bh=9y7cxzKYMVtl+pGbPH1Hg4lL7cQy5WotXAZh0Lw6Q7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EKQm5AZ/vfmd/HYOBYJ/Z8V45eyQjMMf1xl/ltVmKPoHRD8M/pbGheZ//R0t1A+1as/u5+wGV5QXb8vuuFeaEaBavCAbbt/BNnjK+Vnp7ZELsZcMLS4DEJbVjCmOXKN5tA07i5phpdQkfPf1CH79NsUjdSS5zQl2T5+xch8C9uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oVa0KA5/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728546278;
+	bh=K/AD73DuUdch8HGxphzMDTsYOFAtNv/gN1rgFYgMX9o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oVa0KA5/iPAs2wNEXWzs7QCZdQ/liIhCR8mFQL6EsVglg4tjpJF4PhBEv63NARepP
+	 LPciUxXUovoXWTES2ih6wgIYSvs/6mi3xtLwKiLtpFKMzhK8fcN8X+5PtpXnDcJbM1
+	 BQTpiQT0m/mxdKLnT/VDZfpctYX0s0whpVFuAtHbuIWdirIhUf7n9c7XBGqECY74Es
+	 63vp3ZFsHaGpnuXkx3kCDI4EQufWxoXJhEcBLfKGWXv+NYXRGbyw6twIKwdSg/DmwN
+	 w5mh5LWEGBtqYpktN8idoQVm2Q2VUZK8RIfH22qntS9MIO6vwjiAxJ570quwBr0uqj
+	 QrFcBb+bxgL/g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPMGZ0WyLz4wd0;
+	Thu, 10 Oct 2024 18:44:38 +1100 (AEDT)
+Date: Thu, 10 Oct 2024 18:44:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko
+ <mhocko@suse.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bcachefs tree
+Message-ID: <20241010184437.5d8e7f8d@canb.auug.org.au>
+In-Reply-To: <xwlm6pc32uhs6qzbscwbeiuyvqsuxtqsku2eztkzlvwlgse5qc@2r2vlkksohwj>
+References: <20240927104628.2ca6ad07@canb.auug.org.au>
+	<20241010165018.47b3fe1d@canb.auug.org.au>
+	<xwlm6pc32uhs6qzbscwbeiuyvqsuxtqsku2eztkzlvwlgse5qc@2r2vlkksohwj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500002.china.huawei.com (7.185.36.158)
+Content-Type: multipart/signed; boundary="Sig_/E1UQs7VmFtMi2f=lZ1mDLzt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The system PMUs don't depend on the certain CPUs and we don't need a CPUID
-to metric table mapping to match the json event for generating the metric
-table. For example HiSilicon HIP09 only have json events table of system
-PMUs in the "sys/" subdirectory.
+--Sig_/E1UQs7VmFtMi2f=lZ1mDLzt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Currently for this case the struct of system metric table
-"pmu_metrics__hisilicon_hip09_sys" generating works fine and metrics
-display as expected by using `perf list`. But `perf stat` doesn't work
-for such metrics.
+Hi Kent,
 
-  $ perf list metric
-  Metrics:
-    cpa_p0_avg_bw
-         [Average bandwidth of CPA Port 0]
-    cpa_p1_avg_bw
-         [Average bandwidth of CPA Port 1]
-  $ perf stat -M cpa_p0_avg_bw --timeout 1000 --> No error messages output
-  $ echo $?
-  234
+On Thu, 10 Oct 2024 02:10:13 -0400 Kent Overstreet <kent.overstreet@linux.d=
+ev> wrote:
+>
+> That's been dropped from my tree...
 
-The metricgroup__parse_groups() expects to find an cpu metric table, but
-the hisilicon/hip09 doesn't uses CPUID to map json events and metrics, so
-pmu_metrics_table__find() will return NULL, than the cmd run failed.
+Good to know.  I will drop the revert of the revert.
 
-But in metricgroup__add_metric(), the function parse for each sys metric
-and add it to metric_list, which also will get an valid sys metric table.
-So, we can ignore the NULL result of pmu_metrics_table__find() and to use
-the sys metric table.
+--=20
+Cheers,
+Stephen Rothwell
 
-metricgroup__parse_groups
- -> parse_groups
-     -> metricgroup__add_metric_list
-         -> metricgroup__add_metric
-	     -> pmu_for_each_sys_metric   --> parse for each sys metric
+--Sig_/E1UQs7VmFtMi2f=lZ1mDLzt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Testing:
-  $ perf stat -M cpa_p0_avg_bw --timeout 1000
+-----BEGIN PGP SIGNATURE-----
 
- Performance counter stats for 'system wide':
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcHheUACgkQAVBC80lX
+0GzW4ggAj9BjYQ6kL/Fxpz/nlXYX4jBDOkMXO7zcFo6HdL8x9qgVpcxZppbt/VpG
+LTdv9PfTFGP2NwUFeFFteuKhafGtgaL5mM9uD8hnBCiSlD7FfPyE1+fv485IfemW
+sSs48QMl9rIQdWI/bi21qXMXlSZooV5wuEWRaE/CT+e1nSR+oZgEYSUYgg2VxYLg
+1THgWTot55jOdDed0aMWQoiDfg1i0jdrEMSPkpS1elKhTeEFH++OYnBiYIZW7uiH
+1wxwIADhXlfBwFkpguVzy5Hyzknk3yXApLHikb284b1Zz79uFwzhSkjXJrQ0HVk6
+Tinmpox9IXooNFFnsZNyf0mIahl5vA==
+=PyGz
+-----END PGP SIGNATURE-----
 
-     4,004,863,602      cpa_cycles                #     0.00 cpa_p0_avg_bw
-                 0      cpa_p0_wr_dat
-                 0      cpa_p0_rd_dat_64b
-                 0      cpa_p0_rd_dat_32b
-
-       1.001306160 seconds time elapsed
-
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
-Tested-by: Yicong Yang <yangyicong@hisilicon.com>
----
-v1 --> v2:
- -Add some comments to explain the table is null.
- -Modify the patch commit.
- -Add Yicong Test-by.
-v1:https://lore.kernel.org/all/20240807040002.47119-1-hejunhao3@huawei.com/
----
- tools/perf/util/metricgroup.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index 69f6a46402c3..cb428eabd485 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -1123,7 +1123,7 @@ static int metricgroup__add_metric_sys_event_iter(const struct pmu_metric *pm,
- 
- 	ret = add_metric(d->metric_list, pm, d->modifier, d->metric_no_group,
- 			 d->metric_no_threshold, d->user_requested_cpu_list,
--			 d->system_wide, d->root_metric, d->visited, d->table);
-+			 d->system_wide, d->root_metric, d->visited, d->table ?: table);
- 	if (ret)
- 		goto out;
- 
-@@ -1226,7 +1226,8 @@ static int metricgroup__add_metric_callback(const struct pmu_metric *pm,
-  * @system_wide: Are events for all processes recorded.
-  * @metric_list: The list that the metric or metric group are added to.
-  * @table: The table that is searched for metrics, most commonly the table for the
-- *       architecture perf is running upon.
-+ *       architecture perf is running upon. This value could be NULL if no core
-+ *       metrics matches the architecture and we'll try to use the table of system PMUs.
-  */
- static int metricgroup__add_metric(const char *pmu, const char *metric_name, const char *modifier,
- 				   bool metric_no_group, bool metric_no_threshold,
-@@ -1239,7 +1240,8 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
- 	int ret;
- 	bool has_match = false;
- 
--	{
-+	/* Add core metrics to the metric list */
-+	if (table) {
- 		struct metricgroup__add_metric_data data = {
- 			.list = &list,
- 			.pmu = pmu,
-@@ -1263,6 +1265,7 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
- 		has_match = data.has_match;
- 	}
- 	{
-+		/* Parse metrics table of system PMUs */
- 		struct metricgroup_iter_data data = {
- 			.fn = metricgroup__add_metric_sys_event_iter,
- 			.data = (void *) &(struct metricgroup_add_iter_data) {
-@@ -1697,7 +1700,8 @@ int metricgroup__parse_groups(struct evlist *perf_evlist,
- 	const struct pmu_metrics_table *table = pmu_metrics_table__find();
- 
- 	if (!table)
--		return -EINVAL;
-+		pr_debug("The core metric table not found, continue to parse system metric table\n");
-+
- 	if (hardware_aware_grouping)
- 		pr_debug("Use hardware aware grouping instead of traditional metric grouping method\n");
- 
--- 
-2.33.0
-
+--Sig_/E1UQs7VmFtMi2f=lZ1mDLzt--
 
