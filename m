@@ -1,206 +1,105 @@
-Return-Path: <linux-kernel+bounces-358507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D569998037
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD27E99803B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416251C222CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CDD828107A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01E71A070D;
-	Thu, 10 Oct 2024 08:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F971C3F1A;
+	Thu, 10 Oct 2024 08:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYjsIl6J"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="jGWfc7LH"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9058EC153;
-	Thu, 10 Oct 2024 08:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEDB1C3F19;
+	Thu, 10 Oct 2024 08:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728548209; cv=none; b=r01IX+KTzivTb4TA/7b6LQErgHPNFlg3LKr+wUUTAW1WmDkNzcmV/MURTs/z2MuojGupHtrXlS+0IkZjc/AYFP05QKbep33CoQc74sj/6dQJ/GTtWNMBsa1vUVIsx4KGvJDW8UztzH3Esk4PuukA+V8TwYQi44jYvSalIcs2oN4=
+	t=1728548259; cv=none; b=b3adfU5SouQlaMRvEIYItDKGP2COJZh9vBmu/Dp5wy2N4v+7lbL/ZFPaDBuYiQ/xwLHmBI7WsJjS7uosAwuGnpZlyRA9SyVjpkjyQN0CBJk35MPLB/FlDUO//hCgrWBYbqb6Ksot4nEr7Cvo07adaWlOXD4gjdcyjC0d62B6+pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728548209; c=relaxed/simple;
-	bh=wFt66hRYuJmxRsyu0EYyqOHGyLlyWmtjJkTLei3olIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AKqZhFsalSHXpnsuHMUhs9kkjbJ5IODYvhrnbDq3/fZTM98TxLwzpfY4SsRjG/QG2SeEm5O5NGR4zryTx+ez6EofcUqpw8visUncMx37CNx7UU40OdrDc1+AdLiWO9VlXhzux5T7OdxsRJAS1XJBdmeWAgg4acrmiopcxPc0dmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYjsIl6J; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7afcf0625a9so67762585a.0;
-        Thu, 10 Oct 2024 01:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728548206; x=1729153006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hrRWTlMbh8H2NmoPMoUWJCWy0QREhDddrwTIMVfvwYQ=;
-        b=XYjsIl6JLAamxPzKFPbi0+jUtw3/9yhS9rEDDJ1WCf7IN6qDB1eRaGyzG2O1O6tQ9C
-         k0a1neCuaR5Z2DoK7QaAT60U2oL1orM2zpqMqLJp0ZRQVX3GlZ5spOTEgFc5ToexyR6J
-         603Yr1jx1OvDlLkcCjzrq+mOrTQiDwAVb2pL/2kj4+Bp6lAgl0bI0BH1x+WE4cS2IolT
-         Vse7jL7iGHHxEkTFiIgw0k3jeA2F8C8aviv2bGcwJR2KzufpiEHvCNP0S+1KcbvOZ+TV
-         GYwL71seXSnE2yZJ+iWdwVXZSX8sSFstNH69T7gk+cU0fOky/mbOO5MG4tmRSwtPQXsH
-         TlQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728548206; x=1729153006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hrRWTlMbh8H2NmoPMoUWJCWy0QREhDddrwTIMVfvwYQ=;
-        b=g5Gbqocm8kCOsucXz85iiwvo4dOiqu4DrojIfPptFgfkrdTFjLpnzvTjWvw1UAAXfq
-         XC9+RrSrS9GP0GQyPrkR/Hj2WNvl5MV2ZNVyF5bD9WkmWKjoaPKK/SY9sj/WpX6i1XfX
-         ffAw+yGeuuVeMdonSJ06pwmGuyCu38gkNZIcYlsQF10oviwS8hFA3xD1Gn/y+13FZMqN
-         sjn966seKurRxpeT0t4w5Yg3y19Zzq/IJyf4nXC44k9MkjXhjtl/sZtO6MvsOs3m/GLP
-         I/rHVOeHQWFz9Fk1VJ+ABj2NKNN0IpHv/joDbMT3LhE9suYqcl5RD+XlNuY1giYX/LXk
-         t3og==
-X-Forwarded-Encrypted: i=1; AJvYcCXJQgxCu1ygFUCmLX7yA0BVURgrnQkVU6UEkoySH8UfE/4gV9ZOcjfMJ9r6OryTJUU3YCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQr7MsQJPevmRo9ntQSA4EIVngysKzR4eItprTaocRnHIUg3DK
-	g7H4fO79zlUP7RfQ0imAjojoTVUzLkgOOZLHia4VPJyIrU71nHNt
-X-Google-Smtp-Source: AGHT+IHx/LJTzMQzg+IXsJzYsThqyeP0ui7eVONHumKV/hHC/685bnXccaTQTWL+WUQOTduBfD6tqw==
-X-Received: by 2002:a05:620a:1925:b0:7b1:11f4:d0af with SMTP id af79cd13be357-7b111f4d196mr372869785a.29.1728548206416;
-        Thu, 10 Oct 2024 01:16:46 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b114956001sm28673885a.72.2024.10.10.01.16.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 01:16:45 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 864D61200068;
-	Thu, 10 Oct 2024 04:16:45 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 10 Oct 2024 04:16:45 -0400
-X-ME-Sender: <xms:bY0HZ4dSVXIMCvLUqTbxJ3O-9Rw8we4ww5We01UhX7MxUyPJMnvg6g>
-    <xme:bY0HZ6OJ48QLW7moncGOt8DZL9DY1z8Mt3ePUqJdhsPzLAQ7mlfwwoIEtdbrsYKNz
-    PGAaM6pPMA8LPkJqQ>
-X-ME-Received: <xmr:bY0HZ5hkLnZ7-t8IAiIUXM2ocNvrD4Eub-BLKoy3UsRLwmMxvYj9eh3uFsA8jA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefhedgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtrodttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeeitdefvefhteeklefgtefhgeelkeefffelvdev
-    hfehueektdevhfettddvteevvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepledpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggvshdrohhrghdprhgtph
-    htthhopehnvggvrhgrjhdruhhprgguhhihrgihsegrmhgurdgtohhmpdhrtghpthhtohep
-    phgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuhhrvgiikhhisehgmh
-    grihhlrdgtohhmpdhrtghpthhtohepqhhirghnghdriihhrghnghduvdduudesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepsghoqhhunhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:bY0HZ9_QJNGf-jDkwRm8x2FR8jhGkFQQEIYR7fJ3Bbk8N0-KAoQ8Ew>
-    <xmx:bY0HZ0sNLUyV6sibubeb01W0TATlgZUj-whzn-wtRzBmWgBgvz6wnw>
-    <xmx:bY0HZ0GnKrXVBue2ApEls5ZsmOKqPzmzJ1DK9JPpPUqNgp7W2RSwEA>
-    <xmx:bY0HZzMu93UtBnP0clyfD_MhYkh5hXFuRdDhTqMinXzJ01Jvq_5PGg>
-    <xmx:bY0HZ5NKdScG2Q12r8QH01f7ol4vOxS-FIcW82NRM33y2MfuxaH2yxPF>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 10 Oct 2024 04:16:45 -0400 (EDT)
-Date: Thu, 10 Oct 2024 01:16:41 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rcu/nocb: Use switch/case on NOCB timer state machine
-Message-ID: <ZweNaSTMQOqXRIIN@boqun-archlinux>
-References: <20241002145738.38226-1-frederic@kernel.org>
- <20241002145738.38226-2-frederic@kernel.org>
+	s=arc-20240116; t=1728548259; c=relaxed/simple;
+	bh=u/RV5snKlz06wQqXDgWLX0hdoSNe/rd3n154CWQGdog=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l9zEManIRsii2o89wESxn8mgdg6B9HnxrxiM8YZSzvW1B8EdV0p++3MfenzAXg0ikickGUMC0ghjCRLygFvLNm6mG1FQURhdfkLMDy3o7g8cTSmQOwxLhHM9hECFYTXef0hZuznLOaScoV+XIZpoQEFxLqZYju4m+M/l3s5gb0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=jGWfc7LH; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id E960589253;
+	Thu, 10 Oct 2024 10:17:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728548253;
+	bh=0fhsYrDRoI1ChoLX0fTql2+AKk5927de0Mo+mllJGeo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jGWfc7LHMdoedGWJDpkGBv0Iq1uQAFE2cVd4u2jGQL6dOlBFMQQz0854mce1522Vo
+	 ir/ub9/EtvNMinQUpE81hD1gyfHwNExkQoo+k5q13d7paS5R/sVFTjAjVMYrj2vGq5
+	 j9OnW0TrTC8P/jCYggpAaIscmt67m/L7jzxZWHQ2HRdChwmhYsFKx7Av7NtxR0lyMx
+	 1crYhiYAenSvfp6KK/pRbZj2Dyn2+RIJpUfoLs9aZMdxP7X0xypoOw2UXcyCXB0wXQ
+	 tHTaT0quga8JqAD3xwe7rPgw2dM764iC0nYNMl2jyTArMzwMIEWDe/VAxC3ltQDeuP
+	 Hk7yAvd+Z+eyA==
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Lukasz Majewski <lukma@denx.de>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v8 1/2] dt-bindings: arm: Document the btt3 i.MX28 based board
+Date: Thu, 10 Oct 2024 10:17:18 +0200
+Message-Id: <20241010081719.2993296-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002145738.38226-2-frederic@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, Oct 02, 2024 at 04:57:36PM +0200, Frederic Weisbecker wrote:
-> It's more convenient to benefit from the fallthrough feature of
-> switch / case to handle the timer state machine. Also a new state is
-> about to be added that will take advantage of it.
-> 
-> No intended functional change.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  kernel/rcu/tree_nocb.h | 33 +++++++++++++++++++++++----------
->  1 file changed, 23 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 97b99cd06923..2fb803f863da 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-> @@ -271,22 +271,35 @@ static void wake_nocb_gp_defer(struct rcu_data *rdp, int waketype,
->  
->  	raw_spin_lock_irqsave(&rdp_gp->nocb_gp_lock, flags);
->  
-> -	/*
-> -	 * Bypass wakeup overrides previous deferments. In case of
-> -	 * callback storms, no need to wake up too early.
-> -	 */
-> -	if (waketype == RCU_NOCB_WAKE_LAZY &&
-> -	    rdp->nocb_defer_wakeup == RCU_NOCB_WAKE_NOT) {
+The imx287 based btt3 board is very similar to xea in terms of used SOM
+module.
 
-In the old code, if this "if" branch is not taken,
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> -		mod_timer(&rdp_gp->nocb_timer, jiffies + rcu_get_jiffies_lazy_flush());
-> -		WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
-> -	} else if (waketype == RCU_NOCB_WAKE_BYPASS) {
-> +	switch (waketype) {
-> +	case RCU_NOCB_WAKE_BYPASS:
-> +		/*
-> +		 * Bypass wakeup overrides previous deferments. In case of
-> +		 * callback storms, no need to wake up too early.
-> +		 */
->  		mod_timer(&rdp_gp->nocb_timer, jiffies + 2);
->  		WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
-> -	} else {
+---
+Changes for v8:
+- None
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-... it will end up in this else branch, however,
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index b39a7e031177..2b5c405d15ef 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -97,6 +97,7 @@ properties:
+               - i2se,duckbill
+               - i2se,duckbill-2
+               - karo,tx28                 # Ka-Ro electronics TX28 module
++              - lwn,imx28-btt3
+               - lwn,imx28-xea
+               - msr,m28cu3                # M28 SoM with custom base board
+               - schulercontrol,imx28-sps1
+-- 
+2.39.5
 
-> +		break;
-> +	case RCU_NOCB_WAKE_LAZY:
-> +		if (rdp->nocb_defer_wakeup == RCU_NOCB_WAKE_NOT) {
-> +			mod_timer(&rdp_gp->nocb_timer, jiffies + rcu_get_jiffies_lazy_flush());
-> +			WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
-> +		}
-> +		/*
-> +		 * If the timer is already armed, a non-lazy enqueue may have happened
-> +		 * in-between. Don't delay it and fall-through.
-> +		 */
-> +		break;
-
-... here we break instead of fallthrough when waketype ==
-RCU_NOCB_WAKE_LAZY and rdp->nocb_defer_wakeup != RCU_NOCB_WAKE_NOT, this
-seems to me a functional change, is this intented?
-
-Regards,
-Boqun
-
-> +	case RCU_NOCB_WAKE:
-> +		fallthrough;
-> +	case RCU_NOCB_WAKE_FORCE:
->  		if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
->  			mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
->  		if (rdp_gp->nocb_defer_wakeup < waketype)
->  			WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
-> +		break;
-> +	default:
-> +		WARN_ON_ONCE(1);
->  	}
->  
->  	raw_spin_unlock_irqrestore(&rdp_gp->nocb_gp_lock, flags);
-> -- 
-> 2.46.0
-> 
 
