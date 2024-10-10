@@ -1,126 +1,181 @@
-Return-Path: <linux-kernel+bounces-359470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A3B998BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142BE998BF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841B21F225EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB3F292BFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4CF1CCB26;
-	Thu, 10 Oct 2024 15:41:58 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F671CCB41;
+	Thu, 10 Oct 2024 15:41:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59ADF1CBEBE;
-	Thu, 10 Oct 2024 15:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F9E664C6;
+	Thu, 10 Oct 2024 15:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574918; cv=none; b=pAqvvX0jaN279sJ0+2DxXG4nSeKeWulPDq/KVS95/h0sFUkin5yqjzns17JQyomsxlB71x7PfESGSCUof6DfTAyjwo2gl/4oI2Dp0asjjOy0paQg2WRxAGNHLaRu5/xYCoI5kib654zsxsByNq1AejpBWfcpDofR5JEpQGjxuHw=
+	t=1728574899; cv=none; b=U72on/eYmsfbD1Nr1C/PzdFlGJ+zMJbnQcS/P0J5QW41R/MwaEQWRnRdTSiPT+Rwh3LeW9yJbFLkk1/Y/v5M3gVJyeas8/TmMgIUFpeuhif5x05Z6ySeHiOiD+9eQns2hMAQj0IhACS3U3w9vdLKYTpAaPN9Az5BqbsOd2uCmik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574918; c=relaxed/simple;
-	bh=OfwBAl6HoSweT/u8EjV2gqKN+yyKohk67GSL7DFVig4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f2Nn87H28xPqLV3HrC0IiqrvxCi4xE6dJ1Zg0VE5DzAMUT5W4ScBXwetlM89ioHHMv0olUa5BFvrYR9J+DIAVxs1QH2A9CWIgHO+ShtLsh0MIM/GKxq8kQLSnE7eU6sSIDu5V7cZrjK8A2x4hRq/9v3oLN58QZQXqWsOXSqfNLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+	s=arc-20240116; t=1728574899; c=relaxed/simple;
+	bh=2ZNr3XTNYk9na4QSMMXE7JTpGSMV6W6Ncta1m8J6KDA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VS0No1mJ/ExCI9m3EiGGflnmO1O2LcvLFOulBy4+GUels/yUGznsxBR8ki3o+JJ0x6SwDxfOtz0YHuYUx2bP8L1tSKhMHHBs6E3YRo5bn37yw4sLvsS62+TGYCFzIFLy6fYJtBi4Xlt+n3/yLD+wsagXZAU6wJkULdpJ2zcfoY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPYsL4wmWz2PVVR;
-	Thu, 10 Oct 2024 23:41:58 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id F32A8140360;
-	Thu, 10 Oct 2024 23:41:53 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
- (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 10 Oct
- 2024 23:41:53 +0800
-From: Li Zetao <lizetao1@huawei.com>
-To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-	<u.kleine-koenig@pengutronix.de>, <crope@iki.fi>
-CC: <lizetao1@huawei.com>, <linux-media@vger.kernel.org>,
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPYqL1BJPz6J70h;
+	Thu, 10 Oct 2024 23:40:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 614E7140A36;
+	Thu, 10 Oct 2024 23:41:35 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 17:41:34 +0200
+Date: Thu, 10 Oct 2024 16:41:33 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: ts2020: fix null-ptr-deref in ts2020_probe()
-Date: Thu, 10 Oct 2024 23:41:13 +0800
-Message-ID: <20241010154113.3228533-1-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH v4 26/28] cxl/mem: Trace Dynamic capacity Event Record
+Message-ID: <20241010164133.00005d53@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-26-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-26-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-KASAN reported a null-ptr-deref issue when executing the following
-command:
+On Mon, 07 Oct 2024 18:16:32 -0500
+ira.weiny@intel.com wrote:
 
-  # echo ts2020 0x20 > /sys/bus/i2c/devices/i2c-0/new_device
-    KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
-    CPU: 53 UID: 0 PID: 970 Comm: systemd-udevd Not tainted 6.12.0-rc2+ #24
-    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)
-    RIP: 0010:ts2020_probe+0xad/0xe10 [ts2020]
-    RSP: 0018:ffffc9000abbf598 EFLAGS: 00010202
-    RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffffc0714809
-    RDX: 0000000000000002 RSI: ffff88811550be00 RDI: 0000000000000010
-    RBP: ffff888109868800 R08: 0000000000000001 R09: fffff52001577eb6
-    R10: 0000000000000000 R11: ffffc9000abbff50 R12: ffffffffc0714790
-    R13: 1ffff92001577eb8 R14: ffffffffc07190d0 R15: 0000000000000001
-    FS:  00007f95f13b98c0(0000) GS:ffff888149280000(0000) knlGS:0000000000000000
-    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    CR2: 0000555d2634b000 CR3: 0000000152236000 CR4: 00000000000006f0
-    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-    Call Trace:
-     <TASK>
-     ts2020_probe+0xad/0xe10 [ts2020]
-     i2c_device_probe+0x421/0xb40
-     really_probe+0x266/0x850
-    ...
+> From: Navneet Singh <navneet.singh@intel.com>
+> 
+> CXL rev 3.1 section 8.2.9.2.1 adds the Dynamic Capacity Event Records.
+> User space can use trace events for debugging of DC capacity changes.
+> 
+> Add DC trace points to the trace log.
+> 
+> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Minor comment inline about tag formatting.
 
-The cause of the problem is that when using sysfs to dynamically register
-an i2c device, there is no platform data, but the probe process of ts2020
-needs to use platform data, resulting in a null pointer being accessed.
+Either way
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Solve this problem by adding checks to platform data.
+> 
+> ---
+> Changes:
+> [djiang: Use 3.1 spec reference]
+> ---
+>  drivers/cxl/core/mbox.c  |  4 +++
+>  drivers/cxl/core/trace.h | 65 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 69 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> index 6b25d15403a3..816e28cc5a40 100644
+> --- a/drivers/cxl/core/mbox.c
+> +++ b/drivers/cxl/core/mbox.c
+> @@ -994,6 +994,10 @@ static void __cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+>  		ev_type = CXL_CPER_EVENT_DRAM;
+>  	else if (uuid_equal(uuid, &CXL_EVENT_MEM_MODULE_UUID))
+>  		ev_type = CXL_CPER_EVENT_MEM_MODULE;
+> +	else if (uuid_equal(uuid, &CXL_EVENT_DC_EVENT_UUID)) {
+> +		trace_cxl_dynamic_capacity(cxlmd, type, &record->event.dcd);
+> +		return;
+> +	}
+>  
+>  	cxl_event_trace_record(cxlmd, type, ev_type, uuid, &record->event);
+>  }
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index 9167cfba7f59..1303024b5239 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
 
-Fixes: dc245a5f9b51 ("[media] ts2020: implement I2C client bindings")
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
- drivers/media/dvb-frontends/ts2020.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+> +TRACE_EVENT(cxl_dynamic_capacity,
+> +
+> +	TP_PROTO(const struct cxl_memdev *cxlmd, enum cxl_event_log_type log,
+> +		 struct cxl_event_dcd *rec),
+> +
+> +	TP_ARGS(cxlmd, log, rec),
+> +
+> +	TP_STRUCT__entry(
+> +		CXL_EVT_TP_entry
+> +
+> +		/* Dynamic capacity Event */
+> +		__field(u8, event_type)
+> +		__field(u16, hostid)
+> +		__field(u8, region_id)
+> +		__field(u64, dpa_start)
+> +		__field(u64, length)
+> +		__array(u8, tag, CXL_EXTENT_TAG_LEN)
+> +		__field(u16, sh_extent_seq)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		CXL_EVT_TP_fast_assign(cxlmd, log, rec->hdr);
+> +
+> +		/* Dynamic_capacity Event */
+> +		__entry->event_type = rec->event_type;
+> +
+> +		/* DCD event record data */
+> +		__entry->hostid = le16_to_cpu(rec->host_id);
+> +		__entry->region_id = rec->region_index;
+> +		__entry->dpa_start = le64_to_cpu(rec->extent.start_dpa);
+> +		__entry->length = le64_to_cpu(rec->extent.length);
+> +		memcpy(__entry->tag, &rec->extent.tag, CXL_EXTENT_TAG_LEN);
+> +		__entry->sh_extent_seq = le16_to_cpu(rec->extent.shared_extn_seq);
+> +	),
+> +
+> +	CXL_EVT_TP_printk("event_type='%s' host_id='%d' region_id='%d' " \
+> +		"starting_dpa=%llx length=%llx tag=%s " \
+> +		"shared_extent_sequence=%d",
+> +		show_dc_evt_type(__entry->event_type),
+> +		__entry->hostid,
+> +		__entry->region_id,
+> +		__entry->dpa_start,
+> +		__entry->length,
+> +		__print_hex(__entry->tag, CXL_EXTENT_TAG_LEN),
 
-diff --git a/drivers/media/dvb-frontends/ts2020.c b/drivers/media/dvb-frontends/ts2020.c
-index a5baca2449c7..e25add6cc38e 100644
---- a/drivers/media/dvb-frontends/ts2020.c
-+++ b/drivers/media/dvb-frontends/ts2020.c
-@@ -553,13 +553,19 @@ static void ts2020_regmap_unlock(void *__dev)
- static int ts2020_probe(struct i2c_client *client)
- {
- 	struct ts2020_config *pdata = client->dev.platform_data;
--	struct dvb_frontend *fe = pdata->fe;
-+	struct dvb_frontend *fe;
- 	struct ts2020_priv *dev;
- 	int ret;
- 	u8 u8tmp;
- 	unsigned int utmp;
- 	char *chip_str;
- 
-+	if (!pdata) {
-+		dev_err(&client->dev, "platform data is mandatory\n");
-+		return -EINVAL;
-+	}
-+
-+	fe = pdata->fe;
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (!dev) {
- 		ret = -ENOMEM;
--- 
-2.34.1
+%pU maybe?
+https://elixir.bootlin.com/linux/v6.11.2/source/include/ras/ras_event.h#L248
+uses it for the GUIDs in CPER etc.
+
+I guess it depends on how strongly we want to push John's vision of these
+always being UUIDs! (I'm in favor and here is just formatting a debug print
+so that shouldn't be a problem even for those who want for some odd reason
+to use something else for tags :)
+
+
+
+> +		__entry->sh_extent_seq
+> +	)
+> +);
+> +
+>  #endif /* _CXL_EVENTS_H */
+>  
+>  #define TRACE_INCLUDE_FILE trace
+> 
 
 
