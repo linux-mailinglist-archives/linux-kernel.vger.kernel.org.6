@@ -1,110 +1,171 @@
-Return-Path: <linux-kernel+bounces-360128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCE09994F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB3A9994F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB511C22E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA77F1C22E6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816F61E5020;
-	Thu, 10 Oct 2024 22:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8AE1E47B9;
+	Thu, 10 Oct 2024 22:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eae/Cu9v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTX+HMHh"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67AB1E2839;
-	Thu, 10 Oct 2024 22:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069C91E1027;
+	Thu, 10 Oct 2024 22:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598070; cv=none; b=YnxcmHztYgjYHTrm7eOJ5AFOCgLd0MDfgzNpeKSXj7lhjg7cFphMhC0rTaiJZsqUJ0XGsgdwGc4Nih4vsZVhT15frsog2KDHJdCH+hdGxSNKRt0eHxeHLjrGVE/f2suGM2BlnpsLf4sVe/Hs860O0SE9LmogA6WBFngbbQmr2FM=
+	t=1728598147; cv=none; b=h4oWbqRHb1J4xfpb86+/5xfJPJrnkVou/UhEBKH9toTrWWfMVpH15s5CCmYaorpPlppF6XNNB7A8NxjYf0R0CAz9ChGJhNycH/flLK3abSgyg9BhUYR9Uv14XxztgbmZgXJHG2T8XiiDmkEoFAqRtOrbE+cADA3nlz43e3jBH6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598070; c=relaxed/simple;
-	bh=00l5K9SfK1hW5HpyRetxiwRtURhebXZza77EpqLIza4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RcltIdicutAkR5IxQ3Iv8jwXxV5VpsE6RkBZlS1ujmELCXT5gfHzY5Jj9FwPrZviOZ7hD2beL00RenfGkgLBwBu7I9BrGNu3fxM6dMjcAvjcVrmNINTSMSEHgpVs2C8R+XGqZyF+vz5vPib+Ro9fRBJdmuv5tK65vsSvprRoeYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eae/Cu9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0884BC4CEC5;
-	Thu, 10 Oct 2024 22:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728598069;
-	bh=00l5K9SfK1hW5HpyRetxiwRtURhebXZza77EpqLIza4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eae/Cu9vBaBKBo6XIMSl6WoFREPmJgo+TzxFgjgvpThDZgr+Rdvd0xY8odAvDvep5
-	 iFnWblkpvZ8TaxOIc+p1cNkl5WW9H2Tog4ti3FArjiGwPiG50LemcZ0Cx9z1mwKu70
-	 KqGrCC8o5N+j/JHFXsCOSNGb4eK5Db1WpWre3NxymgnA1FjBtfNlUYAdPDEZZaEG0X
-	 kheUm6pIQpVAsaDb8l9ywUE/8cKiyXKy9lnwQIo8Z5bn/6DBHK5XyMRggwmHA7HehI
-	 CjlS5O3R8yUjQB/fYiZWCHbY8zBdv4Ujs5KxpogKdQ9qQAZ9ATt3AFvQ+XLRZrOoHl
-	 6wCghtYRXpwpg==
-Date: Thu, 10 Oct 2024 17:07:47 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/7] PCI: Constify pci_register_io_range() fwnode_handle
-Message-ID: <20241010220747.GA579765@bhelgaas>
+	s=arc-20240116; t=1728598147; c=relaxed/simple;
+	bh=VUlBSWfqgFUu7aGU1pR2gowp/JZI8VAcfhNV6QFmISQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZVOD67/hNmc01mFNwddSTs7f0/CfDsBJsP/9YUQ7QwSOZu9HIn6HYNRD6RCSgHtQe5Q/D3fb/75IpHkBPYjj59jBszh0dTxcgcMqkjd4a4dpu7ixYinBwmlNiNVTffpnNqBtgjdnSA966Aju8qOqVNRaDkNNC0jYH8RK8fePMaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTX+HMHh; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431160cdbd0so8738555e9.1;
+        Thu, 10 Oct 2024 15:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728598144; x=1729202944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ttbGIV1OtP6Y+L+hzzhjHcgo4Ic64lUH6bhnz6qvucM=;
+        b=VTX+HMHhUrlq961MAdIlHGPULna5sByia4oupswgXhK0Ec6fkZmjaFvca7yJSHr7zf
+         dPJHBJubN7LU0jBfmQ0SpLVELvFa9VsBiNy41WnoW3K5AvP0lLOfr46pByZDhbQctf3u
+         l7hrddvFot1hBFeDOK8VCN1OoT3M/NW+1rm2pVQDLlpatlsgUSHMsMLFDMedSsB1ZH5X
+         1/worRlV7DsjlAk2GeIArD1yoeHcS8qXp80QPPkCEWOTP8rTadtRs/Q+jqKAjLEuIEzw
+         7ttMCi3H4661+rCkaOm0oYrL03whPYtIMo+giL0jfz3H6mS7Ioxf4Gpv7tPMlvH+I3a0
+         v9rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728598144; x=1729202944;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ttbGIV1OtP6Y+L+hzzhjHcgo4Ic64lUH6bhnz6qvucM=;
+        b=HkmS7qM8BaIpBCDLWWUa1Ar2uBIyyLIzvsdwIyTvcImw8mU8nfKoU4RiUC0d/7rkCT
+         5FDFkE/Usd5ak2oWPwbyB38Yiz1mmlA317/NNm2YgwAolrU1Zonx9EXvQ9K4CbeG47c6
+         A/4HBHhGlguUy83NlOIAiC/NJNgRy1EGot/k1PaOJaY+PORXuj57q9ItoMCEnP65BwmB
+         d37oWxrfp9sG+UAJaYGFUkZtIKCQjX9d/rm0l7uHFyfWDGDDPOoja7NgsHlW02dpz9oW
+         nDUY93wSdRqKD0Gw+g5zjmm4O7Py1irwuSQYDBmXWnjWWv3ql/VGv57/irDnMEUqiAJy
+         Y2kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoKgkp0xHtfuWzCiImONn3oXNovg7I27fhRg5LVTYvADWVjNZTD51QflD7hPlDzQNGcsmvB143ueSH4uvT@vger.kernel.org, AJvYcCWQxdWd2Yy2fRMgsTIsBkE/DPmr653nKE70LILMehwHcIzcSIv27bIw/RO3aBZg+HORKJoH9tlk+t6ufw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy/t20XvxGwua7ss2+Jt0Ft2y8ORoDHccifSUm9kkyvA4fKUv/
+	zmvBrxdz2y1fsGThPffyS4L+I0vL3K7f9HnyqMEXwFnzc5yzM9mb
+X-Google-Smtp-Source: AGHT+IHeSJFBVDM1SbcoY464K/ygl3HCvWV7h/IxMrNG/Ut2dgNjnOJVa/rz3Jta9HcTAJ32IG2XeQ==
+X-Received: by 2002:adf:cf03:0:b0:37c:c9bc:1be6 with SMTP id ffacd0b85a97d-37d48194896mr3864214f8f.16.1728598144208;
+        Thu, 10 Oct 2024 15:09:04 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:3d08:841a:562:b7b5? (2a02-8389-41cf-e200-3d08-841a-0562-b7b5.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:3d08:841a:562:b7b5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd3dcsm2451217f8f.42.2024.10.10.15.09.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 15:09:03 -0700 (PDT)
+Message-ID: <9a85e6bb-884f-4fa0-b198-bf7707af76c8@gmail.com>
+Date: Fri, 11 Oct 2024 00:09:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010-dt-const-v1-1-87a51f558425@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] Input: sparcspkr - use cleanup facility for
+ device_node
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Hans de Goede <hdegoede@redhat.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-rpi-kernel@lists.infradead.org
+References: <20241010-input_automate_of_node_put-v1-0-ebc62138fbf8@gmail.com>
+ <20241010-input_automate_of_node_put-v1-6-ebc62138fbf8@gmail.com>
+ <20241010214348.GD4017910@ZenIV>
+ <22e55eb1-8aa6-43fa-8020-d18f9f6aa6f8@gmail.com>
+Content-Language: en-US, de-AT
+In-Reply-To: <22e55eb1-8aa6-43fa-8020-d18f9f6aa6f8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 11:27:14AM -0500, Rob Herring (Arm) wrote:
-> pci_register_io_range() does not modify the passed in fwnode_handle, so
-> make it const.
+On 11/10/2024 00:01, Javier Carrasco wrote:
+> On 10/10/2024 23:43, Al Viro wrote:
+>> On Thu, Oct 10, 2024 at 11:25:56PM +0200, Javier Carrasco wrote:
+>>>
+>>> diff --git a/drivers/input/misc/sparcspkr.c b/drivers/input/misc/sparcspkr.c
+>>> index 20020cbc0752..bb1c732c8f95 100644
+>>> --- a/drivers/input/misc/sparcspkr.c
+>>> +++ b/drivers/input/misc/sparcspkr.c
+>>> @@ -188,7 +188,6 @@ static int bbc_beep_probe(struct platform_device *op)
+>>>  {
+>>>  	struct sparcspkr_state *state;
+>>>  	struct bbc_beep_info *info;
+>>> -	struct device_node *dp;
+>>>  	int err = -ENOMEM;
+>>>  
+>>>  	state = kzalloc(sizeof(*state), GFP_KERNEL);
+>>> @@ -199,14 +198,13 @@ static int bbc_beep_probe(struct platform_device *op)
+>>>  	state->event = bbc_spkr_event;
+>>>  	spin_lock_init(&state->lock);
+>>>  
+>>> -	dp = of_find_node_by_path("/");
+>>>  	err = -ENODEV;
+>>> +	struct device_node *dp __free(device_node) = of_find_node_by_path("/");
+>>>  	if (!dp)
+>>>  		goto out_free;
+>>
+>> Sigh...  See that
+>>         state = kzalloc(sizeof(*state), GFP_KERNEL);
+>> 	if (!state)
+>> 		goto out_err;
+>> above?
+>>
+>> IOW, this will quietly generate broken code if built with gcc (and refuse to
+>> compile with clang).  Yeah, this one is trivially fixed (return -ENOMEM instead
+>> of a goto), but...
+>>
+>> __cleanup() can be useful, but it's really *not* safe for blind use; you
+>> need to watch out for changed scopes (harmless in case of device_node)
+>> and for gotos (broken here).
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-> ---
-> Please ack and I'll take with the rest of the series.
-
-Thank you!
-
-> ---
->  drivers/pci/pci.c   | 2 +-
->  include/linux/pci.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Hi Al Viro,
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 7d85c04fbba2..4b102bd1cfea 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -4163,7 +4163,7 @@ EXPORT_SYMBOL(pci_request_regions_exclusive);
->   * Record the PCI IO range (expressed as CPU physical address + size).
->   * Return a negative value if an error has occurred, zero otherwise
->   */
-> -int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-> +int pci_register_io_range(const struct fwnode_handle *fwnode, phys_addr_t addr,
->  			resource_size_t	size)
->  {
->  	int ret = 0;
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 573b4c4c2be6..11421ae5c558 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1556,7 +1556,7 @@ int __must_check pci_bus_alloc_resource(struct pci_bus *bus,
->  			void *alignf_data);
->  
->  
-> -int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
-> +int pci_register_io_range(const struct fwnode_handle *fwnode, phys_addr_t addr,
->  			resource_size_t size);
->  unsigned long pci_address_to_pio(phys_addr_t addr);
->  phys_addr_t pci_pio_to_address(unsigned long pio);
+> sorry, but I think I don't get you. First, I don't see sparc64 as a
+> supported architecture for clang in the Linux documentation. Maybe the
+> documentation is not up-to-date, but I tried to compile with clang and
+> it seems to be true that it is not supported. Anyway, that is not the
+> issue here.
 > 
-> -- 
-> 2.45.2
+> Second, I might be missing something about the scopes you are
+> mentioning. 'state' gets allocated before the device_node is declared,
+> and when the device_node is declared and its initialization fails, it
+> should jump to 'out_free' to free 'state', shouldn't it? Sorry if I have
+> overlooked something here.
 > 
+> Thank your for your feedback and best regards,
+> Javier Carrasco
+> 
+
+
+I think that the issue you are talking about is that the goto will
+trigger the cleanup function of the device_node, which will not be
+initialized at that point.
+
+Yes, the goto before the device_node declaration hurts, and a return as
+you said would be better.
+
+Thanks and best regards,
+Javier Carrasco
 
