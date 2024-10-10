@@ -1,125 +1,221 @@
-Return-Path: <linux-kernel+bounces-359495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA250998C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8367998C5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1191F23556
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C461F221EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B191CC15B;
-	Thu, 10 Oct 2024 15:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AE11CCB47;
+	Thu, 10 Oct 2024 15:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gc+ajeRr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="XwnHlW6X"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78901917FB;
-	Thu, 10 Oct 2024 15:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4131C7B68
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575531; cv=none; b=jHimY0Pr2Icjsidd/uDPtIZ5XY7gUv7CJNZ8i6kyqwkKpVTHGEbBwwg0inITFozhM/ABccT1m3s3SwNG0IWVhRyXwcJ1NcRneUxxPvusa04PoqdaBvGfLNclDgMenVpm1ObKx46fTlKvQ/c/P9frW/hD1YwWVcy1wc64UgGXIwk=
+	t=1728575565; cv=none; b=H2J7/paAakRD8YX90E4oq7tXrRaiLxVQWQxQifwVunVaWzWfdal9HjLA/NEmnESxoKTx6A+62HaOd+MD4Qi/ZEsBwp1Nfrar+6L8TC8j1zBaGMK68zYtqxku3X4Tq26cVbRpH+aUf8xJQMcdLC9bJqKxUi7efWEQz/2KlNIDJJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575531; c=relaxed/simple;
-	bh=39KxPMJVKK5wuawUO5u2oXsAmwKoyC+/FTrdHsX0cFs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=av7tc5/XIeXsbG+zOzIYW2qljv5fCN8vZ0QaevFlMehetRfX0kJZkNQ92Gj4a/nhTRIhoIGhKRTe1XeNo10lvKlp76W9sgIOrOejx1eZ0wSp117RKRIh6leNeCfmKcmdn0P2xLr+oXhQ5gd1SNYiFhDk/0RCqnAp8drutWelSkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gc+ajeRr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 300B0C4CEC5;
-	Thu, 10 Oct 2024 15:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728575531;
-	bh=39KxPMJVKK5wuawUO5u2oXsAmwKoyC+/FTrdHsX0cFs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Gc+ajeRrIx4ycdWxBYWFVFEoR2k6Y0wUM+i91An4qnUFTN+sDwp1JlmiKbpWnASxg
-	 TeWBaz0FHNdzgTCOxKq/KBC1WjpVQldt/2+y/2zdSbO96B5nh5vqKyQUfGNa2gL9UN
-	 8JnNHQV0FQYNAgoovJrv5NOiQlpQUzu7ua/4p26GqHOdXF+8M8SWBzG0jxQi7yW9bY
-	 eiqbKm187ZL4wM7sEMx8P201eoASdyWrV2agfQxHTlAXc42GmcPnpM8CRIIlRBFVGd
-	 P7SahYeFichRRJuZPKHsTcM/qbatUdYlQ7XDlYULsiuf3ja7cxlANqFrfAi1EaihaZ
-	 jGZ2VJ2kcsymg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1syvSS-002FWy-Na;
-	Thu, 10 Oct 2024 16:52:08 +0100
-Date: Thu, 10 Oct 2024 16:52:07 +0100
-Message-ID: <86ldyw5520.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zheng Zengkai <zhengzengkai@huawei.com>
-Cc: <lpieralisi@kernel.org>,
-	<guohanjun@huawei.com>,
-	<sudeep.holla@arm.com>,
-	<mark.rutland@arm.com>,
-	<rafael@kernel.org>,
-	<lenb@kernel.org>,
-	<daniel.lezcano@linaro.org>,
-	<tglx@linutronix.de>,
-	<linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ACPI: GTDT: Tighten the check for the first platform timer entry
-In-Reply-To: <20241010144703.113728-1-zhengzengkai@huawei.com>
-References: <20241010144703.113728-1-zhengzengkai@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1728575565; c=relaxed/simple;
+	bh=UD6gE8Ajbe1yu0kKtf5syRQL8hngYhpGDpczsNaYu0M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y9M+4Vfs5tMBc9CmnVsWHmr9UklW1s/f/VoYeov/PlxF4W5D0Tueg/bWyHoRdkIb/bd5XlepSIF0sqMd3ps8ZG5Dr9n3ye66fp0pCopv6aWcziGxLkt0mim+qDGgtzp5Y+aA1+GHWJxy6VMUQmPEWKJpBEh444MWwHUKJYhHmyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=XwnHlW6X; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1728575564; x=1760111564;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Kkum1blv47enqgyq2aUGev7ra3ELmRp0dUTOAbl+I58=;
+  b=XwnHlW6XYoJPa/bv9C261CUd1VGONwodjKce/FrKZxkkdr/HqFFXS8h3
+   GVXkI+wtuH9Cao+FaP5X/HHHsM5ngppua8lu5Bjy2vVkE1lzTUlisk0ED
+   KROfQaXHoKF5VKpDhytdbcHIf4DGNfCeFBqS5FnmEaDaTRiryObr47z8F
+   4=;
+X-IronPort-AV: E=Sophos;i="6.11,193,1725321600"; 
+   d="scan'208";a="238327105"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 15:52:39 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.43.254:23851]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.18.228:2525] with esmtp (Farcaster)
+ id 646efd08-675e-4746-8ba7-c38ece7edc16; Thu, 10 Oct 2024 15:52:37 +0000 (UTC)
+X-Farcaster-Flow-ID: 646efd08-675e-4746-8ba7-c38ece7edc16
+Received: from EX19D033EUB001.ant.amazon.com (10.252.61.11) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 10 Oct 2024 15:52:28 +0000
+Received: from EX19MTAUEB001.ant.amazon.com (10.252.135.35) by
+ EX19D033EUB001.ant.amazon.com (10.252.61.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 10 Oct 2024 15:52:27 +0000
+Received: from email-imr-corp-prod-iad-1box-1a-9bbde7a3.us-east-1.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.135.35) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Thu, 10 Oct 2024 15:52:27 +0000
+Received: from dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com (dev-dsk-faresx-1b-27755bf1.eu-west-1.amazon.com [10.253.79.181])
+	by email-imr-corp-prod-iad-1box-1a-9bbde7a3.us-east-1.amazon.com (Postfix) with ESMTPS id 229F342252;
+	Thu, 10 Oct 2024 15:52:25 +0000 (UTC)
+From: Fares Mehanna <faresx@amazon.de>
+To: <david@redhat.com>
+CC: <akpm@linux-foundation.org>, <ardb@kernel.org>, <arnd@arndb.de>,
+	<bhelgaas@google.com>, <broonie@kernel.org>, <catalin.marinas@arm.com>,
+	<faresx@amazon.de>, <james.morse@arm.com>, <javierm@redhat.com>,
+	<jean-philippe@linaro.org>, <joey.gouly@arm.com>,
+	<kristina.martsenko@arm.com>, <kvmarm@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <mark.rutland@arm.com>, <maz@kernel.org>,
+	<nh-open-source@amazon.com>, <oliver.upton@linux.dev>, <ptosi@google.com>,
+	<rdunlap@infradead.org>, <rkagan@amazon.de>, <rppt@kernel.org>,
+	<shikemeng@huaweicloud.com>, <suzuki.poulose@arm.com>, <tabba@google.com>,
+	<will@kernel.org>, <yuzenghui@huawei.com>
+Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use it
+Date: Thu, 10 Oct 2024 15:52:10 +0000
+Message-ID: <20241010155210.13321-1-faresx@amazon.de>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <813b9bcb-afde-40b6-a604-cdb71b4b6d7a@redhat.com>
+References: <813b9bcb-afde-40b6-a604-cdb71b4b6d7a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: zhengzengkai@huawei.com, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org, lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Oct 2024 15:47:03 +0100,
-Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+> > In a series posted a few years ago [1], a proposal was put forward to allow the
+> > kernel to allocate memory local to a mm and thus push it out of reach for
+> > current and future speculation-based cross-process attacks.  We still believe
+> > this is a nice thing to have.
+> > 
+> > However, in the time passed since that post Linux mm has grown quite a few new
+> > goodies, so we'd like to explore possibilities to implement this functionality
+> > with less effort and churn leveraging the now available facilities.
+> > 
+> > An RFC was posted few months back [2] to show the proof of concept and a simple
+> > test driver.
+> > 
+> > In this RFC, we're using the same approach of implementing mm-local allocations
+> > piggy-backing on memfd_secret(), using regular user addresses but pinning the
+> > pages and flipping the user/supervisor flag on the respective PTEs to make them
+> > directly accessible from kernel.
+> > In addition to that we are submitting 5 patches to use the secret memory to hide
+> > the vCPU gp-regs and fp-regs on arm64 VHE systems.
 > 
-> As suggested by Marc and Lorenzo, first we need to check whether
-> the platform_timer pointer is within gtdt bounds (< gtdt_end) before
-> de-referencing what it points at to detect the (first) platform
-> timer entry length and check that next platform_timer pointer is
-> within gtdt_end too. Now we do that only in next_platform_timer()
-> for subsequent platform timers.
+> I'm a bit lost on what exactly we want to achieve. The point where we 
+> start flipping user/supervisor flags confuses me :)
 > 
-> So add check against table length (gtdt_end) for the first platform
-> timer entry.
+> With secretmem, you'd get memory allocated that
+> (a) Is accessible by user space -- mapped into user space.
+> (b) Is inaccessible by kernel space -- not mapped into the direct map
+> (c) GUP will fail, but copy_from / copy_to user will work.
 > 
-> Suggested-by: Marc Zyngier <maz@kernel.org>
-> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
-> ---
->  drivers/acpi/arm64/gtdt.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
-> index c0e77c1c8e09..f249af1ed1cd 100644
-> --- a/drivers/acpi/arm64/gtdt.c
-> +++ b/drivers/acpi/arm64/gtdt.c
-> @@ -177,7 +177,8 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->  	}
->  
->  	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
-> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
-> +	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt) ||
-> +			platform_timer >= acpi_gtdt_desc.gtdt_end) {
->  		pr_err(FW_BUG "invalid timer data.\n");
->  		return -EINVAL;
->  	}
+> Another way, without secretmem, would be to consider these "secrets" 
+> kernel allocations that can be mapped into user space using mmap() of a 
+> special fd. That is, they wouldn't have their origin in secretmem, but 
+> in KVM as a kernel allocation. It could be achieved by using VM_MIXEDMAP 
+> with vm_insert_pages(), manually removing them from the directmap.
+> 
+> But, I am not sure who is supposed to access what. Let's explore the 
+> requirements. I assume we want:
+> 
+> (a) Pages accessible by user space -- mapped into user space.
+> (b) Pages inaccessible by kernel space -- not mapped into the direct map
+> (c) GUP to fail (no direct map).
+> (d) copy_from / copy_to user to fail?
+> 
+> And on top of that, some way to access these pages on demand from kernel 
+> space? (temporary CPU-local mapping?)
+> 
+> Or how would the kernel make use of these allocations?
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
 
-You  are  only  checking  the  base  pointer  for  the  platform_timer
-array. This doesn't say anything about the *size* of that array (or at
-least its first element), and whether that actually fits in the table.
+Hi David,
 
-	M.
+Thanks for taking a look at the patches!
 
--- 
-Without deviation from the norm, progress is not possible.
+We're trying to allocate a kernel memory that is accessible to the kernel but
+only when the context of the process is loaded.
+
+So this is a kernel memory that is not needed to operate the kernel itself, it
+is to store & process data on behalf of a process. The requirement for this
+memory is that it would never be touched unless the process is scheduled on this
+core. otherwise any other access will crash the kernel.
+
+So this memory should only be directly readable and writable by the kernel, but
+only when the process context is loaded. The memory shouldn't be readable or
+writable by the owner process at all.
+
+This is basically done by removing those pages from kernel linear address and
+attaching them only in the process mm_struct. So during context switching the
+kernel loses access to the secret memory scheduled out and gain access to the
+new process secret memory.
+
+This generally protects against speculation attacks, and if other process managed
+to trick the kernel to leak data from memory. In this case the kernel will crash
+if it tries to access other processes secret memory.
+
+Since this memory is special in the sense that it is kernel memory but only make
+sense in the term of the owner process, I tried in this patch series to explore
+the possibility of reusing memfd_secret() to allocate this memory in user virtual
+address space, manage it in a VMA, flipping the permissions while keeping the
+control of the mapping exclusively with the kernel.
+
+Right now it is:
+(a) Pages not accessible by user space -- even though they are mapped into user
+    space, the PTEs are marked for kernel usage.
+(b) Pages accessible by kernel space -- even though they are not mapped into the
+    direct map, the PTEs in uvaddr are marked for kernel usage.
+(c) copy_from / copy_to user won't fail -- because it is in the user range, but
+    this can be fixed by allocating specific range in user vaddr to this feature
+    and check against this range there.
+(d) The secret memory vaddr is guessable by the owner process -- that can also
+    be fixed by allocating bigger chunk of user vaddr for this feature and
+    randomly placing the secret memory there.
+(e) Mapping is off-limits to the owner process by marking the VMA as locked,
+    sealed and special.
+
+Other alternative (that was implemented in the first submission) is to track those
+allocations in a non-shared kernel PGD per process, then handle creating, forking
+and context-switching this PGD.
+
+What I like about the memfd_secret() approach is the simplicity and being arch
+agnostic, what I don't like is the increased attack surface by using VMAs to
+track those allocations.
+
+I'm thinking of working on a PoC to implement the first approach of using a
+non-shared kernel PGD for secret memory allocations on arm64. This includes
+adding kernel page table per process where all PGDs are shared but one which
+will be used for secret allocations mapping. And handle the fork & context
+switching (TTBR1 switching(?)) correctly for the secret memory PGD.
+
+What do you think? I'd really appreciate opinions and possible ways forward.
+
+Thanks!
+Fares.
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
