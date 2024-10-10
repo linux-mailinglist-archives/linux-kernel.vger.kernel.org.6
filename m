@@ -1,125 +1,181 @@
-Return-Path: <linux-kernel+bounces-359430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC64998B51
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:22:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0429C99890E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DEEA1C253C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37556B2CBF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA831CCB59;
-	Thu, 10 Oct 2024 15:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="fNgNi+DG"
-Received: from mr85p00im-ztdg06021801.me.com (mr85p00im-ztdg06021801.me.com [17.58.23.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC5C1CC8A4;
+	Thu, 10 Oct 2024 14:11:43 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503531CCB27
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D89B1CBEBF;
+	Thu, 10 Oct 2024 14:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728573748; cv=none; b=RiIynwFP74nXGfhTG0qNU2Bjs5qrB8eN/4Fqan201PIx8m05rpjf9ZoDZgjkGtK4AK+eGBaff6UwVZ1k+Jzi9YJOUj/vmbVvZgfo3cYWqKg8/5OnpnWDoTf3h1uNeh60fO867xbSeciyU5jnbCvz8R+8pRmpcZ4jvGX/pMBIByE=
+	t=1728569502; cv=none; b=s8UpuN+TMMMud0URNHO1sUBdWa3osj1WBxjK85jBCet4XQkV4cixyfDYkXBbwF8IaRjauj/x2iI9o4kg7X+03VFj7YPSDLxEUdK32279cx13ai6gqRc4GsxOOR7FDpRmz+2SB2jzKDjyrSTtdEsoACXAVQLoaVAMhHqx/20XwTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728573748; c=relaxed/simple;
-	bh=6T+tlGDLDokB4GfAYtP8X1S5WQV/OIF+bJlMqerzrTU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SNdT0z80oHmPHHjhiHNMOuZtc8IxVnc2SeEpLuQPdwXpVMf86L5dRQpjyk0dGeOYh/tXiXT6W219ae+GX85dBxWTmS4QnOnHllRE+OUOY0Twb67j8eUwDOYO0IGvC4GJHYrUPgDdqlD0AEwy/usx9Fzl24vFLB3qnkQGORCwQoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=fNgNi+DG; arc=none smtp.client-ip=17.58.23.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1728573746;
-	bh=4bRpvFkGkbd+C5fU8ls9w7Y7zAU16P8zL2Bhr011Hjs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=fNgNi+DGxhNNLlZovmfCZVCjZ/qbnL4MO0+bbexsFc227L6t9chkWXXBQzX2AgpVU
-	 LgKAujK+KZUGStfb6mEAOi0VsladyctwAX+jVvLFQkRdIC/m6ganDDOJhUq/6ES9WD
-	 0B/C/VDjxvGtSqPF4PgO9ur/7sk/4cPaEz3Nw1kDzpeQ/eTY5zGRpblqeD5SqmxJmf
-	 jubAOPQ8KBAaX0OwBXQ1YXPEoHxZ1pjHsrj8gvCvBZENh3KzFVS8UzpipVzHACo+vC
-	 kr12smy/63sMc52MYiD9uqMy1y6+9lN029CFMgbvGWCiFKAqga648nSrilaK/MLWu9
-	 La+TEivqX7sLw==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06021801.me.com (Postfix) with ESMTPSA id 9953FD0079A;
-	Thu, 10 Oct 2024 15:22:22 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 10 Oct 2024 23:22:00 +0800
-Subject: [PATCH] PM: domains: Fix return value of API
- dev_pm_get_subsys_data()
+	s=arc-20240116; t=1728569502; c=relaxed/simple;
+	bh=K2adqvDY5CZRV7PE0cqCef+Mvn75gmUOMma6le7iDCw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XT+xPyvFx/pjOPMUFMdrpL1gBRayjhQEtJVcbz08RpZzpIruZ2sURgepz4rA8CXTmeECBnk8YpT0i+lSbDtEQZn9AtaUo2VWLUUP7gh2MFEqvs3w2F/xrkmwGiemqGVDLOpZriL4lVhrZ9bWQURFFWdS9by2UmqIaAzWZkHr4ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XPWrM1ZmgzCsrx;
+	Thu, 10 Oct 2024 22:10:59 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2FB1E180105;
+	Thu, 10 Oct 2024 22:11:37 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
+ 2024 22:11:33 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+Subject: [PATCH v3 -next 02/15] mm: filemap: move sysctl to mm/filemap.c
+Date: Thu, 10 Oct 2024 23:22:02 +0800
+Message-ID: <20241010152215.3025842-3-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
+References: <20241010152215.3025842-1-yukaixiong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-fix_dev_pm_get_subsys_data-v1-1-2250e8f0051b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABfxB2cC/x3MTQqEMAxA4atI1hbSIswwVxEJrU07WfhDo6KId
- 58yyw8e7wblIqzwaW4ofIjKMlfYtoHx6+fMRmI1OHSdRYsmyUmRD1onyryR7kEvpeg3b1z3eof
- gEFNkqIO1cK3/8354nh9H4Yl6bAAAAA==
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Len Brown <len.brown@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: M_pOUurVt_A_ut6Fg4w9HVdbi7t8ALq7
-X-Proofpoint-ORIG-GUID: M_pOUurVt_A_ut6Fg4w9HVdbi7t8ALq7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 suspectscore=0
- clxscore=1015 adultscore=0 mlxlogscore=999 malwarescore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410100102
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+This moves the filemap related sysctl to mm/filemap.c, and
+removes the redundant external variable declaration.
 
-dev_pm_get_subsys_data() has below 2 issues under condition
-(@dev->power.subsys_data != NULL):
-
-- it will do unnecessary kzalloc() and kfree().
-- it will return -ENOMEM if the kzalloc() fails, that is wrong
-  since the kzalloc() is not needed.
-
-Fixed by not doing kzalloc() and returning 0 for the condition.
-
-Fixes: ef27bed1870d ("PM: Reference counting of power.subsys_data")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
 ---
- drivers/base/power/common.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+v3:
+ - change the title
+---
+ include/linux/mm.h |  2 --
+ kernel/sysctl.c    |  8 --------
+ mm/filemap.c       | 18 +++++++++++++++---
+ 3 files changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
-index 8c34ae1cd8d5..13cb1f2a06e7 100644
---- a/drivers/base/power/common.c
-+++ b/drivers/base/power/common.c
-@@ -26,6 +26,14 @@ int dev_pm_get_subsys_data(struct device *dev)
- {
- 	struct pm_subsys_data *psd;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index df0a5eac66b7..a3c3a7d64407 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -39,8 +39,6 @@ struct user_struct;
+ struct pt_regs;
+ struct folio_batch;
  
-+	spin_lock_irq(&dev->power.lock);
-+	if (dev->power.subsys_data) {
-+		dev->power.subsys_data->refcount++;
-+		spin_unlock_irq(&dev->power.lock);
-+		return 0;
+-extern int sysctl_page_lock_unfairness;
+-
+ void mm_core_init(void);
+ void init_mm_internals(void);
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 726b866af57b..2a875b739054 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2089,14 +2089,6 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ONE,
+ 		.extra2		= SYSCTL_FOUR,
+ 	},
+-	{
+-		.procname	= "page_lock_unfairness",
+-		.data		= &sysctl_page_lock_unfairness,
+-		.maxlen		= sizeof(sysctl_page_lock_unfairness),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ZERO,
+-	},
+ #ifdef CONFIG_MMU
+ 	{
+ 		.procname	= "max_map_count",
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 429895f1a564..0d4adf8068ca 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -47,6 +47,7 @@
+ #include <linux/splice.h>
+ #include <linux/rcupdate_wait.h>
+ #include <linux/sched/mm.h>
++#include <linux/sysctl.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlbflush.h>
+ #include "internal.h"
+@@ -1069,6 +1070,19 @@ static wait_queue_head_t *folio_waitqueue(struct folio *folio)
+ 	return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_TABLE_BITS)];
+ }
+ 
++/* How many times do we accept lock stealing from under a waiter? */
++static int sysctl_page_lock_unfairness = 5;
++static struct ctl_table filemap_sysctl_table[] = {
++	{
++		.procname	= "page_lock_unfairness",
++		.data		= &sysctl_page_lock_unfairness,
++		.maxlen		= sizeof(sysctl_page_lock_unfairness),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
 +	}
-+	spin_unlock_irq(&dev->power.lock);
++};
 +
- 	psd = kzalloc(sizeof(*psd), GFP_KERNEL);
- 	if (!psd)
- 		return -ENOMEM;
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241010-fix_dev_pm_get_subsys_data-2478bb200fde
-
-Best regards,
+ void __init pagecache_init(void)
+ {
+ 	int i;
+@@ -1077,6 +1091,7 @@ void __init pagecache_init(void)
+ 		init_waitqueue_head(&folio_wait_table[i]);
+ 
+ 	page_writeback_init();
++	register_sysctl_init("vm", filemap_sysctl_table);
+ }
+ 
+ /*
+@@ -1224,9 +1239,6 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
+ 	return true;
+ }
+ 
+-/* How many times do we accept lock stealing from under a waiter? */
+-int sysctl_page_lock_unfairness = 5;
+-
+ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+ 		int state, enum behavior behavior)
+ {
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+2.34.1
 
 
