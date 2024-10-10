@@ -1,149 +1,197 @@
-Return-Path: <linux-kernel+bounces-358745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683D999830F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:01:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2BA998312
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FAD81C210CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:01:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB611281977
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B4C1BE864;
-	Thu, 10 Oct 2024 10:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F4E1BDABE;
+	Thu, 10 Oct 2024 10:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="SB32WZ4H"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtFV11m8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCD91BBBF7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2151BBBF7;
+	Thu, 10 Oct 2024 10:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554451; cv=none; b=StCCyTLtVcFf7/JJcXL2FlgMYuPgRylNgZEX7TF4yriEC/fG/4rB1n2q6nXhOQBHSG4pAFlQn08zMgyjTkupRDgHd2X9O69NKFzRpt0WMubQT4rvvZzRQzCKRDqArYjykl/pKNnCPlCHVIAsf4o2JBS6fa7QycPIh8j9JV9t3A0=
+	t=1728554491; cv=none; b=oo7YI8S3lBvoamYQXU7nIWUDBY3iaKfopSCXi0/Nx7ul5LTYNZ6s/mOY42EChBPqgn+8iRZr070MTCyBpUGo/D+z1p/2vPp1aBgozeQ8AwUHf9m7KHJsRYiPqaHPxgR2+nzdIx5MMBPbPCP+FoSVzOj08Y/81dK1i0vWULjyZGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554451; c=relaxed/simple;
-	bh=1hgGmXuLVRKXhHohAA3BPkQmHfbaybE0ZgqiF0mXekA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=q/L5qJcCNmRbTK1wJrj7voM2g0FPO1MyQGoIGmWtKq1ORDIJag+GTWVPEPW+mdLWcyUL/x5FkTM1uObfGwOAtMMm2/2GrkGzJxgOrtdvYhWsFgEyQvQ01RRTCIgHEeAzYly8hikl9cRo96BF7TMboMIYDieFnFLHqHDFBQJrZAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=SB32WZ4H; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a999521d0c3so122364266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728554448; x=1729159248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ebJVrdaGPpzXVT93kSNOz6xd2XJqXSAdAZ6etIW3Ims=;
-        b=SB32WZ4HwXY08XKEfYogl6ssukq4gd+HnUGLZUcdk7LbWahbCDJmETD7jaOvoBJLUP
-         S9WbGM27YyZqE2R1kA3CQxgSLl1bPV2WqTDOy7R176MJb3+oOstTOU+2QmZPIMPc+tR5
-         5cAwYlgfmtG0UdJgqf+My6WJNv7Jk3+wXHLIbA5hPhbSOOMKzmC0fLDVydxm9YFWilOw
-         0LNjFVuB+BM3MPlN4+fdjwE6hM8HwHTX6QZ4gRdnfrgy3kiuZQAKRWO+tVE/UASSwMa5
-         FUKhgfvzmNIFw/0LtTOQTB1E2tZYuZYdycc4EQAehzl9Z81X2RM2z2a8rJwYcpjb8AzU
-         UMjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728554448; x=1729159248;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ebJVrdaGPpzXVT93kSNOz6xd2XJqXSAdAZ6etIW3Ims=;
-        b=rFGDF6/isO27K/WHv8039jqJNFUITDoD2bl4RPmoaDnWp04FAK9sET84jsQdaKFc9s
-         9DzMLEXYj5ENv3Vgam0j4rkcQlqwSvOqXTsu+Iac9p+OgRHuHY5J+R5nmUhpTOeIbHyg
-         T1+Kz6xf3Mhzhzk3xdOYg9S5QAV/TbKxjS6iaLkS8pBeS2BrGDQAUieNtCw0WZUszZL9
-         GyT6NRyPgNwz4c14XKGTmsCgyx1WJssRqxcMaUDDucL63D7osQYtVQcrzdq7hOB6zfPA
-         bodDZHPjy5giYrVh5S/x0EsXGBhCR4e8UJ90TM35iK+p9xJO/69r4Bwk89iKGdTeNy+H
-         QEUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKI4I13ojLPA3z1xZQjWzoAlmg7htSlW/g4VqZH200Ie5Qp/X/lTNddWtbYElDb2j5cAnfLbJPj6cH8r8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO0GDqAisXxtk5wKNAhFdmFMbYAGFp37CHd4s/APp/E+RYmhB/
-	fUfZ7QDeKprtvi8bWgg9uNJyZ6XgVEzihhAAOJyy6B1CP6I65xEQo0pk1U5y2G0Mj91Pa/C0IzZ
-	B
-X-Google-Smtp-Source: AGHT+IHLpub98hIc5Ob5qa2Hr81nP7l6zY7EVcC34hBKOI7yvtg50A5KLJh78bJSKCuqb8kGAeSA5A==
-X-Received: by 2002:a17:907:3e0a:b0:a99:3c32:b538 with SMTP id a640c23a62f3a-a998d32b805mr520152866b.42.1728554447571;
-        Thu, 10 Oct 2024 03:00:47 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ec54c1sm67001166b.10.2024.10.10.03.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 03:00:47 -0700 (PDT)
-Message-ID: <879c5998-cd65-473d-962a-7f4442979ab4@blackwall.org>
-Date: Thu, 10 Oct 2024 13:00:45 +0300
+	s=arc-20240116; t=1728554491; c=relaxed/simple;
+	bh=n5Zp6gdmhvbmwbmdIrkDEzYVm1om2vT3AoMt9Vajij4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OokEln9R174FooqXNNWoU1JPUrpF3Ct5ofkjKxk/ubcb7QqgFj0cbdF6AoDCzk5vrNOFb3ObFafUVI0Bj6bE0kLGjZNZRgchNOZBBCpyNhTro4P+Gqkcc5/hetViKas96H2Kez0mXehIFkLoqYesIzlbiUeXLN1qSZwnt3e/90c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtFV11m8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209BBC4CED5;
+	Thu, 10 Oct 2024 10:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728554491;
+	bh=n5Zp6gdmhvbmwbmdIrkDEzYVm1om2vT3AoMt9Vajij4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CtFV11m87dWMe3LVi+JsFuB7ZzOnjlXjt8cUoi82axO6RS/AmojQcVncb98jaCvZi
+	 m9XyLRzTFf+EobnMJCBvZmdP8if3+rBMOTZqfWcOyCugCQ54KK+pPTFpht6l5qoYqJ
+	 pIFrjpyZku6iDRalEMdZLxnsOAeIUXMg+DfwBpEgl+L9a4lRCJsEN+ae88Y+r6E1Aq
+	 PXNqxrap7OMyHcfhzkz/w8EZthXSrioxvAgv4essfNT1B3SYJxJlyGm+1KXxjpPTMH
+	 oXOkOHNzfpINdR4fAIlEAw3gqVHyNog7jE9xSNLBjwz17UB4zTqJA8lcY+3GegsKEy
+	 37QQFiPN84MMw==
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e0719668e8so289496b6e.0;
+        Thu, 10 Oct 2024 03:01:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUzQcvbsG6QTLdOE2ll7j8UYX1JRnKMSmhnRkV1r7fQmDLZou8UoH76pn87d3SeM3Ig8sQ65tDxNUl8@vger.kernel.org, AJvYcCWwF2YaSyvwl/7mmDcw4uYljyBCSMcTyz4rQuK/Q648j8m6Y3gRQH9WM63/2H5g6be1hhsAESmNWHfqpCzI@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb5On8fK5aJ/IirDbt6UuaY8TQsmUtOXvz5ddSJ3THI60fw+zS
+	h737+4s6Y6Gdp07dmG6ZcG8YMQ+TxM1LFBCE1fedg6KsQXPU4zOXxCr36KYZQ6fSrLudV6cvMn4
+	t7AdAVy6A3jVsZCkfLZNH6zkGf9c=
+X-Google-Smtp-Source: AGHT+IFxafHo+JyQ1hf/GPawKw1+TkTDTc5Gg6D2CVYitq2SPIK1psVljYw1UzvQW0QSFGLKeUwpCR0Umn5/+C8P+uE=
+X-Received: by 2002:a05:6871:686:b0:277:7633:f50b with SMTP id
+ 586e51a60fabf-288342dd615mr3712561fac.16.1728554490275; Thu, 10 Oct 2024
+ 03:01:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [apparmor?] [ext4?] INFO: rcu detected stall in
- sys_getdents64
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- syzbot <syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- Network Development <netdev@vger.kernel.org>
-References: <6707499c.050a0220.1139e6.0017.GAE@google.com>
- <7fbdb7db-57c3-47b8-89ed-da974d03f17f@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <7fbdb7db-57c3-47b8-89ed-da974d03f17f@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241004204845.970951-1-arnd@kernel.org> <CAJZ5v0immr4obYsu2qNKKY2DKxzLDR1a=6B4xY_YTHfPF5kADg@mail.gmail.com>
+ <641307d3-3fe5-401a-ba22-96ad5ef25fed@app.fastmail.com> <CAJZ5v0jBY91TDXPMfmLPeoDLeQCKFD+sHBgkOwPusQAMpZJc6A@mail.gmail.com>
+ <a06460f0-2779-40a6-bb1e-5b1a904fcca5@app.fastmail.com>
+In-Reply-To: <a06460f0-2779-40a6-bb1e-5b1a904fcca5@app.fastmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 Oct 2024 12:01:16 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iW5d=gx_7aDge0_0sR5mSC1j=7ew+Mj8GDgcxQ3jQgpg@mail.gmail.com>
+Message-ID: <CAJZ5v0iW5d=gx_7aDge0_0sR5mSC1j=7ew+Mj8GDgcxQ3jQgpg@mail.gmail.com>
+Subject: Re: [PATCH] acpi: allow building without CONFIG_HAS_IOPORT
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/10/2024 12:48, Tetsuo Handa wrote:
-> This is a printk() flooding problem in bridge driver. Should consider using ratelimit.
-> 
-> #syz set subsystems: net
-> 
+On Thu, Oct 10, 2024 at 7:40=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Wed, Oct 9, 2024, at 19:40, Rafael J. Wysocki wrote:
+> > On Mon, Oct 7, 2024 at 9:23=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wr=
+ote:
+> >> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+> >> index 61ca4afe83dc..132357815324 100644
+> >> --- a/drivers/acpi/Makefile
+> >> +++ b/drivers/acpi/Makefile
+> >> @@ -41,7 +41,7 @@ acpi-y                                +=3D resource.=
+o
+> >>  acpi-y                         +=3D acpi_processor.o
+> >>  acpi-y                         +=3D processor_core.o
+> >>  acpi-$(CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC) +=3D processor_pdc.o
+> >> -acpi-y                         +=3D ec.o
+> >> +acpi-$(CONFIG_HAS_IOPORT)      +=3D ec.o
+> >>  acpi-$(CONFIG_ACPI_DOCK)       +=3D dock.o
+> >>  acpi-$(CONFIG_PCI)             +=3D pci_root.o pci_link.o pci_irq.o
+> >>  obj-$(CONFIG_ACPI_MCFG)                +=3D pci_mcfg.o
+> >> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+> >> index 16917dc3ad60..535d6a72ce1b 100644
+> >> --- a/drivers/acpi/bus.c
+> >> +++ b/drivers/acpi/bus.c
+> >> @@ -1356,7 +1356,8 @@ static int __init acpi_bus_init(void)
+> >>          * Do that before calling acpi_initialize_objects() which may =
+trigger EC
+> >>          * address space accesses.
+> >>          */
+> >> -       acpi_ec_ecdt_probe();
+> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> >> +               acpi_ec_ecdt_probe();
+> >>
+> >>         status =3D acpi_enable_subsystem(ACPI_NO_ACPI_ENABLE);
+> >>         if (ACPI_FAILURE(status)) {
+> >> @@ -1391,7 +1392,8 @@ static int __init acpi_bus_init(void)
+> >>          * Maybe EC region is required at bus_scan/acpi_get_devices. S=
+o it
+> >>          * is necessary to enable it as early as possible.
+> >>          */
+> >> -       acpi_ec_dsdt_probe();
+> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> >> +               acpi_ec_dsdt_probe();
+> >
+> > The above two changes mean that it is not necessary to compile either
+> > acpi_ec_ecdt_probe() or acpi_ec_dsdt_probe() at all if
+> > CONFIG_HAS_IOPORT is not enabled.
+>
+> Correct, this is a result of removing ec.o from the list of objects.
+>
+> >>         pr_info("Interpreter enabled\n");
+> >>
+> >> @@ -1464,7 +1466,8 @@ static int __init acpi_init(void)
+> >>         acpi_arm_init();
+> >>         acpi_riscv_init();
+> >>         acpi_scan_init();
+> >> -       acpi_ec_init();
+> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> >> +               acpi_ec_init();
+> >
+> > And this means that the whole EC driver is not going to work at all the=
+n.
+>
+> Correct. The way I read ec.c it makes no sense if acpi_ec_write_cmd()
+> and acpi_ec_write_data() don't actually access the registers. Is
+> there anything in ec.c that still makes sense without port I/O?
+>
+> >> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor=
+_perflib.c
+> >> index 4265814c74f8..8be453d89ef8 100644
+> >> --- a/drivers/acpi/processor_perflib.c
+> >> +++ b/drivers/acpi/processor_perflib.c
+> >> @@ -455,7 +455,8 @@ int acpi_processor_pstate_control(void)
+> >>  {
+> >>         acpi_status status;
+> >>
+> >> -       if (!acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_contro=
+l)
+> >> +       if (!IS_ENABLED(CONFIG_HAS_IOPORT) ||
+> >> +           !acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_contro=
+l)
+> >>                 return 0;
+> >
+> > All of the existing callers of acpi_processor_pstate_control() are x86
+> > which has CONFIG_HAS_IOPORT AFAICS.
+> >
+> > And if you care about the code size, acpi_processor_notify_smm() can
+> > go away for !CONFIG_HAS_IOPORT too.
+> >
+> >>         pr_debug("Writing pstate_control [0x%x] to smi_command [0x%x]\=
+n",
+> >> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> >> index 7ecc401fb97f..9d5e6dd542bf 100644
+> >> --- a/drivers/acpi/scan.c
+> >> +++ b/drivers/acpi/scan.c
+> >> @@ -2293,7 +2293,8 @@ static int acpi_bus_attach(struct acpi_device *d=
+evice, void *first_pass)
+> >>         if (device->handler)
+> >>                 goto ok;
+> >>
+> >> -       acpi_ec_register_opregions(device);
+> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
+> >> +               acpi_ec_register_opregions(device);
+> >
+> > I'd rather have an empty stub of acpi_ec_register_opregions() for
+> > !CONFIG_HAS_IOPORT instead.
+>
+> Fair enough. Should I add stubs for all the global EC functions then?
 
-It should already be ratelimited, the code that prints is:
-                       if (net_ratelimit())
-                                br_warn(br, "received packet on %s with own address as source address (addr:%pM, vlan:%u)\n",
-                                        source->dev->name, addr, vid);
+Yes, please.
 
-Cheers,
- Nik
+> I also wonder if there should be a separate CONFIG_ACPI_EC symbol
+> that allows the EC logic to be turned off on non-x86 architectures
+> even when HAS_IOPORT is otherwise enabled.
 
-> On 2024/10/10 12:27, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1083b380580000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba92623fdea824c9
->> dashboard link: https://syzkaller.appspot.com/bug?extid=17bc8c5157022e18da8b
->> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135f7d27980000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1483b380580000
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/2ad9af7b84b4/disk-fc20a3e5.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/1afa462ca485/vmlinux-fc20a3e5.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/75c0900b4786/bzImage-fc20a3e5.xz
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com
->>
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
->> rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5244/1:b..l
->> rcu: 	(detected by 1, t=10503 jiffies, g=5253, q=1466 ncpus=2)
->> task:syz-executor116 state:R  running task     stack:18800 pid:5244  tgid:5244  ppid:5243   flags:0x00000002
-> (...snipped...)
->> net_ratelimit: 33488 callbacks suppressed
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
->> bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-> 
-> 
+Yes, CONFIG_ACPI_EC would make sense IMV.
 
+Thanks!
 
