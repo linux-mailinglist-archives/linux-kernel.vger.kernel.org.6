@@ -1,95 +1,155 @@
-Return-Path: <linux-kernel+bounces-359106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A58B99878D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:24:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4AE998791
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6671C222C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02B9285D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F21C1C9DE5;
-	Thu, 10 Oct 2024 13:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D62F1C9DD5;
+	Thu, 10 Oct 2024 13:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPruOcVf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="plgBF/Aa"
+Received: from pv50p00im-ztdg10012001.me.com (pv50p00im-ztdg10012001.me.com [17.58.6.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6A61C1ABE;
-	Thu, 10 Oct 2024 13:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8841C9B93
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566655; cv=none; b=Ic9uJj0vURnPmT7ZeUbHU0Boypa5oCoQmLsENWnCssuE0wdsyrr89FA3AcxaCfVnSTwdWqBoX4dRINmPVl90e6JUFk9v9X+PuhdEYtemOAujlyt5+5ioeZVLSqqypoMFcR36CGZhzDlcUGoLfDqOQ42BLDB4157H4jR37D9I//Q=
+	t=1728566685; cv=none; b=ou5r8JTUfzqfsOab2PPyTp1LRq4hAaUKqfmsO8NmATOuDAkoMa+uYceo+kRsEhk0fPedHlFlLZWmliuKeV4jQTKBpcu73798dWhXKqeFbLyC7RSm1CJujpZX/LV293X29CNfJbViGje1Hc+CFQYd4EUlisIurtgIWVya3FYiuYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566655; c=relaxed/simple;
-	bh=yP11aur8Rt+Rw0tYaqkcFxSY5kmdndx3o4KpjKCWejM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkhfVOZutHWTrY1Dip7MPz7OhzI/BQXWD0UKWzrFlFem1a0MN8xgtHRnecR+rE/zxZT8yiLJykWY9lQNvCFSgpn7bYARumrDd1OX1k54nKN9jyVWhGMZyJNGVvvwfHwn8r1rI+aymBelUyJKGAISYP64j+9iStjB/6+XzYaUkDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPruOcVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98CBC4CEC5;
-	Thu, 10 Oct 2024 13:24:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728566654;
-	bh=yP11aur8Rt+Rw0tYaqkcFxSY5kmdndx3o4KpjKCWejM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aPruOcVf9a7yImnkIMPT5Qi2hcOUQZgNyvBh1PkUztPUB6D+bgsdPKFetO4b24n3/
-	 2GBXgw5FqXTsxRZZDl4djnjRK/Hz75LV8u8TCJI+kbsMKXPjlV9X3/uBExi2RtlVtM
-	 HfQyCPrnkgtROHFUgb/F4+QNv9rqlOPVis3SRokPq2diRhSc1ArlGek0Ek9+elIw5U
-	 32X6QPgP/+R/1atQg0l1DHelVFZnYsD7OaGV0mvTjpOyPVzPQVzV4gwefrMEl8JJ3y
-	 ycUvfRWeusiuUhZXDaynlDcUGsqrz9SN0YFpCMFYFUlO2BXwIjGcDIRl+ESTc6TvAn
-	 537M2tGZe3A5w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syt9P-000000004nT-2lyW;
-	Thu, 10 Oct 2024 15:24:19 +0200
-Date: Thu, 10 Oct 2024 15:24:19 +0200
-From: Johan Hovold <johan@kernel.org>
-To: neil.armstrong@linaro.org
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: mark pd-mapper as broken
-Message-ID: <ZwfVg89DAIE74KGB@hovoldconsulting.com>
-References: <20241010074246.15725-1-johan+linaro@kernel.org>
- <CAA8EJpoiu2hwKWGMTeA=Kr+ZaPL=JJFq1qQOJhUnYz6-uTmHWw@mail.gmail.com>
- <ZweoZwz73GaVlnLB@hovoldconsulting.com>
- <CAA8EJprg0ip=ejFOzBe3iisKHX14w0BnAQUDPqzuPRX6d8fvRA@mail.gmail.com>
- <Zwe-DYZKQpLJgUtp@hovoldconsulting.com>
- <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
+	s=arc-20240116; t=1728566685; c=relaxed/simple;
+	bh=RPUzWRPmZGtFyZr0kjLm7nOCKdJiTpjtAznJ/S9/Fu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JOyu4eX2heSg+g1LS4U41f0uKRfNiIZOTyFGizlPm9qDi6ZLOkMw9dpuQHe7QStMfG7J+4uTkbuu5CL4y3tiVcmfKkohDqhsY4gyYzWz6+Vkub/NJeHIOdGXVSNO5P+5/FHAMfGjQlJ4SzSRfDSZVK9JE2pWurSCsuUixa0ss+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=plgBF/Aa; arc=none smtp.client-ip=17.58.6.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1728566682;
+	bh=UN6iJmBioqcajfS273owz7jWyQHQYDCLoGRNIcRMsEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=plgBF/AaALXUyCcwEzSU725LOltypIU++Xw3KTDZBrfeb+NkpQIy1PZHcKM5PE5E/
+	 7+2wFplxuHJcQDAS9iotTBjlMz0O4UsYdMhKWpi+XeB9oZmuUqIWn9CFkZPJUTa6zW
+	 kuuXZ80nBQ/GE+AyhxLlHbVZoPXq5B0YGS57pbgkjRWHdqXAGyZLbsWOOI+AaJHppm
+	 u+SW5KtExW6p5IlAjKENcOfqzU0Ai9/W8XZp9lPxoHTojRctSIMwVu/eDfip34Sw5d
+	 zIGUPJg+Zb94ClR2vvJqqZnf8fNPcys1Io96FVjiE6HpKuMxcx2AzEuk6QeGcIU9gM
+	 D5/X6C3Aa1zrQ==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10012001.me.com (Postfix) with ESMTPSA id 92FC5A009C;
+	Thu, 10 Oct 2024 13:24:38 +0000 (UTC)
+Message-ID: <d1438cf0-8bea-4125-a046-6e4abfbba2fd@icloud.com>
+Date: Thu, 10 Oct 2024 21:24:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] PM: sleep: wakeirq: Fix a serious logical error in
+ dev_pm_disarm_wake_irq()
+To: Johan Hovold <johan@kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Johan Hovold <johan+linaro@kernel.org>,
+ Tony Lindgren <tony@atomide.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
+ <ZvqigTC7RvngLpme@hovoldconsulting.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <ZvqigTC7RvngLpme@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 3dxJ_xHJTHPaMZnECM4qYor-VgcqZdeW
+X-Proofpoint-GUID: 3dxJ_xHJTHPaMZnECM4qYor-VgcqZdeW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ phishscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410100089
 
-On Thu, Oct 10, 2024 at 01:46:48PM +0200, neil.armstrong@linaro.org wrote:
-> >> On Thu, 10 Oct 2024 at 13:11, Johan Hovold <johan@kernel.org> wrote:
+On 2024/9/30 21:07, Johan Hovold wrote:
+> On Sat, Sep 28, 2024 at 02:26:27AM -0700, Zijun Hu wrote:
+>> IT is a serious logical error for dev_pm_disarm_wake_irq() not to disable
+>> the wake irq enabled by dev_pm_arm_wake_irq()
+> 
+> You need to explain *why* you believe this is an error.
+> 
 
-> >>> As I tried to explain in the commit message, there is currently nothing
-> >>> indicating that these issues are specific to x1e80100 (even if you may
-> >>> not hit them in your setup depending on things like probe order).
+thank you for code review.
+sorry to give reply late due to travel.
 
-> The in-kernel pd-mapper works fine on SM8550 and SM8650, please just revert
-> the X1E8 patch as suggested by Dmitry.
+by convention, dev_pm_disarm_wake_irq() needs to undo the jobs done by
+dev_pm_arm_wake_irq(). but actually it does not do that.
 
-Again, you may just be lucky, we have x1e users that also don't hit
-these issues due to how things are timed during boot in their setups.
+>> fixed by simply correcting
+>> the wrong if condition.
+> 
+> Your commit message is basically just claims "P is wrong, fix P", which
+> doesn't really explain anything.
+> 
+> Writing good commit messages explaining what the problem is is not just
+> required because this is a collaborative project where others need to
+> understand your reasoning, but it also forces you as the author to think
+> through your changes, which can often prevent broken patches from being
+> submitted in the first place.
+> 
 
-If there's some actual evidence that suggests that this is limited to
-x1e, then that would of course be a different matter, but I'm not aware
-of anything like that currently.
+thanks for these good suggestions and will follow it for further patches
+(^^)(^^)
 
-Johan
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>> List relevant commits as following:
+>>
+>> johan+linaro@kernel.org  2023-07-13
+>> Commit: 8527beb12087 ("PM: sleep: wakeirq: fix wake irq arming")
+>>
+>> tony@atomide.com  2018-02-09
+>> Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
+>>
+>> The former commit fixes the later.
+> 
+> These references are relevant, but you need to include them in your
+> commit messages (above ---) and explain why.
+> 
+
+got it, thank you
+
+>> ---
+>>  drivers/base/power/wakeirq.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
+>> index 5a5a9e978e85..8b15f9a0e8f9 100644
+>> --- a/drivers/base/power/wakeirq.c
+>> +++ b/drivers/base/power/wakeirq.c
+>> @@ -356,7 +356,7 @@ void dev_pm_disarm_wake_irq(struct wake_irq *wirq)
+>>  		disable_irq_wake(wirq->irq);
+>>  
+>>  		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
+>> -		    !(wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
+>> +		    (wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
+>>  			disable_irq_nosync(wirq->irq);
+> 
+> I think the current code works as intended.
+>
+
+thank you for this point and let me do more investigation.
+(^^)
+
+>>  	}
+>>  }
+> 
+> Johan
+
 
