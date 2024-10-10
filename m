@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-359482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8B1998D92
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:36:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7293998D79
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DAC1B3AB8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:46:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A703FB3AD6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2221CF5DB;
-	Thu, 10 Oct 2024 15:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F0F1D014F;
+	Thu, 10 Oct 2024 15:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r7gfiTCA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/DL35uF2"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JeOI7EjG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q3gi+112"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD141CDFA6;
-	Thu, 10 Oct 2024 15:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E07D1CEAAC;
+	Thu, 10 Oct 2024 15:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575099; cv=none; b=nwuZuD5liAaVmvkXMeW6QsjkI485Z1mDXvtnghk/dUC5TDsvIyEjFcmu9fhZSxe+yJ+iNF55PTNwZteq34O9n0i/Lj+ER/woF5fc+fVEP6UBd/A5va00KS8bsghxNH3IXqxkA6P52rG+uhagAJrh9CpK3DEDnYSGGDnkkrSo0z8=
+	t=1728575100; cv=none; b=Y2iXlcqLZRtvK4F1TH6bEfDTfK/gnhSTySB5hAcS4cymI2nI/w+0YvNh1NnRFyRoR9k4GDW45cVS7EP0i4GX1GZjUyh9+8tR/hwbcKyXI3mYZZ+gQ6se7RsIoSXSMTvfMlZCKvASjagqz1U6rBc2h9veK8p9SSOq4Eikf9etEHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575099; c=relaxed/simple;
-	bh=hpe2ufKxO4wcPCONeGKr9TgGjUW1E936UNjQ+nG3JrU=;
+	s=arc-20240116; t=1728575100; c=relaxed/simple;
+	bh=l54nGxhAvHD6pY7wtN4Hu9pn70wCVvNZSe9VHdZoefM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z2OP/Q7e44LE44OClRoL87VboKAwM683+OujmhXS1huCmsrMJOVKT8HelIzBU0pWPr72qRsu2JFTdaTfpVRh9nUVB1kmMVNlzlwt9zw06TL2+4f2xkpOFj0m/Rcd4IiZDY3+RAkoQodFYrOSPkLFd7LoRu8usJrH0xwmOtX6qV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r7gfiTCA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/DL35uF2; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=iwJuPeUhJ7OM8QeGIkH78UW2OPfywxYJPa8Mclmex/mYS0VVmC7xtYyTwROBo/wqL95LfONlcJVG4x1yprPHNwSLp90kxDI7hCaNm7DCvFyOeVJcFUOjzd3X2u8hbQ9JzwZiN3MUUgtjDHhcHkzRB+znAUYwqPPz5KHJm0H7Npc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JeOI7EjG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q3gi+112; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728575095;
+	s=2020; t=1728575097;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Xat0rCkZfuBVy+ds3zzBGDHknhhfaZxhQ/1dfBCZr0w=;
-	b=r7gfiTCAQsC/p9L8arvUB1AcmoVbCb06KBfvAwUFBPwE66xPrDZQdOplzHIkTk8Ac+gZDw
-	U0EI8/RO2Lf8EqoHHhdV4kOrPr72E2evRfwp3/650RyeQ8xtIomCo6LTOQ1/ibOpBYkYEZ
-	r7s96u2+hJUxvZiXOQUgdiY7W6DG3HNC8YgqGQzz6Xat0ZwQJsfXNo1Z5JwLHl9z76Rg0T
-	DGjebvVvqJXVuxA25TVBeCwHEPgSItZzu56rtV7mC5kN3RCXB4sCckDrEbdeLy0B5tUmFf
-	kMZ/7UlwgoXOdjavq4NU/tC3ZP6yn9+GecVyQ/QP5XU8uP+K27J2wvgwBKvp8Q==
+	bh=DY01drBheEGVUpRb1fYSGc/wPWUSgNrxFS5OIkyqJ0M=;
+	b=JeOI7EjGLWzijEdDcl6Tyi4eiJ+IoscNn1jn4Vnt1OJdKL/uMl4CZVmNoWEKL26snSeCc3
+	yUpTPNiE6dS+kXCtW/1yOHgifjIaoXu5PN08+QPe2MLJH6B3MorQvyU9c+IOwT3vHUg9ck
+	nUlnT87H5MCm3An3Rjd6Om0ySYAyjGgy5ZEi17K9cQzhfP+zJXWKQf3QUzd4pZHVmQ/abD
+	3RW6JhvsHdGE/RvnfUfZf56jVx3/uwb8LTV5bMMyjMtZ45FLSkTby93OyLEKukozI71WSX
+	NwAl5c4PybYcB33UnzB7wmW8bdj9OQ78VFr+ICgepDAff+wKZqw85Zyvj49WPQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728575095;
+	s=2020e; t=1728575097;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Xat0rCkZfuBVy+ds3zzBGDHknhhfaZxhQ/1dfBCZr0w=;
-	b=/DL35uF2ubZb8FaGaS2Xtk8IO1KgnsvpfdbZ00U4SPY460WhPFgu+WtEUEO78djLJSq7mr
-	9SWI6gYYUV4MWGDg==
-Date: Thu, 10 Oct 2024 17:44:48 +0200
-Subject: [PATCH 5/9] riscv: vdso: Remove timekeeper include
+	bh=DY01drBheEGVUpRb1fYSGc/wPWUSgNrxFS5OIkyqJ0M=;
+	b=q3gi+1121GrBcixQaKmeu1KvtClMIz0AoNScv5wbMLdknPGj1mZTBeK2w8VhWVCj9v64TY
+	VYgJRYX28CCZ+0DQ==
+Date: Thu, 10 Oct 2024 17:44:50 +0200
+Subject: [PATCH 7/9] x86/vdso: Remove timekeeper include
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241010-vdso-generic-arch_update_vsyscall-v1-5-7fe5a3ea4382@linutronix.de>
+Message-Id: <20241010-vdso-generic-arch_update_vsyscall-v1-7-7fe5a3ea4382@linutronix.de>
 References: <20241010-vdso-generic-arch_update_vsyscall-v1-0-7fe5a3ea4382@linutronix.de>
 In-Reply-To: <20241010-vdso-generic-arch_update_vsyscall-v1-0-7fe5a3ea4382@linutronix.de>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -91,11 +91,11 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-s390@vger.kernel.org, loongarch@lists.linux.dev, 
  linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728575090; l=1078;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728575090; l=816;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=hpe2ufKxO4wcPCONeGKr9TgGjUW1E936UNjQ+nG3JrU=;
- b=Z6RtjK/nc0O8tEfVBTBZ0WJ1sj/stEr5ZpmR3YKRCxCah4hYNPuy68GyBh4E+r7C/qWgfxerT
- IHK16qphOLZBJGY2dzcOgcs6USZ+7MX7DH4slmMU1FQj0Mj/nZG1UXo
+ bh=l54nGxhAvHD6pY7wtN4Hu9pn70wCVvNZSe9VHdZoefM=;
+ b=w5TeMa7L2fBX8rWHCW0VUcxRJmtxwVTWhqmFg4Ar7aOri6rXy8RfO9ACmyKKuOK1EBa7U50Tw
+ YyJTJNACEbjDPGQDXMNIPF0R+gdo+aXllV8ZfbtgU2RaAvcg1suki3H
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
@@ -105,32 +105,23 @@ unused and can be removed.
 This avoids including a non-VDSO header while building the VDSO,
 which can lead to compilation errors.
 
-Also drop the comment which is out of date and in the wrong place.
-
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- arch/riscv/include/asm/vdso/vsyscall.h | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/include/asm/vdso/vsyscall.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/vdso/vsyscall.h b/arch/riscv/include/asm/vdso/vsyscall.h
-index 82fd5d83bd602c72c1688a7dffa292b37b5fa790..e8a9c4b53c0c9f4744196eed800b21f3918d1040 100644
---- a/arch/riscv/include/asm/vdso/vsyscall.h
-+++ b/arch/riscv/include/asm/vdso/vsyscall.h
-@@ -4,14 +4,10 @@
+diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso/vsyscall.h
+index 67fedf1698b5e2b710e0504686318949c738bf29..a1f916b18400f65eb91d5ec0e3eb49b070332904 100644
+--- a/arch/x86/include/asm/vdso/vsyscall.h
++++ b/arch/x86/include/asm/vdso/vsyscall.h
+@@ -4,7 +4,6 @@
  
  #ifndef __ASSEMBLY__
  
 -#include <linux/timekeeper_internal.h>
  #include <vdso/datapage.h>
- 
- extern struct vdso_data *vdso_data;
- 
--/*
-- * Update the vDSO data page to keep in sync with kernel timekeeping.
-- */
- static __always_inline struct vdso_data *__riscv_get_k_vdso_data(void)
- {
- 	return vdso_data;
+ #include <asm/vgtod.h>
+ #include <asm/vvar.h>
 
 -- 
 2.47.0
