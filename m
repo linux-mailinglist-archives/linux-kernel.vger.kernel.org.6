@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-360166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1631099956B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:43:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A404799956D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992991F24547
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:43:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48961C2276A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D171E7C0F;
-	Thu, 10 Oct 2024 22:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649631E573A;
+	Thu, 10 Oct 2024 22:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMDYSQBK"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjekT9oA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70D21A2645
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B8F1A2645;
+	Thu, 10 Oct 2024 22:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728600219; cv=none; b=dNuF6is4b20pmP8+mFmeA34BYYMJQfRic1I5RSDOZvx2e20OlYUrcGGHpWSu/NuU1f/suTL2d6zvpscLdPAXLn5FhrslC6R29oJMiuyHxos6bUFVCXBrGZL2VNLnM1xcsvtEQNXM3BWhbRfP/z6eckDs4GyQnybhuQf+KPHb3v0=
+	t=1728600263; cv=none; b=Tdf6waZ9qHKiXb/sO7/1iDsr4Wdc32unN9meOIJqqvKdsYrXIYdzo5ST80DuVsrW/e2pIb+CV1qCoJEIlg3aH2E3o472blqGPx698lPcWbX4wIKdJCHwWYiA1zjv30nEY6HEmTjciUCJHG3szERKA/BRl2ZQPGPpbkfLIm1O6wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728600219; c=relaxed/simple;
-	bh=rRcI0RUw1Jag1h85kqXKMUNy1mgQSNv3nPlsJjUAN+8=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F4Ravx+o4baR55YntS0JraJn/8F5axLaDYSBJDxl22YKWHSUmNT5LdpJ8uSITTrffXQkKzRL4Tlf5uzE07QNQVpESzD0j57e0Ls8NjhazfJBNr7BXd5/H4Urydeagdgwvf5Lz5gf+Y9OqIXM3z2Xv8Bc7CqpKMaAwVSi1SZ0F0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YMDYSQBK; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b1141a3a2aso102983985a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728600216; x=1729205016; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+7kS0OwpIJ8lzGVa/z5he+FP7V/PyYuqC5d6o/YyS+0=;
-        b=YMDYSQBKjIeJM0ic8v3SUwDll9eHP+RjqiIYApLoee42rh4Uho+ieUzqr8TywjinRU
-         bxO3FWrZLJk2dyVOBw+cIDII1RVfY3UgOXF9YtxmIkBu8R53+p8AulLwLEm/DghWF0k8
-         Kzi7ehWywrwZDWUg8FKHwxdI8rBB5VZt5q6t8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728600216; x=1729205016;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+7kS0OwpIJ8lzGVa/z5he+FP7V/PyYuqC5d6o/YyS+0=;
-        b=DYMmqhxUjpOJzAgByvWDH9cO0dP7jHhgR6mz/j/uPUhO5PLxRs5pyE9Y6LvUAmMEjf
-         V02DSMu0RZlTDoaZQd7t8JXOpkioDEd4UcGBpe7tDo8Qp93b0CaUfXfmuvmpl0JOdgZ8
-         SEE7zAICJU/7qMkefDP0juAHZsHz8E5zmpxMbjCvzl3QF0u3ljPbkW9CR4G/t1V6z7x0
-         gbV07LhEPPJj0R5sP3AdJVe5hTKQhz56cXy7rPUCajvYf5iz8mV3+CE8Lo+aP168w0O2
-         EY6Vur3oCAP07giHyILGauvv14+Yda28O3nHhhCG+A3HH3NqhjBluodlxByW0kQPk489
-         VkXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWWKALrZerQT5j+Tdt9Y/5XtgrgjqlDxX14k+Mocce/ZOvY4ksPVrhmQM4XwXEKRZ8ASHNuogKF7OP+Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVaHFX2YDptXLME3ZFUviZ84xOBr0yQLcZvdYUCm+Afjyw2bfM
-	Uv4Vgd97HD8HVm44fA8RD4dAn0AGw3scASaXwn0fbzyCodxNdMtW+gCO13iqBpNjPvB0eyghXCm
-	PGJnAPOe7RvSH897mvss0wQk8L6HhpcPG9Wnd
-X-Google-Smtp-Source: AGHT+IGgeD8OWkjTN2+txsFq08VyD7ih43EBc2xXYlKwMPaCKAPaVrQbOpHLD8TgOLBOWOgI5H4Qck7keHxdPo9DUQ0=
-X-Received: by 2002:a05:620a:460f:b0:7a9:aba6:d012 with SMTP id
- af79cd13be357-7b11a37c515mr97106885a.22.1728600215870; Thu, 10 Oct 2024
- 15:43:35 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 10 Oct 2024 18:43:35 -0400
+	s=arc-20240116; t=1728600263; c=relaxed/simple;
+	bh=OY6fJZkq+9LkJjpKoVQCACB/iFiX3/X4nwzwLjaFFrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bD6QJa+d9/Ayt7nSCZndzoK2X8N/5G4Zrh8fjwGVSwUNQ+3AOxlL4JoQXl7c3oBEorbh4owscgHKfDjsyrEpAU6hc122bXV2vuixkpGPQeFR61egp8EIwQQS2EX0WXHrh5UW/ElFuRtfLiNzKppKq6KIbujc89OkDJ0rFWHC1WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjekT9oA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0043AC4CEC5;
+	Thu, 10 Oct 2024 22:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728600263;
+	bh=OY6fJZkq+9LkJjpKoVQCACB/iFiX3/X4nwzwLjaFFrg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GjekT9oAcVMDatcs0HEPAs4+1pjI6w5UQulGkPSf2QKF+33+tlkTee6J8A6LZfpLg
+	 s5/Xdp+R9glw6F05r1KLhVaM0uoH3xaQ73761ZXmXb4Qxi3tRAKm7a1AFTXB+whg0/
+	 vJZzM77zbX53xSV4kDREruL3o5Bgri2RvTvN2lEocqIJQnah6o/Iz6geecaOQTPUaK
+	 faB9NLGg2v6qt8gcd22BQjgaquTkgImDJ4PTUkEdR/fjQ5RqOwgVjRs+Fa5B0DSuv3
+	 zFc4fDnXWqKSEhwX71Duoh8RiyZaLepKcaPLxKq/d550gXKSPmMGufqFulK+fukw4f
+	 6SwIbVFe3AZFw==
+Received: by pali.im (Postfix)
+	id E090C81B; Fri, 11 Oct 2024 00:44:16 +0200 (CEST)
+Date: Fri, 11 Oct 2024 00:44:16 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	CIFS <linux-cifs@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/7] cifs: Add mount option -o reparse=native
+Message-ID: <20241010224416.kjfdnaiymqmcq5pl@pali>
+References: <20241006100046.30772-1-pali@kernel.org>
+ <20241006100046.30772-2-pali@kernel.org>
+ <CAH2r5muLa_0L5LL4ipQkzEHOUdtYtJVAD29AAjQOaun9dWmK0g@mail.gmail.com>
+ <20241007183650.aw3skuztljpgk2bs@pali>
+ <CAH2r5mttO-aDq94QrLQm10xJRGLg=PULqX9fcfoykAweVVO+uQ@mail.gmail.com>
+ <CAH2r5mvV7WzB62hWt4K6oF_xyrQH1EF75zc0JdfjsjFEV4SQKQ@mail.gmail.com>
+ <20241010223857.vasehbu7nilemato@pali>
+ <CAH2r5msEiD05ehJs_a05sP_rX7BkVH-9LZp8Sj6EFbpZA9bfrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <27acewh6h2xcwp63z5o3tgrjmimf4d3mftpnmkvhdhv273zgsp@i6i5ke4btdqx>
-References: <20240901040658.157425-1-swboyd@chromium.org> <20240901040658.157425-14-swboyd@chromium.org>
- <27acewh6h2xcwp63z5o3tgrjmimf4d3mftpnmkvhdhv273zgsp@i6i5ke4btdqx>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Thu, 10 Oct 2024 18:43:35 -0400
-Message-ID: <CAE-0n53S2dFz74_rgx22_1i_bbEC6kj1SL5LAEq_F2wrdCgBNg@mail.gmail.com>
-Subject: Re: [PATCH v4 13/18] dt-bindings: usb-switch: Extend for DisplayPort altmode
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	dri-devel@lists.freedesktop.org, Guenter Roeck <groeck@chromium.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5msEiD05ehJs_a05sP_rX7BkVH-9LZp8Sj6EFbpZA9bfrg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-Quoting Dmitry Baryshkov (2024-09-19 03:40:19)
-> On Sat, Aug 31, 2024 at 09:06:51PM GMT, Stephen Boyd wrote:
-> > diff --git a/Documentation/devicetree/bindings/usb/usb-switch.yaml b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > index f5dc7e23b134..816f295f322f 100644
-> > --- a/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > +++ b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > @@ -52,6 +52,14 @@ properties:
-> >            endpoint:
-> >              $ref: '#/$defs/usbc-in-endpoint'
+On Thursday 10 October 2024 17:42:55 Steve French wrote:
+> On Thu, Oct 10, 2024, 5:39 PM Pali Rohár <pali@kernel.org> wrote:
+> 
+> > On Thursday 10 October 2024 17:21:59 Steve French wrote:
+> > > On Thu, Oct 10, 2024 at 5:17 PM Steve French <smfrench@gmail.com> wrote:
+> > > >
+> > > >
+> > > >
+> > > > On Mon, Oct 7, 2024 at 1:36 PM Pali Rohár <pali@kernel.org> wrote:
+> > > >>
+> > > >> Currently choosing how new symlinks are created is quite complicated.
+> > > >>
+> > > >> Without these patch series, by default new symlinks are created via
+> > > >> native reparse points, even when reparse=nfs or reparse=wsl is
+> > > >> specified. There is no possibility to create a NFS-style or WSL-style
+> > > >> symlink yet, and this patch series address this missing functionality.
+> > > >> When option -o sfu is specified then all new symlinks are created in
+> > > >> SFU-style, independently of -o reparse option. And when -o mfsymlinks
+> > is
+> > > >> specified then all new symlinks are created in mf style, independently
+> > > >> of -o reparse and -o sfu options.
+> > > >>
+> > > >> This patch series does not change -o sfu and -o mfsymlinks overrides,
+> > it
+> > > >> just changes the way how -o reparse is handled.
+> > > >>
+> > >
+> > > I lean toward something similar, and more intuitive - do not have
+> > > "reparse=" control symlink creation - but instead use another mount
+> > > parm (e.g. "symlink=") for that.  It would be rarely used - only if
+> > > you don't want the default (windows default format too) for server
+> > > symlinks or "mfsymlinks" (for client only symlinks):
+> > >
+> > > 1) "symlink=" if specified can be set to one of five formats (with the
+> > > default being the windows format)
+> > >   a) "mfsymlinks" (Mac style which is safer for many use cases since
+> > > they are "client only" symlinks which the server will never use)
+> > >      Setting "symlink=mfsymlinks" will have the same effect as just
+> > > specifying "mfsymlinks" so won't break anything
+> > >   b) "default" (or "windows") which uses the default symlink format
+> > > when trying to create a new symlink
+> > >   c) "nfs"
+> > >   d) "wsl"
+> > >   e) "sfu"
+> > > 2) "reparse=" will still control how special files are created (char,
+> > > block, fifo, socket) and can be set to:
+> > >    a) "nfs" (default)
+> > >    b) or "wsl"
+> > >    c) If "sfu" set on mount will cause special files to be created
+> > > with "sfu" format instead of using reparse points to create
+> > > 3) reading reparse points will always be supported (unless you want to
+> > > add a new parameter "reparse=none" to treat all reparse points as
+> > > empty directories)
+> > > 4) reading special files via the old "sfu" will only be supported if
+> > > you mount with "sfu"
+> > >
+> > >
+> > >
+> > >
+> > > --
+> > > Thanks,
+> > >
+> > > Steve
 > >
-> > +      port@2:
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        unevaluatedProperties: false
-> > +
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: '#/$defs/dp-endpoint'
->
-> Is it a separate port or is it an endpoint of the same upstream-facing
-> (non-connector-facing) SS port?
+> > Ok, and how to handle creating new sockets? For me it makes sense to
+> > create new sockets in "native" AF_UNIX style - compatible with Windows
+> > WinAPI / WinSocks. Should be there also a new parameter?
+> >
+> 
+> Possibly, but we can decide that later. Aren't sockets typically more
+> transient short lives so less likely to cause issues no matter what format
+> we use??
+> 
+> >
 
-I don't quite follow this comment. This is an input DP endpoint/port.
-
->
-> > +
-> >  oneOf:
-> >    - required:
-> >        - port
-> > @@ -65,6 +73,19 @@ $defs:
-> >      $ref: /schemas/graph.yaml#/$defs/endpoint-base
-> >      description: Super Speed (SS) output endpoint to a type-c connector
-> >      unevaluatedProperties: false
-> > +    properties:
-> > +      data-lanes:
-> > +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +        description: |
-> > +          An array of physical USB Type-C data lane indexes.
-> > +          - 0 is SSRX1 lane
-> > +          - 1 is SSTX1 lane
-> > +          - 2 is SSTX2 lane
-> > +          - 3 is SSRX2 lane
-> > +        minItems: 4
-> > +        maxItems: 4
-> > +        items:
-> > +          maximum: 3
->
-> What is the usecase to delare less than 4 lanes going to the USB-C
-> connector?
-
-I'm not aware of any usecase. The 'maximum: 3' is the max value in the
-cell, i.e. 0, 1, 2, or 3.
+Yes, they are short lives.
 
