@@ -1,94 +1,220 @@
-Return-Path: <linux-kernel+bounces-358299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C567F997CDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A795D997CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A9E1C21DB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5834C282F94
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5109C1A264C;
-	Thu, 10 Oct 2024 06:11:20 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852B919EEC0;
+	Thu, 10 Oct 2024 05:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lZ5b/2nF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB161A0732;
-	Thu, 10 Oct 2024 06:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E395B632;
+	Thu, 10 Oct 2024 05:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728540679; cv=none; b=KwjE6XEMvAEVTT38taSQTghzJKu1Ghzruam6M79uY3Xi4jZdflZeKY1VYd3w+0EslH9qdvNdP+UDO9R0EE2mirkTgxP5/2DQhbA+oahiPFyrTjQjhQkyFbxWnmuc7Y2ltUvtcMpka7Huvol0hYlfJMIpMMKKn6JGoyx9FCysUko=
+	t=1728539424; cv=none; b=aj3DSi79Sr5ctVdOjjYLtTHSH2guDlNLNSrWFFTMZJ71QnL9DIemRhVaGZzwicJNcD3Cm5RPCrIPa8IxnF/INkYGe+keNFQsj98jfyeY7rBRL3wOBnNfFJ3svl7TJijAOgpwiq32yUMDK0Aku/ZPhBAo7Xt6sVDGNZOqRtXWs24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728540679; c=relaxed/simple;
-	bh=MwiKEE1wvhyJ9zJoLL3AnBu7gEh1iYNvknUkhR99PAk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=n+7+LSSuRtK18GbWuUrl6fkWuAPr7/V5A2vZiSxO1ErRUn8yKE1NhEFBPL+cMP0isgCCFDUnX0VRyQNjzcI5OxomGIwA4QjV6i4ryjNSAhYCenS71Mb7cq04wF9+Zv7vQJ+9FnPAH/XJYaetpVNG+Om03AhelHVwNkGTXCQ8Mk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E8B4A1A1E23;
-	Thu, 10 Oct 2024 08:11:16 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AFC3B1A2894;
-	Thu, 10 Oct 2024 08:11:16 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1EFBC1846661;
-	Thu, 10 Oct 2024 14:11:15 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: jingoohan1@gmail.com,
-	manivannan.sadhasivam@linaro.org,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	frank.li@nxp.com,
-	robh@kernel.org
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v2 2/2] PCI: dwc: Always stop link in the dw_pcie_suspend_noirq
-Date: Thu, 10 Oct 2024 13:47:49 +0800
-Message-Id: <1728539269-1861-3-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1728539269-1861-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1728539269-1861-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1728539424; c=relaxed/simple;
+	bh=ftoZxzmF5Na2la2gqE0Z/8nTwbS6Rcf580or7HnPy6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j/VBuRVtjIRjQy7NkjYPIL8IwbulYzNU+116/H0G9bSzT72Kum36p3b4LtGxWO3DDjIUk0sjpawHCt9UNtre0d4VN1b3ZS6a3RBx1cooYU0tfHBdZJilsiq0pR2l6GglA5sEpSLorQqUO5UNm1JncAf4u9JsoxjJgd8ivyN3KFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lZ5b/2nF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728539419;
+	bh=MBZYT1jBI/jxq3UXzURix8IRER1S6YdO4CgkXCDVt48=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lZ5b/2nFwLf22I3OzrMk55Z4RG3hieSEug6PpEiJHLLEgFMpWWaueDh/SVeM49M1y
+	 OIPrdK2yjb6bFbblixupSXeucWBxUtzRJQUwGQPbAFlNrplaZHStuMuJgebTlklgAe
+	 4mrbGhYAVi0KlPinqgur1Hr/2XkVQEhdoiRZ/A2BtIQqu6me8dKvgFrm/XMj2P1xgc
+	 Ot5D55ccf85S9qrLupJYmIKR8fEpR+3BpXbApM/g31mmBpL0ilniQcA8Rjm22U2sQN
+	 EpVELCx+DS6RU2cY8nOUMzMS0VLUYVo8JYKmT4tWK7p2Xgcta9ZGnedLr4otzIpdkJ
+	 ePCOz3/AjuU2w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPJkg1SFwz4wnw;
+	Thu, 10 Oct 2024 16:50:18 +1100 (AEDT)
+Date: Thu, 10 Oct 2024 16:50:18 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, Michal Hocko
+ <mhocko@suse.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bcachefs tree
+Message-ID: <20241010165018.47b3fe1d@canb.auug.org.au>
+In-Reply-To: <20240927104628.2ca6ad07@canb.auug.org.au>
+References: <20240927104628.2ca6ad07@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/1oc5fIaTq9Pu1p5TUoAKBMI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On i.MX8QM, PCIe link can't be re-established again in
-dw_pcie_resume_noirq(), if the LTSSM_EN bit is not cleared properly in
-dw_pcie_suspend_noirq().
+--Sig_/1oc5fIaTq9Pu1p5TUoAKBMI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Add dw_pcie_stop_link() into dw_pcie_suspend_noirq() to fix this issue and
-keep symmetric in suspend/resume function since there is
-dw_pcie_start_link() in dw_pcie_resume_noirq().
+Hi all,
 
-Fixes: 4774faf854f5 ("PCI: dwc: Implement generic suspend/resume functionality")
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, 27 Sep 2024 10:46:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the fs-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> In file included from fs/bcachefs/str_hash.h:5,
+>                  from fs/bcachefs/xattr.h:5,
+>                  from fs/bcachefs/acl.c:6:
+> fs/bcachefs/acl.c: In function 'bch2_acl_from_disk':
+> fs/bcachefs/btree_iter.h:896:44: error: 'PF_MEMALLOC_NORECLAIM' undeclare=
+d (first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
+>   896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAI=
+M|PF_MEMALLOC_NOWARN, _do);\
+>       |                                            ^~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+> fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_=
+locks'
+>   139 |         acl =3D allocate_dropping_locks(trans, ret,
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:896:44: note: each undeclared identifier is repo=
+rted only once for each function it appears in
+>   896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAI=
+M|PF_MEMALLOC_NOWARN, _do);\
+>       |                                            ^~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+> fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_=
+locks'
+>   139 |         acl =3D allocate_dropping_locks(trans, ret,
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:896:66: error: 'PF_MEMALLOC_NOWARN' undeclared (=
+first use in this function); did you mean 'PF_MEMALLOC_NOFS'?
+>   896 |         typeof(_do) _p =3D memalloc_flags_do(PF_MEMALLOC_NORECLAI=
+M|PF_MEMALLOC_NOWARN, _do);\
+>       |                                                                  =
+^~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+> fs/bcachefs/acl.c:139:15: note: in expansion of macro 'allocate_dropping_=
+locks'
+>   139 |         acl =3D allocate_dropping_locks(trans, ret,
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/acl.c: In function 'bch2_acl_chmod':
+> fs/bcachefs/btree_iter.h:886:38: error: 'PF_MEMALLOC_NORECLAIM' undeclare=
+d (first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
+>   886 |         int _ret =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_M=
+EMALLOC_NOWARN, _do);\
+>       |                                      ^~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+> fs/bcachefs/acl.c:430:15: note: in expansion of macro 'allocate_dropping_=
+locks_errcode'
+>   430 |         ret =3D allocate_dropping_locks_errcode(trans,
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:886:60: error: 'PF_MEMALLOC_NOWARN' undeclared (=
+first use in this function); did you mean 'PF_MEMALLOC_NOFS'?
+>   886 |         int _ret =3D memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_M=
+EMALLOC_NOWARN, _do);\
+>       |                                                            ^~~~~~=
+~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+> fs/bcachefs/acl.c:430:15: note: in expansion of macro 'allocate_dropping_=
+locks_errcode'
+>   430 |         ret =3D allocate_dropping_locks_errcode(trans,
+>       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from fs/bcachefs/btree_locking.h:13,
+>                  from fs/bcachefs/btree_io.h:7,
+>                  from fs/bcachefs/btree_cache.c:7:
+> fs/bcachefs/btree_cache.c: In function 'bch2_btree_node_mem_alloc':
+> fs/bcachefs/btree_cache.c:807:31: error: 'PF_MEMALLOC_NORECLAIM' undeclar=
+ed (first use in this function); did you mean 'PF_MEMALLOC_NOIO'?
+>   807 |         if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
+>       |                               ^~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+> fs/bcachefs/btree_cache.c:807:31: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+>   807 |         if (memalloc_flags_do(PF_MEMALLOC_NORECLAIM,
+>       |                               ^~~~~~~~~~~~~~~~~~~~~
+> fs/bcachefs/btree_iter.h:878:53: note: in definition of macro 'memalloc_f=
+lags_do'
+>   878 |         unsigned _saved_flags =3D memalloc_flags_save(_flags);   =
+                 \
+>       |                                                     ^~~~~~
+>=20
+> Caused by commit
+>=20
+>   87a3e08121cb ("bcachefs: Switch to memalloc_flags_do() for vmalloc allo=
+cations")
+>=20
+> from the bcachefs tree interacting with commit
+>=20
+>   0df1d8edfe8a ("Revert "mm: introduce PF_MEMALLOC_NORECLAIM, PF_MEMALLOC=
+_NOWARN"")
+>=20
+> from the mm-hotfixes-unstable branch of the mm-hotfixes tree.
+>=20
+> I have reverted that mm-hotfixes commit for today.
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index a52101bbecf4..f673443d4098 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -952,6 +952,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
- 		}
- 	}
- 
-+	dw_pcie_stop_link(pci);
- 	if (pci->pp.ops->deinit)
- 		pci->pp.ops->deinit(&pci->pp);
- 
--- 
-2.37.1
+The mm-hotixes commit is now in Linus' tree so tomorrow I will have to
+revert it from the bcachefs tree merge (in stead of the fs-next tree
+merge) unless someone comes up with something better.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1oc5fIaTq9Pu1p5TUoAKBMI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcHaxoACgkQAVBC80lX
+0GwMVQf/auOTmBVsMfVAewsr5OJArdRnet0nK8c1AlLBw7/KikGuotngfCbw/Dbe
+M6o6aEJkYijx3sdsrwyXEY4+Q/d5kaQXf6+eq7hv/1PvF3YwW2qKmyIsJoUqJWon
+pxTGEzlb348by+N6cUFDwLmhrvFTy6b0KI6zRKB9PnhpBikkA4dl2J/BlugBkc/l
+j1fk/5NvG+v/4mkgQFlNKGkFZrgb22RQOBYUiTA0klmV3aoVDw08J24m36HTiuhF
+DXOs3nh+5IVc4FchaizE/FC3X8fkRodu+F7tVl8Dg9RW1tuuDavSgjmk9jnDhn38
+dF9RoWWBcq5RGzczYUt8Wzu7d1RBXg==
+=YQEX
+-----END PGP SIGNATURE-----
+
+--Sig_/1oc5fIaTq9Pu1p5TUoAKBMI--
 
