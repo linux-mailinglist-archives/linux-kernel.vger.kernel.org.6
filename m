@@ -1,188 +1,213 @@
-Return-Path: <linux-kernel+bounces-358977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FC69985EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992C59985E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528AB282840
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F51C2827A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC46D1C8FDA;
-	Thu, 10 Oct 2024 12:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18391C462B;
+	Thu, 10 Oct 2024 12:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VOYmbAvh"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WDw06HNq"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E251C8FC1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A9C1BDAA0;
+	Thu, 10 Oct 2024 12:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563309; cv=none; b=eK6bM09HNYTnRg3EynzaOteNIUe54FJo671U79N+SW2Yp+3Gw7/zaIqgo3Jag7enJijK95YVjF8xedlbmCcqGIxVYd0/AXdYhDbWsT/OFkjx18NkV4zms8jZZslTYrtKQt5qLN2es2x0fsF/7sSwpO0erJ24sKbRnLvEPswMUPM=
+	t=1728563292; cv=none; b=tx1qZLBl83xZdcqPAFsDP9m0XNsW3NzkP0aJXB8ol7r+4IZQ4bFNIVCUEb7Di0dPzxSiaeDyy7rrJ2JVDBK5Ay0p4tb0a+ddcdQ0VOuws8b30a8wZrR7v+lfc1MVC/5Bf/K5eLrmuOUtmdiJ8MGFKobSc8Vnr5UhZCL3rZw8nnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563309; c=relaxed/simple;
-	bh=/o/yZ4swobCw3VY94GgXQ0C8aM777wTuhgBNMFNnV60=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VWbZIjX7Vw+empkcfnpvIBviy1S/etT1DadeVN/4mgzCcgkklh9s6ksT4w8+01ZCgo2TTMkgzGKczoMlE+bQIMQ6L/5sJQbtORd89BkXmRVOjd6vyJdVKb/or+BX0DvB0W73eTm9/TIHDsfwY5dX+ANjkbBBByHMdcraq/Uo+CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VOYmbAvh; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d9e31e66eeso18659217b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728563306; x=1729168106; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ysiTQYnIFAM+GVpiQPZxea96jDzKFB0S2bf0Q1srz24=;
-        b=VOYmbAvhxap0cte9dg4PfMjRzh+VLx1RDazD2HeYqoERO/YW4lj1NtG+ntwSjn7VAg
-         EgOg+QiKGOfX4uiwzrgNRmRfoPW/b4riat0uKDZPy0z8iZ4s5iO1X3uzPMgvzxRtqFDm
-         19lEYb/PPOUyMF2GQ2iaxNAyDj/AJJ38r8S9gxCCG+nyzFWuDCwX7eFb++Tt7f7HlosH
-         2zftoZZo43X3cj1LglIblXDE4BLfpO1dQZwARbknCClfbwD1efQX4CU03I7pbDR0OZUI
-         WyjaJEuaflWSGt7amrLUw5o2uDYSs8TknSh5HD37aYSqiLwH/ripsVSzGDvICgIToS4d
-         5M5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728563306; x=1729168106;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ysiTQYnIFAM+GVpiQPZxea96jDzKFB0S2bf0Q1srz24=;
-        b=Gn7QBktkaM50jFBBBLbB7bKU6qhoyoW1A7N8lIiMQu8zl8Mq/HY4At3U0jotT4daZE
-         4YsC0hUYFHF/9bFLNKaKzmoq2Frka5tMS7hPeYUQQpgYc/31TUZBNcXRzaAgBmBFTJBl
-         tepMviitJBg7nyx/5bLf378XuYp8IyUkW+faLumf9pic1hNC6HMJ59vumZBze+XNDE6c
-         bmr1yyhlyKsPF7yzK2G9bJ6zDoQGCLtC68feb1d9E9y1DjZ2a4S1xy/DLC0p+rZ3Wvom
-         c6XaRyD+CfrBv8Oz2gAbdJfYRwx0lqXZcZIiZ7Yf0QlnSN9VoOIeBLnANbCHxp7acmlf
-         ordA==
-X-Gm-Message-State: AOJu0YxwBYiBbZr7A52wGepPj1zNndv9vLhNdZ9F/8aH+UzWY4Jbk1H4
-	eISau6Vt4l4rtOxGm1mXceBBoSiYNOGw0EDJGyFSwpZNGlnKiWADKGZtT5EMzjyOt+/ptJV8LFB
-	eyZ+o87qwcI9GG4BaG+VQsG70xFd1ycNLw6sR3kdQ9MatO/R9x8ze31GGbayVotjpW/TmlSpDr3
-	ZLI91XCYqmDVUKJ3JjU/73YJfbyi58Wg==
-X-Google-Smtp-Source: AGHT+IGYzCVf/jII8KomABTrMZDoXEXfru199j0RK0tDWPSxK1xkfDqRPfD8R/E6mn2ZF9v6gg5pIreS
-X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a05:690c:731:b0:6e3:eab:18b1 with SMTP id
- 00721157ae682-6e3221767a6mr203727b3.1.1728563305577; Thu, 10 Oct 2024
- 05:28:25 -0700 (PDT)
+	s=arc-20240116; t=1728563292; c=relaxed/simple;
+	bh=+PiTsV/00ndEXFaBPUl+xKclCJxHDanNzdM3zXKrEqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ktaJCZEdvp8aPnEB4walqTpPQqeRrVtHf/A1qU4zyLo3n7ccvd93pGhvDj6vIxJ+xRlURyqW5yON4IKaZhda1srhEm3pW082MEQMAvsO2YALHpd2E9dQqAJwtuN/r3d+/2vkvQ+PEtWkIyLtvweUnst2gAjIpteNYmLR0TXc1Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WDw06HNq; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728563288;
+	bh=+PiTsV/00ndEXFaBPUl+xKclCJxHDanNzdM3zXKrEqs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WDw06HNqskMqkhw7m36FbWwqhk5QspGxbqIN/U6aNkXmMBz2eIuM//wtKtHuWuyrC
+	 btWnFnySxse9iAyNfbHIPz5ORaQBf0EeGW+Iefq/pZUY7Nf8HquuUsyn3dXyLb3RJ6
+	 HfTemw1vaGO4KX950kY8Dcu2L9bXHBLnUbmo4H/6UnhiheDovJnRXQQcN+J/d8wXrB
+	 aC9ThAvjjBPPnUnijZeANxO4fqbM3I5on+vDyXPV/iCpyT+59KGxLeoT36Y7mfr+gW
+	 cWeV6D9GOrSUIhpUP39kNRark8P2oa0CmvFk3+FfKidTJjCA0w5fpne3FO0J97UbCS
+	 fdmGPj8IW9D9w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C339C17E35D9;
+	Thu, 10 Oct 2024 14:28:07 +0200 (CEST)
+Message-ID: <d1a9f533-3a9e-47c2-9476-c54653b56e68@collabora.com>
 Date: Thu, 10 Oct 2024 14:28:07 +0200
-In-Reply-To: <20241010122801.1321976-7-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241010122801.1321976-7-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2591; i=ardb@kernel.org;
- h=from:subject; bh=RmdquyWiyHUUPxUBLvM2Ygamlf/86/TxkgF8NWyXERA=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ39RGTnOvUT3GJzrx1X9JCRfnpo9w2pI/P+f72q8Y5HS
- 2VhS1hJRykLgxgHg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZjI/VqGn4yKCg4MbTISnK/Y
- F87etqfSUuC0V+eSGs4vLtH5KVNelDP8M/12ry6phyVirtfhVYVX34UvNvU0q/3pKLY8Kf7HkZk prAA=
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-Message-ID: <20241010122801.1321976-12-ardb+git@google.com>
-Subject: [PATCH v2 5/5] crypto: x86/crc32c - Tweak jump table to validate
- objtool logic
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, keescook@chromium.org, 
-	linux-hardening@vger.kernel.org, nathan@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Jan Beulich <jbeulich@suse.com>, 
-	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] pinctrl: mediatek: add MT7988 pinctrl driver
+To: Frank Wunderlich <linux@fw-web.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
+ eladwf@gmail.com, Sam Shih <sam.shih@mediatek.com>,
+ =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+References: <20241009165222.5670-1-linux@fw-web.de>
+ <20241009165222.5670-3-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241009165222.5670-3-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Il 09/10/24 18:52, Frank Wunderlich ha scritto:
+> From: Daniel Golle <daniel@makrotopia.org>
+> 
+> Add pinctrl driver for the MediaTek MT7988 SoC.
+> 
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> [correctly initialise for the function_desc structure]
+> Signed-off-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>   drivers/pinctrl/mediatek/Kconfig          |    7 +
+>   drivers/pinctrl/mediatek/Makefile         |    1 +
+>   drivers/pinctrl/mediatek/pinctrl-mt7988.c | 1526 +++++++++++++++++++++
+>   3 files changed, 1534 insertions(+)
+>   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7988.c
+> 
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index 7af287252834..952110c783d4 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -187,6 +187,13 @@ config PINCTRL_MT7986
+>   	default ARM64 && ARCH_MEDIATEK
+>   	select PINCTRL_MTK_MOORE
+>   
+> +config PINCTRL_MT7988
+> +	bool "Mediatek MT7988 pin control"
+> +	depends on OF
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARM64 && ARCH_MEDIATEK
+> +	select PINCTRL_MTK_MOORE
+> +
+>   config PINCTRL_MT8167
+>   	bool "MediaTek MT8167 pin control"
+>   	depends on OF
+> diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
+> index 680f7e8526e0..2b47ce030b54 100644
+> --- a/drivers/pinctrl/mediatek/Makefile
+> +++ b/drivers/pinctrl/mediatek/Makefile
+> @@ -27,6 +27,7 @@ obj-$(CONFIG_PINCTRL_MT7623)		+= pinctrl-mt7623.o
+>   obj-$(CONFIG_PINCTRL_MT7629)		+= pinctrl-mt7629.o
+>   obj-$(CONFIG_PINCTRL_MT7981)		+= pinctrl-mt7981.o
+>   obj-$(CONFIG_PINCTRL_MT7986)		+= pinctrl-mt7986.o
+> +obj-$(CONFIG_PINCTRL_MT7988)		+= pinctrl-mt7988.o
+>   obj-$(CONFIG_PINCTRL_MT8167)		+= pinctrl-mt8167.o
+>   obj-$(CONFIG_PINCTRL_MT8173)		+= pinctrl-mt8173.o
+>   obj-$(CONFIG_PINCTRL_MT8183)		+= pinctrl-mt8183.o
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7988.c b/drivers/pinctrl/mediatek/pinctrl-mt7988.c
+> new file mode 100644
+> index 000000000000..5479f4fa47a7
+> --- /dev/null
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt7988.c
+> @@ -0,0 +1,1526 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * The MT7988 driver based on Linux generic pinctrl binding.
+> + *
+> + * Copyright (C) 2020 MediaTek Inc.
+> + * Author: Sam Shih <sam.shih@mediatek.com>
+> + */
+> +
+> +#include "pinctrl-moore.h"
+> +
+> +enum MT7988_PINCTRL_REG_PAGE {
 
-Tweak the jump table so
-- the address is taken far way from its use
-- its offset from the start of .rodata is != 0x0
-- its type is STT_OBJECT and its size is set to the size of the actual
-  table
-- the indirect jump is annotated with a R_X86_64_NONE relocation
-  pointing to the jump table
+Lowercase name for the enumeration, please.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/crypto/crc32c-pcl-intel-asm_64.S | 39 +++++++++++---------
- 1 file changed, 22 insertions(+), 17 deletions(-)
+> +	GPIO_BASE,
+> +	IOCFG_TR_BASE,
+> +	IOCFG_BR_BASE,
+> +	IOCFG_RB_BASE,
+> +	IOCFG_LB_BASE,
+> +	IOCFG_TL_BASE,
+> +};
+> +
 
-diff --git a/arch/x86/crypto/crc32c-pcl-intel-asm_64.S b/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
-index 45b005935194..ba1cca66875b 100644
---- a/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
-+++ b/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
-@@ -93,10 +93,13 @@ SYM_FUNC_START(crc_pcl)
- #define    crc1		%r9
- #define    crc2		%r10
- 
-+	pushq	%rbp
- 	pushq   %rbx
- 	pushq   %rdi
- 	pushq   %rsi
- 
-+	leaq	jump_table(%rip), %rbp
-+
- 	## Move crc_init for Linux to a different
- 	mov     crc_init_arg, crc_init
- 
-@@ -168,9 +171,9 @@ SYM_FUNC_START(crc_pcl)
- 	xor     crc2, crc2
- 
- 	## branch into array
--	leaq	jump_table(%rip), %bufp
--	movslq	(%bufp,%rax,4), len
--	addq	len, %bufp
-+	movslq	(%rbp,%rax,4), %bufp
-+	addq	%rbp, %bufp
-+	.reloc	., R_X86_64_NONE, jump_table
- 	JMP_NOSPEC bufp
- 
- 	################################################################
-@@ -310,24 +313,11 @@ LABEL less_than_ %j			# less_than_j: Length should be in
- 	popq    %rsi
- 	popq    %rdi
- 	popq    %rbx
-+	popq    %rbp
-         RET
- SYM_FUNC_END(crc_pcl)
- 
- .section	.rodata, "a", @progbits
--        ################################################################
--        ## jump table        Table is 129 entries x 2 bytes each
--        ################################################################
--.align 4
--jump_table:
--	i=0
--.rept 129
--.altmacro
--JMPTBL_ENTRY %i
--.noaltmacro
--	i=i+1
--.endr
--
--
- 	################################################################
- 	## PCLMULQDQ tables
- 	## Table is 128 entries x 2 words (8 bytes) each
-@@ -462,3 +452,18 @@ K_table:
- 	.long 0x45cddf4e, 0xe0ac139e
- 	.long 0xacfa3103, 0x6c23e841
- 	.long 0xa51b6135, 0x170076fa
-+
-+        ################################################################
-+        ## jump table        Table is 129 entries x 2 bytes each
-+        ################################################################
-+.align 4
-+jump_table:
-+	i=0
-+.rept 129
-+.altmacro
-+JMPTBL_ENTRY %i
-+.noaltmacro
-+	i=i+1
-+.endr
-+.size	jump_table, . - jump_table
-+.type	jump_table, @object
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
+..snip..
+
+> +static const struct mtk_eint_hw mt7988_eint_hw = {
+> +	.port_mask = 7,
+> +	.ports = 7,
+> +	.ap_num = ARRAY_SIZE(mt7988_pins),
+> +	.db_cnt = 16,
+
+Are you sure that the EINT controller in this SoC doesn't have the
+DBNC_SET and DBNC_CLR registers?
+
+Another way of asking the same thing: are you sure that this SoC does
+not support interrupt debounce?
+
+> +};
+> +
+> +static const char * const mt7988_pinctrl_register_base_names[] = {
+> +	"gpio",	 "iocfg_tr", "iocfg_br",
+> +	"iocfg_rb", "iocfg_lb", "iocfg_tl",
+> +};
+> +
+> +static struct mtk_pin_soc mt7988_data = {
+> +	.reg_cal = mt7988_reg_cals,
+> +	.pins = mt7988_pins,
+> +	.npins = ARRAY_SIZE(mt7988_pins),
+> +	.grps = mt7988_groups,
+> +	.ngrps = ARRAY_SIZE(mt7988_groups),
+> +	.funcs = mt7988_functions,
+> +	.nfuncs = ARRAY_SIZE(mt7988_functions),
+> +	.eint_hw = &mt7988_eint_hw,
+> +	.gpio_m = 0,
+> +	.ies_present = false,
+> +	.base_names = mt7988_pinctrl_register_base_names,
+> +	.nbase_names = ARRAY_SIZE(mt7988_pinctrl_register_base_names),
+> +	.bias_disable_set = mtk_pinconf_bias_disable_set,
+> +	.bias_disable_get = mtk_pinconf_bias_disable_get,
+> +	.bias_set = mtk_pinconf_bias_set,
+> +	.bias_get = mtk_pinconf_bias_get,
+> +	.pull_type = mt7988_pull_type,
+> +	.bias_set_combo = mtk_pinconf_bias_set_combo,
+> +	.bias_get_combo = mtk_pinconf_bias_get_combo,
+> +	.drive_set = mtk_pinconf_drive_set_rev1,
+> +	.drive_get = mtk_pinconf_drive_get_rev1,
+> +	.adv_pull_get = mtk_pinconf_adv_pull_get,
+> +	.adv_pull_set = mtk_pinconf_adv_pull_set,
+> +};
+> +
+> +static const struct of_device_id mt7988_pinctrl_of_match[] = {
+
+Please compress that to a single line.
+
+{ .compatible = "mediatek,mt7988-pinctrl" },
+
+
+Cheers,
+Angelo
+
 
 
