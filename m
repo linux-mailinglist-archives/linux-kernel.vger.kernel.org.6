@@ -1,116 +1,169 @@
-Return-Path: <linux-kernel+bounces-360088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D931399944D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:18:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4E6999451
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4527028477A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:18:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB385B20FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470091E1027;
-	Thu, 10 Oct 2024 21:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306461E1C15;
+	Thu, 10 Oct 2024 21:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FJTmMfbv"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bNYWRJjc"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585B240C03
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 21:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBC31E1A33
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 21:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728595101; cv=none; b=iwomKFRxxsfJd5HrBqw49yUDouvQ+L+0aFGj0YjkTJDG14i/9rQgw16aPUfvfkDGBSdE4IHB4QpLNaro084C6W+U/jnpxDAXlNBms505qALuGAl4MpFWNutlTAcxETRzggCy/qnS2s/EzWiYn1MBl0aKlDPVb23rpt0r/h/jb0o=
+	t=1728595142; cv=none; b=Se+y9ruY9ZzkF7ZamHACLCnARygkc+G69LAizwAN2TayliRoCIHGHhXTcO2yOLNa/3sqXxSZ97FX0Hg+GXYzmKrafL6bJuL5h0k6NaFD3258R1zJe6Lb5wDV8Btr13doXoXhroxv4UH55yYhyrtG5nW4b+jidf6Mdujdlz8yHYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728595101; c=relaxed/simple;
-	bh=66X7MJvhjwaIv9v0E9icVdF/S0iijJDVhOZL5QIOXXk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MvBaGWqHakT+b4uFeLePuxPu980KSGfIyzVd0K2IvLkHCCsHtG8sGenH1gnIcKPMmMD317O5lkcJIdcxqtGUXFiEOkUWbsQXNUWvVNvfbOnSa+lAJDeMM6zp+DuMBUzAnJ95kOhs70BodOct9uONQmhyGuC8gLLqbI2r13bjrx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FJTmMfbv; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49ALI7c7112136;
-	Thu, 10 Oct 2024 16:18:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728595087;
-	bh=hPunnxnKCLa8EHZzqLSh89WeqAPCnHq4nbcLWVjyu5E=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=FJTmMfbvbnrdG29lDzOIQZfkRLUMPhteP+m6UQWPndOqdumTfYhpn2xIO6tPzzRo0
-	 F545yCRaye0ENBVnfzFb/M2epBwlcuFOTk66YdgHL4mJR1M+0z3koEkR/Zooh9ChIc
-	 Zygr6N+lRmRsZFGkigJrIaCfIn86YqavHVvn3xn0=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49ALI7V7017044
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 10 Oct 2024 16:18:07 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
- Oct 2024 16:18:07 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 10 Oct 2024 16:18:07 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49ALI7Ls040027;
-	Thu, 10 Oct 2024 16:18:07 -0500
-Date: Thu, 10 Oct 2024 16:18:07 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Judith Mendez <jm@ti.com>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner
-	<tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-Subject: Re: [PATCH RESEND] clocksource/drivers/timer-ti-dm: Don't fail probe
- if int not found
-Message-ID: <20241010211807.ibxatajiwyqchid4@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20241010144440.24654-1-jm@ti.com>
+	s=arc-20240116; t=1728595142; c=relaxed/simple;
+	bh=XgFyRsRqIXnwJJtXgPqzhU6CtjwMWa+ou90c0icQbx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o2rgppnls+vc/eI8kdKQ13QE5uyOJosZ/LcMjLowv2pNqf7fMXcbaVwZmbyjISS/8elsf/HGlLv6sBi9Tx5NVf009nBHCDinAqxThnqmHXgYyCHb5sBS8NVsaifK/7368F0VP/hMdgmoF+F2pW3ii4XU8u+xkKp5pnQDuLcheZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bNYWRJjc; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-8354c496c90so40827739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728595140; x=1729199940; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nBZbBlwQa7HT+/mui9xTJE7fZJhA2rmF/mcQQtgNOAo=;
+        b=bNYWRJjc1UpZiY4Iip35UUkTTGmuanbWWaFqetgyZP3a4urjmfcRoli4PiZEWbbTPB
+         IJLAlqfX8Uc/oAB0VM7+45RC7bIq7l7jjJJjHqbmSftZS2Fm9yoSJAyPxJzgHp23F0eG
+         ZTpivwUPD1fUasmUYMKpr4bn78qOESMYRFy6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728595140; x=1729199940;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nBZbBlwQa7HT+/mui9xTJE7fZJhA2rmF/mcQQtgNOAo=;
+        b=RrinqIOtICUBapQ2kXJEgkw7hu6O283dIsxrGWk1y/taIkj4lI/C6SFvy4ZEraewmi
+         fdpyRcpTXMi6r/5FeZjvQqtyyiuQnWPxPHDmT8GMXkVMyLU/+6r9TXA5SaBNTMY/V6M0
+         ImUSUmRKhQPCsLDqZ1meu/WF/q6xuNymdEovkpFRxby2shpnRnsvGNv66K/w+pe+Ttmo
+         5odWhREJs6sbtJpS1FC4OJwH8LiC6cBkympH+9Yd82uxo5thOwQlYJny0h+9z7tICrw5
+         rZ04i75HAL48kumc0vxKa3Trh0V1JHD9epbW4m3IInyn+aT/zNh3KUUIpdo2LnmX5KUY
+         GHrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu/hr/TVk2b/JHKHe8UylY7N1uZDMAx/gjR2zjAVnEtOZTaZCCPNRokW2wF3G1IjwPvAiwQr/QKeMqz9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx98heIYSTwxleJp2eiT+xOQ3klH7jkG9+nisNt9Qr2OyURET+i
+	3KzG77Fw9PkpUI7Xwz6ueH+OaPLQYA/BPBWBfX4/nvj6a5tx6j/47QIjEQ3wlGw=
+X-Google-Smtp-Source: AGHT+IEYkeeNxtQt681in3Sz57PrDzHIA9l/kBVtyF0yM/0puYCqVuivQ2EI5A8y1bdIaBfyBVotKw==
+X-Received: by 2002:a05:6602:1341:b0:835:3ec0:9 with SMTP id ca18e2360f4ac-83794d44d5cmr28566839f.15.1728595139979;
+        Thu, 10 Oct 2024 14:18:59 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbada841ebsm384083173.112.2024.10.10.14.18.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 14:18:59 -0700 (PDT)
+Message-ID: <d4602ac9-8aa2-490e-be2d-edef517bc4f3@linuxfoundation.org>
+Date: Thu, 10 Oct 2024 15:18:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20241010144440.24654-1-jm@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v20 01/14] mm: page_frag: add a test module for
+ page_frag
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexander Duyck <alexander.duyck@gmail.com>,
+ Alexander Duyck <alexanderduyck@fb.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241008112049.2279307-1-linyunsheng@huawei.com>
+ <20241008112049.2279307-2-linyunsheng@huawei.com>
+ <cb1acab0-a4c9-4e31-b6f6-70b8049f1663@linuxfoundation.org>
+ <f3f882bf-4120-4daa-b35f-8b1b4e0deb2d@huawei.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <f3f882bf-4120-4daa-b35f-8b1b4e0deb2d@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On October 10, 2024 thus sayeth Judith Mendez:
-> Some timers may not have an interrupt routed to
-> the A53 GIC, but the timer PWM functionality can still
-> be used by Linux Kernel. Therefore, do not fail probe
-> if interrupt is not found and ti,timer-pwm exists.
+On 10/8/24 21:59, Yunsheng Lin wrote:
+> On 2024/10/9 3:56, Shuah Khan wrote:
+>> On 10/8/24 05:20, Yunsheng Lin wrote:
+>>> The testing is done by ensuring that the fragment allocated
+>>> from a frag_frag_cache instance is pushed into a ptr_ring
+>>> instance in a kthread binded to a specified cpu, and a kthread
+>>> binded to a specified cpu will pop the fragment from the
+>>> ptr_ring and free the fragment.
+>>>
+>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>> Reviewed-by: Alexander Duyck <alexanderduyck@fb.com>
+>>
+>> Signed-off-by should be last. Same comment on all the other
 > 
-> Fixes: df28472a1b28 ("ARM: OMAP: dmtimer: platform driver")
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> Changes since v1:
-> - Rebased, add to CC list, add fixes tag
-> ---
->  drivers/clocksource/timer-ti-dm.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> Hi, Shuah
 > 
-> diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-> index b7a34b1a975e..1b61fefed213 100644
-> --- a/drivers/clocksource/timer-ti-dm.c
-> +++ b/drivers/clocksource/timer-ti-dm.c
-> @@ -1104,8 +1104,12 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
->  		return  -ENOMEM;
->  
->  	timer->irq = platform_get_irq(pdev, 0);
-> -	if (timer->irq < 0)
-> -		return timer->irq;
-> +	if (timer->irq < 0) {
-> +		if (of_property_read_bool(dev->of_node, "ti,timer-pwm"))
-> +			dev_err(dev, "Did not find timer interrupt, timer usable in PWM mode only\n");
+> I used 'git am' to collect those tag, it seems that is the order
+> the tool applied, and I checking other applied commit, it seems
+> only Signed-off-by from the committer is the last, like the below
+> recent mm commit:
+> 6901cf55de22
+> ff7f5ad7bce4
+> 
 
-Is this really an error? or more of a dev_info() type problem. It looks
-like we changed how we integrated the timer in K3 chips that broke some 
-assumptions made in OMAP.
+okay.
 
-~Bryan
+>> patches in this series. When you have 4 patches, it is a good
+>> practice to add cover-letter.
+> 
+> I guess the cover-letter meant below?
+> https://lore.kernel.org/all/20241008112049.2279307-1-linyunsheng@huawei.com/
+
+Somehow this isn't in my Inbox.
+
+> 
+>>
+
+[snip]
+
+> ...
+> 
+>>> +function run_manual_check()
+>>> +{
+>>> +    #
+>>> +    # Validate passed parameters. If there is wrong one,
+>>> +    # the script exists and does not execute further.
+>>> +    #
+>>> +    validate_passed_args $@
+>>> +
+>>> +    echo "Run the test with following parameters: $@"
+>>
+>> Is this marker good enough to isolate the test results in the
+>> dmesg? Include the test name in the message.
+>>
+>>
+>>> +    insmod $DRIVER $@ > /dev/null 2>&1
+>>> +    echo "Done."
+>>
+>> Is this marker good enough to isolate the test results in the
+>> dmesg? Include the test name in the message.
+>>
+>>> +    echo "Check the kernel ring buffer to see the summary."
+>>
+>> Usually the test would run dmesg and filter out the test results
+>> from the dmesg and include them in the test script output.
+>>
+>> You can refer to other tests that do that: powerpc/scripts/hmi.sh
+>> is one example.
+> 
+> Thanks, will check that.
+
+thanks,
+-- Shuah
 
