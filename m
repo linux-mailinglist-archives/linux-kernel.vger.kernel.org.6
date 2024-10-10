@@ -1,255 +1,187 @@
-Return-Path: <linux-kernel+bounces-358812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A495998429
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8B7998418
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88E30B2206D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9131F24EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B781E1BF324;
-	Thu, 10 Oct 2024 10:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4F81BF7E7;
+	Thu, 10 Oct 2024 10:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WW35KARi"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="WDQYRcpf"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631F1BDAA0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B9F47A60;
+	Thu, 10 Oct 2024 10:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557399; cv=none; b=hNk/dNxoNcj/AFMh7VO/qJ55N3lK8wY/SN0zTGrAle/uf8WcCweiXWIw8PIlbxYoL/jZTBMxEVFirenZ4PvMTxlKPS6pMmd7YNpXeaKB1zgDTT69LDnTcV89VuDKqrPejGpInPaIWXsADR5bTK3RnjqiKY45R0BNbZSc+lRUKdA=
+	t=1728557187; cv=none; b=WeNhWbdjWV6aD2uNfR9YUtqWcnrOYCNyfHiOPvMgq0F/xaF9YUrmoz5NZ5hzAili8tqCzHVFDB29QpErSiw5xf6rvGhM4Mnhsc8WL/pvs9khp1zaBvDuJMUlAic9teLNzBLmcSCkH6jigq+XX2901U692uKnsvdRwXvyT0GGodI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557399; c=relaxed/simple;
-	bh=iMXkWNY0bNQiK/qpWqcYtLcQ5QR2FQuA0xFLkiCEBYY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=HU5XZ4GYp7nx1UAHkp/EDl7MUvOvGZvB8HRugUcQUFzyQzIwPZ5amxcfoefQFlFJSv8ngzYWZppdOTWYUq6cMougNteItPaRkOLD7bfvHTCmWIJ5I4z3KFibxfdKXMAlnQ2v6QxVb+0dHej/RJM4J82SICGBRGfwUvVCxT+vKaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WW35KARi; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241010104950epoutp0288afae1a8b23b7375598d59e4ebef0a6~9EcndSAKV2537725377epoutp02_
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:49:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241010104950epoutp0288afae1a8b23b7375598d59e4ebef0a6~9EcndSAKV2537725377epoutp02_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728557390;
-	bh=yaB9itcDCiaaIcwDZvNEYBezr6d2OLBDCgCbD010Qfk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=WW35KARikKErMTLLQaUmbiWQw5c1I8g88JWIl674IHRBrkVffSz0aKxWsWSLQbj0I
-	 LG0f8j+/XgO1NVTh9tLcg00M+G50AUl9lKUp3y3HXI9pFRLCZjP9IqpQ1oiDvI4R39
-	 G9qje+0dY9U7uQPFY/oT4HUr34mMGJah/eK+k5ic=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20241010104950epcas5p4652a31c14bbb7849027c6d8333e931bb~9Ecm8uhkP3218632186epcas5p4q;
-	Thu, 10 Oct 2024 10:49:50 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XPRND2hnVz4x9Pw; Thu, 10 Oct
-	2024 10:49:48 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.45.09420.C41B7076; Thu, 10 Oct 2024 19:49:48 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241010104554epcas5p19fa883f33168b2742738e8edcf1f836a~9EZLkRH-22586025860epcas5p1O;
-	Thu, 10 Oct 2024 10:45:54 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241010104554epsmtrp2160f811a65734e82a61728cee45e78be~9EZLjbKzs2675126751epsmtrp2b;
-	Thu, 10 Oct 2024 10:45:54 +0000 (GMT)
-X-AuditID: b6c32a49-0d5ff700000024cc-c0-6707b14cc17b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5C.2C.07371.260B7076; Thu, 10 Oct 2024 19:45:54 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241010104552epsmtip1f5e87c940987a831806f878b5943e0b7~9EZJ76xC_2499324993epsmtip1b;
-	Thu, 10 Oct 2024 10:45:52 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
-	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
-	<s.nawrocki@samsung.com>
-Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
-Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-Date: Thu, 10 Oct 2024 16:15:51 +0530
-Message-ID: <08d001db1b01$94a9b9f0$bdfd2dd0$@samsung.com>
+	s=arc-20240116; t=1728557187; c=relaxed/simple;
+	bh=r9y3AqCg5WMZvS7kWJh0iyuPBPu5wb70lYX5C3oBdtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AF+8hVE52a9KnGti9N0kLf9+OVG6SOYZ3zxvwA6r1qCsLSCXCkjfm5/sFG4jwGnZgSwYSs+5ktoKo3Q4OqvCCFntENNFBdPsfrwEWtCkHTS1Wavxlj9e9l7lTPDKl9gZRzXxdm0sBrnOuddarpQqC6HuuTmcG/mqZo7fXGACgmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=WDQYRcpf; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=J0wXjIsNrPQGXiXr2dT9uUkENmIQgLlLeLiX7T9LCz0=; t=1728557185;
+	x=1728989185; b=WDQYRcpfH+gvI+cMdnCmpusv2Pn7yiC6Jo8bCK05SSXPZPVn632HcbH6W2EbF
+	saJFUxhQSJJc1CFWqkBblkOZ2UKzh8/NyNRf8Sq/Arb4kUyafuCEmAbSPZl2OGq5Gjql+4c3tRO3o
+	7zZtkr4ypVCVoHptw5vSR5iivFH0lKh92Dxsrlt9bn+gFsXuqQCKGekoG2k6siddwfUlDzbEKaw4d
+	GmM/n9hrDJ6YGPVuk4GN1E30Z/m0VNNdo8IfLXbgHLtBHgZiSLb9bbUZPHeVI6EjemaOTTFLR7YVe
+	UYn56OnEr2Q00TTt5bSlbGhUejkRdDvW3rvhMdpqFCXq4MZbpw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1syqgY-0006SI-IZ; Thu, 10 Oct 2024 12:46:22 +0200
+Message-ID: <01a91d65-9984-416f-b8ae-81627eb7994d@leemhuis.info>
+Date: Thu, 10 Oct 2024 12:46:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsAUVIpqkCfYGRoQL0rVzSAfBMA4ivfAuNkA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJJsWRmVeSWpSXmKPExsWy7bCmhq7PRvZ0g+2feS0ezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
-	xNxUWyUXnwBdt8wcoKOUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnF
-	pXnpenmpJVaGBgZGpkCFCdkZf7d0MxVMVq64P8u/gfGLdBcjJ4eEgInEkR3dzF2MXBxCArsZ
-	JWbMnMoC4XxilDhz5ykjhPONUWJ/22EmmJb9tyZDtexllNh5s58NwnnJKHFo3wZWkCo2AU2J
-	m0f/gbWLCCxlkui894MdJMEsYCax5e59sCJOATuJDw0bwOLCAi4SM/5dAhrLwcEioCqxaIYL
-	SJhXwFJi2uMTrBC2oMTJmU9YIMZoSyxb+JoZ4iIFiZ9Pl4HViAhkSRzb/ACqRlzi6M8esEsl
-	BJZySKw/dIURosFF4tnBvVDNwhKvjm9hh7ClJD6/28sGYftI7J/zC6o+Q+LY9uWsELa9xIEr
-	c1hA7mQGenL9Ln2IsKzE1FPrmCD28kn0/n4CDS1eiR3zYGxliZlH7kONl5TYeXknywRGpVlI
-	XpuF5LVZSF6YhbBtASPLKkbJ1ILi3PTUYtMCw7zUcniEJ+fnbmIEp1ktzx2Mdx980DvEyMTB
-	eIhRgoNZSYRXdyFruhBvSmJlVWpRfnxRaU5q8SFGU2BwT2SWEk3OByb6vJJ4QxNLAxMzMzMT
-	S2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamILybAIEvxXvVT4reuODm0y7413x3Osn
-	1nPFXvf/y+XfIVumy7tg+c15si0ll9i33tD9/aE3Vb/L6HB7Fatm/fUOPw+nXX4O7L80396+
-	wXO8iOurxJ6K/2uC9Ff8CmFyZ06Jzm3ZtUDwivLyShXD5ndriwV1vs37+zAiWcNJ+11CesAb
-	vrO/snNmxti/iPDiz1rHJsSiP/mGMPORKIZoz+izzhwNmQHHv6kuOVImWnUn1qGkcrOy8pHQ
-	gz9V010XPN4ueiZc9bPWgtv/vkU2MDj+fdVlLBYv77r/zPTtr9ts+Wfl9je+O1mRcmRH8gq/
-	yY7zF3B6/ZosVP3ESWLLle173wgkvy4oVOc4cWWJEktxRqKhFnNRcSIAZELxqDwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSnG7SBvZ0g/urpCwezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErozfdwsLupUrLq7dxdbAeEO6i5GTQ0LA
-	RGL/rcnMXYxcHEICuxkl/vz6wQiRkJSY/Xs6O4QtLLHy33N2iKLnjBITuyewgSTYBDQlbh79
-	xwiSEBFYyyTRsX0lWDezgIXE8j/X2SA6HjBL9P35DpbgFLCT+NCwAWyssICLxIx/l4B2c3Cw
-	CKhKLJrhAhLmFbCUmPb4BCuELShxcuYTFoiZ2hK9D1sZYexlC18zQ1ynIPHz6TKwehGBLIlj
-	mx9A1YtLHP3ZwzyBUXgWklGzkIyahWTULCQtCxhZVjFKphYU56bnJhsWGOallusVJ+YWl+al
-	6yXn525iBMealsYOxnvz/+kdYmTiYDzEKMHBrCTCq7uQNV2INyWxsiq1KD++qDQntfgQozQH
-	i5I4r+GM2SlCAumJJanZqakFqUUwWSYOTqkGJse2a8ebvn6KK7/86AGXypZ0vv0H/uZw3dod
-	XlZ/vE4x5pXQqxksnI9/6d+VZyoLvSN6w8xF+f6OBqd7nz8eyPQ7JappMu2eqKSlS3SwYv16
-	xkAFEecnLR8+GV7qC2ZZ8NblzfLUNRLZxbXCzEZ8LDtlNdpufnr8vS5x45/oy86Wjze/+HCD
-	s73rbILD8U+dBXvsy/5f+GeywmtO/DvWX2lhbSdZ3S2uTin9yiXCufajvnzr9d7fC08Uf90y
-	Izr4rGjGx5J/jusPNThe9eee9Pf00icPt28VO6Jx0ZRzg8qem7/PMK1/oO1/a9umD08d4mrr
-	JGQO+qb0noyoN34sLPiDfRef6zKlw0K1pl6Py5VYijMSDbWYi4oTATGQXK8kAwAA
-X-CMS-MailID: 20241010104554epcas5p19fa883f33168b2742738e8edcf1f836a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
-	<20240917101016.23238-1-inbaraj.e@samsung.com>
-	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
-	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
-	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
-	<011401db0b13$cbd045f0$6370d1d0$@samsung.com>
-	<1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
-	<03ca01db13e3$bc12e360$3438aa20$@samsung.com>
-	<2b3566dd-71ac-4ef7-abdc-524277879aa6@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Build failure with CONFIG_NFS_LOCALIO=y on Linux
+ 6.12-rc1
+To: Weston Andros Adamson <dros@primarydata.com>,
+ Anna Schumaker <anna.schumaker@oracle.com>, NeilBrown <neilb@suse.de>
+Cc: regressions@lists.linux.dev, Maximilian Bosch <maximilian@mbosch.me>,
+ linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Mike Snitzer <snitzer@kernel.org>
+References: <D4OUJRP8YWRM.ATQ7KASTYX5H@mbosch.me>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
+ JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
+ apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
+ QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
+ OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
+ Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
+ Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
+ sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
+ /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
+ rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
+ ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCX31PIwUJFmtPkwAKCRBytubv
+ TFg9LWsyD/4t3g4i2YVp8RoKAcOut0AZ7/uLSqlm8Jcbb+LeeuzjY9T3mQ4ZX8cybc1jRlsL
+ JMYL8GD3a53/+bXCDdk2HhQKUwBJ9PUDbfWa2E/pnqeJeX6naLn1LtMJ78G9gPeG81dX5Yq+
+ g/2bLXyWefpejlaefaM0GviCt00kG4R/mJJpHPKIPxPbOPY2REzWPoHXJpi7vTOA2R8HrFg/
+ QJbnA25W55DzoxlRb/nGZYG4iQ+2Eplkweq3s3tN88MxzNpsxZp475RmzgcmQpUtKND7Pw+8
+ zTDPmEzkHcUChMEmrhgWc2OCuAu3/ezsw7RnWV0k9Pl5AGROaDqvARUtopQ3yEDAdV6eil2z
+ TvbrokZQca2808v2rYO3TtvtRMtmW/M/yyR233G/JSNos4lODkCwd16GKjERYj+sJsW4/hoZ
+ RQiJQBxjnYr+p26JEvghLE1BMnTK24i88Oo8v+AngR6JBxwH7wFuEIIuLCB9Aagb+TKsf+0c
+ HbQaHZj+wSY5FwgKi6psJxvMxpRpLqPsgl+awFPHARktdPtMzSa+kWMhXC4rJahBC5eEjNmP
+ i23DaFWm8BE9LNjdG8Yl5hl7Zx0mwtnQas7+z6XymGuhNXCOevXVEqm1E42fptYMNiANmrpA
+ OKRF+BHOreakveezlpOz8OtUhsew9b/BsAHXBCEEOuuUg87BTQRSeAENARAAzu/3satWzly6
+ +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
+ s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
+ ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
+ ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
+ z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
+ M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
+ zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
+ 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
+ 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
+ FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
+ WD0tBQJffU8wBQkWa0+jAAoJEHK25u9MWD0tv+0P/A47x8r+hekpuF2KvPpGi3M6rFpdPfeO
+ RpIGkjQWk5M+oF0YH3vtb0+92J7LKfJwv7GIy2PZO2svVnIeCOvXzEM/7G1n5zmNMYGZkSyf
+ x9dnNCjNl10CmuTYud7zsd3cXDku0T+Ow5Dhnk6l4bbJSYzFEbz3B8zMZGrs9EhqNzTLTZ8S
+ Mznmtkxcbb3f/o5SW9NhH60mQ23bB3bBbX1wUQAmMjaDQ/Nt5oHWHN0/6wLyF4lStBGCKN9a
+ TLp6E3100BuTCUCrQf9F3kB7BC92VHvobqYmvLTCTcbxFS4JNuT+ZyV+xR5JiV+2g2HwhxWW
+ uC88BtriqL4atyvtuybQT+56IiiU2gszQ+oxR/1Aq+VZHdUeC6lijFiQblqV6EjenJu+pR9A
+ 7EElGPPmYdO1WQbBrmuOrFuO6wQrbo0TbUiaxYWyoM9cA7v7eFyaxgwXBSWKbo/bcAAViqLW
+ ysaCIZqWxrlhHWWmJMvowVMkB92uPVkxs5IMhSxHS4c2PfZ6D5kvrs3URvIc6zyOrgIaHNzR
+ 8AF4PXWPAuZu1oaG/XKwzMqN/Y/AoxWrCFZNHE27E1RrMhDgmyzIzWQTffJsVPDMQqDfLBhV
+ ic3b8Yec+Kn+ExIF5IuLfHkUgIUs83kDGGbV+wM8NtlGmCXmatyavUwNCXMsuI24HPl7gV2h n7RI
+In-Reply-To: <D4OUJRP8YWRM.ATQ7KASTYX5H@mbosch.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1728557185;1e3385a6;
+X-HE-SMSGID: 1syqgY-0006SI-IZ
+
+Hi, Thorsten here, the Linux kernel's regression tracker.
+
+On 06.10.24 18:00, Maximilian Bosch wrote:
+> 
+> I haven't found an existing report for this problem, but I observed
+> that Linux 6.12-rc1 fails to build like this on aarch64-linux with
+> CONFIG_NFS_LOCALIO=y:
+
+Thx for the report. FWIW, there is another report with similar symptoms
+that looks to be the same issue:
+https://bugzilla.kernel.org/show_bug.cgi?id=219370
+
+That reporter bisected the problem to fa4983862e506d ("nfsd: add LOCALIO
+support") [v6.12-rc1]. CCing the involved developers.
+
+Ciao, Thorsten
+
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: warning: -z relro ignored
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: Unexpected GOT/PLT entries detected!
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: Unexpected run-time procedure linkages detected!
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_iocb_alloc':
+>     /build/source/build/../fs/nfs/localio.c:290:(.text+0x324): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `nfs_to' which may bind externally can not be used when making a shared object; recompile with -fPIC
+>     /build/source/build/../fs/nfs/localio.c:290:(.text+0x324): dangerous relocation: unsupported relocation
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: /build/source/build/../fs/nfs/localio.c:290:(.text+0x330): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_pgio_release':
+>     /build/source/build/../fs/nfs/localio.c:344:(.text+0x47c): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `nfs_to' which may bind externally can not be used when making a shared object; recompile with -fPIC
+>     /build/source/build/../fs/nfs/localio.c:344:(.text+0x47c): dangerous relocation: unsupported relocation
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: /build/source/build/../fs/nfs/localio.c:344:(.text+0x488): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_fsync_work':
+>     /build/source/build/../fs/nfs/localio.c:725:(.text+0x838): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `nfs_to' which may bind externally can not be used when making a shared object; recompile with -fPIC
+>     /build/source/build/../fs/nfs/localio.c:725:(.text+0x838): dangerous relocation: unsupported relocation
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o:/build/source/build/../fs/nfs/localio.c:725: more undefined references to `nfs_to' follow
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_disable':
+>     /build/source/build/../fs/nfs/localio.c:140:(.text+0xeb4): undefined reference to `nfs_uuid_invalidate_one_client'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_probe':
+>     /build/source/build/../fs/nfs/localio.c:209:(.text+0xfac): undefined reference to `nfs_uuid_begin'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: /build/source/build/../fs/nfs/localio.c:212:(.text+0x1074): undefined reference to `nfs_uuid_end'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_open_fh':
+>     /build/source/build/../fs/nfs/localio.c:233:(.text+0x12cc): undefined reference to `nfs_open_local_fh'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_doio':
+>     /build/source/build/../fs/nfs/localio.c:600:(.text+0x13c8): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `nfs_to' which may bind externally can not be used when making a shared object; recompile with -fPIC
+>     /build/source/build/../fs/nfs/localio.c:600:(.text+0x13c8): dangerous relocation: unsupported relocation
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: /build/source/build/../fs/nfs/localio.c:600:(.text+0x13d8): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: /build/source/build/../fs/nfs/localio.c:625:(.text+0x150c): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: in function `nfs_local_release_commit_data':
+>     /build/source/build/../fs/nfs/localio.c:676:(.text+0x18dc): undefined reference to `nfs_to'
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: fs/nfs/localio.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `nfs_to' which may bind externally can not be used when making a shared object; recompile with -fPIC
+>     /build/source/build/../fs/nfs/localio.c:676:(.text+0x18dc): dangerous relocation: unsupported relocation
+>     /nix/store/f3k0rdhcd2cx57phx755c2xixgifw5m5-binutils-2.42/bin/ld: /build/source/build/../fs/nfs/localio.c:676:(.text+0x18ec): undefined reference to `nfs_to'
+>     make[2]: *** [../scripts/Makefile.vmlinux:34: vmlinux] Error 1
+>     make[1]: *** [/build/source/Makefile:1166: vmlinux] Error 2
+>     make: *** [../Makefile:224: __sub-make] Error 2
+> 
+> On x86_64-linux the problem doesn't exist.
+> 
+> For the build are binutils 2.42 & GCC 13.3 used.
+> 
+> The workaround was to turn off CONFIG_NFS_LOCALIO.
+> 
+> With best regards
+> 
+> Ma27
 
 
-
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 01 October 2024 15:30
-> To: Inbaraj E <inbaraj.e=40samsung.com>; 'Stephen Boyd'
-> <sboyd=40kernel.org>; alim.akhtar=40samsung.com; cw00.choi=40samsung.com;
-> linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-samsun=
-g-
-> soc=40vger.kernel.org; mturquette=40baylibre.com; s.nawrocki=40samsung.co=
-m
-> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com
-> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->=20
-> On 01/10/2024 11:24, Inbaraj E wrote:
-> >>>>>>>> CSI stop streaming through pm_runtime_put system is getting
-> >> halted.
-> >>>>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
-> >>>>>>>> ---
-> >>>>>>>
-> >>>>>>> Please add a fixes tag. Although this is likely a band-aid fix
-> >>>>>>> because marking something critical leaves it enabled forever.
-> >>>>>>
-> >>>>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-> >>>>>> supplying clock even for CMU SFR access of CSI block, so we can't
-> >>>>>> gate this.
-> >>>>>
-> >>>>> Hm, I am not so sure. The CMU driver should just take appropriate
-> clock.
-> >>>>> Sprinkling CLK_CRITICAL looks as substitute of missing clock
-> >>>>> handling/
-> >>>>
-> >>>> As per HW design, PLL_CAM_CSI is responsible for suppling clock to
-> >>>> CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some
-> >>>> of the clock is not handled by any driver but it is required for
-> >>>> CSI to work properly. For example CSI NOC clock. So this is the
-> >>>> reason we are
-> >> marking PLL_CAM_CSI as critical.
-> >>>>
-> >>>
-> >>> This is clock hierarchy for CMU_CAM_CSI block.
-> >>>
-> >>> PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
-> >>> 			=7C
-> >>> 			=7C----> DIVIDER --------> CMU_SFR clock
-> >>> 			=7C
-> >>> 			=7C----> DIVIDER --------> CSI NOC clock.
-> >>>
-> >>
-> >> And what is the problem in adding proper handling in the driver? You
-> >> just described case valid for 99% of SoC components.
-> >
-> > Hi Kryzstof,
-> >
-> > Sorry, but it seems I was not able to explain the issue. Let me add
-> > more
-> > details:
-> > So for CSI IP we have two clocks as ACLK and PCLK which needs to be
-> > handled by the driver during start and stop streaming.
-> >
-> > In BLK_CSI we have CSI IP along with other bunch supporting modules
-> > such as CMU_CSI, NOC_CSI, CSI_SFR. For all these components of BLK_CSI
-> > we have a single top level parent PLL clock as PLL_CAM_CSI.
-> >
-> > Now if we look into CSI driver perspective it needs only ACLK and PCLK
-> > clocks for it's operations. But to access CMU SFRs (including
-> > ACLK/PCLK or any other CMU SFR of BLK_CSI) we need parent clock keep
-> > supplying clocks. While we try to gate ACLK clock, due to propagation
-> > logic of clock gating the CCF scans all the clocks from leaf level to
-> > the parent clock and tries to gate clocks if enable/disable ops is
-> > valid for any such clock.
-> >
-> > Issue here is that we are trying to gate PLL_CAM_CSI which itself is
-> > accessible only when this clock is enabled. In fact none of CMU_SFR
-> > will be accessible as soon as PLL_CAM_CSI is gated. CSI driver is not
-> > intended
->=20
-> Obviously, but your CMU is taking the necessary clock and enabled it so w=
-hat
-> is the problem?
->=20
-> > to gate this PLL clock but only the leaf level clock which is
-> > supplying to CSI IP. So in absence of any alternate source of clock
-> > hierarchy which can supply clock for CMU_CSI we can't gate PLL_CAM_CSI.
-> >
-> > Please let us know if you have any other queries why we are insisting
-> > on marking PLL_CAM_CSI as CRITICAL clock.
->=20
-> This is so far quite obvious - just like in all other cases, you need the=
- top clock
-> taken by proper driver. I don't think you are looking at right drivers an=
-d right
-> problem here.
->=20
-
-Hi Krzysztof,
-
-In this case, platform driver need to get this PLL clock and keep it
-enabled always. As PLL_CAM_CSI is source clock for accessing CMU
-registers of CSI block, and PLL_CAM_CSI itself lies in CSI_CMU,
-driver need to prepare and keep it enabled always. This way other PCLK
-and ACLK clocks can be gated. But the PLL_CAM_CSI which is parent of the
-PCLK and ACLK gate clock won't be disabled. Hope this should not be a
-concern.=20
-
-Regards,
-Inbaraj E
-
-> Best regards,
-> Krzysztof
-
+#regzbot ^introduced: fa4983862e506d
+#regzbot dup: https://bugzilla.kernel.org/show_bug.cgi?id=219370
 
 
