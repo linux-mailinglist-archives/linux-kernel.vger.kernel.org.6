@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-359593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681FC998DD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9693998DFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08D8B3376A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A19FCB2789B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C0519CCEC;
-	Thu, 10 Oct 2024 16:40:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62F3199FBA;
-	Thu, 10 Oct 2024 16:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16F7198A39;
+	Thu, 10 Oct 2024 16:42:13 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E332C1957E4;
+	Thu, 10 Oct 2024 16:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578451; cv=none; b=hXf767hcD4YEsnVJ75jgoPW6NUt4hTAU+knpJanXcTjNDuDVWWiU69L4b3nr2IGJRXrrrVIPZCFnEQnhUqLyBbboXNk4cA19O9j4M1A3WhLgR5qK0HRMBWDwUjCHM6/42J7uUgqPz4c7vo9z71PInhNEoNV3XezSogK73oBoFfU=
+	t=1728578533; cv=none; b=FQOUlD+wAYulWkuGQhVktxHsjWRj1ccNSSXoyt9bJGpVEaQQUHf5PZlHihCiRjciJz4H0hqIKtORu66BDzg2Y3UkOEhQs79ktH3ZLiJQ91ftpbPgXocgYjr5lWe/QSfE6XRfYVkskR1jNm9yiOObTcoqT7ju6JtYaNwyLg4ngfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578451; c=relaxed/simple;
-	bh=7Dki8csyxmG2igPYCbUM3Lwm5qOkWkVdaeHqiZcN3Qo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VaSb6UpiN3DrkNZeoydLzIlYL2fkvy0zO3Qrk7mJnC0Xo4WMvRuH23gEcZxcee8tQK+dTZAxWXDEHv2FI/faCi5h2S+/7vVIpTTvFN1DJhdA+eXNSSjVrvYkz9Qjd45siKaDxcYKWzbcR5txZKbrcNV4Y7ozj5jM4YQS6hEoVQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPb8n1Znnz6K5mr;
-	Fri, 11 Oct 2024 00:40:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 488971400CB;
-	Fri, 11 Oct 2024 00:40:46 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 18:40:45 +0200
-Date: Thu, 10 Oct 2024 17:40:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	"Tanislav, Cosmin" <Cosmin.Tanislav@analog.com>, "Hennerich, Michael"
-	<Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Sa,
- Nuno" <Nuno.Sa@analog.com>, Andy Shevchenko <andy@kernel.org>, David Lechner
-	<dlechner@baylibre.com>, "Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan
-	<mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>, Ivan Mikhaylov
-	<fr0st61te@gmail.com>, "Mike Looijmans" <mike.looijmans@topic.nl>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <20241010174043.00002446@Huawei.com>
-In-Reply-To: <DM6PR03MB4315A13F69DE8B4EFB4030E3F3782@DM6PR03MB4315.namprd03.prod.outlook.com>
-References: <20240912121609.13438-1-ramona.nechita@analog.com>
-	<20240912121609.13438-4-ramona.nechita@analog.com>
-	<20240914180648.592cd69e@jic23-huawei>
-	<DM6PR03MB4315306944DE2E5E8CD3B236F36A2@DM6PR03MB4315.namprd03.prod.outlook.com>
-	<20240928153109.52ff4c5e@jic23-huawei>
-	<DM6PR03MB4315A13F69DE8B4EFB4030E3F3782@DM6PR03MB4315.namprd03.prod.outlook.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728578533; c=relaxed/simple;
+	bh=Dmshi+PkdsB3yfDD62dAlBPBe+ZQIBgl8Rq8tKU7WZg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F1yEPeRNMBNUy/SzCWfAJGf3WKYtgB1OI+DjnncIjnsnfZEl9h9wb7ma3rMzFNikxRPz00ZILrzLyNwJ0njsXQ1E44bMsU7/AxiEn04pEKHuPuLazTSdDFbfM4C2qfLfgeJA/rHdZKjPnLn5PWjCU419h4H0hCI51a+XKDEfjMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.11,193,1725289200"; 
+   d="scan'208";a="221574508"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Oct 2024 01:42:09 +0900
+Received: from mulinux.home (unknown [10.226.92.34])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BCA844025507;
+	Fri, 11 Oct 2024 01:41:57 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3] irqchip/renesas-rzg2l: Fix missing put_device
+Date: Thu, 10 Oct 2024 17:41:55 +0100
+Message-Id: <20241010164155.808931-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Oct 2024 14:35:52 +0000
-"Nechita, Ramona" <Ramona.Nechita@analog.com> wrote:
+rzg2l_irqc_common_init calls of_find_device_by_node, but the
+corresponding put_device call is missing.
 
-> Hello Jonathan,
-> 
-> >> >> +
-> >> >> +	ret = ad7779_reset(indio_dev, reset_gpio);
-> >> >> +	if (ret)
-> >> >> +		return ret;
-> >> >> +
-> >> >> +	ad7779_powerup(st, start_gpio);
-> >> >> +	if (ret)
-> >> >> +		return ret;  
-> >> >What powers the device down again if we hit an error?
-> >> >
-> >> >Probably need a devm_add_action_or_reset() or if it self powers down may a comment on that.    
-> >> 
-> >> In the powerup function there are only some register writes and the 
-> >> start gpio is only a synchronization pulse (perhaps the name powerup is not very appropriate), would an action or reset be necessary in this case? Since the regulators are not used in the driver, should there be a function disabling them anyway?
-> >>   
-> >If there is nothing useful to do indeed not but when I see a power up, I rather expect a power down.  Is there anything that can do that or is it a case of it will go to sleep anyway for some other reason?  
-> 
-> I don't think there would be anything to do in a powerdown function specifically, but I could rename the powerup function to "_config" or something similar, to make it more intuitive.
-ok. That will at least make me less suspicious when I read this
-after forgetting all about it ;)
+Make sure we call put_device when failing.
 
-thanks,
+"make coccicheck" will complain about a missing put_device before
+successfully returning from rzg2l_irqc_common_init, however, that's
+a false positive.
 
-Jonathan
+Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+---
 
-> 
-> >  
-> Best Regards,
-> Ramona
-> 
-> 
+v2->v3:
+* Fixed typo in commit log (rzv2h_icu_init replaced with rzg2l_irqc_common_init).
+
+v1->v2:
+* Dropped put_device from the successful path, and added a comment to prevent
+  others from acting upon make coccicheck output.
+
+ drivers/irqchip/irq-renesas-rzg2l.c | 32 +++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index 693ff285ca2c..040463e3b39c 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -542,33 +542,40 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 	parent_domain = irq_find_host(parent);
+ 	if (!parent_domain) {
+ 		dev_err(&pdev->dev, "cannot find parent domain\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto put_dev;
+ 	}
+ 
+ 	rzg2l_irqc_data = devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
+-	if (!rzg2l_irqc_data)
+-		return -ENOMEM;
++	if (!rzg2l_irqc_data) {
++		ret = -ENOMEM;
++		goto put_dev;
++	}
+ 
+ 	rzg2l_irqc_data->irqchip = irq_chip;
+ 
+ 	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
+-	if (IS_ERR(rzg2l_irqc_data->base))
+-		return PTR_ERR(rzg2l_irqc_data->base);
++	if (IS_ERR(rzg2l_irqc_data->base)) {
++		ret = PTR_ERR(rzg2l_irqc_data->base);
++		goto put_dev;
++	}
+ 
+ 	ret = rzg2l_irqc_parse_interrupts(rzg2l_irqc_data, node);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
+-		return ret;
++		goto put_dev;
+ 	}
+ 
+ 	resetn = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+-	if (IS_ERR(resetn))
+-		return PTR_ERR(resetn);
++	if (IS_ERR(resetn)) {
++		ret = PTR_ERR(resetn);
++		goto put_dev;
++	}
+ 
+ 	ret = reset_control_deassert(resetn);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n", ret);
+-		return ret;
++		goto put_dev;
+ 	}
+ 
+ 	pm_runtime_enable(&pdev->dev);
+@@ -591,6 +598,10 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 
+ 	register_syscore_ops(&rzg2l_irqc_syscore_ops);
+ 
++	/*
++	 * coccicheck complains about a missing put_device call before returning, but it's a false
++	 * positive. We still need &pdev->dev after successfully returning from this function.
++	 */
+ 	return 0;
+ 
+ pm_put:
+@@ -598,6 +609,9 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+ 	reset_control_assert(resetn);
++put_dev:
++	put_device(&pdev->dev);
++
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
 
 
