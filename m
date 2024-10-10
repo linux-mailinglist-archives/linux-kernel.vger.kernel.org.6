@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-358966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAA29985D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:22:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A489985DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B0DB281B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486271C21C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A16A1C4626;
-	Thu, 10 Oct 2024 12:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C301C4623;
+	Thu, 10 Oct 2024 12:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Eota9niy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OWhiSjbv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Eota9niy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OWhiSjbv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/3OhUGf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198491C461D;
-	Thu, 10 Oct 2024 12:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E331BDA8D;
+	Thu, 10 Oct 2024 12:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728562942; cv=none; b=W0WFysWwELE2bRuw217vQsr84+9x7j4b1NRZD7H8rwDtXnO+mIwCK9KJLsNJhpPQ0D5O0lTzqA2pVVwsH9RK95O5GC5Btqy+jlUPp2LVvBXMvGJwg+x3FdRUiofSidW4vmeDCSS6sXWFCh12gIW2G8iHH8hgvT9envSYoa079GM=
+	t=1728563105; cv=none; b=M33AxKKW7E5RHCZDMurMQQyIzlaa54hpR59lCRdlwotakrvHZtZVcOvIvzQ7G7zG1tj4t4OEKIH/euEMLjYBSn4YdpB10v6XtZG1rrSp1CjFc/ZoAQCy/JcQ6AfI7pJ6D9wOSAVq5u5SoUfsuUiQAXmul2F8zSmhR3uX5DfFd/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728562942; c=relaxed/simple;
-	bh=pF9sqy4VpT1yiIdmzxnljherPZdxbmq9WM4sPylqjjQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nvxPnlgTE916Vm0NyXdKE1e8iUasxHckMY+6hq0xeCK3nCNP4ri8h4XCm/V4jDDCkuKwviU6Tnkn05aJmk7PgmOLUDPFjrZH1w50RuBnTBWHE7yPmMB5r6xCY0NqK2zl6+ae5YzCBWl2ND106QsIPJ2XrfuchTRBvFHaUdHikmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Eota9niy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OWhiSjbv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Eota9niy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OWhiSjbv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5668F1FE4C;
-	Thu, 10 Oct 2024 12:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728562937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ei8nontnfrkxnbvy1eKc0pyW434N6/D26yPcYL3+WQA=;
-	b=Eota9niy7pEO05YzyPiSD6m5UjI41uyTRhUu90ZvkqQQusfdHVizDns+9esK211rVPIb21
-	SBXAGQKv1tZU8F0yclNliuTAMxzAdA+oRXR46eMFzZJdkzvvMgwopn0GDWovu1C7B5IqLT
-	uI+T56nOKsmf0tRwTR1Jk/H8OV37IPQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728562937;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ei8nontnfrkxnbvy1eKc0pyW434N6/D26yPcYL3+WQA=;
-	b=OWhiSjbvt7UNO77l3ufCUSfwDrVSTqbZ0Jh1oSMBSoZ8rD/avhoIrPOKo36Kve/pWKEBS4
-	QLLSafwcNMJDcxBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Eota9niy;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=OWhiSjbv
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728562937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ei8nontnfrkxnbvy1eKc0pyW434N6/D26yPcYL3+WQA=;
-	b=Eota9niy7pEO05YzyPiSD6m5UjI41uyTRhUu90ZvkqQQusfdHVizDns+9esK211rVPIb21
-	SBXAGQKv1tZU8F0yclNliuTAMxzAdA+oRXR46eMFzZJdkzvvMgwopn0GDWovu1C7B5IqLT
-	uI+T56nOKsmf0tRwTR1Jk/H8OV37IPQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728562937;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ei8nontnfrkxnbvy1eKc0pyW434N6/D26yPcYL3+WQA=;
-	b=OWhiSjbvt7UNO77l3ufCUSfwDrVSTqbZ0Jh1oSMBSoZ8rD/avhoIrPOKo36Kve/pWKEBS4
-	QLLSafwcNMJDcxBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22C131370C;
-	Thu, 10 Oct 2024 12:22:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uioWB/nGB2fdPgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 10 Oct 2024 12:22:17 +0000
-Date: Thu, 10 Oct 2024 14:23:13 +0200
-Message-ID: <87set4170u.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	kl@kl.wtf,
-	k.kosik@outlook.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: usb-audio: Use snprintf instead of sprintf in build_mixer_unit_ctl
-In-Reply-To: <20241009070944.6937-1-zhujun2@cmss.chinamobile.com>
-References: <20241009070944.6937-1-zhujun2@cmss.chinamobile.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1728563105; c=relaxed/simple;
+	bh=HizpD/yKlQdyBbr2TvLEEcfUYqeKG1QhLvslstH1G+w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LlRqCvAwD5yFcc31Rzte3qdITL1fg1qVj0LPRxof6TUucYKqYD5BNOYqrfyw6fSgCFGtTj52oW0tk5hmIDMPY8FyAMNzm/VkyJ3Jvhr+0DSTNri4w7vf5vT1TZ/gbjrXFE24N4qfwxx2WS3PqVeLXcJnkQqi3MbII23krWh37zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/3OhUGf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4301BC4CECE;
+	Thu, 10 Oct 2024 12:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728563105;
+	bh=HizpD/yKlQdyBbr2TvLEEcfUYqeKG1QhLvslstH1G+w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=n/3OhUGfZxCzHMMJ3r6UpqfL8CB69fkt1cYVONODixvCisO5jo5tUbjXiAB2SjyNI
+	 /toprhUD1oBAdkX1JJaCClmlpXRpIEko+aCB6SiAPO0f15Bq9S8eWnGD528g498OwJ
+	 ixEFtVA4oCvKv0mxVkG8w5JMNyfmrK9oQpWzMrpGOcs+rPCBUJ7vpzPCWtr+OWQNJQ
+	 uFNlgUv4Z+xHIqUn66pI8wdFggYzs+y4Jum387mp5i4VE907wAwPo9piJMZfgEm39G
+	 yqem3gme9VtELLpGrmUNhIzjdX/3hQM5fAG9qybYQ/ZJ6ulnoD8gj1QwUdcfUATSFs
+	 uFFjcstbVAvUw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Anna-Maria Behnsen <anna-maria@linutronix.de>,  Frederic Weisbecker
+ <frederic@kernel.org>,  Thomas Gleixner <tglx@linutronix.de>,  Boqun Feng
+ <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6?=
+ =?utf-8?Q?rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  Alice Ryhl <aliceryhl@google.com>,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/14] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <51f18817-1ebd-451a-bc6e-e298a9148001@proton.me> (Benno Lossin's
+	message of "Mon, 23 Sep 2024 16:59:47 +0000")
+References: <20240917222739.1298275-1-a.hindborg@kernel.org>
+	<20240917222739.1298275-3-a.hindborg@kernel.org>
+	<Wohby8PLjQeZ47sXKGeWKOxdA2ShTjjvqOM6xWzhJY1aZ-SYk9TCDAnZN2EqiWuJUKwPKoFCsCofDHjtfeG--w==@protonmail.internalid>
+	<f502f6c6-40b7-4ec4-8d0c-09adb0df1a30@proton.me>
+ <878qvojj0o.fsf@kernel.org>
+	<pvhILkKRTj8T2Ks3off5HLMqewNM_X192WV4J5-nnC4Uu0o9G8-Qk5Tl9bQxsqVCw4QHmeJii7mCK2VorN-xcw==@protonmail.internalid>
+	<33c65715-3af5-44f9-93c5-149d07a4c503@proton.me>
+ <87ldziqqeo.fsf@kernel.org>
+	<51f18817-1ebd-451a-bc6e-e298a9148001@proton.me>
+Date: Thu, 10 Oct 2024 14:24:53 +0200
+Message-ID: <87zfnckuwa.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 5668F1FE4C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[outlook.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.com,perex.cz,kl.wtf,outlook.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Wed, 09 Oct 2024 09:09:44 +0200,
-Zhu Jun wrote:
-> 
-> Simplified code by removing redundant assignment of sprintf return value
-> and improved safety by replacing sprintf with snprintf.
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Benno Lossin <benno.lossin@proton.me> writes:
 
-Thanks, applied now.
+> On 23.09.24 18:35, Andreas Hindborg wrote:
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>> On 19.09.24 07:43, Andreas Hindborg wrote:
+>>>>>> +    /// until the timer is unarmed and the callback has completed.
+>>>>>> +    ///
+>>>>>> +    /// Note: It must be safe to leak the handle.
+>>>>>> +    type TimerHandle: TimerHandle;
+>>>>>
+>>>>> Why does this need to be an associated type? Couldn't we have a
+>>>>> `TimerHandle<T>` struct? The schedule function below could then return
+>>>>> `TimerHandle<Self>`.
+>>>>
+>>>> At one point, I had some cycles in trait resolution. Moving generics to
+>>>> associated types solved that issue. Maybe this can be changed to a
+>>>> generic. But are generics preferred over associated types for some
+>>>> reason?
+>>>
+>>> The associated type is more complicated IMO, because then every
+>>> implementer of the trait needs to create one. If we can avoid that, I
+>>> would prefer a generic type.
+>> 
+>> When you say create, you mean specify?
+>
+> Yes.
+>
+>> Users would not invent their own type to put here, they would use the
+>> types defined by the `hrtimer` module in later patches.
+>
+> I mean the implementers of this trait, not the users of the trait. You
+> define an `ArcTimerHandle`, `PinTimerHandle` and a `PinMutTimerHandle`
+> in this series. I think we can avoid that using a single generic struct.
+
+It is not immediately clear for me how to do this. For `Box` we have:
+
+pub struct BoxTimerHandle<U>
+where
+    U: HasTimer<U>,
+{
+    pub(crate) inner: *mut U,
+}
+
+but for `Pin<&U>` we have
+
+pub struct PinTimerHandle<'a, U>
+where
+    U: HasTimer<U>,
+{
+    pub(crate) inner: Pin<&'a U>,
+}
+
+How can these be combined to a single generic struct?
 
 
-Takashi
+Best regards,
+Andreas
+
 
