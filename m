@@ -1,449 +1,162 @@
-Return-Path: <linux-kernel+bounces-359047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925779986C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:56:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A334C9986C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11ED7281F7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:56:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21F71C23E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25CC1C8FC7;
-	Thu, 10 Oct 2024 12:55:41 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8401C6F76;
+	Thu, 10 Oct 2024 12:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIuwBJgx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087161BD008;
-	Thu, 10 Oct 2024 12:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359271C6F4F;
+	Thu, 10 Oct 2024 12:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564941; cv=none; b=S3ro0gTArD9+r4SdFH4P9XpLUTVdz7zcI5q4yL84iGNaaFCfotyr0+7jwBo8yiIMOzvct0oY7KNmC48pBIwGXkRpAvGiId3ZWH+p2fBaNqedEC9q8TAF92zVGokTBQ0pHT2MnMn8ho9rsh72C3VaSrGVQp2YxdqZ8fQ58wsQZaM=
+	t=1728564955; cv=none; b=I9QBJQG9AEWb6xE+HrXFljlxsVUXbDLR25xFXRMhFOvHgEUHL98PIqKnE4Lc/u2XvH1ETmkha6yHjJNsjWU1nBIAMC3a1wvOzRaNZHsZ0aYi9OGx4rDxGG13EC9wp14/CDnE+rg9bWNnyxb1YwBbSyrimBykvut4aKnLzkJaOkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564941; c=relaxed/simple;
-	bh=M4Y/JsjcOxvqpP8YEu/zrduEd/nsS2h37yg+k6SzxsI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDDQ1imJWcZMctWlZWLjUe0cxjmxbsGPq01Abhi7XSRnR9JCyRdLfljbfqU3S5cqBfn3v1n5e9ziPywhtAWo2EKPGol2ub3RISdxebnnrMDC1XZK1MpK1qE3KeoGhspxumFN6l/9kbFC2tSyjhuaMDqkYPtDnKDkF9H/uxTMZ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1syshY-000000003BK-3nRY;
-	Thu, 10 Oct 2024 12:55:33 +0000
-Date: Thu, 10 Oct 2024 13:55:29 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Xu Liang <lxu@maxlinear.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Robert Marko <robimarko@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH net-next v2 5/5] net: phy: intel-xway: add support for PHY
- LEDs
-Message-ID: <81f4717ab9acf38f3239727a4540ae96fd01109b.1728558223.git.daniel@makrotopia.org>
-References: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1728564955; c=relaxed/simple;
+	bh=q3OKxlVE864uk0NRq8J2IEfOmb/Be2vhnlZ9CAK/heE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDp2CAFzN/N8xrJqvalg3qFVJ6Lpm9wGgLM+bjKIWBOJZAt1e3Z9GcmgNHI3ScrVfwypJ87Bz/RGqe/OCR+A5i93sbz4BEwcH3NmlNjziu4r53jg/SaipG9HfMZrcqmJeCA80ZZyr8ikVFeIRJSCjq4L4ujUCFmFxg0U6FM1IEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIuwBJgx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69279C4CECC;
+	Thu, 10 Oct 2024 12:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728564954;
+	bh=q3OKxlVE864uk0NRq8J2IEfOmb/Be2vhnlZ9CAK/heE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vIuwBJgx/21YS9C/CWU8amD+rvuvlt9wsMz8NVBPA8uPAz/ZP0aeWVhPja1smrAeQ
+	 2LBr9Abn0wHokPaJqvRffE/tL5L51caNq2m755LfSoduakYLa4AM6sZNJc8434mg+/
+	 8WW4dLcKtGj+/D94ZETEpMFnIzkxYLxPAFQbBtJe/tYww70G4Yd1fmkrqajRCe5kc+
+	 /Y8yXVNx5pCgN71AEL9WIM8nxy6Is8USQksgSEFVi1S58yt0z1h+wEIprDXPcmwwCs
+	 59F2OnRWbV1dsSIv4jF5Nck7inr2JX5Zy/DIuU/jNHhjTeQJn8CzM/2uyadoelbR9b
+	 ZZBK96tIZeNSA==
+Date: Thu, 10 Oct 2024 14:55:52 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rcu/nocb: Use switch/case on NOCB timer state machine
+Message-ID: <ZwfO2Llzeyh7En-N@localhost.localdomain>
+References: <20241002145738.38226-1-frederic@kernel.org>
+ <20241002145738.38226-2-frederic@kernel.org>
+ <ZweNaSTMQOqXRIIN@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZweNaSTMQOqXRIIN@boqun-archlinux>
 
-The intel-xway PHY driver predates the PHY LED framework and currently
-initializes all LED pins to equal default values.
+Le Thu, Oct 10, 2024 at 01:16:41AM -0700, Boqun Feng a écrit :
+> On Wed, Oct 02, 2024 at 04:57:36PM +0200, Frederic Weisbecker wrote:
+> > It's more convenient to benefit from the fallthrough feature of
+> > switch / case to handle the timer state machine. Also a new state is
+> > about to be added that will take advantage of it.
+> > 
+> > No intended functional change.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >  kernel/rcu/tree_nocb.h | 33 +++++++++++++++++++++++----------
+> >  1 file changed, 23 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> > index 97b99cd06923..2fb803f863da 100644
+> > --- a/kernel/rcu/tree_nocb.h
+> > +++ b/kernel/rcu/tree_nocb.h
+> > @@ -271,22 +271,35 @@ static void wake_nocb_gp_defer(struct rcu_data *rdp, int waketype,
+> >  
+> >  	raw_spin_lock_irqsave(&rdp_gp->nocb_gp_lock, flags);
+> >  
+> > -	/*
+> > -	 * Bypass wakeup overrides previous deferments. In case of
+> > -	 * callback storms, no need to wake up too early.
+> > -	 */
+> > -	if (waketype == RCU_NOCB_WAKE_LAZY &&
+> > -	    rdp->nocb_defer_wakeup == RCU_NOCB_WAKE_NOT) {
+> 
+> In the old code, if this "if" branch is not taken,
+> 
+> > -		mod_timer(&rdp_gp->nocb_timer, jiffies + rcu_get_jiffies_lazy_flush());
+> > -		WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
+> > -	} else if (waketype == RCU_NOCB_WAKE_BYPASS) {
+> > +	switch (waketype) {
+> > +	case RCU_NOCB_WAKE_BYPASS:
+> > +		/*
+> > +		 * Bypass wakeup overrides previous deferments. In case of
+> > +		 * callback storms, no need to wake up too early.
+> > +		 */
+> >  		mod_timer(&rdp_gp->nocb_timer, jiffies + 2);
+> >  		WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
+> > -	} else {
+> 
+> ... it will end up in this else branch, however,
+> 
+> > +		break;
+> > +	case RCU_NOCB_WAKE_LAZY:
+> > +		if (rdp->nocb_defer_wakeup == RCU_NOCB_WAKE_NOT) {
+> > +			mod_timer(&rdp_gp->nocb_timer, jiffies + rcu_get_jiffies_lazy_flush());
+> > +			WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
+> > +		}
+> > +		/*
+> > +		 * If the timer is already armed, a non-lazy enqueue may have happened
+> > +		 * in-between. Don't delay it and fall-through.
+> > +		 */
+> > +		break;
+> 
+> ... here we break instead of fallthrough when waketype ==
+> RCU_NOCB_WAKE_LAZY and rdp->nocb_defer_wakeup != RCU_NOCB_WAKE_NOT, this
+> seems to me a functional change, is this intented?
 
-Add PHY LED functions to the drivers and don't set default values if
-LEDs are defined in device tree.
+You unveiled my secret plans!
 
-According the datasheets 3 LEDs are supported on all Intel XWAY PHYs.
+I think it was intended at the last minute, because it "fixes" some rare case
+where RCU_NOCB_WAKE_LAZY can be spuriously set over a RCU_NOCB_WAKE. The effect
+shouldn't be too bad because the timer still fires in one jiffy but still
+this is confusing.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-v2: use dedicated bools force_active_high and force_active_low to make
-    xway_gphy_led_polarity_set() more robust
+So saying in the changelog "No functional change intended" was not intended.
 
- drivers/net/phy/intel-xway.c | 253 +++++++++++++++++++++++++++++++++--
- 1 file changed, 244 insertions(+), 9 deletions(-)
+I'll refactor the changelogs and comments.
 
-diff --git a/drivers/net/phy/intel-xway.c b/drivers/net/phy/intel-xway.c
-index 3c032868ef04..0e5454b203c4 100644
---- a/drivers/net/phy/intel-xway.c
-+++ b/drivers/net/phy/intel-xway.c
-@@ -151,6 +151,13 @@
- #define XWAY_MMD_LED3H			0x01E8
- #define XWAY_MMD_LED3L			0x01E9
- 
-+#define XWAY_GPHY_MAX_LEDS		3
-+#define XWAY_GPHY_LED_INV(idx)		BIT(12 + (idx))
-+#define XWAY_GPHY_LED_EN(idx)		BIT(8 + (idx))
-+#define XWAY_GPHY_LED_DA(idx)		BIT(idx)
-+#define XWAY_MMD_LEDxH(idx)		(XWAY_MMD_LED0H + 2 * (idx))
-+#define XWAY_MMD_LEDxL(idx)		(XWAY_MMD_LED0L + 2 * (idx))
-+
- #define PHY_ID_PHY11G_1_3		0x030260D1
- #define PHY_ID_PHY22F_1_3		0x030260E1
- #define PHY_ID_PHY11G_1_4		0xD565A400
-@@ -229,20 +236,12 @@ static int xway_gphy_rgmii_init(struct phy_device *phydev)
- 			  XWAY_MDIO_MIICTRL_TXSKEW_MASK, val);
- }
- 
--static int xway_gphy_config_init(struct phy_device *phydev)
-+static int xway_gphy_init_leds(struct phy_device *phydev)
- {
- 	int err;
- 	u32 ledxh;
- 	u32 ledxl;
- 
--	/* Mask all interrupts */
--	err = phy_write(phydev, XWAY_MDIO_IMASK, 0);
--	if (err)
--		return err;
--
--	/* Clear all pending interrupts */
--	phy_read(phydev, XWAY_MDIO_ISTAT);
--
- 	/* Ensure that integrated led function is enabled for all leds */
- 	err = phy_write(phydev, XWAY_MDIO_LED,
- 			XWAY_MDIO_LED_LED0_EN |
-@@ -276,6 +275,26 @@ static int xway_gphy_config_init(struct phy_device *phydev)
- 	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED2H, ledxh);
- 	phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LED2L, ledxl);
- 
-+	return 0;
-+}
-+
-+static int xway_gphy_config_init(struct phy_device *phydev)
-+{
-+	struct device_node *np = phydev->mdio.dev.of_node;
-+	int err;
-+
-+	/* Mask all interrupts */
-+	err = phy_write(phydev, XWAY_MDIO_IMASK, 0);
-+	if (err)
-+		return err;
-+
-+	/* Use default LED configuration if 'leds' node isn't defined */
-+	if (!of_get_child_by_name(np, "leds"))
-+		xway_gphy_init_leds(phydev);
-+
-+	/* Clear all pending interrupts */
-+	phy_read(phydev, XWAY_MDIO_ISTAT);
-+
- 	err = xway_gphy_rgmii_init(phydev);
- 	if (err)
- 		return err;
-@@ -347,6 +366,172 @@ static irqreturn_t xway_gphy_handle_interrupt(struct phy_device *phydev)
- 	return IRQ_HANDLED;
- }
- 
-+static int xway_gphy_led_brightness_set(struct phy_device *phydev,
-+					u8 index, enum led_brightness value)
-+{
-+	int ret;
-+
-+	if (index >= XWAY_GPHY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	/* clear EN and set manual LED state */
-+	ret = phy_modify(phydev, XWAY_MDIO_LED,
-+			 ((value == LED_OFF) ? XWAY_GPHY_LED_EN(index) : 0) |
-+			 XWAY_GPHY_LED_DA(index),
-+			 (value == LED_OFF) ? 0 : XWAY_GPHY_LED_DA(index));
-+	if (ret)
-+		return ret;
-+
-+	/* clear HW LED setup */
-+	if (value == LED_OFF) {
-+		ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDxH(index), 0);
-+		if (ret)
-+			return ret;
-+
-+		return phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDxL(index), 0);
-+	} else {
-+		return 0;
-+	}
-+}
-+
-+static const unsigned long supported_triggers = (BIT(TRIGGER_NETDEV_LINK) |
-+						 BIT(TRIGGER_NETDEV_LINK_10) |
-+						 BIT(TRIGGER_NETDEV_LINK_100) |
-+						 BIT(TRIGGER_NETDEV_LINK_1000) |
-+						 BIT(TRIGGER_NETDEV_RX) |
-+						 BIT(TRIGGER_NETDEV_TX));
-+
-+static int xway_gphy_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+					 unsigned long rules)
-+{
-+	if (index >= XWAY_GPHY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	/* activity triggers are not possible without combination with a link
-+	 * trigger.
-+	 */
-+	if (rules & (BIT(TRIGGER_NETDEV_RX) | BIT(TRIGGER_NETDEV_TX)) &&
-+	    !(rules & (BIT(TRIGGER_NETDEV_LINK) |
-+		       BIT(TRIGGER_NETDEV_LINK_10) |
-+		       BIT(TRIGGER_NETDEV_LINK_100) |
-+		       BIT(TRIGGER_NETDEV_LINK_1000))))
-+		return -EOPNOTSUPP;
-+
-+	/* All other combinations of the supported triggers are allowed */
-+	if (rules & ~supported_triggers)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+
-+static int xway_gphy_led_hw_control_get(struct phy_device *phydev, u8 index,
-+					unsigned long *rules)
-+{
-+	int lval, hval;
-+
-+	if (index >= XWAY_GPHY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	hval = phy_read_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDxH(index));
-+	if (hval < 0)
-+		return hval;
-+
-+	lval = phy_read_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDxL(index));
-+	if (lval < 0)
-+		return lval;
-+
-+	if (hval & XWAY_MMD_LEDxH_CON_LINK10)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_10);
-+
-+	if (hval & XWAY_MMD_LEDxH_CON_LINK100)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_100);
-+
-+	if (hval & XWAY_MMD_LEDxH_CON_LINK1000)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_1000);
-+
-+	if ((hval & XWAY_MMD_LEDxH_CON_LINK10) &&
-+	    (hval & XWAY_MMD_LEDxH_CON_LINK100) &&
-+	    (hval & XWAY_MMD_LEDxH_CON_LINK1000))
-+		*rules |= BIT(TRIGGER_NETDEV_LINK);
-+
-+	if (lval & XWAY_MMD_LEDxL_PULSE_TXACT)
-+		*rules |= BIT(TRIGGER_NETDEV_TX);
-+
-+	if (lval & XWAY_MMD_LEDxL_PULSE_RXACT)
-+		*rules |= BIT(TRIGGER_NETDEV_RX);
-+
-+	return 0;
-+}
-+
-+static int xway_gphy_led_hw_control_set(struct phy_device *phydev, u8 index,
-+					unsigned long rules)
-+{
-+	u16 hval = 0, lval = 0;
-+	int ret;
-+
-+	if (index >= XWAY_GPHY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_10))
-+		hval |= XWAY_MMD_LEDxH_CON_LINK10;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_100))
-+		hval |= XWAY_MMD_LEDxH_CON_LINK100;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_1000))
-+		hval |= XWAY_MMD_LEDxH_CON_LINK1000;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_TX))
-+		lval |= XWAY_MMD_LEDxL_PULSE_TXACT;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_RX))
-+		lval |= XWAY_MMD_LEDxL_PULSE_RXACT;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDxH(index), hval);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, XWAY_MMD_LEDxL(index), lval);
-+	if (ret)
-+		return ret;
-+
-+	return phy_set_bits(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_EN(index));
-+}
-+
-+static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
-+				      unsigned long modes)
-+{
-+	bool force_active_low = false, force_active_high = false;
-+	u32 mode;
-+
-+	if (index >= XWAY_GPHY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
-+		switch (mode) {
-+		case PHY_LED_ACTIVE_LOW:
-+			force_active_low = true;
-+			break;
-+		case PHY_LED_ACTIVE_HIGH:
-+			force_active_high = true;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (force_active_low)
-+		return phy_set_bits(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index));
-+
-+	if (force_active_high)
-+		return phy_clear_bits(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index));
-+
-+	unreachable();
-+}
-+
- static struct phy_driver xway_gphy[] = {
- 	{
- 		.phy_id		= PHY_ID_PHY11G_1_3,
-@@ -359,6 +544,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY22F_1_3,
- 		.phy_id_mask	= 0xffffffff,
-@@ -370,6 +560,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY11G_1_4,
- 		.phy_id_mask	= 0xffffffff,
-@@ -381,6 +576,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY22F_1_4,
- 		.phy_id_mask	= 0xffffffff,
-@@ -392,6 +592,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY11G_1_5,
- 		.phy_id_mask	= 0xffffffff,
-@@ -402,6 +607,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY22F_1_5,
- 		.phy_id_mask	= 0xffffffff,
-@@ -412,6 +622,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY11G_VR9_1_1,
- 		.phy_id_mask	= 0xffffffff,
-@@ -422,6 +637,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY22F_VR9_1_1,
- 		.phy_id_mask	= 0xffffffff,
-@@ -432,6 +652,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY11G_VR9_1_2,
- 		.phy_id_mask	= 0xffffffff,
-@@ -442,6 +667,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	}, {
- 		.phy_id		= PHY_ID_PHY22F_VR9_1_2,
- 		.phy_id_mask	= 0xffffffff,
-@@ -452,6 +682,11 @@ static struct phy_driver xway_gphy[] = {
- 		.config_intr	= xway_gphy_config_intr,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
-+		.led_brightness_set = xway_gphy_led_brightness_set,
-+		.led_hw_is_supported = xway_gphy_led_hw_is_supported,
-+		.led_hw_control_get = xway_gphy_led_hw_control_get,
-+		.led_hw_control_set = xway_gphy_led_hw_control_set,
-+		.led_polarity_set = xway_gphy_led_polarity_set,
- 	},
- };
- module_phy_driver(xway_gphy);
--- 
-2.47.0
+Thanks.
+
+> 
+> Regards,
+> Boqun
+> 
+> > +	case RCU_NOCB_WAKE:
+> > +		fallthrough;
+> > +	case RCU_NOCB_WAKE_FORCE:
+> >  		if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
+> >  			mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
+> >  		if (rdp_gp->nocb_defer_wakeup < waketype)
+> >  			WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
+> > +		break;
+> > +	default:
+> > +		WARN_ON_ONCE(1);
+> >  	}
+> >  
+> >  	raw_spin_unlock_irqrestore(&rdp_gp->nocb_gp_lock, flags);
+> > -- 
+> > 2.46.0
+> > 
 
