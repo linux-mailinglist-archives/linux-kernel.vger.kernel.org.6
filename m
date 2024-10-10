@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-359591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFFD998DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FAE998DAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36A13281E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6DE283DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9C619C547;
-	Thu, 10 Oct 2024 16:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DF919C57D;
+	Thu, 10 Oct 2024 16:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="qPsGo8OS"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Jf4zudzU"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB7C19A285
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54AD19C56F
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578440; cv=none; b=GCwNv3xmEpCMIEWrwWt6KQaaFPqucKsx+C9YgELKdTq4ZITc8ymLZZG1Q7YGKHq8wMPbRfO3ZAXP9FAQPUQZ25YroxFdnxRYRo2pbW8SXSbGBnFEGmQwYM/yqDShy7u79GhdWvnbQMaNkPJV2gtMCWpMKD8x43w5QTaRidepQXQ=
+	t=1728578445; cv=none; b=Xi9RMcYGJqCGnXP9aX7TbGtbGws9nlXgsmfJubk5PHFXal2VW9aNcJSdyDTReU3iOH9tBJ2N6qQyKT/+QaZKjaG38WPAylb8Do7FcbSDRTHI3xgFXqzij07xLUgqSTpzja040EsV+HWGRy7O910760a957bDGcgwga3K2Yy/z4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578440; c=relaxed/simple;
-	bh=emRD/yhiwJNd5I3pgU02YmFVVUfHmQHkMVwo0yCFw0I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tTfWXNeNxI5VdkdOTHHLyI4IjEdmRpmbUCPsez5F961cJUb6F0UeEtlkRJcTA7CKJdjftDyjEkZ6naLWJy6moTC4Oy5MsQvoh/Ekp0JBwA/iMEs313qVuz1BXTovBR4H4zvACfN473GhPJOlKVUgHT4ztjqIvEpMUpVDu0/qUMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=qPsGo8OS; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-8354599fd8aso44154939f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:40:37 -0700 (PDT)
+	s=arc-20240116; t=1728578445; c=relaxed/simple;
+	bh=1v4s7mTEnjH3CXjUOO8maI7isaTxaSFEhk9NStrXkfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fL6PkYd2fQSJxNZShBgJdV5ACBX+2gXfNMC19gNmof3weaQBy5VX1JI8oxNAHshNiY9GR1PbODcZy8eKexjeFM4ttodqmdlEiWVU2n6EfRkAfGDowFsKTy5F2pY8pmxNsz6CvRlLWoEzP2leLik8aCWA0uShwNqq0hq1iQ4MMe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Jf4zudzU; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e0cd1f3b6so900596b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:40:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728578436; x=1729183236; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xyEsB+OCzLx40GaxNsnDi2QdTHIQWPihWeYETwMhlxk=;
-        b=qPsGo8OS6Sl9xhrIuNpN0TgusVnXqpRlx8G6KM4xOP3rmGq6KNhd2dLTBc8bTLvCON
-         ZcGF4eEDaqB+HnXpj4WOzJdaYRGVv5nVUpS2ZOc3WbYUggza6ON0JLTMYDwGCOcPJOqh
-         OcO0IUsHzf1w5nm4eEh+JxKcmU9vvHHPFAvILGRN0HOioG+vfe5FJxUiOXI+9hFcz8Xk
-         9PveRexzB3hlgV40sasC/nDXvLD7B9rzKq6qqEjLlgOd5eVEb0Q5qZ2EnpbH/2jqQh9N
-         e8vsozbuh2Odep9EnabCUvksxlNiRLC1Mr7rl5ZjMHv5+Rt7ZjBXUr5d4Gh76aKklmZE
-         h1mg==
+        d=fastly.com; s=google; t=1728578443; x=1729183243; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NiQxZ4aNJmS0qPABBP4LcVTamG/dKSm/ne+/UKqykEM=;
+        b=Jf4zudzUc2Zvw3P1YBQG0UE+niQPyynqAZr6Rif/GaH0YZbo1HT8CvqMfuLAHaodE1
+         7tl0fU+VppEWpuB31C+uYAwzDeh0kfspdt4rg5uw+WPkmEkoC4LJwmlNbRnlgnr9RhFW
+         ZNnEkUM2cVqwu2w73elogcYIEvKE2dU1KYr+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728578436; x=1729183236;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xyEsB+OCzLx40GaxNsnDi2QdTHIQWPihWeYETwMhlxk=;
-        b=lOGXZxIrKNCrRa8gS99kZr4LCVtiY2gPCHshFBZmh9l8Xc/Xnry9iA6HhVxXiz0Guo
-         e2IwucK4YlVJpAgnnR4fxY0x+Tvyc1upOyoV3LOcnk8KjXONaBgWv3jr2f0wOeiLpu+1
-         L9FLOzFZg7bIabArGCDYCYtrt6/ChNrJJW5Z+IVn3QVKKkhHtKFSOLdVltq6kWI6inHF
-         cOqXhwxFhOe7tc6rCjaB8s8/5is8MpKdZs04VJQzUO2FpIa4R0zeiDHihY6CWpGd9KBX
-         GBw6nS139Op8sQJQ2jRuwZVFXB8NHxhaYKCwbdhqBCWad7Ud2dKhBtaPP2Bv4en+oOnl
-         Epng==
-X-Forwarded-Encrypted: i=1; AJvYcCWq7GKZUfwDAK2A13N0ALG3I4P3QBV2NIUHXdUa8P7WN2BAzkADfFckfdoe75NumwBsS4zoFTSfhtEpfow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrPjbCIhfO/8Bkj3J8v0ONWVRbNPBlFQoE1XdSF8LwwK9d2z5T
-	VxXE+IHpoggC4756ZiAIzHDipu98BxFAXzM1P4osOQ4B16J6MIMyrcv899roMdlS1Y2hsLpIjNO
-	lq2o=
-X-Google-Smtp-Source: AGHT+IFEmCZPBVhf98FTxzWL+eR06aMmyiWwZQg2crpBWOEdUtRFqg0o1IYByJp66uZ0W79z+8AwVA==
-X-Received: by 2002:a05:6602:1555:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-8353d5125a7mr656986839f.14.1728578436301;
-        Thu, 10 Oct 2024 09:40:36 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbad9d51afsm308876173.44.2024.10.10.09.40.35
+        d=1e100.net; s=20230601; t=1728578443; x=1729183243;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NiQxZ4aNJmS0qPABBP4LcVTamG/dKSm/ne+/UKqykEM=;
+        b=QUjtblCtafOhSMgsfwk4tjpfkuR/zuEj8TyR3zPgAYppqncHKQ61hiv3IlCz4UYabd
+         90DC9q/cncmksgrPB0oC7LrjKFDvs6OTZn5t8lZhh3R8b9m3fbxMhb3qnYJX58odiiu1
+         M9iBT9OWTrHkLFRI8K1xAHKFWJwosduGc1ZLMv8JwyApn8ioyezvMEMfy0Ft/Jgkj2ul
+         97J1YCNO2kAVXmvae9GkJli4ebfSYT+C56EcXoU/yWESMcdGD87wHYM+11haKBVK4fAA
+         CSnOdCc7F5/Ly7icIjTFnWIhcLepUyTCXp8DTdJSycnq7g+eN2WG145DQVuSjKyc3LPi
+         +cKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAdOxf9pF96qN8bdDy6xLJIMUoScCHs/rtIm5uCJBIFpCkgkNhUDdtaZxV26jO8p01sxd7q/4OmBEi5qQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1oOro7CAIbLzrp2StqaozXAfQiKOqHBVhVzyQi2zEJgbQxMkF
+	ue120DFXyOTePhZWNhDOAnCb2kbj7r8VAqx6GePKcKfmQU5G1cvJ75wnLjXlx3o=
+X-Google-Smtp-Source: AGHT+IEUhCypbSWyCbOVGeM1WG8LW+4NQl83CePuAwrOn3lsI6juJ8vumyaQebjeHVdDbQQf2BjKFg==
+X-Received: by 2002:a05:6a00:3c84:b0:71e:989:e714 with SMTP id d2e1a72fcca58-71e1db74cf3mr10946520b3a.11.1728578443159;
+        Thu, 10 Oct 2024 09:40:43 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9e98edsm1220396b3a.34.2024.10.10.09.40.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 09:40:35 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Breno Leitao <leitao@debian.org>
-Cc: kernel-team@meta.com, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241010141509.4028059-1-leitao@debian.org>
-References: <20241010141509.4028059-1-leitao@debian.org>
-Subject: Re: [PATCH] elevator: do not request_module if elevator exists
-Message-Id: <172857843553.77782.4750472326626678741.b4-ty@kernel.dk>
-Date: Thu, 10 Oct 2024 10:40:35 -0600
+        Thu, 10 Oct 2024 09:40:42 -0700 (PDT)
+Date: Thu, 10 Oct 2024 09:40:39 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [net-next v5 6/9] netdev-genl: Support setting per-NAPI config
+ values
+Message-ID: <ZwgDh3O0_95uGAgd@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	Donald Hunter <donald.hunter@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241009005525.13651-1-jdamato@fastly.com>
+ <20241009005525.13651-7-jdamato@fastly.com>
+ <CANn89iJ1=xA9WGhXAMcCAeacE3pYgqiWjcBdxiWjGPACP-5n_g@mail.gmail.com>
+ <20241010081923.7714b268@kernel.org>
+ <CANn89iK_iDY_nTCgqYUk7D_R8k_qu2qQrs2rUAxxAu_ufrzBnw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iK_iDY_nTCgqYUk7D_R8k_qu2qQrs2rUAxxAu_ufrzBnw@mail.gmail.com>
 
-
-On Thu, 10 Oct 2024 07:15:08 -0700, Breno Leitao wrote:
-> Whenever an I/O elevator is changed, the system attempts to load a
-> module for the new elevator. This occurs regardless of whether the
-> elevator is already loaded or built directly into the kernel. This
-> behavior introduces unnecessary overhead and potential issues.
+On Thu, Oct 10, 2024 at 05:30:26PM +0200, Eric Dumazet wrote:
+> On Thu, Oct 10, 2024 at 5:19 PM Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > On Thu, 10 Oct 2024 06:24:54 +0200 Eric Dumazet wrote:
+> > > > +static const struct netlink_range_validation netdev_a_napi_defer_hard_irqs_range = {
+> > > > +       .max    = 2147483647ULL,
+> > >
+> > > Would (u64)INT_MAX  work ?
+> >
+> > I sent a codegen change for this. The codegen is a bit of a mess.
+> >
+> > > > +int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
+> > > > +{
+> > > > +       struct napi_struct *napi;
+> > > > +       unsigned int napi_id;
+> > > > +       int err;
+> > > > +
+> > > > +       if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_NAPI_ID))
+> > > > +               return -EINVAL;
+> > > > +
+> > > > +       napi_id = nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
+> > > > +
+> > > > +       rtnl_lock();
+> > >
+> > > Hmm.... please see my patch there :
+> > >
+> > >  https://patchwork.kernel.org/project/netdevbpf/patch/20241009232728.107604-2-edumazet@google.com/
+> > >
+> > > Lets not add another rtnl_lock() :/
+> >
+> > It's not as easy since NAPIs can come and go at driver's whim.
+> > I'm quietly hoping we can convert all netdev-nl NAPI accesses
+> > to use the netdev->lock protection I strong-armed Paolo into
+> > adding in his shaper series. But perhaps we can do that after
+> > this series? NAPI GET already takes RTNL lock.
 > 
-> This makes the operation slower, and more error-prone. For instance,
-> making the problem fixed by [1] visible for users that doesn't even rely
-> on modules being available through modules.
 > 
-> [...]
+> napi_by_id() is protected by rcu and its own spinlock ( napi_hash_lock )
+> I do not see why rtnl is needed.
+> This will also be a big issue with per netns-RTNL anyway.
 
-Applied, thanks!
+I deeply appreciate and respect both of your thoughts on this; I
+will hold off on sending a v6 until a decision is made on this
+particular issue.
 
-[1/1] elevator: do not request_module if elevator exists
-      commit: 822138bfd69ba93e240dc3663ad719cd8c25d1fa
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Thank you both for your careful review and analysis.
 
