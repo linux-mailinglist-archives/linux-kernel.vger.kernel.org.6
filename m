@@ -1,235 +1,198 @@
-Return-Path: <linux-kernel+bounces-359542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0A2998CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31875998CF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F201F26BCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0AE41F27C2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CFD1CEAD2;
-	Thu, 10 Oct 2024 16:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wNkYgeIA"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DA31CDFB6;
+	Thu, 10 Oct 2024 16:14:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335BF1CEADA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522111C3F34;
+	Thu, 10 Oct 2024 16:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728576891; cv=none; b=Q7UR3iuEVjuhJe6mBcooNxZ1/gB8jd0DgseyifRGfGsj2LIl581Ix3ID7XqVmwkvT1ZDcFDwG95CmyHmJkeFRkscvYVkmrfI2h8LMwZj78JoSe4yKGEKqxM8rVDsvEXb98ASi0pMm3fnSOAb0ctRiplBfTX3S3FQVPBIjw1eH9o=
+	t=1728576865; cv=none; b=lkMK4SK21Kcj8xt/EozjfruLtoI7Rhgfcwab/wNuydMRxJH0jpZPM8eBU860AXEsrqA5P1qN6lDGYH4B5hGf7d3URojFn5y25xFAukJlzYPZEHNfCLsvhX7nAkPwyPI9tZOfL/hzTeb/THjC5du510QJFQRYXXOpQ34rO31+n+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728576891; c=relaxed/simple;
-	bh=OBL7S4ZPXi4nh1gvreOkVV7mExAlKQxlmb2J6M+OuX0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K7vQGvlD/1K3Mvn3beQTd3c3X0Wx9sAXrgYvtpoduUDQXNgeKRu+N6M4TgwXLZLYXkGfioOhMFRaNxx3EhKEQY40JG4+8YQLXf84aQKuCCe4c2JM5Y8DHTqfq8hpqhAKNLgFkdfRAcr3vWgYMV6QmaDVrDxZpTdD/EAtManeRog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wNkYgeIA; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431157f7e80so260615e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728576887; x=1729181687; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J2rpMQ1Sj1SZzdAaEbTPTB8P6Feg0PtFH01l/+GOddc=;
-        b=wNkYgeIAV8GYFz8IN2oNbgbQYWvs7VUHUOH564FUPY1PEHR+qUYtf8xaVxeP2RG5FL
-         d3gS14H4heTcdjVfQM7kpSjAMFdOPXWy2D9yRyRrBJV9mDH2UDKwzxCzxYejUJddp/WO
-         fA86wHLgeQ9egHqcjxqwzb+SZKOSaDsEu50IpW44+IdC78y43sgGxdIkbww3URPQa7V3
-         RPVrhh9vNOEHPV2GZFT3Sk85k4aMe8TZfm42KbwnX9JpVNR5MnxOx1lqmgWW2LtMGA+v
-         lECgf4U9GvsHzQp3KuTtaeMWY78zuMkszfdz4k6qmkMGlhB1AGQfbqWZhCxeSUcjaI+i
-         nMpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728576887; x=1729181687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2rpMQ1Sj1SZzdAaEbTPTB8P6Feg0PtFH01l/+GOddc=;
-        b=TST8wp40AfvL8YfwQt/Kf1Z15G0QHfnXWdwZ7mMCHqU2y0VVfNpWo4UjQTdeiuLdzI
-         EOAiXZUNaVq3X/088soYnfdwHp+mFf3siK615Tt/8oW6Xs5lp5AYdn5vIMAVkAhT/AMB
-         S66MJRiAPedcN9ZPFoj0JpWgG5ZbWnIHY9gMDvKmVor8Wgm69ZyCkVXoEZiiAKxAI4ax
-         T5xvwk1V5oqBDTT5t9pp2970DoOg7vV4Ae51r4dWhoizbbToxPbV6qv0fq8xamMqUvXJ
-         jKL/aU3sJ/PCRTiVuT142sUGPvnplfwjSQDZ8GxPAU3lVIu3OgUo2g9DlsDLufJR5Cbp
-         bb6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXUzcfvONZEd12WwlJBdeaG8huumk6EcsAIbw96Hd/WECtnhjAGdbZMPc5CVuhy6dpqa5/fWJCE7mw9kWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrzdPPikreewsg6tiTXPEqoSYfquZs1zzbLMJ19a/j9xgLfHx9
-	qKLXRT/nINUsM0JgYo5G3HWoDFg6q3mH3J7CujkLMUtcTkksRXNn/5nTm1EYO6ArtS3R0jK/fJK
-	I8d/yDlbRyFst7tn0mmPIoTokmmuvQFumLg1G
-X-Google-Smtp-Source: AGHT+IFCoXuxIhYmSezUFTHTbGhBv5UKJoGGRBf5ZC/uoCvUww9Rczr0gkl6wURytQVhyXkN7Iku3rEVM5JKdKcfHbc=
-X-Received: by 2002:a05:600c:3482:b0:426:66a0:6df6 with SMTP id
- 5b1f17b1804b1-431160a6792mr5412705e9.0.1728576887148; Thu, 10 Oct 2024
- 09:14:47 -0700 (PDT)
+	s=arc-20240116; t=1728576865; c=relaxed/simple;
+	bh=3igbnr8tPRd3kLCD76/Vz7k2aqjhi0+MfWSLTS9xc+I=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=m/y8+9Fb3QYCOORGTtlCz+E/Qmkyd98xtIQstymq4mouFYlyhCGNy/oM/+jE5NDxzokaw4VbuMdglBe8u2+2z2VXQaiPEdDb8/BAzvazFOOPg5GLdDf1ykNVR5ByQ4ZD9KKPQrwfsUjgvvYQJpOivcptYt4JjW5zHKNOEIT8gTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPZZD66vdz67Gvv;
+	Fri, 11 Oct 2024 00:13:56 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id D91F114010C;
+	Fri, 11 Oct 2024 00:14:17 +0800 (CST)
+Received: from GurSIX1 (10.204.104.168) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 18:14:12 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch> <20241009065837.354332-1-gur.stavi@huawei.com> <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch> <002201db1a75$9a83b420$cf8b1c60$@huawei.com> <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch> <002701db1ae3$368d9b70$a3a8d250$@huawei.com> <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch>
+In-Reply-To: <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket is not RUNNING
+Date: Thu, 10 Oct 2024 19:14:04 +0300
+Message-ID: <000101db1b2f$7410c2f0$5c3248d0$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009054429.3970438-1-guanyulin@google.com>
- <20241009054429.3970438-4-guanyulin@google.com> <2024100941-limping-dislodge-5c74@gregkh>
- <CAOuDEK0a43yLhCoA8iq=stj+QQAmKTCVWGKHvKM6-GPEaN9C3g@mail.gmail.com> <2024101021-vertigo-gopher-e487@gregkh>
-In-Reply-To: <2024101021-vertigo-gopher-e487@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Fri, 11 Oct 2024 00:14:00 +0800
-Message-ID: <CAOuDEK01Ke9KZqPf6KOfXaAQRRvw-y0Vagd9NrP8e8_EG-w52g@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] usb: add apis for sideband uasge tracking
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, mathias.nyman@intel.com, 
-	stern@rowland.harvard.edu, elder@kernel.org, oneukum@suse.com, 
-	yajun.deng@linux.dev, dianders@chromium.org, kekrby@gmail.com, perex@perex.cz, 
-	tiwai@suse.com, tj@kernel.org, stanley_chang@realtek.com, 
-	andreyknvl@gmail.com, christophe.jaillet@wanadoo.fr, 
-	quic_jjohnson@quicinc.com, ricardo@marliere.net, grundler@chromium.org, 
-	niko.mauno@vaisala.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, badhri@google.com, 
-	albertccwang@google.com, quic_wcheng@quicinc.com, pumahsu@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGWzwQMZqw76ooUWOpIJuIeDZyLJ8x9WAgAEVHYCAAHM4AIAA1CkdgADoeFuAABvjIA==
+Content-Language: en-us
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-On Thu, Oct 10, 2024 at 2:33=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, Oct 10, 2024 at 01:30:00PM +0800, Guan-Yu Lin wrote:
-> > On Wed, Oct 9, 2024 at 8:44=E2=80=AFPM Greg KH <gregkh@linuxfoundation.=
-org> wrote:
-> > >
-> > > On Wed, Oct 09, 2024 at 05:42:57AM +0000, Guan-Yu Lin wrote:
-> > > > +             parent =3D parent->parent;
-> > > > +     } while (parent);
-> > >
-> > > Woah, walking up the device chain?  That should not be needed, or if =
-so,
-> > > then each device's "usage count" is pointless.
-> > >
-> >
-> > Say a hub X with usb devices A,B,C attached on it, where usb device A
-> > is actively used by sideband now. We'd like to introduce a mechanism
-> > so that hub X won't have to iterate through all its children to
-> > determine sideband activities under this usb device tree.
->
-> Why would a hub care?
->
-
-Without the information of sideband activities on the usb devices
-connected to the hub, the hub couldn't determine if it could suspend
-or not.
-
-> > This problem
-> > is similar to runtime suspending a device, where rpm uses
-> > power.usage_count for tracking activity of the device itself and
-> > power.child_count to check the children's activity. In our scenario,
-> > we don't see the need to separate activities on the device itself or
-> > on its children.
->
-> But that's exactly what is needed here, if a hub wants to know what is
-> happening on a child device, it should just walk the list of children
-> and look :)
->
-> > So we combine two counters in rpm as sb_usage_count,
->
-> Combining counters is almost always never a good idea and will come back
-> to bite you in the end.  Memory isn't an issue here, speed isn't an
-> issue here, so why not just do it properly?
->
-
-By combining the two comments above, my understanding is that we should eit=
-her:
-1. separating the counter to one recording the sideband activity of
-itself, one for its children.
-2. walk the list of children to check sideband activities on demand.
-Please correct me if I mistake your messages.
-
-> > denoting the sideband activities under a specific usb device. We have
-> > to keep a counter in each device so that we won't influence the usb
-> > devices that aren't controlled by a sideband.
->
-> I can understand that for the device being "controlled" by a sideband,
-> but that's it.
->
-> > When sideband activity changes on a usb device, its usb device parents
-> > should all get notified to maintain the correctness of sb_usage_count.
->
-> Why "should" they?  They shouldn't really care.
->
-
-Hubs need the sideband activity information on downstream usb devices,
-so that the hub won't suspend the upstream usb port when there is a
-sideband accessing the usb device connected to it.
-
-> > This notifying process creates the procedure to walk up the device
-> > chain.
->
-> You aren't notifying anyone, you are just incrementing a count that can
-> change at any moment in time.
->
-
-Apologies for the misleading word selection, by notify I mean changing
-the counter.
-
-> > > > +bool usb_sideband_check(struct usb_device *udev)
-> > > > +{
-> > > > +     return !!atomic_read(&udev->sb_usage_count);
-> > >
-> > > And what happens if it changes right after you make this call?  This
-> > > feels racy and broken.
-> > >
-> >
-> > Seems like we need a mechanism to block any new sideband access after
-> > the usb device has been suspended. How about adding a lock during the
-> > period when the usb device is suspended? Do you think this is the
-> > correct direction to address the race condition?
->
-> I don't know, as I don't know exactly what you are going to do with this
-> information.  But as-is, you can't just go "let's put an atomic variable
-> in there to make it race free" as that's just not going to work.
->
-
-Agree that changing the variable to atomic wouldn't resolve race
-conditions. Let me identify and mark critical sections in the next
-patchset.
-
-> > > > @@ -731,6 +732,8 @@ struct usb_device {
+> Gur Stavi wrote:
+> > > Gur Stavi wrote:
+> > > > > Gur Stavi wrote:
+> > > > > > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct sock
+> *sk,
+> > > > > struct fanout_args *args)
+> > > > > > >>  	err = -EINVAL;
+> > > > > > >>
+> > > > > > >>  	spin_lock(&po->bind_lock);
+> > > > > > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> > > > > > >> -	    match->type == type &&
+> > > > > > >> +	if (match->type == type &&
+> > > > > > >>  	    match->prot_hook.type == po->prot_hook.type &&
+> > > > > > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
+> > > > > > >
+> > > > > > > Remaining unaddressed issue is that the socket can now be
+> added
+> > > > > > > before being bound. See comment in v1.
+> > > > > >
+> > > > > > I extended the psock_fanout test with unbound fanout test.
+> > > > > >
+> > > > > > As far as I understand, the easiest way to verify bind is to
+> test
+> > > that
+> > > > > > po->prot_hook.dev != NULL, since we are under a bind_lock
+> anyway.
+> > > > > > But perhaps a more readable and direct approach to test "bind"
+> > > would be
+> > > > > > to test po->ifindex != -1, as ifindex is commented as "bound
+> > > device".
+> > > > > > However, at the moment ifindex is not initialized to -1, I can
+> add
+> > > such
+> > > > > > initialization, but perhaps I do not fully understand all the
+> > > logic.
+> > > > > >
+> > > > > > Any preferences?
+> > > > >
+> > > > > prot_hook.dev is not necessarily set if a packet socket is bound.
+> > > > > It may be bound to any device. See dev_add_pack and ptype_head.
+> > > > >
+> > > > > prot_hook.type, on the other hand, must be set if bound and is
+> only
+> > > > > modified with the bind_lock held too.
+> > > > >
+> > > > > Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD also
+> > > > > succeeds in case bind() was not called explicitly first to bind
+> to
+> > > > > a specific device or change ptype.
 > > > >
-> > > >       u16 hub_delay;
-> > > >       unsigned use_generic_driver:1;
-> > > > +
-> > > > +     atomic_t sb_usage_count;
+> > > > Please clarify the last paragraph? When you say "also succeeds" do
+> you
+> > > > mean SHOULD succeed or MAY SUCCEED by mistake if "something"
+> happens
+> > > ???
 > > >
-> > > Why is this on the device and not the interface that is bound to the
-> > > driver that is doing this work?
+> > > I mean it succeeds currently. Which behavior must then be maintained.
 > > >
-> > > thanks,
+> > > > Do you refer to the following scenario: socket is created with non-
+> zero
+> > > > protocol and becomes RUNNING "without bind" for all devices. In
+> that
+> > > case
+> > > > it can be added to FANOUT without bind. Is that considered a bug or
+> > > does
+> > > > the bind requirement for fanout only apply for all-protocol (0)
+> > > sockets?
 > > >
-> > > greg k-h
+> > > I'm beginning to think that this bind requirement is not needed.
 > >
-> > If the count is bound on the usb interface, I'm afraid that the
-> > sideband information couldn't be broadcasted across its usb device
-> > parents. Do you have some insight on how we can achieve this?
->
-> But the driver that is "sideband" is bound to the interface, not the
-> device, right?  Or is it the device?
->
-> And again, nothing is being "broadcasted" here, it's just a variable to
-> be read at random times and can change randomly :)
->
-> thanks,
->
-> greg k-h
+> > I agree with that. I think that is an historical mistake that socket
+> > becomes implicitly bound to all interfaces if a protocol is defined
+> > during create. Without this bind requirement would make sense.
+> >
+> > >
+> > > All type and dev are valid, even if an ETH_P_NONE fanout group would
+> > > be fairly useless.
+> >
+> > Fanout is all about RX, I think that refusing fanout for socket that
+> > will not receive any packet is OK. The condition can be:
+> > if (po->ifindex == -1 || !po->num)
+> 
+> Fanout is not limited to sockets bound to a specific interface.
+> This will break existing users.
 
-By looking at the comment in xhci-sideband.c, I think the sideband is
-bound to an usb device instead of an usb interface. Maybe Mathias or
-Wesley could provide more details on this.
-/**
- * xhci_sideband_register - register a sideband for a usb device
- * @udev: usb device to be accessed via sideband
-...
- */
+For specific interface ifindex >= 1
+For "any interface" ifindex == 0
+ifindex is -1 only if the socket was created unbound with proto == 0
+or for the rare race case that during re-bind the new dev became unlisted.
+For both of these cases fanout should fail.
 
-Regards,
-Guan-Yu
+> 
+> Binding to ETH_P_NONE is useless, but we're not going to slow down
+> legitimate users with branches for cases that are harmless.
+> 
+
+With "branch", do you refer to performance or something else?
+As I said in other mail, ETH_P_NONE could not be used in a fanout
+before as well because socket cannot become RUNNING with proto == 0.
+For performance, we removed the RUNNING condition and added this.
+It is not like we need to perform 5M fanout registrations/sec. It is a
+syscall after all.
+
+> > I realized another possible problem. We should consider adding ifindex
+> > Field to struct packet_fanout to be used for lookup of an existing
+> match.
+> > There is little sense to bind sockets to different interfaces and then
+> > put them in the same fanout group.
+> > If you agree, I can prepare a separate patch for that.
+> >
+> > > The type and dev must match that of the fanout group, and once added
+> > > to a fanout group can no longer be changed (bind will fail).
+> > >
+> > > I briefy considered the reason might be max_num_members accounting.
+> > > Since f->num_members counts running sockets. But that is not used
+> > > when tracking membership of the group, sk_ref is. Every packet socket
+> > > whose po->rollover is increased increases this refcount.
+> > >
+> > > > What about using ifindex to detect bind? Initialize it to -1 in
+> > > > packet_create and ensure that packet_do_bind, on success, sets it
+> > > > to device id or 0?
+> > > >
+> > > > psock_fanout, should probably be extended with scenarios that test
+> > > > "all devices" and all/specific protocols. Any specific scenario
+> > > > suggestions?
+> > > >
+> > > >
+> > >
+> >
+> >
+> 
+
+
 
