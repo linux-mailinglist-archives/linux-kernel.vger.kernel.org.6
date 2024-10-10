@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-358272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DDB997C67
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:27:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5167F997C69
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B011F1C21768
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01371F244A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986AF19EEC7;
-	Thu, 10 Oct 2024 05:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B1419E99F;
+	Thu, 10 Oct 2024 05:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UovbyWSO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2HHIU/n"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F712AEEC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB50154BF0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728538058; cv=none; b=jLpANiSJ5EYBfaaSYmjb54d2nhIOR8Ws7iMM3sIdLbPYhiGLAvOFzUafI3yuHjbG3TumJvVr7Yk0TSb28RBW8YFWj+GnScZegJOu2nPFKSmFN8JR7D8+wF6Ca+kZTjSDh45y7bbNXZqAzuRCWmtmoPEnlVI0USrDPVbxXbna6Eg=
+	t=1728538230; cv=none; b=JRzTXx+46OK49goH9LzYjWB0o3i+IPj2wNO04m6xe3NT0pIsOPUDfboJGXelRBScbhi7ZF2TgtbZTTYH6pEj7Rsg5OHuHJZu4847z66Z0oHcLfk83om1S72jDhiD0zgk8V9C4+XD7xFFgVJ0dQ7wrpZ4//g68tNWLSqSPVNw9GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728538058; c=relaxed/simple;
-	bh=EvioNNLDIEs1Bc5eLnQliexHwYetYgPdzzvnxiCPCBI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mi7f+K9NXQr+wBneYKtNXV5mlyhh2ug7p/SvgYNT3/5Q3iYEf4rhQ4i+thoZZxLQiQgNlJjeySD4bSmNGWqOMcSlX6aE1vAZw7UCvddsIHtcD8PNnbvb680fZ+2UAT0FySe55GXQi8Gfn3PnNcWN7mY2jbKinO59kLZjSGXA/eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UovbyWSO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1bQT5024235;
-	Thu, 10 Oct 2024 05:27:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=4rZV1jLO1ZScpzDxJGiRNm
-	Wd0ZB05iuSv2dLx6NXGX8=; b=UovbyWSOqaPX7GZw//i51AcJE9R1w7n26aQuj4
-	IdM46PJlmbLV4A0qrWR6kNjqcLCiSw+us6DGuTaANvOxviPCWvzBV97ZP6/l6ACs
-	3XBr/Wa+F7fCcB5ZY6DDIs8/WPRdgQ4i9IU0Y14fxHQ/92ECAV9vUCz/XVnGUrBM
-	qNpqkE5vFarMBVmGC5BEmQhoF4UGItQY3pVarW6EwhzQ3cdwHLDKAq0E6p3mMQ0K
-	mob33/L0z7dbs3zN80VafFaGWY5vNf3KbLBwuCcHPcxV3MjAJrBnhucEbvmvrbpy
-	dzsgnloPpwSNc2MGXw5unuTCuWkxUqRX1V77Bfd3g75uohtw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424wgs7dc1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 05:27:26 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A5RPkN028241
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 05:27:25 GMT
-Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 9 Oct 2024 22:27:20 -0700
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>, <kernel@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <krzysztof.kozlowski@linaro.org>,
-        "Mohammad
- Rafi Shaik" <quic_mohs@quicinc.com>
-Subject: [PATCH v2] arm64: defconfig: Enable WCD937x driver as module
-Date: Thu, 10 Oct 2024 10:56:46 +0530
-Message-ID: <20241010052646.2597418-1-quic_mohs@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728538230; c=relaxed/simple;
+	bh=8vrimWluOky7+aW1AAmoRPcEh4YVHM2VIY8aApW/HZE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sIEsE8WgLeMc/pHtxU3FEzbIcqP0W54iiRJxu1mg4xUMZ7nOFR3A9LA32KSXxIHqP3yQCdcuqqtoo2rybsRFTGX9N4gfXz4JeXo0CQvOvBLe/PfOxOUqtHAfAMUAiWIp4GUIDSXU2+iSgpXH32BPc6nFEcBSubWp0AZjQxfq+/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2HHIU/n; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42f6995dab8so143695e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 22:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728538226; x=1729143026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Vsbn1te+zu6FOdxZ9pZKFB7CXsrSwAH4ylvWDXfwvY=;
+        b=z2HHIU/n2aBAKKWCVeuWNYwBobqKgIz4HQ6ZiX8GDLe9iaTDCqU73JRYNkTrUv1WHs
+         3EhoR2rK1nEh2q+H5ShTlt0QrW0MqNo/qShNozrDxrW9xM4Y2Pa8uFrIN0RxM1ow7szK
+         WU3EwPR8BWLODS4qmptJE5pFSf5/hZEFtjkQqyamx7AuNcoh3X53IFeOuJGx7ArRROq0
+         wHPQhAmGqlLOsTMtrMxo9gP+dZ+nlsxcNo1rNJTSXK6WVogW9GcpjwQ0GjXvsfPWvhWH
+         m9QqFcefl3ZFRDircUHVkcUCvazxLoF1ubYHLhIJuSfg5yog2ke+tN6FjUl1aq9IrCb5
+         jN/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728538226; x=1729143026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Vsbn1te+zu6FOdxZ9pZKFB7CXsrSwAH4ylvWDXfwvY=;
+        b=Rrv4Rm0oxTbfZi21TcrC+4yPO9+3s4r95OfLytoQNN/RyVLDjNavXcvSj8jPZtO7fl
+         6XZT+Pxj997rinoWYSSDt0NWTksB1VhGGwdnZ49R5sxsjd9cqlzc6Uf80BuJQgh95AJp
+         YIXNzZLFAdIvwIg4zOoluJTzDx5423nSgP+tZLyJS0q7UTr7VHP9y+hR5z/pU9NL2kfN
+         nWk3+kNHpI/9/jyGA4WHvCxZ8S7zT03UOb8Mst1DZsIde2YdQ9riUyykL/lOo91Hnhoe
+         5PxIKVT2x0Wzu4Mi+wIU45evgeGrslLJrxBxifWFZsDDRn+CqJkAsv6S0SezAShmeJW1
+         548w==
+X-Forwarded-Encrypted: i=1; AJvYcCUulJzsnc7OVxHAfOnvgHG2UyYZ2eofi+pml62a+a298JqROB6kUEKu+NB8a2CPYotqLbta6JsK3dV59lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY1XGOcXCKf8WCqykw/oHMPnOX04nEPq/GrErryuaJhImUn3VF
+	spR9tILSr9b8FH0MFUJaf8ar0Rb4Hk/pTEX/nKs2eqSt7sSJK32nwIKWL+BWgdjdFnxDJ6hZyU7
+	jJYmRU+CWPFyuMCVRpJMbKAdMeQpDKDY6uKpx
+X-Google-Smtp-Source: AGHT+IExR+gZgJ9+ZjEm/14g9BXJdiE3901d7DoQIau1dkDL3xiK2Bq9ZBBLMMTnoABIwrRyI5YGN5iG92XsC0UWHcA=
+X-Received: by 2002:a05:600c:3d88:b0:42c:9e35:cde6 with SMTP id
+ 5b1f17b1804b1-431161221eemr2758015e9.2.1728538225796; Wed, 09 Oct 2024
+ 22:30:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: y9r0G70FJR3PtkZgQbBu1DKGq12Lun9X
-X-Proofpoint-ORIG-GUID: y9r0G70FJR3PtkZgQbBu1DKGq12Lun9X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=629
- suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1015 adultscore=0
- spamscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100034
+References: <20241009054429.3970438-1-guanyulin@google.com>
+ <20241009054429.3970438-4-guanyulin@google.com> <2024100941-limping-dislodge-5c74@gregkh>
+In-Reply-To: <2024100941-limping-dislodge-5c74@gregkh>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Thu, 10 Oct 2024 13:30:00 +0800
+Message-ID: <CAOuDEK0a43yLhCoA8iq=stj+QQAmKTCVWGKHvKM6-GPEaN9C3g@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] usb: add apis for sideband uasge tracking
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Thinh.Nguyen@synopsys.com, mathias.nyman@intel.com, 
+	stern@rowland.harvard.edu, elder@kernel.org, oneukum@suse.com, 
+	yajun.deng@linux.dev, dianders@chromium.org, kekrby@gmail.com, perex@perex.cz, 
+	tiwai@suse.com, tj@kernel.org, stanley_chang@realtek.com, 
+	andreyknvl@gmail.com, christophe.jaillet@wanadoo.fr, 
+	quic_jjohnson@quicinc.com, ricardo@marliere.net, grundler@chromium.org, 
+	niko.mauno@vaisala.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, badhri@google.com, 
+	albertccwang@google.com, quic_wcheng@quicinc.com, pumahsu@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable Qualcomm WCD937x codec driver as modules
-since it is now used on the QCM6490 platform.
+On Wed, Oct 9, 2024 at 8:44=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
+ wrote:
+>
+> On Wed, Oct 09, 2024 at 05:42:57AM +0000, Guan-Yu Lin wrote:
+> > +void usb_sideband_get(struct usb_device *udev)
+> > +{
+> > +     struct usb_device *parent =3D udev;
+> > +
+> > +     do {
+> > +             atomic_inc(&parent->sb_usage_count);
+>
+> As this is a reference count, use refcount_t please.
 
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Reviewed-by: Rohit Kumar <quic_rohkumar@quicinc.com>
----
-Changes in v2:
-- Rephrase the commit message as suggested by Trilok Soni.
-- Link to v1: https://lore.kernel.org/linux-arm-kernel/6cabe8cf-7286-22f8-029f-140b084004e1@quicinc.com/
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Acknowledged, will change it in the next patch. Thanks for the guidance.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5fdbfea7a5b2..c4746e3412f8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1036,6 +1036,8 @@ CONFIG_SND_SOC_TLV320AIC32X4_I2C=m
- CONFIG_SND_SOC_TLV320AIC3X_I2C=m
- CONFIG_SND_SOC_WCD9335=m
- CONFIG_SND_SOC_WCD934X=m
-+CONFIG_SND_SOC_WCD937X=m
-+CONFIG_SND_SOC_WCD937X_SDW=m
- CONFIG_SND_SOC_WCD939X=m
- CONFIG_SND_SOC_WCD939X_SDW=m
- CONFIG_SND_SOC_WM8524=m
--- 
-2.25.1
+>
+> > +             parent =3D parent->parent;
+> > +     } while (parent);
+>
+> Woah, walking up the device chain?  That should not be needed, or if so,
+> then each device's "usage count" is pointless.
+>
 
+Say a hub X with usb devices A,B,C attached on it, where usb device A
+is actively used by sideband now. We'd like to introduce a mechanism
+so that hub X won't have to iterate through all its children to
+determine sideband activities under this usb device tree. This problem
+is similar to runtime suspending a device, where rpm uses
+power.usage_count for tracking activity of the device itself and
+power.child_count to check the children's activity. In our scenario,
+we don't see the need to separate activities on the device itself or
+on its children. So we combine two counters in rpm as sb_usage_count,
+denoting the sideband activities under a specific usb device. We have
+to keep a counter in each device so that we won't influence the usb
+devices that aren't controlled by a sideband.
+When sideband activity changes on a usb device, its usb device parents
+should all get notified to maintain the correctness of sb_usage_count.
+This notifying process creates the procedure to walk up the device
+chain.
+
+> > +bool usb_sideband_check(struct usb_device *udev)
+> > +{
+> > +     return !!atomic_read(&udev->sb_usage_count);
+>
+> And what happens if it changes right after you make this call?  This
+> feels racy and broken.
+>
+
+Seems like we need a mechanism to block any new sideband access after
+the usb device has been suspended. How about adding a lock during the
+period when the usb device is suspended? Do you think this is the
+correct direction to address the race condition?
+
+> > @@ -731,6 +732,8 @@ struct usb_device {
+> >
+> >       u16 hub_delay;
+> >       unsigned use_generic_driver:1;
+> > +
+> > +     atomic_t sb_usage_count;
+>
+> Why is this on the device and not the interface that is bound to the
+> driver that is doing this work?
+>
+> thanks,
+>
+> greg k-h
+
+If the count is bound on the usb interface, I'm afraid that the
+sideband information couldn't be broadcasted across its usb device
+parents. Do you have some insight on how we can achieve this?
+
+Regards,
+Guan-Yu
 
