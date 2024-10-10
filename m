@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-358851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C29D99849F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6419984A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8556282559
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733DE1F22790
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A111C2DA4;
-	Thu, 10 Oct 2024 11:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770C81C2335;
+	Thu, 10 Oct 2024 11:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8/9AZtn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H37yc6OI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B931C3310;
-	Thu, 10 Oct 2024 11:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04C633CD2;
+	Thu, 10 Oct 2024 11:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558872; cv=none; b=lrYaWBOK3VpMuxuhyiqsUpU1goTbjBBIweqtOIZ8BV8SF7wpDiM7eRkEfbNN747VZ68BzentCnuP0NHRDWMf8iAzkMx2YrfzpwK8ojpBJ1aQWUYwiCsWD28UBjvm0cpM0BZieuDHtepx5+9ruAJK6JlsGBARAXFdFYgeBKLRmCg=
+	t=1728558992; cv=none; b=Ei/PrjCJK39h7YkvEGLsgN/6aCxrLDLNu7+Nf8YMZ3XN7RVlkIl681Lb3lV9k31g4XdLUIwwPRCy19+/kp5eerECTiG0qInCdT5FMO7sGTf8G0uCGZQLJFYYQD3jiyxn7L8FCQR0BHbr8W818dxT8qDRos/FUIUqAo0Pw2mrdmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558872; c=relaxed/simple;
-	bh=faasR6xzN3h6q9heHvMNzaWStXw8OeeUNOIeaDVDmnA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ssUY6AxcMK+R4AYorcMBsOab50JWm95h3j5Y9tkdRC+9zq42qpPDGcUKg1wLkl9YE6bQAANXq+SuYhFNvMUfwLKKHsm3+V7s9hi2JqBwGCkUZK5JVSInJI3tlWV8GlVFRNSJlFfWO4nrYvdemQ0sGUnVAEbMt7Raj08SOsn9k3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8/9AZtn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85748C4CEC5;
-	Thu, 10 Oct 2024 11:14:28 +0000 (UTC)
+	s=arc-20240116; t=1728558992; c=relaxed/simple;
+	bh=MuiucDyIZsey9FoFIxtSbpdBAKLMfR3IEx+A5iRDpRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HI2KEjmak9f1wJjxxwQ56eRgH1F57Obeil2vuC/KWMhjZS2BRH4a4w/CwLRkkxyXtOeKvhPai/F+r7dI2T7qT2Ong8v3e9xnMJcBjcBRhxpiMzlOszMWIu/x+zTrR2GJf8HXvpVIMmezLEqJJmqPo9aDEOmhuhjzBOm3NooQxNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H37yc6OI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD92C4CEC5;
+	Thu, 10 Oct 2024 11:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728558871;
-	bh=faasR6xzN3h6q9heHvMNzaWStXw8OeeUNOIeaDVDmnA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=H8/9AZtnQcDTJFKDFeuufNmkW5gabUoy4BG2i7O43q90IwQz1EsqgPIzIuUudL3Cq
-	 Y7Ok/dCi+HCPLPaFzfSsnduNNX9Fs0CEBu5Hrne8rIiudAHFMjciPY1RPCebCau0G4
-	 fzXlmorIcIQ4kWe9o2MlptmVilY6j3805XFLnmnbTj3N4Yb/RRyFA7pDSA/VkAiC5h
-	 NyYu3MrRsoas3FzLKzcbNj4LLaY7nRfbM/QXAZwVLR6ov//JLkN/T/BmDK4BGfQb52
-	 mMopOajU05W6Wiy+kICiC6YmjKHJRv6ZTARe/gE3VVfc1m3AkpWQ/5NqUIvLy3pvqY
-	 IfCQzzpxZp2QA==
-From: Mark Brown <broonie@kernel.org>
-To: olteanv@gmail.com, frank.li@nxp.com, shawnguo@kernel.org, 
- Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, linux-spi@vger.kernel.org, 
- imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20241008055644.4900-1-hardevsinh.palaniya@siliconsignals.io>
-References: <20241008055644.4900-1-hardevsinh.palaniya@siliconsignals.io>
-Subject: Re: Fix Sparse warnings
-Message-Id: <172855886823.3260167.4815619322285709475.b4-ty@kernel.org>
-Date: Thu, 10 Oct 2024 12:14:28 +0100
+	s=k20201202; t=1728558992;
+	bh=MuiucDyIZsey9FoFIxtSbpdBAKLMfR3IEx+A5iRDpRk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=H37yc6OI1/TpNKQO6irAJ8ZsrsCWXts0FkcvVCZEunxu0t1sHRChtpucmdgBzgqMS
+	 4HnnLuHkIR0SgH9tyK5kACeeMgerjDVQz5UsiKZUYogK7U8ISkPSRetAwxMFslyQht
+	 E4Y4EHaHw6rc8bosUyYtpgFsxt1sr3YnAfpFGiHUX1OeRpK7I4Fmj5QDcqhrGoW5C6
+	 rp1XsCUMnzWT+8jJLmGLshBJj3Rs2/g0SWhdbDqI7H+vvJVhG2cUOdSYV4io8B+fxM
+	 GPrXNrtn2OdatfpRi62mmG/XnlWQQpRuD/Lv55FORpSJYeIeZrraDPvqGN7xsz000v
+	 Qs7fLFNiSWdoQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
+Date: Thu, 10 Oct 2024 13:16:19 +0200
+Message-ID: <20241010111619.119190-1-ojeda@kernel.org>
+In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
+References: <20241008115648.280954295@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Transfer-Encoding: 8bit
 
-On Tue, 08 Oct 2024 11:25:44 +0530, Hardevsinh Palaniya wrote:
-> Change in v2:
-> 
-> in patch 2/2:
-> 	- Use ioread32be instead of readl
-> 	- Use iowrite32be instead of writel
-> 
-> Note: Drop 2 patches(patch 2/4 & 4/4) from the last version
-> link to v1: https://lore.kernel.org/linux-spi/20240927132944.19285-1-hardevsinh.palaniya@siliconsignals.io/T/#t
-> 
-> [...]
+On Tue, 08 Oct 2024 14:01:03 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.10.14 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+> Anything received after that time might be too late.
 
-Applied to
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
 Thanks!
 
-[1/2] spi: spi-fsl-dspi: Fix casting warnings
-      commit: 66c1c4175bbdfcf1cb1411b1ea62e7e0b5571594
-[2/2] spi: spi-imx: Fix casting warnings
-      commit: f3a59ab98cfc18c7b2fb1d8164bedbb1569a7e76
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Cheers,
+Miguel
 
