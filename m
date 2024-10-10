@@ -1,101 +1,70 @@
-Return-Path: <linux-kernel+bounces-358083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584F4997A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:13:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409A9997A11
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037321F23B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AAEA1C21ACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2081E2AD29;
-	Thu, 10 Oct 2024 01:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76342AF07;
+	Thu, 10 Oct 2024 01:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3hZ/bbk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjRkX4Pj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80036F9CB;
-	Thu, 10 Oct 2024 01:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C7610A12;
+	Thu, 10 Oct 2024 01:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728522774; cv=none; b=W10ktxwfSdtXAMskqm2b+79mmuqUgHoTAkcyIPwHfIwpcMNjOpWjxuKFS3W0CUtPQQXxTbBRFGrhNeQOEQK90mE9QUsgPstMGjbY+LK2Xdv0Mk7ZK5ulPvI5hj3t/Nz4XBrQsQZVGo5DTD0ENNmGv7VuQWks+Co2irn8vMh+7LI=
+	t=1728523193; cv=none; b=vAq9tXQeT9KB/xnxW/eAHgS1yPxXG6Cr/IeRpUV73vTPNWzm4VtlP5QOp70rWpgLd+buNP8dcm/B0tNwFsxBBgCJJn2RGRXpZescPISwvWQVT0CHACsZNdKazet0YcF/sN04QLc6ieKvOduwC+d/Vf4PqZ22o1FaA8J+vW6LBqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728522774; c=relaxed/simple;
-	bh=P+IBwA3DyX2CWGogUkSF7cmDoIFQ90YAqvQcabiWl8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9e/QG/HM/nQAcLmsgBWBmp+ESMnb0UWz2/SuALg3Wdbz69AY+vSZI7Z6nkRx22qxWqVVkzML853cUWSfGQOwZepcsMbUa4/IP5ALzJxS3K430sxTmkpz2y11jqO6poFvtwnD9YohE44ZTxZrqRaFgN3fnporNHTeVwicAA+3Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3hZ/bbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85311C4CEC3;
-	Thu, 10 Oct 2024 01:12:53 +0000 (UTC)
+	s=arc-20240116; t=1728523193; c=relaxed/simple;
+	bh=7ibvhYnSJAiJ1OcmrnINL7GDYanGl1DLHCB1INahv/A=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=W6OGohgyvR4V/vnDM0nlphSO9uatkB3LGuzaVpxLLtMtS+QYiZRsh3SmZWG6dfkAdiP9I51J5DevY5EY+I+XLagjea73e6XOx/PtVYSVmvEesi1WD4Bv5rznGNowhl9KAJE8qWB/hlxNo7SyEsyzHgSVDSdEe22ez4ltZOU+hqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjRkX4Pj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF97C4CEC3;
+	Thu, 10 Oct 2024 01:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728522774;
-	bh=P+IBwA3DyX2CWGogUkSF7cmDoIFQ90YAqvQcabiWl8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i3hZ/bbknDvLNasdunyHCfM87m7KM5od3fO2hLEWdOCyA/KR1xvUV5cszN7rj1Nt/
-	 PDuKYodMHxE63SVnuAixpZevTnZWnlhJBSnZRmcLWE2z6LfdTrrqXJ5wxKYRcH2iI/
-	 Yf1KOB2ouj6QWr29Xmnwkq6WZXsb6+i79GxUy9GjoH9/98vTGS++ViARAd2MYWYSg6
-	 ImmFYrCPl+fkANUSGVK4SkEdZgIRpym629XSxntaINch+PzflcD9aW+cGgxhTyOl1T
-	 ygu8bv7pa+/WUc3N1Chi15ooGqL1cFJao4E0r5utVZHsHv1Y3mrEpynwPgTBARpntr
-	 Tb1s0SKFyESUQ==
-Date: Wed, 9 Oct 2024 18:12:52 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Leo Yan <leo.yan@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Dima Kogan <dima@secretsauce.net>, james.clark@linaro.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] perf probe: Support long symbol
-Message-ID: <ZwcqFA4IKbLZ7Cev@google.com>
-References: <20241007141116.882450-1-leo.yan@arm.com>
+	s=k20201202; t=1728523192;
+	bh=7ibvhYnSJAiJ1OcmrnINL7GDYanGl1DLHCB1INahv/A=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=AjRkX4PjjfFZclO+CFvJVDc5m6DClxClhPEQH6SRQGwuYLhqFK+ctVX0w1SC4j9Tq
+	 vP/Q//avbQ9B2z3oN5771b3ZtIWpe0VirMbhlS7QCSDGr0tmZNK0bg9fuyba+eEdWY
+	 wQwnTQiPHnIfTR3mMn/9+3P2GrOkU12r9uHkTDbJNBTdyRZrXpBi9VodVEgEt/X5nv
+	 tg+XENVSxgGZs+23SuQask9NJQCMpwhCfoZTWoVhhUWvBrm5kWaT0yGEetZt6Tgo4p
+	 u5+ZalNRUF2aEELw7FOG6hxwXxa3wKN802kL4J48ki/V+G/N+Xh8YP7ej397eJgALW
+	 kxTkC18g0yd0A==
+Message-ID: <a007bf2fd2bf676348570882a70534cc.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241007141116.882450-1-leo.yan@arm.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240913191037.2690-7-hpausten@protonmail.com>
+References: <20240913191037.2690-1-hpausten@protonmail.com> <20240913191037.2690-7-hpausten@protonmail.com>
+Subject: Re: [PATCH v2 6/6] clk: clocking-wizard: move dynamic reconfig setup behind flag
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+To: Conor Dooley <conor+dt@kernel.org>, Harry Austen <hpausten@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>
+Date: Wed, 09 Oct 2024 18:19:50 -0700
+User-Agent: alot/0.10
 
-Hello Leo,
+Quoting Harry Austen (2024-09-13 12:11:42)
+> Xilinx clocking wizard IP core's dynamic reconfiguration support is
+> optionally enabled at build time. Use the new boolean devicetree
+> property to indicate whether the hardware supports this feature or not.
+>=20
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> ---
 
-On Mon, Oct 07, 2024 at 03:11:13PM +0100, Leo Yan wrote:
-> Currently, a probe supports event name maximum to a 64-byte length. The
-> event name comes from the probed symbol name, otherwise, user can
-> specify an event name.
-> 
-> In the case when user tries to inject a probe for a long symbol, e.g.
-> mangled symbol name in a C++ program, the kernel buffer cannot
-> accommodate it if the symbol name is longer than 64 bytes.
-> 
-> On the other hand, this series relies on the perf tool to resolve the
-> issue. When the tool detects user doesn't specify event name and the
-> probed symbol is longer than 64 bytes, it will generate a hashed event
-> name with 64-byte length to avoid failure.
-
-Please CC Masami for probe related changes in the future.
-
-Thanks,
-Namhyung
-
-> 
-> 
-> Leo Yan (3):
->   perf: Dynamically allocate buffer for event string
->   perf probe: Check group string length
->   perf probe: Generate hash event for long symbol
-> 
->  tools/perf/util/probe-event.c | 71 ++++++++++++++++++++++++++++++++---
->  1 file changed, 65 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+Applied to clk-next
 
