@@ -1,206 +1,169 @@
-Return-Path: <linux-kernel+bounces-359259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627B0998976
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:27:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8AB998978
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56D01F25D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C82A1C24B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DE1CC8BF;
-	Thu, 10 Oct 2024 14:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804DC1CC15B;
+	Thu, 10 Oct 2024 14:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8nEFLhJ"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UDy+P/gm"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99401CC16A;
-	Thu, 10 Oct 2024 14:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1405C1CB511
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570118; cv=none; b=PRxzQZukGJqwGY22KapV4b9aLYtl/7lXS0q4LH7qRvV3o8A8CBQnT29OnW3tsTWcjikU7wrauIrbbfvnQJOMsB49Oov8V/H/8s8ZFZPgxYasKsmI2fdW05iCFsAdt2G4H8GZm82KJCxupA4OQlEVHygzuvKduhyN+HbKQLZOBtk=
+	t=1728570170; cv=none; b=LILrhEOWWUtdD90WEfmD8GztsawZAZRtWGu12cBT61D++AcTIxIMJCFInoYoR4erbPmorkglDfWJdSPoBP7QlvRSXRhnmEIgBQ0blRvC2d8UrNgO9gP8CZBXEc9fNXeoBnEmbAhf2YDaCe0oeGYIX3VF/Y0xEe6dBf3YyLF1iU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570118; c=relaxed/simple;
-	bh=2vsd0t36CysrdnUXJ1Tyy2GMPfaxOitsHFsmsVwjl8o=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=mgDFmS99fbd+w97C7fC8lJCqH27vEZMTQL6s5nCpaTGh4cUiY7YTKNds4Ym2b6t4j2xM3+Nr4OMf71cFYkjfbBmAUx6kxu+YJRav6/ii9BuevdgVxV4H4MFWRMBFaekPpvIUGS+1WrANWTlivhLPyLQVG8HFFl7X9sBoKPdH4GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8nEFLhJ; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbd550b648so8361146d6.0;
-        Thu, 10 Oct 2024 07:21:56 -0700 (PDT)
+	s=arc-20240116; t=1728570170; c=relaxed/simple;
+	bh=pc8gV4huGZDoUca8YffQfxAWHm148iLaPYTVWk1l2jA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgXK3ruPCNitDywlTxiiBu49U1I4RR0fz7IXCFNmyUlgwOUvXuoxGGMm85VqcN5ZMrK+Hf+h5yip+FFSg5fUoMjScbW3kehFoTYXKBZ4WnRknbcwq8DEovpdAJiqRpfqvDU5dxJX4dn0s+nw9bjqyIuy0zP9lp2UA4wBuhDZohw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UDy+P/gm; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fac787f39fso10600801fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728570116; x=1729174916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LPYW2o7+IDp4rOpsXb7mw7n6T5iIMPfjZI8VNMH0Y/k=;
-        b=Z8nEFLhJ0Gx8W80UkLQV5ccTlzWHFk6hDajutTXbdZw1EP4jRrVMv14CEVXx7JHW/J
-         zvhV7XMiut6tZARdgNo13eTzouh/m+1gO4iTqKNI0aG9wh+ajSU3mKl2h5Mvx98mt2jg
-         q7+AA7mfkfsKiTHQlJVF4pH+eH/3jO0UVVNAi98Zb5gtk/jRJrgiW6Efx2Mz3iJJzykk
-         smVye3bBLvSV4JZfxS3X9Z17HLrX1OzcLaO+6jtrgkjkD5D2R8c1hA/6OZbw52JCpY84
-         8kl2FrBLY/N4S4kZcu/BGv91nbX7JV4bLo5JnSGhKPB1sEvpmseGGIP55OmAeaZuYG8V
-         QD/w==
+        d=linaro.org; s=google; t=1728570167; x=1729174967; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9AJcZVNqCADPxVrB/UoMC81RGbypBJxweSdqf11Fz4=;
+        b=UDy+P/gmM3DlA9/uyy+ivLTEbKxgexXSBHV3yKb8r0nZjcOFsz0rj4jA+pAJAPskYD
+         U3bOLH+N913gviSD0KOZXH9AnBISVxaKRs3daqwBRJLuZ+q4U9Dwo1sYTLkn1GMkQdtl
+         B4ze5wsciOOLXMECnyNcqMBOLPHpi2+1zLPfyL7au3Dz4DOTK385WRAVPvQE34OLgizp
+         Rr/LTUpUzCN5jzvPKdXgFvNAfG9y252bnc8yJYmlN10LMM69sCV+s7eBfmWoi2L4jtif
+         5qmZNYK+sMvK1mFIVrGMA2FG4CzA/v/YlI/aCC51gHPy4GK7s+SBqDFIuKSLO2AxbFZN
+         6nfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728570116; x=1729174916;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LPYW2o7+IDp4rOpsXb7mw7n6T5iIMPfjZI8VNMH0Y/k=;
-        b=uW2yNJD9bomzIKFJSVriM11nOWkl7ldSgiiz4cAn7aRzpfTHaOPcbXRpwRwCvU0Qap
-         RyHHSSHMLdcN7IXULYridtqU7dUQoB0Dc9JZqEnQsyBkXs+5yMcdyqbJ3+sv2slb1Oru
-         8OpVFyObE0n4eAraVboU+iw0xnUkPoiyQ8eYBWQ1MqoE5GJH3UZcWunDaMsN0wnaHF25
-         0SJJ+V0V3HXKqCmor9lzMAvQWxW8DP7PURGZrF3gNUycHbjXutmiLsm+oB0mdi6rymzk
-         PfrYVz9c1jqyXEtFbxFx53NUdACK5nT8QRD3yv8OQY8+UJXBw+Lu5AM91g6UObe1or3S
-         jc7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVylv1NysJNstzY0Ny7eI2ZbwSy9tYPIUkvjMhePG3WW0PiVdl2fhAN3VTgQc7X8EH5Rih1L9cii0POMzA=@vger.kernel.org, AJvYcCW5RHhGKeZMBCDJbXdILYz0y0sUsSS7TSpl0QqawnNOFCy/WLBi1hjJ9qBXd7raQVr1nke1naQ6@vger.kernel.org, AJvYcCXnqW2t/wkYUfCiJu6uQTGUrWXN6hejuyO+mMTE43C8U0XJ3U0/gUyKd4qC/+VqqlfVhlRg6ufsvA9WEyr0LcM0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3AqhSjOuCd+EY2KGwZN5Ysxxs2Lhx2siF/VA5ZJD8A+sxCjZ7
-	kXLaKVCKALX4CSoxyJE5r7wJAnGugytSIAGY5z63mN/t6On0ajtB
-X-Google-Smtp-Source: AGHT+IFszecyh01yRjn3IjHo2xSKpUGZZUn/kb84GZw7t3EC/g+95JBcJwuHw+JiRcZY5AMyqzPYBQ==
-X-Received: by 2002:a05:6214:5684:b0:6cb:e52c:c8dd with SMTP id 6a1803df08f44-6cbe52cc95fmr44852066d6.53.1728570115612;
-        Thu, 10 Oct 2024 07:21:55 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8679d3csm5669956d6.137.2024.10.10.07.21.55
+        d=1e100.net; s=20230601; t=1728570167; x=1729174967;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T9AJcZVNqCADPxVrB/UoMC81RGbypBJxweSdqf11Fz4=;
+        b=NaLTThvapmVA3Ukd6+nFEfttNtFsmzDHPjrVx0osCOI0eLOU4yHMT/pxJEAoF141NN
+         8nu0w1xYhon4kXCN57mGZT2xzL2lIjVoRc2kQRY0s/ru23sZWWZiJmOBvZdN+JbJMZYT
+         Ms4s48GunpnBkupL5Uoa4HLxlI1opH9M5MnT4HZ/Qsb40V0z2e2EoCOBDkBqE62jou/Q
+         28oM01zAIoYz/LebDXahUVi/thDlUfoScZGsTSlPKdeWkjn9pzKSRt/fEq25BsMBb7Cd
+         /hvtgcDTCatmtMB2b5uUFQAfH/Ava7V2B5qalKgHaGkF8gNSZTrl1zitiLIn0lVVBmvR
+         ZxMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWs+C4B0wQbtG4njGFX4Xmuc8OwcDGAyL1s4ZR4KdzXWk+7nWJSskPMJGEGIeEv2AHdakuCEA3DEZi24Qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu/pS+rcNpWYZ79JD/MHWf/K8nubij5QbaKg/jlCr3uKLc4BjW
+	E3PO90mFG/5FhOVdRZ0uzsQ2LvzB0WIFLjGjvK9PDC4db6rh4UpaQaak0M/GhdU=
+X-Google-Smtp-Source: AGHT+IF6rZ3MD8nH2vuXY8H2os5uX0/oGgjx49wYPUe6Dm++/RdT24HNnJYcg/TCT0rhnTNfVYjUEg==
+X-Received: by 2002:a2e:b8c1:0:b0:2fa:fe0c:4967 with SMTP id 38308e7fff4ca-2fb1873e465mr41125211fa.20.1728570167037;
+        Thu, 10 Oct 2024 07:22:47 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb2474c85esm2097331fa.115.2024.10.10.07.22.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 07:21:55 -0700 (PDT)
-Date: Thu, 10 Oct 2024 10:21:54 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Gur Stavi <gur.stavi@huawei.com>, 
- 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- shuah@kernel.org
-Message-ID: <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch>
-In-Reply-To: <002701db1ae3$368d9b70$a3a8d250$@huawei.com>
-References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch>
- <20241009065837.354332-1-gur.stavi@huawei.com>
- <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch>
- <002201db1a75$9a83b420$cf8b1c60$@huawei.com>
- <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch>
- <002701db1ae3$368d9b70$a3a8d250$@huawei.com>
-Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket
- is not RUNNING
+        Thu, 10 Oct 2024 07:22:45 -0700 (PDT)
+Date: Thu, 10 Oct 2024 17:22:42 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_ppratap@quicinc.com, 
+	quic_jackp@quicinc.com
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: Add support for usb nodes on
+ QCS8300
+Message-ID: <xwidjnw3fqc2slwl3vftw7yi4j7juiw6rwszjhtxepqd6zz33s@ncoi4aikbb4e>
+References: <20241009195636.2649952-1-quic_kriskura@quicinc.com>
+ <20241009195636.2649952-2-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009195636.2649952-2-quic_kriskura@quicinc.com>
 
-Gur Stavi wrote:
-> > Gur Stavi wrote:
-> > > > Gur Stavi wrote:
-> > > > > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct sock *sk,
-> > > > struct fanout_args *args)
-> > > > > >>  	err = -EINVAL;
-> > > > > >>
-> > > > > >>  	spin_lock(&po->bind_lock);
-> > > > > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
-> > > > > >> -	    match->type == type &&
-> > > > > >> +	if (match->type == type &&
-> > > > > >>  	    match->prot_hook.type == po->prot_hook.type &&
-> > > > > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
-> > > > > >
-> > > > > > Remaining unaddressed issue is that the socket can now be added
-> > > > > > before being bound. See comment in v1.
-> > > > >
-> > > > > I extended the psock_fanout test with unbound fanout test.
-> > > > >
-> > > > > As far as I understand, the easiest way to verify bind is to test
-> > that
-> > > > > po->prot_hook.dev != NULL, since we are under a bind_lock anyway.
-> > > > > But perhaps a more readable and direct approach to test "bind"
-> > would be
-> > > > > to test po->ifindex != -1, as ifindex is commented as "bound
-> > device".
-> > > > > However, at the moment ifindex is not initialized to -1, I can add
-> > such
-> > > > > initialization, but perhaps I do not fully understand all the
-> > logic.
-> > > > >
-> > > > > Any preferences?
-> > > >
-> > > > prot_hook.dev is not necessarily set if a packet socket is bound.
-> > > > It may be bound to any device. See dev_add_pack and ptype_head.
-> > > >
-> > > > prot_hook.type, on the other hand, must be set if bound and is only
-> > > > modified with the bind_lock held too.
-> > > >
-> > > > Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD also
-> > > > succeeds in case bind() was not called explicitly first to bind to
-> > > > a specific device or change ptype.
-> > >
-> > > Please clarify the last paragraph? When you say "also succeeds" do you
-> > > mean SHOULD succeed or MAY SUCCEED by mistake if "something" happens
-> > ???
-> > 
-> > I mean it succeeds currently. Which behavior must then be maintained.
-> > 
-> > > Do you refer to the following scenario: socket is created with non-zero
-> > > protocol and becomes RUNNING "without bind" for all devices. In that
-> > case
-> > > it can be added to FANOUT without bind. Is that considered a bug or
-> > does
-> > > the bind requirement for fanout only apply for all-protocol (0)
-> > sockets?
-> > 
-> > I'm beginning to think that this bind requirement is not needed.
+On Thu, Oct 10, 2024 at 01:26:35AM GMT, Krishna Kurapati wrote:
+> Add support for USB controllers on QCS8300. The second
+> controller is only High Speed capable.
 > 
-> I agree with that. I think that is an historical mistake that socket
-> becomes implicitly bound to all interfaces if a protocol is defined
-> during create. Without this bind requirement would make sense.
-> 
-> > 
-> > All type and dev are valid, even if an ETH_P_NONE fanout group would
-> > be fairly useless.
-> 
-> Fanout is all about RX, I think that refusing fanout for socket that
-> will not receive any packet is OK. The condition can be:
-> if (po->ifindex == -1 || !po->num)
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 165 ++++++++++++++++++++++++++
+>  1 file changed, 165 insertions(+)
 
-Fanout is not limited to sockets bound to a specific interface.
-This will break existing users.
+[...]
 
-Binding to ETH_P_NONE is useless, but we're not going to slow down
-legitimate users with branches for cases that are harmless.
+> +
+> +		usb_2: usb@a4f8800 {
+> +			compatible = "qcom,qcs8300-dwc3", "qcom,dwc3";
+> +			reg = <0x0 0x0a4f8800 0x0 0x400>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +
+> +			clocks = <&gcc GCC_CFG_NOC_USB2_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB20_MASTER_CLK>,
+> +				 <&gcc GCC_AGGRE_USB2_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB20_SLEEP_CLK>,
+> +				 <&gcc GCC_USB20_MOCK_UTMI_CLK>;
+> +			clock-names = "cfg_noc",
+> +				      "core",
+> +				      "iface",
+> +				      "sleep",
+> +				      "mock_utmi";
+> +
+> +			assigned-clocks = <&gcc GCC_USB20_MOCK_UTMI_CLK>,
+> +					  <&gcc GCC_USB20_MASTER_CLK>;
+> +			assigned-clock-rates = <19200000>, <120000000>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
+> +					      <&intc GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>,
+> +					      <&pdc 10 IRQ_TYPE_EDGE_BOTH>,
+> +					      <&pdc 9 IRQ_TYPE_EDGE_BOTH>;
+> +			interrupt-names = "pwr_event",
+> +					  "hs_phy_irq",
+> +					  "dp_hs_phy_irq",
+> +					  "dm_hs_phy_irq";
+> +
+> +			power-domains = <&gcc GCC_USB20_PRIM_GDSC>;
+> +			required-opps = <&rpmhpd_opp_nom>;
+> +
+> +			resets = <&gcc GCC_USB20_PRIM_BCR>;
+> +
+> +			interconnects = <&aggre1_noc MASTER_USB2 0 &mc_virt SLAVE_EBI1 0>,
+> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB2 0>;
+> +			interconnect-names = "usb-ddr", "apps-usb";
 
-> I realized another possible problem. We should consider adding ifindex
-> Field to struct packet_fanout to be used for lookup of an existing match.
-> There is little sense to bind sockets to different interfaces and then
-> put them in the same fanout group.
-> If you agree, I can prepare a separate patch for that.
-> 
-> > The type and dev must match that of the fanout group, and once added
-> > to a fanout group can no longer be changed (bind will fail).
-> > 
-> > I briefy considered the reason might be max_num_members accounting.
-> > Since f->num_members counts running sockets. But that is not used
-> > when tracking membership of the group, sk_ref is. Every packet socket
-> > whose po->rollover is increased increases this refcount.
-> > 
-> > > What about using ifindex to detect bind? Initialize it to -1 in
-> > > packet_create and ensure that packet_do_bind, on success, sets it
-> > > to device id or 0?
-> > >
-> > > psock_fanout, should probably be extended with scenarios that test
-> > > "all devices" and all/specific protocols. Any specific scenario
-> > > suggestions?
-> > >
-> > >
-> > 
-> 
+As this is a USB2-only host, shouldn't it also have qcom,select-utmi-as-pipe-clk ?
+
+> +
+> +			status = "disabled";
+> +
+> +			usb_2_dwc3: usb@a400000 {
+> +				compatible = "snps,dwc3";
+> +				reg = <0x0 0x0a400000 0x0 0xe000>;
+> +				interrupts = <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>;
+> +				iommus = <&apps_smmu 0x20 0x0>;
+> +				phys = <&usb_2_hsphy>;
+> +				phy-names = "usb2-phy";
+> +				snps,dis_u2_susphy_quirk;
+> +				snps,dis_enblslpm_quirk;
+> +			};
+> +		};
+>  	};
+>  
+>  	arch_timer: timer {
+> -- 
+> 2.34.1
 > 
 
-
+-- 
+With best wishes
+Dmitry
 
