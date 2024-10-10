@@ -1,268 +1,181 @@
-Return-Path: <linux-kernel+bounces-358231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E2B997BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C13D997BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4405B2387B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9356EB238F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBA619D8A4;
-	Thu, 10 Oct 2024 04:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F4619CD13;
+	Thu, 10 Oct 2024 04:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h73FDZI8"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nnLSv2MN"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422846EB7D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8976220334
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728534071; cv=none; b=P5rAgOjVKVzLanlqxONqIeLPGph7030YmyubNYyJexFwc1aZ6QWo8I/pC6JWygeTdJEpp+WsjBtFejBmbCVz6uxZDd7I3I9J4TIeiV0MyUdvW+z+TZHqbLnJSz42fab+eXXzKWDW1nurbL8/NYFxId937aZ/ZeuiIZ0khNafpGI=
+	t=1728534146; cv=none; b=sfsvuOCCHabf54lbuvJTDMFiwdeBCnXt67lVMprFIYdUm4vw2h7MPi1JrFAqLCa0mc9K/qKQhOwQdGqhYVt7k8RYqoa32Gk+Vhy4uFjU+2FQIbQKAy6c4LXd0RkGlyjQe8eC/Hao3O7pH0pdWRfKSWwoiAPXjhhZjqITSO3q4KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728534071; c=relaxed/simple;
-	bh=bPEY407b1mxDInoX7xZ2kjMSardJMi/Qo0GVtu1QSqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XZOVP1fa7URJ/Qr9TY/8OWW+aIn3NdbgC4zaoige5GR1XDzk2NSfGus4/j+CSUuueJ7uUBYShH3VwVATly+3aB+RO6hDJLIZgoXEYgch826VOiBf+DzTU5jBJFUvHkrRvkjkH0Ol2816jsctdj6CprYUE+XMbwLn5T8MytfFwoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h73FDZI8; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1728534146; c=relaxed/simple;
+	bh=XE08S0gU6O1ey+7cGRPfMzNdqFMlwKFDi5LYuTNpmMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNaEkio/a2+gTuOop5pdH7lI4UwSx87ujrLCJugGDEWAdD5ODL0Fb8IvU2OI78zOXaxjZv2ZOg9y0G03t0LgFJdzai4tAkxCUEkjEnNRx1cnk7paIfePqAnT3HRqcimy/dRm8Uqq5CS8eOufMRzCIDWjxB/d4GzQKKDs+OvzHvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nnLSv2MN; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c89e66012aso544281a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:21:10 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c5fdd0fe3so131205ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:22:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728534069; x=1729138869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uBnxQhZMdJCucTfdJwBzEhkfmmeJb+9H/zZTu+WT3LU=;
-        b=h73FDZI85UboFhitzqOVQ7K9GUGF12iNQjXmhKkOjM4sBa98JtxoReTjLuqrzqO7yw
-         0OxuYmAlWlsus6ktLJYVG+apFnzPhzgrTla41U6y9M+JTmg4KLZ+/vOiSCRSSihMPcO2
-         +MBGTnv3QslSv0UTfIjYPcSnnh5sr5awmW8tzyLZAxlbQv//agCReYoeBdWbXN6dSpyB
-         hI46WlBeQ/gyP3stEpCn3o82FoojVjZOH7EbuCB5mQwOVKkDimj6uHBwLet88178BSCE
-         7e66aCG6RMAUnGQ8OVQm3SpQZd9h5stwPP7XiKzi5bqQ0trK2mq70B4kQrMnLlTWTPaw
-         cOGw==
+        d=google.com; s=20230601; t=1728534144; x=1729138944; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dYnzX/ygicXmrXwrwnSe5Ie0YJrwJceBZYllZsEBCy0=;
+        b=nnLSv2MNgsOLK51+75L/OKkYxg2KVT4kLC2Axjg+QXfgp8i/lUVAtg+dVBsdMnv1vS
+         4SfpRU5eyaSAylXVbGJp//MrKOErWudIo374QowrE1vpZGfppDCrWk6nG+lUICzctVgk
+         XuNjb1/TXBg29zmxoQ85c2dsGDyvEZAHSFXzeqN7rNVQfPVXkR7tBPd7scLs9V2mKP8V
+         IJce+nuz3JNHR57rWOwCD/BS8wbnrBPNSUD9uZuLO/xQNZlkqwxV/kKYuZSI6jq9ez9H
+         24PztxSABBEPb8xfcZ3g1Qysu+qLVqJY6lonR/HHfesd9iJkkf6OyITmLAzK9+9uDTGo
+         iNqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728534069; x=1729138869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uBnxQhZMdJCucTfdJwBzEhkfmmeJb+9H/zZTu+WT3LU=;
-        b=jbOl0gHhFhW54HZkBb6vuEJ7O9PEIrJv+jQI19M+pEwrzOAsZSWm9yu67Mjx5UcS9/
-         JsYvyreusFZ+AFD+jo4jbHDiz3lZq28drTIrKReXM/GQE1dcgi++d7j/3qEs8MCbQ/j0
-         pngjU8nb/b3pNgwTMNyd/ed3PypRMRjMI8WaqJaKDoPTevjIhIvLJdg9zvdM+R++C1D/
-         CR+RdOG9R/qILAUYmpKzPie00QwStFuSZXLvb5hsf4LRmryzwxscIK9liLA+4uK9Y+rb
-         yob2a8XB9XDVArF7jzRySJVouKYai4BSkHluOnubFTa7jyDdDqQXgoyUJl8HTy4acJ6R
-         BTIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Fp4qUn2+SlvAllAGWffkTEPviscpZ4yerPYNjmDnDC0SCPPb2QnRO3TbSY8w69Sh6UyIMsbaIjktI94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/ZddJHZ1SrU7yLUItpP0zX5D3Rcz7mIScbPIeE+hP5aH4BD8g
-	kHLwuDkzYtMFDjhEpZkjQfmxKncCaappdNUkbgAxA3hQScbHySjEpMHr/FLaUO04OdkItCxjvXB
-	04/3rdQyaXlPXTUGP1OiADiBXZWtOqksbrkeb
-X-Google-Smtp-Source: AGHT+IHTSg4j1DAEQNe89B9nEE0IWfnxBpuKfKV7CzxjHLtLxpkWkjce0nZGVNvYmtnMLjOJ8ReIDN4AoXvY55N/KbE=
-X-Received: by 2002:a05:6402:2713:b0:5c9:89f:9a with SMTP id
- 4fb4d7f45d1cf-5c91d689be7mr3247885a12.32.1728534068353; Wed, 09 Oct 2024
- 21:21:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728534144; x=1729138944;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dYnzX/ygicXmrXwrwnSe5Ie0YJrwJceBZYllZsEBCy0=;
+        b=OsQPFsq+NifsyCDw6qfQaf+n9BrNcSkiufPQenhLQ9FBm20C4Tl1Eze4npT3lhDCyi
+         9QW+nXlQhZY3JzzE7m3pmiZclw1/SmQL0LUDiyEx0jIQP9W30KLaQlIUUKj5Un/9Mh+b
+         HAr8AO0+1/hAFKkJjIblOQdFDuxAvSHdtDpBh8w+HmcWHW6cTRalvsZfWAB6a8AGDTTa
+         pMaDVrhSjmuwUtsr8ijqN988wib8gQuusC8ko935V72E64OFmBoBY8c/cwZMP27saEfA
+         4QLhVnQAzq/W1l7XfERgZLjj//qWPc5pkUkelXPF2EjEYf+DGIUKk+zALVyywDC6nOmT
+         FTOg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ceEHQVomJhgmDSH4OiQimxCaBIREI9b04Eze/BsMcinH0O4i/p63kKhddxXd1kbnDYrE5dwkArHDgPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIIkifc9hh1W8DJQmlpODeGtAkiWlMYbcBoXaU/fUUbIJmusFe
+	23uoQQMgbOxUbCOF/Gh3gEmmxKwjVN8gGKqooOqhv4Oy/IGM+XHVwlbKLxyaCQ==
+X-Google-Smtp-Source: AGHT+IGZ4DY58vKyFJS6CFq59viTnsP7rlKWDcKfosYkedh5t2qjtWmvGzctfWvTcfqOoJnXL+bkLA==
+X-Received: by 2002:a17:903:2287:b0:20c:568f:37c7 with SMTP id d9443c01a7336-20c8720f2bemr1223375ad.17.1728534143716;
+        Wed, 09 Oct 2024 21:22:23 -0700 (PDT)
+Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9f6fc1sm220037b3a.79.2024.10.09.21.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 21:22:23 -0700 (PDT)
+Date: Thu, 10 Oct 2024 04:22:19 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Shu Han <ebpqwerty472123@gmail.com>
+Cc: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	surenb@google.com, linux-kernel@vger.kernel.org,
+	aliceryhl@google.com
+Subject: Re: [PATCH] binder: use augmented rb-tree for faster descriptor
+ lookup
+Message-ID: <ZwdWe_I2p3zD-v1O@google.com>
+References: <20240917030203.286-1-ebpqwerty472123@gmail.com>
+ <ZuyQ8ECy0ypuOStg@google.com>
+ <CAHQche-rZODDsxbf6b3uagLfM52YtcoUuaeW0NxXcPTFFNcsZA@mail.gmail.com>
+ <ZwWdBIu6j0lL2rbt@google.com>
+ <CAHQche8v5CTW0L2cJGCDWOJ---KRv9wxWAk=eUaK1+k9UTcpHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-6-jdamato@fastly.com>
-In-Reply-To: <20241009005525.13651-6-jdamato@fastly.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 10 Oct 2024 06:20:57 +0200
-Message-ID: <CANn89iKytfwyax_d+7U8Xw-Wvj5z1d7xoi4LNhmUQphDiborDQ@mail.gmail.com>
-Subject: Re: [net-next v5 5/9] net: napi: Add napi_config
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com, 
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com, 
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Kory Maincent <kory.maincent@bootlin.com>, Johannes Berg <johannes.berg@intel.com>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHQche8v5CTW0L2cJGCDWOJ---KRv9wxWAk=eUaK1+k9UTcpHA@mail.gmail.com>
 
-On Wed, Oct 9, 2024 at 2:56=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
-e:
->
-> Add a persistent NAPI config area for NAPI configuration to the core.
-> Drivers opt-in to setting the persistent config for a NAPI by passing an
-> index when calling netif_napi_add_config.
->
-> napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
-> (after the NAPIs are deleted).
->
-> Drivers which call netif_napi_add_config will have persistent per-NAPI
-> settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
->
-> Per-NAPI settings are saved in napi_disable and restored in napi_enable.
->
-> Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->  .../networking/net_cachelines/net_device.rst  |  1 +
->  include/linux/netdevice.h                     | 36 ++++++++-
->  net/core/dev.c                                | 79 +++++++++++++++++--
->  net/core/dev.h                                | 12 +++
->  4 files changed, 118 insertions(+), 10 deletions(-)
->
-> diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Doc=
-umentation/networking/net_cachelines/net_device.rst
-> index 3ab663b6cf16..9d86720cb722 100644
-> --- a/Documentation/networking/net_cachelines/net_device.rst
-> +++ b/Documentation/networking/net_cachelines/net_device.rst
-> @@ -183,5 +183,6 @@ struct_dpll_pin*                    dpll_pin
->  struct hlist_head                   page_pools
->  struct dim_irq_moder*               irq_moder
->  u64                                 max_pacing_offload_horizon
-> +struct_napi_config*                 napi_config
->  unsigned_long                       gro_flush_timeout
->  u32                                 napi_defer_hard_irqs
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 4239a4a9d295..b65a901ab4e7 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -342,6 +342,15 @@ struct gro_list {
->   */
->  #define GRO_HASH_BUCKETS       8
->
-> +/*
-> + * Structure for per-NAPI config
-> + */
-> +struct napi_config {
-> +       u64 gro_flush_timeout;
-> +       u32 defer_hard_irqs;
-> +       unsigned int napi_id;
-> +};
-> +
->  /*
->   * Structure for NAPI scheduling similar to tasklet but with weighting
->   */
-> @@ -379,6 +388,8 @@ struct napi_struct {
->         struct list_head        dev_list;
->         struct hlist_node       napi_hash_node;
->         int                     irq;
-> +       int                     index;
-> +       struct napi_config      *config;
->  };
->
->  enum {
-> @@ -1860,9 +1871,6 @@ enum netdev_reg_state {
->   *                             allocated at register_netdev() time
->   *     @real_num_rx_queues:    Number of RX queues currently active in d=
-evice
->   *     @xdp_prog:              XDP sockets filter program pointer
-> - *     @gro_flush_timeout:     timeout for GRO layer in NAPI
-> - *     @napi_defer_hard_irqs:  If not zero, provides a counter that woul=
-d
-> - *                             allow to avoid NIC hard IRQ, on busy queu=
-es.
->   *
->   *     @rx_handler:            handler for received packets
->   *     @rx_handler_data:       XXX: need comments on this one
-> @@ -2012,6 +2020,11 @@ enum netdev_reg_state {
->   *                where the clock is recovered.
->   *
->   *     @max_pacing_offload_horizon: max EDT offload horizon in nsec.
-> + *     @napi_config: An array of napi_config structures containing per-N=
-API
-> + *                   settings.
-> + *     @gro_flush_timeout:     timeout for GRO layer in NAPI
-> + *     @napi_defer_hard_irqs:  If not zero, provides a counter that woul=
-d
-> + *                             allow to avoid NIC hard IRQ, on busy queu=
-es.
->   *
->   *     FIXME: cleanup struct net_device such that network protocol info
->   *     moves out.
-> @@ -2405,6 +2418,7 @@ struct net_device {
->         struct dim_irq_moder    *irq_moder;
->
->         u64                     max_pacing_offload_horizon;
-> +       struct napi_config      *napi_config;
->         unsigned long           gro_flush_timeout;
->         u32                     napi_defer_hard_irqs;
->
-> @@ -2657,6 +2671,22 @@ netif_napi_add_tx_weight(struct net_device *dev,
->         netif_napi_add_weight(dev, napi, poll, weight);
->  }
->
-> +/**
-> + * netif_napi_add_config - initialize a NAPI context with persistent con=
-fig
-> + * @dev: network device
-> + * @napi: NAPI context
-> + * @poll: polling function
-> + * @index: the NAPI index
-> + */
-> +static inline void
-> +netif_napi_add_config(struct net_device *dev, struct napi_struct *napi,
-> +                     int (*poll)(struct napi_struct *, int), int index)
-> +{
-> +       napi->index =3D index;
-> +       napi->config =3D &dev->napi_config[index];
-> +       netif_napi_add_weight(dev, napi, poll, NAPI_POLL_WEIGHT);
-> +}
-> +
->  /**
->   * netif_napi_add_tx() - initialize a NAPI context to be used for Tx onl=
-y
->   * @dev:  network device
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index fca2295f4d95..bd87232f7b37 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -6503,6 +6503,22 @@ EXPORT_SYMBOL(napi_busy_loop);
->
->  #endif /* CONFIG_NET_RX_BUSY_POLL */
->
-> +static void __napi_hash_add_with_id(struct napi_struct *napi,
-> +                                   unsigned int napi_id)
-> +{
-> +       napi->napi_id =3D napi_id;
-> +       hlist_add_head_rcu(&napi->napi_hash_node,
-> +                          &napi_hash[napi->napi_id % HASH_SIZE(napi_hash=
-)]);
-> +}
-> +
-> +static void napi_hash_add_with_id(struct napi_struct *napi,
-> +                                 unsigned int napi_id)
-> +{
-> +       spin_lock(&napi_hash_lock);
-> +       __napi_hash_add_with_id(napi, napi_id);
+On Wed, Oct 09, 2024 at 11:08:42PM +0800, Shu Han wrote:
+> On Wed, Oct 9, 2024 at 4:58 AM Carlos Llamas <cmllamas@google.com> wrote:
+> 
+> Thank you for your patient reply.
+> 
+> > I honestly don't remember. It might have been that we required to expand
+> > the 'struct binder_ref' size. This issue starts to be a problem when we
+> > have thousands of references e.g. 30,000. Adding 4 bytes to each one of
+> > them might not be worth it. But let me check...
+> 
+> I didn't consider memory overhead before...
+> That's indeed an important point.
 
-Hmmm... there is no check if 'napi_id' is already used and hashed.
+Yeah, I actually started with a solution that kept a list of references
+that had "gaps" behind them. This also required expanding struct
+binder_ref and I eventually abandoned this idea.
 
-I would add
+> 
+> Fortunately, after checking, I found that this patch does not occupy any
+> additional memory for `struct binder_ref`.
 
-WARN_ON_ONCE(napi_by_id(napi_id));
+This is good news. I hadn't actually checked this. I'll keep this in
+mind.
 
-> +       spin_unlock(&napi_hash_lock);
-> +}
-> +
->  static void napi_hash_add(struct napi_struct *napi)
->  {
->         if (test_bit(NAPI_STATE_NO_BUSY_POLL, &napi->state))
-> @@ -6515,10 +6531,8 @@ static void napi_hash_add(struct napi_struct *napi=
-)
->                 if (unlikely(++napi_gen_id < MIN_NAPI_ID))
->                         napi_gen_id =3D MIN_NAPI_ID;
->         } while (napi_by_id(napi_gen_id));
-> -       napi->napi_id =3D napi_gen_id;
->
-> -       hlist_add_head_rcu(&napi->napi_hash_node,
-> -                          &napi_hash[napi->napi_id % HASH_SIZE(napi_hash=
-)]);
-> +       __napi_hash_add_with_id(napi, napi_gen_id);
->
->         spin_unlock(&napi_hash_lock);
->  }
->
+> 
+> In a modern 64-bit platform, the size of `struct binder_ref` is 104 bytes.
+> If we add a 4-byte field into it, the size will be 112 bytes(aligned by
+> long). And both of them occupy a 128-byte slab(aligned by kmalloc_index).
+> So the memory cost won't be increased, if there isn't a pending change
+> that needs exactly 24 bytes in `struct binder_ref`.
+> 
+> In Rust, a rbtree::Node costs 40 bytes, 4 of 40 are used for alignment,
+> adding a 4-byte field won't change the size of the struct.
+> 
+> In a 32-bit platform, the number is from 60 bytes to 64 bytes, a 64-byte
+> slab, exactly 4 bytes.(very close to the slab bound)
+> 
+> Perhaps it's caused by introducing augmented rbtree into Rust which
+> requires considerable effort. But personally, I think it's not bad to just
+> introduce augmented rbtree into C (Rust and C are already quite different
+> here).
+> 
+> > Yeah, I think it would look cleaner if we do a revert of the previous
+> > patches though. This way we can remove the noise and see the actual
+> > changes. I'll do this locally for now, no need to send a v2 just yet.
+> 
+> Great point. thanks.
+> 
+> Best regards.
+
+I ran a benchmark test that creates multiple references on a Pixel
+device and the numbers between the augmented rbtree implementation and
+the current dbitmap are pretty much the same:
+
+augmented rbtree:
+--------------------------------------------------------------------
+Benchmark                          Time             CPU   Iterations
+--------------------------------------------------------------------
+BM_collectProxies/0/10        696251 ns       334494 ns         2363 kernel
+BM_collectProxies/0/100      4047417 ns      1886942 ns          390 kernel
+BM_collectProxies/0/1000    29510599 ns     14827312 ns           51 kernel
+BM_collectProxies/0/5000   136774414 ns     70482303 ns            9 kernel
+BM_collectProxies/0/10000  248333277 ns    125898564 ns            5 kernel
+BM_collectProxies/0/20000  485156508 ns    245891699 ns            3 kernel
+
+dbitmap:
+--------------------------------------------------------------------
+Benchmark                          Time             CPU   Iterations
+--------------------------------------------------------------------
+BM_collectProxies/0/10        646427 ns       291657 ns         1935 kernel
+BM_collectProxies/0/100      4203230 ns      2005648 ns          484 kernel
+BM_collectProxies/0/1000    30859725 ns     15369365 ns           42 kernel
+BM_collectProxies/0/5000   147910844 ns     75179017 ns            9 kernel
+BM_collectProxies/0/10000  239196875 ns    121801066 ns            5 kernel
+BM_collectProxies/0/20000  481154229 ns    247742285 ns            3 kernel
+
+You should have this test avialable as 'binderRpcBenchmark' I ran with
+the following parameters if you want to play with it:
+  $ binderRpcBenchmark --benchmark_filter="BM_collectProxies/0/*"
+
+Even if the numbers are too close it seems the bump in memory might be a
+problem. Particularly in 32bit as these devices are more sensitive to
+increases in allocations.
+
+Regards,
+Carlos Llamas
 
