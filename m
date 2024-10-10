@@ -1,146 +1,262 @@
-Return-Path: <linux-kernel+bounces-358813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A6699842E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:51:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B986D998433
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E71B1F25173
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55383283DE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5349A1C174D;
-	Thu, 10 Oct 2024 10:51:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DC91C1AD9;
+	Thu, 10 Oct 2024 10:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m/QDc569"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2641BF7E7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A17D1BF33F;
+	Thu, 10 Oct 2024 10:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557484; cv=none; b=GQ1CMMJ1+5plXksyT6c2zy8kbFmkp9g033TbyWfF36iQ+pwueVG+yuCE1FutwLGEVQyBPX65JYDuTCGqi2jaWDw2jYzwsy2+ARuUu6oJHiFpubu1ZbqhghZZst2va014PCzNKQQynLu1EDl3HPMUMLKvm0PoQfMiFMjiNAiFOgA=
+	t=1728557493; cv=none; b=gI52NjzW0qFfYm494VLfxUUD5VqfjvN1nSgG7C3OgtTuAJ7V9nD0XG//VQrmeNlXnndxltgAkTDUaJM6cM2VWb9b3sq/ba2Teo6Z9FqjSIlJjLZh0BaPA31vSQ529Fo8XXEJZCYDKVRnMM++ltt/UmxGsn2HntODaDZgUoaJka8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557484; c=relaxed/simple;
-	bh=KxLDnybijURxao9r+rWaEVhZy77Ll93ZU/f7DH2KqX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WcnEYnEjhPMDcNaLE4Ro7H4BTcKsW7r+Vb9RCnIb9V7Bsd6mCAjakoLyaP2vg0BDmWGVqiCxBeP9IqiwHa/3/9pJxbU0zRQvIlRsBH2iL+AjkL0dA543Yf82eanSh9JkH8P+oxmIByZUuIOR4M8FQolqiNHSue86JEvpsg44ILw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syql7-0002TO-Hb; Thu, 10 Oct 2024 12:51:05 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syql5-000pBs-WE; Thu, 10 Oct 2024 12:51:04 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1syql5-00D7lT-30;
-	Thu, 10 Oct 2024 12:51:03 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	stable@vger.kernel.org,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: [PATCH net v1 1] net: macb: Avoid 20s boot delay by skipping MDIO bus registration for fixed-link PHY
-Date: Thu, 10 Oct 2024 12:51:01 +0200
-Message-Id: <20241010105101.3128090-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1728557493; c=relaxed/simple;
+	bh=zAX4XWrMKm5ojbaPg2ZDb4VhTJz4cJh+5+DSVLBKsAg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fZD5EHpbRW4mq1fAHkCPeR50Nq3DX3wFV+pBH7UHAUTdi2NVS5TQhxTDUeNBf+d1YktZ3YYHwjpvKNpEZupFCrRFCQBiywuP931yed9FafBJ5XYMQ5lwC5fXUcFdW2/ABRO/RUcnavLe1cXNRILjdZDsswtRk58tCynZVPEl5W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m/QDc569; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AAbhRS020122;
+	Thu, 10 Oct 2024 10:51:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=VI1QMUGqyrKhM+I15a2vKb5zJ+iX0mCy1aXSHazEJTQ=; b=m/
+	QDc5695nhCsK8Ua9F9XzlBGT9kLkXj7tpG9R8vYzfYR5HYD9e3UgNJzY2+3RHQq1
+	PZE5lXBMr+K2P0WqRb9hkR+qYIIdLnS88CYC0mtuk8X2XGk/LtnHuParcGnvGCK9
+	7I/uxdE/5lVFyyEW+0f/2RQNhkQo8noM2hfCj1Se3qDUCXTgbNdEg4AAg3B6O96M
+	amwyRvrGR9GdnvAQRxPlMXrtsTgjKRARHKqYYnH1rjwysRt0TX+CnBMLIF5HgaOn
+	v1KkzBvU1hid9/VD5PHWwWEBODdStLY7wRgLQIUXQSPqthuKq9hFfJ1mlMcmnQrW
+	u6kIjyMhaci1bfGL4RZA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7g0ta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 10:51:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AApSjf012537
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 10:51:28 GMT
+Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 10 Oct 2024 03:51:24 -0700
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable Bluetooth
+Date: Thu, 10 Oct 2024 16:21:07 +0530
+Message-ID: <20241010105107.30118-1-quic_janathot@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: edgPxRqE78z3yGPaq-6lgDXcfz5O1vTx
+X-Proofpoint-GUID: edgPxRqE78z3yGPaq-6lgDXcfz5O1vTx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=925 bulkscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 clxscore=1015 spamscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100072
 
-A boot delay was introduced by commit 79540d133ed6 ("net: macb: Fix
-handling of fixed-link node"). This delay was caused by the call to
-`mdiobus_register()` in cases where a fixed-link PHY was present. The
-MDIO bus registration triggered unnecessary PHY address scans, leading
-to a 20-second delay due to attempts to detect Clause 45 (C45)
-compatible PHYs, despite no MDIO bus being attached.
+Add Bluetooth and UART7 support for qcs6490-rb3gen2.
 
-The commit 79540d133ed6 ("net: macb: Fix handling of fixed-link node")
-was originally introduced to fix a regression caused by commit
-7897b071ac3b4 ("net: macb: convert to phylink"), which caused the driver
-to misinterpret fixed-link nodes as PHY nodes. This resulted in warnings
-like:
-mdio_bus f0028000.ethernet-ffffffff: fixed-link has invalid PHY address
-mdio_bus f0028000.ethernet-ffffffff: scan phy fixed-link at address 0
-...
-mdio_bus f0028000.ethernet-ffffffff: scan phy fixed-link at address 31
-
-This patch reworks the logic to avoid registering and allocation of the
-MDIO bus when:
-  - The device tree contains a fixed-link node.
-  - There is no "mdio" child node in the device tree.
-
-If a child node named "mdio" exists, the MDIO bus will be registered to
-support PHYs  attached to the MACB's MDIO bus. Otherwise, with only a
-fixed-link, the MDIO bus is skipped.
-
-Tested on a sama5d35 based system with a ksz8863 switch attached to
-macb0.
-
-Fixes: 79540d133ed6 ("net: macb: Fix handling of fixed-link node")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: stable@vger.kernel.org
+Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 122 ++++++++++++++++++-
+ 1 file changed, 121 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index f06babec04a0b..e4ee55bc53ba7 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -930,9 +930,6 @@ static int macb_mdiobus_register(struct macb *bp)
- 		return ret;
- 	}
-
--	if (of_phy_is_fixed_link(np))
--		return mdiobus_register(bp->mii_bus);
--
- 	/* Only create the PHY from the device tree if at least one PHY is
- 	 * described. Otherwise scan the entire MDIO bus. We do this to support
- 	 * old device tree that did not follow the best practices and did not
-@@ -953,8 +950,19 @@ static int macb_mdiobus_register(struct macb *bp)
-
- static int macb_mii_init(struct macb *bp)
- {
-+	struct device_node *child, *np = bp->pdev->dev.of_node;
- 	int err = -ENXIO;
-
-+	/* With fixed-link, we don't need to register the MDIO bus,
-+	 * except if we have a child named "mdio" in the device tree.
-+	 * In that case, some PHYs may be attached to the MACB's MDIO bus.
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 0d45662b8028..c0bc44be7dd4 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: BSD-3-Clause
+ /*
+- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ /dts-v1/;
+@@ -32,6 +32,8 @@
+ 
+ 	aliases {
+ 		serial0 = &uart5;
++		bluetooth0 = &bluetooth;
++		serial1 = &uart7;
+ 	};
+ 
+ 	chosen {
+@@ -688,6 +690,39 @@
+ 	status = "okay";
+ };
+ 
++&qup_uart7_cts {
++	/*
++	 * Configure a bias-bus-hold on CTS to lower power
++	 * usage when Bluetooth is turned off. Bus hold will
++	 * maintain a low power state regardless of whether
++	 * the Bluetooth module drives the pin in either
++	 * direction or leaves the pin fully unpowered.
 +	 */
-+	child = of_get_child_by_name(np, "mdio");
-+	if (child)
-+		of_node_put(child);
-+	else if (of_phy_is_fixed_link(np))
-+		return macb_mii_probe(bp->dev);
++	bias-bus-hold;
++};
 +
- 	/* Enable management port */
- 	macb_writel(bp, NCR, MACB_BIT(MPE));
-
---
-2.39.5
++&qup_uart7_rts {
++	/* We'll drive RTS, so no pull */
++	drive-strength = <2>;
++	bias-disable;
++};
++
++&qup_uart7_rx {
++	/*
++	 * Configure a pull-up on RX. This is needed to avoid
++	 * garbage data when the TX pin of the Bluetooth module is
++	 * in tri-state (module powered off or not driving the
++	 * signal yet).
++	 */
++	bias-pull-up;
++};
++
++&qup_uart7_tx {
++	/* We'll drive TX, so no pull */
++	drive-strength = <2>;
++	bias-disable;
++};
++
+ &qupv3_id_0 {
+ 	status = "okay";
+ };
+@@ -719,12 +754,97 @@
+ &tlmm {
+ 	gpio-reserved-ranges = <32 2>, /* ADSP */
+ 			       <48 4>; /* NFC */
++	bt_en: bt-en-state {
++		pins = "gpio85";
++		function = "gpio";
++		output-low;
++		bias-disable;
++	};
++
++	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
++		pins = "gpio28";
++		function = "gpio";
++		/*
++		 * Configure a bias-bus-hold on CTS to lower power
++		 * usage when Bluetooth is turned off. Bus hold will
++		 * maintain a low power state regardless of whether
++		 * the Bluetooth module drives the pin in either
++		 * direction or leaves the pin fully unpowered.
++		 */
++		bias-bus-hold;
++	};
++
++	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
++		pins = "gpio29";
++		function = "gpio";
++		/*
++		 * Configure pull-down on RTS. As RTS is active low
++		 * signal, pull it low to indicate the BT SoC that it
++		 * can wakeup the system anytime from suspend state by
++		 * pulling RX low (by sending wakeup bytes).
++		 */
++		bias-pull-down;
++	};
++
++	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
++		pins = "gpio31";
++		function = "gpio";
++		/*
++		 * Configure a pull-up on RX. This is needed to avoid
++		 * garbage data when the TX pin of the Bluetooth module
++		 * is floating which may cause spurious wakeups.
++		 */
++		bias-pull-up;
++	};
++
++	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
++		pins = "gpio30";
++		function = "gpio";
++		/*
++		 * Configure pull-up on TX when it isn't actively driven
++		 * to prevent BT SoC from receiving garbage during sleep.
++		 */
++		bias-pull-up;
++	};
++
++	sw_ctrl: sw-ctrl-state {
++		pins = "gpio86";
++		function = "gpio";
++		bias-pull-down;
++	};
+ };
+ 
+ &uart5 {
+ 	status = "okay";
+ };
+ 
++&uart7 {
++	status = "okay";
++	/delete-property/interrupts;
++	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
++				<&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-1 = <&qup_uart7_sleep_cts>, <&qup_uart7_sleep_rts>,
++			<&qup_uart7_sleep_tx>, <&qup_uart7_sleep_rx>;
++
++	bluetooth: bluetooth {
++		compatible = "qcom,wcn6750-bt";
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_en>, <&sw_ctrl>;
++		enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
++		swctrl-gpios = <&tlmm 86 GPIO_ACTIVE_HIGH>;
++		vddaon-supply = <&vreg_s7b_0p972>;
++		vddbtcxmx-supply = <&vreg_s7b_0p972>;
++		vddrfacmn-supply = <&vreg_s7b_0p972>;
++		vddrfa0p8-supply = <&vreg_s7b_0p972>;
++		vddrfa1p7-supply = <&vreg_s1b_1p872>;
++		vddrfa1p2-supply = <&vreg_s8b_1p272>;
++		vddrfa2p2-supply = <&vreg_s1c_2p19>;
++		vddasd-supply = <&vreg_l11c_2p8>;
++		max-speed = <3200000>;
++	};
++};
++
+ &usb_1 {
+ 	status = "okay";
+ };
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
 
