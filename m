@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-358811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB53B99841F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A6699842E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DDE31F2502E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E71B1F25173
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38121BE251;
-	Thu, 10 Oct 2024 10:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DcnNL9FJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5349A1C174D;
+	Thu, 10 Oct 2024 10:51:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4F1A00F0;
-	Thu, 10 Oct 2024 10:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2641BF7E7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557256; cv=none; b=Zd1xgIa+Hr+z4ikcWDjj3SZErKaR70GL7AJbvbYa6J8mnN+oiAj9LjvXDJSOEf9y/Q1ti+PCv8Yx5eYdy9RPsliTBOQMjJcaIOaH//KdCufNPOCcCyGGz0JHsXMnd7VGihe5vEI+NvPJUj6YNl5droWVrQDObKf02uo5vnflQRM=
+	t=1728557484; cv=none; b=GQ1CMMJ1+5plXksyT6c2zy8kbFmkp9g033TbyWfF36iQ+pwueVG+yuCE1FutwLGEVQyBPX65JYDuTCGqi2jaWDw2jYzwsy2+ARuUu6oJHiFpubu1ZbqhghZZst2va014PCzNKQQynLu1EDl3HPMUMLKvm0PoQfMiFMjiNAiFOgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557256; c=relaxed/simple;
-	bh=v1m6sKjUWaKH5tcwIPZPQRzsAK8mfmTeuH6SEbXZQJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyeGb3kQ0ir3+6MH0AiRqR/dyiIAZyJ+hwDZIIUDR+gC0poDkbUuwiEMff5gKYO9i9uBKmWCmIjS/klSQZH73Ur51TZmvW8mLTXSsEcNWA0FL8lEZhM5ZWS/YA31nYFnsyLbhQxCbifpdVjP7J6OX+AoxWhjkmmBbtjNsrpiESM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DcnNL9FJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=b0md/58JspE7aFSFNfnKWagcGNvByj1vnQKOUmwdHEw=; b=DcnNL9FJHzB7UIU0Q3YEGQLBhv
-	yAd7Rqhpm2GWXdmU+LEJAP6KhN9sNVezFfP+X8y07JKbwLtx2Nl7dXj3fL/t115ocOsDmPfEEDIZn
-	FOsDnPnExT93oBErJq4mPZPuW/lTMPLproEMScJrftmp86eccLgDCJFyXjKUQ1+i/JLtNz2si/y/F
-	B0GrX1SNaeutFnLxvK849Fu1/Kh/Q6BibXoZiiri2/R/3JicuNFFj04wtJgVzM/5FPmb+kmX7ZLOR
-	iGLLa4p0MfvGRqZA7U1PxwimyGLSiftU0SHi2nE3aP1QOhh1akqJ3oCeTbav+OgqmplLewxzTU64z
-	4L0rtLCQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1syqhY-00000007QLt-2DDQ;
-	Thu, 10 Oct 2024 10:47:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9AFCA30088D; Thu, 10 Oct 2024 12:47:24 +0200 (CEST)
-Date: Thu, 10 Oct 2024 12:47:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Suren Baghdasaryan <surenb@google.com>,
+	s=arc-20240116; t=1728557484; c=relaxed/simple;
+	bh=KxLDnybijURxao9r+rWaEVhZy77Ll93ZU/f7DH2KqX4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WcnEYnEjhPMDcNaLE4Ro7H4BTcKsW7r+Vb9RCnIb9V7Bsd6mCAjakoLyaP2vg0BDmWGVqiCxBeP9IqiwHa/3/9pJxbU0zRQvIlRsBH2iL+AjkL0dA543Yf82eanSh9JkH8P+oxmIByZUuIOR4M8FQolqiNHSue86JEvpsg44ILw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syql7-0002TO-Hb; Thu, 10 Oct 2024 12:51:05 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syql5-000pBs-WE; Thu, 10 Oct 2024 12:51:04 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1syql5-00D7lT-30;
+	Thu, 10 Oct 2024 12:51:03 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	stable@vger.kernel.org,
+	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Klaus Kudielka <klaus.kudielka@gmail.com>,
-	Chris Bainbridge <chris.bainbridge@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Youssef Esmat <youssefesmat@google.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Bert Karwatzki <spasswolf@web.de>, regressions@lists.linux.dev
-Subject: Re: [PATCH 0/3] sched/core: Fix PSI inconsistent task state splats
- with DELAY_DEQUEUE
-Message-ID: <20241010104724.GK14587@noisy.programming.kicks-ass.net>
-References: <20241010082838.2474-1-kprateek.nayak@amd.com>
+	netdev@vger.kernel.org,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: [PATCH net v1 1] net: macb: Avoid 20s boot delay by skipping MDIO bus registration for fixed-link PHY
+Date: Thu, 10 Oct 2024 12:51:01 +0200
+Message-Id: <20241010105101.3128090-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010082838.2474-1-kprateek.nayak@amd.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 10, 2024 at 08:28:35AM +0000, K Prateek Nayak wrote:
-> After the introduction of DELAY_DEQUEUE, PSI consistently started
-> warning about inconsistent task state early into the boot. This could be
-> root-caused to three issues that the three patches respectively solve:
-> 
-> o PSI signals not being dequeued when the task is blocked, but also
->   delayed since psi_sched_switch() considered "!task_on_rq_queued()" as
->   the task being blocked but a delayed task will remain queued on the
->   runqueue until it is picked again and goes through a full dequeue.
-> 
-> o enqueue_task() not using the ENQUEUE_WAKEUP alongside ENQUEUE_DELAYED
->   in ttwu_runnable(). Since psi_enqueue() only considers (in terms of
->   enqueue flags):
-> 
->     (flags & ENQUEUE_WAKEUP) && !(flags & ENQUEUE_MIGRATED)
-> 
->   ... as a wakeup, the lack of ENQUEUE_WAKEUP can misguide psi_enqueue()
->   which only clears TSK_IOWAIT flag on wakeups.
-> 
-> o When a delayed task is migrated by the load balancer, the requeue or
->   the wakeup context may be aware that the task has migrated between it
->   blocking and it waking up. This is necessary to be communicated to PSI
->   which forgoes clearing TSK_IOWAIT since it expects the psi_.*dequeue()
->   to have cleared it during migration.
-> 
-> The series correctly communicates the blocked status of a delayed task
-> to psi_dequeue(), adds the ENQUEUE_WAKEUP flag during a requeue in
-> ttwu_runnable(), re-arranges the psi_enqueue() to be called after a
-> "p->sched_class->enqueue_task()", and notify psi_enqueue() of a
-> migration in delayed state using "p->migration_flags" to maintain the
-> task state consistently.
-> 
-> This series was previously posted as one large diff at
-> https://lore.kernel.org/lkml/f82def74-a64a-4a05-c8d4-4eeb3e03d0c0@amd.com/
-> and was tested by Johannes. The tags on the diff have been carried
-> to this series.
+A boot delay was introduced by commit 79540d133ed6 ("net: macb: Fix
+handling of fixed-link node"). This delay was caused by the call to
+`mdiobus_register()` in cases where a fixed-link PHY was present. The
+MDIO bus registration triggered unnecessary PHY address scans, leading
+to a 20-second delay due to attempts to detect Clause 45 (C45)
+compatible PHYs, despite no MDIO bus being attached.
 
-Thanks!
+The commit 79540d133ed6 ("net: macb: Fix handling of fixed-link node")
+was originally introduced to fix a regression caused by commit
+7897b071ac3b4 ("net: macb: convert to phylink"), which caused the driver
+to misinterpret fixed-link nodes as PHY nodes. This resulted in warnings
+like:
+mdio_bus f0028000.ethernet-ffffffff: fixed-link has invalid PHY address
+mdio_bus f0028000.ethernet-ffffffff: scan phy fixed-link at address 0
+...
+mdio_bus f0028000.ethernet-ffffffff: scan phy fixed-link at address 31
 
-I've renamed DELAYED_MIGRATED to MF_DELAYED, and made a note to go
-rename the MDF_PUSH thing to something consistent.
+This patch reworks the logic to avoid registering and allocation of the
+MDIO bus when:
+  - The device tree contains a fixed-link node.
+  - There is no "mdio" child node in the device tree.
 
-I've stuck then in queue.git sched/urgent along with a few other fixes
-and I will hopefully push the lot into tip soon.
+If a child node named "mdio" exists, the MDIO bus will be registered to
+support PHYs  attached to the MACB's MDIO bus. Otherwise, with only a
+fixed-link, the MDIO bus is skipped.
+
+Tested on a sama5d35 based system with a ksz8863 switch attached to
+macb0.
+
+Fixes: 79540d133ed6 ("net: macb: Fix handling of fixed-link node")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: stable@vger.kernel.org
+---
+ drivers/net/ethernet/cadence/macb_main.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index f06babec04a0b..e4ee55bc53ba7 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -930,9 +930,6 @@ static int macb_mdiobus_register(struct macb *bp)
+ 		return ret;
+ 	}
+
+-	if (of_phy_is_fixed_link(np))
+-		return mdiobus_register(bp->mii_bus);
+-
+ 	/* Only create the PHY from the device tree if at least one PHY is
+ 	 * described. Otherwise scan the entire MDIO bus. We do this to support
+ 	 * old device tree that did not follow the best practices and did not
+@@ -953,8 +950,19 @@ static int macb_mdiobus_register(struct macb *bp)
+
+ static int macb_mii_init(struct macb *bp)
+ {
++	struct device_node *child, *np = bp->pdev->dev.of_node;
+ 	int err = -ENXIO;
+
++	/* With fixed-link, we don't need to register the MDIO bus,
++	 * except if we have a child named "mdio" in the device tree.
++	 * In that case, some PHYs may be attached to the MACB's MDIO bus.
++	 */
++	child = of_get_child_by_name(np, "mdio");
++	if (child)
++		of_node_put(child);
++	else if (of_phy_is_fixed_link(np))
++		return macb_mii_probe(bp->dev);
++
+ 	/* Enable management port */
+ 	macb_writel(bp, NCR, MACB_BIT(MPE));
+
+--
+2.39.5
+
 
