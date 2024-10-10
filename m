@@ -1,246 +1,145 @@
-Return-Path: <linux-kernel+bounces-359100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F36199877A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99F099877C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6C0DB223EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:20:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164001C218C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399DD1C9B6D;
-	Thu, 10 Oct 2024 13:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B261C9DE9;
+	Thu, 10 Oct 2024 13:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yTqAhBRF"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="W+3qDMOr"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967E81C7B84
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2921C9B95;
+	Thu, 10 Oct 2024 13:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566425; cv=none; b=F8aoWvUNV7D4bBAnuBJMjt3cv+kyFYzfjWc6DN2phmMburiKtRs0Bz2ONVtHT27OLr2wmS4GhXtUCVzEltQjS1bavKSLZljnSonOTBwj4gJwpFeEaHav74wptgx7QXbffNICmIv78cYpI/Sq8IYPoRnLbbDqn1DQsqQsC6yn/1A=
+	t=1728566449; cv=none; b=CdjdiJgYuTVCre0au5sKgO/3W61b46sUz2HjzBmGiNrkmZvb63jVi30LjeuVDv8HxrMS1D//7uriC4fOnOkGNxrqm9bih8B1ZCf5oVwdr26vLW2vr28Dp/oGsEmhBz1G1O0llBet+ZXqUI1d9479aL17YVEvshz2hv2sHQ9LT0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566425; c=relaxed/simple;
-	bh=sTYwBdVyW82zjeklkFZu2GucilWszQtZTJ++Duz9sAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3WuZI7XhGBSXFDRQEU0pjExulGt7ZtsHGOS1THl3gAWaYKGFAwEHmxJKlKNWPNjkYDhObwJY9ots6+zdHmjG3QG0l5vpdS87bh7kHlP3vec5gyfcZJzY3+shIl9AU10ujZxuvzqcUetDQe5dL9ESf6wP2omMwqIRKCEooJfiVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yTqAhBRF; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so1259710e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:20:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728566422; x=1729171222; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=afwhwANrqqjIZBXW8NL/Qic7KEaJJJJRdGp7JOpIUIo=;
-        b=yTqAhBRFCBF0JkO42THpZDiGCWMVgjIsYNsHg+3mvhaKZtlUUdIqRIGyYRu1I/3z9a
-         0D4uCBTi5BOjxTwuuXMCHovz9IEihJFGt53jUgAb0c7007XaCsuSjovCA8qTPcwpFxMu
-         /1rfbI9idEXvIg1ufRs9+5vFyrtsPVdA5wTkSgQZHVbm4YSpEczZvM8nEUnp6sfF/6UI
-         EjozCgLXEL4tFkz5WlOvDg1K7KoZHWg0KHDUzbYTgNI6iLLt8QbXLLk9ctBBLFnftp1a
-         23R9S6zDQZMbTxQo4e+4xCDVB240FRo9VxqdTtf3AjT8QlxK9IxB1CwN9xSbDLjOdoOT
-         qEbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728566422; x=1729171222;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=afwhwANrqqjIZBXW8NL/Qic7KEaJJJJRdGp7JOpIUIo=;
-        b=OD2YWYzWeaSBgIv3cVLaGXVp/H2G71p9h0fwhblPXqqV4C/xngW+nq2UNVe/hp/AW7
-         BwkH4AGsrlj1vZIMTNLQT9dOHkjouaNu+YXGRP1HDmj+UtCjZNEBHAD7+K5JqeBD061U
-         HE7q//Ic1jKIy8WnFqjswlPbsOYoOXsVUGnmi/ecAIj4VvfXgw49gqp5OZVquzSkvg7w
-         LT5kmy1Bo0dxWAip0zIac6f5j7aoo18ncOX6kHt9cVz8BQmXIJ3nWpHVP4iWr7Yilr7i
-         nEF6E5wstjz241aVtqS+cvkrtGyuGEFwV9riWCemhyeAU4J8dn4dH68y7ktA2nWc7YzJ
-         CZsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUa9ZYIQDDteGKol0eUw0S5j0UK9ZbgcNStj6XttmVCaz1sBCCBjUPagD99FyTohsZUV4ppUptb3wnf7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9+a7a8zp1Mz+oNkC/3Yo6Zy+5etlrIJskBmzf9312rcNI8PdM
-	E2e5di22fon2N8sR8L9/c/sY1hkeT2PB1VxFTLZ5lARbomMTi1VoQfuUVD+ILOg=
-X-Google-Smtp-Source: AGHT+IE/rgqAiHR9MVe1Z5kBE+dVl8tJdx0Xano7R9HQucKZllTMG/aWC2ImiYcthp5VhrcRP6uTWA==
-X-Received: by 2002:a05:6512:220d:b0:539:9f3c:3bfd with SMTP id 2adb3069b0e04-539c497050dmr4024250e87.58.1728566421692;
-        Thu, 10 Oct 2024 06:20:21 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8f0f9csm250105e87.189.2024.10.10.06.20.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:20:21 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:20:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/14] drm/msm/dpu: Support quad-pipe in SSPP checking
-Message-ID: <j2ws4q45uwmk4anzgz32ckzsbuc32zngmnybynxoyvgtezu6kr@5e2hxhfsmbtf>
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-10-76d4f5d413bf@linaro.org>
+	s=arc-20240116; t=1728566449; c=relaxed/simple;
+	bh=JZrAbpbckH2nBhnmg5VyCz6EUzQ3WD5A0ex838XTkKg=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dzg59qT+b4fFg5AkcbdGCVwuC6xaciIpFIGEXxp6z3/yJNt8X4oaJBNBmv3jKxwtCeaAAU86eIRSOXGZmP1tNiJMTFBtsY5hb5fSeoYPmm31AY0Q+PD4u4gOa9WhaKLpi7NAWMFib/j0ujpxpQv7OaRi233LgdDdxa6ODiGVfWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=W+3qDMOr; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A7scEZ023252;
+	Thu, 10 Oct 2024 08:20:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=G7le7fW1jGOAmb535XwG1XQ3Pf+60e0NkXkbfOAA50s=; b=
+	W+3qDMOrmRSRe6ZvEy7OK9j6f8ZY2RvOeQZPAiGYQ/gXgdRVzwadSCX9rzyP+eyq
+	q8rSHpfyyPTylAfZVoNFxv0KUQV+hUX3JSUrCSOAQQQ/rPdpSIzh7WtwwHRDzUJO
+	lGCHlEKGrTYDunT+RLrM5BDqIACUj/ncIp1puOgoabnIuu3ghRFohDg3kuS7S29t
+	XfVyezarpkjoAZRfOZfHYG0uV/V1nefpOmupWOpCTeOIlpoWLvSwfR5vlqjfiAyQ
+	OLEFkeIhYz/i96+ht7QuMnTE/ZV12LSuaRXAA01B9Vzr15AVzMWISWYTlyZfWBAt
+	63FD4rzBlMS2TiieDfo62w==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4231vhxnra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 08:20:27 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
+ 2024 14:20:25 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 10 Oct 2024 14:20:25 +0100
+Received: from EDIN6ZZ2FY3 (EDIN6ZZ2FY3.ad.cirrus.com [198.61.68.101])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 7082682024A;
+	Thu, 10 Oct 2024 13:20:25 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: 'Takashi Iwai' <tiwai@suse.de>
+CC: "'Luke D. Jones'" <luke@ljones.dev>, <tiwai@suse.com>,
+        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <rf@opensource.cirrus.com>, <foss@athaariq.my.id>,
+        <sbinding@opensource.cirrus.com>, <kailang@realtek.com>,
+        <perex@perex.cz>
+References: <20241009205800.40570-1-luke@ljones.dev>	<000d01db1afa$4e76b430$eb641c90$@opensource.cirrus.com> <87wmig17f2.wl-tiwai@suse.de>
+In-Reply-To: <87wmig17f2.wl-tiwai@suse.de>
+Subject: RE: [PATCH] ALSA: hda/realtek: fixup ASUS GA605W
+Date: Thu, 10 Oct 2024 14:20:25 +0100
+Message-ID: <001401db1b17$2afd9060$80f8b120$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-10-76d4f5d413bf@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-gb
+Thread-Index: AQLaM5BF+fBgGyVU6uCoux+KLk9DawE2RdoNATtvTXawbjR9YA==
+X-Proofpoint-GUID: TJcchQXsWPsZ4rQq9kkWWJ7ATE2ro_Vn
+X-Proofpoint-ORIG-GUID: TJcchQXsWPsZ4rQq9kkWWJ7ATE2ro_Vn
+X-Proofpoint-Spam-Reason: safe
 
-On Wed, Oct 09, 2024 at 04:50:23PM GMT, Jun Nie wrote:
-> Move requreiment check to routine of every pipe check. Because there is
-
-s/Because there is/There will be/
-
-> multiple SSPPs for quad-pipe case in future.
+On Thu, 10 Oct 2024 13:15, Takashi Iwai wrote:
+> On Thu, 10 Oct 2024 11:53:49 +0200, Simon Trimmer wrote:
+> > On Wed, Oct 09, 2024, Luke D. Jones wrote:
+> > > The GA605W laptop has almost the exact same codec setup as the GA403
+> > > and so the same quirks apply to it.
+> > >
+> > > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> > > ---
+> > >  sound/pci/hda/patch_realtek.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/sound/pci/hda/patch_realtek.c
+> b/sound/pci/hda/patch_realtek.c
+> > > index 41e1119877b3..19b0bae074b6 100644
+> > > --- a/sound/pci/hda/patch_realtek.c
+> > > +++ b/sound/pci/hda/patch_realtek.c
+> > > @@ -10507,7 +10507,7 @@ static const struct snd_pci_quirk
+> > > alc269_fixup_tbl[] = {
+> > ...
+> > >  	SND_PCI_QUIRK(0x1043, 0x1e63, "ASUS H7606W",
+> > ALC285_FIXUP_CS35L56_I2C_2),
+> > > -	SND_PCI_QUIRK(0x1043, 0x1e83, "ASUS GA605W",
+> > ALC285_FIXUP_CS35L56_I2C_2),
+> > > +	SND_PCI_QUIRK(0x1043, 0x1e83, "ASUS GA605W",
+> > ALC285_FIXUP_ASUS_GA403U_HEADSET_MIC),
+> > ...
+> >
+> > Hi Luke,
+> > Thanks!
+> >
+> > The support code for the CS35L56 has changed a little in Takashi's
+branches
+> > from what that patch was generated against and there is no longer an
+> > existing quirk in the fixup table to trigger the component binding (but
+the
+> > general idea seems reasonable to hook the fixup of the headset mic).
 > 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h |  2 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c   | 86 ++++++++++++++---------------
->  2 files changed, 44 insertions(+), 44 deletions(-)
+> Right, the patch doesn't apply to the latest tree for 6.12-rc.
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> index fc54625ae5d4f..05b92ff7eb529 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> @@ -143,11 +143,13 @@ struct dpu_hw_pixel_ext {
->   *             such as decimation, flip etc to program this field
->   * @dest_rect: destination ROI.
->   * @rotation: simplified drm rotation hint
-> + * @valid: notify that this pipe and config is in use
-
-This is not related to code move, is it? And if it is, it should be
-described in the commit message.
-
->   */
->  struct dpu_sw_pipe_cfg {
->  	struct drm_rect src_rect;
->  	struct drm_rect dst_rect;
->  	unsigned int rotation;
-> +	bool valid;
->  };
->  
->  /**
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> index 9a8fbeec2e1e8..904ebec1c8a18 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> @@ -739,12 +739,40 @@ static int dpu_plane_check_inline_rotation(struct dpu_plane *pdpu,
->  static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
->  		struct dpu_sw_pipe *pipe,
->  		struct dpu_sw_pipe_cfg *pipe_cfg,
-> -		const struct msm_format *fmt,
-> -		const struct drm_display_mode *mode)
-> +		const struct drm_display_mode *mode,
-> +		struct drm_plane_state *new_plane_state)
->  {
->  	uint32_t min_src_size;
->  	struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
->  	int ret;
-> +	const struct msm_format *fmt;
-> +	uint32_t supported_rotations;
-> +	const struct dpu_sspp_cfg *pipe_hw_caps;
-> +	const struct dpu_sspp_sub_blks *sblk;
-> +
-> +	pipe_hw_caps = pipe->sspp->cap;
-> +	sblk = pipe->sspp->cap->sblk;
-> +
-> +	/*
-> +	 * We already have verified scaling against platform limitations.
-> +	 * Now check if the SSPP supports scaling at all.
-> +	 */
-> +	if (!sblk->scaler_blk.len &&
-> +	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
-> +	      drm_rect_width(&new_plane_state->dst)) ||
-> +	     (drm_rect_height(&new_plane_state->src) >> 16 !=
-> +	      drm_rect_height(&new_plane_state->dst))))
-> +		return -ERANGE;
-> +
-> +	fmt = msm_framebuffer_format(new_plane_state->fb);
-> +
-> +	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
-> +
-> +	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
-> +		supported_rotations |= DRM_MODE_ROTATE_90;
-> +
-> +	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
-> +						   supported_rotations);
->  
->  	min_src_size = MSM_FORMAT_IS_YUV(fmt) ? 2 : 1;
->  
-> @@ -920,49 +948,19 @@ static int dpu_plane_atomic_check_pipes(struct drm_plane *plane,
->  		drm_atomic_get_new_plane_state(state, plane);
->  	struct dpu_plane *pdpu = to_dpu_plane(plane);
->  	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
-> -	const struct msm_format *fmt;
-> -	struct dpu_sw_pipe *pipe = &pstate->pipe[0];
-> -	struct dpu_sw_pipe *r_pipe = &pstate->pipe[1];
-> -	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg[0];
-> -	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->pipe_cfg[1];
-> -	uint32_t supported_rotations;
-> -	const struct dpu_sspp_cfg *pipe_hw_caps;
-> -	const struct dpu_sspp_sub_blks *sblk;
-> -	int ret = 0;
-> -
-> -	pipe_hw_caps = pipe->sspp->cap;
-> -	sblk = pipe->sspp->cap->sblk;
-> -
-> -	/*
-> -	 * We already have verified scaling against platform limitations.
-> -	 * Now check if the SSPP supports scaling at all.
-> -	 */
-> -	if (!sblk->scaler_blk.len &&
-> -	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
-> -	      drm_rect_width(&new_plane_state->dst)) ||
-> -	     (drm_rect_height(&new_plane_state->src) >> 16 !=
-> -	      drm_rect_height(&new_plane_state->dst))))
-> -		return -ERANGE;
-> -
-> -	fmt = msm_framebuffer_format(new_plane_state->fb);
-> -
-> -	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
-> -
-> -	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
-> -		supported_rotations |= DRM_MODE_ROTATE_90;
-> -
-> -	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
-> -						   supported_rotations);
-> -	r_pipe_cfg->rotation = pipe_cfg->rotation;
-> -
-> -	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
-> -					  &crtc_state->adjusted_mode);
-> -	if (ret)
-> -		return ret;
-> +	struct dpu_sw_pipe *pipe;
-> +	struct dpu_sw_pipe_cfg *pipe_cfg;
-> +	int ret = 0, i;
->  
-> -	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
-> -		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
-> -						  &crtc_state->adjusted_mode);
-> +	for (i = 0; i < PIPES_PER_PLANE; i++) {
-> +		pipe = &pstate->pipe[i];
-> +		pipe_cfg = &pstate->pipe_cfg[i];
-> +		if (!pipe_cfg->valid || !pipe->sspp)
-> +			break;
-
-And... this check broke display support at this point, didn't it? It's
-never set, so none of the pipes are going to be checked.
-
-> +		DPU_DEBUG_PLANE(pdpu, "pipe %d is in use, validate it\n", i);
-> +		ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
-> +						  &crtc_state->adjusted_mode,
-> +						  new_plane_state);
->  		if (ret)
->  			return ret;
->  	}
+> We should start with setting up only the pincfg.  The binding with
+> Cirrus is handled via find_cirrus_companion_amps().  The shared DAC
+> of speaker and bass speaker is an open question, whether we still need
+> the workaround by alc285_fixup_speaker2_to_dac1().  Let's see.
 > 
-> -- 
-> 2.34.1
-> 
+> BTW, rather a question to Cirrus devs: may the call of
+> find_cirrus_companion_amps() conflict with the existing manual setup
+> of the Cirrus codec by a quirk entry?
 
--- 
-With best wishes
-Dmitry
+I think we're good (I rarely get to access to the end products so try to
+stick to the parts of the system that I have the details for which never
+includes the Realtek codec...) in this general case I'd just expect that the
+quirk entries wouldn't have the element at the end of the chain that used to
+do the amp component binding fixup and the remaining tweaks for things like
+the Realtek routing and mute indicators would be unaffected.
+
+Cheers,
+-Simon
+
 
