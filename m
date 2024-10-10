@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-358906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589AA99852B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:39:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C14C699852D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10813282D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B60D2835B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E691BE874;
-	Thu, 10 Oct 2024 11:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCkGCi4y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619FC1C57AD;
+	Thu, 10 Oct 2024 11:37:09 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D551C244C;
-	Thu, 10 Oct 2024 11:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABE41C579D;
+	Thu, 10 Oct 2024 11:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560223; cv=none; b=HX5Ff2nxVnoTLeMSLX0mcnwdOWt0gL6L8cgxF4ZU1b5q8id/Y526yAKq6p5AA0f8HKcT1pj9R1PVzN1008Q9MtRX42EnEWMwqKzeCV1dataVNJUTGQfVe8E3QULu/vrOUZThTwaV1aEM31E1wPKMsgIjJ1XeVHIZT3JsyCEJ95c=
+	t=1728560229; cv=none; b=kFoj7Jj9P+saLSP+s7rOGoc4v3gTuYNuAEnhXMedqc5EmLNR+auQe3JF5IZ7sCcW+X5Wa56WxXbl30iR/dtPqn3sI1g9Iqkslc9dYZbtXD8hX68bx2HAskLpEDsLY7u9klsu1AHl6W9CyUChoARfURXl6KnyNHfbBZ6znJQdVsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560223; c=relaxed/simple;
-	bh=6sN9NiVMs+mNbF82/Dl7byU7N6CfksVb4qD0SmT0wN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=phukXKZP6+BZqgNKreWCjw9Lz6Ccv1qISQ9UWlM7UNQVejrFbMbm1qrV8M+QMLMjIQ0gEZpujjgBiBLMGerr0JZMTlsxvLWssEXcP1hVn07RFlud+bWRw8Bl65uglO5nJNfLCryKWLphMf6zKKa9s1VIgEPy0v5MY4peNIVxxCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCkGCi4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E47CC4CEC5;
-	Thu, 10 Oct 2024 11:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728560223;
-	bh=6sN9NiVMs+mNbF82/Dl7byU7N6CfksVb4qD0SmT0wN0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=UCkGCi4yx9jq6b+kP6jVEX/OMs8lBRB7FvmSkNCDc5MViRJZ9/6m43+Y/63alG7Yl
-	 A0QAxMaFaRugaG/+5jXKBaNlX3tmWXvWEfy4A6uRsBtMYWnrg3rZVW6p52S/PdOras
-	 neydh9dN90RkDsbWqCHR1/U9QfIDTdjN9d2cnWxy4qWiV+bFSF5CgzRMTNqj7jT9+E
-	 wBjAqk8i3fef3tsi8vP0GKO/PVEoMC5cYoTmG+G6E6TwRtppt6DE8VeF9NN2SGakY3
-	 hZQA8Jg0tgUht5mXdxzHuN5nmEVJOqOrpK+vbxRguN+C/dYhy3EBMwiQaYeXudXIeG
-	 ncoXB24qndzRw==
-Message-ID: <901ab11e-bfe3-487c-9867-53289c848792@kernel.org>
-Date: Thu, 10 Oct 2024 14:36:58 +0300
+	s=arc-20240116; t=1728560229; c=relaxed/simple;
+	bh=YbnyJmpvU4EcQJVRyA/cXbEEzA7lbQ/nhBxqeUhjHMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pOgxNYUpUZ5ly+o297ZeeTPy9kRghyXV2pBJujdiM4BLNk7GLIv58+Y19BPpJicbPLehrYqu31Oea/I+bJ3rQDLj556gDCTlVSB17enNAJZCq6YK+uYQD8OmnbXZSIC6cqeTtIDypvlXDNEpnyJ/95m6vAL6RNmZW+KKyf4VNvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPSPG2CS0zySyh;
+	Thu, 10 Oct 2024 19:35:46 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id B8D701402CA;
+	Thu, 10 Oct 2024 19:37:03 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 19:37:03 +0800
+Message-ID: <159495c8-71be-4a11-8c49-d528e8154841@huawei.com>
+Date: Thu, 10 Oct 2024 19:37:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,151 +47,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] clk: twl: add TWL6030 support
-To: Andreas Kemnade <andreas@kemnade.info>,
- Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>, linux-kernel@vger.kernel.org,
- Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- linux-omap@vger.kernel.org
-References: <20241010074355.58161-1-andreas@kemnade.info>
- <20241010074355.58161-4-andreas@kemnade.info>
+Subject: Re: [PATCH net-next v20 14/14] mm: page_frag: add an entry in
+ MAINTAINERS for page_frag
+To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
+CC: <davem@davemloft.net>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>
+References: <20241008112049.2279307-1-linyunsheng@huawei.com>
+ <20241008112049.2279307-15-linyunsheng@huawei.com>
+ <20241008174350.7b0d3184@kernel.org>
+ <a3f94649-9880-4dc0-a8ab-d43fab7c9350@huawei.com>
+ <be4be68a-caff-4657-9a49-67b3eaefe478@redhat.com>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241010074355.58161-4-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <be4be68a-caff-4657-9a49-67b3eaefe478@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi Andreas,
+On 2024/10/10 0:32, Paolo Abeni wrote:
+> Hi,
 
-On 10/10/2024 10:43, Andreas Kemnade wrote:
-> The TWL6030 has similar clocks, so add support for it. Take care of the
-> resource grouping handling needed.
+Hi,
+
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  drivers/clk/Kconfig   |  2 +-
->  drivers/clk/clk-twl.c | 52 +++++++++++++++++++++++++++++++++++--------
->  2 files changed, 44 insertions(+), 10 deletions(-)
+> On 10/9/24 06:01, Yunsheng Lin wrote:
+>> On 2024/10/9 8:43, Jakub Kicinski wrote:
+>>> On Tue, 8 Oct 2024 19:20:48 +0800 Yunsheng Lin wrote:
+>>>> +M:    Yunsheng Lin <linyunsheng@huawei.com>
+>>>
+>>> The bar for maintaining core code is very high, if you'd
+>>> like to be a maintainer please start small.
+>>
+>> I did start small with the page_pool case, as mentioned in
+>> [1] of a similar comment, and the page_frag is a small
+>> subsystem/library as mentioned in commit log.
+>>
+>> I think I still might need a second opinion here.
+>>
+>> 1. https://lore.kernel.org/linux-kernel/dea82ac3-65fc-c941-685f-9d4655aa4a52@huawei.com/
 > 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 299bc678ed1b..82ec12f9b82c 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -291,7 +291,7 @@ config CLK_TWL
->  	help
->  	  Enable support for controlling the clock resources on TWL family
->  	  PMICs. These devices have some 32K clock outputs which can be
-> -	  controlled by software. For now, only the TWL6032 clocks are
-> +	  controlled by software. For now, the TWL6032 and TWL6030 clocks are
->  	  supported.
->  
->  config CLK_TWL6040
-> diff --git a/drivers/clk/clk-twl.c b/drivers/clk/clk-twl.c
-> index 1d684b358401..c04bcb61e260 100644
-> --- a/drivers/clk/clk-twl.c
-> +++ b/drivers/clk/clk-twl.c
-> @@ -11,13 +11,29 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  
-> -#define VREG_STATE              2
-> +#define VREG_STATE		2
-> +#define VREG_GRP		0
->  #define TWL6030_CFG_STATE_OFF   0x00
->  #define TWL6030_CFG_STATE_ON    0x01
->  #define TWL6030_CFG_STATE_MASK  0x03
-> +#define TWL6030_CFG_STATE_GRP_SHIFT	5
-> +#define TWL6030_CFG_STATE_APP_SHIFT	2
-> +#define TWL6030_CFG_STATE_APP_MASK	(0x03 << TWL6030_CFG_STATE_APP_SHIFT)
-> +#define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
-> +						TWL6030_CFG_STATE_APP_SHIFT)
-> +#define P1_GRP BIT(0) /* processor power group */
-> +#define P2_GRP BIT(1)
-> +#define P3_GRP BIT(2)
-> +#define ALL_GRP (P1_GRP | P2_GRP | P3_GRP)
-> +
-> +enum twl_type {
-> +	TWL_TYPE_6030,
-> +	TWL_TYPE_6032,
-> +};
->  
->  struct twl_clock_info {
->  	struct device *dev;
-> +	enum twl_type type;
->  	u8 base;
->  	struct clk_hw hw;
->  };
-> @@ -56,14 +72,21 @@ static unsigned long twl_clks_recalc_rate(struct clk_hw *hw,
->  static int twl6032_clks_prepare(struct clk_hw *hw)
->  {
->  	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
-> -	int ret;
->  
-> -	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> -			   TWL6030_CFG_STATE_ON);
-> -	if (ret < 0)
-> -		dev_err(cinfo->dev, "clk prepare failed\n");
-> +	if (cinfo->type == TWL_TYPE_6030) {
-> +		int grp;
-> +
-> +		grp = twlclk_read(cinfo, TWL_MODULE_PM_RECEIVER, VREG_GRP);
-> +		if (grp < 0)
-> +			return grp;
->  
-> -	return ret;
-> +		return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> +				    grp << TWL6030_CFG_STATE_GRP_SHIFT |
-> +				    TWL6030_CFG_STATE_ON);
-> +	}
-> +
-> +	return twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> +			    TWL6030_CFG_STATE_ON);
->  }
->  
->  static void twl6032_clks_unprepare(struct clk_hw *hw)
-> @@ -71,8 +94,14 @@ static void twl6032_clks_unprepare(struct clk_hw *hw)
->  	struct twl_clock_info *cinfo = to_twl_clks_info(hw);
->  	int ret;
->  
-> -	ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> -			   TWL6030_CFG_STATE_OFF);
-> +	if (cinfo->type == TWL_TYPE_6032)
+> Please note that the 'small' part here does not refer strictly to code size. Any core networking code has the bar significantly higher than i.e. NIC drivers - even if the latter could count order of magnitude more LoC.
+> AFAICS there is an unwritten convention that people are called to maintain core code, as opposed to people appointing themself to maintain driver code.
 
-Shouldn't this be done for TWL_TYPE_6030?
+Is there any discussion that is referring to above 'unwritten convention'?
+As my pool community experience tells me the above 'unwritten
+convention' is mainly referring to well-established subsystem that is
+already in the MAINTAINERS, and page_frag is not really a subsystem or
+library before this patchset, it seems common to me that someone being
+willing and able to turn it into a subsystem or library might become the
+co-maintainer if she/he is also willing to co-maintain it.
 
-> +		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> +				   ALL_GRP << TWL6030_CFG_STATE_GRP_SHIFT |
-> +				   TWL6030_CFG_STATE_OFF);
-> +	else> +		ret = twlclk_write(cinfo, TWL_MODULE_PM_RECEIVER, VREG_STATE,
-> +				   TWL6030_CFG_STATE_OFF);
-> +
->  	if (ret < 0)
->  		dev_err(cinfo->dev, "clk unprepare failed\n");
->  }
-> @@ -138,6 +167,7 @@ static int twl_clks_probe(struct platform_device *pdev)
->  	for (i = 0; i < count; i++) {
->  		cinfo[i].base = hw_data[i].base;
->  		cinfo[i].dev = &pdev->dev;
-> +		cinfo[i].type = platform_get_device_id(pdev)->driver_data;
->  		cinfo[i].hw.init = &hw_data[i].init;
->  		ret = devm_clk_hw_register(&pdev->dev, &cinfo[i].hw);
->  		if (ret) {
-> @@ -159,7 +189,11 @@ static int twl_clks_probe(struct platform_device *pdev)
->  
->  static const struct platform_device_id twl_clks_id[] = {
->  	{
-> +		.name = "twl6030-clk",
-> +		.driver_data = TWL_TYPE_6030,
-> +	}, {
->  		.name = "twl6032-clk",
-> +		.driver_data = TWL_TYPE_6032,
->  	}, {
->  		/* sentinel */
->  	}
-
--- 
-cheers,
--roger
+> 
+> Cheers,
+> 
+> Paolo
+> 
+> 
 
