@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-358128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E9B997A81
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C05997B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EBC01F23E90
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0071F234D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B802A3A1BF;
-	Thu, 10 Oct 2024 02:18:56 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB422BA3F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E851922D5;
+	Thu, 10 Oct 2024 03:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Bz4DAGzl"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840D4BE57;
+	Thu, 10 Oct 2024 03:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728526736; cv=none; b=K1npI4DNeHdVI7kSXKfLzHuGW2lY3OlUq4XWV8iuow0nKzIyUG54G7fO4Gi4IDm7hAyoBoT1GXgPb5AlD08WOEEjN4DeiFm/ijPi3d8f81Ixe/kQzg0h7qZbUI3jQTwTvuAVfP7RKdt2T5l8pPnKjTCqRYccdepRtdXtBai+AUc=
+	t=1728530970; cv=none; b=bMIFuAo3bdR8WDgO2/aUKJlRcBl3UMrsBbC1JxX4MGiygcCB0JswXRupDNTrgHwV5TKdZQN3m1BOv8zJEgKhhpbtq0cT1ykIDo7ub6mKhYuP6StrVTmJVLC6f/Hy/UDAZiBaSB0bI4aa06dF6Kp3mBzorGLYgJFG/XL6QE3n/Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728526736; c=relaxed/simple;
-	bh=H0GPgm/dq9wZFdjKf45P5ehiUNnwu4cv8a7qqYfvKK0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ojkCVYWB3H930WL98UrsGfaI1QadbrD5hkLcPrfGI68abLSGqnKWhZvV0JBYNoMbTVvPXW50hKfn9TaPVdZQHW6RjStuREnRkNCI9ST5YdVJlbFVzrbEBMYOQXbJGh0dxJJioMqcTdboMjPEHNnN3v5g6LhoWMTFp3Ew4L/XjVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee267073989833-27848;
-	Thu, 10 Oct 2024 10:18:50 +0800 (CST)
-X-RM-TRANSID:2ee267073989833-27848
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee467073988090-25a8f;
-	Thu, 10 Oct 2024 10:18:49 +0800 (CST)
-X-RM-TRANSID:2ee467073988090-25a8f
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: linux-kernel@vger.kernel.org
-Cc: zhujun2@cmss.chinamobile.com
-Subject: [PATCH] samples: connector: Ensure socket is closed after message sending
-Date: Wed,  9 Oct 2024 19:18:48 -0700
-Message-Id: <20241010021848.3157-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728530970; c=relaxed/simple;
+	bh=PyF5geQSl03RGWICGtUFnjvq/wA03VKXDbCICjL6w14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H5NCtozIfcvbnofYujDVVksWRFqi/qBLLOi2JhG1NaTb4Bpk8DDC8irEgHYvdCuFf3wf/kyHymHvnSpykEfz5B2QbTviYxUx5gy2Jsiq2s5BtRMJyUgIcBSa29xWIikHfm/AjiedoHKUWZaFOLWfAESgAjQsmcJS0LMl0f6ZQfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Bz4DAGzl; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 723AF88FAB;
+	Thu, 10 Oct 2024 05:29:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1728530966;
+	bh=gQnsQNQ/PBK1SteM9oC4cO5u8kTLGnBUpC1Tp8O2a+Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Bz4DAGzlzPqKpi94IKhRnwm9EDdVDYpweUjGZCxQC5/5v0ZScB7AHUZz99xNZ3sO4
+	 fXwHcb7Wfo9g1chTT07xZ3hg5iFnq2wW6XoqMOs1YdkzmI9d3BtX9usExRCZZJQLzV
+	 fO3hNP8Mq+sf/y5TZAPx6e7mnwBjwjBGeNJ724egjSM81vhEV5VWl+VcmLrtD8e50W
+	 EECJ93i9aovobS4t1zqCX1ZT0BP6CJDEKP02T/pxQj/Vfe3eBSSbD8ndTnnMHse5+3
+	 by8zd7hh3H5bfHb22YWv0AwSVzznnQYTNEq0KmGuZSzbip+bdhut1fsmmlM4iYJJg2
+	 HMrbWIqvnBwMg==
+Message-ID: <0ea547b0-5ccb-4cf7-bb57-807caf8649ca@denx.de>
+Date: Thu, 10 Oct 2024 03:18:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.li@nxp.com>
+Cc: u.kleine-koenig@baylibre.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, festevam@gmail.com, francesco@dolcini.it,
+ imx@lists.linux.dev, jun.li@nxp.com, kernel@pengutronix.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ p.zabel@pengutronix.de, pratikmanvar09@gmail.com, robh@kernel.org,
+ s.hauer@pengutronix.de, shawnguo@kernel.org, xiaoning.wang@nxp.com
+References: <20241008194123.1943141-1-Frank.Li@nxp.com>
+ <41cc47bd-f18f-463b-a0dc-843088ecf91e@denx.de>
+ <ZwajVXRwDLDg2rc7@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <ZwajVXRwDLDg2rc7@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Added a call to close(s) at the end of the message sending loop
-in main function.
+On 10/9/24 5:37 PM, Frank Li wrote:
+> On Wed, Oct 09, 2024 at 03:55:35AM +0200, Marek Vasut wrote:
+>> On 10/8/24 9:41 PM, Frank Li wrote:
+>>
+>> [...]
+>>
+>>> +	c = clkrate * 1500;
+>>> +	do_div(c, NSEC_PER_SEC);
+>>> +
+>>> +	local_irq_save(flags);
+>>> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
+>>> +
+>>> +	if (duty_cycles < imx->duty_cycle && (cr & MX3_PWMCR_EN)) {
+>>
+>> I think you can use state->enabled instead of (cr & MX3_PWMCR_EN).
+> 
+> state->enabled is new state. Need check old state here. If old state is
+> disable, needn't this workaround at all.
+Can you add code comment like this please ?
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- samples/connector/ucon.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/samples/connector/ucon.c b/samples/connector/ucon.c
-index fa17f864200e..4934a95622d0 100644
---- a/samples/connector/ucon.c
-+++ b/samples/connector/ucon.c
-@@ -181,6 +181,7 @@ int main(int argc, char *argv[])
- 			ulog("%d messages have been sent to %08x.%08x.\n", i, data->id.idx, data->id.val);
- 		}
- 
-+		close(s);
- 		return 0;
- 	}
- 
--- 
-2.17.1
-
-
-
+Thank you !
 
