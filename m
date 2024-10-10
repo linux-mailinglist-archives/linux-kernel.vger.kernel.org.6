@@ -1,111 +1,268 @@
-Return-Path: <linux-kernel+bounces-358230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E294B997BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:16:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E2B997BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 116F31C21768
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:16:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4405B2387B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8719D070;
-	Thu, 10 Oct 2024 04:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBA619D8A4;
+	Thu, 10 Oct 2024 04:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iSjSLg2M"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h73FDZI8"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B01405F7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422846EB7D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728533786; cv=none; b=In9IIXeXZq6qTJUV+CiTrDD/FnWwLrPu2WU1dIe/ihua+ma7hI6Q7k+9f9x7YbPIw53lXXyUHFKbteZnp/hF3ExQIFExEYUuPo9IOLFt3qkcRnMv5trAkAEf8oExHbVJ+i7l8Xox65twBLifCM0Z2Wpjl7c+P2Sc2DDwADDCTNw=
+	t=1728534071; cv=none; b=P5rAgOjVKVzLanlqxONqIeLPGph7030YmyubNYyJexFwc1aZ6QWo8I/pC6JWygeTdJEpp+WsjBtFejBmbCVz6uxZDd7I3I9J4TIeiV0MyUdvW+z+TZHqbLnJSz42fab+eXXzKWDW1nurbL8/NYFxId937aZ/ZeuiIZ0khNafpGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728533786; c=relaxed/simple;
-	bh=/NOfPZ7eMm5ZzTytaiKGiKN9UkLL+n7+0hNpo6cf5sc=;
+	s=arc-20240116; t=1728534071; c=relaxed/simple;
+	bh=bPEY407b1mxDInoX7xZ2kjMSardJMi/Qo0GVtu1QSqA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ccJtjQky9YpdQBjTPrmfKrCav71cfSnCJ8pa+e4EhwA+fs9w3cMpp3tL9HnhQBivy57o6So8B7GztyEBYWGGUC1eNirWpnBRoBqsO4v3iScgBPemZiCYeNJFyk/ICOzrnCEYozbI9C2RTs1oGi/ix6TfdkH5X2TJ/L+O2NntM/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iSjSLg2M; arc=none smtp.client-ip=209.85.128.51
+	 To:Cc:Content-Type; b=XZOVP1fa7URJ/Qr9TY/8OWW+aIn3NdbgC4zaoige5GR1XDzk2NSfGus4/j+CSUuueJ7uUBYShH3VwVATly+3aB+RO6hDJLIZgoXEYgch826VOiBf+DzTU5jBJFUvHkrRvkjkH0Ol2816jsctdj6CprYUE+XMbwLn5T8MytfFwoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h73FDZI8; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43111d23e29so85735e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:16:23 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c89e66012aso544281a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:21:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728533782; x=1729138582; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728534069; x=1729138869; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k9CK/O4HA+lbmjqu3KI23h4Z9dZBS4xoaBV+wIbWtTc=;
-        b=iSjSLg2MsDbrmkufcn5NT3CZZWsnpIZ2tJHIlJF8i0sdfBH5Ci4RFtdCUoHNw4AIlo
-         kbWvzKemShGNnuuOeEDHUjSRHcY+xwajTpIseBJXem1pJHnkBNTUYLFPAKJdEXdB2hm3
-         uyqd+G8VZpfyVwZylbbvOQvFpUkgdBHecSXOw6wJRKi06l9SLLlSeN/5OfXNrADqwNjl
-         jcA1bdkywPpi1GVJITpgGOTaY/+zjPMUpV19MXCKU3YyWyxKo2BfcCKeW1OZSSEZqzbG
-         i350bb00VDIqVD0taQjFwFSDpT8f+A/nGVMbWiQWTKYhQmQ5nJTnjHCYiMs87tLpX4KG
-         qIVg==
+        bh=uBnxQhZMdJCucTfdJwBzEhkfmmeJb+9H/zZTu+WT3LU=;
+        b=h73FDZI85UboFhitzqOVQ7K9GUGF12iNQjXmhKkOjM4sBa98JtxoReTjLuqrzqO7yw
+         0OxuYmAlWlsus6ktLJYVG+apFnzPhzgrTla41U6y9M+JTmg4KLZ+/vOiSCRSSihMPcO2
+         +MBGTnv3QslSv0UTfIjYPcSnnh5sr5awmW8tzyLZAxlbQv//agCReYoeBdWbXN6dSpyB
+         hI46WlBeQ/gyP3stEpCn3o82FoojVjZOH7EbuCB5mQwOVKkDimj6uHBwLet88178BSCE
+         7e66aCG6RMAUnGQ8OVQm3SpQZd9h5stwPP7XiKzi5bqQ0trK2mq70B4kQrMnLlTWTPaw
+         cOGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728533782; x=1729138582;
+        d=1e100.net; s=20230601; t=1728534069; x=1729138869;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k9CK/O4HA+lbmjqu3KI23h4Z9dZBS4xoaBV+wIbWtTc=;
-        b=WIjWiFnQhwjAHKVyNCTgb1AfYUXSw9Et0/EcuEMfMzfyI+elPRXia3GgrlqT7+ZUmh
-         TAwHW7fkRxkuoNZE8Eyciycf18ukU9yiURM8kUo9t8VJpdw5ZypmPZ2Eo+VwHOrmF86X
-         bElLEdn4a6Tnyk8FFD15iq6SudjtE0rMnrZ8rq/NQVm2giKoFwP0UMX+t/MWXrLI178+
-         jFK9cEDIR5DuEg0o2/EHGe2+fAPn07zmg+tE+UzGGHGOzAuXAtxQIndB0w9keb44iz3H
-         mtdnlVLEdd9lIiwcuzMRW++hHr1NtLT0YUpJ0KRsiC2VCEd6/T09C7jSsV9nBqarUnuE
-         R2Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCVItCH7FrM5eRNmadQRZyDdL/Xh7bJLoJWfLyqsx6joTeKPrdNebkCGq6I0TQQpRnDb7+xqcidjN1o8VWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziFtCSlqToOT+YfQ4TJxXyvaXSuu4EHzRi5SCPWeUrHMOalNMD
-	oumLmYvQJMfT7PoUgO6kbO08ofzukN4Wk9qjGJHdxkTcFY55g2ZSAej9btMvWsE7SxqDykNreGG
-	IOOgp5GvNlkawLk0ACaH5A23sUIxjhSnQbk2w
-X-Google-Smtp-Source: AGHT+IGP7qugmWppsd+XlsR9KmIIvyoIQhlhHpbvsPc4XOnMNQwrh5jCpIEK9VKbli8xlljzbWSo++KAN7+HMPOUG7g=
-X-Received: by 2002:a05:600c:3ec3:b0:426:5d89:896d with SMTP id
- 5b1f17b1804b1-43116e075ebmr1681815e9.1.1728533782304; Wed, 09 Oct 2024
- 21:16:22 -0700 (PDT)
+        bh=uBnxQhZMdJCucTfdJwBzEhkfmmeJb+9H/zZTu+WT3LU=;
+        b=jbOl0gHhFhW54HZkBb6vuEJ7O9PEIrJv+jQI19M+pEwrzOAsZSWm9yu67Mjx5UcS9/
+         JsYvyreusFZ+AFD+jo4jbHDiz3lZq28drTIrKReXM/GQE1dcgi++d7j/3qEs8MCbQ/j0
+         pngjU8nb/b3pNgwTMNyd/ed3PypRMRjMI8WaqJaKDoPTevjIhIvLJdg9zvdM+R++C1D/
+         CR+RdOG9R/qILAUYmpKzPie00QwStFuSZXLvb5hsf4LRmryzwxscIK9liLA+4uK9Y+rb
+         yob2a8XB9XDVArF7jzRySJVouKYai4BSkHluOnubFTa7jyDdDqQXgoyUJl8HTy4acJ6R
+         BTIw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Fp4qUn2+SlvAllAGWffkTEPviscpZ4yerPYNjmDnDC0SCPPb2QnRO3TbSY8w69Sh6UyIMsbaIjktI94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/ZddJHZ1SrU7yLUItpP0zX5D3Rcz7mIScbPIeE+hP5aH4BD8g
+	kHLwuDkzYtMFDjhEpZkjQfmxKncCaappdNUkbgAxA3hQScbHySjEpMHr/FLaUO04OdkItCxjvXB
+	04/3rdQyaXlPXTUGP1OiADiBXZWtOqksbrkeb
+X-Google-Smtp-Source: AGHT+IHTSg4j1DAEQNe89B9nEE0IWfnxBpuKfKV7CzxjHLtLxpkWkjce0nZGVNvYmtnMLjOJ8ReIDN4AoXvY55N/KbE=
+X-Received: by 2002:a05:6402:2713:b0:5c9:89f:9a with SMTP id
+ 4fb4d7f45d1cf-5c91d689be7mr3247885a12.32.1728534068353; Wed, 09 Oct 2024
+ 21:21:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009054429.3970438-1-guanyulin@google.com>
- <20241009054429.3970438-5-guanyulin@google.com> <2024100935-resonate-aneurism-b330@gregkh>
-In-Reply-To: <2024100935-resonate-aneurism-b330@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Thu, 10 Oct 2024 12:16:00 +0800
-Message-ID: <CAOuDEK11OaXX5g-1OvD3ehew=D=_PixL00PrSP2wf=O9zgUPvA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] xhci: sideband: add api to trace sideband usage
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thinh.Nguyen@synopsys.com, mathias.nyman@intel.com, 
-	stern@rowland.harvard.edu, elder@kernel.org, oneukum@suse.com, 
-	yajun.deng@linux.dev, dianders@chromium.org, kekrby@gmail.com, perex@perex.cz, 
-	tiwai@suse.com, tj@kernel.org, stanley_chang@realtek.com, 
-	andreyknvl@gmail.com, christophe.jaillet@wanadoo.fr, 
-	quic_jjohnson@quicinc.com, ricardo@marliere.net, grundler@chromium.org, 
-	niko.mauno@vaisala.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, badhri@google.com, 
-	albertccwang@google.com, quic_wcheng@quicinc.com, pumahsu@google.com
+References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-6-jdamato@fastly.com>
+In-Reply-To: <20241009005525.13651-6-jdamato@fastly.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 10 Oct 2024 06:20:57 +0200
+Message-ID: <CANn89iKytfwyax_d+7U8Xw-Wvj5z1d7xoi4LNhmUQphDiborDQ@mail.gmail.com>
+Subject: Re: [net-next v5 5/9] net: napi: Add napi_config
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com, 
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com, 
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Kory Maincent <kory.maincent@bootlin.com>, Johannes Berg <johannes.berg@intel.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 8:48=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
+On Wed, Oct 9, 2024 at 2:56=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
+e:
 >
-> On Wed, Oct 09, 2024 at 05:42:58AM +0000, Guan-Yu Lin wrote:
-> > --- a/include/linux/usb/hcd.h
-> > +++ b/include/linux/usb/hcd.h
-> > @@ -84,6 +84,10 @@ struct usb_hcd {
-> >       struct urb              *status_urb;    /* the current status urb=
- */
-> >  #ifdef CONFIG_PM
-> >       struct work_struct      wakeup_work;    /* for remote wakeup */
-> > +#ifdef CONFIG_USB_XHCI_SIDEBAND
-> > +     /* Number of active sideband accessing the host controller. */
-> > +     atomic_t                sb_usage_count;
+> Add a persistent NAPI config area for NAPI configuration to the core.
+> Drivers opt-in to setting the persistent config for a NAPI by passing an
+> index when calling netif_napi_add_config.
 >
-> It's a reference count, use refcount_t please.
+> napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
+> (after the NAPIs are deleted).
+>
+> Drivers which call netif_napi_add_config will have persistent per-NAPI
+> settings: NAPI IDs, gro_flush_timeout, and defer_hard_irq settings.
+>
+> Per-NAPI settings are saved in napi_disable and restored in napi_enable.
+>
+> Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  .../networking/net_cachelines/net_device.rst  |  1 +
+>  include/linux/netdevice.h                     | 36 ++++++++-
+>  net/core/dev.c                                | 79 +++++++++++++++++--
+>  net/core/dev.h                                | 12 +++
+>  4 files changed, 118 insertions(+), 10 deletions(-)
+>
+> diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Doc=
+umentation/networking/net_cachelines/net_device.rst
+> index 3ab663b6cf16..9d86720cb722 100644
+> --- a/Documentation/networking/net_cachelines/net_device.rst
+> +++ b/Documentation/networking/net_cachelines/net_device.rst
+> @@ -183,5 +183,6 @@ struct_dpll_pin*                    dpll_pin
+>  struct hlist_head                   page_pools
+>  struct dim_irq_moder*               irq_moder
+>  u64                                 max_pacing_offload_horizon
+> +struct_napi_config*                 napi_config
+>  unsigned_long                       gro_flush_timeout
+>  u32                                 napi_defer_hard_irqs
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index 4239a4a9d295..b65a901ab4e7 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -342,6 +342,15 @@ struct gro_list {
+>   */
+>  #define GRO_HASH_BUCKETS       8
+>
+> +/*
+> + * Structure for per-NAPI config
+> + */
+> +struct napi_config {
+> +       u64 gro_flush_timeout;
+> +       u32 defer_hard_irqs;
+> +       unsigned int napi_id;
+> +};
+> +
+>  /*
+>   * Structure for NAPI scheduling similar to tasklet but with weighting
+>   */
+> @@ -379,6 +388,8 @@ struct napi_struct {
+>         struct list_head        dev_list;
+>         struct hlist_node       napi_hash_node;
+>         int                     irq;
+> +       int                     index;
+> +       struct napi_config      *config;
+>  };
+>
+>  enum {
+> @@ -1860,9 +1871,6 @@ enum netdev_reg_state {
+>   *                             allocated at register_netdev() time
+>   *     @real_num_rx_queues:    Number of RX queues currently active in d=
+evice
+>   *     @xdp_prog:              XDP sockets filter program pointer
+> - *     @gro_flush_timeout:     timeout for GRO layer in NAPI
+> - *     @napi_defer_hard_irqs:  If not zero, provides a counter that woul=
+d
+> - *                             allow to avoid NIC hard IRQ, on busy queu=
+es.
+>   *
+>   *     @rx_handler:            handler for received packets
+>   *     @rx_handler_data:       XXX: need comments on this one
+> @@ -2012,6 +2020,11 @@ enum netdev_reg_state {
+>   *                where the clock is recovered.
+>   *
+>   *     @max_pacing_offload_horizon: max EDT offload horizon in nsec.
+> + *     @napi_config: An array of napi_config structures containing per-N=
+API
+> + *                   settings.
+> + *     @gro_flush_timeout:     timeout for GRO layer in NAPI
+> + *     @napi_defer_hard_irqs:  If not zero, provides a counter that woul=
+d
+> + *                             allow to avoid NIC hard IRQ, on busy queu=
+es.
+>   *
+>   *     FIXME: cleanup struct net_device such that network protocol info
+>   *     moves out.
+> @@ -2405,6 +2418,7 @@ struct net_device {
+>         struct dim_irq_moder    *irq_moder;
+>
+>         u64                     max_pacing_offload_horizon;
+> +       struct napi_config      *napi_config;
+>         unsigned long           gro_flush_timeout;
+>         u32                     napi_defer_hard_irqs;
+>
+> @@ -2657,6 +2671,22 @@ netif_napi_add_tx_weight(struct net_device *dev,
+>         netif_napi_add_weight(dev, napi, poll, weight);
+>  }
+>
+> +/**
+> + * netif_napi_add_config - initialize a NAPI context with persistent con=
+fig
+> + * @dev: network device
+> + * @napi: NAPI context
+> + * @poll: polling function
+> + * @index: the NAPI index
+> + */
+> +static inline void
+> +netif_napi_add_config(struct net_device *dev, struct napi_struct *napi,
+> +                     int (*poll)(struct napi_struct *, int), int index)
+> +{
+> +       napi->index =3D index;
+> +       napi->config =3D &dev->napi_config[index];
+> +       netif_napi_add_weight(dev, napi, poll, NAPI_POLL_WEIGHT);
+> +}
+> +
+>  /**
+>   * netif_napi_add_tx() - initialize a NAPI context to be used for Tx onl=
+y
+>   * @dev:  network device
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index fca2295f4d95..bd87232f7b37 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -6503,6 +6503,22 @@ EXPORT_SYMBOL(napi_busy_loop);
+>
+>  #endif /* CONFIG_NET_RX_BUSY_POLL */
+>
+> +static void __napi_hash_add_with_id(struct napi_struct *napi,
+> +                                   unsigned int napi_id)
+> +{
+> +       napi->napi_id =3D napi_id;
+> +       hlist_add_head_rcu(&napi->napi_hash_node,
+> +                          &napi_hash[napi->napi_id % HASH_SIZE(napi_hash=
+)]);
+> +}
+> +
+> +static void napi_hash_add_with_id(struct napi_struct *napi,
+> +                                 unsigned int napi_id)
+> +{
+> +       spin_lock(&napi_hash_lock);
+> +       __napi_hash_add_with_id(napi, napi_id);
 
-Appreciate the clear instructions, let me fix it in the next version.
+Hmmm... there is no check if 'napi_id' is already used and hashed.
+
+I would add
+
+WARN_ON_ONCE(napi_by_id(napi_id));
+
+> +       spin_unlock(&napi_hash_lock);
+> +}
+> +
+>  static void napi_hash_add(struct napi_struct *napi)
+>  {
+>         if (test_bit(NAPI_STATE_NO_BUSY_POLL, &napi->state))
+> @@ -6515,10 +6531,8 @@ static void napi_hash_add(struct napi_struct *napi=
+)
+>                 if (unlikely(++napi_gen_id < MIN_NAPI_ID))
+>                         napi_gen_id =3D MIN_NAPI_ID;
+>         } while (napi_by_id(napi_gen_id));
+> -       napi->napi_id =3D napi_gen_id;
+>
+> -       hlist_add_head_rcu(&napi->napi_hash_node,
+> -                          &napi_hash[napi->napi_id % HASH_SIZE(napi_hash=
+)]);
+> +       __napi_hash_add_with_id(napi, napi_gen_id);
+>
+>         spin_unlock(&napi_hash_lock);
+>  }
+>
 
