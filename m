@@ -1,145 +1,107 @@
-Return-Path: <linux-kernel+bounces-360182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69573999597
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:07:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808DE9995B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829EE1F24B8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:07:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F1AB24502
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704021E3DE6;
-	Thu, 10 Oct 2024 23:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GIm/YkKU"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76811E5709;
+	Thu, 10 Oct 2024 23:21:53 +0000 (UTC)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D3E1BCA0A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E05463D;
+	Thu, 10 Oct 2024 23:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728601647; cv=none; b=G9Xzt1FR7B8vdPhubUP+j3fuFX8FXY2kaUzOQB30aEXh86XiRd9BNz9Ij/8uyP3WB7jwlFGTdn3pmYHUODqSIsV9ZaRDpll/6NH0pNLrOxag6p95ztoC4ngA0ZKqlljoUnUUGP2r+2eFkVbrNI4sWA2Q72G8Bi7hzQF6mphk/mI=
+	t=1728602513; cv=none; b=ZvhCzM+/sioS1dZUR2X6gI7PQP6cVokAiwrZLu2GgI1dpWndRZdj3ozSip6fzeM9JK5dIocO/Pmk4779dq9jfL8ADSWmFIixFJkksmPSkFqfx9fmRJs0JbMg20KOK7JrBAJCpnG9vaWIL5I4uVptpsjy7vx+vQ4NRSO7A4jjsp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728601647; c=relaxed/simple;
-	bh=g6+gP/Abi8kIg2yNFkh8Xtajwz83aO55asrM6HlvKQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gzvKdQKDAyUnJab+yppHpc/SDVehdX5fn1g4j2D0ApUa+LGn9Nai8drddo1cBSWu7gylqyzty8RH9hRNbK5GQnkzHEwQfooknGE8jj9jKCfsvxJ9jLQV8EyAUESFsAzdJ1lPhDNb5X79EXTuaS4oaaGYW3wuMvyci5PdMs00YnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GIm/YkKU; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7ac83a98e5eso126396185a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728601645; x=1729206445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ast5PSZ42QXljwwMqB/wFICsAeJUR76J1fOkjB4gshw=;
-        b=GIm/YkKUhHcReVHyaQ1rhck3HS9EJKBRntfVc8uhA7nbHtBAZR1iqS3jWwqtFoNw9g
-         6M4QrwUjv8bFij/IAFk+U1nNbV5DtqwlR98KfaPZTUzEjsZg7vFiJZsA/boMjcUVf4Hw
-         lUntw8DzcDg8qarEomUg5eEcyHRB5/b98V75I=
+	s=arc-20240116; t=1728602513; c=relaxed/simple;
+	bh=h447ird2RnSAEFnDOQoO2FOMrWPCyvKO7xO3qzchTLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UC90D7thIaPSB0D4DdgQpP59V6lVaHu9ju3OGTS2HFU7Rp/sx5Bbmk3AoyrFjEsih+au29506ggSLcchnEtboDcoaG2Mj06yddB33uvI2jJzrJ4RdSEtFHOhaIIyKz+Qr6T0OrHr7ugXrOIQyvDvx/sWD/AWqUD9FePCLPHQ2YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uejji.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uejji.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e5c9026ea1so128695b6e.1;
+        Thu, 10 Oct 2024 16:21:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728601645; x=1729206445;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ast5PSZ42QXljwwMqB/wFICsAeJUR76J1fOkjB4gshw=;
-        b=cQDc/IPhgqrsgtmthAoBqtY16Ab79Jp9kG4uu5ukYBVU25UFBc2TnXsZ4lJuyrrdB+
-         M47nAe94zSj3P7Xjw90g2P9ym1BBxO8uR7Gqwj48tvvrjWwAfswdJeVn9Xl88Easpiz2
-         iMfZbn50SzVMHL9XwA9/eE4gM7F32urf24l6gkoG2O2Exduc3LHcAzYHqicYIlCoLis5
-         kJUPP1T8lY45gehaXc+vqnOvjWscljnFdDnDsgzVIrIOZslL3igYi2P0sAO+g92GLMXB
-         umy9v4vdyjYHWXUCbRLfXKArVa7xgg18775UvDzpWzQ3Jdbxuf4kFFO6o69ZSz0MVzeM
-         blPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV39gaM+rNGAfVWXK9jn9dFS3vu4meO2mQLK26Aoug36ZVhMMd2nLQpmAXOnpDcb3MKOYPRDijPkWXm/PA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5BVmdtnppjcMQv0mYcuGMhFjBrsfrtGdbCyQ86zrr6TvgeoFY
-	SPvicE1siPkCjxFbeoqTtJS0FxW/eAC4T+rkAH//OComOz/8UCPfwWb42uhV3A==
-X-Google-Smtp-Source: AGHT+IHjLTYzECPKxvPK64ftAIOP0ZKiWYLkKAL+0vyTdQdpvK4wVZTPmrminqYbdTVXXnOw3pGwvQ==
-X-Received: by 2002:a05:620a:172a:b0:7a9:a6f5:4912 with SMTP id af79cd13be357-7b11a3b5ad4mr129737085a.22.1728601645271;
-        Thu, 10 Oct 2024 16:07:25 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148d6a09sm86705685a.42.2024.10.10.16.07.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 16:07:23 -0700 (PDT)
-Message-ID: <dfc1ab0b-0d5f-4205-b8b0-96784d58d31b@broadcom.com>
-Date: Thu, 10 Oct 2024 16:07:21 -0700
+        d=1e100.net; s=20230601; t=1728602510; x=1729207310;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ILg17cAFaMForjMTc6vKIqKwor/oDXUjafNG46r39fs=;
+        b=MUcc8hYv/76eXQJvMiAEnHL0qFJUGFIjkvkItsC7WcQR6iIdkT5oEtmE9DYj+dkYwj
+         o79+iFCC3ADYr4ECDgG5bAUvTKX1qfAnq1ry6iv8g2dJT6h05mGXWWZ4KstlUAgeDveL
+         G7iPtB1pnEBNXNMRTpo+87ZzD1DWMmDOYHXgUzMLsIEcNL0Jvc5zU6YzjJUeJH2Kb0Fc
+         XM4J40JlwzB0a8zI53RlIo3uems2WcE7vxb3khDMPmIjPx7LPBgRrtJ+dgHXMKCmFsM2
+         DLV+fHysPWSQYFEl4oDa6apkgK9ugQjeDZNsi5SpffYpPyeygJGlmsxyECzFb03r8RxR
+         q3HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTSrQHrLJx2ZYm4Oq46u/cidmsAhVm0PleQWUIRGf2e+RLoNdizJiBW/ljKNm9wmkRHv1CGFCxZFv7yDpA@vger.kernel.org, AJvYcCWYNuV1EQLjd80sHFQP0KKmeVu6zY4BvwMh9ux+mPwjQrYeZqMnulo2j5xpri8Z8jGBsJ7JInfUECfgDw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/CJq1IFMr0W96yHJPfSQqhsZmovS+ayDkF84LMPvDanLXWqtu
+	gAY0k4WCCXpnwXpeDJZkLLAB7frbk7p6noTbzEhk/Ak7m1450TEA
+X-Google-Smtp-Source: AGHT+IHFO3/W/HVeN/A0hgfWroyDMjnr0nxy7dWo33N1vhQDB9jvZzWI5+p64oZdz57ZgKPnyxvLWA==
+X-Received: by 2002:a05:6808:654b:b0:3e3:9762:7b74 with SMTP id 5614622812f47-3e5c8f60bcfmr493333b6e.18.1728602510536;
+        Thu, 10 Oct 2024 16:21:50 -0700 (PDT)
+Received: from muster.uejji.net ([47.188.205.107])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e515003353sm388549b6e.36.2024.10.10.16.21.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 16:21:49 -0700 (PDT)
+From: John Edwards <uejji@uejji.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: John Edwards <uejji@uejji.net>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/1] Input: xpad - add support for MSI Claw A1M
+Date: Thu, 10 Oct 2024 23:09:23 +0000
+Message-ID: <20241010232020.3292284-4-uejji@uejji.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241010232020.3292284-2-uejji@uejji.net>
+References: <20241010232020.3292284-2-uejji@uejji.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: broadcom: Fix L2 linesize for Raspberry Pi 5
-To: Willow Cunningham <willow.e.cunningham@gmail.com>
-Cc: willow.e.cunningham@maine.edu, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
- Andrea della Porta <andrea.porta@suse.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241010150409.262087-1-willow.e.cunningham@maine.edu>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241010150409.262087-1-willow.e.cunningham@maine.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/10/24 08:04, Willow Cunningham wrote:
-> From: Willow Cunningham <willow.e.cunningham@gmail.com>
-> 
-> Fixes: faa3381267d0 ("arm64: dts: broadcom: Add minimal support for
-> Raspberry Pi 5")
-> 
-> Set the cache-line-size parameter of the L2 cache for each core to the
-> correct value of 64 bytes.
-> 
-> Previously, the L2 cache line size was incorrectly set to 128 bytes
-> for the Broadcom BCM2712. This causes validation tests for the
-> Performance Application Programming Interface (PAPI) tool to fail as
-> they depend on sysfs accurately reporting cache line sizes.
-> 
-> The correct value of 64 bytes is stated in the official documentation of
-> the ARM Cortex A-72, which is linked in the comments of
-> arm64/boot/dts/broadcom/bcm2712.dtsi as the source for cache-line-size.
-> 
-> Signed-off-by: Willow Cunningham <willow.e.cunningham@maine.edu>
+Add MSI Claw A1M controller to xpad_device match table when in xinput mode.
+Add MSI VID as XPAD_XBOX360_VENDOR.
 
-Applied, thanks!
+Signed-off-by: John Edwards <uejji@uejji.net>
+Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+---
+ drivers/input/joystick/xpad.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+index 4eda18f4f..9f44669df 100644
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -218,6 +218,7 @@ static const struct xpad_device {
+ 	{ 0x0c12, 0x8810, "Zeroplus Xbox Controller", 0, XTYPE_XBOX },
+ 	{ 0x0c12, 0x9902, "HAMA VibraX - *FAULTY HARDWARE*", 0, XTYPE_XBOX },
+ 	{ 0x0d2f, 0x0002, "Andamiro Pump It Up pad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX },
++	{ 0x0db0, 0x1901, "Micro Star International Xbox360 Controller for Windows", 0, XTYPE_XBOX360 },
+ 	{ 0x0e4c, 0x1097, "Radica Gamester Controller", 0, XTYPE_XBOX },
+ 	{ 0x0e4c, 0x1103, "Radica Gamester Reflex", MAP_TRIGGERS_TO_BUTTONS, XTYPE_XBOX },
+ 	{ 0x0e4c, 0x2390, "Radica Games Jtech Controller", 0, XTYPE_XBOX },
+@@ -492,6 +493,7 @@ static const struct usb_device_id xpad_table[] = {
+ 	XPAD_XBOX360_VENDOR(0x07ff),		/* Mad Catz Gamepad */
+ 	XPAD_XBOXONE_VENDOR(0x0b05),		/* ASUS controllers */
+ 	XPAD_XBOX360_VENDOR(0x0c12),		/* Zeroplus X-Box 360 controllers */
++	XPAD_XBOX360_VENDOR(0x0db0),		/* Micro Star International X-Box 360 controllers */
+ 	XPAD_XBOX360_VENDOR(0x0e6f),		/* 0x0e6f Xbox 360 controllers */
+ 	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f Xbox One controllers */
+ 	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori controllers */
 -- 
-Florian
+2.43.0
+
 
