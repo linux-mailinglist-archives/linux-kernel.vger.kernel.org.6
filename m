@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-359734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B982998FB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD82998FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B75461F24C50
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB266282D0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953111CEAD2;
-	Thu, 10 Oct 2024 18:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909A21CEAA6;
+	Thu, 10 Oct 2024 18:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZFeLxxX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRCplQ8k"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903911CEAA7;
-	Thu, 10 Oct 2024 18:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216138396;
+	Thu, 10 Oct 2024 18:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584418; cv=none; b=UpxLUDeYt5/fVGuGC0YDYAnsBz/y0Q9fckwx86CW/kGaCKmSkIa6/EZcBVQEFJpdzIhucxPguCxhi5SB4JMURmHjV/iWLBX7JcH8mfB0lazgVL/qmdbVBx42n8omTLLi5SyaPc2xpcOTRqeSLIGq2AIWGcSqGWkr05HHsdY1NGQ=
+	t=1728584438; cv=none; b=WEZ0Wh2FJfqgs4JTY/CGoWVYFCpgCeG/ApZM6xLr+5i0hEKB9k5VIIbhOaNh6tUZbuO13rpuRL+qo9IUhA9JmMm/qw/OKYXokZlRfoY6k0f17DtxuiTMXHykH62hgZGG6P5HLEEPQ/X/JRUo3K50L3oi28BUiV37W+c5rjh9Bjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584418; c=relaxed/simple;
-	bh=FicUtrc9ldvt8iypHNOSymiyr8AWJnh+K9cgdxhR6JQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7IaDafYE2SCo5qiZRGVbdA4XRE0eqE+/qGXLNiEZIP8gLLICyd0+exN4cRbyWJzFaECUCgqQdKlAOrBh/DZwBjv8UHp/0IaxsE/N6cR28YmlhdI5H6Fky07HM6mp6uAkEBntOwzcSi2SpTpjsRgOfsn4SBRVSxtcjxstj1VmGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZFeLxxX; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728584417; x=1760120417;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FicUtrc9ldvt8iypHNOSymiyr8AWJnh+K9cgdxhR6JQ=;
-  b=fZFeLxxX7RDNCoK1rNPuZUeh1/jQEwT3c+yGgPkMwGY1J5OymL3JzrqW
-   MZBH4ZT+aXacxUWw8kZE+QzoBPpu11XWCM7u8lGKK3OFRerX3QO49ZrYy
-   OTVcTAsKlYmigwY6BdgDtZ+ZYdNb0BTf171Y+bfYr2rcrmov81WCRJTt/
-   5raunTNxOYZ+w+lJm1L1IvhCqMW+AWN8Yr3kFQduBR5VKLd4K/tYVEMLI
-   lct7O2Uzvqk5EG2LeyggmpFItxsgXzJfZfJNDxoy58xkkY2cCpacx8qXi
-   i/3U7hPNUQdbKJghswIWrUoQkYDmQes3eesHdA/us9OHs2d2bYgOqeVsg
-   w==;
-X-CSE-ConnectionGUID: xlAZHX6lSgKCON92EiXzwA==
-X-CSE-MsgGUID: W1gZKbh7RTKulZyyfjIzCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="15589027"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="15589027"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 11:20:16 -0700
-X-CSE-ConnectionGUID: DEWjVGkjSfaRjtnCgEDsvg==
-X-CSE-MsgGUID: QvoCv6CASpqIbYmpJlguHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="100009260"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 11:20:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1syxlk-00000001dJl-0D95;
-	Thu, 10 Oct 2024 21:20:12 +0300
-Date: Thu, 10 Oct 2024 21:20:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dejin Zheng <zhengdejin5@gmail.com>,
-	Philipp Stanner <pstanner@redhat.com>
-Cc: helgaas@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1728584438; c=relaxed/simple;
+	bh=AQ0kR/CdHYq7xnw3rsJ9i4pLf5dT9pWRk+1pMPO0hlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AItMX/I+YXdBODtL4FpmcgcE10s4IpB+8CJJyvNB6yiAMLjPhSyrBPLCFzhnSHdakNBVNfWKaIvMvC1YJkrKD+pzHkEc/zJVWKdIE6uUyVGVwEHsaMlJIUE4zFLvZ++Igxpx1+D/HKKwWae+tYBDMaejank2TLkNG3Bb7HlPUxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRCplQ8k; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13440971fa.3;
+        Thu, 10 Oct 2024 11:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728584434; x=1729189234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnAkawjZqfeZ7VH0Jg0DFYz+xjlN8xdngDCa0VPoccA=;
+        b=VRCplQ8k7YwEpfTNDE+xC+RQnOCZsCmg8d8yC2VdXn4NmgiluXSyVXbjvYVWAinwRS
+         0EStBxN9M4lDYbzqLeWf/NnYBxOl8Cjvin0+Jx7ooIvSkjXaoQC8C6DnZi/pzi/pJY5f
+         Rk2WgyP5snJi1sjGsEXSR3vkZc43fWM2Pi0z6CmhT3zggsXzAE3EWuwW6Ma4MKoDPOxB
+         PVNLCzCVnuAbpQgVl25MKgNgtDG7hXHG8CTbtlqYuDzy5s/SALXyzHzlpwuyKRP/XSgO
+         uEzxgyFvt9eQeHxeZQx6scK1BkN0pkAb5zApRwsTCiUku+/y/OQmyH4Xskna/IznIRWZ
+         ci2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728584434; x=1729189234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AnAkawjZqfeZ7VH0Jg0DFYz+xjlN8xdngDCa0VPoccA=;
+        b=YWvwk5LIpD2Qi8UkiFGvg22XIgWVOHRzwZlqlSO4BOib6s1vamQylgRDgiSuiRrVFi
+         srMI0Lc39PT0Vb8vSBwCOeernBcMdIamKaGSLcA8kFQyDUOB4E2rvPSHBhfJcVPC6IIu
+         i56gpzY4bwFMwqH170crfUxkYceHL91i2Xt0Ef+fUf1tJCrG5NbWBjZI+pCkZ/NcAnf1
+         eoBvB1m+B5Hpun47tSZLPWeFPR8ImU68n+8Rmhe12odsWjaM0NfHf4xh0T2iEl2SwP2V
+         9lpzBGeAPFHxCNyEMGPGE/N0RLAjjAB43WXKzPEz4nkZx6lneWBRy3Tfto8QP9r33s7x
+         DCHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKEJP8dvCkehpwXKRXScmmurx/QMI04Xc1764J/wPhDNY0gMkooarwbiJS1/Sk8ua32mKtkUfSEpKW8I=@vger.kernel.org, AJvYcCXzXvg2jILYxZyDKHe9vKr7CoT+Hi/PcDylrR7Nng82ncq6IlzpzkUBdc+OlmnuhsAVYyxJGQTYTb5pvU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYT0XgQWNQdSQLc1I08tNnRppIIhzLsgEfJV1BCrtAYjBGOmyl
+	Oi6jovp6kg4BW+neAIbqOzTlA+/FVvUe6XdsL6FNHSt/Y49xrn8+oyiiw0zW
+X-Google-Smtp-Source: AGHT+IGfi0DarAWtv5MybSL1H7WiCZ+sBqFN5puLs0NY6kQSdyj0bxg7ojxxdV7ITOUPdk+lSwn9/g==
+X-Received: by 2002:a05:651c:548:b0:2f3:f4e2:869c with SMTP id 38308e7fff4ca-2fb188105e7mr42531671fa.44.1728584434204;
+        Thu, 10 Oct 2024 11:20:34 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937153032sm1096641a12.53.2024.10.10.11.20.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 11:20:33 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Ryan Lee <ryans.lee@analog.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/4] Introduce pcim_alloc_irq_vectors()
-Message-ID: <Zwga201ezmC75Qyi@smile.fi.intel.com>
-References: <20210607153916.1021016-1-zhengdejin5@gmail.com>
+Subject: [PATCH][next] ASoC: max98388: Fix missing increment of variable slot_found
+Date: Thu, 10 Oct 2024 19:20:32 +0100
+Message-Id: <20241010182032.776280-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210607153916.1021016-1-zhengdejin5@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-+Cc: Philipp (JFYI)
+The variable slot_found is being initialized to zero and inside
+a for-loop is being checked if it's reached MAX_NUM_CH, however,
+this is currently impossible since slot_found is never changed.
+In a previous loop a similar coding pattern is used and slot_found
+is being incremented. It appears the increment of slot_found is
+missing from the loop, so fix the code by adding in the increment.
 
-On Mon, Jun 07, 2021 at 11:39:12PM +0800, Dejin Zheng wrote:
-> Introduce pcim_alloc_irq_vectors(), a device-managed version of
-> pci_alloc_irq_vectors(), In some i2c drivers, If pcim_enable_device()
-> has been called before, then pci_alloc_irq_vectors() is actually a
-> device-managed function. It is used as a device-managed function, So
-> replace it with pcim_alloc_irq_vectors().
-> 
-> Changelog
-> ---------
-> v6 -> v7:
-> 	- rebase to PCI next branch
-> 	- add a stub for pci_is_managed() when disable PCI for
-> 	  fix build error in sparc architecture.
-> v5 -> v6:
-> 	- rebase to 5.13-rc4
-> v4 -> v5:
-> 	- Remove the check of enable device in pcim_alloc_irq_vectors()
-> 	  and make it as a static line function.
-> 	- Modify the subject name in patch 3 and patch 4.
-> v3 -> v4:
-> 	- add some commit comments for patch 3
-> v2 -> v3:
-> 	- Add some commit comments for replace some codes in
-> 	  pcim_release() by pci_free_irq_vectors().
-> 	- Simplify the error handling path in i2c designware
-> 	  driver.
-> v1 -> v2:
-> 	- Use pci_free_irq_vectors() to replace some code in
-> 	  pcim_release().
-> 	- Modify some commit messages.
+Fixes: 6a8e1d46f062 ("ASoC: max98388: add amplifier driver")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/max98388.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/sound/soc/codecs/max98388.c b/sound/soc/codecs/max98388.c
+index b847d7c59ec0..99986090b4a6 100644
+--- a/sound/soc/codecs/max98388.c
++++ b/sound/soc/codecs/max98388.c
+@@ -759,14 +759,15 @@ static int max98388_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	slot_found = 0;
+ 	mask = tx_mask;
+ 	for (cnt = 0 ; cnt < MAX_NUM_SLOTS ; cnt++, mask >>= 1) {
+ 		if (mask & 0x1) {
+ 			addr = MAX98388_R2044_PCM_TX_CTRL1 + (cnt / 8);
+ 			bits = cnt % 8;
+ 			regmap_update_bits(max98388->regmap, addr, bits, bits);
++			slot_found++;
+ 			if (slot_found >= MAX_NUM_CH)
+ 				break;
+ 		}
+ 	}
+ 
+ 	return 0;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.5
 
 
