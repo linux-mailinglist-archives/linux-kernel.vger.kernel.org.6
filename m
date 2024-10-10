@@ -1,102 +1,121 @@
-Return-Path: <linux-kernel+bounces-359529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D95998CB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D3B998CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957E428363C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 424F028685E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF351CEEA6;
-	Thu, 10 Oct 2024 16:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B65D1CCEE3;
+	Thu, 10 Oct 2024 16:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHfk2wEx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ue3fvJwT"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0FE1CEE83;
-	Thu, 10 Oct 2024 16:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D942207A;
+	Thu, 10 Oct 2024 16:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728576183; cv=none; b=a0j+o6KiC7J+iioItiWF70yKI/pHizRKJeWqx87DFSOnjUQARQQsOugqx2HBHu19Mb99OKZZaLMBU+XlT6VAMt5PT/KybobFVhnsC/YShJEEbXpXPpGUBuGIR5N0u2HCuPYLfwqgLBYOqM0f10JxWDznxJZIF66gro8DtVxRFNk=
+	t=1728576264; cv=none; b=iNvVMDawSe8J1UdOJvds2UOz6LbuEao2wkk8+7v+ftpc3nRSKo8Hl/1ETxR5WIQm+yBeFReHk8KVYKRiI1zn3CcjO1knRwivREq+fNi9hMruxNFdZ0qJVSWECmV5A//eylC9/MfEyJX0eYcGnI7ARUgBYlO3JCVPoenXL5JcDg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728576183; c=relaxed/simple;
-	bh=rAq/G8gwCb1+rwQzT/Y8bXAu/xz5ci3OpT4Ooh+KTUI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kCT8Ctwb35Kh4zyBLcjNB1OhDhnksup6M1PG8bLie5v+YNmn5JOhOgirvj4LtsjXibukwTaHuF5URrqdY+zyZgA+5s2pXuuKHYizKtnZpjazGWrkGjcXGIJI1nLHQGZg2/Ipgy5zPs7/mE2v79ErCsMXQHIFBUKgH5fyBOeoslU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHfk2wEx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3A24C4CECC;
-	Thu, 10 Oct 2024 16:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728576182;
-	bh=rAq/G8gwCb1+rwQzT/Y8bXAu/xz5ci3OpT4Ooh+KTUI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CHfk2wExM4tvXO7/iZhHlO35in43YiPzcfc1UARpkPfi428kghCZ2aPybwWAJalB3
-	 BAuDAKRqLLeKEHcEUJHzEHBydE8WvBiEP0OoHf83xTssqg1TN5OLIWQ188DdAHRvp2
-	 8bYeZ8q9SjEE9De7uiMYEcrNcI2ZH2awrpUGy/U9XQJCFbKRRrztXW48D1DZrKyLKQ
-	 V5NESYJB0TXLaW3CvyWwugOlUrLGDVhdG8VAtt+EzDcjfWOVDxQm36UVxZ3aBcLBK+
-	 MNauGk907pjUcT5f8EoqjFzaAadp3KmJVH2A0PGtsFPM6WBTSqMZ4IV75e8r8WYPga
-	 iCtjwE8+L1xSg==
-From: Mark Brown <broonie@kernel.org>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Valentin Caron <valentin.caron@foss.st.com>, 
- Alain Volmat <alain.volmat@foss.st.com>
-Cc: linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20241010-spi-mp25-device-fix-v2-1-d13920de473d@foss.st.com>
-References: <20241010-spi-mp25-device-fix-v2-1-d13920de473d@foss.st.com>
-Subject: Re: [PATCH v2] spi: stm32: fix missing device mode capability in
- stm32mp25
-Message-Id: <172857618035.3841267.4703963999206968322.b4-ty@kernel.org>
-Date: Thu, 10 Oct 2024 17:03:00 +0100
+	s=arc-20240116; t=1728576264; c=relaxed/simple;
+	bh=o3EDci7FnB4sdL4nheWjIvOwpfcKu77OyfInnC/XHw0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eCjGRwrAOTs7WCS+iQHuGQ9ixdmQ+CjQvuOgB0ZeL2K/PWq3X5XgFClaS04JLXiWfsPbhtgK9Cuob8A5eQpxi9W5RpYcHGfM6Ewa6EMJ9qI2yRcB3j6UkEcuVW61h9qDO8ys7TzoJTjBLKvtHNpVCCBNfYQLJhBM4ftmG9CTaL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ue3fvJwT; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728576258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kHsk3WKYOtf6YIW4r4cEK0zr25z4Yvu6MikBAKtqoh8=;
+	b=ue3fvJwTCGlWlGqqLTCcmuyk7Ws8xNMck/cqE9KU4gs8F/3XbYxuu2dTa6NQ2tsutU1BLf
+	IfSuN/9e2j2iT4q3Z1i4reTHcple2eJkka1T9dofIcMMiKozE3DCFDxIAtLvuDBppzmo7Z
+	q8oeWPCCuIYFdHzdoxtYLlzNaNl5uI0G7Nj6s91pZrnQUm8m3/ammF4Q1d2OfI//C5r+TG
+	KYmUUZC4V6vS5iWaIxV0/x40jAiL9/heGVZwqochIQKQZddHWrjOQR2ZQaWWEs7MVYnBZB
+	+5phUGGvstM2tg6olDRq61ovtXGbbAvsJ91j3yczsBr+BHe5IwqHZ48XiN/UZw==
+Date: Thu, 10 Oct 2024 18:04:18 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Prevent thermal runaways in RK3308
+ SoC dtsi
+In-Reply-To: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+References: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+Message-ID: <df92710498f66bcb4580cb2cd1573fb2@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, 10 Oct 2024 15:33:03 +0200, Alain Volmat wrote:
-> The STM32MP25 SOC has capability to behave in device mode however
-> missing .has_device_mode within its stm32mp25_spi_cfg structure leads
-> to not being able to enable the device mode.
+On 2024-10-10 12:19, Dragan Simic wrote:
+> Until the TSADC, thermal zones, thermal trips and cooling maps are 
+> defined
+> in the RK3308 SoC dtsi, none of the CPU OPPs except the slowest one may 
+> be
+> enabled under any circumstances.  Allowing the DVFS to scale the CPU 
+> cores
+> up without even just the critical CPU thermal trip in place can rather 
+> easily
+> result in thermal runaways and damaged SoCs, which is bad.
 > 
+> Thus, leave only the lowest available CPU OPP enabled for now.
 > 
+> Fixes: 6913c45239fd ("arm64: dts: rockchip: Add core dts for RK3308 
+> SOC")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
 
-Applied to
+As a note, I'll hopefully get back with the proper implementation of the
+thermal configuration for the RK3308, but not before the 6.14 merge 
+window.
+In the meantime, let's stick to having only the lowest CPU OPP in place,
+as changed in this patch.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: stm32: fix missing device mode capability in stm32mp25
-      commit: b5a468199b995bd8ee3c26f169a416a181210c9e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> index 31c25de2d689..a7698e1f6b9e 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> @@ -120,16 +120,19 @@ opp-600000000 {
+>  			opp-hz = /bits/ 64 <600000000>;
+>  			opp-microvolt = <950000 950000 1340000>;
+>  			clock-latency-ns = <40000>;
+> +			status = "disabled";
+>  		};
+>  		opp-816000000 {
+>  			opp-hz = /bits/ 64 <816000000>;
+>  			opp-microvolt = <1025000 1025000 1340000>;
+>  			clock-latency-ns = <40000>;
+> +			status = "disabled";
+>  		};
+>  		opp-1008000000 {
+>  			opp-hz = /bits/ 64 <1008000000>;
+>  			opp-microvolt = <1125000 1125000 1340000>;
+>  			clock-latency-ns = <40000>;
+> +			status = "disabled";
+>  		};
+>  	};
 
