@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-358864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10AF9984DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:23:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 203D99984E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7804283B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA104282FD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CE81C2DD5;
-	Thu, 10 Oct 2024 11:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B491C2DA2;
+	Thu, 10 Oct 2024 11:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q3Tu0g8v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="FxvoE3wd"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40311C2DA1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26A41C2450
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728559399; cv=none; b=ZRF6sdmzA5TRZDcUJrHQdRVuyC0p2zZAeloNL5fcjJjLSKsRKCGb/+hQ4iyB6vwrfDVVxvuWtCQ6CyNJqOHy0eLJf5YDSss5PQ1DEcf4zUHXUsqU992DnAsb71juOvXQvKLKo8nvpdMgXElp5G6GFTUI3fgMkBUJjL7HqusX3d8=
+	t=1728559423; cv=none; b=EY9TPoh969lUhZADfKR8gF85gf+mu+2wEFlW1QW7VjR2bU93VszBzQPWwGH4+B//mopf2GN7maBXPQUxzBOUzkMPM8Km69IJ+QeoFbKGM1t6i6lmUFDLfeU0iRrqiUwAQyVLOx4UZAigdX9deibBulWHK7h7fqHI6w11e6+epos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728559399; c=relaxed/simple;
-	bh=x9iaGYlku1I61w3bKz/b2Pv+BfrZU92jU/nEmEgj4Fo=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=YMLAt2Lgcbl+BcgpP0G3ESucLubVqWLH2c9kFixHDVfhwVLXFn3yroJhPPZN9reHNd+Pe6m2oLY4z7hdoHUTApZzsnwpnVCAg8kzxLBzagY8eHP1fwK1kzmBGk+TUXxicyRcKWWDTc9J9IEGE5kdTfRrFe1uM8PImPefH602PWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q3Tu0g8v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728559395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0NXJ/YlAi2284RdYmfvHVqovUyQSlsXPT+gI0a/FAik=;
-	b=Q3Tu0g8vXbH0OCqlEKxVPnn795jBfs3ro7Diw8PCl5kkwSeYBwz/JLF9wUmMhVUv8pJcP4
-	1dS7DkJotENflUaOuJsr06HxnEX2uUMcxCQRMZmWzzY70QJdWTrcNCiOchmrJgJaNPZXYD
-	fxETlzjebCxn6DVhNPzpkHTxdCRU/KE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-371-i8qS1cvJP6ysisq-7AS9jg-1; Thu,
- 10 Oct 2024 07:23:10 -0400
-X-MC-Unique: i8qS1cvJP6ysisq-7AS9jg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D9F8C1956096;
-	Thu, 10 Oct 2024 11:23:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 984581956086;
-	Thu, 10 Oct 2024 11:23:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240821024301.1058918-6-wozizhi@huawei.com>
-References: <20240821024301.1058918-6-wozizhi@huawei.com> <20240821024301.1058918-1-wozizhi@huawei.com>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
-    hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
-    zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    libaokun1@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
-    yukuai3@huawei.com
-Subject: Re: [PATCH 5/8] cachefiles: Clean up in cachefiles_commit_tmpfile()
+	s=arc-20240116; t=1728559423; c=relaxed/simple;
+	bh=r6b1YbYea6821kcyyk+/o9Ps7Vn8p6Hcspii7DWXgN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zf/4XMafq8ZZ4gfnkfoKOfsMaHjDVfs7gR9ari24M8n6WfTLZFLYRcZtEzM/5jDCjyuUhxdYqpgxR/ZHW4fILD2ta0ZzmwMP8xf59fuzPNSW7iPslPWbe9peHJ3z8Hee/rLiCx/UJUbPB1V0cRMIPa1JnaGTyMpvryrAXo7OOXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=FxvoE3wd; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cd8a5aac9so384883f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1728559420; x=1729164220; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qfJuw9pHQcCV2tXijS5mDrRlpcbQjwcuPA1DQvQPNA=;
+        b=FxvoE3wd9vh09e+Wq6vWh8kqLaLA+ZDn9pTUdBy5sPvQc/8gZH7q49w4SFx89v+mA1
+         QsTJdn37/8EHkD2wqqcnYEoVWYojYrnQNfpGIvO2eHwsavfwpSQ+J/Y+KIt8e/hXSeJH
+         RYSrOLVSddsDUTSd7KRoOF+CDH6neZL0ATEBwhqj0+INAuvAZUL6jxRuPiQ7WiKHlDlH
+         gH1cPTYnXWJ3TUVKygMLub+NQTXub1yOPZ0ix86AqsNb5M2dfi7MivwPb68N2Ij8rjew
+         vKEzd3VWLLXBGpN1Uk7CpsSMIOHfer0BdVezIocye3oPKwzKJLa4SJA9tazGAInF7o1r
+         wI5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728559420; x=1729164220;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8qfJuw9pHQcCV2tXijS5mDrRlpcbQjwcuPA1DQvQPNA=;
+        b=gGmWWa8Gp2URcBDZSbpOoc13V5G0BR/2j140H+1FbyrxS4dLjMnJPDxg+lLq+C86kw
+         HzNFshhvIUwPXJiza7QBVnQLUFQ0ieN35r1TDbpDVmV7Q6Ciq1Rmx9O5JrfKBNZvjljo
+         SiUClIejb5Z7E/Xd9q06sFjeEdNgqnuK4HiVJTzi6ruSH97Y+hh38shRm7CbIdEO1t+r
+         t+zigHZEcuk3zXV1DsmUzZM0WuDR0L+rDXQI9d6c/GnFZTN5Dpf0ksJwJPc5sjQMtX97
+         cbv9EquLnfrwAB/Q3jwv3mQrOFJwgkmacS3j0znpXWUO4cAlKWxoEjwQD5N2ZC8waHy+
+         Ba6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCeDD+vN/4losGvUVwguuIQDRSyvd1OA4+gyK7VCP0s/6khSPHouUL03StonyuSW4mkj3tc3D6FCP6aUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnqKvf9Wesy1qUn9BhNdvnScfeaS0AuSUDk0ibRCCbq3FUZ9Uh
+	vcjME/6V/W7DxH/Jt95pkdwiZwKrfz9IhfDLi+jU8dw06tOZ63yq+8Ip4nTpUGA=
+X-Google-Smtp-Source: AGHT+IH0Vw9DArkGqysshRsRh+1TVUr/gLVYh5xxCOXj9zpK/lUtCdEkscRNDv0C5ZugXkPc3DUS9Q==
+X-Received: by 2002:adf:e904:0:b0:37d:5141:ee91 with SMTP id ffacd0b85a97d-37d5141f219mr307476f8f.18.1728559419903;
+        Thu, 10 Oct 2024 04:23:39 -0700 (PDT)
+Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8ab6sm1272727f8f.10.2024.10.10.04.23.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 04:23:39 -0700 (PDT)
+From: Naresh Solanki <naresh.solanki@9elements.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: Naresh Solanki <naresh.solanki@9elements.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v5 1/2] dt-bindings: arm: aspeed: add IBM SBP1 board
+Date: Thu, 10 Oct 2024 16:53:31 +0530
+Message-ID: <20241010112337.3840703-1-naresh.solanki@9elements.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <303857.1728559382.1@warthog.procyon.org.uk>
-Date: Thu, 10 Oct 2024 12:23:02 +0100
-Message-ID: <303858.1728559382@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-Zizhi Wo <wozizhi@huawei.com> wrote:
+Document the new compatibles used on IBM SBP1.
 
-> Currently, cachefiles_commit_tmpfile() will only be called if object->flags
-> is set to CACHEFILES_OBJECT_USING_TMPFILE. Only cachefiles_create_file()
-> and cachefiles_invalidate_cookie() set this flag. Both of these functions
-> replace object->file with the new tmpfile, and both are called by
-> fscache_cookie_state_machine(), so there are no concurrency issues.
-> 
-> So the equation "d_backing_inode(dentry) == file_inode(object->file)" in
-> cachefiles_commit_tmpfile() will never hold true according to the above
-> conditions. This patch removes this part of the redundant code and does not
-> involve any other logical changes.
-> 
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Changes in V4:
+- Retain Acked-by from v2.
+- Fix alphabetic order
+---
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yeah, that's reasonable - and if it did hold true, all we do is unlink and
-relink it.
-
-Acked-by: David Howells <dhowells@redhat.com>
+diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+index 2f92b8ab08fa..c79c74ab3d78 100644
+--- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
++++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+@@ -91,6 +91,7 @@ properties:
+               - ibm,everest-bmc
+               - ibm,fuji-bmc
+               - ibm,rainier-bmc
++              - ibm,sbp1-bmc
+               - ibm,system1-bmc
+               - ibm,tacoma-bmc
+               - inventec,starscream-bmc
+-- 
+2.42.0
 
 
