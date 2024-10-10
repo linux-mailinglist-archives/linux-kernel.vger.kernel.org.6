@@ -1,209 +1,130 @@
-Return-Path: <linux-kernel+bounces-360118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD08E9994A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:50:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3D69994AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63BC228565D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7681A1C22DD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28F51E2841;
-	Thu, 10 Oct 2024 21:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3491D1E47A3;
+	Thu, 10 Oct 2024 21:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeLjOfWc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G1tNDY1r"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1861CDFD4;
-	Thu, 10 Oct 2024 21:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3CB1BDA83
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 21:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728597041; cv=none; b=QxpYQzQv1FLD0ShIK/ORzXoEtYcbPPw3+3IK4+YU1uTz2gIr9WCbJW8T2pI8W/WGMa4uEkV4DmE5/jtYmfWeVwNI2cWv6Ie6NYK348GGCvYHDQDjgkd5/V/+ilYF1Gao3MG9jd3oJS+Fpt4s3kRwv1eVO4A3daKVysWJu9fA0eo=
+	t=1728597081; cv=none; b=njVgrrlRiC/0+6W4epgCNbU5bsIlMw+2+jd6Z/YtubTqaGV38hwmYBwvVyJIhwqHMsZj4UqCdSe2kRVwhyCttE//HJZKsxtPcIoLd6v08lrQLuT799hXfVBsn3Kzy7qTWD/RY2vDT6E4gVq9gF9NdubLaivacKQC5okaSHJEXGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728597041; c=relaxed/simple;
-	bh=bPTxm2yrPYRAOVe6pD9tpiUS8n5ZOExNrPgwDxaq87w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0BrwGyaa15ZJEwn488qBJkEbBAH5CJ8OBr9oxG71H51xGHsOOJeFmJHHvINUzi9Hq1jEj96LYvQMvQEQg9U7+LPWL68HTvz8K4tY0HzbnIQYlp5WN10bhV9CWmq8Nr216Z2Gnnma+AR1kv87TXsVXSBu/LoeMqsF+PoU42AIi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeLjOfWc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A437AC4CEC5;
-	Thu, 10 Oct 2024 21:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728597041;
-	bh=bPTxm2yrPYRAOVe6pD9tpiUS8n5ZOExNrPgwDxaq87w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jeLjOfWcxod7GqvCTIiEQ9mo8qa4gai2frxnNIwRgfCAPp15Si+/nZVVUjAPMPh5K
-	 FJkRixuq0G5ifng2aL5hwi5cFE7863Sa7V0HkAPnugS7Bg7AWub+7rJu2HddCh1Q0x
-	 2V+D9hAcDY2eutJWE7xQWhCy4FKez+OAd3tHFDhI5djcA1JcTiuUeDM9LFnNnqnrLP
-	 Vx5LEphCIUhmiC6gAEQ52AzIHIdgXip55XOC1Q4vgbctlpfs3PiafeFudqzveNACY7
-	 f+cqg25XW/8dtW+wn8iam+OeHq2f5GRGFTUeiVBTpKAAkPmdyqRHw1u0WJPhkHXfN9
-	 O/K9MuiyMSHWQ==
-Received: by pali.im (Postfix)
-	id D2C8381B; Thu, 10 Oct 2024 23:50:34 +0200 (CEST)
-Date: Thu, 10 Oct 2024 23:50:34 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] cifs: Add support for creating WSL-style symlinks
-Message-ID: <20241010215034.pai6w6khigohip3g@pali>
-References: <20241006100046.30772-1-pali@kernel.org>
- <20241006100046.30772-7-pali@kernel.org>
+	s=arc-20240116; t=1728597081; c=relaxed/simple;
+	bh=PwwXkCJnspDRZTjE+IzvY3hxePY5F0YKt/vsvQ06YnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDjehFsdduFSo6lc9XZi25v7zGVrlR42VNlkPKvGl5JDV+gIp/eh1yIe9fQAmXq6p9QOtr4zpjsOCp1s5fLGKsThycmaIpkJz1bxrhonpI+D1svDPe/Gp3Y7v2YdtoUAnWZAwykxh1PP86tTmFS2Cm0JQy+/aYh/rlRU9so9xvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G1tNDY1r; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8378db14280so4891439f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728597078; x=1729201878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uh29BSYlRHYdLt2ocxo/fMoIUs4a5eCJ/P6zRKs85Io=;
+        b=G1tNDY1rh8f9Dmv0bmfFaB0A+k8V3Rl1F54XTBKguT0QVbqJuLjMlajyj1KKj5ahHZ
+         vSc9+W5InJ6wSNjoCk1yvin/tAn6XT1UbLAFfsRPKu4hS/BNJXp1vt0eo8cNyu1bBhsV
+         g98BiZxulhQCd4hst14vSY0Po29G9rJClaZ0o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728597078; x=1729201878;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uh29BSYlRHYdLt2ocxo/fMoIUs4a5eCJ/P6zRKs85Io=;
+        b=TdiQgM+Gu2ODazasvhXpMtr90cgGpestt3Fu45cMVeQ8p33v4Jvtrr2/vKxV8s8Z5+
+         2By+lriG80Hr53gh1O6nssN40nX5YqVOMGIcidoSzWONf7D7NlUKAUkSy2zYWJznwp3Q
+         aaI9mIQo0bZBNpP4yC1GVQaS384QL+mKKy45PPDWO9MYPgbCn+UMklXN9dNlqRKMHXh4
+         9WhN6e2I1WLVyXHbDXNdwMNqkoMMjpIm1fzU9uWxu083U+o/TEfmJL31njFO+KkfBnnw
+         klg+mouhQzKIQq8ntIH6y4GagxaV7QeVmPXX/1jgkuu0qp6eAMsvnUWsFcOcNYzk0TxH
+         3k6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqDo7L4HfOCpBX1uYOTKdioJsTKEtM0DVaEjUgxohCP0ody5PMoQsRCGm+HeEiWaIvn6pBkUtNr0SZ7Bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnsW2kc+1sgnM5kVuIh2GIUREuudvrHV8GFSvyXCRH0GC4sH97
+	bvqoPwxkjx0W7B+O9AmYaMK+KWcN/G+cmoUBnsjbqZKdKXofB6oIYSCE75nzkTONW8NCPV/tmUf
+	+
+X-Google-Smtp-Source: AGHT+IGiDgwEJY1ZMq6egYLmaOYSKlkRouWLFZDSNPsrPR3YOwgzGFrvb5pu1BOry26y2sZLkG8dPA==
+X-Received: by 2002:a92:c544:0:b0:3a0:4e2b:9ab9 with SMTP id e9e14a558f8ab-3a3b5f7a9b9mr3132295ab.5.1728597078374;
+        Thu, 10 Oct 2024 14:51:18 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afdae1a7sm4331785ab.1.2024.10.10.14.51.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 14:51:17 -0700 (PDT)
+Message-ID: <2d048360-64b8-4af8-a5a5-3b69c5d3247d@linuxfoundation.org>
+Date: Thu, 10 Oct 2024 15:51:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241006100046.30772-7-pali@kernel.org>
-User-Agent: NeoMutt/20180716
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] mm/execmem: Remove logically deadcode in execmem.c
+To: "Everest K.C." <everestkc@everestkc.com.np>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241010181102.5522-1-everestkc@everestkc.com.np>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241010181102.5522-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sunday 06 October 2024 12:00:45 Pali Rohár wrote:
-> This change implements support for creating new symlink in WSL-style by
-> Linux cifs client when -o reparse=wsl mount option is specified. WSL-style
-> symlink uses reparse point with tag IO_REPARSE_TAG_LX_SYMLINK and symlink
-> target location is stored in reparse buffer in UTF-8 encoding prefixed by
-> 32-bit flags. Flags bits are unknown, but it was observed that WSL always
-> sets flags to value 0x02000000. Do same in Linux cifs client.
+On 10/10/24 12:10, Everest K.C. wrote:
+> NULL check of variable `area` within the `mas_for_each` loop is
+> unnecessary, as the varialbe `area` can never be NULL. So, the
+> `continue` statement inside the if block is never reached.
 > 
-> New symlinks would be created in WSL-style only in case the mount option
-> -o reparse=wsl is specified, which is not by default. So default CIFS
-> mounts are not affected by this change.
+> Remove the if block that performs the NULL check.
 > 
-> Signed-off-by: Pali Rohár <pali@kernel.org>
+> This was reported by Coverity Scan:
+> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600362
+> 
+> Fixes: d44c3485820e ("execmem: add support for cache of large ROX pages")
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
 > ---
->  fs/smb/client/reparse.c | 65 +++++++++++++++++++++++++++++++++--------
->  1 file changed, 53 insertions(+), 12 deletions(-)
+>   mm/execmem.c | 3 ---
+>   1 file changed, 3 deletions(-)
 > 
-> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> index 402eb568f466..6606c40487ae 100644
-> --- a/fs/smb/client/reparse.c
-> +++ b/fs/smb/client/reparse.c
-> @@ -506,9 +506,17 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
->  	return rc;
->  }
->  
-> -static int wsl_set_reparse_buf(struct reparse_data_buffer *buf,
-> -			       mode_t mode, struct kvec *iov)
-> +static int wsl_set_reparse_buf(struct reparse_data_buffer **buf,
-> +			       mode_t mode, const char *symname,
-> +			       struct cifs_sb_info *cifs_sb,
-> +			       struct kvec *iov)
->  {
-> +	struct reparse_wsl_symlink_data_buffer *symlink_buf;
-> +	__le16 *symname_utf16;
-> +	int symname_utf16_len;
-> +	int symname_utf8_maxlen;
-> +	int symname_utf8_len;
-> +	size_t buf_len;
->  	u32 tag;
->  
->  	switch ((tag = reparse_mode_wsl_tag(mode))) {
-> @@ -516,17 +524,45 @@ static int wsl_set_reparse_buf(struct reparse_data_buffer *buf,
->  	case IO_REPARSE_TAG_LX_CHR:
->  	case IO_REPARSE_TAG_LX_FIFO:
->  	case IO_REPARSE_TAG_AF_UNIX:
-> +		buf_len = sizeof(struct reparse_data_buffer);
-> +		*buf = kzalloc(buf_len, GFP_KERNEL);
-> +		if (!*buf)
-> +			return -ENOMEM;
-> +		break;
-> +	case IO_REPARSE_TAG_LX_SYMLINK:
-> +		symname_utf16 = cifs_strndup_to_utf16(symname, strlen(symname),
-> +						      &symname_utf16_len,
-> +						      cifs_sb->local_nls,
-> +						      NO_MAP_UNI_RSVD);
-> +		if (!symname_utf16)
-> +			return -ENOMEM;
-> +		symname_utf8_maxlen = symname_utf16_len/2*3;
-> +		symlink_buf = kzalloc(sizeof(struct reparse_wsl_symlink_data_buffer) +
-> +				      symname_utf8_maxlen, GFP_KERNEL);
-> +		if (!symlink_buf) {
-> +			kfree(symname_utf16);
-> +			return -ENOMEM;
-> +		}
-> +		/* Flag 0x02000000 is unknown, but all wsl symlinks have this value */
-> +		symlink_buf->Flags = cpu_to_le32(0x02000000);
-> +		/* PathBuffer is in UTF-8 but without trailing null-term byte */
-> +		symname_utf8_len = utf16s_to_utf8s(symname_utf16, symname_utf16_len/2,
-> +						   UTF16_LITTLE_ENDIAN,
-> +						   symlink_buf->PathBuffer,
-> +						   symname_utf8_maxlen);
-> +		*buf = (struct reparse_data_buffer *)symlink_buf;
-> +		buf_len = sizeof(struct reparse_wsl_symlink_data_buffer) + symname_utf8_len;
-> +		kfree(symname_utf16);
->  		break;
-> -	case IO_REPARSE_TAG_LX_SYMLINK: /* TODO: add support for WSL symlinks */
->  	default:
->  		return -EOPNOTSUPP;
->  	}
->  
-> -	buf->ReparseTag = cpu_to_le32(tag);
-> -	buf->Reserved = 0;
-> -	buf->ReparseDataLength = 0;
-> -	iov->iov_base = buf;
-> -	iov->iov_len = sizeof(*buf);
-> +	(*buf)->ReparseTag = cpu_to_le32(tag);
-> +	(*buf)->Reserved = 0;
-> +	(*buf)->ReparseDataLength = buf_len - sizeof(struct reparse_data_buffer);
+> diff --git a/mm/execmem.c b/mm/execmem.c
+> index 9c6ff9687860..97706d8ed720 100644
+> --- a/mm/execmem.c
+> +++ b/mm/execmem.c
+> @@ -75,9 +75,6 @@ static void execmem_cache_clean(struct work_struct *work)
+>   	mas_for_each(&mas, area, ULONG_MAX) {
+>   		size_t size;
+>   
+> -		if (!area)
+> -			continue;
+> -
 
-ReparseDataLength is in little endian, so it should be:
+This more of a question than comment:
+mas_for_each() says:
+Note: may return the zero entry.
 
-  (*buf)->ReparseDataLength = cpu_to_le16(buf_len - sizeof(struct reparse_data_buffer));
+Does that mean mas_range_len() can be zero? Does that
+need to be handled?
 
-> +	iov->iov_base = *buf;
-> +	iov->iov_len = buf_len;
->  	return 0;
->  }
->  
-> @@ -618,25 +654,29 @@ static int mknod_wsl(unsigned int xid, struct inode *inode,
->  		     const char *full_path, umode_t mode, dev_t dev,
->  		     const char *symname)
->  {
-> +	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
->  	struct cifs_open_info_data data;
-> -	struct reparse_data_buffer buf;
-> +	struct reparse_data_buffer *buf;
->  	struct smb2_create_ea_ctx *cc;
->  	struct inode *new;
->  	unsigned int len;
->  	struct kvec reparse_iov, xattr_iov;
->  	int rc;
->  
-> -	rc = wsl_set_reparse_buf(&buf, mode, &reparse_iov);
-> +	rc = wsl_set_reparse_buf(&buf, mode, symname, cifs_sb, &reparse_iov);
->  	if (rc)
->  		return rc;
->  
->  	rc = wsl_set_xattrs(inode, mode, dev, &xattr_iov);
-> -	if (rc)
-> +	if (rc) {
-> +		kfree(buf);
->  		return rc;
-> +	}
->  
->  	data = (struct cifs_open_info_data) {
->  		.reparse_point = true,
-> -		.reparse = { .tag = le32_to_cpu(buf.ReparseTag), .buf = &buf, },
-> +		.reparse = { .tag = le32_to_cpu(buf->ReparseTag), .buf = buf, },
-> +		.symlink_target = kstrdup(symname, GFP_KERNEL),
->  	};
->  
->  	cc = xattr_iov.iov_base;
-> @@ -653,6 +693,7 @@ static int mknod_wsl(unsigned int xid, struct inode *inode,
->  		rc = PTR_ERR(new);
->  	cifs_free_open_info(&data);
->  	kfree(xattr_iov.iov_base);
-> +	kfree(buf);
->  	return rc;
->  }
->  
-> -- 
-> 2.20.1
-> 
+
+>   		size = mas_range_len(&mas);
+>   
+>   		if (IS_ALIGNED(size, PMD_SIZE) &&
+
+
+thanks,
+-- Shuah
 
