@@ -1,194 +1,209 @@
-Return-Path: <linux-kernel+bounces-358695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB095998285
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD0F998281
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDE7D1C25F64
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865301F252E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7D51C1755;
-	Thu, 10 Oct 2024 09:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364671BC9FC;
+	Thu, 10 Oct 2024 09:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sNBVSsNn"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5JiThZO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4622D1BF80A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F6619258C;
+	Thu, 10 Oct 2024 09:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553124; cv=none; b=sCvmRw7KL8SD42Z8ISj/4MeQzEIA1q6u+v26OLMDu0OZrDgG861royjrNrYfKog6kC19TzbQe2Wp1qVHLfdbGfx7H6SfbOVzjGnUKyvMdUHqOUuVuTcScNchjckBQLlUWaIPSEtoPvzXvQmliM4Uez3BJHevpmwKNNy0xDf2Yns=
+	t=1728553116; cv=none; b=uKxuXUK9wF2vqnqAnZtegkcBBmIpuDl3zENgTA5yopiNToRJMbVdyi86PbPgDclAV07N0vg5T/a9ISffGLtmt0xRDNuEAvo9WUSYU4H5OBtzMhSWjrLxkcgFkLNDQRMHiK/7At6rTqxeDwwNfyEbFKVb4TTZStk63bNjp9dZmzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553124; c=relaxed/simple;
-	bh=VT2SuDcWVnMzBAVEldlhHzTMoIA8IDGupx5zZhlV3n0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z8AZntQNl6BwIrWHi55iA/PoWOItEeR/Mo6e7MPNNKBHSX1fIzAljTIH5c9mibAFTkmNtPOrdDv0oZ7BBr88bEwHrCbzeLt3BRoTEZ5DxjQ7QRCFqg5QX1llisIe9regdrYig1cJXRglH/TUmIsJDEEYoT2w9baclXA3W3f0o7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sNBVSsNn; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e31d9c8efcso16212117b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728553120; x=1729157920; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eACD4XRROaCtgnocFX5+RB0Y2dfNcR6e9CG+8sSoYh4=;
-        b=sNBVSsNnhylM6WSpK6/6EfmclcZZOAZ9BnNhGA2O77iUB009VHT/xu/XxxDvpAt5m7
-         trH3PXmyh+6XRaRmJs7anXJZs7lvdkrIFPnKo9jkUNeNnZysLjGSXVBIWnVleF827YAM
-         /McQGfpp3zPsBN35xjFcrboXnnApx0TraY+HEUChqCpKfjp6GzaY3fUtv2lHbSKSdvTN
-         JrlKCn0eOVytHgrnBEL9q/K4i5ApyTNuFV7Jb18rmqLcnJVrg/tkF/zeHA1BziLwMgey
-         3GZPSBeeuaTk+4cJr9le7F8epoJzzoJ//InvmDUC02peRx2P7LkLvW4XheNVRQ8hMVH/
-         TH2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728553120; x=1729157920;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eACD4XRROaCtgnocFX5+RB0Y2dfNcR6e9CG+8sSoYh4=;
-        b=Y+UUfdUOT3/6qFNnl9OI6sqDd7A/k+6P4vjtZeQDIo39Vwrrn1PGT7a4rh+2hmTx+7
-         kj1Do2xKF9o7v+pv0/pCx5Qkqigd40VSmcbCEOWzpTxrWshDDev5WyB3ZMSeDQ7UUQHz
-         61EEsuNrBqQ/3tUB43qHb+nTLhjgqd3uHX5Aks5Hp6Sv2koCXOjIU6DcCHW5VLZYGpFN
-         urvKs0zUGRHEMqthf5Tapdd1k/CLzGlmCOfcuy/xEh4w3coJh1vLh8/7ErBjiQ7o6tJX
-         cK7/YhJk323rB+yX7gBNIPkDgeWYROfrEvuUpG5TFY5AoZ9Z+W4ii2t6/Y1V8NjW+PnJ
-         xqXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXwV1g2BqROJoFv11jNGurMOHsZMux6MWbZIOZQn5+fhaWrk97xQ5Xo4t75u7D89iA6zb5AJcyqPUyDsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXJySTa6FLom3BQHFLAwHJ7GhLqfHr/3kI9hx49tyizetETFaQ
-	zlX0YZQZER6D1W1R1pHQQkw10pLldkUx3PGx5ElgW6dm7rjaoHHHC+axpdsYjp8fxuJPke4fWJo
-	qNyGDOMwKvRK0Jg==
-X-Google-Smtp-Source: AGHT+IEGcui+HlgSNQoktbhQh3A2G5+Kd6G/NcYjKQUmJw3bmKVSjI3w7gKgtE/Edkv8/1W9cri6mLPryjmTGjI=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:690c:2c01:b0:6db:d257:b98 with SMTP
- id 00721157ae682-6e32215253bmr516967b3.3.1728553120372; Thu, 10 Oct 2024
- 02:38:40 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:38:27 +0000
-In-Reply-To: <20241010-icall-detect-vers-v1-0-8f114956aa88@google.com>
+	s=arc-20240116; t=1728553116; c=relaxed/simple;
+	bh=s8pq7zq5S4UhlLRf5W3BVvCYiyiabLKKdxg3puAo+pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=on63dv9zmfS5LHw4VPx1BhHTJ1hFK++5rBtUw5R142Xn1ISKBAa63JqO40V3h6DFbrm9aIHauObzO0fLm8gO43k6biV9QGS1LkCrP92+MaUgnRPaek3OldP38FXCib3sCJ+fP3fS0PaNifJBnyd79rS9IxWeTThkxeccY2OyxDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5JiThZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F9CBC4CEC5;
+	Thu, 10 Oct 2024 09:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728553115;
+	bh=s8pq7zq5S4UhlLRf5W3BVvCYiyiabLKKdxg3puAo+pg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e5JiThZOpajg13EsllPyorCz5erBUyOxbbwpJgk/6eH8A4lK/sOtlTqLmOreQXNR+
+	 vgD42TyOJYWJcznHgfhVj4+UDk4rEvjOK082kj1FNcF6XCozMgzhiFGGV+l+Hb/K25
+	 jOAPYqkoFtW9n0R7GJaQlNWH0XLrC4i3HqWP1kewtkD8Q8uC+2kh6JFRFAriDWuJiY
+	 q7KKuvf+nPynf9cZvYZ6zw9BJ3uIfttyWlYQklkoX8yFFhU93N+zdgww8bbw7O4Lj9
+	 h5+dqqmLegG1UTsEv/Kb5HY/Ht6GUpDUHk3krwbGI4D3gTxA4WydSTe722/6t00aAS
+	 PFQ90q6tWF2ew==
+Date: Thu, 10 Oct 2024 11:38:32 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Luca Boccassi <luca.boccassi@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241010-bauordnung-gewarnt-781b740ad813@brauner>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <20241008-parkraum-wegrand-4e42c89b1742@brauner>
+ <CAMw=ZnSEwOXw-crX=JmGvYJrQ9C6-v40-swLhALNH0DBPLoyXQ@mail.gmail.com>
+ <20241009.205103-sudsy.thunder.enamel.kennel-kyrq7lTfmNRZ@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241010-icall-detect-vers-v1-0-8f114956aa88@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4239; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=VT2SuDcWVnMzBAVEldlhHzTMoIA8IDGupx5zZhlV3n0=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnB6CYs0u7blh+ZX5hDv0dKotrih6IeVcBm5Vhp
- EN1T0iq4B2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZwegmAAKCRAEWL7uWMY5
- RhQFEACswAkfF3tGCsn7bv37wtSYjM0N0Gh3kSpV81MBZrV8NDPZJKdw5njIOrmlRvMtiVqZ0vn
- uaGVEOCtCJnJQgfUF3OVzu2Q5yBB54S1oXq3f3DNEuB2R9hHIexEM5E2QvXxNOvYPXR6REEwBR9
- xyXVgO0l6/Lx2O4GHUULGr2aULI7kGBqJMUQOt21mp1PS6lGMaWVeUq8OpmdBWOGQmPbXj0slsc
- XRVgymT4v5Nf1kWcQmQnZ6+w5ZfAMhw/CikqMwDIRlvV0cx8YgXvIDsJDDDcua0FR3MDhn84xFL
- jisqTVf+0h+1A9BRgwMz5wbgDvr/uUogd6A4nM32lL4tUBMl0KeruMKA8qIw+SfMYO21XmTrosy
- 1WmuqELMXSwO28R/oPaIdH+OS7Po874Nin7ktneBKuPIS6UPhdZuIXEBrf1tYs6t46AvdhHEktO
- AWkfHpXQCRiZ7LWiEngFArYMRDNCOfSKXBmEt4re54CTQOWvu2Qw2DI+EcOkvuUDIye+j7KEAVG
- Lb9b+s2UBP6k3+2DD2NKRlPPnors/rPhp7vRzBH2YKAujl1zfmCCl1OlqWyGwXI8Wg7FsPxeWZ3
- 4ItweSD98EgjTVkS/xw9FeweugxAKS6Z9ryfioYx1l8lVqsoyPacr4/LA3Uz6WSQC3HRtfi0Yl+ ISH/VMpZbdy3FoA==
-X-Mailer: b4 0.13.0
-Message-ID: <20241010-icall-detect-vers-v1-2-8f114956aa88@google.com>
-Subject: [PATCH 2/2] cfi: fix conditions for HAVE_CFI_ICALL_NORMALIZE_INTEGERS
-From: Alice Ryhl <aliceryhl@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241009.205103-sudsy.thunder.enamel.kennel-kyrq7lTfmNRZ@cyphar.com>
 
-The HAVE_CFI_ICALL_NORMALIZE_INTEGERS option has some tricky conditions
-when KASAN or GCOV are turned on, as in that case we need some clang and
-rustc fixes [1][2] to avoid boot failures. The intent with the current
-setup is that you should be able to override the check and turn on the
-option if your clang/rustc has the fix. However, this override does not
-work in practice. Thus, use the new RUSTC_LLVM_VERSION to correctly
-implement the check for whether the fix is available.
+On Thu, Oct 10, 2024 at 07:52:20AM +1100, Aleksa Sarai wrote:
+> On 2024-10-08, Luca Boccassi <luca.boccassi@gmail.com> wrote:
+> > On Tue, 8 Oct 2024 at 14:06, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Tue, Oct 08, 2024 at 01:18:20PM GMT, luca.boccassi@gmail.com wrote:
+> > > > From: Luca Boccassi <luca.boccassi@gmail.com>
+> > > >
+> > > > A common pattern when using pid fds is having to get information
+> > > > about the process, which currently requires /proc being mounted,
+> > > > resolving the fd to a pid, and then do manual string parsing of
+> > > > /proc/N/status and friends. This needs to be reimplemented over
+> > > > and over in all userspace projects (e.g.: I have reimplemented
+> > > > resolving in systemd, dbus, dbus-daemon, polkit so far), and
+> > > > requires additional care in checking that the fd is still valid
+> > > > after having parsed the data, to avoid races.
+> > > >
+> > > > Having a programmatic API that can be used directly removes all
+> > > > these requirements, including having /proc mounted.
+> > > >
+> > > > As discussed at LPC24, add an ioctl with an extensible struct
+> > > > so that more parameters can be added later if needed. Start with
+> > > > returning pid/tgid/ppid and creds unconditionally, and cgroupid
+> > > > optionally.
+> > > >
+> > > > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+> > > > ---
+> > > > v9: drop result_mask and reuse request_mask instead
+> > > > v8: use RAII guard for rcu, call put_cred()
+> > > > v7: fix RCU issue and style issue introduced by v6 found by reviewer
+> > > > v6: use rcu_read_lock() when fetching cgroupid, use task_ppid_nr_ns() to
+> > > >     get the ppid, return ESCHR if any of pid/tgid/ppid are 0 at the end
+> > > >     of the call to avoid providing incomplete data, document what the
+> > > >     callers should expect
+> > > > v5: check again that the task hasn't exited immediately before copying
+> > > >     the result out to userspace, to ensure we are not returning stale data
+> > > >     add an ifdef around the cgroup structs usage to fix build errors when
+> > > >     the feature is disabled
+> > > > v4: fix arg check in pidfd_ioctl() by moving it after the new call
+> > > > v3: switch from pid_vnr() to task_pid_vnr()
+> > > > v2: Apply comments from Christian, apart from the one about pid namespaces
+> > > >     as I need additional hints on how to implement it.
+> > > >     Drop the security_context string as it is not the appropriate
+> > > >     metadata to give userspace these days.
+> > > >
+> > > >  fs/pidfs.c                                    | 88 ++++++++++++++++++-
+> > > >  include/uapi/linux/pidfd.h                    | 30 +++++++
+> > > >  .../testing/selftests/pidfd/pidfd_open_test.c | 80 ++++++++++++++++-
+> > > >  3 files changed, 194 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > > > index 80675b6bf884..15cdc7fe4968 100644
+> > > > --- a/fs/pidfs.c
+> > > > +++ b/fs/pidfs.c
+> > > > @@ -2,6 +2,7 @@
+> > > >  #include <linux/anon_inodes.h>
+> > > >  #include <linux/file.h>
+> > > >  #include <linux/fs.h>
+> > > > +#include <linux/cgroup.h>
+> > > >  #include <linux/magic.h>
+> > > >  #include <linux/mount.h>
+> > > >  #include <linux/pid.h>
+> > > > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+> > > >       return poll_flags;
+> > > >  }
+> > > >
+> > > > +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
+> > > > +{
+> > > > +     struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
+> > > > +     size_t usize = _IOC_SIZE(cmd);
+> > > > +     struct pidfd_info kinfo = {};
+> > > > +     struct user_namespace *user_ns;
+> > > > +     const struct cred *c;
+> > > > +     __u64 request_mask;
+> > > > +
+> > > > +     if (!uinfo)
+> > > > +             return -EINVAL;
+> > > > +     if (usize < sizeof(struct pidfd_info))
+> > > > +             return -EINVAL; /* First version, no smaller struct possible */
+> > > > +
+> > > > +     if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
+> > > > +             return -EFAULT;
+> > > > +
+> > > > +     c = get_task_cred(task);
+> > > > +     if (!c)
+> > > > +             return -ESRCH;
+> > > > +
+> > > > +     /* Unconditionally return identifiers and credentials, the rest only on request */
+> > > > +
+> > > > +     user_ns = current_user_ns();
+> > > > +     kinfo.ruid = from_kuid_munged(user_ns, c->uid);
+> > > > +     kinfo.rgid = from_kgid_munged(user_ns, c->gid);
+> > > > +     kinfo.euid = from_kuid_munged(user_ns, c->euid);
+> > > > +     kinfo.egid = from_kgid_munged(user_ns, c->egid);
+> > > > +     kinfo.suid = from_kuid_munged(user_ns, c->suid);
+> > > > +     kinfo.sgid = from_kgid_munged(user_ns, c->sgid);
+> > > > +     kinfo.fsuid = from_kuid_munged(user_ns, c->fsuid);
+> > > > +     kinfo.fsgid = from_kgid_munged(user_ns, c->fsgid);
+> > > > +     put_cred(c);
+> > > > +
+> > > > +#ifdef CONFIG_CGROUPS
+> > > > +     if (request_mask & PIDFD_INFO_CGROUPID) {
+> > > > +             struct cgroup *cgrp;
+> > > > +
+> > > > +             guard(rcu)();
+> > > > +             cgrp = task_cgroup(task, pids_cgrp_id);
+> > > > +             if (!cgrp)
+> > > > +                     return -ENODEV;
+> > >
+> > > Afaict this means that the task has already exited. In other words, the
+> > > cgroup id cannot be retrieved anymore for a task that has exited but not
+> > > been reaped. Frankly, I would have expected the cgroup id to be
+> > > retrievable until the task has been reaped but that's another
+> > > discussion.
+> > >
+> > > My point is if you contrast this with the other information in here: If
+> > > the task has exited but hasn't been reaped then you can still get
+> > > credentials such as *uid/*gid, and pid namespace relative information
+> > > such as pid/tgid/ppid.
+> > >
+> > > So really, I would argue that you don't want to fail this but only
+> > > report 0 here. That's me working under the assumption that cgroup ids
+> > > start from 1...
+> > >
+> > > /me checks
+> > >
+> > > Yes, they start from 1 so 0 is invalid.
+> > >
+> > > > +             kinfo.cgroupid = cgroup_id(cgrp);
+> > >
+> > > Fwiw, it looks like getting the cgroup id is basically just
+> > > dereferencing pointers without having to hold any meaningful locks. So
+> > > it should be fast. So making it unconditional seems fine to me.
+> > 
+> > There's an ifdef since it's an optional kernel feature, and there's
+> > also this thing that we might not have it, so I'd rather keep the
+> > flag, and set it only if we can get the information (instead of
+> > failing). As a user that seems clearer to me.
+> 
+> I think we should keep the request_mask flag when returning from the
+> kernel, but it's not necessary for the user to request it explicitly
+> because it's cheap to get. This is how STATX_MNT_ID works and I think it
+> makes sense to do it that way.
 
-Additionally, remove KASAN_HW_TAGS from the list of incompatible
-options. The CFI_ICALL_NORMALIZE_INTEGERS option is incompatible with
-KASAN because LLVM will emit some constructors when using KASAN that are
-assigned incorrect CFI tags. These constructors are emitted due to use
-of -fsanitize=kernel-address or -fsanitize=kernel-hwaddress that are
-respectively passed when KASAN_GENERIC or KASAN_SW_TAGS are enabled.
-However, the KASAN_HW_TAGS option relies on hardware support for MTE
-instead and does not pass either flag. (Note also that KASAN_HW_TAGS
-does not `select CONSTRUCTORS`.)
-
-Link: https://github.com/llvm/llvm-project/pull/104826 [1]
-Link: https://github.com/rust-lang/rust/pull/129373 [2]
-Fixes: 4c66f8307ac0 ("cfi: encode cfi normalized integers + kasan/gcov bug in Kconfig")
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- arch/Kconfig | 26 ++++++++++++--------------
- init/Kconfig |  2 +-
- 2 files changed, 13 insertions(+), 15 deletions(-)
-
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 8af374ea1adc..00163e4a237c 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -838,7 +838,7 @@ config CFI_CLANG
- config CFI_ICALL_NORMALIZE_INTEGERS
- 	bool "Normalize CFI tags for integers"
- 	depends on CFI_CLANG
--	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS
-+	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
- 	help
- 	  This option normalizes the CFI tags for integer types so that all
- 	  integer types of the same size and signedness receive the same CFI
-@@ -851,21 +851,19 @@ config CFI_ICALL_NORMALIZE_INTEGERS
- 
- 	  This option is necessary for using CFI with Rust. If unsure, say N.
- 
--config HAVE_CFI_ICALL_NORMALIZE_INTEGERS
--	def_bool !GCOV_KERNEL && !KASAN
--	depends on CFI_CLANG
-+config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
-+	def_bool y
- 	depends on $(cc-option,-fsanitize=kcfi -fsanitize-cfi-icall-experimental-normalize-integers)
--	help
--	  Is CFI_ICALL_NORMALIZE_INTEGERS supported with the set of compilers
--	  currently in use?
-+	# With GCOV/KASAN we need this fix: https://github.com/llvm/llvm-project/pull/104826
-+	depends on CLANG_VERSION >= 190000 || (!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
- 
--	  This option defaults to false if GCOV or KASAN is enabled, as there is
--	  an LLVM bug that makes normalized integers tags incompatible with
--	  KASAN and GCOV. Kconfig currently does not have the infrastructure to
--	  detect whether your rustc compiler contains the fix for this bug, so
--	  it is assumed that it doesn't. If your compiler has the fix, you can
--	  explicitly enable this option in your config file. The Kconfig logic
--	  needed to detect this will be added in a future kernel release.
-+config HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
-+	def_bool y
-+	depends on HAVE_CFI_ICALL_NORMALIZE_INTEGERS_CLANG
-+	depends on RUSTC_VERSION >= 107900
-+	# With GCOV/KASAN we need this fix: https://github.com/rust-lang/rust/pull/129373
-+	depends on (RUSTC_LLVM_VERSION >= 190000 && RUSTC_VERSION >= 108200) || \
-+		(!GCOV_KERNEL && !KASAN_GENERIC && !KASAN_SW_TAGS)
- 
- config CFI_PERMISSIVE
- 	bool "Use CFI in permissive mode"
-diff --git a/init/Kconfig b/init/Kconfig
-index 98cf859d58c2..c521e1421ad4 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1950,7 +1950,7 @@ config RUST
- 	depends on !GCC_PLUGIN_RANDSTRUCT
- 	depends on !RANDSTRUCT
- 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
--	depends on !CFI_CLANG || RUSTC_VERSION >= 107900 && HAVE_CFI_ICALL_NORMALIZE_INTEGERS
-+	depends on !CFI_CLANG || HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
- 	select CFI_ICALL_NORMALIZE_INTEGERS if CFI_CLANG
- 	depends on !CALL_PADDING || RUSTC_VERSION >= 108100
- 	depends on !KASAN_SW_TAGS
-
--- 
-2.47.0.rc0.187.ge670bccf7e-goog
-
+So what we should do is not require userspace to request it explicitly
+but always raise the flag in request_mask when it's available. I agree.
 
