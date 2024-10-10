@@ -1,142 +1,94 @@
-Return-Path: <linux-kernel+bounces-360135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A9399950C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:22:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5314B99950B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDCCC284E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:22:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8350D1C22CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D928F1E573C;
-	Thu, 10 Oct 2024 22:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B143A1E2849;
+	Thu, 10 Oct 2024 22:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VeJQGZ+G"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZPrhQC2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89DD1E32C5;
-	Thu, 10 Oct 2024 22:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D05148301;
+	Thu, 10 Oct 2024 22:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598910; cv=none; b=PUNgcEZgl/ACDhCOLZcAeq4aEzydyjCcemSEftLNZCEoutj8go8utBRL8Ys3d/BmkgM7HEZLGwKLCw0rkIFL/uLR43TYLCnWa3zYpz+2H7nljmVm66WJjTHSGTHwNCblBSc/l6cxePfPlLVmWtub5tTn5PQU3pz1cVrMXtYpO5E=
+	t=1728598908; cv=none; b=VRpXtD7w+65hZkQb65abis5Bk9HvhHiOD4+Ben9xQuAe16HyluM7qvOEIyHzSdE9xEPJyZ3wa5zG86prIqi2EV3Ri5lob7skcluVQEr8pr9LcA/7ACsas/BKwh8UwZKGAUatrAAv19VOj5N3FQFmx9rv8rJMhPlCUxU2vxOX1yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598910; c=relaxed/simple;
-	bh=1oz99yS4RcrK4IXNqU16/mIzAMENLRg4ngdxPPKm4sU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ne5dHC86hOQnjl92Z/f2Xt7QTOKiI1gRgE4zkylGvlnR9sun34CyANoEvcmHDac3SdDjFzYQWjDECFQDJfC8tb6KaIHtm4JLfbipKWeWeVE/YfryyxbhbJn1WdRr9RMAGsPZDZXAQ6QG8QxLzauLp2nKYtCPlFL3chZ9cuTVPgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VeJQGZ+G; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1728598906; x=1728858106;
-	bh=rp/P/5HH2+ZaFWkr9AvBU2PKX4NqLTmJGAGtg0jpa3k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=VeJQGZ+G2gcOOra5KFYtPTDrP5sV1oiJa/Gv1N1IZ6BfrarIirGOakgulpfhMZ2Ch
-	 /gAkFhhZ+85PO9V/rB8zBmCZfcpA4zGWAlKB2psDOX9I8EN0ljJNCCMTZpDFxL1z0q
-	 CbxhblZGh6/Utk/iNqqOmb4J1ZEuqedA5ptwPLqVJxxQ6u9UmrfgRrc71U6XuX3reP
-	 vDfoTTnp/namp71vwC2dd/0z2oO9Ig8YP+pn4pQIP4pQrNbH6I6zUFZ1qeqGHuKhkW
-	 wxxUaNhPKTnexo75hDD+KxFF2clg+Acm4k2jPv81KWQdcN0OOoFRf4oo4rRS0Wx9Mp
-	 Te2aSTm1dtmBA==
-Date: Thu, 10 Oct 2024 22:21:41 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v4] rust: add global lock support
-Message-ID: <3e7832f7-8806-41e0-8e36-6f178df2eaef@proton.me>
-In-Reply-To: <ZwgB39dXLdFWQkHz@boqun-archlinux>
-References: <20240930-static-mutex-v4-1-c59555413127@google.com> <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me> <CAH5fLghsozD0qeTygBM0-WDgXRwtGcsc6B3bT1794QMx3=vSTg@mail.gmail.com> <Zwfcwg23tfrKIyrq@boqun-archlinux> <CAH5fLgjhTWjmYqxcTRRv6FTpv7Vg9nnVCGGWbSKPqOSjJ5XyQA@mail.gmail.com> <ZwfkzKz5mz6UvZfK@boqun-archlinux> <ZwgB39dXLdFWQkHz@boqun-archlinux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ee1ea3d47b7bb8278ecd414affae5dc91a2fd1fd
+	s=arc-20240116; t=1728598908; c=relaxed/simple;
+	bh=oBDNpYeXUb77o/FNxNq8pnU5gAz9EMoLLWFXUk5bfy0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ReFPVEWkIFlbnyS3oxpc/taRvuGTgseqRwNsU5qh3v0GtuQPEfhKbF1qIeGcC4F2Jw4l4e0aByZcwmtHrgF4A3NMt2XGCOPRCul78hpZJD0rh4jaLdPq/DBnBkqyyHyTEF/Q+6SPPoitzAxeXCdMPBzOSanO6i5yr8F0TmxYrjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZPrhQC2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E95AC4CEC5;
+	Thu, 10 Oct 2024 22:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728598907;
+	bh=oBDNpYeXUb77o/FNxNq8pnU5gAz9EMoLLWFXUk5bfy0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=GZPrhQC28VWzXwSBj/v7nkqdYJ/5RaOhwlNuIdUPmqtovSNJAzaDOg4FHyMBwEYpV
+	 WK+v0bYwfJD0FELKbJy37A7rCThPC1Yn2JbFxSZowJuAdk5Hc/dBhU2YxmpYQJ9wXy
+	 14dA0iJmVopOUba810unxjINPWkgw6Dc8a6UoIG2tlhdgYRiq9v+ORjYyNKG3j9crE
+	 3iVZzWFtpFG+nnf2yN04LieDzxJK+PwSxLWDcMrPiESNs4gEizDThm0X5AILaYGaOP
+	 TbqnuDdxXf/ea1xK9shNT+bYmPppk11f3vecIFFY5u6ajs7RTeGaPhTKoehceujFjK
+	 8oTtXpIj89SZg==
+Message-ID: <eeb311ff8cbfff0166286d1363c8b7d5.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240910130640.20631-1-abelova@astralinux.ru>
+References: <20240910130640.20631-1-abelova@astralinux.ru>
+Subject: Re: [PATCH] clk: actions: prevent overflow in owl_pll_recalc_rate
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>, Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, stable@vger.kernel.org
+To: Anastasia Belova <abelova@astralinux.ru>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 10 Oct 2024 15:21:45 -0700
+User-Agent: alot/0.10
 
-On 10.10.24 18:33, Boqun Feng wrote:
-> On Thu, Oct 10, 2024 at 07:29:32AM -0700, Boqun Feng wrote:
->> On Thu, Oct 10, 2024 at 03:58:07PM +0200, Alice Ryhl wrote:
->>> On Thu, Oct 10, 2024 at 3:55=E2=80=AFPM Boqun Feng <boqun.feng@gmail.co=
-m> wrote:
->>>>
->>>> On Thu, Oct 10, 2024 at 12:53:00PM +0200, Alice Ryhl wrote:
->>>> [...]
->>>>>>> +#[macro_export]
->>>>>>> +macro_rules! global_lock {
->>>>>>> +    {
->>>>>>> +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident=
-<$valuety:ty> =3D unsafe { uninit };
->>>>>>> +        value: $value:expr;
->>>>>>
->>>>>> I would find it more natural to use `=3D` instead of `:` here, since=
- then
->>>>>> it would read as a normal statement with the semicolon at the end.
->>>>>> Another alternative would be to use `,` instead of `;`, but that doe=
-sn't
->>>>>> work nicely with the static keyword above (although you could make t=
-he
->>>>>> user write it in another {}, but that also isn't ideal...).
->>>>>>
->>>>>> Using `=3D` instead of `:` makes my editor put the correct amount of
->>>>>> indentation there, `:` adds a lot of extra spaces.
->>>>>
->>>>> That seems sensible.
->>>>>
->>>>
->>>> While we are at it, how about we make the syntax:
->>>>
->>>>         global_lock!{
->>>>             static MY_LOCK: Mutex<u32> =3D unsafe { 0 };
->>>>         }
->>>>
->>>> or
->>>>
->>>>         global_lock!{
->>>>             static MY_LOCK: Mutex<u32> =3D unsafe { uninit { 0 } };
->>>>         }
->>>>
->>>> ?
->>>>
->>>> i.e. instead of a "value" field, we put it in the "initialization
->>>> expression". To me, this make it more clear that "value" is the
->>>> initialized value protected by the lock. Thoughts?
->>>
->>> `uninit { 0 }` looks pretty terrible IMO. Can we come up with something=
- better?
->>>
->>
+Quoting Anastasia Belova (2024-09-10 06:06:40)
+> In case of OWL S900 SoC clock driver there are cases
+> where bfreq =3D 24000000, shift =3D 0. If value read from
+> CMU_COREPLL or CMU_DDRPLL to val is big enough, an
+> overflow may occur.
 >=20
-> how about:
+> Add explicit casting to prevent it.
 >=20
->         global_lock!{
->             static MY_LOCK: Mutex<u32> =3D unsafe { data: 0 };
-
-I dislike this, since there is no `uninit` anywhere, but the mutex needs
-to be initialized.
-
->         }
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 >=20
-> ?
+> Fixes: 2792c37e94c8 ("clk: actions: Add pll clock support")
+> Cc: <stable@vger.kernel.org>=20
+
+Seems like we don't need these tags because it can't overflow.
+
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+>  drivers/clk/actions/owl-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> "data: " will make it clear that the value is not for the lock state.
-> "uninit" is dropped because the "unsafe" already requires the global
-> variable to be initialised first. Or "unsafe { uninit, data: 0 }" if you
-> want to keep the "uninit" part?
+> diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
+> index 155f313986b4..fa17567665ec 100644
+> --- a/drivers/clk/actions/owl-pll.c
+> +++ b/drivers/clk/actions/owl-pll.c
+> @@ -104,7 +104,7 @@ static unsigned long owl_pll_recalc_rate(struct clk_h=
+w *hw,
+>         val =3D val >> pll_hw->shift;
+>         val &=3D mul_mask(pll_hw);
+> =20
+> -       return pll_hw->bfreq * val;
+> +       return (unsigned long)pll_hw->bfreq * val;
 
-That also looks weird to me...
-
-But I haven't come up with a good alternative
-
----
-Cheers,
-Benno
-
+I'm lost. Did you intend to cast this to a u64?
 
