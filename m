@@ -1,83 +1,106 @@
-Return-Path: <linux-kernel+bounces-358797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FECF9983EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D359983F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360FF284A83
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E9D2827E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98B61C0DC5;
-	Thu, 10 Oct 2024 10:38:20 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A54B1C0DF5;
+	Thu, 10 Oct 2024 10:39:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509AC1BE85C;
-	Thu, 10 Oct 2024 10:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E568F1BBBE5;
+	Thu, 10 Oct 2024 10:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728556700; cv=none; b=MvnIglUFYdQImQEUOW0uc+dYqV1zPK9qeaBFiNjBfvq2eUsMhzRTqCbySSuiaVAzWMDVu3UDlcBoqqNzgpjrl0nvUWM8fcVTORmcnZ8RJl+44zPYF8qgbSYGI3mlRfuSqFk9cE/v8KG4ATe+ddi8uzYPIJA7dMJYc8ykvf+NsgI=
+	t=1728556745; cv=none; b=S8Sx7CF7EE0mWhGnaev66kPnUjRVHaLykHq9rD6DewWKpsw/+fNQ6lfoMxZXINsQAPI5Brjk1rYaM3RTp0Mer4SjIECQjAR8NwdZyMu9ntgTtkHjPiGMb8cEyeqZK9s9K8/oM0ZQUmmZS81Gy+AT01uoyBHsnqoVGFtwplQ28cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728556700; c=relaxed/simple;
-	bh=Lw2O3ETbAIU9U+j++V3wo4W6gSAUAgo61UBoQRWxMu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dmbhv/GOYTjppzgZckAZdKiGQEQBpFCnl8TsmDw7BvlBt9gyQ0ix+yKRNks/QuO3kBuytAvZ6etQUC4cLX0/Zv7tQnaD9vTfOe0nox2hKGgXT0qfUxDZMN7PuaJfd8LPURle2rwnCBMQarmJSVYr384VLe+IBcHmoXaPqLWzeN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 6980228023E98;
-	Thu, 10 Oct 2024 12:38:08 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 532204A310D; Thu, 10 Oct 2024 12:38:08 +0200 (CEST)
-Date: Thu, 10 Oct 2024 12:38:08 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
-	bhelgaas@google.com, dave@stgolabs.net, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, Jonathan.Cameron@huawei.com
-Subject: Re: [PATCH] PCI/DOE: Poll DOE Busy bit for up to 1 second in
- pci_doe_send_req
-Message-ID: <ZweukOWeqFy8vd4W@wunner.de>
-References: <20241004162828.314-1-gourry@gourry.net>
+	s=arc-20240116; t=1728556745; c=relaxed/simple;
+	bh=+/BA0dLgxO8wAG+3HrR28u8hSmQpVqRVWw/L70ASVVo=;
+	h=From:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GTJjHq14I0JHCdXqdGysBYrX0ZJbi7sW6PmsBsKBSUVDJ6eaZ2MvWTfeI4W88qEchMrNUR8FL6RBmlsYpAw+jDY9SGm1Dh2W83sjbOB6Zq74RrnrDhGRVOwdePjoSaJg1IbnRhSIJ0re7aigzoPXGuyjAv60OsCPsmsQuQO+9pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPR7L5kt8z6K5s4;
+	Thu, 10 Oct 2024 18:38:38 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0C398140556;
+	Thu, 10 Oct 2024 18:38:59 +0800 (CST)
+Received: from GurSIX1 (10.204.104.168) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 12:38:53 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+	<shuah@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	<linux-kselftest@vger.kernel.org>
+References: <cover.1728555449.git.gur.stavi@huawei.com> <9e15c0c2cd19d94207a1791de0dc9051a5abb95a.1728555449.git.gur.stavi@huawei.com>
+In-Reply-To: <9e15c0c2cd19d94207a1791de0dc9051a5abb95a.1728555449.git.gur.stavi@huawei.com>
+Subject: RE: [PATCH net-next v03 1/3] af_packet: allow fanout_add when socket is not RUNNING
+Date: Thu, 10 Oct 2024 13:38:47 +0300
+Message-ID: <002f01db1b00$9d09d9a0$d71d8ce0$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004162828.314-1-gourry@gourry.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGv7mksA7veRkl0u2n9N9OvQm77J/yjDg
+Content-Language: en-us
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-On Fri, Oct 04, 2024 at 12:28:28PM -0400, Gregory Price wrote:
-> Polling on the PCI DOE Busy Bit for (at max) one PCI DOE timeout
-> interval (1 second), resolves this issues cleanly.
+> Subject: [PATCH net-next v03 1/3] af_packet: allow fanout_add when socket
+> is not RUNNING
+> 
+> PACKET socket can retain its fanout membership through link down and up
+> and leave a fanout while closed regardless of link state.
+> However, socket was forbidden from joining a fanout while it was not
+> RUNNING.
+> 
+> This patch allows PACKET socket to join fanout while not RUNNING.
+> 
+> The previous test for RUNNING also implicitly tested that the socket is
+> bound to a device. An explicit test of ifindex was added instead.
 
-Nit: s/issues/issue/
+I had some mess up with the send-email. I prepared the following more
+complete git comment but sent the wrong patch. The code is still the same.
 
-> Subsqeuent code in doe_statemachine_work and abort paths also wait
+---
+PACKET socket can retain its fanout membership through link down and up
+and leave a fanout while closed regardless of link state.
+However, socket was forbidden from joining a fanout while it was not
+RUNNING.
 
-Nit: s/Subsqeuent/Subsequent/
+This patch allows PACKET socket to join fanout while not RUNNING.
 
-> --- a/drivers/pci/doe.c
-> +++ b/drivers/pci/doe.c
-> @@ -149,14 +149,26 @@ static int pci_doe_send_req(struct pci_doe_mb *doe_mb,
->  	size_t length, remainder;
->  	u32 val;
->  	int i;
-> +	unsigned long timeout_jiffies;
+Socket can be RUNNING if it has a specified protocol. Either directly 
+from packet_create (being implicitly bound to any interface) or following
+a successful bind. Socket RUNNING state is switched off if it is bound to
+an interface that went down.
 
-Nit: Reverse Christmas tree.
+Instead of the test for RUNNING, this patch adds a test that socket can
+receive packets before allowing it into a fanout group. Socket can
+receive packets if it has a configured protocol and is bound to an
+interface or bound to any interface.
 
-With that addressed,
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+The only difference between the previous test and the current test is
+that the bound interface is allowed to have IFF_UP cleared.
+---
+
+
+
 
