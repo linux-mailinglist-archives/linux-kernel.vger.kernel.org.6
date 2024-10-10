@@ -1,101 +1,85 @@
-Return-Path: <linux-kernel+bounces-359454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FD7998C66
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D13F5998C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71B32B2A63A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:33:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08A84B328DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212DC1CDFC3;
-	Thu, 10 Oct 2024 15:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1741CCB41;
+	Thu, 10 Oct 2024 15:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bncb/jbf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWYOwQpu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bncb/jbf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWYOwQpu"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hdlIpHYg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A4A1CDFA4;
-	Thu, 10 Oct 2024 15:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822131CC89F;
+	Thu, 10 Oct 2024 15:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574335; cv=none; b=pc5jN0kqtOjcH0Dk5qzVsE9yqefeZvRa+qsym9aS+JqAKP5GpoUs/2bWI6uONy7cbo/P0EWmCi3UhSWhChdBuhzlPcsx+WtWZr7SfUlnrHUSuX4N18yTO/8YpTd69ECLbQh+efP8csYUT9zAbKTbg5heZr+t+urQwReZZjcTGSw=
+	t=1728574352; cv=none; b=UmhjaEjRA9jwksCgxQaPDVbjd9s22kz+JJltsdb0q1M8jd6LqUhyvTFWdPFixohFIB8thFZu+kOCx82Vj0cUxphg0Tpby7kCZWoC8G9eig1wMrShlSgmPHZxCql/xLzFEwa9JICryAJxHpW9nlYeUkv4+YFGv91hTe8VRM/X+X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574335; c=relaxed/simple;
-	bh=8FG78Yx/NmL46NnAHhIiOuyBrOox9hs38DDYe3tcfQk=;
+	s=arc-20240116; t=1728574352; c=relaxed/simple;
+	bh=MP15bS4w3vSqH5JjlnyEj+lJuyt5Y2WkrfBOlfGovZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9q/DgEcgyu5BrzIMKk920vPPMjjAQdJ1wyUFJKk8ZKu4GlKGD2I4GqCX5xfPI4jmyVbbXMaAyxABzqRHJtuaYB3txaILvGzjun5njL1fQKCcsahR3p3SzVxBk1/4LQPrZsiqNAW7NrZT5x8DmsCd5+mJTLOb+NMte+MNu9Bgjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bncb/jbf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWYOwQpu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bncb/jbf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWYOwQpu; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 97F4E1FB3D;
-	Thu, 10 Oct 2024 15:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728574331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
-	b=Bncb/jbfJjPrn7S8Ou1m14/OGJxEZO1X6pUr+L0IsWV80Jh4peHR443tKLpS0GIcTGAXvK
-	PLKJyA2wlXjNIq2ab+fQgPLt5wv9NfvE2fufcjd3uxVC1wMK4yMwMHBAGDT1AbPnxJLt18
-	dUQuxtAQPOMNx+u23RBK6KW9Uahhim8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728574331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
-	b=jWYOwQpuDPLP1CDMenLnJnDxMTJkMEeGE+15wLZOL2RyeuY8AAboNdH1KdxJYYaE8WYLkN
-	RBaGSwV1Z1/3AqBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728574331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
-	b=Bncb/jbfJjPrn7S8Ou1m14/OGJxEZO1X6pUr+L0IsWV80Jh4peHR443tKLpS0GIcTGAXvK
-	PLKJyA2wlXjNIq2ab+fQgPLt5wv9NfvE2fufcjd3uxVC1wMK4yMwMHBAGDT1AbPnxJLt18
-	dUQuxtAQPOMNx+u23RBK6KW9Uahhim8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728574331;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
-	b=jWYOwQpuDPLP1CDMenLnJnDxMTJkMEeGE+15wLZOL2RyeuY8AAboNdH1KdxJYYaE8WYLkN
-	RBaGSwV1Z1/3AqBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 797C413A6E;
-	Thu, 10 Oct 2024 15:32:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id s0B0HXvzB2etfAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 10 Oct 2024 15:32:11 +0000
-Date: Thu, 10 Oct 2024 17:32:06 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Christian Heusel <christian@heusel.eu>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] btrfs: send: cleanup unneeded variable in changed_verity
-Message-ID: <20241010153206.GQ1609@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241010-btrfs-return-cleanup-v1-1-3d7a7649530a@heusel.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uERW7ymBYAR8nYsS/M12IgcmfYvDIglfT3yeItYEES/QPNfcspBoTNbYYrhFwAEdn/6w6CiW8bdFJOAeG/iPI1Nuy6OhdKU+XfMxNP+1z3IEeGz1dlhLmJaPTZIkOd9PlzbRyclHI+Ubpie4fXBmZ594m3mGVEjkdcX7Uky/GB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdlIpHYg; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728574351; x=1760110351;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MP15bS4w3vSqH5JjlnyEj+lJuyt5Y2WkrfBOlfGovZ8=;
+  b=hdlIpHYgrQ5JkCQACO2Ob6IQdjxn8egWXqagEB4ep1hdTH/modk9ua6z
+   8q8Ffoq3tzp0rWyXhTF2RJUewYxdSVBOBJP8aWI4YD6ktgViumHnJNA2w
+   m/632BPozGF7kh0P4/NjzUQdbIXX7gqmlrk9/8iBjv+PKsewEXTkZXkLO
+   DlR6NJHDZ8Y2jpvDhsIaqFYkDwANFYxP0XR35TTh3oWFN5xN/ylSxGwra
+   0Rg559p0uCUHmbtmA3/nkv63lBDI6VLwM8tRNLKZy/NpUthmHRQdoq+WD
+   vUB7fi4u5VmrURzWB8dVJL34I9SCHzo+XRJfLssM9+IXhyKtQK4i50tvW
+   Q==;
+X-CSE-ConnectionGUID: EYRAZESpQ5CXqn3EW0rFgw==
+X-CSE-MsgGUID: JptM8s08StyxFOj1vOPBsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45456275"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="45456275"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:32:30 -0700
+X-CSE-ConnectionGUID: 8qbP8zovS+qEoDxs1TzEVw==
+X-CSE-MsgGUID: BDJjDco/TJayOTFrgGJreA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="76828992"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:32:25 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1syv9K-00000001Zwx-1c2G;
+	Thu, 10 Oct 2024 18:32:22 +0300
+Date: Thu, 10 Oct 2024 18:32:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v8 7/8] platform/chrome: Introduce device tree hardware
+ prober
+Message-ID: <ZwfzhsvlPrxMi61j@smile.fi.intel.com>
+References: <20241008073430.3992087-1-wenst@chromium.org>
+ <20241008073430.3992087-8-wenst@chromium.org>
+ <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,41 +88,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010-btrfs-return-cleanup-v1-1-3d7a7649530a@heusel.eu>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.991];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <Zwfy6ER6sbr_QxsY@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Oct 10, 2024 at 03:25:25PM +0200, Christian Heusel wrote:
-> As all changed_ functions need to return something, just return 0
-> directly here, as the verity status is passed via the context.
+On Thu, Oct 10, 2024 at 06:29:44PM +0300, Andy Shevchenko wrote:
+> On Tue, Oct 08, 2024 at 03:34:26PM +0800, Chen-Yu Tsai wrote:
+
+...
+
+> > +static const struct chromeos_i2c_probe_data chromeos_i2c_probe_dumb_touchscreen = {
+> > +	.cfg = &(const struct i2c_of_probe_cfg) {
 > 
-> Suggested-by: David Sterba <dsterba@suse.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410092305.WbyqspH8-lkp@intel.com/
-> Signed-off-by: Christian Heusel <christian@heusel.eu>
+> Perhaps you can introduce something like
+> 
+> #define DEFINE_I2C_OF_PROBE_CFG(_type_, _ops_)		\
+> 	(struct ...) {					\
+> 		.ops = _ops_,				\
+> 		.type = #_type_,			\
+> 	}
+> 
+> and use it here as
+> 
+> 	.cfg = DEFINE_I2C_OF_PROBE_CFG(touchscreen, NULL),
+> 
+> > +		.type = "touchscreen"
+> 
+> Ditto.
 
-Thank you, added to for-next.
+This was for leaving trailing comma.
+
+> > +	}
+> 
+> Ditto.
+> 
+> > +};
+> > +
+> > +static const struct i2c_of_probe_cfg chromeos_i2c_probe_simple_trackpad_cfg = {
+> > +	.ops = &i2c_of_probe_simple_ops,
+> > +	.type = "trackpad"
+> 
+> Leave a comma.
+> 
+> > +};
+
+...
+
+> > +	.cfg = &chromeos_i2c_probe_simple_trackpad_cfg,
+> 
+> 	.cfg = DEFINE_I2C_OF_PROBE_CFG(trackpad, i2c_of_probe_simple_ops),
+> 
+> Or even
+> 
+> #define DEFINE_I2C_OF_PROBE_CFG_SIMPLE(_type_)			\
+> 	DEFINE_I2C_OF_PROBE_CFG(type, &i2c_of_probe_simple_ops)
+
+With that also looking at the above
+
+#define DEFINE_I2C_OF_PROBE_CFG_NONE(_type_)				\
+	DEFINE_I2C_OF_PROBE_CFG(type, NULL)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
