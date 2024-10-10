@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-358997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1892D998624
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62063998629
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B17C928056E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E655E1F22184
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC601C462B;
-	Thu, 10 Oct 2024 12:35:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F6D29AF;
-	Thu, 10 Oct 2024 12:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1CD1C57AD;
+	Thu, 10 Oct 2024 12:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VAO+y59H"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF56129AF;
+	Thu, 10 Oct 2024 12:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563732; cv=none; b=mm14egS6IT1gUdNwKqHseAe3NOq/CoPSQAnoDLuhznaOxaYNyVRkC8prVPsSc7mda5OKpIOA3lWI1tz2vzyuwVedgFx9fTsQpBcVChqfiQFQzb4FuZSHIaxEyQW2T3YQu2a3plpVTbu+O+ee4lcbpdUWqqJwXKhnNq09urYiVPY=
+	t=1728563769; cv=none; b=EQjcUR7thFKPTVgsOzZYC7Hi4R5KnfpV3KSKbMaeDmnwgaiP6GHykbwoMnmzA8vr1+JJojquKhZM2Jr4/35u8g+l+/7IsvoLrkAf1Kh0RDpNxl3UuG795+aTFyxnr6sLZ/p5XWGPwTjc3Fc9VKw/ZR5KpQgGSC77StzQCcW2DHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563732; c=relaxed/simple;
-	bh=fIsd+POJH173emuvnI8MGIWiD+VNJKbD0DF57uz2rTg=;
+	s=arc-20240116; t=1728563769; c=relaxed/simple;
+	bh=Rryj9oLGExO1bUhiYrapGyYrh33dxncpOASEi3N3YnA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZZnQreEmcpef5Adn+CnQilFedXYWo3CBYt7HlTz+sV3SWp/6Amtw2pmgygC3ui7IeS65G81DTJz8GO35ZHWJEUrqJrzUVAI/rOHIkJw5SRUiv4sHaCZ5eAIbbZI227ChJpAh2eYNDCDxoIM7p+aUp7L6PsjauH9dSOVhDXircdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 777A6497;
-	Thu, 10 Oct 2024 05:35:58 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C41903F58B;
-	Thu, 10 Oct 2024 05:35:25 -0700 (PDT)
-Message-ID: <c9360dce-559c-4523-b98c-041fc748ce61@arm.com>
-Date: Thu, 10 Oct 2024 13:35:24 +0100
+	 In-Reply-To:Content-Type; b=R3C/orrm6lm2f8o+moC7uDUJXrdLCGoD2h5GBo1dsA7gSG81wBvlCnWGjq/5Qp2a9HiubgnSsy4e4KWrppTT27nc+LkhFYNOBzDAQVAe0gmNU1fANuq7Ci+yZ0rYo0HBwqZITsm3ULCisPiOoKjhI16dTx3SXxuH2UK2OmteWys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VAO+y59H; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728563764;
+	bh=Rryj9oLGExO1bUhiYrapGyYrh33dxncpOASEi3N3YnA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VAO+y59HV7qdy1CWL2CYTOxzn8chuMzPQC7JQOw/BjFOdZ+pIp0jEiWvhCZi6lcsS
+	 lGXjXZeWPJWc2baUbshzufwHwWxl3L2Ar/t/p2zpVnBf05eK7LPrtvsMoIgM5Q+jIV
+	 F/hkVoGjjLIdPxEffX3+GhYIGe6y2kH+HGsrR1wx9uZ4AxklscLtmzj/oeszwwlR54
+	 Jv2l5DWgiO8YgjwjD2Qfd24JVqW03PYJ6d45ITw8PVLVVswQ44pSZFqYbZEdx4GFzS
+	 D6EeQ64nKAZ3CDSzX5+sIvW0mxrFYox+vJxVyuxmYvnuenJU/DAuDk6xOb7mEKHNq3
+	 /e8y/elb7mgMw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4172617E35E0;
+	Thu, 10 Oct 2024 14:36:04 +0200 (CEST)
+Message-ID: <4ac4c8ab-4180-4fcc-9e48-6dede7448dee@collabora.com>
+Date: Thu, 10 Oct 2024 14:36:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,71 +56,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] vdso: Introduce vdso/page.h
-To: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org
-Cc: Andy Lutomirski <luto@kernel.org>, "Jason A . Donenfeld"
- <Jason@zx2c4.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-References: <20241003152910.3287259-1-vincenzo.frascino@arm.com>
- <20241003152910.3287259-3-vincenzo.frascino@arm.com> <87wmihr49g.ffs@tglx>
+Subject: Re: [PATCH v4 4/4] arm64: dts: mediatek: mt7988: add pinctrl support
+To: Frank Wunderlich <linux@fw-web.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
+ eladwf@gmail.com
+References: <20241009165222.5670-1-linux@fw-web.de>
+ <20241009165222.5670-5-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <87wmihr49g.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20241009165222.5670-5-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 09/10/2024 10:53, Thomas Gleixner wrote:
-> On Thu, Oct 03 2024 at 16:29, Vincenzo Frascino wrote:
->> The VDSO implementation includes headers from outside of the
->> vdso/ namespace.
->>
->> Introduce vdso/page.h to make sure that the generic library
->> uses only the allowed namespace.
->>
->> Note: on a 32-bit architecture UL is an unsigned 32 bit long. Hence when
->> it supports 64-bit phys_addr_t we might end up in situation in which
->> the
+Il 09/10/24 18:52, Frank Wunderlich ha scritto:
+> From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> We end up with nothing.
+> Add mt7988a pinctrl node.
 > 
->> top 32 bit are cleared. To prevent this issue this patch provides
->> separate macros for PAGE_MASK.
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+> v2:
+> - fix wrong alignment of reg values
+> ---
+>   arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 241 ++++++++++++++++++++++
+>   1 file changed, 241 insertions(+)
 > 
-> 'this patch' is redundant information.
-> 
-> git grep 'This patch' Documentation/process/
-> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+> index c9649b815276..7e15934efe0b 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+> @@ -3,6 +3,7 @@
+>   #include <dt-bindings/clock/mediatek,mt7988-clk.h>
+>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   #include <dt-bindings/phy/phy.h>
+> +#include <dt-bindings/pinctrl/mt65xx.h>
+>   
+>   / {
+>   	compatible = "mediatek,mt7988a";
+> @@ -105,6 +106,246 @@ clock-controller@1001e000 {
+>   			#clock-cells = <1>;
+>   		};
+>   
+> +		pio: pinctrl@1001f000 {
+> +			compatible = "mediatek,mt7988-pinctrl";
+> +			reg = <0 0x1001f000 0 0x1000>,
+> +			      <0 0x11c10000 0 0x1000>,
+> +			      <0 0x11d00000 0 0x1000>,
+> +			      <0 0x11d20000 0 0x1000>,
+> +			      <0 0x11e00000 0 0x1000>,
+> +			      <0 0x11f00000 0 0x1000>,
+> +			      <0 0x1000b000 0 0x1000>;
+> +			reg-names = "gpio", "iocfg_tr",
+> +				    "iocfg_br", "iocfg_rb",
+> +				    "iocfg_lb", "iocfg_tl", "eint";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio-ranges = <&pio 0 0 84>;
+> +			interrupt-controller;
+> +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-parent = <&gic>;
+> +			#interrupt-cells = <2>;
+> +
+> +			mdio0_pins: mdio0-pins {
+> +				mux {
+> +					function = "eth";
+> +					groups = "mdc_mdio0";
+> +				};
+> +
+> +				conf {
+> +					pins = "SMI_0_MDC", "SMI_0_MDIO";
+> +					drive-strength = <MTK_DRIVE_8mA>;
 
-My bad, I thought that Documentation/process/submitting-patches.rst referred
-only to the proposed change which is in imperative mood.
+Please do *not* use the MTK_DRIVE_(x)mA definitions anymore.
 
-I will rephrase it accordingly.
+Here it is `drive-strength = <8>`.
 
-...
+> +				};
+> +			};
+> +
+> +			i2c0_pins: i2c0-g0-pins {
+> +				mux {
+> +					function = "i2c";
+> +					groups = "i2c0_1";
+> +				};
+> +			};
+> +
+> +			i2c1_pins: i2c1-g0-pins {
+> +				mux {
+> +					function = "i2c";
+> +					groups = "i2c1_0";
+> +				};
+> +			};
 
->> +#define PAGE_MASK	(~(PAGE_SIZE-1))
-> 
-> #define PAGE_MASK	(~(PAGE_SIZE - 1))
-> 
-> please.
->
+Whatever pin can be configured with one or multiple groups that can be different
+must *not* be in the SoC dtsi, but rather in the *board* dts(i) file, as the wanted
+configuration of those pins is *not* soc-specific but board-specific.
 
-Will change it in v4.
+ From a fast look, I can see that at least the I2C pins can be assigned to different
+functions: for example, pins 15+16 can be either of i2c0_1, *or* u30_phy_i2c0, *or*
+u32_phy_i2c0, *or* xfi_phy0_i2c1 ... or others, even.
 
-> Thanks,
-> 
->         tglx
+Finally - I think that *most* of the muxing that you're declaring here must instead
+go to your board specific devicetree and not in mt7988a.dtsi.
 
--- 
-Regards,
-Vincenzo
+Cheers,
+Angelo
+
+
+
 
