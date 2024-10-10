@@ -1,245 +1,145 @@
-Return-Path: <linux-kernel+bounces-360181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D448F999595
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:06:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69573999597
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85982284A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829EE1F24B8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CD21E5714;
-	Thu, 10 Oct 2024 23:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704021E3DE6;
+	Thu, 10 Oct 2024 23:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoHUZQER"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GIm/YkKU"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963A614D6F9;
-	Thu, 10 Oct 2024 23:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D3E1BCA0A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728601608; cv=none; b=atUwCXkMQHrTbX+Ddw9pwMXZ2sEMkPjTKGwAQuhKTYffo4BDyshhpnnUSL9mH8ApInqUOAOEWbPFz9OCE4046XJrVpYeoLFRWfGdLm48win1v+gvIsqOlpDbSqblo1dv6ic0lIcfEdI19nLfio++ywqNsGtdnwyCRQu1FAAP4HY=
+	t=1728601647; cv=none; b=G9Xzt1FR7B8vdPhubUP+j3fuFX8FXY2kaUzOQB30aEXh86XiRd9BNz9Ij/8uyP3WB7jwlFGTdn3pmYHUODqSIsV9ZaRDpll/6NH0pNLrOxag6p95ztoC4ngA0ZKqlljoUnUUGP2r+2eFkVbrNI4sWA2Q72G8Bi7hzQF6mphk/mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728601608; c=relaxed/simple;
-	bh=YLuKjDxmL7XQBkXyqS0+w9XDn7surOgsOY4wlYFluZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=osl5M5hajea6RF/DjsQJ/FRWQVMRW2TmWJ0Cd1u61+Kn4QEIQ1lPHgin2FM7Q8rzSjTapwj7bIT1msCFIZ7cQ6Qasri1UgM+uqFRF30uNf1NAtifWeNTDvpz0/M98GdAEvugykZLIp1gkyHgu2BBqgmj33F52UeZsGnQldI54yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoHUZQER; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b10e0fadbcso92667385a.2;
-        Thu, 10 Oct 2024 16:06:46 -0700 (PDT)
+	s=arc-20240116; t=1728601647; c=relaxed/simple;
+	bh=g6+gP/Abi8kIg2yNFkh8Xtajwz83aO55asrM6HlvKQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gzvKdQKDAyUnJab+yppHpc/SDVehdX5fn1g4j2D0ApUa+LGn9Nai8drddo1cBSWu7gylqyzty8RH9hRNbK5GQnkzHEwQfooknGE8jj9jKCfsvxJ9jLQV8EyAUESFsAzdJ1lPhDNb5X79EXTuaS4oaaGYW3wuMvyci5PdMs00YnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GIm/YkKU; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7ac83a98e5eso126396185a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:07:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728601605; x=1729206405; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/sS0ErlMuTAzK3eikJGf9qkuIa41+FkusE3cYOwPH8=;
-        b=SoHUZQER1Cjtab2CIBVvs3myVl0Hqd4/rg1WnXBwzrh22hdKvJz1toG5KgbmuoW8Gr
-         TSC7oxFJWNWulDD1mNBuR1d2S7pkF8+IVS2OYeiwicY860FIDBKYT+ZCDnP7QgiYZo4M
-         /dmKpcZ3JMZ5M1hMtdlCTosYwF4ZjAPteKCVicFEpvqx0pz4xLhPZTMYJoz8LSSBbNH8
-         VPJw7ojdMPi3yk/OEv8UAx47OwraMI71UDgF935bI0eSpkXI65oAsKvexZe7ATz4bDWM
-         k1cMxN60B+S3+IECItTQbjerFxfXf/FSbOk8Go9MGpxXrMX4syidIUIG8VxhD42puERB
-         ZMhw==
+        d=broadcom.com; s=google; t=1728601645; x=1729206445; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ast5PSZ42QXljwwMqB/wFICsAeJUR76J1fOkjB4gshw=;
+        b=GIm/YkKUhHcReVHyaQ1rhck3HS9EJKBRntfVc8uhA7nbHtBAZR1iqS3jWwqtFoNw9g
+         6M4QrwUjv8bFij/IAFk+U1nNbV5DtqwlR98KfaPZTUzEjsZg7vFiJZsA/boMjcUVf4Hw
+         lUntw8DzcDg8qarEomUg5eEcyHRB5/b98V75I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728601605; x=1729206405;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i/sS0ErlMuTAzK3eikJGf9qkuIa41+FkusE3cYOwPH8=;
-        b=o5Pm74TCyR91KCEGjJbd7v1vJTr9FrFvbtRCDyS6u3YWql6lKPvkYXozzE2yquIVxP
-         tJw9g8SMQuHcqavwsI4VKfmoxt2be+Ljhcsy0B8uA8wh36aHhFkk3vj5LFPW1blvxZgp
-         otz2hA7KdIQ52bbuTFzpO4WGWXvhdA4NByfCArLRbZtpBJwk2Nv13+V1oYNoM2gKzNmC
-         xeVHj0LI63XdVIfoiATxIYW79pWYu78zMcTjIAtYMvzfz6XFRRZOSm63mMWzGSyE6SIk
-         +eeBNKUZinRQaazGuS9zZoV9FT/6jgpFxYrASYVgaEN8INkLxL7PjrOPBOtXw64PnGIa
-         xIrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVqQdnAJy5w9ZVsQG6wL1qYnBie+YMrnjXCeHl43cuNMmhLs28jAnOEnpFTziuwA1hUnxnn0fHuJjhnNo=@vger.kernel.org, AJvYcCV8OPiCAolOh3AWI9R4xAqC8tcfa6PhkUTau9ErazrQgJ0DNL6JxLwStKnA5b/cQmWJq616WDNHT3VIPlk40gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvK2XP9/uN757pRJDv7beTxxxnhOq1cvi3DP9OK9g3Z0EUDtBb
-	VauAgrnGZiYnKWga5/gmmaKmSxqCONpLTYF42gxx+7LsV/piFZx6
-X-Google-Smtp-Source: AGHT+IHO7HUgUEiWGHGvwuj0m62GUIGJenqQ2aggMakuy6xJt1K5+MM0WzAR1ZGM/Vwx/llsG4YKSA==
-X-Received: by 2002:a05:620a:46ac:b0:7ae:64f4:db46 with SMTP id af79cd13be357-7b11a3c570fmr108479985a.64.1728601605311;
-        Thu, 10 Oct 2024 16:06:45 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148d69fesm86394685a.41.2024.10.10.16.06.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 16:06:44 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id EFAD6120007F;
-	Thu, 10 Oct 2024 19:06:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 10 Oct 2024 19:06:43 -0400
-X-ME-Sender: <xms:A14IZ-ukVeEZqJA4WVTeIpsAK4wpOORp1zAUq6LJM_hA_zYlZo3yxQ>
-    <xme:A14IZzd2PP5mbPhDul891cNrBa2Xn_d7E8YH93580aQtvQb-WTKBe5H_iW2ISERww
-    zKCt3Gp_vtO0ZCIIQ>
-X-ME-Received: <xmr:A14IZ5wXCDYO4ULvjO6Bt_K6AbSyFVF5zAqRIcLyM6iA5HA3CVlmBttOacI7YA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedgudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfh
-    gfehgeekkeeigfdukefhgfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtoh
-    hnrdhmvgdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgt
-    phhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrghrhiesgh
-    grrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhm
-    rghilhdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsghoqhhunhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:A14IZ5OhW5crXFOC0Lyg047R6kX3q8wZkTMXEVXjLWsX8C9-eCKnfg>
-    <xmx:A14IZ--h9W4suqz090z9djw3T9sByn8kqjpU-r04QuiwW8MOzzgYGQ>
-    <xmx:A14IZxVJTflXiHPk5bJbgvR4eWvVnRMeMpXK8vGdGyEEhLLtANSW6Q>
-    <xmx:A14IZ3eNip09eg2IZf2zg5G3ZdbxZ7qj_bwsxcFGbRmBAtqefBZ0AQ>
-    <xmx:A14IZ4fyezOyN8x7bSkYZcSI_qE_cmb_YH_JQfLa6pDY5AFu5BNRTL4u>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 10 Oct 2024 19:06:42 -0400 (EDT)
-Date: Thu, 10 Oct 2024 16:06:32 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v4] rust: add global lock support
-Message-ID: <Zwhd-Eu_1oB9CIYd@boqun-archlinux>
-References: <20240930-static-mutex-v4-1-c59555413127@google.com>
- <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me>
- <CAH5fLghsozD0qeTygBM0-WDgXRwtGcsc6B3bT1794QMx3=vSTg@mail.gmail.com>
- <Zwfcwg23tfrKIyrq@boqun-archlinux>
- <CAH5fLgjhTWjmYqxcTRRv6FTpv7Vg9nnVCGGWbSKPqOSjJ5XyQA@mail.gmail.com>
- <ZwfkzKz5mz6UvZfK@boqun-archlinux>
- <ZwgB39dXLdFWQkHz@boqun-archlinux>
- <3e7832f7-8806-41e0-8e36-6f178df2eaef@proton.me>
+        d=1e100.net; s=20230601; t=1728601645; x=1729206445;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ast5PSZ42QXljwwMqB/wFICsAeJUR76J1fOkjB4gshw=;
+        b=cQDc/IPhgqrsgtmthAoBqtY16Ab79Jp9kG4uu5ukYBVU25UFBc2TnXsZ4lJuyrrdB+
+         M47nAe94zSj3P7Xjw90g2P9ym1BBxO8uR7Gqwj48tvvrjWwAfswdJeVn9Xl88Easpiz2
+         iMfZbn50SzVMHL9XwA9/eE4gM7F32urf24l6gkoG2O2Exduc3LHcAzYHqicYIlCoLis5
+         kJUPP1T8lY45gehaXc+vqnOvjWscljnFdDnDsgzVIrIOZslL3igYi2P0sAO+g92GLMXB
+         umy9v4vdyjYHWXUCbRLfXKArVa7xgg18775UvDzpWzQ3Jdbxuf4kFFO6o69ZSz0MVzeM
+         blPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV39gaM+rNGAfVWXK9jn9dFS3vu4meO2mQLK26Aoug36ZVhMMd2nLQpmAXOnpDcb3MKOYPRDijPkWXm/PA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5BVmdtnppjcMQv0mYcuGMhFjBrsfrtGdbCyQ86zrr6TvgeoFY
+	SPvicE1siPkCjxFbeoqTtJS0FxW/eAC4T+rkAH//OComOz/8UCPfwWb42uhV3A==
+X-Google-Smtp-Source: AGHT+IHjLTYzECPKxvPK64ftAIOP0ZKiWYLkKAL+0vyTdQdpvK4wVZTPmrminqYbdTVXXnOw3pGwvQ==
+X-Received: by 2002:a05:620a:172a:b0:7a9:a6f5:4912 with SMTP id af79cd13be357-7b11a3b5ad4mr129737085a.22.1728601645271;
+        Thu, 10 Oct 2024 16:07:25 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148d6a09sm86705685a.42.2024.10.10.16.07.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 16:07:23 -0700 (PDT)
+Message-ID: <dfc1ab0b-0d5f-4205-b8b0-96784d58d31b@broadcom.com>
+Date: Thu, 10 Oct 2024 16:07:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e7832f7-8806-41e0-8e36-6f178df2eaef@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: broadcom: Fix L2 linesize for Raspberry Pi 5
+To: Willow Cunningham <willow.e.cunningham@gmail.com>
+Cc: willow.e.cunningham@maine.edu, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stefan Wahren <wahrenst@gmx.net>,
+ Andrea della Porta <andrea.porta@suse.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241010150409.262087-1-willow.e.cunningham@maine.edu>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241010150409.262087-1-willow.e.cunningham@maine.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 10:21:41PM +0000, Benno Lossin wrote:
-> On 10.10.24 18:33, Boqun Feng wrote:
-> > On Thu, Oct 10, 2024 at 07:29:32AM -0700, Boqun Feng wrote:
-> >> On Thu, Oct 10, 2024 at 03:58:07PM +0200, Alice Ryhl wrote:
-> >>> On Thu, Oct 10, 2024 at 3:55 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >>>>
-> >>>> On Thu, Oct 10, 2024 at 12:53:00PM +0200, Alice Ryhl wrote:
-> >>>> [...]
-> >>>>>>> +#[macro_export]
-> >>>>>>> +macro_rules! global_lock {
-> >>>>>>> +    {
-> >>>>>>> +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valuety:ty> = unsafe { uninit };
-> >>>>>>> +        value: $value:expr;
-> >>>>>>
-> >>>>>> I would find it more natural to use `=` instead of `:` here, since then
-> >>>>>> it would read as a normal statement with the semicolon at the end.
-> >>>>>> Another alternative would be to use `,` instead of `;`, but that doesn't
-> >>>>>> work nicely with the static keyword above (although you could make the
-> >>>>>> user write it in another {}, but that also isn't ideal...).
-> >>>>>>
-> >>>>>> Using `=` instead of `:` makes my editor put the correct amount of
-> >>>>>> indentation there, `:` adds a lot of extra spaces.
-> >>>>>
-> >>>>> That seems sensible.
-> >>>>>
-> >>>>
-> >>>> While we are at it, how about we make the syntax:
-> >>>>
-> >>>>         global_lock!{
-> >>>>             static MY_LOCK: Mutex<u32> = unsafe { 0 };
-> >>>>         }
-> >>>>
-> >>>> or
-> >>>>
-> >>>>         global_lock!{
-> >>>>             static MY_LOCK: Mutex<u32> = unsafe { uninit { 0 } };
-> >>>>         }
-> >>>>
-> >>>> ?
-> >>>>
-> >>>> i.e. instead of a "value" field, we put it in the "initialization
-> >>>> expression". To me, this make it more clear that "value" is the
-> >>>> initialized value protected by the lock. Thoughts?
-> >>>
-> >>> `uninit { 0 }` looks pretty terrible IMO. Can we come up with something better?
-> >>>
-> >>
-> > 
-> > how about:
-> > 
-> >         global_lock!{
-> >             static MY_LOCK: Mutex<u32> = unsafe { data: 0 };
+On 10/10/24 08:04, Willow Cunningham wrote:
+> From: Willow Cunningham <willow.e.cunningham@gmail.com>
 > 
-> I dislike this, since there is no `uninit` anywhere, but the mutex needs
-> to be initialized.
+> Fixes: faa3381267d0 ("arm64: dts: broadcom: Add minimal support for
+> Raspberry Pi 5")
 > 
-> >         }
-> > 
-> > ?
-> > 
-> > "data: " will make it clear that the value is not for the lock state.
-> > "uninit" is dropped because the "unsafe" already requires the global
-> > variable to be initialised first. Or "unsafe { uninit, data: 0 }" if you
-> > want to keep the "uninit" part?
+> Set the cache-line-size parameter of the L2 cache for each core to the
+> correct value of 64 bytes.
 > 
-> That also looks weird to me...
+> Previously, the L2 cache line size was incorrectly set to 128 bytes
+> for the Broadcom BCM2712. This causes validation tests for the
+> Performance Application Programming Interface (PAPI) tool to fail as
+> they depend on sysfs accurately reporting cache line sizes.
 > 
-> But I haven't come up with a good alternative
+> The correct value of 64 bytes is stated in the official documentation of
+> the ARM Cortex A-72, which is linked in the comments of
+> arm64/boot/dts/broadcom/bcm2712.dtsi as the source for cache-line-size.
 > 
+> Signed-off-by: Willow Cunningham <willow.e.cunningham@maine.edu>
 
-How about a "fake" MaybyUninit:
-
-	global_lock!{
-            static MY_LOCK: Mutex<u32> = unsafe { MaybeUninit::new(0).assume_init() };
-	}
-
-?
-
-I feel like we need to put the data in the initialization expression
-because if we resolve the initialization issues and can skip the extra
-init step, we pretty much want to use the macro like:
-
-	global_lock!{
-            static MY_LOCK: Mutex<u32> = { data: 0 };
-	    // maybe even
-            // static MY_LOCK: Mutex<u32> = { 0 };
-	}
-
-instead of
-
-	global_lock!{
-            static MY_LOCK: Mutex<u32> = init;
-	    value = 0;
-	}
-
-, right?
-
-So we need to think about providing a smooth way for users to transfer.
-Not just adjust the changes (which I believe is a good practice for
-coccinelle), but also the conceptual model "oh now I don't need to
-provide a 'value=' field?". Hence even though the above proposals may
-look weird, but I think that's still better?
-
-Regards,
-Boqun
-
-
-> ---
-> Cheers,
-> Benno
-> 
+Applied, thanks!
+-- 
+Florian
 
