@@ -1,187 +1,89 @@
-Return-Path: <linux-kernel+bounces-358704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83D199829D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF47B9982A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983212820A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:42:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F311F22889
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB2A1BC9EE;
-	Thu, 10 Oct 2024 09:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBE01BC9EE;
+	Thu, 10 Oct 2024 09:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MoqewcXm"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m4PK/UOx"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725BBBE6F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC44818DF65;
+	Thu, 10 Oct 2024 09:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553358; cv=none; b=bLeAjkWRduXbH+JqcsrdnZ24hgXRiRW+mYr1tz3ZxGac8T91k0XrLRj4DSc6m04PBMsow0EVyEmp/geE1Awbxbd6YiqpT+lZAeop4l0HEj98OH9k70xHGS0na0FdzhrHbSfRxbeieO6DTRoO8I9AvYtkiPdnh66SD/MSotgGQJg=
+	t=1728553371; cv=none; b=c/EcSRGxizKvWOe2dBJw4I6mg5/gUJt/tHzKfmM/DY/5InEB7TqV/xBc+NbqoF4VUbEFw5Q6iOiK2mEx/OmN6i1TsR28H7czgqVnl9GeIdsdHLwINh0K2v+t2IpyGdhibFfwoby0XXZA+hRmkiqAIq+SPIEnlBP+sP01mJrq9eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553358; c=relaxed/simple;
-	bh=qw7bxAwcUEvG6rzmDxAgT3vcA69UNv8FW+zgV5hbTxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f5KvCcMcscthM5ratJ4L6VFEMcK3ltRXegFeZKzFsELzZfk/G0YuNAXgZV/DMXC0cfyS3X4sJQ0fLBjN14w0RvPqFI4rXILYoM+MZPltSwGv4nLW6DdEAy/X+sFqwBAHjwAlWGP6bRC0NhkhmCw6FdH1UIjbri9SfSwGR8CuLbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MoqewcXm; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e2f4c1f79bso7428487b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728553355; x=1729158155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2AFuEM5iQK1BFg24WS6aJ9H/ndfdGGqBiQFPKLr/iwg=;
-        b=MoqewcXmHKBen+R9/q7pADloLoGELuAWTo/D5V401PmjR9UO2c1AMZv6MBBaRwi/vF
-         ey49Hj7fyMDz9m6v/3PlIykvDkJTgZedTTFyIKnuZ9YyqcHxmbuxYqAeAHEUCZOPt7ZG
-         geXFY2jWPPnjB0IPQttuOnzu0eVzNVWx9ZAwv3+/G1HEZmvPqz2UuKDsfPC6XbhXpjbf
-         IVxM27YQFE0yfLft8LJ1X5CmXkW9aU747rjH4e2ev9eTf5tpIqLdarZIBGGT+mAASlNP
-         sqRMJBhgnhuJAviu+FMJlAF/PqwgLZSA0TudKOiDpu7JI0JK9eX03JQsZGmUgwyH5NQ2
-         JT4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728553355; x=1729158155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2AFuEM5iQK1BFg24WS6aJ9H/ndfdGGqBiQFPKLr/iwg=;
-        b=iNHSlYMYLGmAFdWHgHUgzs25Bbk2YUxyPmD8DWkxIXoiRh20jrDq3s7xSBicC9bbAJ
-         eHNavD9CXW7dB+uf/y+UnA1UJ0j5jQkQccEzW1T8jiLM+yjzjLGgEQkmYXi7VjouQdVD
-         /rpmS2I86aB2xQ4zwJllEkuYbjHPfnbBo6mP7pagygZaSx+eNe4w2oYxeXFM9rTvmY2y
-         aXLfMBQBKM9w3uRAhXBP+AvZrgXXWtci7pOEfvPM8htCTMIQ8irRGFE/uKnKzPbiHe8D
-         E7+oZRO/yrhB8TAN3pB0JQVdBNh3ynV5U1GDzgge8EGQEH799caLpFT2X3Pjmr8B5kU/
-         eUqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrWq3HZGE3SGMS2R2oFG7nAkitNCdQp7qwQN5sOxxi3nAm8T/3E9IcRaqvSdVTZRZ0YRX5aFCu/pC0PNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylPV3LZSGzy1DRixUyK08jFHc3LwT+/WO618nUdweE1bME/wcW
-	QLulNGkeWECGtNAf0vlgdjmZoKW58atXcVJPytOy3KYeDVDP9XU71AyUBr//IdqGprXph511TDy
-	HJWxNMKCCmE0xVfy0OND4j47c7k7knGz9znZD7Q==
-X-Google-Smtp-Source: AGHT+IGmAQ12ZK/exUtgQunkQD9Pba+qYyFly3uEDHGNZP0eC+XCxiqyJ8v2g1NWX+u+g414abxOj3NfbQ9kYJQAxO4=
-X-Received: by 2002:a05:690c:2f08:b0:6db:da26:e8c6 with SMTP id
- 00721157ae682-6e322491509mr49597547b3.44.1728553355429; Thu, 10 Oct 2024
- 02:42:35 -0700 (PDT)
+	s=arc-20240116; t=1728553371; c=relaxed/simple;
+	bh=346cdhzfMjk0IugSFuF5mu9ZT8QjdmGOPWqppdkR+Sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=piimYImyqwgZK0wuQms629j/ud5Ww348Sv3UFRnr7hY+LXYXJOrgi+K4kBgX53qsnYx3NB3zSSX9/hpMPwjNry2YueX89OnarrBQAVoeSRg9MBCMB+9V2P3oZm4+G2z/6vCfRco1Ns7zuRDZs8VsN5dahRdp3iexG4F3CBm9J1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m4PK/UOx; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cRaxaOIG6VIWm/An1JMpyl8wdnm639NBZ/3o+pQVzBk=; b=m4PK/UOxubqShBQ4Rd0obSAgl9
+	eGhdntLwcUAmTGnXVwBpec+u5B/rbWNSQ4DjCiVicB6jaJfHRvkJZgkSs5zPLcbIO0CEpwZU4adty
+	YDMgmv3hEWRis7PQ6qc+IsLim5gryqhjz/rU5IS3UmJr1iSpUB9CppG+v80vCan4CLxU7EmJZ3wvA
+	eY18GLZPNnppJRdpfg3U5X546Xn8FT28IK1sfWhUgygLd/c/1Df7ib4VVCVjKPpmZUDKqx1+7TVVI
+	MyzWdOhKhwvP0ORPqXRpqE7F7spFZuDm4ZOGUwZ94WfrT3YuC7sgYI+MHKCHLhNGIE8o5TC2+JRI2
+	X6+H0fUg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1syph3-0000000CGvD-1ino;
+	Thu, 10 Oct 2024 09:42:49 +0000
+Date: Thu, 10 Oct 2024 02:42:49 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [PATCH 05/12] iomap: Introduce IOMAP_ENCODED
+Message-ID: <ZwehmQt52_iSMLeL@infradead.org>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <d886ab58b1754342797d84b1fa06fea98b6363f8.1728071257.git.rgoldwyn@suse.com>
+ <ZwT_-7RGl6ygY6dz@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-20-v1-0-139511076a9f@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-20-v1-2-139511076a9f@linaro.org>
- <CAA8EJpr-B2OZbn5_6dUnojf9ZTXkVcE2nUL1QHohTmk0Qa+bPg@mail.gmail.com> <CABymUCMAsXFz4tMdNexxU8UVGu_khcD6EE+KBt=5EHmKbXvG5A@mail.gmail.com>
-In-Reply-To: <CABymUCMAsXFz4tMdNexxU8UVGu_khcD6EE+KBt=5EHmKbXvG5A@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 10 Oct 2024 12:42:24 +0300
-Message-ID: <CAA8EJpqv84EPWysZKhATthybZ5ODutNq9mJ0SO2HpzqruaR=+g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/msm/dpu: configure DSC per number in use
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwT_-7RGl6ygY6dz@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 10 Oct 2024 at 04:47, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
-=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 06:10=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Wed, 9 Oct 2024 at 09:39, Jun Nie <jun.nie@linaro.org> wrote:
-> > >
-> > > Only 2 DSC engines are allowed, or no DSC is involved currently.
-> >
-> > Can't parse this phrase.
->
-> How about this:
-> If DSC is enabled, the only case is with 2 DSC engines so far.
+On Tue, Oct 08, 2024 at 02:48:43AM -0700, Christoph Hellwig wrote:
+> In general I'm not a huge fan of the encoded magic here, but I'll
+> need to take a closer look at the caller if I can come up with
+> something better.
 
-Just:
+I looked a bit more at the code.  I'm not entirely sure I fully
+understand it yet, but:
 
-Currently if DSC support is requested, the driver only supports using
-2 DSC blocks.
+I think most of the read side special casing would be handled by
+always submitting the bio at the end of an iomap.  Ritesh was
+looking into that for supporting ext2-like file systems that
+read indirect block ondemand, but I think it actually is fundamentally
+the right thing to do anyway.
 
->
->
-> >
-> > > We need 4 DSC in quad-pipe topology in future. So let's only configur=
-e
-> > > DSC engines in use, instread of maximum number of DSC engines.
-> >
-> > Nit: instead
->
-> Yep.
-> >
-> > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 13 ++++++++-----
-> > >  1 file changed, 8 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_encoder.c
-> > > index 39700b13e92f3..e8400b494687c 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > @@ -1871,10 +1871,13 @@ static void dpu_encoder_dsc_pipe_cfg(struct d=
-pu_hw_ctl *ctl,
-> > >                 ctl->ops.update_pending_flush_dsc(ctl, hw_dsc->idx);
-> > >  }
-> > >
-> > > -static void dpu_encoder_prep_dsc(struct dpu_encoder_virt *dpu_enc,
-> > > -                                struct drm_dsc_config *dsc)
-> > > +static void dpu_encoder_prep_dsc(struct drm_encoder *drm_enc)
-> > >  {
-> > >         /* coding only for 2LM, 2enc, 1 dsc config */
-> > > +       struct dpu_encoder_virt *dpu_enc =3D to_dpu_encoder_virt(drm_=
-enc);
-> > > +       struct dpu_crtc_state *cstate =3D to_dpu_crtc_state(drm_enc->=
-crtc->state);
-> > > +       struct drm_dsc_config *dsc =3D dpu_enc->dsc;
-> >
-> > Why? This doesn't seem to be related to num_dscs introduction.
->
-> You mean the comments above these 3 lines? Yeah, it should be removed.
+For the write we plan to add a new IOMAP_BOUNDARY flag to prevent
+merges as part of the XFS RT group series, and I think this should
+also solve your problems with keeping one bio per iomap?  The
+current patch is here:
 
-No, I mean that this whole chunk isn't related to the num_dsc support.
-There is no need to change function arguments.
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=djwong-wtf&id=91b5d7a52dab63732aee451bba0db315ae9bd09b
 
-> >
-> > > +       int num_dsc =3D cstate->num_dscs;
-> > >         struct dpu_encoder_phys *enc_master =3D dpu_enc->cur_master;
-> > >         struct dpu_hw_ctl *ctl =3D enc_master->hw_ctl;
-> > >         struct dpu_hw_dsc *hw_dsc[MAX_CHANNELS_PER_ENC];
-> >
-> > [...]
-> >
-> > > @@ -1953,7 +1956,7 @@ void dpu_encoder_prepare_for_kickoff(struct drm=
-_encoder *drm_enc)
-> > >         }
-> > >
-> > >         if (dpu_enc->dsc)
-> > > -               dpu_encoder_prep_dsc(dpu_enc, dpu_enc->dsc);
-> > > +               dpu_encoder_prep_dsc(drm_enc);
-> > >  }
-> > >
-> > >  bool dpu_encoder_is_valid_for_commit(struct drm_encoder *drm_enc)
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
-
-
-
---=20
-With best wishes
-Dmitry
 
