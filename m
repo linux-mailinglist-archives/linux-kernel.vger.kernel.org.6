@@ -1,506 +1,311 @@
-Return-Path: <linux-kernel+bounces-359881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A05F9991EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:10:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2F29991F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13B011F27F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B36B2E496
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A668B1D0481;
-	Thu, 10 Oct 2024 19:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE3B1E5733;
+	Thu, 10 Oct 2024 19:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brun.one header.i=@brun.one header.b="SzrmHG5z"
-Received: from mx.dolansoft.org (s2.dolansoft.org [212.51.146.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTRD7SRr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838931CDFCB;
-	Thu, 10 Oct 2024 19:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.51.146.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9319CD17;
+	Thu, 10 Oct 2024 19:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728587199; cv=none; b=un7QAyku9gAQWWLZxFU6K0KFTPR6a7brru09z4xgLbFwn85W8q7oLh+00FC6PaeBXtwYK0dhAhVzTvKy5ipQ5QMaZBakATeXmlFAW/1HT7phZidEaEpP1YVPUznD0gRehAxd9jgnuKkrKs8w8RQO31K7nM1VJ1GknWiqRmaWI7Q=
+	t=1728587249; cv=none; b=rCsGbu5Yo/QyPbzkJ718qL5Ji4Nz31WJ/n2Xz8GxhyTypjVLGhmqv/KJtxWQVgy9ft3fZm9gy6kMpwlKf91KlTgjl168+T2OFpjWg6ocTV2rnINvMhkgQz/KaOdv3oxNfIzqKfKrYYtiQJ001l5Qkty8dS/EZht9b+jQC17cBZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728587199; c=relaxed/simple;
-	bh=HkHoMTzYglqnY6r9iavZkDufw8TNqGKwte1owVWRiAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cuvaq4wLN19sndw+CIp2Juz/AAWknnwc76JPNHOw0O1fTePOlRR+N6+QD700tQeIAywPP0y6C1KXf/kCrpOj4WAuYU68XwHw01t2nC0Skwf+jMB+ieRdCWGq95+oqra0kHVLC9ZFpjAnBSifCBwXgVIa1+b4Loj1EAkvgOTnV9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brun.one; spf=pass smtp.mailfrom=brun.one; dkim=pass (2048-bit key) header.d=brun.one header.i=@brun.one header.b=SzrmHG5z; arc=none smtp.client-ip=212.51.146.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brun.one
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brun.one
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=brun.one;
-	s=s1; h=MIME-Version:Message-ID:Date:Subject:Cc:To:From:In-Reply-To:
-	References:From:To:Subject:Date:Message-ID:Reply-To;
-	bh=32ljFa15IOBzAiuqwqjBBBXq9cDj1+EckZPC1IUzpqQ=; b=SzrmHG5zjnxRnrnvAq8XAGk61n
-	vW/j2WuRqUWgkGO5HqMEF0v15In4cd9JxLpbnurtJw/maePX+jaXbRzquB+Qq1Imrv+C+lClcEITI
-	yqK5q5vGVGFHMprjTcmB4vy1LCAaTyZfUn/Ebi9r4q+9dsmgipZmWv1mpnfTTHjHT0NeL94LYmxVK
-	wHrpV1KA0KsPncYwZ08TJ2uut420froeL4h2CfSzYSqDofPtXyZi15pxGWmuQFJLEsB9d1hLC1QLg
-	m5B7fXloGTiP1ZDXucBgAHGDCw78ighcVrlenOhyE1R0xpGndWteCk0q9/Fm3ePiAKudvgdwlVPPI
-	XgF2OXGg==;
-Received: from [212.51.153.89] (helo=localhost.localdomain)
-	by mx.dolansoft.org with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98)
-	(envelope-from <lorenz@dolansoft.org>)
-	id 1syyUT-000000004qv-1qDm;
-	Thu, 10 Oct 2024 19:06:25 +0000
-From: Lorenz Brun <lorenz@brun.one>
-To: Igor Russkikh <irusskikh@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: atlantic: support reading SFP module info
-Date: Thu, 10 Oct 2024 21:06:14 +0200
-Message-ID: <20241010190617.391638-1-lorenz@brun.one>
+	s=arc-20240116; t=1728587249; c=relaxed/simple;
+	bh=4FyLCZ7OLTy+fgNteG8kX8j3xWeYO0/AKTh/Grmb0oY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=XnY5oz45w2xtXK/1GqgNkWMybG/QlujwdYJxYTEpSLtOSiircVDGS6uaVWdG0AGVEljxe8HOiI5Iy5hwHeu9zqi91+fHtr/jQor3Y3VlflXzU1FaLfgvhcw9OqvnMl4oCzg4oOKgoSC2q6XDQwG2xjEsrsBh/8Fitv6ZosgI0X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTRD7SRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD778C4CEC5;
+	Thu, 10 Oct 2024 19:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728587249;
+	bh=4FyLCZ7OLTy+fgNteG8kX8j3xWeYO0/AKTh/Grmb0oY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iTRD7SRrCnIRO/krFncVj3Ov/hK7kc/9xuHLBZDjWzil9InHhPACGxsseTRIm+QUN
+	 vPcwiXqEjGVYB3zhun0ggw34PIh4CM2B0HNtaAzEiWcBDtKq2+dn51sJP58xWyNU01
+	 XGsOl1R6XU38MZmrg1c+jg0YQKWI55/FfAOOlrxk4sD2rct4S7CZ7h10FAtgomQ7nY
+	 c3X6TXadh5eqIQz2acEIzORqiv8+RcZT6o8/pQtWfQWMOM+LqND72j4KsTdf2i72Tx
+	 jNQmCsGgehtMJyIgtmFB/qa7kTQ15E1bmlBd7xMpLNbJNNSbPOYoNz8ZdKBMi+LOAe
+	 X9eyOHPkT2BtA==
+Date: Thu, 10 Oct 2024 14:07:26 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
+	Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
+Subject: Re: [PATCH 0/15] Enable CXL PCIe port protocol error handling and
+ logging
+Message-ID: <20241010190726.GA570880@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: lorenz@dolansoft.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008221657.1130181-1-terry.bowman@amd.com>
 
-Add support for reading SFP module info and digital diagnostic
-monitoring data if supported by the module. The only Aquantia
-controller without an integrated PHY is the AQC100 which belongs to
-the B0 revision, that's why it's only implemented there.
+On Tue, Oct 08, 2024 at 05:16:42PM -0500, Terry Bowman wrote:
+> This is a continuation of the CXL port error handling RFC from earlier.[1]
+> The RFC resulted in the decision to add CXL PCIe port error handling to
+> the existing RCH downstream port handling. This patchset adds the CXL PCIe
+> port handling and logging.
+> 
+> The first 7 patches update the existing AER service driver to support CXL
+> PCIe port protocol error handling and reporting. This includes AER service
+> driver changes for adding correctable and uncorrectable error support, CXL
+> specific recovery handling, and addition of CXL driver callback handlers.
+> 
+> The following 8 patches address CXL driver support for CXL PCIe port
+> protocol errors. This includes the following changes to the CXL drivers:
+> mapping CXL port and downstream port RAS registers, interface updates for
+> common RCH and VH, adding port specific error handlers, and protocol error
+> logging.
+> 
+> [1] - https://lore.kernel.org/linux-cxl/20240617200411.1426554
+> -1-terry.bowman@amd.com/
 
-The register information was extracted from a diagnostic tool made
-publicly available by Dell, but all code was written from scratch by me.
+Makes life easier if URLs are all on one line so they still work.
 
-This has been tested to work with a variety of both optical and direct
-attach modules I had lying around and seems to work fine with all of
-them, including the diagnostics if supported by an optical module.
-All tests have been done with an AQC100 on an TL-NT521F card on firmware
-version 3.1.121 (current at the time of this patch).
+> Testing:
+> 
+> Below are test results for this patchset. This is using Qemu with a root
+> port (0c:00.0), upstream switch port (0d:00.0),and downstream switch port
+> (0e:00.0).
+> 
+> This was tested using aer-inject updated to support CE and UCE internal
+> error injection. CXL RAS was set using a test patch (not upstreamed).
+> 
+>     Root port UCE:
+>     root@tbowman-cxl:~/aer-inject# ./root-uce-inject.sh
+>     [   27.318920] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0c:00.0
+>     [   27.320164] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0c:00.0
+>     [   27.321518] pcieport 0000:0c:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>     [   27.322483] pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00400000/02000000
+>     [   27.323243] pcieport 0000:0c:00.0:    [22] UncorrIntErr
+>     [   27.325584] aer_event: 0000:0c:00.0 PCIe Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
+>     [   27.325584]
+>     [   27.327171] cxl_port_aer_uncorrectable_error: device=0000:0c:00.0 host=pci0000:0c status: 'Memory Address Parity Error'
+>     first_error: 'Memory Address Parity Error'
+>     [   27.333277] Kernel panic - not syncing: CXL cachemem error. Invoking panic
+>     [   27.333872] CPU: 12 UID: 0 PID: 122 Comm: irq/24-aerdrv Not tainted 6.11.0-rc1-port-error-g1fb9097c3728 #3857
+>     [   27.334761] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>     [   27.335716] Call Trace:
+>     [   27.335985]  <TASK>
+>     [   27.336226]  panic+0x2ed/0x320
+>     [   27.336547]  ? __pfx_cxl_report_normal_detected+0x10/0x10
+>     [   27.337037]  ? __pfx_aer_root_reset+0x10/0x10
+>     [   27.337453]  cxl_do_recovery+0x304/0x310
+>     [   27.337833]  aer_isr+0x3fd/0x700
+>     [   27.338154]  ? __pfx_irq_thread_fn+0x10/0x10
+>     [   27.338572]  irq_thread_fn+0x1f/0x60
+>     [   27.338923]  irq_thread+0x102/0x1b0
+>     [   27.339267]  ? __pfx_irq_thread_dtor+0x10/0x10
+>     [   27.339683]  ? __pfx_irq_thread+0x10/0x10
+>     [   27.340059]  kthread+0xcd/0x100
+>     [   27.340387]  ? __pfx_kthread+0x10/0x10
+>     [   27.340748]  ret_from_fork+0x2f/0x50
+>     [   27.341100]  ? __pfx_kthread+0x10/0x10
+>     [   27.341466]  ret_from_fork_asm+0x1a/0x30
+>     [   27.341842]  </TASK>
+>     [   27.342281] Kernel Offset: 0x1ba00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>     [   27.343221] ---[ end Kernel panic - not syncing: CXL cachemem error. Invoking panic ]---
+> 
+>     Root port CE:
+>     root@tbowman-cxl:~/aer-inject# ./root-ce-inject.sh
+>     [   19.444339] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00004000/00000000 into device 0000:0c:00.0
+>     [   19.445530] pcieport 0000:0c:00.0: AER: Correctable error message received from 0000:0c:00.0
+>     [   19.446750] pcieport 0000:0c:00.0: PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+>     [   19.447742] pcieport 0000:0c:00.0:   device [8086:7075] error status/mask=00004000/0000a000
+>     [   19.448549] pcieport 0000:0c:00.0:    [14] CorrIntErr
+>     [   19.449223] aer_event: 0000:0c:00.0 PCIe Bus Error: severity=Corrected, Corrected Internal Error, TLP Header=Not available
+>     [   19.449223]
+>     [   19.451415] cxl_port_aer_correctable_error: device=0000:0c:00.0 host=pci0000:0c status='Received Error From Physical Layer'
+> 
+>     Upstream switch port UCE:
+>     root@tbowman-cxl:~/aer-inject# ./us-uce-inject.sh
+>     [   45.236853] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0d:00.0
+>     [   45.238101] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0d:00.0
+>     [   45.239416] pcieport 0000:0d:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>     [   45.240412] pcieport 0000:0d:00.0:   device [19e5:a128] error status/mask=00400000/02000000
+>     [   45.241159] pcieport 0000:0d:00.0:    [22] UncorrIntErr
+>     [   45.242448] aer_event: 0000:0d:00.0 PCIe Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
+>     [   45.242448]
+>     [   45.244008] cxl_port_aer_uncorrectable_error: device=0000:0d:00.0 host=0000:0c:00.0 status: 'Memory Address Parity Error'
+>     first_error: 'Memory Address Parity Error'
+>     [   45.249129] Kernel panic - not syncing: CXL cachemem error. Invoking panic
+>     [   45.249800] CPU: 12 UID: 0 PID: 122 Comm: irq/24-aerdrv Not tainted 6.11.0-rc1-port-error-g1fb9097c3728 #3855
+>     [   45.250795] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>     [   45.251907] Call Trace:
+>     [   45.253284]  <TASK>
+>     [   45.253564]  panic+0x2ed/0x320
+>     [   45.253909]  ? __pfx_cxl_report_normal_detected+0x10/0x10
+>     [   45.255455]  ? __pfx_aer_root_reset+0x10/0x10
+>     [   45.255915]  cxl_do_recovery+0x304/0x310
+>     [   45.257219]  aer_isr+0x3fd/0x700
+>     [   45.257572]  ? __pfx_irq_thread_fn+0x10/0x10
+>     [   45.258006]  irq_thread_fn+0x1f/0x60
+>     [   45.258383]  irq_thread+0x102/0x1b0
+>     [   45.258748]  ? __pfx_irq_thread_dtor+0x10/0x10
+>     [   45.259196]  ? __pfx_irq_thread+0x10/0x10
+>     [   45.259605]  kthread+0xcd/0x100
+>     [   45.259956]  ? __pfx_kthread+0x10/0x10
+>     [   45.260386]  ret_from_fork+0x2f/0x50
+>     [   45.260879]  ? __pfx_kthread+0x10/0x10
+>     [   45.261418]  ret_from_fork_asm+0x1a/0x30
+>     [   45.261936]  </TASK>
+>     [   45.262451] Kernel Offset: 0xc600000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>     [   45.263467] ---[ end Kernel panic - not syncing: CXL cachemem error. Invoking panic ]---
+> 
+>     Upstream switch port CE:
+>     root@tbowman-cxl:~/aer-inject# ./us-ce-inject.sh 
+>     [   37.504029] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00004000/00000000 into device 0000:0d:00.0
+>     [   37.506076] pcieport 0000:0c:00.0: AER: Correctable error message received from 0000:0d:00.0
+>     [   37.507599] pcieport 0000:0d:00.0: PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+>     [   37.508759] pcieport 0000:0d:00.0:   device [19e5:a128] error status/mask=00004000/0000a000
+>     [   37.509574] pcieport 0000:0d:00.0:    [14] CorrIntErr            
+>     [   37.510180] aer_event: 0000:0d:00.0 PCIe Bus Error: severity=Corrected, Corrected Internal Error, TLP Header=Not available
+>     [   37.510180] 
+>     [   37.512057] cxl_port_aer_correctable_error: device=0000:0d:00.0 host=0000:0c:00.0 status='Received Error From Physical Layer'
+> 
+>     Downstream switch port UCE:
+>     root@tbowman-cxl:~/aer-inject# ./ds-uce-inject.sh
+>     [   29.421532] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00000000/00400000 into device 0000:0e:00.0
+>     [   29.422812] pcieport 0000:0c:00.0: AER: Uncorrectable (Fatal) error message received from 0000:0e:00.0
+>     [   29.424551] pcieport 0000:0e:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+>     [   29.425670] pcieport 0000:0e:00.0:   device [19e5:a129] error status/mask=00400000/02000000
+>     [   29.426487] pcieport 0000:0e:00.0:    [22] UncorrIntErr
+>     [   29.427111] aer_event: 0000:0e:00.0 PCIe Bus Error: severity=Fatal, Uncorrectable Internal Error, TLP Header=Not available
+>     [   29.427111]
+>     [   29.428688] cxl_port_aer_uncorrectable_error: device=0000:0e:00.0 host=0000:0d:00.0 status: 'Memory Address Parity Error'
+>     first_error: 'Memory Address Parity Error'
+>     [   29.430173] Kernel panic - not syncing: CXL cachemem error. Invoking panic
+>     [   29.430862] CPU: 12 UID: 0 PID: 122 Comm: irq/24-aerdrv Not tainted 6.11.0-rc1-port-error-g844fd2319372 #3851
+>     [   29.431874] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>     [   29.433031] Call Trace:
+>     [   29.433354]  <TASK>
+>     [   29.433631]  panic+0x2ed/0x320
+>     [   29.434010]  ? __pfx_cxl_report_normal_detected+0x10/0x10
+>     [   29.434653]  ? __pfx_aer_root_reset+0x10/0x10
+>     [   29.435179]  cxl_do_recovery+0x304/0x310
+>     [   29.435626]  aer_isr+0x3fd/0x700
+>     [   29.436027]  ? __pfx_irq_thread_fn+0x10/0x10
+>     [   29.436507]  irq_thread_fn+0x1f/0x60
+>     [   29.436898]  irq_thread+0x102/0x1b0
+>     [   29.437293]  ? __pfx_irq_thread_dtor+0x10/0x10
+>     [   29.437758]  ? __pfx_irq_thread+0x10/0x10
+>     [   29.438189]  kthread+0xcd/0x100
+>     [   29.438551]  ? __pfx_kthread+0x10/0x10
+>     [   29.438959]  ret_from_fork+0x2f/0x50
+>     [   29.439362]  ? __pfx_kthread+0x10/0x10
+>     [   29.439771]  ret_from_fork_asm+0x1a/0x30
+>     [   29.440221]  </TASK>
+>     [   29.440738] Kernel Offset: 0x10a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>     [   29.441812] ---[ end Kernel panic - not syncing: CXL cachemem error. Invoking panic ]---
+> 
+>     Downstream switch port CE:
+>     root@tbowman-cxl:~/aer-inject# ./ds-ce-inject.sh
+>     [  177.114442] pcieport 0000:0c:00.0: aer_inject: Injecting errors 00004000/00000000 into device 0000:0e:00.0
+>     [  177.115602] pcieport 0000:0c:00.0: AER: Correctable error message received from 0000:0e:00.0
+>     [  177.116973] pcieport 0000:0e:00.0: PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+>     [  177.117985] pcieport 0000:0e:00.0:   device [19e5:a129] error status/mask=00004000/0000a000
+>     [  177.118809] pcieport 0000:0e:00.0:    [14] CorrIntErr
+>     [  177.119521] aer_event: 0000:0e:00.0 PCIe Bus Error: severity=Corrected, Corrected Internal Error, TLP Header=Not available
+>     [  177.119521]
+>     [  177.122037] cxl_port_aer_correctable_error: device=0000:0e:00.0 host=0000:0d:00.0 status='Received Error From Physical Layer'
 
-Signed-off-by: Lorenz Brun <lorenz@brun.one>
----
-Changes in v2:
-* Style nits
-* Removed duplicate check for zero-length eeprom request
-* Use min() instead of min_t()
-* Use non-atomic polling, this is not in an atomic context
+Thanks for the hints about how to test this; it's helpful to have
+those in the email archives.  Remove the timestamps and non-relevant
+call trace entries unless they add useful information.  AFAICT they're
+just distractions in this case.
 
----
- .../ethernet/aquantia/atlantic/aq_ethtool.c   |  75 ++++++++++
- .../ethernet/aquantia/atlantic/aq_ethtool.h   |   8 ++
- .../net/ethernet/aquantia/atlantic/aq_hw.h    |   3 +
- .../aquantia/atlantic/hw_atl/hw_atl_b0.c      | 130 ++++++++++++++++++
- .../aquantia/atlantic/hw_atl/hw_atl_llh.c     |  43 ++++++
- .../aquantia/atlantic/hw_atl/hw_atl_llh.h     |  21 +++
- .../atlantic/hw_atl/hw_atl_llh_internal.h     |  32 +++++
- 7 files changed, 312 insertions(+)
+> Changes RFC->v1:
+>  [Dan] Rename cxl_rch_handle_error() becomes cxl_handle_error()
+>  [Dan] Add cxl_do_recovery()
+>  [Jonathan] Flatten cxl_setup_parent_uport()
+>  [Jonathan] Use cxl_component_regs instead of struct cxl_regs regs
+>  [Jonathan] Rename cxl_dev_is_pci_type()
+>  [Ming] bus_find_device(&cxl_bus_type, NULL, &pdev->dev, match_uport) can
+>  replace these find_cxl_port() and device_find_child().
+>  [Jonathan] Compact call to cxl_port_map_regs() in cxl_setup_parent_uport()
+>  [Ming] Dont use endpoint as host to cxl_map_component_regs()
+>  [Bjorn] Use "PCIe UIR/CIE" instesad of "AER UI/CIE"
+>  [TODO][Bjorn] Dont use Kconfig to enable/disable a CXL external interface
+> 
+> Terry Bowman (15):
+>   cxl/aer/pci: Add CXL PCIe port error handler callbacks in AER service
+>     driver
+>   cxl/aer/pci: Update is_internal_error() to be callable w/o
+>     CONFIG_PCIEAER_CXL
+>   cxl/aer/pci: Refactor AER driver's existing interfaces to support CXL
+>     PCIe ports
+>   cxl/aer/pci: Add CXL PCIe port correctable error support in AER
+>     service driver
+>   cxl/aer/pci: Update AER driver to read UCE fatal status for all CXL
+>     PCIe port devices
+>   cxl/aer/pci: Introduce PCI_ERS_RESULT_PANIC to pci_ers_result type
+>   cxl/aer/pci: Add CXL PCIe port uncorrectable error recovery in AER
+>     service driver
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
-index 440ff4616fec..ee809f96e9a4 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.c
-@@ -15,6 +15,7 @@
- #include "aq_macsec.h"
- #include "aq_main.h"
- 
-+#include <linux/ethtool.h>
- #include <linux/linkmode.h>
- #include <linux/ptp_clock_kernel.h>
- 
-@@ -977,6 +978,78 @@ static int aq_ethtool_set_phy_tunable(struct net_device *ndev,
- 	return err;
- }
- 
-+static int aq_ethtool_get_module_info(struct net_device *ndev,
-+				      struct ethtool_modinfo *modinfo)
-+{
-+	struct aq_nic_s *aq_nic = netdev_priv(ndev);
-+	u8 compliance_val, dom_type;
-+	int err;
-+
-+	/* Module EEPROM is only supported for controllers with external PHY */
-+	if (aq_nic->aq_nic_cfg.aq_hw_caps->media_type != AQ_HW_MEDIA_TYPE_FIBRE)
-+		return -EOPNOTSUPP;
-+
-+	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
-+		return -EOPNOTSUPP;
-+
-+	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-+		SFF_8472_ID_ADDR, SFF_8472_COMP_ADDR, 1, &compliance_val);
-+	if (err)
-+		return err;
-+
-+	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-+		SFF_8472_ID_ADDR, SFF_8472_DOM_TYPE_ADDR, 1, &dom_type);
-+	if (err)
-+		return err;
-+
-+	if (dom_type & SFF_8472_ADDRESS_CHANGE_REQ_MASK || compliance_val == 0x00) {
-+		modinfo->type = ETH_MODULE_SFF_8079;
-+		modinfo->eeprom_len = ETH_MODULE_SFF_8079_LEN;
-+	} else {
-+		modinfo->type = ETH_MODULE_SFF_8472;
-+		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
-+	}
-+	return 0;
-+}
-+
-+static int aq_ethtool_get_module_eeprom(struct net_device *ndev,
-+					struct ethtool_eeprom *ee, unsigned char *data)
-+{
-+	int err;
-+	unsigned int first, last, len;
-+	struct aq_nic_s *aq_nic = netdev_priv(ndev);
-+
-+	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
-+		return -EOPNOTSUPP;
-+
-+	first = ee->offset;
-+	last = ee->offset + ee->len;
-+
-+	if (first < ETH_MODULE_SFF_8079_LEN) {
-+		len = min(last, ETH_MODULE_SFF_8079_LEN);
-+		len -= first;
-+
-+		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-+			SFF_8472_ID_ADDR, first, len, data);
-+		if (err)
-+			return err;
-+
-+		first += len;
-+		data += len;
-+	}
-+	if (first < ETH_MODULE_SFF_8472_LEN && last > ETH_MODULE_SFF_8079_LEN) {
-+		len = min(last, ETH_MODULE_SFF_8472_LEN);
-+		len -= first;
-+		first -= ETH_MODULE_SFF_8079_LEN;
-+
-+		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-+			SFF_8472_DIAGNOSTICS_ADDR, first, len, data);
-+		if (err)
-+			return err;
-+	}
-+	return 0;
-+}
-+
- const struct ethtool_ops aq_ethtool_ops = {
- 	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
- 				     ETHTOOL_COALESCE_MAX_FRAMES,
-@@ -1014,4 +1087,6 @@ const struct ethtool_ops aq_ethtool_ops = {
- 	.get_ts_info         = aq_ethtool_get_ts_info,
- 	.get_phy_tunable     = aq_ethtool_get_phy_tunable,
- 	.set_phy_tunable     = aq_ethtool_set_phy_tunable,
-+	.get_module_info     = aq_ethtool_get_module_info,
-+	.get_module_eeprom   = aq_ethtool_get_module_eeprom,
- };
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h
-index 6d5be5ebeb13..f26fe1a75539 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ethtool.h
-@@ -14,4 +14,12 @@
- extern const struct ethtool_ops aq_ethtool_ops;
- #define AQ_PRIV_FLAGS_MASK   (AQ_HW_LOOPBACK_MASK)
- 
-+#define SFF_8472_ID_ADDR 0x50
-+#define SFF_8472_DIAGNOSTICS_ADDR 0x51
-+
-+#define SFF_8472_COMP_ADDR	0x5e
-+#define SFF_8472_DOM_TYPE_ADDR	0x5c
-+
-+#define SFF_8472_ADDRESS_CHANGE_REQ_MASK 0x4
-+
- #endif /* AQ_ETHTOOL_H */
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-index f010bda61c96..42c0efc1b455 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-@@ -340,6 +340,9 @@ struct aq_hw_ops {
- 	int (*hw_set_loopback)(struct aq_hw_s *self, u32 mode, bool enable);
- 
- 	int (*hw_get_mac_temp)(struct aq_hw_s *self, u32 *temp);
-+
-+	int (*hw_read_module_eeprom)(struct aq_hw_s *self, u8 dev_addr,
-+				     u8 reg_start_addr, int len, u8 *data);
- };
- 
- struct aq_fw_ops {
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index 56c46266bb0a..413d77f5398d 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -1654,6 +1654,135 @@ static int hw_atl_b0_get_mac_temp(struct aq_hw_s *self, u32 *temp)
- 	return 0;
- }
- 
-+#define START_TRANSMIT 0x5001
-+#define START_READ_TRANSMIT 0x5101
-+#define STOP_TRANSMIT 0x3001
-+#define REPEAT_TRANSMIT 0x1001
-+#define REPEAT_NACK_TRANSMIT 0x1011
-+
-+static int hw_atl_b0_smb0_wait_result(struct aq_hw_s *self, bool expect_ack)
-+{
-+	int err;
-+	u32 val;
-+
-+	err = readx_poll_timeout(hw_atl_smb0_byte_transfer_complete_get,
-+				 self, val, val == 1, 100U, 10000U);
-+	if (err)
-+		return err;
-+	if (hw_atl_smb0_receive_acknowledged_get(self) != expect_ack)
-+		return -EIO;
-+	return 0;
-+}
-+
-+// Starts an I2C/SMBUS write to a given address. addr is in 7-bit format,
-+// the read/write bit is not part of it.
-+static int hw_atl_b0_smb0_start_write(struct aq_hw_s *self, u32 addr)
-+{
-+	hw_atl_smb0_tx_data_set(self, (addr << 1) | 0);
-+	hw_atl_smb0_provisioning2_set(self, START_TRANSMIT);
-+	return hw_atl_b0_smb0_wait_result(self, 0);
-+}
-+
-+// Writes a single byte as part of an ongoing write started by start_write.
-+static int hw_atl_b0_smb0_write_byte(struct aq_hw_s *self, u32 data)
-+{
-+	hw_atl_smb0_tx_data_set(self, data);
-+	hw_atl_smb0_provisioning2_set(self, REPEAT_TRANSMIT);
-+	return hw_atl_b0_smb0_wait_result(self, 0);
-+}
-+
-+// Starts an I2C/SMBUS read to a given address. addr is in 7-bit format,
-+// the read/write bit is not part of it.
-+static int hw_atl_b0_smb0_start_read(struct aq_hw_s *self, u32 addr)
-+{
-+	int err;
-+
-+	hw_atl_smb0_tx_data_set(self, (addr << 1) | 1);
-+	hw_atl_smb0_provisioning2_set(self, START_READ_TRANSMIT);
-+	err = hw_atl_b0_smb0_wait_result(self, 0);
-+	if (err)
-+		return err;
-+	if (hw_atl_smb0_repeated_start_detect_get(self) == 0)
-+		return -EIO;
-+	return 0;
-+}
-+
-+// Reads a single byte as part of an ongoing read started by start_read.
-+static int hw_atl_b0_smb0_read_byte(struct aq_hw_s *self)
-+{
-+	int err;
-+
-+	hw_atl_smb0_provisioning2_set(self, REPEAT_TRANSMIT);
-+	err = hw_atl_b0_smb0_wait_result(self, 0);
-+	if (err)
-+		return err;
-+	return hw_atl_smb0_rx_data_get(self);
-+}
-+
-+// Reads the last byte of an ongoing read.
-+static int hw_atl_b0_smb0_read_byte_nack(struct aq_hw_s *self)
-+{
-+	int err;
-+
-+	hw_atl_smb0_provisioning2_set(self, REPEAT_NACK_TRANSMIT);
-+	err = hw_atl_b0_smb0_wait_result(self, 1);
-+	if (err)
-+		return err;
-+	return hw_atl_smb0_rx_data_get(self);
-+}
-+
-+// Sends a stop condition and ends a transfer.
-+static void hw_atl_b0_smb0_stop(struct aq_hw_s *self)
-+{
-+	hw_atl_smb0_provisioning2_set(self, STOP_TRANSMIT);
-+}
-+
-+static int hw_atl_b0_read_module_eeprom(struct aq_hw_s *self, u8 dev_addr,
-+					u8 reg_start_addr, int len, u8 *data)
-+{
-+	int err;
-+	int i, b;
-+	u32 val;
-+
-+	/* Wait for SMBUS0 to be idle */
-+	err = readx_poll_timeout(hw_atl_smb0_bus_busy_get, self,
-+				 val, val == 0, 100U, 10000U);
-+	if (err)
-+		return err;
-+
-+	err = hw_atl_b0_smb0_start_write(self, dev_addr);
-+	if (err)
-+		goto out;
-+
-+	err = hw_atl_b0_smb0_write_byte(self, reg_start_addr);
-+	if (err)
-+		goto out;
-+
-+	err = hw_atl_b0_smb0_start_read(self, dev_addr);
-+	if (err)
-+		goto out;
-+
-+	for (i = 0; i < len - 1; i++) {
-+		b = hw_atl_b0_smb0_read_byte(self);
-+		if (b < 0) {
-+			err = b;
-+			goto out;
-+		}
-+		data[i] = (u8)b;
-+	}
-+
-+	b = hw_atl_b0_smb0_read_byte_nack(self);
-+	if (b < 0) {
-+		err = b;
-+		goto out;
-+	}
-+	data[i] = (u8)b;
-+
-+out:
-+	hw_atl_b0_smb0_stop(self);
-+	return err;
-+}
-+
- const struct aq_hw_ops hw_atl_ops_b0 = {
- 	.hw_soft_reset        = hw_atl_utils_soft_reset,
- 	.hw_prepare           = hw_atl_utils_initfw,
-@@ -1712,4 +1841,5 @@ const struct aq_hw_ops hw_atl_ops_b0 = {
- 	.hw_set_fc               = hw_atl_b0_set_fc,
- 
- 	.hw_get_mac_temp         = hw_atl_b0_get_mac_temp,
-+	.hw_read_module_eeprom   = hw_atl_b0_read_module_eeprom,
- };
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-index 7b67bdd8a258..d07af1271d59 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-@@ -57,6 +57,49 @@ u32 hw_atl_ts_data_get(struct aq_hw_s *aq_hw)
- 				  HW_ATL_TS_DATA_OUT_SHIFT);
- }
- 
-+u32 hw_atl_smb0_bus_busy_get(struct aq_hw_s *aq_hw)
-+{
-+	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_BUS_BUSY_ADR,
-+				HW_ATL_SMB0_BUS_BUSY_MSK,
-+				HW_ATL_SMB0_BUS_BUSY_SHIFT);
-+}
-+
-+u32 hw_atl_smb0_byte_transfer_complete_get(struct aq_hw_s *aq_hw)
-+{
-+	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_ADR,
-+				HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_MSK,
-+				HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_SHIFT);
-+}
-+
-+u32 hw_atl_smb0_receive_acknowledged_get(struct aq_hw_s *aq_hw)
-+{
-+	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_RX_ACKNOWLEDGED_ADR,
-+				HW_ATL_SMB0_RX_ACKNOWLEDGED_MSK,
-+				HW_ATL_SMB0_RX_ACKNOWLEDGED_SHIFT);
-+}
-+
-+u32 hw_atl_smb0_repeated_start_detect_get(struct aq_hw_s *aq_hw)
-+{
-+	return aq_hw_read_reg_bit(aq_hw, HW_ATL_SMB0_REPEATED_START_DETECT_ADR,
-+				HW_ATL_SMB0_REPEATED_START_DETECT_MSK,
-+				HW_ATL_SMB0_REPEATED_START_DETECT_SHIFT);
-+}
-+
-+u32 hw_atl_smb0_rx_data_get(struct aq_hw_s *aq_hw)
-+{
-+	return aq_hw_read_reg(aq_hw, HW_ATL_SMB0_RECEIVED_DATA_ADR);
-+}
-+
-+void hw_atl_smb0_tx_data_set(struct aq_hw_s *aq_hw, u32 data)
-+{
-+	return aq_hw_write_reg(aq_hw, HW_ATL_SMB0_TRANSMITTED_DATA_ADR, data);
-+}
-+
-+void hw_atl_smb0_provisioning2_set(struct aq_hw_s *aq_hw, u32 data)
-+{
-+	return aq_hw_write_reg(aq_hw, HW_ATL_SMB0_PROVISIONING2_ADR, data);
-+}
-+
- /* global */
- void hw_atl_reg_glb_cpu_sem_set(struct aq_hw_s *aq_hw, u32 glb_cpu_sem,
- 				u32 semaphore)
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-index 58f5ee0a6214..5fd506acacb5 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-@@ -34,6 +34,27 @@ u32 hw_atl_ts_ready_latch_high_get(struct aq_hw_s *aq_hw);
- /* get temperature sense data */
- u32 hw_atl_ts_data_get(struct aq_hw_s *aq_hw);
- 
-+/* SMBUS0 bus busy */
-+u32 hw_atl_smb0_bus_busy_get(struct aq_hw_s *aq_hw);
-+
-+/* SMBUS0 byte transfer complete */
-+u32 hw_atl_smb0_byte_transfer_complete_get(struct aq_hw_s *aq_hw);
-+
-+/* SMBUS0 receive acknowledged */
-+u32 hw_atl_smb0_receive_acknowledged_get(struct aq_hw_s *aq_hw);
-+
-+/* SMBUS0 set transmitted data (only leftmost byte of data valid) */
-+void hw_atl_smb0_tx_data_set(struct aq_hw_s *aq_hw, u32 data);
-+
-+/* SMBUS0 provisioning2 command register */
-+void hw_atl_smb0_provisioning2_set(struct aq_hw_s *aq_hw, u32 data);
-+
-+/* SMBUS0 repeated start detect */
-+u32 hw_atl_smb0_repeated_start_detect_get(struct aq_hw_s *aq_hw);
-+
-+/* SMBUS0 received data register */
-+u32 hw_atl_smb0_rx_data_get(struct aq_hw_s *aq_hw);
-+
- /* global */
- 
- /* set global microprocessor semaphore */
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-index 4a6467031b9e..fce30d90b6cb 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-@@ -42,6 +42,38 @@
- #define HW_ATL_TS_DATA_OUT_SHIFT 0
- #define HW_ATL_TS_DATA_OUT_WIDTH 12
- 
-+/* SMBUS0 Received Data register */
-+#define HW_ATL_SMB0_RECEIVED_DATA_ADR 0x00000748
-+/* SMBUS0 Transmitted Data register */
-+#define HW_ATL_SMB0_TRANSMITTED_DATA_ADR 0x00000608
-+
-+/* SMBUS0 Global Provisioning 2 register */
-+#define HW_ATL_SMB0_PROVISIONING2_ADR 0x00000604
-+
-+/* SMBUS0 Bus Busy Bitfield Definitions */
-+#define HW_ATL_SMB0_BUS_BUSY_ADR 0x00000744
-+#define HW_ATL_SMB0_BUS_BUSY_MSK 0x00000080
-+#define HW_ATL_SMB0_BUS_BUSY_SHIFT 7
-+#define HW_ATL_SMB0_BUS_BUSY_WIDTH 1
-+
-+/* SMBUS0 Byte Transfer Complete Bitfield Definitions */
-+#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_ADR 0x00000744
-+#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_MSK 0x00000002
-+#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_SHIFT 1
-+#define HW_ATL_SMB0_BYTE_TRANSFER_COMPLETE_WIDTH 1
-+
-+/* SMBUS0 Receive Acknowledge Bitfield Definitions */
-+#define HW_ATL_SMB0_RX_ACKNOWLEDGED_ADR 0x00000744
-+#define HW_ATL_SMB0_RX_ACKNOWLEDGED_MSK 0x00000100
-+#define HW_ATL_SMB0_RX_ACKNOWLEDGED_SHIFT 8
-+#define HW_ATL_SMB0_RX_ACKNOWLEDGED_WIDTH 1
-+
-+/* SMBUS0 Repeated Start Detect Bitfield Definitions */
-+#define HW_ATL_SMB0_REPEATED_START_DETECT_ADR 0x00000744
-+#define HW_ATL_SMB0_REPEATED_START_DETECT_MSK 0x00000004
-+#define HW_ATL_SMB0_REPEATED_START_DETECT_SHIFT 2
-+#define HW_ATL_SMB0_REPEATED_START_DETECT_WIDTH 1
-+
- /* global microprocessor semaphore  definitions
-  * base address: 0x000003a0
-  * parameter: semaphore {s} | stride size 0x4 | range [0, 15]
--- 
-2.44.1
+I had to look at the patches to learn that all the above only touch
+drivers/pci, aer.h, and pci.h.  Can you use the PCI subject line
+conventions (e.g., "PCI/AER: ...") to make this more obvious?  Almost
+all already include "CXL", so I don't think we'd really lose any
+information.
 
+>   cxl/pci: Change find_cxl_ports() to be non-static
+>   cxl/pci: Map CXL PCIe downstream port RAS registers
+>   cxl/pci: Map CXL PCIe upstream port RAS registers
+>   cxl/pci: Update RAS handler interfaces to support CXL PCIe ports
+>   cxl/pci: Add error handler for CXL PCIe port RAS errors
+>   cxl/pci: Add trace logging for CXL PCIe port RAS errors
+>   cxl/aer/pci: Export pci_aer_unmask_internal_errors()
+
+Ditto here, and add something about CXL in the subject since this
+doesn't export universally.
+
+>   cxl/pci: Enable internal CE/UCE interrupts for CXL PCIe port devices
+> 
+>  drivers/cxl/core/core.h  |   3 +
+>  drivers/cxl/core/pci.c   | 172 +++++++++++++++++++++++++++++++--------
+>  drivers/cxl/core/port.c  |   4 +-
+>  drivers/cxl/core/trace.h |  47 +++++++++++
+>  drivers/cxl/cxl.h        |  14 +++-
+>  drivers/cxl/mem.c        |  30 ++++++-
+>  drivers/cxl/pci.c        |   8 ++
+>  drivers/pci/pci.h        |   5 ++
+>  drivers/pci/pcie/aer.c   | 123 ++++++++++++++++++++--------
+>  drivers/pci/pcie/err.c   | 150 ++++++++++++++++++++++++++++++++++
+>  include/linux/aer.h      |  16 ++++
+>  include/linux/pci.h      |   3 +
+>  12 files changed, 503 insertions(+), 72 deletions(-)
+> 
+> 
+> base-commit: f7982d85e136ba7e26b31a725c1841373f81f84a
+
+This doesn't apply cleanly on v6.12-rc1, and
+f7982d85e136ba7e26b31a725c1841373f81f84a isn't upstream yet.  Where
+is it?  I guess it relies on some other series that hasn't been merged
+yet?
+
+Bjorn
 
