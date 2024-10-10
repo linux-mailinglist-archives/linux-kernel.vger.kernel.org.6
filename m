@@ -1,121 +1,113 @@
-Return-Path: <linux-kernel+bounces-359161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2B8998833
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:48:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363A4998836
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A801F24CDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:48:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5244B24ED9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCB31C9ED8;
-	Thu, 10 Oct 2024 13:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D04E1CB524;
+	Thu, 10 Oct 2024 13:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="RZWkP8r5"
-Received: from pv50p00im-ztdg10012001.me.com (pv50p00im-ztdg10012001.me.com [17.58.6.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gIQbxEz1"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3019C1C9EC9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7311CB307
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568052; cv=none; b=NcrcstMT4KYQNx3tY+wmOh5S8jPspE6MfBCvsCsrDmZJBlKdq9FM9BN+cCm0MbSvOQr2B2LkXf6Z10TXbPEwI2D1EDMVpnqM8mEq2STNkHjT1PL8GvndQhC4KfW3Nq7HyeMVvfLjuYsLNKxpeG/R/yECuDIAPndFRLAx7TFdL0s=
+	t=1728568078; cv=none; b=bcpuTo/3B5DF0YazGQyBAllz2oHmXnI1rM8SZex8xilYo2Ty9zMge/iyyYrA1y9YYFr0WsBvF3rdk42jSTPwJzb3cBtFjihEWitz9uw9osnliclrGf36XdI/N6HPpJrIG5dA9sP+6vOy7NtnLZCRt/+/RHlQIaf9QjdMH9y+TGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568052; c=relaxed/simple;
-	bh=MrEhm0OtyQrbVJzG6ipSNS9SAbMoJNzexjfEfx4WFnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mc5O41PgAtg5Bhgse4cs0wNtGmOpVFPTQy+sToAS1xLh1Wk345s+xM9YCn6KGyl30/I+s8aMuIvVyzrsSIUqYaqPhi+0p5ucXp1Oron3Qg4jXiZzwBFu+tjcfybu2qFjMejvGlSFPJr+PYc0V3vlXJXtPO0LmLET+AIynenKa1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=RZWkP8r5; arc=none smtp.client-ip=17.58.6.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1728568050;
-	bh=SNtGl0htC2wcy3umrpu79n9cwuSf8KzJj9a6iqMHrBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=RZWkP8r53ZCnnMgikAE/VeCbZDoKGO6kAFxYVc31/CVsomMhiAEm+tcyyk2TRxMWm
-	 eZRuxl/IXKcOPMNQ6vI6ntIStc4B7W8TEL/I7830Fr0l9s+AOUQ6m2AJcfL5ZPpLoS
-	 qRV8abPhM7xvBNdGeFc2qEmjfXlBdPTRYdlod3ctoe4zHMM4zUctpSrfQASEHaxIMe
-	 ZsOa6ObWu7W5vPGSuIN1eitXuQ9sw2XQUYlHjxDcf6nwIJq6IrqKjc5XKShJa7gJCY
-	 2qJ64poF/gKjE+sTIRPd32mxl1h8IdMLVkNI/3S089bP09/9JheCyLx7BFGF5m9VdI
-	 HoiLDbQya1kzw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10012001.me.com (Postfix) with ESMTPSA id 977ECA0318;
-	Thu, 10 Oct 2024 13:47:24 +0000 (UTC)
-Message-ID: <75e2b3a5-e8ed-47f2-8f7d-89c6f9481026@icloud.com>
-Date: Thu, 10 Oct 2024 21:47:21 +0800
+	s=arc-20240116; t=1728568078; c=relaxed/simple;
+	bh=YCktKjLn0MSEw2PJMMzh38/Oa32wsLHWQSGx36/qLTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umPahVc8BrGQPu0KtqEr32g72pWqGxo22vd5X309QfJqIzw4zDRGlAFMjcYPj3XGCjIPcWzW+si0mRRzM9S2XFEyYwgLEY2sWLNkVCvaugAF9IfhESfFdQsPa7z8h8712cWTFN0BIazxLs1jhA4fLKtyxrDgOhWO5Y5AMfdr9y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gIQbxEz1; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5398f3be400so1069564e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:47:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728568075; x=1729172875; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P72PVJgi4uitEzWkX+CGhxiijiq09qyKhZsAdOcJJtA=;
+        b=gIQbxEz1ERcL/lrrrn3U9xlIumMU0XQvl9PAS7fCQyghM6UrJMnBMu4m2AsaK+fEfA
+         BAG3cjgox1WDgusI7P2goGNd04H55LSGgvKDjvQnJ55Y4paK/8HMY9QVvmF0D0ghilGw
+         2Gnp9YTc+buwRsF3VNHPMmYxFzjSwq9Dy5VczAJ1SZ44gP6aETxwLmWP2+Z6bQuZTPBJ
+         22dj1Urs4ABTltlifJbvitP/OZgoAAp1VC8kN9Nvpfmj6Y1oUz5/5UCnbhPMxQSM54zD
+         32eM7WIbUKOZmjXgUOVNOG2vTGGFKzgd8TAdURhrdV4R/+s8rNdoZzHAXdQEQ4XOybe9
+         +H6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728568075; x=1729172875;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P72PVJgi4uitEzWkX+CGhxiijiq09qyKhZsAdOcJJtA=;
+        b=R5MRf5vqUcWkZTX49bvvnQ8nDjc+8nia16B9/Gk7qRLC1VYZCh12svcMIoVBJnHd4/
+         qgPyy+njWiMB4/2I9KMttiQhGwseBHiSDI82vClHLBOUnPg/6kkfKgvX2Uj2QZjQodbq
+         OPNaIjfI5hO/aP453VDCsI2nIkAAmZ9VikeyTlsnnCED4TkqBZ34CYCY5UXEIoJzfHD2
+         CGRFEfR/DgdqZu8MgmyzKbuGkPTehYsrVqNF7aBhIasS8gEJpvKPN6QuIFV7bg4/2Zi7
+         o1RqzK7ARB4LfEOliwcGUr5E08c++sRfU8ILvYK1lv8d/+nZDio5kOouaf24SClRWZ46
+         8u1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWtXvosi/9gZBvoKc85RaEVoXRamSSjJrQPPJIGkper5HoMO1RB7CngRqyoTjMrJiC1NC9mnsDODzxQRDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztseVHb+LZ3HLNluxhpyzue0fPHXI9ab4eVdwohrOsqMCM3e4B
+	F7b1Lm1aUGvenpBFO7UyqKljAbgeSehPGji1v5rwfK98HY2EB8qX1eG7p7jb/cc=
+X-Google-Smtp-Source: AGHT+IEjiQ58D2UdYLj6Yl92fdF2u466WimLIPKrNDpd4Kv0zCmXqRdfPWW59v1LOM5jtmbzLl3WsQ==
+X-Received: by 2002:a05:6512:23a9:b0:535:6a4d:ed74 with SMTP id 2adb3069b0e04-539c496114amr4079862e87.51.1728568075061;
+        Thu, 10 Oct 2024 06:47:55 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb9059f1sm255143e87.301.2024.10.10.06.47.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 06:47:53 -0700 (PDT)
+Date: Thu, 10 Oct 2024 16:47:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Miaoqing Pan <quic_miaoqing@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
+	agross@kernel.org, andersson@kernel.org, linux-kernel@vger.kernel.org, 
+	konrad.dybcio@linaro.org, mchehab@kernel.org, quic_vgarodia@quicinc.com, 
+	stanimir.k.varbanov@gmail.com, kvalo@kernel.org, quic_jjohnson@quicinc.com, 
+	ath11k@lists.infradead.org
+Subject: Re: [PATCH v4] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
+Message-ID: <asvhh4kzq6s6yz3wrqfmuolcnlonoobogoh45pnq4zdr44lpxs@zgarzpduk2sk>
+References: <20241010132902.2882939-1-quic_miaoqing@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] cxl/region: Find free cxl decoder by
- device_for_each_child()
-To: Dan Williams <dan.j.williams@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dave Jiang <dave.jiang@intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_zijuhu <quic_zijuhu@quicinc.com>
-References: <20240905-const_dfc_prepare-v4-0-4180e1d5a244@quicinc.com>
- <20240905-const_dfc_prepare-v4-1-4180e1d5a244@quicinc.com>
- <2024090531-mustang-scheming-3066@gregkh>
- <66df52d15129a_2cba232943d@iweiny-mobl.notmuch>
- <66df9692e324d_ae21294ad@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <a6dae308-ff34-4479-a638-8c12ff2e8d32@quicinc.com>
- <66dfc7d4f11a3_32646294f7@dwillia2-xfh.jf.intel.com.notmuch>
- <e7e6ea66-bcfe-4af4-9f82-ae39fef1a976@icloud.com>
- <66e06d66ca21b_3264629448@dwillia2-xfh.jf.intel.com.notmuch>
- <66e08f9beb6a2_326462945d@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <66e08f9beb6a2_326462945d@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: p4NiH2jssWHjSxaPAhKl2mS26oD5TdUd
-X-Proofpoint-GUID: p4NiH2jssWHjSxaPAhKl2mS26oD5TdUd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_11,2024-10-10_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- phishscore=0 mlxscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410100092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010132902.2882939-1-quic_miaoqing@quicinc.com>
 
-On 2024/9/11 02:27, Dan Williams wrote:
-> Dan Williams wrote:
-> [..]
->> So, while regionB would be the next decoder to allocate after regionC is
->> torn down, it is not a free decoder while decoderC and regionC have not been
->> reclaimed.
+On Thu, Oct 10, 2024 at 09:29:02PM GMT, Miaoqing Pan wrote:
+> Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
+> board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
 > 
-> The "simple" conversion is bug compatible with the current
-> implementation, but here's a path to both constify the
-> device_find_child() argument, *and* prevent unwanted allocations by
-> allocating decoders precisely by id.  Something like this, it passes a
-> quick unit test run:
-> 
+> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+> ---
+> v2:
+>   - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
+>   - relocate pcieport0 node in alphabetical order.
+> v3:
+>   - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
+> v4:
+>   - update 'ath11k-calibration-variant' to "Ride".
 
-I submitted changes suggested by Dan as shown by below link:
-https://patchwork.kernel.org/project/cxl/patch/20240917-const_dfc_prepare-v5-1-0e20f673ee0c@quicinc.com/
+What exactly is Ride? Is there just one Ride board? I thought it's a
+board family name.
 
-I also made a little modification based on that Dan suggested.
-welcome to code review again (^^).
+Also, could you please extend the commit message with messages from the
+ath11k driver, showing the chip_id / board_id ?
 
-Sorry for this noise (^^).
 
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index 1d5007e3795a..749a281819b4 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -1750,7 +1750,8 @@ static int cxl_decoder_init(struct cxl_port *port, struct cxl_decoder *cxld)
->  	struct device *dev;
->  	int rc;
->  
-[snip]
+-- 
+With best wishes
+Dmitry
 
