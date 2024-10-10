@@ -1,167 +1,177 @@
-Return-Path: <linux-kernel+bounces-358736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874CF9982FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E589982FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43288B21A60
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9FAE281AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CFB1BDA89;
-	Thu, 10 Oct 2024 09:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD8C1BDA8C;
+	Thu, 10 Oct 2024 09:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YT5jwcCk"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ku7zG7Ch"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0087C19E7D0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045CD1BC9FE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554260; cv=none; b=ETWn8OjnYTkhHEXVdosI+RsxfCUNr8luhmweAXiORkJIwZOrao0Nn2zPTF6gkIFRj6Igvnfaz763oAsgO+QPSYqORzZL/zQRkGIzpessUsOKIH8nwWIJCaKybgN0ET4PVZ1T9Jup9WRL58ZZH3JM1AiMybhfTlwwObTTvwr5YMY=
+	t=1728554289; cv=none; b=jrTCFYryXPGP2Ypta7ixVgUdRl6gFhmRt3LT1XEFPsU4dmDVBWbZ4KcLq6AuAypOOZ0QBBkoDCM0j66JqAe7LEGqHqh1v0OMvIo1dmIzW58SLohU+kQQenDlvWikGr4xJWm6w2zk8uFi0VqocwVoekw8cLljl6vXFX0UHh+q+G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554260; c=relaxed/simple;
-	bh=dJ57paU3yob7a98B5OTRsIY7OeCtfujMFlrYsNqU8PU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BbCyE4ajafqYnY40E+WuHIzlg0z+wpReRbg50pW8j3HM/LoGvRIvCfYKaQUWbACGyRO5rXxDTx5I0S3e37EvfkHBL/FGbLaDGlAVMG3o/Mx+HHeRbX9Z2niQ6hMe5JhrD2d738aoWxYMfKCoV4WMzh2l4NmiC8UARwmIUkPCIyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YT5jwcCk; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e28ea358f65so651199276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:57:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728554258; x=1729159058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l2ArA4ZcoREZanu8i6/c0JbOGoOWnzH6250enjQ0frk=;
-        b=YT5jwcCkqs8gCzvkaW6EQFS8XxibjtMZnbStmPqAExpyFwzXGZKxcUdX6AB40AWlNx
-         HKDS/V+kFwgc2YUStqkKc8+IBLfkNPRW2azad1Sl56Du6MnTTz6k0UkSzzjv1bgYxKuT
-         Acu4RW/k9r2tNlt//BEX1moyp8/w2mwtHsG0gw+ozLIlLhLmIjqDVBpOitMhpV0N7N8J
-         3yvUif/yPhH+8JR3Ai9OkXv7co7rVrDfMX6LJ85O17stjxBMXQ3BTo0VOhUuo+JVxIcI
-         82ovVsrk+2yeGMWHvtsnrtHFcQUfTuY3FcwJ0bXx856/LUKZCaiBG4dFYiAPh9RGj1+b
-         lG8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728554258; x=1729159058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l2ArA4ZcoREZanu8i6/c0JbOGoOWnzH6250enjQ0frk=;
-        b=izDRaOOEB7w5bTS0B/ORRYSBsqDKKgCTDqyg0kovToqsT62gA8w13r+EPzfa0xb0CJ
-         wlPH7/lE0v+d4mVZ89WZCSPSO/lmtn3pgtj9CpgCfmiG55ihY3AthTPrMkIuvcOPy1Gi
-         kYY869LAOJ5GGcRv5OV/VDBI/JM8PhEK6AG7tC2BojOLOJdmepC/J8rWDuYuGPCIfZzN
-         ANcpVXqSZqd4QV/PaobrioN1JQrKFj+sCXjJHWQ5ZL3YjVdy8x5wbJVfndUyqLZHnQ1T
-         zt19zsliAZq4sNyOae0t4sXn16cVpTwnsoI/fjybmZnmBDFG1pRJPdlNUwMQDHH1Qhqe
-         qxfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXijtgxg/4tzOmNYiQcRjrquIFUqDFez93wuMYCF1SpFmqeQRtrsxoRdhhFTFgaTcshNec8ERLs+SeRtGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY2Uw75pnNgy3/oMnuDwieDs3CvDveihV/GiAJ9QbEZKHMXpCL
-	P+CwMIs7iTV9BkdAcDZOvzRhXDphWesqetAFc1JYMgtlNpZ6+jhWllavDf+7O/z8GdoUGPmrr2x
-	OchJZsDSD7F0vAgj2RBSGWTRtKpZ06y7R1hJBdw==
-X-Google-Smtp-Source: AGHT+IFutXdu1n6F87Ao7/fpG55G3IQ3I7av3UbOLSvXJvC0UI/LJPXg6XG5U7GQSsXzAx+mdlHswYAlQWxtVCzTHio=
-X-Received: by 2002:a05:6902:140e:b0:e16:4ca7:7acf with SMTP id
- 3f1490d57ef6-e290b7cefa9mr1978248276.10.1728554258022; Thu, 10 Oct 2024
- 02:57:38 -0700 (PDT)
+	s=arc-20240116; t=1728554289; c=relaxed/simple;
+	bh=NfhfZqu2Su0RgqD8cq5nEWdseA734/1rsCzpimrRzr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tw3ybIahDgSD5iGIJLYKkLcToE5mwA9q6kZ6aOrC2XVP0zn+Lt7wbl34iKoz6UJaBwcrKEBcie9geZVK2raz+xnaSXkgZdcRf1lBcbgdT/7jNcYn4PLNwY7UK+ynbP7zt0IUKvSPdnArM9ece6h56B+zCbqQaGKZf4HXJHETFso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ku7zG7Ch; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728554288; x=1760090288;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NfhfZqu2Su0RgqD8cq5nEWdseA734/1rsCzpimrRzr8=;
+  b=Ku7zG7ChR2UEV/7zGR/M/hNJwKCGkFImMDcgpmMkSAnxXP4pqkjE+ARQ
+   +3Sd/BnpxbPadgzlDmX+T2i+nyBRmDAVIpR8QTqi8GS1RiCGrEmdPjy16
+   ZUPYjLyJ+sqfVFIsv4zZrAGH7MmsBmIWvqhUGhFulev9Bc/MoZalmubiM
+   fCbJxo27vNgXNrbfXi/6GYMT1qqTgQbSRZ8nwiYOLY/gYhX3ORp/pN7Ax
+   LjY317YxzhZ8uNwHbHpih+OS8N8SatGhONOnvZQfh3sQi0yUtXAhluHNH
+   y8Dr6bzCfKrBJqP7W7kN+XO8H04oljxxcwkpO6cEnuWe0mRCLVXRUDDgo
+   w==;
+X-CSE-ConnectionGUID: pyUTzTEPSKCK1r7gbpjAiw==
+X-CSE-MsgGUID: mW8cPwyaTpOJe+UueueP4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31797866"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="31797866"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:58:07 -0700
+X-CSE-ConnectionGUID: N7yLUXyFTj2JAcgUg+ExFA==
+X-CSE-MsgGUID: N+4A3YoOQVOSa5ysiTYLQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="76742946"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2024 02:58:05 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sypvm-000Abe-1i;
+	Thu, 10 Oct 2024 09:58:02 +0000
+Date: Thu, 10 Oct 2024 17:57:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Edward Adam Davis <eadavis@qq.com>,
+	syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	almaz.alexandrovich@paragon-software.com,
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] ntfs3: Fix WARNING in ntfs_extend_initialized_size
+Message-ID: <202410101748.6VtnyCOG-lkp@intel.com>
+References: <tencent_EE134FDF8DFFA5E18D84121FDDE5DDB41907@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913102836.6144-1-victorshihgli@gmail.com>
- <CAPDyKFoHrRGYkNCu0ev8iF6e8tQV7cbTAxm9jS0CCqvizmoWmw@mail.gmail.com> <CAK00qKAUg5VFkxbrYUeFjRq+3UN2dcOZ0RJFDK2e3tCxKOJNLQ@mail.gmail.com>
-In-Reply-To: <CAK00qKAUg5VFkxbrYUeFjRq+3UN2dcOZ0RJFDK2e3tCxKOJNLQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 10 Oct 2024 11:57:00 +0200
-Message-ID: <CAPDyKFqhbt-u8qRCfvssSBDT5RUchj6gJj=4a75dEdpp++emdg@mail.gmail.com>
-Subject: Re: [PATCH V22 00/22] Add support UHS-II for GL9755 and GL9767
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
-	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
-	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_EE134FDF8DFFA5E18D84121FDDE5DDB41907@qq.com>
 
-On Thu, 10 Oct 2024 at 08:20, Victor Shih <victorshihgli@gmail.com> wrote:
->
-> On Mon, Oct 7, 2024 at 11:34=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Fri, 13 Sept 2024 at 12:28, Victor Shih <victorshihgli@gmail.com> wr=
-ote:
-> > >
-> > > From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> > >
-> > > Summary
-> > > =3D=3D=3D=3D=3D=3D=3D
-> > > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > > UHS-II compatibility.
-> > >
-> > > About UHS-II, roughly deal with the following three parts:
-> > > 1) A UHS-II detection and initialization:
-> > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
-> > >   Sequence[2]).
-> > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequen=
-ce
-> > >   [2]).
-> > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inclu=
-de
-> > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
-> > >   Setting Register Setup Sequence.
-> > >
-> > > 2) Send Legacy SD command through SD-TRAN
-> > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure L=
-egacy
-> > >   SD compatibility and preserve Legacy SD infrastructures (Section 7.=
-1.1
-> > >   Packet Types and Format Overview[3]).
-> > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UH=
-S-II
-> > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2=
-]).
-> > >
-> > > 3) UHS-II Interrupt
-> > > - Except for UHS-II error interrupts, most interrupts share the origi=
-nal
-> > >   interrupt registers.
-> > >
-> > > Patch structure
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > patch#1-#7:  for core
-> > > patch#8-#20: for sdhci
-> > > patch#21:    for GL9755
-> > > patch#22:    for GL9767
-> >
-> > Patch 1 -> 6 applied for next, with some minor updates to patch2.
-> >
-> > Patch 7 needs some more work, I will comment on that separately.
-> >
-> > I am okay with patch 8 -> 22, but since there will be a re-spin for a
-> > new version, perhaps you can run a new round of checkpatch.pl to see
-> > if some of the warning that it reports can be fixed too.
-> >
-> > [...]
-> >
-> > Kind regards
-> > Uffe
->
-> Hi, Ulf
->
-> I really appreciate your reply and I will resend the new series of
-> patches before the end of next week.
-> Do I need to include patch 1 to patch 6 when re-sending the new series
-> of patches?
-> Or should patch 7 to patch 22 be sufficient?
+Hi Edward,
 
-Hi Victor,
+kernel test robot noticed the following build errors:
 
-Patch 7 to 22 is sufficient. Just rebase the series on top of the
-mmc-tree's next branch, then you should be good to go.
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.12-rc2 next-20241010]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Kind regards
-Uffe
+url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/ntfs3-Fix-WARNING-in-ntfs_extend_initialized_size/20241007-191224
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/tencent_EE134FDF8DFFA5E18D84121FDDE5DDB41907%40qq.com
+patch subject: [PATCH] ntfs3: Fix WARNING in ntfs_extend_initialized_size
+config: i386-buildonly-randconfig-001-20241010 (https://download.01.org/0day-ci/archive/20241010/202410101748.6VtnyCOG-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410101748.6VtnyCOG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410101748.6VtnyCOG-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> fs/ntfs3/file.c:402:15: error: no member named 'valid' in 'struct ntfs_inode'
+     402 |                 WARN_ON(ni->valid >= pos);
+         |                         ~~  ^
+   include/asm-generic/bug.h:123:25: note: expanded from macro 'WARN_ON'
+     123 |         int __ret_warn_on = !!(condition);                              \
+         |                                ^~~~~~~~~
+   1 error generated.
+
+
+vim +402 fs/ntfs3/file.c
+
+   379	
+   380	static int ntfs_extend(struct inode *inode, loff_t pos, size_t count,
+   381			       struct file *file)
+   382	{
+   383		struct ntfs_inode *ni = ntfs_i(inode);
+   384		struct address_space *mapping = inode->i_mapping;
+   385		loff_t end = pos + count;
+   386		bool extend_init = file && pos > ni->i_valid;
+   387		int err;
+   388	
+   389		if (end <= inode->i_size && !extend_init)
+   390			return 0;
+   391	
+   392		/* Mark rw ntfs as dirty. It will be cleared at umount. */
+   393		ntfs_set_state(ni->mi.sbi, NTFS_DIRTY_DIRTY);
+   394	
+   395		if (end > inode->i_size) {
+   396			err = ntfs_set_size(inode, end);
+   397			if (err)
+   398				goto out;
+   399		}
+   400	
+   401		if (extend_init && !is_compressed(ni)) {
+ > 402			WARN_ON(ni->valid >= pos);
+   403			err = ntfs_extend_initialized_size(file, ni, ni->i_valid, pos);
+   404			if (err)
+   405				goto out;
+   406		} else {
+   407			err = 0;
+   408		}
+   409	
+   410		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+   411		mark_inode_dirty(inode);
+   412	
+   413		if (IS_SYNC(inode)) {
+   414			int err2;
+   415	
+   416			err = filemap_fdatawrite_range(mapping, pos, end - 1);
+   417			err2 = sync_mapping_buffers(mapping);
+   418			if (!err)
+   419				err = err2;
+   420			err2 = write_inode_now(inode, 1);
+   421			if (!err)
+   422				err = err2;
+   423			if (!err)
+   424				err = filemap_fdatawait_range(mapping, pos, end - 1);
+   425		}
+   426	
+   427	out:
+   428		return err;
+   429	}
+   430	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
