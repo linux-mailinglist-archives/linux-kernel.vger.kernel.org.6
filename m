@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-358470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE58D997FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:30:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42996997FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE96D1C23BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65D71F28712
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3861FCC58;
-	Thu, 10 Oct 2024 07:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA5C1FA25A;
+	Thu, 10 Oct 2024 07:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVtLcd07"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="KsvnZSl/"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07D91C5796;
-	Thu, 10 Oct 2024 07:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7581C461D;
+	Thu, 10 Oct 2024 07:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728546292; cv=none; b=mOmI4nSEsgZynwVi2+8nGZh7y5cOyUrkonKDAyiztk1Cg7alk5OYfh1+O54ANF+T26iSqdJFBc1C5wAlFYAGekMoJkBthY0HZpx/52n/h3FYWLdh5ZH1UGj/kOrIRlMgv7wyxyo2/DTMOaF27KFkbfNSrY8t53qZMk/NLZJjKVA=
+	t=1728546252; cv=none; b=Sn2WKF/hQoXq/sL0wio4c3M8TiUfCCoaKCZwi5fXEEUXx5r6k6/q/HN+3PyiYgbPiZzdI5t+b3K7oNkhlpv8+COH0EFSVeIg84CInB0hP3WK0PZAH7Iv5+kJb0veNMKyDHNHJOe+C+QSK0+yTd8t5awoh5nKwoXoPfnlaezvHjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728546292; c=relaxed/simple;
-	bh=A20Cxip7h9+hwVZDDL8T9b50iOLKZr6WhzudD6Hbq8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ORC6tS/HsJQS7bLmdieex06A4qw8f4QQdytxOUVHUa/MwR33Nl7gFE31sup8fYDl2YvabHckX5KNya5gukFnPTvNmvY6+CZpxsxGkXw2+es8X7CZZfYaVcuc60bsaojQuWBBoxthmOcv8Z5xBlTDRSIavVK1XkntxJCIVxnvqr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVtLcd07; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74114C4CEC5;
-	Thu, 10 Oct 2024 07:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728546291;
-	bh=A20Cxip7h9+hwVZDDL8T9b50iOLKZr6WhzudD6Hbq8E=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MVtLcd07As1FA0eLjjXzFN7+2Swv38YSrDFoGa3CM0hUn3GteVeYvK/K6GbutNxyJ
-	 vjlDlXQvGS/VBAbX3ZZCEvXsot4rB4RsSwfJcg3/iUfmensZhh6sozHLAzkLClf1wm
-	 ERA7MFbVmLEXnYzNuRRpWiPJ3f+MyRAq53vDlKkrYE4p/pZjISE9wB4EpaS6m/X0n2
-	 lyAeW5//o1dMahL7tk0EE59nISwuCH8/hgJUFfyHylNX3a9y6bhImaE+tzIoYUaVlT
-	 ZhdZRoz06h/FdeFVOC3Y7k+DKJwAcoVi+wn03Fm2l858YxGRv4nFuINL4nrhCY4zpg
-	 iyls+R2aC7o9w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1synqw-0000000047M-3YFJ;
-	Thu, 10 Oct 2024 09:44:55 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Chris Lew <quic_clew@quicinc.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1728546252; c=relaxed/simple;
+	bh=wjQn6x7hmw05iGVXgCKPpKhnBa3dzt0E8KlKESli17g=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ImZJwyohQbFJB+Rz0C+xzhm3zb3T0WdwnFYVixXqa6G+S+zveCq/ZPce3G9O4SxzVOumPQutwVpySCXBLfK8iOay6nADwwUwthPUhfFL+jDi9uWW/E0HhepvQ6Bzq6WSCdQJsjnm6rMNePt+OIzGY34TZ26tuPHeNP81KE5Zsk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=KsvnZSl/; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=9j1nFx/lczpeat6SxVqYFDHmTqdMDhQGBTx9iCoyYQI=; b=KsvnZSl/3i+bHHIcc2bgGFMf28
+	zuDZm6PNAKUtEM5ggt5rQs2UkQBujDRlCNxDZAkmfsdUF+U6TKatmrlmkwX7A58hLFelNc2ZvqAIi
+	5rxU5mcUsTCpV3RZ8tXcjs0GDq0P5JBB+k0/0fa4FVkUGaPcAvth9yBfjta7EMu9zI2/9bMHbhAos
+	qspIHX9BQssSLg0xL7SUK6UKldBGQbyyZiPjA3QcdXiBv8TZxCQR0hm3j7efShHis0XvFJzM6godL
+	DDQWVIttUN+JtX29pYOrDcxpp3BvQKeUsKlaRCZx882Yff5nKEOaFCVYO+BET5IuhMus8G4AfPsoH
+	mSj2xX6A==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
 	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] soc: qcom: mark pd-mapper as broken
-Date: Thu, 10 Oct 2024 09:42:46 +0200
-Message-ID: <20241010074246.15725-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	Tony Lindgren <tony@atomide.com>,
+	linux-clk@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Roger Quadros <rogerq@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-omap@vger.kernel.org
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v4 0/3] mfd: twl: Add clock for TWL6030
+Date: Thu, 10 Oct 2024 09:43:52 +0200
+Message-Id: <20241010074355.58161-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,68 +64,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When using the in-kernel pd-mapper on x1e80100, client drivers often
-fail to communicate with the firmware during boot, which specifically
-breaks battery and USB-C altmode notifications. This has been observed
-to happen on almost every second boot (41%) but likely depends on probe
-order:
+Previously the clock support for only implemented for TWL6032 so add
+it also for the TWL6030. There are devices out there where especially
+WLAN only works if these clocks are enabled by some patched U-Boot.
+This allows to explicitly specify the clock requirements.
 
-    pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-    pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+Changes in V4:
+- cleanup if (TWL6032_SUBCLASS)
 
-    ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+Changes in V3:
+- use type enum in driver_data and twl_clock_info
+- revert back to store device instead of platform_device
 
-    qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+Changes in V2:
+- cleanup some defines
+- no separate ops for 6030
+- remove is_prepared()
+- update Kconfig
 
-In the same setup audio also fails to probe albeit much more rarely:
+Andreas Kemnade (3):
+  mfd: twl-core: Add a clock subdevice for the TWL6030
+  clk: twl: remove is_prepared
+  clk: twl: add TWL6030 support
 
-    PDR: avs/audio get domain list txn wait failed: -110
-    PDR: service lookup for avs/audio failed: -110
+ drivers/clk/Kconfig    |  2 +-
+ drivers/clk/clk-twl.c  | 69 ++++++++++++++++++++++++++----------------
+ drivers/mfd/twl-core.c | 26 +++++++++++-----
+ 3 files changed, 62 insertions(+), 35 deletions(-)
 
-Chris Lew has provided an analysis and is working on a fix for the
-ECANCELED (125) errors, but it is not yet clear whether this will also
-address the audio regression.
-
-Even if this was first observed on x1e80100 there is currently no reason
-to believe that these issues are specific to that platform.
-
-Disable the in-kernel pd-mapper for now, and make sure to backport this
-to stable to prevent users and distros from migrating away from the
-user-space service.
-
-Fixes: 1ebcde047c54 ("soc: qcom: add pd-mapper implementation")
-Cc: stable@vger.kernel.org	# 6.11
-Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
-
-It's now been over two months since I reported this regression, and even
-if we seem to be making some progress on at least some of these issues I
-think we need disable the pd-mapper temporarily until the fixes are in
-place (e.g. to prevent distros from dropping the user-space service).
-
-Johan
-
-
-#regzbot introduced: 1ebcde047c54
-
-
- drivers/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 74b9121240f8..35ddab9338d4 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -78,6 +78,7 @@ config QCOM_PD_MAPPER
- 	select QCOM_PDR_MSG
- 	select AUXILIARY_BUS
- 	depends on NET && QRTR && (ARCH_QCOM || COMPILE_TEST)
-+	depends on BROKEN
- 	default QCOM_RPROC_COMMON
- 	help
- 	  The Protection Domain Mapper maps registered services to the domains
 -- 
-2.45.2
+2.39.5
 
 
