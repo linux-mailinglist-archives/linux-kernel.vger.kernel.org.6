@@ -1,180 +1,216 @@
-Return-Path: <linux-kernel+bounces-358524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A99B99805F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:43:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F85299804B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 677811C24BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:43:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A73C9B25C38
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75801CC8BF;
-	Thu, 10 Oct 2024 08:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="yvULkrbV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214791C9EAA;
+	Thu, 10 Oct 2024 08:22:18 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C961CBE9F;
-	Thu, 10 Oct 2024 08:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BE61C9DFD;
+	Thu, 10 Oct 2024 08:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728548595; cv=none; b=XK53zcSKC969BfOp+VRjrpIwHic8MqF/DSQ14NHMJ1WynL9Ir9Sfe3sr3sXHdHB2uGnSA6p8gaRgvH4c/XSkduMyzVo32AHtT3OoNXx5ZdEaDpiA3XfDKP5EtgHeQBZ66XCbiprWADxzBCzU+6WDrsHVGrqNcXp+C+5J2eR31GA=
+	t=1728548537; cv=none; b=ESe/s+IDSUVIxNYhK3zwd9tlGPdjVJBzKe15KyaL8r0DEqd1C2OCWjHtq6xYik6smvVzKXQC3W/fgm7iIfn7+7dgNE6863hS5F7PPUefTmgwBQ8+EtU0D/+NJVT9ik2zdlG4FDWvUybFsKq67bXxEHvnbdeMZyOUgJvaNHDbtH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728548595; c=relaxed/simple;
-	bh=so3vazU+kWnaRGDyW/mPgxy+A2iYe9UlJUu37xFaU5Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rUWdfLiGRpwFbi+SNhb7tOue/wiDtK4f4RWlDW3QepH0YW9/oEN9VzX+g9AzX0PQYCyfhfbKJZuQ0S3vmFneXq51Ga0n7wcyzJufgrbFseDHXuSB7cI3YrsSvCYMVoAYU+3lhItiL11+HmDV+uue58EMHrp2oXYWunaf6OpYQaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=yvULkrbV; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728548592; x=1760084592;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=so3vazU+kWnaRGDyW/mPgxy+A2iYe9UlJUu37xFaU5Q=;
-  b=yvULkrbVatHoqYxuCZ2PFMzAWQirXYlApo7E7qExZY6jJwlR/V3HfI6o
-   rsWf6kULsfmgmC8ndTJ5OWJaIgo7b+5VC5iFEhNaWRedRPC5jyQpi1LMV
-   AwqUhoc8hye03U8/tZuVrKrUF4+E6mJB3Lx9nsu+ss7SVRpynazIa6Faj
-   mq6yX/KkknWWlQgYgJWVndNx8cCH+oLbW84toW177sNU8WIadM1Orys+T
-   gHt8foQ96pHSHAOYbTiN4IiRnUeaMdoaSS/A22DrU/nmcPRPWqL//eCQu
-   40KM4gJWwlNbudG0+oe1uuIeSXBZpMvkC//QImk3frQDx9Kt5s/aKBVha
-   w==;
-X-CSE-ConnectionGUID: 0Oq6o7p0RZi/Peoa7+MFHw==
-X-CSE-MsgGUID: QmiUCtYMTPyP8V68ZyBZCA==
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="36163260"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Oct 2024 01:23:10 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 10 Oct 2024 01:22:57 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 10 Oct 2024 01:22:53 -0700
-From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<parthiban.veerasooran@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<Thorsten.Kummermehr@microchip.com>
-Subject: [PATCH net-next v4 7/7] net: phy: microchip_t1s: configure collision detection based on PLCA mode
-Date: Thu, 10 Oct 2024 13:52:05 +0530
-Message-ID: <20241010082205.221493-8-parthiban.veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241010082205.221493-1-parthiban.veerasooran@microchip.com>
-References: <20241010082205.221493-1-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1728548537; c=relaxed/simple;
+	bh=tizj/2ON0s8hivUUQyCrgL1oJjcxmvgQm6TBf2uFKgg=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=CS+RLspYmkEKHLDwT6YP/PSHB1XYHSIBnEseu7ED9oEhC9QiXSafypG3qVgQa5VlspxS7ZQ7Y745f2JSDn4/oROiOfIZZQy/mvjvJVmL1TgGZgqnjh8y3hKyHZAqpdXy7bHsTywIr1wK//jtlEQAJJTa2FYW3BgsICtxlmfcqiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a997736106fso82585266b.3;
+        Thu, 10 Oct 2024 01:22:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728548534; x=1729153334;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XvlJr187G3JHxibK82yYw/9HPt95/oKgkf6mzoCItII=;
+        b=SQmGsrjGlebx7YjnVNYCwgklQUzIMISnSHTOGWdJQzop9X1p5hhENu5lZ1YKQCkJYS
+         Laxcqydf7WglNF6cAGgZJLz2ChCbGeqEaVh2PjNASHjFjxfseQgdBqzLtaFf2tC+wzrt
+         xZsPCO1BullqV6S+fMEoq100X6/jZ5K/TVDDeLYbmxz36H9TjnTbPbuBUmpnOTBFLW1L
+         ph4wRa013aEEXEKM+G2lKJilFCpp4PMiHX+IvT6mYIea3jfPfu42YlighVEwRfo87WgM
+         uin/vjNDGB9Xu5NV/LSUsLiNTSG0z0I2cZ1pKzC9BM9d81ZG1s1dIsXtz+C6IJ+/U/gi
+         V4yA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYWdFAb7sjTSsn90XV4rdiPQFp5FPbkO4LHU9EE5QFgNvdJgik776Tdjff+p7tXVcK7x4xLISQ7Pafn9RE2d8JTw==@vger.kernel.org, AJvYcCWpsIGfuyLiaQX6BBiqn+zb/r9tebvZrhgT+c4UkePAKo7uljsaFCnuemFdgVihLGrbN5PElHSPWr9r8f4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWZuylN9o6yX67BqsQ9ACxNdx69iU6cfCbHtVt2iraacMH00/E
+	Mo5ajo4tgs/iLpROvuzARN5cPaAxAS3waRuPiI7VS8HlNoRDjXpg
+X-Google-Smtp-Source: AGHT+IHiN3Gv42KEmUmKtHPqHQ5zgyczqeId97dSe11yacg9/6ze108x42KbMIGZ1hck+90SND4WlA==
+X-Received: by 2002:a17:907:3e23:b0:a8d:2faf:d33d with SMTP id a640c23a62f3a-a998d10b6bcmr508633266b.9.1728548533917;
+        Thu, 10 Oct 2024 01:22:13 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f73acsm52270266b.224.2024.10.10.01.22.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 01:22:13 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------AXkDSbexvJUHvnO4YYt3tSde"
+Message-ID: <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
+Date: Thu, 10 Oct 2024 10:22:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
+ syscall ids in syscalltbl->entries
+To: Howard Chu <howardchu95@gmail.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20240705132059.853205-1-howardchu95@gmail.com>
+ <20240705132059.853205-2-howardchu95@gmail.com>
+ <6fe63fa3-6c63-4b75-ac09-884d26f6fb95@kernel.org> <ZtJWEVn8-w07Wm0q@x1>
+ <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org> <ZtYJ0z8f-1jwYSbV@x1>
+ <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
+ <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
+ <ZwYbQswnGHSstClc@google.com>
+ <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
+ <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
 
-As per LAN8650/1 Rev.B0/B1 AN1760 (Revision F (DS60001760G - June 2024))
-and LAN8670/1/2 Rev.C1/C2 AN1699 (Revision E (DS60001699F - June 2024)),
-under normal operation, the device should be operated in PLCA mode.
-Disabling collision detection is recommended to allow the device to
-operate in noisy environments or when reflections and other inherent
-transmission line distortion cause poor signal quality. Collision
-detection must be re-enabled if the device is configured to operate in
-CSMA/CD mode.
+This is a multi-part message in MIME format.
+--------------AXkDSbexvJUHvnO4YYt3tSde
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
----
- drivers/net/phy/microchip_t1s.c | 42 ++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+On 09. 10. 24, 8:58, Howard Chu wrote:
+> If Namhyung's fix alone does not solve the problem please try this:
 
-diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
-index d305c2b1fcd0..75d291154b4c 100644
---- a/drivers/net/phy/microchip_t1s.c
-+++ b/drivers/net/phy/microchip_t1s.c
-@@ -26,6 +26,12 @@
- #define LAN865X_REG_CFGPARAM_CTRL 0x00DA
- #define LAN865X_REG_STS2 0x0019
- 
-+/* Collision Detector Control 0 Register */
-+#define LAN86XX_REG_COL_DET_CTRL0	0x0087
-+#define COL_DET_CTRL0_ENABLE_BIT_MASK	BIT(15)
-+#define COL_DET_ENABLE			BIT(15)
-+#define COL_DET_DISABLE			0x0000
-+
- #define LAN865X_CFGPARAM_READ_ENABLE BIT(1)
- 
- /* The arrays below are pulled from the following table from AN1699
-@@ -371,6 +377,36 @@ static int lan867x_revb1_config_init(struct phy_device *phydev)
- 	return 0;
- }
- 
-+/* As per LAN8650/1 Rev.B0/B1 AN1760 (Revision F (DS60001760G - June 2024)) and
-+ * LAN8670/1/2 Rev.C1/C2 AN1699 (Revision E (DS60001699F - June 2024)), under
-+ * normal operation, the device should be operated in PLCA mode. Disabling
-+ * collision detection is recommended to allow the device to operate in noisy
-+ * environments or when reflections and other inherent transmission line
-+ * distortion cause poor signal quality. Collision detection must be re-enabled
-+ * if the device is configured to operate in CSMA/CD mode.
-+ *
-+ * AN1760: https://www.microchip.com/en-us/application-notes/an1760
-+ * AN1699: https://www.microchip.com/en-us/application-notes/an1699
-+ */
-+static int lan86xx_plca_set_cfg(struct phy_device *phydev,
-+				const struct phy_plca_cfg *plca_cfg)
-+{
-+	int ret;
-+
-+	ret = genphy_c45_plca_set_cfg(phydev, plca_cfg);
-+	if (ret)
-+		return ret;
-+
-+	if (plca_cfg->enabled)
-+		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-+				      LAN86XX_REG_COL_DET_CTRL0,
-+				      COL_DET_CTRL0_ENABLE_BIT_MASK,
-+				      COL_DET_DISABLE);
-+
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND2, LAN86XX_REG_COL_DET_CTRL0,
-+			      COL_DET_CTRL0_ENABLE_BIT_MASK, COL_DET_ENABLE);
-+}
-+
- static int lan86xx_read_status(struct phy_device *phydev)
- {
- 	/* The phy has some limitations, namely:
-@@ -432,7 +468,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan867x_revc_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- 	{
-@@ -442,7 +478,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan867x_revc_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- 	{
-@@ -454,7 +490,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.read_mmd           = lan865x_phy_read_mmd,
- 		.write_mmd          = lan865x_phy_write_mmd,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- };
+Hi,
+
+it obviously did not. But this one indeed does.
+
+> --- a/tools/perf/util/syscalltbl.c
+> +++ b/tools/perf/util/syscalltbl.c
+> @@ -46,6 +46,11 @@ static const char *const *syscalltbl_native =
+> syscalltbl_mips_n64;
+>   #include <asm/syscalls.c>
+>   const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
+>   static const char *const *syscalltbl_native = syscalltbl_loongarch;
+> +#else
+> +const int syscalltbl_native_max_id = 1;
+
+This ^^^ should be 0 IMO. Look:
+         for (i = 0; i <= syscalltbl_native_max_id; ++i)
+                 if (syscalltbl_native[i])
+                         ++nr_entries;
+
+> +static const char *const syscalltbl_native[] = {
+> +       [0] = "unknown",
+> +};
+>   #endif
+> 
+>   struct syscall {
+> @@ -182,6 +187,11 @@ int syscalltbl__id(struct syscalltbl *tbl, const
+> char *name)
+>           return audit_name_to_syscall(name, tbl->audit_machine);
+>   }
+> 
+> +int syscalltbl__id_at_idx(struct syscalltbl *tbl __maybe_unused, int idx)
+> +{
+> +        return idx;
+> +}
+
+This looks somewhat familiar :):
+https://lore.kernel.org/all/739001a4-4df1-4dec-a141-926c78c5c07e@kernel.org/
+
+I am attaching an updated patch.
+
+thanks,
 -- 
-2.34.1
+js
+suse labs
 
+--------------AXkDSbexvJUHvnO4YYt3tSde
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-perf-fix-non-listed-archs.patch"
+Content-Disposition: attachment;
+ filename="0001-perf-fix-non-listed-archs.patch"
+Content-Transfer-Encoding: base64
+
+RnJvbSAzZDRmMDZkNzljOTQ5YThmMTU1YzIwNjUyYjRmNjg1NTQwODk5YWQ0IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBKaXJpIFNsYWJ5IDxqc2xhYnlAc3VzZS5jej4KRGF0
+ZTogVGh1LCAxMCBPY3QgMjAyNCAwOTo1NzowNyArMDIwMApTdWJqZWN0OiBbUEFUQ0hdIHBl
+cmY6IGZpeCBub24tbGlzdGVkIGFyY2hzCgpTdWdnZXN0ZWQtYnk6IEhvd2FyZCBDaHUgPGhv
+d2FyZGNodTk1QGdtYWlsLmNvbT4KU2lnbmVkLW9mZi1ieTogSmlyaSBTbGFieSA8anNsYWJ5
+QHN1c2UuY3o+Ci0tLQogdG9vbHMvcGVyZi91dGlsL3N5c2NhbGx0YmwuYyB8IDEwICsrKysr
+KysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEv
+dG9vbHMvcGVyZi91dGlsL3N5c2NhbGx0YmwuYyBiL3Rvb2xzL3BlcmYvdXRpbC9zeXNjYWxs
+dGJsLmMKaW5kZXggN2MxNWRlYzY5MDBkLi42YzQ1ZGVkOTIyYjYgMTAwNjQ0Ci0tLSBhL3Rv
+b2xzL3BlcmYvdXRpbC9zeXNjYWxsdGJsLmMKKysrIGIvdG9vbHMvcGVyZi91dGlsL3N5c2Nh
+bGx0YmwuYwpAQCAtNDYsNiArNDYsMTEgQEAgc3RhdGljIGNvbnN0IGNoYXIgKmNvbnN0ICpz
+eXNjYWxsdGJsX25hdGl2ZSA9IHN5c2NhbGx0YmxfbWlwc19uNjQ7CiAjaW5jbHVkZSA8YXNt
+L3N5c2NhbGxzLmM+CiBjb25zdCBpbnQgc3lzY2FsbHRibF9uYXRpdmVfbWF4X2lkID0gU1lT
+Q0FMTFRCTF9MT09OR0FSQ0hfTUFYX0lEOwogc3RhdGljIGNvbnN0IGNoYXIgKmNvbnN0ICpz
+eXNjYWxsdGJsX25hdGl2ZSA9IHN5c2NhbGx0YmxfbG9vbmdhcmNoOworI2Vsc2UKK2NvbnN0
+IGludCBzeXNjYWxsdGJsX25hdGl2ZV9tYXhfaWQgPSAwOworc3RhdGljIGNvbnN0IGNoYXIg
+KmNvbnN0IHN5c2NhbGx0YmxfbmF0aXZlW10gPSB7CisJWzBdID0gInVua25vd24iLAorfTsK
+ICNlbmRpZgogCiBzdHJ1Y3Qgc3lzY2FsbCB7CkBAIC0xODIsNiArMTg3LDExIEBAIGludCBz
+eXNjYWxsdGJsX19pZChzdHJ1Y3Qgc3lzY2FsbHRibCAqdGJsLCBjb25zdCBjaGFyICpuYW1l
+KQogCXJldHVybiBhdWRpdF9uYW1lX3RvX3N5c2NhbGwobmFtZSwgdGJsLT5hdWRpdF9tYWNo
+aW5lKTsKIH0KIAoraW50IHN5c2NhbGx0YmxfX2lkX2F0X2lkeChzdHJ1Y3Qgc3lzY2FsbHRi
+bCAqdGJsIF9fbWF5YmVfdW51c2VkLCBpbnQgaWR4KQoreworCXJldHVybiBpZHg7Cit9CisK
+IGludCBzeXNjYWxsdGJsX19zdHJnbG9ibWF0Y2hfbmV4dChzdHJ1Y3Qgc3lzY2FsbHRibCAq
+dGJsIF9fbWF5YmVfdW51c2VkLAogCQkJCSAgY29uc3QgY2hhciAqc3lzY2FsbF9nbG9iIF9f
+bWF5YmVfdW51c2VkLCBpbnQgKmlkeCBfX21heWJlX3VudXNlZCkKIHsKLS0gCjIuNDYuMQoK
+
+
+--------------AXkDSbexvJUHvnO4YYt3tSde--
 
