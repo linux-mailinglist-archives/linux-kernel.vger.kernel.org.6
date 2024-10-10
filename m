@@ -1,86 +1,83 @@
-Return-Path: <linux-kernel+bounces-359853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CAF9991B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:05:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50F9999183
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA0DB2726B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672C21F25EBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D551CEEB9;
-	Thu, 10 Oct 2024 18:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6011F8929;
+	Thu, 10 Oct 2024 18:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0ZL8ssr"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bt57W1IZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502001E00B6;
-	Thu, 10 Oct 2024 18:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8281CEAC0;
+	Thu, 10 Oct 2024 18:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728585600; cv=none; b=t0cZiLriMxLC9CjioZcaB0FUNjGKqHeED4fh3ePiVp8JmlJ1dYbiLsZz7sYij2D1Lj3T/TYM0DS1oIog5c+7XtZlwlbxGIAmojjp10g28FVuyJVgPkzZIxpNKFjke3k3gJMLEssDknzmn+PyVimNWrMPm7C5c/BEcoYxGI15QO8=
+	t=1728585650; cv=none; b=sYr28Ds59zqo02EjmAdZ9OrLrzvPKNkfpHkIxNq8SqrEob425/FwDpoKeHWR3zAbCrJ/LvYWV5ivInua6fNZVibMvIX7EO+NiYvXY9ioAtQ5IsZ3WCFgxYFWfKLAsSoI3mUumNq5/GO840P8SgaXrMVWXQr/N87ZOFR51WQQ4mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728585600; c=relaxed/simple;
-	bh=vt0d7PTWUJpwYF67FaqTOwRZSMHKQVroP6ADdcxk0tk=;
+	s=arc-20240116; t=1728585650; c=relaxed/simple;
+	bh=8zyGryIG+8f37y9X6+jQKoGyj1yPV5E+vuAhGInmxiI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rm7miGOYM259oJpcyJf3cSsd12uyq7e7h2XIK+B+pc0o70fAY1bVXMC93B5LHDPynNVJU9QlM9EZf8ceovxe5/gUfPLJWkmfJvnwQIgPptXYnv7Fa4wzXtcURNXUaRLakjSNSDx7fUiQ56WSPKLT6CyNspdduGX8MrNuOhtROyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0ZL8ssr; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso911391a12.0;
-        Thu, 10 Oct 2024 11:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728585599; x=1729190399; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vt0d7PTWUJpwYF67FaqTOwRZSMHKQVroP6ADdcxk0tk=;
-        b=P0ZL8ssr3jRAvNxlUBtUo3448eaWMR3wWtRQfKOwfgaPRx61G33l/s9HGWQvVCo0V0
-         M5fz2IOeal/lTU7Pc7pfH8ZZqm5/2wbQ6z5pS+tc05RWM6NF043Hnxv1WYmHAB+PMmog
-         VHvckfLWTvg3i0xOj0+sQTSpjKuzhdXTWSbCMDDE1ojYA63C5mqa6rNkuu9CmwKa9ivh
-         fM2/MKuqtVwhzDgon10TcXkdiI/j+m2MbZPZ/R1Av9Y8mi4vbPUL0QbZkbytx6KwANSn
-         EIl3owY5avwrOjUD63neFc0ZHNBvefittlEkd3ixFREisK0kIZetJYD9M6ATLZZ+E/wa
-         T9VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728585599; x=1729190399;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vt0d7PTWUJpwYF67FaqTOwRZSMHKQVroP6ADdcxk0tk=;
-        b=kDJufvg0cVsD+pd/6b1EK+lyUsrKyckTICebDYIEgbMhF0lPJB20LMO0yAs+x11U7H
-         E+cSuUXktVkG81I6ATe9D5714OwSNE4nuTYpiceYbKB2J0ADAkP8DuEEdrMzgZEaTgnJ
-         cVuzcCu+mxs9mK5CznCGYyol5SvJaZbioNQEizoDaWzMjgBcbrVRe1ne1vIDhkuhGmNq
-         ivg/qrgddr9iO/7iMXncfEUigTOv1+atOEWRphW1HmGDOciYxobhxx9BklxM/2Lg4MIN
-         4Pzou2DQ+c9SZtm5BOYddwCIrpQ/7i0PYVZb6lWBtAayTAnaoebjoN1WDWM8v8WKjyju
-         qOpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXqpTGiBf9t1MD7DEbhS6cKHMoEUq9E+cnoNjzwe12fkNk/uBUzJXD4tuCJ8TRhZjwhhR50QtOZmdLd2tUq7093BYu3Q==@vger.kernel.org, AJvYcCWg4iFgwkB0TYpPaQcEDA34ohzgkDQvfhxmTxa7yP9LvJCyqfo5qsv69qJomIONIxEnyVZMlXQtEynnB7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznFfFhcXyStefzDb15lAhUNGVP1QrFZ/nE/PE2jFSneFq2ktjQ
-	l7zRqnkDBBwtFQmnnv39DyF83PFyAa/qMgk+LPE49xOQHmFd/Z3L
-X-Google-Smtp-Source: AGHT+IH68yKbuVbBykHvA5QRrX99U7UIh7JlELPRwWGopc9OZpqMcdOZLjwzgB7xwIE7KEFGDm9iIg==
-X-Received: by 2002:a17:90a:d90f:b0:2e0:b5c8:9ca2 with SMTP id 98e67ed59e1d1-2e2f0a971bamr148279a91.9.1728585598626;
-        Thu, 10 Oct 2024 11:39:58 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2e6ef1ad0sm681846a91.49.2024.10.10.11.39.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 11:39:58 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: ilpo.jarvinen@linux.intel.com
-Cc: Dell.Client.Kernel@dell.com,
-	hdegoede@redhat.com,
-	kuurtb@gmail.com,
+	 MIME-Version; b=IS83kcCeIlrlF04K9gVj8Sw5YfsrRKDIMbbLKfVSbcssFlGkciix0dQsjwxrBcYEFtWqZ4zBMq/wx4nsVcesI9AnUKtKuB60WH80mDy9YBrLNSoGOvPq4l741UNGVhud9SiQdqgr6itnAqjeFe1nWNkFdZqlLZwwoe9u20aCi3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bt57W1IZ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728585648; x=1760121648;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=8zyGryIG+8f37y9X6+jQKoGyj1yPV5E+vuAhGInmxiI=;
+  b=bt57W1IZ0LRfDDWGHBIYZI2+d3IwQ6xDXqWI/uqFR8s6Hb7q4xbFVtjv
+   QK9xjTApsW/Dj+BDzxI6VCCvs42fSR9RFW2I0J7vgJQ2AbKcuAuwj7v7M
+   esv/ajPTnHlXegBYpCngXpj9qOGNudXd3hivbxxSZa7LfaFrav307GCGK
+   27WlkhqD0bXxzIwSgiA5O/jgzaow8i6/nGsn9kqiTW67Pl4uJZCpFKKI3
+   PMJb5MX0KNFz9oSBlJ0XklNhojWOhkfycd3mxHbr5Yny6aMFjAHiwQocw
+   I0syqK9eR5jmpyWjhQ0AMtSIMrKwGnwHBDTCD0OemBwxFMGDqvmIzq93G
+   Q==;
+X-CSE-ConnectionGUID: W0CXof51TYiSEZIxOmz0mA==
+X-CSE-MsgGUID: vjvKMwi1RjaQ6F+CQ87qRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27415478"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="27415478"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 11:40:47 -0700
+X-CSE-ConnectionGUID: PvEJGH1rSJ2DMABBSKGV8A==
+X-CSE-MsgGUID: Wz80ePwJR/OsOjWgGi1q9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="76882872"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.124.223.143])
+  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2024 11:40:46 -0700
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3] alienware-wmi: Dell AWCC platform_profile support
-Date: Thu, 10 Oct 2024 15:39:53 -0300
-Message-ID: <20241010183953.13231-1-kuurtb@gmail.com>
+	ak@linux.intel.com,
+	linux@treblig.org
+Subject: [PATCH] perf report: Display columns Predicted/Abort/Cycles in --branch-history
+Date: Thu, 10 Oct 2024 13:40:46 -0500
+Message-ID: <20241010184046.203822-1-thomas.falcon@intel.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <b4746132-2282-3cb4-64f5-bc83afbcafae@linux.intel.com>
-References: <b4746132-2282-3cb4-64f5-bc83afbcafae@linux.intel.com>
+In-Reply-To: <Zwcg3ULyehsSODxF@google.com>
+References: <Zwcg3ULyehsSODxF@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,9 +86,267 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Thank you! I noticed the kernel thanks to the kernel robot too. I will
-be sure to add them in v4.
+The original commit message:
 
-Kurt
+"
+Use current sort mechanism but the real .se_cmp() just returns 0 so
+that new columns "Predicted", "Abort" and "Cycles" are created in display
+but actually these keys are not the sort keys.
+
+For example:
+
+Overhead  Source:Line   Symbol    Shared Object  Predicted  Abort  Cycles
+........  ............  ........  .............  .........  .....  ......
+
+  38.25%  div.c:45      [.] main  div            97.6%      0      3
+"
+
+Update missed commit from series "perf report: Show branch flags/cycles
+in --branch-history callgraph view" to apply to current repository so that
+new columns described above are visible.
+
+Link to original series:
+https://lore.kernel.org/lkml/1477876794-30749-1-git-send-email-yao.jin@linux.intel.com/
+
+Reported-by: Dr. David Alan Gilbert <linux@treblig.org>
+Suggested-by: Kan Liang <kan.liang@linux.intel.com>
+Co-developed-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Thomas Falcon <thomas.falcon@intel.com>
+Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+---
+ tools/perf/Documentation/perf-report.txt |   8 ++
+ tools/perf/builtin-report.c              |   6 +-
+ tools/perf/util/hist.c                   |   3 +
+ tools/perf/util/hist.h                   |   3 +
+ tools/perf/util/sort.c                   | 113 ++++++++++++++++++++++-
+ tools/perf/util/sort.h                   |   3 +
+ 6 files changed, 134 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index 7c66d81ab978..87f864519406 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -391,6 +391,14 @@ OPTIONS
+ 	This allows to examine the path the program took to each sample.
+ 	The data collection must have used -b (or -j) and -g.
+ 
++	Also show with some branch flags that can be:
++	- Predicted: display the average percentage of predicated branches.
++		     (predicated number / total number)
++	- Abort: display the number of tsx aborted branches.
++	- Cycles: cycles in basic block.
++
++	- iterations: display the average number of iterations in callchain list.
++
+ --addr2line=<path>::
+         Path to addr2line binary.
+ 
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 5dc17ffee27a..36b344e39dd6 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1271,6 +1271,10 @@ static int process_attr(const struct perf_tool *tool __maybe_unused,
+ 	return 0;
+ }
+ 
++#define CALLCHAIN_BRANCH_SORT_ORDER	\
++	"srcline,symbol,dso,callchain_branch_predicted," \
++	"callchain_branch_abort,callchain_branch_cycles"
++
+ int cmd_report(int argc, const char **argv)
+ {
+ 	struct perf_session *session;
+@@ -1639,7 +1643,7 @@ int cmd_report(int argc, const char **argv)
+ 		symbol_conf.use_callchain = true;
+ 		callchain_register_param(&callchain_param);
+ 		if (sort_order == NULL)
+-			sort_order = "srcline,symbol,dso";
++			sort_order = CALLCHAIN_BRANCH_SORT_ORDER;
+ 	}
+ 
+ 	if (report.mem_mode) {
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index f387e85a0087..fff134565801 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -218,6 +218,9 @@ void hists__calc_col_len(struct hists *hists, struct hist_entry *h)
+ 	hists__new_col_len(hists, HISTC_LOCAL_P_STAGE_CYC, 13);
+ 	hists__new_col_len(hists, HISTC_GLOBAL_P_STAGE_CYC, 13);
+ 	hists__new_col_len(hists, HISTC_ADDR, BITS_PER_LONG / 4 + 2);
++	hists__new_col_len(hists, HISTC_CALLCHAIN_BRANCH_PREDICTED, 9);
++	hists__new_col_len(hists, HISTC_CALLCHAIN_BRANCH_ABORT, 5);
++	hists__new_col_len(hists, HISTC_CALLCHAIN_BRANCH_CYCLES, 6);
+ 
+ 	if (symbol_conf.nanosecs)
+ 		hists__new_col_len(hists, HISTC_TIME, 16);
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 7d7ae94b4b31..1131056924d9 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -87,6 +87,9 @@ enum hist_column {
+ 	HISTC_TYPE_OFFSET,
+ 	HISTC_SYMBOL_OFFSET,
+ 	HISTC_TYPE_CACHELINE,
++	HISTC_CALLCHAIN_BRANCH_PREDICTED,
++	HISTC_CALLCHAIN_BRANCH_ABORT,
++	HISTC_CALLCHAIN_BRANCH_CYCLES,
+ 	HISTC_NR_COLS, /* Last entry */
+ };
+ 
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 013020f33ece..168c488f0178 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -677,6 +677,102 @@ struct sort_entry sort_sym_ipc_null = {
+ 	.se_width_idx	= HISTC_SYMBOL_IPC,
+ };
+ 
++/* --sort callchain_branch_predicted */
++
++static int64_t
++sort__callchain_branch_predicted_cmp(struct hist_entry *left __maybe_unused,
++				     struct hist_entry *right __maybe_unused)
++{
++	return 0;
++}
++
++static int hist_entry__callchain_branch_predicted_snprintf(
++	struct hist_entry *he, char *bf, size_t size, unsigned int width)
++{
++	u64 branch_count, predicted_count;
++	double percent = 0.0;
++	char str[32];
++
++	callchain_branch_counts(he->callchain, &branch_count,
++				&predicted_count, NULL, NULL);
++
++	if (branch_count)
++		percent = predicted_count * 100.0 / branch_count;
++
++	snprintf(str, sizeof(str), "%.1f%%", percent);
++	return repsep_snprintf(bf, size, "%-*.*s", width, width, str);
++}
++
++struct sort_entry sort_callchain_branch_predicted = {
++	.se_header	= "Predicted",
++	.se_cmp		= sort__callchain_branch_predicted_cmp,
++	.se_snprintf	= hist_entry__callchain_branch_predicted_snprintf,
++	.se_width_idx	= HISTC_CALLCHAIN_BRANCH_PREDICTED,
++};
++
++/* --sort callchain_branch_abort */
++
++static int64_t
++sort__callchain_branch_abort_cmp(struct hist_entry *left __maybe_unused,
++				 struct hist_entry *right __maybe_unused)
++{
++	return 0;
++}
++
++static int hist_entry__callchain_branch_abort_snprintf(struct hist_entry *he,
++						       char *bf, size_t size,
++						       unsigned int width)
++{
++	u64 branch_count, abort_count;
++	char str[32];
++
++	callchain_branch_counts(he->callchain, &branch_count,
++				NULL, &abort_count, NULL);
++
++	snprintf(str, sizeof(str), "%" PRId64, abort_count);
++	return repsep_snprintf(bf, size, "%-*.*s", width, width, str);
++}
++
++struct sort_entry sort_callchain_branch_abort = {
++	.se_header	= "Abort",
++	.se_cmp		= sort__callchain_branch_abort_cmp,
++	.se_snprintf	= hist_entry__callchain_branch_abort_snprintf,
++	.se_width_idx	= HISTC_CALLCHAIN_BRANCH_ABORT,
++};
++
++/* --sort callchain_branch_cycles */
++
++static int64_t
++sort__callchain_branch_cycles_cmp(struct hist_entry *left __maybe_unused,
++				  struct hist_entry *right __maybe_unused)
++{
++	return 0;
++}
++
++static int hist_entry__callchain_branch_cycles_snprintf(struct hist_entry *he,
++							char *bf, size_t size,
++							unsigned int width)
++{
++	u64 branch_count, cycles_count, cycles = 0;
++	char str[32];
++
++	callchain_branch_counts(he->callchain, &branch_count,
++				NULL, NULL, &cycles_count);
++
++	if (branch_count)
++		cycles = cycles_count / branch_count;
++
++	snprintf(str, sizeof(str), "%" PRId64 "", cycles);
++	return repsep_snprintf(bf, size, "%-*.*s", width, width, str);
++}
++
++struct sort_entry sort_callchain_branch_cycles = {
++	.se_header	= "Cycles",
++	.se_cmp		= sort__callchain_branch_cycles_cmp,
++	.se_snprintf	= hist_entry__callchain_branch_cycles_snprintf,
++	.se_width_idx	= HISTC_CALLCHAIN_BRANCH_CYCLES,
++};
++
+ /* --sort srcfile */
+ 
+ static char no_srcfile[1];
+@@ -2456,6 +2552,15 @@ static struct sort_dimension bstack_sort_dimensions[] = {
+ 	DIM(SORT_SYM_IPC, "ipc_lbr", sort_sym_ipc),
+ 	DIM(SORT_ADDR_FROM, "addr_from", sort_addr_from),
+ 	DIM(SORT_ADDR_TO, "addr_to", sort_addr_to),
++	DIM(SORT_CALLCHAIN_BRANCH_PREDICTED,
++		"callchain_branch_predicted",
++		sort_callchain_branch_predicted),
++	DIM(SORT_CALLCHAIN_BRANCH_ABORT,
++		"callchain_branch_abort",
++		sort_callchain_branch_abort),
++	DIM(SORT_CALLCHAIN_BRANCH_CYCLES,
++		"callchain_branch_cycles",
++		sort_callchain_branch_cycles)
+ };
+ 
+ #undef DIM
+@@ -3484,7 +3589,13 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
+ 		if (!sd->name || strncasecmp(tok, sd->name, strlen(tok)))
+ 			continue;
+ 
+-		if (sort__mode != SORT_MODE__BRANCH)
++		if ((sort__mode != SORT_MODE__BRANCH) &&
++			strncasecmp(tok, "callchain_branch_predicted",
++				    strlen(tok)) &&
++			strncasecmp(tok, "callchain_branch_abort",
++				    strlen(tok)) &&
++			strncasecmp(tok, "callchain_branch_cycles",
++				    strlen(tok)))
+ 			return -EINVAL;
+ 
+ 		if (sd->entry == &sort_sym_from || sd->entry == &sort_sym_to)
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index 9ff68c6786e7..a8572574e168 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -88,6 +88,9 @@ enum sort_type {
+ 	SORT_SYM_IPC,
+ 	SORT_ADDR_FROM,
+ 	SORT_ADDR_TO,
++	SORT_CALLCHAIN_BRANCH_PREDICTED,
++	SORT_CALLCHAIN_BRANCH_ABORT,
++	SORT_CALLCHAIN_BRANCH_CYCLES,
+ 
+ 	/* memory mode specific sort keys */
+ 	__SORT_MEMORY_MODE,
+-- 
+2.47.0
 
 
