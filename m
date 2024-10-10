@@ -1,79 +1,66 @@
-Return-Path: <linux-kernel+bounces-359204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4580B9988A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D239988A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E429C1F27DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C282866F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002401CB31B;
-	Thu, 10 Oct 2024 14:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700D1CBE86;
+	Thu, 10 Oct 2024 14:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P6maQH/W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyCLCPQF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA631BFDF7;
-	Thu, 10 Oct 2024 14:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2FC1C9EB4;
+	Thu, 10 Oct 2024 14:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568944; cv=none; b=mBSVcreOFsNZFn5VLSBqmAHAeSLMA3jpEw4yP7CXIN7MiC1YfE4z3HhYLawEAy3o8E6wMDU8LuZCzhbgzXBEO+y76Yd9KyeRQFJ1IQTinSWVd6m1fGISaz7M8iykWvIsGN9vemzUdxNSRZw4KcKLsyCoIorkefPjXGSVz8QnuUY=
+	t=1728568967; cv=none; b=OI9F+dQGJxmQJJ+b9ZFwKsi/9glmhz/YUT2HlaYS7pnV4m9x/hi211RodiqXUbyVVbOPiVfAiB1kjvf2wg/7qvsyr0gQrx5lCk/pJY9q9wha7RR+2Iu3r8sI7lHmz4sPNEY96ZBLTGCqbarlu3c3UULv0JkBaD8gZXrPtziOS8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568944; c=relaxed/simple;
-	bh=WgANwihm9KBwZ5LTDgL6K6TpZ4A9WaoqCH1uyV6Q22k=;
+	s=arc-20240116; t=1728568967; c=relaxed/simple;
+	bh=nS8LibFP7Uli0nM5nRHClR7oAA1za5RJPPtfXxGKNIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFLxQFjyVu6/Bn8gH43ZdK5JFHjGi1L8DiRvz/ukGT3xkCSn2POXpf+a6ISa2trTlr0Z8ffN6q/12uAjNdn0PjFoOLaMsMd2UUQ1QmIOzDSSmZU4RtOh2a3PI+X4J6YAurqXL8z4pPSKGjb256JpUjRiG7fxhyqXq6RKlFGMxPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P6maQH/W; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728568944; x=1760104944;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WgANwihm9KBwZ5LTDgL6K6TpZ4A9WaoqCH1uyV6Q22k=;
-  b=P6maQH/WesQB8MvAfxlUpA4t1OqmIlLDE4la+dqRsQxYTfRR9wmZ5cHf
-   ffd9EfLPEYdYFxEULmq7iYbRUjCuAc40Q/fIETAAslXP4y1fPVPZPUoJh
-   YkfsWmdxuRiY2y9d6pMudVqWckbN6OSycXdg13JcGmtjpOeTCcJKxdLbf
-   RaP9My8o0NDvPOgq8L5DHjhxNprs05X3gRUs/qpr/BGWZOJ+5XFpJSVRA
-   KBavVKj9kpQxMvgru63LTnR2PaPJEH4FYJr+UE2Wx0DgIYye0XCFSfRk1
-   MrFIRz6cDP/fce0xegQ0/Q/pkNf5HZ+bzXGEeaSvQvcvCJ8nEZ/580tAV
-   g==;
-X-CSE-ConnectionGUID: rWvcabtvTWeZnpq+cLZFmg==
-X-CSE-MsgGUID: dBQA/zDSQGiltX91sd4Skg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28059221"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="28059221"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:02:23 -0700
-X-CSE-ConnectionGUID: 2Ym4+BdvSXm1gEUOZMKBTA==
-X-CSE-MsgGUID: SvIH2XcoSXGgWcI2dFQefg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="107441181"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:02:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sytk9-00000001YUV-3yrw;
-	Thu, 10 Oct 2024 17:02:17 +0300
-Date: Thu, 10 Oct 2024 17:02:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jai Luthra <jai.luthra@ideasonboard.com>
-Subject: Re: [PATCH 11/13] media: i2c: ds90ub960: Handle errors in
- ub960_log_status_ub960_sp_eq()
-Message-ID: <ZwfeafBHg6Kgbh7G@smile.fi.intel.com>
-References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
- <20241004-ub9xx-fixes-v1-11-e30a4633c786@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiykE2MlSs83eb+dW4iCGTUng7Q2GSSla8J0odVA0r37wN/tHwmOyWWv21SAjM1Nsm4Y5YIGsHoXDX2JljyjsGwDY7f7DGWujuIrpyajAsn0Bg11LbaWYZr22XmbnGF1gWKH0G/VpZxxnAtuF30Qs3Lqh0+36IGf9Q41pIfDiC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyCLCPQF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CB0C4CEC5;
+	Thu, 10 Oct 2024 14:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728568966;
+	bh=nS8LibFP7Uli0nM5nRHClR7oAA1za5RJPPtfXxGKNIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MyCLCPQFAFlAiWOS7trGzk0UzeG3YI+swbEmRrvEDad7VftBx5duSlzfY4+dEJbys
+	 +dq2tKvvOYJppgxQSMoo4PYs7kvOQpCz/Rcfow918vppbKySYYELc47k3Z0/U4Kp0g
+	 v/6BhoXVnchbDLdycv89jMiUN6PK6vo8hO4ZL3pd+DbeGWeZGVkgPbvDPVyw14ov1i
+	 PPTE+z04jtrOrVLimy1dYHVMwnzfCYay1XdEYDTQc6ORqbK0WWf9T0RAM9NKGiFXux
+	 XEG2hoDnO9fDEjgC1c2otmofLK19h8loetz5O4yZ6LtTC9yQswPqu+ouhbLxMUZQ5E
+	 leMII6DEFfNDA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sytkh-000000005Pr-1g8e;
+	Thu, 10 Oct 2024 16:02:51 +0200
+Date: Thu, 10 Oct 2024 16:02:51 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
+Message-ID: <Zwfei-Jn6goiya4H@hovoldconsulting.com>
+References: <20241009161715.14994-1-johan+linaro@kernel.org>
+ <xwscnif4mqzykjinjtbr7jqsksy2buzindyttkk754jmumktm3@p5xxnmia7fxe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,36 +69,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004-ub9xx-fixes-v1-11-e30a4633c786@ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <xwscnif4mqzykjinjtbr7jqsksy2buzindyttkk754jmumktm3@p5xxnmia7fxe>
 
-On Fri, Oct 04, 2024 at 05:46:42PM +0300, Tomi Valkeinen wrote:
-> Add error handling for i2c read/write calls to
-> ub960_log_status_ub960_sp_eq()
+On Thu, Oct 10, 2024 at 04:54:19PM +0300, Dmitry Baryshkov wrote:
+> On Wed, Oct 09, 2024 at 06:17:15PM GMT, Johan Hovold wrote:
+> > The DWC PCIe controller can be used with its internal MSI controller or
+> > with an external one such as the GICv3 Interrupt Translation Service
+> > (ITS).
+> > 
+> > Add the msi-map properties needed to use the GIC ITS. This will also
+> > make Linux switch to the ITS implementation, which allows for assigning
+> > affinity to individual MSIs. This specifically allows NVMe and Wi-Fi
+> > interrupts to be processed on all cores (and not just on CPU0).
+> > 
+> > Note that using the GIC ITS on x1e80100 will cause Advanced Error
+> > Reporting (AER) interrupts to be received on errors unlike when using
+> > the internal MSI controller. Consequently, notifications about
+> > (correctable) errors may now be logged for errors that previously went
+> > unnoticed.
+> > 
+> > Also note that PCIe5 (and PCIe3) can currently only be used with the
+> > internal MSI controller due to a platform (firmware) limitation.
+> > 
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> > ---
+> > 
+> > The PCIe Gen4 stability fixes [1] are now in 6.12-rc1 so that we can enable
+> > the GIC ITS without being flooded with link error notifications [2].
+> 
+> Cc: <stable+noautosel@kernel.org> # Depends on driver stability fixes
 
-Missed period.
+This patch is enabling a new feature, it is not a fix, so Bjorn please
+do not include the above tag when applying.
 
-...
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
->  	u8 eq_level;
->  	s8 strobe_pos;
->  	u8 v = 0;
+But thanks for reviewing.
 
-With that change in place you may remove redundant assignments to 0 here
-and everywhere else where is not needed anymore.
-
-> +	int ret;
->  
->  	/* Strobe */
->  
-> -	ub960_read(priv, UB960_XR_AEQ_CTL1, &v);
-> +	ret = ub960_read(priv, UB960_XR_AEQ_CTL1, &v);
-> +	if (ret)
-> +		return;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Johan
 
