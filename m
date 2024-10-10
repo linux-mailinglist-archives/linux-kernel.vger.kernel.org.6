@@ -1,90 +1,145 @@
-Return-Path: <linux-kernel+bounces-358355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE03C997D8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:46:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C228E997D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91BE1C230AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:46:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3420B20B3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D751A38C2;
-	Thu, 10 Oct 2024 06:46:15 +0000 (UTC)
-Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2B32F50;
-	Thu, 10 Oct 2024 06:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F151A4F2B;
+	Thu, 10 Oct 2024 06:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="KX+mdnG/"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5333E1A01C6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728542775; cv=none; b=DqcRfD3EwK9hVRNL6hxum9Q6i2A6l/2ZWbCKODmXeUKspdz48rDzQIqpq5DtmTZ3Spq9TWE8ZNFR73FTVt09SuJRXmLxRdNN+oDeIsJX7vneyPcqbU9FuH4etWwPaQ0JSUYHKAQSQyhN0pRFDRHW6nM2CgMHrkpw5FLnOjPo/rE=
+	t=1728542870; cv=none; b=C6Xk7i/5+OkoaGBNQV931x6Wec+dtp+YBOR5nciqUNSXt/E9AmlrYcy9Yuk6P3RCDNuIwG0YxDeeX6NujrwwDuBvCJGX53tyes7zdJt+HmfdtNK0isYmTdRVMMBPBXluv3OTz1jzgp4nAcTKSu8vmXsM3Bl+TuDQKbs91Eaa6F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728542775; c=relaxed/simple;
-	bh=D5BRSPBPiILM4yEAvVbU5zoG52ij8jUvL4aJwkls0Jo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ie1Xz1X2LrY5Ct/5p/x+9RoDruOvq5Xjv/HrSPbapwgYCPfyWKSvZ1zt0htnIrWKHYrHmaCbuwXtBXlPWbscI8zVUHmjB30tLRwqz5Ll0sLgN5qNlNMgYPjLP0cNsIgRaYt0CgRUBTguUXM0K8kTka+5uboYEBZVVgZ32N4WTa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96707782a492-fb49f;
-	Thu, 10 Oct 2024 14:46:02 +0800 (CST)
-X-RM-TRANSID:2ee96707782a492-fb49f
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee167077828a81-3baa6;
-	Thu, 10 Oct 2024 14:46:02 +0800 (CST)
-X-RM-TRANSID:2ee167077828a81-3baa6
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: andrii@kernel.org
-Cc: eddyz87@gmail.com,
-	shuah@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com,
-	mykolal@fb.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Subject: [PATCH] selftests/bpf: Removed redundant variable
-Date: Wed,  9 Oct 2024 23:46:00 -0700
-Message-Id: <20241010064600.4574-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728542870; c=relaxed/simple;
+	bh=tHKOmblPX8wWLhgLOo8CPqJ8M9jXDYJnSLJvl7GpjB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuhXXdpbj88f7jZIsbA9wLueWzZcr1MyH2+MwQ49nPIF0q9CPoVw7MJeexYlhW9gzPhQSLP7SCgSvdNjWWmVA/cx2UJ8kO7kOh5mDqT/KYTGa+O11i38r624mFPvEgNkrz0pAiF3votH9f1APvb/+kfY0gi4hrj3XdIUYwZa9OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=KX+mdnG/; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7e9fd82f1a5so356355a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728542868; x=1729147668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=33F/qO1jWhb/z9QZCc7vqOINV1AdFFbOfnQtd2l6oAE=;
+        b=KX+mdnG/8CIwLKgktALcD0tDiWXvnXzAKc07336uK5oSDFhHaKIJrTuyR5AP/ZaM8X
+         9bUB7C4JBAFdaqTlQj523C0cDOf/9HV/p6zgAdktzQi0WpzRd8GCde5rWOIOBAc9EcwL
+         zCx9p2hgLXdNic3yHe1ads1+r7oHfrPmSSXXus+rp8u8gtNG3fPX/qrRcE835R4b45do
+         t52ek7LJL/b6DKDv0ngWzzROZq4svWo4owazQnVitlAgmWQzMcT14nnI4QOHKFqwX2Ur
+         DdYcGWgJ1cR7rv97mrayxT3cSmD1n0qpwp1eqWj+CxBSpRtnO99wL64/bxH7mA8YOyVR
+         TvTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728542868; x=1729147668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=33F/qO1jWhb/z9QZCc7vqOINV1AdFFbOfnQtd2l6oAE=;
+        b=Mu04TDcjgymk/7HQbg6H5JCazC2eYxCTZInPXqp9sySLqi3jzJDsnM2D6MgBNDXOtF
+         hg1PFMMDd0RdW7Tn9sZ7uKWW0RHvWVIb1/qcsmOYkELYmzLt2wc6Wbp36PCkmROakuiX
+         W3Vjxrz/WORAlqOTCfonBEf8usSGmRHwHOyxxiaY0mf+rjv5RHQ+dTqZZTUsiKuyblQF
+         hHe4V5UYipnKkxt+5U1o4cIY8ArFb6Yj8N9NFVpMUrcAFpnz6Q2W0QDNW8bi7PuCEoHR
+         GWHsjCqge1gJVisJNcTH+gD+Cq78rOCfyE5Nitu6h8kDWgBEIid0+oD22/xCxavi8GRQ
+         TZxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1ifzXF89362RefIEBk7y+nHkE917XnakRsE7OGxO4n9UcpqOyawhN3p7/ligFQPPIj0IYqfW/8pRM8kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzExjUHtKMrf/jNaPUn7V4VG1By7DSLDE9Em88rGUIuu2JoCAJi
+	W5F/oqleBaA2oCDvbCmmFRbRrq3o44Q0zVfMxbP3Bo6CYIj9YAroKC1jK+BBS5o=
+X-Google-Smtp-Source: AGHT+IEgUc4JwOQEFIr4+Uu9TrvsM9ik9NQZ6rVUYqg5KibEvwonxSBx64smuK3WsnJ9Ka0B0r8fYA==
+X-Received: by 2002:a05:6a21:1583:b0:1d7:11af:6a with SMTP id adf61e73a8af0-1d8a3c4be3amr7324895637.37.1728542868540;
+        Wed, 09 Oct 2024 23:47:48 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.238.28])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71e2aa93dd2sm424402b3a.119.2024.10.09.23.47.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 23:47:48 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3] drm/xe/guc: Fix dereference before NULL check
+Date: Thu, 10 Oct 2024 00:46:34 -0600
+Message-ID: <20241010064636.3970-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The error check is no longer needed for this test case,
-simplifying the code.
+The pointer list->list is dereferenced before the NULL check.
+Fix this by moving the NULL check outside the for loop, so that
+the check is performed before the dereferencing.
+The list->list pointer cannot be NULL so this has no effect on runtime.
+It's just a correctness issue.
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+This issue was reported by Coverity Scan.
+https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
+
+Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
 ---
- tools/testing/selftests/bpf/prog_tests/signal_pending.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V2 -> V3: - Changed Null to NULL in the changelog
+          - Corrected typo in the changelong
+          - Added more description to the changelong
+	  - Fixed the link for Coverity Report
+	  - Removed the space after the Fixes tag
+V1 -> V2: - Combined the `!list->list` check in preexisting if statement
+	  - Added Fixes tag 
+	  - Added the link to the Coverity Scan report 
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/signal_pending.c b/tools/testing/selftests/bpf/prog_tests/signal_pending.c
-index 70b49da5ca0a..8920fadb3aa9 100644
---- a/tools/testing/selftests/bpf/prog_tests/signal_pending.c
-+++ b/tools/testing/selftests/bpf/prog_tests/signal_pending.c
-@@ -36,7 +36,7 @@ static void test_signal_pending_by_type(enum bpf_prog_type prog_type)
- 	err = setitimer(ITIMER_REAL, &timeo, NULL);
- 	ASSERT_OK(err, "test-run-signal-timer");
+ drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
+index 41262bda20ed..947c3a6d0e5a 100644
+--- a/drivers/gpu/drm/xe/xe_guc_capture.c
++++ b/drivers/gpu/drm/xe/xe_guc_capture.c
+@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+ {
+ 	int i;
  
--	err = bpf_prog_test_run_opts(prog_fd, &topts);
-+	bpf_prog_test_run_opts(prog_fd, &topts);
- 	ASSERT_LE(topts.duration, 500000000 /* 500ms */,
- 		  "test-run-signal-duration");
+-	if (!list || list->num_regs == 0)
++	if (!list || !list->list || list->num_regs == 0)
+ 		return;
  
+ 	if (!regs)
+@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+ 		struct __guc_mmio_reg_descr desc = list->list[i];
+ 		u32 value;
+ 
+-		if (!list->list)
+-			return;
+-
+ 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
+ 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
+ 		} else {
 -- 
-2.17.1
-
-
+2.43.0
 
 
