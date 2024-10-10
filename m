@@ -1,153 +1,206 @@
-Return-Path: <linux-kernel+bounces-359258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68178998971
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627B0998976
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB78281F2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56D01F25D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73681CC175;
-	Thu, 10 Oct 2024 14:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DE1CC8BF;
+	Thu, 10 Oct 2024 14:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="THu5v9dm"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8nEFLhJ"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32111CC16A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99401CC16A;
+	Thu, 10 Oct 2024 14:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570110; cv=none; b=Qvu+nsXbO8AY8XsD8JNZmJZQIHwvPU8s+oyqtp61KmOcyQUzxL+5EurXGMIeNDfAEKSl7JZ9/3i+4BQ/Cy3FnxtzyLFu+IGi7dbMgUTXYTjlhS9S65HoicuZZy+k6Fabnq0LeADpN6kqGOJExCNK/iHR41GvpXFm83wG6Z7siLk=
+	t=1728570118; cv=none; b=PRxzQZukGJqwGY22KapV4b9aLYtl/7lXS0q4LH7qRvV3o8A8CBQnT29OnW3tsTWcjikU7wrauIrbbfvnQJOMsB49Oov8V/H/8s8ZFZPgxYasKsmI2fdW05iCFsAdt2G4H8GZm82KJCxupA4OQlEVHygzuvKduhyN+HbKQLZOBtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570110; c=relaxed/simple;
-	bh=Pn+/ovAfKzaZgF1lOOQemSoa3w7I63F4I3qtxW0337Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RqbDc3TOvOkQOcoJgtQFP+IWPZTxKpLPiTMJN7RTZZv4xLTYycyP3PzxCx5z+lxf4lQ72ISJii6GKzXcOjnwqB+hXEZpmWjweXD2WI0jgtVgSh95HYUBa7903om2K7aBHAMzJZQH+L+39c7L1tZV5xNCijBlV3VPLIbWPBsCVKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=THu5v9dm; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460464090d5so4278151cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:21:48 -0700 (PDT)
+	s=arc-20240116; t=1728570118; c=relaxed/simple;
+	bh=2vsd0t36CysrdnUXJ1Tyy2GMPfaxOitsHFsmsVwjl8o=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=mgDFmS99fbd+w97C7fC8lJCqH27vEZMTQL6s5nCpaTGh4cUiY7YTKNds4Ym2b6t4j2xM3+Nr4OMf71cFYkjfbBmAUx6kxu+YJRav6/ii9BuevdgVxV4H4MFWRMBFaekPpvIUGS+1WrANWTlivhLPyLQVG8HFFl7X9sBoKPdH4GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8nEFLhJ; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbd550b648so8361146d6.0;
+        Thu, 10 Oct 2024 07:21:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1728570108; x=1729174908; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vtQNH6rvFcrdxN4zHa126S8BT47FK08wSbNoHwbhRl0=;
-        b=THu5v9dmI28MJFTQc4Ws0lmriBo44cwiS+kcTBpct3vKr65hdmxTCm7XmxDpcD3vGY
-         712FO30yPRA4XizJigNhRDoxF2Y9Wqvu9fAZlwJ6tbpkHkr/dNf5OGAAay0lqpgz0zi7
-         fhC9A02nuJzcnpPngUbh65iCAsx11KDl6MKM9uL7ooatlvuvOS5X4ESWroEOOScikla7
-         leaKPIljZAWH6akBgVf8awbU/V9pBWAsgpGjqU16tAPTpdvVDGYT0iY9GGpqOANnxL8o
-         UHPkfgpb/qEsPQVBSFKm6yHFtb0TekkeIoUCfrnDvZy1TDuWZOwjKoZT6u93kuEXAF4P
-         d5QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728570108; x=1729174908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728570116; x=1729174916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vtQNH6rvFcrdxN4zHa126S8BT47FK08wSbNoHwbhRl0=;
-        b=SH0CYpCE1PZxgAMq2kZvZVGCAP7Mt4BWLhYgNlRfUFaAxdtYk9B9wvaEOzE7MCNHCZ
-         cN5wsSm2v+4/Mj+3tw09NYuoUsu32eWEeBkZOGkRFOMVEg/eDJYkm5+aoA4D5mZcvtWq
-         aNB/S5WVwVT65S8WBqU+gbwACPYdWWfjk0f2BdQ6YLf5ME7tAU6rXc5yEX7WLOy4ECP+
-         eOH2mIL1yZaP+0+FbZbFEJxYaYAi2jeNa0GFqatCLXXrfc6qpivSFUn+/LrbMYLnm8lS
-         qLNS4A76bNRKnc/dr6hB+qypw5XNQ/02zaukZID6feegcqeigkSvVwt7wcOfvGl6GDLb
-         5Dbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuVu2sV0+nUDSUotHDfuqpaH2p09+wyleTcJLXNNnn86YUICtCHiB7vRUpwBipkc2S5ywDLGMHhyiCzpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAv4EqsqSakOEftUoSN/wtx9IIdTM+WqkPqBwtwkyZemdSEzlS
-	17OeP9aB0VMBUnyvu4bFejB4inKeveb47zaFpKOkoDas2BLJU8DhsnOcBHSBBQ==
-X-Google-Smtp-Source: AGHT+IE+UsnOG49Pq5AyS2xIUjW9P9DXzZJGhEQefQupzSZHTswqoW16lQIgXA8ZNNhcWysuNuhDWQ==
-X-Received: by 2002:ac8:7d46:0:b0:44f:f14c:6a63 with SMTP id d75a77b69052e-45fa5ec0fe9mr96443611cf.11.1728570107392;
-        Thu, 10 Oct 2024 07:21:47 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::31c2])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460427d5178sm5748291cf.25.2024.10.10.07.21.45
+        bh=LPYW2o7+IDp4rOpsXb7mw7n6T5iIMPfjZI8VNMH0Y/k=;
+        b=Z8nEFLhJ0Gx8W80UkLQV5ccTlzWHFk6hDajutTXbdZw1EP4jRrVMv14CEVXx7JHW/J
+         zvhV7XMiut6tZARdgNo13eTzouh/m+1gO4iTqKNI0aG9wh+ajSU3mKl2h5Mvx98mt2jg
+         q7+AA7mfkfsKiTHQlJVF4pH+eH/3jO0UVVNAi98Zb5gtk/jRJrgiW6Efx2Mz3iJJzykk
+         smVye3bBLvSV4JZfxS3X9Z17HLrX1OzcLaO+6jtrgkjkD5D2R8c1hA/6OZbw52JCpY84
+         8kl2FrBLY/N4S4kZcu/BGv91nbX7JV4bLo5JnSGhKPB1sEvpmseGGIP55OmAeaZuYG8V
+         QD/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728570116; x=1729174916;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LPYW2o7+IDp4rOpsXb7mw7n6T5iIMPfjZI8VNMH0Y/k=;
+        b=uW2yNJD9bomzIKFJSVriM11nOWkl7ldSgiiz4cAn7aRzpfTHaOPcbXRpwRwCvU0Qap
+         RyHHSSHMLdcN7IXULYridtqU7dUQoB0Dc9JZqEnQsyBkXs+5yMcdyqbJ3+sv2slb1Oru
+         8OpVFyObE0n4eAraVboU+iw0xnUkPoiyQ8eYBWQ1MqoE5GJH3UZcWunDaMsN0wnaHF25
+         0SJJ+V0V3HXKqCmor9lzMAvQWxW8DP7PURGZrF3gNUycHbjXutmiLsm+oB0mdi6rymzk
+         PfrYVz9c1jqyXEtFbxFx53NUdACK5nT8QRD3yv8OQY8+UJXBw+Lu5AM91g6UObe1or3S
+         jc7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVylv1NysJNstzY0Ny7eI2ZbwSy9tYPIUkvjMhePG3WW0PiVdl2fhAN3VTgQc7X8EH5Rih1L9cii0POMzA=@vger.kernel.org, AJvYcCW5RHhGKeZMBCDJbXdILYz0y0sUsSS7TSpl0QqawnNOFCy/WLBi1hjJ9qBXd7raQVr1nke1naQ6@vger.kernel.org, AJvYcCXnqW2t/wkYUfCiJu6uQTGUrWXN6hejuyO+mMTE43C8U0XJ3U0/gUyKd4qC/+VqqlfVhlRg6ufsvA9WEyr0LcM0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3AqhSjOuCd+EY2KGwZN5Ysxxs2Lhx2siF/VA5ZJD8A+sxCjZ7
+	kXLaKVCKALX4CSoxyJE5r7wJAnGugytSIAGY5z63mN/t6On0ajtB
+X-Google-Smtp-Source: AGHT+IFszecyh01yRjn3IjHo2xSKpUGZZUn/kb84GZw7t3EC/g+95JBcJwuHw+JiRcZY5AMyqzPYBQ==
+X-Received: by 2002:a05:6214:5684:b0:6cb:e52c:c8dd with SMTP id 6a1803df08f44-6cbe52cc95fmr44852066d6.53.1728570115612;
+        Thu, 10 Oct 2024 07:21:55 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8679d3csm5669956d6.137.2024.10.10.07.21.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 07:21:47 -0700 (PDT)
-Date: Thu, 10 Oct 2024 10:21:43 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: duanchenghao <duanchenghao@kylinos.cn>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Hongyu Xie <xy521521@gmail.com>, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz,
-	stanley_chang@realtek.com, tj@kernel.org,
-	Hongyu Xie <xiehongyu1@kylinos.cn>
-Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
- USB status when S4 wakes up
-Message-ID: <d70e070f-5224-402c-ac27-0703b4010b18@rowland.harvard.edu>
-References: <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
- <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
- <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
- <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
- <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
- <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
- <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
- <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
- <2c368013-8363-4a4e-bfee-2f0b14d01162@rowland.harvard.edu>
- <5f2f6b979e95e4c2bc33ea0277112939164f6024.camel@kylinos.cn>
+        Thu, 10 Oct 2024 07:21:55 -0700 (PDT)
+Date: Thu, 10 Oct 2024 10:21:54 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Gur Stavi <gur.stavi@huawei.com>, 
+ 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ pabeni@redhat.com, 
+ shuah@kernel.org
+Message-ID: <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch>
+In-Reply-To: <002701db1ae3$368d9b70$a3a8d250$@huawei.com>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch>
+ <20241009065837.354332-1-gur.stavi@huawei.com>
+ <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch>
+ <002201db1a75$9a83b420$cf8b1c60$@huawei.com>
+ <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch>
+ <002701db1ae3$368d9b70$a3a8d250$@huawei.com>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket
+ is not RUNNING
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f2f6b979e95e4c2bc33ea0277112939164f6024.camel@kylinos.cn>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 01:59:08PM +0800, duanchenghao wrote:
-> Hi Alan,
+Gur Stavi wrote:
+> > Gur Stavi wrote:
+> > > > Gur Stavi wrote:
+> > > > > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct sock *sk,
+> > > > struct fanout_args *args)
+> > > > > >>  	err = -EINVAL;
+> > > > > >>
+> > > > > >>  	spin_lock(&po->bind_lock);
+> > > > > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> > > > > >> -	    match->type == type &&
+> > > > > >> +	if (match->type == type &&
+> > > > > >>  	    match->prot_hook.type == po->prot_hook.type &&
+> > > > > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
+> > > > > >
+> > > > > > Remaining unaddressed issue is that the socket can now be added
+> > > > > > before being bound. See comment in v1.
+> > > > >
+> > > > > I extended the psock_fanout test with unbound fanout test.
+> > > > >
+> > > > > As far as I understand, the easiest way to verify bind is to test
+> > that
+> > > > > po->prot_hook.dev != NULL, since we are under a bind_lock anyway.
+> > > > > But perhaps a more readable and direct approach to test "bind"
+> > would be
+> > > > > to test po->ifindex != -1, as ifindex is commented as "bound
+> > device".
+> > > > > However, at the moment ifindex is not initialized to -1, I can add
+> > such
+> > > > > initialization, but perhaps I do not fully understand all the
+> > logic.
+> > > > >
+> > > > > Any preferences?
+> > > >
+> > > > prot_hook.dev is not necessarily set if a packet socket is bound.
+> > > > It may be bound to any device. See dev_add_pack and ptype_head.
+> > > >
+> > > > prot_hook.type, on the other hand, must be set if bound and is only
+> > > > modified with the bind_lock held too.
+> > > >
+> > > > Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD also
+> > > > succeeds in case bind() was not called explicitly first to bind to
+> > > > a specific device or change ptype.
+> > >
+> > > Please clarify the last paragraph? When you say "also succeeds" do you
+> > > mean SHOULD succeed or MAY SUCCEED by mistake if "something" happens
+> > ???
+> > 
+> > I mean it succeeds currently. Which behavior must then be maintained.
+> > 
+> > > Do you refer to the following scenario: socket is created with non-zero
+> > > protocol and becomes RUNNING "without bind" for all devices. In that
+> > case
+> > > it can be added to FANOUT without bind. Is that considered a bug or
+> > does
+> > > the bind requirement for fanout only apply for all-protocol (0)
+> > sockets?
+> > 
+> > I'm beginning to think that this bind requirement is not needed.
+> 
+> I agree with that. I think that is an historical mistake that socket
+> becomes implicitly bound to all interfaces if a protocol is defined
+> during create. Without this bind requirement would make sense.
+> 
+> > 
+> > All type and dev are valid, even if an ETH_P_NONE fanout group would
+> > be fairly useless.
+> 
+> Fanout is all about RX, I think that refusing fanout for socket that
+> will not receive any packet is OK. The condition can be:
+> if (po->ifindex == -1 || !po->num)
 
-> Thank you very much for your evaluation of the scheme. I have a
-> question regarding why the set_bit operation for the
-> HCD_FLAG_WAKEUP_PENDING flag is performed in the top half of an
-> interrupt handler, while the clear_bit operation is done in the bottom
-> half. This seems to contradict conventional practices. The issue is not
-> limited to S4; if other processes freeze the work queue in the bottom
-> half, the same problem may arise.
+Fanout is not limited to sockets bound to a specific interface.
+This will break existing users.
 
-The flag is treated this way because that's what it means: A wakeup is 
-pending.  The kernel first learns about the wakeup when it receives the 
-wakeup interrupt from the host controller, so that's when it sets the 
-flag -- in the top half of the interrupt handler.  The wakeup procedure 
-isn't complete until the root hub has been resumed, so the flag remains 
-set until that resume is finished, in the bottom half.
+Binding to ETH_P_NONE is useless, but we're not going to slow down
+legitimate users with branches for cases that are harmless.
 
-You say "the same problem may arise", but I don't think it is a problem.  
-If the system is about to suspend the host controller with wakeups 
-enabled, and a wakeup request has already been received but the system 
-has not yet finished acting on it, then the suspend _should_ fail.  
-After all, if the wakeup interrupt had arrived just after the host 
-controller was suspended rather than just before, it would have caused 
-the host controller to be resumed right away -- with exactly the same 
-effect as if the controller had never been suspended in the first place.
+> I realized another possible problem. We should consider adding ifindex
+> Field to struct packet_fanout to be used for lookup of an existing match.
+> There is little sense to bind sockets to different interfaces and then
+> put them in the same fanout group.
+> If you agree, I can prepare a separate patch for that.
+> 
+> > The type and dev must match that of the fanout group, and once added
+> > to a fanout group can no longer be changed (bind will fail).
+> > 
+> > I briefy considered the reason might be max_num_members accounting.
+> > Since f->num_members counts running sockets. But that is not used
+> > when tracking membership of the group, sk_ref is. Every packet socket
+> > whose po->rollover is increased increases this refcount.
+> > 
+> > > What about using ifindex to detect bind? Initialize it to -1 in
+> > > packet_create and ensure that packet_do_bind, on success, sets it
+> > > to device id or 0?
+> > >
+> > > psock_fanout, should probably be extended with scenarios that test
+> > > "all devices" and all/specific protocols. Any specific scenario
+> > > suggestions?
+> > >
+> > >
+> > 
+> 
+> 
 
-> The solution you described below should be able to resolve the current
-> S4 issue, but for now, we haven't identified any other scenarios that
-> require the same operation.
-
-Perhaps because there aren't any.
-
->  Based on my understanding, the USB device
-> is woken up in the bottom half of the interrupt,
-
-You are failing to distinguish between the host controller and the root 
-hub.  The host controller (which is a PCI device on your system, not a 
-USB device) is woken up in the top half of the interrupt handler.  The 
-root hub (which is a virtual USB device) is woken up in the bottom half.  
-Both operations have to occur before the wakeup can be considered fully 
-complete.
-
->  and both the set_bit
-> and clear_bit operations for the HCD_FLAG_WAKEUP_PENDING flag should be
-> executed within the same thread in the bottom half. May I ask if there
-> are any other reasons why the set_bit is executed in the top half?
-
-Because the root hub's wakeup becomes pending when the host controller 
-is resumed, in the top half.
-
-Alan Stern
 
 
