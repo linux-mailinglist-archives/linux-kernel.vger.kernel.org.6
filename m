@@ -1,127 +1,201 @@
-Return-Path: <linux-kernel+bounces-358344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72997997D70
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:38:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12D2997D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21251C217F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:38:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43E12B2217B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A9A1BDA87;
-	Thu, 10 Oct 2024 06:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8880E1BE238;
+	Thu, 10 Oct 2024 06:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SAw5QFwW"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nh7c8DBq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE47E1BCA12;
-	Thu, 10 Oct 2024 06:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5EE1A4E70;
+	Thu, 10 Oct 2024 06:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728542190; cv=none; b=LyEMiJee3CU9Kh3nnG/zMEDWZblx2p+EW3v17e+/q+wrMzsudJqmB24Jx/lSPc+3/3fgSnXw2hNA7IL9N1daS35wB49sV7Bfae6JsRQUiUg5awPWqH1JIHTcKnyGElYF0HTn3fXngIC6qfcaYxD6+F4Q7UG1VNxPfL788Bi4TMo=
+	t=1728542195; cv=none; b=I+W8IIiWijHDjyFFsKbkBeRIXWSecMzC8EtzuP+oWweoCdUeAdFPonpHU1ewuZQm8jKkv6aGazfLO4vJSFakYS1WHa//7Al3uTZYyH7H5UxwFOIlgwL8phAFstgP15E1i2rVoHRbb+81+NEZKcEQIZD/Sh9vJec1gRkV4E7zREk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728542190; c=relaxed/simple;
-	bh=rFTXzuJcR06ddN4070uzIzRRC/MmzJK4wQKN2A4qj28=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DF7FdrS97tI96NhplDXsDdJpHwiEdk5iKehlp3HunODz2vJ/BkBsRFYK5DiBKhun0BsrZEFgPZ8WOAq1xYAVAnZsiiIJzK+g2lMmhDmYZ+ILYrzfFB53afmlZvfvMldx0GJA1WET0OmQsaqb6lfJyg2kIZq0HlSZlwFPmpk1QsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SAw5QFwW; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 93C501C000A;
-	Thu, 10 Oct 2024 06:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728542186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jyXjSeqKBZyL71QqcutV8ArwuYnG2LnYxkOoexou8f4=;
-	b=SAw5QFwWtCqakeFSSXijueLg5UFPgJSeXs1ItqWiSp7X34pAIYTX1H3Rhjy7//iyKt2WW1
-	zALsDelHFyuLLZpax7RjGsRPCCcOLCWCcUB2reU6g+kQNkuZJ6OniIBVTE1lKtA08uczXD
-	7wFEWCa7KICN8nq8yw9RjgvhF826WPBS3Gr0mn5pH8RfUJifztCc0O69boZGMFeJjyStGB
-	xJxlH54ubDc0CfoRyq7a2JPM90x++Wv8oOhx2rPxlTCKx9KurMpuXF/UIJJB/ZUX8cVZJS
-	CzhxMmm+mpz2OFHZ1rJh8/8NTzWp/SmGL5kUuiTSrFa74k292pO5ScU2AzXc5w==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH v9 6/6] reset: mchp: sparx5: set the dev member of the reset controller
-Date: Thu, 10 Oct 2024 08:36:06 +0200
-Message-ID: <20241010063611.788527-7-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241010063611.788527-1-herve.codina@bootlin.com>
-References: <20241010063611.788527-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1728542195; c=relaxed/simple;
+	bh=Z8fQrFMb1nC2PllT4QPZ4bs2pAcDaZjow0DEtkXPWf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RC5qzjJ9fxUENkJg1vEvWJBgkNRbQXMCclW6HFuVdgaIZDMsKWAGxoDDKIRg8fWTzXZOL99WoXpegiNv9F0n9lShaSkoOy+hsyvaKtoey3BHAKkZcYPvfXji75t28l2IErpCvvFTfYAWVP39xpM7Cula1MK74tFplMANrY/uXWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nh7c8DBq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A3pIoG010146;
+	Thu, 10 Oct 2024 06:36:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=GNW3p+7Wz9sS0n4wzd7TtvZAPmM+ukeiwy0LXzh
+	ZIjk=; b=Nh7c8DBqoSt8QTan+QntAY49BRCH6ruGLSXjoe/hjnim/0qVba/F/tJ
+	q4XxIKxqFsSjNvaji5c1BiqU7v43nQiqe9DaUH6uknxPBgyqo/bpCvTmBMEF20hG
+	RWZLfFvENLyr5fK3DobVD7ruMw6h3xOq5480wHsifBHD/LkxPunjZFIzvOSiItsr
+	rgq7JIXfP8tfjXN2FgoopC2K7g8Ap5L2yq9twf1z650hrEYtcAT3exh+kRa5V110
+	7AnuvEdhmWDPdoje1r8miuJ1Y3tW9pNYLOc0kR8OLpr7Tr6AYOZLxqTX/AuyTf/6
+	BjNHwRY/rTiNv2E3uZH6RH3UwsSiREQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4267cmrnqq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 06:36:25 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49A6aOi9015491;
+	Thu, 10 Oct 2024 06:36:24 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4267cmrnqk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 06:36:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49A5c7LD030253;
+	Thu, 10 Oct 2024 06:36:23 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsmx6rk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 06:36:23 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49A6aLEx50528516
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 06:36:21 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 31A6E20043;
+	Thu, 10 Oct 2024 06:36:21 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A52D920040;
+	Thu, 10 Oct 2024 06:36:19 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.124.218.86])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 10 Oct 2024 06:36:19 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-xfs@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, dchinner@redhat.com,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2] xfs: Check for deallayed allocations before setting extsize
+Date: Thu, 10 Oct 2024 12:06:17 +0530
+Message-ID: <20241010063617.563365-1-ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: qidPp17v_4s5F_VQrIWY4jy3t4YuS-Hg
+X-Proofpoint-GUID: Q69WZaTvzXS055WeCCu9XuG0bpscRHNI
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_03,2024-10-09_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=811 mlxscore=0 spamscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410100040
 
-From: Clément Léger <clement.leger@bootlin.com>
+Extsize is allowed to be set on files with no data in it. For this,
+we were checking if the files have extents but missed to check if
+delayed extents were present. This patch adds that check.
 
-In order to guarantee the device will not be deleted by the reset
-controller consumer, set the dev member of the reset controller.
+While we are at it, also refactor this check into a helper since
+its used in some other places as well like xfs_inactive() or
+xfs_ioctl_setattr_xflags()
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+**Without the patch (SUCCEEDS)**
+
+$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+
+wrote 1024/1024 bytes at offset 0
+1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+
+**With the patch (FAILS as expected)**
+
+$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+
+wrote 1024/1024 bytes at offset 0
+1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 ---
- drivers/reset/reset-microchip-sparx5.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index c4cc0edbb250..aa5464be7053 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -154,6 +154,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 		return err;
+* Changes since v1 *
+
+ - RVB by Christoph
+ - Added a helper to check if inode has data instead of
+   open coding.
+	
+v1:
+https://lore.kernel.org/linux-xfs/Zv_cTc6cgxszKGy3@infradead.org/T/#mf949dafb2b2f63bea1f7c0ce5265a2527aaf22a9
+
+ fs/xfs/xfs_inode.c | 2 +-
+ fs/xfs/xfs_inode.h | 5 +++++
+ fs/xfs/xfs_ioctl.c | 5 +++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index bcc277fc0a83..3d083a8fd8ed 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -1409,7 +1409,7 @@ xfs_inactive(
  
- 	ctx->rcdev.owner = THIS_MODULE;
-+	ctx->rcdev.dev = &pdev->dev;
- 	ctx->rcdev.nr_resets = 1;
- 	ctx->rcdev.ops = &sparx5_reset_ops;
- 	ctx->rcdev.of_node = dn;
+ 	if (S_ISREG(VFS_I(ip)->i_mode) &&
+ 	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
+-	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
++	     xfs_inode_has_data(ip)))
+ 		truncate = 1;
+ 
+ 	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
+diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+index 97ed912306fd..ae1ccf2a3c8b 100644
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
+ 	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
+ }
+ 
++static inline bool xfs_inode_has_data(struct xfs_inode *ip)
++{
++	return (ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0);
++}
++
+ /*
+  * Check if an inode has any data in the COW fork.  This might be often false
+  * even for inodes with the reflink flag when there is no pending COW operation.
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index a20d426ef021..88b9c8cf0272 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
+ 
+ 	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
+ 		/* Can't change realtime flag if any extents are allocated. */
+-		if (ip->i_df.if_nextents || ip->i_delayed_blks)
++		if (xfs_inode_has_data(ip))
+ 			return -EINVAL;
+ 
+ 		/*
+@@ -602,7 +602,8 @@ xfs_ioctl_setattr_check_extsize(
+ 	if (!fa->fsx_valid)
+ 		return 0;
+ 
+-	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
++	if (S_ISREG(VFS_I(ip)->i_mode) &&
++	    xfs_inode_has_data(ip) &&
+ 	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+ 		return -EINVAL;
+ 
 -- 
-2.46.2
+2.43.5
 
 
