@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-358838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D12998480
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F40599847B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71561B20F6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048821F21F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5AB1C2DA2;
-	Thu, 10 Oct 2024 11:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB38C1C3309;
+	Thu, 10 Oct 2024 11:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cwhdiNQ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJig6mhT"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139371C245B;
-	Thu, 10 Oct 2024 11:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C7C1BFE12;
+	Thu, 10 Oct 2024 11:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558409; cv=none; b=OsB7pK3KZdQtNNKNCcbI88yHQE7NCOThE/JT1SFyVMD0sXaYHwEm5Zu1VQH0cPjundMujuaIiYAvIGKGr4WoNJEuJw+0V2ojvxgkXmcXEXHkudTJ4fjbaCLR3xeByRXnC/6t6p+6MytKt5Z514HJk5KU4A/z/kSxrfmhMTiZMPM=
+	t=1728558382; cv=none; b=Ft5a1hzFX4Vopx7nC9sijPJfNNUPZJcQp6swGcOGh1l6rG1iMb3YA41AJ6Zccrhe5qdG7iEUwAZr1YuqjEMWqEX7Iwg/PwVCPTIUq/32ZmdWNv+h/siYxtwhhgOvZuXq5yaHGdUgi1+HIoY08I2Ng6oGGkljrf9b7QT9TSzLMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558409; c=relaxed/simple;
-	bh=dJV9aCYcY7E9gcS+re6KKVn4+hyOlb7m4eaxnZwGmk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Li+kaoyOAA+oXA+S4cd5ol6wnptqtJbkt6jpMcLYatnWwMVoUHhkzfh/VCv3vffRx+vBioiDieRG4lqbofCuFuvZV2SVqdczT3Uzrkq0FXZ5+xRUQ3RwJmMY9NHksur7RNzSETk2rR4GHXKmddY4RUDdHId3Ekdi4LxGKoye5NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cwhdiNQ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755CFC4CEC5;
-	Thu, 10 Oct 2024 11:06:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728558408;
-	bh=dJV9aCYcY7E9gcS+re6KKVn4+hyOlb7m4eaxnZwGmk8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cwhdiNQ2qtaWzxgQ0OtwXaXKOirRFIcxNMcABdMSOt17yXosRShjAEUZllQfU7/Au
-	 NxGBQA/6f3wHFyhWx6HtWwOMTBRUlAYic4FqE4VqZ5mTLGFAPc30wfL1wmG6X2t8JD
-	 yC6KqHThIlqkBlabk9L7TmiZpktCa89F4Apj4s6U=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Linux 6.6.56
-Date: Thu, 10 Oct 2024 13:06:37 +0200
-Message-ID: <2024101038-undated-bullpen-8b09@gregkh>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <2024101038-overhung-discard-e873@gregkh>
-References: <2024101038-overhung-discard-e873@gregkh>
+	s=arc-20240116; t=1728558382; c=relaxed/simple;
+	bh=2U7+swKAAmw08h0DPcAMPCat1Scw7idxysE2ZzSVzJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mYNEfR0HRg+7jbukJ/vHewpU3r/FIY3Z+ngnNpGa6Nr1VOZXB+b/EpRzV7Jm6C5j+LIdIGiAhPPxHk2uHQ/8S6sGdBVoy2RTEABwHj9s77oDKFjkPgfs4WAXO8sHndr8hi3GG3R2u15NQp1ScfLaDmWy1Ut1mDzph9ZFpOTb0Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJig6mhT; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso826322276.0;
+        Thu, 10 Oct 2024 04:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728558379; x=1729163179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2U7+swKAAmw08h0DPcAMPCat1Scw7idxysE2ZzSVzJE=;
+        b=cJig6mhTUZ9K8a9YDNseP93tylbgZdkQaJn0PZSjP3X1quhU64a0si4qrR4akxPYWB
+         0DxjFxDfvyGwo5v8TXTduG1eI76T4jSkov/yp7vdERZa18O5TrbYDfxEMKhwi/iHoi/e
+         f35uifEQ4dtQb/ijsDhF++PawaDTbenyEYXBFvHmL6q/rqI5FRqXY125hyi6uBUY1gbt
+         gHdozKOcgdixaftrcD91oBgGPLhxrAxlPY3/kPiPX2QfYn+Y5WoTfJ68GnpQuFbAaXH7
+         ANax7GoHc9mRlwvUzgVfFvnHS3iHqiEvwf0t9EzbsWiQIiZJ5jmrpssf99M3dzrBuifi
+         4ivQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728558379; x=1729163179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2U7+swKAAmw08h0DPcAMPCat1Scw7idxysE2ZzSVzJE=;
+        b=M0ESPE2qRPfpA+Iri7Z866IT0dM9EuYU3zZMpUoHwjOVr/+WZVDHddrfH84XJ1ow8z
+         gmlCqmiV5iR4gPGegLignbGF8ZvkGGUTaj8BJSjZZLGPvxz0K5S+WkMMggrfpMSS+YZf
+         olICAZBFLHLvnC8FRV1HLdXbCKDpW0qw/Vjoplx6BJxWhmpqXIc7Pxyx2hdQts8Z38LN
+         vXO4bxlX7j9f6QRZoOdTkMmin5yxD4xp9VGnEhmI26TUEQmUnWQvEuLM/xvcIvLxWJLI
+         Ab2EU5AwEYyeVORwN75yh8QEQD0ZE1+m3DQ07jtLOZ+EfwUIF7G9R+jPbl8x5DNBJke4
+         LHYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSGulo1940gsDVU+EOV6g6F8o9rZEEqp6v0GNmu/VPT4g3MCDS9k5BLhVe1VQTM9XDZ99CGup8@vger.kernel.org, AJvYcCXASYKy/iox44Vqyaz3e5jB5CbrgGz+YTrxdSWseWLOds0b95MS0Mc3mDADm4y9pmLsPhz1BL76PXmYOog=@vger.kernel.org, AJvYcCXnVkhKaqlX9L1+ghl+9R6k69JoecXWFW72jstLw8OkCrBIX8sf5FV4dmdMlDvrCuSm4ljAVjTGIUM29Bu0P5SBwl4J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWpKpcb8s5DtIDi+tzqbHXCSYgwLPftz287Ti1NW3cn8sBUgJg
+	9esTyxc4AyJAY7XC+wU5grQrf9x09BkTz2eL0zz/DCjfwWOYoxOpmL26ND4qC8M4PDjMcrr7wfO
+	4LMQBzaVTOrdq3p/hOttGY3lDE3M=
+X-Google-Smtp-Source: AGHT+IFVVZzZzpFh1Fx2ik7fwEcjo6mL58ZZLuyObjsrW8NPsx7AoOnKFrHOY58Oywki1hSOLCcNo65JzO3qJLGyrT4=
+X-Received: by 2002:a05:6902:18c6:b0:e28:75c8:49b with SMTP id
+ 3f1490d57ef6-e2909b34092mr4244261276.0.1728558379383; Thu, 10 Oct 2024
+ 04:06:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241009121705.850222-1-dongml2@chinatelecom.cn> <CANn89iLKVh0_wkgZ-a2+Dr9xz6wOs58CE8PpwzZEH8ZHMn=jsA@mail.gmail.com>
+In-Reply-To: <CANn89iLKVh0_wkgZ-a2+Dr9xz6wOs58CE8PpwzZEH8ZHMn=jsA@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Thu, 10 Oct 2024 19:07:01 +0800
+Message-ID: <CADxym3YonoJ5GUToUxJTnVpd3O-_SsSZK2tPMmUkXCzs3Oy-XQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: tcp: add tracepoint skb_latency for latency monitor
+To: Eric Dumazet <edumazet@google.com>, vadim.fedorenko@linux.dev, 
+	Jason Xing <kerneljasonxing@gmail.com>
+Cc: kuba@kernel.org, davem@davemloft.net, pabeni@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	dsahern@kernel.org, yan@cloudflare.com, dongml2@chinatelecom.cn, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Makefile b/Makefile
-index 6e297758842d..301c5694995c 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,9 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 6
- PATCHLEVEL = 6
--SUBLEVEL = 55
-+SUBLEVEL = 56
- EXTRAVERSION =
--NAME = Hurr durr I'ma ninja sloth
-+NAME = Pinguïn Aangedreven
- 
- # *DOCUMENTATION*
- # To see a list of typical targets execute "make help"
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 24dead4e3065..7c6874804660 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2536,12 +2536,8 @@ static void save_lbr_cursor_node(struct thread *thread,
- 		cursor->curr = cursor->first;
- 	else
- 		cursor->curr = cursor->curr->next;
--
--	map_symbol__exit(&lbr_stitch->prev_lbr_cursor[idx].ms);
- 	memcpy(&lbr_stitch->prev_lbr_cursor[idx], cursor->curr,
- 	       sizeof(struct callchain_cursor_node));
--	lbr_stitch->prev_lbr_cursor[idx].ms.maps = maps__get(cursor->curr->ms.maps);
--	lbr_stitch->prev_lbr_cursor[idx].ms.map = map__get(cursor->curr->ms.map);
- 
- 	lbr_stitch->prev_lbr_cursor[idx].valid = true;
- 	cursor->pos++;
-@@ -2752,9 +2748,6 @@ static bool has_stitched_lbr(struct thread *thread,
- 		memcpy(&stitch_node->cursor, &lbr_stitch->prev_lbr_cursor[i],
- 		       sizeof(struct callchain_cursor_node));
- 
--		stitch_node->cursor.ms.maps = maps__get(lbr_stitch->prev_lbr_cursor[i].ms.maps);
--		stitch_node->cursor.ms.map = map__get(lbr_stitch->prev_lbr_cursor[i].ms.map);
--
- 		if (callee)
- 			list_add(&stitch_node->node, &lbr_stitch->lists);
- 		else
-@@ -2778,8 +2771,6 @@ static bool alloc_lbr_stitch(struct thread *thread, unsigned int max_lbr)
- 	if (!thread__lbr_stitch(thread)->prev_lbr_cursor)
- 		goto free_lbr_stitch;
- 
--	thread__lbr_stitch(thread)->prev_lbr_cursor_size = max_lbr + 1;
--
- 	INIT_LIST_HEAD(&thread__lbr_stitch(thread)->lists);
- 	INIT_LIST_HEAD(&thread__lbr_stitch(thread)->free_lists);
- 
-@@ -2835,12 +2826,8 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
- 						max_lbr, callee);
- 
- 		if (!stitched_lbr && !list_empty(&lbr_stitch->lists)) {
--			struct stitch_list *stitch_node;
--
--			list_for_each_entry(stitch_node, &lbr_stitch->lists, node)
--				map_symbol__exit(&stitch_node->cursor.ms);
--
--			list_splice_init(&lbr_stitch->lists, &lbr_stitch->free_lists);
-+			list_replace_init(&lbr_stitch->lists,
-+					  &lbr_stitch->free_lists);
- 		}
- 		memcpy(&lbr_stitch->prev_sample, sample, sizeof(*sample));
- 	}
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 6817b99e550b..61e9f449c725 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -478,7 +478,6 @@ void thread__free_stitch_list(struct thread *thread)
- 		return;
- 
- 	list_for_each_entry_safe(pos, tmp, &lbr_stitch->lists, node) {
--		map_symbol__exit(&pos->cursor.ms);
- 		list_del_init(&pos->node);
- 		free(pos);
- 	}
-@@ -488,9 +487,6 @@ void thread__free_stitch_list(struct thread *thread)
- 		free(pos);
- 	}
- 
--	for (unsigned int i = 0 ; i < lbr_stitch->prev_lbr_cursor_size; i++)
--		map_symbol__exit(&lbr_stitch->prev_lbr_cursor[i].ms);
--
- 	zfree(&lbr_stitch->prev_lbr_cursor);
- 	free(thread__lbr_stitch(thread));
- 	thread__set_lbr_stitch(thread, NULL);
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index a5423f834dc9..0df775b5c110 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -28,7 +28,6 @@ struct lbr_stitch {
- 	struct list_head		free_lists;
- 	struct perf_sample		prev_sample;
- 	struct callchain_cursor_node	*prev_lbr_cursor;
--	unsigned int prev_lbr_cursor_size;
- };
- 
- struct thread_rb_node {
+On Wed, Oct 9, 2024 at 11:53=E2=80=AFPM Eric Dumazet <edumazet@google.com> =
+wrote:
+>
+> On Wed, Oct 9, 2024 at 2:17=E2=80=AFPM Menglong Dong <menglong8.dong@gmai=
+l.com> wrote:
+> >
+> > In this commit, we introduce a new tracepoint "skb_latency", which is
+> > used to trace the latency on sending or receiving packet. For now, only
+> > TCP is supported. Maybe we should call it "tcp_latency"?
+> >
+> > There are 6 stages are introduced in this commit to trace the networkin=
+g
+> > latency.
+> >
+> > The existing SO_TIMESTAMPING and MSG_TSTAMP_* can obtain the timestampi=
+ng
+> > of sending and receiving packet, but it's not convenient.
+> >
+> > First, most applications didn't use this function when implement, and w=
+e
+> > can't make them implement it right now when networking latency happens.
+> >
+> > Second, it's inefficient, as it need to get the timestamping from the
+> > error queue with syscalls.
+> >
+> > Third, the timestamping it offers is not enough to analyse the latency
+> > on sending or receiving packet.
+> >
+> > As for me, the main usage of this tracepoint is to be hooked by my BPF
+> > program, and do some filter, and capture the latency that I interested
+> > in.
+> >
+> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > ---
+>
+> Big NACK from my side.
+>
+> Adding tcp_mstamp_refresh() all over the place is not what I call 'tracin=
+g'.
+
+The tcp_mstamp_refresh() is optional, as we can update skb->tstamp with
+tcp_clock_ns() directly instead (maybe with a control of the static branch)=
+.
+
+As @Vadim says, @Jason Xing already has a similar series on the
+networking latency monitor before, which is based on BPF.
+
+(what a coincidence :/)
+
+So let's focus on Jason's series.
+
+Thanks!
+Menglong Dong
 
