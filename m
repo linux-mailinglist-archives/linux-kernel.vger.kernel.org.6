@@ -1,83 +1,85 @@
-Return-Path: <linux-kernel+bounces-358534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622BF998080
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:46:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2B9998082
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC9928326F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:46:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983001C26CA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9871D460F;
-	Thu, 10 Oct 2024 08:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4B51E1331;
+	Thu, 10 Oct 2024 08:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2/cpdPC"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmO7Vryp"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D9F1D07BE;
-	Thu, 10 Oct 2024 08:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D401E1321;
+	Thu, 10 Oct 2024 08:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728548913; cv=none; b=pHcbE+aMOBO7xt5AwVmizMQMA5DzpKVJbDKHSOht18ZnyIRhi5tIv3y+5VsSC5XRI/asILESz5XMHTJY3dP537mhmt0iG5x4Ym3U1YItsRZ3ODQEkHmCA+nFq0rZL+fZBEHizvIkpJRb79lBDEPgkutzYwQq9qc74LpsNUikS3w=
+	t=1728548948; cv=none; b=fPJBSQ3rBId2eBJRw4nYlpcOB3MH5RqB/ygGiwJGZxyJQP4U7aJDoDasWse6/F4qT3IjvAnac0L1SLaAVQyolnjvTGwI3zsznu7n/r0FfMhRSihyyzq1fge7gIg4E1x8yNShI027vadzIBuEFmYmNW+01BdcUu0m9yF86XsfZrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728548913; c=relaxed/simple;
-	bh=5SnhgPRUuU5LmlRag8wTkS8N/CC/zWntHpE1bLWhr6k=;
+	s=arc-20240116; t=1728548948; c=relaxed/simple;
+	bh=I5Ea6PGkvzypTjuRn0NyGbjzXruH+kV9lE1eez1AFTI=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=liAAnwe5cU2GvODqxXGlJgqdAB4tYjSbXrBq/lSvLbc4/nIuoccFW2T2ramM6e6PX36oKeUKAxKZEgLQtkL6mCw9EW6SLAOXv+nNjoSk86Gfatst37YBcB+1itQE7IJutPG7s9ESDd8YLNhza1N3uFJXlmqBRHomCK5MP3y1Qh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2/cpdPC; arc=none smtp.client-ip=209.85.221.48
+	 Content-Type:MIME-Version; b=OvkWw/IZtuGIdBGagmGpf7QDStFF0sCrjyHsVqiDfBEILgmWzVOol9XFZYg4ffvpqiMBABz2XYBL3uF9R6l2FRY8dvxMI1E7JlF6m+yTGmBBCMF+9kEq6tYPvFzQzrBGSqZm9UAkXCI5sI22fucCmjFGtKrruDiNRKCjd3HdR0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmO7Vryp; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d47b38336so326206f8f.3;
-        Thu, 10 Oct 2024 01:28:30 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42ca4e0299eso4514885e9.2;
+        Thu, 10 Oct 2024 01:29:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728548909; x=1729153709; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728548945; x=1729153745; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=FbBN3yZYUGrr8qODI7yZovjpMzT5/HDa5n+6VJGVpUM=;
-        b=h2/cpdPCmlr+04K5CQTOZbs7IKAne/M9LQ+BsChVTOlT6/ILDHxdPMoOfmnx200Cch
-         h0NEfx4jX3Rx31rupK+AXL+9Q0gA68UmjG95ShnlUC+HfggUhjfxe9RWGWleZ9za8q2J
-         UhgHdrUh2oICScgZnqiEPVVvrTDbRyhtpM0YW4STTbtFQEyjp/ZhIxVr8nSqpnaXbte8
-         INc+WqCYOxyd8aeQ4WbVClI0xPR78EehBLRL7YUCIDeeFKYDolXhzXC5Jo0St9Bi7iJA
-         P8yjnA9bJLDrwpCs46QJPjCdMWpiAH+ZP8buWnlD9XBb+Bw5A1+qpJmUjzaMrFbGK7oX
-         qFkg==
+        bh=I5Ea6PGkvzypTjuRn0NyGbjzXruH+kV9lE1eez1AFTI=;
+        b=FmO7VrypFQl9aLp9JL7g9BwKwtm2gppuyo76KGRkT2oGfwpsu2ed5jaYqmVgiUer8d
+         bTUh/L5ddBvwfnqi6A/54PPLr61F55cP0IIXM3QKyZyV9b+ymy/LMH4YNKk84vjot7zS
+         IDvd4rlX3/+8uyZyuk7Jisry/1o+gF6AYrg8/psh7V0Wh5Ej04hmKtxHbgwOdjDE1wJV
+         4/1UPj27xDs3Ot9fbCEoOklsDalG2abQAqRXt1xxe5zF6JGO+fc8JoIZqBniHQ5JUd5j
+         c5RXgi5ocqBjbOxQ1cpAQZQz6PUTde+zT4us9fDYIJJzkT551H2gvEvrQvlLLxx+n/9e
+         pB/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728548909; x=1729153709;
+        d=1e100.net; s=20230601; t=1728548945; x=1729153745;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FbBN3yZYUGrr8qODI7yZovjpMzT5/HDa5n+6VJGVpUM=;
-        b=aS6h1F2gZU2wxF4swMvRVfUQBn1CFDsqgg8sH8VUIdetTCbgJRR0+XB324nIY33pr+
-         qC7Hqa1u10/ZmKAcqd+DykYG4u7/D5cs893DQxzcLwpPh9oM988UUyH6V8Xgck41j186
-         pKABFMUntFif4mhg+kIZbc2TSvb1oq0eNDfujWQ1E7EWFXx+4t9jyp+ViL8J8bM/ZB/Z
-         q890piBQmsiFUge6VGMa/VPI6aFbdVvnqC5RmSKnjDvwMQaf00gvVf84ObrPSow/Jz64
-         lT8+lp5R4TwoaoXM7Sh+tnjiNOSia6hB/fHDq27fSy4/h/FGy/enOYmwWGOw9zVy6/1m
-         kezw==
-X-Forwarded-Encrypted: i=1; AJvYcCViSO3yTIZMwiSbvFtTMNSmDgQ873ulKbZRJ898HWugt367CsUCkjQnmH4WX3JhFK4nmFxokT1n9ya0yxtW@vger.kernel.org, AJvYcCWqa8nFx13Jqzp31LD/OU05bQqTZuUrepQc7p+lmZWmhgv9duJPpSVATduuoYdlJvGTSmiWxwGiw+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrCz8b7sVAXQY7ejbE4UXBy3aefWjwJ+2X+p6YEEnYEdSjZJcB
-	1FrPRQ6PPwFfEU+z5HVAvTeOguh2Btyv0OQuqqyG5Le0guWo7CvbPdlPvRcKEbM=
-X-Google-Smtp-Source: AGHT+IGv0xrtHkq6yisyh3etRfRvcNy5X3JAUYEOS4cSzQbRX0+uG9/FRzua21othi4mqgRrHXSfOQ==
-X-Received: by 2002:a5d:5c87:0:b0:37d:43ad:14eb with SMTP id ffacd0b85a97d-37d43ad1534mr2513889f8f.14.1728548908512;
-        Thu, 10 Oct 2024 01:28:28 -0700 (PDT)
+        bh=I5Ea6PGkvzypTjuRn0NyGbjzXruH+kV9lE1eez1AFTI=;
+        b=HVFpY4E+kxmB36dIoIFC4qbwPqlKTYvreifRJ3VTswwVZS1yyZkV064ZL9ddpKtRFv
+         HwQ2gvStGXFZ6a2gIWuO4Qg6zWNwgHP0dpPGcUeaqBxtsejwxTKihMA9atLzON+5r0TO
+         4FJzga30fq7FGf7Y06wCSqjr9Gg6N57uGZmUqfKjI/YxlIT2b6zUf2Boul1yn5v9xuSG
+         2NPg3TTXMwA9Our0KUIt+vBnZLCW7wTFBWHEUf5eP5D9SwPtRwu/FZB5BcwC9zT7+puY
+         828yXl2ynghsEA30XL4srnOA9hdeV4jmVxmXXL+IHbAgbh/xF2squwNWOj8pjxA6vnjh
+         FHnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXF44lvVQlTHsptLRYRPci5bWAjBJxg8sEx6mHhJZqfzCEvwJVuWVRP+IP3Y2dl6X2H6sA94ilTpF88Nfk=@vger.kernel.org, AJvYcCXfYRE/inud7YFsyDsypXjPKRRimV5OjuSjbgOOnNXXC5XegShXL5r8ME6gIciwEzBPI1VwgttJVaB7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkFst2CDg+nlhhgyo6ppga3CBs8R9dXtmVbRpXbl3pKMynP8TZ
+	BexCsPWxvK21f/GPTYMEM7a2nRVwdvMByOvVBtddBjh3yeUh7ASTL7bXrvhDLm4=
+X-Google-Smtp-Source: AGHT+IGjK3bIM0DBkDb+cuk8Ce58H4JGpsO6ceiWUXDLSBsHO011Q1XTbXuF2dipNitWnlmuXJ86Sw==
+X-Received: by 2002:a05:600c:1f0d:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-430d6faa2b6mr33791775e9.27.1728548945146;
+        Thu, 10 Oct 2024 01:29:05 -0700 (PDT)
 Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cfa8fsm832848f8f.49.2024.10.10.01.28.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d70b4462sm41474825e9.30.2024.10.10.01.29.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 01:28:28 -0700 (PDT)
-Message-ID: <b5427f9c7fdbd4b93ba7b355aaf44afde23b0026.camel@gmail.com>
-Subject: Re: [PATCH] iio: adc: ad7944: add namespace to T_QUIET_NS
+        Thu, 10 Oct 2024 01:29:04 -0700 (PDT)
+Message-ID: <57169283416bf7902523891ba03d1f878772ffe5.camel@gmail.com>
+Subject: Re: [PATCH 0/2] pwm: axi-pwmgen: always enable FORCE_ALIGN
 From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?=
+	 <ukleinek@kernel.org>
 Cc: Michael Hennerich <michael.hennerich@analog.com>, Nuno
- =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 10 Oct 2024 10:32:44 +0200
-In-Reply-To: <20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-v1-1-a216357a065c@baylibre.com>
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Trevor Gamblin <tgamblin@baylibre.com>, 
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 10 Oct 2024 10:33:20 +0200
+In-Reply-To: <20241009-pwm-axi-pwmgen-enable-force_align-v1-0-5d6ad8cbf5b4@baylibre.com>
 References: 
-	<20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-v1-1-a216357a065c@baylibre.com>
+	<20241009-pwm-axi-pwmgen-enable-force_align-v1-0-5d6ad8cbf5b4@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.54.0 
@@ -88,48 +90,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2024-10-09 at 16:26 -0500, David Lechner wrote:
-> Add AD7944_ namespace to T_QUIET_NS. This is the preferred style. This
-> way the bad style won't be copied when we add more T_ macros.
+On Wed, 2024-10-09 at 16:11 -0500, David Lechner wrote:
+> When using the axi-pwmgen as a trigger for ADCs, we've found that the
+> default behavior of the PWMGEN IP block is not ideal. The default
+> behavior is to wait for the period of all PWM outputs to run out before
+> applying any new settings. But there isn't a way to block until this
+> happens (and even if there was, it could take a long time). So the
+> pwm apply function returns before the new settings are actually applied.
 >=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> This makes certain use cases impossible. For example, to use the PWM
+> like a GPIO to create a single pulse on and off to trigger a single ADC
+> conversion.
+>=20
+> The AXI PWMGEN has a FORCE_ALIGN configuration option that changes the
+> behavior so that any new output settings (period, duty cycle, etc.) are
+> applied immediately. This can cause glitches in the output, but makes
+> the PWM actually useable for most applications.
+>=20
+> Also, there was a naming conflict with register names, so there is a
+> preliminary cleanup patch to sort that out.
+>=20
 > ---
 
 Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-> =C2=A0drivers/iio/adc/ad7944.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> David Lechner (2):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pwm: axi-pwmgen: rename 0x10 register
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pwm: axi-pwmgen: enable FORCE_ALIGN by def=
+ault
 >=20
-> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
-> index 0f36138a7144..a5aea4e9f1a7 100644
-> --- a/drivers/iio/adc/ad7944.c
-> +++ b/drivers/iio/adc/ad7944.c
-> @@ -80,7 +80,7 @@ struct ad7944_adc {
-> =C2=A0};
-> =C2=A0
-> =C2=A0/* quite time before CNV rising edge */
-> -#define T_QUIET_NS	20
-> +#define AD7944_T_QUIET_NS	20
-> =C2=A0
-> =C2=A0static const struct ad7944_timing_spec ad7944_timing_spec =3D {
-> =C2=A0	.conv_ns =3D 420,
-> @@ -150,7 +150,7 @@ static int ad7944_3wire_cs_mode_init_msg(struct devic=
-e
-> *dev, struct ad7944_adc *
-> =C2=A0	 * CS is tied to CNV and we need a low to high transition to start
-> the
-> =C2=A0	 * conversion, so place CNV low for t_QUIET to prepare for this.
-> =C2=A0	 */
-> -	xfers[0].delay.value =3D T_QUIET_NS;
-> +	xfers[0].delay.value =3D AD7944_T_QUIET_NS;
-> =C2=A0	xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> =C2=A0
-> =C2=A0	/*
->=20
+> =C2=A0drivers/pwm/pwm-axi-pwmgen.c | 24 ++++++++++++++++++------
+> =C2=A01 file changed, 18 insertions(+), 6 deletions(-)
 > ---
-> base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
-> change-id: 20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-a9ed696927=
-18
+> base-commit: ff25451372ee1aa4c4f4401dc96516782a00dd4d
+> change-id: 20241009-pwm-axi-pwmgen-enable-force_align-cfb403da4612
 >=20
 > Best regards,
 
