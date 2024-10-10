@@ -1,166 +1,132 @@
-Return-Path: <linux-kernel+bounces-358611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D59B998193
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:08:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AE3998194
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E82B1C21427
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DA46B27AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC291C3F00;
-	Thu, 10 Oct 2024 09:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198191B3724;
+	Thu, 10 Oct 2024 09:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="S1RiBeI2"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pRSaE0zi"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EB91BD51F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3621019AD73
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551088; cv=none; b=SaCbIGray7uN1cbr/RrorhMobJZhec7Cx7lL4AfQ0ITeDOvndFtlBi7qCA4ZTt8WJZ5Acgo2J5+hdneQmna2WKBU4XMe+cM2OXd5bZdqwa1nO7SzwiA78rtUz5JM9OWJzSBrKnIQ5GznDWSocv2HSM4cPhz+97X3VWrR+Vy8bEs=
+	t=1728551172; cv=none; b=Hdi6UFrplMD7JIMAH5gpsF0ZuCRamJCuyd7UkS7HajEFb7XTy0fF0VJjSbK2PXOdRgAszUifLXiH3nxV8vPNH4og/oa2KXVeWx41kajaWHnpfdWAC/nYsVYOAcf1cUyUxIZYOMjyE75PINz8bq9YginIsLJ5v4+8SePyFZY0lpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551088; c=relaxed/simple;
-	bh=9BemIHVkwFnZXsrs4ApAwKmSNWzb/ytWkzgUD5HrqEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PZRuhnfZn759/TVuYVGZIsXyjjTrm45wqC530BLy04tQS8UdBJSXCUIwD7NXs3/qV9+dD0LbDicp/t25whWI33lmFLVMH5PR5bpkZ0tcyjOA1OZ0tcD/6esYVmng85qqwn+8aUm+OFQK7JV/sY+1v8gYwgp6PGo9q7V1NVg4nz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=S1RiBeI2; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728551084; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=rY5VPsaO1H3ZA4xnMlRJLB6Hi8aGa4Y6EA1p+XeRCfQ=;
-	b=S1RiBeI2SV83b5bMxy+NAISBV+VyenWo78jHBore8kH49Yeq1564lfF0oH7sHUQCi+M/gmG5YhZXVh4T9ahcq1J9HY1cqJsXFXEGzIa3XVvIaRKzmWDV3+us3Xxj2pgiVn22JGW4T0Mch7Rg47F7JI3yuIo0q16u8a+MjWKUenQ=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGlkE6t_1728551079 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Oct 2024 17:04:43 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 2/2] erofs: get rid of kaddr in `struct z_erofs_maprecorder`
-Date: Thu, 10 Oct 2024 17:04:20 +0800
-Message-ID: <20241010090420.405871-2-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241010090420.405871-1-hsiangkao@linux.alibaba.com>
-References: <20241010090420.405871-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728551172; c=relaxed/simple;
+	bh=vQFYsetKvh92e/zvO32kVmpmG0fODL02A6a/hL3T5sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gqeRQbKcRK9aOGUirpyHzIO/6y1NZOjicBW2p24qbzHjg3I3Ee9cbtArknGIjqwNsm4AcvM1EuVZEnQXjMdOREYPnCRJokufDLEmV9BHLpazGjcOyfCYCvpNLfuY3tJEuAXihdmmOBZ/J81uu4RYh5t6WMA6ucsQhtcwjYybzCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pRSaE0zi; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539908f238fso808539e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728551167; x=1729155967; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e7HF+ewI6tZ9yPck9QZOJ+Ws/0TKRf2Dgxr1lY+CsiE=;
+        b=pRSaE0ziXfzh9tRjEMnCpOj34y3zctwaahXbGqEsc+tAWS2nmNqrP4M6fM5JrttoLs
+         zk2qmfvoWEMEqCV1lmrcq0eByaoKLxO/zCtvaBRxD45bxC2IpPmLxscnAUnNK4nV5FC8
+         G62HJZKftTK3K6QcENC2CMN7efFYK9+EsAz0pKMNYxvT/xbA5B69DyTkBe6DvNBGhcs8
+         L8oqRwAHpTR6CzqiUtBldq07hQqodgRcF4Qtv54UTg7F5uyAgGopPOLxIZZ7xCSNclbv
+         joOhsIE/OItSUT7D5ITQ+4+6Ix2aUTwDoBeRfo50ofN9JiYL84Kd16leXIGh/WId9Hah
+         W1Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728551167; x=1729155967;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e7HF+ewI6tZ9yPck9QZOJ+Ws/0TKRf2Dgxr1lY+CsiE=;
+        b=rcEO3asVgIIoGQezROWjPupzzU/2GPGEdSuj17abW0KAy98ZQyJCajrsGvZzutYi2a
+         MM/qmEh84oKPmbfmKg/lG4m00WEEBpYsNB3BPfrWHESI9n+Izsjrsdi6m4kElxVGnayC
+         SwHmY13kZdSsUgHDh8NzYHqGl5XSM+8Pi1LOpQpBwdfdcr3GxsqjenfuGgGTTdw6GCcJ
+         usWd1zUF2kvAZ+etsDrJ5rIllRJp0EQ6Q7OoHaWyhlW98Q9gV3Aj3CRFaStUj5ODK8eD
+         xXvrKjCRRMhdIAgtE1YU3q6EvlNmFz9Yy/a4ZKPdWJN3xnYaT0E7W9E6BXFRnhLfCI0j
+         Rumg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9xeL1O3EQZu3usuHdvsCSCFbrCvW3zs6MKXTGBxTVrt4jhFVuD05l4AaSCiIpNJKnBHNu90V9oV/wG2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ZXtnI22lFqwO5XxR9FL3w7ryVMGM0yr02ISx29/7cSv35CW9
+	9jKjiSghDDYHBUr1KLi9nVqb3sJSKIVck39PMe87SjSs8W7lURodxElfvbVvdhE=
+X-Google-Smtp-Source: AGHT+IHWxG2o8e/70tdhq6YBZ0lpADFoBYupOp/ROu9HosAG7AZwJVoFGYbTjtgi9nvjJmi3WvVlzA==
+X-Received: by 2002:a05:6512:3b23:b0:533:43e2:6ac4 with SMTP id 2adb3069b0e04-539c4965aeamr3368953e87.49.1728551167278;
+        Thu, 10 Oct 2024 02:06:07 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffd7esm9857605e9.19.2024.10.10.02.06.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 02:06:06 -0700 (PDT)
+Message-ID: <52125138-9ba5-4f71-9e7d-aff5f85d0dae@linaro.org>
+Date: Thu, 10 Oct 2024 10:06:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] perf trace: Fix support for the new BPF feature in
+ clang 12
+To: Howard Chu <howardchu95@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: mingo@redhat.com, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>
+References: <20241007051414.2995674-1-howardchu95@gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20241007051414.2995674-1-howardchu95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-`kaddr` becomes useless after switching to metabuf.
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zmap.c | 34 +++++++++++++---------------------
- 1 file changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index e980e29873a5..d329a38de1b9 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -10,8 +10,6 @@
- struct z_erofs_maprecorder {
- 	struct inode *inode;
- 	struct erofs_map_blocks *map;
--	void *kaddr;
--
- 	unsigned long lcn;
- 	/* compression extent information gathered */
- 	u8  type, headtype;
-@@ -33,14 +31,11 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
- 	struct z_erofs_lcluster_index *di;
- 	unsigned int advise;
- 
--	m->kaddr = erofs_read_metabuf(&m->map->buf, inode->i_sb,
--				      pos, EROFS_KMAP);
--	if (IS_ERR(m->kaddr))
--		return PTR_ERR(m->kaddr);
--
--	m->nextpackoff = pos + sizeof(struct z_erofs_lcluster_index);
-+	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, EROFS_KMAP);
-+	if (IS_ERR(di))
-+		return PTR_ERR(di);
- 	m->lcn = lcn;
--	di = m->kaddr;
-+	m->nextpackoff = pos + sizeof(struct z_erofs_lcluster_index);
- 
- 	advise = le16_to_cpu(di->di_advise);
- 	m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
-@@ -53,8 +48,7 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
- 				DBG_BUGON(1);
- 				return -EFSCORRUPTED;
- 			}
--			m->compressedblks = m->delta[0] &
--				~Z_EROFS_LI_D0_CBLKCNT;
-+			m->compressedblks = m->delta[0] & ~Z_EROFS_LI_D0_CBLKCNT;
- 			m->delta[0] = 1;
- 		}
- 		m->delta[1] = le16_to_cpu(di->di_u.delta[1]);
-@@ -110,9 +104,9 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	struct erofs_inode *const vi = EROFS_I(m->inode);
- 	const unsigned int lclusterbits = vi->z_logical_clusterbits;
- 	unsigned int vcnt, lo, lobits, encodebits, nblk, bytes;
--	int i;
--	u8 *in, type;
- 	bool big_pcluster;
-+	u8 *in, type;
-+	int i;
- 
- 	if (1 << amortizedshift == 4 && lclusterbits <= 14)
- 		vcnt = 2;
-@@ -121,6 +115,10 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	else
- 		return -EOPNOTSUPP;
- 
-+	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos, EROFS_KMAP);
-+	if (IS_ERR(in))
-+		return PTR_ERR(in);
-+
- 	/* it doesn't equal to round_up(..) */
- 	m->nextpackoff = round_down(pos, vcnt << amortizedshift) +
- 			 (vcnt << amortizedshift);
-@@ -128,9 +126,7 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	lobits = max(lclusterbits, ilog2(Z_EROFS_LI_D0_CBLKCNT) + 1U);
- 	encodebits = ((vcnt << amortizedshift) - sizeof(__le32)) * 8 / vcnt;
- 	bytes = pos & ((vcnt << amortizedshift) - 1);
--
--	in = m->kaddr - bytes;
--
-+	in -= bytes;
- 	i = bytes >> amortizedshift;
- 
- 	lo = decode_compactedbits(lobits, in, encodebits * i, &type);
-@@ -226,7 +222,6 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
- 	if (lcn >= totalidx)
- 		return -EINVAL;
- 
--	m->lcn = lcn;
- 	/* used to align to 32-byte (compacted_2b) alignment */
- 	compacted_4b_initial = (32 - ebase % 32) / 4;
- 	if (compacted_4b_initial == 32 / 4)
-@@ -254,11 +249,8 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
- 	lcn -= compacted_2b;
- 	amortizedshift = 2;
- out:
-+	m->lcn = lcn;
- 	pos += lcn * (1 << amortizedshift);
--	m->kaddr = erofs_read_metabuf(&m->map->buf, inode->i_sb,
--				      pos, EROFS_KMAP);
--	if (IS_ERR(m->kaddr))
--		return PTR_ERR(m->kaddr);
- 	return unpack_compacted_index(m, amortizedshift, pos, lookahead);
- }
- 
--- 
-2.43.5
+On 07/10/2024 6:14 am, Howard Chu wrote:
+> The new augmentation feature in perf trace, along with the protocol
+> change (from payload to payload->value), breaks the clang 12 build.
+> 
+> perf trace actually builds for any clang version newer than clang 16.
+> However, as pointed out by Namhyung Kim <namhyung@kernel.org> and Ian
+> Rogers <irogers@google.com>, clang 16, which was released in 2023, is
+> still too new for most users. Additionally, as James Clark
+> <james.clark@linaro.org> noted, some commonly used distributions do not
+> yet support clang 16. Therefore, breaking BPF features between clang 12
+> and clang 15 is not a good approach.
+> 
+> This patch series rewrites the BPF program in a way that allows it to
+> pass the BPF verifier, even when the BPF bytecode is generated by older
+> versions of clang.
+> 
+> However, I have only tested it till clang 14, as older versions are not
+> supported by my distribution.
+> 
+> Howard Chu (2):
+>    perf build: Change the clang check back to 12.0.1
+>    perf trace: Rewrite BPF code to pass the verifier
+> 
+>   tools/perf/Makefile.config                    |   4 +-
+>   .../bpf_skel/augmented_raw_syscalls.bpf.c     | 117 ++++++++++--------
+>   2 files changed, 65 insertions(+), 56 deletions(-)
+> 
+
+Tested with clang 15:
+
+  $ sudo perf trace -e write --max-events=100 -- echo hello
+     0.000 ( 0.014 ms): echo/834165 write(fd: 1, buf: hello\10, count: 6)
+                                             =
+
+Tested-by: James Clark <james.clark@linaro.org>
 
 
