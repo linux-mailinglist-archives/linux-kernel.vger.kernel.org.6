@@ -1,219 +1,175 @@
-Return-Path: <linux-kernel+bounces-359606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155A7998DF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:04:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86735998E09
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE78283DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A5DCB272B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DEF19B5A3;
-	Thu, 10 Oct 2024 17:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8948838F9C;
+	Thu, 10 Oct 2024 17:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R13bEh8f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wKjtNr5L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R13bEh8f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wKjtNr5L"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQsc9nlV"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC71194082;
-	Thu, 10 Oct 2024 17:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D6E2AD12;
+	Thu, 10 Oct 2024 17:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728579851; cv=none; b=JRzAJlrW3DHxez/hLjmDUsq2qs3UaziuolhariaOLr038VBktFyxIk5xOm0T99fUiOf5f1XMI6Ud9HVZyu1yqW7QIbEh9eXGIMHWN3NT1uU3+y1HyYzXYP3havfxnKCFq9t6UZZYAU0gMqsKod/CmXounKgPjHio14Us0qkKJIk=
+	t=1728579879; cv=none; b=nKIUmuXmyh+VAJViLYF1M0G29O07mRvQYdq7I9wZI9n7PPL1IiFdKr8QHvQLSALKEp4PdTUB4a4xSqO/NNJqSYjk93bNUtFxcBe77NMyfqt70siu/X0ighYAR0Dou8O4GNbLdZ0SH///1W2Ra5Ofrpf3rlavK3UyPmDNKgaAbQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728579851; c=relaxed/simple;
-	bh=N5kkopy6+sy/N4pf9F62M56jQ4wMtx57nNY4mDpEIAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l9TXQPRRxmMaAwwHqdDorx+tKARs5jlkG+8Q6U3ish7vUTvOwOHZ04IPgLWQ6QydQh02C2/yc5Ui4hK6ZI4yvnR9fr1v4Sidxed4S9nuB7hPa2A/870yDxu8QVdHZF9Yvb+sa1Sjnu90lq1SWow7H1z/Ts7DJj8kms5Fm+1H8Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R13bEh8f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wKjtNr5L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R13bEh8f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wKjtNr5L; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 702901F7EE;
-	Thu, 10 Oct 2024 17:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728579846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ks2nA91ED5J6DgSnjm5yk0DBGzEhu1zjCwZL/gz6+l0=;
-	b=R13bEh8fcXjhhQO8mqnsVfhPw/0/ehRfCOnB+aaMO52Us7zBLYjaUAC96+lnKvylIJG7J6
-	xxDDSjj2P2LC4dtjsMuDScn4g2m+LMH6E2K+sf4H8tY0YyvwMQBE+Rvxl2QDlMlse5+krt
-	LOps5zVH87PDHINklLgXxXyCDp2s43o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728579846;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ks2nA91ED5J6DgSnjm5yk0DBGzEhu1zjCwZL/gz6+l0=;
-	b=wKjtNr5LsWe9lbPS0XjIQlkg0DWouxbEdJdwwfLEpsqPGvngUtlQ7AOgAJjBKNXxDbCfxf
-	4h8mw8bom970/8Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=R13bEh8f;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=wKjtNr5L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728579846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ks2nA91ED5J6DgSnjm5yk0DBGzEhu1zjCwZL/gz6+l0=;
-	b=R13bEh8fcXjhhQO8mqnsVfhPw/0/ehRfCOnB+aaMO52Us7zBLYjaUAC96+lnKvylIJG7J6
-	xxDDSjj2P2LC4dtjsMuDScn4g2m+LMH6E2K+sf4H8tY0YyvwMQBE+Rvxl2QDlMlse5+krt
-	LOps5zVH87PDHINklLgXxXyCDp2s43o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728579846;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ks2nA91ED5J6DgSnjm5yk0DBGzEhu1zjCwZL/gz6+l0=;
-	b=wKjtNr5LsWe9lbPS0XjIQlkg0DWouxbEdJdwwfLEpsqPGvngUtlQ7AOgAJjBKNXxDbCfxf
-	4h8mw8bom970/8Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6420E13A6E;
-	Thu, 10 Oct 2024 17:04:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tphqGAYJCGd/GQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 10 Oct 2024 17:04:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 08155A08A2; Thu, 10 Oct 2024 19:04:06 +0200 (CEST)
-Date: Thu, 10 Oct 2024 19:04:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Ye Bin <yebin@huaweicloud.com>,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yebin10@huawei.com, zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
- filesystem
-Message-ID: <20241010170405.m5l4wutd4csj3v6d@quack3>
-References: <20241010112543.1609648-1-yebin@huaweicloud.com>
- <20241010112543.1609648-3-yebin@huaweicloud.com>
- <20241010121607.54ttcmdfmh7ywho7@quack3>
- <5A1217C0-A778-4A9A-B9D8-5F0401DC1013@redhat.com>
+	s=arc-20240116; t=1728579879; c=relaxed/simple;
+	bh=KmaCXUsf76qXjPkMG6xmS/GxpfPhh7ZBsUs/imeasvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nfDI30glzZcVMWsytN9DZ1205Btmepw7+tXjEb7wm05Vm2KeQD8VB30O6HVauVvjT9VF0zxtI1QNGXfvnHNQIvA03XHCY014zIK7iTrGRXZKFnGpmHxRV4A18WxC5Y1LGCgj5c7wLZNZbnNJcd3HnW4LBZmAFIqjHwnipIFVwyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQsc9nlV; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d50fad249so352307f8f.1;
+        Thu, 10 Oct 2024 10:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728579876; x=1729184676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c+DAWWUvKTQgW3MLl9vHnA8Jud2Bc9oa6MqljB4YdFk=;
+        b=DQsc9nlVQYksrDWPRNaitZr6XdkLUIZY3eUXQ+lunrHAFOQE6yU/rtssDHEdruxOxn
+         Bx4bO76wi9shTaDogWsnDYOwlcPYXvDkpg7CC9/o/aFstM4G/CiSgwzKkVXIMQQ3PkBp
+         bsgz2wIFnyW97D5b5pYtd44UH0RQmu9R6LYuyOxhljVtZA/QXgLUTwLF3T2hnz8XncYL
+         xoz2nCWnRTC3NFc+I5DFn6Es3tnsdti+ZNAAuMzfcGUcYW9p3dvQBAB/R3VaQIbYMlo7
+         hq1YfXPMX5Nvdth4aTz/BCTWIMMq1q+2/MIsQs3G9HeYTjqJ5MrMFmkMwIf75m8qB71O
+         TftA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728579876; x=1729184676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c+DAWWUvKTQgW3MLl9vHnA8Jud2Bc9oa6MqljB4YdFk=;
+        b=OVymdUJZJiwKCw1dqy5EAaY95XC1bqoVKUSPelQ50dKHrRYa1PvP28pao8OE8JkPn7
+         0RmpcPnA3QN7gpgfIUAKgCuxto/ytpO51TTH323XvGfS5Ak29rEysq2pHFOYGwXwaGqh
+         dOof4yf4GmPtzn2hRyIyaVnWxT/x1Kxw0JgHa4N7BHeruSQ2oojcUtrEnZjkhNl4+4lH
+         5zSQlSB+B/e5rS2pWwfbVbxRE2RksBxal39wXBEkaTsOcm0rXlmWjlbsuREWBBQJcHSE
+         1+nd9Xsurr7izoqyfu2G6/pUrlslqmBf+rXpqiIu4hQpUv7ZXIJ5haZ96tPbkas+5y7a
+         fw1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUORYqYFuM3q9rsJDAF0HZeV0SlGDpw+3PDI1FOp/B/l0S+moF4ONcBmf2ITF5Yr7RFh/A=@vger.kernel.org, AJvYcCXImh3NHmaGPtKQznFl/4jfl2z0aVO9owLUbn4vTC5dg2Fmri9HFzbhSxpRmM0Oi0GlNSiHoa9D2KN38UVS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxulFEHnjhDXih/ZGA7nKiufDh7uD1IgksUjyPxZpI6IaL4DAIm
+	y0bywEDcBz0lfPcPQ+3ntwEoTKIthGnwrpYoIkNFwDp7/9JtqJRuFdHa1cBdyfjCE0A2EvwpjUd
+	OFjlJhNN5ch5Z6EVDUjLYgW2DsXg=
+X-Google-Smtp-Source: AGHT+IEClv/cTkt5E2SWxAPhIQ5PRwySBYvQxAVESe6/iRML/OaeVGWjqVj4NOlIkO5y/2r/8QROOzYWbH5DxUg6kZw=
+X-Received: by 2002:a05:6000:109:b0:37c:cdb6:6a9e with SMTP id
+ ffacd0b85a97d-37d3a9b5242mr4815198f8f.9.1728579875879; Thu, 10 Oct 2024
+ 10:04:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5A1217C0-A778-4A9A-B9D8-5F0401DC1013@redhat.com>
-X-Rspamd-Queue-Id: 702901F7EE
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,huawei.com:email,suse.com:email];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241002180956.1781008-1-namhyung@kernel.org> <20241002180956.1781008-3-namhyung@kernel.org>
+ <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
+ <ZwBdS86yBtOWy3iD@google.com> <37ca3072-4a0b-470f-b5b2-9828a2b708e5@suse.cz>
+ <ZwYt-GJfzMoozTOU@google.com> <ZwgEykf_XmVpEE8_@google.com>
+In-Reply-To: <ZwgEykf_XmVpEE8_@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 10 Oct 2024 10:04:24 -0700
+Message-ID: <CAADnVQLXrS0coJrk5RPxvik5Sz2yFko5z=+PXdGfju_7Lxj=mQ@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, Song Liu <song@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 10-10-24 09:35:46, Benjamin Coddington wrote:
-> On 10 Oct 2024, at 8:16, Jan Kara wrote:
-> 
-> > On Thu 10-10-24 19:25:42, Ye Bin wrote:
-> >> From: Ye Bin <yebin10@huawei.com>
-> >>
-> >> In order to better analyze the issue of file system uninstallation caused
-> >> by kernel module opening files, it is necessary to perform dentry recycling
+On Thu, Oct 10, 2024 at 9:46=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Wed, Oct 09, 2024 at 12:17:12AM -0700, Namhyung Kim wrote:
+> > On Mon, Oct 07, 2024 at 02:57:08PM +0200, Vlastimil Babka wrote:
+> > > On 10/4/24 11:25 PM, Roman Gushchin wrote:
+> > > > On Fri, Oct 04, 2024 at 01:10:58PM -0700, Song Liu wrote:
+> > > >> On Wed, Oct 2, 2024 at 11:10=E2=80=AFAM Namhyung Kim <namhyung@ker=
+nel.org> wrote:
+> > > >>>
+> > > >>> The bpf_get_kmem_cache() is to get a slab cache information from =
+a
+> > > >>> virtual address like virt_to_cache().  If the address is a pointe=
+r
+> > > >>> to a slab object, it'd return a valid kmem_cache pointer, otherwi=
+se
+> > > >>> NULL is returned.
+> > > >>>
+> > > >>> It doesn't grab a reference count of the kmem_cache so the caller=
+ is
+> > > >>> responsible to manage the access.  The intended use case for now =
+is to
+> > > >>> symbolize locks in slab objects from the lock contention tracepoi=
+nts.
+> > > >>>
+> > > >>> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> > > >>> Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
+> > > >>> Acked-by: Vlastimil Babka <vbabka@suse.cz> #mm/slab
+> > > >>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > >
+> > >
+> > > So IIRC from our discussions with Namhyung and Arnaldo at LSF/MM I
+> > > thought the perf use case was:
+> > >
+> > > - at the beginning it iterates the kmem caches and stores anything of
+> > > possible interest in bpf maps or somewhere - hence we have the iterat=
+or
+> > > - during profiling, from object it gets to a cache, but doesn't need =
+to
+> > > access the cache - just store the kmem_cache address in the perf reco=
+rd
+> > > - after profiling itself, use the information in the maps from the fi=
+rst
+> > > step together with cache pointers from the second step to calculate
+> > > whatever is necessary
 > >
-> > I don't quite understand the use case you mention here. Can you explain it
-> > a bit more (that being said I've needed dropping caches for a particular sb
-> > myself a few times for debugging purposes so I generally agree it is a
-> > useful feature).
+> > Correct.
 > >
-> >> on a single file system. But now, apart from global dentry recycling, it is
-> >> not supported to do dentry recycling on a single file system separately.
-> >> This feature has usage scenarios in problem localization scenarios.At the
-> >> same time, it also provides users with a slightly fine-grained
-> >> pagecache/entry recycling mechanism.
-> >> This patch supports the recycling of pagecache/entry for individual file
-> >> systems.
-> >>
-> >> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> >> ---
-> >>  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/mm.h |  2 ++
-> >>  kernel/sysctl.c    |  9 +++++++++
-> >>  3 files changed, 54 insertions(+)
-> >>
-> >> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> >> index d45ef541d848..99d412cf3e52 100644
-> >> --- a/fs/drop_caches.c
-> >> +++ b/fs/drop_caches.c
-> >> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
-> >>  	}
-> >>  	return 0;
-> >>  }
-> >> +
-> >> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
-> >> +				  void *buffer, size_t *length, loff_t *ppos)
-> >> +{
-> >> +	unsigned int major, minor;
-> >> +	unsigned int ctl;
-> >> +	struct super_block *sb;
-> >> +	static int stfu;
-> >> +
-> >> +	if (!write)
-> >> +		return 0;
-> >> +
-> >> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
-> >> +		return -EINVAL;
+> > >
+> > > So at no point it should be necessary to take refcount to a kmem_cach=
+e?
+> > >
+> > > But maybe "bpf_get_kmem_cache()" is implemented here as too generic
+> > > given the above use case and it should be implemented in a way that t=
+he
+> > > pointer it returns cannot be used to access anything (which could be
+> > > unsafe), but only as a bpf map key - so it should return e.g. an
+> > > unsigned long instead?
 > >
-> > I think specifying bdev major & minor number is not a great interface these
-> > days. In particular for filesystems which are not bdev based such as NFS. I
-> > think specifying path to some file/dir in the filesystem is nicer and you
-> > can easily resolve that to sb here as well.
-> 
-> Slight disagreement here since NFS uses set_anon_super() and major:minor
-> will work fine with it.
+> > Yep, this should work for my use case.  Maybe we don't need the
+> > iterator when bpf_get_kmem_cache() kfunc returns the valid pointer as
+> > we can get the necessary info at the moment.  But I think it'd be less
+> > efficient as more work need to be done at the event (lock contention).
+> > It'd better setting up necessary info in a map before monitoring (using
+> > the iterator), and just looking up the map with the kfunc while
+> > monitoring the lock contention.
+>
+> Maybe it's still better to return a non-refcounted pointer for future
+> use.  I'll leave it for v5.
 
-OK, fair point, anon bdev numbers can be used. But filesystems using
-get_tree_nodev() would still be problematic.
+Pls keep it as:
+__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
 
-> I'd prefer it actually since it avoids this
-> interface having to do a pathwalk and make decisions about what's mounted
-> where and in what namespace.
-
-I don't understand the problem here. We'd do user_path_at(AT_FDCWD, ...,
-&path) and then take path.mnt->mnt_sb. That doesn't look terribly
-complicated to me. Plus it naturally deals with issues like namespacing
-etc. although they are not a huge issue here because the functionality
-should be restricted to CAP_SYS_ADMIN anyway.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+just make sure it's PTR_UNTRUSTED.
+No need to make it return long or void *.
+The users can do:
+  bpf_core_cast(any_value, struct kmem_cache);
+anyway, but it would be an unnecessary step.
 
