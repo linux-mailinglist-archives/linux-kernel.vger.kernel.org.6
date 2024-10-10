@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-358847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E315998494
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:14:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C99998497
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDF4282B26
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D2F1F24AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EED1C244F;
-	Thu, 10 Oct 2024 11:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3261C2DD5;
+	Thu, 10 Oct 2024 11:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9hYjoi4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ex7U2jk4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECDC1C2439;
-	Thu, 10 Oct 2024 11:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41A1C2DC8;
+	Thu, 10 Oct 2024 11:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558844; cv=none; b=DKnyiSTvBWxXVefKfaRzQpiPL0w7PtkTvpYuMIjOiH+tSK26inU9HWGV/J1zjIPt1DeR+hjI4fGvanPmfqNj8oFY/lym11kduUNfpsMS6CjxaXfcOKUA6hxWYHYPh+hJlRtxNjH6bQP46PMhqVDfZfJYF4DVZ41QN4WLZT6Fq4I=
+	t=1728558849; cv=none; b=oZlEYKmWazZYkCyyzu0SMcg3WDgKZGwehbXMob8KzVTQhog6bYt060D9UPT9wOc8Dnx2k0z7bo8ZCz6HWVpNRoikPn/PWMBMrxYtyjU07VkMoqbuMJFzLnK2EHdPKIIYruCP7VBjfHmCLEhXaIf5lcqtVvPxG/M9hJMsYxGBq/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558844; c=relaxed/simple;
-	bh=Ddg6EIHl2NK2TWwpLSpCiLRnzSOXb2j+tOrgi4H3kNQ=;
+	s=arc-20240116; t=1728558849; c=relaxed/simple;
+	bh=Xkcwtb0WrnxptNevR20ESVve7MqObs8X2QnVhJ8ogb8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RxArb8MFsB6qPCfVregSKI1B9XveM/bt19tJfZxsana+N5eWvY4qrq+tWmRr8HZdaDjNsmlBi+3uN9EoKKy2/Xs42C0YmeEl7LBEnSj8ga0H9aw6TwWXRhKXadciCInuI245aCqjR2kp3t0NCsDn6KViRX/561mcw9Hl4OcAjpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9hYjoi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9622FC4CEC5;
-	Thu, 10 Oct 2024 11:14:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=lYxuZh6BF4/6K9CnCchs8qnYiuXhALZhKGT4V8YuhyAjoH1lpCocAEg/YlkX2C5hZcBsGeS4ViZa9nIEKIzajp0GZjAlrjGu+rqLZYGuKO4KZ9RtmQVcqcgCflWWIeioioc47o4a+3Xk+jMo7HQpRTtwkKkSx+vWEu3cKF/KtgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ex7U2jk4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A5CC4CEC5;
+	Thu, 10 Oct 2024 11:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728558844;
-	bh=Ddg6EIHl2NK2TWwpLSpCiLRnzSOXb2j+tOrgi4H3kNQ=;
+	s=k20201202; t=1728558849;
+	bh=Xkcwtb0WrnxptNevR20ESVve7MqObs8X2QnVhJ8ogb8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=e9hYjoi4esKau57f1oEKp9lqpR/lez0vbpaW5d+ZF5sd/1SkhZ/OBiEIdThHIh1UW
-	 YQWtB09DSlenWQZMf072e5F5Gya5EvCrnIbmBvJdCbDK53P0Jx3EV+GQuFqjHiw4y+
-	 7Z9VaDwVDG6i1wawlzDnZXAbzH8nB0M9UKDjScueA+z43Su+ArEaqtk53N81YjSE7M
-	 N29UNeWJfuWEnTU6DtKL+/re4TVEG0ixIi7Wxx9EK1MRIU/oKvN1ZebGVs6wNSYDBV
-	 ZaL7ocx+BbF9/4GZTyI28Cf5ygEuMBcv7UKeZJfipn1RbYQB45C7dVccEbBPP+q1x5
-	 3yDpCOS17BzYQ==
+	b=Ex7U2jk477p6hZdg9nxjjM4IaQodev13qL6nKjaAlX575f8y1Wq7wXAW0MkOEQkqm
+	 BdCrnr7tCULO2QmQQRPyDgs9yfFIYxrPblJE6DnlF5o4TdeLG1Kwc08LnXLcLGxUc/
+	 ED6KZaVh+YdOKD4MQMVoe3h4vE6p9FcOVVQsT/qjoVm7PCV6eZKtCMu+c57BxvlBau
+	 1MYAJ/xdHWm3C9jSshsY6zwqfEiXl6sRIkN4ycvWNj3rEAzziYAiQ74ioKiHqjL35T
+	 6PDiDsuLqgLgcULBTBW9MKhGH2LCNgIyXcERliLLmoV5u+L/vAI2rGSNjB0pL72YSi
+	 85HA9jRDHaHRQ==
 From: Mark Brown <broonie@kernel.org>
-To: perex@perex.cz, Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: tiwai@suse.com, wangweidong.a@awinic.com, 
- andriy.shevchenko@linux.intel.com, heiko@sntech.de, 
- kuninori.morimoto.gx@renesas.com, nathan@kernel.org, 
- u.kleine-koenig@baylibre.com, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, lgirdwood@gmail.com
-In-Reply-To: <20241008025923.10606-1-zhujun2@cmss.chinamobile.com>
-References: <20241008025923.10606-1-zhujun2@cmss.chinamobile.com>
-Subject: Re: [PATCH] sound:aw88399:Correct error handling in
- aw_dev_get_dsp_status function
-Message-Id: <172855884130.3258793.11914506844337433857.b4-ty@kernel.org>
-Date: Thu, 10 Oct 2024 12:14:01 +0100
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Benjamin Bara <bbara93@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>, 
+ stable@vger.kernel.org
+In-Reply-To: <20241008-tegra-dapm-v2-1-5e999cb5f0e7@skidata.com>
+References: <20241008-tegra-dapm-v2-1-5e999cb5f0e7@skidata.com>
+Subject: Re: [PATCH v2] ASoC: dapm: avoid container_of() to get component
+Message-Id: <172855884665.3258793.1116462601049800083.b4-ty@kernel.org>
+Date: Thu, 10 Oct 2024 12:14:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,11 +63,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Mon, 07 Oct 2024 19:59:23 -0700, Zhu Jun wrote:
-> Added proper error handling for register value check that
-> return -EPERM when register value does not meet expected condition
+On Tue, 08 Oct 2024 13:36:14 +0200, Benjamin Bara wrote:
+> The current implementation does not work for widgets of DAPMs without
+> component, as snd_soc_dapm_to_component() requires it. If the widget is
+> directly owned by the card, e.g. as it is the case for the tegra
+> implementation, the call leads to UB. Therefore directly access the
+> component of the widget's DAPM to be able to check if a component is
+> available.
 > 
-> 
+> [...]
 
 Applied to
 
@@ -75,8 +79,8 @@ Applied to
 
 Thanks!
 
-[1/1] sound:aw88399:Correct error handling in aw_dev_get_dsp_status function
-      commit: 53189ae7aa1eeabd937c7a4d1f41e40513597d2c
+[1/1] ASoC: dapm: avoid container_of() to get component
+      commit: 3fe9f5882cf71573516749b0bb687ef88f470d1d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
