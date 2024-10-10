@@ -1,120 +1,98 @@
-Return-Path: <linux-kernel+bounces-358869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1072F9984ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:25:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235949984D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9211C24102
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:25:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 522711C23E86
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECA71C32E7;
-	Thu, 10 Oct 2024 11:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51B41C244C;
+	Thu, 10 Oct 2024 11:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lJU3XipM"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S/xeoDtQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4408EF9CB;
-	Thu, 10 Oct 2024 11:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1A91BDA9C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728559498; cv=none; b=InQCUQURrZJXy2KopfSLwNiiMGblaTDM2DJRM0l0CyqwgCNx3NwGn5Q2bb6+oQP1HiqSQZfHabSclAK/4fyQ4lt7NHQfHthsiNVM1rjTSnfJ451Ce/aOm+WhTGwwWAf+3Bd/G1B+fWGQLjEO7Tc3sYVLdTpbXhucqxnw+KfcU/U=
+	t=1728559299; cv=none; b=coFPW0zI8/mVFGDHE1EuZ9yD0lPx3i1gs81XmIhdL5yiBvC5N+9XYu6GiED6KLoqKleYvD0KdLbrmp7Opo9bQ/wKVMYaIFmcmA7dzaMcOUPaqTD5yNvYz9v/DEMfKu1uHFvfqe8mz1bLj6eQnAErfyBRnK8a/mcOdp0DAzoR6k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728559498; c=relaxed/simple;
-	bh=ywceDmzYQKH28KRgkOB9nGjXZGaXYWHDTS1DHsIk3Xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUuLrkdglHhx44mApQ+EQFXIKRBLA8kVLdD9+H5nnVY0EFblvRJ+e40vmW4us2EYqIwLbufF7EWcvY70Bo4saly8+aC8AfZUQPLYZFWK7z33uesqXuj+3/ij+uB959dIg9EAQBlcEhGa+vndDrh1DE+o647jvVIS4gMPjnChG+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lJU3XipM; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABMduX002819;
-	Thu, 10 Oct 2024 11:24:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=+Lt5TvzGhT9DI465dwqRMgLKs/FyG
-	03acJyUMNDMqLk=; b=lJU3XipMDhMxFK5PrptopagRJT+BsXO2p/dV/UFKndEuX
-	4UN88zW7V9u3npraMwVgr7ngRDdoX7al+rFEUbdlZ4hTz6U7l3sdhItAL6OxHtrc
-	ITAXFxGohb+5jqMV6l895TwZVnd7l2SZyuI3TyTUHOmuIYyv75s9u/smTWyaz3N0
-	qV+LFe/BgNeFzitlHwMmY3R/90rXnqUTX7hqMV3A726aXu88A1cbV8Yjqsn2IfpA
-	DsG9qFw76Vw39ryyf6E7xFeFMZ1gYeHTn26xAZ6F7AvnYaw3gDHNHOLVUqfALiQ/
-	kjFXlI8Fuw35sLzxPDPFTYv9LKUUMMBQV/i59v6SA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42306ejh49-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 11:24:49 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABCS2V011625;
-	Thu, 10 Oct 2024 11:24:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwg6x7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 11:24:48 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49ABOl9C031014;
-	Thu, 10 Oct 2024 11:24:47 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 422uwg6x6y-1;
-	Thu, 10 Oct 2024 11:24:47 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Chen Wang <unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@outlook.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-Subject: [PATCH] pinctrl: sophgo: fix double free in cv1800_pctrl_dt_node_to_map()
-Date: Thu, 10 Oct 2024 04:18:18 -0700
-Message-ID: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728559299; c=relaxed/simple;
+	bh=rR8f+de+D5b0oudKUsUYnxAfnq3kygzsXm/DO2e+OqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgT4gNunpTZuAkrnNDvXNiy09wEFgZdtIgFFUwMD96gdutsGvgqtadd07/emfP+0pFq0iiDjnemSh2FOwlZmfjVGCR2A4k9zHUE9517eG0mS38FlIHemjMviZ/XmqEBZv6IfC2pMaIh0OO7D7xiJZfIYpTRClA3PDrbDJpbs2tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S/xeoDtQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=l+ulxE4xZbMUB2WbEqYu/8bVJ1wR+ekFv4y5fuKOpJw=; b=S/xeoDtQiynkh0IifpkO0FjVmr
+	NJdLQdYCd5yMk5eQCryNsOQBF8zpCLbKXCP6Hl2TUO9SK6nYxT0cThI+gMwOBHSx3p43RBuUdLVCr
+	sSaT7WxXwXb0VXKTozRVqK2WwLpKXPyzhNRqlq+qgDPcel1/d5rjkbhpdJxQJ20OAZlcjgJjwF23Z
+	lLPd62Nsg0+ve7YMg84VSYTUN+fhN36mxGFwi9wCJEpFPwvBlPQ/P/L79R37qhf8Qc2VPAHkhWxr5
+	Cn0gL4EvQz0z+lZt4Pol1MmX/TRMVUuniAbyvbf49icKfnnjkk/Wi7GKK1WWyZw8Z07/pLfZ1fM9+
+	8BBm3qoA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syrEa-00000007Tg3-1OT3;
+	Thu, 10 Oct 2024 11:21:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 88CD130088D; Thu, 10 Oct 2024 13:21:32 +0200 (CEST)
+Date: Thu, 10 Oct 2024 13:21:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, neeraj.upadhyay@kernel.org,
+	riel@surriel.com, leobras@redhat.com, tglx@linutronix.de,
+	qiyuzhu2@amd.com
+Subject: Re: locking/csd-lock: Switch from sched_clock() to
+ ktime_get_mono_fast_ns()
+Message-ID: <20241010112132.GF17263@noisy.programming.kicks-ass.net>
+References: <da9e8bee-71c2-4a59-a865-3dd6c5c9f092@paulmck-laptop>
+ <20241009180708.GU17263@noisy.programming.kicks-ass.net>
+ <663ad810-3318-43af-8607-17ff7fe26e4a@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_08,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410100075
-X-Proofpoint-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
-X-Proofpoint-ORIG-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <663ad810-3318-43af-8607-17ff7fe26e4a@paulmck-laptop>
 
-'map' is allocated using devm_* which takes care of freeing the allocated
-data, but in error paths there is a call to pinctrl_utils_free_map()
-which also does kfree(map) which leads to a double free.
+On Wed, Oct 09, 2024 at 11:18:34AM -0700, Paul E. McKenney wrote:
+> On Wed, Oct 09, 2024 at 08:07:08PM +0200, Peter Zijlstra wrote:
+> > On Wed, Oct 09, 2024 at 10:57:24AM -0700, Paul E. McKenney wrote:
+> > > Currently, the CONFIG_CSD_LOCK_WAIT_DEBUG code uses sched_clock()
+> > > to check for excessive CSD-lock wait times.  This works, but does not
+> > > guarantee monotonic timestamps. 
+> > 
+> > It does if you provide a sane TSC
+> 
+> What is this "sane TSC" of which you speak?  ;-)
+> 
+> More seriously, the raw reads from the TSC that are carried out by
+> sched_clock() are not guaranteed to be monotonic due to potential
+> instruction reordering and the like.  This is *not* a theoretical
+> statement -- we really do see this on the fleet.  Very rarely for any
+> given system, to be sure, but not at all rare across the full set of them.
+> 
+> This results in false-positive CSD-lock complaints claiming almost 2^64
+> nanoseconds of delay, which are not good complaints to have.
 
-Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
+Ooh, so the real difference is that clocksource_tsc ends up using
+rdtsc_ordered() while sched_clock() ends up using rdtsc(), and you're
+actually seeing that reordering happen.
 
-Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with smatch, only compile tested.
----
- drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+*urgh*.
 
-diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-index d18fc5aa84f7..57f2674e75d6 100644
---- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-+++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-@@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	if (!grpnames)
- 		return -ENOMEM;
- 
--	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
-+	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
- 	if (!map)
- 		return -ENOMEM;
- 
--- 
-2.39.3
-
+Yes, please put that in the Changelog.
 
