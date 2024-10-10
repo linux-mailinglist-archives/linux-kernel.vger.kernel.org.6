@@ -1,94 +1,101 @@
-Return-Path: <linux-kernel+bounces-358925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6ACD99855E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB53998561
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1262C1C234A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A24241F2498E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6431C4604;
-	Thu, 10 Oct 2024 11:53:46 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC981C2DD5;
+	Thu, 10 Oct 2024 11:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IIe+J1UD"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058811BE23D;
-	Thu, 10 Oct 2024 11:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461681BE23D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728561225; cv=none; b=AVUpZ3eenSlZf4AL4NnNKFKyXq4FU1lkQHR/7PuBPqGvFKI1HnG7tPW1np6kBPTng7GDdIh3Jifa5LKv5Feyj19JEf66HWTpWmo94GIy+NxWUDCtfSjPnFwYs+Mwg1irdXgNE68v4HqzHS0LSlvNJslQwjFUqBblARzFtucMrQQ=
+	t=1728561344; cv=none; b=AKf4CG9foMZj50HvyiXJ9/XqHFRMhpCHgf6p4PZm8wch8ddKaiq00NoJ/t7Br2egjsWPTa3rxfEMLm/z60mELIFwxcOm9/ehtjdr2RPIO9bj/0DG4jED6BjPHhEz3WfCmFCoJZw8CXT++LXM016MbY0C1tdk/1DZ++aza/6u90M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728561225; c=relaxed/simple;
-	bh=2jUyUz82EUmgHXC7DdO/UyMt9a5PwBEohkkcpg5BRdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FSzTI/4SgoMiNEukARnE9yfU9o4ibTTrDSIz8KpNPGwIDM0BipugATnjeRgrJH4yfRad6j07gY4/DmR4eAxguF+ggrwPBOcXYHY7KHU2vqTTXpnczyAjw4zWmYtcQUakSL+aJIE1v9ZQll78nVFcXNeio7VY/igYT+rmuHLVa2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPSmQ43jGzyT1j;
-	Thu, 10 Oct 2024 19:52:22 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0760018010F;
-	Thu, 10 Oct 2024 19:53:40 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 19:53:39 +0800
-Message-ID: <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
-Date: Thu, 10 Oct 2024 19:53:39 +0800
+	s=arc-20240116; t=1728561344; c=relaxed/simple;
+	bh=9ypUntO+knrZwXW14pBBJWuCGp9e8ARsbAZz6ZyvuJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPd96FPP78hv3K+RX8SqhYfSu/KA/Cns4Px30VvsvplnhTLIgFTZmZBgkx6Ac6aAiKhQH7BBKX1Q+SmWbvkSTC+c23mqX05rDHb9JYyEkCxySIARHgQ6yR3rUE3dPfUnOxwUaELRTpd5eAa+CrdEydeXCeNmXzB8kEPxZbdJd+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IIe+J1UD; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Jgzc/uLviO7J54OVqHpsyMnCk4VTRuOJ3qugkDERST8=; b=IIe+J1UD8SkmQSXtqZvX4LjYxM
+	/0Qpcshk2xUqgwE/jU5u5u9nB6ve8edCv9dFAsxYsM3S+wjJZD+ytsnuWIIx0lbtBnTmW70PGy/Yg
+	dhq8BZm077nnWVQf3Ucm0qP01tA13M774TFjnv4b2zZekyAYVM0HKzbPVdH8lElXZSh8hnskU40yw
+	9uQ3M1J73m7NhJRRDeKEZf514jrZ1G4Gdmzvj/8Vl9ladGZy6kRKzrMjnP+BJC0ha7VTjxjMn40Sg
+	heqvJhzhOJfoe353S5xm8RhxMf8zN8UUHuNKHPTZDrBkvkarvSNRmIc3ZCCpFgA/4jVj0MqTUgQtZ
+	LqmG04VA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53502)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1syrlZ-0002IO-0l;
+	Thu, 10 Oct 2024 12:55:36 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1syrlU-0007HP-2r;
+	Thu, 10 Oct 2024 12:55:32 +0100
+Date: Thu, 10 Oct 2024 12:55:32 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
+	Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 00/28] ARM: Switch to generic entry
+Message-ID: <ZwfAtJfNm95sXgo8@shell.armlinux.org.uk>
+References: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
-To: Furong Xu <0x1207@gmail.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
-	<ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <xfr@outlook.com>
-References: <20241010114019.1734573-1-0x1207@gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <20241010114019.1734573-1-0x1207@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 2024/10/10 19:40, Furong Xu wrote:
-> Setting dma_sync_size to 0 is not illegal, and several drivers already did.
-> We can save a couple of function calls if check for dma_sync_size earlier.
-> 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
->  net/core/page_pool.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index a813d30d2135..fac52ba3f7c4 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -454,7 +454,7 @@ page_pool_dma_sync_for_device(const struct page_pool *pool,
->  			      netmem_ref netmem,
->  			      u32 dma_sync_size)
->  {
-> -	if (pool->dma_sync && dma_dev_need_sync(pool->p.dev))
-> +	if (dma_sync_size && pool->dma_sync && dma_dev_need_sync(pool->p.dev))
->  		__page_pool_dma_sync_for_device(pool, netmem, dma_sync_size);
+On Thu, Oct 10, 2024 at 01:33:38PM +0200, Linus Walleij wrote:
+> This patch series converts a slew of ARM assembly into the
+> corresponding C code, step by step moving the codebase
+> closer to the expectations of the generic entry code,
+> and as a last step switches ARM over to the generic
+> entry code.
 
-Is there any reason that those drivers not to unset the PP_FLAG_DMA_SYNC_DEV
-when calling page_pool_create()?
-Does it only need dma sync for some cases and not need dma sync for other
-cases? if so, why not do the dma sync in the driver instead?
+I haven't looked at the series yet, but I guess we're throwing away
+all the effort I put in to make stuff like syscalls as fast as
+possible.
 
->  }
->  
+So the question is... do we want performance, or do we want generic
+(and slower) code?
+
+It seems insane to me that we spend time micro-optimising things like
+memcpy, memset, divide routines, but then go and throw away performance
+that applications actually rely upon, such as syscall performance.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
