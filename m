@@ -1,83 +1,101 @@
-Return-Path: <linux-kernel+bounces-358050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2D39979A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:33:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99BC9979A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073871C2244D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:33:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B7CB22225
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B96210957;
-	Thu, 10 Oct 2024 00:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042DB36C;
+	Thu, 10 Oct 2024 00:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGn0J00H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOtR3avt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80972A1D2;
-	Thu, 10 Oct 2024 00:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E924C144;
+	Thu, 10 Oct 2024 00:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728520375; cv=none; b=DCV+zrALAmDI5lIEkBTjP76AMsJJJRqhosKVFYTUCCnW8Xr4EKrgfyhT8rIBJc5CxJrm/XTgawMnzn6sN7itJo5Ca9LQyzswyjR+TZ0tD2HSgTwpTxZBeYyzGlIjo3NxeoHnBj+4V2CYY+GtTqTtrdQ+Mv45NhUiOrYLd8eRzqQ=
+	t=1728520414; cv=none; b=ZcGwN0Erd1qvB7rsPqkIOJ8D8x0PPJ336Xghrs9ZkYxQRVsyACYdz8hiNk5gFSu6OW2CZ8PTcccLPAK9XEA2JoDyP1QTe/KQb7b49o3Ws9NrSaFy2KOiK7ISxjo3BxoUm9Rn/DFiHam1v7djrdfkS7turJ3I3zLoyiE08uttqh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728520375; c=relaxed/simple;
-	bh=QarAG9OsS0S7oXws7XJsQIFCQAcnaMCbtsh+DM35Fcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YBwI5hacrjs5G900x33xyknx5XzAPvVsrSu3vTIv1XFAjyn2+bUBNFA9H5Z/ytdM93DnUxeNPUSBKzjF74QhtRXaJIh6RFEJK1tMCkvnaFJNzDOZ/HNy/ouCnf+8rygNH/MlgfmhjOOhFpFORNqc6VlSg9mp5t0mwSjq99MSeG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGn0J00H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6633CC4CEC3;
-	Thu, 10 Oct 2024 00:32:54 +0000 (UTC)
+	s=arc-20240116; t=1728520414; c=relaxed/simple;
+	bh=IqcTrKiwdbZHhepDa3OiHZSbNeCni10R4bqSzlR+NCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrfzjh6sBN+/SmArSrQOH3/XTI8hAimGLT9Hku/zpVEiKrgwvNEAl1mSaYW1dWTto81c8AXJY0WjyxeTsiGxogtbILpA5No0HxWHQQ6HJjL3d4PrtcSiAC7IzJE9deFAvu6SU1Pccr0jOJrLH95wp9jR1A2i/U3/e54L/k8uNL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOtR3avt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59D9C4CEC3;
+	Thu, 10 Oct 2024 00:33:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728520375;
-	bh=QarAG9OsS0S7oXws7XJsQIFCQAcnaMCbtsh+DM35Fcw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FGn0J00HfbQ3QOMVUqk1P7sFWmH62grr/Lc9+Ar39iMKi+ib9tL6BLhCpOB1ZxllE
-	 0MRu42N7V/iGB9cBbdJfiOwSrsdTdPn9NwUypq52PfjxzpFXlkEinsT7EEDfvrNRzb
-	 nXmCqlafauZ46G5rrpSPV+rUEZE82Ux0wGJWns13gCl7f/La5N026MaRT4hHcTFvfe
-	 tKxX77Y0gwrEKnMPMJYe6QSgQ1FOHg8/8C1cCfAuBbez7m+eCCrHicLjxZzIrFkuNb
-	 PVKAHtJnkdlmyu1fKMNRcxPyIZ5CmvG2vp3tw9AP0i1TQBMI9i3oJM27PgPVmhYMrT
-	 Km5smAzOMfAcQ==
-Date: Wed, 9 Oct 2024 17:32:53 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
- <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
- David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
- <abuehaze@amazon.com>, Paolo Abeni <pabeni@redhat.com>, "Christopher S .
- Hall" <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>,
- John Stultz <jstultz@google.com>, "Michael S . Tsirkin" <mst@redhat.com>,
- netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier
- <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, qemu-devel
- <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v7] ptp: Add support for the AMZNC10C 'vmclock'
- device
-Message-ID: <20241009173253.5eb545db@kernel.org>
-In-Reply-To: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
-References: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
+	s=k20201202; t=1728520413;
+	bh=IqcTrKiwdbZHhepDa3OiHZSbNeCni10R4bqSzlR+NCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XOtR3avtr5Y27qwqeQNHH1lyP1O1eKGCqx44DvflLLWrh8Og1bdpvmD3/v1kSFNXT
+	 xOJHsMx2HpSrUCtwmbtY5wZEUWjmtlhYFcEqBbbOsppeJ5oSkIhUOSayHjEnSTjyip
+	 y62h7aNdhvNqRuJeVvSNcIvTHnAhnsLUWCsJLMMi8OcKACLDy09hzY0UKuLMY6Sf6V
+	 CIDR5lU+R31E/Sui7GYUhSeYnhpioMKepLa2RRcyh4quLAAAWjmYPLqiTzWoa7gLgj
+	 FVpXYVPGLL+uIQDUbfSSc1GRIZO9Uh01dTCQR7z4n+3DchoQwtkJ0x+Sd7oQTPnhrc
+	 v+XOs0RRJTK7Q==
+Date: Wed, 9 Oct 2024 17:33:31 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>
+Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
+Message-ID: <20241010003331.gsanhvqyl5g2kgiq@treble.attlocal.net>
+References: <CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
+ <20240816101031.6dd1361b@rorschach.local.home>
+ <Zr-ho0ncAk__sZiX@krava>
+ <20240816153040.14d36c77@rorschach.local.home>
+ <ZsMwyO1Tv6BsOyc-@krava>
+ <20240819113747.31d1ae79@gandalf.local.home>
+ <ZsRtOzhicxAhkmoN@krava>
+ <20240820110507.2ba3d541@gandalf.local.home>
+ <Zv11JnaQIlV8BCnB@krava>
+ <Zwbqhkd2Hneftw5F@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zwbqhkd2Hneftw5F@krava>
 
-On Sun, 06 Oct 2024 08:17:58 +0100 David Woodhouse wrote:
-> +config PTP_1588_CLOCK_VMCLOCK
-> +	tristate "Virtual machine PTP clock"
-> +	depends on X86_TSC || ARM_ARCH_TIMER
-> +	depends on PTP_1588_CLOCK && ACPI && ARCH_SUPPORTS_INT128
-> +	default y
+On Wed, Oct 09, 2024 at 10:41:42PM +0200, Jiri Olsa wrote:
+> > AFAICS we'd need to do roughly:
+> >   - for each tracepoint we'd need to interpret one of the functions
+> >     where TP_fast_assign macro gets unwinded:
+> >       perf_trace_##call
+> >       trace_custom_event_raw_event_##call
+> >       trace_event_raw_event_##call
+> >   - we can't tell at this point which argument is kernel object,
+> >     so we'd need to check all arguments (assuming we can get their count)
+> >   - store argument info (if it has null check) into some elf tables and
+> >     use those later in bpf verifier
+> >   - it's all arch specific 
+> > 
+> > on first look it seems hard and fragile (given it's arch specific)
+> > but I might be easily wrong with above.. do you have an idea on how
+> > this could work?
+> 
+> Hi Josh,
+> we'd like to have information on which of tracepoint's arguments can be NULL
+> 
+> Steven had an idea that objtool could help with that by doing something like
+> what's described above.. would you have any thoughts on that?
 
-Why default to enabled? Linus will not be happy..
+Objtool doesn't know anything about function arguments, I'm not sure how
+this could be done unless I'm missing something.
+
+-- 
+Josh
 
