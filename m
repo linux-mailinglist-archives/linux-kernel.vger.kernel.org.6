@@ -1,174 +1,198 @@
-Return-Path: <linux-kernel+bounces-358999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62063998629
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:36:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86592998628
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E655E1F22184
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8940E1C20979
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1CD1C57AD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CD91C5794;
 	Thu, 10 Oct 2024 12:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VAO+y59H"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQj4vusl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF56129AF;
-	Thu, 10 Oct 2024 12:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921B51BD00B;
+	Thu, 10 Oct 2024 12:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563769; cv=none; b=EQjcUR7thFKPTVgsOzZYC7Hi4R5KnfpV3KSKbMaeDmnwgaiP6GHykbwoMnmzA8vr1+JJojquKhZM2Jr4/35u8g+l+/7IsvoLrkAf1Kh0RDpNxl3UuG795+aTFyxnr6sLZ/p5XWGPwTjc3Fc9VKw/ZR5KpQgGSC77StzQCcW2DHU=
+	t=1728563768; cv=none; b=QyK02dfPoVn35DTWvIXjUwrAQO1ZJ0JfYUcs/QaPEokUU9p6OMJNINsh2n3nEvnzCCkox1VNWdFg7I6Gf44E/PCo6uoINMm3oNgmQG5vZh1kTLBOKxrvTSZmCmApIrVgMNFeodeZSPP519YYxSC0864WVeTodQb8V73ePd+aeMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563769; c=relaxed/simple;
-	bh=Rryj9oLGExO1bUhiYrapGyYrh33dxncpOASEi3N3YnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R3C/orrm6lm2f8o+moC7uDUJXrdLCGoD2h5GBo1dsA7gSG81wBvlCnWGjq/5Qp2a9HiubgnSsy4e4KWrppTT27nc+LkhFYNOBzDAQVAe0gmNU1fANuq7Ci+yZ0rYo0HBwqZITsm3ULCisPiOoKjhI16dTx3SXxuH2UK2OmteWys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VAO+y59H; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728563764;
-	bh=Rryj9oLGExO1bUhiYrapGyYrh33dxncpOASEi3N3YnA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VAO+y59HV7qdy1CWL2CYTOxzn8chuMzPQC7JQOw/BjFOdZ+pIp0jEiWvhCZi6lcsS
-	 lGXjXZeWPJWc2baUbshzufwHwWxl3L2Ar/t/p2zpVnBf05eK7LPrtvsMoIgM5Q+jIV
-	 F/hkVoGjjLIdPxEffX3+GhYIGe6y2kH+HGsrR1wx9uZ4AxklscLtmzj/oeszwwlR54
-	 Jv2l5DWgiO8YgjwjD2Qfd24JVqW03PYJ6d45ITw8PVLVVswQ44pSZFqYbZEdx4GFzS
-	 D6EeQ64nKAZ3CDSzX5+sIvW0mxrFYox+vJxVyuxmYvnuenJU/DAuDk6xOb7mEKHNq3
-	 /e8y/elb7mgMw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4172617E35E0;
-	Thu, 10 Oct 2024 14:36:04 +0200 (CEST)
-Message-ID: <4ac4c8ab-4180-4fcc-9e48-6dede7448dee@collabora.com>
-Date: Thu, 10 Oct 2024 14:36:03 +0200
+	s=arc-20240116; t=1728563768; c=relaxed/simple;
+	bh=Mrfex9PaX8qsirzDCOIMidvr+l1VhKsLmb0RG30fKrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVfGm4IGOWLCb9YAApE5FICzZzon8F26XM/mi4YXFKfRARv+twWV0xUXHDzB0iQTWDABMmdjjiH763MRIwHSPnTpcbB3aqzHGhvMB4TOZV4u594X+W/xd4Yxh33FtIBVOXy/3UESw81ingKA7Z0nnNNvYQIuVnkHmvoFjTa2ga4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQj4vusl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F8CC4CECE;
+	Thu, 10 Oct 2024 12:36:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728563768;
+	bh=Mrfex9PaX8qsirzDCOIMidvr+l1VhKsLmb0RG30fKrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uQj4vusl2xZyU2s6eZMzP0ufrrKpBG9qlyuhuQvJ9sjoTaOMo1QIul8EGCr2tkuE4
+	 xSeSNrVwS6M44XVcCdw8+Y353IY4YTBCQl0ln9Eef9gYiXUyzZnjln4i3ZOSMNVC2u
+	 r0SyEDUGUCCRqQU84Yq7imAHb4+QYJPyqriUcNZVWnammTp2GztTTqqN/CgxHfSaqG
+	 2YeO0tHDt33FN9ORsPKpdqwe/V+C2dWp41X/bdpWSEUfWMf4jyrfONbX2T2SaRsrin
+	 00Nye82TLAU5B4EBsJEhUg/7z9M7qOwh2vQtPWESHijBvm8Nm12HzcsvyqBAa9MTUq
+	 aXToxtxSMxk7A==
+Date: Thu, 10 Oct 2024 14:36:04 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 05/15] timers: Update function descriptions of
+ sleep/delay related functions
+Message-ID: <ZwfKNNpjYnn2OGWG@localhost.localdomain>
+References: <ZwMF_y62yJ-bmNL9@pavilion.home>
+ <87wmig9wj4.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: mediatek: mt7988: add pinctrl support
-To: Frank Wunderlich <linux@fw-web.de>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
- eladwf@gmail.com
-References: <20241009165222.5670-1-linux@fw-web.de>
- <20241009165222.5670-5-linux@fw-web.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241009165222.5670-5-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87wmig9wj4.fsf@somnus>
 
-Il 09/10/24 18:52, Frank Wunderlich ha scritto:
-> From: Frank Wunderlich <frank-w@public-files.de>
+Le Thu, Oct 10, 2024 at 10:45:03AM +0200, Anna-Maria Behnsen a écrit :
+> Frederic Weisbecker <frederic@kernel.org> writes:
+> > I can't say I'm less confused about these values but at least it
+> > brings a bit of light in the horizon...
 > 
-> Add mt7988a pinctrl node.
+> :) This will be cleaned up in a second step all over the place as
+> suggested by Thomas already in v1. But for now, the aim is only to fix
+> fsleep and especially the outdated documentation of delay and sleep
+> related functions.
+
+Sure.
+
 > 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
-> v2:
-> - fix wrong alignment of reg values
-> ---
->   arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 241 ++++++++++++++++++++++
->   1 file changed, 241 insertions(+)
+> >>   */
+> >>  
+> >> -/* 0x10c7 is 2**32 / 1000000 (rounded up) */
+> >> +/**
+> >> + * udelay - Inserting a delay based on microseconds with busy waiting
+> >> + * @usec:	requested delay in microseconds
+> >> + *
+> >> + * When delaying in an atomic context ndelay(), udelay() and mdelay() are the
+> >> + * only valid variants of delaying/sleeping to go with.
+> >> + *
+> >> + * When inserting delays in non atomic context which are shorter than the time
+> >> + * which is required to queue e.g. an hrtimer and to enter then the scheduler,
+> >> + * it is also valuable to use udelay(). But is not simple to specify a generic
+> >
+> > But it is*
+> >
+> >> + * threshold for this which will fit for all systems, but an approximation would
+> >
+> > But but?
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-> index c9649b815276..7e15934efe0b 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-> @@ -3,6 +3,7 @@
->   #include <dt-bindings/clock/mediatek,mt7988-clk.h>
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/phy/phy.h>
-> +#include <dt-bindings/pinctrl/mt65xx.h>
->   
->   / {
->   	compatible = "mediatek,mt7988a";
-> @@ -105,6 +106,246 @@ clock-controller@1001e000 {
->   			#clock-cells = <1>;
->   		};
->   
-> +		pio: pinctrl@1001f000 {
-> +			compatible = "mediatek,mt7988-pinctrl";
-> +			reg = <0 0x1001f000 0 0x1000>,
-> +			      <0 0x11c10000 0 0x1000>,
-> +			      <0 0x11d00000 0 0x1000>,
-> +			      <0 0x11d20000 0 0x1000>,
-> +			      <0 0x11e00000 0 0x1000>,
-> +			      <0 0x11f00000 0 0x1000>,
-> +			      <0 0x1000b000 0 0x1000>;
-> +			reg-names = "gpio", "iocfg_tr",
-> +				    "iocfg_br", "iocfg_rb",
-> +				    "iocfg_lb", "iocfg_tl", "eint";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pio 0 0 84>;
-> +			interrupt-controller;
-> +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-parent = <&gic>;
-> +			#interrupt-cells = <2>;
-> +
-> +			mdio0_pins: mdio0-pins {
-> +				mux {
-> +					function = "eth";
-> +					groups = "mdc_mdio0";
-> +				};
-> +
-> +				conf {
-> +					pins = "SMI_0_MDC", "SMI_0_MDIO";
-> +					drive-strength = <MTK_DRIVE_8mA>;
+> change those two sentences into: But it is not simple to specify a
+> generic threshold for this which will fit for all systems. An
+> approximation is a threshold for all delays up to 10 microseconds.
 
-Please do *not* use the MTK_DRIVE_(x)mA definitions anymore.
+Very good!
 
-Here it is `drive-strength = <8>`.
+> >> @@ -281,7 +281,34 @@ EXPORT_SYMBOL_GPL(schedule_hrtimeout);
+> >>  
+> >>  /**
+> >>   * msleep - sleep safely even with waitqueue interruptions
+> >> - * @msecs: Time in milliseconds to sleep for
+> >> + * @msecs:	Requested sleep duration in milliseconds
+> >> + *
+> >> + * msleep() uses jiffy based timeouts for the sleep duration. The accuracy of
+> >> + * the resulting sleep duration depends on:
+> >> + *
+> >> + * * HZ configuration
+> >> + * * sleep duration (as granularity of a bucket which collects timers increases
+> >> + *   with the timer wheel levels)
+> >> + *
+> >> + * When the timer is queued into the second level of the timer wheel the maximum
+> >> + * additional delay will be 12.5%. For explanation please check the detailed
+> >> + * description about the basics of the timer wheel. In case this is accurate
+> >> + * enough check which sleep length is selected to make sure required accuracy is
+> >> + * given. Please use therefore the following simple steps:
+> >> + *
+> >> + * #. Decide which slack is fine for the requested sleep duration - but do not
+> >> + *    use values shorter than 1/8
+> >
+> > I'm confused, what means 1/x for a slack value? 1/8 means 125 msecs? I'm not
+> > even I understand what you mean by slack. Is it the bucket_expiry - expiry?
+> 
+> I was confused as well and had to read it twice... I would propose to
+> rephrase the whole function description:
+> 
+> 
+> /**
+>  * msleep - sleep safely even with waitqueue interruptions
+>  * @msecs:	Requested sleep duration in milliseconds
+>  *
+>  * msleep() uses jiffy based timeouts for the sleep duration. Because of the
+>  * design of the timer wheel, the maximum additional percentage delay (slack) is
+>  * 12.5%. This is only valid for timers which will end up in the second or a
+>  * higher level of the timer wheel. For explanation of those 12.5% please check
+>  * the detailed description about the basics of the timer wheel.
 
-> +				};
-> +			};
-> +
-> +			i2c0_pins: i2c0-g0-pins {
-> +				mux {
-> +					function = "i2c";
-> +					groups = "i2c0_1";
-> +				};
-> +			};
-> +
-> +			i2c1_pins: i2c1-g0-pins {
-> +				mux {
-> +					function = "i2c";
-> +					groups = "i2c1_0";
-> +				};
-> +			};
+I've never realized this constant worst percentage of slack. Would be nice to mention
+that somewhere in kernel/time/timer.c
 
-Whatever pin can be configured with one or multiple groups that can be different
-must *not* be in the SoC dtsi, but rather in the *board* dts(i) file, as the wanted
-configuration of those pins is *not* soc-specific but board-specific.
+However this doesn't need a second to apply. It only takes crossing levels above
+0. Or am I missing something?
 
- From a fast look, I can see that at least the I2C pins can be assigned to different
-functions: for example, pins 15+16 can be either of i2c0_1, *or* u30_phy_i2c0, *or*
-u32_phy_i2c0, *or* xfi_phy0_i2c1 ... or others, even.
+>  *
+>  * The slack of timers which will end up in the first level depends on:
+>  *
+>  * * sleep duration (msecs)
+>  * * HZ configuration
+>  *
+>  * To make sure the sleep duration with the slack is accurate enough, a slack
+>  * value is required (because of the design of the timer wheel it is not
 
-Finally - I think that *most* of the muxing that you're declaring here must instead
-go to your board specific devicetree and not in mt7988a.dtsi.
+But where is it required?
 
-Cheers,
-Angelo
+>  * possible to define a value smaller than 12.5%). The following check makes
+>  * clear, whether the sleep duration with the defined slack and with the HZ
+>  * configuration will meet the constraints:
+>  *
+>  *  ``msecs >= (MSECS_PER_TICK / slack)``
+>  *
+>  * Examples:
+>  *
+>  * * ``HZ=1000`` with ``slack=25%``: ``MSECS_PER_TICK / slack = 1 / (1/4) = 4``:
+>  *   all sleep durations greater or equal 4ms will meet the constraints.
+>  * * ``HZ=1000`` with ``slack=12.5%``: ``MSECS_PER_TICK / slack = 1 / (1/8) = 8``:
+>  *   all sleep durations greater or equal 8ms will meet the constraints.
+>  * * ``HZ=250`` with ``slack=25%``: ``MSECS_PER_TICK / slack = 4 / (1/4) = 16``:
+>  *   all sleep durations greater or equal 16ms will meet the constraints.
+>  * * ``HZ=250`` with ``slack=12.5%``: ``MSECS_PER_TICK / slack = 4 / (1/8) = 32``:
+>  *   all sleep durations greater or equal 32ms will meet the constraints.
 
+But who defines those slacks and where? I'm even more confused now...
 
+>  *
+>  * See also the signal aware variant msleep_interruptible().
+>  */
+> 
+> >
+> > But I'm still lost...
+> >
+> 
+> Hopefully no longer :)
 
+Well...
+
+> Thanks,
+> 
+> 	Anna-Maria
+> 
+> 
 
