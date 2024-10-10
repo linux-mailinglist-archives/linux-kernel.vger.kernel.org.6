@@ -1,153 +1,374 @@
-Return-Path: <linux-kernel+bounces-358260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EFF997C22
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7AA997C24
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 07:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 327C3B21B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355AC1F24BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4CB192D89;
-	Thu, 10 Oct 2024 05:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2DB19D09F;
+	Thu, 10 Oct 2024 05:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lOaGwoMJ"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U+mf1IKH"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2044.outbound.protection.outlook.com [40.107.96.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408BA2F50
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728536892; cv=none; b=jGJWf0ZCH3Zqcw/4p5LJF3haMqP0pJez29JgNO+iZ7OM1VS+qhuUq0Sjkx1PypI1PuC1PScV8oaHbBjvOesk+eVHTGGL/h1x2VlYCwsgp6AAtRORjKoSEmrC9JGMC5zdZiRmzQ6gT0w7yxcOT9YjXRedUBN1rDFv20aZzCFPWME=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728536892; c=relaxed/simple;
-	bh=dHq6VCP1hHO2QytBv9CEweFhJ2eiwLqJv4XOYupTF7I=;
-	h=Mime-Version:Subject:From:To:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=fqeaD8QZaj2+sf+2FR4qXlGiHugHJE44EG4osahQEc3Vb0F8e61p1cFLpz9r5DapFzZmrurZ8XDCuPiIbwUGsPyfVaZUQ+Ze/nvgizW0egW3brpSpegXFSxqtE3LHFhRM8Wd72uNvO9yPnPZT/4A0hbLAdE6daHiMcirHW43b3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lOaGwoMJ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241010050808epoutp02be039a9a287e3df308f7e70137b8b02d~8-yQ-bwmC1849318493epoutp02L
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:08:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241010050808epoutp02be039a9a287e3df308f7e70137b8b02d~8-yQ-bwmC1849318493epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728536888;
-	bh=kDPmTXhPX6cxQzuvSTnQ8wrHQwVwp7TSgQJ6vfD5NDg=;
-	h=Subject:Reply-To:From:To:In-Reply-To:Date:References:From;
-	b=lOaGwoMJMCctFMlArcITukaqyJaQ/V1BXHysVh4048VXazrMPxv2MIDrQHmOegG8z
-	 PgQn0WXBAvA9k8eW1cb41VIcFn3O5B3oQAUshFCK3SiccpCJX50IAAONnKcaGYSzuK
-	 NO3pahkIaiDKYntzldz0nWItWnd5fZ31OwFesd6I=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241010050807epcas2p4c745218ce269021cdeb83774ed7d9b8e~8-yQn6kKG1746417464epcas2p40;
-	Thu, 10 Oct 2024 05:08:07 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XPHnz1THfz4x9Px; Thu, 10 Oct
-	2024 05:08:07 +0000 (GMT)
-X-AuditID: b6c32a48-7f9ff70000002653-bf-6707613757ce
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4F.C6.09811.73167076; Thu, 10 Oct 2024 14:08:07 +0900 (KST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA112F50;
+	Thu, 10 Oct 2024 05:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728536928; cv=fail; b=Nfbap0nuoUuW836XL1wFl99z1xo+Wx0ScAGnq1rvReaofGYcbHi7iv9ZoSLc0iPMPogiIWpX7+UZFPDDclL429jmGvh3b8F3aHqPquc7kICvRBnqNuveMbBJV35/Iu4/PhmK73qDej9Zj5nn4yrA5lA1t367T7aFVvvaro32RR4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728536928; c=relaxed/simple;
+	bh=vlNSNUP0Z9kJ8YNMgeDniTLmkJVEjxEYSn2xyBmqUcU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aTi45RlOJVlkPwNTksvQ6pNLh4FOZKaAmWHa4O95IPvY9CnX03ZEYZAUtkz6ilWbbL458rZ9XFhUB/aswNX8efcHzunA/sAizr/mOSNZymK2+rW9QomYx0yNdZleAfpDf/vpAdxSTlG9ZqK4Vwi9mN57htMJN42ra6SiNvEpq0k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U+mf1IKH; arc=fail smtp.client-ip=40.107.96.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oxmMLyx439gyEDITSR0VDAaGuOILsNA1/+kngv2XmGqjJBZVjJpbS9bABGG0Zl7Ck6sr/8dtEq9fWT16SuYHQftO5aIAPBGemCVB0wafdCueRug9uQwfX80LowEjy17pH4R5FY9QAr8LhrZSLXhtJI4r0NySpqxnkYcp/qFOKOs6I8kfICykIghlQrgIg9V3dXg6X1RF7QX0rz/08Mr9Q7WK0t6uwIiW+Y+u+2CeNEw4Oazj51VUxIJku8ymYDMdDPS7Xuw9BRXpwyraA+KW0rrlttSyVIST9cK3+HVUaKKtIKn+JsOVpWZSm9wuY96b+Sx1w8J5HU77JD9fq3DVjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fUIpQQOmYjVlh8TNkigvfghJB73OnDKuK71rbuaVw7U=;
+ b=GMWs4n47NPG5AS3b9Q6G4Cy7oU+XRLb3PFnHnewhnkuy3pen/r/wQTS5V1oRERibMJipjlAazepedjIBaweGrihX5J4UO99LWX5fCHFVjyPpJTgh8G1gbhGC1Cbunf1UIKKgsK9DjI4SrUh4xTEYjf4XZK2NjcRZ31VtvnqsLbff7x/4T8SdyxBHru19G9Fgs4tFWktwDDFmDw/VctXhHaEzWe/T6xYR62uvNRXXTZWc0qXdW7G+hrOVByoOhxjneAqGilFNMLvnBHJ6+rp8CbP+w+OF+w1BTwhHTgmT3MAfVU57VhtyZHqA+o1Ci+YefhHIBY9KpvNXJxq6vabMNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fUIpQQOmYjVlh8TNkigvfghJB73OnDKuK71rbuaVw7U=;
+ b=U+mf1IKH+QoqH25F6oW2m4jo8YNoWTpc5vo01PjYRoUOvZWkgPKw5btlXMeMQ3hD6k43z6hnYmZAwy4SL1IP2ISIVoqiZyu4mrVXmbKcaxBCOt1bxLesMOMngGkliSKqfkPCPS0npBhfy2O+FslUnHjxfNOIG3FmFf/fZ7/kSLQ=
+Received: from MW3PR06CA0030.namprd06.prod.outlook.com (2603:10b6:303:2a::35)
+ by DS0PR12MB6536.namprd12.prod.outlook.com (2603:10b6:8:d3::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
+ 2024 05:08:41 +0000
+Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
+ (2603:10b6:303:2a:cafe::82) by MW3PR06CA0030.outlook.office365.com
+ (2603:10b6:303:2a::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17 via Frontend
+ Transport; Thu, 10 Oct 2024 05:08:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Thu, 10 Oct 2024 05:08:39 +0000
+Received: from BLR-L-RBANGORI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 10 Oct
+ 2024 00:08:32 -0500
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <namhyung@kernel.org>
+CC: <ravi.bangoria@amd.com>, <acme@kernel.org>, <eranian@google.com>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
+	<kan.liang@linux.intel.com>, <tglx@linutronix.de>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<santosh.shukla@amd.com>, <ananth.narayan@amd.com>, <sandipan.das@amd.com>
+Subject: [PATCH] perf/amd/ibs: Add support for OP Load Latency Filtering
+Date: Thu, 10 Oct 2024 05:08:15 +0000
+Message-ID: <20241010050815.751-1-ravi.bangoria@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: [RESEND][PATCH v2] libf2fs: Fix calculation of usable segments for
- single  zoned device
-Reply-To: yonggil.song@samsung.com
-Sender: Yonggil Song <yonggil.song@samsung.com>
-From: Yonggil Song <yonggil.song@samsung.com>
-To: Yonggil Song <yonggil.song@samsung.com>, Chao Yu <chao@kernel.org>,
-	"jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-	"linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Dongjin Kim <dongjin_.kim@samsung.com>,
-	Siwoo Jung <siu.jung@samsung.com>, Daejun Park <daejun7.park@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20241010045935epcms2p7ab5f54e9789b36ea496abcb100a7878f@epcms2p7>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20241010050806epcms2p8927a8ebf52433366ddcb08384e7090c9@epcms2p8>
-Date: Thu, 10 Oct 2024 14:08:06 +0900
-X-CMS-MailID: 20241010050806epcms2p8927a8ebf52433366ddcb08384e7090c9
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTQtc8kT3dYN8pdovTU88yWax6EG7x
-	46SJxZP1s5gtLi1yt7i8aw6bxfmJr5kspp4/wuTA4bFpVSebx+4Fn5k8+rasYvT4vEkugCUq
-	2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AYlhbLE
-	nFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToF5gV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbG
-	hJtf2Ap6uSs2Xm1ib2CcxNnFyMkhIWAi8eP1DeYuRi4OIYEdjBK77jewdTFycPAKCEr83SEM
-	YgoLJEnMXlQAUi4koCRx7UAvC4gtLKAvsXnxMnYQm01AV+LvhuXsIGNEBBqYJXY/3cQEMZ9X
-	Ykb7UxYIW1pi+/KtjCA2p4CfxME576FqNCR+LOtlhrBFJW6ufssOY78/Np8RwhaRaL13FqpG
-	UOLBz91QcUmJRYfOQ83Jl/i74jobhF0jsbWhDSquL3GtYyPYDbwCvhIPuu+C2SwCqhK7V+yF
-	qnGRWHFyIlgvs4C8xPa3c5hBfmcW0JRYv0sfxJQQUJY4cosFooJPouPwX3aYD3fMewI1RU1i
-	86bNrBC2jMSFx22MEK0eEmc/B0ECeSqzxLXn3SwTGBVmIcJ5FpK9sxD2LmBkXsUollpQnJue
-	WmxUYAKP2uT83E2M4MSo5bGDcfbbD3qHGJk4GA8xSnAwK4nw6i5kTRfiTUmsrEotyo8vKs1J
-	LT7EaAr08URmKdHkfGBqziuJNzSxNDAxMzM0NzI1MFcS573XOjdFSCA9sSQ1OzW1ILUIpo+J
-	g1OqgSnzn9tPqber3ae7+qid0vt5Or2gbcPMQ2qLbq85UvHqQNP9IgUL2118qVWmTptnNNev
-	/CYcPtPPp5jnrMLnyOlvGku9BOa8Uz9neDr3x5x36xYmGHGaWPtaMmpzekz4lFmfHhTHuUaB
-	sX/tv+aZp6fsaZ2nxTZ7lZDUI4WeGXsOG6TMqQsyOLfFI0zsikPGkv+RXSmvKuNN49+4JMr+
-	/LKk6vmrPXWvHCafFQxg8uL9xpkmr1FZKMJ268mPd6/457h6NVjuyMx7Yy63+eMJ3m2Veyec
-	ML4+L/q4+JxHzt/DG8u4Z/C0FlYe25W2q124wVTLT95BXK48Q49Fac0Kve1fJYqer+9ecEJH
-	2j1qnRJLcUaioRZzUXEiAHG3H6QVBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303
-References: <20241010045935epcms2p7ab5f54e9789b36ea496abcb100a7878f@epcms2p7>
-	<20241010043123epcms2p2ad514eb5e4a94413d8b26aea56f772a8@epcms2p2>
-	<20241010021506epcms2p21d877e3c72389b41805db31f391d2b42@epcms2p2>
-	<e26d7399-a0a7-4646-8e93-267cb20018cf@kernel.org>
-	<20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
-	<CGME20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|DS0PR12MB6536:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc54ab90-ee81-4f7a-c6a9-08dce8e99a50
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NDNm+FtIZV+0MSGF/E739MBkbl4dnM6Jb2qENn5aWUaB+9tTB2NcFvNbhaNi?=
+ =?us-ascii?Q?spRill2GvUBN38fYKPwhRO7kh7qDR/R1/6FGpWCIfzs5pm4WSll/kBecCEKU?=
+ =?us-ascii?Q?YbGjkrIFOMktMax0zrcHj7LVkxetl4yrpRFERMUf6EEZKgIiz0iPaz5yOFJR?=
+ =?us-ascii?Q?8rW7xpy8UG4WHbdczASVuyNIozk8cPUXAcNNzljDIU00cAUBBFM0Fpu0kmQf?=
+ =?us-ascii?Q?F1yxTtsZsN985WHUvQR2mIMfqRy8rDbbm6zIop3H3h50EfMZKP554P+YlpbK?=
+ =?us-ascii?Q?ZC3tk1K54lQkl221+rsmjIy6URYj2xbK/O11LNypd4yFXHj8m1p5kgkD7VzD?=
+ =?us-ascii?Q?EY9JihJhZuEtWSHR7CUMSP9o9WA2GIPT9ZdlE8870tI+sMDkVXdq4a21l+pT?=
+ =?us-ascii?Q?LG7RsS6IVZK1rdUfPvM0LlNDyVyqS9ZoRoXQ3iLfJ/9WQ7VTeql4k8b+fn7P?=
+ =?us-ascii?Q?belsevp2MjJipHq75EkeNUiYSSEvVErTKpDmqKpcl3kHleLznaZkf6NDB+Ev?=
+ =?us-ascii?Q?0Mx/dNbsqcj+fEP6VypsWfMa4hHZZ4ERMCRgtaHha7WwrRcwRY/kGwVgb3w4?=
+ =?us-ascii?Q?Hqz/qwR5pAKnaBsS7bxMe0JGh0knK/4qRB/JldRR0jsrHZOAE2p0kPE5qJBv?=
+ =?us-ascii?Q?j7aPb/5NcdjAnP8FCg59MHH/hlaKlMiEAbmb1jwM4w0VrTAVVrPA1zGwvDyx?=
+ =?us-ascii?Q?RAjYsyzLKJd6tPyqdEjHBrsqoBIEcnjS1oYpGrybCXDDFfuWchAcbJQW2KQO?=
+ =?us-ascii?Q?1AMssF3hSt2rgVPdxOiRjAwrN87x+6EjKBoD6WUuxXqgaCvCkoF7fhDJXWiT?=
+ =?us-ascii?Q?rWOqVCjmPMpED8lEIPMGLMlM73YkmNkXjT1GhAjbE2RDPIAW0BBPg+SdRPPU?=
+ =?us-ascii?Q?OlX+dkXGaSCeomOmEX3wwKxits5dq9CVdZbvat+UGdpJIoBVg8zu/5aTgmkL?=
+ =?us-ascii?Q?tuNPkJoN/8nnAnfqPvpOzOE+1wTmiROXsmWgA+/6FDKQO2YjGdI6cEv4lNDV?=
+ =?us-ascii?Q?upjHzHRzq3LfEHYl/C8RESUp7QJRXjqoz3PfCqWCLOhDB8qt+6DNcQTAwAXD?=
+ =?us-ascii?Q?Vr6q3AZ2uuv7TMbUneTGIsPNzYC+voOBNDCPdhqyZPVMyrax8h+xU+FJLwUc?=
+ =?us-ascii?Q?VaBrSkPUk8AgOe/sg2483KSNmeoavL3tQKtZ1NWR5OMjRLAxLQ9bLVCp2+bg?=
+ =?us-ascii?Q?RsmkCmnXYSA5/SrRlw+tZw2R7I9H9vJoaAWBUFMugK5DldOpYmCIf3YyY9HF?=
+ =?us-ascii?Q?KkQBqXTqKq8aiOzabYGH1amBtgAY2f6HK7Xn2SbIJN+qPbnKKbo570cvJnbj?=
+ =?us-ascii?Q?N5LsAspmi1D+BGuF6N2gfkFKk9j+n2eLSArVmzXJmcjQJM/tXPMkCqvpKlL3?=
+ =?us-ascii?Q?EECxeSg328zAlxXTE5QIHppkmKHV?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 05:08:39.2214
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc54ab90-ee81-4f7a-c6a9-08dce8e99a50
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6536
 
-There was a problem that did not subtract the super block area when calculating
-the usable segments for a single zoned device with a conventional zone.
-This resulted in incorrect the overprovision and reserved area.
+A new Load Latency Filtering capability is added to IBS Op pmu with
+latest (Zen5) uarch. It's advertised by CPUID_Fn8000001B_EAX bit 12.
+When enabled, IBS hw will raise interrupts only for samples that had
+an IbsDcMissLat value greater than N cycles, where N is a programmable
+value defined as multiples of 128 (i.e., 128, 256, 512 etc.) from
+128-2048 cycles. L3MissOnly is a mandatory dependency for LdLat, and
+like L3MissOnly, Hardware internally drops the sample and restarts if
+the sample does not meet the filtering condition.
 
-	<256MiB legacy block + zoned block w/ 32MiB zone size>
-	Info: Overprovision ratio = 3.570%
-	Info: Overprovision segments = 656 (GC reserved = 560)
+Add support for LdLat filtering in IBS Op pmu. Since hardware supports
+threshold in multiple of 128, add a software filter on top to support
+latency threshold with the granularity of 1 cycle between [128-2048].
 
-	<8 conventional zone + 1016 sequential zone w/ 32MiB zone size>
-	Info: Overprovision ratio = 3.700%
-	Info: Overprovision segments = 676 (GC reserved = 578)
+Example usage:
+  # perf record -a -e ibs_op/l3missonly=1,ldlat=128/ -- sleep 5
 
-This patch addresses the problem by subtracting the super block area when
-there is only one zoned device.
-
-Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
 ---
- lib/libf2fs_zoned.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index 89ba5ad73a76..1a0985378789 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -555,6 +555,11 @@ uint32_t f2fs_get_usable_segments(struct f2fs_super_block *sb)
+Note: IBS sample period cleanup patches are pre-req for this.
+      https://lore.kernel.org/r/20241007034810.754-1-ravi.bangoria@amd.com
+
+ arch/x86/events/amd/ibs.c         | 96 ++++++++++++++++++++++++++++---
+ arch/x86/include/asm/perf_event.h |  3 +
+ 2 files changed, 91 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 0d1db2fffc5b..50c364b7c5bb 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -265,6 +265,14 @@ static int validate_group(struct perf_event *event)
+ 	return 0;
+ }
+ 
++static bool perf_ibs_ldlat_event(struct perf_ibs *perf_ibs,
++				 struct perf_event *event)
++{
++	return perf_ibs == &perf_ibs_op &&
++	       (ibs_caps & IBS_CAPS_OPLDLAT) &&
++	       (event->attr.config1 & 0xFFF);
++}
++
+ static int perf_ibs_init(struct perf_event *event)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -326,6 +334,20 @@ static int perf_ibs_init(struct perf_event *event)
+ 			return -EINVAL;
  	}
- 	usable_segs -= (get_sb(main_blkaddr) - get_sb(segment0_blkaddr)) >>
- 						get_sb(log_blocks_per_seg);
+ 
++	if (perf_ibs_ldlat_event(perf_ibs, event)) {
++		u64 ldlat = event->attr.config1 & 0xFFF;
 +
-+	/* single zoned device needs to remove a super block area */
-+	if (c.ndevs == 1 && c.devices[0].zoned_model == F2FS_ZONED_HM)
-+		usable_segs -= (get_sb(segment0_blkaddr) >> get_sb(log_blocks_per_seg));
++		if (!(config & IBS_OP_L3MISSONLY))
++			return -EINVAL;
 +
- 	return usable_segs;
- #endif
- 	return get_sb(segment_count_main);
++		if (ldlat < 128 || ldlat > 2048)
++			return -EINVAL;
++		ldlat >>= 7;
++
++		config |= (ldlat - 1) << 59;
++		config |= IBS_OP_LDLAT_EN;
++	}
++
+ 	/*
+ 	 * If we modify hwc->sample_period, we also need to update
+ 	 * hwc->last_period and hwc->period_left.
+@@ -610,7 +632,9 @@ PMU_FORMAT_ATTR(rand_en,	"config:57");
+ PMU_FORMAT_ATTR(cnt_ctl,	"config:19");
+ PMU_EVENT_ATTR_STRING(l3missonly, fetch_l3missonly, "config:59");
+ PMU_EVENT_ATTR_STRING(l3missonly, op_l3missonly, "config:16");
++PMU_EVENT_ATTR_STRING(ldlat, ibs_op_ldlat_format, "config1:0-11");
+ PMU_EVENT_ATTR_STRING(zen4_ibs_extensions, zen4_ibs_extensions, "1");
++PMU_EVENT_ATTR_STRING(ldlat, ibs_op_ldlat_cap, "1");
+ 
+ static umode_t
+ zen4_ibs_extensions_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+@@ -618,6 +642,12 @@ zen4_ibs_extensions_is_visible(struct kobject *kobj, struct attribute *attr, int
+ 	return ibs_caps & IBS_CAPS_ZEN4 ? attr->mode : 0;
+ }
+ 
++static umode_t
++ibs_op_ldlat_is_visible(struct kobject *kobj, struct attribute *attr, int i)
++{
++	return ibs_caps & IBS_CAPS_OPLDLAT ? attr->mode : 0;
++}
++
+ static struct attribute *rand_en_attrs[] = {
+ 	&format_attr_rand_en.attr,
+ 	NULL,
+@@ -633,6 +663,11 @@ static struct attribute *zen4_ibs_extensions_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute *ibs_op_ldlat_cap_attrs[] = {
++	&ibs_op_ldlat_cap.attr.attr,
++	NULL,
++};
++
+ static struct attribute_group group_rand_en = {
+ 	.name = "format",
+ 	.attrs = rand_en_attrs,
+@@ -650,6 +685,12 @@ static struct attribute_group group_zen4_ibs_extensions = {
+ 	.is_visible = zen4_ibs_extensions_is_visible,
+ };
+ 
++static struct attribute_group group_ibs_op_ldlat_cap = {
++	.name = "caps",
++	.attrs = ibs_op_ldlat_cap_attrs,
++	.is_visible = ibs_op_ldlat_is_visible,
++};
++
+ static const struct attribute_group *fetch_attr_groups[] = {
+ 	&group_rand_en,
+ 	&empty_caps_group,
+@@ -678,6 +719,11 @@ static struct attribute *op_l3missonly_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute *ibs_op_ldlat_format_attrs[] = {
++	&ibs_op_ldlat_format.attr.attr,
++	NULL,
++};
++
+ static struct attribute_group group_cnt_ctl = {
+ 	.name = "format",
+ 	.attrs = cnt_ctl_attrs,
+@@ -690,10 +736,18 @@ static struct attribute_group group_op_l3missonly = {
+ 	.is_visible = zen4_ibs_extensions_is_visible,
+ };
+ 
++static struct attribute_group group_ibs_op_ldlat_format = {
++	.name = "format",
++	.attrs = ibs_op_ldlat_format_attrs,
++	.is_visible = ibs_op_ldlat_is_visible,
++};
++
+ static const struct attribute_group *op_attr_update[] = {
+ 	&group_cnt_ctl,
+ 	&group_op_l3missonly,
+ 	&group_zen4_ibs_extensions,
++	&group_ibs_op_ldlat_cap,
++	&group_ibs_op_ldlat_format,
+ 	NULL,
+ };
+ 
+@@ -1050,15 +1104,25 @@ static void perf_ibs_parse_ld_st_data(__u64 sample_type,
+ 	}
+ }
+ 
+-static int perf_ibs_get_offset_max(struct perf_ibs *perf_ibs, u64 sample_type,
++static bool perf_ibs_is_mem_sample_type(struct perf_ibs *perf_ibs,
++					struct perf_event *event)
++{
++	u64 sample_type = event->attr.sample_type;
++
++	return perf_ibs == &perf_ibs_op &&
++	       sample_type & (PERF_SAMPLE_DATA_SRC |
++			      PERF_SAMPLE_WEIGHT_TYPE |
++			      PERF_SAMPLE_ADDR |
++			      PERF_SAMPLE_PHYS_ADDR);
++}
++
++static int perf_ibs_get_offset_max(struct perf_ibs *perf_ibs,
++				   struct perf_event *event,
+ 				   int check_rip)
+ {
+-	if (sample_type & PERF_SAMPLE_RAW ||
+-	    (perf_ibs == &perf_ibs_op &&
+-	     (sample_type & PERF_SAMPLE_DATA_SRC ||
+-	      sample_type & PERF_SAMPLE_WEIGHT_TYPE ||
+-	      sample_type & PERF_SAMPLE_ADDR ||
+-	      sample_type & PERF_SAMPLE_PHYS_ADDR)))
++	if (event->attr.sample_type & PERF_SAMPLE_RAW ||
++	    perf_ibs_is_mem_sample_type(perf_ibs, event) ||
++	    perf_ibs_ldlat_event(perf_ibs, event))
+ 		return perf_ibs->offset_max;
+ 	else if (check_rip)
+ 		return 3;
+@@ -1113,7 +1177,7 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+ 	offset = 1;
+ 	check_rip = (perf_ibs == &perf_ibs_op && (ibs_caps & IBS_CAPS_RIPINVALIDCHK));
+ 
+-	offset_max = perf_ibs_get_offset_max(perf_ibs, event->attr.sample_type, check_rip);
++	offset_max = perf_ibs_get_offset_max(perf_ibs, event, check_rip);
+ 
+ 	do {
+ 		rdmsrl(msr + offset, *buf++);
+@@ -1122,6 +1186,22 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+ 				       perf_ibs->offset_max,
+ 				       offset + 1);
+ 	} while (offset < offset_max);
++
++	if (perf_ibs_ldlat_event(perf_ibs, event)) {
++		union ibs_op_data3 op_data3;
++
++		op_data3.val = ibs_data.regs[ibs_op_msr_idx(MSR_AMD64_IBSOPDATA3)];
++		/*
++		 * Opening event is errored out if load latency threshold is
++		 * outside of [128, 2048] range. Since the event has reached
++		 * interrupt handler, we can safely assume the threshold is
++		 * within [128, 2048] range.
++		 */
++		if (!op_data3.ld_op || !op_data3.dc_miss ||
++		    op_data3.dc_miss_lat <= (event->attr.config1 & 0xFFF))
++			goto out;
++	}
++
+ 	/*
+ 	 * Read IbsBrTarget, IbsOpData4, and IbsExtdCtl separately
+ 	 * depending on their availability.
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 72f1bcb0fa31..e6cfd948c6e3 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -471,6 +471,7 @@ struct pebs_xmm {
+ #define IBS_CAPS_FETCHCTLEXTD		(1U<<9)
+ #define IBS_CAPS_OPDATA4		(1U<<10)
+ #define IBS_CAPS_ZEN4			(1U<<11)
++#define IBS_CAPS_OPLDLAT		(1U<<12)
+ 
+ #define IBS_CAPS_DEFAULT		(IBS_CAPS_AVAIL		\
+ 					 | IBS_CAPS_FETCHSAM	\
+@@ -496,6 +497,8 @@ struct pebs_xmm {
+  * The lower 7 bits of the current count are random bits
+  * preloaded by hardware and ignored in software
+  */
++#define IBS_OP_LDLAT_EN		(1ULL<<63)
++#define IBS_OP_LDLAT		(0xFULL<<59)
+ #define IBS_OP_CUR_CNT		(0xFFF80ULL<<32)
+ #define IBS_OP_CUR_CNT_RAND	(0x0007FULL<<32)
+ #define IBS_OP_CUR_CNT_EXT_MASK	(0x7FULL<<52)
 -- 
 2.43.0
 
