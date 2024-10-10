@@ -1,107 +1,210 @@
-Return-Path: <linux-kernel+bounces-358614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097C2998197
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CA599819A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7431C25756
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBBA21F2149D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C5A1B652C;
-	Thu, 10 Oct 2024 09:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7D71BC9EE;
+	Thu, 10 Oct 2024 09:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOoBvxfD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0xTcg5L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36581194C7A;
-	Thu, 10 Oct 2024 09:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD021BC072;
+	Thu, 10 Oct 2024 09:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551190; cv=none; b=HCeLFg5jh26HTM58dshXFuusOjs7Onk0R9LFjHaX8ZDkDmMFtuCPXYoHv3PTLFcySJogfroW2xO40me7PIkDkRxdt3rduPlTrxWAQt8ePT2rtvupEoiLFYVvw1OJ3fmuLbbpug170bQA+GERM1/qaRxfxcIcf6mgex1a3w4mXv4=
+	t=1728551211; cv=none; b=hRWtgqKpIoNeZr8CmUjvJoTYfHaG17uBltpqmWKLlu0Vak/+/jrBoPHv7XOfu2pPECEjmGVbo71/hjBsR2xYRUvll+z8Nlei3/FRNSTTjgk1RF1epkZRfqq0SBFkoWeN7oB+sFQ2EF1Pc2ATlYCLqSlVTzVyN3QTQZdjwg2S6ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551190; c=relaxed/simple;
-	bh=6zv28lyhaRAoE502GCYQmLpHg+7/WMPqUPkwVP2H+nI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLZYGhoPVeMveQ0OwIct+EMVgo/vl/MC0+DDo+GMFRtCCeUQLOOlpvZ5UV737+4wNl6B7qJgiJuixv69s+tAhqEGKATBkLNhRUDkkytH3wi+ezuALEbYuV+t4sVEo7iYhiM5HAbMBbyF5WqAmYckOUaWHsqv/8TjqrFVt4kjt7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOoBvxfD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53C8C4CEC5;
-	Thu, 10 Oct 2024 09:06:29 +0000 (UTC)
+	s=arc-20240116; t=1728551211; c=relaxed/simple;
+	bh=v4F8XpUl4hzFdHfzDjb5HLOD91LVHfyBbNZzZzRfUAU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tA4vyqVmnk6OO75vamtImUOjlBkAHz0AQs/MA5+EO9vkuSVGgMha+SsuYPxYMRqQSrQsfwPPi5gqOFWO7HvSO3Q8ih+qQPCK3nAiHDvCrhmFpAPHi8QQ67YH9mfUgprZ5n0l8dI4/oBN53vHMI9/UkdH5eS9QewwuvT4TujKXi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0xTcg5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F882C4CEC5;
+	Thu, 10 Oct 2024 09:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728551189;
-	bh=6zv28lyhaRAoE502GCYQmLpHg+7/WMPqUPkwVP2H+nI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FOoBvxfDNWRTBvfP4TT6U4X7UxoV506vVy6pkWmJiarelXh6zTZtBNoUhW5qTzDfZ
-	 mmldSjRURDWMIjV4PNe82dZBWFu9nLhgTOF69RBGt2rUhhZ8Vazr4EHZKSk/A+hBS+
-	 E4jKCP8DODuU6rxCpEOOKzUG176JtKLqmhqsxLAYkvxuPXn3XMEWURirZc4bNqptDY
-	 z8uPayFxEhIu+pLgSAnCufpamxyVzTcd4imEura2FxwZQ49Rv8Yd9uUMPncZQFJ2Pr
-	 ShjaNMv/CKwEJnHsLKG4TO0NcUZSCbO2IjHeCK3hVqOWP8jy9TwlQmj9PGoBFC92O0
-	 Hvbo/vQNX15PQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1syp7y-000000008O2-0dBB;
-	Thu, 10 Oct 2024 11:06:34 +0200
-Date: Thu, 10 Oct 2024 11:06:34 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable+noautosel@kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3] arm64: dts: qcom: x1e80100: Fix PCIe 6a lanes
- description
-Message-ID: <ZweZGk1sypc535DL@hovoldconsulting.com>
-References: <20241009-x1e80100-dts-fixes-pcie6a-v3-1-14a1163e691b@linaro.org>
+	s=k20201202; t=1728551211;
+	bh=v4F8XpUl4hzFdHfzDjb5HLOD91LVHfyBbNZzZzRfUAU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R0xTcg5L2aCx/ttD6ENUD6O6y1Zfwx3aCFVpWkNrHVIazxdpJw5ZtkdwfKBhtURRr
+	 nKs+katFJtGY4y9BHsx6YE5YLYjJyfbk5XB0Ad2iiIxeARpwAHC7FA+lJZdmhUd74G
+	 Sv67APBSjpoytNZZVp828xYUo8/esQSrHxYAzGzMi1pqcAAmjQcVphmr4yIWk06iuh
+	 0yZ9pbVU6fAogCQZzdc83nl7zeVrgLPZLlbhR4nNZl8VIRciqGgae2hONIXtep4um7
+	 EfOB3Vby2EJIgRv2v2i0IPeo+hySRYJ1+p/AJ+HhbBPMXpH9jnWoITGvuAkWNODkV/
+	 UtSHXuY5irBBg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Gary Guo" <gary@garyguo.net>
+Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Greg KH"
+ <gregkh@linuxfoundation.org>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  "Benno Lossin" <benno.lossin@proton.me>,  "Trevor Gross"
+ <tmgross@umich.edu>,  "Jens Axboe" <axboe@kernel.dk>,  "Will Deacon"
+ <will@kernel.org>,  "Peter Zijlstra" <peterz@infradead.org>,  "Mark
+ Rutland" <mark.rutland@arm.com>,  <linux-block@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rust: block: convert `block::mq` to use `Refcount`
+In-Reply-To: <871q0onyhf.fsf@kernel.org> (Andreas Hindborg's message of "Thu,
+	10 Oct 2024 10:39:08 +0200")
+References: <20241004155247.2210469-1-gary@garyguo.net>
+	<20241004155247.2210469-4-gary@garyguo.net>
+	<OKHi9uP1uJD59N2oYRk1OfsxsrGlqiupMsgcvrva9_IPnEI9wpoxmabHQo1EYen96ClDBRQyrJWxb7WJxiMiAA==@protonmail.internalid>
+	<2024100507-percolate-kinship-fc9a@gregkh> <87zfniop6i.fsf@kernel.org>
+	<CAH5fLghK1dtkF5bRpcRcu2SXZ6vgPoHGLRqW2=r0J3-2T3ALwQ@mail.gmail.com>
+	<fz1Ji-tl63pAnAOL2TkFwggNx45TTBONKOUcKAKq7e6ZOCX2KsklDS6Zbc_xqnMef1eevpM-a64Bui_nEg49mA==@protonmail.internalid>
+	<20241005142332.78b8b5d0.gary@garyguo.net> <87msjioax2.fsf@kernel.org>
+	<871q0onyhf.fsf@kernel.org>
+Date: Thu, 10 Oct 2024 11:06:36 +0200
+Message-ID: <87set4min7.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009-x1e80100-dts-fixes-pcie6a-v3-1-14a1163e691b@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 09, 2024 at 02:07:23PM +0300, Abel Vesa wrote:
-> Fix the description and compatible for PCIe 6a, as it is in fact a
-> 4-lanes controller and PHY, but it can also be used in 2-lanes mode. For
-> 4-lanes mode, it uses the lanes provided by PCIe 6b. For 2-lanes mode,
-> PCIe 6a uses 2 lanes and then PCIe 6b uses the other 2 lanes. The number
-> of lanes in which the PHY should be configured depends on a TCSR register
-> value on each individual board.
-> 
-> Cc: stable+noautosel@kernel.org # Depends on pcie-qcom 16.0 GT/s support
-> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Changes in v3:
-> - Re-worded the commit message once more to suggest a fix w.r.t
->   lanes.
-> - Added back fixes tag and CC stable but with noautosel reason
-> - Picked up Konrad's R-b tag.
-> - Link to v2: https://lore.kernel.org/r/20241004-x1e80100-dts-fixes-pcie6a-v2-1-3af9ff7a5a71@linaro.org
-> 
-> Changes in v2:
-> - Re-worded the commit message according to Johan's suggestions
-> - Dropped the clocks changes.
-> - Dropped the fixes tag as this relies on the Gen4 4-lanes stability
->   patchset which has been only merged in 6.12, so backporting this patch
->   would break NVMe support for all platforms.
-> - Link to v1: https://lore.kernel.org/r/20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-Thanks for the update. I find the commit message much clearer now:
+> Andreas Hindborg <a.hindborg@kernel.org> writes:
+>
+>> "Gary Guo" <gary@garyguo.net> writes:
+>>
+>>> On Sat, 5 Oct 2024 13:59:44 +0200
+>>> Alice Ryhl <aliceryhl@google.com> wrote:
+>>>
+>>>> On Sat, Oct 5, 2024 at 11:49=E2=80=AFAM Andreas Hindborg <a.hindborg@k=
+ernel.org> wrote:
+>>>> >
+>>>> > Hi Greg,
+>>>> >
+>>>> > "Greg KH" <gregkh@linuxfoundation.org> writes:
+>>>> >
+>>>> > > On Fri, Oct 04, 2024 at 04:52:24PM +0100, Gary Guo wrote:
+>>>> > >> There is an operation needed by `block::mq`, atomically decreasing
+>>>> > >> refcount from 2 to 0, which is not available through refcount.h, =
+so
+>>>> > >> I exposed `Refcount::as_atomic` which allows accessing the refcou=
+nt
+>>>> > >> directly.
+>>>> > >
+>>>> > > That's scary, and of course feels wrong on many levels, but:
+>>>> > >
+>>>> > >
+>>>> > >> @@ -91,13 +95,17 @@ pub(crate) unsafe fn start_unchecked(this: &A=
+Ref<Self>) {
+>>>> > >>      /// C `struct request`. If the operation fails, `this` is re=
+turned in the
+>>>> > >>      /// `Err` variant.
+>>>> > >>      fn try_set_end(this: ARef<Self>) -> Result<*mut bindings::re=
+quest, ARef<Self>> {
+>>>> > >> -        // We can race with `TagSet::tag_to_rq`
+>>>> > >> -        if let Err(_old) =3D this.wrapper_ref().refcount().compa=
+re_exchange(
+>>>> > >> -            2,
+>>>> > >> -            0,
+>>>> > >> -            Ordering::Relaxed,
+>>>> > >> -            Ordering::Relaxed,
+>>>> > >> -        ) {
+>>>> > >> +        // To hand back the ownership, we need the current refco=
+unt to be 2.
+>>>> > >> +        // Since we can race with `TagSet::tag_to_rq`, this need=
+s to atomically reduce
+>>>> > >> +        // refcount to 0. `Refcount` does not provide a way to d=
+o this, so use the underlying
+>>>> > >> +        // atomics directly.
+>>>> > >> +        if this
+>>>> > >> +            .wrapper_ref()
+>>>> > >> +            .refcount()
+>>>> > >> +            .as_atomic()
+>>>> > >> +            .compare_exchange(2, 0, Ordering::Relaxed, Ordering:=
+:Relaxed)
+>>>> > >> +            .is_err()
+>>>> > >
+>>>> > > Why not just call rust_helper_refcount_set()?  Or is the issue tha=
+t you
+>>>> > > think you might not be 2 here?  And if you HAVE to be 2, why that =
+magic
+>>>> > > value (i.e. why not just always be 1 and rely on normal
+>>>> > > increment/decrement?)
+>>>> > >
+>>>> > > I know some refcounts are odd in the kernel, but I don't see where=
+ the
+>>>> > > block layer is caring about 2 as a refcount anywhere, what am I mi=
+ssing?
+>>>> >
+>>>> > It is in the documentation, rendered version available here [1]. Let=
+ me
+>>>> > know if it is still unclear, then I guess we need to update the docs.
+>>>> >
+>>>> > Also, my session from Recipes has a little bit of discussion regardi=
+ng
+>>>> > this refcount and it's use [2].
+>>>> >
+>>>> > Best regards,
+>>>> > Andreas
+>>>> >
+>>>> >
+>>>> > [1] https://rust.docs.kernel.org/kernel/block/mq/struct.Request.html=
+#implementation-details
+>>>> > [2] https://youtu.be/1LEvgkhU-t4?si=3DB1XnJhzCCNnUtRsI&t=3D1685
+>>>>
+>>>> So it sounds like there is one refcount from the C side, and some
+>>>> number of references from the Rust side. The function checks whether
+>>>> there's only one Rust reference left, and if so, takes ownership of
+>>>> the value, correct?
+>>>>
+>>>> In that case, the CAS should have an acquire ordering to synchronize
+>>>> with dropping the refcount 3->2 on another thread. Otherwise, you
+>>>> might have a data race with the operations that happened just before
+>>>> the 3->2 refcount drop.
+>>>>
+>>>> Alice
+>>>
+>>> The code as is is fine since there's no data protected in
+>>> `RequestDataWrapper` yet (in fact it's not even generic yet). I know
+>>> Andreas does want to introduce driver-specific data into that, so in
+>>> the long term the acquire would be necessary.
+>>>
+>>> Andreas, please let me know if you want me to make the change now, or
+>>> you'd rather change the ordering when you introduce data to
+>>> `RequestDataWrapper`.
+>>
+>> I guess we will have said data dependencies when we are going to run
+>> drop for fields in the private data area. Thanks for pointing that out.
+>> I will update the ordering when I submit that patch.
+>>
+>> As I mentioned before, I would rather we do not apply this patch before
+>> we get a way to inline helpers.
+>
+> As discussed offline, the code that suffers the performance regression
+> is downstream, and since this change seems to be important, I can apply
+> the helper LTO patch downstream as well.
+>
+> Since the plan for the downstream code _is_ to move upstream, I really
+> hope to see the helper LTO patch upstream, so we don't get a performance
+> regression because of these refcounts.
+>
+> If we cannot figure out a way to get the LTO patches (or an alternative
+> solution) upstream, we can always revert back to a more performant
+> solution in block.
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
+I forgot to report the result of the benchmarks. Over the usual
+benchmark workload that I run for `rnull` I see an average 0.8 percent
+performance penalty with this patch. For some configurations
+I see 95% CI N=3D40 [-18%;-5%]. So it is not insignificant.
 
-Johan
+
+BR Andreas
+
 
