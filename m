@@ -1,255 +1,263 @@
-Return-Path: <linux-kernel+bounces-358579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA64998110
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:57:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E63F998119
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECCD1C274F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:57:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6ADEB26A9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9660E1B5ED6;
-	Thu, 10 Oct 2024 08:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7C11BDAB0;
+	Thu, 10 Oct 2024 08:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IqZAcmoG"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3kNozI4"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5EF41C6D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B061019AD73
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728550290; cv=none; b=RRYoHutbJEL61LS0fVbPAi08WhHwGk5vm6KfwN98ShcNUWoEcfZzMSj5idEEANIriul82tcM6DWYF2t/jFy5LMlX2uJM00joktDLof3TtwPgzlYAwr4csUQDu31OeCkvZ1Moax99Jr77sGoZVIfT5Z5ROmJkbVHnHi+sdfqVzi8=
+	t=1728550374; cv=none; b=DpZhFCFh5uDBSXdhqkKsWf5xDlYLwrGRAwfj3+mVAYE61jiCLkfJAKTvbxhKCsAunLizffAMbewCA1m7khT3JGgu2BEpJqy6fSmuWPTKtwcXuB+WAbjTcZYMfnqdIePfDNIM2DNvJwj/aVsi5KUz2gbS66KnqZvqDmI4UWHtDTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728550290; c=relaxed/simple;
-	bh=AmTwx/e9IvoNu67kS/GGVL8h9ra60KlBhAIFm2ZaWus=;
-	h=MIME-Version:Content-Type:Date:Message-ID:CC:Subject:From:To:
-	 In-Reply-To:References; b=vDFfOi/YJ7IqVAkD7VD87t9Z2+puuhku8THkdinsxS3d1XRzPLnYa7kjhBhYG+msV4Hta8SAERVSYErWj8cDO2Gsa0mRRxWP1P3XfkHep0XhZGr5slta+AlKO5uup+6QJQ5HLy0NfwybR3brWN6oIq5N+SNT/wkwS7Me0OIHE1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IqZAcmoG; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241010085126euoutp0100562359a1bc112df58085317447971c~9C1PL_0RF2511725117euoutp01B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:51:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241010085126euoutp0100562359a1bc112df58085317447971c~9C1PL_0RF2511725117euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728550286;
-	bh=YeM0dPO1+nOm8boXRksVmRulqdYkOpcgua7bJ4stkko=;
-	h=Date:CC:Subject:From:To:In-Reply-To:References:From;
-	b=IqZAcmoG0fPWQx0EFoivcYxhT2gEZNmrPnNzRmSzrnyrkJxe9fMs6x57IY0z8yj5C
-	 GshqEPkfH7VPrZ+DdvsnZm0SECacEqzpjl0v2Eg7je3Nyi2zBmZ/WzAs8fSi8ef6WD
-	 UtN9d8BPnCHIsS1WjADypsgZpvpAEnY647kuWv/I=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241010085126eucas1p133b991680631c9903f010a922665f94a~9C1O634Qn1720817208eucas1p1F;
-	Thu, 10 Oct 2024 08:51:26 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 28.9B.09624.E8597076; Thu, 10
-	Oct 2024 09:51:26 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241010085125eucas1p2ad657cb4a5d0bbb9a6a8579406983210~9C1OmfLjj1034510345eucas1p2f;
-	Thu, 10 Oct 2024 08:51:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241010085125eusmtrp191ce25df44c285f7699f77502cf3a01e~9C1Ol7M4q0373503735eusmtrp1r;
-	Thu, 10 Oct 2024 08:51:25 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-ac-6707958ee44f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 76.CA.19096.D8597076; Thu, 10
-	Oct 2024 09:51:25 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241010085125eusmtip1dffecbfff70e1fa8a4350908291cce88~9C1OcEOHr1248812488eusmtip1r;
-	Thu, 10 Oct 2024 08:51:25 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 10 Oct 2024 09:51:24 +0100
+	s=arc-20240116; t=1728550374; c=relaxed/simple;
+	bh=0kuuvx8S6hxYXc/Q2SEM7qWLako0NeQPxFPsHkxB69s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vwo2vddleyZU9d16H0X7FI8rrWFAhX5HQxrn7Le5n8YM+wCmW6c4Auofyit7k2jMmYlEWGJqYvmmNDfNGTVomtfIOjY06DovBcHlWqpy6hDoeZFhd/PX7htySHwjbEkweP31OjuKeO1kQOXhf4D1NoAPkKSZ7YUhbE5z8w7Oyao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3kNozI4; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so6044135e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728550370; x=1729155170; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4gB+FHKjUtmOrTxqJNh1pOMw3FFxgDS/WvLLgffyczM=;
+        b=z3kNozI4Axn5eRaMpmMWlpUrTT1W5Rs3V/3MtpgEeLXR/GIq3oSELpVJAx/RwQWgh3
+         VbZ7uIPY8uPsQhibKbXsL+LEJENnfeR5Ko4fXV6FdH+g4XIZxGDMmJ9gZ+t6cspJhsib
+         gBRVTKQb0XTjhGxGc4tRiQDyI2jw5eInnyZSQBdLeBHLtENIRDwfZ7gk/ISErzCyXFmX
+         n81vMlypqLaCedLu/0q5p6H8IB/qtS9EaBj0y1RNbNs3Cac6e49ebEzZgpIIq/CTVrv/
+         5BfhTdVfn5UcZn0+WxfGA9/eQDwrQR+pn8TJymgSqbXJFnEexEi5iBd76F3SAnmFHI71
+         Hrsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728550370; x=1729155170;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4gB+FHKjUtmOrTxqJNh1pOMw3FFxgDS/WvLLgffyczM=;
+        b=ORQ7Nc3i8+EIIw3+bEpW4UFcXge7cbIl3YPGuxizBjnqybBchXBkMcg6yCGoZ6ROuD
+         Js8fRJFMOm8j513hyuzt+dl3N3bGWq2kE0J+22GvddI5cM6Z3xFgj37jWE6jMHnYrH9U
+         L6lAr3qF4FQu2vLDkrAguiP2wG/xzk3Dq6TzN7l56H/2AYV0r9zIWIAe0ZUgxtMI2/NV
+         eNKDZwKeu54G5jaj93yDkAI+kSjG9zHgjQyv3oY3LMs3MuBfRhUzISVEMN7utI7OkYOw
+         R9HV6vwdj8G6MBYLjiEH7uAbtd46YZ++jojZmQX1ssynEwrqH7UVkCRDh6tSYKMOM/wX
+         VqpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfyePSSbJhjnHJedGNwo+SVmTgXdUi2nYfhv6m5i+edcffnFQsWpyS6Fuj+SuEcAKI8B9xyBIXMRNrOn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPcjUeS+QjO/XZ7q5EwGRl+gUsU3wgJW9nMrd5HFVy6XO6Cl1W
+	EGxXzJqJYSUZMYRNMbyL+wEZX7hkNSTrquWVk7OYrTrAEZ2RLc3nisTyyolCQY0=
+X-Google-Smtp-Source: AGHT+IHF6MBLxr7Jsp2l5hDpG1f+RZEDPhjwpuRTU+QgJgiAT9795ytUe4ZI5bD7CxezWQIY1nBr0g==
+X-Received: by 2002:a05:600c:1e10:b0:428:f0c2:ef4a with SMTP id 5b1f17b1804b1-430ccf1d7fdmr49634915e9.13.1728550370074;
+        Thu, 10 Oct 2024 01:52:50 -0700 (PDT)
+Received: from [192.168.68.111] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-431182d7bddsm9333705e9.8.2024.10.10.01.52.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 01:52:49 -0700 (PDT)
+Message-ID: <32bb0156-a820-402c-8076-630e5fb1bc8c@linaro.org>
+Date: Thu, 10 Oct 2024 09:52:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 10 Oct 2024 10:51:24 +0200
-Message-ID: <D4RZXQ8GR1C4.35P1KFUAWX09N@samsung.com>
-CC: Linus Torvalds <torvalds@linux-foundation.org>,
-	<linux-bcachefs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc2
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Theodore Ts'o <tytso@mit.edu>, Kent Overstreet
-	<kent.overstreet@linux.dev>
-X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
-In-Reply-To: <20241009035139.GB167360@mit.edu>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduzned2+qezpBmdfslnMfv6V2WJC42pW
-	iz17T7JYXN41h83iUd9bdovWnp/sDmweJ2b8ZvFY2DCV2aPpzFFmj8+b5AJYorhsUlJzMstS
-	i/TtErgypv2ZwVxwQbXi1Km7TA2Mq+W6GDk5JARMJK5cvs3cxcjFISSwglHi+/y/bBDOF0aJ
-	lxeesEM4nxklNj26xAbTcvPMHUaIxHJGidZdB1jgqr5e7IZq2cwoMW39BWaQFl4BQYmTM5+w
-	gNjMAtoSyxa+ZoawNSVat/9mB7FZBFQlbn+/wApRbyKxZ8oXsKnMAjMZJW5vvAFWJCxgLLHu
-	5zqwZjag5n0nN4HFRQQCJJ7PWs0McZ+axP/+iWDLOAX0JHqPbYa6W1FixsSVLBB2rcSpLbeY
-	QBZICDzgkFi+4B1UkYvEhgWv2CFsYYlXx7dA2TISpyf3QDWnSyxZNwvKLpDYc3sW0NUcQLa1
-	RN+ZHIiwo8SKpg3MEGE+iRtvBSH+5ZOYtG06VJhXoqNNaAKjyiykEJqFFEKzkEJoASPzKkbx
-	1NLi3PTUYsO81HK94sTc4tK8dL3k/NxNjMDkcvrf8U87GOe++qh3iJGJg/EQowQHs5IIr+5C
-	1nQh3pTEyqrUovz4otKc1OJDjNIcLErivKop8qlCAumJJanZqakFqUUwWSYOTqkGJmWTz6ZT
-	OA5ts8w5//Z8B/d9rSd/9t7+7Wmd3FuyL+rt/QDedJ6eAoatTO6uxd71l3+/s7nR/EOPK7Hl
-	Q8SSeTLL9nHzaz5Z1Dtp9nFHr6sSDU39G95Nk7d/ZP3ffN7pnMDssrKGv0krTwXW3H8jUJH/
-	qGPtZYHi4+1+zDnbKqZ8yyvjU8+wZzPR8bSa724h/zJK6HLy87LDHB2bVH3WPTXacXf+2qQC
-	C4+zfZMe8+62XKxkH5Ff87uDP1d75mzeuTs32939FHSg74C9c67GTf08Q/t3rO5fdK88ql7w
-	Kijawco5oLReP5KrYun0ndtktRN+MaxuNL4xPe1G89KF+98tD8oxSnbwjcqTX3JYiaU4I9FQ
-	i7moOBEAuWXb7p0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsVy+t/xu7q9U9nTDe42GlnMfv6V2WJC42pW
-	iz17T7JYXN41h83iUd9bdovWnp/sDmweJ2b8ZvFY2DCV2aPpzFFmj8+b5AJYovRsivJLS1IV
-	MvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQypv2ZwVxwQbXi1Km7
-	TA2Mq+W6GDk5JARMJG6eucPYxcjFISSwlFFi+8x+VoiEjMTGL1ehbGGJP9e62CCKPjJKHPx+
-	lx3C2cwo8eFuFwtIFa+AoMTJmU/AbGYBbYllC18zQ9iaEq3bf7OD2CwCqhK3v19ghag3kdgz
-	5QsLyCBmgZmMErc33gArEhYwllj3cx1YMxtQ876Tm8DiIgJ+ErsmfIQ6SU3if/9EFogrXrBI
-	fH97nAkkwSmgJ9F7bDMbRJGixIyJK1kg7FqJz3+fMU5gFJmF5NhZSI6dheTYBYzMqxhFUkuL
-	c9Nzi430ihNzi0vz0vWS83M3MQLjb9uxn1t2MK589VHvECMTB+MhRgkOZiURXt2FrOlCvCmJ
-	lVWpRfnxRaU5qcWHGE2Bvp7ILCWanA9MAHkl8YZmBqaGJmaWBqaWZsZK4rxsV86nCQmkJ5ak
-	ZqemFqQWwfQxcXBKNTBJpl04N5Pb+1AVQ6ZPvrN5KtezLzU9p5cvsTaOsLvox+zUt1IxbF2I
-	stOF7/d/WUUp2nKYbJt++2ZU9j7fDnn2+P2nN9Y2vlbTrFp4Z1tGwleLiyUq8+/1TGGYIFvE
-	EN/EtcRhb7Sbe5O20k39MFau9bYZT3U3eYjou18PELxl/jiqUk/r4NaY1d9P51nfSAkpf6u+
-	IKrkoeGUxypZsQyC2zfeufTnkYmtru214p2nriVXLO3bJtKd+MalmcEph7Hs6fELNVu23+Cp
-	X/5rhtBk+WXLZ8jveOJduSvnVulN25MqEyZGf4/7nsUc+6c8xvDE2kUnVXX3Lcr+fv3tNtfn
-	DUpNUTpHg+/s4ldsV1BiKc5INNRiLipOBADKHAdvSAMAAA==
-X-CMS-MailID: 20241010085125eucas1p2ad657cb4a5d0bbb9a6a8579406983210
-X-Msg-Generator: CA
-X-RootMTR: 20241010085125eucas1p2ad657cb4a5d0bbb9a6a8579406983210
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241010085125eucas1p2ad657cb4a5d0bbb9a6a8579406983210
-References: <cphtxla2se4gavql3re5xju7mqxld4rp6q4wbqephb6by5ibfa@5myddcaxerpb>
-	<CAHk-=wjit-1ETRxCBrQAw49AUcE5scEM5O++M=793bDWnQktmw@mail.gmail.com>
-	<x7w7lr3yniqrgcuy7vzor5busql2cglirhput67pjk6gtxtbfc@ghb46xdnjvgw>
-	<CAHk-=wi-nKcOEnvX3RX+ovpsC4GvsHz1f6iZ5ZeD-34wiWvPgA@mail.gmail.com>
-	<e3qmolajxidrxkuizuheumydigvzi7qwplggpd2mm2cxwxxzvr@5nkt3ylphmtl>
-	<CAHk-=wjns3i5bm++338SrfJhrDUt6wyzvUPMLrEvMZan5ezmxQ@mail.gmail.com>
-	<2nyd5xfm765iklvzjxvn2nx3onhtdntqrnmvlg2panhtdbff7i@evgk5ecmkuoo>
-	<20241006043002.GE158527@mit.edu>
-	<jhvwp3wgm6avhzspf7l7nldkiy5lcdzne5lekpvxugbb5orcci@mkvn5n7z2qlr>
-	<20241009035139.GB167360@mit.edu>
-	<CGME20241010085125eucas1p2ad657cb4a5d0bbb9a6a8579406983210@eucas1p2.samsung.com>
-
-On Wed Oct 9, 2024 at 5:51 AM CEST, Theodore Ts'o wrote:
-> On Sun, Oct 06, 2024 at 12:33:51AM -0400, Kent Overstreet wrote:
->>=20
->> Correct me if I'm wrong, but your system isn't available to the
->> community, and I haven't seen a CI or dashboard for kdevops?
->
-> It's up on github for anyone to download, and I've provided pre-built
-> test appliance so people don't have to have downloaded xfstests and
-> all of its dependencies and build it from scratch.  (That's been
-> automated, of course, but the build infrastructure is setup to use a
-> Debian build chroot, and with the precompiled test appliances, you can
-> use my test runner on pretty much any Linux distribution; it will even
-> work on MacOS if you have qemu built from macports, although for now
-> you have to build the kernel on Linux distro using Parallels VM[1].)
->
-> I'll note that IMHO making testing resources available to the
-> community isn't really the bottleneck.  Using cloud resources,
-> especially if you spin up the VM's only when you need to run the
-> tests, and shut them down once the test is complete, which
-> gce-xfstests does, is actually quite cheap.  At retail prices, running
-> a dozen ext4 file system configurations against xfstests's "auto"
-> group will take about 24 hours of VM time, and including the cost of
-> the block devices, costs just under two dollars USD.  Because the
-> tests are run in parallel, the total wall clock time to run all of the
-> tests is about two and a half hours.  Running the "quick" group on a
-> single file system configuration costs pennies.  So the $300 of free
-> GCE credits will actually get someone pretty far!
->
-> No, the bottleneck is having someone knowledgeable enough to interpret
-> the test results and then finding the root cause of the failures.
-> This is one of the reasons why I haven't stressed all that much about
-> dashboards.  Dashboards are only useful if the right person(s) is
-> looking at them.  That's why I've been much more interested in making
-> it stupidly easy to run tests on someone's local resources, e.g.:
->
->      https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-=
-quickstart.md
->
-> In fact, for most people, the entry point that I envision as being
-> most interesting is that they download the kvm-xfstests, and following
-> the instructions in the quickstart, so they can run "kvm-xfstests
-> smoke" before sending me an ext4 patch.  Running the smoke test only
-> takes 15 minutes using qemu, and it's much more convenient for them to
-> run that on their local machine than to trigger the test on some
-> remote machine, whether it's in the cloud or someone's remote test
-> server.
->
-> In any case, that's why I haven't been interesting in working with
-> your test infrastructure; I have my own, and in my opinion, my
-> approach is the better one to make available to the community, and so
-> when I have time to improve it, I'd much rather work on
-> {kvm,gce,android}-xfstests.
->
-> Cheers,
->
-> 						- Ted
->
->
-> [1] Figuring out how to coerce the MacOS toolchain to build the Linux
-> kernel would be cool if anyone ever figures it out.  However, I *have*
-
-Building Linux for arm64 is now supported in macOS. You can find all patch
-series discussions here [1]. In case you want to give this a try, here the
-steps:
-
-	```shell
-	diskutil apfs addVolume /dev/disk<N> "Case-sensitive APFS" linux
-	```
-=09
-	```shell
-	brew install coreutils findutils gnu-sed gnu-tar grep llvm make pkg-config
-	```
-=09
-	```shell
-	brew tap bee-headers/bee-headers
-	brew install bee-headers/bee-headers/bee-headers
-	```
-=09
-	Initialize the environment with `bee-init`. Repeat with every new shell:
-=09
-	```shell
-	source bee-init
-	```
-=09
-	```shell
-	make LLVM=3D1 defconfig
-	make LLVM=3D1 -j$(nproc)
-	```
-=09
-More details about the setup required can be found here [2].
-
-This allows to build the kernel and boot it with QEMU -kernel argument. And
-debug it with with lldb.
-
-[1]
-v3: https://lore.kernel.org/all/20240925-macos-build-support-v3-1-233dda880=
-e60@samsung.com/
-v2: https://lore.kernel.org/all/20240906-macos-build-support-v2-0-06beff418=
-848@samsung.com/
-v1: https://lore.kernel.org/all/20240807-macos-build-support-v1-0-4cd1ded85=
-694@samsung.com/
-
-[2] https://github.com/bee-headers/homebrew-bee-headers/blob/main/README.md
-
-Daniel
-
-> done kernel development using a Macbook Air M2 while on a cruise ship
-> with limited internet access, building the kernel using a Parallels VM
-> running Debian testing, and then using qemu from MacPorts to avoid the
-> double virtualization performance penalty to run xfstests to test the
-> freshly-built arm64 kernel, using my xfstests runner -- and all of
-> this is available on github for anyone to use.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: qcom: sdm845: add missing soundwire runtime stream
+ alloc
+To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Cc: stable@vger.kernel.org, broonie@kernel.org, dmitry.baryshkov@linaro.org,
+ krzysztof.kozlowski@linaro.org, pierre-louis.bossart@linux.intel.com,
+ vkoul@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ linux-kernel@vger.kernel.org
+References: <20241009213922.999355-1-alexey.klimov@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20241009213922.999355-1-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
+On 09/10/2024 22:39, Alexey Klimov wrote:
+> During the migration of Soundwire runtime stream allocation from
+> the Qualcomm Soundwire controller to SoC's soundcard drivers the sdm845
+> soundcard was forgotten.
+> 
+> At this point any playback attempt or audio daemon startup, for instance
+> on sdm845-db845c (Qualcomm RB3 board), will result in stream pointer
+> NULL dereference:
+> 
+>   Unable to handle kernel NULL pointer dereference at virtual
+>   address 0000000000000020
+>   Mem abort info:
+>     ESR = 0x0000000096000004
+>     EC = 0x25: DABT (current EL), IL = 32 bits
+>     SET = 0, FnV = 0
+>     EA = 0, S1PTW = 0
+>     FSC = 0x04: level 0 translation fault
+>   Data abort info:
+>     ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>     CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>     GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>   user pgtable: 4k pages, 48-bit VAs, pgdp=0000000101ecf000
+>   [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
+>   Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>   Modules linked in: ...
+>   CPU: 5 UID: 0 PID: 1198 Comm: aplay
+>   Not tainted 6.12.0-rc2-qcomlt-arm64-00059-g9d78f315a362-dirty #18
+>   Hardware name: Thundercomm Dragonboard 845c (DT)
+>   pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>   pc : sdw_stream_add_slave+0x44/0x380 [soundwire_bus]
+>   lr : sdw_stream_add_slave+0x44/0x380 [soundwire_bus]
+>   sp : ffff80008a2035c0
+>   x29: ffff80008a2035c0 x28: ffff80008a203978 x27: 0000000000000000
+>   x26: 00000000000000c0 x25: 0000000000000000 x24: ffff1676025f4800
+>   x23: ffff167600ff1cb8 x22: ffff167600ff1c98 x21: 0000000000000003
+>   x20: ffff167607316000 x19: ffff167604e64e80 x18: 0000000000000000
+>   x17: 0000000000000000 x16: ffffcec265074160 x15: 0000000000000000
+>   x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>   x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+>   x8 : 0000000000000000 x7 : 0000000000000000 x6 : ffff167600ff1cec
+>   x5 : ffffcec22cfa2010 x4 : 0000000000000000 x3 : 0000000000000003
+>   x2 : ffff167613f836c0 x1 : 0000000000000000 x0 : ffff16761feb60b8
+>   Call trace:
+>    sdw_stream_add_slave+0x44/0x380 [soundwire_bus]
+>    wsa881x_hw_params+0x68/0x80 [snd_soc_wsa881x]
+>    snd_soc_dai_hw_params+0x3c/0xa4
+>    __soc_pcm_hw_params+0x230/0x660
+>    dpcm_be_dai_hw_params+0x1d0/0x3f8
+>    dpcm_fe_dai_hw_params+0x98/0x268
+>    snd_pcm_hw_params+0x124/0x460
+>    snd_pcm_common_ioctl+0x998/0x16e8
+>    snd_pcm_ioctl+0x34/0x58
+>    __arm64_sys_ioctl+0xac/0xf8
+>    invoke_syscall+0x48/0x104
+>    el0_svc_common.constprop.0+0x40/0xe0
+>    do_el0_svc+0x1c/0x28
+>    el0_svc+0x34/0xe0
+>    el0t_64_sync_handler+0x120/0x12c
+>    el0t_64_sync+0x190/0x194
+>   Code: aa0403fb f9418400 9100e000 9400102f (f8420f22)
+>   ---[ end trace 0000000000000000 ]---
+> 
+> 0000000000006108 <sdw_stream_add_slave>:
+>      6108:       d503233f        paciasp
+>      610c:       a9b97bfd        stp     x29, x30, [sp, #-112]!
+>      6110:       910003fd        mov     x29, sp
+>      6114:       a90153f3        stp     x19, x20, [sp, #16]
+>      6118:       a9025bf5        stp     x21, x22, [sp, #32]
+>      611c:       aa0103f6        mov     x22, x1
+>      6120:       2a0303f5        mov     w21, w3
+>      6124:       a90363f7        stp     x23, x24, [sp, #48]
+>      6128:       aa0003f8        mov     x24, x0
+>      612c:       aa0203f7        mov     x23, x2
+>      6130:       a9046bf9        stp     x25, x26, [sp, #64]
+>      6134:       aa0403f9        mov     x25, x4        <-- x4 copied to x25
+>      6138:       a90573fb        stp     x27, x28, [sp, #80]
+>      613c:       aa0403fb        mov     x27, x4
+>      6140:       f9418400        ldr     x0, [x0, #776]
+>      6144:       9100e000        add     x0, x0, #0x38
+>      6148:       94000000        bl      0 <mutex_lock>
+>      614c:       f8420f22        ldr     x2, [x25, #32]!  <-- offset 0x44
+>      ^^^
+> This is 0x6108 + offset 0x44 from the beginning of sdw_stream_add_slave()
+> where data abort happens.
+> wsa881x_hw_params() is called with stream = NULL and passes it further
+> in register x4 (5th argument) to sdw_stream_add_slave() without any checks.
+> Value from x4 is copied to x25 and finally it aborts on trying to load
+> a value from address in x25 plus offset 32 (in dec) which corresponds
+> to master_list member in struct sdw_stream_runtime:
+> 
+> struct sdw_stream_runtime {
+>          const char  *              name;	/*     0     8 */
+>          struct sdw_stream_params   params;	/*     8    12 */
+>          enum sdw_stream_state      state;	/*    20     4 */
+>          enum sdw_stream_type       type;	/*    24     4 */
+>          /* XXX 4 bytes hole, try to pack */
+>   here-> struct list_head           master_list;	/*    32    16 */
+>          int                        m_rt_count;	/*    48     4 */
+>          /* size: 56, cachelines: 1, members: 6 */
+>          /* sum members: 48, holes: 1, sum holes: 4 */
+>          /* padding: 4 */
+>          /* last cacheline: 56 bytes */
+> 
+> Fix this by adding required calls to qcom_snd_sdw_startup() and
+> sdw_release_stream() to startup and shutdown routines which restores
+> the previous correct behaviour when ->set_stream() method is called to
+> set a valid stream runtime pointer on playback startup.
+> 
+> Reproduced and then fix was tested on db845c RB3 board.
+> 
+> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: stable@vger.kernel.org
+> Fixes: 15c7fab0e047 ("ASoC: qcom: Move Soundwire runtime stream alloc to soundcards")
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+
+thanks for fixing this,
+
+
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+--srini
+> ---
+>   sound/soc/qcom/sdm845.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+> index 75701546b6ea..a479d7e5b7fb 100644
+> --- a/sound/soc/qcom/sdm845.c
+> +++ b/sound/soc/qcom/sdm845.c
+> @@ -15,6 +15,7 @@
+>   #include <uapi/linux/input-event-codes.h>
+>   #include "common.h"
+>   #include "qdsp6/q6afe.h"
+> +#include "sdw.h"
+>   #include "../codecs/rt5663.h"
+>   
+>   #define DRIVER_NAME	"sdm845"
+> @@ -416,7 +417,7 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
+>   		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
+>   		break;
+>   	}
+> -	return 0;
+> +	return qcom_snd_sdw_startup(substream);
+>   }
+>   
+>   static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+> @@ -425,6 +426,7 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+>   	struct snd_soc_card *card = rtd->card;
+>   	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
+>   	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+> +	struct sdw_stream_runtime *sruntime = data->sruntime[cpu_dai->id];
+>   
+>   	switch (cpu_dai->id) {
+>   	case PRIMARY_MI2S_RX:
+> @@ -463,6 +465,9 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+>   		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
+>   		break;
+>   	}
+> +
+> +	data->sruntime[cpu_dai->id] = NULL;
+> +	sdw_release_stream(sruntime);
+>   }
+>   
+>   static int sdm845_snd_prepare(struct snd_pcm_substream *substream)
 
