@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-360152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B6F99952E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:25:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A59999531
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70E41F28643
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53641F2864A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793DC1E8836;
-	Thu, 10 Oct 2024 22:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38131E5034;
+	Thu, 10 Oct 2024 22:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4CULXzt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf4BhbzN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF031E8829;
-	Thu, 10 Oct 2024 22:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B93519A2A3;
+	Thu, 10 Oct 2024 22:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728599093; cv=none; b=Wh4HouWb91k+bJahSqLuf/Z+mYJ2dN+fJC111fx1vJnSymBOgbvZUvPjF25GW9wtEQyYAMmM1QzCy9fw4M0POagHd8/8Pj9QEfUYIx/P0IuXE0JAtbR3S9DWeUV02+Fy9vxc+IiLXvs2EzH6nSLTUykVv0cLOYeQGxpiy+SIB9I=
+	t=1728599258; cv=none; b=h74DnQkPjD2RqJmnDY6mK63C2kqDAcM7lV6w7ImOOWGbJ/+JJGkOt/LKuTh8I01khwUdoZCr1GHEcoqk/4DamTLUeJwSOeihjFjNs3Ci+N98wVAB9v/gZdkuh6v4TVEwwfktpiAcyDZXXThFGI763a7D688FG7T6VMxjymqoPj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728599093; c=relaxed/simple;
-	bh=EKsbnf9mUcRRkS47SOr4tSrOs3etmgqIWhCS2/QU4dA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/pvWMfj8c2jFGzeHNJ9Ehi4HxCorfkNgqvyBaUOYKLnglR7dh6BPQSh4sJnFKwbJwowtTIRiacs/kVD/LeuzOOrIyPT46tburiXYjTTWOnTZpzH87BoesXL3xr5BXBpouYIQcWUEz/akA4oO1cOXhPkGUG5Q0PrvmzDDAfBzKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4CULXzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 077ACC4CEC5;
-	Thu, 10 Oct 2024 22:24:52 +0000 (UTC)
+	s=arc-20240116; t=1728599258; c=relaxed/simple;
+	bh=oTNzX0Px6F2ZuEdSdbpP0nHju9ehSWKosmu3toVlgy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ByKnQq39O8NdM3yp3C2bTlDkuG/4SNBVb4gCmMCW/pvak1i1cXLXgM4M9KB7lAMT+j3qq0QIi0ZjdYQaHY4IukHM1Oyid9TloSM0XaOOBBaqgYtMt1cwx2mMDsMGb518D+Ycb9zm9WHG4b0H0apsavVuNjW/0zNKKjwO+24M8rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf4BhbzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739D1C4CEC5;
+	Thu, 10 Oct 2024 22:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728599093;
-	bh=EKsbnf9mUcRRkS47SOr4tSrOs3etmgqIWhCS2/QU4dA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o4CULXzt5eVTD6F4bhRjtHSWGn+r+OtRB3ztzwRUXMYWD2W3ijffJFjzdYgQhq1J2
-	 NBIRlH8s3MOVF3ZyXVmmmIwfH/hqaE8kqroO3l3cUmd3ALhANaLxTn2jsO58FZne8p
-	 XN2+cnzf4DWAejoV9CcbstgycWDAn8pJombm0TifUG5meDvdnQbNLHKlCy6S/nv9SR
-	 ZTbOuFzgaToEe6qD2B6aQjmk1PzjL4IK/KlgBtLE4Wpu7TwNn7TrnNCpoWpm2ZaN0Q
-	 bxn4zjPQL5xbwGHtYWYnI5f8hoxT4ygiFCvzgNCoABoL1uqfGeBhNDS4nS3AT6QQk5
-	 9u56FvBqabQNQ==
-Date: Thu, 10 Oct 2024 15:24:51 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] HID: simplify code in fetch_item()
-Message-ID: <20241010222451.GA3571761@thelio-3990X>
-References: <ZvwYbESMZ667QZqY@google.com>
+	s=k20201202; t=1728599257;
+	bh=oTNzX0Px6F2ZuEdSdbpP0nHju9ehSWKosmu3toVlgy0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Pf4BhbzNjET2vqzRkOWkNObKT9+3v+3g4SHSdy+1tpvL6vl4hEwcRRznlwxWc9SpL
+	 2ImhQkURL1Dsm0G/uFMlhz02FywDkPw2ml5J544X1gV81NSDVwgV1rakOLFsmiBbNV
+	 EIQ2DwNgm20C5hTNMOUxlG+Xwjn2CJ9o4QJSzRPuscYWDllIHfGQN5orwonzHDa7w7
+	 LBlGkdFS4EBJbVMjP+eJCc3tYX/lo4nIx0oyc431qSUO3wcI3TzRdF69JB0LByP5JJ
+	 +eL9i4RdpAVTQDveIkREhRXCYwXqng5nPWsiU7lCP12cHtKUPqMPIlBjwvq9Q4f52O
+	 FjtjwkQ/xbYhg==
+Date: Thu, 10 Oct 2024 17:27:35 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+Cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v3 4/5] PCI/IOV: Allow extending VF BAR within original
+ resource boundary
+Message-ID: <20241010222735.GA580854@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZvwYbESMZ667QZqY@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241010103203.382898-5-michal.winiarski@intel.com>
 
-Hi Dmitry,
+On Thu, Oct 10, 2024 at 12:32:02PM +0200, Michał Winiarski wrote:
+> VF MMIO resource reservation, either created by system firmware and
+> inherited by Linux PCI subsystem or created by the subsystem itself,
+> contains enough space to fit the BAR of all SR-IOV Virtual Functions
+> that can potentially be created (total VFs supported by the device).
 
-On Tue, Oct 01, 2024 at 08:42:36AM -0700, Dmitry Torokhov wrote:
-> We can easily calculate the size of the item using arithmetic (shifts).
-> This allows to pull duplicated code out of the switch statement, making
-> it cleaner.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/hid/hid-core.c | 31 ++++++++++++++-----------------
->  1 file changed, 14 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 988d0acbdf04..00942d40fe08 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -754,35 +754,32 @@ static u8 *fetch_item(__u8 *start, __u8 *end, struct hid_item *item)
+It's *possible* that this is true, but there's no guarantee that
+firmware has assigned enough space for all BARs of all possible VFs.
+
+> This can be leveraged when the device is exposing lower than optimal BAR
+> size as a default, allowing access to the entire resource when lower
+> number of VFs are created.
+> It is achieved by dynamically resizing the BAR to largest possible value
+> that allows to fit all newly created VFs within the original resource
+> boundary.
+
+Add blank lines between paragraphs.
+
+This log doesn't actually say what the patch does.  It describes a
+possible configuration and ways that it may be used, and even *how*
+something might be done, but something along the lines of the subject
+line should be included in the commit log.
+
+> +static void pci_iov_resource_do_extend(struct pci_dev *dev, int resno, u16 num_vfs)
+
+Please wrap to fit in 80 columns like the rest of the file.
+
+> +int pci_iov_resource_extend(struct pci_dev *dev, int resno, bool enable)
+
+Please add kerneldoc here to help users of this exported function.
+
+> @@ -480,6 +560,11 @@ static ssize_t sriov_numvfs_store(struct device *dev,
+>  		goto exit;
 >  	}
 >  
->  	item->format = HID_ITEM_FORMAT_SHORT;
-> -	item->size = b & 3;
-> +	item->size = BIT(b & 3) >> 1; /* 0, 1, 2, 3 -> 0, 1, 2, 4 */
-> +
-> +	if (end - start < item->size)
-> +		return NULL;
->  
->  	switch (item->size) {
->  	case 0:
-> -		return start;
-> +		break;
->  
->  	case 1:
-> -		if ((end - start) < 1)
-> -			return NULL;
-> -		item->data.u8 = *start++;
-> -		return start;
-> +		item->data.u8 = *start;
-> +		break;
->  
->  	case 2:
-> -		if ((end - start) < 2)
-> -			return NULL;
->  		item->data.u16 = get_unaligned_le16(start);
-> -		start = (__u8 *)((__le16 *)start + 1);
-> -		return start;
-> +		break;
->  
-> -	case 3:
-> -		item->size++;
-> -		if ((end - start) < 4)
-> -			return NULL;
-> +	case 4:
->  		item->data.u32 = get_unaligned_le32(start);
-> -		start = (__u8 *)((__le32 *)start + 1);
-> -		return start;
-> +		break;
-> +
-> +	default:
-> +		unreachable();
->  	}
->  
-> -	return NULL;
-> +	return start + item->size;
->  }
+> +	for (i = 0; i < PCI_SRIOV_NUM_BARS; i++) {
+> +		if (pdev->sriov->rebar_extend[i])
+> +			pci_iov_resource_do_extend(pdev, i + PCI_IOV_RESOURCES, num_vfs);
 
-I am noticing some interesting behavior when building with clang, namely
-some objtool warnings and a failed boot when LTO is enabled, which I
-bisected to this change as commit 61595012f280 ("HID: simplify code in
-fetch_item()"), such as:
+Wrap to fit in 80 columns.
 
-  $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 mrproper defconfig vmlinux
-  vmlinux.o: warning: objtool: hid_open_report() falls through to next function hid_parser_main()
-  vmlinux.o: warning: objtool: hid_scan_report() falls through to next function hid_allocate_device()
-
-With LTO enabled, the warning becomes:
-
-  vmlinux.o: warning: objtool: hid_open_report+0x21b: can't find jump dest instruction at .text.hid_open_report+0x40f
-
-A bare unreachable(), especially in the default case of a switch
-statement, is generally considered harmful in my experience, as it can
-introduce undefined behavior, which can mess up how a compiler might
-optimize a function. Commit d652d5f1eeeb ("drm/edid: fix objtool warning
-in drm_cvt_modes()") and commit 3764647b255a ("bcachefs: Remove
-undefined behavior in bch2_dev_buckets_reserved()") have some good
-commit messages talking about it.
-
-Getting rid of the unreachable() in some way resolves the issue. I
-tested using BUG() in lieu of unreachable() like the second change I
-mentioned above, which resolves the issue cleanly, as the default case
-clearly cannot happen. Another option I tested was some sort of printk
-statement and returning NULL, which some maintainers prefer, even in
-spite of impossible conditions. I am happy to send a patch with one of
-those changes or open to other suggestions.
-
-Cheers,
-Nathan
+Bjorn
 
