@@ -1,158 +1,89 @@
-Return-Path: <linux-kernel+bounces-358918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48327998547
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:45:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC16998549
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2DF12862FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:45:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250A31F223CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFA71C2453;
-	Thu, 10 Oct 2024 11:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF031C2454;
+	Thu, 10 Oct 2024 11:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1fLorkF"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DSWwCyki";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SbzAb/Wd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95001C232A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925C7183CD9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560729; cv=none; b=cIc7hVX2JGVtRX5iL/oUmbRv311OdtdztvxI6wP8q993llNFZrGCn78/Hzn4cKHDUA4G0GKNreLkcS0vl3ZLJEOc7k5lT4Y4A32KmH28W1Q0R8hU3IkstkCSY6NcUCHyPfBQqmxo/zTPx9B/0h+ATai2EOPWoTWYgXOvSsGMnwA=
+	t=1728560796; cv=none; b=pKd2qKeReew9qHk7zk5gofYUBQGX2cOlpX3GLysQXuAoGSgOURSI9hZ6xuTlr+LaOroKLo0BKfm3wdWjGeVc66MSutr5MIP113BP+tv86LTpIOxQE1xWc5Les4kYiC2KgiQLBJ4RBRBQ71s0bSLJfs/vWJNVLTp3ZtooR2Xmdn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560729; c=relaxed/simple;
-	bh=q9FMhM0jnNcL9a9AR10MCSj+R0zE1bgogO+nYxeLXH4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fMORU8npwo5b/eOCp8Nq5ukpjrFfk7lNJB3em1lgeV++FdnrrULzDyB6gulNO1zSY16AdRzJxsW7VL1OkmwAQmLIY4KLa8X0ZmwUKkKZzelOUdKGh+raA7mq33F+bgOWTXXADWwYQio7C4AR9UwS9B8qQ5k3z/O4OhZo3RM0rVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1fLorkF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so6164795e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728560726; x=1729165526; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D2xmxsqgdQVradbva4jgM/cA1GhFS38qtF/e0CndkSs=;
-        b=l1fLorkFEHh9g6xNv7USRiDU5pBFiXyAKQs349r4eCL1XAnCbPOP8vMx/Pf2Ch2De4
-         UJIXBXEag43h89re2nrc6oWlihpKm1O85jigIeypObJWsNipVFHfs7Q8uF4SwC476EIU
-         XZyFPRBNSTELaad7FwwqI+Gel6Ze0Awu1XUZxUo/dqD7PelkkaSo64CihdDegaWT61bv
-         o19NH/XuPzQIALNR/b5JC3Xcip9Mr0eXPFbB6bZt9Kyn52+YVJNVU9SQ7iMXMto7viBN
-         ZgHuJkvzKPVM6q9XUSMjj6+RlgrtUCI9SWn7zRpAO5xEiXSJY3OetfNIjo+7e9HgSsdA
-         /xfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728560726; x=1729165526;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D2xmxsqgdQVradbva4jgM/cA1GhFS38qtF/e0CndkSs=;
-        b=Zw6j09YH2SrqzzpqE8MhBYSDAKfmthNtZOlvQ+1RqJfyH5055vxgCCeVRaCnopTDoL
-         zo/J5Lmu3pG2y9N7cy1+n1TfT2WjLdKNPlaN+nAB8c62cQ7Yg0XnXK68QwK9JpKURCrZ
-         mclEkQdEZy87xiyusvAYNG5pEphvESxs/j+08mDaPH9KGLb/Esg4tcP5ogYPsJWbaPaP
-         yK9TKj4HCTVBz43kBXxomdLz/FunqoCxeBZK4bzundHNHPz2nyBbcIfdZw3bO1s5cPoN
-         /faVWeXly3cY6Ny9hK4ymheyv1jMCPKHB++VptWL+peD2w76pzL/fVdzPquudfhkZCic
-         +6Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUc+/2X+ksP0G7BxekkrWitTFsphcSWLDHXlXJ2xK/NZ6b393UX45Sgz4rrRQJG9wD0zjK1ErSuXakr3tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdEFci9Se72doAyGJlJ4UEauGUuu54oWC1j+/bVP/mfDqcie+F
-	QxACl1CPY0ZZDWJyak4JjvQNRPStx+aR6MXVnpXimuKOngiuhXJG9ctPWrU/bdpcZiI1TN0SY9h
-	JhAg=
-X-Google-Smtp-Source: AGHT+IEEXQ0SEJ5dsi+RYFbTzB2LMay1r8aPCx38Vlq/fjfIc7PXi4TMfoTrzPoCxDWU3RYD3VzWJQ==
-X-Received: by 2002:a05:600c:1f11:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-430d6faa2c2mr44641545e9.26.1728560726053;
-        Thu, 10 Oct 2024 04:45:26 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:64e2:34a0:1d01:60a2? ([2a01:e0a:982:cbb0:64e2:34a0:1d01:60a2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431183061a4sm14120285e9.23.2024.10.10.04.45.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 04:45:25 -0700 (PDT)
-Message-ID: <318b658f-a395-40f4-9bfc-0261489b547b@linaro.org>
-Date: Thu, 10 Oct 2024 13:45:24 +0200
+	s=arc-20240116; t=1728560796; c=relaxed/simple;
+	bh=rFkxvfPO1JHC/WQR6HbnlLOaMbVKXMFENzloyo6155s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s8AeBW86SRwXEUWiM+LB/iKQ2nY/l2VyZidpFUzFvRqA3ZDN+//aWR1V85Z2hDK5B6Fhk0dHag316XrkMCBspSVGIrMnhx3g9kOKDXlrlsFQcMkf08LUub4xG5iE6ZM1hUxS+omWP12ka+MkBV7WTVNYBWlbCPQbRpSgBuW6dMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DSWwCyki; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SbzAb/Wd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728560792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AlMv9tmvfuxRB+hSunR/bD24PVWzP/WzhnKYM4KcZI8=;
+	b=DSWwCykiDPoqW6qwi896xbYnYnEYM8Uvjfgf5pddMmI9CZEGjJ5IXuvVW0QTWLP7VNPszS
+	+3Dm/Jh6+keNsbiNWYwon8sKGfgqi1okrNBjViX/XUv8pY0EDOssHelGSAMAnen8okcNzv
+	aUr0ZHrcBuMJLo+vRmwoc4UustJqgNCbGdYBYOwPi2UNJx8g+w8YJeNzR+k518Ih4OCkX+
+	7LD6Yo+RPD8FyUY8idRDUT8fl6UnUIUtubbe4708jKk81zDJ+OoX0Sw0MI/LSoZoDHC65q
+	tXNHfJRpwyzdTtxUqoM+HegW5OgMBu/gqj9tBBsa6zYNra9ZRylWaH22BSAE0Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728560792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AlMv9tmvfuxRB+hSunR/bD24PVWzP/WzhnKYM4KcZI8=;
+	b=SbzAb/WdqSuZe3iS2pCMRNc0hdq+CYiOwDZu8kenLwtKWJ2EoFV720KcVf6LDa6MfOjtfD
+	eDpsX+ax/vbip8CA==
+To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Subject: Re: [patch 03/25] debugobjects: Dont destroy kmem cache in init()
+In-Reply-To: <c118dad2-4e39-78f2-c09b-0fe771feb86a@huawei.com>
+References: <20241007163507.647617031@linutronix.de>
+ <20241007164913.137021337@linutronix.de>
+ <c118dad2-4e39-78f2-c09b-0fe771feb86a@huawei.com>
+Date: Thu, 10 Oct 2024 13:46:32 +0200
+Message-ID: <878quwi3jb.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/mipi-dsi: fix kernel doc on
- mipi_dsi_compression_mode_multi
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20241010-starqltechn_integration_upstream_drm_fix-v1-1-cf3cb1d1ce77@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241010-starqltechn_integration_upstream_drm_fix-v1-1-cf3cb1d1ce77@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Thanks !
+On Thu, Oct 10 2024 at 10:14, Leizhen wrote:
+> On 2024/10/8 0:49, Thomas Gleixner wrote:
+>> -	if (!obj_cache || debug_objects_replace_static_objects()) {
+>> +	if (!cache || !debug_objects_replace_static_objects(cache)) {
+>>  		debug_objects_enabled = 0;
+>> -		kmem_cache_destroy(obj_cache);
+>
+> kmem_cache_destroy(cache) should be kept, or move it into debug_objects_replace_static_objects()
+> and place it above 'return false'.
 
-On 10/10/2024 12:31, Dzmitry Sankouski wrote:
-> Replace dsi parameter on ctx in kernel doc of
-> mipi_dsi_compression_mode_multi function.
-> 
-> Fixes: 975bdea8c470 ("drm/mipi-dsi: add mipi_dsi_compression_mode_multi")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410092245.tfsuUllL-lkp@intel.com/
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->   drivers/gpu/drm/drm_mipi_dsi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-> index d8ee74701f1e..5e5c5f84daac 100644
-> --- a/drivers/gpu/drm/drm_mipi_dsi.c
-> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
-> @@ -1522,7 +1522,7 @@ EXPORT_SYMBOL(mipi_dsi_compression_mode_ext_multi);
->   
->   /**
->    * mipi_dsi_compression_mode_multi() - enable/disable DSC on the peripheral
-> - * @dsi: DSI peripheral device
-> + * @ctx: Context for multiple DSI transactions
->    * @enable: Whether to enable or disable the DSC
->    *
->    * Enable or disable Display Stream Compression on the peripheral using the
-> 
-> ---
-> base-commit: 4c93ede2b0c73a7708f46a01669769d15d31e1d2
-> change-id: 20241010-starqltechn_integration_upstream_drm_fix-72233382f98f
-> 
-> Best regards,
+At that point it can't be destroyed. See the backtrace.
 
+So we just give the objects back and leak the kmem_cache.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Thanks,
+
+        tglx
 
