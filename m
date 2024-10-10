@@ -1,114 +1,118 @@
-Return-Path: <linux-kernel+bounces-359660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83426998EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:47:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB290998EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10682282233
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:47:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39C69B27FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B36119ABBD;
-	Thu, 10 Oct 2024 17:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F150C19D078;
+	Thu, 10 Oct 2024 17:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3vpkT8D"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4LeYP+8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354753D3B8;
-	Thu, 10 Oct 2024 17:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E4219A292;
+	Thu, 10 Oct 2024 17:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582392; cv=none; b=ABqt/SzFGufC77cDtlg5V5YkmqcP7nr8B3L2NlCaGbDoUACWHx3Uf4E/BD8JrH2mdRBVP2ovo2azFm4tNIQC+GKDVgm2P8WdXK40n4yisFrZnE5Tt3cMj4K1RPJVTIi53ma2a6f8bywZI3XijG72Zfiix3ctacqUhDiMSh5X+dQ=
+	t=1728582471; cv=none; b=qsjNlZdbZOxZnfgnYR/ZMVY3k8DwTlci4p4fAyVHhkP3J/q9NDNiLuzatzEMjKCmox68624kvKnvqN4qiYzvIZOBHVcdERNq5NV4cEuNv+CixHAtjzZPJlRxKrXyX/e/Yk4+rIPfIlI84BKV+R5RKjNpIi/uUeBJ5sqXvBXfC6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582392; c=relaxed/simple;
-	bh=mn/ZPOf2DDxL/uHo6xPSIFgWMJvXHVeziNYrO1fVmWA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rODi9/r6ayB7+h48M+pz/zeRSygDFVL7FeP57+nyAWGuZVdfjHMQZ/7cJe74ZyhnT5D3XXuibFNP1s7CjRGAGwerKJ1vOcukWNOk/rOVzc/PYrCkt8KoZyHVEMV9B5ag313fWhXy8sJR6y5KH8PqqWWOGfTlY2rAwcpsR0NGwmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D3vpkT8D; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2e6a1042dso388110a91.2;
-        Thu, 10 Oct 2024 10:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728582390; x=1729187190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fodw2y9RXjh33ztN0s4LLH7quAMnnnuBtbSFabngXnU=;
-        b=D3vpkT8DU4ujH5v6B1uAXlCGJT/5Z+LS7XWaRy4QcUkTNePUMEji9s2RS/X62ms+vC
-         ZfL4WKtOjjC/MSL2+h1Z447yK663v4RORyBvemribQyAU8iTXgwtqEVyAbcxfU/MlbMg
-         zSKVE9HjNbmdkPlC3LlzkQMVjaGyfxsQQlLBZOrECc60k0uE8Ti5QtfwurK/2otCtzCh
-         zBHWoW3M7AT8BkYRwyIaEJ5HVj6vOEejCr+77GkukHXSEn6Qzcm1JL/J/h3iYVc8aG+e
-         5ISbDE69tK2InB+EXfOJPEc0h1RdmgXHFp/urwOC7UnjrNsT68TdXVB/UTrTJbEbrEj5
-         SZ7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728582390; x=1729187190;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fodw2y9RXjh33ztN0s4LLH7quAMnnnuBtbSFabngXnU=;
-        b=MAOCX+0c08sIN375Wj9fBc7PlK3PuG2gSqePc56mhWWQJpcrO+roh7eJsKUmFfloK3
-         mDnUAPw1GvnViZdZBV5+MU+ZTKk9bka1u284NRp2TSricQkt6h/UwYsHFIMQUPKEYSYa
-         2ZmuinPus9AtkLvD6tGVyQFF9DgMaUvVhjPMoQCrU35mYX7QxPCbVycgF1wRlyN3c5pl
-         0h7h05suH77Q+Bf8ieDcmuarh6XISd8frQ41DyM4ZZ7HNxFkoxAzyBz5RiQOoHpdTdiO
-         vcL6lOKPab7o8dqhvAuzxYXoMhZ3P9qvUKauNxyfmMv0R8A3c3eG5gxQ/Z+98YSaA4dp
-         ZakA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuPvlcYJSej9tGkVhz7RsOCAtAd8u5+/RFTWCzcwTxWPUf/rdO/6288n0CB1SGDLTHtfxBzY8+9R4JeMjI@vger.kernel.org, AJvYcCX+zM2sEA60TkekAHwi866gM4GDLBlKKgZCoiVhi5hEXtOGvm7JClvDWYIjQSttBH+JGfjIHkjFdIfNlXo=@vger.kernel.org, AJvYcCXsOBgVyEETVoSPVtXKyBEdgc+VW0/YnIyy+AM1IalfZ8RrNSdRifmn2M9XZt96DNByw5dD0Um0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGwYTflSP4v11e30F5vjF2qIuWp07NdCQWBS2ryvf6w9tdbzak
-	UzdMUwB0q4Ji8vJPfHefZcTao/LPncbieFzWisMmB/9uxwyHvtL8
-X-Google-Smtp-Source: AGHT+IG2UOEz7aX30q4xZnAkGlmF8olOXxivWfzqq9oco5P2NO3C5dX05PT0Jpd4+OrBTJ8rLpEuTQ==
-X-Received: by 2002:a17:90a:688c:b0:2e0:894f:198e with SMTP id 98e67ed59e1d1-2e2a2525180mr8536555a91.30.1728582390270;
-        Thu, 10 Oct 2024 10:46:30 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5df0ce8sm1629325a91.14.2024.10.10.10.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 10:46:29 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot+955da2d57931604ee691@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] vt: prevent kernel-infoleak in con_font_get()
-Date: Fri, 11 Oct 2024 02:46:19 +0900
-Message-Id: <20241010174619.59662-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728582471; c=relaxed/simple;
+	bh=tqW3HNkzdDUFotQYvxdaqpfS1qgxIo1pj80zT2CfJ/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NF2TiHPunXoHAIDjUGWU4AS72mt+9V6dZmYvBetkfbESOlnWI60/jRv0FSFmPoBzK91UCKDA5BBIdwvnGb3hyBdlYWGLII4hNfnS0vQHE5vlHOK3uXxVRKSIy0CqLKcrBZDZ6Mgj8OYU5oFF71hW+KwsH0TPTg7JxiXkT7OTcKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4LeYP+8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC47C4CEC5;
+	Thu, 10 Oct 2024 17:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728582470;
+	bh=tqW3HNkzdDUFotQYvxdaqpfS1qgxIo1pj80zT2CfJ/I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h4LeYP+8B9AZoEfvk4EcFNjfvo4R31ZcpbbzwvDaTACsiM/puQqADmaUw9AO6maYH
+	 HHiAop4mPwcIYfQLIiM1fVPX4gE9Q5RasF5SkLradAWZAAcXmpvDRBPdxXUJFwtWqe
+	 ohOhd9RyWChZfdnLgw2aXe9mfjKQX4JaJwL3K7LKW05ZaX7OZl3mO2/TLErttyNnnt
+	 CaziJnAiGp4GWdoRh7ntRCdv+k26JorlRx6dO6OwzGXchRfNs3wH4mjupre6UYNlEF
+	 uilGUCuYSc5T9GltZjAtzIZkdkDmX7sme7ZNGTsw19ozBuJc2+tcT++cVkhFlWqTij
+	 dPv0YbjBEAksA==
+Date: Thu, 10 Oct 2024 18:47:42 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Emil Gedenryd <Emil.Gedenryd@axis.com>
+Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "dannenberg@ti.com" <dannenberg@ti.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "lars@metafoo.de"
+ <lars@metafoo.de>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Kernel
+ <Kernel@axis.com>
+Subject: Re: [PATCH v4 2/2] iio: light: opt3001: add support for TI's
+ opt3002 light sensor
+Message-ID: <20241010184742.1747bfe2@jic23-huawei>
+In-Reply-To: <b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
+References: <20241003-add_opt3002-v4-0-c550dc4591b4@axis.com>
+	<20241003-add_opt3002-v4-2-c550dc4591b4@axis.com>
+	<20241006141624.3fa5bf34@jic23-huawei>
+	<b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-font.data may not initialize all memory spaces depending on the implementation
-of vc->vc_sw->con_font_get. This may cause info-leak, so to prevent this, it
-is safest to modify it to initialize the allocated memory space to 0, and it
-generally does not affect the overall performance of the system.
+On Mon, 7 Oct 2024 07:19:06 +0000
+Emil Gedenryd <Emil.Gedenryd@axis.com> wrote:
 
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+955da2d57931604ee691@syzkaller.appspotmail.com
-Fixes: 05e2600cb0a4 ("VT: Bump font size limitation to 64x128 pixels")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/tty/vt/vt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Sun, 2024-10-06 at 14:16 +0100, Jonathan Cameron wrote:
+> > On Thu, 3 Oct 2024 14:22:17 +0200
+> > Emil Gedenryd <emil.gedenryd@axis.com> wrote: =20
+> > >=20
+> > > +struct opt3001_chip_info {
+> > > +	const struct iio_chan_spec (*channels)[2];
+> > > +	enum iio_chan_type chan_type;
+> > > +	int num_channels;
+> > > +
+> > > +	const struct opt3001_scale (*scales)[12]; =20
+> > This doesn't compile for me as one of the two options only
+> > has 11 entries.  You could either force them to be 12
+> > entries each or use a pointer without the size and
+> > add a num_scales entry in here.
+> >=20
+> > Jonathan =20
+>=20
+> Hi Jonathan,
+>=20
+> Are you building on top of the patch that was accepted in earlier version=
+s of this
+> patch set? That patch adds the twelfth missing scale value for the opt300=
+1.
+> See:=C2=A0https://lore.kernel.org/all/20240916-add_opt3002-v3-1-984b190cd=
+68c@axis.com/
+>=20
+> Should I have added some tag to highlight the dependency for this version=
+ of the
+> patch set?
+Ah.  Yes, I was half asleep.
+They are going via different branches (slow and fast) so I'll have to
+sit on this series until after that fix is in the upstream for the togreg
+branch of iio.git.
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index cd87e3d1291e..96842ce817af 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -4726,7 +4726,7 @@ static int con_font_get(struct vc_data *vc, struct console_font_op *op)
- 		return -EINVAL;
- 
- 	if (op->data) {
--		font.data = kvmalloc(max_font_size, GFP_KERNEL);
-+		font.data = kvzalloc(max_font_size, GFP_KERNEL);
- 		if (!font.data)
- 			return -ENOMEM;
- 	} else
---
+If I seem to have lost it after that is the case feel free to give me a pok=
+e.
+
+Jonathan
+
+
+>=20
+> Best regards,
+> Emil=20
+
 
