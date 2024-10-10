@@ -1,145 +1,172 @@
-Return-Path: <linux-kernel+bounces-359052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900679986D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F6A9986DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F01BB24EE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820761F25065
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAB71CB32A;
-	Thu, 10 Oct 2024 12:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70011C8FB3;
+	Thu, 10 Oct 2024 12:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yH1xqL5r"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KqhiexEM"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BEA1CB31C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B76A1BD008
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564967; cv=none; b=Kq90nmtnk8OPZLkNUwPtbFEurFqZm6zgCZagv4+QUwS/9V+reniHISHWgPzwBH50mNYlra8sfynpqKR5DyKSG1O4Z9WtN3yzUz9EW11YYHPGO0Vjhc5lk/22X+r6hF610G3N+hCGOrC5jOi6AkfgJaB9Bn81C9jFQtPE3ZOP0lI=
+	t=1728565033; cv=none; b=Zu/f0aJvenNDrlRHtnqT06rTNEr1immlDmYczvFT0JwSET+QFLgKQQXvt0HiG2FaAAcILPfAWOJZVH/leEL938JLsRB8gQ7GqrQsJg7dvXxMVakDI8eMnvkYKgR4NY9ZsaezK2mHma7lRQtsXVpFT8sVbqBYl/AF526b/juMgEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564967; c=relaxed/simple;
-	bh=tOHp6AWjbTv4yI6UVldQljr7MbFCmo+VO/FEqnev4UM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JFMnzvmaZixzgV2b7eHxxhAfk1ezt3XbiwF7IAwovhoe32yDkRTq5sFehoa0IZD8/s0BLXkv0pXWPfQlRTRsTkVTf4HaDefy2wGRmAkgZ/CRmUZ1FYZO9rk7p5XyHeneiRXjiLzujTiQyluTjscs5uqiSnaU/HL0vjSH5Psgb3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yH1xqL5r; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so9385461fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:56:05 -0700 (PDT)
+	s=arc-20240116; t=1728565033; c=relaxed/simple;
+	bh=OblR90xVpQ3uxMqRXP8BWxnDSHKdVQMnE4obNvo1stQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=exRYBZWs4Lz73i2DguEv3MoqRt1pVGRITs7cwvUy9BRpPYmuG2NTYXqGyyZG0Q3WWORT2BQ9DScfJJiYQw5cL6J/NXoB8wo7Kgwyzb770RtS1p0Yg4D/fIfx2QuD3giLLkfrsL4Uy9ePDwdKVILaipInTKuhUgSWw4UAkU6ZmEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KqhiexEM; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e290222fde4so952155276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728564964; x=1729169764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BNnUCyPTi+G8LZCplzDQqmQsNRTnEL4ih2dYIBtqKZc=;
-        b=yH1xqL5rxnPIgaJqM/g3sgRVZ0LaPfNjTcxgx/j0ECRgU0bjbLGRiXwDOD4iT8GOyb
-         uSTwRs/JtW+V+aLN2p1YKSTIh0mWlfu9Hi3vbaA497frPC0518fi4LscmYRfKwSpFFiR
-         X4cmrbrAFZKOrVZL5UfaWYVKdWUAwtXVFNsxmwW1hd3SbnuVpoXbkhCEud1UFSGpNxoz
-         IDi3p13fC1BqSmASSyI4nf2BnMcq8ynxktPw1MnXz2z6+S5Lo/6SFTfPgXgyy+hOcN7g
-         hPykDLuhu4koeHCeTFnCKKT+S6BS/V2klokan7SRrsYaH2j1SO9ghB0gT+Io0Omxr+8J
-         53sg==
+        d=google.com; s=20230601; t=1728565029; x=1729169829; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DOhG2lII0b1XV2Pvd8Pm4xtK1qOLGqdV7w9S0Zd2Ryk=;
+        b=KqhiexEMuln/ajTVAghK2rJeTfuTklhSbDRCh2YbtMCcExf4x6nPk4B67s46rnAPG0
+         dcT0B3i/NanAIo6mICAhkb8Dc6tw2CUP9S5XzuGKSY6TLClKCH363DpxisP4sD9UXz3m
+         XzxlfpPhm7XXLYs0jSTCJjkbRo290+ZrKbMfvTGS4Qm2omkGBOuEzf4xn4reD0u4azY8
+         EztYSj5vFib9J7M1u5IKxIF91T6Is8dwZjahI5n7Cpw+eQsNjYdsRRPN5OO/twcZc7DQ
+         nC4h6PNPoPSjjsuuLh4SAv8wZ5izfRglGOnzAIMrTNsv4xr/xevzWMShnvmFYmJ859u8
+         VnIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728564964; x=1729169764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BNnUCyPTi+G8LZCplzDQqmQsNRTnEL4ih2dYIBtqKZc=;
-        b=BMrTYEmvrJyAmOPrkHiGyDE+XvU9yU7J8Yk7Zb4O1DZKPa/W+y0RhImCUWHwcbc86L
-         +GCJOAmUL41jAeRZ6rtnf4CFiecVh8AbT0C7qPLyeIsDnEix7r3C/j70/ep1wXI2gLB7
-         F2oJFGn2U1uTmK5nW8VxI8d5gye0SE1qusvLu+pigHDXie6j7RIMo/I6ioAOVJj4buBk
-         2b/QrEMUmwRucQO5nCNncnEvjXuScprPWELn942ROVK/X4rNwM6SmaPQWtIgnD1UF7pB
-         BR97jYdLn/2ugfqJtQgvyYLKxvZt5J/0oonZbx1mtDL7owNIi4Vd4Yr/djQHOMzcTVXF
-         HnGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSBSs+MMZXzkMuqPSdnDKmPTCAo3tWxhJOdU5P4B16UJ9jsbQsv+ku3DeFKFFNgTuD6ohlahhO8Re7OfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB8KG7zVrRv0JpciQmRHdHUCf+lgmOStxQAnLj6rD8BY/VTwIf
-	h4N8ssaBjMRZW5jzeeFkoPr8zVIikiW4ssaMf2KxpaOHeVfnC9s3acWyCTBD/18=
-X-Google-Smtp-Source: AGHT+IE3OVGS1otAXhVnWrTDRmy9pILODy/3R4ocjn+v7nJ3EHEAHwBirvcqYOXxLoGkanEri2+Jaw==
-X-Received: by 2002:a05:651c:505:b0:2fa:c519:6e66 with SMTP id 38308e7fff4ca-2fb187d1e4dmr33465261fa.40.1728564963861;
-        Thu, 10 Oct 2024 05:56:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb245b16cbsm1902981fa.62.2024.10.10.05.56.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 05:56:02 -0700 (PDT)
-Date: Thu, 10 Oct 2024 15:56:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, quic_tengfan@quicinc.com, quic_tingweiz@quicinc.com, 
-	quic_aiquny@quicinc.com, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: add the tlmm driver for QCS8300
- platforms
-Message-ID: <yh5qzohy42r226a4e7yupimfdl6xccpntuffot7dnhrftagtae@4ruw5vmcknfq>
-References: <20241009-qcs8300_tlmm-v2-0-9e40dee5e4f1@quicinc.com>
- <20241009-qcs8300_tlmm-v2-2-9e40dee5e4f1@quicinc.com>
+        d=1e100.net; s=20230601; t=1728565029; x=1729169829;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DOhG2lII0b1XV2Pvd8Pm4xtK1qOLGqdV7w9S0Zd2Ryk=;
+        b=h35jQiRLEwIRooTv8f3cv41p7/KIehUiRDt75OBpMdOwXMjDGlCGNi8G+Bj5DUBdfA
+         /7l1UyGs89DURa6tSOb7QGHXsZ+sE/E4ak23CQkWcjZ5LaPim3LpjpNUiS9dMmQSymq/
+         QwaHRApZyVwX83P11EA9HBsSe5D/qvByakrTv37HtwSckOdfYbdEL9ZWMf2mF8gKMxgf
+         mxo5Szn65hBUwmIu/JythR/Y+sQCV9KyQUAPSOZCdvieFNGQ75h7RGW2RN+i29IRvT+o
+         dq6CjzQ0fKtW+UMtOAO/IlH2Sb+7a7brauFEPnuXHvlcMK51UsAJcNqVpiEJWBI9I0kw
+         Pp6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWYPPF31uZygfjbxq+JAbaFnNJl5Buoso6V15jx4roW3SKNOzd+xdwgbayt51L8pbGJbUmuRDIzz6x6xRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3RRPXtJ3DLUwj8x39z25EUREbTT/nuSAvMaMx2J0cRRdq73Nk
+	KovKVhleIT9YCm9CRdfFHMtz5F+bG/iDmD9+qjhEmMFtL8vdAG5ibjyhqbjUFuRn04SEr/9UQwp
+	4JIW2SwMRCZOMEg==
+X-Google-Smtp-Source: AGHT+IFnN4NiKROer/bhYUK3vmbJ0WzRy9Z6ly5mrAMMM7hZC0uCRREmQ6LL+Xht/BsVZC1c7cKNRgHPb8oUo5I=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a25:103:0:b0:e0b:af9b:fb79 with SMTP id
+ 3f1490d57ef6-e28fe346f12mr108404276.3.1728565029274; Thu, 10 Oct 2024
+ 05:57:09 -0700 (PDT)
+Date: Thu, 10 Oct 2024 12:56:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009-qcs8300_tlmm-v2-2-9e40dee5e4f1@quicinc.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAALPB2cC/2XOQW7DIBCF4atErEsFA9jQVe9RdTGGwUFqQmRXq
+ FXku3ccL+rIyzfi+8VdzDQVmsXb6S4mamUu9cqjezmJeMbrSLIk3gIUWNWDke2CMnuldcghD8Y
+ JfnmbKJefR+Xjk/e5zN91+n1Em16vz75pqaUBTA455Inex1rHL3qN9SLWQIM96jcEjHAw5AL0K
+ Ro8IPOP+IMbMozS0EUdFeaE4YDsHsGGLCMVNPpeOY/WHJDbo25DbkVWaZ+VSwTDE1qW5Q+0caX QawEAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2391; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=OblR90xVpQ3uxMqRXP8BWxnDSHKdVQMnE4obNvo1stQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnB88XawLv1JPH9Yp7lgHZ3+4WXZQrNW3dTUC7J
+ CsNSWB2nwOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZwfPFwAKCRAEWL7uWMY5
+ RhFOD/9Wi46kNqF/PhA72INQt/WYgFCKYjm6ixQ4fxU4f/KfewJOEhjWEUPiWMxICagP/QfIdVP
+ foJFdIjRtk6x+oidLD3IsU96jidqNV5kPw3jYU7vbwSyKNxFeZtdyu3HUXvI1dl/54i4Ku6N2q1
+ PuoaHJ9ovsv/tO39bdAhhesIddykQ7dZRrJ6n7xuF+IGHc+7/2sUy7ssRB95TOKpJJeahbOz5xM
+ sIi5Lg6NmU9OnpbkmM07C5ZxWQyk4aod8Wccmc7uz9Ue7fCM9yTpf/w79bmUIeNL7AtTsjwhNYb
+ C4xJAbGKp0cY2Q3PRtQsJMZKozAk8HuSk17nT2RF5xNsIbQjpOC00jLxoQz66nZp84WY7Sk+vYq
+ KvAjSU5lOavfic0QbdUeYvPinGMzoCWhJcnHBVibOBeiSJFv5dfyRBnmvs2BQ2kt9KLiuFaomK1
+ Dol0yFuBmMN6LvCDD9WdCSMRkgjk4c3Sy2bbGGFQ7Yd/+tvQmboaz5WhmkppDb0MEKTaVnCv4KY
+ VyY2DjbFM4DoDbTiI2g/AVKHrfI/5sDuw26chHxy8M6d+9veC0ofEMbMOD6veoFxrg4AL4Lkdgn
+ fEKXjb8nEm3+CWHven01aTubTguh/3L4vdqONQhH3KiKCqE42Hd0tfaOcxZZvPFWPCuuNsThyg3 flADVaXqU1yl2aA==
+X-Mailer: b4 0.13.0
+Message-ID: <20241010-vma-v6-0-d89039b6f573@google.com>
+Subject: [PATCH v6 0/2] Rust support for mm_struct, vm_area_struct, and mmap
+ for miscdevice
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 09, 2024 at 03:13:34PM GMT, Jingyi Wang wrote:
-> Add support for QCS8300 TLMM configuration and control via the
-> pinctrl framework.
-> 
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
->  drivers/pinctrl/qcom/Kconfig.msm       |    7 +
->  drivers/pinctrl/qcom/Makefile          |    1 +
->  drivers/pinctrl/qcom/pinctrl-qcs8300.c | 1246 ++++++++++++++++++++++++++++++++
->  3 files changed, 1254 insertions(+)
-> 
+The first patch introduces mm_struct and vm_area_struct abstractions,
+and the second patch uses them for miscdevice.
 
-[...]
+This updates the vm_area_struct support to use the approach we discussed
+at LPC where there are three different types depending on the kind of
+access you have to the vma. You either have read access, write access,
+or you are initializing it. Each case allows a larger set of operations
+on the vma.
 
-> +	[125] = PINGROUP(125, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
-> +	[126] = PINGROUP(126, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[127] = PINGROUP(127, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[128] = PINGROUP(128, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[129] = PINGROUP(129, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[130] = PINGROUP(130, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[131] = PINGROUP(131, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[132] = PINGROUP(132, _, _, _, _, _, _, _, _, _, _, egpio),
-> +	[133] = UFS_RESET(ufs_reset, 0x92000),
-> +	[134] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x89000, 15, 0),
-> +	[135] = SDC_QDSD_PINGROUP(sdc1_clk, 0x89000, 13, 6),
-> +	[136] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x89000, 11, 3),
-> +	[137] = SDC_QDSD_PINGROUP(sdc1_data, 0x89000, 9, 0),
-> +};
-> +
+This is based on top of char-misc-next for the base miscdevice
+abstractions. That said, the first patch in the series also applies on
+v6.12-rc2.
 
-[...]
+---
+Changes in v6:
+- Introduce VmArea{Ref,Mut,New} distinction.
+- Add a second patchset for miscdevice.
+- Rebase on char-misc-next (currently on v6.12-rc2).
+- Link to v5: https://lore.kernel.org/r/20240806-vma-v5-1-04018f05de2b@google.com
 
-> +
-> +static const struct msm_pinctrl_soc_data qcs8300_pinctrl = {
-> +	.pins = qcs8300_pins,
-> +	.npins = ARRAY_SIZE(qcs8300_pins),
-> +	.functions = qcs8300_functions,
-> +	.nfunctions = ARRAY_SIZE(qcs8300_functions),
-> +	.groups = qcs8300_groups,
-> +	.ngroups = ARRAY_SIZE(qcs8300_groups),
-> +	.ngpios = 134,
+Changes in v5:
+- Rename VmArea::from_raw_vma to from_raw.
+- Use Pin for mutable VmArea references.
+- Go through `ARef::from` in `mmgrab_current`.
+- Link to v4: https://lore.kernel.org/r/20240802-vma-v4-1-091a87058a43@google.com
 
-I believe this should be 133.
+Changes in v4:
+- Pull out ARef::into_raw into a separate patch.
+- Update invariants and struct documentation.
+- Rename from_raw_mm to from_raw.
+- Link to v3: https://lore.kernel.org/r/20240801-vma-v3-1-db6c1c0afda9@google.com
 
-> +	.wakeirq_map = qcs8300_pdc_map,
-> +	.nwakeirq_map = ARRAY_SIZE(qcs8300_pdc_map),
-> +	.egpio_func = 11,
-> +};
-> +
+Changes in v3:
+- Reorder entries in mm.rs.
+- Use ARef for mmput_async helper.
+- Clarify that VmArea requires you to hold the mmap read or write lock.
+- Link to v2: https://lore.kernel.org/r/20240727-vma-v2-1-ab3e5927dc3a@google.com
 
+Changes in v2:
+- mm.rs is redesigned from scratch making use of AsRef
+- Add notes about whether destructors may sleep
+- Rename Area to VmArea
+- Link to v1: https://lore.kernel.org/r/20240723-vma-v1-1-32ad5a0118ee@google.com
+
+---
+Alice Ryhl (2):
+      rust: mm: add abstractions for mm_struct and vm_area_struct
+      rust: miscdevice: add mmap support
+
+ rust/helpers/helpers.c    |   1 +
+ rust/helpers/mm.c         |  55 ++++++++
+ rust/kernel/lib.rs        |   1 +
+ rust/kernel/miscdevice.rs |  24 ++++
+ rust/kernel/mm.rs         | 344 ++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/mm/virt.rs    | 264 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 689 insertions(+)
+---
+base-commit: f893691e742688ae21ad597c5bba13bef54706cd
+change-id: 20240723-vma-f80119f9fb35
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Alice Ryhl <aliceryhl@google.com>
+
 
