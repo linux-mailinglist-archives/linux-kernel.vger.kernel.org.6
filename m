@@ -1,118 +1,175 @@
-Return-Path: <linux-kernel+bounces-359661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB290998EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:48:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94205998EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39C69B27FB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CBF01C24496
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F150C19D078;
-	Thu, 10 Oct 2024 17:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAF219A292;
+	Thu, 10 Oct 2024 17:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4LeYP+8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UMNB4+y7"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E4219A292;
-	Thu, 10 Oct 2024 17:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3CC19ABC6
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582471; cv=none; b=qsjNlZdbZOxZnfgnYR/ZMVY3k8DwTlci4p4fAyVHhkP3J/q9NDNiLuzatzEMjKCmox68624kvKnvqN4qiYzvIZOBHVcdERNq5NV4cEuNv+CixHAtjzZPJlRxKrXyX/e/Yk4+rIPfIlI84BKV+R5RKjNpIi/uUeBJ5sqXvBXfC6o=
+	t=1728582484; cv=none; b=UFH1JqxhI/LeumZQC2eQxhzxr5ib6QdsF7gqcNV1h2YY34U+DKxtBPn7o3CozFlxIL3xq22HQowtrRMPdRak0bZoPGXmbPbKczHQB3kqVh8DEVmhyO0BUPJi+5LUQRxazTTwM+Jd/aFmgyRPDR+1VbxmQ4g4VmDFe+J2YeoubjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582471; c=relaxed/simple;
-	bh=tqW3HNkzdDUFotQYvxdaqpfS1qgxIo1pj80zT2CfJ/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NF2TiHPunXoHAIDjUGWU4AS72mt+9V6dZmYvBetkfbESOlnWI60/jRv0FSFmPoBzK91UCKDA5BBIdwvnGb3hyBdlYWGLII4hNfnS0vQHE5vlHOK3uXxVRKSIy0CqLKcrBZDZ6Mgj8OYU5oFF71hW+KwsH0TPTg7JxiXkT7OTcKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4LeYP+8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC47C4CEC5;
-	Thu, 10 Oct 2024 17:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728582470;
-	bh=tqW3HNkzdDUFotQYvxdaqpfS1qgxIo1pj80zT2CfJ/I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h4LeYP+8B9AZoEfvk4EcFNjfvo4R31ZcpbbzwvDaTACsiM/puQqADmaUw9AO6maYH
-	 HHiAop4mPwcIYfQLIiM1fVPX4gE9Q5RasF5SkLradAWZAAcXmpvDRBPdxXUJFwtWqe
-	 ohOhd9RyWChZfdnLgw2aXe9mfjKQX4JaJwL3K7LKW05ZaX7OZl3mO2/TLErttyNnnt
-	 CaziJnAiGp4GWdoRh7ntRCdv+k26JorlRx6dO6OwzGXchRfNs3wH4mjupre6UYNlEF
-	 uilGUCuYSc5T9GltZjAtzIZkdkDmX7sme7ZNGTsw19ozBuJc2+tcT++cVkhFlWqTij
-	 dPv0YbjBEAksA==
-Date: Thu, 10 Oct 2024 18:47:42 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Emil Gedenryd <Emil.Gedenryd@axis.com>
-Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "dannenberg@ti.com" <dannenberg@ti.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "lars@metafoo.de"
- <lars@metafoo.de>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Kernel
- <Kernel@axis.com>
-Subject: Re: [PATCH v4 2/2] iio: light: opt3001: add support for TI's
- opt3002 light sensor
-Message-ID: <20241010184742.1747bfe2@jic23-huawei>
-In-Reply-To: <b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
-References: <20241003-add_opt3002-v4-0-c550dc4591b4@axis.com>
-	<20241003-add_opt3002-v4-2-c550dc4591b4@axis.com>
-	<20241006141624.3fa5bf34@jic23-huawei>
-	<b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728582484; c=relaxed/simple;
+	bh=E8mbeffuJCF5vv+fAvVmB2Ys8E6dCWOV1902JqtVczw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Lsd86i1uHvpIRairWuXbYMo/EeUdEsn4oSTA0o5MXyFBtCeTo33LFbN0cB/ZikmmqU9i3sqmTnNIWZo3o7SASmi+v/wBwR/y7Gez1WyayTlDAi8QZ5FsNIHqVdQ4XqyeIPOkHIfRwnOLzJEVWrFJmFpHrgmBInhelOcPWQCCqIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UMNB4+y7; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b5792baaso1608414276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728582482; x=1729187282; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X1Z42wRbrt15yDSnqRKqM6/kC3SQS2TPM9wcYC+W7Ws=;
+        b=UMNB4+y7EjVUZLgIGOqdsiqTA9dBPw/WZWFoqidjXSdJYJxJhPXsf5EBFPP86/zzNZ
+         HWV1A6uZqY6dGscLBtLo9XMdAr0PINu7yAAsaaNtosg6TAB12ugIvwM13K46OrHlTBlw
+         I4XS5JfUMSWdg+eKd3Ym5TZYeKvmSVWCHer7Ke82ifnIBWHx1ie5BF5Qfk85y6nmALnz
+         YJTsP1Q8L43CYCLG9VqNJTh5wavuvxh3tU1C/Xn8zFhkr+wVO544EUiInVdGcKBGZd51
+         1toOYv89EFcO9Mhuxoyw6OWwtmAt31+W5GD3zd16GedQbzZ39jO4MiTgehyMnRpd0r2S
+         rrGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728582482; x=1729187282;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X1Z42wRbrt15yDSnqRKqM6/kC3SQS2TPM9wcYC+W7Ws=;
+        b=BlH/BrHWelbEoNbWQ4iUwXJs4HnhSeLZB6LGeJCo3QDE0Yhy5TtVK+HqTSHbqnG0Zu
+         MnEjAR/NSmSfkcxVCvVdWbjjjem2JGG/yTEIg9Zpw3cJE6Ru9pZFqmCPzWVJkr6OatNw
+         rlcGONbNl3wNKYLmASHknhlttn4xqHwqNunRtpi7JYHtW92LV2fFSwTwe28uC+1xKS5B
+         QWbSVYzxKRNZxcfEkJeG+5N+GJH8xE+tuEX+1lzUzi68iEkIKo/0JjiiCEYklJ4jSHtn
+         yWxH5dliuQ1Ufel+FxY4mYKNr4QSw9UQZzFiOJEyOF8Qsx1U+xmN9Dc7rozQOAqk/THc
+         AYzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGEDBJxVvVrrAyEKs2lEnVZzqDj//nI2UuQZZJQ+T5pohS8taqk8/WY8T/ghTCKBZFcsSVZz9/q4fbqbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcNGNHTnssZx/J6c81X/bgw6O/brqU7ZJ+9+7S+9S4haNe9TxP
+	s1YlZFVjTRgjnQy1zYOLaROeaFI6TC5yFd2aMthiNqUVJ+ZNHCSLkWyiYZ4VVk4o5iMV23adchu
+	08Q==
+X-Google-Smtp-Source: AGHT+IF0dDDUVU5j61y3AwnqaoruwprA9uZzFBQnwA7DNa3maVwIMFNNKTf0+Fg7U7/6tuyOWQZWYl0/xnc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:a2c5:0:b0:e28:f1e8:6596 with SMTP id
+ 3f1490d57ef6-e28fe328e1emr94533276.1.1728582481751; Thu, 10 Oct 2024 10:48:01
+ -0700 (PDT)
+Date: Thu, 10 Oct 2024 10:48:00 -0700
+In-Reply-To: <1baf4159-ce53-4a75-99bf-adf4b89dd07b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241009150455.1057573-1-seanjc@google.com> <20241009150455.1057573-5-seanjc@google.com>
+ <1baf4159-ce53-4a75-99bf-adf4b89dd07b@redhat.com>
+Message-ID: <ZwgTUNCOIh2xwU6e@google.com>
+Subject: Re: [PATCH 4/6] Revert "KVM: Fix vcpu_array[0] races"
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, Michal Luczaj <mhal@rbox.co>, Alexander Potapenko <glider@google.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 7 Oct 2024 07:19:06 +0000
-Emil Gedenryd <Emil.Gedenryd@axis.com> wrote:
+On Thu, Oct 10, 2024, Paolo Bonzini wrote:
+> On 10/9/24 17:04, Sean Christopherson wrote:
+> > Now that KVM loads from vcpu_array if and only if the target index is
+> > valid with respect to online_vcpus, i.e. now that it is safe to erase a
+> > not-fully-onlined vCPU entry, revert to storing into vcpu_array before
+> > success is guaranteed.
+> > 
+> > If xa_store() fails, which _should_ be impossible, then putting the vCPU's
+> > reference to 'struct kvm' results in a refcounting bug as the vCPU fd has
+> > been installed and owns the vCPU's reference.
+> > 
+> > This was found by inspection, but forcing the xa_store() to fail
+> > confirms the problem:
+> > 
+> >   | Unable to handle kernel paging request at virtual address ffff800080ecd960
+> >   | Call trace:
+> >   |  _raw_spin_lock_irq+0x2c/0x70
+> >   |  kvm_irqfd_release+0x24/0xa0
+> >   |  kvm_vm_release+0x1c/0x38
+> >   |  __fput+0x88/0x2ec
+> >   |  ____fput+0x10/0x1c
+> >   |  task_work_run+0xb0/0xd4
+> >   |  do_exit+0x210/0x854
+> >   |  do_group_exit+0x70/0x98
+> >   |  get_signal+0x6b0/0x73c
+> >   |  do_signal+0xa4/0x11e8
+> >   |  do_notify_resume+0x60/0x12c
+> >   |  el0_svc+0x64/0x68
+> >   |  el0t_64_sync_handler+0x84/0xfc
+> >   |  el0t_64_sync+0x190/0x194
+> >   | Code: b9000909 d503201f 2a1f03e1 52800028 (88e17c08)
+> > 
+> > Practically speaking, this is a non-issue as xa_store() can't fail, absent
+> > a nasty kernel bug.  But the code is visually jarring and technically
+> > broken.
+> > 
+> > This reverts commit afb2acb2e3a32e4d56f7fbd819769b98ed1b7520.
+> > 
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Michal Luczaj <mhal@rbox.co>
+> > Cc: Alexander Potapenko <glider@google.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > Reported-by: Will Deacon <will@kernel.org>
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   virt/kvm/kvm_main.c | 14 +++++---------
+> >   1 file changed, 5 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index fca9f74e9544..f081839521ef 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -4283,7 +4283,8 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+> >   	}
+> >   	vcpu->vcpu_idx = atomic_read(&kvm->online_vcpus);
+> > -	r = xa_reserve(&kvm->vcpu_array, vcpu->vcpu_idx, GFP_KERNEL_ACCOUNT);
+> > +	r = xa_insert(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, GFP_KERNEL_ACCOUNT);
+> > +	BUG_ON(r == -EBUSY);
+> >   	if (r)
+> >   		goto unlock_vcpu_destroy;
+> > @@ -4298,12 +4299,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+> >   	kvm_get_kvm(kvm);
+> >   	r = create_vcpu_fd(vcpu);
+> >   	if (r < 0)
+> > -		goto kvm_put_xa_release;
+> > -
+> > -	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+> > -		r = -EINVAL;
+> > -		goto kvm_put_xa_release;
+> > -	}
+> > +		goto kvm_put_xa_erase;
+> 
+> I also find it a bit jarring though that we have to undo the insertion. This
+> is a chicken-and-egg situation where you are pick one operation B that will
+> have to undo operation A if it fails.  But what xa_store is doing, is
+> breaking this deadlock.
+> 
+> The code is a bit longer, sure, but I don't see the point in complicating
+> the vcpu_array invariants and letting an entry disappear.
 
-> On Sun, 2024-10-06 at 14:16 +0100, Jonathan Cameron wrote:
-> > On Thu, 3 Oct 2024 14:22:17 +0200
-> > Emil Gedenryd <emil.gedenryd@axis.com> wrote: =20
-> > >=20
-> > > +struct opt3001_chip_info {
-> > > +	const struct iio_chan_spec (*channels)[2];
-> > > +	enum iio_chan_type chan_type;
-> > > +	int num_channels;
-> > > +
-> > > +	const struct opt3001_scale (*scales)[12]; =20
-> > This doesn't compile for me as one of the two options only
-> > has 11 entries.  You could either force them to be 12
-> > entries each or use a pointer without the size and
-> > add a num_scales entry in here.
-> >=20
-> > Jonathan =20
->=20
-> Hi Jonathan,
->=20
-> Are you building on top of the patch that was accepted in earlier version=
-s of this
-> patch set? That patch adds the twelfth missing scale value for the opt300=
-1.
-> See:=C2=A0https://lore.kernel.org/all/20240916-add_opt3002-v3-1-984b190cd=
-68c@axis.com/
->=20
-> Should I have added some tag to highlight the dependency for this version=
- of the
-> patch set?
-Ah.  Yes, I was half asleep.
-They are going via different branches (slow and fast) so I'll have to
-sit on this series until after that fix is in the upstream for the togreg
-branch of iio.git.
+But we only need one rule: vcpu_array[x] is valid if and only if 'x' is less than
+online_vcpus.  And that rule is necessary regardless of whether or not vcpu_array[x]
+is filled before success is guaranteed.
 
-If I seem to have lost it after that is the case feel free to give me a pok=
-e.
-
-Jonathan
-
-
->=20
-> Best regards,
-> Emil=20
-
+I'm not concerned about the code length, it's that we need to do _something_ if
+xa_store() fails.  Yeah, it should never happen, but knowingly doing nothing feels
+all kinds of wrong.  I don't like BUG(), because it's obviously very doable to
+gracefully handle failure.  And a WARN() is rather pointless, because continuing
+on with an invalid entry is all but guaranteed to crash, i.e. is little more than a
+deferred BUG() in this case.
 
