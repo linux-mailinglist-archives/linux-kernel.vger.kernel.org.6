@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-360046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715159993DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90879993DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827A71C222CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0EAA1C224C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0031E1A33;
-	Thu, 10 Oct 2024 20:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F53A1E1321;
+	Thu, 10 Oct 2024 20:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="aT9yBInu"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A2II72d+"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36DA18C03D;
-	Thu, 10 Oct 2024 20:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E09F19CC17
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593074; cv=none; b=lFxJZlf3avyenJc/CBM99pRHnOiYwp/0cVDItbz5Krkvzn/g17/nhJaFPl8LKLHjdpEPR2A4HI97a3hpiog0PVvYzeoHY6sMMyhbLxDab0r7FAL9YffGF9BWjZG29xe7Vlix6c1eASM8DMSOdO5V8nq8vMHWYSUoTvZzjUwaifw=
+	t=1728593109; cv=none; b=CXijnMg3uDE62S5EUSPZ6xs+MQqf1d0Jc2jEloIAI6EZv70rn7QsgdDncvnIHVKyjnJAQbe6etLsnLbWb79Cz38ISr2698lOVRMOTwdMDlBtMJM5Niib+yCrY/Mg4ypciCT4+83yv0+c6pIxZhGebYjZ+ifAgI6FTJfgImqqIgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593074; c=relaxed/simple;
-	bh=ECBin4k6fw2OruJMi64LWYj7wG/maXr/6kyXQve3tKw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i1M8A61VfekeFdID0Xw575V1s4pz2oYKkpCzguJdjcxO+r0+wWqIMYjQ47JP2BB7EMT/sLZ3TcMeu9NBidd+CY/wHa0UCu1eF8gUKNoMVaWDSIHJD30uaa2V5CmQmc1HjaNdaZLrEWFDoloddC0HsaqMfy/awsTutblmpnjZ2Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=aT9yBInu; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=2yWyCpZ53gIzx3cAD/L1bBLUXyJxFe90aJntlIsY7DE=; b=aT9yBInumEWU60gV
-	hmoBzenr8/UVDbVxS8RVtQaRYD3ZDaRMzGPplltSjtBmfnjdaepkTRKdfeBQmxrLN7ntezYZhM1CW
-	Eig8HEueTHvc55w1U6RbNIb8ghmifhl/g8I1ZQpsb+5DPQyAWbavmL+Rouq2RlmvtEfzepN7u1acm
-	ynVYnUttaLcBFQsCvAxrWp8YZIHRDQnQG6cxC/G6/yfMOcdSfMmKzYroLjTlEbV6j7/DdQYKpzMEx
-	Eyplvi5UsEJjSNT5h/tI9667UVOS/zbDaZZAKYiQ4oCRw5GrcdhVkSq5FNj64Ea47tb9nCXb97ML+
-	L4USjEM5i16eVH46NQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sz01M-00AMjK-0t;
-	Thu, 10 Oct 2024 20:44:28 +0000
-From: linux@treblig.org
-To: philipp.reisner@linbit.com,
-	lars.ellenberg@linbit.com,
-	christoph.boehmwalder@linbit.com,
-	axboe@kernel.dk
-Cc: drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] drbd: Remove unused conn_lowest_minor
-Date: Thu, 10 Oct 2024 21:44:26 +0100
-Message-ID: <20241010204426.277535-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728593109; c=relaxed/simple;
+	bh=T0I5UjmJOQJJIbk9m/25YnvlDbc6zeA2yj0DV3LU7uI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CPKnk9Uy1Nu8sEHXZq9tGpgS/lbOj8V+3zq3/3o14pq4eX4WahdGTn5qxcclf42YZtoKLgG1kN2urdLeC22WAy07UiB2q/HLRqTsq1YMVxOISO0aegzJ9mmnF3CaBoeoZtPsm+hJUPwl/5VFq1N3d5gRICbIm043m2BRwaMp4Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A2II72d+; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-835426c0fefso43404139f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728593106; x=1729197906; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SAZSSuU4AY4LM/i+AUIV9y5uNgoAfd3WYw6jsPJQ6yk=;
+        b=A2II72d+NYrWHtVbMDzmu0hjW72sbQ7SP8Kq/k7oJ5xcHoTKHh3MDcELTZUHkFkP9p
+         tpnn569dZS5cmC0DlYjsI7cZ2qCBQmmQTDqhEguMQ/Rp9kL4bHbIoME1rZIGr/K8mwtJ
+         gj0ZuqBFrtKAzI5ZLASeVSHPHDjyztY3FRT1g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728593106; x=1729197906;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SAZSSuU4AY4LM/i+AUIV9y5uNgoAfd3WYw6jsPJQ6yk=;
+        b=RyewVG0PHxkWoM6lVUV9YiH2qGImM/nyEIeqj/9JtHVYJ+WjCUq+VDPP6DO7bY6cP0
+         /EqM4n/c3zhby/a4aT/wS8dEX3CrUy7QhitZXFPUS0209ZEFLKsLZRAn0gZF5yxM5dY3
+         skLiZUcPdbr2VYIVk7RZVmpt/8cMAAt4ihVT/yYLD/vhtQXaTigYkK+yb0gHbEbHI2rJ
+         KIiU/ERNr5RnQGvTUD1AWK0njuCbJkGbxJZRXTp/QPj/92oHdZpFH09Ih8fXB/v5oNFD
+         2My5LUC6ARjrQ3+TtLHPVCe7yXuLcTiWdUz3ohSnvN2VZThr9K7A1B0YPahXYGM3g3/M
+         rDzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvCIWc4JMWtZBIcpDW4sGc+plocKbcFYebToZMSgioG2TYkOq9B2CH+P4KhMOOnS3oLra8aXU2uE8228g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzljLHqUXAiUsWaEHkwvN+LLOrk2ZlL/YkbSKk/DRkfqylz6Xqb
+	yFfHOkcD+Ad8tUNiCPL75qzW5q4snNHC62OqNQvxHekIbXd8OrbZckMcWkQBT+U=
+X-Google-Smtp-Source: AGHT+IGcN/GmadmtTwocCSsKB9AGUqIjUMcPAuMJbJzoDZpQA9VhOP5iHDhIUzJA74ZaNYE+gchffw==
+X-Received: by 2002:a05:6602:620a:b0:82c:f7b1:a9fb with SMTP id ca18e2360f4ac-83782bf3c81mr27750939f.5.1728593106223;
+        Thu, 10 Oct 2024 13:45:06 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbada84203sm379377173.120.2024.10.10.13.45.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 13:45:05 -0700 (PDT)
+Message-ID: <a34eb4f6-4d8b-421e-a441-18887e2eddfd@linuxfoundation.org>
+Date: Thu, 10 Oct 2024 14:45:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ftrace/selftest: Test combination of function_graph
+ tracer and function profiler
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241004145618.18436d7e@gandalf.local.home>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241004145618.18436d7e@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 10/4/24 12:56, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Masami reported a bug when running function graph tracing then the
+> function profiler. The following commands would cause a kernel crash:
+> 
+>    # cd /sys/kernel/tracing/
+>    # echo function_graph > current_tracer
+>    # echo 1 > function_profile_enabled
+> 
+> In that order. Create a test to test this two to make sure this does not
+> come back as a regression.
+> 
+> Link: https://lore.kernel.org/172398528350.293426.8347220120333730248.stgit@devnote2
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+> Changes since v1: https://lore.kernel.org/20240821150903.05c6cf96@gandalf.local.home
+> 
+> - Added comment to why we are doing a sleep 1
+> 
+> - Now that the fix is in mainline, we can add this to the selftests
+> 
+>   .../ftrace/test.d/ftrace/fgraph-profiler.tc   | 31 +++++++++++++++++++
+>   1 file changed, 31 insertions(+)
+>   create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+> new file mode 100644
+> index 000000000000..1580e4ef9739
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/fgraph-profiler.tc
+> @@ -0,0 +1,31 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# description: ftrace - function profiler with function graph tracing
+> +# requires: function_profile_enabled set_ftrace_filter function_graph:tracer
+> +
+> +# The function graph tracer can now be run along side of the function
+> +# profiler. But there was a bug that caused the combination of the two
+> +# to crash. It also required the function graph tracer to be started
+> +# first.
+> +#
+> +# This test triggers that bug
+> +#
+> +# We need function_graph and profiling to to run this test
 
-conn_lowest_minor() last use was removed by 2011 commit
-69a227731a37 ("drbd: Pass a peer device to a number of fuctions")
+"to to" -< "to"
 
-Remove it.
+I noticed this during my commit checks. Please fix and send v3.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/block/drbd/drbd_int.h  |  1 -
- drivers/block/drbd/drbd_main.c | 14 --------------
- 2 files changed, 15 deletions(-)
-
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index 2a05d955e30b..e21492981f7d 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -1364,7 +1364,6 @@ extern struct bio_set drbd_io_bio_set;
- 
- extern struct mutex resources_mutex;
- 
--extern int conn_lowest_minor(struct drbd_connection *connection);
- extern enum drbd_ret_code drbd_create_device(struct drbd_config_context *adm_ctx, unsigned int minor);
- extern void drbd_destroy_device(struct kref *kref);
- extern void drbd_delete_device(struct drbd_device *device);
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index 0d74d75260ef..5bbd312c3e14 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -471,20 +471,6 @@ void _drbd_thread_stop(struct drbd_thread *thi, int restart, int wait)
- 		wait_for_completion(&thi->stop);
- }
- 
--int conn_lowest_minor(struct drbd_connection *connection)
--{
--	struct drbd_peer_device *peer_device;
--	int vnr = 0, minor = -1;
--
--	rcu_read_lock();
--	peer_device = idr_get_next(&connection->peer_devices, &vnr);
--	if (peer_device)
--		minor = device_to_minor(peer_device->device);
--	rcu_read_unlock();
--
--	return minor;
--}
--
- #ifdef CONFIG_SMP
- /*
-  * drbd_calc_cpu_mask() - Generate CPU masks, spread over all CPUs
--- 
-2.47.0
+> +
+> +fail() { # mesg
+> +    echo $1
+> +    exit_fail
+> +}
+> +
+> +echo "Enabling function graph tracer:"
+> +echo function_graph > current_tracer
+> +echo "enable profiler"
+> +
+> +# Older kernels do not allow function_profile to be enabled with
+> +# function graph tracer. If the below fails, mark it as unsupported
+> +echo 1 > function_profile_enabled || exit_unsupported
+> +
+> +# Let it run for a bit to make sure nothing explodes
+> +sleep 1
+> +
+> +exit 0
 
 
