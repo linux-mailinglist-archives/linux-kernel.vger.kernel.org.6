@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-358893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40630998515
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:36:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68452998517
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629701C2377B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2389E286CB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937521C3F2C;
-	Thu, 10 Oct 2024 11:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0DE1CB31A;
+	Thu, 10 Oct 2024 11:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHZLuh0Q"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bewWdoek"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46A1C9EBD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425121C4603
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560054; cv=none; b=UFUGg+WYqiD2SjtbeCTyNJt9UD73jd7G+Ru+r7W1TXMS5GtbUQPVBJEKFyTB07feYERz7Wn3dvI6Rgi5CeGmZQRHKB3kIIHuFy+Le0X0IZffkUnsvCcVi2xaBuUircft1rGlFXVapcJgzt4XvFU6lPQ0NyVfTMDbPL/kA99zEYs=
+	t=1728560057; cv=none; b=DzYbVxqM2V2jMpqb6LP5jvwcF/eATu49zG0IrtF1QhOpbxuomWLUFLb0NHycNtyeXPmueyvwYcJ8VEUvzL1hnm0dgDvYoGpsmJPsFxaVIYXDPHXWeTjhOsuU7Vw1rOmfGWraT6QhywpFX8w/bs570IQc8V9FPNw9E7cEbPY2Hl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560054; c=relaxed/simple;
-	bh=CpGlIrf5p+st0iXrAuSSydMx9vVrjXfwmalBa4qqxa4=;
+	s=arc-20240116; t=1728560057; c=relaxed/simple;
+	bh=xji/pcLoEPAUztYWn3ikVISlaHvrDnwTx4BX+5Les5s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z8al2ImLFR1XwHnYcoTmhYpNUpfou8jhEVvru4k6Rg6DMvuzqWA8KKkzzOrtoAIu+dN4P0f31q1zPFhg7D3ErJb4T6yLgoVMb3K8jUUVKzIRxcFK1ODGWr7WFV+dpwGSSLKCJc6sLLPXpXxDTgCbOMD0Q42cHZj4Js7AEUGBlR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHZLuh0Q; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:To:Cc; b=Tn+09vJx7lPA3FThmHHPboo6ZadZ9q6mjw842mb1fY/xPAWvXdfBGZHfpkzKrNtucLKJaxK8RrKQSDheb5AoYUJDxpFJx1YFw2mjhmDi1PzzFRHq/MBudQ254JUnmUmE5yNNYiKu4a+CHXRAq+GWIrC0gM5/f2uUUI7Pn7m833g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bewWdoek; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a995f56ea2dso132029566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:34:13 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a993302fa02so131327366b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728560051; x=1729164851; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728560053; x=1729164853; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JNSBA39L+uD3IEP0aKHjk6mvKlXPMhygyF+Shfug/O4=;
-        b=JHZLuh0QMsOpu0imoIhu3PhzNXsQXyOW21PoZScNA9vhgOlguTedh32Sgntz9APDKv
-         kMkpkpB3JVxfHDP6UwLdYxBPm08HkL7Dmw1EEhZzJDMZEDsJaSTEP0WTNmLSPIwPjKPN
-         JDZiciiC5PLnISLr4iIWM9FMaTndDFIFdfvby6YuXUKpHhgCi9T1AQy3rH5sZJc+s0ux
-         s3g9XV7rXkuOB6XRiSwzG0zIT5k+XQGQ5MikWxVjbDJJe9vjKl8jkfkEU1w8hOwNo2wI
-         VUVKLS6p1KbpMZGuOHj8/mUTqnV2cqLBMJiraItuXWg45dKR6rB+UoiMRhiL89/S8IjI
-         s6fQ==
+        bh=hNYBR6ZSh2a4w1mSh6FqJlsw/BqZTd6AKV7VHjOwsQw=;
+        b=bewWdoekEME/CtnGopmLKnTvnOcFa0NWLDJina4kg3ol+2gG49F2GrEZHPhhJd99rV
+         76tncRoSvus2Kag4R7+Ci3wTBPTe2akBUu6VzSPgp1PmMJswTiit7NfkZo2RdncNdRh9
+         3vyFQVIKR7a6VPV3rKYDTVkUb0rv/kBdm1w6S49gavzxAXlgkMMZKahQ1Iq8Ngk5AI9N
+         wJQxEMt7K1OWM/SWc1PLGuX8Lk5M/KiuhL16hN5nXvOF4qvf75rbnCpWVyeTid9xZihk
+         H7KEog03HSqU2Kjidl4YpPaVlJKQ5Sb3Pa9FrfTdEAdW4b1SwJ1Q20+mFC2VBPrJMu5N
+         dGJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728560051; x=1729164851;
+        d=1e100.net; s=20230601; t=1728560053; x=1729164853;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JNSBA39L+uD3IEP0aKHjk6mvKlXPMhygyF+Shfug/O4=;
-        b=ngMZoz7PbxbDSLSwiDVcH3MKQ4MCCRogTgkg2R7RsRn0BpOK8OR+Ht+yPKuvm7LDrP
-         vh0bhNMFx7gROO13ZXLUpDiv97Y/RFitz52IESZP35IqSgHnYGbNRyhxllLqGfOAIYjZ
-         4cx8N+G5HItpVA4nQFJulvdu+MS9k/aPm2DRqPUPo1Tj4rpqpLbOq5KGCkyNaGuot3Wl
-         B0EjXjOolUU7liyFUylpavajxoIzK+G50Gux0B6cWblAb2XxfjXmNNiK3UzWTZEwNADs
-         lKXn6wuyQ0t2tPe5CZLKtuCTivCrGkMQjcnVJR6Qx15ouKF6+V8rtNcS7jo9jKEO6ZKI
-         I58g==
-X-Forwarded-Encrypted: i=1; AJvYcCXx5d7fk9V5nl94Rb/U3CGjhlWLMqnWQAWLFp7JQx97hHOSKrOXJSOxVuMrSySufR2ZhXpqDXfZfFlj0DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGmNRJLSbeXhpmDoeMkhzrfoYRRpfc5dGhpshO18qqT9U0anbo
-	q1ulaJ9qRz53bkT6+AINwQgrq9Jqim6ixmXoDiYIA8R6qK7KO/B6ccQYu7KbO7M=
-X-Google-Smtp-Source: AGHT+IE5VMKxvHaqB8TM4UQMzMj1+qpZY8SgS8d9OXFElPL9iiC2IKmw/Xc8WMoNH9f/aynvyMEWdg==
-X-Received: by 2002:a17:907:e65c:b0:a99:5773:3612 with SMTP id a640c23a62f3a-a998d202140mr531002866b.36.1728560049978;
-        Thu, 10 Oct 2024 04:34:09 -0700 (PDT)
+        bh=hNYBR6ZSh2a4w1mSh6FqJlsw/BqZTd6AKV7VHjOwsQw=;
+        b=FflyOzNU7JwTv+glIT2hzyHsKJWeysK7j6sf54b74O/nf7DHdSXIuTS32EILheUGGM
+         FzBlJfFqQGKNoAzuXvqjNLsMqtdqtNYpkWcVdKDMxNYTqbO1oYXBYK/pSrgy3zM8wJp+
+         VvYczXEgZPJDCbX9ioL8smiBajOcRwFhYpPUMY/E351zj1senZepf5rii+oicXC7mZDw
+         a54CtueaVPKXSnua5HkYTgWbHth8howLcBmycWahODvjCUN7cQJqnZWiOwFjek5eriGE
+         Yhd+/3xUpzbldY7mGWEQLpip8uu0WavvdeMaFdb7wxcOtuRqyfcce7dRSjOnpTV6UXq3
+         ycgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpuCbSWe8i+XGkExpPzF03sFRMxO6x9S6OX/4BvnCgycGx06qw8rqpN7MbQzCfnw7s+gaG3CjM0sRk4C0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs3JYxVDvJVOj0XvgQRdV/g8N50XYPJGwxoNso+WcSasVXMQV9
+	oO+qmWyv21yiAx/nSwDp8WE2XdxdY5KhWKKqaFGPoo8SWtC0EZuR0NKhutF5C8c=
+X-Google-Smtp-Source: AGHT+IHL5fhjnV7jrHCiVi1KTSPjzJB1MdYFxv8NsvHT8D9zQW+FbMo3EZMj/2II5YwtAlSsYXswMA==
+X-Received: by 2002:a17:906:d259:b0:a99:42e7:21f with SMTP id a640c23a62f3a-a998d224f32mr538373366b.37.1728560052587;
+        Thu, 10 Oct 2024 04:34:12 -0700 (PDT)
 Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.34.08
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.34.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 04:34:08 -0700 (PDT)
+        Thu, 10 Oct 2024 04:34:12 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 10 Oct 2024 13:33:54 +0200
-Subject: [PATCH RFC 16/28] ARM: entry: Drop argument to asm_irqentry macros
+Date: Thu, 10 Oct 2024 13:33:55 +0200
+Subject: [PATCH RFC 17/28] ARM: entry: Implement
+ syscall_exit_to_user_mode()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-arm-generic-entry-v1-16-b94f451d087b@linaro.org>
+Message-Id: <20241010-arm-generic-entry-v1-17-b94f451d087b@linaro.org>
 References: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 In-Reply-To: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 To: Oleg Nesterov <oleg@redhat.com>, Russell King <linux@armlinux.org.uk>, 
@@ -90,108 +91,122 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.0
 
-asm_irqentry_enter_from_user_mode and asm_irqentry_exit_to_user_mode
-have a "save" argument that will save and restore registers before
-the call to the C function.
-
-Now all invocations set this argument to 0 so drop the surplus
-code.
+Mirroring syscall_enter_from_user_mode() we create the sibling
+call syscall_exit_to_user_mode() and start to move some stuff
+over from assembly, first the rseq call and the interrupt
+disablement.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/kernel/entry-armv.S   |  8 ++++----
- arch/arm/kernel/entry-common.S |  2 +-
- arch/arm/kernel/entry-header.S | 18 ++----------------
- 3 files changed, 7 insertions(+), 21 deletions(-)
+ arch/arm/include/asm/entry.h   |  1 +
+ arch/arm/include/asm/signal.h  |  1 -
+ arch/arm/kernel/entry-common.S | 10 ++--------
+ arch/arm/kernel/entry.c        |  8 ++++++++
+ arch/arm/kernel/signal.c       |  7 -------
+ 5 files changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index 0328860475e1..09ce1be1f677 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -421,7 +421,7 @@ ENDPROC(__fiq_abt)
- 	.align	5
- __dabt_usr:
- 	usr_entry uaccess=0
--	asm_irqentry_enter_from_user_mode save = 0
-+	asm_irqentry_enter_from_user_mode
- 	kuser_cmpxchg_check
- 	mov	r2, sp
- 	dabt_helper
-@@ -432,7 +432,7 @@ ENDPROC(__dabt_usr)
- 	.align	5
- __irq_usr:
- 	usr_entry
--	asm_irqentry_enter_from_user_mode save = 0
-+	asm_irqentry_enter_from_user_mode
- 	kuser_cmpxchg_check
- 	irq_handler from_user=1
- 	get_thread_info tsk
-@@ -446,7 +446,7 @@ ENDPROC(__irq_usr)
- 	.align	5
- __und_usr:
- 	usr_entry uaccess=0
--	asm_irqentry_enter_from_user_mode save = 0
-+	asm_irqentry_enter_from_user_mode
+diff --git a/arch/arm/include/asm/entry.h b/arch/arm/include/asm/entry.h
+index e259b074caef..8b8cc9a1eefb 100644
+--- a/arch/arm/include/asm/entry.h
++++ b/arch/arm/include/asm/entry.h
+@@ -9,6 +9,7 @@ struct pt_regs;
+  * to generic entry once they are semantically equivalent.
+  */
+ long syscall_enter_from_user_mode(struct pt_regs *regs, long);
++void syscall_exit_to_user_mode(struct pt_regs *regs);
+ void irqentry_enter_from_user_mode(struct pt_regs *regs);
+ void irqentry_exit_to_user_mode(struct pt_regs *regs);
  
- 	@ IRQs must be enabled before attempting to read the instruction from
- 	@ user space since that could cause a page/translation fault if the
-@@ -471,7 +471,7 @@ ENDPROC(__und_usr)
- 	.align	5
- __pabt_usr:
- 	usr_entry
--	asm_irqentry_enter_from_user_mode save = 0
-+	asm_irqentry_enter_from_user_mode
- 	mov	r2, sp				@ regs
- 	pabt_helper
-  UNWIND(.fnend		)
+diff --git a/arch/arm/include/asm/signal.h b/arch/arm/include/asm/signal.h
+index 7acccc96840c..bb753cd3e29f 100644
+--- a/arch/arm/include/asm/signal.h
++++ b/arch/arm/include/asm/signal.h
+@@ -23,7 +23,6 @@ typedef struct {
+ 
+ #include <asm/sigcontext.h>
+ 
+-void do_rseq_syscall(struct pt_regs *regs);
+ void do_work_pending(struct pt_regs *regs, unsigned int thread_flags);
+ 
+ #endif
 diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 14b2495cae3c..df564388905e 100644
+index df564388905e..3559e0a9f5e0 100644
 --- a/arch/arm/kernel/entry-common.S
 +++ b/arch/arm/kernel/entry-common.S
-@@ -109,7 +109,7 @@ ENTRY(ret_to_user_from_irq)
+@@ -65,12 +65,9 @@ ret_fast_syscall:
+  UNWIND(.fnstart	)
+  UNWIND(.cantunwind	)
+ 	add	sp, sp, #(S_R0 + S_OFF)
+-#if IS_ENABLED(CONFIG_DEBUG_RSEQ)
+ 	/* do_rseq_syscall needs interrupts enabled. */
+ 	mov	r0, sp				@ 'regs'
+-	bl	do_rseq_syscall
+-#endif
+-	disable_irq_notrace			@ disable interrupts
++	bl	syscall_exit_to_user_mode
+ 	ldr	r1, [tsk, #TI_FLAGS]		@ re-check for syscall tracing
  	movs	r1, r1, lsl #16
- 	bne	slow_work_pending
- no_work_pending:
--	asm_irqentry_exit_to_user_mode save = 0
-+	asm_irqentry_exit_to_user_mode
+ 	beq	no_work_pending
+@@ -97,13 +94,10 @@ ENDPROC(ret_fast_syscall)
+  * do_work_pending() will update this state if necessary.
+  */
+ ENTRY(ret_to_user)
+-#if IS_ENABLED(CONFIG_DEBUG_RSEQ)
+ 	/* do_rseq_syscall needs interrupts enabled. */
+ 	enable_irq_notrace			@ enable interrupts
+ 	mov	r0, sp				@ 'regs'
+-	bl	do_rseq_syscall
+-#endif
+-	disable_irq_notrace			@ disable interrupts
++	bl	syscall_exit_to_user_mode
+ ENTRY(ret_to_user_from_irq)
+ 	ldr	r1, [tsk, #TI_FLAGS]
+ 	movs	r1, r1, lsl #16
+diff --git a/arch/arm/kernel/entry.c b/arch/arm/kernel/entry.c
+index 1973947c7ad7..472338047337 100644
+--- a/arch/arm/kernel/entry.c
++++ b/arch/arm/kernel/entry.c
+@@ -1,7 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <asm/entry.h>
++#include <asm/signal.h>
+ #include <linux/context_tracking.h>
+ #include <linux/irqflags.h>
++#include <linux/rseq.h>
  
- #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
- 	bl	stackleak_erase_on_task_stack
-diff --git a/arch/arm/kernel/entry-header.S b/arch/arm/kernel/entry-header.S
-index fb5bb019199b..50c0b55adc74 100644
---- a/arch/arm/kernel/entry-header.S
-+++ b/arch/arm/kernel/entry-header.S
-@@ -365,28 +365,14 @@ ALT_UP_B(.L1_\@)
-  * Context tracking and other mode transitions. Used to instrument transitions
-  * between user and kernel mode.
- */
--	.macro asm_irqentry_enter_from_user_mode, save = 1
--	.if	\save
--	stmdb   sp!, {r0-r3, ip, lr}
-+	.macro asm_irqentry_enter_from_user_mode
- 	mov	r0, sp				@ regs
- 	bl	irqentry_enter_from_user_mode
--	ldmia	sp!, {r0-r3, ip, lr}
--	.else
--	mov	r0, sp				@ regs
--	bl	irqentry_enter_from_user_mode
--	.endif
- 	.endm
+ long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
+ {
+@@ -14,6 +16,12 @@ long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
+ 	return syscall;
+ }
  
--	.macro asm_irqentry_exit_to_user_mode, save = 1
--	.if	\save
--	stmdb   sp!, {r0-r3, ip, lr}
-+	.macro asm_irqentry_exit_to_user_mode
- 	mov	r0, sp				@ regs
- 	bl	irqentry_exit_to_user_mode
--	ldmia	sp!, {r0-r3, ip, lr}
--	.else
--	mov	r0, sp				@ regs
--	bl	irqentry_exit_to_user_mode
--	.endif
- 	.endm
++void syscall_exit_to_user_mode(struct pt_regs *regs)
++{
++	rseq_syscall(regs);
++	local_irq_disable();
++}
++
+ noinstr void irqentry_enter_from_user_mode(struct pt_regs *regs)
+ {
+ 	trace_hardirqs_off();
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index 7b1a16e86b23..03b20637a2e1 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -659,13 +659,6 @@ struct page *get_signal_page(void)
+ 	return page;
+ }
  
+-#ifdef CONFIG_DEBUG_RSEQ
+-asmlinkage void do_rseq_syscall(struct pt_regs *regs)
+-{
+-	rseq_syscall(regs);
+-}
+-#endif
+-
  /*
+  * Compile-time assertions for siginfo_t offsets. Check NSIG* as well, as
+  * changes likely come with new fields that should be added below.
 
 -- 
 2.46.2
