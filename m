@@ -1,90 +1,97 @@
-Return-Path: <linux-kernel+bounces-358681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69167998261
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2700998277
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A41C2870FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16AC1C20757
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECFD1BBBC3;
-	Thu, 10 Oct 2024 09:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2581C243D;
+	Thu, 10 Oct 2024 09:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="guTT+b+j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="fWirJMJB"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F3033CE8;
-	Thu, 10 Oct 2024 09:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CE1BC9FE;
+	Thu, 10 Oct 2024 09:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552880; cv=none; b=EVDt0hx74Yl29KUJY/LyYLKgwKEIHkdxVvoU2N3YhfzQzdVw/u7RJyEOUwO84P9bMwSnEEZFkbl6FSDSvvWxdGYM+UKa9foLAP08yTmrc62DlcpOs13W3OX+LR997Lcca+5z1Rc0i+VTnsWQ+0vKqzoSHvB6nOp6GHBB7/OI/qQ=
+	t=1728552970; cv=none; b=XFENMGqhOBsdxwzweqWHOkg0hSyhdqX7wopPrh4BSphEVlRCOVehOqPpCC5ksXnue+FB5fvdo1htEW3brlTeJqonLuCLrK4cEskH7WRwYJF04hrjKyTI88rZU8bwwy071Go0brmk+DCuZCpb6ofmSla0/ElsJ6BE6LWGDa5lfro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552880; c=relaxed/simple;
-	bh=dWfSFjkqfTJgifxqlOgIG/IsOAQZKlT3tfzmz+XaNrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxU9F6LxQ49WBziiipR0KoPKXI61Sjcm8bJjvGyUrz3rut3Kcz+3FNCLVGhU3b0k0myOSA1tXTOjZoSfQRabwK0MqTv0zDlTtDvdRyY6TwpMvqZmyLtQGx9F+5ghAOU5sJR9TzE8YYWwH+CoeXK7SwPiUHvjx/aTuNAVJQdC+NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=guTT+b+j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73971C4CEC5;
-	Thu, 10 Oct 2024 09:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728552880;
-	bh=dWfSFjkqfTJgifxqlOgIG/IsOAQZKlT3tfzmz+XaNrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=guTT+b+jurmQHBP6Vh91ljDbL0KDxNByuebJtHcbp0k+5FmMcMYmsMmoIO4P+r4Z6
-	 4XUwyHgFgKmcAjJspXEcEBflLShDb2PALJD2Er1RgztDxcDqGt6+57hZnXDqmfmRFN
-	 oc5p/lRisRdu0+qXKJ1OmeP2aHkmbvobSGRMZJisjztkbyoaiUl1c7w4Xj19JKEd8b
-	 XU7FOaut+Nnd+EpLJetsKaYv6nrvAtF9iQaYP7knOt+NXGRX0xZBktqG5YRw4GIpQc
-	 2bXlzfdCxlXQN49fAvr6OfjrPf7M+LSaF/evT7jOsayvAwxpfLBlOkJzLGPOuNPdUV
-	 3ZzizRZgniqZw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sypZE-000000001bV-3pNR;
-	Thu, 10 Oct 2024 11:34:44 +0200
-Date: Thu, 10 Oct 2024 11:34:44 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
-Message-ID: <ZweftESPrJNEsqGE@hovoldconsulting.com>
-References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
- <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
+	s=arc-20240116; t=1728552970; c=relaxed/simple;
+	bh=uYXEr1Z89kmAttCLdkPheh3zvnlkWUNbdaNaUYJQzgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bqDZ2OMVRr1lp2aeURxA8jJBxdN7Uw+NFfMpVfZ+eWefm8BI0yqJ3O5telb3DSaoeoH9WGxmNevTykPRSxjbJEh6Qgb5LOEhlrjBAUyuH5tr+26hbDhSJlsya1XstvtsOlWa2VR7id9fEbujr6+fpj2i37InhJoqcknMiStYLRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=fWirJMJB; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=NeUFTYaEM1aQRYKUzV4CLhrw7q0+SneYVNTrMPH7tuM=; b=fWirJMJBnfllY8zgWvciOL+yEV
+	ebBEI1zhPdMPs21ARAP9wFuviagximww3WUorDxOQ4c9YF6S025OXfrh3IS+2CznwsW2zXx8/aUTe
+	dTyXMwMdAlsZ47K4nVfiJNF+AAF3ETknej2Cu96fcbNyg4Otia0qEXdNHawjapYLMpNjBnTGOmEjU
+	qMq5yqN0Metu5xc6GAWnymAAH7Z2jg8s7+YwP3aO242lO0TeLDPmWjiFTf+rIxkg6OseythcmUusg
+	XTsiF7f0ap4AcQ7auY/xoU2Yxl+83cCGPdN8mgb6ptQhjzQZC4vkMzlM5hixyatU6uaEzMpvNs4rF
+	gcDqdBig==;
+Date: Thu, 10 Oct 2024 11:35:57 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Tony Lindgren <tony@atomide.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Enric Balletbo i Serra
+ <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>,
+ Nishanth Menon <nm@ti.com>, srk@ti.com, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/3] ARM: dts: ti: omap: fix dtbs_check warnings for
+ ti,gpmc-nand and ti,gpmc-onenend
+Message-ID: <20241010113557.1c987754@akair>
+In-Reply-To: <20241009-gpmc-omap-dtbx-v2-0-fc68124a090a@kernel.org>
+References: <20241009-gpmc-omap-dtbx-v2-0-fc68124a090a@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 07, 2024 at 08:22:27PM +0200, Stephan Gerhold wrote:
-> Add the WiFi/BT nodes for QCP and describe the regulators for the WCN7850
-> combo chip using the new power sequencing bindings. All voltages are
-> derived from chained fixed regulators controlled using a single GPIO.
+Am Wed, 09 Oct 2024 16:16:53 +0300
+schrieb Roger Quadros <rogerq@kernel.org>:
+
+> This series fixes dtbs_check warnings on OMAP platforms
+> for ti,gpmc-nand and ti,gpmc-onenand.
 > 
-> The same setup also works for CRD (and likely most of the other X1E80100
-> laptops). However, unlike the QCP they use soldered or removable M.2 cards
-> supplied by a single 3.3V fixed regulator. The other necessary voltages are
-> then derived inside the M.2 card. Describing this properly requires
-> new bindings, so this commit only adds QCP for now.
+> The following warnings are fixed
+> - "nand@0,0: Unevaluated properties are not allowed ('linux,mtd-name'
+> was unexpected)"
+> - "nand@0,0: Unevaluated properties are not allowed
+> ('gpmc,device-nand' was unexpected)"
+> - "omap3430-sdp.dtb: onenand@2,0: Unevaluated properties are not
+> allowed ('linux,mtd-name' was unexpected)"
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> ---
+> Changes in v2:
+> - Rebased on v6.12-rc1
+> - Link to v1:
+> https://lore.kernel.org/r/20240903-gpmc-dtb-v1-0-380952952e34@kernel.org
+> 
+hmm, v1 seems to be applied. 
+see
+https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap.git/commit/?h=for-next&id=ea453dc2d4d6b7bed89386fe76916252993676ab
+Kevin seems to only have pushed the for-next branch and not the
+individual topic-6.13 branches.
 
-Based on our discussions it seems we do not really need to describe the
-internal PMU at all for WCN7850 (as the bluetooth and wlan blocks can be
-enabled indepdendently) so perhaps we can just restore the old binding
-and drop most of this boilerplate for all boards.
-
-Johan
+Regards,
+Andreas
 
