@@ -1,130 +1,189 @@
-Return-Path: <linux-kernel+bounces-358825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD3499844B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9822998456
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B685284D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EF528514A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7D51898ED;
-	Thu, 10 Oct 2024 11:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCAF1C245A;
+	Thu, 10 Oct 2024 11:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="intOHK0N"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECVmeCsQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D277A1BD50A;
-	Thu, 10 Oct 2024 11:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D341C243D;
+	Thu, 10 Oct 2024 11:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558020; cv=none; b=TctDAZFRe0m+zLmWRFrVFlgG3cXxTLnk2zDjU/aSXRJmx4JAllcAyw+wyHFxxD0pTphxHAD+75ztK9OKp3/PAZ3PrHT3zI/NFOSNgMn5AnP4Fhnp1KDAIIJojKUa2xw+oz6pwZtdbU6uXS6mAiWP07xH6GjVPzi6ChZFRfAvh2A=
+	t=1728558097; cv=none; b=VFOIxVZRJCFFrMdCaOHmNv3VlbPBw/m6bJHt/D8myu0whQI+jgqP0TH4y5L3IDm+J3bc3iCzuqPJiynx85YlymTmu7mgIlccoWTJvUuIq0uiRiKoRYaQxzliumyhfHhWKeBpwZNwPK61Z2Y21TDNOwuyZ0U7R+buSXi0CmHD7e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558020; c=relaxed/simple;
-	bh=8i2d581H7RAIv0CvvcVmjq+Yi+GzmbcnlzsXCTnZ+5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0qM/eiHG37H2uedUiexhXWErtPO1eut20nj7h9NmSwORzogYYLWbgFefTVf9aXBePdJh0dDEirL/K3NkEeuhhJtLAJwz4A4EjKAHfcQ5/D0AhIVnuk+PfoHwSXQ5OLPiLFF4hZU1NVvMrUwSzwccp2OhU96Cte3vkFmvK9b3xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=intOHK0N; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99388e3009so114202566b.3;
-        Thu, 10 Oct 2024 04:00:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728558017; x=1729162817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wm6MZYXLSHo1dcmzMTR+ZzKs3r2Jrq8C9K6nZwy4g50=;
-        b=intOHK0NDc4IIHfcn5Y8kt/adCusUM14jWlsIy02nWRz2IYOAgL/mn4daKX+ZZGHnv
-         KHeS3eyxhOms877PxCQV5kbD97GDPTRv9QzFGDm6hYLOLEz0WB5rQ91I12yBtcnoFAHT
-         tpWhZV7PM/XWaxyIWlRpQvO20uC13SSM4+AHwCknM3vVAQrfiPBWNsu/cNXeAKlVyJ5h
-         l0iszNRCJzuNqo3WHeoud/tCEr/guTnMmfxWCm5PPeqF5Lu5DadHPg9BOdhAFTM72TLK
-         KWp4gJ1i/KUjZuPHtXF+yN63l0xVnwgTqDhKPKxmIpw/lP0fG74mgYPl0l6+/WF9cc6N
-         tHbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728558017; x=1729162817;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wm6MZYXLSHo1dcmzMTR+ZzKs3r2Jrq8C9K6nZwy4g50=;
-        b=lyTFNNPn/8fMiKLrJM59j9dCPdpiaJxzlEIyymg6cpISYIA9mF+UDsnx4kHd9J7XHF
-         M8HifZeMbnzO0G7EwU3Mf5YubnOsVt0gfcr/06nOoicO0WT6PFs442Nx+nzxPJ7Ed0+8
-         7skxpPB6fe+JEqBLHUtDzVm8fsHG9T5xOzGyOT+uPCEODM942GUPXpe+MbQD2OSpHMo0
-         EnljeBA1LRQ/QpEVhoGRyyIQp3PC1hcgOL12jUw+sOyf0N8SJX+bKmqz1zIuHFCrLMn1
-         EIc8/k9BGvXzN+I5Z5MNdeLfyPgpqCOrqTjMv/0Q9yfbvV0LTiHVEmOeOBYo7zznB8sF
-         RxwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOZF+J48fT+UpVQFlKxzoFGMVhyqVyRBpfes3gOhd9ym3+E89XvjTBqtZySifB68Gb85Dc2za3BYUfSmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4eetTcPlRl1vU5MA04nuuaR98Q/dkijqiG7hymsf9EwR3ubT1
-	b8F77KSd9G8YiRKlIYVuqAAV9cknv+GHrEMzZ9yF6coHlYRPCWkWnuZwIXGW
-X-Google-Smtp-Source: AGHT+IF4Du3Ih2aP9a4aeYx5V5KpMHpUyahtsSe3e+80RgRQFzvJY7pAi69j/1zbBr1MglyJEAAoNQ==
-X-Received: by 2002:a17:907:1c1a:b0:a86:a4b1:d2b8 with SMTP id a640c23a62f3a-a998d11892dmr528404366b.4.1728558016851;
-        Thu, 10 Oct 2024 04:00:16 -0700 (PDT)
-Received: from [192.168.42.132] ([81.95.8.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80bfc5esm73268166b.142.2024.10.10.04.00.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 04:00:15 -0700 (PDT)
-Message-ID: <fccf8cbd-82ec-4d97-a5aa-faf57ac78874@gmail.com>
-Date: Thu, 10 Oct 2024 13:00:14 +0200
+	s=arc-20240116; t=1728558097; c=relaxed/simple;
+	bh=YtKnFjjEp03jPtDkeC8jufxAJ+D4e6/2CJ4T+ZVZQPs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nRtwhdVSy3aSXLnAt9a1Ukj3Mi9a1DOU0AAUNe2uNLmEeIgdNpdRkMQEYi571G9vlfBCqZYjGpPAwULcXgnmuGD1B8x939ircVs23z4WiUtEdin9/DyYkcoXL8cVFwRK2D5ECUCphCrd4qvBWxjFguqW4/4mMYUpW2g+U9Q+CT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECVmeCsQ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728558096; x=1760094096;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=YtKnFjjEp03jPtDkeC8jufxAJ+D4e6/2CJ4T+ZVZQPs=;
+  b=ECVmeCsQXjsLTdrFrTSig9btYZq6gPZP9H5ahtQ84DaG8q2SKIprNb6y
+   r/TW7ASnh5c2nOu6XxoJxRNut+lgc8vapOXN3XzXf1nnL/1EsbZbJcoMu
+   KoTz0NtIbDNoEmklN6nhMqm2LaInG5pK7LQqW2I3yTbEL6/KUhwwoKUUL
+   FERFIh2ziFvlpAmEN61fyqQRFiPl11/15HDNzNvvlUFdrVLpRlerBpxlN
+   80jgHEWUR/EsNvrQfbCrmIXvEr+xRLgQ3ZjNhylqZ2IHri8bIaiQ2xffl
+   Hug41XiL/AuXmURvSQaiJOFpNEQwGKgAOj6gKm+VEEfW7Pgq1XuqbXQOz
+   w==;
+X-CSE-ConnectionGUID: QUlNHju2SqeXSYsHqnhM8w==
+X-CSE-MsgGUID: 6GPfzuhNQ6mHaKQdkawHvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27717282"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="27717282"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 04:01:34 -0700
+X-CSE-ConnectionGUID: P2iknpqjQMijA1685hUysA==
+X-CSE-MsgGUID: VsLIan/9R2ScsJ+6HVCBmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="76164498"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.237])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 04:01:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 10 Oct 2024 14:01:24 +0300 (EEST)
+To: =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>
+cc: linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Michal Wajdeczko <michal.wajdeczko@intel.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Matt Roper <matthew.d.roper@intel.com>
+Subject: Re: [PATCH v3 1/5] PCI/IOV: Restore VF resizable BAR state after
+ reset
+In-Reply-To: <20241010103203.382898-2-michal.winiarski@intel.com>
+Message-ID: <e4597db1-d294-3814-fe11-45231bde24cc@linux.intel.com>
+References: <20241010103203.382898-1-michal.winiarski@intel.com> <20241010103203.382898-2-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: mediatek: mt8188: Remove unnecessary variable
- assignments
-To: Tang Bin <tangbin@cmss.chinamobile.com>, lgirdwood@gmail.com,
- broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
- angelogioacchino.delregno@collabora.com
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
-Content-Language: en-US
-From: Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-1722614830-1728558084=:12246"
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1722614830-1728558084=:12246
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 10/10/24 09:35, Tang Bin wrote:
-> In the function mtk_dai_hdmitx_dptx_hw_params, the variable
-> 'ret' is redundant, thus remove it.
-> 
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+On Thu, 10 Oct 2024, Micha=C5=82 Winiarski wrote:
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
+> Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
+> the system firmware, or the PCI subsystem itself.
+> Add the capability ID and restore it as a part of IOV state.
+> See PCIe r4.0, sec 9.3.7.4.
+>=20
+> Signed-off-by: Micha=C5=82 Winiarski <michal.winiarski@intel.com>
 > ---
->   sound/soc/mediatek/mt8188/mt8188-dai-etdm.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c b/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c
-> index 2a48f5fd6..69a091dad 100644
-> --- a/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c
-> +++ b/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c
-> @@ -2422,7 +2422,6 @@ static int mtk_dai_hdmitx_dptx_hw_params(struct snd_pcm_substream *substream,
->   	unsigned int channels = params_channels(params);
->   	snd_pcm_format_t format = params_format(params);
->   	int width = snd_pcm_format_physical_width(format);
-> -	int ret;
->   
->   	if (!is_valid_etdm_dai(dai->id))
->   		return -EINVAL;
-> @@ -2450,9 +2449,7 @@ static int mtk_dai_hdmitx_dptx_hw_params(struct snd_pcm_substream *substream,
->   		etdm_data->data_mode = MTK_DAI_ETDM_DATA_MULTI_PIN;
->   	}
->   
-> -	ret = mtk_dai_etdm_configure(afe, rate, channels, width, dai->id);
-> -
-> -	return ret;
-> +	return mtk_dai_etdm_configure(afe, rate, channels, width, dai->id);
->   }
->   
->   static int mtk_dai_hdmitx_dptx_set_sysclk(struct snd_soc_dai *dai,
+>  drivers/pci/iov.c             | 29 ++++++++++++++++++++++++++++-
+>  include/uapi/linux/pci_regs.h |  1 +
+>  2 files changed, 29 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index aaa33e8dc4c97..fd5c059b29c13 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -7,6 +7,7 @@
+>   * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
+>   */
+> =20
+> +#include <linux/bitfield.h>
+>  #include <linux/pci.h>
+>  #include <linux/slab.h>
+>  #include <linux/export.h>
+> @@ -862,6 +863,30 @@ static void sriov_release(struct pci_dev *dev)
+>  =09dev->sriov =3D NULL;
+>  }
+> =20
+> +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
+> +{
+> +=09unsigned int pos, nbars, i;
+> +=09u32 ctrl;
+> +
+> +=09pos =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VF_REBAR);
+> +=09if (!pos)
+> +=09=09return;
+> +
+> +=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> +=09nbars =3D FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
+> +
+> +=09for (i =3D 0; i < nbars; i++, pos +=3D 8) {
+> +=09=09int bar_idx, size;
+> +
+> +=09=09pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> +=09=09bar_idx =3D ctrl & PCI_REBAR_CTRL_BAR_IDX;
 
+Use FIELD_GET().
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+> +=09=09size =3D pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
+> +=09=09ctrl &=3D ~PCI_REBAR_CTRL_BAR_SIZE;
+> +=09=09ctrl |=3D FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
+> +=09=09pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
+> +=09}
+> +}
+> +
+>  static void sriov_restore_state(struct pci_dev *dev)
+>  {
+>  =09int i;
+> @@ -1021,8 +1046,10 @@ resource_size_t pci_sriov_resource_alignment(struc=
+t pci_dev *dev, int resno)
+>   */
+>  void pci_restore_iov_state(struct pci_dev *dev)
+>  {
+> -=09if (dev->is_physfn)
+> +=09if (dev->is_physfn) {
+> +=09=09sriov_restore_vf_rebar_state(dev);
+>  =09=09sriov_restore_state(dev);
+> +=09}
+>  }
+> =20
+>  /**
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.=
+h
+> index 12323b3334a9c..a0cf701c4c3af 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -740,6 +740,7 @@
+>  #define PCI_EXT_CAP_ID_L1SS=090x1E=09/* L1 PM Substates */
+>  #define PCI_EXT_CAP_ID_PTM=090x1F=09/* Precision Time Measurement */
+>  #define PCI_EXT_CAP_ID_DVSEC=090x23=09/* Designated Vendor-Specific */
+> +#define PCI_EXT_CAP_ID_VF_REBAR 0x24=09/* VF Resizable BAR */
+>  #define PCI_EXT_CAP_ID_DLF=090x25=09/* Data Link Feature */
+>  #define PCI_EXT_CAP_ID_PL_16GT=090x26=09/* Physical Layer 16.0 GT/s */
+>  #define PCI_EXT_CAP_ID_NPEM=090x29=09/* Native PCIe Enclosure Management=
+ */
+>=20
+--8323328-1722614830-1728558084=:12246--
 
