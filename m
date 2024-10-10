@@ -1,148 +1,107 @@
-Return-Path: <linux-kernel+bounces-358613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DFB998198
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097C2998197
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39808B27ABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7431C25756
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802421BBBF1;
-	Thu, 10 Oct 2024 09:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C5A1B652C;
+	Thu, 10 Oct 2024 09:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WL+BoClG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4QOfUk01"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOoBvxfD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F812194C7A
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36581194C7A;
+	Thu, 10 Oct 2024 09:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551173; cv=none; b=IVdGWJ/enHmMD8dCha259AHqiHGRSVDDEWGLF7OK7ssRGm6JauSwiXVacxdKt+vDiAoild9mg+qloB7JngSW01qcoZZtLSdyIBrW87BMTjmDr3HHjYj6bwQK1b/WETVu5LuAcP6YJVWZNLBoLiUd1LYRZUNPmIR3z2oO0iZPYFs=
+	t=1728551190; cv=none; b=HCeLFg5jh26HTM58dshXFuusOjs7Onk0R9LFjHaX8ZDkDmMFtuCPXYoHv3PTLFcySJogfroW2xO40me7PIkDkRxdt3rduPlTrxWAQt8ePT2rtvupEoiLFYVvw1OJ3fmuLbbpug170bQA+GERM1/qaRxfxcIcf6mgex1a3w4mXv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551173; c=relaxed/simple;
-	bh=cWVYFkyxgookqYEVW/YbwelYHauwq+AEknw1K3n3UTQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=t4L5tw5pDldYMmI9mBxn1UncyZ3J8xW59oSfqojERLYTrModVNPJBIH88leGYL9IFvEd0kuU7huAcdhxy5PMInk1tSmt/T/xMq+ijFjl1UdgsY654zOhPRk9hVbfAATkqIscbRSJ9gwCybHTeDv9A5x1A1SBMEGCP5WpDcdtSEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WL+BoClG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4QOfUk01; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728551169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8u+BrXdsCN8F9YI+DQrAGXJivZ1tgdxpt4JlHf7ZkNE=;
-	b=WL+BoClGt5w8N0pqJ0mB3ErXwizHoeWiHWLbg4zyD7H5nabk6aiWHPRzcmynxzwltAnEBg
-	iPqoBRc/H4gBp74kcZic3BEE3y3AaQvIYHACLrda5T2tTOsAwALh9WlhRmSn3jIFyeOz+z
-	GmA9WEj++7xsvQJE6BU+NeManjAz441m/MsXRz+WsI1WTiQKCCduZQirH6PAtipvqQtawx
-	yDbAMHDU1vxM4hi/pALmH2FAAG4EWbwtDXsHe8d4SdJOY4FPjS35PXK2aT0JBxmU2zzUvG
-	GjudacTmCAUMA7+/Wdnxzyg1AHgswZZm0KtK0SjQEkYUWEX7aMOWtY0Qog+fbw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728551169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8u+BrXdsCN8F9YI+DQrAGXJivZ1tgdxpt4JlHf7ZkNE=;
-	b=4QOfUk01TGreh/KEV76ujGAo6ieCY1U6LTkbW5Lmj5ul/bLsYVjNWpcqAuzBmBMmCLgmNM
-	UGIffmTkb9xbldAw==
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Andy Whitcroft <apw@canonical.com>, Joe
- Perches <joe@perches.com>
-Subject: Re: [PATCH v2 09/15] timers: Add a warning to usleep_range_state()
- for wrong order of arguments
-In-Reply-To: <ZwZ1ePAzuyJBlxNy@localhost.localdomain>
-References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
- <20240911-devel-anna-maria-b4-timers-flseep-v2-9-b0d3f33ccfe0@linutronix.de>
- <ZwZ1ePAzuyJBlxNy@localhost.localdomain>
-Date: Thu, 10 Oct 2024 11:06:09 +0200
-Message-ID: <87plo89vjy.fsf@somnus>
+	s=arc-20240116; t=1728551190; c=relaxed/simple;
+	bh=6zv28lyhaRAoE502GCYQmLpHg+7/WMPqUPkwVP2H+nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLZYGhoPVeMveQ0OwIct+EMVgo/vl/MC0+DDo+GMFRtCCeUQLOOlpvZ5UV737+4wNl6B7qJgiJuixv69s+tAhqEGKATBkLNhRUDkkytH3wi+ezuALEbYuV+t4sVEo7iYhiM5HAbMBbyF5WqAmYckOUaWHsqv/8TjqrFVt4kjt7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOoBvxfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53C8C4CEC5;
+	Thu, 10 Oct 2024 09:06:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728551189;
+	bh=6zv28lyhaRAoE502GCYQmLpHg+7/WMPqUPkwVP2H+nI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FOoBvxfDNWRTBvfP4TT6U4X7UxoV506vVy6pkWmJiarelXh6zTZtBNoUhW5qTzDfZ
+	 mmldSjRURDWMIjV4PNe82dZBWFu9nLhgTOF69RBGt2rUhhZ8Vazr4EHZKSk/A+hBS+
+	 E4jKCP8DODuU6rxCpEOOKzUG176JtKLqmhqsxLAYkvxuPXn3XMEWURirZc4bNqptDY
+	 z8uPayFxEhIu+pLgSAnCufpamxyVzTcd4imEura2FxwZQ49Rv8Yd9uUMPncZQFJ2Pr
+	 ShjaNMv/CKwEJnHsLKG4TO0NcUZSCbO2IjHeCK3hVqOWP8jy9TwlQmj9PGoBFC92O0
+	 Hvbo/vQNX15PQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syp7y-000000008O2-0dBB;
+	Thu, 10 Oct 2024 11:06:34 +0200
+Date: Thu, 10 Oct 2024 11:06:34 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable+noautosel@kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v3] arm64: dts: qcom: x1e80100: Fix PCIe 6a lanes
+ description
+Message-ID: <ZweZGk1sypc535DL@hovoldconsulting.com>
+References: <20241009-x1e80100-dts-fixes-pcie6a-v3-1-14a1163e691b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009-x1e80100-dts-fixes-pcie6a-v3-1-14a1163e691b@linaro.org>
 
-Frederic Weisbecker <frederic@kernel.org> writes:
+On Wed, Oct 09, 2024 at 02:07:23PM +0300, Abel Vesa wrote:
+> Fix the description and compatible for PCIe 6a, as it is in fact a
+> 4-lanes controller and PHY, but it can also be used in 2-lanes mode. For
+> 4-lanes mode, it uses the lanes provided by PCIe 6b. For 2-lanes mode,
+> PCIe 6a uses 2 lanes and then PCIe 6b uses the other 2 lanes. The number
+> of lanes in which the PHY should be configured depends on a TCSR register
+> value on each individual board.
+> 
+> Cc: stable+noautosel@kernel.org # Depends on pcie-qcom 16.0 GT/s support
+> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+> Changes in v3:
+> - Re-worded the commit message once more to suggest a fix w.r.t
+>   lanes.
+> - Added back fixes tag and CC stable but with noautosel reason
+> - Picked up Konrad's R-b tag.
+> - Link to v2: https://lore.kernel.org/r/20241004-x1e80100-dts-fixes-pcie6a-v2-1-3af9ff7a5a71@linaro.org
+> 
+> Changes in v2:
+> - Re-worded the commit message according to Johan's suggestions
+> - Dropped the clocks changes.
+> - Dropped the fixes tag as this relies on the Gen4 4-lanes stability
+>   patchset which has been only merged in 6.12, so backporting this patch
+>   would break NVMe support for all platforms.
+> - Link to v1: https://lore.kernel.org/r/20240531-x1e80100-dts-fixes-pcie6a-v1-2-1573ebcae1e8@linaro.org
 
-> Le Wed, Sep 11, 2024 at 07:13:35AM +0200, Anna-Maria Behnsen a =C3=A9crit=
- :
->> There is a warning in checkpatch script that triggers, when min and max
->> arguments of usleep_range_state() are in reverse order. This check does
->> only cover callsites which uses constants. Move this check into the code=
- as
->> a WARN_ON_ONCE() to also cover callsites not using constants and get rid=
- of
->> it in checkpatch.
->>=20
->> Cc: Andy Whitcroft <apw@canonical.com>
->> Cc: Joe Perches <joe@perches.com>
->> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
->> ---
->>  kernel/time/sleep_timeout.c | 2 ++
->>  scripts/checkpatch.pl       | 4 ----
->>  2 files changed, 2 insertions(+), 4 deletions(-)
->>=20
->> diff --git a/kernel/time/sleep_timeout.c b/kernel/time/sleep_timeout.c
->> index 21f412350b15..4b805d7e1903 100644
->> --- a/kernel/time/sleep_timeout.c
->> +++ b/kernel/time/sleep_timeout.c
->> @@ -364,6 +364,8 @@ void __sched usleep_range_state(unsigned long min, u=
-nsigned long max, unsigned i
->>  	ktime_t exp =3D ktime_add_us(ktime_get(), min);
->>  	u64 delta =3D (u64)(max - min) * NSEC_PER_USEC;
->>=20=20
->> +	WARN_ON_ONCE(max < min);
->> +
->
-> Should it try to "fix" to avoid overflow?
->
-> if WARN_ON_ONCE(max < min)
->     delta =3D 0
+Thanks for the update. I find the commit message much clearer now:
 
-yes!
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
->>  	for (;;) {
->>  		__set_current_state(state);
->>  		/* Do not return before the requested sleep time has elapsed */
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->> index 39032224d504..ba3359bdd1fa 100755
->> --- a/scripts/checkpatch.pl
->> +++ b/scripts/checkpatch.pl
->> @@ -7088,10 +7088,6 @@ sub process {
->>  			if ($min eq $max) {
->>  				WARN("USLEEP_RANGE",
->>  				     "usleep_range should not use min =3D=3D max args; see Document=
-ation/timers/timers-howto.rst\n" . "$here\n$stat\n");
->> -			} elsif ($min =3D~ /^\d+$/ && $max =3D~ /^\d+$/ &&
->> -				 $min > $max) {
->> -				WARN("USLEEP_RANGE",
->> -				     "usleep_range args reversed, use min then max; see Documentati=
-on/timers/timers-howto.rst\n" . "$here\n$stat\n");
->
-> Perhaps it doesn't hurt to keep the static check?
-
-I'll keep it but drop the link to the
-Documentation/timers/timers-howto.rst which will be removed.
-
-> Thanks.
->>  			}
->>  		}
->>=20=20
->>=20
->> --=20
->> 2.39.2
->>=20
+Johan
 
