@@ -1,230 +1,171 @@
-Return-Path: <linux-kernel+bounces-360191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFBA9995B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED0F9995B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DABB1C22991
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B58A2840FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09791E6310;
-	Thu, 10 Oct 2024 23:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B571E7658;
+	Thu, 10 Oct 2024 23:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b1QHqEDN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giVnXvp+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961621C2316;
-	Thu, 10 Oct 2024 23:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8B663D;
+	Thu, 10 Oct 2024 23:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728602618; cv=none; b=NSBqYmaWMVYys+wtLwyn8nN46ciJonBuetwk3QjholBwN593MjHxhMWkIMd8+BGpz6KdOPz27wjha/R4bQj67OW3RgYC1rRS8CJ9iZ3FA62d7b9R0m8ESZJ4wgW4tz6hS+8+3LVCyeR0MXExbGuQTmckg8vsjwPNykMZFLT5D2M=
+	t=1728602707; cv=none; b=uDnXUOJ7Ti+7TE6z55VGZ7Vi81C2tZO2KgfE/0A3NsbkugmKxOsMuLmEp5uZnkZnJsxFBF+sQDlVhdjFwpF8zO8QtsgFzm2G+bKJ18UjjbWJPhvfgjgF6U+lVpLxQGGCGunBlsMkKVfyw/At3AEZvClOwoML396114UIbH7BpCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728602618; c=relaxed/simple;
-	bh=zSIUU4EIutJsGV4ecHxtDXT7wk9XtbmBS441tFOYCVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=I1ueUPG+2m1wPpzXb3wGY7OnEB+iV3KL1YiRLTCTzP+ArdB/kezjpq5z3hPjjgCXxzNzJ3Blz5+ytoirHfnthWkaJ2CFZFYlLMxUc/76qoBIdGJ5IKP/ft1uS3P4o63pgkWP/n1ZZLAGS5fqjZPGFORJuT+SnFmo1+STAx1PbIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=b1QHqEDN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728602610;
-	bh=9IE0OxjsikQFfE5cKhbzBAcsZU0+6Rc7alQKJsUxxUU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=b1QHqEDNk93ysIqJNaZLt0q5TOm4S3JAeqsjBpVfgnjtBxY4aGTbdFexw4DM9uged
-	 7b9/8uv5asydXpBnUrpfa00FvpGYp/g3Zwnpm0/+aUCwGhZOuyuRDpk6MM76o/lS4h
-	 04oPL7t7DQNqKJXL7a9uHmU8VcjDoj3ugkAdwKZvqXhmuGKoHNm2cJ6nDsxdkH1/yj
-	 iE24Arr2jp5XETjBL0n38a9AjFFNbLtWt01N1MgjbDpukDSIPN+vVlOcCVoQl3ADVB
-	 zkv3ng1jW13IwJSRrTdNC5u4MS4BKky/7Hw/BvvB3El+fShJcH9wWnN/4FaHP86S3P
-	 l5fNbby7bmlEA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPm5t0KtXz4wcs;
-	Fri, 11 Oct 2024 10:23:30 +1100 (AEDT)
-Date: Fri, 11 Oct 2024 10:23:30 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, Namhyung Kim
- <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the perf tree
-Message-ID: <20241011102330.02bece12@canb.auug.org.au>
+	s=arc-20240116; t=1728602707; c=relaxed/simple;
+	bh=SkeUhfgqXNji7w4xxQutN92ENbwE2DcNcHbbwYFp+6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CtHaQ5Q8S004M++ThvrDDC1tdMrrja0doDU9/hevCewFpfjIVStoYHjNTfjH75mSGDFU64mTMfrlxET4A2+hmvdaiXxUmXmjMN6iMvgmNOoozeokBcB8xbGMQR2mSZsQxBEfcR+3PwaLbcLCG0xskvpMWop6zanqcEQY7/zjSLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giVnXvp+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3C1C4CEC5;
+	Thu, 10 Oct 2024 23:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728602707;
+	bh=SkeUhfgqXNji7w4xxQutN92ENbwE2DcNcHbbwYFp+6c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=giVnXvp+04utXzc16EEnQh68Lf1FrjoJCHHdyNXB+Rz0+ecy3XTuXiE2xvypxdgqu
+	 2MMZkEahxm8oMQEBMwnVGTf+VsHNh2hK3xoA75I2YLTqnesMiBeCs9/9Ad6Ht/xdqr
+	 U4hzC2UgVZ1wmjT6D0Tbl4k9N2uYkwON+D2wNB5sygNUpRMkdHNwRveHWsMRrmElks
+	 O0TK8Ato9cWzyOAOqiQcIJUMlLWsO3BUWRhIx+MoYifYNS7XFi5Jy/PhyAheSLhVaQ
+	 A7Ai8un3gjGgF3B5dZvcM1skdqwqkXEw/Rd4Cy7soqGqjJb8MQfsNBgvPvsCVUNKkv
+	 GbH44iX92QfgQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v5 bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc
+Date: Thu, 10 Oct 2024 16:25:02 -0700
+Message-ID: <20241010232505.1339892-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/IHBT7_kpKo6QUGABkkQ_o27";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/IHBT7_kpKo6QUGABkkQ_o27
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+I'm proposing a new iterator and a kfunc for the slab memory allocator
+to get information of each kmem_cache like in /proc/slabinfo or
+/sys/kernel/slab in more flexible way.
 
-After merging the perf tree, today's linux-next build (native perf)
-failed like this:
+v5 changes)
 
-util/evsel.c: In function 'store_event':
-util/evsel.c:138:50: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 6 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  138 |         snprintf(path, PATH_MAX, "%s/event-%d-%llu-%d", dir,
-      |                                               ~~~^
-      |                                                  |
-      |                                                  long long unsigned=
- int
-      |                                               %lu
-  139 |                  attr->type, attr->config, fd);
-      |                              ~~~~~~~~~~~~        =20
-      |                                  |
-      |                                  __u64 {aka long unsigned int}
-util/evsel.c:147:41: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 4 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  147 |         if (fprintf(file, "[event-%d-%llu-%d]\n",
-      |                                      ~~~^
-      |                                         |
-      |                                         long long unsigned int
-      |                                      %lu
-  148 |                     attr->type, attr->config, fd) < 0) {
-      |                                 ~~~~~~~~~~~~
-      |                                     |
-      |                                     __u64 {aka long unsigned int}
-util/evsel.c:164:33: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  164 |         WRITE_ASS(config,  "llu");
-      |                                 ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:164:9: note: in expansion of macro 'WRITE_ASS'
-  164 |         WRITE_ASS(config,  "llu");
-      |         ^~~~~~~~~
-util/evsel.c:165:39: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  165 |         WRITE_ASS(sample_period, "llu");
-      |                                       ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:165:9: note: in expansion of macro 'WRITE_ASS'
-  165 |         WRITE_ASS(sample_period, "llu");
-      |         ^~~~~~~~~
-util/evsel.c:166:39: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  166 |         WRITE_ASS(sample_type,   "llu");
-      |                                       ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:166:9: note: in expansion of macro 'WRITE_ASS'
-  166 |         WRITE_ASS(sample_type,   "llu");
-      |         ^~~~~~~~~
-util/evsel.c:167:39: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  167 |         WRITE_ASS(read_format,   "llu");
-      |                                       ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:167:9: note: in expansion of macro 'WRITE_ASS'
-  167 |         WRITE_ASS(read_format,   "llu");
-      |         ^~~~~~~~~
-util/evsel.c:198:33: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  198 |         WRITE_ASS(config1, "llu");
-      |                                 ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:198:9: note: in expansion of macro 'WRITE_ASS'
-  198 |         WRITE_ASS(config1, "llu");
-      |         ^~~~~~~~~
-util/evsel.c:199:33: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  199 |         WRITE_ASS(config2, "llu");
-      |                                 ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:199:9: note: in expansion of macro 'WRITE_ASS'
-  199 |         WRITE_ASS(config2, "llu");
-      |         ^~~~~~~~~
-util/evsel.c:200:44: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  200 |         WRITE_ASS(branch_sample_type, "llu");
-      |                                            ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:200:9: note: in expansion of macro 'WRITE_ASS'
-  200 |         WRITE_ASS(branch_sample_type, "llu");
-      |         ^~~~~~~~~
-util/evsel.c:201:44: error: format '%llu' expects argument of type 'long lo=
-ng unsigned int', but argument 3 has type '__u64' {aka 'long unsigned int'}=
- [-Werror=3Dformat=3D]
-  201 |         WRITE_ASS(sample_regs_user,   "llu");
-      |                                            ^
-util/evsel.c:122:28: note: in definition of macro '__WRITE_ASS'
-  122 |         if (fprintf(file, #str "=3D%"fmt "\n", data) < 0) {        =
-       \
-      |                            ^~~
-util/evsel.c:201:9: note: in expansion of macro 'WRITE_ASS'
-  201 |         WRITE_ASS(sample_regs_user,   "llu");
-      |         ^~~~~~~~~
-cc1: all warnings being treated as errors
+ * set PTR_UNTRUSTED for return value of bpf_get_kmem_cache()  (Alexei)
+ * add KF_RCU_PROTECTED to bpf_get_kmem_cache().  See below.  (Song)
+ * add WARN_ON_ONCE and comment in kmem_cache_iter_seq_next()  (Song)
+ * change kmem_cache_iter_seq functions not to call BPF on intermediate stop
+ * add a subtest to compare the kmem cache info with /proc/slabinfo  (Alexei)
 
-Caused by commit
+v4: https://lore.kernel.org/lkml/20241002180956.1781008-1-namhyung@kernel.org
 
-  f90a29144887 ("perf test: Remove C test wrapper for attr.py")
+ * skip kmem_cache_destroy() in kmem_cache_iter_seq_stop() if possible  (Vlastimil)
+ * fix a bug in the kmem_cache_iter_seq_start() for the last entry
 
-This is a native build of perf on ppc64le using
+v3: https://lore.kernel.org/lkml/20241002065456.1580143-1-namhyung@kernel.org/
 
-  make -C tools/perf -f Makefile.perf NO_BPF_SKEL=3D1
+ * rework kmem_cache_iter not to hold slab_mutex when running BPF  (Alexei)
+ * add virt_addr_valid() check  (Alexei)
+ * fix random test failure by running test with the current task  (Hyeonggon)
 
-I have merged the perf tree from next-20241010 for today.
+v2: https://lore.kernel.org/lkml/20240927184133.968283-1-namhyung@kernel.org/
 
---=20
-Cheers,
-Stephen Rothwell
+ * rename it to "kmem_cache_iter"
+ * fix a build issue
+ * add Acked-by's from Roman and Vlastimil (Thanks!)
+ * add error codes in the test for debugging
 
---Sig_/IHBT7_kpKo6QUGABkkQ_o27
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+v1: https://lore.kernel.org/lkml/20240925223023.735947-1-namhyung@kernel.org/
 
------BEGIN PGP SIGNATURE-----
+My use case is `perf lock contention` tool which shows contended locks
+but many of them are not global locks and don't have symbols.  If it
+can tranlate the address of the lock in a slab object to the name of
+the slab, it'd be much more useful.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcIYfIACgkQAVBC80lX
-0GwoGQf/aASUfjN6RnMGJe/cp/qQ4mJBtpFtTajWZQQ1uyACNtal613rnvcC8qT8
-7XIAr8TEgoPgtFnPlM9rcCLFObVQUat7/NYrx8z0H8nHY9ylDTcfRbFOKY4l5qOt
-vOsRdF7IBGK5M3WsuTeK5rEzx0R7IXIuJm7RPTzJxCOpSFNTn098vX5qG0frFkEf
-y9qZ8FK0VnJlxw+183xg35rtDKMDIe0qlnBXpTBFPE/N/sQl0QLkuDz1g9BlK/j/
-sZ3Xeg7We5Gkk+pS+3Wq/b/5aePyyNbiz5tCZdn1Y7oxXEB4sKBK/vqMz0FRVf51
-nRalSQWKAoonQxNZSGkS1s0N4I3iaA==
-=4dBI
------END PGP SIGNATURE-----
+I'm not aware of type information in slab yet, but I was told there's
+a work to associate BTF ID with it.  It'd be definitely helpful to my
+use case.  Probably we need another kfunc to get the start address of
+the object or the offset in the object from an address if the type
+info is available.  But I want to start with a simple thing first.
 
---Sig_/IHBT7_kpKo6QUGABkkQ_o27--
+The kmem_cache_iter iterates kmem_cache objects under slab_mutex and
+will be useful for userspace to prepare some work for specific slabs
+like setting up filters in advance.  And the bpf_get_kmem_cache()
+kfunc will return a pointer to a slab from the address of a lock.
+
+Actualy I'm not sure about the RCU lock - IIUC it doesn't protect the
+kmem_cache itself but kmem_cache_destroy() calls some RCU barrier
+functions, so having RCU read lock would protect the object from going
+away by kfree_rcu() or something and then kmem_cache.  But please
+correct me if I'm wrong.
+
+And the test code is to read from the iterator and make sure it finds
+a slab cache of the task_struct for the current task.
+
+The code is available at 'bpf/slab-iter-v5' branch in
+https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (3):
+  bpf: Add kmem_cache iterator
+  mm/bpf: Add bpf_get_kmem_cache() kfunc
+  selftests/bpf: Add a test for kmem_cache_iter
+
+ include/linux/btf_ids.h                       |   1 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/helpers.c                          |   1 +
+ kernel/bpf/kmem_cache_iter.c                  | 175 ++++++++++++++++++
+ kernel/bpf/verifier.c                         |   5 +
+ mm/slab_common.c                              |  19 ++
+ .../bpf/prog_tests/kmem_cache_iter.c          | 115 ++++++++++++
+ tools/testing/selftests/bpf/progs/bpf_iter.h  |   7 +
+ .../selftests/bpf/progs/kmem_cache_iter.c     |  95 ++++++++++
+ 9 files changed, 419 insertions(+)
+ create mode 100644 kernel/bpf/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+ create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+
+
+base-commit: 5bd48a3a14df4b3ee1be0757efcc0f40d4f57b35
+-- 
+2.47.0.rc1.288.g06298d1525-goog
+
 
