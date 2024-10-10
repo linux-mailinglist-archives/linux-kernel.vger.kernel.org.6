@@ -1,77 +1,135 @@
-Return-Path: <linux-kernel+bounces-359582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C85998D91
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:36:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B625B998DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6141E1C238E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA046B2B5B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF671957E4;
-	Thu, 10 Oct 2024 16:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08D0194C92;
+	Thu, 10 Oct 2024 16:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGWqA8hF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyQAye1x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8F51953AD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB6526AFC;
+	Thu, 10 Oct 2024 16:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578163; cv=none; b=bNUhjS66xB+bQBACe5GqLtT8EsKfdbIgfP3w6zaKd7bnqGs5/EGQ6IPT9GKCs+yc/X2PLZJ3RsLOMr2wIIMwPEQdICm/Xf5vwMRL1ZoJ84Xd1ByR3bBl3a1+yQi5aaDZewF/VjsGiFPNhzHUdexf1cR+aoF0LeYg5iZ/ZqcjTdY=
+	t=1728578176; cv=none; b=k7Xv7pXc5UaoUYLwhEQS18lUbEHlyS1k+wPa6EeJUqjp9YWowtZBD4WMKPgpTzCIhcFwKYY7NkbtXEzJ1HFsNfbJWeseuVBECp8Be0GYYOT7eS38n2x47eo+tfuFm2GBaZCoViJDQSVlz5mmYpEqaU+0J67r00BBg4ezoC/ZYhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578163; c=relaxed/simple;
-	bh=5q9bdWcF/uDstrjX4xGgD6gUZboSJxZvKbDvle2AsRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NbD9FB4V/zM/lBVOKpdvycAbUTTAgPuexW/DVQAVgOdvg0iTsbNzynNphGbOjmCah6bNX/Amjw6tmkp7boh4IW5gBPyoBXhkIrFcgrp5BlUvAZv6XBftybwoxJZnI8OfVJc4eyYvms43peeJPbg9gNEJfMEd2UXk4fzeEhe59fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGWqA8hF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82AD9C4CEC5;
-	Thu, 10 Oct 2024 16:36:02 +0000 (UTC)
+	s=arc-20240116; t=1728578176; c=relaxed/simple;
+	bh=+PcoP17wyqxQzVgGZJNk+lyONjE1Gzqm03Ri5IiE3Io=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W1q4IyUYSS68FZXEjGtAzh6gCHAbSGgMUY3lFvcHSw7SxcWnuoWGI7fhPsT529eyP5WHMCjzEIRShKcbj9X9Kxn0tc77YZLNmmsRUgUXe7Zx0KCP8QnitOLyaTEUu5ixktVvV6fdiVnNyN+1WddSxEqu7fMwVvUhSHCCFP+3Uxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyQAye1x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941C5C4CEC5;
+	Thu, 10 Oct 2024 16:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728578162;
-	bh=5q9bdWcF/uDstrjX4xGgD6gUZboSJxZvKbDvle2AsRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dGWqA8hF7dZrdyj/maXqkj3MSKVUCOTwqPumf+hDi6ZBkWLJKP6MW2q/j8lETxzb1
-	 KmPdFuY4IOVw0qFDztOWBoxDJdyHYt7b/v+fMsEei3CIObY/hYYDTGZtGcqB8vpfvw
-	 KidupRDw6kRoQq/G8PtUWyW+6aUcTKatRPHqUvpMWa2knIw8cXWXJcYJEqj65+vOI7
-	 Lo1TeILCiQ8opaj8SxSOsjMa0B6mZsTu3JWMq89EP/AdG0XHo5dgv5iqd0W9TyP+B6
-	 VluJglNFvRBli7Yzf5Mu6vuklHRwgqGL69o4hrY27fhwIpmn2/5zqORS60sgskKZ03
-	 6YPoaPVQMwwBA==
-Date: Thu, 10 Oct 2024 06:36:01 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Honglei Wang <jameshongleiwang@126.com>
-Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched_ext: use correct function name in
- pick_task_scx() warning message
-Message-ID: <ZwgCce2o5fqPOwEx@slm.duckdns.org>
-References: <20241010033405.72313-1-jameshongleiwang@126.com>
+	s=k20201202; t=1728578175;
+	bh=+PcoP17wyqxQzVgGZJNk+lyONjE1Gzqm03Ri5IiE3Io=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fyQAye1x2Otw3ge0mMDzsHotis3zDP2aXjfoDKs4QIeuvs4c0FB/glmDslvb6iHN/
+	 tulS94mFUDBJd72e8rQpglJn1+lsOZbRB4Z+3FbOcFUnOfqOdHABysqacA1fDSzyNz
+	 ewBfXMFIf6NF73Ik9WYyQJ73/N2lfCwd0Xr+LL3oHyUmCPmj43IwLXL10oShTeN5hQ
+	 l9X8/79r/+6hPhQv1oGwFpTDDBQzyN+RxOLF44xi+h/ZuYb/iZLwklmuxTlAHsV9Q+
+	 7Vvp2NTSqMS79lh5sAwnntg5z2tQMQNrPut64a4I0D1yr9ZmJJ5da3LfJbja2XMoL0
+	 Zi178BqpedrRg==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu <rcu@vger.kernel.org>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH] rcu/nocb: Fix rcuog wake-up from offline softirq
+Date: Thu, 10 Oct 2024 18:36:09 +0200
+Message-ID: <20241010163609.51273-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010033405.72313-1-jameshongleiwang@126.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 11:34:05AM +0800, Honglei Wang wrote:
-> pick_next_task_scx() was turned into pick_task_scx() since
-> commit 753e2836d139 ("sched_ext: Unify regular and core-sched pick
-> task paths"). Update the outdated message.
-> 
-> Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
+After a CPU has set itself offline and before it eventually calls
+rcutree_report_cpu_dead(), there are still opportunities for callbacks
+to be enqueued, for example from a softirq. When that happens on NOCB,
+the rcuog wake-up is deferred through an IPI to an online CPU in order
+not to call into the scheduler and risk arming the RT-bandwidth after
+hrtimers have been migrated out and disabled.
 
-Patch updated in tree.
+But performing a synchronized IPI from a softirq is buggy as reported in
+the following scenario:
 
-Thanks.
+        WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_single
+        Modules linked in: rcutorture torture
+        CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00012-g9139f93209d1 #1
+        Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
+        RIP: 0010:smp_call_function_single
+        <IRQ>
+        swake_up_one_online
+        __call_rcu_nocb_wake
+        __call_rcu_common
+        ? rcu_torture_one_read
+        call_timer_fn
+        __run_timers
+        run_timer_softirq
+        handle_softirqs
+        irq_exit_rcu
+        ? tick_handle_periodic
+        sysvec_apic_timer_interrupt
+        </IRQ>
 
+Fix this with forcing deferred rcuog wake up through the NOCB timer when
+the CPU is offline. The actual wake up will happen from
+rcutree_report_cpu_dead().
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409231644.4c55582d-lkp@intel.com
+Fixes: 9139f93209d1 ("rcu/nocb: Fix RT throttling hrtimer armed from offline CPU")
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/rcu/tree_nocb.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+index 97b99cd06923..16865475120b 100644
+--- a/kernel/rcu/tree_nocb.h
++++ b/kernel/rcu/tree_nocb.h
+@@ -554,13 +554,19 @@ static void __call_rcu_nocb_wake(struct rcu_data *rdp, bool was_alldone,
+ 			rcu_nocb_unlock(rdp);
+ 			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_LAZY,
+ 					   TPS("WakeLazy"));
+-		} else if (!irqs_disabled_flags(flags)) {
++		} else if (!irqs_disabled_flags(flags) && cpu_online(rdp->cpu)) {
+ 			/* ... if queue was empty ... */
+ 			rcu_nocb_unlock(rdp);
+ 			wake_nocb_gp(rdp, false);
+ 			trace_rcu_nocb_wake(rcu_state.name, rdp->cpu,
+ 					    TPS("WakeEmpty"));
+ 		} else {
++			/*
++			 * Don't do the wake-up upfront on fragile paths.
++			 * Also offline CPUs can't call swake_up_one_online() from
++			 * (soft-)IRQs. Rely on the final deferred wake-up from
++			 * rcutree_report_cpu_dead()
++			 */
+ 			rcu_nocb_unlock(rdp);
+ 			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE,
+ 					   TPS("WakeEmptyIsDeferred"));
 -- 
-tejun
+2.46.0
+
 
