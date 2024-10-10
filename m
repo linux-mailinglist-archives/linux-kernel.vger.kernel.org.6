@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-358907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14C699852D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:39:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E008998530
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B60D2835B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080171F23F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619FC1C57AD;
-	Thu, 10 Oct 2024 11:37:09 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25661C462A;
+	Thu, 10 Oct 2024 11:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J8LlM4R1"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABE41C579D;
-	Thu, 10 Oct 2024 11:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825C81C460D;
+	Thu, 10 Oct 2024 11:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560229; cv=none; b=kFoj7Jj9P+saLSP+s7rOGoc4v3gTuYNuAEnhXMedqc5EmLNR+auQe3JF5IZ7sCcW+X5Wa56WxXbl30iR/dtPqn3sI1g9Iqkslc9dYZbtXD8hX68bx2HAskLpEDsLY7u9klsu1AHl6W9CyUChoARfURXl6KnyNHfbBZ6znJQdVsE=
+	t=1728560278; cv=none; b=aQuLn9tt6LYgmx98dIZAjHKO5hy8g5TULhtJcVxmUuD1jiYdeT+55chfCHM9O53EAx9HN9p6PrpXhcTz5JhAkXKxm78+bMhXEBxh4Eh9j42qUqJjmBPUMa8WrdejPCJ39hj0a4YzwAHOBEikVEe8+mQhycoWl0QXyyz/S+RgX4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560229; c=relaxed/simple;
-	bh=YbnyJmpvU4EcQJVRyA/cXbEEzA7lbQ/nhBxqeUhjHMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pOgxNYUpUZ5ly+o297ZeeTPy9kRghyXV2pBJujdiM4BLNk7GLIv58+Y19BPpJicbPLehrYqu31Oea/I+bJ3rQDLj556gDCTlVSB17enNAJZCq6YK+uYQD8OmnbXZSIC6cqeTtIDypvlXDNEpnyJ/95m6vAL6RNmZW+KKyf4VNvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPSPG2CS0zySyh;
-	Thu, 10 Oct 2024 19:35:46 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id B8D701402CA;
-	Thu, 10 Oct 2024 19:37:03 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 19:37:03 +0800
-Message-ID: <159495c8-71be-4a11-8c49-d528e8154841@huawei.com>
-Date: Thu, 10 Oct 2024 19:37:03 +0800
+	s=arc-20240116; t=1728560278; c=relaxed/simple;
+	bh=ANDjRIA1ZprcU8exVnvEaIqGcwciA1WJ5Bq8psWLXLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6RwVMgoyE98h5zQMW8vZ+JaJ9LUrS+fHLZPS/hzjfDFblCSbbc75bKtBxU1Rr1QwpOwnsM4tC1tnSVsP86B+cEuqNwFQYe9yB/ebCCs5mRTK+P6JgY7R5mmi4zLNcnBQcAaoveVbbusU0ldoSADBBlzogPwwXm48kaVti2IwNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J8LlM4R1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AeP6MXC9HVagnimcA4KeNuLvS+oXfaoCNFU0RDE/p3A=; b=J8LlM4R1b1U+EciwkUe/tANvQI
+	8DBT9O/R7KRbKA+73LbRwefXAwtDpcxXrwGZymbwG5BGOFtHRSEZXN3gy3CjHWeOGcPi/uvhfBhLQ
+	VHjH1xLXnSAojwoJ8wHciJVFbF7pUGP4vobY/z4lZjc3AHRcdpHjkNsgzhKXcZZyhEUsc3wOcgV3h
+	feAUNdCRcLy5m8SYvZjzu64rXgUw+/Ie498vc9Oc4NVLk5u9dZKJ7yrMzX1e7k/+nE/4Gvlm/PbZI
+	9J2DUlrccIhdMO+qBZYJBuCBI/TgFSlEouJ+Sv/IPksZtn2f+At0sRUmXiLXlZyE2lgZX+S/Z9qi/
+	Y3ozu9rw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1syrUK-00000005Mv7-418t;
+	Thu, 10 Oct 2024 11:37:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8D65130088D; Thu, 10 Oct 2024 13:37:48 +0200 (CEST)
+Date: Thu, 10 Oct 2024 13:37:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Matthew Maurer <mmaurer@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Kees Cook <kees@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] cfi: rust: pass -Zpatchable-function-entry on all
+ architectures
+Message-ID: <20241010113748.GL33184@noisy.programming.kicks-ass.net>
+References: <20241008-cfi-patchable-all-v1-1-512481fd731d@google.com>
+ <ZwbAvEnrzu6UUgGl@J2N7QTR9R3>
+ <CAH5fLgipBfd5pNKqniXqFudruyGaJG=LDc5MEf3Yxq1yRMmQcw@mail.gmail.com>
+ <ZwewMw8jBh6OU-L_@J2N7QTR9R3>
+ <20241010110344.GL14587@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v20 14/14] mm: page_frag: add an entry in
- MAINTAINERS for page_frag
-To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
-CC: <davem@davemloft.net>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>
-References: <20241008112049.2279307-1-linyunsheng@huawei.com>
- <20241008112049.2279307-15-linyunsheng@huawei.com>
- <20241008174350.7b0d3184@kernel.org>
- <a3f94649-9880-4dc0-a8ab-d43fab7c9350@huawei.com>
- <be4be68a-caff-4657-9a49-67b3eaefe478@redhat.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <be4be68a-caff-4657-9a49-67b3eaefe478@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010110344.GL14587@noisy.programming.kicks-ass.net>
 
-On 2024/10/10 0:32, Paolo Abeni wrote:
-> Hi,
+On Thu, Oct 10, 2024 at 01:03:44PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 10, 2024 at 11:45:07AM +0100, Mark Rutland wrote:
+> 
+> > What happens on x86 for ftrace and rust?
+> 
+> I can't seem to enable CONFIG_RUST, so I can't tell you :/
 
-Hi,
+So much for the debian 'rust-all' package actually including all. Thanks
+Boqun for telling me about the rustavailable make target.
 
-> 
-> On 10/9/24 06:01, Yunsheng Lin wrote:
->> On 2024/10/9 8:43, Jakub Kicinski wrote:
->>> On Tue, 8 Oct 2024 19:20:48 +0800 Yunsheng Lin wrote:
->>>> +M:    Yunsheng Lin <linyunsheng@huawei.com>
->>>
->>> The bar for maintaining core code is very high, if you'd
->>> like to be a maintainer please start small.
->>
->> I did start small with the page_pool case, as mentioned in
->> [1] of a similar comment, and the page_frag is a small
->> subsystem/library as mentioned in commit log.
->>
->> I think I still might need a second opinion here.
->>
->> 1. https://lore.kernel.org/linux-kernel/dea82ac3-65fc-c941-685f-9d4655aa4a52@huawei.com/
-> 
-> Please note that the 'small' part here does not refer strictly to code size. Any core networking code has the bar significantly higher than i.e. NIC drivers - even if the latter could count order of magnitude more LoC.
-> AFAICS there is an unwritten convention that people are called to maintain core code, as opposed to people appointing themself to maintain driver code.
-
-Is there any discussion that is referring to above 'unwritten convention'?
-As my pool community experience tells me the above 'unwritten
-convention' is mainly referring to well-established subsystem that is
-already in the MAINTAINERS, and page_frag is not really a subsystem or
-library before this patchset, it seems common to me that someone being
-willing and able to turn it into a subsystem or library might become the
-co-maintainer if she/he is also willing to co-maintain it.
-
-> 
-> Cheers,
-> 
-> Paolo
-> 
-> 
+Anyway, confirmed (x86_64) rust code does not have __fentry__ hooks and
+cannot be traced :-(
 
