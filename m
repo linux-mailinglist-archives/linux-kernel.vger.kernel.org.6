@@ -1,189 +1,250 @@
-Return-Path: <linux-kernel+bounces-358069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B099979E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BDD9979E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35C8EB21152
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443C028488B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B93179A3;
-	Thu, 10 Oct 2024 00:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386E8171C9;
+	Thu, 10 Oct 2024 00:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1t16P2M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TckMWn+0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D39C645;
-	Thu, 10 Oct 2024 00:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DFF2AD33;
+	Thu, 10 Oct 2024 00:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728521778; cv=none; b=cz+kWRtmeenc+vJqFIHWKuP2Eosvf1eTGcM0uvbkCWMr/RaQW9W1LoGT+ij8/CT+mHKdM2zEn0rH07sfkL6Ph7zkP5sIUFu1+iCnBAfmeqKkZ726uid6llQ/NohL4BhcmrMmbOH2EDXH5s3hWKsqTDKTzcXb5Pi9+bV62JhP6hU=
+	t=1728521787; cv=none; b=iLOWrUoYNUGnzhnHyv0CUTr+AqI7T6NaJ8TBvg2iELntlwsUz7sG5kHxwvhe61RzxfY/s2EDsijrq3bPr1DHCBEbLYWm+oQNWcyUtda8uVhXXOEmiOh4lEshHp+0r705/bHp7tnBRaAghHtNutbkXzmLdZSy0EOnoH1JbY7gnog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728521778; c=relaxed/simple;
-	bh=vPU8eDSK0RCvm9VfT+wiAdV9Sb3h9y1YygQuyN6AqDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fZKM49dBx1fMV4G/A6hDaUso6LvUoi1e9/WFHqp20uKF39+to6DOvFy2nYFgbO14tX/4Eip1EarPPUykq8n6xrBfUveo/FGOhVADzg672vtCATaFdFY2+Vfj+sDJJhyAtcofBPGRSiqpwbx3JTwOTxbiE2MkUOOmwiEXPqSUDYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1t16P2M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760D3C4CEC3;
-	Thu, 10 Oct 2024 00:56:17 +0000 (UTC)
+	s=arc-20240116; t=1728521787; c=relaxed/simple;
+	bh=eIXQdu5G0lTx04A4tDOo6481P4obHE3p359ClK5Pxyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsY0dzy5x0hpjHxRJPTWkcBcAGy4RYgo4a2LzPIErEuQCao0HLv2CmLbIhZV3i4Rg+C73VUVON+gJG1snFZePfF/eXZo9B0pu1/pFdf5eE1ypgDvIyFnV2yM1wyyLDnumIVNJfy4XgZZJN5sa2n0DugneV8b2KRsQSQmPmI0SVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TckMWn+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73802C4CEC3;
+	Thu, 10 Oct 2024 00:56:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728521777;
-	bh=vPU8eDSK0RCvm9VfT+wiAdV9Sb3h9y1YygQuyN6AqDY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u1t16P2MA6Hr8Bn/mfs4uV+l8jLpaTHD8QH/9pcQgADSpxZvMULix4ItesEngeZQm
-	 45y8DHwjXoIWNdKBwPdn6rCzIMyN2VBbtCGbwxXnLK1+0oHPrGuv+KyVy33xWaTugF
-	 jOYu32Ujw8ebIRIHKXxzms6apyq5jtOv1hkacJ5Q/h2d3pakz224ERQREqovr0Viyy
-	 mfnK7qli3nYbD+gich6RdoWfpElrKAzj/VhD2wHD0xauGeF0QcUgRY7G+6DW+YSiLl
-	 GpJW1FL548WRFEjEyqvApLD7cnJL2Z1AdF3R/osjd4jNYd0tg5AY700ObOAPZLl7fE
-	 aKuiKdT30cHmQ==
-Date: Wed, 9 Oct 2024 17:56:16 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lorenz Brun <lorenz@brun.one>
-Cc: Igor Russkikh <irusskikh@marvell.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: atlantic: support reading SFP module info
-Message-ID: <20241009175616.39594837@kernel.org>
-In-Reply-To: <20241006215028.79486-1-lorenz@brun.one>
-References: <20241006215028.79486-1-lorenz@brun.one>
+	s=k20201202; t=1728521787;
+	bh=eIXQdu5G0lTx04A4tDOo6481P4obHE3p359ClK5Pxyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TckMWn+0/MfBHWt+5zIaSgdf52IEhxiCoPl9FYJNxrldZ88LiNQN5rdEEFmDVLdXZ
+	 a3JOc9iaVSEDxnuWkTHZUrhz5eA/3ycWo3dVHhF2vSGFcNufbME9KyTSfCAOVpzv7r
+	 wSu2e7L4OhKxoA2jHz8f9GwcuYt1sDq/TrFN5vOZrObhpl74uZYmy8dldFa40vyIZ2
+	 Rk06k06bANUyer0t8IMVete8iVB99fYb5oXMHg5BM1o9Ap67wFw+nLchVypewlZa3t
+	 ZpchJmY9VLAfOgBREL7LnR4VaftCNDIXuGNDNGPR7+TGvJOLiERZnMp7GVLhftSmBe
+	 02c6aBsmiuQTw==
+Date: Wed, 9 Oct 2024 17:56:25 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Leo Yan <leo.yan@linux.dev>, Howard Chu <howardchu95@gmail.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
+Message-ID: <ZwcmOeI2NDQw96mR@google.com>
+References: <20241001171950.233723-1-irogers@google.com>
+ <CAP-5=fWExR7ae=dgiAG8BCtDN0XDwnzy9=SBbE0cy5S1Luw-4A@mail.gmail.com>
+ <ZwYW54gKOfnUboeZ@google.com>
+ <CAP-5=fUY8d4DN+ekpj5B58kvoksrPcWpZU=iZhs+=bFfpakK3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUY8d4DN+ekpj5B58kvoksrPcWpZU=iZhs+=bFfpakK3Q@mail.gmail.com>
 
-On Sun,  6 Oct 2024 23:50:25 +0200 Lorenz Brun wrote:
-> Add support for reading SFP module info and digital diagnostic
-> monitoring data if supported by the module. The only Aquantia
-> controller without an integrated PHY is the AQC100 which belongs to
-> the B0 revision, that's why it's only implemented there.
+On Tue, Oct 08, 2024 at 10:59:59PM -0700, Ian Rogers wrote:
+> On Tue, Oct 8, 2024 at 10:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Tue, Oct 08, 2024 at 11:55:29AM -0700, Ian Rogers wrote:
+> > > On Tue, Oct 1, 2024 at 10:19 AM Ian Rogers <irogers@google.com> wrote:
+> > > >
+> > > > The path detection for "Setup struct perf_event_attr" test is brittle
+> > > > and leads to the test frequently not running. Running shell tests is
+> > > > reasonably robust, so make the test a shell test. Move the test files
+> > > > to reflect this.
+> > >
+> > > Ping.
+> > >
+> > > I think this is worthwhile cleanup for the attributes test. It should
+> > > avoid problems like:
+> > > https://lore.kernel.org/lkml/ZroNTkdA8XDFaDks@x1/
+> >
+> > Sorry, it's not clear to me what was the problem.  Can you please say it
+> > again briefly?
 > 
-> The register information was extracted from a diagnostic tool made
-> publicly available by Dell, but all code was written from scratch by me.
+> If you build perf like:
+> make -C tools/perf O=/tmp/perf
 > 
-> This has been tested to work with a variety of both optical and direct
-> attach modules I had lying around and seems to work fine with all of
-> them, including the diagnostics if supported by an optical module.
-> All tests have been done with an AQC100 on an TL-NT521F card on firmware
-> version 3.1.121 (current at the time of this patch).
+> Then run the built perf test for the "Setup struct perf_event_attr" it
+> skips (causing the tests to bitrot and fixes to be sent by Veronika):
+> ```
+> $ sudo /tmp/perf/perf test -vv perf_event_attr
+> capget syscall failed (No such file or directory - 2) fall back on root check
+> 17: Setup struct perf_event_attr:
+> 17: Setup struct perf_event_attr:
+> --- start ---
+> test child forked, pid 806601
+> Using CPUID GenuineIntel-6-8D-1
+> ---- end(-2) ----
+> 17: Setup struct perf_event_attr                                    : Skip
+> ```
+> 
+> The issue is around the path set up, the test has a few path
+> expectations but they are brittle as shown above. While we could
+> endeavour to set up the path in C code, it makes sense to migrate the
+> test to a shell test due to the tests smaller size, ease of
+> environment variable manipulation, existing perf test support for
+> better path setup, etc. Ie let's not reinvent the shell test
+> infrastructure that handles python tests for the sake of one C test.
+> After this change:
+> ```
+> $ sudo /tmp/perf/perf test attribute
+> 76: Perf attribute expectations test                                : Ok
+> ```
 
-> +static int aq_ethtool_get_module_info(struct net_device *ndev,
-> +				      struct ethtool_modinfo *modinfo)
-> +{
-> +	int err;
-> +	u8 compliance_val, dom_type;
-> +	struct aq_nic_s *aq_nic = netdev_priv(ndev);
+Ok, thanks for the explanation!
+Namhyung
 
-nit:
-Could you reverse the order of variable declarations?
-We prefer longest to shortest lines.
-
-> +
-> +	/* Module EEPROM is only supported for controllers with external PHY */
-> +	if (aq_nic->aq_nic_cfg.aq_hw_caps->media_type != AQ_HW_MEDIA_TYPE_FIBRE)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
-> +		return -EOPNOTSUPP;
-> +
-> +	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-> +		SFF_8472_ID_ADDR, SFF_8472_COMP_ADDR, 1, &compliance_val);
-> +	if (err)
-> +		return err;
-> +
-> +	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-> +		SFF_8472_ID_ADDR, SFF_8472_DOM_TYPE_ADDR, 1, &dom_type);
-> +	if (err)
-> +		return err;
-> +
-> +	if (dom_type & SFF_8472_ADDRESS_CHANGE_REQ_MASK || compliance_val == 0x00) {
-> +		modinfo->type = ETH_MODULE_SFF_8079;
-> +		modinfo->eeprom_len = ETH_MODULE_SFF_8079_LEN;
-> +	} else {
-> +		modinfo->type = ETH_MODULE_SFF_8472;
-> +		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int aq_ethtool_get_module_eeprom(struct net_device *ndev,
-> +					struct ethtool_eeprom *ee, unsigned char *data)
-> +{
-> +	int err;
-> +	unsigned int first, last, len;
-> +		struct aq_nic_s *aq_nic = netdev_priv(ndev);
-
-nit: extra tab here
-
-> +	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (ee->len == 0)
-> +		return -EINVAL;
-
-I don't think core will let that happen, you can remove the check
-
-> +	first = ee->offset;
-> +	last = ee->offset + ee->len;
-> +
-> +	if (first < ETH_MODULE_SFF_8079_LEN) {
-> +		len = min_t(unsigned int, last, ETH_MODULE_SFF_8079_LEN);
-
-AFAIU pure min() may work these days
-
-> +		len -= first;
-> +
-> +		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-> +			SFF_8472_ID_ADDR, first, len, data);
-> +		if (err)
-> +			return err;
-> +
-> +		first += len;
-> +		data += len;
-> +	}
-> +	if (first < ETH_MODULE_SFF_8472_LEN && last > ETH_MODULE_SFF_8079_LEN) {
-> +		len = min_t(unsigned int, last, ETH_MODULE_SFF_8472_LEN);
-> +		len -= first;
-> +		first -= ETH_MODULE_SFF_8079_LEN;
-> +
-> +		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
-> +			SFF_8472_DIAGNOSTICS_ADDR, first, len, data);
-> +		if (err)
-> +			return err;
-> +	}
-> +	return 0;
-> +}
-> +
->  const struct ethtool_ops aq_ethtool_ops = {
->  	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
->  				     ETHTOOL_COALESCE_MAX_FRAMES,
-> @@ -1014,4 +1090,6 @@ const struct ethtool_ops aq_ethtool_ops = {
->  	.get_ts_info         = aq_ethtool_get_ts_info,
->  	.get_phy_tunable     = aq_ethtool_get_phy_tunable,
->  	.set_phy_tunable     = aq_ethtool_set_phy_tunable,
-> +	.get_module_info     = aq_ethtool_get_module_info,
-> +	.get_module_eeprom   = aq_ethtool_get_module_eeprom,
->  };
-
-> +static int hw_atl_b0_read_module_eeprom(struct aq_hw_s *self, u8 dev_addr,
-> +					u8 reg_start_addr, int len, u8 *data)
-> +{
-> +	int err;
-> +	int i, b;
-> +	u32 val;
-> +
-> +	/* Wait for SMBUS0 to be idle */
-> +	err = readx_poll_timeout_atomic(hw_atl_smb0_bus_busy_get, self,
-> +					val, val == 0, 100U, 10000U);
-
-Why atomic?
--- 
-pw-bot: cr
+> 
+> > >
+> > > > Ian Rogers (3):
+> > > >   perf test: Add a shell wrapper for "Setup struct perf_event_attr"
+> > > >   perf test: Remove C test wrapper for attr.py
+> > > >   perf test: Move attr files into shell directory where they are used
+> > > >
+> > > >  tools/perf/Makefile.perf                      |   5 +-
+> > > >  tools/perf/perf.c                             |   2 -
+> > > >  tools/perf/tests/Build                        |   1 -
+> > > >  tools/perf/tests/attr.c                       | 218 ------------------
+> > > >  tools/perf/tests/builtin-test.c               |   1 -
+> > > >  tools/perf/tests/shell/attr.sh                |  22 ++
+> > > >  tools/perf/tests/{ => shell}/attr/README      |   0
+> > > >  tools/perf/tests/{ => shell}/attr/base-record |   0
+> > > >  .../tests/{ => shell}/attr/base-record-spe    |   0
+> > > >  tools/perf/tests/{ => shell}/attr/base-stat   |   0
+> > > >  .../tests/{ => shell}/attr/system-wide-dummy  |   0
+> > > >  .../tests/{ => shell}/attr/test-record-C0     |   0
+> > > >  .../tests/{ => shell}/attr/test-record-basic  |   0
+> > > >  .../{ => shell}/attr/test-record-branch-any   |   0
+> > > >  .../attr/test-record-branch-filter-any        |   0
+> > > >  .../attr/test-record-branch-filter-any_call   |   0
+> > > >  .../attr/test-record-branch-filter-any_ret    |   0
+> > > >  .../attr/test-record-branch-filter-hv         |   0
+> > > >  .../attr/test-record-branch-filter-ind_call   |   0
+> > > >  .../attr/test-record-branch-filter-k          |   0
+> > > >  .../attr/test-record-branch-filter-u          |   0
+> > > >  .../tests/{ => shell}/attr/test-record-count  |   0
+> > > >  .../tests/{ => shell}/attr/test-record-data   |   0
+> > > >  .../{ => shell}/attr/test-record-dummy-C0     |   0
+> > > >  .../tests/{ => shell}/attr/test-record-freq   |   0
+> > > >  .../attr/test-record-graph-default            |   0
+> > > >  .../attr/test-record-graph-default-aarch64    |   0
+> > > >  .../{ => shell}/attr/test-record-graph-dwarf  |   0
+> > > >  .../{ => shell}/attr/test-record-graph-fp     |   0
+> > > >  .../attr/test-record-graph-fp-aarch64         |   0
+> > > >  .../attr/test-record-group-sampling           |   0
+> > > >  .../tests/{ => shell}/attr/test-record-group1 |   0
+> > > >  .../tests/{ => shell}/attr/test-record-group2 |   0
+> > > >  .../{ => shell}/attr/test-record-no-buffering |   0
+> > > >  .../{ => shell}/attr/test-record-no-inherit   |   0
+> > > >  .../{ => shell}/attr/test-record-no-samples   |   0
+> > > >  .../tests/{ => shell}/attr/test-record-period |   0
+> > > >  .../{ => shell}/attr/test-record-pfm-period   |   0
+> > > >  .../tests/{ => shell}/attr/test-record-raw    |   0
+> > > >  .../{ => shell}/attr/test-record-spe-period   |   0
+> > > >  .../attr/test-record-spe-period-term          |   0
+> > > >  .../attr/test-record-spe-physical-address     |   0
+> > > >  .../attr/test-record-user-regs-no-sve-aarch64 |   0
+> > > >  .../test-record-user-regs-old-sve-aarch64     |   0
+> > > >  .../attr/test-record-user-regs-sve-aarch64    |   0
+> > > >  .../perf/tests/{ => shell}/attr/test-stat-C0  |   0
+> > > >  .../tests/{ => shell}/attr/test-stat-basic    |   0
+> > > >  .../tests/{ => shell}/attr/test-stat-default  |   0
+> > > >  .../{ => shell}/attr/test-stat-detailed-1     |   0
+> > > >  .../{ => shell}/attr/test-stat-detailed-2     |   0
+> > > >  .../{ => shell}/attr/test-stat-detailed-3     |   0
+> > > >  .../tests/{ => shell}/attr/test-stat-group1   |   0
+> > > >  .../{ => shell}/attr/test-stat-no-inherit     |   0
+> > > >  tools/perf/tests/{ => shell/lib}/attr.py      |   0
+> > > >  tools/perf/tests/tests.h                      |   1 -
+> > > >  tools/perf/util/evsel.c                       | 122 +++++++++-
+> > > >  tools/perf/util/util.h                        |   7 -
+> > > >  57 files changed, 142 insertions(+), 237 deletions(-)
+> > > >  delete mode 100644 tools/perf/tests/attr.c
+> > > >  create mode 100755 tools/perf/tests/shell/attr.sh
+> > > >  rename tools/perf/tests/{ => shell}/attr/README (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/base-record (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/base-record-spe (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/base-stat (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/system-wide-dummy (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-C0 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-basic (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-any (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_call (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-any_ret (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-hv (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-ind_call (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-k (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-branch-filter-u (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-count (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-data (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-dummy-C0 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-freq (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-default (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-default-aarch64 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-dwarf (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-graph-fp-aarch64 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-group-sampling (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-group1 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-group2 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-no-buffering (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-no-inherit (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-no-samples (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-period (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-pfm-period (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-raw (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-period (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-period-term (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-spe-physical-address (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-no-sve-aarch64 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-old-sve-aarch64 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-record-user-regs-sve-aarch64 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-C0 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-basic (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-default (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-1 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-2 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-detailed-3 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-group1 (100%)
+> > > >  rename tools/perf/tests/{ => shell}/attr/test-stat-no-inherit (100%)
+> > > >  rename tools/perf/tests/{ => shell/lib}/attr.py (100%)
+> > > >
+> > > > --
+> > > > 2.46.1.824.gd892dcdcdd-goog
+> > > >
 
