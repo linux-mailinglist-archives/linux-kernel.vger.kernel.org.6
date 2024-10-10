@@ -1,170 +1,253 @@
-Return-Path: <linux-kernel+bounces-359465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6B998BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5AD7998BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8FF1C24A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA691C24AA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162101CC886;
-	Thu, 10 Oct 2024 15:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6269B1CCEF9;
+	Thu, 10 Oct 2024 15:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AD9lnCec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L2mmwB5X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3BE192D8B;
-	Thu, 10 Oct 2024 15:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907621CCB2E;
+	Thu, 10 Oct 2024 15:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574717; cv=none; b=ckmn1HSo1DLNwtdO8qJ2PRrLqZef+9yzo4D4zD1srcF4fuDuvEerdd6l5g7RfhAJG/b8yBKBVlMI1KdVIOkCZ9JR0Lqn+Dq7Vap7QOjIjaFrahFiJ6YiOXJ7lATp2QCyPyKY8vjj59KlH/IogiOiB2kXvpsic9gyc40178O6PUM=
+	t=1728574763; cv=none; b=at8SGK+Ge4l2CdaeGzC/ZRzrxC0uDWOcgdDb3TSZe93+fYCUd1x2guKnwUD6dke0NK0TNFfxrTXJJeMaxMLqPfq26pngR8XJVmbhdqJIu1BTQDfwc5avgX/VUX26fsaoFiJANRcrqxMzIbn77q89w+2U4fqR5ZmfjRl/C7d0GsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574717; c=relaxed/simple;
-	bh=uit4Lub857XpP8bTZpmDL+e/ODYWWFL0tRZq2qQw2uw=;
+	s=arc-20240116; t=1728574763; c=relaxed/simple;
+	bh=OKZM64W2/1goUfn9zpZk+nrafJl+gGzMnyjh3GoRC7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzlOukoZ3lHB+0hyhro4PrMBXQ8s5KF5ljP7WbphbB5x48jHze45qfZ604ADMqrm03uwIdEmuvbpMSEFg69i2t8Bjyancjx16DHHSOkGxbbgMtHLfw5ztMdluavoNvnXiRGaBW3o7fCpZKvnNUD+JYNPYJbBXHZ8wylhDUzKBcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AD9lnCec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E071C4CEC5;
-	Thu, 10 Oct 2024 15:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728574717;
-	bh=uit4Lub857XpP8bTZpmDL+e/ODYWWFL0tRZq2qQw2uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AD9lnCecP7G3SU98hjKeIg/DUoTrcAwC8Vd9ohjRrn9hwTUbNQ8IhJVBjKTeTqCC/
-	 6LdfgfWTyGgWn2MQb+vO4VdJ+6zUmk9GYW3EMB64DDlvSLS2e6cnLTsu6w8QERMopv
-	 wJG6wF7nOFYdbYdF3mU56JP5HPLIAAHIZ4KLNZa/UtrEq+GE41lcoY+RT16sJWR+qB
-	 56SXpuw05PWLSOOQtttGxTZji+RUvZtLb7W4xT7TvfApTbEmZJLsRXK+TIWjD+/Pzv
-	 fVVNDVEPU9P96+CotDDq6lbVs9uADhuTFLsG86YHLiNDSAfGAzQFkMNhppSl9Ys9R4
-	 8Up8y794nVP8w==
-Date: Thu, 10 Oct 2024 17:38:34 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 12/12] refscale: Add srcu_read_lock_lite() support
- using "srcu-lite"
-Message-ID: <Zwf0-jFnWmpPIVy_@localhost.localdomain>
-References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
- <20241009180719.778285-12-paulmck@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5Bb2COs79OiV80n1L2Vy51i/TTrR7DFRIfPdjEc9PXEYtbb/yFTfDR8BZxoSDl3J8BXsHNP7AzzaJIS2CKBjKWLXXcev/IsBbhqjVitJgbSiM/TOEFQ+RIp2O/oAAk5D0Q7LJ4JdkrMle5C3SJXA0D1pb3yOFflvlNNuzWABco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L2mmwB5X; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728574762; x=1760110762;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OKZM64W2/1goUfn9zpZk+nrafJl+gGzMnyjh3GoRC7Q=;
+  b=L2mmwB5XAHT8FXs/oVTyK79unVybIdMQE2V4hqOTYONvbSbTwNYrTBPC
+   851Hfc8pt7EPQCokopwqL2TYzDjQXqEylvGHlrCxuX9uwdrOTH3tAYNpu
+   wV20rDJYTjhe9G0fVJ6jfsZQp0ZXjmDH9qL2S5bFmzwlMVsiTY590YCQd
+   UCXQGidLQFfLcU030pjtW+yo98hGYW6TJX8TV/ABRRJEkxr65N63iybaq
+   6qwQYTj4fhob9vckSGsq96ngbNEFAzzkeBM03QcPv2DLja1llZ7xmF7Hs
+   euj3MV0B6Vkgu/VpIyHbCBNxZWqN8a507dnwOXdCYGq4mG/2EnENsfyJ4
+   Q==;
+X-CSE-ConnectionGUID: zLiurKvyTcqn1Ty1sfnnTQ==
+X-CSE-MsgGUID: vs764LOiQHW5gIqIYIYn+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31736772"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="31736772"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:39:21 -0700
+X-CSE-ConnectionGUID: pfr2fdPsTgiJOjd3/2PF8Q==
+X-CSE-MsgGUID: x3yuQj0aSsa6TZ/FIAjH5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="81637488"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 10 Oct 2024 08:39:18 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syvFz-000AwT-2N;
+	Thu, 10 Oct 2024 15:39:15 +0000
+Date: Thu, 10 Oct 2024 23:38:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Golle <daniel@makrotopia.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
+Message-ID: <202410102342.H7m4WFQ5-lkp@intel.com>
+References: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009180719.778285-12-paulmck@kernel.org>
+In-Reply-To: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
 
-Le Wed, Oct 09, 2024 at 11:07:19AM -0700, Paul E. McKenney a écrit :
-> This commit creates a new srcu-lite option for the refscale.scale_type
-> module parameter that selects srcu_read_lock_lite() and
-> srcu_read_unlock_lite().
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: <bpf@vger.kernel.org>
+Hi Daniel,
 
-This one does not apply cleanly. I assume there is some dependency to another
-branch?
+kernel test robot noticed the following build errors:
 
-Thanks.
+[auto build test ERROR on net-next/main]
 
-> ---
->  kernel/rcu/refscale.c | 51 +++++++++++++++++++++++++++++++++----------
->  1 file changed, 40 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-> index be66e5a67ee19..897d5b5494949 100644
-> --- a/kernel/rcu/refscale.c
-> +++ b/kernel/rcu/refscale.c
-> @@ -216,6 +216,36 @@ static const struct ref_scale_ops srcu_ops = {
->  	.name		= "srcu"
->  };
->  
-> +static void srcu_lite_ref_scale_read_section(const int nloops)
-> +{
-> +	int i;
-> +	int idx;
-> +
-> +	for (i = nloops; i >= 0; i--) {
-> +		idx = srcu_read_lock_lite(srcu_ctlp);
-> +		srcu_read_unlock_lite(srcu_ctlp, idx);
-> +	}
-> +}
-> +
-> +static void srcu_lite_ref_scale_delay_section(const int nloops, const int udl, const int ndl)
-> +{
-> +	int i;
-> +	int idx;
-> +
-> +	for (i = nloops; i >= 0; i--) {
-> +		idx = srcu_read_lock_lite(srcu_ctlp);
-> +		un_delay(udl, ndl);
-> +		srcu_read_unlock_lite(srcu_ctlp, idx);
-> +	}
-> +}
-> +
-> +static const struct ref_scale_ops srcu_lite_ops = {
-> +	.init		= rcu_sync_scale_init,
-> +	.readsection	= srcu_lite_ref_scale_read_section,
-> +	.delaysection	= srcu_lite_ref_scale_delay_section,
-> +	.name		= "srcu-lite"
-> +};
-> +
->  #ifdef CONFIG_TASKS_RCU
->  
->  // Definitions for RCU Tasks ref scale testing: Empty read markers.
-> @@ -1133,27 +1163,26 @@ ref_scale_init(void)
->  	long i;
->  	int firsterr = 0;
->  	static const struct ref_scale_ops *scale_ops[] = {
-> -		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
-> -		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &sched_clock_ops, &clock_ops,
-> -		&jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
-> +		&rcu_ops, &srcu_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
-> +		&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
-> +		&sched_clock_ops, &clock_ops, &jiffies_ops, &typesafe_ref_ops, &typesafe_lock_ops,
-> +		&typesafe_seqlock_ops,
->  	};
->  
->  	if (!torture_init_begin(scale_type, verbose))
->  		return -EBUSY;
->  
->  	for (i = 0; i < ARRAY_SIZE(scale_ops); i++) {
-> -		cur_ops = scale_ops[i];
-> -		if (strcmp(scale_type, cur_ops->name) == 0)
-> +		cur_ops = scale_ops[i]; if (strcmp(scale_type,
-> +		cur_ops->name) == 0)
->  			break;
->  	}
->  	if (i == ARRAY_SIZE(scale_ops)) {
-> -		pr_alert("rcu-scale: invalid scale type: \"%s\"\n", scale_type);
-> -		pr_alert("rcu-scale types:");
-> -		for (i = 0; i < ARRAY_SIZE(scale_ops); i++)
-> +		pr_alert("rcu-scale: invalid scale type: \"%s\"\n",
-> +		scale_type); pr_alert("rcu-scale types:"); for (i = 0;
-> +		i < ARRAY_SIZE(scale_ops); i++)
->  			pr_cont(" %s", scale_ops[i]->name);
-> -		pr_cont("\n");
-> -		firsterr = -EINVAL;
-> -		cur_ops = NULL;
-> +		pr_cont("\n"); firsterr = -EINVAL; cur_ops = NULL;
->  		goto unwind;
->  	}
->  	if (cur_ops->init)
-> -- 
-> 2.40.1
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Golle/net-phy-intel-xway-add-support-for-PHY-LEDs/20241009-103036
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel%40makrotopia.org
+patch subject: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241010/202410102342.H7m4WFQ5-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410102342.H7m4WFQ5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410102342.H7m4WFQ5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/net/phy/intel-xway.c:7:
+   In file included from include/linux/mdio.h:9:
+   In file included from include/uapi/linux/mdio.h:15:
+   In file included from include/linux/mii.h:13:
+   In file included from include/linux/linkmode.h:5:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/net/phy/intel-xway.c:7:
+   In file included from include/linux/mdio.h:9:
+   In file included from include/uapi/linux/mdio.h:15:
+   In file included from include/linux/mii.h:13:
+   In file included from include/linux/linkmode.h:5:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/net/phy/intel-xway.c:7:
+   In file included from include/linux/mdio.h:9:
+   In file included from include/uapi/linux/mdio.h:15:
+   In file included from include/linux/mii.h:13:
+   In file included from include/linux/linkmode.h:5:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/net/phy/intel-xway.c:7:
+   In file included from include/linux/mdio.h:9:
+   In file included from include/uapi/linux/mdio.h:15:
+   In file included from include/linux/mii.h:13:
+   In file included from include/linux/linkmode.h:5:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/net/phy/intel-xway.c:518:8: error: use of undeclared identifier 'PHY_LED_ACTIVE_HIGH'; did you mean 'PHY_LED_ACTIVE_LOW'?
+     518 |                 case PHY_LED_ACTIVE_HIGH:
+         |                      ^~~~~~~~~~~~~~~~~~~
+         |                      PHY_LED_ACTIVE_LOW
+   include/linux/phy.h:880:2: note: 'PHY_LED_ACTIVE_LOW' declared here
+     880 |         PHY_LED_ACTIVE_LOW = 0,
+         |         ^
+>> drivers/net/phy/intel-xway.c:518:8: error: duplicate case value 'PHY_LED_ACTIVE_LOW'
+     518 |                 case PHY_LED_ACTIVE_HIGH:
+         |                      ^
+   drivers/net/phy/intel-xway.c:515:8: note: previous case defined here
+     515 |                 case PHY_LED_ACTIVE_LOW:
+         |                      ^
+   7 warnings and 2 errors generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +518 drivers/net/phy/intel-xway.c
+
+   503	
+   504	static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
+   505					      unsigned long modes)
+   506	{
+   507		bool active_low = false;
+   508		u32 mode;
+   509	
+   510		if (index >= XWAY_GPHY_MAX_LEDS)
+   511			return -EINVAL;
+   512	
+   513		for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+   514			switch (mode) {
+   515			case PHY_LED_ACTIVE_LOW:
+   516				active_low = true;
+   517				break;
+ > 518			case PHY_LED_ACTIVE_HIGH:
+   519				break;
+   520			default:
+   521				return -EINVAL;
+   522			}
+   523		}
+   524	
+   525		return phy_modify(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index),
+   526				  active_low ? XWAY_GPHY_LED_INV(index) : 0);
+   527	}
+   528	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
