@@ -1,137 +1,84 @@
-Return-Path: <linux-kernel+bounces-359980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCFF999332
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:53:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEF5999334
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60EAB1C23CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:53:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E62F1C22C34
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137841D0947;
-	Thu, 10 Oct 2024 19:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D751CF5C5;
+	Thu, 10 Oct 2024 19:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6hv54ez"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HFaHqye8"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC4719B3CB;
-	Thu, 10 Oct 2024 19:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17461CBEAB;
+	Thu, 10 Oct 2024 19:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728589972; cv=none; b=SclLe8wvtf5LHK2H81s11W6phZbt23d9UtLSNljxpWrEC3trXVozuSqrIftDWCWPkahBxAAeyPJb8VIDxMBRtdoUPg1ynKfFSHye2LfRLmpTIW1LvK8J5SH6CP3hLr0VZEhXhhAN/Be1x7Q+W/vLKjpQi0Fyx5ozd2wQGS4KmsQ=
+	t=1728589998; cv=none; b=CnGx/1d/XW1rVArpsm+yfKIzulCMC2lYYAcushFlDJ8VYqX9kq1lB7SXb0n9aPqPS65HQNaNuxKw9Tum8RQ+bbriFPGzIcsUaHeyuVX4xIyRjeJ4Qu86V5CpaYHxGuuGDP3IezHiX3LVuEppUBYX4sjvFZhnbHdyhjM3eySazJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728589972; c=relaxed/simple;
-	bh=Dv8ScenVzzecZ9PQIm1c8dRNjUPdLBI18C5uRbFisgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i3paAbp+84+ZgSllb7dfGJUawy91GoLbVXMTiGuobcxAQCnJJ5UIXi9T2S2TkubZiyY2Q99MGBWqacDHzZaBtlflBvXpmqKT4zDj1WnkzrNZ8NF/BnC3gwyEXItKhGE6Gecgx7u+9Sxt7X1OkTGJFX2LNhz0PyZkMQt16q+HB7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6hv54ez; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-50cf67a2ef7so368592e0c.1;
-        Thu, 10 Oct 2024 12:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728589970; x=1729194770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dv8ScenVzzecZ9PQIm1c8dRNjUPdLBI18C5uRbFisgg=;
-        b=l6hv54ezvBxqsID6a/MW6jz2QF9urOXgA5INMUhcb0wgG2ODfSdT2b9Dfng91KiyUl
-         497DHVpvgrS6Wcv5cXtc8dKLBSUIubzsCnnirGMvusQEZEBtYDKSoB3TsZprrSII97So
-         GquhK+CjLbEko9Ai4wl0vXnYu8tZWTzjJnYKh5nPlfATMDNqxlZB9jyAvpazOmQacXS/
-         0iqPxOqgqCziujv0ghdl9CkyWfPByIf0kU+GXsBzUBdvksInk9YdyrtO40egu5KJknds
-         4mOzQlT9lX5TjKqeOuX0lifEgdWw70ksnnZiPb9aJn+Fn9+AAwIVSANr0ulyDG+U7v68
-         lIDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728589970; x=1729194770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dv8ScenVzzecZ9PQIm1c8dRNjUPdLBI18C5uRbFisgg=;
-        b=GUhAjNqLbBXFJJI8MwvuCb/dz1kQJDVUKo+u7JR97BVq1AxQIZVuAxH2OBVmKpSRZH
-         1b2WjGgLiOVBvSHV75S2ChRbsySTENNt3KTQdad73fksZfDZlpa0Hw5OlCqLuckv5KgY
-         MT+lM5ko7kokGyswHx1Q8x1+15534H3AjkW+SKkkfVjoHTQkrWetvE6lOkner2nsSwqi
-         vkhIl7Pozh0FDydSbZBxvF/CZSNoVOG2T8rvllQrvZA4gN1j7x0DrwA4Nmjr7NFxykkK
-         zIL/eyiqzm4NRn+8eWO4kXbM0jQKn4ihlUMrvuxUoxCmTQbszf7IevB8RxRoUEv2ih7S
-         FD4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVviTHnglYpHHe1IxPsH/9VcSQUXFJiu1ae/BoyXTaRVusv20Wv4AvoDGbL2HvGIbS8LpiTPVIx+yxN@vger.kernel.org, AJvYcCWOFED+may6Ub2zl/1xla4MgXSid/jXcUcKYd8ZVoghfYe0GTAIThN3hsSuksQ4e5lJ2PqEdTL8uFLfO/yeeTksr7Y=@vger.kernel.org, AJvYcCWaB1g8spb50ZiIhd0P1kWetEUen6JU9xMdxm1d4qDUSjKn4zVo4hCpdFcyfYBO+DsgUM1EDL3EoalP5NQX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxNRp808GBj326jtVwTspMv6uSVyVvyF87LkPzVwVVLZJo3g2p
-	2swCRUuXDzqE6/w840q6mhGyRpWVJgf37uVChovnmMPVB/cPANkNOi5Xt/NnK5M7xO7isDB+O+q
-	GmBPCX+OYFQ9L9PNS1Au5Dd+eMyz5SOXF
-X-Google-Smtp-Source: AGHT+IECnwyYm6oX3xIJTYXOyAK8E60VhUQWoVlZLK4j55nxlb/55YA4vppnZ8HKR3hqPj5gdj7Zx0SPDrLilqG1imI=
-X-Received: by 2002:a05:6122:3116:b0:50b:e9a5:cd7b with SMTP id
- 71dfb90a1353d-50cf0c4d769mr6149491e0c.9.1728589969790; Thu, 10 Oct 2024
- 12:52:49 -0700 (PDT)
+	s=arc-20240116; t=1728589998; c=relaxed/simple;
+	bh=gLLejnF18JRaBdqLMMz0kV/sqCjBfUTWGoq1CF3hyso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LuvH+wlfxQLEJ17l1aRIskwiSOJWuGQxM+w41taZXWHYJOdkGbjhwq3PHelZHo1p6kUhTHXd4tPgbpxUU5LDMU2kdHtgTte1LoOKvo9KP9z6H7mh2MUPzAOCV+9QezKnw7LIoba/sYZlhcrzcV3/Q8FKkm2xPciEHcc6AqQnFR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HFaHqye8; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=oPrHANtDfaFu++DyXSV355UVRr83DEBqjiYMk9rKCkk=; b=HFaHqye8gT7FD1vFqxAaukg2ij
+	OGo85Yu7PRdhCVVbXMx0lu6YUYURb+nG4LaY1duqe5AWsCxD+Moe6nE7ax1Yg6vGX6b+1CBWb09Rv
+	m7lRHcEUujVeKsgCQ7GFvQ3Yg1QA//JbZIG366o+QSvBtm+6AMuq7CjYDU9c1Qvmkl4M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1syzDb-009eKH-4z; Thu, 10 Oct 2024 21:53:03 +0200
+Date: Thu, 10 Oct 2024 21:53:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Iulian Gilca <igilca1980@gmail.com>
+Cc: igilca@outlook.com, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] of: net: Add option for random mac address
+Message-ID: <b4d4090a-2197-40ce-9bb5-1d651496d414@lunn.ch>
+References: <20241010190508.196894-1-igilca1980@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241003131642.472298-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <7fe863c8-b883-45b0-b0e9-e376764d0bb7@tuxon.dev> <CA+V-a8tQ5vYbzhpdoeBFX483DV-nRpARCdWJnhm-vvTLzpTW2g@mail.gmail.com>
- <CACRpkdak=nv3R4z6PxNEcGgc7B6MV3bjwRbuFoTjgRCQ6CVOXw@mail.gmail.com>
-In-Reply-To: <CACRpkdak=nv3R4z6PxNEcGgc7B6MV3bjwRbuFoTjgRCQ6CVOXw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 10 Oct 2024 20:52:23 +0100
-Message-ID: <CA+V-a8uQ=b_3VRA9tbkfCNZt-UGt-_rfWbfx6HpMj6D3QWALsQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Always call rzg2l_gpio_request()
- for interrupt pins
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: claudiu beznea <claudiu.beznea@tuxon.dev>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010190508.196894-1-igilca1980@gmail.com>
 
-Hi Linus,
+On Thu, Oct 10, 2024 at 03:05:03PM -0400, Iulian Gilca wrote:
+> Embedded devices that may not have fixed mac address
+> may want to use a randomly generated one.
+> DSA switch ports are some of these.
 
-On Thu, Oct 10, 2024 at 8:47=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> On Wed, Oct 9, 2024 at 10:27=E2=80=AFAM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Wed, Oct 9, 2024 at 9:11=E2=80=AFAM claudiu beznea <claudiu.beznea@t=
-uxon.dev> wrote:
->
-> > > All these ports are hogs to configure them as input. Removing the hog
-> > > property make this patch work but I'm not sure this is the right appr=
-oach
-> > > (see below diff).
-> > >
-> > I have dropped a query [0] to GPIO maintainers to check on the correct =
-approach.
-> >
-> > https://lore.kernel.org/all/CA+V-a8vxUjTWccV-wLgy5CJiFYfEMsx-f+8weCJDP6=
-uD_dh4AA@mail.gmail.com/
->
-> Yeah I replied, the callbacks in struct irq_chip rzg2l_gpio_irqchip
-> should be calling the following callbacks:
->
-Sorry I wanted to do some poc before I responded to your email.
+Sorry, i don't follow what this patch is doing. You are looking in DT
+for a property "random-address". DT is static, so how is it going to
+be random?
 
-> /* lock/unlock as IRQ */
-> int gpiochip_lock_as_irq(struct gpio_chip *gc, unsigned int offset);
-> void gpiochip_unlock_as_irq(struct gpio_chip *gc, unsigned int offset);
->
-> In its
-> .irq_request_resources and .irq_release_resources callbacks.
->
-> And it currently doesn't even define these callbacks.
->
-> If the driver was using the GPIOLIB_IRQCHIP and adding the
-> irqchip in the standard way along with the gpiochip, this would
-> not be a problem.
->
-> Can you look into simply using GPIOLIB_IRQCHIP like most
-> other drivers as well?
->
-Thanks for the pointers, I'll investigate and add support for it.
+I also don't understand you use case. Generally, a MAC driver will try
+to find a fixed MAC address. If one cannot be found, it generates a
+random one.
 
-Cheers,
-Prabhakar
+For DSA, it takes the MAC address from the conduit interface for the
+user interfaces. If userspace whats to use come other MAC address on
+user ports, it can change the MAC address in the usual way.
+
+	Andrew
 
