@@ -1,155 +1,124 @@
-Return-Path: <linux-kernel+bounces-358717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E859982C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB289981FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000361F21CE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19EC21F21AC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5797A1BFDE9;
-	Thu, 10 Oct 2024 09:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22851BD512;
+	Thu, 10 Oct 2024 09:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZuMDp5Vg"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PWkEQ6Lk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7E21BC9E3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E076C1BD026
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553750; cv=none; b=F3E/RVW4j7ZMnuwvi0uQBFzRu3m1zIQRMDpkejD3xEe1t4U39HqPEgxa6NiqIzvXmrrx11RnV51JltoqOBlEo08tbHM42yOINgb3hxuaNyMA4vxiWtThEE9RUNodiTJUaxgek8S/dq4wl9xAVlGDV9z8CN1o39bkfDrK+/yqL1Y=
+	t=1728552015; cv=none; b=FJzD5Y+fiSkiX7JFkQujGio7lSeD1ZmRlfuwbbJIju+lNZPEF+H9GhuwCpV3IYEmO/niMdnKEdINm66RgqiS7KEMrctcs/RS1OD0uLp8W/Vp1B81rIeBC30klxL2OIwAFMt8X/RolRbU+UmTvzsOrEb1uHE/KhibfGd25k4m2hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553750; c=relaxed/simple;
-	bh=u8smGMxe7I6SDzmR4h+bIeQ8OGFXW4NhD8nmS056mss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=qIbhg50jUeC8cSUJqkoUBehklL+sSTax5H9znL0r8kTIcpAj5PPp1osGmsEYkgeUsazXk2My6rQZV65eYdfI/h82+ivtKeF/IUGZuqeLVQVc9H+gvFu2hPbsUY+Py99F15Dl+oMqI68uxRofuTRLWOb40U0IukMm+h/KIk7C/UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZuMDp5Vg; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241010094906epoutp04e7006595eef0c6f504368803ff788587~9Dnlb2nOt1393913939epoutp04a
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:49:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241010094906epoutp04e7006595eef0c6f504368803ff788587~9Dnlb2nOt1393913939epoutp04a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728553746;
-	bh=u8smGMxe7I6SDzmR4h+bIeQ8OGFXW4NhD8nmS056mss=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZuMDp5Vguh7ZAJUyMZn1TBS9NVgQN1P78VBGZJp28KXP+gDko6IcIdsVn1xI6Whtp
-	 knQIQceS3DzDmVbGor1H1q5f83ml/a1UXYErfjb7zqxriIKpvR2lkL9hgq+UA1Z9A1
-	 t+chomn6tvB4NonzGRr7zzVfcugvWf729cNIgX5s=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241010094905epcas5p1895c82ccf5ded1a6269fd9874d3299f9~9DnktG3KM0390103901epcas5p1i;
-	Thu, 10 Oct 2024 09:49:05 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XPQ265vmDz4x9Pw; Thu, 10 Oct
-	2024 09:49:02 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3C.06.18935.E03A7076; Thu, 10 Oct 2024 18:49:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241010092012epcas5p2bc333a1f880209003523e71d97ba3298~9DOWjE8IC3201132011epcas5p2Q;
-	Thu, 10 Oct 2024 09:20:12 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241010092012epsmtrp2036b1ed46d6c1b4bc3ef4bf02bcdb5d9~9DOWhVmon0902409024epsmtrp2i;
-	Thu, 10 Oct 2024 09:20:12 +0000 (GMT)
-X-AuditID: b6c32a50-a99ff700000049f7-f9-6707a30e3822
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	74.91.08227.C4C97076; Thu, 10 Oct 2024 18:20:12 +0900 (KST)
-Received: from dev.. (unknown [109.105.118.18]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241010092011epsmtip1c884ed7c717d5c99fda30e37a13a14e4~9DOVptx_P0740307403epsmtip1y;
-	Thu, 10 Oct 2024 09:20:11 +0000 (GMT)
-From: Ruyi Zhang <ruyi.zhang@samsung.com>
-To: asml.silence@gmail.com, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	peiwei.li@samsung.com, ruyi.zhang@samsung.com
-Subject: RE: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to
- fdinfo
-Date: Thu, 10 Oct 2024 09:20:03 +0000
-Message-ID: <20241010092003.2894-1-ruyi.zhang@samsung.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <1f21a22b-e5a7-48bd-a1c8-b9d817b2291a@gmail.com>
+	s=arc-20240116; t=1728552015; c=relaxed/simple;
+	bh=gt2Q8i+/uL6SnPG+SqIIUvv4iq2wBJWCilwcTB+uC2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rChjLezqwvPdNEPFTn5/OszYvNsP4BhgSg2gCnz5HEJ9sPGQ2WmHo/t2OSnB6TBAPigQu+wcw6q5AmaCQnMIxOKiL8rcWs4MBURD79u83xVtU8pue1obsGogO0+HYmKtHTcNWsD/5Af0zdIuku1f7W9Yipo2QeG4W7HkKCnzoe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PWkEQ6Lk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728552012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c2EUHF55AVEM97e3j7jFpqy1lpH47XxEwMg8191duf8=;
+	b=PWkEQ6Lkwcz2bAvCklPepqYMReNZYxMDtaJiaj1lNY2wM51muQaw1yE20JOrr3X5h6X/uA
+	mtBEDXh3+rvYIAnllXQWiBOZPzoE+FrIg5C++9Nh9zEtxuCi6fsuCaBhkv7HSyo99aduJL
+	NFnki2PqFB1I5cF6en6ZsEQTOJh/2J0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-KQi6t3NcMKmlHW-rZIAGxw-1; Thu, 10 Oct 2024 05:20:09 -0400
+X-MC-Unique: KQi6t3NcMKmlHW-rZIAGxw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d325e2b47so348421f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:20:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728552008; x=1729156808;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c2EUHF55AVEM97e3j7jFpqy1lpH47XxEwMg8191duf8=;
+        b=vv0nLX5K/SxfzlNaNfVZUngTkC9l5504lRKtRI39/AqVYChwpUywFNAuqvW46JdypD
+         XQyVYUDddr3D/LytHBWVQ+gjc4N3uNOYl9OxXPXoXl7NkJQmHmGWzVikY3pN0FedSwwU
+         QBt3dlYF64ABOKcyIBlQQfhCg1RlchGny5eP7G7+KJzP1wrU/jwRyTSAB7Or/JRUpHSU
+         VXdlDloB9oxbpXiq8iqWGD8AXhzjpFFtOmWHZvAzf5Xz3V3q6LUd8emPGMD2OiPltSPB
+         Aj2lk61Y7qm0x9kWJIgurwKhL2AkKROCew/blGI6qK0i4U+29YYgH3JNe6jkVMlv/jNd
+         MJoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQbqFvWAm1Wvy2GZVSt6kdsW1PHdthWQhMtEbMPDx1/CkIEiVQwdPdFwSgrcsTclmX99N57147AVBz1Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKVOlJZFABZvNzco1P36IiRN0AO/1obk+/yK9PMFFI2FCAqjFC
+	KYiYjKfgn9YXKkEpf2uc4EpgFYAQkmQ2pYxWV5r7wOciq6JVR2yPmaY4/Oc5eCf0ePsxneKrKfv
+	qIe92X9oEZNnGLrdQA80sV2XbNDkhthfoIqbzPDHXo9WUmdy8NaPd9kin+vj2yg==
+X-Received: by 2002:a5d:6908:0:b0:374:b71f:72c9 with SMTP id ffacd0b85a97d-37d47e9d085mr2387102f8f.16.1728552008548;
+        Thu, 10 Oct 2024 02:20:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFdzmtcngiF6R3pU93/9HaNeh0a1Th7Q3WQBAnseARGFC78C7arTlWMQzmNNCWluBuGpiZQJg==
+X-Received: by 2002:a5d:6908:0:b0:374:b71f:72c9 with SMTP id ffacd0b85a97d-37d47e9d085mr2387085f8f.16.1728552008187;
+        Thu, 10 Oct 2024 02:20:08 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-27-157.dyn.eolo.it. [146.241.27.157])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa3bsm974757f8f.78.2024.10.10.02.20.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 02:20:07 -0700 (PDT)
+Message-ID: <822f5875-5ec0-46e1-83f8-66ec1e31f0f2@redhat.com>
+Date: Thu, 10 Oct 2024 11:20:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmk+LIzCtJLcpLzFFi42LZdlhTQ5dvMXu6watF+hZzVm1jtFh9t5/N
-	4l3rORaLX913GS0u75rDZvFsL6fFl8Pf2S3OTvjA6sDhsXPWXXaPy2dLPfq2rGL0+LxJLoAl
-	KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+gIJYWy
-	xJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2
-	xr81rAXzOSpOdD1gbWC8xNbFyMkhIWAi8ePDTuYuRi4OIYE9jBKNXR9ZQBJCAp8YJe7e0YRI
-	fGOU2HvrHhNMx/1bf9ggEnsZJQ4s/88G0fGEUWLS+lIQm01AU+LyzAZGEFtEQFti7f3tYFOZ
-	BbIlDp6fCjSIg0NYIEBi9mw9kDCLgKrEvkm7mEFsXgEriY7+y8wQu+QlFu9YDmZzCthKLL74
-	lgmiRlDi5MwnUCPlJZq3zgb7QELgFrvE5b2bWCCaXSSuftwNZQtLvDq+hR3ClpL4/G4vG8gN
-	EgLFEg/78iHCDYwS237XQdjWEv+u7GEBKWEGemX9Ln2IsKzE1FPrmCDW8kn0/n4CDRJeiR3z
-	YGwVifcr3jHBbFrfuhvK9pC4cu4/CyTYJjBKrFj6kn0Co8IsJO/MQvLOLITVCxiZVzFKpRYU
-	56anJpsWGOrmpZbDozg5P3cTIzhVagXsYFy94a/eIUYmDsZDjBIczEoivLoLWdOFeFMSK6tS
-	i/Lji0pzUosPMZoCA3wis5Rocj4wWeeVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2a
-	WpBaBNPHxMEp1cC0+vQOo9s13XuU21+EzLy/aOOaV1f5mvcJxHMFiPNXu1t48604om+94YXm
-	yTzXN8XT927xdlxh7fDZyzieKVUz9WfN+o3575JmHFV6qB79u/DSjOm5ijcTqgrv31j46cqi
-	V4df7gicx2k6d3mj0Rv+2AqzHXEKLzvLOd66rr0VabnPuNBlQ8Q8tgcty4NPM8yOmqW6sPLw
-	l5s6Dqev5HbxM71j4FrZk3mlIi1yv45u7l0O+zUbJmcmRp5sr2m7JLukt8Gn8+XKH3bP3KYY
-	31iUd6zau0zfxjDTnJfzVJ2X0uFzEpp7/lqW1F93Znl562HSgebpNV4uSlxzPiX29zd6/Qu4
-	znJvs0SpRNHLigtKLMUZiYZazEXFiQDtJ18kHgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSnK7PHPZ0g5v3RCzmrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLZXk6LL4e/s1ucnfCB1YHDY+esu+wel8+WevRtWcXo8XmTXABL
-	FJdNSmpOZllqkb5dAlfGvzWsBfM5Kk50PWBtYLzE1sXIySEhYCJx/9YfMFtIYDejxJy76RBx
-	KYmbTceYIGxhiZX/nrND1DxilPiyTxHEZhPQlLg8s4ERxBYR0JVYu6kRzGYWyJc41rCeGcQW
-	FvCT+P6+D6yXRUBVYt+kXWBxXgEriY7+y8wQ8+UlFu9YDmZzCthKLL74FmgvB9AuG4klU7gg
-	ygUlTs58wgIxXl6ieets5gmMArOQpGYhSS1gZFrFKJlaUJybnltsWGCUl1quV5yYW1yal66X
-	nJ+7iREcylpaOxj3rPqgd4iRiYPxEKMEB7OSCK/uQtZ0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK
-	4rzfXvemCAmkJ5akZqemFqQWwWSZODilGpg2Zp66OW255uXNV/5unPvMRGeK/EPZw8nJa3b2
-	e4gWTJsXt1ptVpXf4oT2ispfV775O3MJshe+dfXrbruQkl1+dWqjiVzX/uN9p2a9ucD0Jv2G
-	ulm78fa2rWrhL3XuZS2Idjp2xaTWwkPfVPN6b89shlebQibKOk/p7PoaviX9gNv5NQtSLA9F
-	p7GZ3D/gtLb5cPLnxRcNC4UWS9x+HWR31CrFUinorG1iRM4vxwKemT+N3ZkO6C1+s+9UtEPN
-	9/pP8c2vef/858hitEkNXa5/IiVgQdurbpPnHA80lL9euW3GfG6JtELxrGeK6y5xhnQxLtX+
-	b1x4o/ln27IrrAIls9Q4nBn1XX98yLjW36rEUpyRaKjFXFScCACmoiMs1AIAAA==
-X-CMS-MailID: 20241010092012epcas5p2bc333a1f880209003523e71d97ba3298
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241010092012epcas5p2bc333a1f880209003523e71d97ba3298
-References: <1f21a22b-e5a7-48bd-a1c8-b9d817b2291a@gmail.com>
-	<CGME20241010092012epcas5p2bc333a1f880209003523e71d97ba3298@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: Implement fault injection forcing skb
+ reallocation
+To: Breno Leitao <leitao@debian.org>, Akinobu Mita <akinobu.mita@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-team@meta.com, kuniyu@amazon.com, asml.silence@gmail.com,
+ Willem de Bruijn <willemb@google.com>, Mina Almasry
+ <almasrymina@google.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+References: <20241008111358.1691157-1-leitao@debian.org>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241008111358.1691157-1-leitao@debian.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
----
-On 25 Sep 2024 12:58 Pavel Begunkov wrote
-> On 9/25/24 09:58, Ruyi Zhang wrote:
->> io_uring fdinfo contains most of the runtime information,which is
->> helpful for debugging io_uring applications; However, there is
->> currently a lack of timeout-related information, and this patch adds
->> timeout_list information.
+On 10/8/24 13:13, Breno Leitao wrote:
+> +void skb_might_realloc(struct sk_buff *skb)
+> +{
+> +	struct net_device *net = skb->dev;
+> +
+> +	if (skb_realloc.filtered &&
+> +	    strncmp(net->name, skb_realloc.devname, IFNAMSIZ))
+> +		/* device name filter set, but names do not match */
+> +		return;
+> +
+> +	if (!should_fail(&skb_realloc.attr, 1))
+> +		return;
 
-> Please refer to unaddressed comments from v1. We can't have irqs
-> disabled for that long. And it's too verbose (i.e. depends on
-> the number of timeouts).
+if you wraps the above 2 statement in an helper() taking an skb 
+argument, you could wrap it with the ALLOW_ERROR_INJECTION() macro, for 
+added flexibility, i.e. look at the existing should_failslab().
 
-Two questions:
+Cheers,
 
-1. I agree with you, we shouldn't walk a potentially very long list
-under spinlock. but i can't find any other way to get all the timeout
-information than to walk the timeout_list. Do you have any good ideas?
+Paolo
 
-2. I also agree seq_printf heavier, if we use seq_put_decimal_ull and
-seq_puts to concatenate strings, I haven't tested whether it's more
-efficient or not, but the code is certainly not as readable as the
-former. It's also possible that I don't fully understand what you mean
-and want to hear your opinion.
-
----
-Ruyi Zhang
 
