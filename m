@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-359102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CE1998781
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFAE998788
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680171F217B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2CE1F223C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D7B1C3316;
-	Thu, 10 Oct 2024 13:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C56B1C9DC5;
+	Thu, 10 Oct 2024 13:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saeAksIE"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X2N2DsUm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213961C7B84
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2FD1C3316;
+	Thu, 10 Oct 2024 13:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566483; cv=none; b=czNY/KNdIcTVGXKWjoShG3H8m1UAJXfXMsF05hf2ejrUaroQLfSdIjwzJX80gKW+58oUHfbO2Fa4ioRInLfvdzS+Nxpzkzpmw2dr67Sq4G5Ym2o88lLwMiHrey0C6QLKqzda4R/L7cBxbBIq6IopGtC8jvQ9RDuubbFEB0TAP5c=
+	t=1728566599; cv=none; b=FH0tz9UjoHlbbTaO6K26I5/EKmOfnJ0fuuAkpKhLX+D9YfIezf2NjiUsF7ZKY8eQlseFVMNIffSlW4AU6vLDCqK8h6E3FoiyJGnjwyG+RYpukL+IhnWL/OJyzHgfL+ZYah42vnoCxPl1Tqlmj3arYcFyfiFm4sE28sNXNEjhQeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566483; c=relaxed/simple;
-	bh=7DRDybXvi8HHlA4JKBozEkk5rZAUBYHz1N91SMf9M6c=;
+	s=arc-20240116; t=1728566599; c=relaxed/simple;
+	bh=8gkgQpfHiPKDNwXXX6H42EXWbu+1NYnLstaEU40yiVg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HO8cobjtQj7clhm2YroESYjZHN4ORNF1QZuu5+tVQ/TJRz+8nl+WqWKv4hsZzB86QBe9T9vwCCTTUc2DaNXmb6AcESGrMYEKedeSppddDrRXHsNPDr8y+wv83bLBmORMnidGCoCkXjBGxGykfkdG/j09aEl/DBIh62lYTXsfG14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=saeAksIE; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5398e58ceebso857948e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728566480; x=1729171280; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XigYU3sB/s2Rw0iXGaJ9OicIPQ+b9qifNZZ8fxL3Ss0=;
-        b=saeAksIE1ygxOIYHGCaTNFT8q4l5+6fMSVYAySUZu0wyNyZtPh7xINgPhn9XiNbT1x
-         ElTRKE6g1mmBNiuWXK28wQdHlQeCGjbhXIjFdhnNlynfCl9YrnrCnmEYIQt9CUi+hNIg
-         G0IMCJUgF4qh/3oz3A0rHfq1XX9qg05JBwLaxWhoQE0uUvldn/8qZyq43iBLV/1uxqBI
-         B45sEN/2iWDGxNLENwykavlX5wsFQhW33GALAZiwRJKjErS8ksNuOvV7aPYvTJNPtkHf
-         +UbLg0IA1w7Z5dk8jXilrZI2yLz9lKYepftNausG7IBkt3oaZDj6zRFpQkK7mFMbays3
-         G0xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728566480; x=1729171280;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XigYU3sB/s2Rw0iXGaJ9OicIPQ+b9qifNZZ8fxL3Ss0=;
-        b=wHWaiTRpIMiRpU26PmwZScsmquDfg3sAWe/16DtMB6P10jmo6fdNv75W4ujNs5u2jR
-         BRMp9nZXri4NAifo1MB9+n1yrRGWxY6Pxca1Q2wad8F/SxDdwOIt1XJ94OTFwxasarUt
-         In+XVJlOIp1suY9rtozF4mpY0eRkaYFo3fdoPyXvuQEN/ML2qRAEFWAzNLYVXpkMHwpJ
-         dgOIx90pF2UfyIKA70RCY7cL9j77RND3YE+Np+EichiQg/az4erPYPd7ObKjenrdGKda
-         IwBbLWEy6w8kRA0i3c6Qa4iiltQ12o3h2BDBIkaEWG0mSEtUtLiX/eZY4trj1JmWMVWl
-         /DoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX66AF3FWWc4ZeO+uMG/RBUTh5ohGRu89OWhO427o8zYyej+JTibudVZIexAYppotbDb59SwoUwMpMWRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxgM+zntevB8UJODVwSqfgtOXPa/HfHh0h7nIDFNBmBQo0yIzi
-	KH5a8TWV9Psh5v0v4elyNkaZwc1Wdzk60pBtpOp1dCI+MbsKk34b5EDD1QIXwhQ=
-X-Google-Smtp-Source: AGHT+IF+YKWCkRaviw5WO8kAYdrmWTSD0wjNIqxxPvLjLHR42AM2SSftnbdZgot9P+As/E1/AS0loA==
-X-Received: by 2002:a05:6512:2392:b0:535:6480:707d with SMTP id 2adb3069b0e04-539c98ab991mr1255454e87.19.1728566480282;
-        Thu, 10 Oct 2024 06:21:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c11e4sm255304e87.10.2024.10.10.06.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:21:19 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:21:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/14] drm/msm/dpu: Share SSPP info for multi-rect case
-Message-ID: <olzxobeurhyi76tdn7mq3wegxth4c7a2ys7dikajkx4d5y5z7i@3vkyjy3hg57s>
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-11-76d4f5d413bf@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eBRTjOvCAzlGR0sYGbD26bu+7eU146/ho54TLyHuzdndNIaQRhbzyunNDJLo2TU1FH8hbDY7fw9hx+2UC5VUAqumdycFMV1J3oCw2Zr1x+knP4wFTQWQbohAzIdQ07DRFm4/MeZPdgl5BrCO95hhHMpk30bX20VSqqz4ouu++So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X2N2DsUm; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728566597; x=1760102597;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8gkgQpfHiPKDNwXXX6H42EXWbu+1NYnLstaEU40yiVg=;
+  b=X2N2DsUm4hoDOWEf/CBoVeCLB6MnVwOM2iZ7GEEJeSv9BWKsibUzePlf
+   RffRys6rG5MOJUObP3R6tIXFzH2/H0kfOKZSZ48vz9afZ0gmTyoQo2XGk
+   di3SQm8USmKdXz6f1NVOZ3PSPprYMiFEXWhtK/xGTO5SebFZoHV4PQFph
+   R5AMtBNBDpwwjnb6EQEA/9dWuINeyzT1aieqbCKv0uXbekQDbLdHyeKyG
+   +lyX7elteCACyiT8vcqVWx++b3I2ywMp4j/aT6ZehI+VxJPj73PvmnchK
+   oq6fLINbPPCPvSPmJab3suSD3oekA1axmbgvcyQTrw5jyk24ePzStmWe0
+   A==;
+X-CSE-ConnectionGUID: oHdOTM8PR7yPisrudmqb3A==
+X-CSE-MsgGUID: oYSPN9VhRaWUI4brDS/Ddg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="39288630"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="39288630"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:23:16 -0700
+X-CSE-ConnectionGUID: 8m+xtbiWRPKjBiHC/Uu+Ag==
+X-CSE-MsgGUID: g4DDWm/IRbWUAcw1Dj6xWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="76777958"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Oct 2024 06:23:14 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1syt8I-000An3-2K;
+	Thu, 10 Oct 2024 13:23:10 +0000
+Date: Thu, 10 Oct 2024 21:23:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Golle <daniel@makrotopia.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
+Message-ID: <202410102110.ts6N9Ge2-lkp@intel.com>
+References: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,43 +82,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-11-76d4f5d413bf@linaro.org>
+In-Reply-To: <c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel@makrotopia.org>
 
-On Wed, Oct 09, 2024 at 04:50:24PM GMT, Jun Nie wrote:
-> Share SSPP info for multi-rect case if virtual plane is not enabled.
-> Otherwise, the 2nd half of DMA content is not displayed due to sspp
-> pointer of r_pipe is null.
+Hi Daniel,
 
-Fixes?
+kernel test robot noticed the following build errors:
 
-> 
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> index 904ebec1c8a18..898fc2937954e 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> @@ -1042,6 +1042,11 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->  		pipe->multirect_index = DPU_SSPP_RECT_0;
->  		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
->  
-> +		/*
-> +		 * Signifies that r_pipe is to be used if the width of the 2nd
-> +		 * pipe is not 0. This does not apply to virtual plane case.
-> +		 */
-> +		r_pipe->sspp = pipe->sspp;
->  		r_pipe->multirect_index = DPU_SSPP_RECT_1;
->  		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
->  	}
-> 
-> -- 
-> 2.34.1
-> 
+[auto build test ERROR on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Golle/net-phy-intel-xway-add-support-for-PHY-LEDs/20241009-103036
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/c1358e27e3fea346600369bb5d9195e6ccfbcf50.1728440758.git.daniel%40makrotopia.org
+patch subject: [PATCH net-next] net: phy: intel-xway: add support for PHY LEDs
+config: xtensa-randconfig-r073-20241010 (https://download.01.org/0day-ci/archive/20241010/202410102110.ts6N9Ge2-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410102110.ts6N9Ge2-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410102110.ts6N9Ge2-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/net/phy/intel-xway.c: In function 'xway_gphy_led_polarity_set':
+>> drivers/net/phy/intel-xway.c:518:22: error: 'PHY_LED_ACTIVE_HIGH' undeclared (first use in this function); did you mean 'PHY_LED_ACTIVE_LOW'?
+     518 |                 case PHY_LED_ACTIVE_HIGH:
+         |                      ^~~~~~~~~~~~~~~~~~~
+         |                      PHY_LED_ACTIVE_LOW
+   drivers/net/phy/intel-xway.c:518:22: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +518 drivers/net/phy/intel-xway.c
+
+   503	
+   504	static int xway_gphy_led_polarity_set(struct phy_device *phydev, int index,
+   505					      unsigned long modes)
+   506	{
+   507		bool active_low = false;
+   508		u32 mode;
+   509	
+   510		if (index >= XWAY_GPHY_MAX_LEDS)
+   511			return -EINVAL;
+   512	
+   513		for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
+   514			switch (mode) {
+   515			case PHY_LED_ACTIVE_LOW:
+   516				active_low = true;
+   517				break;
+ > 518			case PHY_LED_ACTIVE_HIGH:
+   519				break;
+   520			default:
+   521				return -EINVAL;
+   522			}
+   523		}
+   524	
+   525		return phy_modify(phydev, XWAY_MDIO_LED, XWAY_GPHY_LED_INV(index),
+   526				  active_low ? XWAY_GPHY_LED_INV(index) : 0);
+   527	}
+   528	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
