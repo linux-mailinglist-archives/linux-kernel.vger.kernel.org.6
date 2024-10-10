@@ -1,182 +1,189 @@
-Return-Path: <linux-kernel+bounces-359344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADE5998A68
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41514998A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 761B928AAD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB06286248
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840E11C3F28;
-	Thu, 10 Oct 2024 14:40:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD561CFECC;
+	Thu, 10 Oct 2024 14:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvohx1nJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCC51BDAA8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5581CF287;
+	Thu, 10 Oct 2024 14:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728571207; cv=none; b=Kz45EocM9piI+7B5tt2i3dJyCGzS8R5PWt4apWvOAyrK3pgcEezExDJ/cAD3Pt16X/vvkUZWGq+AFmWb94C50AkP4aV16pxbaYpJmwkpI94Igf0XPPmrEBcXKt+/cN4pF4kHRjUCWHSO9eNdKq0AwBDcKxDnEokqXm7x4ggfmug=
+	t=1728571239; cv=none; b=Vbp0qnjgKlvCO7qUp7IxPTtuvE4RHoWZ1zh8sjN4xwuKWv2X7Xpgi5m7SDBMWTKWAc4TtHaaYlOjiZyhNFG7hkWbK7gvSNp9hNW9UgFgCxbPUR22hZDcWvEux5ESQht8HqJvYSOKABJJLG0J0yue2F6ecsjfpoTO0RS6ulMU8DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728571207; c=relaxed/simple;
-	bh=9delhOsS+8TJZS5VissoMefMM4psTkjN44vE+o17H10=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CA4eZqvtAxdCI6sHHZjKc/3hOq/ddOKnXwUPbSnkGmSdVoiD5ncqJTu6M8gAQD7Om7TxZuTuGBNh/D2muS/36lqbycCOhFAJSqy4/pnDz7j67xxDpQZeUBkeGuZ4M/FJf2ZWyENQK4L37rACX93v7+DC1hg8arMsnIdAcytkngk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a392e9a8a4so12757025ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:40:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728571204; x=1729176004;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lfp9HgLnIe8KgqcOJwAdxioq3FdoGZF0q/gDkSRawMM=;
-        b=L8A5O3bw5LbDGvw2ndAk9Zq+sMmG1S0tezLtCIcNswtaPX6RmHR2SuMtaJKCO9KAlo
-         DgQmRa1z08e6DeAFe5GSEo7P1lctBxTxh241O2FVXMHqtngVxk+8gWKIi+hNFpAag0H7
-         XJqlL1RSF3LxOxxxxZDeOg/NaHWjuTbmABHBHVFdgh3YLXIS/IclBkpRkXxXcNzJEF3X
-         iTO5We3m4GL3gErJOhuUsSCKioOdlFAlg8utfwV0KOLvFGoD4Ow64Rojkm7UPcF/Wilg
-         hCIDtTAZDHKdoBCQoSx+zAC5XPGWKoBcLnZYA70ku5hGISaNxiC6dBHTQRQjQmButln/
-         CfGQ==
-X-Gm-Message-State: AOJu0YxTNNY1p7a9VhK3KO7d3aStlJ0v6xbWmph/1yUqqK+wAFjjqCsI
-	4WdVHmbL0kaI6mOPsSeBW+7SUqm+84+7zaLOZ8mfsIGPlD/5nonOE/iuLgkaVrEendCUkHzFr9v
-	WRfPUgDEeisBAhBxwI5M+3TylHeRLqRikkZBTtYr0cWdaiqUR3A2enIQ=
-X-Google-Smtp-Source: AGHT+IFLNeJn+46Ol+sKga2bhGb4RO5Q0a+15QgbEeYn5Z8ey0FIoDEUGIMYikvY+lABhChjH04T8H2Vzcx4h0L1RqPh//hnMQgD
+	s=arc-20240116; t=1728571239; c=relaxed/simple;
+	bh=Uq5PgKpLE7uhqRzqfCFPjNL9bUnSLqy/ztfVl9urxFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iyU4HRBaWtJ9ckQ23mk/9EDVGaDE4bHcWirzDm2/UhQ2K4tBqA8oYaZk/VhWkQVxTvBDx1VN5TYOlNW1yMqhIzNw7aDRFS1blRomGK8KGuaqu5pyL+tZOLZGXinnsuqOp2+4ioL6GKYJ1yv5QrTWEXb8bkpxMkSWJVvBpJjO5Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvohx1nJ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728571237; x=1760107237;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Uq5PgKpLE7uhqRzqfCFPjNL9bUnSLqy/ztfVl9urxFg=;
+  b=kvohx1nJBQjJkXtR7BonDqKnk2WLQ8kzvl1kAiX/UbNcW0uulzNFvqsK
+   fcJUtpkJVb+cxXxaYzsfB5rFDUax0YJV5eBOVnTzm9HtfzrXXk1Q4am7B
+   qjoDK/SzW0sPcvdy/83mUEheSoga3MIc00TpXib+QjtGcVAHgnH2F3+Ii
+   sWX6enJJDC8lKbTxCBZN+m4XBFOvu1Thj++uQUV+5FhkfZOKORS2L2gie
+   BF5q0yMCaZIOW4v+vpukcZiDtJKJbCK00ZLCVex4JqYcVsS0pecsvsv3P
+   A6G0s7+19c57NeGaTpwTVwvmeiE6ytyptxZE/Ep+P3NNWV63h2cMOLdfh
+   g==;
+X-CSE-ConnectionGUID: G2PFZdprT3uxuFLWZ1xo+w==
+X-CSE-MsgGUID: TvdzS29ERRWcOc+n0N2hTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28065604"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="28065604"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:40:36 -0700
+X-CSE-ConnectionGUID: 24TFoChFQf2xX8y5S/3N6A==
+X-CSE-MsgGUID: bcd6cbeoShWJdS+S7bWq0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="81191373"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:40:22 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1syuKv-00000001Z6U-0EM4;
+	Thu, 10 Oct 2024 17:40:17 +0300
+Date: Thu, 10 Oct 2024 17:40:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mostafa Saleh <smostafa@google.com>, Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Soumya Negi <soumya.negi97@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
+	Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-staging@lists.linux.dev, kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Subject: Re: [RFC PATCH 01/13] PCI: Prepare removing devres from pci_intx()
+Message-ID: <ZwfnULv2myACxnVb@smile.fi.intel.com>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+ <20241009083519.10088-2-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c81:b0:3a0:9d62:3b65 with SMTP id
- e9e14a558f8ab-3a397cee1c1mr65587265ab.3.1728571204527; Thu, 10 Oct 2024
- 07:40:04 -0700 (PDT)
-Date: Thu, 10 Oct 2024 07:40:04 -0700
-In-Reply-To: <96341c70-45e4-489d-9dd4-6f3171d26cab@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6707e744.050a0220.8109b.0011.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
-From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, niharchaithanya@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009083519.10088-2-pstanner@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Wed, Oct 09, 2024 at 10:35:07AM +0200, Philipp Stanner wrote:
+> pci_intx() is a hybrid function which sometimes performs devres
+> operations, depending on whether pcim_enable_device() has been used to
+> enable the pci_dev. This sometimes-managed nature of the function is
+> problematic. Notably, it causes the function to allocate under some
+> circumstances which makes it unusable from interrupt context.
+> 
+> To, ultimately, remove the hybrid nature from pci_intx(), it is first
+> necessary to provide an always-managed and a never-managed version
+> of that function. Then, all callers of pci_intx() can be ported to the
+> version they need, depending whether they use pci_enable_device() or
+> pcim_enable_device().
+> 
+> An always-managed function exists, namely pcim_intx(), for which
+> __pcim_intx(), a never-managed version of pci_intx() had been
+> implemented.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __exfat_get_dentry_set
+> Make __pcim_intx() a public function under the name
+> pci_intx_unmanaged(). Make pcim_intx() a public function.
 
-loop0: detected capacity change from 0 to 256
-exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
-=====================================================
-BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
- __exfat_get_dentry_set+0x10ca/0x14d0 fs/exfat/dir.c:804
- exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:859
- __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:47
- __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
- exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
- exfat_write_failed fs/exfat/inode.c:423 [inline]
- exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:487
- generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
- __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
- exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+To avoid an additional churn we can make just completely new APIs, namely:
+pcim_int_x()
+pci_int_x()
 
-Uninit was stored to memory at:
- memcpy_to_iter lib/iov_iter.c:65 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
- copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
- shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_read+0x278/0x760 fs/read_write.c:923
- lo_read_simple drivers/block/loop.c:283 [inline]
- do_req_filebacked drivers/block/loop.c:516 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
- copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
- generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
- shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof mm/mempolicy.c:2345 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
- __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
- block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
- exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:436
- exfat_extend_valid_size fs/exfat/file.c:553 [inline]
- exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
- __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
- x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 5969 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00074-gd3d1556696c1-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+You won't need all dirty dances with double underscored function naming and
+renaming.
 
 
-Tested on:
+...
 
-commit:         d3d15566 Merge tag 'mm-hotfixes-stable-2024-10-09-15-4..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e36fd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
-dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16e45040580000
+> +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+> +
+> +	if (enable)
+> +		new = pci_command & ~PCI_COMMAND_INTX_DISABLE;
+> +	else
+> +		new = pci_command | PCI_COMMAND_INTX_DISABLE;
+> +
+> +	if (new != pci_command)
+
+I would use positive conditionals as easy to read (yes, a couple of lines
+longer, but also a win is the indentation and avoiding an additional churn in
+the future in case we need to add something in this branch.
+
+> +		pci_write_config_word(pdev, PCI_COMMAND, new);
+
+...
+
+Otherwise I'm for the idea in general.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
