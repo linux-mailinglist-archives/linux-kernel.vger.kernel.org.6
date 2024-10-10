@@ -1,440 +1,297 @@
-Return-Path: <linux-kernel+bounces-359625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03DD998E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:26:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2859B998E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A044283635
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:26:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B543B22167
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F326A19CC2E;
-	Thu, 10 Oct 2024 17:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D374F19CCEC;
+	Thu, 10 Oct 2024 17:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpGqIe/w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YiNwHkJ7"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA61619C567;
-	Thu, 10 Oct 2024 17:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A44199FCE
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728581203; cv=none; b=ThNsU6POEZm+ALDk1MhNlgFqkBlUwNRQvpuvhOMz46qnqi+rT6ruencCfj/wKexXRhYZPQTSm8l/6YU61yQg+nC14aMKLenGZ2iDp7kHRzPdxEeQhaMGBJZIsfuKA3mnAFKry3r9b34d1xua2ZiL7p3TrVY3Iak7+cNk+HvHWnE=
+	t=1728581731; cv=none; b=J8jbQlZHAqun5rg9x743U9fpZanO2yFhMpT71tZ30sXWidfq5LDbQJydz29dSNGol4wqMiMx+QjxBb0wLnir0ZW3nCNxhxX5NNYAzCQLxrSWmP6rXDuhvQ8G0BMoaoxEjAFYzC78hUSJwpNafeup4SnRXZ4d6EmeoaFg9o2uTTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728581203; c=relaxed/simple;
-	bh=eXNV8gHDwWwsRCGRqYWnmtKvCj0CVemYc0gIjRC/i5Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JOwV/Y2j2b77YWYQb1Fo9yi3TQJB/oYfJKcXYK5fSgzSbraPIVtQX8WSNzenubfkkiadPL4GXwxsGY3FCbqFuzkLSDtCcwKxFS+Z/b7GMBhUD0gj3hRxe4bfJSc4jZQ0sw6vVE/22ALZ9SuRZ5Yd/2il30TAVEkMuMS+rv+vmwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpGqIe/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E5FC4CEC5;
-	Thu, 10 Oct 2024 17:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728581202;
-	bh=eXNV8gHDwWwsRCGRqYWnmtKvCj0CVemYc0gIjRC/i5Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GpGqIe/wjEOCjUq12tUrDGJ7SkbAcgNYReXfHjrt4rzQ5OC7e7Gahr94Qzpd5mlP9
-	 VcjImfpO7Duq9VXh7qIHoiLpgajJrioZTheaGK43glK8yHZVZD+/rDxf9HXpwbt9GO
-	 C9OSxpRGWdiquIHb0UjUgJ5Hn+1vs+advQCIYSa0tYkMvOfa5MmiYmRSTYKgC9UvAS
-	 3v/DLSGpljPZkaoEbhAETpIXaVdMIDvDuKLRoaUfKB90/Pm4TvQSZ4ZYO/0qh1NC8P
-	 MfyQ87ttUoexV5rM9SBJYA2f3Gsz7jEzpsPyuz+8qqxf5FGEzl+pKmcK2/DOzkEf6S
-	 wzZFxb3b2cCUA==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking for v6.12-rc3
-Date: Thu, 10 Oct 2024 10:26:41 -0700
-Message-ID: <20241010172641.1027485-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1728581731; c=relaxed/simple;
+	bh=C3nvDo4V6bCHXXVshrM6mSReoIZPTcAhgOpDmwGhhxc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aR2h3HlaQDdH2PEhrJqeRMBo4ifdAvz22fBjCQtUTcEBTIKtIe2fHl8RW2iSV4OIv7cENbUG1YFJdYnp/hFazWHeyy2KhjBNsIrVTtbqXiWp3B6/xcA6zyT1ks/g9EzYQK7zvVTMa5DnIE2HAUJgqfQBqs1cUkHtZG5SVmncW54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YiNwHkJ7; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 16282C08E5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:27:11 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 27EA120002;
+	Thu, 10 Oct 2024 17:27:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728581224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cjW1iqTnZt7Tql22SF2gqUtFnIpZXxwf+7g9zNxGy38=;
+	b=YiNwHkJ7tRq5iBMzl0N7JPkJfzUna1pFa89s4mQrxVQH7TzwpVafBwMd3ltOJXx+z+Ds5k
+	b76FfcflT5FzN1MhuZVEXnQm05BhDbxKSNRRFRDfqW25dC46oAxT//xTiD79TGZ1tKHT2n
+	7xKBpCgZgZuQyxEB3j5KeII39B6Mxflb/7ljiSGilSla7gXbQtZ1bPcnvoL8s+hneAhA+Y
+	kIohXC6HnW4JcspwFeQsS8SL8xk//+ucfQYSoaPjqskjLjPhgGujPqhHplJMVsz0SRIEGR
+	7HIwknQOrpvJomO/nVbSJvwZOFQ3kIobHqwXo9SpP++bQeIlzeQ9Di/4hqa+tw==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Thu, 10 Oct 2024 19:27:00 +0200
+Subject: [PATCH v2] drm/vkms: Remove index parameter from init_vkms_output
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20241010-vkms-remove-index-v2-1-6b8d6cfd5a15@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAGQOCGcC/32OwQ6CMAyGX4X0bHUMYtST72E4wFak0W26zQVDe
+ HcnxKu3fm2+v/8EgTxTgFMxgafEgZ3NIDcFqKG1V0LWmUEKWYuj2GO6mYCejEv5ZDWNWLV7ErW
+ qDiQkZO/hqedxybw0K3t6vnJ0XJfQtYFQOWM4ngrtDRoOavcb0NIY4WsOHKLz76VcKhf1T49UY
+ omV6knrg1Kd7M+dc/HOdptfQTPP8wcmb4oc7gAAAA==
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7390;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=C3nvDo4V6bCHXXVshrM6mSReoIZPTcAhgOpDmwGhhxc=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnCA5m/wReDMSQxhI98iajU4eQYt445jMbcPvw3
+ NTzr1pzKaWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZwgOZgAKCRAgrS7GWxAs
+ 4rpDEADAsofiRONRJ7NVdbBpbx5L/WRTUZxrhUkT7wsVM6IwXeKKjLFMM7aT2JwtO7uQDRuhYeq
+ msJC0xa9/7UnTj/yAYnND1H14uQMP38+BPx84sbtjgl3fFE8AaSjrgBQa8lyckzd9klrQ+qyCqH
+ HJVP6JGmBbIuxp9CiVRcuJ7LOEjBpJaQIlxJHiZfmwq/lOO+4L8r+bYsIfhnvBpmt1ibTK8QGNv
+ afuSKs7HNcW1U3/Me6EgqHfJvtKLm3QN7Y7dDkbLjkWmtWaf5u2LzuHoVuNXwep9CJ1AWoMBErG
+ paTkxMdQ4/ELc72qPkMkdgjlYt+cmrZZwdw1Er+Z1pbRwnnoHQJBEY8cI7x16KSiGcWSVHGZyT+
+ 7ou7MiELsjBvQ/qDDega/4F5a8WnIVwLkpqT+JIGGgRBFh76ZRwXTOof85eVzvn6xVhQFNat3VG
+ B9JRQpY0o6SodExKQNm3/vTce4HN6Mxu051gxGczA6OkvUG/kodxWGtmzbVhuKcukWZLKRHWEMn
+ P8jvn7mRClup6ibxkHOyOSYiCewG0jQonkczY1rAVMmrKB/xjO+ydOS+H05L8HXNIfAvJipSdSk
+ 4GpxptQ2kCbUqIcJhoi3eZM99jI7Ftk4//EV3H2mqKsngG30lgu8oNelfgBk/7Q04o1zcgwp+it
+ IQI9zC6EjAlTzCw==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
+
+VKMS currently supports only one CRTC, so it make no sense to have this
+index configurable. To avoid issues, replace this hardcoded index by
+drm_crtc_mask when applicable.
+
+There is no need to manually set a crtc mask on primary and cursor plane
+as it is automatically set by drmm_crtc_alloc_with_planes.
+
+In addition, this will remove the use of an uninitialized structure in
+vkms_add_overlay_plane. This currently works by chance because two things:
+- vkms_plane_init always set a possible_crtcs value, so the problematic
+  branch is never used;
+- drm_crtc_mask on an kzalloc'd drm_crtc returns BIT(0), and the VKMS CRTC
+  always have this id.
+
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- Applied comments from José
+- Link to v1: https://lore.kernel.org/r/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com
+---
+ drivers/gpu/drm/vkms/vkms_drv.c    |  2 +-
+ drivers/gpu/drm/vkms/vkms_drv.h    |  8 ++----
+ drivers/gpu/drm/vkms/vkms_output.c | 54 ++++++++++++++------------------------
+ drivers/gpu/drm/vkms/vkms_plane.c  |  4 +--
+ 4 files changed, 24 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 2d1e95cb66e5..0f6805b9fe7b 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -174,7 +174,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
+ 	dev->mode_config.preferred_depth = 0;
+ 	dev->mode_config.helper_private = &vkms_mode_config_helpers;
+ 
+-	return vkms_output_init(vkmsdev, 0);
++	return vkms_output_init(vkmsdev);
+ }
+ 
+ static int vkms_create(struct vkms_config *config)
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index 672fe191e239..036101ee4ea1 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -212,21 +212,17 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+  * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
+  *
+  * @vkmsdev: VKMS device to initialize
+- * @index: CRTC which can be attached to the planes. The caller must ensure that
+- *	   @index is positive and less or equals to 31.
+  */
+-int vkms_output_init(struct vkms_device *vkmsdev, int index);
++int vkms_output_init(struct vkms_device *vkmsdev);
+ 
+ /**
+  * vkms_plane_init() - Initialize a plane
+  *
+  * @vkmsdev: VKMS device containing the plane
+  * @type: type of plane to initialize
+- * @index: CRTC which can be attached to the plane. The caller must ensure that
+- *	   @index is positive and less or equals to 31.
+  */
+ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				   enum drm_plane_type type, int index);
++				   enum drm_plane_type type);
+ 
+ /* CRC Support */
+ const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 0a5a185aa0b0..5128aa3b2eb6 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -32,29 +32,14 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+ 	.get_modes    = vkms_conn_get_modes,
+ };
+ 
+-static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
+-				  struct drm_crtc *crtc)
+-{
+-	struct vkms_plane *overlay;
+-
+-	overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, index);
+-	if (IS_ERR(overlay))
+-		return PTR_ERR(overlay);
+-
+-	if (!overlay->base.possible_crtcs)
+-		overlay->base.possible_crtcs = drm_crtc_mask(crtc);
+-
+-	return 0;
+-}
+-
+-int vkms_output_init(struct vkms_device *vkmsdev, int index)
++int vkms_output_init(struct vkms_device *vkmsdev)
+ {
+ 	struct vkms_output *output = &vkmsdev->output;
+ 	struct drm_device *dev = &vkmsdev->drm;
+ 	struct drm_connector *connector = &output->connector;
+ 	struct drm_encoder *encoder = &output->encoder;
+ 	struct drm_crtc *crtc = &output->crtc;
+-	struct vkms_plane *primary, *cursor = NULL;
++	struct vkms_plane *primary, *overlay, *cursor = NULL;
+ 	int ret;
+ 	int writeback;
+ 	unsigned int n;
+@@ -65,34 +50,37 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+ 	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
+ 	 * composition.
+ 	 */
+-	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
++	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
+ 	if (IS_ERR(primary))
+ 		return PTR_ERR(primary);
+ 
+-	if (vkmsdev->config->overlay) {
+-		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
+-			ret = vkms_add_overlay_plane(vkmsdev, index, crtc);
+-			if (ret)
+-				return ret;
+-		}
+-	}
+-
+ 	if (vkmsdev->config->cursor) {
+-		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
++		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
+ 		if (IS_ERR(cursor))
+ 			return PTR_ERR(cursor);
+ 	}
+ 
+-	/* [1]: Allocation of a CRTC, its index will be BIT(0) = 1 */
+ 	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
+ 	if (ret)
+ 		return ret;
+ 
++	if (vkmsdev->config->overlay) {
++		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
++			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY);
++			if (IS_ERR(overlay)) {
++				DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
++				ret = PTR_ERR(overlay);
++				goto err_crtc;
++			}
++			overlay->base.possible_crtcs = drm_crtc_mask(crtc);
++		}
++	}
++
+ 	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
+ 				 DRM_MODE_CONNECTOR_VIRTUAL);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to init connector\n");
+-		goto err_connector;
++		goto err_crtc;
+ 	}
+ 
+ 	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+@@ -103,11 +91,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+ 		DRM_ERROR("Failed to init encoder\n");
+ 		goto err_encoder;
+ 	}
+-	/*
+-	 * This is a hardcoded value to select crtc for the encoder.
+-	 * BIT(0) here designate the first registered CRTC, the one allocated in [1]
+-	 */
+-	encoder->possible_crtcs = BIT(0);
++	encoder->possible_crtcs = drm_crtc_mask(crtc);
+ 
+ 	ret = drm_connector_attach_encoder(connector, encoder);
+ 	if (ret) {
+@@ -131,7 +115,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+ err_encoder:
+ 	drm_connector_cleanup(connector);
+ 
+-err_connector:
++err_crtc:
+ 	drm_crtc_cleanup(crtc);
+ 
+ 	return ret;
+diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+index e5c625ab8e3e..ad137c9a75f5 100644
+--- a/drivers/gpu/drm/vkms/vkms_plane.c
++++ b/drivers/gpu/drm/vkms/vkms_plane.c
+@@ -198,12 +198,12 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
+ };
+ 
+ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				   enum drm_plane_type type, int index)
++				   enum drm_plane_type type)
+ {
+ 	struct drm_device *dev = &vkmsdev->drm;
+ 	struct vkms_plane *plane;
+ 
+-	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << index,
++	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
+ 					   &vkms_plane_funcs,
+ 					   vkms_formats, ARRAY_SIZE(vkms_formats),
+ 					   NULL, type, NULL);
+
+---
+base-commit: 33c255312660653cf54f8019896b5dca28e3c580
+change-id: 20240906-vkms-remove-index-3a6e04c38e02
+
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
 
-Hi Linus!
-
-The following changes since commit 8c245fe7dde3bf776253550fc914a36293db4ff3:
-
-  Merge tag 'net-6.12-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-10-03 09:44:00 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.12-rc3
-
-for you to fetch changes up to 7b43ba65019e83b55cfacfcfc0c3a08330af54c1:
-
-  Merge branch 'maintainers-networking-file-coverage-updates' (2024-10-10 09:35:51 -0700)
-
-----------------------------------------------------------------
-Including fixes from bluetooth and netfilter.
-
-Current release - regressions:
-
- - dsa: sja1105: fix reception from VLAN-unaware bridges
-
- - Revert "net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is enabled"
-
- - eth: fec: don't save PTP state if PTP is unsupported
-
-Current release - new code bugs:
-
- - smc: fix lack of icsk_syn_mss with IPPROTO_SMC, prevent null-deref
-
- - eth: airoha: update Tx CPU DMA ring idx at the end of xmit loop
-
- - phy: aquantia: AQR115c fix up PMA capabilities
-
-Previous releases - regressions:
-
- - tcp: 3 fixes for retrans_stamp and undo logic
-
-Previous releases - always broken:
-
- - net: do not delay dst_entries_add() in dst_release()
-
- - netfilter: restrict xtables extensions to families that are safe,
-   syzbot found a way to combine ebtables with extensions that are
-   never used by userspace tools
-
- - sctp: ensure sk_state is set to CLOSED if hashing fails in
-   sctp_listen_start
-
- - mptcp: handle consistently DSS corruption, and prevent corruption
-   due to large pmtu xmit
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Abhishek Chauhan (2):
-      net: phy: aquantia: AQR115c fix up PMA capabilities
-      net: phy: aquantia: remove usage of phy_set_max_speed
-
-Ahmed Zaki (1):
-      idpf: fix VF dynamic interrupt ctl register initialization
-
-Aleksandr Loktionov (1):
-      i40e: Fix macvlan leak by synchronizing access to mac_filter_hash
-
-Anastasia Kovaleva (1):
-      net: Fix an unsafe loop on the list
-
-Anatolij Gustschin (1):
-      net: dsa: lan9303: ensure chip reset and wait for READY status
-
-Andy Roulin (2):
-      netfilter: br_netfilter: fix panic with metadata_dst skb
-      selftests: add regression test for br_netfilter panic
-
-Arkadiusz Kubalewski (1):
-      ice: disallow DPLL_PIN_STATE_SELECTABLE for dpll output pins
-
-Breno Leitao (1):
-      net: netconsole: fix wrong warning
-
-Christian Marangi (1):
-      net: phy: Remove LED entry from LEDs list on unregister
-
-Christophe JAILLET (2):
-      net: phy: bcm84881: Fix some error handling paths
-      net: ethernet: adi: adin1110: Fix some error handling path in adin1110_read_fifo()
-
-D. Wythe (1):
-      net/smc: fix lacks of icsk_syn_mss with IPPROTO_SMC
-
-Daniel Palmer (1):
-      net: amd: mvme147: Fix probe banner message
-
-Dave Ertman (1):
-      ice: fix VLAN replay after reset
-
-David Howells (2):
-      rxrpc: Fix a race between socket set up and I/O thread creation
-      rxrpc: Fix uninitialised variable in rxrpc_send_data()
-
-Eric Dumazet (4):
-      net/sched: accept TCA_STAB only for root qdisc
-      net: do not delay dst_entries_add() in dst_release()
-      ppp: fix ppp_async_encode() illegal access
-      slip: make slhc_remember() more robust against malicious packets
-
-Florian Westphal (3):
-      netfilter: xtables: avoid NFPROTO_UNSPEC where needed
-      netfilter: fib: check correct rtable in vrf setups
-      selftests: netfilter: conntrack_vrf.sh: add fib test case
-
-Greg Thelen (1):
-      selftests: make kselftest-clean remove libynl outputs
-
-Gui-Dong Han (2):
-      ice: Fix improper handling of refcount in ice_dpll_init_rclk_pins()
-      ice: Fix improper handling of refcount in ice_sriov_set_msix_vec_count()
-
-Heiner Kallweit (1):
-      net: phy: realtek: Fix MMD access on RTL8126A-integrated PHY
-
-Ignat Korchagin (1):
-      net: explicitly clear the sk pointer, when pf->create fails
-
-Ingo van Lil (1):
-      net: phy: dp83869: fix memory corruption when enabling fiber
-
-Jacky Chou (1):
-      net: ftgmac100: fixed not check status from fixed phy
-
-Jakub Kicinski (12):
-      Merge branch 'fix-aqr-pma-capabilities'
-      Merge branch 'tcp-3-fixes-for-retrans_stamp-and-undo-logic'
-      Merge branch 'rxrpc-miscellaneous-fixes'
-      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      Merge branch 'netfilter-br_netfilter-fix-panic-with-metadata_dst-skb'
-      Merge branch 'ibmvnic-fix-for-send-scrq-direct'
-      Revert "net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is enabled"
-      Merge tag 'for-net-2024-10-04' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge branch 'selftests-net-add-missing-gitignore-and-extra_clean-entries'
-      Merge branch 'mptcp-misc-fixes-involving-fallback-to-tcp'
-      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      Merge branch 'maintainers-networking-file-coverage-updates'
-
-Javier Carrasco (3):
-      selftests: net: add msg_oob to gitignore
-      selftests: net: rds: add include.sh to EXTRA_CLEAN
-      selftests: net: rds: add gitignore file for include.sh
-
-Jijie Shao (1):
-      net: hns3/hns: Update the maintainer for the HNS3/HNS ethernet driver
-
-Jonas Gorski (5):
-      net: dsa: b53: fix jumbo frame mtu check
-      net: dsa: b53: fix max MTU for 1g switches
-      net: dsa: b53: fix max MTU for BCM5325/BCM5365
-      net: dsa: b53: allow lower MTUs on BCM5325/5365
-      net: dsa: b53: fix jumbo frames on 10/100 ports
-
-Joshua Hay (1):
-      idpf: use actual mbx receive payload length
-
-Kacper Ludwinski (1):
-      selftests: net: no_forwarding: fix VID for $swp2 in one_bridge_two_pvids() test
-
-Kory Maincent (1):
-      net: pse-pd: Fix enabled status mismatch
-
-Kuniyuki Iwashima (6):
-      rtnetlink: Add bulk registration helpers for rtnetlink message handlers.
-      vxlan: Handle error of rtnl_register_module().
-      bridge: Handle error of rtnl_register_module().
-      mctp: Handle error of rtnl_register_module().
-      mpls: Handle error of rtnl_register_module().
-      phonet: Handle error of rtnl_register_module().
-
-Larysa Zaremba (1):
-      idpf: deinit virtchnl transaction manager after vport and vectors
-
-Leo Stone (1):
-      Documentation: networking/tcp_ao: typo and grammar fixes
-
-Lorenzo Bianconi (1):
-      net: airoha: Update tx cpu dma ring idx at the end of xmit loop
-
-Luiz Augusto von Dentz (3):
-      Bluetooth: RFCOMM: FIX possible deadlock in rfcomm_sk_state_change
-      Bluetooth: hci_conn: Fix UAF in hci_enhanced_setup_sync
-      Bluetooth: btusb: Don't fail external suspend requests
-
-MD Danish Anwar (1):
-      net: ti: icssg-prueth: Fix race condition for VLAN table access
-
-Marcin Szycik (3):
-      ice: Fix entering Safe Mode
-      ice: Fix netif_is_ice() in Safe Mode
-      ice: Fix increasing MSI-X on VF
-
-Matthieu Baerts (NGI0) (2):
-      mptcp: fallback when MPTCP opts are dropped after 1st data
-      mptcp: pm: do not remove closing subflows
-
-Michal Swiatkowski (2):
-      ice: set correct dst VSI in only LAN filters
-      ice: clear port vlan config during reset
-
-Mohamed Khalfella (1):
-      igb: Do not bring the device up after non-fatal error
-
-Neal Cardwell (3):
-      tcp: fix to allow timestamp undo if no retransmits were sent
-      tcp: fix tcp_enter_recovery() to zero retrans_stamp when it's safe
-      tcp: fix TFO SYN_RECV to not zero retrans_stamp with retransmits out
-
-Nick Child (1):
-      ibmvnic: Inspect header requirements before using scrq direct
-
-Nicolas Pitre (2):
-      net: ethernet: ti: am65-cpsw: prevent WARN_ON upon module removal
-      net: ethernet: ti: am65-cpsw: avoid devm_alloc_etherdev, fix module removal
-
-Paolo Abeni (6):
-      Merge branch 'fix-ti-am65-cpsw-nuss-module-removal'
-      Merge branch 'net-dsa-b53-assorted-jumbo-frame-fixes'
-      mptcp: handle consistently DSS corruption
-      tcp: fix mptcp DSS corruption due to large pmtu xmit
-      Merge tag 'nf-24-10-09' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-      Merge branch 'rtnetlink-handle-error-of-rtnl_register_module'
-
-Przemek Kitszel (1):
-      ice: fix memleak in ice_init_tx_topology()
-
-Rosen Penev (2):
-      net: ibm: emac: mal: fix wrong goto
-      net: ibm: emac: mal: add dcr_unmap to _remove
-
-Sebastian Andrzej Siewior (1):
-      sfc: Don't invoke xdp_do_flush() from netpoll.
-
-Simon Horman (3):
-      docs: netdev: document guidance on cleanup patches
-      MAINTAINERS: consistently exclude wireless files from NETWORKING [GENERAL]
-      MAINTAINERS: Add headers and mailing list to UDP section
-
-Vitaly Lifshits (1):
-      e1000e: change I219 (19) devices to ADP
-
-Vladimir Oltean (2):
-      net: dsa: sja1105: fix reception from VLAN-unaware bridges
-      net: dsa: refuse cross-chip mirroring operations
-
-Wei Fang (1):
-      net: fec: don't save PTP state if PTP is unsupported
-
-Wojciech Drewek (1):
-      ice: Flush FDB entries before reset
-
-Xin Long (1):
-      sctp: ensure sk_state is set to CLOSED if hashing fails in sctp_listen_start
-
- Documentation/networking/tcp_ao.rst                |  20 +--
- Documentation/process/maintainer-netdev.rst        |  17 +++
- MAINTAINERS                                        |  19 ++-
- drivers/bluetooth/btusb.c                          |  20 ++-
- drivers/net/dsa/b53/b53_common.c                   |  17 ++-
- drivers/net/dsa/lan9303-core.c                     |  29 ++++
- drivers/net/dsa/sja1105/sja1105_main.c             |   1 -
- drivers/net/ethernet/adi/adin1110.c                |   4 +-
- drivers/net/ethernet/amd/mvme147.c                 |   7 +-
- drivers/net/ethernet/faraday/ftgmac100.c           |   7 +-
- drivers/net/ethernet/freescale/fec_main.c          |   6 +-
- drivers/net/ethernet/ibm/emac/mal.c                |   4 +-
- drivers/net/ethernet/ibm/ibmvnic.c                 |   6 +-
- drivers/net/ethernet/intel/e1000e/hw.h             |   4 +-
- drivers/net/ethernet/intel/e1000e/netdev.c         |   4 +-
- drivers/net/ethernet/intel/i40e/i40e_main.c        |   1 +
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |   2 +
- drivers/net/ethernet/intel/ice/ice_ddp.c           |  58 ++++----
- drivers/net/ethernet/intel/ice/ice_ddp.h           |   4 +-
- drivers/net/ethernet/intel/ice/ice_dpll.c          |   6 +-
- drivers/net/ethernet/intel/ice/ice_eswitch_br.c    |   5 +-
- drivers/net/ethernet/intel/ice/ice_eswitch_br.h    |   1 +
- drivers/net/ethernet/intel/ice/ice_main.c          |  39 +-----
- drivers/net/ethernet/intel/ice/ice_sriov.c         |  19 ++-
- drivers/net/ethernet/intel/ice/ice_switch.c        |   2 -
- drivers/net/ethernet/intel/ice/ice_tc_lib.c        |  11 ++
- drivers/net/ethernet/intel/ice/ice_vf_lib.c        |   9 +-
- .../net/ethernet/intel/ice/ice_vf_lib_private.h    |   1 -
- drivers/net/ethernet/intel/ice/ice_vsi_vlan_lib.c  |  57 ++++++++
- drivers/net/ethernet/intel/ice/ice_vsi_vlan_lib.h  |   1 +
- drivers/net/ethernet/intel/idpf/idpf_vf_dev.c      |   1 +
- drivers/net/ethernet/intel/idpf/idpf_virtchnl.c    |  11 +-
- drivers/net/ethernet/intel/igb/igb_main.c          |   4 +
- drivers/net/ethernet/mediatek/airoha_eth.c         |   9 +-
- drivers/net/ethernet/sfc/efx_channels.c            |   3 +-
- drivers/net/ethernet/sfc/siena/efx_channels.c      |   3 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   2 +-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c           |  22 +--
- drivers/net/ethernet/ti/icssg/icssg_config.c       |   2 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.c       |   1 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.h       |   2 +
- drivers/net/netconsole.c                           |   8 +-
- drivers/net/phy/aquantia/aquantia_main.c           |  51 ++++---
- drivers/net/phy/bcm84881.c                         |   4 +-
- drivers/net/phy/dp83869.c                          |   1 -
- drivers/net/phy/phy_device.c                       |   5 +-
- drivers/net/phy/realtek.c                          |  24 +++-
- drivers/net/ppp/ppp_async.c                        |   2 +-
- drivers/net/pse-pd/pse_core.c                      |  11 ++
- drivers/net/slip/slhc.c                            |  57 ++++----
- drivers/net/vxlan/vxlan_core.c                     |   6 +-
- drivers/net/vxlan/vxlan_private.h                  |   2 +-
- drivers/net/vxlan/vxlan_vnifilter.c                |  19 ++-
- include/net/mctp.h                                 |   2 +-
- include/net/rtnetlink.h                            |  17 +++
- include/net/sch_generic.h                          |   1 -
- include/net/sock.h                                 |   2 +
- net/bluetooth/hci_conn.c                           |   3 +
- net/bluetooth/rfcomm/sock.c                        |   2 -
- net/bridge/br_netfilter_hooks.c                    |   5 +
- net/bridge/br_netlink.c                            |   6 +-
- net/bridge/br_private.h                            |   5 +-
- net/bridge/br_vlan.c                               |  19 ++-
- net/core/dst.c                                     |  17 ++-
- net/core/rtnetlink.c                               |  29 ++++
- net/dsa/user.c                                     |  11 +-
- net/ipv4/netfilter/nft_fib_ipv4.c                  |   4 +-
- net/ipv4/tcp_input.c                               |  42 +++++-
- net/ipv4/tcp_output.c                              |   5 +-
- net/ipv6/netfilter/nft_fib_ipv6.c                  |   5 +-
- net/mctp/af_mctp.c                                 |   6 +-
- net/mctp/device.c                                  |  32 +++--
- net/mctp/neigh.c                                   |  29 ++--
- net/mctp/route.c                                   |  33 +++--
- net/mpls/af_mpls.c                                 |  32 +++--
- net/mptcp/mib.c                                    |   2 +
- net/mptcp/mib.h                                    |   2 +
- net/mptcp/pm_netlink.c                             |   3 +-
- net/mptcp/protocol.c                               |  24 +++-
- net/mptcp/subflow.c                                |   6 +-
- net/netfilter/xt_CHECKSUM.c                        |  33 +++--
- net/netfilter/xt_CLASSIFY.c                        |  16 ++-
- net/netfilter/xt_CONNSECMARK.c                     |  36 +++--
- net/netfilter/xt_CT.c                              | 148 +++++++++++++--------
- net/netfilter/xt_IDLETIMER.c                       |  59 +++++---
- net/netfilter/xt_LED.c                             |  39 ++++--
- net/netfilter/xt_NFLOG.c                           |  36 +++--
- net/netfilter/xt_RATEEST.c                         |  39 ++++--
- net/netfilter/xt_SECMARK.c                         |  27 +++-
- net/netfilter/xt_TRACE.c                           |  35 +++--
- net/netfilter/xt_addrtype.c                        |  15 ++-
- net/netfilter/xt_cluster.c                         |  33 +++--
- net/netfilter/xt_connbytes.c                       |   4 +-
- net/netfilter/xt_connlimit.c                       |  39 ++++--
- net/netfilter/xt_connmark.c                        |  28 +++-
- net/netfilter/xt_mark.c                            |  42 ++++--
- net/netlink/af_netlink.c                           |   3 +-
- net/phonet/pn_netlink.c                            |  28 ++--
- net/rxrpc/ar-internal.h                            |   2 +-
- net/rxrpc/io_thread.c                              |  10 +-
- net/rxrpc/local_object.c                           |   2 +-
- net/rxrpc/sendmsg.c                                |  10 +-
- net/sched/sch_api.c                                |   7 +-
- net/sctp/socket.c                                  |  18 ++-
- net/smc/smc_inet.c                                 |  11 ++
- net/socket.c                                       |   7 +-
- tools/testing/selftests/net/.gitignore             |   1 +
- .../selftests/net/forwarding/no_forwarding.sh      |   2 +-
- tools/testing/selftests/net/netfilter/Makefile     |   1 +
- tools/testing/selftests/net/netfilter/config       |   2 +
- .../selftests/net/netfilter/conntrack_vrf.sh       |  33 +++++
- .../selftests/net/netfilter/vxlan_mtu_frag.sh      | 121 +++++++++++++++++
- tools/testing/selftests/net/rds/.gitignore         |   1 +
- tools/testing/selftests/net/rds/Makefile           |   2 +-
- tools/testing/selftests/net/ynl.mk                 |   4 +
- 115 files changed, 1360 insertions(+), 509 deletions(-)
- create mode 100755 tools/testing/selftests/net/netfilter/vxlan_mtu_frag.sh
- create mode 100644 tools/testing/selftests/net/rds/.gitignore
 
