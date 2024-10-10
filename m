@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-359790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817AF9990C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95029990CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359D61F20FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FE8287F50
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE1A2040B8;
-	Thu, 10 Oct 2024 18:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3607204948;
+	Thu, 10 Oct 2024 18:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xqt2Fs5n"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bQ8YWjsA"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C7204086
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297D42038B7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584784; cv=none; b=boIIfIQnQOIM/bEqTucyM9vgFq0UK7wfLCZkvTbGdwFpdx+oxY+1TSrkBqM34CwQs1cEghT7jWnV6JCcxdw8Cc9boMuQj8oPlTzXXg6r0y43BgD5Hs57y36W3uCmES9x0PiB9kvByeRs5seXAxpzCdhIhHFFB2IUJwwSkrg4EQI=
+	t=1728584786; cv=none; b=RGS5S0zRFrBO4bzMLZsguTGV7HzBrNE2RzwseyOjMWBfwUqHm8dD8O5kgFv0jC1hs2eMWBPLcDF5SbhUme4S/FtgRJhOAif4FL+2H733q/zTNykTiC68XpOhArfttgd0i0ObN6m2nWy/IpTVKnbPcb7UmlhxoFeeWYmx3MW53GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584784; c=relaxed/simple;
-	bh=acp8IhS6KrAOGkkRIhpxPxZ31aINXkAYcQRqekRRiYM=;
+	s=arc-20240116; t=1728584786; c=relaxed/simple;
+	bh=Hkx6OqV7mFxqog7S2nXIkbHpJQToxM9/kCtdODEngY8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=APjL5vScxqGjfRMwPg4XVpvbZu36gFvs5SePFrl93p3gg8Is4k3LJJZptGbMHiKg+UU12Hf2hx/C1dqHRqnrfhVrjW6b/EGYLbfRja8pAga7Z2jwkpZzk2l2v3VwURP2xP2TrQdfOrc3HXQXcCSidIxRAIFKZh7qUCxpDUFB43s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xqt2Fs5n; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=mU7mqpW7NJGu9cr6Cr+DwdRO/3bNH5PvUGucC2ofmc+2fpo2ovftisgIlahOAnW9adRYC4054oHBJUb5pz5gJb+JsDWCV8EfkahhsqsxsXvWDMFf7don78sRMM89dLTwTHhejKa3EF4SKdcDUnWbx/1I+nugSA83Kni2d+sdTdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bQ8YWjsA; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e29b4f8837so18944137b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:26:22 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6818fa37eecso1273911a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728584782; x=1729189582; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728584784; x=1729189584; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CHy2j9VNwFKd5G/Ubc3O4QkXvNoIm5ox3M6XZ4oswcY=;
-        b=Xqt2Fs5nbw3a9rY6oVLT35/D0l+G/AD+Q49HX1QdXMfC2SfNz4O5O1dvtdhGzDWUDl
-         JpqTDsMCsN6OxFww5+NH7ydMQnMFtfrmh34ZhDsUCf/uTkDGYmH6VlOYAcds86k0XnLu
-         dP0P0MTgvn/Qf9H0M5XOt0K7URLrCKcwSGSrKXhaF7fEgRm8tzA0j54XzIeR4IkT7Ji5
-         AoZrpW3iiSMjwhmWTfZ64gNRi5aT38cY6iP8t9xd8k0HMzsVYBTUhBM1elfqfp5jqfzO
-         ADF/8T0Dad0vzNIZJhArpIvd/mEd9y0HE3XU4hpM3jp77eHkpOjUClLqF4+0clJvSyS9
-         WkzA==
+        bh=O48RmE1hmLPs0qNEdPIh+k/rpCPu+e8A6GC4+tMXVMw=;
+        b=bQ8YWjsAmSCtND2aP1+tnixLSReqcEMO5NgW5XaAIrBbL2LakVMBpTYBr79a6Ie4it
+         yNo7Kq1xSA5MpJ+3LWpNyQ8FebCsfQePx6QL7MRRwa7HUCZ4EAISOfHABrJmf07r19dm
+         vC7F1QJ2GzmgWC7lF+MFU+KbFzyvgv1xoyoqQgeGA7foloGcAJt5EuXt6aPoIbgmFg8d
+         S+O2XvahdLb6BSZR7nlHR5Hzv2cmwMq+KpUVit9qdBBsIoaQJtbbi96Ot04RWV1vcYCh
+         XiFcWmxVFgOdE1nBSgaaQ0SHKFiqMCAzj5V7S3qW2P8xyztxxmcbI6IW8VfCE4tAXTJs
+         qhzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728584782; x=1729189582;
+        d=1e100.net; s=20230601; t=1728584784; x=1729189584;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=CHy2j9VNwFKd5G/Ubc3O4QkXvNoIm5ox3M6XZ4oswcY=;
-        b=il+rzKFo6I1oklxehqWblzrHmn9hURUlR+YZOrbB1a8yzXrDJjcTVkdkQePf0eefVr
-         7apiqNbL9MfBhZ26uiH2DTFemtw5IoTIwa5Rmj+Tunh/pFzyRyNN84NPfxDRQk3Fzjr7
-         i8at3DKnnp0cKMnIsY7aLYftzWLD8x1jN98u2QHXSuFXFToTCU3day2au2pQsW7lf6ou
-         jfSIHD+2K/GfLr1Z0AdZBNAeQ6qhz1x4upVsMdx9bAVjpf5N6gqYanJDwFt4iJlWOFs+
-         b+zOOHYmNp016RrOgReGp+G0gLv6yk1IaXpIGdbu+oKMvQhNXuC5kP/JmWVTY8Oqbx/N
-         Wn2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJPkTlfW33XBKQN+OSSL7XG4IFmYImSLZayQfOtu16vDOBi5/wZ4L6bNQ0SoX8AbzNGDo4qEKpb5sHSEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1BR8dKr0z8SNOg0k4+OrPhjE2yvucU3JwHkKo8cVPgbffoA31
-	XeAamjEixkJYCZvLhqj2/ikztUFmkFf+mBJJtrLaDx1y+/p89q62XDqizJUTXd8U6wyCg46vuKD
-	xaw==
-X-Google-Smtp-Source: AGHT+IEBXjEpYcXfPYRm3Nf4G9ZN1ucR55aqjscHr2p9QPsSrcRZYI0185ucK64AXquh+1QVcruWQv+kNDM=
+        bh=O48RmE1hmLPs0qNEdPIh+k/rpCPu+e8A6GC4+tMXVMw=;
+        b=ZMg9Hy4S/wSbGR6A2xpszDsKu7sVPg9YLB1DrOr9BeexyGRPkH6QIn1nn6CWkMvFIP
+         ZZPFvlyi8+/d4uFrGWnAoKD1x5pqgK3TKn9aPUf+QhpwA2JCzvMAAOuw+yOo4scvyVUh
+         zuQ+7bRykYIO0BoAc9O9Hw8Fa1Ya6HnZ6dq/coMCmCjSz81j2Z7DxMsN6HNWRA2+0Ytk
+         lRHS5wdDEYaqa0745lKOZlHTAfnPE3/KdePVebt7/zSDyHtLxusK+OlDdJssG0ik2Cwj
+         uS8/XlIPh8oEtZiYSxP81QeNfhwKN8Gjnu4R8Q0nGpG0Rku4UOSzJV5OaVfJwrNzQjwK
+         A45w==
+X-Forwarded-Encrypted: i=1; AJvYcCWoTWsyhvz/P1JlRIqToA+wVtA7VFlhXLjYRU/ynHhmmDBA5FIYv5XnbmRZqyp69+K4/C6Bza6GRKiee/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUGSc6h0I/XH8VdNJEEjVmXGCNTWUY8EH9xF2HJliiVit11/xR
+	poG/vsqz+ZaSJPYzbLxhiG6UZBJI70zKWt9xMROGcNwvmkwiJ2H1AaQnWjTMOC7sjlveOBcHoE8
+	ryA==
+X-Google-Smtp-Source: AGHT+IGY3J0AFIsOlJbVDrqn6majLeEUOkcp3LAakwsbgSwDXT3SnAGgA9L20idMLdLGQvBeoRsHZDJxo50=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:5605:b0:6be:523:af53 with SMTP id
- 00721157ae682-6e32f2f4e28mr919077b3.3.1728584781575; Thu, 10 Oct 2024
- 11:26:21 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a63:2445:0:b0:75d:16f9:c075 with SMTP id
+ 41be03b00d2f7-7ea5359cd2amr19a12.9.1728584783356; Thu, 10 Oct 2024 11:26:23
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 11:23:45 -0700
+Date: Thu, 10 Oct 2024 11:23:46 -0700
 In-Reply-To: <20241010182427.1434605-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,9 +76,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241010182427.1434605-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241010182427.1434605-44-seanjc@google.com>
-Subject: [PATCH v13 43/85] KVM: Add kvm_faultin_pfn() to specifically service
- guest page faults
+Message-ID: <20241010182427.1434605-45-seanjc@google.com>
+Subject: [PATCH v13 44/85] KVM: x86/mmu: Convert page fault paths to kvm_faultin_pfn()
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
@@ -98,83 +97,69 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Add a new dedicated API, kvm_faultin_pfn(), for servicing guest page
-faults, i.e. for getting pages/pfns that will be mapped into the guest via
-an mmu_notifier-protected KVM MMU.  Keep struct kvm_follow_pfn buried in
-internal code, as having __kvm_faultin_pfn() take "out" params is actually
-cleaner for several architectures, e.g. it allows the caller to have its
-own "page fault" structure without having to marshal data to/from
-kvm_follow_pfn.
+Convert KVM x86 to use the recently introduced __kvm_faultin_pfn().
+Opportunstically capture the refcounted_page grabbed by KVM for use in
+future changes.
 
-Long term, common KVM would ideally provide a kvm_page_fault structure, a
-la x86's struct of the same name.  But all architectures need to be
-converted to a common API before that can happen.
+No functional change intended.
 
 Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- include/linux/kvm_host.h | 12 ++++++++++++
- virt/kvm/kvm_main.c      | 22 ++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+ arch/x86/kvm/mmu/mmu.c          | 14 ++++++++++----
+ arch/x86/kvm/mmu/mmu_internal.h |  1 +
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 346bfef14e5a..3b9afb40e935 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1231,6 +1231,18 @@ static inline void kvm_release_page_unused(struct pa=
-ge *page)
- void kvm_release_page_clean(struct page *page);
- void kvm_release_page_dirty(struct page *page);
-=20
-+kvm_pfn_t __kvm_faultin_pfn(const struct kvm_memory_slot *slot, gfn_t gfn,
-+			    unsigned int foll, bool *writable,
-+			    struct page **refcounted_page);
-+
-+static inline kvm_pfn_t kvm_faultin_pfn(struct kvm_vcpu *vcpu, gfn_t gfn,
-+					bool write, bool *writable,
-+					struct page **refcounted_page)
-+{
-+	return __kvm_faultin_pfn(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn,
-+				 write ? FOLL_WRITE : 0, writable, refcounted_page);
-+}
-+
- kvm_pfn_t gfn_to_pfn(struct kvm *kvm, gfn_t gfn);
- kvm_pfn_t gfn_to_pfn_prot(struct kvm *kvm, gfn_t gfn, bool write_fault,
- 		      bool *writable);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 6dcb4f0eed3e..696d5e429b3e 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3098,6 +3098,28 @@ kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu,=
- gfn_t gfn)
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_pfn);
-=20
-+kvm_pfn_t __kvm_faultin_pfn(const struct kvm_memory_slot *slot, gfn_t gfn,
-+			    unsigned int foll, bool *writable,
-+			    struct page **refcounted_page)
-+{
-+	struct kvm_follow_pfn kfp =3D {
-+		.slot =3D slot,
-+		.gfn =3D gfn,
-+		.flags =3D foll,
-+		.map_writable =3D writable,
-+		.refcounted_page =3D refcounted_page,
-+	};
-+
-+	if (WARN_ON_ONCE(!writable || !refcounted_page))
-+		return KVM_PFN_ERR_FAULT;
-+
-+	*writable =3D false;
-+	*refcounted_page =3D NULL;
-+
-+	return kvm_follow_pfn(&kfp);
-+}
-+EXPORT_SYMBOL_GPL(__kvm_faultin_pfn);
-+
- int kvm_prefetch_pages(struct kvm_memory_slot *slot, gfn_t gfn,
- 		       struct page **pages, int nr_pages)
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index f730870887dd..2e2076287aaf 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -4416,11 +4416,14 @@ static int kvm_mmu_faultin_pfn_private(struct kvm_v=
+cpu *vcpu,
+ static int __kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
+ 				 struct kvm_page_fault *fault)
  {
++	unsigned int foll =3D fault->write ? FOLL_WRITE : 0;
++
+ 	if (fault->is_private)
+ 		return kvm_mmu_faultin_pfn_private(vcpu, fault);
+=20
+-	fault->pfn =3D __gfn_to_pfn_memslot(fault->slot, fault->gfn, false, true,
+-					  fault->write, &fault->map_writable);
++	foll |=3D FOLL_NOWAIT;
++	fault->pfn =3D __kvm_faultin_pfn(fault->slot, fault->gfn, foll,
++				       &fault->map_writable, &fault->refcounted_page);
+=20
+ 	/*
+ 	 * If resolving the page failed because I/O is needed to fault-in the
+@@ -4447,8 +4450,11 @@ static int __kvm_mmu_faultin_pfn(struct kvm_vcpu *vc=
+pu,
+ 	 * to wait for IO.  Note, gup always bails if it is unable to quickly
+ 	 * get a page and a fatal signal, i.e. SIGKILL, is pending.
+ 	 */
+-	fault->pfn =3D __gfn_to_pfn_memslot(fault->slot, fault->gfn, true, true,
+-					  fault->write, &fault->map_writable);
++	foll |=3D FOLL_INTERRUPTIBLE;
++	foll &=3D ~FOLL_NOWAIT;
++	fault->pfn =3D __kvm_faultin_pfn(fault->slot, fault->gfn, foll,
++				       &fault->map_writable, &fault->refcounted_page);
++
+ 	return RET_PF_CONTINUE;
+ }
+=20
+diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_interna=
+l.h
+index 59e600f6ff9d..fabbea504a69 100644
+--- a/arch/x86/kvm/mmu/mmu_internal.h
++++ b/arch/x86/kvm/mmu/mmu_internal.h
+@@ -238,6 +238,7 @@ struct kvm_page_fault {
+ 	/* Outputs of kvm_mmu_faultin_pfn().  */
+ 	unsigned long mmu_seq;
+ 	kvm_pfn_t pfn;
++	struct page *refcounted_page;
+ 	bool map_writable;
+=20
+ 	/*
 --=20
 2.47.0.rc1.288.g06298d1525-goog
 
