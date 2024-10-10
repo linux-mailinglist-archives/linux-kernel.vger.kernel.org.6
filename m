@@ -1,105 +1,158 @@
-Return-Path: <linux-kernel+bounces-358970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574AE9985DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:26:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CFB9985DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB4D8B223EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FF0E1F24A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED6F1C5799;
-	Thu, 10 Oct 2024 12:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5855E1C4627;
+	Thu, 10 Oct 2024 12:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aD/6Qcgt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WGjskZ4m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GHb+GC/B"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810C11C462A;
-	Thu, 10 Oct 2024 12:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440DB1C4610;
+	Thu, 10 Oct 2024 12:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563152; cv=none; b=g/F9Fv/+DqgB0pcAT4IlyyrHLauQ7/n/SdnBYlhW25VxlLgDsph6GJPOLeirBipzr9NTHDNnIWiAewDFjJiA5iaZhioHT6Aav6D/ntG48Z4lv1f1/nRWHxCZJo+eZmQelXl+RuulMj8ltLWDhbGIhY+3YfJIP8EZg6pW3S4o2Q0=
+	t=1728563149; cv=none; b=p3JeMzSvXcD+mK3w8dBIkWioooTYwWVafaBmfesPGdFPyXkFqrXb7ELJzqmlNQObndxN+RN474sQcLvVd9LdepS8s0zB2X3mW1xdnTjneyeoh1eVSssD8sf9keUlpgreKpZE8Ga25DdPwpNblTEG5USKDgjPgiusRFLF3exSzbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563152; c=relaxed/simple;
-	bh=nm09FEO+6GkoggqETkjCn/NtWaoWHclU9qh4LQ4l3lA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FfiXFAS4KsnSWEp5o/2lirRq+0HEuPpQ0/a2HfUxe1BAv8ZlwhQx5siCBvWJv8HxsqpRmkxt+EXzLFuV66W8CyxfZn8YiO+yE9AEj1tezj6CIuvEl/Xqwj6OTd+pWUr0Q8PDt6EWc4wMIuDo7hzYo55ennVH4X9Be3gIN0gSd7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aD/6Qcgt; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728563151; x=1760099151;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=nm09FEO+6GkoggqETkjCn/NtWaoWHclU9qh4LQ4l3lA=;
-  b=aD/6QcgtszNQ1RX1galZmpejq5u0hX6FxU6GIL5xomF3DQAamWoTdNja
-   9lOTzg2n+iZtRHTOFyGDKnX1eBOUY302FIuPqfUdMO51NEVZDI4MfHqjn
-   w4N/23g5bZs1aBnG2bGcJTjkR9hF4TAryfAkxVCK5wdOnAN/gUFgEbULj
-   zMkd7t1kfQQ5TiPXi0WgDgIIhfYCH/B0WtvWkjap/bPTAg6lhAJusSRlh
-   /dN/oz4SAq+n+eQ7FovWjxG5CtzPQVTdDAooRPjjGemtHIzfzCkxH5Bpo
-   3Umf1RKJ7RHaBoWaT5n2DRDma9qOPUpJiLyp1jwlbQqyHOtNTVEiUt3gp
-   w==;
-X-CSE-ConnectionGUID: FLaz3lFvQz6jIKn56G18zA==
-X-CSE-MsgGUID: 5x2LWT66TpuWsJ4MtT2Gbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27386099"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="27386099"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 05:25:50 -0700
-X-CSE-ConnectionGUID: 6G2iYIBTSuSMPhLP6gUiIQ==
-X-CSE-MsgGUID: 3ppPgMquSvWf9SZHSP9sog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="99913528"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.237])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 05:25:48 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: corentin.chary@gmail.com, luke@ljones.dev, hdegoede@redhat.com, 
- Abdul Rahim <abdul.rahim@myyahoo.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241009230558.51892-1-abdul.rahim@myyahoo.com>
-References: <20241009230558.51892-1-abdul.rahim.ref@myyahoo.com>
- <20241009230558.51892-1-abdul.rahim@myyahoo.com>
-Subject: Re: [PATCH] asus-laptop: prefer strscpy() over strcpy()
-Message-Id: <172856314314.1946.14702947705883158463.b4-ty@linux.intel.com>
-Date: Thu, 10 Oct 2024 15:25:43 +0300
+	s=arc-20240116; t=1728563149; c=relaxed/simple;
+	bh=9fH9wulpqdp/Ge5H+zi24V1LwNgG+nqf6Y4SypcfTqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uzfzKHnShNacqoeSsbiwaVmYaaGoA2g8jR/vzE0msztV8uq9qZGAwZeHEZnJEbbEyre1FtxMS9FblFApHZiLMpeKlK7NfGtXrWi6OfRjrMRksmG8QPIyv/mVJjtUvs3UnQ9lNZPFSVlNvhE+Oe7QqxYfRRUAkM5XGHdtDodeLMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WGjskZ4m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GHb+GC/B; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 10 Oct 2024 14:25:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728563146;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NX5RhoJ/MlDzG/mTrF+6FZ25OV+y6FcZq4dFLjVx4SI=;
+	b=WGjskZ4medTthYhTN1hTfBi2C+3qJZ4gzTSK59E4KX2R2lENvV8mTzhLvItJrnrejYf40z
+	Q5wm4v8ko/nvtu2IKKqjJjGUY2m+LeAbQ8cO5IIfE6f9hr3UfQYmQghc4hoILunPuRfG5s
+	U44nadd+ifH6qgfT/Pgl2IzabckesgYmgOGxnef7uVBxxO3/y5hTe9QMmhs2N1KZpfYkVL
+	AXu6xd3WyNwUmVT4ZN02k1BaLPboo7PYIOVCQw4W7tUyAR+wjicO54xwzd/5IHRGn4ECTO
+	W3nar6q+fAkYlWn0JCE/7IWHVhhZtxE9fkNLyRmlHjaPK9+jNuOpJHdj53MtDg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728563146;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NX5RhoJ/MlDzG/mTrF+6FZ25OV+y6FcZq4dFLjVx4SI=;
+	b=GHb+GC/Bkoyk2lO1G6yM5dzZxHOF/pBHJI4gm0V8sOIzQtpo1GzC92nQgNGvsUkqxSCBhx
+	y1mpbo/unAXBsMAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, ankur.a.arora@oracle.com, efault@gmx.de,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
+Subject: [PATCH v2 3/3] riscv: add PREEMPT_LAZY support
+Message-ID: <20241010122545.7N_x3GuX@linutronix.de>
+References: <20241009105709.887510-1-bigeasy@linutronix.de>
+ <20241009105709.887510-4-bigeasy@linutronix.de>
+ <20241009130307.GN17263@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241009130307.GN17263@noisy.programming.kicks-ass.net>
 
-On Thu, 10 Oct 2024 04:35:58 +0530, Abdul Rahim wrote:
+=46rom: Jisheng Zhang <jszhang@kernel.org>
 
-> The function strcpy() is depreciated and potentially unsafe. It performs
-> no bounds checking on the destination buffer. This could result in
-> linear overflows beyond the end of the buffer, leading to all kinds of
-> misbehaviors. The safe replacement is strscpy() [1].
-> 
-> this fixes checkpatch warning:
->     WARNING: Prefer strscpy over strcpy
-> 
-> [...]
+riscv has switched to GENERIC_ENTRY, so adding PREEMPT_LAZY is as simple
+as adding TIF_NEED_RESCHED_LAZY related definitions and enabling
+ARCH_HAS_PREEMPT_LAZY.
 
+[bigeasy: Replace old PREEMPT_AUTO bits with new PREEMPT_LAZY ]
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
 
-The list of commits applied:
-[1/1] asus-laptop: prefer strscpy() over strcpy()
-      commit: 8150408bfdb2f9c17970295427cf91470189e6d0
+v1=E2=80=A6v2:
+  - shuffle TIF bits around to make RESCHED next to RESCHED_LAZY.
+    Compiles & boots.
 
---
- i.
+ arch/riscv/Kconfig                   |  1 +
+ arch/riscv/include/asm/thread_info.h | 10 ++++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 62545946ecf43..3516c58480612 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -39,6 +39,7 @@ config RISCV
+ 	select ARCH_HAS_MMIOWB
+ 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+ 	select ARCH_HAS_PMEM_API
++	select ARCH_HAS_PREEMPT_LAZY
+ 	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+ 	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
+ 	select ARCH_HAS_PTE_SPECIAL
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/=
+thread_info.h
+index 9c10fb180f438..f5916a70879a8 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -107,9 +107,10 @@ int arch_dup_task_struct(struct task_struct *dst, stru=
+ct task_struct *src);
+  * - pending work-to-be-done flags are in lowest half-word
+  * - other flags in upper half-word(s)
+  */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
++#define TIF_NEED_RESCHED	0	/* rescheduling necessary */
++#define TIF_NEED_RESCHED_LAZY	1       /* Lazy rescheduling needed */
++#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
++#define TIF_SIGPENDING		3	/* signal pending */
+ #define TIF_RESTORE_SIGMASK	4	/* restore signal mask in do_signal() */
+ #define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+ #define TIF_NOTIFY_SIGNAL	9	/* signal notifications exist */
+@@ -117,9 +118,10 @@ int arch_dup_task_struct(struct task_struct *dst, stru=
+ct task_struct *src);
+ #define TIF_32BIT		11	/* compat-mode 32bit process */
+ #define TIF_RISCV_V_DEFER_RESTORE	12 /* restore Vector before returing to =
+user */
+=20
++#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
++#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
+ #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_RISCV_V_DEFER_RESTORE	(1 << TIF_RISCV_V_DEFER_RESTORE)
+--=20
+2.45.2
 
 
