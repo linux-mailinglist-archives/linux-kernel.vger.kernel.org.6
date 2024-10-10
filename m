@@ -1,243 +1,248 @@
-Return-Path: <linux-kernel+bounces-358101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D25997A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B24997A2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878DA1F23C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654E21F235BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4392F2B9D2;
-	Thu, 10 Oct 2024 01:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F732AF17;
+	Thu, 10 Oct 2024 01:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ut2np6uC"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Z+CxxQLW";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vBtEzUs+"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0608A22094
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728523702; cv=none; b=mPfyOq0oBdKioYMVANuxIWAfUCfr0H/gmUHhL7dxCRVn5cAizrAUHxxPj4Mk4FE7xSMvR7tdQGEyVm2Py0tC5xFWM50sLgp8bDuVqRaslp1E7kWuojLzL7XZbC1qIrQQNg2jpW305X47fyXTmQCARsLlAdkPbnMQHzNUjwGGwIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728523702; c=relaxed/simple;
-	bh=I/MrKtHVqIJu7U2B8TRyeGeNvRXOu4glprUHE82I3vA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4VjTfmWCDIWvDTl1RoC3lTxNBzAH2KH6QN0jYpMddkDw7TzDb0nueVDGnmDsdndskiQrJP1+CiCVZv0gl6VQtGA+46ul0/a3otzK9AA3xqxduwR2gDIGZqoTTOhZsGOiEGoAVMTgxjzf4SKohuV2bHOFTwG9dIboAHb5fr4ScM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ut2np6uC; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5398e7341a3so62397e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 18:28:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB342CCB7
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728523793; cv=fail; b=mSxiltGAjk/XbhNzMhKBRo5PDntAYMom4waQE934Jo42NdtGH2pfmw0SOf5fYDyvzm0Grjb5+es1HePdUNNO0aUTJZKBr/vHgDWSOOKy9x//96WLaERKjwlXCnuyF9aHa2+Pyrw5Gx6UHcQSxoLvjVMv2BNvcpkrCNzhjVBMXq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728523793; c=relaxed/simple;
+	bh=wSZdrsf7C9Blm+1E5lYgSnreeRk54Nlq44j72PzQx1c=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eJkghnVE00rF31tjiXj041U+uGZOtDjSEkhGTrZdH9foMUhkprzBbor/5uyZbtqyW8yT0mvuMTfjpxZ+QG6GQAjO7QIrF/ywWTAbrq/nEXptASfwq1lgn74mwPVIh4pCjFDH5la/6j3NPhMFykXgSRpxuqYpleqUSiiJuYtCXqE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Z+CxxQLW; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vBtEzUs+; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 499LtfGL013834;
+	Thu, 10 Oct 2024 01:29:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=FoovJ6n+exxjJDU82x
+	s8hvSvVOfMUj6eaaEvKwVZb6I=; b=Z+CxxQLWBhDC9WW5oNWjhcbLgIzCg7TL66
+	uJTHcbqAFktdyzXOgNdFFj2nYCuHwwU2YBVfHhFXJA4cyAtITpOSzVcDyALu9BQD
+	dS/zTKBY8AGvXOSdS5d8TjH15QyPEP+wS/4y/gGMBfEYppj5V33XBzXsc3yvgppS
+	YqjZRgR+lI02sjp1N5zLSaVycfTRbNAn2AdewHzO+yv9euWGeBN5a2GlIy1RvaZb
+	1xB/btVKBqKuDR4As7w5IVuzDyMSL2E8g49oFAcKxhwKEVQIVK0bNxUJhMp2ADLZ
+	8fxh4TbAaFDLjfhCytDU2Q7A4UT3PkaIuS2M2JRrJbpwR8bmDRuw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 423063sqjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 01:29:39 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49A0tpBu038335;
+	Thu, 10 Oct 2024 01:29:27 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2043.outbound.protection.outlook.com [104.47.51.43])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uw9f3rb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 01:29:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gMhX+mzbN7bmTPY/T5h5O4369BkfIG0WaTETK38DE95dsU9GiXzqexROxO/nbg8hjUiBMFhc/xvFRwUHum00bBUdk/EOOj6uXkyB8C9yVFEqbFPGmiXhWRJgBmHxal8GqJLVS9zOKvQwOjMLuashpCvMhoolqvMh7JdUu5ZBZ1YH4RByW03DyBa3LVgCENK5gLUAzUifKZ/G4ueGAx3p+kgDVKqJqeJtRAHdYrsaBlxszTRSAP9xMT0HoRlUAEdFOOWDXkcNlNnHZGtAXWspQBKMtL9ywtdTEXjsOjeRAEYkA6JBfGt2M3LTURdyJiPo+LNc6b63m5RMzY5briecnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FoovJ6n+exxjJDU82xs8hvSvVOfMUj6eaaEvKwVZb6I=;
+ b=AlJS+xScl900Zhj+Ebk5vwFRmBmB97CnjQ9Eq8CpTcPYX0W3QJNhtijHIaQIOH7gRV11gNRfu7e8LXlfwxT0AmKXKSByVE+yiUCIUfS0HxzlUEbRkaJp1oRyPYpkYgLBp9+1HZQVmbGb9RGtxdgJNZmnuMhjwwo8sxblgOyVON0d/yIiu1mjsXRvqVBaSu+Po6wmoSqptmSUnplvhgRAWrw18aHAKKBSF/aiy3+tQE6V+FPjKM5yledTVMf2mUBYeMU5KMPjQRrZZzgB563odSDJ+wETIluC29rtAZy0xoci60klTS7HZa6mo2tk1lB6/69aQmyMoJ2SoHSA5/4q6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728523699; x=1729128499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VlaT00TYnkVw/cLCmAFB9f/ich8Z222RWy8eT5SZDZE=;
-        b=Ut2np6uCThNlbFfxkPBGnuusMw9fyblEhbjEhtPNbtbYNLUCgFHMwvXonmlse+dIPb
-         eRTYtgfSQ/PnVDnnKVwcEtTY1cvJzV6FNMX8x4aC9lrP+T6ppCK6WYgfRsHHtRKtKmZY
-         ppwbTenSYFhWSi+hNbGzzKlYxbhD30ih4+iDglSBhxVcQmSf2A8O/ysmcGOeCLSWW1tG
-         AkdxTo4RcXDoGElm/1JcazocIon3OpmZqywXk2n1g23uDruvQ4tT1lAIflDzaCfxUvBO
-         ul1yv68KxUDbC1286htJYvjbh7ITr0nOEzh2rbuo3V+qLyY4fxzrCRbFGWFA2tmnE/bU
-         fDhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728523699; x=1729128499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VlaT00TYnkVw/cLCmAFB9f/ich8Z222RWy8eT5SZDZE=;
-        b=YDYbe7G9megb4Bv4LXAmm8v40N2dcYvh68ZBuuAhXy802W24ZoxfxH3lp6WUNLt23L
-         9NDPn+cmGiA+uqTMvb/QFkL9leLFpRn8foUV4GbkyLbJZzv7EWKl0AXp1k178qFBftm/
-         T/4iDLYhGGcm159j7oIS6tGYq6Zx6HXqDYBSxZYZrmt1yeKMw9BvxClyCkxkZCIqupeK
-         MVFC2cpE0Zlqq/c64ohWEnk0mgyHWWL+Dm7n5039a1FisIVnTUoB2A0cDcDClUgcHWIG
-         5qV80lx1JtWYqGPOvQ8BnbetNroljGEnos+7pHCrEo1VfrEIhCqH87QHrjtnrG8MczRE
-         QA3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJkLrlEyD4mxCh3im+Wp5zZDnWs1wqBByT4GLFluIoOP4woifQcHCGY4OGFP/Jl+Z06vGyXEfu2W5O7es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSEmiFs2vW+lJmKSojsiHaVhjsbun1qgWktN8krgA6SYMSMTsf
-	l07nfw1GHSA88cjTxO2crcGDxDmD6eop2QfBL+r4cNBisa6o0k1RUfu1j0n98GQ6uoBOMAsUvO7
-	6RPaDA6P+m0hgNHyTfGOuFv0F6DNPI+ZX
-X-Google-Smtp-Source: AGHT+IGA8D4d/NKfE3sAHW3yv8tf12g0swxPE5fwD6W9LctvR9eXNFEcWIB7pKDIgeLKGG161xVsRyF0AMYmeA6bpOs=
-X-Received: by 2002:a05:6512:1327:b0:535:6a7b:9c03 with SMTP id
- 2adb3069b0e04-539c494a024mr699845e87.6.1728523698840; Wed, 09 Oct 2024
- 18:28:18 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FoovJ6n+exxjJDU82xs8hvSvVOfMUj6eaaEvKwVZb6I=;
+ b=vBtEzUs+XaZe4OwW2vyWWRq1xPcmFm5WFIDXjB1mdgOcXxwas2h6Gs014cl8XkA/fV3Cf715KZ+A0AKfBw1oFrzmel8FAWNUR1TJP1/zvAsjJl4bkjbvrhoImsuxuXY3jjYhRX7+FyzmtiidIutlT3L2vZLEAYEWVw5HB6elN8o=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by SA1PR10MB7790.namprd10.prod.outlook.com (2603:10b6:806:3b1::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Thu, 10 Oct
+ 2024 01:29:24 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%6]) with mapi id 15.20.8026.020; Thu, 10 Oct 2024
+ 01:29:24 +0000
+Date: Wed, 9 Oct 2024 21:29:22 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org,
+        maple-tree@lists.infradead.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, willy@infradead.org,
+        richard.weiyang@gmail.com
+Subject: Re: [PATCH] maple_tree: remove conditionals to detect wr_node_store
+Message-ID: <jjncaumvurhacujkoryn4jcgqlvnyoctlow6nc4oubkrr6yjvx@ymnfisz526v4>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org, 
+	richard.weiyang@gmail.com
+References: <20241009152007.2096-1-sidhartha.kumar@oracle.com>
+ <qevigth7doscc2kqdnrcagh4klgruehp3x4mwo2lc5c3qrey72@6omxfs7qhk45>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qevigth7doscc2kqdnrcagh4klgruehp3x4mwo2lc5c3qrey72@6omxfs7qhk45>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4PR01CA0462.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d6::13) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009074953.608591-1-zhaoyang.huang@unisoc.com> <20241009135252.53276de999d3006a20cad21c@linux-foundation.org>
-In-Reply-To: <20241009135252.53276de999d3006a20cad21c@linux-foundation.org>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Thu, 10 Oct 2024 09:28:07 +0800
-Message-ID: <CAGWkznFAAM5VZ0Q8Hy+T9b9g3qBsxj9WFTaHwwhXvcSR=AYqVQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: throttle and inc min_seq when both page types reach MIN_NR_GENS
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SA1PR10MB7790:EE_
+X-MS-Office365-Filtering-Correlation-Id: 293577b0-54f5-488d-6345-08dce8caf96d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HwY6cISA5FypMyCxo5fnPukAyk3+IiyU5Rhflp5RYDb3cyVOVsbbuKelUNQ1?=
+ =?us-ascii?Q?cchqyMPa1URRUkl355rzahcRxoeQCOlhrGk8jtOPipazKvhVqnxglF8uYMMd?=
+ =?us-ascii?Q?Nkjm/+Rg6NLMMYCzndHEe8/X/4WgFC+M7gDPDkLSLvu0ItLveJGFLM/iG2rG?=
+ =?us-ascii?Q?EvshxWX0LzbWMrvIUu4v9BcEWYLCxXm/w++3ZxUtcvq+pqbFA3EUIvCfHDzO?=
+ =?us-ascii?Q?RgPk+envTYCcQ4iGH6hZFKM/1wMKkO/T3DA3tN7CPg3rw+VuwkI4RlJF3DGe?=
+ =?us-ascii?Q?ZQPCfREb9illIN9vVhfxcgWgKGPtFzJZmjIAJeqvi3sQSljm17+Gb6tgNN7P?=
+ =?us-ascii?Q?aquReu272vOp/m85fRC01qAensoKiBgFX9YxeX7FxujVqLj0WjXa+3BMXvS5?=
+ =?us-ascii?Q?B4TW0QJww8Iv+aq5UwjebchhiqmjMEj81M8s/ew6z0Suawthhkp42cGS7/cp?=
+ =?us-ascii?Q?Gnu1ik9PfEDM7vWFPIrCsAp0BldG2cIkn2kO6vZDXdiaLP8QyYzmvJ5r7a8S?=
+ =?us-ascii?Q?TrZU8I6LlL7U/h0gs7bz5/3t8tC6VCkn89dGOV3rL7nXvfHsSdoleuhF2zif?=
+ =?us-ascii?Q?KLGNUTqGtM9wHZEzwOlK4/V2ZsIPfA+x73bmG2GAg9uRgEHggUywl4CI71Ju?=
+ =?us-ascii?Q?ECKQjDORDnHCmVrdD24xiukajKLga/3DXB6rQ+9OPOPP8sowhNoHhbbRFUH1?=
+ =?us-ascii?Q?Hk1yHbECbnQdT03sGAmyBMT7mn+3Qy8KyLenY7O35q92kTokiapba89b6GMQ?=
+ =?us-ascii?Q?sqrWy218i9G6Jhfo+xHIFbIXgQ8PeX6tvJzwyvTPwromc2F64GpdMuXFdsjX?=
+ =?us-ascii?Q?dGMuWY1tLvdC/HLTASWg5Lt9R/bGLvV2v806O7l4iNjUk9sCm05QjGwCiFmG?=
+ =?us-ascii?Q?QPvQ7eAOynjkQmve3eX/KHnSX3tDdUt4SJP1nX/9qKQQqlM3Yr0yI7hPd6v+?=
+ =?us-ascii?Q?WGPKrgMXVqeqhg2sofv7dP9PkLRivJWnIZYlc4Uqm0zzmF4u671+wfidvqvI?=
+ =?us-ascii?Q?R925Q3ujP7tdFZ5OGH6YYQs/zuJrRqshrg0W5pKNfFMBUQXHFiHVjC14f15x?=
+ =?us-ascii?Q?GGKfxQobKG5ZaSfLRiRFP5dqQSL3frPyC6ipuaUGKygpSFmiq+pAA+uQvgLZ?=
+ =?us-ascii?Q?4Bv2JeHotS+eltA3bG15Yi9622aMonDHzc1qTPruFtaf2lddxCPPVlAUOVdC?=
+ =?us-ascii?Q?1/rcc/8++Xf8vUXPJjWC6E40o3c3wGxeP45QjhdFRhIAzTOqpA/Y3Lzqcvo?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?e6NHv75MWP/b4rw+9rso+sIkNN3Ft9kjSlQPgSxmQcx/l9+GCvFm/lb+em5w?=
+ =?us-ascii?Q?quWiYHOWhUIPB5waDFHTX/UmQ47eZ9rFNXXzqbbC5KTrMgzgnMll+8zK57PR?=
+ =?us-ascii?Q?zDx5DWVIFJQTQRF7+pn73XsWnYk/r38GoqYf0OoXBaEGakYIIQoTWlyLB1Ho?=
+ =?us-ascii?Q?wLE74k9OeKDVlcyCgUhw45D6NwwWS+ET5/wYCzGES9Ze41MgLGcN0dhW5d2M?=
+ =?us-ascii?Q?PxNx2ww90TPm/e7q+CZPLtmNeGH+DGGeXMbCxWIGyonYDsiMfPK3muXY6KxJ?=
+ =?us-ascii?Q?pWzxSL9hEEVJBnMqtIHw0dac3dAx7Ty791x4qGUKn/36eLuZaeYo9EJ88yPA?=
+ =?us-ascii?Q?pxjAQ0CFMf4m3dxS98Gc2OdI4LiXieG1GKfDoqbcgYtXvVvJuVy80e9y3Xlb?=
+ =?us-ascii?Q?DctzmaOrL3rWfgx4N1G2UMLAefS2mqBETE8gDFSzlUAItgcjJrIl/3CMSXtA?=
+ =?us-ascii?Q?TY9zKejoM1voIPSIY0fKCn8QdRMDBWYi2LgsblM+gbDBRbpMJgDuD/5MiaJ0?=
+ =?us-ascii?Q?vhAWIJJYcR2zf1/5ululk6USH4i46gXnnytECRVV4EewVcO6wFPgwTtdkHoF?=
+ =?us-ascii?Q?CVugtB+wbG58+yZEpGaeGQzrztTXPAw/ZtoqYjkiy3A8YzZ2VyGHWczeGhje?=
+ =?us-ascii?Q?wsK38quVFrY2ooqATvvo/r8ABfdgeuXbI+sFZbnog8lo2Yieb+j4F+4iew4A?=
+ =?us-ascii?Q?iUiIfWnjHSUXACunfbkYaEOaGV6EUNtidDA8BEWqWucxY0a8LhEOIxsx8Bcd?=
+ =?us-ascii?Q?dr3K9dQ7TECOjyq2UiOo0LQouL/o+wh1j8lCW50er61cWHJN9OJzSr0KoQ0V?=
+ =?us-ascii?Q?vQolvlYWL/Q0+rEc272D9C4XLNRoCRBwuQ9HxI1WlxdPYhqvq2QuI+Mm++sw?=
+ =?us-ascii?Q?cFjVP06kv0tdbpXjTyb5E0H1I8PJc4jIj5jrq1jjSzPWlNjyte/w739VmOFG?=
+ =?us-ascii?Q?CNOTXSf1cZn3odWbL7BwZa9w0IbLUlufeclJb83HmKNo3EizfvYmZZs8yzuv?=
+ =?us-ascii?Q?RI7shXDvDiJWFTQQY1QFXeXv86YFURRxwvj7Xs15pdt08wLQhgIxtg45Uwdx?=
+ =?us-ascii?Q?ly44kqmakm9uJ//8ebhWFysh0n6Tj+PSo5QckjBBGK0/1CRfH2+HrCXZQegc?=
+ =?us-ascii?Q?IsZrnDIvzx+QbfmOudOCKxWsMwItvW49cyo1A1PwO6GQuvv2IQFELoaVWW1G?=
+ =?us-ascii?Q?SQoVqXYsIuvUyLvaQYTE4puMFQr4ZNg7AKJdWSY9VkrbJeB7ohdd0/DrRXP9?=
+ =?us-ascii?Q?fxE1vmFUor+iJx61DnaGXSjyQisC/OBJlGfEnlhzmy/e7FMu8i+U25WMAZxl?=
+ =?us-ascii?Q?r4S7nX5sUthjWqYRcp7GSUgsWP0BNqNPx7TIPWVBk1GlWz0Jz2bbS+sTzGBH?=
+ =?us-ascii?Q?AjVT2qt9iBD/rKHxx2cCX5Hlvu2mCetOpv0Fc5oL9fb0/UJZHKDQQ9x0pFr+?=
+ =?us-ascii?Q?t0P35iHjfvmuxTrEfz2CJCaGoBclZ7oeEhHzFp+k5UY63wXSauH8YdIEWov4?=
+ =?us-ascii?Q?MaGU7e97J8a7VxLffevEMmS/qTNQ0F0lsj3snglngk/S9sPPiuzWLvk8j1uP?=
+ =?us-ascii?Q?NNwjmY4dN34mgnEabjqEfIFsoUbvZRWmTBUUwxd9?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9RSItVNneZZ/aJAcmPDAku7koovCgnlsoUUUEs3neG3Vw1AqJQ7HbJES7BUeP15QQyKsIcSelk7qomsG95xHnRP1hRWLYFhCvPmCGW3eEKpMmG+axGCTKJ33jAK7c/QAQDvpam0h7DJURH0Khlx9KlOjTq946jfGbwE6AHFVoV0hVdCeMBy69j1mbQL58r9aVCGeP60zwOVOP5bWMdOGTkqTmuSphSxMDazX/byTvg1mFMoo1x0QnzhADqrgQazCzyxk1Ct6bJRpK8xcB+u1RwVvxtc1arLNgn7X7LKz45Wf9nogRWbwZaqNZwIAdYtvOWFGz576VPGRPRGhYsMiWaKqqU9lS2FMHsYSzcdyL+RkjY0FnXARXKeIyXGtBcLRELardzQcvbnYYtWssUod7Vo2LujlatHJ6kTQytx6v4wa5StdlSnc0mZ0i/Pu/HbLw1s5vqsXHQoRxGTkFEswt3+Y3lu7pk0AwU/2Io2c++XX1afSvkJMSo5QkVnV33LZ9GkazpkOZiHLUAkQLsg9gqQxFPUqaRMDOVCWe4KeJ60YvYGB3giF3Ng61Q2ff7QXTHM2zpvvQHbhXKP8mux13fByzrh8lYDkVUzTCtjUvQk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 293577b0-54f5-488d-6345-08dce8caf96d
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 01:29:24.6957
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kZS1ZWQPXvMQfkrSG1sgqTp4cU60xIWkF7aBflV+4XeIRgP/s5TKzUK/mvaIR0VLQmxEBaFKOObDDI/7APjWgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB7790
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-09_22,2024-10-09_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410100007
+X-Proofpoint-ORIG-GUID: p8FSq9oatNueu0jLwfPMK6HW1ES5Mlq-
+X-Proofpoint-GUID: p8FSq9oatNueu0jLwfPMK6HW1ES5Mlq-
 
-On Thu, Oct 10, 2024 at 4:52=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Wed, 9 Oct 2024 15:49:53 +0800 "zhaoyang.huang" <zhaoyang.huang@unisoc=
-.com> wrote:
->
-> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> >
-> > The test case of [1] leads to system hang which caused by a local
-> > watchdog thread starved over 20s on a 5.5GB RAM ANDROID15(v6.6)
-> > system. This commit solve the issue by have the reclaimer be throttled
-> > and increase min_seq if both page types reach MIN_NR_GENS, which may
-> > introduce a livelock of switching type with holding lruvec->lru_lock.
-> >
-> > [1]
-> > launch below script 8 times simutanously which allocates 1GB virtual
-> > memory and access it from user space by each thread.
-> > $ costmem -c1024000 -b12800 -o0 &
-> >
->
-> That looks like a pretty simple testcase.  Do people know where to get
-> `costmem' from?
-Sorry, I am just aware that this is an internal test tool integrated
-into the SDK by our folks. Here is an old version of costmem which I
-can share
+* Liam R. Howlett <Liam.Howlett@oracle.com> [241009 20:02]:
+> * Sidhartha Kumar <sidhartha.kumar@oracle.com> [241009 11:20]:
+> > From: Sidhartha <sidhartha.kumar@oracle.com>
+> > 
+> > In mas_wr_store_type(), we check if new_end < mt_slots[wr_mas->type]. If
+> > this check fails, we know that ,after this, new_end is >= mt_min_slots.
+> > Checking this again when we detect a wr_node_store later in the function
+> > is reduntant. Because this check is part of an OR statement, the statement
+> > will always evaluate to true, therefore we can just get rid of it.
+> > 
+> > Suggested-by; Wei Yang <richard.weiyang@gmail.com>
+> > Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> > ---
+> >  lib/maple_tree.c | 9 +--------
+> >  1 file changed, 1 insertion(+), 8 deletions(-)
+> > 
+> > diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> > index 4b423330d83c..f5a12d37b352 100644
+> > --- a/lib/maple_tree.c
+> > +++ b/lib/maple_tree.c
+> > @@ -4252,14 +4252,7 @@ static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
+> >  		return;
+> >  	}
+> >  
+> > -	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
+> > -		(mas->mas_flags & MA_STATE_BULK)) {
+> 
+> Although this will be evaluated as true due to the new_end having at
+> least the minimum data, it points out that MA_STATE_BULK is not being
+> evaluated correctly in the new_end < min case.
+> 
+> That is, we will rebalance if we are in MA_STATE_BULK mode without
+> meeting the sufficient data mark - which is not correct.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+Reading through this function, it would be much cleaner to return the
+enum from the function and assign it in the caller.
 
-unsigned int block_size =3D 64;
-unsigned int cost_size =3D 1024 * 1024;
-int oom_adj =3D 15;
-
-static void usage(void)
-{
-printf("Usage:\n");
-printf("  costmem [-ccost_size(KB) -bblock_size(KB) -oOom_adj(-16 to 15)]\n=
-");
-printf("  such as: costmem -c2048 -b128 -o15\n");
-}
-
-void process_options(int argc, char **argv)
-{
-int opt =3D 0;
-while ((opt =3D getopt (argc, argv, "c:b:o:")) !=3D -1) {
-switch (opt) {
-case 'c':
-cost_size =3D (unsigned int)atoi(optarg);
-break;
-case 'b':
-block_size =3D (unsigned int)atoi(optarg);
-break;
-case 'o':
-oom_adj =3D atoi(optarg);
-break;
-default:
-break;
-}
-}
-}
-
-int main(int argc, char *argv[])
-{
-int i, max;
-char *memory;
-size_t j;
-size_t page_size;
-int rval =3D -EINVAL;
-char text[128] =3D {0};
-int fd;
-pid_t pid =3D getpid();
-
-if (argc < 2) {
-usage();
-return rval;
-} else if (argc =3D=3D 2) {
-if (strstr(argv[1], "help"))
-usage();
-return rval;
-}
-
-process_options(argc, argv);
-if (oom_adj < -16 || oom_adj > 15) {
-printf("Oom_adj must between -16 to 15\n");
-return rval;
-}
-
-sprintf(text, "/proc/%d/oom_adj", pid);
-
-fd =3D open(text, O_WRONLY);
-
-if (-1 =3D=3D fd) {
-perror("open");
-return rval;
-} else {
-sprintf(text, "%d", oom_adj);
-if (write(fd, text, strlen(text)) =3D=3D -1)
-perror("write");
-
-close(fd);
-}
-
-printf("Cost mem %d KB, %d KB per Block, oom_adj %d\n", cost_size,
-block_size, oom_adj);
-
-max =3D cost_size / block_size;
-
-for(i =3D 1; i < max + 1; i++) {
-memory =3D malloc(block_size * 1024);
-if(NULL =3D=3D memory){
-perror("malloc");
-return rval;
-}
-
-if(mlock(memory, block_size * 1024) =3D=3D -1) {
-perror("mlock");
-return rval;
-}
-
-memset(memory, 0, block_size * 1024);
-
-printf("%dKB,", (int)(block_size * i));
-if(9 =3D=3D i % 10)
-printf("\n");
-}
-
-printf("Have malloc and mlock %d KB mem\n", block_size * i);
-printf("Have malloc and mlock %d KB mem\n", block_size * i);
-printf("Have malloc and mlock %d KB mem\n", block_size * i);
-
-i =3D 0;
-while(1){
-sleep(20);
-i++;
-printf(".");
-if(9 =3D=3D i % 10)
-printf("Please Ctrl+c to kill this APP\n");
-}
-return 0;
-}
-
->
-> > --- a/mm/vmscan.c
-> > +++ b/mm/vmscan.c
->
-> This is a somewhat serious issue, so I'll add the patch for some
-> testing, but I'll await feedback from MGLRU developers before
-> proceeeding further, thanks.
-IMHO, MGLRU is now lack of the mechanism of 'too_many_isolated' thing,
-should we do it in this way or others?
->
+> 
+> > -		mas->store_type = wr_node_store;
+> > -		return;
+> > -	}
+> > -
+> > -	mas->store_type = wr_invalid;
+> > -	MAS_WARN_ON(mas, 1);
+> > +	mas->store_type = wr_node_store;
+> >  }
+> >  
+> >  /**
+> > -- 
+> > 2.43.0
+> > 
+> 
+> -- 
+> maple-tree mailing list
+> maple-tree@lists.infradead.org
+> https://lists.infradead.org/mailman/listinfo/maple-tree
 
