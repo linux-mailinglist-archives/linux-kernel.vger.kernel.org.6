@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-358879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F2D998507
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:34:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FEE998508
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5427C1C234CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98231F27093
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051001C3F2F;
-	Thu, 10 Oct 2024 11:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5011C4612;
+	Thu, 10 Oct 2024 11:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="meuoJII3"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="obBaYvyS"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD94B1C32EC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51AF1C3F28
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560029; cv=none; b=hsOasugBai2D5n+fS3nmfO3/hV12AY/OklAu78WuPdqX2kcwWgYASY/tnYjfYYJ8DDf7LivAI4cWuSpaXivgAgPtHgtJff5jR2yXgusJU2knEL4aUIWj++AuiEXt+95mYs+uuPiqWfFBGau91DZ6GOldo6FKP+IIA1jLht7+0Ik=
+	t=1728560031; cv=none; b=fw2XkPiRVT6+ibDXyPNhbN7GiXvn4IRs+YStjbNQZtK1QHLA3utr9QGUjNiQI6g+CwyAW4hxU15/BvAUUsmj71OidMzJobpj+b//TTxAXi0ZSA1k/9fZLemkG7eOQ2IMwRSgNZurQExKEwwmbpZsY+kYMUhtXrX0dvInEnJ5pYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560029; c=relaxed/simple;
-	bh=0u2mldWq4lrnYPUiJZwplGdYFoRn/IGd4Af409B6kLE=;
+	s=arc-20240116; t=1728560031; c=relaxed/simple;
+	bh=F4l5jY4Wqe+bOqNg1KeOS2Pb/rQnbpWuqlfxyr64WII=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P6oAVDFEIL0Imo+HVLIoJ1B1CHWYXySLzbs4HHYuU/ePBUlc1IoHax4BFWO/kmz/ouclN5hRUsxnL0kNAWeBF0m52Sw3v3k8F3mgfBshZwnttYGJITgUNgltHboQZhAPJz3Zzqkv6NrINYliO+x4P+xC3hJti4+teMcrwCKubGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=meuoJII3; arc=none smtp.client-ip=209.85.218.49
+	 In-Reply-To:To:Cc; b=j+C7O/nKQHPETAPUfMjNlJWrY0ZqiS7nvDc52647nRX27zUmKRO6WDNtkQnSwz1eGkO+vxYhEX80884wYRimuHl2x4xndq3BaCeN1lEf2AgRZYIJfAqgLvoVCZmCbWXWXU+tQCFa+UgENQPGGA/VDShgKdzm2qV5MsuhAf5XsMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=obBaYvyS; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9952ea05c5so135409366b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:33:47 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso1046351a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728560026; x=1729164826; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728560028; x=1729164828; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R4LTFu04v+ewJrCMf1qStO/yKKemj/dlkSOHqQ2h8u0=;
-        b=meuoJII3VbN6cv+9I18IbBSiTZrVSn/lExOstWwCNmU8aIYkQD22xGENCIIg74Nfw8
-         5xI5XIOCcNCo5xQNjXmijAwF9ePU6VY0pG81DqoFCnAoB7RORzvBKiTshw9tcGFP180+
-         ZsikS10OvRWpe7SY+tyHbtUNp7wJwhV6RXlp81Gv/RR/1C+eoSUXhPF316j4tmPJUpYv
-         lTK+utYG7tzFMAAqOR7IFJJQiqXjVGhDBMAEp9h/alrQixOLS+BE/8bY3+B7LqBRM/JK
-         47l6GP1Is/dDwWH7zOoo7GClrWjnRbNIruQCcoajyfcbVXrBfWAzCrLWNrP1ILS4zHsm
-         kiSg==
+        bh=OxEtYMLSB1QX4C5qcE83rstSx0FEcAVbxyG1Gu9/c1s=;
+        b=obBaYvySisvaa6lKRRxFTPets1IJkbEA/05bbdXKi5kdLXiYGHL67J2uEHianpqVjX
+         9C8R6W2SXJmIrmnE8wq4oqzNau+LtNVw/anXlYq92UoZtI0BgdP+MGiaJ65w+ixl0Kjb
+         AggvSuAU7FmQkeMnGJLhPeTD2CLfPRN/7pbFwMdQzuIvMCGqAx8nnk7pwZ5GNglT0D5H
+         HA/e0JpkXIgStxwMZ0eApsqAXtlmR9Afp59LNAeZI/oG32KJbe4pTYRBRo7/uwLBth3+
+         0OMyWMqKH4SYHUDs0WVnSlIeTCGr8/DLBZD1jmmYnln4Ewvb5BHStKgVJ6rwO+YHA7e6
+         cuUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728560026; x=1729164826;
+        d=1e100.net; s=20230601; t=1728560028; x=1729164828;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R4LTFu04v+ewJrCMf1qStO/yKKemj/dlkSOHqQ2h8u0=;
-        b=cAIwmrGawZ+jz1vn8kMbPNWBckcM11VEND1bWDkOnZLjen0ivVWCDagmCYM4ZlSL60
-         7xCiDnUMTJVIZc+1jrAwrXaAUy5xJEKvhsHgmVGFRta5fZdNeu1x2DZ9RxFD3tSdjLzS
-         4Y3SOKgENkrsaYpiwSk9nrAi4oqCgW/fUazqxz9Qiyi5n5s+0VrxKp6jbK5/XA7nM+ng
-         1cSt0VRTeOBHawqurSgcK/WRxGVE5gPh/BYlQeaa9uYy7lvCa8zgz7Knb4a7u+QPVyYF
-         oJwRwIgULFMfzWrM/PYxytblERNK4u8r5AZbl0llymMCv0Wc6k9bdyz5drWjGbQ+ttfF
-         MaLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHrVHwYJOojEgaUlSFk8X5ReC5CQmzHoh3C6e6MYlCuv3Tuf/93Oda77juVlj62xi4jpLe9D7FKRhRauU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy2shHn8FumK41bg4IHX3hErs692/MFWKDc0fEZmnkzv4sfN7x
-	UQakyRdm0WblyzjTwo+rl7nbe1QSCtpbTnJfTKMMSBOie7cTKgLrsetrmAOF9ZM=
-X-Google-Smtp-Source: AGHT+IF/7BdKriGHfpakAch78gEDyPg7g4F5Squ3DH3oytxrvyGsFjm+zrnSb3mJBDsLPEmr+DbRWQ==
-X-Received: by 2002:a17:907:7e84:b0:a99:62a4:3fc1 with SMTP id a640c23a62f3a-a998d315001mr502326466b.49.1728560026025;
-        Thu, 10 Oct 2024 04:33:46 -0700 (PDT)
+        bh=OxEtYMLSB1QX4C5qcE83rstSx0FEcAVbxyG1Gu9/c1s=;
+        b=Um0oB7MUIOqupQYWvKQSCsb3QBolj7OnYyMXrln+9dTRTAXyK+cjD3fmx4xmFZ7JXI
+         EOvgQzwH+xSpbjaNLS8PNYou3UuvzkXgJ0iAKbM5+UQ5xWQu7K3Q0b7UJ7iL0B2h2Hcz
+         nPv4g60UaKFhpN0K2WilqrJK7J2CMcXWGRGgHiBShOfSYl8EF5l1EvHC7+KJJ31zhlwJ
+         ihCG7zfJTV89ttADHZaDuAU4wEh7tZN4gnM3S+eNRKKEDIOIUTgZFxksQOEgP1YcKJwa
+         59G7CuIX/ggm6iByNnE1omicCPJa+MmMlaHdPBL3m7DBdv/xi1qaFpqQU9fr4ijUXm0G
+         oB3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnqpox4ib/FbaQNI0g70GO9kFgsix0ZD1EDhTs5bz8mCFgHAaVooMbnEIQnubv5OvRJ+EmXrzQOHYIa4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6yI5qDK4M8uJXsOSQAqNo41JE5AFhl47Gd418CU8/ajx2KNWL
+	P9T7+MrF1XYsT3cKxqCA2khif316B8Axue4H89+y0kQB5umOzhrox0QlwKH9Dh0=
+X-Google-Smtp-Source: AGHT+IGmKNJPIbWGBVZJfO8+b8zw8XAoQP29rf5wbFh2YjSEj93didfv6G/hdQTs2PTJu3Y9jhUpkw==
+X-Received: by 2002:a17:907:360d:b0:a99:adc1:1432 with SMTP id a640c23a62f3a-a99adc11551mr84023666b.65.1728560028080;
+        Thu, 10 Oct 2024 04:33:48 -0700 (PDT)
 Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.33.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.33.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 04:33:44 -0700 (PDT)
+        Thu, 10 Oct 2024 04:33:46 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 10 Oct 2024 13:33:40 +0200
-Subject: [PATCH RFC 02/28] ARM: ptrace: Split report_syscall()
+Date: Thu, 10 Oct 2024 13:33:41 +0200
+Subject: [PATCH RFC 03/28] ARM: entry: Skip ret_slow_syscall label
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-arm-generic-entry-v1-2-b94f451d087b@linaro.org>
+Message-Id: <20241010-arm-generic-entry-v1-3-b94f451d087b@linaro.org>
 References: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 In-Reply-To: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 To: Oleg Nesterov <oleg@redhat.com>, Russell King <linux@armlinux.org.uk>, 
@@ -90,79 +90,51 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.0
 
-The generic entry code requires that report_syscall() be provided
-in two parts: report_syscall_enter() and report_syscall_exit()
-so split the combined function in two.
+Don't introduce this extra label anymore now that we have
+a clearly defined entry point for ret_to_user.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/kernel/ptrace.c | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
+ arch/arm/kernel/entry-common.S | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/kernel/ptrace.c b/arch/arm/kernel/ptrace.c
-index c421a899fc84..07b0daf47441 100644
---- a/arch/arm/kernel/ptrace.c
-+++ b/arch/arm/kernel/ptrace.c
-@@ -827,31 +827,45 @@ enum ptrace_syscall_dir {
- 	PTRACE_SYSCALL_EXIT,
- };
+diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+index f379c852dcb7..2f93c2f6d5b8 100644
+--- a/arch/arm/kernel/entry-common.S
++++ b/arch/arm/kernel/entry-common.S
+@@ -102,7 +102,6 @@ ENDPROC(ret_fast_syscall)
+  * do_work_pending() will update this state if necessary.
+  */
+ ENTRY(ret_to_user)
+-ret_slow_syscall:
+ #if IS_ENABLED(CONFIG_DEBUG_RSEQ)
+ 	/* do_rseq_syscall needs interrupts enabled. */
+ 	enable_irq_notrace			@ enable interrupts
+@@ -136,7 +135,7 @@ ENTRY(ret_from_fork)
+ 	badrne	lr, 1f
+ 	retne	r5
+ 1:	get_thread_info tsk
+-	b	ret_slow_syscall
++	b	ret_to_user
+ ENDPROC(ret_from_fork)
  
--static void report_syscall(struct pt_regs *regs, enum ptrace_syscall_dir dir)
-+static void report_syscall_enter(struct pt_regs *regs)
- {
- 	unsigned long ip;
+ /*=============================================================================
+@@ -310,13 +309,13 @@ __sys_trace_return_nosave:
+ 	enable_irq_notrace
+ 	mov	r0, sp
+ 	bl	syscall_trace_exit
+-	b	ret_slow_syscall
++	b	ret_to_user
  
- 	/*
- 	 * IP is used to denote syscall entry/exit:
--	 * IP = 0 -> entry, =1 -> exit
-+	 * IP = 0 -> entry
- 	 */
- 	ip = regs->ARM_ip;
--	regs->ARM_ip = dir;
-+	regs->ARM_ip = PTRACE_SYSCALL_ENTER;
+ __sys_trace_return:
+ 	str	r0, [sp, #S_R0 + S_OFF]!	@ save returned r0
+ 	mov	r0, sp
+ 	bl	syscall_trace_exit
+-	b	ret_slow_syscall
++	b	ret_to_user
  
--	if (dir == PTRACE_SYSCALL_EXIT)
--		ptrace_report_syscall_exit(regs, 0);
--	else if (ptrace_report_syscall_entry(regs))
-+	if (ptrace_report_syscall_entry(regs))
- 		current_thread_info()->abi_syscall = -1;
- 
- 	regs->ARM_ip = ip;
- }
- 
-+static void report_syscall_exit(struct pt_regs *regs)
-+{
-+	unsigned long ip;
-+
-+	/*
-+	 * IP is used to denote syscall entry/exit:
-+	 * IP = 1 -> exit
-+	 */
-+	ip = regs->ARM_ip;
-+	regs->ARM_ip = PTRACE_SYSCALL_EXIT;
-+
-+	ptrace_report_syscall_exit(regs, 0);
-+
-+	regs->ARM_ip = ip;
-+}
-+
- asmlinkage int syscall_trace_enter(struct pt_regs *regs)
- {
- 	int scno;
- 
- 	if (test_thread_flag(TIF_SYSCALL_TRACE))
--		report_syscall(regs, PTRACE_SYSCALL_ENTER);
-+		report_syscall_enter(regs);
- 
- 	/* Do seccomp after ptrace; syscall may have changed. */
- #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
-@@ -892,5 +906,5 @@ asmlinkage void syscall_trace_exit(struct pt_regs *regs)
- 		trace_sys_exit(regs, regs_return_value(regs));
- 
- 	if (test_thread_flag(TIF_SYSCALL_TRACE))
--		report_syscall(regs, PTRACE_SYSCALL_EXIT);
-+		report_syscall_exit(regs);
- }
+ 	.macro	syscall_table_start, sym
+ 	.equ	__sys_nr, 0
 
 -- 
 2.46.2
