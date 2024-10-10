@@ -1,107 +1,205 @@
-Return-Path: <linux-kernel+bounces-358228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104AD997BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDC2997BCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7BF1F245D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:13:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6901F2490A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B137219ABD8;
-	Thu, 10 Oct 2024 04:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECF418950A;
+	Thu, 10 Oct 2024 04:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0EM1WTzy"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="JUEgjjWs"
+Received: from mail-m92233.xmail.ntesmail.com (mail-m92233.xmail.ntesmail.com [103.126.92.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFBE6EB7D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5DC19C549;
+	Thu, 10 Oct 2024 04:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.126.92.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728533596; cv=none; b=Sz+opGfgPu5WUtDDhEkgx60pWh0HOqLGX8m76ijpNxGvRAQJM6rMEvCnJ5hngot/UaWvAQNTBXmrhoGDt76gf5JcNyfiJyI0i6GGDepkMx+B2Qhfoh/VjFTy74GEOKDnd/TNKnPbuzejTxAgLvWXSxTvSfytLLkPEKFQa0XErAY=
+	t=1728534419; cv=none; b=a54UXNQTyYa9WMxhJ5+3E6qcn1czWwGpZHbVaR9OZ80ehCmt4otnIJfbbaIl8RSw97kQRptqBNJ4Gsm/JIxmxaoeFZ5pyf1c9RXCD2N303nbKp2itfy6gJVFVt8c8kNozuibA2todr49gy1oldH0GYLcxPTv9jTts9GQ8xO7tYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728533596; c=relaxed/simple;
-	bh=NeY05LlwBc0ajuq1r6Lvp+ySX0MuSaKuKFkUvi7MQXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OmTG+O/pBGvynzLTKnic1CltrsEymy6MbXKFH5TmAK7SxiCpCDzzc1Faz6pkhVuA4b9ODodLg6P0FmpeSplcXnDwJKNVjZBdZDL7sgYO+/GFhFjT1r4uMgYoOrDahnfbxr/Bx5oq6OPjBieN8AsffhwCH82NlQkK1WzSrIuqCzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0EM1WTzy; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c5cf26b95aso521051a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728533592; x=1729138392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NeY05LlwBc0ajuq1r6Lvp+ySX0MuSaKuKFkUvi7MQXQ=;
-        b=0EM1WTzyfqEdVvrzi4s8pAh+ov2jymKnhbhUkSe4w8tgknr4M9A2n5tqynYtjFwuwF
-         BRLAzPREE9IiyPEwWRvmZbu0FTHFMRRXeWDx8GH+rGDGQh+oaS/QMGNmGYERqQsvghAu
-         XfV7I3FeNooMdZDIg6DznMY8sy2OZ8jmrCvNj+/nkIYFoflhZSfSzcQ6RLco4NFs4Snj
-         gOI8ul0qpKx0hD715gOuaLwfiR3RqQ5J/dg45w8S4kptcMSFfNwf/SgjBzhSSSeXNIr5
-         QqluuNBZUUEC4QEAuwyF4ywpKA0iebvVnxYiO1g45w1xH3XqzGJ/zy/FP9crbasKpQVB
-         rl+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728533592; x=1729138392;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NeY05LlwBc0ajuq1r6Lvp+ySX0MuSaKuKFkUvi7MQXQ=;
-        b=er99HhNOe4XJ5ZwFkuwG/vZtuRHlM1wQ0bYhOxNgWjTqRXwaH3qKc17GPv3lhsC4ye
-         mA5fLytj6PzewILHNLGrMVknISLWkFrg5tZxoOhytDnMENElhHbGAzwAwNuPi8+8ix1Q
-         wRKNk8tqCfV4eouHgU1SNJVU63b2Srktc/aEW1CcitMjdcabJLMaANjiiSr7gCBdvAiv
-         9ARqAgFsc6vgxojkh7Uhzu8fpZ20v7s0wbr4EvM1XGdh5nEy53qnOS2m/YyIrK3J+nYE
-         YwgQWEKZlDeFeQxbLm4bt+bVncFXt1K2DfH2cCOKLybTqbMLhBxoZJCzGIbYnaWGEIQh
-         7jAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLZw/CaQTFOmmueGok3z209ALLu4hqySpOnlBV4ohLiCdXKvrZOMIavPSBT5TwvSlI1xm2ZtdGRGUoAWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy309U7SfaG91wUna1fduSQ3IGoTmg4ykdwQZEmZ1E5+/KMNu7D
-	RJrnArrFJ43drh21MIy2h1mGb7Ppbw/n7SU2oGdWF1W2jy1PPJ79LBOemZn+k3BT/J5aNVMhyLK
-	p8Hnc4kNbysqeA/jSlXSbMTzqUsJ22HNzP6o5
-X-Google-Smtp-Source: AGHT+IG+FVwH/Qj12xcjY3CkGWjMkdfNSI/LctZhiS6nktk17XPL2NZH4mbMaPk+5ew/hx877PmjHC+OTnmlCYT8uX0=
-X-Received: by 2002:a05:6402:2742:b0:5c9:3428:20a4 with SMTP id
- 4fb4d7f45d1cf-5c934282139mr901645a12.12.1728533591505; Wed, 09 Oct 2024
- 21:13:11 -0700 (PDT)
+	s=arc-20240116; t=1728534419; c=relaxed/simple;
+	bh=6//KWScm9mX9fW3ydl5GhjP8SzMNCQwOOC0JNpGmk/4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j7ZPNAK9ZKpa9XahOa9VYXY1saFihGH4M+jBYbVBuvdANevWojIeMfDb03QZo7K29X4DnnUbzFYBl1ZMZtDy1jnNvrVQKYTVEAlZ4ORQLe5PAY3zwnk/jz8Z8iVRXeqTW9Q53K6BS68PVPxcpHarA78I2DV2HAIYHCvrOu9tWek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=JUEgjjWs; arc=none smtp.client-ip=103.126.92.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=JUEgjjWsw8WkgYb+mcECVsI9IkmmXko4RB2udUoVTr19YR+jrI2EiCkwocKdrB85u2ooGalZr4zn1fVqmOtcGX/SUp90/dS2xkk0galBmo+k5nbZW6RqSLhusQYNH/rZ1r4xyCOArDJMFmu40t95UgPPWeBGiwNqZlyEss0tugs=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=aKBu267PcSvUBWDRFu4xvYcquBPnRNKWPIvfJjrnkG4=;
+	h=date:mime-version:subject:message-id:from;
+Received: from [172.16.12.45] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 114E95203C3;
+	Thu, 10 Oct 2024 09:21:08 +0800 (CST)
+Message-ID: <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
+Date: Thu, 10 Oct 2024 09:21:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-4-jdamato@fastly.com>
-In-Reply-To: <20241009005525.13651-4-jdamato@fastly.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 10 Oct 2024 06:13:00 +0200
-Message-ID: <CANn89iKD5eMrQY2wz1JKMygQRhGn71ATSjhV_qWO7LH_693-3g@mail.gmail.com>
-Subject: Re: [net-next v5 3/9] net: napi: Make gro_flush_timeout per-NAPI
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com, 
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com, 
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Kory Maincent <kory.maincent@bootlin.com>, Johannes Berg <johannes.berg@intel.com>, 
-	Breno Leitao <leitao@debian.org>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
+ Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+To: Ulf Hansson <ulf.hansson@linaro.org>
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+ <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+Content-Language: en-GB
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkJCTFYdSUNMTh5LS0lPTR9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a927403f43303afkunm114e95203c3
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MT46Shw6SjIpFA9LHw89NxcJ
+	Pz9PCgtVSlVKTElDTklISU1CTExNVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU1CTEg3Bg++
 
-On Wed, Oct 9, 2024 at 2:56=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
-e:
->
-> Allow per-NAPI gro_flush_timeout setting.
->
-> The existing sysfs parameter is respected; writes to sysfs will write to
-> all NAPI structs for the device and the net_device gro_flush_timeout
-> field. Reads from sysfs will read from the net_device field.
->
-> The ability to set gro_flush_timeout on specific NAPI instances will be
-> added in a later commit, via netdev-genl.
->
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
+Hi Ulf
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+在 2024/10/9 21:15, Ulf Hansson 写道:
+> [...]
+> 
+>> +
+>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
+>> +{
+>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+>> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> 
+> pd_to_genpd() isn't safe to use like this. It's solely to be used by
+> genpd provider drivers.
+> 
+>> +
+>> +       clk_disable_unprepare(host->ref_out_clk);
+>> +
+>> +       /*
+>> +        * Shouldn't power down if rpm_lvl is less than level 5.
+> 
+> Can you elaborate on why we must not power-off the power-domain when
+> level is less than 5?
+> 
+
+Because ufshcd driver assume the controller is active and the link is on
+if level is less than 5. So the default resume policy will not try to
+recover the registers until the first error happened. Otherwise if the
+level is >=5, it assumes the controller is off and the link is down,
+then it will restore the registers and link.
+
+And the level is changeable via sysfs.
+
+> What happens if we power-off anyway when the level is less than 5?
+> 
+>> +        * This flag will be passed down to platform power-domain driver
+>> +        * which has the final decision.
+>> +        */
+>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
+>> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
+>> +       else
+>> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
+> 
+> The genpd->flags is not supposed to be changed like this - and
+> especially not from a genpd consumer driver.
+> 
+> I am trying to understand a bit more of the use case here. Let's see
+> if that helps me to potentially suggest an alternative approach.
+> 
+
+I was not familiar with the genpd part, so I haven't come up with 
+another solution. It would be great if you can guide me to the right
+way.
+
+>> +
+>> +       return ufshcd_runtime_suspend(dev);
+>> +}
+>> +
+>> +static int ufs_rockchip_runtime_resume(struct device *dev)
+>> +{
+>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+>> +       int err;
+>> +
+>> +       err = clk_prepare_enable(host->ref_out_clk);
+>> +       if (err) {
+>> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
+>> +               return err;
+>> +       }
+>> +
+>> +       reset_control_assert(host->rst);
+>> +       usleep_range(1, 2);
+>> +       reset_control_deassert(host->rst);
+>> +
+>> +       return ufshcd_runtime_resume(dev);
+>> +}
+>> +
+>> +static int ufs_rockchip_system_suspend(struct device *dev)
+>> +{
+>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
+>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
+>> +
+>> +       /* Pass down desired spm_lvl to Firmware */
+>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
+>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
+> 
+> Can you please elaborate on what goes on here? Is this turning off the
+> power-domain that the dev is attached to - or what is actually
+> happening?
+> 
+
+This smc call is trying to ask firmware not to turn off the power-domian
+that the UFS is attached to and also not to turn off the power of UFS
+conntroller.
+
+Per your comment at patch 4, should I use GENPD_FLAG_ALWAYS_ON +
+arm_smccc_smc here in system suspend?
+
+>> +
+>> +       return ufshcd_system_suspend(dev);
+>> +}
+>> +
+>> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
+>> +       SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_system_suspend, ufshcd_system_resume)
+>> +       SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
+>> +       .prepare         = ufshcd_suspend_prepare,
+>> +       .complete        = ufshcd_resume_complete,
+>> +};
+>> +
+>> +static struct platform_driver ufs_rockchip_pltform = {
+>> +       .probe = ufs_rockchip_probe,
+>> +       .remove = ufs_rockchip_remove,
+>> +       .driver = {
+>> +               .name = "ufshcd-rockchip",
+>> +               .pm = &ufs_rockchip_pm_ops,
+>> +               .of_match_table = ufs_rockchip_of_match,
+>> +       },
+>> +};
+>> +module_platform_driver(ufs_rockchip_pltform);
+>> +
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
 
