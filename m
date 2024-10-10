@@ -1,298 +1,204 @@
-Return-Path: <linux-kernel+bounces-359091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FC199874E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:14:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAACB998754
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E16285624
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D01F1F21F71
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9498C1C9B9B;
-	Thu, 10 Oct 2024 13:14:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BEA1C460A;
+	Thu, 10 Oct 2024 13:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aJn7f9b4"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322441C6F76;
-	Thu, 10 Oct 2024 13:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ECF1DFCB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566054; cv=none; b=h+K7AzDUvGhpWB7cUYtP3KmSGJ6Z5QnAN8Ji0yeawfqc7AWYG1jQgm9ToIo3WCJnV54H/PpgjQqTcxXvh4HPxULlw3Hd1pUq+qEHf2PiPX1P3JaWT27wdVr8srcirKes5BSRc79wN/F4kILFqYgiYqDcWkc4vToc8lC+uEz6n5U=
+	t=1728566125; cv=none; b=hsoHamrHOoVRuonBglSIH+yOn2xz21uqwxHhVRyNw+aPgDtHsjMsbLGxPPtVb9CXvPEoqlIGq1kW41/5hB1ZqgoefYbuQXiHqZzfzKZxkfMy8ilzLW/kqaxtJ0CF0vSV3TJc2qVV5oGyTCqoY2idhvyRUVsMtaJ2Oa6aUKokEso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566054; c=relaxed/simple;
-	bh=LaBI2ILpuauw7TkFsMIt96tmTH7xhPjg0He+nUpof5c=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMiRJ/wjsAcRU8prPzIT/JumlymZ17orGAjCwVu7huq4/AvbtNZhNscxhxz6XcPxsd7MW9dVdvHOGVBNWpOjNm85y6YSmWGoDXst7mTQEq9JBxiqjmLsEnh7rv8/uZPds44Hf4XaWR1okpPOtWXC1zG/Vz/hw+DBWhrKoxMFouo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPVZP2v7Qz6HJwb;
-	Thu, 10 Oct 2024 21:13:49 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 12FFB140AE5;
-	Thu, 10 Oct 2024 21:14:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 15:14:09 +0200
-Date: Thu, 10 Oct 2024 14:14:08 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 14/28] cxl/port: Add endpoint decoder DC mode support
- to sysfs
-Message-ID: <20241010141408.000022d8@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-14-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-14-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728566125; c=relaxed/simple;
+	bh=piG7spDyI4SMwG425xbizqqdIg+64jbDc/2NxOiLfaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0lPbEyCna7v7FoW2KzdoTGFTVc/1bT9h2ycd0ZBbSGH3fyrV64xJl05pKfn+nj+KpR4GIHiKVM+ZiZ1HVljoa/ikmNl1MyqJdGAo5XckwFfMBNhHPtSy2NLXR2jFUnZMuzzldFdmo+Nxn3l1DC45LvbTykfe1m8jOmVSYkqicE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aJn7f9b4; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso13287341fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728566122; x=1729170922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HtB9kAVv9ewzwyyxT2HgaIAbvdU2B8U0xWvscjF8+ew=;
+        b=aJn7f9b4gbjOHQxvjS+Ve63R3PLePG13ArDTBUctr2lVa+gt2Q8aYFIZQVme1LfHzF
+         x6oOcQsOL4Og3rf2jwtTDSAp4p+/U9bd3Qg8wYHOmqIa4ePKmorSoAVz4mzrnY+VJyG2
+         dO74CJlS8yNsj6O/h4CehcYOv74B1dOViUfAtzsIGV86M5iOwQJbD3XwFo6Plf/LiecU
+         6HnglD72Rj+Zvfz1biMWUtNFB2mNTMcKR0jSmJfOoolD1NZAue9KX1Ri3u9t5J4M+TBF
+         Rs8kUSLgkaOuGP7SOCXbeGxI27yZOelWJ1aFDdaUvZn+f3t01FNNEGZY44B31vtB8v7V
+         BBhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728566122; x=1729170922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HtB9kAVv9ewzwyyxT2HgaIAbvdU2B8U0xWvscjF8+ew=;
+        b=toGJe8updt3XcHjPQxCV9tNtyBfeE+wL2/XcW2Nzz0sdXVWSdy/Od00qIIKXQtNJ0d
+         U6XVA/vIxYI5ENkJhuY4xIay6c4hGOV7N7OIXV1E3ZwVdf72en4mCrmT+vBOxK9kdTmL
+         ZDSFk6V2t2vuiSFieeNtVdK2Z5Sgsu+g1OCGHjAk+qKz8kff9bYVM7SajVTrBzVXmr2z
+         67YUtwR2KsRel1rkQLE9rd1ibsMvsEDr6hXZmeLulaYuEQAA20FbDDjvgsk0wQc4e2ZO
+         JXYMR/BaSS3Lbr37vxDqBDfE4oZKybybhsV3lAZIQJRagqyKysO7XIWR4c1hfNKo1Qu3
+         qZMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvyUVCCp+MzGcpD8em8v7y2VUM3K1Pl6nU2tuZv+Zq0rVUImd8NVNQYkeFoJskWSOxFuaMVJFqRd3pDEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNbOu6pRqqZE+TbckZwgsIvpDQknIf2AvINq321lMT9E+KQeiH
+	rePHfzdzzGgQkRjR7TqO2hG2xRFgWFNo+2pg5o91cykSygF13zXd/iL52j0o/08=
+X-Google-Smtp-Source: AGHT+IH87YK8uHv2ZWN1NNC54PbY4gQ2AIlsgM9SMaLpPP1t+mq+ARbZWeCTLYn1opz9zUFkkR2P9A==
+X-Received: by 2002:a2e:be23:0:b0:2ef:1b1b:7f42 with SMTP id 38308e7fff4ca-2fb187e7de2mr59795661fa.36.1728566121685;
+        Thu, 10 Oct 2024 06:15:21 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb2aeec78esm156381fa.96.2024.10.10.06.15.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 06:15:20 -0700 (PDT)
+Date: Thu, 10 Oct 2024 16:15:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/14] drm/msm/dpu: blend pipes per mixer pairs config
+Message-ID: <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3>
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
 
-On Mon, 07 Oct 2024 18:16:20 -0500
-ira.weiny@intel.com wrote:
-
-> From: Navneet Singh <navneet.singh@intel.com>
+On Wed, Oct 09, 2024 at 04:50:22PM GMT, Jun Nie wrote:
+> Blend pipes by set of mixer pair config. The first 2 pipes are for left
+> half screen with the first set of mixer pair config. And the later 2 pipes
+> are for right in quad pipe case.
 > 
-> Endpoint decoder mode is used to represent the partition the decoder
-> points to such as ram or pmem.
-> 
-> Expand the mode to allow a decoder to point to a specific DC partition
-> (Region).
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-
-A few comments inline about ways that can make this a little tidier
-and less fragile.
-
-
-Jonathan
-
-> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
 > ---
-> Changes:
-> [iweiny: prevent creation of region on shareable DC partitions]
-> [Fan: change mode range logic]
-> [Fan: use !resource_size()]
-> [djiang: use the static mode name string array in mode_store()]
-> [Jonathan: remove rc check from mode to region index]
-> [Jonathan: clarify decoder mode 'mixed']
-> [djbw: drop cleanup patch and just follow the convention in cxl_dpa_set_mode()]
-> [fan: make dcd resource size check similar to other partitions]
-> [djbw, jonathan, fan: remove mode range check from dc_mode_to_region_index]
-> [iweiny: push sysfs versions to 6.12]
-> ---
->  Documentation/ABI/testing/sysfs-bus-cxl | 21 ++++++++++----------
->  drivers/cxl/core/hdm.c                  | 17 ++++++++++++++++
->  drivers/cxl/core/port.c                 | 10 +++++-----
->  drivers/cxl/cxl.h                       | 35 ++++++++++++++++++---------------
->  4 files changed, 52 insertions(+), 31 deletions(-)
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 38 ++++++++++++++++++-----------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
+>  2 files changed, 25 insertions(+), 14 deletions(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> index b865eefdb74c..661dab99183f 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> @@ -361,23 +361,24 @@ Description:
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index 43d9817cd858f..66f745399a602 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -442,7 +442,7 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+>  	const struct msm_format *format;
+>  	struct dpu_hw_ctl *ctl = mixer->lm_ctl;
 >  
+> -	uint32_t lm_idx, i;
+> +	uint32_t lm_idx, lm_pair, i, pipe_idx;
+>  	bool bg_alpha_enable = false;
+>  	DECLARE_BITMAP(fetch_active, SSPP_MAX);
 >  
->  What:		/sys/bus/cxl/devices/decoderX.Y/mode
-> -Date:		May, 2022
-> -KernelVersion:	v6.0
-> +Date:		May, 2022, October 2024
-> +KernelVersion:	v6.0, v6.12 (dcY)
->  Contact:	linux-cxl@vger.kernel.org
->  Description:
->  		(RW) When a CXL decoder is of devtype "cxl_decoder_endpoint" it
->  		translates from a host physical address range, to a device local
->  		address range. Device-local address ranges are further split
-> -		into a 'ram' (volatile memory) range and 'pmem' (persistent
-> -		memory) range. The 'mode' attribute emits one of 'ram', 'pmem',
-> -		'mixed', or 'none'. The 'mixed' indication is for error cases
-> -		when a decoder straddles the volatile/persistent partition
-> -		boundary, and 'none' indicates the decoder is not actively
-> -		decoding, or no DPA allocation policy has been set.
-> +		into a 'ram' (volatile memory) range, 'pmem' (persistent
-> +		memory) range, or Dynamic Capacity (DC) range.
-		memory) range, and Dynamic Capacity (DC) ranges.
+> @@ -463,15 +463,20 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_crtc *crtc,
+>  		if (pstate->stage == DPU_STAGE_BASE && format->alpha_enable)
+>  			bg_alpha_enable = true;
+>  
+> -		for (i = 0; i < PIPES_PER_LM_PAIR; i++) {
+> -			if (!pstate->pipe[i].sspp)
+> -				continue;
+> -			set_bit(pstate->pipe[i].sspp->idx, fetch_active);
+> -			_dpu_crtc_blend_setup_pipe(crtc, plane,
+> -						   mixer, cstate->num_mixers,
+> -						   pstate->stage,
+> -						   format, fb ? fb->modifier : 0,
+> -						   &pstate->pipe[i], i, stage_cfg);
+> +		/* loop pipe per mixer pair */
+> +		for (lm_pair = 0; lm_pair < PIPES_PER_PLANE / 2; lm_pair++) {
+> +			for (i = 0; i < PIPES_PER_LM_PAIR; i++) {
+> +				pipe_idx = i + lm_pair * PIPES_PER_LM_PAIR;
+> +				if (!pstate->pipe[pipe_idx].sspp)
+> +					continue;
+> +				set_bit(pstate->pipe[pipe_idx].sspp->idx, fetch_active);
+> +				_dpu_crtc_blend_setup_pipe(crtc, plane,
+> +							   mixer, cstate->num_mixers,
+> +							   pstate->stage,
+> +							   format, fb ? fb->modifier : 0,
+> +							   &pstate->pipe[pipe_idx], i,
+> +							   &stage_cfg[lm_pair]);
+> +			}
+>  		}
+>  
+>  		/* blend config update */
+> @@ -503,7 +508,7 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
+>  	struct dpu_crtc_mixer *mixer = cstate->mixers;
+>  	struct dpu_hw_ctl *ctl;
+>  	struct dpu_hw_mixer *lm;
+> -	struct dpu_hw_stage_cfg stage_cfg;
+> +	struct dpu_hw_stage_cfg stage_cfg[LM_PAIRS_PER_PLANE];
 
-(doesn't work with preceding text otherwise)
+After seeing this code, can we define STAGES_PER_PLANE (and
+also keep PLANES_PER_STAGE defined to 2)?
 
-> The 'mode'
-> +		attribute emits one of 'ram', 'pmem', 'dcY', 'mixed', or
-> +		'none'. The 'mixed' indication is for error cases when a
-> +		decoder straddles partition boundaries, and 'none' indicates
-> +		the decoder is not actively decoding, or no DPA allocation
-> +		policy has been set.
+>  	int i;
 >  
->  		'mode' can be written, when the decoder is in the 'disabled'
-> -		state, with either 'ram' or 'pmem' to set the boundaries for the
-> -		next allocation.
-> +		state, with 'ram', 'pmem', or 'dcY' to set the boundaries for
-> +		the next allocation.
->  
->  
->  What:		/sys/bus/cxl/devices/decoderX.Y/dpa_resource
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 8c7f941eaba1..b368babb55d9 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -551,6 +551,7 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
->  	switch (mode) {
->  	case CXL_DECODER_RAM:
->  	case CXL_DECODER_PMEM:
-> +	case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
->  		break;
->  	default:
->  		dev_dbg(dev, "unsupported mode: %d\n", mode);
-> @@ -578,6 +579,22 @@ int cxl_dpa_set_mode(struct cxl_endpoint_decoder *cxled,
->  		goto out;
+>  	DRM_DEBUG_ATOMIC("%s\n", dpu_crtc->name);
+> @@ -516,9 +521,9 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
 >  	}
 >  
-> +	if (mode >= CXL_DECODER_DC0 && mode <= CXL_DECODER_DC7) {
-> +		struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlds);
-> +
-> +		rc = dc_mode_to_region_index(mode);
-> +		if (!resource_size(&cxlds->dc_res[rc])) {
-> +			dev_dbg(dev, "no available dynamic capacity\n");
-> +			rc = -ENXIO;
-> +			goto out;
-Probably worth adding a precursor patch that uses guard(rwsem_write) on
-the cxl_dpa_rwsem
-Allows for early returns simplifying existing code and this.
-
-
-> +		}
-> +		if (mds->dc_region[rc].shareable) {
-> +			dev_err(dev, "DC region %d is shareable\n", rc);
-> +			rc = -EINVAL;
-> +			goto out;
-> +		}
-> +	}
-> +
->  	cxled->mode = mode;
->  	rc = 0;
->  out:
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index 85b912c11f04..23b4f266a83a 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -205,11 +205,11 @@ static ssize_t mode_store(struct device *dev, struct device_attribute *attr,
->  	enum cxl_decoder_mode mode;
->  	ssize_t rc;
+>  	/* initialize stage cfg */
+> -	memset(&stage_cfg, 0, sizeof(struct dpu_hw_stage_cfg));
+> +	memset(&stage_cfg, 0, sizeof(stage_cfg));
 >  
-> -	if (sysfs_streq(buf, "pmem"))
-> -		mode = CXL_DECODER_PMEM;
-> -	else if (sysfs_streq(buf, "ram"))
-> -		mode = CXL_DECODER_RAM;
-> -	else
-> +	for (mode = CXL_DECODER_RAM; mode < CXL_DECODER_MIXED; mode++)
-> +		if (sysfs_streq(buf, cxl_decoder_mode_names[mode]))
-> +			break;
-> +
-Loop over them all then do what you have here but explicit matches
-to reject the ones that can't be set.
-Add a MODE_COUNT to the end of the options.
-
-	for (mode = 0; mode < CXL_DECODER_MODE_COUNT; mode++)
-		if (sysfs_streq(buf, cxl_decoder_mode_names[mode]))
-			break;
-
-	if (mode == CXL_DECODER_MODE_COUNT)
-		return -EINVAL;
-
-	if (mode == CXL_DECODER_NONE)
-		return -EINVAL;
-
-	/* Not yet supported */
-	if (mode == CXL_DECODER_MIXED)
-		return -EINVAL;
-...
-
-> +	if (mode >= CXL_DECODER_MIXED)
->  		return -EINVAL;
+> -	_dpu_crtc_blend_setup_mixer(crtc, dpu_crtc, mixer, &stage_cfg);
+> +	_dpu_crtc_blend_setup_mixer(crtc, dpu_crtc, mixer, &stage_cfg[0]);
 >  
->  	rc = cxl_dpa_set_mode(cxled, mode);
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 8b7099c38a40..cbaacbe0f36d 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -365,6 +365,9 @@ struct cxl_decoder {
->  /*
->   * CXL_DECODER_DEAD prevents endpoints from being reattached to regions
->   * while cxld_unregister() is running
-> + *
-> + * NOTE: CXL_DECODER_RAM must be second and CXL_DECODER_MIXED must be last.
-This is a bit ugly. I'd change the logic a bit to avoid it.
-The list of things we don't support is short so just check for them.
-See above.
-
-> + *	 See mode_store()
->   */
->  enum cxl_decoder_mode {
->  	CXL_DECODER_NONE,
-> @@ -382,25 +385,25 @@ enum cxl_decoder_mode {
->  	CXL_DECODER_DEAD,
->  };
+>  	for (i = 0; i < cstate->num_mixers; i++) {
+>  		ctl = mixer[i].lm_ctl;
+> @@ -535,8 +540,13 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
+>  			mixer[i].mixer_op_mode,
+>  			ctl->idx - CTL_0);
 >  
-> +static const char * const cxl_decoder_mode_names[] = {
-> +	[CXL_DECODER_NONE] = "none",
-> +	[CXL_DECODER_RAM] = "ram",
-> +	[CXL_DECODER_PMEM] = "pmem",
-> +	[CXL_DECODER_DC0] = "dc0",
-> +	[CXL_DECODER_DC1] = "dc1",
-> +	[CXL_DECODER_DC2] = "dc2",
-> +	[CXL_DECODER_DC3] = "dc3",
-> +	[CXL_DECODER_DC4] = "dc4",
-> +	[CXL_DECODER_DC5] = "dc5",
-> +	[CXL_DECODER_DC6] = "dc6",
-> +	[CXL_DECODER_DC7] = "dc7",
-> +	[CXL_DECODER_MIXED] = "mixed",
-> +};
-> +
->  static inline const char *cxl_decoder_mode_name(enum cxl_decoder_mode mode)
->  {
-> -	static const char * const names[] = {
-> -		[CXL_DECODER_NONE] = "none",
-> -		[CXL_DECODER_RAM] = "ram",
-> -		[CXL_DECODER_PMEM] = "pmem",
-> -		[CXL_DECODER_DC0] = "dc0",
-> -		[CXL_DECODER_DC1] = "dc1",
-> -		[CXL_DECODER_DC2] = "dc2",
-> -		[CXL_DECODER_DC3] = "dc3",
-> -		[CXL_DECODER_DC4] = "dc4",
-> -		[CXL_DECODER_DC5] = "dc5",
-> -		[CXL_DECODER_DC6] = "dc6",
-> -		[CXL_DECODER_DC7] = "dc7",
-> -		[CXL_DECODER_MIXED] = "mixed",
-> -	};
-> -
->  	if (mode >= CXL_DECODER_NONE && mode <= CXL_DECODER_MIXED)
-> -		return names[mode];
-> +		return cxl_decoder_mode_names[mode];
->  	return "mixed";
+> +		/*
+> +		 * call dpu_hw_ctl_setup_blendstage() to blend layers per stage cfg.
+> +		 * There is 4 mixers at most. The first 2 are for the left half, and
+> +		 * the later 2 are for the right half.
+> +		 */
+>  		ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm->idx,
+> -			&stage_cfg);
+> +			&stage_cfg[i / 2]);
+>  	}
 >  }
 >  
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> index 3277debe11689..d8f5cffa60ea6 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+> @@ -34,6 +34,7 @@
+>  
+>  #define PIPES_PER_PLANE			2
+>  #define PIPES_PER_LM_PAIR		2
+> +#define LM_PAIRS_PER_PLANE		2
+>  #ifndef DPU_MAX_DE_CURVES
+>  #define DPU_MAX_DE_CURVES		3
+>  #endif
+> 
+> -- 
+> 2.34.1
 > 
 
+-- 
+With best wishes
+Dmitry
 
