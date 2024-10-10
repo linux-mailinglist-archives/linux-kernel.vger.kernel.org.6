@@ -1,124 +1,171 @@
-Return-Path: <linux-kernel+bounces-359687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C25998F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1CD998F08
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C501C209B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ECBD1C20D53
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29741CCB2D;
-	Thu, 10 Oct 2024 17:57:37 +0000 (UTC)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D74A19D88F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F90419D087;
 	Thu, 10 Oct 2024 17:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BbXir0cH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BB919C57D;
+	Thu, 10 Oct 2024 17:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583057; cv=none; b=qOZRltbWdfFXnTh8dfEzqY0BLN1sdP32ozq/5Ph9UtGSRChrZA5V6eiETrUb9DYe8wkRqAP+JfayvZBs0HAGEq2wJPeXcTjkBSFBu9lufDf+Pcf3FeZ+Q3/MWXyIKsyyfJ42xQrTSze7IXckyLbjLvE0LcEdbXItVy5rrHziGic=
+	t=1728583054; cv=none; b=lfshqp4bPlPYS4YX6DaVGMh+OtncvAHRwUDibe1h1WBjPEY628mWlJPpz2PELr51e1I+WphGXWKyIsIYjxnIV4v9oIcyaDw5qB6LvCW1iNbhJaFgpbMAFRsvM7h1bD8Q9kpxNWl+Pj495WBXB/0igysSqdEiI/CQ5SF9/0t+38g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583057; c=relaxed/simple;
-	bh=ZjDn5Fbn7btLzGQIJ8RjdoCOKXeRv15aDBCmCy04A/s=;
+	s=arc-20240116; t=1728583054; c=relaxed/simple;
+	bh=PFsH6ItHrM4WJs3X0uhKTVAGz1bIRu+P1arqBYDfk2U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UyOMZTdaeT5Kt/PaHr+njLoVPzxufKVtu/djM9/I2chFxO1WV0OTc7zcTNNj+zSGdzwObtUY49ogmtMzqLVYsSouNLTzThWAy4k8FuDEDDhfPCOB+FYjYoTQdTabDVZPoi/3uVa6DVlwDSZhEO1YnViL2MFFsO6mz8UcnEZVjIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5398e3f43f3so1432573e87.2;
-        Thu, 10 Oct 2024 10:57:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728583050; x=1729187850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RUQ8WQ4jeEKOJ8GygBSqWu/2JMxlgxdbild12IpsiMo=;
-        b=qt+XjSTYM4AThRcFKRCWiuHMnRrKGYh+rpc72Q5xX7C6Wt0wqED0fYoDIzjejztmEX
-         LcWAeGcQs10DuFw2b1o/oVTuYWIF7MMftEx5kFilCGPgj302DkHeaOfHzBGsLSxk1cHP
-         8XjFzVoxV7YwZWpnG/7ezn84eG3aqCGAT37CS3Rng99kj/+OmZXkZ8nnpsCM5lUCrFGX
-         xQoCl4e2x6dYyZxoGdvySCyNOSpzpkQYjI18im/RUmuIt7f01H2fNFBKTceB8j6lzMV6
-         8yPbNF0Q7YAYmd4TtIzYbDKSh/w9CN3A5hlkoODUplwSz1s70pkueHNOGXunf8Fr4txv
-         YP8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKmSi/Yf90NbadA8Si/NG+LpF7+CjdueWqx/ifsFgurtlfFOPTEIEIu/V6gQvaAftcC9LKczO6So/K//xt/7A=@vger.kernel.org, AJvYcCWDIHGxVp4e49vbvyb2BTrA7WpnVRbws7wzCL7wOzEFYyIhR4CQ7DYXL+dWRsMTq5YBVtg0pOo/pqdaH9DyZOMC17A=@vger.kernel.org, AJvYcCXCGDZOTpM5fhar7o+tIEy7COC3ah1ZMNIW1bjJ9vGmIkudwFzIXMsPwzT/5Qk3GVq4g4fx8UqTz3q0gkDg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+tm6cqPPHwToW0HzgnGKjwE9nVacjqmIjNULx4YqqAxXN+47W
-	alrvWYhw+HIMe7dRqaybQu19hGNCy1DUrNjpj2fvkx/8q2nUv6z1llIPHckWmjw=
-X-Google-Smtp-Source: AGHT+IHycR7lzd+QH9PQusnaFsb882tODyKwq08rZRqhR0fLblC/Ve3+/tFzs445j6mqmZQUCjWc6A==
-X-Received: by 2002:a05:6512:6cd:b0:539:d3db:3a7d with SMTP id 2adb3069b0e04-539d49bcf98mr254508e87.5.1728583050124;
-        Thu, 10 Oct 2024 10:57:30 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8d7eaasm333328e87.176.2024.10.10.10.57.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 10:57:29 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539973829e7so1286741e87.0;
-        Thu, 10 Oct 2024 10:57:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWIbOVGHdAhXFIiwfJoKqBIHMXYMp2r9uy8lN9nIAzHAQrGmwSoHpqlCJ6a0XNKRt35e8gBGVoAAM+0tE4B@vger.kernel.org, AJvYcCWQV25FnAZZrj7JC5wUHbimXXxhji+EYLy1dJstwQ3BaurQyPAhhd2muoXsJfDXvrLKaJUi68zlI6uMZDybclGLzis=@vger.kernel.org, AJvYcCX/61XZX9fZp2fsoO4ztcC2Je0j78Y1D5omuQ2ZQwtm6h08Ah4FtHk9eaRv/UaCpbNGAxKAU8vBsMCh6ZgVOrE=@vger.kernel.org
-X-Received: by 2002:a05:6512:3a91:b0:52c:e326:f4cf with SMTP id
- 2adb3069b0e04-539d49bcfd5mr240762e87.3.1728583049223; Thu, 10 Oct 2024
- 10:57:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=TtKHZZD0AGUJN1CAwfNTHUASrFGREyoRssZwUnqa6AZ8SJBcvPicrpLJCDDtue/HB+nhB3uTI49TgFXeavKKFvhtw3o6M+PjGH2vyjTWl213uV4s383DVYDk+d6IVkDlEbPtlSQZHGx+ZWaXcVYbdA+X20/FOF/GFDGeWpIJvI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BbXir0cH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E780C4CEC6;
+	Thu, 10 Oct 2024 17:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728583054;
+	bh=PFsH6ItHrM4WJs3X0uhKTVAGz1bIRu+P1arqBYDfk2U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BbXir0cH3uyT1gpTZnaLVIYlVE9/xzWqPbd1p8SQCEidrrVyViaUYXgj6/W9fWwaK
+	 A/Z5wKSiBSBNchzKk5gpms7l5/CdX7ZJN1P1x2tOefp7AYF9gdKLmfqk9Dv8v/UxCW
+	 NoFYPW/rPljT30mNpsphVe2Qpeiao9FieOulHksZVMV2Tgc301LE5Y1cvpnS1WWeog
+	 +VMs1PTmXPI0W3lKpjLtMumODX4zn7gNnphYX2DW7fX68poe9g7QYn3oCnxcA5x6FB
+	 71TUhaPYzqQF5QE2GhhFe0xoOBtQwNC51VmgoyG5r8UlvsWozLM9MqLy8SjEE80AHg
+	 zD2OkKfMxF3mg==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5e5d0a80db4so625935eaf.3;
+        Thu, 10 Oct 2024 10:57:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX5NTIwfmjvgkDGJmcNUOxPdO3Kli46F5nnrWkE4T+kyVDzBPkNUXulh1Z60lPJ4xF2rrdVEBR6eo8=@vger.kernel.org, AJvYcCXy/6EFvcBCbDwrd5nPWnDhvCJmeavNNF4ypxVR2Ym0s2TAAMZp4EbUSE1uwlCt8lhaKCHW6yonPYeL5Dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytrezFQ52XralKkodS9mil69bK3Eq03sKgjGohvnPSK4MRl+hx
+	p0f7mEf4HWvoMH3G59ZxfuiQrWq+tzvVx+sqBXiu5JJJ9IM2WIMsBLKbasVBBfySYMF27UannO6
+	YXArF80JbZlkxmWh5ALbetMnQZw4=
+X-Google-Smtp-Source: AGHT+IHsGFdp1H2B0bRRMFETpGIZM6TFOs4+STFq23+cQOaCSlRAvLYs2o5IIAiNjyfZh29gcfzP5sR3gjPZzlbL2II=
+X-Received: by 2002:a05:6820:1621:b0:5c4:144b:1ff9 with SMTP id
+ 006d021491bc7-5e9900a5a42mr4003997eaf.5.1728583053486; Thu, 10 Oct 2024
+ 10:57:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010164155.808931-1-fabrizio.castro.jz@renesas.com> <2e9bf925-8fcd-4e0b-bc3b-996fffc84681@web.de>
-In-Reply-To: <2e9bf925-8fcd-4e0b-bc3b-996fffc84681@web.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Oct 2024 19:57:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWURj8YzXKbt74KqgEX5fc1ivg_4ctMxUy3QdJGipLuZA@mail.gmail.com>
-Message-ID: <CAMuHMdWURj8YzXKbt74KqgEX5fc1ivg_4ctMxUy3QdJGipLuZA@mail.gmail.com>
-Subject: Re: [PATCH v3] irqchip/renesas-rzg2l: Fix missing put_device
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Thomas Gleixner <tglx@linutronix.de>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
-	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>
+References: <20241003083952.3186-1-Dhananjay.Ugwekar@amd.com>
+ <20241003083952.3186-2-Dhananjay.Ugwekar@amd.com> <CAJZ5v0hoiPo6Q=K=q-EoCNsunr0zLGPJgK39LwnjsSr=btmjOw@mail.gmail.com>
+ <ac6aab6d-51d8-47e8-8508-8cc52aba227b@amd.com> <CAJZ5v0iKOQkAUuZaHf1Zcm5sO6xD-dYkeTg8nyC3EuMmY0qDqQ@mail.gmail.com>
+ <CAJZ5v0j46anSdQBnsqojcyn2RGKG259ahd92n380wUSAtRFDxg@mail.gmail.com> <b4758500-9169-41fd-8dc4-9b61d00f2fb6@amd.com>
+In-Reply-To: <b4758500-9169-41fd-8dc4-9b61d00f2fb6@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 Oct 2024 19:57:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jrbNFGR3gevtRS+KDB-iVx-aK4F30TCrZOLH7x0QXuqg@mail.gmail.com>
+Message-ID: <CAJZ5v0jrbNFGR3gevtRS+KDB-iVx-aK4F30TCrZOLH7x0QXuqg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] cpufreq: Add a callback to update the min_freq_req
+ from drivers
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, gautham.shenoy@amd.com, mario.limonciello@amd.com, 
+	perry.yuan@amd.com, ray.huang@amd.com, viresh.kumar@linaro.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Markus,
+Hi,
 
-On Thu, Oct 10, 2024 at 7:53=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
-de> wrote:
-> > rzg2l_irqc_common_init calls of_find_device_by_node, but the
-> > corresponding put_device call is missing.
-> >
-> > Make sure we call put_device when failing.
-> >
-> > "make coccicheck" will complain about a missing put_device before
-> > successfully returning from rzg2l_irqc_common_init, however, that's
-> > a false positive.
-> >
-> > Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller dri=
-ver")
+On Tue, Oct 8, 2024 at 8:32=E2=80=AFAM Dhananjay Ugwekar
+<Dhananjay.Ugwekar@amd.com> wrote:
 >
-> Might the application of scope-based resource management become more
-> interesting accordingly?
+> Hello Rafael,
+>
+> On 10/7/2024 9:18 PM, Rafael J. Wysocki wrote:
+> > On Mon, Oct 7, 2024 at 5:46=E2=80=AFPM Rafael J. Wysocki <rafael@kernel=
+.org> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On Mon, Oct 7, 2024 at 6:40=E2=80=AFAM Dhananjay Ugwekar
+> >> <Dhananjay.Ugwekar@amd.com> wrote:
+> >>>
+> >>> Hello Rafael,
+> >>>
+> >>> On 10/4/2024 11:47 PM, Rafael J. Wysocki wrote:
+> >>>> On Thu, Oct 3, 2024 at 10:44=E2=80=AFAM Dhananjay Ugwekar
+> >>>> <Dhananjay.Ugwekar@amd.com> wrote:
+> >>>>>
+> >>>>> Currently, there is no proper way to update the initial lower frequ=
+ency
+> >>>>> limit from cpufreq drivers.
+> >>>>
+> >>>> Why do you want to do it?
+> >>>
+> >>> We want to set the initial lower frequency limit at a more efficient =
+level
+> >>> (lowest_nonlinear_freq) than the lowest frequency, which helps save p=
+ower in
+> >>> some idle scenarios, and also improves benchmark results in some scen=
+arios.
+> >>> At the same time, we want to allow the user to set the lower limit ba=
+ck to
+> >>> the inefficient lowest frequency.
+> >>
+> >> So you want the default value of scaling_min_freq to be greater than
+> >> the total floor.
+>
+> Yes, we want to set the default min value to what we think is best for th=
+e platform.
+>
+> >>
+> >> I have to say that I'm not particularly fond of this approach because
+> >> it is adding a new meaning to scaling_min_freq: Setting it below the
+> >> default would not cause the driver to use inefficient frequencies
+> >
+> > s/not/now/ (sorry)
+>
+> I believe we are not changing the meaning of the scaling_min_freq just se=
+tting it
+> to the best value at boot and then allowing the user to have access to th=
+e entire
+> frequency range for the platform. Also, we have cpuinfo_min_freq/max_freq=
+ to
+> indicate to the user as to what the entire frequency range is for the pla=
+tform
+> (depending on boost enabled/disabled).
 
-No, as explained in the comments:
+But the default you want to set is the lowest efficient frequency
+which user space needs to be aware of.  Otherwise it may make
+suboptimal decisions.
 
-> > +       /*
-> > +        * coccicheck complains about a missing put_device call before =
-returning, but it's a false
-> > +        * positive. We still need &pdev->dev after successfully return=
-ing from this function.
-> > +        */
+> >
+> > I should have double checked this before sending.
+> >
+> >> which user space may not be aware of.
+>
+> I guess, this part we can fix by documenting correctly ?
+>
+> >> Moreover, it would tell the
+> >> driver how far it could go with that.
+>
+> Sorry, I didnt understand this part.
 
-Gr{oetje,eeting}s,
+Sorry, never mind.  I was just repeating myself.
 
-                        Geert
+> >>
+> >> IMV it would be bettwr to have a separate interface for this kind of t=
+uning.
+>
+> I feel like we can incorporate this change cleanly enough into scaling_mi=
+n_freq,
+> without adding a new interface which might further confuse the user. But =
+please
+> let me know your concerns and thoughts.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+I'm not sure if you realize that the .show() operation for
+scaling_min_freq prints policy->max and you can easily make your
+driver's .verify() callback change it to whatever value is desired.
+You may as well set it to the lowest efficient frequency if the one
+passed to you is equal to FREQ_QOS_MIN_DEFAULT_VALUE.
 
