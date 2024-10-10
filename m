@@ -1,224 +1,102 @@
-Return-Path: <linux-kernel+bounces-359976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3501D99932B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:52:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87B699932D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57341F21102
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D2C287E6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02911CF7B8;
-	Thu, 10 Oct 2024 19:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD81C1DFD93;
+	Thu, 10 Oct 2024 19:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NJ6BVJz5"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2043.outbound.protection.outlook.com [40.107.92.43])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="G5a9H1SV"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2271990C1;
-	Thu, 10 Oct 2024 19:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728589765; cv=fail; b=aFrkL8f2Zj6Su1uHGGRzVvBnMJP0jHNx7a10/9nxGPhOugfCTGBrqyHP8PFlKIh3bIPj9t/KU8hJRZzxCHJApCFsBu2GcdRn8neSJmKTMHigPwu9vWcY+IcstdN086IugIeUyQXr+3HKtPvPETimo1INaSnRQFnXHddKqwByoZU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728589765; c=relaxed/simple;
-	bh=qUEstWqX3cPM6HYDj+bHQ/UA5Q+vXJiep5vA+wVsLF0=;
-	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
-	 Content-Type:MIME-Version; b=H7mM/PLpNSduCRgLHNEUb7Sig8shdL+dW/wxG5Jc+NOsxr1zAnV/eT0l5hbkhJOzFzTNm/CAzba3YRGnFBUmoGQkoJEpCqW0u78O3W7/BkAeqbKTMqQ4JaueCdYB0ENUGoWiwAAd5g5Bjat7cTU1GVIY1vLBLxELR/vbK9aC7wc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NJ6BVJz5; arc=fail smtp.client-ip=40.107.92.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nySP5+4GdWIpZkJcjBs4UJbom7lnaeKnpA2svW9zwLHxxwygZPiSCL6nsXvhLaPKONYwZZo/uDGkyTe12rlyNN0iLEDcbm1Byt8EoC9bhnGPZF6fZt6xcDfEF9ULd5jGjOvXel8HovN0izb52GzFfsTQmZlqSlhUpf9WbhjKDNTQQZ31HGmg2zHmBrQHIPmH6nWMrbhdQJCLIMp3UkGf3TxZRzPkNJ/F4Jg5W2VlB9NyGV1mZTfMRq1RQmlz42eZfjjGURGAIWz5OAHe+XEBouu9vFEdpbks2rI5SGhCQCgtdFF85EHK8mo/dC5c7jqoXsB8wGFRaEUYGPuhEVy+3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ABiCLnHkj2TrbeFwxyODPQ9xgfIGxkNGP3VKAno477s=;
- b=YLcR7itC7CWtxQQrHqtEWZRxPyoSbU/tfSk5TDnkWOvk9irbxi+VUHPMO96dayoexk3MXgTDhKYAWWq/0z1fBpcmfTKaxTCTEYdnziDVN6fLDK1XIox/9Do8F9Aro67kvNOwLRIg5TN2btJ18hz78ZGtUk+6six2OytNWTZMo0oxRfDbnLMtRYANr8PqkYnF2DSmvoh/DuNrSRYyuyghlNSlSashzUjcIL8WMqGbve/p5DkQiEvrP2n1LiIUGJxDpYonU3OkIDYxiATc2nXWBtFfREVrZn/46INSe5YnGjPrFgHricALZ/iCiutAfJtS5bRTc5129vRersCvJ/iyVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ABiCLnHkj2TrbeFwxyODPQ9xgfIGxkNGP3VKAno477s=;
- b=NJ6BVJz5C0o4n+TqtPzth4qY57IxVK8eoY9wmFnjou8covd7kS508dnaTklq5mTJlfpxhfH6YGSkPizye6K+VeAdEF8FNZTm4mg+iCcJPEGWCIhTs2sLLe4vWfLQFrAsW8+ufq2rcdoFJSsrIyUpRq8wba+bDE3GGlqkZj4hdlI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by CYXPR12MB9425.namprd12.prod.outlook.com (2603:10b6:930:dc::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 19:49:19 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
- 19:49:19 +0000
-Message-ID: <75780a58-5070-e111-5d77-d29093305c8b@amd.com>
-Date: Thu, 10 Oct 2024 14:49:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241009092850.197575-1-nikunj@amd.com>
- <20241009092850.197575-18-nikunj@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v12 17/19] x86/kvmclock: Abort SecureTSC enabled guest
- when kvmclock is selected
-In-Reply-To: <20241009092850.197575-18-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0152.namprd13.prod.outlook.com
- (2603:10b6:806:28::7) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77CF1D0E10;
+	Thu, 10 Oct 2024 19:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728589929; cv=none; b=I9SfAs0W94RsGwv74xxdvXvsc5oVOpk6rvdaoN12Mas9dtcJ405+V9n0534wlVmLf+VfVKxUfuCBCYzpOUnK/RxoMTv5fq9TNgxm5A83gCuVlNqVU1yY1NHfP+/yp5xZ4egiy6Yx/WjhhzqAS+DjXtcIGhn0x57xSpsyumaqmCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728589929; c=relaxed/simple;
+	bh=qcw6j0ZeUrCc7n9ZciGlFMxJdT8988R8ntWHIog88Pw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=p6aiOzS2OvE3ey9GtfOt5sXNzJh3X/ynnEOp6XFwb1yfwFTRMXNSKB9VlD2nL1Vu2IG8R+Auy4SnUgI7xQo6XsSH2HXxX3moNwoCSs5zquxkH+FfnfabnDMFYNHBJL/aiHq2JlR9RWA2IagLBA1CWSw3AbU9Gu6nyxJkdghJ/4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=G5a9H1SV; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D259242C00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728589921; bh=g/gqbhjttoQMvUxgUOCqWQJ3rN+RGvjKpCYXLspiUSU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=G5a9H1SViQHuvk3GfgRHnlBWW/amvewQgCVgyRaNquaNEXlAfSI+eJsvoj17InQ5c
+	 jPv4NiR8jzFWe+jxgIA6KdvA7sBCOSKhT6PRwDK5CnoFtssD8etgc2+gISua1jyANs
+	 k32YoozCSGHxCx2siZ6zW7VPJzOpL6vx/JzE1JJwfLnleK1JA2kNeTgRwjL/yo6mLa
+	 JWYfK/NNUY1T9Bvy/NiE+7k3EHGXXAWl4q3B27989WJXgrXIimQ1CAiJVqzCeifZ7t
+	 IF0x8Q7yVNhWReSiqrXKaQTOZsuqT310HUZgFfNE0UC+ZxS7XaaSFrO4qwwcqOaTaJ
+	 82ohLVF9s9pLg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D259242C00;
+	Thu, 10 Oct 2024 19:52:00 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Steven Rostedt <rostedt@goodmis.org>, SurajSonawane2415
+ <surajsonawane0215@gmail.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH] docs: fix WARNING document not included in any toctree
+In-Reply-To: <20241010154708.0bf658a3@gandalf.local.home>
+References: <20241002195817.22972-1-surajsonawane0215@gmail.com>
+ <20241010154708.0bf658a3@gandalf.local.home>
+Date: Thu, 10 Oct 2024 13:51:59 -0600
+Message-ID: <87y12vzqg0.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CYXPR12MB9425:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3369aafc-49dd-46fe-4f7e-08dce964a191
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L3BYYU4xbVNIazFoTmR2V1pvdE5FNVdHT05GeU40RWhjR2trdHhyMWJUcmx0?=
- =?utf-8?B?VVkva21RZ3U4ZEhiOWRVZFAzOG1TdThHbEFlUHJ1Rng4TG5mdXM5K24yeGtr?=
- =?utf-8?B?TUt4aDB0S0tXb0phRjIrTmVvaG55M1B2NlNvMFFra1lPTXpJL0laL0k2ZEVQ?=
- =?utf-8?B?bGY0Tkp5a0Y5RSs3ZUdHOVhNcnA4R3BKQVc1L0hrSzBGdU8rMmpqUEgyMUFK?=
- =?utf-8?B?UW1mbldGMmlvak1tWEJJb01YY2VTcnZnR3Y3WHVXb1JUYXVkV1VZUktBaDNo?=
- =?utf-8?B?NkExSDR0RXJSaXhWTG95c0JyNGQ0NHpEcXZqeThTM3lyY2tGRzg2Rm1mL01G?=
- =?utf-8?B?T3QwbUpnV2tjcS9NYW1NRkdKNERtdk1qMWs4cThpb1lzamNiZkYxdG83ZnNZ?=
- =?utf-8?B?M1JVR1ByTkwzWUkyZ2dJbVJ1aGU5NWx1KzBwVUpzSXdmeEhPNWpTOXpHYTBZ?=
- =?utf-8?B?V1loVlFlQmNkU3FIQ3UyRlovdmZ0WGtUcmlZNEZZY0ZINVVtRjBkdlNFYWly?=
- =?utf-8?B?MW81MGMyTzg0SVNDZmlrZThjMDQyWnlyRXdDWitWY21oNzNrSUVlOXBNTk5O?=
- =?utf-8?B?ZUNoMnlMNzVlVDQ4ZTZGb0gweXNkcTJTdmJUSjBzemlxbVJTZWZML0VmNlNm?=
- =?utf-8?B?anYxYjNkN3J0dzdoRlAzTkVMbHRhWDFhOVJwbkFFM3dCdmMrcXJYQlFrbWVn?=
- =?utf-8?B?WW9EZVNuZEt4cFZ0QWF6R1YwZEZ2YTIxOTdnTWhlWktPV3FVSXNtbmRlTVlJ?=
- =?utf-8?B?YXErUTZWeHUvdUx3TkJlMUtsLytLemkyVXhPOHA0WC90eDI4TXpRbXloYUM5?=
- =?utf-8?B?M0Q5d3RGSm40S3dBY09hV2tZY2VEYWprOE9mUzIwMC8vL3IwU0I5dWtyMytD?=
- =?utf-8?B?OVVLbW53Mi9mV1orS2NzdGVGOElYejh0bnZ2VU1pNlRkaGwzYkFuaFlCbjNK?=
- =?utf-8?B?c2k5UWhQbjNTdlFXbnM5UUtsRWg3dkROSjh5SitRdFBKNEs5ZE1LNk9QeTdv?=
- =?utf-8?B?ZlgwU0pYQmovWlRreldTNzFPbWtNRDdzZkM4b0F5V2VIb0kvR0dxSEFEbHAz?=
- =?utf-8?B?S3dUTDRVanAwekFKeEpaKzViN1NDT200bGIxREJjdUZ3UU5lQnMwK2NSbGc3?=
- =?utf-8?B?ZlZyLzhwek84TGJSUlA4MDBxZlY1bTVzZ0hoeExFbmNTTmRITXlJSDB2VWhj?=
- =?utf-8?B?VU0rQmptWnZnYlJTTWFhYTVxaFpvcStiUlRvK3I0cGhxdlNCTHovRzJiYnBr?=
- =?utf-8?B?Y1Ftbi9zbUNnNG90b3UyUFRmU0k4T0V3UDlLU2lqWTdrODlldDZXMU4zZ3pz?=
- =?utf-8?B?U2R6aXZkTXVldEpaT05nRFhtU3NnamZnaEZsS3FqbWhoMS9tempHaGU5QjNi?=
- =?utf-8?B?bXJtS2NWTVpOV2N5d1lKWFh0VGlUci9VNEFFdGN0enNuUzU5TEZibVlOSHZn?=
- =?utf-8?B?MlFJTHlYV2pjMmpTS3ppZFVHTWQ1Q2hXQkxjU3FlR2dsYkhIdmxQVWIwVjll?=
- =?utf-8?B?aTlRMmkvUUZYZ1NBbEFINnFKcDhnM01HTU1aeFdOTDVFMHlBa2hiOWZTRU5l?=
- =?utf-8?B?bVBKd3VtZjNQZ0xMNU1IYTRJSklTNWp3ajN6Z3pRZ1B5eFhDT1FGeGNrZ1Ns?=
- =?utf-8?B?TzJNSDV3RGJjNFJINXVEQk12cW4xRjI2T0NLMzRxdVRKRjVJdzkwZ1V3QkNu?=
- =?utf-8?B?ODJJUHA5eFBPYzRJTnJzc0s1VzVMbmRmZHMvQW9WaWpZK1RLYWhOS05RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MzhqL2l1cG0rV1kxZTN0RHErMDRIaDRmTHFmZHJrRncvL1FpL2FMV3RPTWE3?=
- =?utf-8?B?b0N2SlRPejVPaWJGdUVUR0dCMUVaNENKeEQzQ1NGQmI5WUJvUGlzWDZRWm03?=
- =?utf-8?B?c1VNZERra2ZBWlI2b2d3UFQ3VFhhczRmS0V4OVZiNG1OZjdjbS9HbHBaTnVq?=
- =?utf-8?B?emRmYzVMbEU0dmFGNGx2M0M3cG1oUUpDUDdORHVLdGdJbHM3cG1QNGcyUjg3?=
- =?utf-8?B?VGhaT2VBSGpBS0pwZW5NSHJ5YU9WNkFoM0wxQnVEY29nTUZHNjVYSjBNZWV2?=
- =?utf-8?B?R2daUnZrOVRNbFJiaEdtR0NjcnlodTRrTWlaVUkyYXh0OHhVZWg5dWEvL2pX?=
- =?utf-8?B?MzdibXdublZKUzhLTHp1WUV2TzdXNFJubFBFTndrbmZCRVR6NlUvOWZ6WlF1?=
- =?utf-8?B?ZnJObTUrU0hnRU13TGN3YTdmcXE3dEllNm5KcUNJbFNySEdRU1ZzYXo5Q2pY?=
- =?utf-8?B?SGJmQWNwdkFieXBwS1JLZUhnOW1XamtvYTFjd3lTdW1WK21ZRlE3VEF4MWpX?=
- =?utf-8?B?eDc5MDNnRFRneUc2T2lHeGo2VDN3TVI1cFJxRUwrQ0FiOXJOWUxvZHJwWkMy?=
- =?utf-8?B?cWprNWpSQUw4RnpFUDJVdWJSdEtqY09uQ1laRDJWTHFyTkhwWHFxazU5ZFZh?=
- =?utf-8?B?VGNJT1M1QlRRRG1qdkpOUmYrNXlMRmVJZGFzU3dxR1pqaVdJMHpqOEM2NmZ6?=
- =?utf-8?B?bzJpWjNlelNpdVg2QUMrUER2bkExekl6dGloN1QxMngxSDVLTFJvSktXcTdl?=
- =?utf-8?B?YXJJWm5HeEJaOHZJb3ZNcmVrMGZGQjYvTTNRUmVSYnFNaWRYdlV5ZTFhUmhI?=
- =?utf-8?B?U1NiSDhjeFB2cXhKVmlHUTJIYmtqTXR5OTcvYlR5ZFcwRUdaZ2daa0tpaUFQ?=
- =?utf-8?B?ekJVazJxaFpJMTBaMGxoYUM4LzB4bkFodm5ncUpFemVEbFhPODJGNzlXcDc4?=
- =?utf-8?B?clJPbjBFeEczWWl1VjAxTTB4MW14aXRaRVZrUnhFUzNjSmhRN0g3Rmt4RmRB?=
- =?utf-8?B?S1pRVnJvZVJwenBZQW1UOVpWeVhjcUZRM0JCdG50Nlg1VHlJZVhlb3p6Q1N4?=
- =?utf-8?B?Y1dnVHBrM294ajJCTnF1MnpTVVljdEZBTkFJRHpZbWREN2VNNnlkc2E4OEtz?=
- =?utf-8?B?UkVWZFFTeFZMcDlITzZrUTE0M3ozZ2tsVXpEQWE0ZXQ5ZnVLZDc4aXlhZDd0?=
- =?utf-8?B?a1B6dkNXS3JmejNGT1FiMXYzQmpuOUxKK21UR0FGMUVlTG84U0tHc0RjdWpO?=
- =?utf-8?B?VnlzN3NBSk1ra0hPeWl6NVNqVkNMYjMxVHRWcVQvYkQ2TWhHcDM0UHNtVVV0?=
- =?utf-8?B?Q0lZSC9vTTFZTXNDWjU0VTZmNDlSaStUNXNxY1pHZ1hZT3pVNU5BaUJxUjlS?=
- =?utf-8?B?cFBwRnpadWRnd3ZYR2Q3ay9iOGQwN28xTWhuQlBKQzB1aURYVmxtSmpkb3du?=
- =?utf-8?B?OHY2OW1ML29UUnNlRDIvNUVNc2NaVTdyaTlkRmk4WlhuNXlQZnVqeGxLbzBv?=
- =?utf-8?B?YmFDWUFWWFY1WHBFcnh3b1Q5cVV3K2NMSTd3dHhMc0UwNkVudDd6c0U3WE9P?=
- =?utf-8?B?SVpWMGZLb2EyZWJmTVYrbVd5S1VPVlNsbDl0VFRuNEEzdHo4Ky81RURxRWlL?=
- =?utf-8?B?OENyM1JERWYwQXJZZXBlMXMrTE1hNENzMFRSRml4bjBRYWxsUGVOZGlJOGZS?=
- =?utf-8?B?bzEvUTkzaWpLQXZwVUUwRnBwZXBHY25qVDhmQU5HWkFEWUJTYWp0TFhZUDFL?=
- =?utf-8?B?STRZQWVsRFh2dWRrRjhSVUpMTG1iNEdxMVVUbEtJbUFBd3UrbkJyT2NIQ2Rs?=
- =?utf-8?B?cGtWOHVSTmtORVNIV0tMc0FxVDVjR0pvZjBIUlFVc0JBb05FejZvV01EZWYr?=
- =?utf-8?B?a3JDU0RBY2lXT3NQNWdWMWxtV3g0THVCWVp3ckQ5Z1NBRjQzVWd6aE1WbC9q?=
- =?utf-8?B?VFNoUVVta0VWWjhHT0VSUm1MZFkvN0p0ZjdBcS9zZzRvYWdDTlM1ckw2YzVh?=
- =?utf-8?B?VU5GZHhlYVNodkJqN3M4Vk1lR1ZjTDZVQjRFNWladU5BQkR0SDBlalRGb2E5?=
- =?utf-8?B?MTM4Z25JWWNXSGswSWgrYXFmL2Z6UkVhUGJCcy9US0plSDR3eUNzakMxTDJp?=
- =?utf-8?Q?qMHarm5BBSau5LUuMQ4VDu0BR?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3369aafc-49dd-46fe-4f7e-08dce964a191
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 19:49:19.7450
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jRbIeTtvTS6rtMBr0KETSo3SmDG5jGsGYh2ID4R46ixlUsVZp9m3nY77HLpuOKvVL43vnZfR5AhSMkmczrllDw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9425
+Content-Type: text/plain
 
-On 10/9/24 04:28, Nikunj A Dadhania wrote:
-> SecureTSC enabled guests should use TSC as the only clock source, abort
-> the guest when clock source switches to hypervisor controlled kvmclock.
-> 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> ---
->  arch/x86/kernel/kvmclock.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-> index 5cd3717e103b..552c28cda874 100644
-> --- a/arch/x86/kernel/kvmclock.c
-> +++ b/arch/x86/kernel/kvmclock.c
-> @@ -22,6 +22,7 @@
->  #include <asm/x86_init.h>
->  #include <asm/kvmclock.h>
->  #include <asm/timer.h>
-> +#include <asm/sev.h>
->  
->  static int kvmclock __initdata = 1;
->  static int kvmclock_vsyscall __initdata = 1;
-> @@ -155,6 +156,13 @@ static void enable_kvm_sc_work(struct work_struct *work)
->  {
->  	u8 flags;
->  
-> +	/*
-> +	 * For guest with SecureTSC enabled, TSC should be the only clock source.
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-s/For guest/For a guest/
-s/TSC should/The TSC should/
+> On Thu,  3 Oct 2024 01:28:17 +0530
+> SurajSonawane2415 <surajsonawane0215@gmail.com> wrote:
+>
+>> Add debugging.rst to the relevant toctree to fix warning
+>> about missing documentation inclusion in toctree.
+>> 
+>> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+>> ---
+>>  Documentation/trace/index.rst | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+>> diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
+>> index 0b300901f..2c991dc96 100644
+>> --- a/Documentation/trace/index.rst
+>> +++ b/Documentation/trace/index.rst
+>> @@ -24,6 +24,7 @@ Linux Tracing Technologies
+>>     histogram
+>>     histogram-design
+>>     boottime-trace
+>> +   debugging
+>
+> If order matters here, I'd like the debugging to be at the top. As I plan
+> on it being more of a tutorial for using tracing, and should be the first
+> document people see.
+>
+> I need to take some time out and start filling it up!
 
-> +	 * Abort the guest when kvmclock is selected as the clock source.
-> +	 */
-> +	if (cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
-> +		snp_abort();
+That's the order that the links will show up in the rendered page, so
+yes, it matters.
 
-Can a message be issued here?
-
-Also, you could use sev_es_terminate() to provide a specific Linux
-reason code, e.g.:
-
-  sev_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SECURE_TSC_KVMCLOCK);
-
-or whatever name you want to use for this situation.
-
-Thanks,
-Tom
-
-> +
->  	old_pv_sched_clock = static_call_query(pv_sched_clock);
->  	flags = pvclock_read_flags(&hv_clock_boot[0].pvti);
->  	kvm_sched_clock_init(flags & PVCLOCK_TSC_STABLE_BIT);
+jon
 
