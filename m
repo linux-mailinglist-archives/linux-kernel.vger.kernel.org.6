@@ -1,146 +1,91 @@
-Return-Path: <linux-kernel+bounces-358073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1199979EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823369979F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6E31F233CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AC31F2220B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70DC1D696;
-	Thu, 10 Oct 2024 00:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7342E29D06;
+	Thu, 10 Oct 2024 01:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejarvUAe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3vDKsI/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF98B663;
-	Thu, 10 Oct 2024 00:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF715BE68;
+	Thu, 10 Oct 2024 01:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728521980; cv=none; b=hQkyI4PIM1XQkHm/PZ/sCprZE6pazOKyXWeSvjMLTxFBqhC8pNv0Li165Gmgk3K8+TYSEMgpeJphTAsD7lOQBGHQDZRCEELMkWCuG7rhAsMkK9CbiruR5wVqyyrtkBuWBjI9bLWqGRF5zeiV6SxI+qVup11oQihi7VsAFnzeoDk=
+	t=1728522025; cv=none; b=k97rfuMdJypmjoeDpZt11nggYYJNHgPWQBjwKwMVoeBvSlz3RTsKEFboZtbZ+I1I6Yrjsjww//LmUuXp3eM5TtPCibNkAsJNCvlIXciuQBaOo/hvCCzqQ63q9PcHHPmaClK7msR5+UplQFhTLFHPQ31cWsDhVtxqTx7I/wGrvIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728521980; c=relaxed/simple;
-	bh=5HiOaXway9j6RVOALfB8fIBHanllp481Y52QUV0BwtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTGIqrJXAI63W+pfiJQ8eSQ9NjaSqdYcLSziCJZ7YqV4hW5TuHpOR0bbu5SLyUZ6dt3KMCut2yv0j/b9GyElFdVgrcLwj0HbvcezR/HSb9tBdp5cPg5muIQG8BUdHn4AQuBYpW95FvZQ/mHaIDnMkPkp6tw6ORVY2t5Tjl+IvDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejarvUAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DDE6C4CEC3;
-	Thu, 10 Oct 2024 00:59:39 +0000 (UTC)
+	s=arc-20240116; t=1728522025; c=relaxed/simple;
+	bh=pG2K624uEgi0xR+pggi3+7hy+WagHSAnEj/80vrp7VA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=n7P41SBB30EYBJDnkntkaC7nqfOWB1UTOAsTuIydpHQEGf2eydohV0y4dCi+W35OkImx/adCwTPD4qKX6qxjcI0JOcsNq3/9GhQDdkBmZPwO8bDJBT1eslkGFeJcgC9l0mGSGqzfRs0fVZwuUWb3CYn6877ckmunb/smdrwZw34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3vDKsI/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09DDC4CEC3;
+	Thu, 10 Oct 2024 01:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728521979;
-	bh=5HiOaXway9j6RVOALfB8fIBHanllp481Y52QUV0BwtA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ejarvUAeXnQLS3FvsEfTDcnXnigYg+tD/8DoaQ5nTIe7tfwitRB7CC08TEGs4a4vc
-	 8+Kbi7tkzxoCLdE6SMx0H4uGVCtz0Ezz7zmJzafFrVtbAjOaN447CFOgW5Ar9q8Orv
-	 4FGUx0B0if0ARNUK1m0TYs+EmbPwe8e9KP8Sirp7xr675uCddM38LwZsLiL1GsSRWg
-	 v0AlteLl6S1R05UBlmf7uGKhDFrMsfLYIisCaBT5nqM8vE9v1eF4f/K1yemAzMsZK0
-	 5q3lCWMpSj7gEwnWZx3tfzzStrRAvHjv0fPE/y5gPXQAlf6Ceuuu/jefYdR2Y6ktND
-	 5n6Pp5p60ME0Q==
-Date: Wed, 9 Oct 2024 17:59:37 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/8] CSV/JSON metric thresholds, fix printf modifiers
-Message-ID: <Zwcm-SHp6BcVCfPb@google.com>
-References: <20241004234120.1495209-1-irogers@google.com>
- <ZwW2m5D2cnIabE_z@google.com>
- <CAP-5=fV80pNi=jh48uq+99pSHV9aeE1X7LvDi=bY9sGQ0JVwkg@mail.gmail.com>
+	s=k20201202; t=1728522025;
+	bh=pG2K624uEgi0xR+pggi3+7hy+WagHSAnEj/80vrp7VA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=m3vDKsI/ckTkn/sLY3MewfqfEU2dP4580FqwcCzozAtlcbp2yqhFOw/FnmyLksAeF
+	 /NhhY/fEG7MmMJydL5hfmA9qzqK61lkCXdpba0BmfqtfDTJ7yDUCw+Ur12NXQ1w6ra
+	 djySIMvuRqV5XnT0l5OyXKV0GTLUpGdhOwM5c7SfuyIJPcY/ZIbceSQd/K/4C9O5UL
+	 7CkO8M8MzfRGi369CgfwlIkkoEURG+73INBXEbi9Dn3fuo9olz3O9iZanKTQ68b8Sg
+	 FlgjORihI1OSevCaJuBQhX6I6fW4+JX7o9AcrEJVHu4m3Pm8sEk4kBLm6j+KSjRUJt
+	 OnURw8u1kdFfQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DA63806644;
+	Thu, 10 Oct 2024 01:00:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fV80pNi=jh48uq+99pSHV9aeE1X7LvDi=bY9sGQ0JVwkg@mail.gmail.com>
+Subject: Re: [net] net: ftgmac100: fixed not check status from fixed phy
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172852202999.1525987.11825427813885563934.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Oct 2024 01:00:29 +0000
+References: <20241007032435.787892-1-jacky_chou@aspeedtech.com>
+In-Reply-To: <20241007032435.787892-1-jacky_chou@aspeedtech.com>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, jacob.e.keller@intel.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue, Oct 08, 2024 at 04:40:19PM -0700, Ian Rogers wrote:
-> On Tue, Oct 8, 2024 at 3:47 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hi Ian,
-> >
-> > On Fri, Oct 04, 2024 at 04:41:12PM -0700, Ian Rogers wrote:
-> > > Metric thresholds are being computed for CSV and JSON output but not
-> > > displayed. Rename the color that encodes the threshold as enum values
-> > > and use to generate string constants in a CSV column or json
-> > > dictionary value.
-> >
-> > IIUC it'd show "good" or "bad" when the metric defines a threshold and
-> > show "good", "less good", "nearly bad" or "bad" for the legacy shadow
-> > stats?  Anyway it's nice to show if the value is good or not.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 7 Oct 2024 11:24:35 +0800 you wrote:
+> Add error handling from calling fixed_phy_register.
+> It may return some error, therefore, need to check the status.
 > 
-> Correct. I'm open to suggestions for the names. The alternative to
-> showing the metric thresholds would be to drop them for CSV and JSON
-> output, which would reduce the number of events. With this approach
-> the thresholds can still be dropped with --metric-no-threshold.
-
-Ok, I don't have better idea for the naming.
-
-Thanks,
-Namhyung
-
+> And fixed_phy_register needs to bind a device node for mdio.
+> Add the mac device node for fixed_phy_register function.
+> This is a reference to this function, of_phy_register_fixed_link().
 > 
-> > >
-> > > Add printf attribute to functions in color.h that could support
-> > > it. Fix bad printf format strings that this detected.
-> > >
-> > > Ian Rogers (8):
-> > >   perf color: Add printf format checking and resolve issues
-> > >   perf stat: Fix/add parameter names for print_metric
-> > >   perf stat: Display "none" for NaN with metric only json
-> > >   perf stat: Drop metric-unit if unit is NULL
-> > >   perf stat: Change color to threshold in print_metric
-> > >   perf stat: Display metric threshold value in CSV output
-> > >   perf stat: Add metric-threshold to json output
-> > >   perf stat: Disable metric thresholds for CSV/JSON metric-only mode
-> >
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> >
-> > Thanks,
-> > Namhyung
-> >
-> > >
-> > >  tools/perf/Documentation/perf-stat.txt        |   1 +
-> > >  tools/perf/arch/x86/util/iostat.c             |   2 +-
-> > >  tools/perf/builtin-sched.c                    |   2 +-
-> > >  tools/perf/builtin-script.c                   |   6 +-
-> > >  tools/perf/builtin-stat.c                     |   8 ++
-> > >  tools/perf/builtin-trace.c                    |   2 +-
-> > >  .../tests/shell/lib/perf_json_output_lint.py  |   5 +-
-> > >  tools/perf/tests/shell/stat+csv_output.sh     |  24 ++--
-> > >  tools/perf/util/arm-spe.c                     |   2 +-
-> > >  tools/perf/util/color.h                       |   9 +-
-> > >  tools/perf/util/intel-bts.c                   |   2 +-
-> > >  tools/perf/util/intel-pt.c                    |   2 +-
-> > >  tools/perf/util/s390-cpumsf.c                 |   2 +-
-> > >  tools/perf/util/s390-sample-raw.c             |   6 +-
-> > >  tools/perf/util/stat-display.c                |  85 +++++++++---
-> > >  tools/perf/util/stat-shadow.c                 | 128 ++++++++++--------
-> > >  tools/perf/util/stat.h                        |  16 ++-
-> > >  17 files changed, 191 insertions(+), 111 deletions(-)
-> > >
-> > > --
-> > > 2.47.0.rc0.187.ge670bccf7e-goog
-> > >
+> [...]
+
+Here is the summary with links:
+  - [net] net: ftgmac100: fixed not check status from fixed phy
+    https://git.kernel.org/netdev/net/c/70a0da8c1135
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
