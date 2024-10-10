@@ -1,235 +1,165 @@
-Return-Path: <linux-kernel+bounces-358254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F2D997C10
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:59:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C25C997C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F71C281B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46401F24BF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A51119E96D;
-	Thu, 10 Oct 2024 04:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5201C19EEC0;
+	Thu, 10 Oct 2024 04:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfFUKLer"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="IH2fxrGI"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D28C18F2FF;
-	Thu, 10 Oct 2024 04:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3929119D89B
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728536334; cv=none; b=Lvo7YpxW+9BUPBaQPoYMGfmR6KlVvc3cgA88c+OZ/dXfbsuZ3eXDfhrgPcRTAdAEIwUYeHAW2E+J+K9crKK8mw3RtHKuaXUE3lzA1ZsA/8MjzYP0t9BFlDRXNOdse7yqqF8Hv4nrIa7VHsKUIe2rNoS5AVHE7GAMtFc1NmLPRnQ=
+	t=1728536350; cv=none; b=IfaSaTcARE13rlxb4jVzwhZGLJ3I93xjIE/25KTfWQzqEoxd3WLKoPA9qGA/EBBcd0Ag1KuS5hOVZbXT4GgnYMc0H3mEY8l4B5lZ+rBRKPg3xjpNHwpjjxtKyNYnZowI/SOi/4a1a34QDfbaFHGT728qxkZjFNysLKDf+UAgJvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728536334; c=relaxed/simple;
-	bh=rvPvWpE0WNaL4hil9zTCJfZ9UGfGvYk05TegTskFXHQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rIqAdAH/tGQvJs3R25tY3OUQwBWmIahjCyYfyC2zhG5FdR3Dux6iqTCXoWnJ3iMSKdgavq6Q28Cn/gRl9YO8KYCmHB2tEKxQ2Wxa6SmDaIwmV1hrXheNjlFhSCHt4IGGegS007m5VyjUBt3GL8Ku228YiE4fVbUivLLevm2lLnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfFUKLer; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71df0dbee46so397349b3a.0;
-        Wed, 09 Oct 2024 21:58:53 -0700 (PDT)
+	s=arc-20240116; t=1728536350; c=relaxed/simple;
+	bh=zJXI2DYez1X3sci0YkGbrgs+5tXVO2AmBbY6FOY3sbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z88MR3JBu5uAjwcKzuaxgj7e5UKAHQ9pxCUS3HcoXhF8fbT+GtIfh/Mp0oH+smsDzPA/AfOahGicFJB0uImHyL7s06lAtJOUkYDQMn+KOog+nZso0t0SDMil5IDSXdG/9omiaegzgusa/MEJ6ARAT3v2SNZYPcVSl0bvxTF6gEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=IH2fxrGI; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e3dfc24a80so326079b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:59:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728536332; x=1729141132; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9e/VPAlIyAZCli/ofmVddbzqeYWWWHaTukcajHAji3A=;
-        b=YfFUKLeryAGFC/4v2XD5bWxCujaWW6K6nK3a9L8DPxgkuV2uY1uSLZOTcFz2GJhUAg
-         Xiw+K8n0VXPTs6t49mDvC3VMsS2UCqXn/O/ju4w7MK1N1MNDVpcGuGqO4iO73IRUJpdg
-         4cfsPfzPNeIm0KDl29nFb+ojbh0ZK/ksG+a2yN+40pzBM3iXXBLcIwHA97wXAz/p83mm
-         PCIXUZ4dbkTING2+53X6+418BmdbEAz7EDM5yIXf/Y/h/YLJYlHIYlNYDLxPrIpdhTKs
-         NNqNwIYjh2/m9QxUFrltefdUHDVnfkiZ4XNVEcXbEtPrJZGf9qxm9tzVdZQGrZW/KXHR
-         sj1w==
+        d=fastly.com; s=google; t=1728536348; x=1729141148; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VoU/x6ussxWWJbQQRe+aak+n5cu3oteZEAGlAAF1Mng=;
+        b=IH2fxrGI8TvWnBEZuqTKDd2AZ1YZnCmrpCIOwtHx6IU3qrgaQXR5IFx5qkk+UVEIgO
+         qmuFjAgGCBBIh8pFYNHzR5lWd33gioRqSDgOA5avDaVvcdVFwpHseTDpNwVi/V6W/CPo
+         WZNxBBdpg2BG90zBiP1dpSKmbP4l4fevwZLtA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728536332; x=1729141132;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9e/VPAlIyAZCli/ofmVddbzqeYWWWHaTukcajHAji3A=;
-        b=VvEBWefcq3KHKKT6NuOrepZEbC47AvEzCw71gnMn13zhikXXL1UKt+BvI+V/HXInka
-         VxBJtpg5s0ZpsMqtEzyBrIOWXiYhJyB+fhszTAH6nauxkC134Emkw3zCZu7ZynFBUbNF
-         LtpfvpMwbiINYBALK/wHvTKKoMMZZLIrHlXWI3f2wKL2iLudxEkT2oWBfB1gfk54X+66
-         rtvFWrryxm5T7OjqUM5/+1HIFM8iUkqfQN3A0eRBeZSovh6U2DgoksFK9b7bd9J8FcKO
-         SU1+ag+KBKo9x3eLgCp5ai3xRYiUBm83bvfkEbaxmD2/vC5bsDaCL0uIEOjNSUBilf2B
-         iZMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaPTW015YYRlGZjKRa/onu0ARCHes90zvo0oytuvjTf6MdLvHuuVsGx3dZHbG6N3H+pcOiCW2yZfOmxJw=@vger.kernel.org, AJvYcCWc/OACV/Lvzoy0oT5oEqBYc7q4X3C46uWK4bPWaNVeWa8SlvVAsqlwteVIvuA1CFFWIHTsYpkb4IKk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT9cnsiCuf0g09PUhvXjSpArKAnHwS0z6Zdy5RmwxRMA0hKlJ+
-	cDSDQjdN+CUS2LNbPCKCirz6NROMcwB42ZnhpGQsV+m0dnlPcTpa5IQcHkn77Pk=
-X-Google-Smtp-Source: AGHT+IG2nyCkFOO52IwqGEVeGZFUcEZh6aaC4IsBlYqOzlbxD2W9HXO0B7BsiNtsD8i3f6tY+uFRHg==
-X-Received: by 2002:a05:6a00:3e16:b0:71e:14c:8d31 with SMTP id d2e1a72fcca58-71e1db858d1mr8318997b3a.16.1728536332042;
-        Wed, 09 Oct 2024 21:58:52 -0700 (PDT)
-Received: from gmail.com ([24.130.68.0])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0a50dsm262899b3a.195.2024.10.09.21.58.48
+        d=1e100.net; s=20230601; t=1728536348; x=1729141148;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VoU/x6ussxWWJbQQRe+aak+n5cu3oteZEAGlAAF1Mng=;
+        b=HCQWK8CyXOM0bJB/ixc2HCqmtCckqyPlVIR6I/Fpj5j7DK+4/VktWEgxGN2h7XFty1
+         XCiQbR+6ZN327/0th1rMlzSL8stTl1hTOAT1jf9m1gufewY10yEi6iYwvV7xS9RBtdkn
+         1T6edi2Pp5Rn/z8I60CWPYcs4pYsCaEvmTU7qNm5GHTg2JYdTSdm0a3bAiNGDwGJTCdY
+         lwngEdeXa6KPSL69SdA3WXhUyoAeHJsurq4svjBDMg9fUqA5aUwXex6wPIBp0dQiCeDB
+         xBtokyYGyeLVB2pOCDsLgW4BQ/dQafmVRMz5wzfwUxGAWlPrOMB6S1eVwkMOvcUJisy0
+         a68w==
+X-Forwarded-Encrypted: i=1; AJvYcCV41g5TL7UEDyhoRO5bss94t5ohDNAa4+5x144AbO0Iyc5gqs78R3rhB2TJjMkSJic1KE9xQp2ZTsPgQfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9wic0W4EXL3czqBcEuGNzIOKU4GZ1CtzoWOS7TEdhjUIE9t4o
+	dD5gNxqSFUmkvKzFKOkGVnVOnt1iuxJQBHgX9DDPSrdsOL4Hip9ItPWS5v77nXA=
+X-Google-Smtp-Source: AGHT+IEv0O7Nb5eais5i8QxwOLcaw9aRE9xxut8kOh2lLhxTp3ohXV68TchdcBO6zQkEqoEbPW8kbw==
+X-Received: by 2002:a05:6808:1918:b0:3d2:18c1:bf35 with SMTP id 5614622812f47-3e4d71beaddmr1948457b6e.33.1728536348313;
+        Wed, 09 Oct 2024 21:59:08 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea4496690dsm278239a12.77.2024.10.09.21.59.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 21:58:49 -0700 (PDT)
-From: Guo Xuenan <marcus.yu.56@gmail.com>
-X-Google-Original-From: Guo Xuenan <guoxuenan@huawei.com>
-Date: Wed, 9 Oct 2024 21:58:46 -0700
-To: stable@vger.kernel.org, gregkh@linuxfoundation.org, sashal@kernel.org
-Cc: leah.rumancik@gmail.com, djwong@kernel.org, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	marcus.yu.56@gmail.com
-Subject: [PATCH 5.15.y] xfs: fix super block buf log item UAF during force
- shutdown
-Message-ID: <ZwdfBhBsMEG2_1Tr@gmail.com>
+        Wed, 09 Oct 2024 21:59:07 -0700 (PDT)
+Date: Wed, 9 Oct 2024 21:59:04 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [net-next v5 4/9] netdev-genl: Dump gro_flush_timeout
+Message-ID: <ZwdfGOnyjhTtdR0s@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241009005525.13651-1-jdamato@fastly.com>
+ <20241009005525.13651-5-jdamato@fastly.com>
+ <20241009201440.418e21de@kernel.org>
+ <ZwdZQa3nujo7TZ1c@LQ3V64L9R2>
+ <CANn89iLNuzv7hr19FF0u8TsJwDbGcxrs24FqKhmvxMxLPUZBbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iLNuzv7hr19FF0u8TsJwDbGcxrs24FqKhmvxMxLPUZBbQ@mail.gmail.com>
 
-commit 575689fc0ffa6c4bb4e72fd18e31a6525a6124e0 upstream.
+On Thu, Oct 10, 2024 at 06:45:11AM +0200, Eric Dumazet wrote:
+> On Thu, Oct 10, 2024 at 6:34 AM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > On Wed, Oct 09, 2024 at 08:14:40PM -0700, Jakub Kicinski wrote:
+> > > On Wed,  9 Oct 2024 00:54:58 +0000 Joe Damato wrote:
+> > > > +        name: gro-flush-timeout
+> > > > +        doc: The timeout, in nanoseconds, of when to trigger the NAPI
+> > > > +             watchdog timer and schedule NAPI processing.
+> > >
+> > > You gotta respin because we reformatted the cacheline info.
+> >
+> > Yea, I figured I'd be racing with that change and would need a
+> > respin.
+> >
+> > I'm not sure how the queue works exactly, but it looks like I might
+> > also be racing with another change [1], I think.
+> >
+> > I think I'm just over 24hr and could respin and resend now, but
+> > should I wait longer in case [1] is merged before you see my
+> > respin?
+> 
+> I would avoid the rtnl_lock() addition in "netdev-genl: Support
+> setting per-NAPI config values"
+> before re-sending ?
 
-xfs log io error will trigger xlog shut down, and end_io worker call
-xlog_state_shutdown_callbacks to unpin and release the buf log item.
-The race condition is that when there are some thread doing transaction
-commit and happened not to be intercepted by xlog_is_shutdown, then,
-these log item will be insert into CIL, when unpin and release these
-buf log item, UAF will occur. BTW, add delay before `xlog_cil_commit`
-can increase recurrence probability.
+OK.
 
-The following call graph actually encountered this bad situation.
-fsstress                    io end worker kworker/0:1H-216
-                            xlog_ioend_work
-                              ->xlog_force_shutdown
-                                ->xlog_state_shutdown_callbacks
-                                  ->xlog_cil_process_committed
-                                    ->xlog_cil_committed
-                                      ->xfs_trans_committed_bulk
-->xfs_trans_apply_sb_deltas             ->li_ops->iop_unpin(lip, 1);
-  ->xfs_trans_getsb
-    ->_xfs_trans_bjoin
-      ->xfs_buf_item_init
-        ->if (bip) { return 0;} //relog
-->xlog_cil_commit
-  ->xlog_cil_insert_items //insert into CIL
-                                           ->xfs_buf_ioend_fail(bp);
-                                             ->xfs_buf_ioend
-                                               ->xfs_buf_item_done
-                                                 ->xfs_buf_item_relse
-                                                   ->xfs_buf_item_free
+> >
+> > Just trying to figure out how to get the fewest number of respins
+> > possible ;)
+> >
+> > > So while at it perhaps throw in a sentence here about the GRO effects?
+> > > The initial use of GRO flush timeout was to hold incomplete GRO
+> > > super-frames in the GRO engine across NAPI cycles.
+> >
+> > From my reading of the code, if the timeout is non-zero, then
+> > napi_gro_flush will flush only "old" super-frames in
+> > napi_complete_done.
+> >
+> > If that's accurate (and maybe I missed something?), then how about:
+> >
+> > doc: The timeout, in nanoseconds, of when to trigger the NAPI
+> >      watchdog timer which schedules NAPI processing. Additionally, a
+> >      non-zero value will also prevent GRO from flushing recent
+> >      super-frames at the end of a NAPI cycle. This may add receive
+> >      latency in exchange for reducing the number of frames processed
+> >      by the network stack.
+> 
+> Note that linux TCP always has a PSH flag at the end of each TSO packet,
+> so the latency increase is only possible in presence of tail drop,
+> if the last MSS (with the PSH) was dropped.
 
-when cil push worker gather percpu cil and insert super block buf log item
-into ctx->log_items then uaf occurs.
-
-==================================================================
-BUG: KASAN: use-after-free in xlog_cil_push_work+0x1c8f/0x22f0
-Write of size 8 at addr ffff88801800f3f0 by task kworker/u4:4/105
-
-CPU: 0 PID: 105 Comm: kworker/u4:4 Tainted: G W
-6.1.0-rc1-00001-g274115149b42 #136
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-Workqueue: xfs-cil/sda xlog_cil_push_work
-Call Trace:
- <TASK>
- dump_stack_lvl+0x4d/0x66
- print_report+0x171/0x4a6
- kasan_report+0xb3/0x130
- xlog_cil_push_work+0x1c8f/0x22f0
- process_one_work+0x6f9/0xf70
- worker_thread+0x578/0xf30
- kthread+0x28c/0x330
- ret_from_fork+0x1f/0x30
- </TASK>
-
-Allocated by task 2145:
- kasan_save_stack+0x1e/0x40
- kasan_set_track+0x21/0x30
- __kasan_slab_alloc+0x54/0x60
- kmem_cache_alloc+0x14a/0x510
- xfs_buf_item_init+0x160/0x6d0
- _xfs_trans_bjoin+0x7f/0x2e0
- xfs_trans_getsb+0xb6/0x3f0
- xfs_trans_apply_sb_deltas+0x1f/0x8c0
- __xfs_trans_commit+0xa25/0xe10
- xfs_symlink+0xe23/0x1660
- xfs_vn_symlink+0x157/0x280
- vfs_symlink+0x491/0x790
- do_symlinkat+0x128/0x220
- __x64_sys_symlink+0x7a/0x90
- do_syscall_64+0x35/0x80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-Freed by task 216:
- kasan_save_stack+0x1e/0x40
- kasan_set_track+0x21/0x30
- kasan_save_free_info+0x2a/0x40
- __kasan_slab_free+0x105/0x1a0
- kmem_cache_free+0xb6/0x460
- xfs_buf_ioend+0x1e9/0x11f0
- xfs_buf_item_unpin+0x3d6/0x840
- xfs_trans_committed_bulk+0x4c2/0x7c0
- xlog_cil_committed+0xab6/0xfb0
- xlog_cil_process_committed+0x117/0x1e0
- xlog_state_shutdown_callbacks+0x208/0x440
- xlog_force_shutdown+0x1b3/0x3a0
- xlog_ioend_work+0xef/0x1d0
- process_one_work+0x6f9/0xf70
- worker_thread+0x578/0xf30
- kthread+0x28c/0x330
- ret_from_fork+0x1f/0x30
-
-The buggy address belongs to the object at ffff88801800f388
- which belongs to the cache xfs_buf_item of size 272
-The buggy address is located 104 bytes inside of
- 272-byte region [ffff88801800f388, ffff88801800f498)
-
-The buggy address belongs to the physical page:
-page:ffffea0000600380 refcount:1 mapcount:0 mapping:0000000000000000
-index:0xffff88801800f208 pfn:0x1800e
-head:ffffea0000600380 order:1 compound_mapcount:0 compound_pincount:0
-flags: 0x1fffff80010200(slab|head|node=0|zone=1|lastcpupid=0x1fffff)
-raw: 001fffff80010200 ffffea0000699788 ffff88801319db50 ffff88800fb50640
-raw: ffff88801800f208 000000000015000a 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88801800f280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88801800f300: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88801800f380: fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                             ^
- ffff88801800f400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88801800f480: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-Disabling lock debugging due to kernel taint
-
-Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
----
-
-The fix 575689fc0ffa ("xfs: fix super block buf log item UAF
-during force shutdown") was first introduced in v6.2-rc1. Syzkaller
-reports that the UAF bug is still present in linux-5.15.y
-(https://syzkaller.appspot.com/bug?extid=4d9a694803b65e21655b).
-I think a backport should be beneficial here.
-
----
-
- fs/xfs/xfs_buf_item.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
-index b1ab100c09e1..ffe318eb897f 100644
---- a/fs/xfs/xfs_buf_item.c
-+++ b/fs/xfs/xfs_buf_item.c
-@@ -1017,6 +1017,8 @@ xfs_buf_item_relse(
- 	trace_xfs_buf_item_relse(bp, _RET_IP_);
- 	ASSERT(!test_bit(XFS_LI_IN_AIL, &bip->bli_item.li_flags));
- 
-+	if (atomic_read(&bip->bli_refcount))
-+		return;
- 	bp->b_log_item = NULL;
- 	xfs_buf_rele(bp);
- 	xfs_buf_item_free(bip);
--- 
-2.46.2
-
+Would you like me to note that in the doc, as well?
 
