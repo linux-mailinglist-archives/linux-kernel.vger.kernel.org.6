@@ -1,233 +1,125 @@
-Return-Path: <linux-kernel+bounces-358756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0374299833B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:10:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2A099832C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3783283D21
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB351C20DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669C21C232C;
-	Thu, 10 Oct 2024 10:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ai0iFDgF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D191BF322;
+	Thu, 10 Oct 2024 10:09:04 +0000 (UTC)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D731BE251;
-	Thu, 10 Oct 2024 10:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB0F18C03D;
+	Thu, 10 Oct 2024 10:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554985; cv=none; b=Z5w1ul52mLP2tMJca8F4OQjd46QsMcZJsq5bYtNvt8LnVIVwjFygunI+i2MatO1Hi0DT7QuFuZmElC2fQ6LHpmUjAMYw72fEP8MzqzEtGJfRzXizoCfPPcsSbwaeFcK2CWDMBsxFS0f+jA32HyD4SyKXo2lnr/TsnqwpwTqolg0=
+	t=1728554943; cv=none; b=kFTHddJwM65LpCyNUwWJBaDGim3AuMRToc0SE5HfHQIqFNKoBZxP0RyDhzMCOwdXULnNwGIdLbH4qPHw2QudvfMazs1bPdJpUDiKyRbzUAx60/q9NNpZB5Oh1Hhzu08GgYoeSbsbD9SHcFAu1I7sKtIeHHqQpJoFVEUooiDMbYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554985; c=relaxed/simple;
-	bh=1devtUPHuNl3wWnbl3BrC/SkHddisfze/2kLWT0uMFA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=paxuT/lU0CrL8wGqz5S8SGskTa6RELGrkdbsbbR7d9IJhdTl7Zy3pe7Xpm3KdtLjvysREghKMTGlhPzcoAgXwyCbwY3PVtpkkF5au+kqZq8JnJylHS3mNnGYJJ4LKDcVH9V1xmzK/SLVKF1wvLK9v0hC4gMNXMUSs02fVTOwahk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ai0iFDgF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1av7w029300;
-	Thu, 10 Oct 2024 10:09:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R5OhkkmuVXJYEIOqzZ44+3xoVlPdSu7q/ZnNqPoHAEw=; b=Ai0iFDgFYRTwt6wW
-	M8Ge7EAf/dCvxOVUGEkr6pgaDvt0lkmPgKJp6Jvz1SY00NBXompBo3fF6GIso64/
-	q0VrSnS9tHzpTruR6oePG4YdO8kjCSjZh05GdW9EVmb4I4T7qCxbE0r84kK9t0QF
-	ACpNk8UbFK1iDMmygDA1Dl3oQQf1FpnnJ5HvHw1CbX/v4OCMoGNQi8cJiTX8O/fR
-	1aBvOilg4l9FGO85NTjZatvNIpbxpPRqIKpAdxhms9QBt1MqMaUvIr+gDTs7d98b
-	YDdowedhnD3UKucjWXaYHTkfV7njgKBbQqXTruJ1k6hhrFZbdPo6MOdNIhkCUhHj
-	PcVHrQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424x7s05gp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 10:09:35 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AA9Y9h014634
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 10:09:34 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 10 Oct 2024 03:09:30 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-Date: Thu, 10 Oct 2024 18:08:47 +0800
-Subject: [PATCH v2 2/3] soc: qcom: llcc: Add LLCC configuration for the
- QCS8300 platform
+	s=arc-20240116; t=1728554943; c=relaxed/simple;
+	bh=YWHB+my37muquSy1XkY//hgr5fEDz/6DVNflN1m/7dI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EXFduuPenDVfLtMcA2ZDWYS9AleOZUOm+GMItD0mdvP7FQ76GvQ2efYjMsmdDxXNnNoI0mrqXUakZIdN2fW0o0BTmMsnxjXeoMff0/S+cIQQ9WmOmfs9IldghQlsxxeYPzcNMgkpEmmAv794Nrd0WPAXXU3T5xvZjt/Lt+vkAuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso743655276.2;
+        Thu, 10 Oct 2024 03:09:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728554941; x=1729159741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=miJ8/WzZit7AkjMUZIt04ikXcWEMhi6CNqSN9WbGjyg=;
+        b=Jd7g8E/Kh9q2xUfNGiQ8wWKxKrsVweZf2hWK1aPYE9KUd+GaK8rxtRKJ7MTbbYj/A2
+         FEj6CfMML7ygxKl2IGXRbXslOVPcrpiSRC6yFtqDC1tddqh9W4AJ7lrOcoMNCUFc2CO4
+         JI1Y9e0ha1sVPqDb2lVKrsoKp75mSlGC66wbgMIzRCMJ0rbiAG/xBGdBzWVnCwiBRa3t
+         p/AApLsJxJiu+LyY1a3c91EZcp/iUFHsDHgaHxnulB2UvTivqGJiwKNi8h5J9wonjYyP
+         lKMJ7Va5upxnPvv+Ucc6kZKEp5QjBR1mW5vAcirZXxblvVZ4rkr4EAr9M+lEYQHsgAa9
+         Ae5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+c71rM5RvP2W/pJGctk6axYnIiK0IPFp+bimtYcxnINhmFLlzwDXMFAh1aaV983qJCNh4I7FqSJr8@vger.kernel.org, AJvYcCUluKuFUuUMH5EX7Tz62tPhzzB9+EyMREVK1tkcrDkWPRUNj+N0xsUjk742f1aleC5mHUulPECgEZoP@vger.kernel.org, AJvYcCUxfOlJZWmlUhuD5Is2kO/zjHh842aFYaxrZcr+mchJ7qqR3ewcmQcWOReDjy2+sq9Ocgow3gBsJL93@vger.kernel.org, AJvYcCVpPwpAncVDar78EViUrHsT36kCUrMCE2UsIe0QyxOWLq3uB9J5bHLxZUaxyFPID3Qvx6yH7O7wD8koRZio@vger.kernel.org, AJvYcCXaDDQk0P0LJUFcbvxZaL1bkSOrvARC4bzQAr/uokEslUG+PWAf+4AXSy8qaTu3yC3sTCkiI/p7LRekxKI1Z2fkYKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYtTYr1l4QiwkthSFcurmj0PYbPwdpFKIRyzv/Y7Eh2llhWvDp
+	6YbA+dC8VD4ZKcf5kJ7qUrnXfjv9jcnsL2cSv936Kc49lwAOZUoEPpwvIDvf
+X-Google-Smtp-Source: AGHT+IFrm/zOqEfnuzkypReNrsnt9tcpSHCmbAaV9smH5Qz/Mis/RZGuPK4g5EmS6mGU4fyWKRvo3w==
+X-Received: by 2002:a05:6902:1609:b0:e29:6b8:af2 with SMTP id 3f1490d57ef6-e2906b80e18mr3622607276.55.1728554940782;
+        Thu, 10 Oct 2024 03:09:00 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ee18b5csm238374276.37.2024.10.10.03.09.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 03:09:00 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e2346f164cso7099017b3.3;
+        Thu, 10 Oct 2024 03:09:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUnqcLRpIrCBfJrreWpL/4xbj8Q3GPIdMYNzl0t5UzEu+Ei70bLqZwnYIzcqyPCIADN9OY8UJWRtUqYoxuAkbXvVc=@vger.kernel.org, AJvYcCUdWeUYo3HZQet2Anju9vF/OkjEenDucXALmajBe4Jwwtczcl0VA2L93CYBlKEZnG5N8lOEthZdg2S7@vger.kernel.org, AJvYcCVAR4bGPLhz2TVpOqvOxdk+ehA2QFIpaU7TUPCEppt9D/RgPqGz4WTk9zJMpuDpx/9VxzfV8cZpZ2a4@vger.kernel.org, AJvYcCVSGM6rZc2Ez4C20DuXc9ZsKBT+czbugrq0ozUy/AN8hf/f53kiwDq5AbjE6mXlSHPHmKu5NmmqN1pt@vger.kernel.org, AJvYcCXw1y28P1Mr7MZZ0bq2VNOGmaVr6IufruyPk+V0CdZWOnccgE2Tr4QTg+aw8KiB/rdxMqgeac9tqhEXgsD/@vger.kernel.org
+X-Received: by 2002:a05:690c:4e89:b0:6e3:17b4:aeee with SMTP id
+ 00721157ae682-6e322491428mr39513197b3.43.1728554940009; Thu, 10 Oct 2024
+ 03:09:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
-References: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
-In-Reply-To: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        Jingyi Wang
-	<quic_jingyw@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728554962; l=3538;
- i=quic_jingyw@quicinc.com; s=20240910; h=from:subject:message-id;
- bh=1devtUPHuNl3wWnbl3BrC/SkHddisfze/2kLWT0uMFA=;
- b=KK4X+bDXIWDmad0t+o1yB9MhbVKEcEWvtOKZaGIN9KATF4UVRauCzibUUIx4hq8rLq36JO5jo
- V9nO6y1RYwfDOjgsm3cHu4ksCQRketQI7Ytt5J55qZORzp+0DpQhdLH
-X-Developer-Key: i=quic_jingyw@quicinc.com; a=ed25519;
- pk=ZRP1KgWMhlXXWlSYLoO7TSfwKgt6ke8hw5xWcSY+wLQ=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OYnoeCuZ2qYEbT09m6SSCNBeQIpMSFRW
-X-Proofpoint-ORIG-GUID: OYnoeCuZ2qYEbT09m6SSCNBeQIpMSFRW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 spamscore=0 clxscore=1015 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100067
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Oct 2024 12:08:48 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVqWdFmLAgXmieBjFgj8Rz1cJqVbdFDn0Ep76UawqsU2Q@mail.gmail.com>
+Message-ID: <CAMuHMdVqWdFmLAgXmieBjFgj8Rz1cJqVbdFDn0Ep76UawqsU2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 01/12] dt-bindings: clock: renesas,r9a08g045-vbattb:
+ Document VBATTB
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add LLCC configuration for the QCS8300 platform. There is an errata on
-LB_CNT information on QCS8300 platform, override the value to get the
-right number of banks.
+Hi Claudiu,
 
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- drivers/soc/qcom/llcc-qcom.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
+> the tamper detector and a small general usage memory of 128B. Add
+> documentation for it.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - moved the file to clock dt bindings directory as it is the
+>   only functionality supported at the moment; the other functionalities
+>   (tamper detector, SRAM) are offered though register spreaded
+>   though the address space of the VBATTB IP and not actually
+>   individual devices; the other functionalities are not
+>   planned to be supported soon and if they will be I think they
+>   fit better on auxiliary bus than MFD
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index a470285f54a8..d867b1596725 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -2225,6 +2225,56 @@ static const struct llcc_slice_config sm8650_data[] = {
- 	},
- };
- 
-+static const struct llcc_slice_config qcs8300_data[] = {
-+	{
-+		.usecase_id = LLCC_GPUHTW,
-+		.slice_id = 11,
-+		.max_cap = 128,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPU,
-+		.slice_id = 12,
-+		.max_cap = 512,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.write_scid_en = true,
-+	}, {
-+		.usecase_id = LLCC_MMUHWT,
-+		.slice_id = 13,
-+		.max_cap = 128,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_ECC,
-+		.slice_id = 26,
-+		.max_cap = 256,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_WRCACHE,
-+		.slice_id = 31,
-+		.max_cap = 128,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0xf,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	},
-+};
-+
- static const struct llcc_slice_config qdu1000_data_2ch[] = {
- 	{
- 		.usecase_id = LLCC_MDMHPGRW,
-@@ -2646,6 +2696,16 @@ static const u32 llcc_v2_1_reg_offset[] = {
- 	[LLCC_COMMON_STATUS0]	= 0x0003400c,
- };
- 
-+static const struct qcom_llcc_config qcs8300_cfg[] = {
-+	{
-+		.sct_data	= qcs8300_data,
-+		.size		= ARRAY_SIZE(qcs8300_data),
-+		.need_llcc_cfg	= true,
-+		.reg_offset	= llcc_v2_1_reg_offset,
-+		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-+	},
-+};
-+
- static const struct qcom_llcc_config qdu1000_cfg[] = {
- 	{
- 		.sct_data       = qdu1000_data_8ch,
-@@ -2829,6 +2889,11 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
- 	},
- };
- 
-+static const struct qcom_sct_config qcs8300_cfgs = {
-+	.llcc_config	= qcs8300_cfg,
-+	.num_config	= ARRAY_SIZE(qcs8300_cfg),
-+};
-+
- static const struct qcom_sct_config qdu1000_cfgs = {
- 	.llcc_config	= qdu1000_cfg,
- 	.num_config	= ARRAY_SIZE(qdu1000_cfg),
-@@ -3391,6 +3456,12 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- 	num_banks >>= LLCC_LB_CNT_SHIFT;
- 	drv_data->num_banks = num_banks;
- 
-+	/* LB_CNT information is wrong on QCS8300, override the value */
-+	if (of_device_is_compatible(dev->of_node, "qcom,qcs8300-llcc")) {
-+		num_banks = 4;
-+		drv_data->num_banks = 4;
-+	}
-+
- 	drv_data->regmaps = devm_kcalloc(dev, num_banks, sizeof(*drv_data->regmaps), GFP_KERNEL);
- 	if (!drv_data->regmaps) {
- 		ret = -ENOMEM;
-@@ -3484,6 +3555,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id qcom_llcc_of_match[] = {
-+	{ .compatible = "qcom,qcs8300-llcc", .data = &qcs8300_cfgs},
- 	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
- 	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
- 	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
+The battery-backed-up SRAM could be exported through the
+NVMEM framework. I am not sure it offers some way to export the tamper
+flag (to indicate it's erased, i.e. empty).
 
--- 
-2.25.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
