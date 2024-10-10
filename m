@@ -1,184 +1,156 @@
-Return-Path: <linux-kernel+bounces-359023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DA5998668
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0859F99869D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93287B23AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:46:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC0AB21D97
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5D11C4629;
-	Thu, 10 Oct 2024 12:45:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AED1C57B5;
+	Thu, 10 Oct 2024 12:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="Qsoa3ViP";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="JeXiX1LE"
+Received: from smtpout144.security-mail.net (smtpout144.security-mail.net [85.31.212.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A505D1C579A;
-	Thu, 10 Oct 2024 12:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564341; cv=none; b=rCu0jMeDdFLbmu6gjzriGM5B1p4IUqBy1/RI0aVDqB27N0NBH/DTXOrfQwOvekVgBEUDLkUv2rC2htRzi3GZ1qOspFjp2jXzpcvJCKU0cyfdD6E1NMN/FnFzSVfi87QhrbxBXPQpnzIeI36BTqR1WKBU7fIt3FAB4ZIANJaJQe0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564341; c=relaxed/simple;
-	bh=XXZ5TjTag0urHfraLP3YklOn4FDkBrCcuI/v/Qu8nU4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JdHi3ekqH6WoGvNh0mmKaLHtgSaMaf2HNiKFrPkgqRv1YAWp25vluzLZgI3FbBncB5MZP0sCVCweiJkJWrbatJoAeiMw9MBwED3lJq1fxq/ncYAML2v/KIsp7iBo7AKp/LKVhn9P8EJ4kANr+i11NooaIyBHin8/KUeWQof1Tv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPTxR3zvDz6HJP4;
-	Thu, 10 Oct 2024 20:45:15 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 16EAB140AE5;
-	Thu, 10 Oct 2024 20:45:36 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 14:45:35 +0200
-Date: Thu, 10 Oct 2024 13:45:33 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 11/28] cxl/hdm: Add dynamic capacity size support to
- endpoint decoders
-Message-ID: <20241010134533.00002750@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-11-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-11-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE7C1C243D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.144
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728564605; cv=fail; b=Sov/Q9yAt5BzrlYFNv0jbrGQl8t9fURScBVggyUoUlSy+mYZRffXBCknrkLGbylA86YuRjiPGl9vZISwnxRpGMIDk7+mcRmfUb49uGK68y27d+NFsTngfwQX73kI2WEupdS+4yFcywYTzefycg6cYLPS5n/i8ZZCPnar3gGZAOM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728564605; c=relaxed/simple;
+	bh=ZTSa5eF3W1402K0h/xi5QUvCCPtERTNR0o70TnhcL44=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IU3EnR+LZkBPxVlYeXwN5Z1bO29sRHR2ZhCuTX+Lbj1OTnx6VcCzII2ZE9BCyvJDHH9CiXLfDoUCJZMjscUVFHt00WHXgMJBEI7e7pNXDLSYpH4qWxQimBPoB/tykDx96EG9EqUiH6SsyNp5fyS/TFGg1Eo/dvIB4Zn5pYudQ5Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=Qsoa3ViP; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=JeXiX1LE reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (fx601.security-mail.net [127.0.0.1])
+	by fx601.security-mail.net (Postfix) with ESMTP id 01BB8349704
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:46:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1728564392;
+	bh=ZTSa5eF3W1402K0h/xi5QUvCCPtERTNR0o70TnhcL44=;
+	h=From:To:Cc:Subject:Date;
+	b=Qsoa3ViPmE/2lVnkokyXZhZ/KG3VmbBu/LqR9qBbyUhz/lWhBD74Ku1K7kxcUlU6c
+	 xLTNYS6n05IPlzr2OyzH6lzNAaa+YRz21So4eJfalajZf+ITOEfvhPPTAd9A7O3foX
+	 0i/FZ5cwgSSk+Y6GDCT9Fo3YLtMCfco7GmDDAKgc=
+Received: from fx601 (fx601.security-mail.net [127.0.0.1]) by
+ fx601.security-mail.net (Postfix) with ESMTP id D4C0C3496B6; Thu, 10 Oct
+ 2024 14:46:31 +0200 (CEST)
+Received: from PA5P264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17010001.outbound.protection.outlook.com
+ [40.93.76.1]) by fx601.security-mail.net (Postfix) with ESMTPS id
+ E6F28349972; Thu, 10 Oct 2024 14:46:29 +0200 (CEST)
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:118::6)
+ by PASP264MB4793.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:432::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.22; Thu, 10 Oct
+ 2024 12:46:28 +0000
+Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626]) by PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::6fc2:2c8c:edc1:f626%4]) with mapi id 15.20.8048.013; Thu, 10 Oct
+ 2024 12:46:28 +0000
+X-Secumail-id: <10635.6707cca5.b468f.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HaFNonXCZCAuH9/Ay3iLzNpJjVftB4UTFwajDAFbdo40lZDobvoiZGw8nG7IptnYgVgUs2FiqXA+XgfPo2JiFAvH9igPhg+JqGTrp0chBymFIn8750Z24DkgQ4VPZKkc3DWB/7NehPwTfRIwcl0AbL8z4Qdm1RwVKd1lhQok8zHYUz0/PPgh9aW79MDEsdKKwglHl9fwTIIiWgS/1BiHQgXkaOY3K8yuZYsl88h0pQIepzUEFfuFyu7mGUA13tojZoo37FYg38W3ZXVCBJ2xZx+x69VzFGNg3+gx55Hal7NDNn14uo3uhP4kfzRwgt2NYJJhT/2Lphnyzy1jqmt4FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nns6IfU6iZSS5Xhn9RqtJruG10S4MtZGeqhbL5xN8ac=;
+ b=locBqyMV0jLLINuXUfFCuDZKw8hy5dhSYRBHGzig+Ayyjwz4qqjwXyy07nsW92TuDDVTPCHhmWxswdhNuQtQV4/6Bl62kSnOwHttQIYXWYg0BNTGgSpICcFOop0kHPfde0MC62Mw/2linwHFXURm8T5ho+KpjT/UrylTAbJMbFoIFIT/6ZiSEoUbWlj376tAVGqFnoz8WRs85rCdBw+JLvmhTz9dTC+c1zprbzRLFEpGQn+yW4d+7mvQo7hdPzz/WP/cNl1JWZw9AkA/+lkVZgA4DV5vp9Q8zygeJMPMsiHq0QKrq6oX/xwlY6DEoBphk4WxvHI9RtElLmqZ0yohUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nns6IfU6iZSS5Xhn9RqtJruG10S4MtZGeqhbL5xN8ac=;
+ b=JeXiX1LEXW+/xeza5NnhOHtUBGOTI3cgnFQ+aP1nfPFsztoTYm42atLOZ7DigsjzhxTaCQxRF7uHiTwITKyYEaZOolAhITysJhTJdBZbp8QlwT7b9MZUuVck90S8Subgcetxgha5W+uO5Yv9Bb4EzT6k73r0d+iLQecDJOLpgPQSYEgCWjpTOl2kgwoeRaUyjFBEXqrXUGU6UEdfSSMV0B0VAiIi/aycMjUlKO94dE4DbPbIoLOLPmWG/7ZRSIInHEA2urEggZ3oSWGFDl3GVBh/lSDcbU+odNuBtcj0q3ep8SF4fl4K1ToWsF7PpOLEHc6P1HuFZWPT7l3qbAe+ww==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+From: Julian Vetter <jvetter@kalrayinc.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, Julian Vetter
+ <jvetter@kalrayinc.com>, Takashi Iwai <tiwai@suse.de>, Yann Sionneau
+ <ysionneau@kalrayinc.com>
+Subject: [PATCH] sound: Make CONFIG_SND depend on INDIRECT_IOMEM instead of
+ UML
+Date: Thu, 10 Oct 2024 14:46:01 +0200
+Message-ID: <20241010124601.700528-1-jvetter@kalrayinc.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR10CA0084.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:15::37) To PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:118::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAYP264MB3766:EE_|PASP264MB4793:EE_
+X-MS-Office365-Filtering-Correlation-Id: 057cc345-6685-4c42-73f1-08dce9298f1e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info: vFkKxQpE538MrAZSWk/KveIQ3XIW/wxv6VrIH3Kw3ne19Je6bkTZSJ/VlvVaH6h0LMwYXMX5cggbE43JbauH/1eXdTV3LC8bHk5IoUEoru38ZqRryNTvOJIeLI3t5bTkIUoy8VmoL9ES5L1Fu6bckamv/GL2R1nAaiX1VbYA0vONHTB8cKf4UF0kg4XFmBtdsoXLRh9XAD+bWlUeR/GznBgSHXY4ZY5hlJpPB7hjggQ0WwNIrU2DfQ+y5nodlig5Pq37P9uzESM3EM4EXt9wZfCicBxN/F82t2rorfzqXek/2m5wAchDxKfj0Favby/wsjAZ4I9CgilQijti7fPO3XxV+KOSOPfOEprJ0+L0dSFJMn0A7AnFDUACjhu+KgKCAcRCYVjsHYMzDqOldXssbqzB6oIzpRW7VUOpconPpSHB974tBB74wfFZevMrQCfWJ2C+SdeLzdGUX6qwVoytJD6fe6WKVwPodvnHFGZ+QIKCFUdsn9saE5o/l3YeCvmFzVtASWkoBSa0RcNWtCVIJhNYW6+7mNR2Q0z62M0A+JcdzCwtELnJb4W/wQN0szzlopsGw7gP+GVVm86asQ6aG1+o/earXT9+0IaLJZpX8hHMSbI91WO1G6PPqFKzzvYWVx6+w+xXilqG+Ih28sVMwwFWeMfmLYv7t7/+BZZqZgIWxImTCX6RUmT2cVoOYirkuEvhrI1L4Qdy+7uGh/mBCe+sDIQcedyN6nWT3b8Lp9i+UNPmPlqMjA5ST28thkIDZ8q1zJqlUMmIlizvOTr114zN8024HpnT/+atj3j0WFOHic0sLElk4ySw8gLXfNtFuYuAnrPi1Y57mt4pPX9Q4h04OKcKzFWdJ1OhXwDl6SsdXL87b/ox0DfBVVcG6/0nZ7qfGsFry6/uupiRJJczYX8L/XX9LVMytJIEomsW+ozbPwx62iFUyR6LdEZUKI0c4ke
+ ssR1n+nUyhdOUgHgb3jIBXc83yVMi+AkygkeU9QpypRbZie4ASdp06wn0MJqRxAMFD/5yY91gN0Mnr81iINo7JaiF3GV2QCEp4xhbpKQR3e3WzHvUIGBekPqf0wf7B149hwLlp353aTsiJ7aOS1ZNVw3tvTa0D1yKjTy4ioTzdurVBFi19lOf/q+ahdZLaxoQTgYhX1KfKLNIxX9rTazt2iG21fk5BjpmUu/Br8o2MZuNk+fifpWkDIvLLpdJ4B/n8agoQRzXV8JBg+A0hktIFEf4ZjFkxs1TYLWew13cJ03v6Y9qoqYnUbvZ66lH00mp98yXU91dTKKaI76l9WQoYHgaVH6yvrfvk78GRPq/GG8/o1Xs5wqqUGBv73lw/DbGM+Tl0a5N7lIPAPKdUg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: hyTUp479ZZgSROVD+e4dL+04y18dC8FYMDOsWeed4p9OqlWYMUuMjTEwkZg5mmRi0ufFKb20BdDcW7bh3BnTMw3nxdpfxy2/Oyo9chVZ1nrj6fqhrztBGbYWrNlPWBTaf3qGaGHQOP4LdxNAClfI+puSm14P5TLmrMcoBD52FD8FzhC9j1b1fv7LfS3uGNAtRGGJIi5YgrqQj2igvQ8Lm9QNsCc8BLMt2qmsQ9c3k5BHUspN/zZHEz/nLLDZV5OqwyPiND/pfpVNx4Fwlep7gIguGiFSIRhnFDDfJkocLOoSUpGkyGJSntf8fH4bBKexdh3w6U4aEOjrj3vxXm+HUBGPKdAna3Ecyl7J+bzCd4UmTgYFuHA5GsBG+VzDwGXC4/4CxNBWY7x1AzjBXJXl53jgvnAJ/hH8+wrGhlqPmDv7dPCuHc1uDzs1rv/3AZlz6ftJAnyOldDddPrqoZMHaa237comV6N3vaer9ww+Bcy7xPhwOIBgMjTXjGXsKEvabN4IIXLmqy5H57dEFVi1DS3vc+j0DuchHyty+blD950krqqADf+VluqNLLkrx0Nawmhn1TaoyfBE/xzMJFUx4dyP7w4+v+dHFw+mVFdlYjE9SGPDVB072M3enxZ2+Y2O1ddt8GfDtYrzpPp145tcyy/dgkmAwRAHYWC3XKEwtZyYR6/dDixUDrE4vkhQVt3hUgN/xw62s7LJOEMs0LhfddJly+J8wbOlJFWq2Bp9mNv2ML3wX9m9y/uUxnKl5/GlFsXn23W5K6WOu+mVicngAxxURhv2tOc5FkjH9pTDpGHy7uv2J/G5vJe+UCquOVieDyaPBKpVwKHljGNmI/QGPOpawqIE85HsAOWw2rJdL39rq3H3RzC8NNbBqq5mpW4S/qVWRTObQbS4TIo44oqFYBSMUrBr2rK+6RIrA80YR4cpVdt4BcrVz43BzJjjCis8
+ AUWBlCz2Ts1pj/znlVwZSYA4IuM+Z3l0Nd53lcuRAKxPBNv5Zvxgp9bVi4K9TfnE7yhHnW4NqUPbvI/I4pMogrn3CiraMSSrdTohDkdqWr4+WwKY3N3zqUftHdWtsxbglunClKJ1e9PEE8IQkl5qhq/vYSmY9sS1TxvB1Q+6rVJGYN2ZcD/oypCHkZpGoUqPLIm0u+s19MGW78zVvQkLz9IyUvMmaJf6087CnAvQ37wgD4t3S0NlkTwnD3T4wcYY2NIa/uZNmpifFsnU383IzJwXci7vWkLnJfbgHsC4Yo7KG7w16FgMGQGRKCHTKHvmSurxsA6lDBkgyeTdMVwVXWa3YtJnBxh1Xzry5CrBIUfMnzdAlDJrxKPR6Ix4UUrlGBFfEpkKWP6RZwtZM1V08b013ffglJ1iIcZQBq8SkJ22a615WknCIC2zSWm76qCbuB8+FBaYJ2Ed2kiHpHBkjvchihyGq2i/zkC8SMXY79kaiIOa4SgBCM97zaNM2J+ad2qUbbWh8qlDOhrAse91gSTHOsWfBzM+iYLVAwXxgu0ZzyTHWnV++C9GOo/loHGgxNdZ8gac/2pO4ig9VRGWw5DyHXXjpxLNVG8R1DT7qB0eMWgpG5/xcguzyXZoSL5L
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 057cc345-6685-4c42-73f1-08dce9298f1e
+X-MS-Exchange-CrossTenant-AuthSource: PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 12:46:28.4999
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4rsPjkaUO73ZleRTwqx7cOycxJX4x+nzSuzITzdwcKpHF0S+Xd5GMlerdYKx6ejpWYXmSm0CDzpWMVskHD1xww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB4793
+Content-Type: text/plain; charset=utf-8
+X-ALTERMIMEV2_out: done
 
-On Mon, 07 Oct 2024 18:16:17 -0500
-ira.weiny@intel.com wrote:
+When building for the UM arch and neither INDIRECT_IOMEM=y, nor
+HAS_IOMEM=y is selected, it will fall back to the implementations from
+asm-generic/io.h for IO memcpy. But these fall-back functions just do a
+memcpy. So, instead of depending on UML, add dependency on 'HAS_IOMEM ||
+INDIRECT_IOMEM'.
 
-> From: Navneet Singh <navneet.singh@intel.com>
-> 
-> To support Dynamic Capacity Devices (DCD) endpoint decoders will need to
-> map DC partitions (regions).  In addition to assigning the size of the
-> DC partition, the decoder must assign any skip value from the previous
-> decoder.  This must be done within a contiguous DPA space.
-> 
-> Two complications arise with Dynamic Capacity regions which did not
-> exist with Ram and PMEM partitions.  First, gaps in the DPA space can
-> exist between and around the DC partitions.  Second, the Linux resource
-> tree does not allow a resource to be marked across existing nodes within
-> a tree.
-> 
-> For clarity, below is an example of an 60GB device with 10GB of RAM,
-> 10GB of PMEM and 10GB for each of 2 DC partitions.  The desired CXL
-> mapping is 5GB of RAM, 5GB of PMEM, and 5GB of DC1.
-> 
->      DPA RANGE
->      (dpa_res)
-> 0GB        10GB       20GB       30GB       40GB       50GB       60GB
-> |----------|----------|----------|----------|----------|----------|
-> 
-> RAM         PMEM                  DC0                   DC1
->  (ram_res)  (pmem_res)            (dc_res[0])           (dc_res[1])
-> |----------|----------|   <gap>  |----------|   <gap>  |----------|
-> 
->  RAM        PMEM                                        DC1
-> |XXXXX|----|XXXXX|----|----------|----------|----------|XXXXX-----|
-> 0GB   5GB  10GB  15GB 20GB       30GB       40GB       50GB       60GB
-> 
-> The previous skip resource between RAM and PMEM was always a child of
-> the RAM resource and fit nicely [see (S) below].  Because of this
-> simplicity this skip resource reference was not stored in any CXL state.
-> On release the skip range could be calculated based on the endpoint
-> decoders stored values.
-> 
-> Now when DC1 is being mapped 4 skip resources must be created as
-> children.  One for the PMEM resource (A), two of the parent DPA resource
-> (B,D), and one more child of the DC0 resource (C).
-> 
-> 0GB        10GB       20GB       30GB       40GB       50GB       60GB
-> |----------|----------|----------|----------|----------|----------|
->                            |                     |
-> |----------|----------|    |     |----------|    |     |----------|
->         |          |       |          |          |
->        (S)        (A)     (B)        (C)        (D)
-> 	v          v       v          v          v
-> |XXXXX|----|XXXXX|----|----------|----------|----------|XXXXX-----|
->        skip       skip  skip        skip      skip
-> 
-> Expand the calculation of DPA free space and enhance the logic to
-> support this more complex skipping.  To track the potential of multiple
-> skip resources an xarray is attached to the endpoint decoder.  The
-> existing algorithm between RAM and PMEM is consolidated within the new
-> one to streamline the code even though the result is the storage of a
-> single skip resource in the xarray.
-> 
-> Signed-off-by: Navneet Singh <navneet.singh@intel.com>
-> Co-developed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-One trivial comment inline.
+Acked-by: Takashi Iwai <tiwai@suse.de>
+Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+---
+ sound/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> ---
-> Changes:
-> [djiang: s/skip_res/skip_xa/]
-> ---
->  drivers/cxl/core/hdm.c  | 196 ++++++++++++++++++++++++++++++++++++++++++++----
->  drivers/cxl/core/port.c |   2 +
->  drivers/cxl/cxl.h       |   2 +
->  3 files changed, 184 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 3df10517a327..8c7f941eaba1 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -223,6 +223,25 @@ void cxl_dpa_debug(struct seq_file *file, struct cxl_dev_state *cxlds)
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_dpa_debug, CXL);
->  
-> +static void cxl_skip_release(struct cxl_endpoint_decoder *cxled)
-> +{
-> +	struct cxl_dev_state *cxlds = cxled_to_memdev(cxled)->cxlds;
-> +	struct cxl_port *port = cxled_to_port(cxled);
-> +	struct device *dev = &port->dev;
-> +	unsigned long index;
-> +	void *entry;
-> +
-> +	xa_for_each(&cxled->skip_xa, index, entry) {
-> +		struct resource *res = entry;
-
-	struct resource *res;
-
-	xa_for_each(&cxled->skip_xa, index, res) {
-
-as can always cast form a pointer to a void *
-and avoiding the extra local variable is a nice to have.
+diff --git a/sound/Kconfig b/sound/Kconfig
+index 4c036a9a420a..8b40205394fe 100644
+--- a/sound/Kconfig
++++ b/sound/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menuconfig SOUND
+ 	tristate "Sound card support"
+-	depends on HAS_IOMEM || UML
++	depends on HAS_IOMEM || INDIRECT_IOMEM
+ 	help
+ 	  If you have a sound card in your computer, i.e. if it can say more
+ 	  than an occasional beep, say Y.
+-- 
+2.34.1
 
 
-> +
-> +		dev_dbg(dev, "decoder%d.%d: releasing skipped space; %pr\n",
-> +			port->id, cxled->cxld.id, res);
-> +		__release_region(&cxlds->dpa_res, res->start,
-> +				 resource_size(res));
-> +		xa_erase(&cxled->skip_xa, index);
-> +	}
-> +}
+
 
 
 
