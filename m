@@ -1,97 +1,90 @@
-Return-Path: <linux-kernel+bounces-359491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3317998C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2469B998C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40F24282632
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E2B1F2163A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8868E1C6F6E;
-	Thu, 10 Oct 2024 15:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B408D1CCEC5;
+	Thu, 10 Oct 2024 15:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrrTVhxU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qi3Zb5U5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ECD18FDAB;
-	Thu, 10 Oct 2024 15:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1716118FDAB;
+	Thu, 10 Oct 2024 15:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575476; cv=none; b=sSz8UOVgS36tViLY/hlUYPWhpp0Nb/tuA4zncZm9rgEfeqlbsoB+rp16hUd8+AfWCKFvT7RdX+O+WiPsA1BmnuL8+VuxTfg/cAkxP7rDwibnzoIcEQcYwjyvDmKDtlViMGbQv6uBhT9S7gOcC4EYAyiyFdxUvX5xUq1ya+PjKwg=
+	t=1728575479; cv=none; b=IWs9G5bArrJzkNhHOotfRuOrDybZTFO25ZW0GKGvc/YWlUNFzMKqIkThCiPYKETaTjIIDeKYiGHZ3nJE4RIQCLvLJPanc2i3EVyDcEzt20SHkqEPLfqhbNOK+NgU8Ii5bft7LHa7sq2a58ggWFE2Ue/FrOm3g3KuZ6a4qDk/e+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575476; c=relaxed/simple;
-	bh=jAKRRfR5dMsM6IPiHAHZTHNfn9lv+cHMvIkPNYqzcOU=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AQYIk0DhUaGQpl/NpuNRQzgLTTBSOS+Kw/HhFs8bqYw5aTcH4nLdos1pJ6iBeLTPMRo8TfxYgPIbiw5VsLv4rZGsd9t5Gq793T+OQbf8Dj9nayHuzyKcpdVmIojQS+ZsZY3tOrV8BFhSwib0lX2E23eINL3VG6KIZudRBpxpYdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrrTVhxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1967C4CEC5;
-	Thu, 10 Oct 2024 15:51:13 +0000 (UTC)
+	s=arc-20240116; t=1728575479; c=relaxed/simple;
+	bh=ttQ8cFNdImZtFW4BofuTsTI+cZD6lZfjDSK+dfOaST0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzGqhMruAGAzmjy93Sd2CLh1V6yNoKflwMN9OjTTDINI6NARaqXqL3eMD8jcTvBsCQd6DnmFJ0EUlsIWdcIsSER537Y/FhuvixijZUQpGLyZu5gPRTZT1HkBtI02Dj+E1wAGr2TCXoGV14JNTAyHAjLyaQ+mnR1GgD0L4JunBRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qi3Zb5U5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD99C4CECF;
+	Thu, 10 Oct 2024 15:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728575474;
-	bh=jAKRRfR5dMsM6IPiHAHZTHNfn9lv+cHMvIkPNYqzcOU=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=FrrTVhxUPy/3AShSSmh8fNL5EZo+HJirLXWX7SwIcVmPLUNIE2GkIq4+sGRDZ24jB
-	 D1+ZaizFIW4OrrrdINz7OSNKOm79AdTFGT62qnafpn/6qFY2Z84ij2E0GfTNI8Wnuk
-	 buQFbmXylwfB/VksO3/4KNwkxCgFJ6zBHtVVx4BpXlF78bH4lvg8iJ03pcouBcsNK6
-	 S24GcixYmDYOTEgdCGQteEvz3rUdsS4+7kk8kMZ+GHuIOBdA2+EEgkTeZ9ZDuCq90K
-	 kdkqNb027xEUpQMTLYAmLWbxyd090l1/r59rDf4SN5uR7uiK83mOvHV+UEow3EJ0C/
-	 IDMYtFoBffVNw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Leo Yan <leo.yan@linux.dev>,
-	Howard Chu <howardchu95@gmail.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Ian Rogers <irogers@google.com>
-Subject: Re: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
-Date: Thu, 10 Oct 2024 08:50:54 -0700
-Message-ID: <172857541969.1131797.2693392463657578240.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-In-Reply-To: <20241001171950.233723-1-irogers@google.com>
-References: <20241001171950.233723-1-irogers@google.com>
+	s=k20201202; t=1728575478;
+	bh=ttQ8cFNdImZtFW4BofuTsTI+cZD6lZfjDSK+dfOaST0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qi3Zb5U5qfghxlLeNd/zwKWDyQ+ZvBqVnrTIS8QOK3LrpOVG0BOKiTFL2Eio6c54J
+	 ZECKIGiXX2eOKWAnc0z8KATEEejcpYlMENUJN473EaK1n6F1uR/r5wA+cQAZRPP8PN
+	 OlDkBkau6Oqj5IJBEwxS3A+W2IYfI4MDcnTbgTNg+AdFj+nAw8Byka5jy5U1ppP4kP
+	 hJGN/eiE58cPo1Bve20TDyCerIM83tT+NWkFlf/A/64biRFZbNQbiiP7lshU2uim8G
+	 Vo4n1OYUmzLTbYek7s8dQJc3J3iMcMsx/6BcnnOu/rVFgbFlTO7JQKRZ4l8hQug+KA
+	 6DvKc10djWgNA==
+Date: Thu, 10 Oct 2024 08:51:16 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: zhang warden <zhangwarden@gmail.com>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jikos@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] selftests: livepatch: add test cases of stack_order
+ sysfs interface
+Message-ID: <20241010155116.cuata6eg3lb7usvd@treble.attlocal.net>
+References: <20241008075203.36235-1-zhangwarden@gmail.com>
+ <20241008075203.36235-2-zhangwarden@gmail.com>
+ <0d554ea7bd3f672d80a2566f9cbe15a151372c32.camel@suse.com>
+ <A35F0A92-8901-470C-8CDF-85DE89D2597F@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <A35F0A92-8901-470C-8CDF-85DE89D2597F@gmail.com>
 
-
-On Tue, 01 Oct 2024 10:19:47 -0700, Ian Rogers wrote:
-> The path detection for "Setup struct perf_event_attr" test is brittle
-> and leads to the test frequently not running. Running shell tests is
-> reasonably robust, so make the test a shell test. Move the test files
-> to reflect this.
+On Thu, Oct 10, 2024 at 11:11:56PM +0800, zhang warden wrote:
+> > IIUC, you only need to test the stack order by loading LP modules. In
+> > this case you could use our currently existing LP testing module for
+> > that, right? That's what we currently do when testing different sysfs
+> > attributes.
+> > 
 > 
-> Ian Rogers (3):
->   perf test: Add a shell wrapper for "Setup struct perf_event_attr"
->   perf test: Remove C test wrapper for attr.py
->   perf test: Move attr files into shell directory where they are used
+> Yes, in fact, those three module I submitted is reuse the existing LP
+> testing module of 'test_klp_livepatch'. Because I found some module
+> in test module set "klp_replace" attribute true. If a module set this
+> attribute true, it will disable the previous module. 
 > 
-> [...]
+> What's more, testing this 'stack_order' attribute need more than one
+> module, hoping to change the same function. And breaking the '.replace'
+> value of existing module may not be a good way. So I decided to copy 
+> more test module with '.replace=false' and this module is changing 
+> the same function.
 
-Applied to perf-tools-next, thanks!
+Maybe add a replace=[true|false] module parameter.
 
-Best regards,
-Namhyung
+-- 
+Josh
 
