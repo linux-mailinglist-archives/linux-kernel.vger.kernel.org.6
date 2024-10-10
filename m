@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-358680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F7699825E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69167998261
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3451C1F23B1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A41C2870FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC40A1BF336;
-	Thu, 10 Oct 2024 09:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECFD1BBBC3;
+	Thu, 10 Oct 2024 09:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INirg5Ug"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="guTT+b+j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB2A1BE245;
-	Thu, 10 Oct 2024 09:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F3033CE8;
+	Thu, 10 Oct 2024 09:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552835; cv=none; b=dapzRyWf1UFoTebdSMUqrysmanuQrOeb8+nqVEdqjckrLyzL6C9bq+Ti7ew0loxc8ZedSstsIQ1K+rd8305a/bGBeOP3akkcpzWN+Kwk4QsiHUqh+Mw4pRu8ios1aiGKEVj3Gvn1h7ef4Q43LTtcRZiI3NGop/pWg/PR+XR6dKA=
+	t=1728552880; cv=none; b=EVDt0hx74Yl29KUJY/LyYLKgwKEIHkdxVvoU2N3YhfzQzdVw/u7RJyEOUwO84P9bMwSnEEZFkbl6FSDSvvWxdGYM+UKa9foLAP08yTmrc62DlcpOs13W3OX+LR997Lcca+5z1Rc0i+VTnsWQ+0vKqzoSHvB6nOp6GHBB7/OI/qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552835; c=relaxed/simple;
-	bh=re5Q+qO/hHoNx+eKZZ1hEuECNny9DIdvg8+EGAFqVig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IyMtn1WuFby4mAfPOqs6As7CcDP5mZbYl4y7l5J2xu5IwCt3d8s4/W5ToyX+b1Ytli6lAN5rsE1WaVFjMQMQh7gaNSqFN1sZFop28gfZOmPDw3U/SbBkv+IFKP9TV+fR5aDo/jw4KmyMy5mHoGTJmfkCZNhqmtexlRKQ94/k9G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INirg5Ug; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728552833; x=1760088833;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=re5Q+qO/hHoNx+eKZZ1hEuECNny9DIdvg8+EGAFqVig=;
-  b=INirg5Ug+4+Ch0DdJMisIg58FBycSy7vUfj9mDBi9tOuXkxC7hsCt3f2
-   oU3Dhgg/6U19j7PSBr70wiGN27jtNr1BOKx3Ps9n02VVofn1mMTn+JGXt
-   z8J/FKOfXknV7J3ApkleUFRGFLQi6dFrb3Q/lYEH+NV9v5oALsNn/vCno
-   TvbRKvIintG4K9ZGJGzJxWHo5grXJxmADeBT1YU3ddhkxBPfCuHQMwlTk
-   pie09uYhx7QGG8PdrI5W3SSZO6nk9fow3WdOkSxwNhYyIoWVOtmzQ5rgU
-   GSgZjg8qHxC6SqmmAmuTgzy6q4s85LFPjm3s92cIpCo+mohkpY6OMxIvP
-   A==;
-X-CSE-ConnectionGUID: UgRKTbP2RVyH5++iiGp5iA==
-X-CSE-MsgGUID: PZLH6j5NS/qB2R7sGeA3FQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27710352"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="27710352"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:33:52 -0700
-X-CSE-ConnectionGUID: QgsLcRwqRKuJVaJxSY/Zcw==
-X-CSE-MsgGUID: SKqVmDLOQ/maIfi6mzE8lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="76143171"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa006.fm.intel.com with ESMTP; 10 Oct 2024 02:33:49 -0700
-Received: from [10.245.97.255] (unknown [10.245.97.255])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id E7C982876E;
-	Thu, 10 Oct 2024 10:33:46 +0100 (IST)
-Message-ID: <6f64b79b-391e-4c78-98ac-8741b82201b4@intel.com>
-Date: Thu, 10 Oct 2024 11:33:45 +0200
+	s=arc-20240116; t=1728552880; c=relaxed/simple;
+	bh=dWfSFjkqfTJgifxqlOgIG/IsOAQZKlT3tfzmz+XaNrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WxU9F6LxQ49WBziiipR0KoPKXI61Sjcm8bJjvGyUrz3rut3Kcz+3FNCLVGhU3b0k0myOSA1tXTOjZoSfQRabwK0MqTv0zDlTtDvdRyY6TwpMvqZmyLtQGx9F+5ghAOU5sJR9TzE8YYWwH+CoeXK7SwPiUHvjx/aTuNAVJQdC+NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=guTT+b+j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73971C4CEC5;
+	Thu, 10 Oct 2024 09:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728552880;
+	bh=dWfSFjkqfTJgifxqlOgIG/IsOAQZKlT3tfzmz+XaNrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=guTT+b+jurmQHBP6Vh91ljDbL0KDxNByuebJtHcbp0k+5FmMcMYmsMmoIO4P+r4Z6
+	 4XUwyHgFgKmcAjJspXEcEBflLShDb2PALJD2Er1RgztDxcDqGt6+57hZnXDqmfmRFN
+	 oc5p/lRisRdu0+qXKJ1OmeP2aHkmbvobSGRMZJisjztkbyoaiUl1c7w4Xj19JKEd8b
+	 XU7FOaut+Nnd+EpLJetsKaYv6nrvAtF9iQaYP7knOt+NXGRX0xZBktqG5YRw4GIpQc
+	 2bXlzfdCxlXQN49fAvr6OfjrPf7M+LSaF/evT7jOsayvAwxpfLBlOkJzLGPOuNPdUV
+	 3ZzizRZgniqZw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sypZE-000000001bV-3pNR;
+	Thu, 10 Oct 2024 11:34:44 +0200
+Date: Thu, 10 Oct 2024 11:34:44 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+Message-ID: <ZweftESPrJNEsqGE@hovoldconsulting.com>
+References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
+ <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] drm/xe/guc: Fix dereference before NULL check
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- "Everest K.C." <everestkc@everestkc.com.np>
-Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
- rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- skhan@linuxfoundation.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241010064636.3970-1-everestkc@everestkc.com.np>
- <1a5407c4-3b0f-48a1-940a-cc6b3ff3fb12@stanley.mountain>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <1a5407c4-3b0f-48a1-940a-cc6b3ff3fb12@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
 
-
-
-On 10.10.2024 08:54, Dan Carpenter wrote:
-> On Thu, Oct 10, 2024 at 12:46:34AM -0600, Everest K.C. wrote:
->> The pointer list->list is dereferenced before the NULL check.
->> Fix this by moving the NULL check outside the for loop, so that
->> the check is performed before the dereferencing.
->> The list->list pointer cannot be NULL so this has no effect on runtime.
->> It's just a correctness issue.
->>
->> This issue was reported by Coverity Scan.
->> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
->>
->> Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
-
-hmm, this seems wrong, shouldn't this be:
-
-Fixes: 0f1fdf559225 ("drm/xe/guc: Save manual engine capture into
-capture list")
-
->> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
->> ---
+On Mon, Oct 07, 2024 at 08:22:27PM +0200, Stephan Gerhold wrote:
+> Add the WiFi/BT nodes for QCP and describe the regulators for the WCN7850
+> combo chip using the new power sequencing bindings. All voltages are
+> derived from chained fixed regulators controlled using a single GPIO.
 > 
-> Perfect!  Thanks.
-> 
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> regards,
-> dan carpenter
-> 
+> The same setup also works for CRD (and likely most of the other X1E80100
+> laptops). However, unlike the QCP they use soldered or removable M.2 cards
+> supplied by a single 3.3V fixed regulator. The other necessary voltages are
+> then derived inside the M.2 card. Describing this properly requires
+> new bindings, so this commit only adds QCP for now.
 
+Based on our discussions it seems we do not really need to describe the
+internal PMU at all for WCN7850 (as the bluetooth and wlan blocks can be
+enabled indepdendently) so perhaps we can just restore the old binding
+and drop most of this boilerplate for all boards.
+
+Johan
 
