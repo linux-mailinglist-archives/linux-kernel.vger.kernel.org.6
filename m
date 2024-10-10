@@ -1,168 +1,92 @@
-Return-Path: <linux-kernel+bounces-359168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724B7998847
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:51:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F9D998840
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AD5E1C20A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D646BB22583
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7869E1CB32C;
-	Thu, 10 Oct 2024 13:49:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEE01CB527;
+	Thu, 10 Oct 2024 13:49:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93A71C7B6A;
-	Thu, 10 Oct 2024 13:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A3B1CB309;
+	Thu, 10 Oct 2024 13:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568173; cv=none; b=uv0H6QUXUmsu6BiftA0YFnMbAb1iYb3h607j2KGevGLw/+QvsMvFloIvUflb4rPPk4/xokWOPMRZcvMW2tfGHblF+bMMvDvhdgn8gzyCWgIKhiSezaQJcI44aaSpfQIy0zndLLxAuVfZDnI/0pJ0eHHvwQyEuZA+URQb7vBMQRE=
+	t=1728568161; cv=none; b=bVsH8g0JvvAVMk1tHhhC/zEXjIYQsqT/Hf33RC/QV3YsQzgXhUDBNUcfq/xMZFteBf01gyTSbfqjt5YsMXA4FWkKmEmEEJie6sjbyZum+6bHuo6t/nkEji3imoqcBpjLKQUd2jbxdXsKcKtbJMJFW0GeUPINoR0VZ/RZoo+g/DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568173; c=relaxed/simple;
-	bh=nBqSAYCspXG50WnbQUQ6A0JibPo+98HLRl/jVeDw7mY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UT/jDENyjcwjbwUAGpvNnm1PWBHzQCSKkEA00SFD0pUQJuIIlEdi0g8xxsAiUVyJbO6z+XbNnkcTwissxiR9dZ/IKm+F8svndv+etI/BJo1vqA3T+Iqfz++MdC9ih+h+QMQQnxhAYpeObFUCTFo9AXlImT0PklXYKQpU90pjcrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPWGW03txz6LDJf;
-	Thu, 10 Oct 2024 21:45:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D1559140AE5;
-	Thu, 10 Oct 2024 21:49:27 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 15:49:27 +0200
-Date: Thu, 10 Oct 2024 14:49:25 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 17/28] cxl/events: Split event msgnum configuration
- from irq setup
-Message-ID: <20241010144925.00006c2b@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-17-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-17-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728568161; c=relaxed/simple;
+	bh=MUZDI/UFfGGECYVXxsnrqEk2MO969Rn+aKLck0TcTks=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PBzueg39O0Dpn7JB4PaE0uhCCfiYAs12tr/Wn8V5bDezADE/GghD42L0czE5yICS8ucID1M7njX3SAb4MOyQlQBu/qm0dUCWxwsAItnpqxDTxoeyH+b7947jWxoGKDsxagtBfmSysPuxtY4zaonyQQb4EE8rsvUOVeIXZrUcEow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE263C4CEC5;
+	Thu, 10 Oct 2024 13:49:19 +0000 (UTC)
+Date: Thu, 10 Oct 2024 09:49:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, bpf
+ <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Jose E.
+ Marchesi" <jose.marchesi@oracle.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: NULL pointer deref when running BPF monitor program
+ (6.11.0-rc1)
+Message-ID: <20241010094926.146c6b38@gandalf.local.home>
+In-Reply-To: <ZweXrhopOmEb9rMx@krava>
+References: <ZsMwyO1Tv6BsOyc-@krava>
+	<20240819113747.31d1ae79@gandalf.local.home>
+	<ZsRtOzhicxAhkmoN@krava>
+	<20240820110507.2ba3d541@gandalf.local.home>
+	<Zv11JnaQIlV8BCnB@krava>
+	<Zwbqhkd2Hneftw5F@krava>
+	<20241010003331.gsanhvqyl5g2kgiq@treble.attlocal.net>
+	<20241009205647.1be1d489@gandalf.local.home>
+	<20241009205750.43be92ad@gandalf.local.home>
+	<20241010031727.zizrnubjrb25w4ex@treble.attlocal.net>
+	<ZweXrhopOmEb9rMx@krava>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 07 Oct 2024 18:16:23 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+On Thu, 10 Oct 2024 11:00:30 +0200
+Jiri Olsa <olsajiri@gmail.com> wrote:
 
-> Dynamic Capacity Devices (DCD) require event interrupts to process
-> memory addition or removal.  BIOS may have control over non-DCD event
-> processing.  DCD interrupt configuration needs to be separate from
-> memory event interrupt configuration.
+> > Unfortunately it's not that simple, the args could be moved around to
+> > other registers.  And objtool doesn't have an emulator.
+> > 
+> > Also it's not clear how that would deal with >6 args, or IS_ERR() as
+> > Jirka pointed out upthread.  
+
+For the >6 args, I would say that the verifier just says any arg greater
+than 6 can be NULL. There's not many trace events that have that (if any).
+
 > 
-> Split cxl_event_config_msgnums() from irq setup in preparation for
-> separate DCD interrupts configuration.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Trivial comment inline
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> another complication might be that the code in tracepoint's fast assign
+> can potentially call global function (?), that could do the argument NULL
+> check and we won't have its code at objtool invocation time
 
+I'm starting to think that the best thing to do is to have the verifier add
+exception code in the bpf program that just kills the task if it faults on
+reading a tracepoint parameter.
 
-> ---
->  drivers/cxl/pci.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index fc5ab74448cc..29a863331bec 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -702,35 +702,31 @@ static int cxl_event_config_msgnums(struct cxl_memdev_state *mds,
->  	return cxl_event_get_int_policy(mds, policy);
->  }
->  
-> -static int cxl_event_irqsetup(struct cxl_memdev_state *mds)
-> +static int cxl_event_irqsetup(struct cxl_memdev_state *mds,
-> +			      struct cxl_event_interrupt_policy *policy)
->  {
->  	struct cxl_dev_state *cxlds = &mds->cxlds;
-> -	struct cxl_event_interrupt_policy policy;
->  	int rc;
->  
-> -	rc = cxl_event_config_msgnums(mds, &policy);
-> -	if (rc)
-> -		return rc;
-> -
-> -	rc = cxl_event_req_irq(cxlds, policy.info_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->info_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Info log\n");
->  		return rc;
+This all started because it was assumed (incorrectly, and I was never
+asked) that trace point args can't be NULL. It was always the case that
+they could be. This was not a regression.
 
-At somepoint maybe dev_err_probe() is appropriate in here.
+Now that there's existing BPF programs that assume that tracepoint
+arguments are not NULL, is a bug in user space. Not the kernel.
 
->  	}
->  
-> -	rc = cxl_event_req_irq(cxlds, policy.warn_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->warn_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Warn log\n");
->  		return rc;
->  	}
->  
-> -	rc = cxl_event_req_irq(cxlds, policy.failure_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->failure_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Failure log\n");
->  		return rc;
->  	}
->  
-> -	rc = cxl_event_req_irq(cxlds, policy.fatal_settings);
-> +	rc = cxl_event_req_irq(cxlds, policy->fatal_settings);
->  	if (rc) {
->  		dev_err(cxlds->dev, "Failed to get interrupt for event Fatal log\n");
->  		return rc;
-> @@ -749,7 +745,7 @@ static bool cxl_event_int_is_fw(u8 setting)
->  static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  			    struct cxl_memdev_state *mds, bool irq_avail)
->  {
-> -	struct cxl_event_interrupt_policy policy;
-> +	struct cxl_event_interrupt_policy policy = { 0 };
->  	int rc;
->  
->  	/*
-> @@ -777,11 +773,15 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  		return -EBUSY;
->  	}
->  
-> +	rc = cxl_event_config_msgnums(mds, &policy);
-> +	if (rc)
-> +		return rc;
-> +
->  	rc = cxl_mem_alloc_event_buf(mds);
->  	if (rc)
->  		return rc;
->  
-> -	rc = cxl_event_irqsetup(mds);
-> +	rc = cxl_event_irqsetup(mds, &policy);
->  	if (rc)
->  		return rc;
->  
-> 
-
+-- Steve
 
