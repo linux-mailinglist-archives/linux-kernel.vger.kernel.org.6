@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-359598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893BA998DC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70645998DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260D6282D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:46:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF341C23EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16897199395;
-	Thu, 10 Oct 2024 16:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF256199396;
+	Thu, 10 Oct 2024 16:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6Ix0bf3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="h8cEJo/1"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CC8198A24;
-	Thu, 10 Oct 2024 16:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490041991B8;
+	Thu, 10 Oct 2024 16:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578765; cv=none; b=DCMTkt/C2+8nbNEs3e6lM4nYBwee4HZrg78QMXhJrQDQrUbgdFtI+QHr00NivUKdFS9ZSEnFip8szwG3VjrKo9qwL4URCFaapwugseFqQqgYtsvinDm3l+B/EVHIEo8ipV4qoiKP0SeDNlhSnoeekI79a3RnGjh3K6w1wj4ctas=
+	t=1728579040; cv=none; b=YBwGL8WG+5+6BpgnG8DwEoP9UcJL7SYk0HmEksd2rVicjTpOcJCix+iU33DIvirpteqpj9asXfyXzHwoQdxQXJS0sOsyxV26mFnK4QeWufCEfOAfCK85okn9LN16gXg0x0QlKqBTJS3dcVHh79Jwi5zFDK4rzL2Y9Xg1Glm68w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578765; c=relaxed/simple;
-	bh=08oJ1Ty/lrHxJqMnlNGf1Ch3DicmHiyZz4nCpw21uTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBIor1wkxdKFAH3I1qRrh+siVg2iwGUUowS+oxncSFB0AcESswULCjWEbiu5zbJoNAZmslgtCKgEIJ158Kx4NmGFCKZQAHxHNxaL/UdcyeE10ygvY8j9+sAJluDTvvCz+La3qujHKPu6Yl7NiMgld8xCTbcX+ZkOgnHyj9D7DMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6Ix0bf3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C578C4CEC5;
-	Thu, 10 Oct 2024 16:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728578765;
-	bh=08oJ1Ty/lrHxJqMnlNGf1Ch3DicmHiyZz4nCpw21uTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u6Ix0bf3cc4FRzmp91azgETmOFuE1wfVYXinRRyp/GD+FEuglq4TSdz9649GSdcug
-	 0SYmCsewJ/UiaKzoy9ydisL4moKN3CEBN2+blXvMpwfEJkE+N9G+GGLGgDu2kAUQQ7
-	 GbIEOhxWfoQmkdZaloxwfgYsdCdfcdKI3l9c8rlRClxSNqJxVPvZJ3m9Ld5lmnQKFl
-	 4eguRKzkJpu5ZhMzDRvgm/SoBWRz33hySRLia5MnJpQ5q62NT0FVOP0DGZbXm7QO1y
-	 Hlf3uE9SKbY6T/2PeGYHYsWHacXMGWVSUVEuKEF7Tbdb6IMv9M7epOv6zWu8rOn+om
-	 Nmzi5alsOz6RQ==
-Date: Thu, 10 Oct 2024 09:46:02 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, Song Liu <song@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v4 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-Message-ID: <ZwgEykf_XmVpEE8_@google.com>
-References: <20241002180956.1781008-1-namhyung@kernel.org>
- <20241002180956.1781008-3-namhyung@kernel.org>
- <CAPhsuW7Bh-ZXfM2aYB=Yj8WaJHFc==AKmv6LDRgBq-TfdQ3s8A@mail.gmail.com>
- <ZwBdS86yBtOWy3iD@google.com>
- <37ca3072-4a0b-470f-b5b2-9828a2b708e5@suse.cz>
- <ZwYt-GJfzMoozTOU@google.com>
+	s=arc-20240116; t=1728579040; c=relaxed/simple;
+	bh=Etg/hUSSIISCsDWdUTe2INcxYzNi5dlpOTEAFSJHzAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mbh8K6TSuhyjLRw6U1WKxiXdGswUrEuBQ+4rterHTtW0cbP5xpBU3CJccDJyiY3EpBIknqKHl915A6bFpVS7wCo8bpSCF557Vth3InpqzgWf2WEW7zw57wDY8y30LJ2h58WmrLPnQHpsOGrzU6SPeNSJS2Zk5qkUsTYDw16OoEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=h8cEJo/1; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728579026; x=1729183826; i=wahrenst@gmx.net;
+	bh=Etg/hUSSIISCsDWdUTe2INcxYzNi5dlpOTEAFSJHzAI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=h8cEJo/14Tjkz62WejSu72xLCKg5rMJH+IcRwGPh6zTBQYknxBpnNr255TctM7ja
+	 Jg2+fyIUavXDWzuGJ1egRoV0HYNxYoGnK6YotPf7JEY/wM24leyt2jDri5qIIDnlS
+	 HCacQ/fjZPCjL4HdUgNfmBVR7OmiLxU1qdmN0Zbh+gO/Nuiif6hwuRqMhUjdzUAF9
+	 xObIY2huoaivEo5Dl4fAy4d5A9wEM0uo0gHSkgfPMD5Dzx2/TXodRnalVzBkf5ora
+	 v4c8j+X1UHvfXxv5PtY7NlMXKQ94kf8Xg3Eo0QtILPWhIpXtpCpEPMpy6OIlus8m3
+	 ijkhwuCYxY6Y1uhbVQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MRmjq-1tNnp20qN8-00YR6H; Thu, 10
+ Oct 2024 18:50:26 +0200
+Message-ID: <890c234b-6d68-4a43-8bea-208e5d1a115c@gmx.net>
+Date: Thu, 10 Oct 2024 18:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwYt-GJfzMoozTOU@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] staging: vchiq_core: Macros indentation fix
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241010102250.236545-1-umang.jain@ideasonboard.com>
+ <20241010102250.236545-5-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241010102250.236545-5-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w8SU1GkLKTXWfDlL3iHpizF7uxH5F6xYix/ZuuraWfp4XtbnNgt
+ EHg3ypUio3TG9riYGklvQDoY4GDUVjVaK0XWsamREdM5Pov/jyvUUEQPJ9ebOTlzHDMreR6
+ WihvCwhTTb+bQW9eNTr76Lqn96Hvds6mGh+9gikxayKgW72p1VWEXOJ5b2MJ5WWp1hsQlB1
+ NZaTGQiShfsx6p3/VfJUw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BeOGGQXhwrE=;sDrbDNtCXZGDQ0lzRcidJc+cWS/
+ GCpso9W+qRljlpcHT2tKRnItzjfMVMHTI/CcXsIAo50kON7ngfT5t6f6YqP58uv2W9yIrT1sR
+ KyPmXFIsnBzaV+Qpb5JgMoEnRw8wDSDLFaFvNIzEZsSDTjF3fEcSgvclEWfvFiFCxsMylc/i9
+ oawDj54C1TLIQ1Dd+Tfg3ggWxe/CkjdbUImpkovHjDj+1+f0ifzv0WZVyLdSR2QeVN1SWlZF8
+ SOaAfB0mL4DnIkE8oCp7KCguwVFqP5d0h8O7/rc2JUNq8PnDjegiT7jemHGMRkC8ydsVE8Xqy
+ eyZl1CUn12ZeQc0JRMWBcCQ83c956FvKckZGO5uMPTq9YWku0y/ycAWNQP5887QiXN9JzAv+J
+ 08NHJBid3+th0mPNa16hcAWUfoPGrorasnpqBg4Xj8ybTU+dtsSqhDKm8KlEXhOpyK4XIHuhO
+ yj7H156707T49vq9LdtfNOCYX3MlApAgLgUKgL3cu0HLCDDS/Cv/PiljjyTkhoegGpADdBsiC
+ QmtBPMWITrft6vg6AmVVbhv8chJL7oGAjCI9IMzVXL/wtjH6+aYEhrgE+uuJOXPQxpTsm0S3H
+ NpLBxVjw75usUCgRJjFAfCxs8S7H8QBbVD0XnxDUpg8troNPnH+ZGw+cYW5wroVdP36wXpfbg
+ ulC1pbKue97mgSA+jypIrMZcwzYrQhSf/aTSHhgKPe5Pp7rFhq2lRnHG8vwZ5M73+uQPcaPDl
+ f7I+LtbonuznJzyyeOjLgQXRPuLhsuEIKEfg2VToMZ1JXcBMxZiWopCazzkldvmKHf+a3CYYN
+ 5nWRqc0gnUwotOsd13fYE4sA==
 
-On Wed, Oct 09, 2024 at 12:17:12AM -0700, Namhyung Kim wrote:
-> On Mon, Oct 07, 2024 at 02:57:08PM +0200, Vlastimil Babka wrote:
-> > On 10/4/24 11:25 PM, Roman Gushchin wrote:
-> > > On Fri, Oct 04, 2024 at 01:10:58PM -0700, Song Liu wrote:
-> > >> On Wed, Oct 2, 2024 at 11:10 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > >>>
-> > >>> The bpf_get_kmem_cache() is to get a slab cache information from a
-> > >>> virtual address like virt_to_cache().  If the address is a pointer
-> > >>> to a slab object, it'd return a valid kmem_cache pointer, otherwise
-> > >>> NULL is returned.
-> > >>>
-> > >>> It doesn't grab a reference count of the kmem_cache so the caller is
-> > >>> responsible to manage the access.  The intended use case for now is to
-> > >>> symbolize locks in slab objects from the lock contention tracepoints.
-> > >>>
-> > >>> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> > >>> Acked-by: Roman Gushchin <roman.gushchin@linux.dev> (mm/*)
-> > >>> Acked-by: Vlastimil Babka <vbabka@suse.cz> #mm/slab
-> > >>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > 
-> > 
-> > So IIRC from our discussions with Namhyung and Arnaldo at LSF/MM I
-> > thought the perf use case was:
-> > 
-> > - at the beginning it iterates the kmem caches and stores anything of
-> > possible interest in bpf maps or somewhere - hence we have the iterator
-> > - during profiling, from object it gets to a cache, but doesn't need to
-> > access the cache - just store the kmem_cache address in the perf record
-> > - after profiling itself, use the information in the maps from the first
-> > step together with cache pointers from the second step to calculate
-> > whatever is necessary
-> 
-> Correct.
-> 
-> > 
-> > So at no point it should be necessary to take refcount to a kmem_cache?
-> > 
-> > But maybe "bpf_get_kmem_cache()" is implemented here as too generic
-> > given the above use case and it should be implemented in a way that the
-> > pointer it returns cannot be used to access anything (which could be
-> > unsafe), but only as a bpf map key - so it should return e.g. an
-> > unsigned long instead?
-> 
-> Yep, this should work for my use case.  Maybe we don't need the
-> iterator when bpf_get_kmem_cache() kfunc returns the valid pointer as
-> we can get the necessary info at the moment.  But I think it'd be less
-> efficient as more work need to be done at the event (lock contention).
-> It'd better setting up necessary info in a map before monitoring (using
-> the iterator), and just looking up the map with the kfunc while
-> monitoring the lock contention.
+Hi Umang,
 
-Maybe it's still better to return a non-refcounted pointer for future
-use.  I'll leave it for v5.
+Am 10.10.24 um 12:22 schrieb Umang Jain:
+> Make sure that MAKE_* macros fit within 80 columns instead of spanning
+> in a single line.
+honestly i'm not a fan of this change, because it just silence
+checkpatch but doesn't improve readability.
 
-Thanks,
-Namhyung
+Regards
 
 
