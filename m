@@ -1,157 +1,195 @@
-Return-Path: <linux-kernel+bounces-359670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B53998ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A83998EEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579C21F24B8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5165F282151
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ABB1C9EA4;
-	Thu, 10 Oct 2024 17:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0551CF5D9;
+	Thu, 10 Oct 2024 17:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cVV9CWOd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XGVeQmfK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cVV9CWOd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XGVeQmfK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jMBof341"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2464198831;
-	Thu, 10 Oct 2024 17:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B731CF5EA
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582679; cv=none; b=g/7o9EWyMSX7IrwSOfX69CWzIT1ZTvhtaYlArgX78FSi84zH9HtjKkV/cqAY4YuvPhT8OjjySRISnx9dQXkBq3UzQ8QEfeT8280Lfgssc+yCYCPur488ooeZFv78mFIZrIRjYdFEJTUrLKBVWs65L8r6CjaruREIHuWHt14+f1M=
+	t=1728582751; cv=none; b=i/8FWf9gcvLEbI3LFiGCt4iNdEiwjzPyIe9ByyoXop1xUM7yd58ePVj0A+d29CG+D3qb7PfNjuUViuXWXFcHr4Pi/rQFo6b3WSvamVdUvIrwegEqzsMxnvQ/mjCkjm4DbzqCqh7yWius2w99SP1h4hEp6MpZzOrS7/vMe+xL7q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582679; c=relaxed/simple;
-	bh=jobFgPk37rqd3MarI9UadU6Ux0ibFBTduuVRuzoynUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pAjbhFI/WminpCSduFVFtqEZhJs4ZW8Aex3jLykhLHFixCRlUdvYFCfLF0o01h0I8TJNAcMBw8flukP+pS/WtAtTRTBb5J4Cu+JSFQpQJMS1hpqFbvVPUoL75dqzJXuoL/REpdDQOZmsu1v+zmlBUpoIlhd3UUw8KiEXoSg3BpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cVV9CWOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XGVeQmfK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cVV9CWOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XGVeQmfK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 456C61FF0D;
-	Thu, 10 Oct 2024 17:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728582676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
-	b=cVV9CWOd0wJ+FWjjPvP4VYovviTTPMGu45G5XNaHqXkwnySHdZHVrk+p6xCChHngQijf+d
-	MfUMzeH2Ojc43/ijaXLogD2WaUJaTMr8ln7Ugn+eWc1nvm9s21oNzNkQhAvww94HUQf6ZH
-	HgaAvl/L/IEW7Qq+JrpCqvFWKTXv/6E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728582676;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
-	b=XGVeQmfKMm20SrDiAkHVezgQsHdtImS8NaT+aY4CfHL486ORizUU8U5xVHd6vjDvjWoGob
-	cQULAk87GmU5GfBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728582676; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
-	b=cVV9CWOd0wJ+FWjjPvP4VYovviTTPMGu45G5XNaHqXkwnySHdZHVrk+p6xCChHngQijf+d
-	MfUMzeH2Ojc43/ijaXLogD2WaUJaTMr8ln7Ugn+eWc1nvm9s21oNzNkQhAvww94HUQf6ZH
-	HgaAvl/L/IEW7Qq+JrpCqvFWKTXv/6E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728582676;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YEHVi7P5uqK9yzIu2JIFbFt6nNGwYO1WCrMyPid421o=;
-	b=XGVeQmfKMm20SrDiAkHVezgQsHdtImS8NaT+aY4CfHL486ORizUU8U5xVHd6vjDvjWoGob
-	cQULAk87GmU5GfBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0FB1B13A6E;
-	Thu, 10 Oct 2024 17:51:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SLKnORMUCGcNJwAAD6G6ig
-	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 17:51:15 +0000
-Date: Thu, 10 Oct 2024 13:51:06 -0400
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/12] iomap: add bioset in iomap_read_folio_ops for
- filesystems to use own bioset
-Message-ID: <culcdpzjq7dhe2rvyalc4rfyucvcyijyttwtuoeqfayxm3ssbo@3l2zpexykayn>
-References: <cover.1728071257.git.rgoldwyn@suse.com>
- <95262994f8ba468ab26f1e855224c54c2a439669.1728071257.git.rgoldwyn@suse.com>
- <ZwT_OwN9MOZSEseE@infradead.org>
+	s=arc-20240116; t=1728582751; c=relaxed/simple;
+	bh=wIJkzro5qJWOdr2gzKdknWXZ5j3M5dSu0NXfBW2TRxM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aF4Lsvwhct5O8oSY2TXosheVgP8IJps/l70CaF5Z7kZIP7rR/WMyvhO5C//zNr5jZt8XhSfLWw4w76UYZggFzjd/0Rif9r89Gl9M8K9lodPkn4y3MNOJ1D/ykBL1Mq/UOounce/9qrP2fn3vX812feGxOHBhZy/RwyvIYchVsSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jMBof341; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AD8kOC027035;
+	Thu, 10 Oct 2024 17:52:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=oNl8qbJwfIXDG/UAwjT6ZFo0a8CuYyPXXz44Avl05qc=; b=jM
+	Bof341BFv4s5/sMJr0NfS9JQv/gHer+u90f8QNg4JVFo/cge/lvIvcgaWzTaNVxs
+	uPrc2evx8QN8p2t1r05luUrt2Fu2ikLWqTW9oKKIIVYtv1WL4wLagsdzHyaiTpNM
+	si5q1IxkDOxQE9SbfGh8hKaWsentIVfbsvRjf8xNsieK2WA6HiV1FCNXArQdaju1
+	qrlqeor9Iu7cu5Bpji1sb3NwUl58fuKPSI9hCTpK5vTVcrmS2gArFLO8ieec7WYy
+	Xgub/n6MGl6RwvktekzxHVHxHi9QZNVDagGhkOXnOyyPRH2rOglwO+l9l1TKBGvh
+	j0xSRwC3yCCKJN8xqrEg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426fj6rqyc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 17:52:12 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AHqBcx011580
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 17:52:11 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 10 Oct 2024 10:52:07 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <minchan@kernel.org>, <senozhatsky@chromium.org>,
+        <akpm@linux-foundation.org>, <willy@infradead.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar <quic_pintu@quicinc.com>
+Subject: [PATCH] mm/zsmalloc: Use memcpy_from/to_page whereever possible
+Date: Thu, 10 Oct 2024 23:21:43 +0530
+Message-ID: <20241010175143.27262-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwT_OwN9MOZSEseE@infradead.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_THREE(0.00)[3]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fqU7cb6IRHNjToMAf-LH-u0MmQNgoe0x
+X-Proofpoint-ORIG-GUID: fqU7cb6IRHNjToMAf-LH-u0MmQNgoe0x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=796
+ lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ clxscore=1011 mlxscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410100118
 
-On  2:45 08/10, Christoph Hellwig wrote:
-> >  	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
-> > +		struct bio_set *bioset;
-> >  		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
-> >  		gfp_t orig_gfp = gfp;
-> >  		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
-> 
-> Nit: I try to keep variables just declared and not initialized after
-> those initialized at declaration time.
-> 
-> > +
-> > +		if (ctx->ops && ctx->ops->bio_set)
-> > +			bioset = ctx->ops->bio_set;
-> > +		else
-> > +			bioset = &fs_bio_set;
-> > +
-> > +		ctx->bio = bio_alloc_bioset(iomap->bdev, bio_max_segs(nr_vecs),
-> > +				REQ_OP_READ, gfp, bioset);
-> > +
-> 
-> But it would be nice to move this logic into a helper, similar to what
-> is done in the direct I/O code.  That should robably include
-> picking the gfp flags from the ctx.
-> 
+As part of [1] we have replaced kmap/kunmap_atomic() with
+kmap_local_page()/kunmap_local().
 
-Agree. I will put this in the next version.
+But later it was found that some of the code could be replaced
+with already available apis in highmem.h, such as
+memcpy_from_page()/memcpy_to_page().
 
+Also, update the comments with correct api naming.
+
+[1] https://lkml.kernel.org/r/20241001175358.12970-1-quic_pintu@quicinc.com
+
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Suggested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ mm/zsmalloc.c | 36 +++++++++++++-----------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index d3ff10160a5f..64b66a4d3e6e 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -263,7 +263,7 @@ struct zspage {
+ struct mapping_area {
+ 	local_lock_t lock;
+ 	char *vm_buf; /* copy buffer for objects that span pages */
+-	char *vm_addr; /* address of kmap_atomic()'ed pages */
++	char *vm_addr; /* address of kmap_local_page()'ed pages */
+ 	enum zs_mapmode vm_mm; /* mapping mode */
+ };
+ 
+@@ -1046,11 +1046,10 @@ static inline void __zs_cpu_down(struct mapping_area *area)
+ static void *__zs_map_object(struct mapping_area *area,
+ 			struct page *pages[2], int off, int size)
+ {
+-	int sizes[2];
+-	void *addr;
++	size_t sizes[2];
+ 	char *buf = area->vm_buf;
+ 
+-	/* disable page faults to match kmap_atomic() return conditions */
++	/* disable page faults to match kmap_local_page() return conditions */
+ 	pagefault_disable();
+ 
+ 	/* no read fastpath */
+@@ -1061,12 +1060,8 @@ static void *__zs_map_object(struct mapping_area *area,
+ 	sizes[1] = size - sizes[0];
+ 
+ 	/* copy object to per-cpu buffer */
+-	addr = kmap_local_page(pages[0]);
+-	memcpy(buf, addr + off, sizes[0]);
+-	kunmap_local(addr);
+-	addr = kmap_local_page(pages[1]);
+-	memcpy(buf + sizes[0], addr, sizes[1]);
+-	kunmap_local(addr);
++	memcpy_from_page(buf, pages[0], off, sizes[0]);
++	memcpy_from_page(buf + sizes[0], pages[1], 0, sizes[1]);
+ out:
+ 	return area->vm_buf;
+ }
+@@ -1074,8 +1069,7 @@ static void *__zs_map_object(struct mapping_area *area,
+ static void __zs_unmap_object(struct mapping_area *area,
+ 			struct page *pages[2], int off, int size)
+ {
+-	int sizes[2];
+-	void *addr;
++	size_t sizes[2];
+ 	char *buf;
+ 
+ 	/* no write fastpath */
+@@ -1091,15 +1085,11 @@ static void __zs_unmap_object(struct mapping_area *area,
+ 	sizes[1] = size - sizes[0];
+ 
+ 	/* copy per-cpu buffer to object */
+-	addr = kmap_local_page(pages[0]);
+-	memcpy(addr + off, buf, sizes[0]);
+-	kunmap_local(addr);
+-	addr = kmap_local_page(pages[1]);
+-	memcpy(addr, buf + sizes[0], sizes[1]);
+-	kunmap_local(addr);
++	memcpy_to_page(pages[0], off, buf, sizes[0]);
++	memcpy_to_page(pages[1], 0, buf + sizes[0], sizes[1]);
+ 
+ out:
+-	/* enable page faults to match kunmap_atomic() return conditions */
++	/* enable page faults to match kunmap_local() return conditions */
+ 	pagefault_enable();
+ }
+ 
+@@ -1511,10 +1501,10 @@ static void zs_object_copy(struct size_class *class, unsigned long dst,
+ 		d_size -= size;
+ 
+ 		/*
+-		 * Calling kunmap_atomic(d_addr) is necessary. kunmap_atomic()
+-		 * calls must occurs in reverse order of calls to kmap_atomic().
+-		 * So, to call kunmap_atomic(s_addr) we should first call
+-		 * kunmap_atomic(d_addr). For more details see
++		 * Calling kunmap_local(d_addr) is necessary. kunmap_local()
++		 * calls must occurs in reverse order of calls to kmap_local_page().
++		 * So, to call kunmap_local(s_addr) we should first call
++		 * kunmap_local(d_addr). For more details see
+ 		 * Documentation/mm/highmem.rst.
+ 		 */
+ 		if (s_off >= PAGE_SIZE) {
 -- 
-Goldwyn
+2.17.1
+
 
