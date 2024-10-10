@@ -1,89 +1,189 @@
-Return-Path: <linux-kernel+bounces-358068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6155C9979E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B099979E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D163EB21551
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:54:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35C8EB21152
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6453E17C9E;
-	Thu, 10 Oct 2024 00:54:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B93179A3;
+	Thu, 10 Oct 2024 00:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1t16P2M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72A615E81
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D39C645;
+	Thu, 10 Oct 2024 00:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728521647; cv=none; b=SFH/KjGS34Xlvy5UPC0C13Gi5OJFvHy/ev8djzTScbDbg8SJFUmGGsGtFj1ETC3xhmFoUm1yGbPYqJERP8A2mrNf6lJhcrQEWBEW57f12A/j0H8qIjcoErBnf13a+7aluVOV/VJKBqjJD+zxlKbQx7wIBaeuVANU1V2+Sw8kAIY=
+	t=1728521778; cv=none; b=cz+kWRtmeenc+vJqFIHWKuP2Eosvf1eTGcM0uvbkCWMr/RaQW9W1LoGT+ij8/CT+mHKdM2zEn0rH07sfkL6Ph7zkP5sIUFu1+iCnBAfmeqKkZ726uid6llQ/NohL4BhcmrMmbOH2EDXH5s3hWKsqTDKTzcXb5Pi9+bV62JhP6hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728521647; c=relaxed/simple;
-	bh=ZEf+mRMIEtHoQBvWHnPNgW50SBSsa4ahNYSUgssG85s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hJF+aRWKW49ILeBo+pyhRtUEipjaJsB/vE6LUpMg5yYGY6O9OIVIkd8V+Kza51Cn5ddDEgBXvuKdzJtJJteelVNBqNUgMQL8Nxydeybl/6TPAuNAAN7OZA2VuQUlVXLWuvGJdt4tMCUohGc6ng/1SkYvTNd2J8L5SO1AkB+XH4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a392e9a8a4so5559945ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 17:54:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728521644; x=1729126444;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iDd3dVTeMocyMGKsdPEvyYiDAGldatYVwSJW2aFtTDc=;
-        b=sQPRV1m2P0ooz0JyS0guhTrAjiuOCyxKQ3fcdWQoQ6kV3k+/qXV9WnxxwxkPB0MedB
-         Lcfb1S/VRwm7t8J7gV3J1DKrgH3kVpnqjAP15rrW95Cj96eCb2WJIYM612HsJWw22bLM
-         KU18Kjc0pdta1AYqWORkuhcrKmBwvUfsZEnzZ47FquV259sJdtZKWAsLsQ334BH0iF0D
-         edXcD9i4A1/ekvn5LWO0T09ujyJApvcdAClVGSsVFHXBgFBG1ybD/KD935HmDimyrbvB
-         FNSWID4I7KRo/FjrrzyEPofdeX7WJwo3usb5qiiNiNMXhEs8l9MvzaKYJi4mSy1h2ECg
-         uYSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNjtS0gfljDNCmwhskWP+U+IkdRgLZ5MIYppT+l9RS09R4U4wZeOPxqrrsxmpvu82PF+Fi62BCzLs4JNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhkmCYqD/b0+lcdeM/nEEGsb6rfz4ZNAriJ3RkdWDSPy8KhvGm
-	n6zbomZJbRCGOXL70aeTMBaKSRuve32CSkGH2VNlkDEHyRSXzH991/91rodQELMu9p5FKHdo1JO
-	mjzdknH6Nb3mdjQcl4vMKfe52V/KpazaFZhZCT/diYsXdYMsf2cQ7iwM=
-X-Google-Smtp-Source: AGHT+IHEynNFo0ccOZYNcQe1Z/JSsKyZamtEH62XfeNT8qGFQcToW7ZsSSUJBRUZaU358R3SSgLv2XvVLOS4Ht2aT2zy+9yMdjPF
+	s=arc-20240116; t=1728521778; c=relaxed/simple;
+	bh=vPU8eDSK0RCvm9VfT+wiAdV9Sb3h9y1YygQuyN6AqDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fZKM49dBx1fMV4G/A6hDaUso6LvUoi1e9/WFHqp20uKF39+to6DOvFy2nYFgbO14tX/4Eip1EarPPUykq8n6xrBfUveo/FGOhVADzg672vtCATaFdFY2+Vfj+sDJJhyAtcofBPGRSiqpwbx3JTwOTxbiE2MkUOOmwiEXPqSUDYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1t16P2M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760D3C4CEC3;
+	Thu, 10 Oct 2024 00:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728521777;
+	bh=vPU8eDSK0RCvm9VfT+wiAdV9Sb3h9y1YygQuyN6AqDY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u1t16P2MA6Hr8Bn/mfs4uV+l8jLpaTHD8QH/9pcQgADSpxZvMULix4ItesEngeZQm
+	 45y8DHwjXoIWNdKBwPdn6rCzIMyN2VBbtCGbwxXnLK1+0oHPrGuv+KyVy33xWaTugF
+	 jOYu32Ujw8ebIRIHKXxzms6apyq5jtOv1hkacJ5Q/h2d3pakz224ERQREqovr0Viyy
+	 mfnK7qli3nYbD+gich6RdoWfpElrKAzj/VhD2wHD0xauGeF0QcUgRY7G+6DW+YSiLl
+	 GpJW1FL548WRFEjEyqvApLD7cnJL2Z1AdF3R/osjd4jNYd0tg5AY700ObOAPZLl7fE
+	 aKuiKdT30cHmQ==
+Date: Wed, 9 Oct 2024 17:56:16 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lorenz Brun <lorenz@brun.one>
+Cc: Igor Russkikh <irusskikh@marvell.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: atlantic: support reading SFP module info
+Message-ID: <20241009175616.39594837@kernel.org>
+In-Reply-To: <20241006215028.79486-1-lorenz@brun.one>
+References: <20241006215028.79486-1-lorenz@brun.one>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:3a0:98b2:8f3b with SMTP id
- e9e14a558f8ab-3a397cfa93cmr48447805ab.7.1728521643780; Wed, 09 Oct 2024
- 17:54:03 -0700 (PDT)
-Date: Wed, 09 Oct 2024 17:54:03 -0700
-In-Reply-To: <5278c962-8f78-499d-9723-38a3d6520e19@gmx.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670725ab.050a0220.1139e6.0015.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] BUG: sleeping function called from invalid
- context in getname_kernel
-From: syzbot <syzbot+02a127be2df04bdc5df0@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quwenruo.btrfs@gmx.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sun,  6 Oct 2024 23:50:25 +0200 Lorenz Brun wrote:
+> Add support for reading SFP module info and digital diagnostic
+> monitoring data if supported by the module. The only Aquantia
+> controller without an integrated PHY is the AQC100 which belongs to
+> the B0 revision, that's why it's only implemented there.
+> 
+> The register information was extracted from a diagnostic tool made
+> publicly available by Dell, but all code was written from scratch by me.
+> 
+> This has been tested to work with a variety of both optical and direct
+> attach modules I had lying around and seems to work fine with all of
+> them, including the diagnostics if supported by an optical module.
+> All tests have been done with an AQC100 on an TL-NT521F card on firmware
+> version 3.1.121 (current at the time of this patch).
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> +static int aq_ethtool_get_module_info(struct net_device *ndev,
+> +				      struct ethtool_modinfo *modinfo)
+> +{
+> +	int err;
+> +	u8 compliance_val, dom_type;
+> +	struct aq_nic_s *aq_nic = netdev_priv(ndev);
 
-Reported-by: syzbot+02a127be2df04bdc5df0@syzkaller.appspotmail.com
-Tested-by: syzbot+02a127be2df04bdc5df0@syzkaller.appspotmail.com
+nit:
+Could you reverse the order of variable declarations?
+We prefer longest to shortest lines.
 
-Tested on:
+> +
+> +	/* Module EEPROM is only supported for controllers with external PHY */
+> +	if (aq_nic->aq_nic_cfg.aq_hw_caps->media_type != AQ_HW_MEDIA_TYPE_FIBRE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
+> +		return -EOPNOTSUPP;
+> +
+> +	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
+> +		SFF_8472_ID_ADDR, SFF_8472_COMP_ADDR, 1, &compliance_val);
+> +	if (err)
+> +		return err;
+> +
+> +	err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
+> +		SFF_8472_ID_ADDR, SFF_8472_DOM_TYPE_ADDR, 1, &dom_type);
+> +	if (err)
+> +		return err;
+> +
+> +	if (dom_type & SFF_8472_ADDRESS_CHANGE_REQ_MASK || compliance_val == 0x00) {
+> +		modinfo->type = ETH_MODULE_SFF_8079;
+> +		modinfo->eeprom_len = ETH_MODULE_SFF_8079_LEN;
+> +	} else {
+> +		modinfo->type = ETH_MODULE_SFF_8472;
+> +		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int aq_ethtool_get_module_eeprom(struct net_device *ndev,
+> +					struct ethtool_eeprom *ee, unsigned char *data)
+> +{
+> +	int err;
+> +	unsigned int first, last, len;
+> +		struct aq_nic_s *aq_nic = netdev_priv(ndev);
 
-commit:         964c2da7 btrfs: make buffered write to copy one page a..
-git tree:       https://github.com/adam900710/linux.git subpage_read
-console output: https://syzkaller.appspot.com/x/log.txt?x=115d8f07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3ec5955a0d4f6ede
-dashboard link: https://syzkaller.appspot.com/bug?extid=02a127be2df04bdc5df0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+nit: extra tab here
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+> +	if (!aq_nic->aq_hw_ops->hw_read_module_eeprom)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (ee->len == 0)
+> +		return -EINVAL;
+
+I don't think core will let that happen, you can remove the check
+
+> +	first = ee->offset;
+> +	last = ee->offset + ee->len;
+> +
+> +	if (first < ETH_MODULE_SFF_8079_LEN) {
+> +		len = min_t(unsigned int, last, ETH_MODULE_SFF_8079_LEN);
+
+AFAIU pure min() may work these days
+
+> +		len -= first;
+> +
+> +		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
+> +			SFF_8472_ID_ADDR, first, len, data);
+> +		if (err)
+> +			return err;
+> +
+> +		first += len;
+> +		data += len;
+> +	}
+> +	if (first < ETH_MODULE_SFF_8472_LEN && last > ETH_MODULE_SFF_8079_LEN) {
+> +		len = min_t(unsigned int, last, ETH_MODULE_SFF_8472_LEN);
+> +		len -= first;
+> +		first -= ETH_MODULE_SFF_8079_LEN;
+> +
+> +		err = aq_nic->aq_hw_ops->hw_read_module_eeprom(aq_nic->aq_hw,
+> +			SFF_8472_DIAGNOSTICS_ADDR, first, len, data);
+> +		if (err)
+> +			return err;
+> +	}
+> +	return 0;
+> +}
+> +
+>  const struct ethtool_ops aq_ethtool_ops = {
+>  	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
+>  				     ETHTOOL_COALESCE_MAX_FRAMES,
+> @@ -1014,4 +1090,6 @@ const struct ethtool_ops aq_ethtool_ops = {
+>  	.get_ts_info         = aq_ethtool_get_ts_info,
+>  	.get_phy_tunable     = aq_ethtool_get_phy_tunable,
+>  	.set_phy_tunable     = aq_ethtool_set_phy_tunable,
+> +	.get_module_info     = aq_ethtool_get_module_info,
+> +	.get_module_eeprom   = aq_ethtool_get_module_eeprom,
+>  };
+
+> +static int hw_atl_b0_read_module_eeprom(struct aq_hw_s *self, u8 dev_addr,
+> +					u8 reg_start_addr, int len, u8 *data)
+> +{
+> +	int err;
+> +	int i, b;
+> +	u32 val;
+> +
+> +	/* Wait for SMBUS0 to be idle */
+> +	err = readx_poll_timeout_atomic(hw_atl_smb0_bus_busy_get, self,
+> +					val, val == 0, 100U, 10000U);
+
+Why atomic?
+-- 
+pw-bot: cr
 
