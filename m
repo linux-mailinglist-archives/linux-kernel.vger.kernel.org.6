@@ -1,297 +1,87 @@
-Return-Path: <linux-kernel+bounces-359634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2859B998E63
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32960998E4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B543B22167
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E974E28369C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D374F19CCEC;
-	Thu, 10 Oct 2024 17:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DE619CC16;
+	Thu, 10 Oct 2024 17:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YiNwHkJ7"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u8k1EL9o"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A44199FCE
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C9619CC06
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728581731; cv=none; b=J8jbQlZHAqun5rg9x743U9fpZanO2yFhMpT71tZ30sXWidfq5LDbQJydz29dSNGol4wqMiMx+QjxBb0wLnir0ZW3nCNxhxX5NNYAzCQLxrSWmP6rXDuhvQ8G0BMoaoxEjAFYzC78hUSJwpNafeup4SnRXZ4d6EmeoaFg9o2uTTk=
+	t=1728581251; cv=none; b=DeNGRCQWMG+KW+vrIXgvG5yHARjaxO8iqgxEbAjaIQSdx+NcNh2gN86C2YRu79DnSQ5zFT2MOtLCN6AYDHolyhxwmqx4dAIu5xay3FGBeS8Vix3YBB8POfr4yVHWWbfqX/Yrw7Mtie5IZx3SKlnYNk2GS7LNQXX0C7MLul9yeNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728581731; c=relaxed/simple;
-	bh=C3nvDo4V6bCHXXVshrM6mSReoIZPTcAhgOpDmwGhhxc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aR2h3HlaQDdH2PEhrJqeRMBo4ifdAvz22fBjCQtUTcEBTIKtIe2fHl8RW2iSV4OIv7cENbUG1YFJdYnp/hFazWHeyy2KhjBNsIrVTtbqXiWp3B6/xcA6zyT1ks/g9EzYQK7zvVTMa5DnIE2HAUJgqfQBqs1cUkHtZG5SVmncW54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YiNwHkJ7; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 16282C08E5
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:27:11 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 27EA120002;
-	Thu, 10 Oct 2024 17:27:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728581224;
+	s=arc-20240116; t=1728581251; c=relaxed/simple;
+	bh=Ao4t8Rd+GNMX4tFjKE5sXChnKVztvnZ5xoHE0429CRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WROL6qzCupwnLbEmarc1TzbVpBN6RXEORMtdoiTzpompkhrFHUyQdLXFwlYd8BX1yLdUa45b0nNgfhRYluffOf5Ka3HP8HXv7uvIJbgps90FTiepj+pRK4BtnXTFwi1O0ECo6ANO517AN0at22X/CfFfTOZ/C+uTc7cVvn2GtMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u8k1EL9o; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 10 Oct 2024 10:27:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728581247;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cjW1iqTnZt7Tql22SF2gqUtFnIpZXxwf+7g9zNxGy38=;
-	b=YiNwHkJ7tRq5iBMzl0N7JPkJfzUna1pFa89s4mQrxVQH7TzwpVafBwMd3ltOJXx+z+Ds5k
-	b76FfcflT5FzN1MhuZVEXnQm05BhDbxKSNRRFRDfqW25dC46oAxT//xTiD79TGZ1tKHT2n
-	7xKBpCgZgZuQyxEB3j5KeII39B6Mxflb/7ljiSGilSla7gXbQtZ1bPcnvoL8s+hneAhA+Y
-	kIohXC6HnW4JcspwFeQsS8SL8xk//+ucfQYSoaPjqskjLjPhgGujPqhHplJMVsz0SRIEGR
-	7HIwknQOrpvJomO/nVbSJvwZOFQ3kIobHqwXo9SpP++bQeIlzeQ9Di/4hqa+tw==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Thu, 10 Oct 2024 19:27:00 +0200
-Subject: [PATCH v2] drm/vkms: Remove index parameter from init_vkms_output
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cte0SjyxO3LPNz1UcE8kNcEfEtgnbXauFmqf2BL8sEw=;
+	b=u8k1EL9ojeo8f2L/H89Hnd6deF/3qbzjy7PUJ/n0yNK3YIH1Skln2Sk3vEfTSL9Oh0AvNB
+	Swzv/vbxwZIHT9KPXMwGQIG8pRsSyDY3d2v6yGFYVnAlY9Zgey18SLPjIZHWJDPeNluF9J
+	mUS+viPu0UrxFXBEiZ936DhRKuQURa4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Muchun Song <muchun.song@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
+	JP Kobryn <inwardvessel@gmail.com>, Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
+Message-ID: <hp45j5kdj5lrqltor5zsx5ti5fsw5j6pzomgtgixr3iq6z2qdd@6if6wvwmzi4h>
+References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
+ <Zwcj5SC_MYrPpNQq@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241010-vkms-remove-index-v2-1-6b8d6cfd5a15@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAGQOCGcC/32OwQ6CMAyGX4X0bHUMYtST72E4wFak0W26zQVDe
- HcnxKu3fm2+v/8EgTxTgFMxgafEgZ3NIDcFqKG1V0LWmUEKWYuj2GO6mYCejEv5ZDWNWLV7ErW
- qDiQkZO/hqedxybw0K3t6vnJ0XJfQtYFQOWM4ngrtDRoOavcb0NIY4WsOHKLz76VcKhf1T49UY
- omV6knrg1Kd7M+dc/HOdptfQTPP8wcmb4oc7gAAAA==
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7390;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=C3nvDo4V6bCHXXVshrM6mSReoIZPTcAhgOpDmwGhhxc=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnCA5m/wReDMSQxhI98iajU4eQYt445jMbcPvw3
- NTzr1pzKaWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZwgOZgAKCRAgrS7GWxAs
- 4rpDEADAsofiRONRJ7NVdbBpbx5L/WRTUZxrhUkT7wsVM6IwXeKKjLFMM7aT2JwtO7uQDRuhYeq
- msJC0xa9/7UnTj/yAYnND1H14uQMP38+BPx84sbtjgl3fFE8AaSjrgBQa8lyckzd9klrQ+qyCqH
- HJVP6JGmBbIuxp9CiVRcuJ7LOEjBpJaQIlxJHiZfmwq/lOO+4L8r+bYsIfhnvBpmt1ibTK8QGNv
- afuSKs7HNcW1U3/Me6EgqHfJvtKLm3QN7Y7dDkbLjkWmtWaf5u2LzuHoVuNXwep9CJ1AWoMBErG
- paTkxMdQ4/ELc72qPkMkdgjlYt+cmrZZwdw1Er+Z1pbRwnnoHQJBEY8cI7x16KSiGcWSVHGZyT+
- 7ou7MiELsjBvQ/qDDega/4F5a8WnIVwLkpqT+JIGGgRBFh76ZRwXTOof85eVzvn6xVhQFNat3VG
- B9JRQpY0o6SodExKQNm3/vTce4HN6Mxu051gxGczA6OkvUG/kodxWGtmzbVhuKcukWZLKRHWEMn
- P8jvn7mRClup6ibxkHOyOSYiCewG0jQonkczY1rAVMmrKB/xjO+ydOS+H05L8HXNIfAvJipSdSk
- 4GpxptQ2kCbUqIcJhoi3eZM99jI7Ftk4//EV3H2mqKsngG30lgu8oNelfgBk/7Q04o1zcgwp+it
- IQI9zC6EjAlTzCw==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwcj5SC_MYrPpNQq@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-VKMS currently supports only one CRTC, so it make no sense to have this
-index configurable. To avoid issues, replace this hardcoded index by
-drm_crtc_mask when applicable.
+On Thu, Oct 10, 2024 at 12:46:29AM GMT, Roman Gushchin wrote:
+> On Wed, Oct 09, 2024 at 05:35:50PM -0700, Shakeel Butt wrote:
+> > The memcg stats are maintained in rstat infrastructure which provides
+> > very fast updates side and reasonable read side. However memcg added
+> > plethora of stats and made the read side, which is cgroup rstat flush,
+> > very slow. To solve that, threshold was added in the memcg stats read
+> > side i.e. no need to flush the stats if updates are within the
+> > threshold.
+> > 
+> > This threshold based improvement worked for sometime but more stats were
+> > added to memcg and also the read codepath was getting triggered in the
+> > performance sensitive paths which made threshold based ratelimiting
+> > ineffective. We need more visibility into the hot and cold stats i.e.
+> > stats with a lot of updates. Let's add trace to get that visibility.
+> > 
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> 
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-There is no need to manually set a crtc mask on primary and cursor plane
-as it is automatically set by drmm_crtc_alloc_with_planes.
-
-In addition, this will remove the use of an uninitialized structure in
-vkms_add_overlay_plane. This currently works by chance because two things:
-- vkms_plane_init always set a possible_crtcs value, so the problematic
-  branch is never used;
-- drm_crtc_mask on an kzalloc'd drm_crtc returns BIT(0), and the VKMS CRTC
-  always have this id.
-
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
-Changes in v2:
-- Applied comments from José
-- Link to v1: https://lore.kernel.org/r/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com
----
- drivers/gpu/drm/vkms/vkms_drv.c    |  2 +-
- drivers/gpu/drm/vkms/vkms_drv.h    |  8 ++----
- drivers/gpu/drm/vkms/vkms_output.c | 54 ++++++++++++++------------------------
- drivers/gpu/drm/vkms/vkms_plane.c  |  4 +--
- 4 files changed, 24 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 2d1e95cb66e5..0f6805b9fe7b 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -174,7 +174,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
- 	dev->mode_config.preferred_depth = 0;
- 	dev->mode_config.helper_private = &vkms_mode_config_helpers;
- 
--	return vkms_output_init(vkmsdev, 0);
-+	return vkms_output_init(vkmsdev);
- }
- 
- static int vkms_create(struct vkms_config *config)
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index 672fe191e239..036101ee4ea1 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -212,21 +212,17 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-  * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
-  *
-  * @vkmsdev: VKMS device to initialize
-- * @index: CRTC which can be attached to the planes. The caller must ensure that
-- *	   @index is positive and less or equals to 31.
-  */
--int vkms_output_init(struct vkms_device *vkmsdev, int index);
-+int vkms_output_init(struct vkms_device *vkmsdev);
- 
- /**
-  * vkms_plane_init() - Initialize a plane
-  *
-  * @vkmsdev: VKMS device containing the plane
-  * @type: type of plane to initialize
-- * @index: CRTC which can be attached to the plane. The caller must ensure that
-- *	   @index is positive and less or equals to 31.
-  */
- struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
--				   enum drm_plane_type type, int index);
-+				   enum drm_plane_type type);
- 
- /* CRC Support */
- const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index 0a5a185aa0b0..5128aa3b2eb6 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -32,29 +32,14 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
- 	.get_modes    = vkms_conn_get_modes,
- };
- 
--static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
--				  struct drm_crtc *crtc)
--{
--	struct vkms_plane *overlay;
--
--	overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, index);
--	if (IS_ERR(overlay))
--		return PTR_ERR(overlay);
--
--	if (!overlay->base.possible_crtcs)
--		overlay->base.possible_crtcs = drm_crtc_mask(crtc);
--
--	return 0;
--}
--
--int vkms_output_init(struct vkms_device *vkmsdev, int index)
-+int vkms_output_init(struct vkms_device *vkmsdev)
- {
- 	struct vkms_output *output = &vkmsdev->output;
- 	struct drm_device *dev = &vkmsdev->drm;
- 	struct drm_connector *connector = &output->connector;
- 	struct drm_encoder *encoder = &output->encoder;
- 	struct drm_crtc *crtc = &output->crtc;
--	struct vkms_plane *primary, *cursor = NULL;
-+	struct vkms_plane *primary, *overlay, *cursor = NULL;
- 	int ret;
- 	int writeback;
- 	unsigned int n;
-@@ -65,34 +50,37 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
- 	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
- 	 * composition.
- 	 */
--	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
-+	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
- 
--	if (vkmsdev->config->overlay) {
--		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
--			ret = vkms_add_overlay_plane(vkmsdev, index, crtc);
--			if (ret)
--				return ret;
--		}
--	}
--
- 	if (vkmsdev->config->cursor) {
--		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
-+		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
- 		if (IS_ERR(cursor))
- 			return PTR_ERR(cursor);
- 	}
- 
--	/* [1]: Allocation of a CRTC, its index will be BIT(0) = 1 */
- 	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
- 	if (ret)
- 		return ret;
- 
-+	if (vkmsdev->config->overlay) {
-+		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-+			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY);
-+			if (IS_ERR(overlay)) {
-+				DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
-+				ret = PTR_ERR(overlay);
-+				goto err_crtc;
-+			}
-+			overlay->base.possible_crtcs = drm_crtc_mask(crtc);
-+		}
-+	}
-+
- 	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
- 				 DRM_MODE_CONNECTOR_VIRTUAL);
- 	if (ret) {
- 		DRM_ERROR("Failed to init connector\n");
--		goto err_connector;
-+		goto err_crtc;
- 	}
- 
- 	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
-@@ -103,11 +91,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
- 		DRM_ERROR("Failed to init encoder\n");
- 		goto err_encoder;
- 	}
--	/*
--	 * This is a hardcoded value to select crtc for the encoder.
--	 * BIT(0) here designate the first registered CRTC, the one allocated in [1]
--	 */
--	encoder->possible_crtcs = BIT(0);
-+	encoder->possible_crtcs = drm_crtc_mask(crtc);
- 
- 	ret = drm_connector_attach_encoder(connector, encoder);
- 	if (ret) {
-@@ -131,7 +115,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
- err_encoder:
- 	drm_connector_cleanup(connector);
- 
--err_connector:
-+err_crtc:
- 	drm_crtc_cleanup(crtc);
- 
- 	return ret;
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index e5c625ab8e3e..ad137c9a75f5 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -198,12 +198,12 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
- };
- 
- struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
--				   enum drm_plane_type type, int index)
-+				   enum drm_plane_type type)
- {
- 	struct drm_device *dev = &vkmsdev->drm;
- 	struct vkms_plane *plane;
- 
--	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << index,
-+	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
- 					   &vkms_plane_funcs,
- 					   vkms_formats, ARRAY_SIZE(vkms_formats),
- 					   NULL, type, NULL);
-
----
-base-commit: 33c255312660653cf54f8019896b5dca28e3c580
-change-id: 20240906-vkms-remove-index-3a6e04c38e02
-
-Best regards,
--- 
-Louis Chauvet <louis.chauvet@bootlin.com>
-
+Thanks for the review.
 
