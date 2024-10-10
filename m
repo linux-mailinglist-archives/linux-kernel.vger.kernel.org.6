@@ -1,123 +1,144 @@
-Return-Path: <linux-kernel+bounces-359250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7560899895A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:24:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF897998A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B15A1F26EFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35E9AB2ECB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECC71CF280;
-	Thu, 10 Oct 2024 14:16:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298C11CF5D2;
+	Thu, 10 Oct 2024 14:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUTjORlr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3131CDFBD
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D601CF5CD;
+	Thu, 10 Oct 2024 14:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569766; cv=none; b=IXvfJxm44EjWPjEijSGtk+pmJmSqRvE2sa5nMtBDcfNj6ILM7wzPM3SaxaE/C7x0NE7xoDklaK24PfZ4VJRaxX1UIEFt3uEYdMdWi52gaPIUyPolrVgsDS4n9yc+8z1XeZcjTbthCz4mRgRR4uzhbt2x+Mm0WcvuXd3JN9RugLc=
+	t=1728569841; cv=none; b=U3diJC4I71zY03eACO85g75JSBg9rdRKDpxj0b/JR/MoXS/ylu5/H9Ui+q9CjifzYfQ6slfl8YM1GHoyjGyaLVGSbqZFdMc3FelRvcHzIsKOMAI44w+KiOm1328KIim0OmV4wARwO2+cXVf5LHA4BgMQnNXY+skMBqWZyMA93jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569766; c=relaxed/simple;
-	bh=wo1aqpD0fJx2ciqxxDy8ZSZ5yYdeEAeEXEqccPnZFUk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NIFZ0S7J54bJf0Bw/WKBN+9LbF803pybjI1ePIOHzLuFYmJJCjpVhGjE9KsfKrTmpMeTygA6an3jYv+rJll7w+dHuANrjna2PTXk6/f0uLf535mGof6emh6sHhT4AJ6SRLtYjmBKYU8PpArPYwwP8EQHh6jfrPj0ihS/2AGi/FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3ae3c2cacso8605725ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:16:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728569764; x=1729174564;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xgq60H82SiwsEEYyfETa4MwhBeXGmeG/1/Rkqw+PB7Y=;
-        b=w1hyIVdxTqYBNfxSIh4qjjzol3txWo07zJpQGKBZ3MBtgiYVuWZHEkVgLgVLE4exf4
-         H80o8qFL9cVCnw579RVT3m1FYocHLPQ9W+ds8+l9wGHN0yi8554cz+slkRgRW894S60J
-         ejs0CpuruXWk87m02v6UdeW3kOyZFGkVk8dMPwNJb+dHecegfKcciJRqdUEx2XjjPc3V
-         CEaab5UIOPDWzoXeBDuM9KnShogGSbXdU6iDDvhhKz/841UNIH/7UYURiDvqnS/lrSYX
-         d/5orBpVyG8r2sukf5ZsyudxYBpAGer0u6Byso4ov+g1RLE9urfcIGKzvRbE5Aih6Aj7
-         l4sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeX8jOVhX82V1uxbYbe6nFDDQ/JmeWQA133+ppmVcZpzuG9GzJTHjW85j9R8VxJKZTfcKPkU5u+Owzmbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypgzcUWaK2mOuZbxt9xBzqOizGGmnjLMgrqnWRhKK6Lr1qGAYf
-	FovA2iLZnOesbStrONAn6f4ksHDgUBBSERUopjPMmXsWxHXIb6M1EUNI6YTMsy2KZr5wP2kRjIX
-	AQe3XUZLGWv79pFCNd6mQGWCF4RxB3WIs1DERCZ89nyGNehdEmPY41Vg=
-X-Google-Smtp-Source: AGHT+IGyR/sLbWQK4QmtOec/SQH+sZL6vZpBJgNUN4MWA4vVduu4+9Z9or8U54sP7rLb2td24R/a8Yihjkcp40W99jiCXYw1Zaiy
+	s=arc-20240116; t=1728569841; c=relaxed/simple;
+	bh=1PjyvsczcSZkLe66VAcgR3YAMDFQk4KexMDCjSwoyms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AR6uff4ZcKc1erfz4SRqw184jcAtOmVvIn47/hgHVx++1F8PgYxHH2WsliVFyu9bteM3t5OXRlHXvx5MP3ouyp/853g6n2bf4MOaRkJp/XhSvweHRUR+dipkGMGDUveLG7PDRbeZVvMZQMmaEkUhNl0v1aBr0vjbFuJdyjOriK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUTjORlr; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728569840; x=1760105840;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1PjyvsczcSZkLe66VAcgR3YAMDFQk4KexMDCjSwoyms=;
+  b=AUTjORlrSUFekQIVL6S1+dH9Um86untBaO6qG64zMhmYNppPmFkpw3Zh
+   0ualb9Iyr67BddJoXR5agbktnmIt1ZyCKzRpvmjPpfiKMnYD4VZfkY9yS
+   YjxfkTmKRABn/ZwXKYagshrmQCAXWate7ZRbkKic+a8i3ACF1ixtHO6xR
+   pYy3TpadyFCddxylUYuXOXavxhjbNlevLeW0sZP5sfB1hT720d74E7BjW
+   iWNXrT5UChOvwDdhGBBueMv16cEUSdaADRG0cwfjXAfpbHQ9mad5pGj/2
+   JIDXQ5wqVrMKLh1+yvGQoxBKZsMladJEGTqDbkQOwg6azfeyBBJoiMSRU
+   w==;
+X-CSE-ConnectionGUID: BprFDYv0SLyqm0vqo6W2lg==
+X-CSE-MsgGUID: guNXru2YQwuopl2wvkgNPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27401180"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="27401180"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:17:19 -0700
+X-CSE-ConnectionGUID: 4SQEOs7RRGOFSVe0M1xdRg==
+X-CSE-MsgGUID: f58R46SvTY27ZWTBzSxC5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="107331102"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 10 Oct 2024 07:17:14 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sytya-000Aq9-1E;
+	Thu, 10 Oct 2024 14:17:12 +0000
+Date: Thu, 10 Oct 2024 22:16:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com
+Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next 05/11] net: enetc: add enetc-pf-common driver
+ support
+Message-ID: <202410102136.jQHZOcS4-lkp@intel.com>
+References: <20241009095116.147412-6-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0a:0:b0:3a1:a163:ba58 with SMTP id
- e9e14a558f8ab-3a397d1d064mr70988585ab.26.1728569764030; Thu, 10 Oct 2024
- 07:16:04 -0700 (PDT)
-Date: Thu, 10 Oct 2024 07:16:03 -0700
-In-Reply-To: <ZwfZkr_27ycafr7F@iZbp1asjb3cy8ks0srf007Z>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6707e1a3.050a0220.8109b.0010.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	qianqiang.liu@163.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009095116.147412-6-wei.fang@nxp.com>
 
-Hello,
+Hi Wei,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __hfs_ext_cache_extent
+kernel test robot noticed the following build warnings:
 
-loop0: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
-BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
- __hfs_ext_read_extent fs/hfs/extent.c:163 [inline]
- __hfs_ext_cache_extent+0x779/0x7e0 fs/hfs/extent.c:179
- hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
- hfs_get_block+0x733/0xf50 fs/hfs/extent.c:366
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
- block_write_begin fs/buffer.c:2231 [inline]
- cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2509 [inline]
- cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
- notify_change+0x1a8e/0x1b80 fs/attr.c:503
- do_truncate+0x22a/0x2b0 fs/open.c:65
- vfs_truncate+0x5d4/0x680 fs/open.c:111
- do_sys_truncate+0x104/0x240 fs/open.c:134
- __do_sys_truncate fs/open.c:146 [inline]
- __se_sys_truncate fs/open.c:144 [inline]
- __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
- x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[auto build test WARNING on net-next/main]
 
-Local variable fd.i created at:
- hfs_ext_read_extent fs/hfs/extent.c:193 [inline]
- hfs_get_block+0x295/0xf50 fs/hfs/extent.c:366
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241009-181113
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241009095116.147412-6-wei.fang%40nxp.com
+patch subject: [PATCH net-next 05/11] net: enetc: add enetc-pf-common driver support
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241010/202410102136.jQHZOcS4-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241010/202410102136.jQHZOcS4-lkp@intel.com/reproduce)
 
-CPU: 1 UID: 0 PID: 5954 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00074-gd3d1556696c1-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410102136.jQHZOcS4-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:3:
+>> include/linux/fsl/enetc_mdio.h:62:18: warning: no previous prototype for 'enetc_hw_alloc' [-Wmissing-prototypes]
+      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+         |                  ^~~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
-Tested on:
+vim +/enetc_hw_alloc +62 include/linux/fsl/enetc_mdio.h
 
-commit:         d3d15566 Merge tag 'mm-hotfixes-stable-2024-10-09-15-4..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17aecb27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1777005f980000
+6517798dd3432a Claudiu Manoil 2020-01-06  49  
+80e87442e69ba8 Andrew Lunn    2023-01-12  50  static inline int enetc_mdio_read_c22(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  51  				      int regnum)
+6517798dd3432a Claudiu Manoil 2020-01-06  52  { return -EINVAL; }
+80e87442e69ba8 Andrew Lunn    2023-01-12  53  static inline int enetc_mdio_write_c22(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  54  				       int regnum, u16 value)
+80e87442e69ba8 Andrew Lunn    2023-01-12  55  { return -EINVAL; }
+80e87442e69ba8 Andrew Lunn    2023-01-12  56  static inline int enetc_mdio_read_c45(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  57  				      int devad, int regnum)
+80e87442e69ba8 Andrew Lunn    2023-01-12  58  { return -EINVAL; }
+80e87442e69ba8 Andrew Lunn    2023-01-12  59  static inline int enetc_mdio_write_c45(struct mii_bus *bus, int phy_id,
+80e87442e69ba8 Andrew Lunn    2023-01-12  60  				       int devad, int regnum, u16 value)
+6517798dd3432a Claudiu Manoil 2020-01-06  61  { return -EINVAL; }
+6517798dd3432a Claudiu Manoil 2020-01-06 @62  struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+6517798dd3432a Claudiu Manoil 2020-01-06  63  { return ERR_PTR(-EINVAL); }
+6517798dd3432a Claudiu Manoil 2020-01-06  64  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
