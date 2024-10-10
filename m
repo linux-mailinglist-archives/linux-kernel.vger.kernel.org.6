@@ -1,243 +1,130 @@
-Return-Path: <linux-kernel+bounces-358032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A48997974
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:02:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F35997977
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8AB61C21BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD06284361
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43EA79DE;
-	Thu, 10 Oct 2024 00:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3F1653;
+	Thu, 10 Oct 2024 00:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vuvB9ybR"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="PsqeiHLs"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB026623
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBDF17E
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728518536; cv=none; b=Jk+RAolZOa/y7A7R3XMGg3v27YMeBBXcxu1TvMsUc+cDCrSZbJVxF2KiVFbeLm5Ps40FKk2A5jU8Ab5ghBky/Wfq1MyrbGm+MDrvpZ6JI1doLTDJz9Zf2kOgUutpPgcUk1LSpojoowEmFqueTx15KHuJYv653IDQnVMCFuUeB6Q=
+	t=1728518671; cv=none; b=nNiN70iaZB907S3/uomyK6spUGs5e4EbVRFgZlsZNqCThY+58TXNe4XbuLhW3XRYNe45/eOCAUKBjTdrZ2omanzg2SAIsBN0h7zsmc8qpM3i/x+aC37SXThwK9Q1dnHfhJtUjFYqNnQ8Xkh10bhWSoQ+WXHyhIh7xp3VVMuQE/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728518536; c=relaxed/simple;
-	bh=ewGqRf1g6Sl7BxQGp08YR8W3r9FXfAEWp++dX7lyTMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKarUT4b6Ys8urd/cwhjxsCbgCftZ/hV3uymbp95X1cOS4Q0ieYFbOFZ+oSyb/Pi8zpTRQ65FOh3EuqI2NY53fsg1arwOM8xiJ/ZriQyjx1N29Vf878+1r+MqTuYAE3Ig5tyq/5JRkEbaya4Q0pqNsr6NGm29PS/t7AjJjsPwnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vuvB9ybR; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2bd347124so283554a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 17:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728518533; x=1729123333; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z81onnv7XmpsFKJJEJouk5fW7lC/eJB47z6sozvRnOU=;
-        b=vuvB9ybRThfOultl9MKUk74XHtLMYLSGysi4/XdZtFHACescnpiUWJodqvF1gCEshr
-         epG7YLP5ADOJukQ4lj/g5GvaKJw6A4GO3UhutTbN48Fg/Gng499b2OPL94jrgKPt45pE
-         fNomdr4+iSptDyfc93Erp34tfQ6lCa9LwhMm0W1Cmk8pyFYnfL7c8XFR4FH2izHoOJba
-         Lr2J3djRLveFmfBpzjAafxekAsQxClmYeMnFOl2a7flCsXq3aoRzdkxJfz0guWRPZ3uL
-         IqxcSKFrgY8WV6JDQ6dTFiXAJBHWxMZg8FugPOX3z0XN7ae1eurvLR68U4dkgfGlTWWV
-         4nuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728518533; x=1729123333;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z81onnv7XmpsFKJJEJouk5fW7lC/eJB47z6sozvRnOU=;
-        b=d0CvuLHHwGT2AZY4JZzV+7jkBoopwtp3FjICaYyh0z22xQBQzfhPjXxP1BS1UFSCse
-         Ic5fIHMEDwXAV+pcVxr1BhbQFvbrri/PLKNrCDpwN1AbqDeqXt0qZuFV2kym1pT7xS8M
-         O5JB0zqyac7rvPgy1EctEYZ6Hzu5JJzIPrOpMQ6ttaHpjw+hRSlOnSjJ/MdjzqI/qpic
-         UYW6lM18cL8KdAwuZXujFcWVsAgR1uLstCQLTTGYlO+PEYRB0k2fF02JuL8o2Y/yYY3P
-         YW/uVpbepfcwwnaW28ssTq9q+zFthNoUPxxsR5HDs6dMLrBiZTOKQITXw3GIlZga5Mx6
-         LukQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKJxsLtZFpokCx2yVmMeCXE8lcieAbCl+UmV7HMNqGQBO/xkDPNz26tmzHtPF7RXybWx4kJNre/b0NnwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU1JxMwRm/Pfp5tK//vGWK4/dPG3HN+HZdj7CN/ZoyTv5ZzpTa
-	4h++Zm/rt3GHFEuAYIE8KbMVvMIDKdT4P9NJJdbOUXmrN329U8OPCbCszu/4NXU=
-X-Google-Smtp-Source: AGHT+IFZmP54aZT+PGhT0sMeks15kfczHLhKUFL1tfOl/r4KWZKd9Mj0XsQpQ7yVRv3lx6isgmniRg==
-X-Received: by 2002:a17:90b:4a42:b0:2e2:bad2:69ba with SMTP id 98e67ed59e1d1-2e2bad26afcmr3003723a91.14.1728518533102;
-        Wed, 09 Oct 2024 17:02:13 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5f0b03bsm22252a91.34.2024.10.09.17.02.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 17:02:12 -0700 (PDT)
-Date: Wed, 9 Oct 2024 17:02:08 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v6 11/33] riscv/mm : ensure PROT_WRITE leads to VM_READ |
- VM_WRITE
-Message-ID: <ZwcZgKuOK5MpldDX@debug.ba.rivosinc.com>
-References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
- <20241008-v5_user_cfi_series-v6-11-60d9fe073f37@rivosinc.com>
- <22972e7b-0844-4ebc-8d82-a0838b83c3a0@lucifer.local>
+	s=arc-20240116; t=1728518671; c=relaxed/simple;
+	bh=xCFdlQe2qIXmkhYaOhV8Oe1OWnBaKqhn/2JmRB3U+Hk=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=Qv6lXSqPgMy4eMfRM3dJ8+mY7iEK/bc7CjuHCXBaJ2MQ0LIO8MKmBmzXf8Ov/hUsJCuqV1puoQeIvf2bgS3H1LByXdlaDYNbLWYjdY3hbHq4TppVyQgMZ4jRTt+4jM6PPZ2fcIHdF+EwxxST8LZacSHKxiZuJVYko65XBDt3r/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=PsqeiHLs; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id yAdPs5iYBumtXygfMsoqie; Thu, 10 Oct 2024 00:04:28 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id ygfLsW58GzPxVygfLskSl3; Thu, 10 Oct 2024 00:04:28 +0000
+X-Authority-Analysis: v=2.4 cv=Apvo3v9P c=1 sm=1 tr=0 ts=67071a0c
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gdqp99qaU+axZJTHntMncWRNOI6hwC4IiVkIpoyf888=; b=PsqeiHLs7IAsZZGG11WnF26iyN
+	ZwnpcDzJrtqX+js5Zz7xRA/i0/E2aHnuXT4kWrT0LR2knwXR4jdeWlTaQaf14Qhp3mhDDQwmnaCh4
+	72CdANEaG6BXkHx8hbu/m2ZmE+yJFOSxR+jRMxXQlXWPtkn+B0o3iYjwtWlF0Q6qwJGw1WkUL95l3
+	woAygRotoXhoqJRXDUJh1edtDfW4QOo10RZ2alJAR7cFkP+3HHcDGMntMwuxlOcxnqpnchdauqzR9
+	1fNggrlDUjPLHLP/2bJfieezlE9i+OvwTL4zvzD3wDqvowMgphv5YRUqSAjcgGcfzlTNlb2U9lbv6
+	P20Z+ZMQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:46230 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sygfJ-002nN0-1S;
+	Wed, 09 Oct 2024 18:04:25 -0600
+Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241008115648.280954295@linuxfoundation.org>
+In-Reply-To: <20241008115648.280954295@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <f2d65195-1635-9cc0-97ca-b9cc8dc822d3@w6rz.net>
+Date: Wed, 9 Oct 2024 17:04:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <22972e7b-0844-4ebc-8d82-a0838b83c3a0@lucifer.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sygfJ-002nN0-1S
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:46230
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfC8/rwRof8tQNuH3JANF0lwK9W/vGPj1SIM2hJu79DcdB5zgztgi5QIYG90d6/dYxsH69f3HS7Wzy93uTvXWEB7mOT5K3lXfK223IxQCXjTaBaZvqWQ3
+ ZyYwuNanAljjJv1zVux4FlIKCxXF+z4H+clfspihlNg3XRA3Uc5nyS4e2qVbia3Wz5EIdrXDzX/GYGLkD0celbdfA2In0VUy9a4=
 
-On Wed, Oct 09, 2024 at 02:36:12PM +0100, Lorenzo Stoakes wrote:
->On Tue, Oct 08, 2024 at 03:36:53PM -0700, Deepak Gupta wrote:
->> `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
->> VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
->> updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
->> This is to make sure that any existing apps using PROT_WRITE still work.
->>
->> Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
->> Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
->> encodings for shadow stack. Above changes ensure that existing apps
->> continue to work because underneath kernel will be picking
->> `protection_map[VM_WRITE|VM_READ]` PTE encodings.
->>
->> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/mman.h    | 24 ++++++++++++++++++++++++
->>  arch/riscv/include/asm/pgtable.h |  1 +
->>  arch/riscv/kernel/sys_riscv.c    | 10 ++++++++++
->>  arch/riscv/mm/init.c             |  2 +-
->>  mm/mmap.c                        |  1 +
->>  5 files changed, 37 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
->> new file mode 100644
->> index 000000000000..ef9fedf32546
->> --- /dev/null
->> +++ b/arch/riscv/include/asm/mman.h
->> @@ -0,0 +1,24 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef __ASM_MMAN_H__
->> +#define __ASM_MMAN_H__
->> +
->> +#include <linux/compiler.h>
->> +#include <linux/types.h>
->> +#include <uapi/asm/mman.h>
->> +
->> +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
->> +	unsigned long pkey __always_unused)
->> +{
->> +	unsigned long ret = 0;
->> +
->> +	/*
->> +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
->> +	 * Only VM_WRITE means shadow stack.
->> +	 */
->> +	if (prot & PROT_WRITE)
->> +		ret = (VM_READ | VM_WRITE);
->> +	return ret;
->> +}
->> +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
->> +
->> +#endif /* ! __ASM_MMAN_H__ */
->> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
->> index e79f15293492..4948a1f18ae8 100644
->> --- a/arch/riscv/include/asm/pgtable.h
->> +++ b/arch/riscv/include/asm/pgtable.h
->> @@ -177,6 +177,7 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
->>  #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
->>  #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
->>  					 _PAGE_EXEC | _PAGE_WRITE)
->> +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
->>
->>  #define PAGE_COPY		PAGE_READ
->>  #define PAGE_COPY_EXEC		PAGE_READ_EXEC
->> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
->> index d77afe05578f..43a448bf254b 100644
->> --- a/arch/riscv/kernel/sys_riscv.c
->> +++ b/arch/riscv/kernel/sys_riscv.c
->> @@ -7,6 +7,7 @@
->>
->>  #include <linux/syscalls.h>
->>  #include <asm/cacheflush.h>
->> +#include <asm-generic/mman-common.h>
->>
->>  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
->>  			   unsigned long prot, unsigned long flags,
->> @@ -16,6 +17,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
->>  	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
->>  		return -EINVAL;
->>
->> +	/*
->> +	 * If PROT_WRITE is specified then extend that to PROT_READ
->> +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
->> +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
->> +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
->> +	 */
->> +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
->> +		prot |= PROT_READ;
->> +
->>  	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
->>  			       offset >> (PAGE_SHIFT - page_shift_offset));
->>  }
->> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->> index 0e8c20adcd98..964810aeb405 100644
->> --- a/arch/riscv/mm/init.c
->> +++ b/arch/riscv/mm/init.c
->> @@ -326,7 +326,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
->>  static const pgprot_t protection_map[16] = {
->>  	[VM_NONE]					= PAGE_NONE,
->>  	[VM_READ]					= PAGE_READ,
->> -	[VM_WRITE]					= PAGE_COPY,
->> +	[VM_WRITE]					= PAGE_SHADOWSTACK,
->>  	[VM_WRITE | VM_READ]				= PAGE_COPY,
->>  	[VM_EXEC]					= PAGE_EXEC,
->>  	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index dd4b35a25aeb..b56f1e8cbfc6 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -47,6 +47,7 @@
->>  #include <linux/oom.h>
->>  #include <linux/sched/mm.h>
->>  #include <linux/ksm.h>
->> +#include <linux/processor.h>
+On 10/8/24 5:01 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.14 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
->This seems benign enough, just wonder why you need it?
-
-I think leftover from previous versions. Will remove it.
-Don't think its needed here anymore.
-
+> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+> Anything received after that time might be too late.
 >
->>
->>  #include <linux/uaccess.h>
->>  #include <asm/cacheflush.h>
->>
->> --
->> 2.45.0
->>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.14-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
+
 
