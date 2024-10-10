@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-360147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA10999525
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A9399950C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169E81C22594
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDCCC284E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE7C1EF092;
-	Thu, 10 Oct 2024 22:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D928F1E573C;
+	Thu, 10 Oct 2024 22:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ucH3W9WC"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VeJQGZ+G"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4446C1C172A;
-	Thu, 10 Oct 2024 22:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89DD1E32C5;
+	Thu, 10 Oct 2024 22:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728598959; cv=none; b=DR8fZ0VAKHc5tYTD3z58hEh67jbDncRg/HTndtn5xjLIzRZRUE4dubytA8quk/C7XJj5DVE7Vu8xay3N+GyygMGIjKSFBgfJmpD1tfhn0XZGRWB+LpDvVzIQgjykfH+IE05LVSK3Tr9b/nl6yl4U3+CQg5Q/VO7ZkjbB+jv7FMo=
+	t=1728598910; cv=none; b=PUNgcEZgl/ACDhCOLZcAeq4aEzydyjCcemSEftLNZCEoutj8go8utBRL8Ys3d/BmkgM7HEZLGwKLCw0rkIFL/uLR43TYLCnWa3zYpz+2H7nljmVm66WJjTHSGTHwNCblBSc/l6cxePfPlLVmWtub5tTn5PQU3pz1cVrMXtYpO5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728598959; c=relaxed/simple;
-	bh=sbzkRocgHF+RLVRdsZm18wLCdz4OqurChzrAtJI9nk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fzgewm2Kk4zgpLIXCNCh+WcXRXfV07X/WhHAei6e28gc3uapmgc13B1pWivmtBvy5CtGnPaG8rsauP7j7wDgwFqKQrBkSTxlSWkTIIVnpvV9/Jhb7hF6v0arxBJQZYSf6fzvAaQlmr6ryo24K7/v2HdoZ2pG/i+ZyDysX8Ehyt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ucH3W9WC reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 1f06392505035da9; Fri, 11 Oct 2024 00:22:25 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A49A169EF02;
-	Fri, 11 Oct 2024 00:22:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1728598945;
-	bh=sbzkRocgHF+RLVRdsZm18wLCdz4OqurChzrAtJI9nk4=;
-	h=From:Subject:Date;
-	b=ucH3W9WC3xecLxItzi8dYrRNGIC75szLlUwpFNHojI7dDujDpyDzbueWWMQdTHqNx
-	 dzRojgqdSlglfTpP0ICIdWf8kkInWLNYlMYeW759w56fP2hMFQ9ltIKvAaYHy6WFSl
-	 QkYTP6Jyqx4DWs10Xhvn6SFM6ztXYBWvsPbjJ1lFfMY3tQMOXWigtNW1QRpEBTs/8U
-	 jcoQ92DEGE2T3pvHaRnjk4aVHxjlrutTZOZUKSu14otL48MStYrRaX9jzqUZoCEizN
-	 5IdEgUtU/NHZoNyMFNtMXHRFnia6il4XieU5u9Z2NA+7vVesfKZkqbUgqG/zrn3dsI
-	 23CHETi6jFv9Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject:
- [PATCH v2 10/11] thermal: core: Separate thermal zone governor initialization
-Date: Fri, 11 Oct 2024 00:20:56 +0200
-Message-ID: <4408795.ejJDZkT8p0@rjwysocki.net>
-In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
-References: <4985597.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1728598910; c=relaxed/simple;
+	bh=1oz99yS4RcrK4IXNqU16/mIzAMENLRg4ngdxPPKm4sU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ne5dHC86hOQnjl92Z/f2Xt7QTOKiI1gRgE4zkylGvlnR9sun34CyANoEvcmHDac3SdDjFzYQWjDECFQDJfC8tb6KaIHtm4JLfbipKWeWeVE/YfryyxbhbJn1WdRr9RMAGsPZDZXAQ6QG8QxLzauLp2nKYtCPlFL3chZ9cuTVPgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VeJQGZ+G; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1728598906; x=1728858106;
+	bh=rp/P/5HH2+ZaFWkr9AvBU2PKX4NqLTmJGAGtg0jpa3k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=VeJQGZ+G2gcOOra5KFYtPTDrP5sV1oiJa/Gv1N1IZ6BfrarIirGOakgulpfhMZ2Ch
+	 /gAkFhhZ+85PO9V/rB8zBmCZfcpA4zGWAlKB2psDOX9I8EN0ljJNCCMTZpDFxL1z0q
+	 CbxhblZGh6/Utk/iNqqOmb4J1ZEuqedA5ptwPLqVJxxQ6u9UmrfgRrc71U6XuX3reP
+	 vDfoTTnp/namp71vwC2dd/0z2oO9Ig8YP+pn4pQIP4pQrNbH6I6zUFZ1qeqGHuKhkW
+	 wxxUaNhPKTnexo75hDD+KxFF2clg+Acm4k2jPv81KWQdcN0OOoFRf4oo4rRS0Wx9Mp
+	 Te2aSTm1dtmBA==
+Date: Thu, 10 Oct 2024 22:21:41 +0000
+To: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v4] rust: add global lock support
+Message-ID: <3e7832f7-8806-41e0-8e36-6f178df2eaef@proton.me>
+In-Reply-To: <ZwgB39dXLdFWQkHz@boqun-archlinux>
+References: <20240930-static-mutex-v4-1-c59555413127@google.com> <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me> <CAH5fLghsozD0qeTygBM0-WDgXRwtGcsc6B3bT1794QMx3=vSTg@mail.gmail.com> <Zwfcwg23tfrKIyrq@boqun-archlinux> <CAH5fLgjhTWjmYqxcTRRv6FTpv7Vg9nnVCGGWbSKPqOSjJ5XyQA@mail.gmail.com> <ZwfkzKz5mz6UvZfK@boqun-archlinux> <ZwgB39dXLdFWQkHz@boqun-archlinux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: ee1ea3d47b7bb8278ecd414affae5dc91a2fd1fd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedguddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriih
-X-DCC--Metrics: v370.home.net.pl 0; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 10.10.24 18:33, Boqun Feng wrote:
+> On Thu, Oct 10, 2024 at 07:29:32AM -0700, Boqun Feng wrote:
+>> On Thu, Oct 10, 2024 at 03:58:07PM +0200, Alice Ryhl wrote:
+>>> On Thu, Oct 10, 2024 at 3:55=E2=80=AFPM Boqun Feng <boqun.feng@gmail.co=
+m> wrote:
+>>>>
+>>>> On Thu, Oct 10, 2024 at 12:53:00PM +0200, Alice Ryhl wrote:
+>>>> [...]
+>>>>>>> +#[macro_export]
+>>>>>>> +macro_rules! global_lock {
+>>>>>>> +    {
+>>>>>>> +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident=
+<$valuety:ty> =3D unsafe { uninit };
+>>>>>>> +        value: $value:expr;
+>>>>>>
+>>>>>> I would find it more natural to use `=3D` instead of `:` here, since=
+ then
+>>>>>> it would read as a normal statement with the semicolon at the end.
+>>>>>> Another alternative would be to use `,` instead of `;`, but that doe=
+sn't
+>>>>>> work nicely with the static keyword above (although you could make t=
+he
+>>>>>> user write it in another {}, but that also isn't ideal...).
+>>>>>>
+>>>>>> Using `=3D` instead of `:` makes my editor put the correct amount of
+>>>>>> indentation there, `:` adds a lot of extra spaces.
+>>>>>
+>>>>> That seems sensible.
+>>>>>
+>>>>
+>>>> While we are at it, how about we make the syntax:
+>>>>
+>>>>         global_lock!{
+>>>>             static MY_LOCK: Mutex<u32> =3D unsafe { 0 };
+>>>>         }
+>>>>
+>>>> or
+>>>>
+>>>>         global_lock!{
+>>>>             static MY_LOCK: Mutex<u32> =3D unsafe { uninit { 0 } };
+>>>>         }
+>>>>
+>>>> ?
+>>>>
+>>>> i.e. instead of a "value" field, we put it in the "initialization
+>>>> expression". To me, this make it more clear that "value" is the
+>>>> initialized value protected by the lock. Thoughts?
+>>>
+>>> `uninit { 0 }` looks pretty terrible IMO. Can we come up with something=
+ better?
+>>>
+>>
+>=20
+> how about:
+>=20
+>         global_lock!{
+>             static MY_LOCK: Mutex<u32> =3D unsafe { data: 0 };
 
-In preparation for a subsequent change that will switch over the thermal
-core to using a mutex guard for managing thermal_governor_lock, move
-the code running in thermal_zone_device_register_with_trips() under that
-lock into a separate function called thermal_zone_init_governor().
+I dislike this, since there is no `uninit` anywhere, but the mutex needs
+to be initialized.
 
-While at it, drop a useless comment.
+>         }
+>=20
+> ?
+>=20
+> "data: " will make it clear that the value is not for the lock state.
+> "uninit" is dropped because the "unsafe" already requires the global
+> variable to be initialised first. Or "unsafe { uninit, data: 0 }" if you
+> want to keep the "uninit" part?
 
-No intentional functional impact.
+That also looks weird to me...
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+But I haven't come up with a good alternative
+
 ---
-
-This is a resend of
-
-https://lore.kernel.org/linux-pm/2495577.jE0xQCEvom@rjwysocki.net/
-
----
- drivers/thermal/thermal_core.c |   36 +++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1343,6 +1343,25 @@ int thermal_zone_get_crit_temp(struct th
- }
- EXPORT_SYMBOL_GPL(thermal_zone_get_crit_temp);
- 
-+static int thermal_zone_init_governor(struct thermal_zone_device *tz)
-+{
-+	struct thermal_governor *governor;
-+	int ret;
-+
-+	mutex_lock(&thermal_governor_lock);
-+
-+	if (tz->tzp)
-+		governor = __find_governor(tz->tzp->governor_name);
-+	else
-+		governor = def_governor;
-+
-+	ret = thermal_set_governor(tz, governor);
-+
-+	mutex_unlock(&thermal_governor_lock);
-+
-+	return ret;
-+}
-+
- static void thermal_zone_init_complete(struct thermal_zone_device *tz)
- {
- 	struct thermal_cooling_device *cdev;
-@@ -1407,7 +1426,6 @@ thermal_zone_device_register_with_trips(
- 	struct thermal_trip_desc *td;
- 	int id;
- 	int result;
--	struct thermal_governor *governor;
- 
- 	if (!type || strlen(type) == 0) {
- 		pr_err("No thermal zone type defined\n");
-@@ -1505,21 +1523,9 @@ thermal_zone_device_register_with_trips(
- 	if (result)
- 		goto release_device;
- 
--	/* Update 'this' zone's governor information */
--	mutex_lock(&thermal_governor_lock);
--
--	if (tz->tzp)
--		governor = __find_governor(tz->tzp->governor_name);
--	else
--		governor = def_governor;
--
--	result = thermal_set_governor(tz, governor);
--	if (result) {
--		mutex_unlock(&thermal_governor_lock);
-+	result = thermal_zone_init_governor(tz);
-+	if (result)
- 		goto unregister;
--	}
--
--	mutex_unlock(&thermal_governor_lock);
- 
- 	if (!tz->tzp || !tz->tzp->no_hwmon) {
- 		result = thermal_add_hwmon_sysfs(tz);
-
-
+Cheers,
+Benno
 
 
