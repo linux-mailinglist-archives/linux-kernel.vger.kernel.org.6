@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-358701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3183998294
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:41:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3BA998297
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891B11F225CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8DC285CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835671BC07B;
-	Thu, 10 Oct 2024 09:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEE41BC097;
+	Thu, 10 Oct 2024 09:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLmSsD5K"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zX9p2aZ6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17711946C8;
-	Thu, 10 Oct 2024 09:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB77F1BC061;
+	Thu, 10 Oct 2024 09:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553295; cv=none; b=HgYhN5x0mw0Zigs5RidQtc/oIEngCg8BP4qxl3jo5us6dGa4FoSDINNgDuggE8XykqXXxVf2Bz+qyiZgWy7gsIvRWs4UGQ8sF0+f6wr7tODyeNmgLcfEIKkWLpcZJkGOt3cpJfN6r8sS2VjG3KaazazP/K9O2uGnZNDy0f9ISw4=
+	t=1728553324; cv=none; b=EMadXTwgb6FvIUG9M3Hy2G3wSfkXxv6JIp9wcIED7P/NZOOQ3FrHSJFKqSKgsggLOehUu/nEQw0M5XmWKn211r7m19lFM50XkV/DhALrZwU+txL5mUrNrb1ejugVWtoUyqLFmvTcBIueVycnM8yCB17j3SG1rbSLIYyMyR7IP6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553295; c=relaxed/simple;
-	bh=5O+UpFPebLYLebTl+sL0ZAbnmq5acbF5JPs5rpoBhOs=;
+	s=arc-20240116; t=1728553324; c=relaxed/simple;
+	bh=GIEhwdto29dTIdh5H2EYdZNpFROtC3k9we0ptMpXhdo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBLn5u3AEYDIrhXkw4dhtw8fU0/HVUF6kkFmOnTPEjlj31Kmf/lpW4cElcD56z2m8MNhNE9Hajf0KKzISJZ3xTykSOGghNIwO8G3teI/AlCLt90V3mzEVSWXqPyReyza3FeLE3i3pjAsxpzDsF2e/FoFyVHZ4Uz//EkF/H47vcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLmSsD5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4B2C4CEC5;
-	Thu, 10 Oct 2024 09:41:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728553294;
-	bh=5O+UpFPebLYLebTl+sL0ZAbnmq5acbF5JPs5rpoBhOs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNVprvdOfBahhq50qunOvCDF92oJeWNzpbEowRc2KDLV0D+3R90t4fY7NeExG6z4tvBcUNpULTdRy455nsskURpmEu/tFejS7jfNLjLIeffuQs7Qu3szHGjkh0eh3CAgkiu0O5GiW98ivL/6Et0lyQdJ0CUBUfqo5fuv4NAOMGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zX9p2aZ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B372C4CEC5;
+	Thu, 10 Oct 2024 09:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728553323;
+	bh=GIEhwdto29dTIdh5H2EYdZNpFROtC3k9we0ptMpXhdo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OLmSsD5KzkHUBtJ9uXNBgdVS9SgecIPeX8D+UvKW8HYmavKXNYPS4K9Jr5IGRPDvY
-	 nK+sXzXzoTTBDtZaCigThcmqlH9keEM+eInNt/27J7CqWwElbdZjsHtCjwrMQnUFrg
-	 QL0gPJNk8C4hfJcR1SLSArNoyX27FxnMCpdq/ngdRPN4x09lg7FEFl4XP5e2NURzUR
-	 k6jm1wR+zdYqJZdBfAtzWOnC5NlxcPfAITtreteeHUye4NUs9erqmVf+7wl4p22uSP
-	 xPWiLx0Ef71pJ4XDXEo/ceFxN0a1jXw03lPjP6SMiHSNyJStuVAH+r1CF5XdPDbBjo
-	 AzgdTCKSe/TZQ==
-Date: Thu, 10 Oct 2024 10:41:30 +0100
-From: Simon Horman <horms@kernel.org>
-To: Stefan Wiehler <stefan.wiehler@nokia.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3 3/4] ip6mr: Lock RCU before ip6mr_get_table() call
- in ip6mr_compat_ioctl()
-Message-ID: <20241010094130.GA1098236@kernel.org>
-References: <20241010090741.1980100-2-stefan.wiehler@nokia.com>
- <20241010090741.1980100-7-stefan.wiehler@nokia.com>
+	b=zX9p2aZ6jrztUDxeBO52da8z69ZkOWyH9pv6vxWg6T7tWCsGzR0z72bv9P0pmiQIw
+	 wQYWZUvXzov9vBTtqAQcR3bdMZoum4WLSwGjC5STMy7KZsiCr6oH31B3SkXL+x3HOS
+	 AMpytUXLPJUQ+HvEJoX3uYanfLA+F572B+sKu0Oo=
+Date: Thu, 10 Oct 2024 11:41:59 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+Cc: Fabricio Gasperin <fgasperin@lkcamp.dev>,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Teddy Wang <teddy.wang@siliconmotion.com>,
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
+Subject: Re: [PATCH] staging: sm750: Fix missing config in Kconfig
+Message-ID: <2024101036-footboard-stinger-9c03@gregkh>
+References: <20240921180612.57657-1-fgasperin@lkcamp.dev>
+ <20240921180612.57657-2-fgasperin@lkcamp.dev>
+ <2024100925-lend-aging-2ff3@gregkh>
+ <b8c3c51e-375f-4139-8336-76b6df56e8ea@lkcamp.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,107 +59,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010090741.1980100-7-stefan.wiehler@nokia.com>
+In-Reply-To: <b8c3c51e-375f-4139-8336-76b6df56e8ea@lkcamp.dev>
 
-On Thu, Oct 10, 2024 at 11:07:44AM +0200, Stefan Wiehler wrote:
-> When IPV6_MROUTE_MULTIPLE_TABLES is enabled, calls to ip6mr_get_table()
-> must be done under RCU or RTNL lock. Copy from user space must be
-> performed beforehand as we are not allowed to sleep under RCU lock.
+On Wed, Oct 09, 2024 at 10:44:38AM -0300, Vinicius Peixoto wrote:
+> Hi Greg,
 > 
-> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
-> Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
-> ---
-> v3:
->   - split into separate patches
-> v2: https://patchwork.kernel.org/project/netdevbpf/patch/20241001100119.230711-2-stefan.wiehler@nokia.com/
->   - rebase on top of net tree
->   - add Fixes tag
->   - refactor out paths
-> v1: https://patchwork.kernel.org/project/netdevbpf/patch/20240605195355.363936-1-oss@malat.biz/
-> ---
->  net/ipv6/ip6mr.c | 46 ++++++++++++++++++++++++++++++++--------------
->  1 file changed, 32 insertions(+), 14 deletions(-)
+> On 10/9/24 06:56, Greg Kroah-Hartman wrote:
+> > On Sat, Sep 21, 2024 at 03:06:09PM -0300, Fabricio Gasperin wrote:
+> > > Fixes the following compilation error:
+> > > 
+> > > ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> > > ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> > > ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> > > 
+> > > Signed-off-by: Fabricio Gasperin <fgasperin@lkcamp.dev>
+> > > ---
+> > >   drivers/staging/sm750fb/Kconfig | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/drivers/staging/sm750fb/Kconfig b/drivers/staging/sm750fb/Kconfig
+> > > index 08bcccdd0f1c..eca1aa43d725 100644
+> > > --- a/drivers/staging/sm750fb/Kconfig
+> > > +++ b/drivers/staging/sm750fb/Kconfig
+> > > @@ -3,6 +3,7 @@ config FB_SM750
+> > >   	tristate "Silicon Motion SM750 framebuffer support"
+> > >   	depends on FB && PCI && HAS_IOPORT
+> > >   	select FB_MODE_HELPERS
+> > > +	select FB_IOMEM_FOPS
+> > >   	select FB_CFB_FILLRECT
+> > >   	select FB_CFB_COPYAREA
+> > >   	select FB_CFB_IMAGEBLIT
+> > > -- 
+> > > 2.46.1
+> > > 
+> > > 
+> > 
+> > What is causing this error? What commit created the problem, and why
+> > has no one reported it yet?
 > 
-> diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-> index b18eb4ad21e4..415ba6f55a44 100644
-> --- a/net/ipv6/ip6mr.c
-> +++ b/net/ipv6/ip6mr.c
-> @@ -1961,10 +1961,7 @@ int ip6mr_compat_ioctl(struct sock *sk, unsigned int cmd, void __user *arg)
->  	struct mfc6_cache *c;
->  	struct net *net = sock_net(sk);
->  	struct mr_table *mrt;
-> -
-> -	mrt = ip6mr_get_table(net, raw6_sk(sk)->ip6mr_table ? : RT6_TABLE_DFLT);
-> -	if (!mrt)
-> -		return -ENOENT;
-> +	int err;
->  
->  	switch (cmd) {
->  	case SIOCGETMIFCNT_IN6:
-> @@ -1972,8 +1969,30 @@ int ip6mr_compat_ioctl(struct sock *sk, unsigned int cmd, void __user *arg)
->  			return -EFAULT;
->  		if (vr.mifi >= mrt->maxvif)
->  			return -EINVAL;
+> This happens because drivers/staging/sm750fb/sm750.c, defines an fb_ops
+> structure:
+> 
+> static const struct fb_ops lynxfb_ops = {
+> 	.owner = THIS_MODULE,
+> 	FB_DEFAULT_IOMEM_OPS,
+> 	...
+> };
+> 
+> FB_DEFAULT_IOMEM_OPS expands to the fb_io_* helpers declared in
+> include/linux/fb.h and defined in drivers/video/fbdev/core/fb_io_fops.c;
+> however, the latter is gated by FB_IOMEM_FOPS, so when compiling a kernel
+> with CONFIG_STAGING=y + CONFIG_FB=m + CONFIG_FB_SM750=m, you get the
+> following error:
+> 
+> ERROR: modpost: "fb_io_read" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> ERROR: modpost: "fb_io_write" [drivers/staging/sm750fb/sm750fb.ko]
+> undefined!
+> ERROR: modpost: "fb_io_mmap" [drivers/staging/sm750fb/sm750fb.ko] undefined!
+> make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+> 
+> So in order to solve it we select FB_IOMEM_FOPS, much like the other FB_*
+> drivers do in drivers/video/fbdev/Kconfig.
+> 
+> Not entirely sure why this wasn't caught before, but the commit that broke
+> the build for sm750fb is 6b180f66c0dd ("fbdev: Provide I/O-memory helpers as
+> module"), which made the fb_io_* helpers be built as a separate module
+> instead of being bundled in fb.o (which is what sm750fb was relying on). I
+> think Fabricio can add a "Fixes:" tag in v2.
 
-Hi Stefan,
+Ok, thanks for the explaination.  All of this should go into the
+changelog text, and yes, a Fixes: tag is also required.
 
-mrt is now used uninitialised here.
+thanks,
 
-> +		break;
-> +	case SIOCGETSGCNT_IN6:
-> +		if (copy_from_user(&sr, arg, sizeof(sr)))
-> +			return -EFAULT;
-> +		break;
-> +	default:
-> +		return -ENOIOCTLCMD;
-> +	}
-> +
-> +
-> +	rcu_read_lock();
-> +	mrt = ip6mr_get_table(net, raw6_sk(sk)->ip6mr_table ? : RT6_TABLE_DFLT);
-> +	if (!mrt) {
-> +		err = -ENOENT;
-> +		goto out;
-> +	}
-> +
-> +	switch (cmd) {
-> +	case SIOCGETMIFCNT_IN6:
-> +		if (vr.mifi >= mrt->maxvif) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
->  		vr.mifi = array_index_nospec(vr.mifi, mrt->maxvif);
-> -		rcu_read_lock();
->  		vif = &mrt->vif_table[vr.mifi];
->  		if (VIF_EXISTS(mrt, vr.mifi)) {
->  			vr.icount = READ_ONCE(vif->pkt_in);
-
-...
-
-> @@ -2004,11 +2020,13 @@ int ip6mr_compat_ioctl(struct sock *sk, unsigned int cmd, void __user *arg)
->  				return -EFAULT;
->  			return 0;
->  		}
-> -		rcu_read_unlock();
-> -		return -EADDRNOTAVAIL;
-> -	default:
-> -		return -ENOIOCTLCMD;
-> +		err = -EADDRNOTAVAIL;
-> +		goto out;
->  	}
-> +
-
-I think that this out label should be used consistently once rcu_read_lock
-has been taken. With this patch applied there seems to be one case on error
-where rcu_read_unlock() before returning, and one case where it isn't
-(which looks like it leaks the lock).
-
-> +out:
-> +	rcu_read_unlock();
-> +	return err;
->  }
->  #endif
-
--- 
-pw-bot: changes-requested
+greg k-h
 
