@@ -1,78 +1,109 @@
-Return-Path: <linux-kernel+bounces-359949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FC19992EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:46:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B289992F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED812288A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:46:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4F61C249A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4746F1E132F;
-	Thu, 10 Oct 2024 19:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axUPrGjZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AC81DFDA2;
+	Thu, 10 Oct 2024 19:43:18 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86A11CEEA4
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462E519DFA2;
+	Thu, 10 Oct 2024 19:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728589321; cv=none; b=L67j9gtVfrnoXKUHhQ9YBGf4gMOIxR4kxEAwSWBd/WaAg5hOmlPBJpmtXmhsQ1blBXpsxwRkXQBs2qvYQIPeGGHjYP+H7WByuGFaQYeNZqvK2Hk3duaWfwBjHVCGa0UaLMmXvc+j+uKzKkPCtj2nW38TOpepHx6NuA/TJ47Gizw=
+	t=1728589398; cv=none; b=RbKJIIJrImwLHbsW9W7sptmuushVTafakYTg+mowz9ziLjkZyQsRjlAtbr7k6BafHfgc+mOheefEuL4CSTwzEPShkB8//MKS/6+q9xbHKiEoKSZjRdrAmNNhBtStj4TPdge2HIe9hFXIn7X+JoCLcEKi0NoMBIaFSq9C+vgYDj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728589321; c=relaxed/simple;
-	bh=Zro1HpePXgGRO6zxYed8MTwT5KZp8Z+w0fujtg83CkY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eZFRo8+aTcMBzFgUNJpA0yo0mubrAR3DsYyIXSwXByAe+BfdXuERN1bjg2d7b0mA4m3GPoPrv5r0DZAWMUG0SesQzK3w8yUo90QF9aoCJ4fFufleVs11pV+laE5uepwiMlt8UB5ClAeNXkGIENrWSj1iJtkuSxxe0zVH1Tb+Wi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axUPrGjZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C5BC4CEC5;
-	Thu, 10 Oct 2024 19:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728589321;
-	bh=Zro1HpePXgGRO6zxYed8MTwT5KZp8Z+w0fujtg83CkY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=axUPrGjZTk4OhfYbUi2Kkkh+5DZeWXfnlY3jUa8KZMZmv+Ww/oZKYP2HnWz1UsIfb
-	 dVOcA6aZGjbpFrHbmtNjD7jBnajvsjp/OBjWsq9Rbg0j4EhEd5U5PPTbk9TIYlhruc
-	 hIWbtab830xwkPMDX2Txns815uNxtyfDIQcJSamGVw+wobPGcuIqCTkB5Z4h/OBDeo
-	 DPNHf/kwjzBOXL05V3d2Bv5YPZ47DsgVwBbYvyvVwlBPUU78NHGwmeztIy1jN5YP2V
-	 Wsw+oYkAduCtD2EKXiqDofAAZI1II9d8sbal8bdM9CfspJVqWNEpz273A2BAQIW0Jr
-	 suIzcIKQDFxIQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D4F3803263;
-	Thu, 10 Oct 2024 19:42:07 +0000 (UTC)
-Subject: Re: [GIT PULL] ring-buffer: Fix for 6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241010112636.2dba6885@gandalf.local.home>
-References: <20241010112636.2dba6885@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241010112636.2dba6885@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-ringbuffer-v6.12-rc2
-X-PR-Tracked-Commit-Id: 912da2c384d510ce40c5af9c3adc316afa4ec547
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0edab8d1324dfeee52aad763236c9015e413c4c2
-Message-Id: <172858932568.2148416.6110311848721509859.pr-tracker-bot@kernel.org>
-Date: Thu, 10 Oct 2024 19:42:05 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1728589398; c=relaxed/simple;
+	bh=Q7OewBtQ0Gea+BFYlkHx/5aubBH7TAKhTSr3FH3BPqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MdcRwGCEMAoH9yewKKwFBpJCOPuGGXNwuCBT/Q85b3WNaAonKJls/5CKNybxP2QRrRTEP7CT27vf5VG1vossmmzlk2gkDek9ZRSolokc3w80oUOcbZlyTgVHWPsvDN+FyeDE+Beb/Rqao3LoD9Lky8AyUaUm6iMzIeSIQEJ3WSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75495C4CECF;
+	Thu, 10 Oct 2024 19:43:12 +0000 (UTC)
+Date: Thu, 10 Oct 2024 15:43:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, Jason Baron <jbaron@akamai.com>, Ard
+ Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?B?Qmo=?=
+ =?UTF-8?B?w7Zybg==?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
+ <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-arm-kernel@lists.infradead.org, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
+ <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Samuel Holland
+ <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
+ <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
+ <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev
+Subject: Re: [PATCH v9 1/5] rust: add generic static_key_false
+Message-ID: <20241010154320.6d17ba69@gandalf.local.home>
+In-Reply-To: <20241001211543.qdjl4pyfhehxqfk7@treble>
+References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
+	<20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
+	<20241001211543.qdjl4pyfhehxqfk7@treble>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Thu, 10 Oct 2024 11:26:36 -0400:
+On Tue, 1 Oct 2024 14:15:43 -0700
+Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-ringbuffer-v6.12-rc2
+> On Tue, Oct 01, 2024 at 01:29:58PM +0000, Alice Ryhl wrote:
+> > Add just enough support for static key so that we can use it from
+> > tracepoints. Tracepoints rely on `static_key_false` even though it is
+> > deprecated, so we add the same functionality to Rust.  
+> 
+> Instead of extending the old deprecated static key interface into Rust,
+> can we just change tracepoints to use the new one?
+> 
+> /me makes a note to go convert the other users...
+> 
+> From: Josh Poimboeuf <jpoimboe@kernel.org>
+> Subject: [PATCH] tracepoints: Use new static branch API
+> 
+> The old static key API based on 'struct static_key' is deprecated.
+> Convert tracepoints to use the new API.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0edab8d1324dfeee52aad763236c9015e413c4c2
+Alice,
 
-Thank you!
+Can you send a v10 with the added acks and whitespace fixes as well as
+using static_branch_unlikely(), and I'll pull it into my tree.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Base it off of v6.12-rc2.
+
+Thanks,
+
+-- Steve
 
