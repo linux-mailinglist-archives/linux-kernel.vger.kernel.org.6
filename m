@@ -1,198 +1,121 @@
-Return-Path: <linux-kernel+bounces-358319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE78997D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:23:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFC8997D23
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DE7285176
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38A3282F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548D019EED2;
-	Thu, 10 Oct 2024 06:23:40 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D34193070;
+	Thu, 10 Oct 2024 06:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="B3Kpe3aD"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD81311AC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B4319E82A
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728541420; cv=none; b=SzY6jIzpPij6XUw8l5G2kX4S29vRe3uOMd3lLwopCg4bSqGk47NbHOD9gixFkBgWFlFd1b2eUtN9uBM+0AqK2syLlb/jq9fsL7VBoQTzdlcjsHkQdpfgJ2c29zuMKp8i3uV426kHpK4qpAawrUIJ/pNuqpAa3kTMmme9Y9v4PHU=
+	t=1728541474; cv=none; b=Z9ZR49l1O2AN4jqcZ0vAlqMZqZqmTMKNcvW1QUA47hOXx0xpG4kLKgcaYSvhytzrxNIXnC+JINWSA/tC5JSxGGPNc9pvUpkEvggCXwUUCg7UW8wsZrONeYdEl02IUhn56KAeW1/YSd7C0XnE/qzplumicmvamI7Bag0GX44s064=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728541420; c=relaxed/simple;
-	bh=1KByvVZ1FvuZMXChOGTpKcLF9Y+ZjvDj/rnc9Of+SUc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EE44wfnAnMD2xdUCdp0KAyDtZQE+xPXQ5mAd6AfSs8nM2eRg9syOujYwTb02pz3sKPNPCCysEPRwmi1HzVPaRPmK/PQp/If8EWAs8yHxu2OPwIsBdW8dpKpcLFqW1qPtcKeUrpg/6AwMQKgs+paCS14u4pnOC4jOx30sU+x4Yys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPKRX1r87zySr9;
-	Thu, 10 Oct 2024 14:22:16 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id 728D61401E9;
-	Thu, 10 Oct 2024 14:23:33 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 14:23:33 +0800
-Subject: Re: [patch 13/25] debugobjects: Rename and tidy up per CPU pools
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Waiman Long <longman@redhat.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.770595795@linutronix.de>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <30b4864b-4d41-3484-f324-76598a98f7d4@huawei.com>
-Date: Thu, 10 Oct 2024 14:23:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1728541474; c=relaxed/simple;
+	bh=06v5ByD0afjFJR2Gk//6r4sYzvL051t2rbG6jI+cafg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=edZtXBloFsY9Ashd2i4TELCiuvoNCMQ7luY0EGq2uATXC6EyJwOA6435YB5c6jtSKoHZyU9xCagAM2hZ+tHQ/W4hXH9K1+AB3ToFu8MtmsBHcMcBDW4wQTYJafrD2d7skPYJzHtd2cK24XcHJ6QxqNRSSLD3/iWfHlCrUDSDdu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=B3Kpe3aD; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so256200f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1728541470; x=1729146270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=06v5ByD0afjFJR2Gk//6r4sYzvL051t2rbG6jI+cafg=;
+        b=B3Kpe3aDsmbhLLtHzo8VK9ZpJpX9MSQFynq5TpP5EuIR49OtIOPRJ/nGrPm95ikCCp
+         RR89gCfBX4c307B0Zsgj+IEXmtHG5nJKycwd1i/7EZI26k0sC706MGx1O39DnkL9Ujbc
+         k5kVkTnP1BTZIIwHEA/gnrp57IQVqb3cQc83JAdlllqaJuqW4Wu5Qkjk8E8SzljDurFw
+         4MzvtfPm3oeoWZjHlGEXyPCCxyRl+XyVHEhd72zkV+zoU6cBrMcP4pN6EAd29IAhfP7E
+         qSRMDbauUOLspb7O5yxGfMcYHsadvZYMkHlPF9zx5SgEtGknn/RrPGwdXjrVff94er9y
+         uPkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728541470; x=1729146270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=06v5ByD0afjFJR2Gk//6r4sYzvL051t2rbG6jI+cafg=;
+        b=DIURLoLHmdSDU/NgGdicJ+Y8gcfpwmLISVPoNCfwMMu3slHYRKKPCYWkkiI0B4QJ1f
+         Uk9W/1nGP5QHGT5gVsuLcNksO35ImvqXyaEBdUGKCG9bXfjVKvZQxpNaZUaz6XrpQJk3
+         eZ+iM+oZ0oZPwPPbXl7TWihb6pgilgna3J7qb78kzRDxpQftuLGgJgi3tnLd0/z9uVum
+         3J22/+7Y+MX0CIp1N0fofX2BTzgNmso5nt2pMjdHUgXBvBZqg2+LILqFx1p3Zna4SqB6
+         jwVeZ7IMHQ1MGNPT9DmAi4l9wLGLRFMuG9SQOpEqrfBeXqleb1868SSnHUagc+VZ4lGZ
+         jbeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzgbyagl8AlKx+5ns8OvJoj6AuKvlt/irPJrJ+Sd3i5D3YLWCrFH3LbDJ9MzaLrmtGOGEQR6xBVhIAF90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjTxCsnhUNQlCF7oy8xVgu2RjlAIlxwQ0euvkrovG5hwlVr4GY
+	LjFvrwDwLH114sukhIz8m/gcrelBWk6F/ONWakRdFxBaMIhBPAH8b+Gp1DbJBR8=
+X-Google-Smtp-Source: AGHT+IFb4UsVqlsnmRzalMlOFhL03MP9RKPAZIFBzAhHFTnSb9JuNURPjg2Y03goJMWBnZPtgCszsA==
+X-Received: by 2002:a5d:5606:0:b0:37d:4937:c9eb with SMTP id ffacd0b85a97d-37d4937cbd4mr887313f8f.21.1728541470555;
+        Wed, 09 Oct 2024 23:24:30 -0700 (PDT)
+Received: from blindfold.localnet ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd127sm605077f8f.36.2024.10.09.23.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 23:24:30 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net, kadlec@netfilter.org, pablo@netfilter.org, rgb@redhat.com, upstream+net@sigma-star.at, audit@vger.kernel.org, linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
+Date: Thu, 10 Oct 2024 08:24:28 +0200
+Message-ID: <4370155.VQJxnDRnGh@somecomputer>
+In-Reply-To: <CAHC9VhSbAM3iWxhO+rgJ0d0qOtrSouw0McrjstuP5xQw3=A35Q@mail.gmail.com>
+References: <20241009203218.26329-1-richard@nod.at> <CAHC9VhSbAM3iWxhO+rgJ0d0qOtrSouw0McrjstuP5xQw3=A35Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241007164913.770595795@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+
+Am Donnerstag, 10. Oktober 2024, 00:02:44 CEST schrieb Paul Moore:
+> [CC'ing the audit and LSM lists for obvious reasons]
+>=20
+> If we're logging the subjective credentials of the skb's associated
+> socket, we really should also log the socket's LSM secctx similar to
+> what we do with audit_log_task() and audit_log_task_context().
+> Unfortunately, I don't believe we currently have a LSM interface that
+> return the secctx from a sock/socket, although we do have
+> security_inode_getsecctx() which *should* yield the same result using
+> SOCK_INODE(sk->sk_socket).
+
+Hm, I thought about that but saw 2173c519d5e91 ("audit: normalize NETFILTER=
+_PKT").
+It removed usage of audit_log_secctx() and many other, IMHO, useful fields.
+What about skb->secctx?
+
+>=20
+> I should also mention that I'm currently reviewing a patchset which is
+> going to add proper support for multiple LSMs in audit which will
+> likely impact this work.
+>=20
+> https://lore.kernel.org/linux-security-module/20241009173222.12219-1-case=
+y@schaufler-ca.com/
+
+Ok!
+
+Thanks,
+//richard
+=20
+=2D-=20
+=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
+=2DGasse 6, 6020 Innsbruck, AUT
+UID/VAT Nr: ATU 66964118 | FN: 374287y
 
 
-
-On 2024/10/8 0:50, Thomas Gleixner wrote:
-> No point in having a separate data structure. Reuse struct obj_pool and
-> tidy up the code.
-
-Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  lib/debugobjects.c |   43 +++++++++++++++++--------------------------
->  1 file changed, 17 insertions(+), 26 deletions(-)
-> 
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -43,21 +43,12 @@ struct debug_bucket {
->  	raw_spinlock_t		lock;
->  };
->  
-> -/*
-> - * Debug object percpu free list
-> - * Access is protected by disabling irq
-> - */
-> -struct debug_percpu_free {
-> -	struct hlist_head	free_objs;
-> -	int			obj_free;
-> -};
-> -
->  struct obj_pool {
->  	struct hlist_head	objects;
->  	unsigned int		cnt;
->  } ____cacheline_aligned;
->  
-> -static DEFINE_PER_CPU(struct debug_percpu_free, percpu_obj_pool);
-> +static DEFINE_PER_CPU(struct obj_pool, pool_pcpu);
->  
->  static struct debug_bucket	obj_hash[ODEBUG_HASH_SIZE];
->  
-> @@ -271,13 +262,13 @@ static struct debug_obj *__alloc_object(
->  static struct debug_obj *
->  alloc_object(void *addr, struct debug_bucket *b, const struct debug_obj_descr *descr)
->  {
-> -	struct debug_percpu_free *percpu_pool = this_cpu_ptr(&percpu_obj_pool);
-> +	struct obj_pool *percpu_pool = this_cpu_ptr(&pool_pcpu);
->  	struct debug_obj *obj;
->  
->  	if (likely(obj_cache)) {
-> -		obj = __alloc_object(&percpu_pool->free_objs);
-> +		obj = __alloc_object(&percpu_pool->objects);
->  		if (obj) {
-> -			percpu_pool->obj_free--;
-> +			percpu_pool->cnt--;
->  			goto init_obj;
->  		}
->  	} else {
-> @@ -304,8 +295,8 @@ alloc_object(void *addr, struct debug_bu
->  				obj2 = __alloc_object(&pool_global.objects);
->  				if (!obj2)
->  					break;
-> -				hlist_add_head(&obj2->node, &percpu_pool->free_objs);
-> -				percpu_pool->obj_free++;
-> +				hlist_add_head(&obj2->node, &percpu_pool->objects);
-> +				percpu_pool->cnt++;
->  				obj_pool_used++;
->  				WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
->  			}
-> @@ -384,7 +375,7 @@ static void free_obj_work(struct work_st
->  static void __free_object(struct debug_obj *obj)
->  {
->  	struct debug_obj *objs[ODEBUG_BATCH_SIZE];
-> -	struct debug_percpu_free *percpu_pool;
-> +	struct obj_pool *percpu_pool;
->  	int lookahead_count = 0;
->  	bool work;
->  
-> @@ -398,10 +389,10 @@ static void __free_object(struct debug_o
->  	/*
->  	 * Try to free it into the percpu pool first.
->  	 */
-> -	percpu_pool = this_cpu_ptr(&percpu_obj_pool);
-> -	if (percpu_pool->obj_free < ODEBUG_POOL_PERCPU_SIZE) {
-> -		hlist_add_head(&obj->node, &percpu_pool->free_objs);
-> -		percpu_pool->obj_free++;
-> +	percpu_pool = this_cpu_ptr(&pool_pcpu);
-> +	if (percpu_pool->cnt < ODEBUG_POOL_PERCPU_SIZE) {
-> +		hlist_add_head(&obj->node, &percpu_pool->objects);
-> +		percpu_pool->cnt++;
->  		return;
->  	}
->  
-> @@ -410,10 +401,10 @@ static void __free_object(struct debug_o
->  	 * of objects from the percpu pool and free them as well.
->  	 */
->  	for (; lookahead_count < ODEBUG_BATCH_SIZE; lookahead_count++) {
-> -		objs[lookahead_count] = __alloc_object(&percpu_pool->free_objs);
-> +		objs[lookahead_count] = __alloc_object(&percpu_pool->objects);
->  		if (!objs[lookahead_count])
->  			break;
-> -		percpu_pool->obj_free--;
-> +		percpu_pool->cnt--;
->  	}
->  
->  	raw_spin_lock(&pool_lock);
-> @@ -494,10 +485,10 @@ static void put_objects(struct hlist_hea
->  static int object_cpu_offline(unsigned int cpu)
->  {
->  	/* Remote access is safe as the CPU is dead already */
-> -	struct debug_percpu_free *pcp = per_cpu_ptr(&percpu_obj_pool, cpu);
-> +	struct obj_pool *pcp = per_cpu_ptr(&pool_pcpu, cpu);
->  
-> -	put_objects(&pcp->free_objs);
-> -	pcp->obj_free = 0;
-> +	put_objects(&pcp->objects);
-> +	pcp->cnt = 0;
->  	return 0;
->  }
->  #endif
-> @@ -1076,7 +1067,7 @@ static int debug_stats_show(struct seq_f
->  	int cpu, obj_percpu_free = 0;
->  
->  	for_each_possible_cpu(cpu)
-> -		obj_percpu_free += per_cpu(percpu_obj_pool.obj_free, cpu);
-> +		obj_percpu_free += per_cpu(pool_pcpu.cnt, cpu);
->  
->  	seq_printf(m, "max_chain     :%d\n", debug_objects_maxchain);
->  	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
-> 
-> .
-> 
-
--- 
-Regards,
-  Zhen Lei
 
