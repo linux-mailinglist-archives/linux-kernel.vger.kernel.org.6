@@ -1,153 +1,173 @@
-Return-Path: <linux-kernel+bounces-359673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFF4998EDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:53:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55372998EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC45C1C2146E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:53:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9F63B26697
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AC71CFEA0;
-	Thu, 10 Oct 2024 17:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6653C19D078;
+	Thu, 10 Oct 2024 17:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F4Pt5mpl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zllPLjR8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EYx4iYDN";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zllPLjR8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EYx4iYDN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DD71CF7B2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF7D192D67;
+	Thu, 10 Oct 2024 17:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582697; cv=none; b=UPQpIme7w02rZ1wQjwBfkI/MX1wvyN/l8dYuYsEWUONxSm7C8045+3at5LK95DFVbK8Fr3QoAtIfLDE8qffvKtAWcJYLS2zsW3TbSXy86ipMsA/HQgOHIAd3i9em3O5A9Y9OTmPbGCjTyrlm6kCjGWkuY6tPYN9L7yMAHQYaMtI=
+	t=1728582624; cv=none; b=YxpsGP4CIvXpVsgQR136cScYonDC32icO2sOXfcQAltR+WEOIz69wMr1MnMRS/Ya28s3TK94dvmO2mhT2edtGEHC7dw5q5CdJErToLiPw+dP8Ge6kB0qv+p67woF633CMHzO4xKxNqI+Vjo/T/d26kweKE95uyptI8jLMAKC/U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582697; c=relaxed/simple;
-	bh=IywaZWF+g2PbDc1VwQqvpFLC3+ytyFGpwFePV11UE3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ker6VdIgd8KMpGy44MjZCzwjENVmFsfOs2VPsvRDPF5ReqA94u/Nzs8ck8vInEtRtY5e99ZVRSZbDya+NBK6/9w4rEPKC95vfBPgDU9bQxAakoi2aK1t6qHgCGqDt2Ezpr8itr9KliRPkoLosyOdxyGZBcRkmwBR/+siI5sTSrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F4Pt5mpl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728582695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fUwkPzApTD7NhHibkGSsv7YC+83MOmdVz2KjAeVYO1o=;
-	b=F4Pt5mpluwgFNcK6qoIQSOpp+TO4kbhSEDObG8KHdl5XHlCo3l76BFU5En/wJYxBazdEsI
-	DLUvChrK9tUhJ9vKnhQKDRfOGJyf41ra1HGd2jEybdhltcfqhS3yx+dD43YJ0p6e1itMEZ
-	5hQj9662kiRJXme9683vX0q2lQo4KXk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-OWOItd8oNAiTynnGMLP7ow-1; Thu,
- 10 Oct 2024 13:51:34 -0400
-X-MC-Unique: OWOItd8oNAiTynnGMLP7ow-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1728582624; c=relaxed/simple;
+	bh=iztxLkH+6QeNEq3pKGgSEMGZyZe5s+OlEO+YHMVWhMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DNNaWMja4N9PhKzhWJFeip6TWpPNiCMULZGCI4Vb0havmC6PyaeTyN2Z2owsFY6hh6iTfrLUi8+HXl6edCMBGQQ+CvfbcjbT3OYWVe2lbR6i+TsDfdiyE7uYXYw+NykiqkwpR23spJqYYHvSvqDmv7Ox54yMfN7t+nWaqcZ35YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zllPLjR8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EYx4iYDN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zllPLjR8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EYx4iYDN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CD3581955BE1;
-	Thu, 10 Oct 2024 17:51:32 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.239])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E65E519560A2;
-	Thu, 10 Oct 2024 17:51:29 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: kvalo@kernel.org,
-	jjohnson@kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: jtornosm@redhat.com,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] wifi: ath12k: fix warning when unbinding
-Date: Thu, 10 Oct 2024 19:48:59 +0200
-Message-ID: <20241010175102.207324-3-jtornosm@redhat.com>
-In-Reply-To: <20241010175102.207324-1-jtornosm@redhat.com>
-References: <20241010175102.207324-1-jtornosm@redhat.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DA9261FF0D;
+	Thu, 10 Oct 2024 17:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728582620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvXSIBVuGePrZ2AW5JUzbcF3MdB5n2e5htVDCCOf188=;
+	b=zllPLjR8998NRT3mUgDJMpdQwfc55CEoT26Yx1+ORCRuPq0IKJLZfn+uhvXiQ6asQLLjAP
+	vqWoYFFPeRc8jEkIjn76gMgXkL2otrXeLbdqoIneoGBZzt2NT6LOo8OPd/jnyhVa6KsFE7
+	11jfaYeadlcH6Oa4G56qX6LqEJLZ7Wc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728582620;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvXSIBVuGePrZ2AW5JUzbcF3MdB5n2e5htVDCCOf188=;
+	b=EYx4iYDNxr/bH6FrEDSg4+qqs6NQxCg9rpfH0pPGNgvFsVv7I+mgHe5LrXHS4EtJvhZsma
+	1E4h5qBd8Q0NDRCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728582620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvXSIBVuGePrZ2AW5JUzbcF3MdB5n2e5htVDCCOf188=;
+	b=zllPLjR8998NRT3mUgDJMpdQwfc55CEoT26Yx1+ORCRuPq0IKJLZfn+uhvXiQ6asQLLjAP
+	vqWoYFFPeRc8jEkIjn76gMgXkL2otrXeLbdqoIneoGBZzt2NT6LOo8OPd/jnyhVa6KsFE7
+	11jfaYeadlcH6Oa4G56qX6LqEJLZ7Wc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728582620;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvXSIBVuGePrZ2AW5JUzbcF3MdB5n2e5htVDCCOf188=;
+	b=EYx4iYDNxr/bH6FrEDSg4+qqs6NQxCg9rpfH0pPGNgvFsVv7I+mgHe5LrXHS4EtJvhZsma
+	1E4h5qBd8Q0NDRCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9F8D413A6E;
+	Thu, 10 Oct 2024 17:50:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Zes9IdwTCGe/JgAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Thu, 10 Oct 2024 17:50:20 +0000
+Date: Thu, 10 Oct 2024 13:50:11 -0400
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [PATCH 05/12] iomap: Introduce IOMAP_ENCODED
+Message-ID: <3g2onw33g6fsz53eaygt3mrlv3yuuqm3kj6fvnr2tcamk3m5xo@5exfubdurtr4>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <d886ab58b1754342797d84b1fa06fea98b6363f8.1728071257.git.rgoldwyn@suse.com>
+ <ZwT_-7RGl6ygY6dz@infradead.org>
+ <ZwehmQt52_iSMLeL@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwehmQt52_iSMLeL@infradead.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[4]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-If there is an error during some initialization realated to firmware,
-the buffers dp->tx_ring[i].tx_status are released.
-However this is released again when the device is unbinded (ath12k_pci),
-and we get:
-[   41.271233] WARNING: CPU: 0 PID: 2098 at mm/slub.c:4689 free_large_kmalloc+0x4d/0x80
-[   41.271246] Modules linked in: uinput snd_seq_dummy snd_hrtimer nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables nfnetlink sunrpc qrtr_mhi intel_rapl_msr intel_rapl_common intel_uncore_frequency_common intel_pmc_core intel_vsec pmt_telemetry pmt_class kvm_intel kvm rapl qrtr snd_hda_codec_generic ath12k qmi_helpers snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi iTCO_wdt intel_pmc_bxt mac80211 snd_hda_codec iTCO_vendor_support libarc4 snd_hda_core snd_hwdep snd_seq snd_seq_device cfg80211 snd_pcm pcspkr i2c_i801 snd_timer i2c_smbus snd rfkill soundcore lpc_ich mhi virtio_balloon joydev xfs crct10dif_pclmul crc32_pclmul crc32c_intel polyval_clmulni polyval_generic ghash_clmulni_intel sha512_ssse3 sha256_ssse3 sha1_ssse3 virtio_net virtio_blk virtio_console virtio_gpu net_failover failover virtio_dma_buf serio_raw fuse qemu_fw_cfg
-[   41.271284] CPU: 0 UID: 0 PID: 2098 Comm: bash Kdump: loaded Not tainted 6.12.0-rc1+ #29
-[   41.271286] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
-[   41.271287] RIP: 0010:free_large_kmalloc+0x4d/0x80
-[   41.271289] Code: 00 10 00 00 48 d3 e0 f7 d8 81 e2 c0 00 00 00 75 2f 89 c6 48 89 df e8 82 ff ff ff f0 ff 4b 34 0f 85 59 0e ce 00 e9 5b 0e ce 00 <0f> 0b 80 3d c8 29 3c 02 00 0f 84 2d 0e ce 00 b8 00 f0 ff ff eb d1
-[   41.271290] RSP: 0018:ffffa40881a33c50 EFLAGS: 00010246
-[   41.271292] RAX: 000fffffc0000000 RBX: ffffe697c0278000 RCX: 0000000000000000
-[   41.271293] RDX: ffffe697c0b60008 RSI: ffff8d00c9e00000 RDI: ffffe697c0278000
-[   41.271294] RBP: ffff8d00c3af0000 R08: ffff8d00f215d0c0 R09: 0000000080400038
-[   41.271294] R10: 0000000080400038 R11: 0000000000000000 R12: 0000000000000001
-[   41.271295] R13: ffffffffc0ef8948 R14: ffffffffc0ef8948 R15: ffff8d00c1277560
-[   41.271296] FS:  00007fd31e556740(0000) GS:ffff8d011e400000(0000) knlGS:0000000000000000
-[   41.271297] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   41.271298] CR2: 00007f778d3ffb38 CR3: 00000000065dc000 CR4: 0000000000752ef0
-[   41.271301] PKRU: 55555554
-[   41.271302] Call Trace:
-[   41.271304]  <TASK>
-[   41.271304]  ? free_large_kmalloc+0x4d/0x80
-[   41.271306]  ? __warn.cold+0x93/0xfa
-[   41.271308]  ? free_large_kmalloc+0x4d/0x80
-[   41.271311]  ? report_bug+0xff/0x140
-[   41.271314]  ? handle_bug+0x58/0x90
-[   41.271316]  ? exc_invalid_op+0x17/0x70
-[   41.271317]  ? asm_exc_invalid_op+0x1a/0x20
-[   41.271321]  ? free_large_kmalloc+0x4d/0x80
-[   41.271323]  ath12k_dp_free+0xdc/0x110 [ath12k]
-[   41.271337]  ath12k_core_deinit+0x8d/0xb0 [ath12k]
-[   41.271345]  ath12k_pci_remove+0x50/0xf0 [ath12k]
-[   41.271354]  pci_device_remove+0x3f/0xb0
-[   41.271356]  device_release_driver_internal+0x19c/0x200
-[   41.271359]  unbind_store+0xa1/0xb0
-...
+On  2:42 10/10, Christoph Hellwig wrote:
+> On Tue, Oct 08, 2024 at 02:48:43AM -0700, Christoph Hellwig wrote:
+> > In general I'm not a huge fan of the encoded magic here, but I'll
+> > need to take a closer look at the caller if I can come up with
+> > something better.
+> 
+> I looked a bit more at the code.  I'm not entirely sure I fully
+> understand it yet, but:
+> 
+> I think most of the read side special casing would be handled by
+> always submitting the bio at the end of an iomap.  Ritesh was
+> looking into that for supporting ext2-like file systems that
+> read indirect block ondemand, but I think it actually is fundamentally
+> the right thing to do anyway.
+> 
+> For the write we plan to add a new IOMAP_BOUNDARY flag to prevent
+> merges as part of the XFS RT group series, and I think this should
+> also solve your problems with keeping one bio per iomap?  The
+> current patch is here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=djwong-wtf&id=91b5d7a52dab63732aee451bba0db315ae9bd09b
+> 
 
-The issue is always reproducible from a VM because the MSI addressing
-initialization is failing.
+Yes, this is helpful but it will solve only one of the three
+requirements.
 
-In order to fix the issue, just check if the buffers were already released
-and if they need to be released, in addition set to NULL for the checking.
+The first, compressed and uncompressed extents are to be dealth with
+differently because of the additional step of uncompressing the bio
+corresponding to the extent. So, iomap needs to inform btrfs that the
+bio submitted (through newly created function submit_io()) is compressed
+and needs to be read and decompressed.
 
-cc: stable@vger.kernel.org
-Fixes: d889913205cf7 ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
-Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
----
- drivers/net/wireless/ath/ath12k/dp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+The second, btrfs sets the bi_sector to the start of the extent map
+and the assignment cannot go through iomap_sector(). Compressed extents
+being smaller than regular one, iomap_sector would most of the times
+overrun beyond the compressed extent. So, in this patchset, I am setting
+this in ->submit_io()
 
-diff --git a/drivers/net/wireless/ath/ath12k/dp.c b/drivers/net/wireless/ath/ath12k/dp.c
-index 789d430e4455..9d878d815f3c 100644
---- a/drivers/net/wireless/ath/ath12k/dp.c
-+++ b/drivers/net/wireless/ath/ath12k/dp.c
-@@ -1277,8 +1277,12 @@ void ath12k_dp_free(struct ath12k_base *ab)
- 
- 	ath12k_dp_rx_reo_cmd_list_cleanup(ab);
- 
--	for (i = 0; i < ab->hw_params->max_tx_ring; i++)
--		kfree(dp->tx_ring[i].tx_status);
-+	for (i = 0; i < ab->hw_params->max_tx_ring; i++) {
-+		if (dp->tx_ring[i].tx_status) {
-+			kfree(dp->tx_ring[i].tx_status);
-+			dp->tx_ring[i].tx_status = NULL;
-+		}
-+	}
- 
- 	ath12k_dp_rx_free(ab);
- 	/* Deinit any SOC level resource */
+
 -- 
-2.46.2
-
+Goldwyn
 
