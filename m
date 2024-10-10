@@ -1,92 +1,184 @@
-Return-Path: <linux-kernel+bounces-359521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3911E998C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:00:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959D9998C9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0DE1F23B02
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED0922811C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84B1CCECB;
-	Thu, 10 Oct 2024 16:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I26nUxRX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBD31CCEE3;
+	Thu, 10 Oct 2024 16:01:16 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D36B13C682;
-	Thu, 10 Oct 2024 16:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F203E4207F;
+	Thu, 10 Oct 2024 16:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728576029; cv=none; b=is0GBLZKsLYgWW+cUurZLox7u0s5ItFe7LIWtQjh5zECW1CXIOQ4MFep9ATi2u+d38xVniAS8hhzt3pXsIllAd413WJ8XyD+obq0z8ojAIlRsEjGfeJERuk52/HLapZZ/uHdbfBbQI+18fEJY98RY4reFEaXsyLD4qpqw1wRrWo=
+	t=1728576076; cv=none; b=WP3AgubWdFZWewN/EySnk8Xm9UWuQWCFiLYjJkUX47iz25L8LMTYOj6RwwBjo5gZdsXqONguLuyLzossi/Q51WfwMoXZFbs2ElMtxV2LCmGdYgBNdiTy3PZlEbdJNGNYnF4S1zoF2Qlr3leK+JV0uhf0/4A3MzRQb+KcV9axlJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728576029; c=relaxed/simple;
-	bh=bOXfCK9aa6Z+FHkqe8BT3+D5wySGG8XgdIRoiD27rJg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hjLZKXBTe//WyQ0+/pcC2q4g/gguS1khiWJ+kgFYPDk8YV1xr4Xt1XDN6dVt+ZNjQEUtfAakaqO/kzIdhwHQlq/WREMurpHTkEosT2tvycPMZKN1+clof+Ae69PyAbl2mgInhlkTbz7OQNvJHlens1h4budlcASQFmfPSxNgAkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I26nUxRX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A12C4CEC5;
-	Thu, 10 Oct 2024 16:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728576027;
-	bh=bOXfCK9aa6Z+FHkqe8BT3+D5wySGG8XgdIRoiD27rJg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=I26nUxRX1Oc5WtUzgH72oKUI/ZZmIJFQr8dyEUDXjHSGWjmvabhmt8WnVSZaKZ9xQ
-	 67kSmvTRiSl+uzCesXEVBnHIsRwGJQhu20Zo1WAhosOLcE/JdpovprHeh2v+3Ab21j
-	 I07/bB/7U8UJeIFWT/jdj4389UixdfOdDGw6MmMsW3eQq/iab8FmQ3klKOAd29xIb7
-	 C+4thJKKDZpi4t6tU/mVRZZ6J5duEhE9zodA5Unfej9sWJkwS4ORHwxYS9u+hQ5F5r
-	 O5j93L3EOmcKtcV9Hd5rHBEblpl+QHEtBx636/0tBkCYexF5QHcwTC2Hyr6AJa1biy
-	 FsVSUCNDNDndg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 348573803263;
-	Thu, 10 Oct 2024 16:00:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728576076; c=relaxed/simple;
+	bh=UH4y1cVuG/rp5iFVwmdeZSf8A6fP63A4SCsHVcjrGq4=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EkhqTZTkuNv1FerwjRO4ytQXCjuqjYwOprfu5XFTrM63aUod4KvmpOjCMqNmk4//X7CN6QTpNE2FMfXOKGnuBj4EX8jtF5fAV7Zpl9ck5fOXCMSXdR1nGiBYfD7cB3XBvNxDjClJb9Po8KM6AmSt42tlmRKkEEADEhEtQfmbt/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPZBV4d5xz6J7t4;
+	Thu, 10 Oct 2024 23:56:50 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id CB3FC140518;
+	Fri, 11 Oct 2024 00:01:11 +0800 (CST)
+Received: from GurSIX1 (10.204.104.168) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 18:01:05 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+	<shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
+References: <cover.1728555449.git.gur.stavi@huawei.com> <9e15c0c2cd19d94207a1791de0dc9051a5abb95a.1728555449.git.gur.stavi@huawei.com> <6707d56835f42_2029212942b@willemb.c.googlers.com.notmuch>
+In-Reply-To: <6707d56835f42_2029212942b@willemb.c.googlers.com.notmuch>
+Subject: RE: [PATCH net-next v03 1/3] af_packet: allow fanout_add when socket is not RUNNING
+Date: Thu, 10 Oct 2024 19:00:58 +0300
+Message-ID: <000001db1b2d$9f9a00f0$dece02d0$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf v2] bpf: fix argument type in bpf_loop documentation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172857603201.2077656.16946456539767560762.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 16:00:32 +0000
-References: <20241010035652.17830-1-technoboy85@gmail.com>
-In-Reply-To: <20241010035652.17830-1-technoboy85@gmail.com>
-To: Matteo Croce <technoboy85@gmail.com>
-Cc: andrii@kernel.org, bpf@vger.kernel.org, ast@kernel.org,
- daniel@iogearbox.net, linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- teknoraver@meta.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGv7mksA7veRkl0u2n9N9OvQm77J/18cAgABJxLA=
+Content-Language: en-us
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Thu, 10 Oct 2024 04:56:52 +0100 you wrote:
-> From: Matteo Croce <teknoraver@meta.com>
+> Gur Stavi wrote:
+> > PACKET socket can retain its fanout membership through link down and up
+> > and leave a fanout while closed regardless of link state.
+> > However, socket was forbidden from joining a fanout while it was not
+> > RUNNING.
+> >
+> > This patch allows PACKET socket to join fanout while not RUNNING.
+> >
+> > The previous test for RUNNING also implicitly tested that the socket is
+> > bound to a device. An explicit test of ifindex was added instead.
+> >
+> > Signed-off-by: Gur Stavi <gur.stavi@huawei.com>
+> > ---
+> >  net/packet/af_packet.c | 35 +++++++++++++++++++++--------------
+> >  1 file changed, 21 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> > index f8942062f776..8137c33ab0fd 100644
+> > --- a/net/packet/af_packet.c
+> > +++ b/net/packet/af_packet.c
+> > @@ -1843,26 +1843,29 @@ static int fanout_add(struct sock *sk, struct
+> fanout_args *args)
+> >  		match->prot_hook.ignore_outgoing = type_flags &
+> PACKET_FANOUT_FLAG_IGNORE_OUTGOING;
+> >  		list_add(&match->list, &fanout_list);
+> >  	}
+> > -	err = -EINVAL;
+> >
+> >  	spin_lock(&po->bind_lock);
+> > -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> > -	    match->type == type &&
+> > -	    match->prot_hook.type == po->prot_hook.type &&
+> > -	    match->prot_hook.dev == po->prot_hook.dev) {
+> > +	if (po->ifindex == -1 || po->num == 0) {
 > 
-> The `index` argument to bpf_loop() is threaded as an u64.
-> This lead in a subtle verifier denial where clang cloned the argument
-> in another register[1].
+> This patch is more complex than it needs to be.
 > 
-> [1] https://github.com/systemd/systemd/pull/34650#issuecomment-2401092895
+> No need to block the case of ETH_P_NONE or not bound to a socket.
+
+
+ETH_P_NONE was blocked before as well.
+packet_do_bind will not switch socket to RUNNING when proto is 0.
+
+	if (proto == 0 || !need_rehook)
+		goto out_unlock;
+
+Same for packet_create.
+
+So the old condition could only pass the RUNNING condition if proto
+was non-zero.
+The new condition is exactly equivalent except for allowing IFF_UP
+to be cleared in the bound device.
+
+
+Yes, the same result could be achieved with a FEW less line changes
+but I think that the new logic is more readable where every clause
+explains itself with a comment instead of constructing one large if
+statement. And since the solution does add another nested if for the
+RUNNING the extra indentation started to look ugly.
+
 > 
-> [...]
-
-Here is the summary with links:
-  - [bpf,v2] bpf: fix argument type in bpf_loop documentation
-    https://git.kernel.org/bpf/bpf-next/c/5bd48a3a14df
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> I would have discussed that in v2, but you already respun.
+> 
+> > +		/* Socket can not receive packets */
+> > +		err = -ENXIO;
+> > +	} else if (match->type != type ||
+> > +		   match->prot_hook.type != po->prot_hook.type ||
+> > +		   match->prot_hook.dev != po->prot_hook.dev) {
+> > +		/* Joining an existing group, properties must be identical */
+> > +		err = -EINVAL;
+> > +	} else if (refcount_read(&match->sk_ref) >= match->max_num_members)
+> {
+> >  		err = -ENOSPC;
+> > -		if (refcount_read(&match->sk_ref) < match->max_num_members) {
+> > +	} else {
+> > +		/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
+> > +		WRITE_ONCE(po->fanout, match);
+> > +		po->rollover = rollover;
+> > +		rollover = NULL;
+> > +		refcount_set(&match->sk_ref, refcount_read(&match->sk_ref) +
+> 1);
+> > +		if (packet_sock_flag(po, PACKET_SOCK_RUNNING)) {
+> >  			__dev_remove_pack(&po->prot_hook);
+> > -
+> > -			/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
+> > -			WRITE_ONCE(po->fanout, match);
+> > -
+> > -			po->rollover = rollover;
+> > -			rollover = NULL;
+> > -			refcount_set(&match->sk_ref, refcount_read(&match-
+> >sk_ref) + 1);
+> >  			__fanout_link(sk, po);
+> > -			err = 0;
+> >  		}
+> > +		err = 0;
+> >  	}
+> >  	spin_unlock(&po->bind_lock);
+> >
+> > @@ -3452,8 +3455,12 @@ static int packet_create(struct net *net, struct
+> socket *sock, int protocol,
+> >  	po->prot_hook.af_packet_net = sock_net(sk);
+> >
+> >  	if (proto) {
+> > +		/* Implicitly bind socket to "any interface" */
+> > +		po->ifindex = 0;
+> >  		po->prot_hook.type = proto;
+> >  		__register_prot_hook(sk);
+> > +	} else {
+> > +		po->ifindex = -1;
+> >  	}
+> >
+> >  	mutex_lock(&net->packet.sklist_lock);
+> > --
+> > 2.45.2
+> >
+> 
 
 
 
