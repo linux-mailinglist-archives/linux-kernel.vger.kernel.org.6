@@ -1,300 +1,151 @@
-Return-Path: <linux-kernel+bounces-359475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C03998C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:44:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE95F998C17
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91251C24A53
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0DD1F2222E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CF21CCB4F;
-	Thu, 10 Oct 2024 15:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A40D1CCB4D;
+	Thu, 10 Oct 2024 15:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cTSCv4h5"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013054.outbound.protection.outlook.com [52.101.67.54])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ps5/mk3m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="emr3NoHm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CBE1CEABE;
-	Thu, 10 Oct 2024 15:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575022; cv=fail; b=orZHr8+G0/34agyzyfIS1Y1twT8+R7mtL4fFDSb8ceQtFzVKv8Y/i9ADhXIp2B7oGJvyv96YDDFt1OKNwi58bWepchRD1WwDCT7ztFeMx4L1uwM8CZNWfhTKWL+/DCHt+nNOfcTRibySk1UvbFGYxJn77mGrcClPVKa9MRjg84A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575022; c=relaxed/simple;
-	bh=YTMkOF4Kh/3dRghFGNF1mfy0yW9xeMU2lmhKnFlPqW0=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=FIN0GzXTl11eOiyH5yHhVc+6GY81Gt5Yvw5rA9upPz8HGBrFR2HFuk8lcbmuqWPEHU8s5sKQFMFx0UOy5T+jY90vMfxF1p8FTQ52i7QGzfYGJaMxhmd5QxThNQhnnMVblmZ1vdWKw2TFY4Pr5c2EpXdiUuyN90JeVJiaCReAb4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cTSCv4h5; arc=fail smtp.client-ip=52.101.67.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wmn3eKQBdDHdhvQrnYdqWujkyg0CPVv/28JrC/BgdjKlKAlh7NLOVykYhLsaP08r26vCxHH23HIAcDKgGTWFGFeMsn2iPZjEjA/IhSvqVwGLZC0HM6CS9bTS61fc038SvMYF5yAUwzf9X/PoKEZkME+W1lE3KN2iFrNEX67zlX+hdBryTjOEgwDthxv1e3Q5klfd/UAz1d3p2uBKnRhkNgq+mQEClIr+KE/hu0uW+8CPL46eG8RsErSxHUDhh3/LKdmJqbHFDqu74KOM6wzAKkNc+Cfz5Fy54asvr9pyJxPiTnZCByOEd/99ELT0D42SXR9OG924WcS8H363mwi8JQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iP0VBvZWlThDWEJW7MVOfXrUwg9EzkapLRwaqgJ2VI4=;
- b=hQrnimJPQg2KfwmgxmLEblBT8wp3SmwmCOkeH+5ly3FoSWzJ24IVeaRemhxB80zjSxW7HiNgeUYeOh/Jd+ZxAvM1dsOS3jCfuaODvFFRNAYvOeIRAoqi/uomRRLEWoNUyE0xi8dORrlmF/UTce/t1WnbLM3TivRklilKiQmdUJAtPr637INelGew7UHQf/Z2Qjn3IHaSotxCaub+gRg3iXKsGqZFV9ZtAJNTEpyiRGmEYCKjHwMK1Y1ild6091avLGzQEQsRNU0gvfDVXyiVVkfLQ3UKsNOxqIEua6AeJFD11cAC0hCHbv17ips+tud+tjEUsqi0tv6USv3xB0ZykA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iP0VBvZWlThDWEJW7MVOfXrUwg9EzkapLRwaqgJ2VI4=;
- b=cTSCv4h57J0w+fA+rcDW8rR9Uv0boh9v2cV9hJnpGk49o4+R50IM+DBtJe85mNmJaJYm/iGhUdikw4LzhPRJ4/fUX8EBW44qRbpbjzBnFc+HCjJ5WrPvQC3T9yb8CmmxpW1n4lUZD2uR1hbPS324kjKKc/iOmh/ZtNe0o8U+WP8G2irTB1tnUbDprKHkTv927lLe7Q2chobj0S4Y2w5V+0XZdYdRzd1Cca12YSD1ra4gdjfOk8PMHIVXW7nlBiYjw/ydhYQ7Vai7MD/VQpasfMT3icNHPUf6pXHwwuh+uKs/7gDcYJuAXB7xrjwWU18xf5FY+0yreVsYihTJdz3/xA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB8984.eurprd04.prod.outlook.com (2603:10a6:10:2e3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
- 2024 15:43:37 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
- 15:43:37 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Thu, 10 Oct 2024 11:42:41 -0400
-Subject: [PATCH v2 4/5] dt-bindings: watchdog: convert zii,rave-sp-wdt.txt
- to yaml format
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-zii_yaml-v2-4-0ab730607422@nxp.com>
-References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
-In-Reply-To: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Daniel Thompson <daniel.thompson@linaro.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-leds@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728574994; l=3314;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=YTMkOF4Kh/3dRghFGNF1mfy0yW9xeMU2lmhKnFlPqW0=;
- b=XHFl3NL0xxCtKxYLv5Qd4+14hjtP9eeSmYfn91gmoifmLN/uVrVaSyldjg39ck7yd77pojhUU
- 6fcO+UIE8DaD2TsPGKaK0qZGmWZfXlr3cCI44d4b9HdVzoIQetqo0Ag
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ2PR07CA0022.namprd07.prod.outlook.com
- (2603:10b6:a03:505::24) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6617A1CC886;
+	Thu, 10 Oct 2024 15:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728575095; cv=none; b=q/xVhOsJQeE5gV+GAG1RgT8jp6X3I2dU5taE2wvtmg0hQC2yZtf3G7SJbhScDcjVQ4dY+3k7FDMbSVe4Da1CsL+eSkvVR/C/8gaTLKeGp/kdfMJKvJW2Y1XvG6Axqr7mdxCAyfdM0JSiiKuMom+VDMRobIiX5Jsv5UR/PrRX6EU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728575095; c=relaxed/simple;
+	bh=vEHRAngD9MuOuPCRiDNA82VJK+gEUM8qSBaRt6uEvJ8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Aj2rCau79qIXmpf7D2jNxUbMaw4Qr34D2YLlxReY9gXc1Sxcr4m7B4wiKRi5Xm80955Xx8iyFxA6uLdF+DskGw2EW8dwe3GE+ilpxdohIRvSWT6i7uUrf3EUFV2ewvQ22i/Ks/WUhYqBbhA4gfgUSohmXkEOKxhRYsHcS3MCggM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ps5/mk3m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=emr3NoHm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728575092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WB2N5QQfjQyKK/IUZ575K6iS8NC3eDxd0F8948RG5sI=;
+	b=ps5/mk3mLsDUcipYhz2wooMeo7xb/Bn2oBPHVLBrTQ3HFkqDcYJw7haKo5JLGLxvxpa0Ut
+	iVzD3jy/0zexbSOPVOypbrhox3PKsimdvyEuOqVawg0v8ms+IgZEUUSIkzUOYLP6cWrJhV
+	ogjefToGPLbVkuZ/zwTjy4REwnantdhl3WvBJbGxAbb+aWMlxri+pW5bG7xV+TgIoFlZJU
+	u4Jgp0XP7/cOTC3s2qC1LSczikNFB8FXdDPVckdjW25HunnkiMwr/osgbleBYRyHT7LUND
+	f89GQ/KI9KFltOPdCFC4scwzYUBNIQJopih6hTVRKhrpODcOlXJsnP8rMFX8jQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728575092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WB2N5QQfjQyKK/IUZ575K6iS8NC3eDxd0F8948RG5sI=;
+	b=emr3NoHm0dHHfPU9ByEiH4Mdm2TEYYw/8+O2ANg9R48cypLGQulPkR9BJ0bgx2rqUqf5G4
+	7XJZRDGckZp7jGDg==
+Subject: [PATCH 0/9] vdso: Remove timekeeper argument and includes
+Date: Thu, 10 Oct 2024 17:44:43 +0200
+Message-Id: <20241010-vdso-generic-arch_update_vsyscall-v1-0-7fe5a3ea4382@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8984:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3bb8f580-7d2b-4ab8-8903-08dce9424e5a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|52116014|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R2RXY3NUbXJmbzRzZitLR0p1aitOQndaNjNRaU9YNTl5UUM1LzRCZG1OcWcr?=
- =?utf-8?B?cnpjQnQ5RXJjOGlCcFVPQUlXR1VoYW1iWEU0RmlrSGIwTitaRHdMdjVtNTNY?=
- =?utf-8?B?WnB5M01hQUNzMWxjS2EyNEluODh5bU14YlNOM0ZteEllS1RCa0ZCbnZTWXIv?=
- =?utf-8?B?cGw3Nk0yM0M0REtiWnQ4NTI2Rlp5NmhlRG00em1RR0lNeXBialU4TFQrcFlU?=
- =?utf-8?B?UFBUall2RXIwM21ya3JWSmNkV3BsU3VuR3FaTmlndHFzNkRTQUlaWGlXTHBh?=
- =?utf-8?B?NWlLWHFFdXJpWFphMm44a0ZNZ08rU2xYdkJmYUF0aXN2bm1EY2RTNGZ0KzBm?=
- =?utf-8?B?L2RqNXFlNHQ4ak45MUpZR2dWZFZOOXUvSmIvSUlvbzVML0xGdGYwb2Q3Sy9U?=
- =?utf-8?B?NFdIZGxCZDgzZGpDdFRLTEFlMzU5ck9QU3NuT1FINnZwNk9QUEd1L3ZXZU1F?=
- =?utf-8?B?aGdSZ0VTUjdWL3VQaU05WTEvNGsvMXBaRUpybUFzVzljbHJXN0lMWlNKZ2R4?=
- =?utf-8?B?VWhBUmNnOThIK1JKN0J1a0dzOE9MS0FleGRLT0hsSnRZT05xOWtkUG9LY1RT?=
- =?utf-8?B?OTZBR25TSWxYd3N1cmVucTRpMzBjbGhKL2o5R3Rmd0pMWU15RG0wODN6Ukg2?=
- =?utf-8?B?dmM0SDhYMmJtZU1hRkZkY0hvaDhlaHJ0eUdCc0pHR25mREVxbzdaOHJtNUhY?=
- =?utf-8?B?cldURGtyZGMvUytlLzJibWlRRUw2ODZCWWV4QWdZYUFvcDlkNGtyTFJMbURo?=
- =?utf-8?B?eTB4bzJYeFhaT1BjcU1RZkxlUjdSV3dHSS90WFhwdkU2NW5jbmQySU55Y1F3?=
- =?utf-8?B?b0xZU2hmNW1nWDdoc3VsV21hS3BhYml4bmJrU2JxaDNVVElkT3ZieDJrcEla?=
- =?utf-8?B?WTFHMy9VWDJkNW96dWR6cldvYitrT2hrazBCaHdGQ1JDcVZrd1JMUU1nRS9k?=
- =?utf-8?B?VE1tdTdvcnhVZ3lzNDlja0NUanpUZllqWWN1Q1Zlb2F5ZUxrMUsrYjNBdzBG?=
- =?utf-8?B?Wk1vMDlDSW5QNUE0YkIwUlRqS1dTSXVCa3piVlNpYzZRWHRUUVpwV0QxZ1ZS?=
- =?utf-8?B?UkQwTGh1RGtnOTZlUnc3MWJsSmRNcnl0cEs3bGVGTTJ2N3c3TjlCbEFiWGQw?=
- =?utf-8?B?WXgzT0ZUd0xDeFFONUhlRXlTc2RsVUt1ZkRpR1VEazNTeEVEMXhONnl6Z250?=
- =?utf-8?B?OVE0bDRETmtpVHZBUEhQM0E4aW5kQmUzdk9INCs0M2Vva2xCZXV6aXFEUlRH?=
- =?utf-8?B?NXZ1S1JwNENTVzV1UU5DdVBrLzJDQmVldEw5alQxMFZmUDBBYk5TRlMwbFk3?=
- =?utf-8?B?bFUvenV2ZnkxeXRsbzRQWkFlbnl3cGtYTHpuUVJ3dEJPaEcxK3FJYlhOdzU0?=
- =?utf-8?B?SS9mWEZmcEN4Z3FUcHh5aEVJT0Z5RWVmRStYYmp3ajlCTGY5RG5ZWGpMRVVP?=
- =?utf-8?B?bkdadUtiM3JkL1NqcDIvcnNPSnhXdlJaMTEwNFNRQjJsR2NnK1BhMEFUNnhP?=
- =?utf-8?B?M0I5c0hEalRGbnM4dVhaYVRpeDlqaENhbjVTOVR2SGlmV25WQnZTMEgvbEJX?=
- =?utf-8?B?QmM2TkU3anFOeW5FVGR1MWdYUkZlYnhXOTZLd1VsNkxQZStpME5hb0paV2VQ?=
- =?utf-8?B?WmZCemRMcXZueWhxWG45V2ZseGtML2FJYWdnRUVVcWhEK2t0citYenhVRlpS?=
- =?utf-8?B?NGxGd0w1aUZYLyttcEdvajZIYXd2d0FKaG9NYWNxbGJ2TUpFZ1luMlBxNmtk?=
- =?utf-8?Q?i6FZfnP3El2cF7bdD0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dTBaTWZybE8zNVZXUFRpU3hWeldTbzIzWUZXcldtTXNNTlJwaGVaRmxTYVFl?=
- =?utf-8?B?YytickZXQkJtY2U5SUljMEcvaDkxZ0JaWmdtTGRYb0hGYnZBSVFlNGx4TW1K?=
- =?utf-8?B?bzJUL0U2Y2VTMHRRYlRUWTExdWwyM3dhVUpJYmFWdWczeHh1cGIwblhLOHRs?=
- =?utf-8?B?NnZackVRTGxmZlFUUkp1S3RVNnZ3TGorUlhMcEJmR1pKNzJRVzFuY3hQQlJp?=
- =?utf-8?B?TFVlbTR3UExUeFR3WlJaeVhwSDhiQXJDblJydUpGL29CRzMzYXlWS3hIZGh2?=
- =?utf-8?B?QTYyVExpS0VOUnEzMmhXYldHQUVxbktEVlk2cmUrTHVCaTBkMGkvY2NvVW11?=
- =?utf-8?B?a0JQVFpoQk1JZWd5UUpvUHJmdTJCKzh0VWo2N2xoVE9iMU1HK29iYzZkZStk?=
- =?utf-8?B?TlZXTFdVaERXdlJpRWQ5TlN4eXltemVDNUI1YndvQTREbHZjSFVLN0ZaU0R3?=
- =?utf-8?B?b01wdWtiYlI3TjBSVWM3SmVlR3YzRUtlZHR0Q0laZ2ZMeGJubUVGMnZJU3VL?=
- =?utf-8?B?b2JmN1dtZFJqWGNxY0tYVVZXN25QbXdib2F2RGhvMTZEVno2amRrLzgwcVFQ?=
- =?utf-8?B?bTVpV1dTZUI5UFhDMi9sTVlSZGdtV083WlZ5aTUxRkJEbm9ieWlYL0RmOVBo?=
- =?utf-8?B?cUs3NmR6T0lYQTIzWG9FWGNsWnlBKzZrSlc1dkFkYnZQelV0WmUwWGhBWUlR?=
- =?utf-8?B?QXBQM29EQmF6bDRYQy9yVjFtMmR2aDBhZDE0QS81WXhLaEVvQ25GTWxwRW5V?=
- =?utf-8?B?ZWZ1Uy80anpETVU5MDF2cnJTSGJ5TGpxWmw5RGtseUpGZ05Hb3ZUcTJ0Wlpi?=
- =?utf-8?B?aWdUSmN1R1AvWERIVmd5MGs4UTFIVlU0NElrckhXejllOEZhNnF1YnI4TWl4?=
- =?utf-8?B?d1o5VC9JdmVmdTFWY3BSakFxMXNGbUJQUi9rbUdyUXpvaGR1NVZnNUNrNE5U?=
- =?utf-8?B?SU9OVG1uSkY1N1c4bDNxWjl3NWsrQjZFaitkOGErQm5KbjVWTFVsZXYxOXVZ?=
- =?utf-8?B?bFVUUE43YlhyN29yZGlOZ1V1U0xObmlzRUNac0NxUTBmSXlrTFdHdzF1c2Fn?=
- =?utf-8?B?OFN5Q0hLc1FuT0xOOElZVUUzUEk1UVROZWRjenAxU3lSMGpCTjJLWURhVzdw?=
- =?utf-8?B?aDdkUUlwRThiem1XUDdSTWYvTjVIZWFRRDVKaFFBdVJyRlZ6d3BGMWdtbHJU?=
- =?utf-8?B?elFMKzdPNm41TzlzV2tHN211RUdjTGJDL2I1aDBPZXNQcVhOSitUdnBGSDAr?=
- =?utf-8?B?akswOVkrV2NQZUVBK0hBZGdOODk2ZGVSNmVyNTY2RWNRZ0xsV0kyNC9vWmhY?=
- =?utf-8?B?Z3hrY1JaK0NSUmpkS3RKZUlueE5rUC93MTJSYXBBS0hlK0d2WDVpV0tCSFZn?=
- =?utf-8?B?Y3UyblcwVGxNaEhWV2taTk54SDlLZG1PbTVhMDR6aEhleklzKzlqSS9BNmNM?=
- =?utf-8?B?UzJrVFNORlV2V0JDaVF5TDJ0Z045SmxhSHc1bGxpcUJFWEgrZmFCcm43Tm8r?=
- =?utf-8?B?b251NGprWmNqaFBuWlBtKzNxQXA4RkNLUEpYc1REZjdpaGpZQnZPQmFLSG1R?=
- =?utf-8?B?L1lta1FEU1dQbVA0d2tVYnZiYjl5SS8vMFlJSXhYQlNYMjJrVFZzMXUva0ZD?=
- =?utf-8?B?VENTQUxHU1o1aTV0ZzJPLzBSRStieU1tZnJkL3FuWlBuUUlubjdxNm13aG8y?=
- =?utf-8?B?aVBvTVQvZ01rcGl1Q0tKQnlsNFJHQXg3VCtZT25YQWlMYTc3aDRLU2tXZlJZ?=
- =?utf-8?B?NHV3dHl6VHFOa3MyVWY5K3FTdEUrVGNYemtTeFJSbmNqaTVMaEhGSTFzSGRo?=
- =?utf-8?B?cGtXd2RORysxbjNKK3QvRC9LKzZBR0J0L1ZCN1VwOVdhL0twOFhoZXR0NEVj?=
- =?utf-8?B?TEVGZmZNWU1GWFdka1lNd21VVytQU3lKSitUZDdDdzFyanIxa05lN3FEcWpk?=
- =?utf-8?B?akZwajByOHd2d1ZPWVBrQXJLUnplcjBaL1FBRzVIb2M5VC9BTDJlRk0xbXo3?=
- =?utf-8?B?NkJwLytuZXZVWjNmQkovc2hocFhUUjAvNGhONDVKVm40VHBFVG5id3VYZ21y?=
- =?utf-8?B?YnJ6dVFjdmhwRWZiMnJOK3IxaXdSOFpwbXA0Ni9zY0NiaXFFcDFQNjhtZzRI?=
- =?utf-8?Q?mbF4=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb8f580-7d2b-4ab8-8903-08dce9424e5a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 15:43:37.2363
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m9dg9yCcEuLFGRGJKzA7GTLcnrE0ZCy/IQP+4hca74lMaIWnjrXhSTdprPvW0Z4dxx4pn8+vBx0SnqexL2uIIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8984
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGz2B2cC/x2NwQqDMBAFf0X27EISSqv9FREJyasuSJSsDS3iv
+ zf0OIeZOUmRBUrP5qSMIipbqmDbhsLi0wyWWJmccTdrrOESdeMZqWqBfQ7L9N6jPzAV/Wrw68r
+ mbjv0HRz6B9XOnvGSz/8xjNf1A5OTjDxzAAAA
+X-Change-ID: 20241010-vdso-generic-arch_update_vsyscall-0618e98e2e97
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, 
+ WANG Xuerui <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, 
+ Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arch@vger.kernel.org, linux-mips@vger.kernel.org, 
+ linux-s390@vger.kernel.org, loongarch@lists.linux.dev, 
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728575090; l=2075;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=vEHRAngD9MuOuPCRiDNA82VJK+gEUM8qSBaRt6uEvJ8=;
+ b=szGvUeLPyxK9BXdP3C2DAht9jfEjDDdicb9QA7bfacls7AZdd5//5wdmNBRY3OWPdXAQ8Ggs1
+ vq/W4RoWU/nAhk3XVNwRQTRkMgu+o4WOS9VefNnOTg/jkrdU3MIarWk
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Convert device binding doc zii,rave-sp-wdt.txt to yaml format.
-Additional changes:
-- Ref to watchdog.yaml.
-- Remove mfd node in example.
-- Remove eeprom part in example.
+The timekeper argument __arm64_update_vsyscall() is never used and
+for historical reasons many VDSO headers and implementations include
+timekeeper headers.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+With the move to the generic VDSO clock storage mode these are unused.
+Including arbitrary headers from VDSO code can lead to build problems.
+
+Remove all of them.
+
+These patches are intended to be merged via the tip tree,
+so following patches can be based on a unified base.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- .../bindings/watchdog/zii,rave-sp-wdt.txt          | 39 ------------------
- .../bindings/watchdog/zii,rave-sp-wdt.yaml         | 47 ++++++++++++++++++++++
- 2 files changed, 47 insertions(+), 39 deletions(-)
+Thomas Weißschuh (9):
+      vdso: Remove timekeeper argument of __arch_update_vsyscall()
+      arm: vdso: Remove timekeeper includes
+      arm64: vdso: Remove timekeeper include
+      powerpc/vdso: Remove timekeeper includes
+      riscv: vdso: Remove timekeeper include
+      s390/vdso: Remove timekeeper includes
+      x86/vdso: Remove timekeeper include
+      LoongArch: vdso: Remove timekeeper includes
+      MIPS: vdso: Remove timekeeper includes
 
-diff --git a/Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.txt b/Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.txt
-deleted file mode 100644
-index 3de96186e92e6..0000000000000
---- a/Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.txt
-+++ /dev/null
-@@ -1,39 +0,0 @@
--Zodiac Inflight Innovations RAVE Supervisory Processor Watchdog Bindings
--
--RAVE SP watchdog device is a "MFD cell" device corresponding to
--watchdog functionality of RAVE Supervisory Processor. It is expected
--that its Device Tree node is specified as a child of the node
--corresponding to the parent RAVE SP device (as documented in
--Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
--
--Required properties:
--
--- compatible: Depending on wire protocol implemented by RAVE SP
--  firmware, should be one of:
--	- "zii,rave-sp-watchdog"
--	- "zii,rave-sp-watchdog-legacy"
--
--Optional properties:
--
--- wdt-timeout:	Two byte nvmem cell specified as per
--		Documentation/devicetree/bindings/nvmem/nvmem.txt
--
--Example:
--
--	rave-sp {
--		compatible = "zii,rave-sp-rdu1";
--		current-speed = <38400>;
--
--		eeprom {
--			wdt_timeout: wdt-timeout@8E {
--				reg = <0x8E 2>;
--			};
--		};
--
--		watchdog {
--			compatible = "zii,rave-sp-watchdog";
--			nvmem-cells = <&wdt_timeout>;
--			nvmem-cell-names = "wdt-timeout";
--		};
--	}
--
-diff --git a/Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml b/Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml
-new file mode 100644
-index 0000000000000..de0d56725dd40
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/zii,rave-sp-wdt.yaml
-@@ -0,0 +1,47 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/zii,rave-sp-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Zodiac Inflight Innovations RAVE Supervisory Processor Watchdog
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+description:
-+  RAVE SP watchdog device is a "MFD cell" device corresponding to
-+  watchdog functionality of RAVE Supervisory Processor. It is expected
-+  that its Device Tree node is specified as a child of the node
-+  corresponding to the parent RAVE SP device (as documented in
-+  Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml)
-+
-+properties:
-+  compatible:
-+    enum:
-+      - zii,rave-sp-watchdog
-+      - zii,rave-sp-watchdog-legacy
-+
-+  nvmem-cell-names:
-+    items:
-+      - const: wdt_timeout
-+
-+  nvmem-cells:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    watchdog {
-+        compatible = "zii,rave-sp-watchdog";
-+        nvmem-cells = <&wdt_timeout>;
-+        nvmem-cell-names = "wdt_timeout";
-+    };
-+
+ arch/arm/include/asm/vdso/vsyscall.h       | 4 ----
+ arch/arm/kernel/vdso.c                     | 1 -
+ arch/arm64/include/asm/vdso/vsyscall.h     | 3 +--
+ arch/arm64/kernel/vdso.c                   | 1 -
+ arch/loongarch/include/asm/vdso/vsyscall.h | 4 ----
+ arch/loongarch/kernel/vdso.c               | 1 -
+ arch/mips/include/asm/vdso/vsyscall.h      | 1 -
+ arch/mips/kernel/vdso.c                    | 1 -
+ arch/powerpc/include/asm/vdso/vsyscall.h   | 4 ----
+ arch/powerpc/kernel/time.c                 | 1 -
+ arch/riscv/include/asm/vdso/vsyscall.h     | 4 ----
+ arch/s390/include/asm/vdso/vsyscall.h      | 5 -----
+ arch/s390/kernel/time.c                    | 1 -
+ arch/x86/include/asm/vdso/vsyscall.h       | 1 -
+ include/asm-generic/vdso/vsyscall.h        | 3 +--
+ kernel/time/vsyscall.c                     | 2 +-
+ 16 files changed, 3 insertions(+), 34 deletions(-)
+---
+base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+change-id: 20241010-vdso-generic-arch_update_vsyscall-0618e98e2e97
 
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
