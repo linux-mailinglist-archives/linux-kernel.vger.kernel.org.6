@@ -1,119 +1,173 @@
-Return-Path: <linux-kernel+bounces-359044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8BC9986BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084B19986EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2B01C23B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:55:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE952830F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479401C6F58;
-	Thu, 10 Oct 2024 12:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76F81C7B64;
+	Thu, 10 Oct 2024 12:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+G4yTfU"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LFUqWwjo"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAC51C2DAA;
-	Thu, 10 Oct 2024 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA601C7B68
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564909; cv=none; b=SLpqy+uHPJAlgcC6LU7eYUcc0bKU/QTjy9rnuXZBfCs9S7tzAZCUeK3185d5Ke0/flOjABJ5HhvVJpbXYKMvqayWsmM4c4uM/+2EZDzjAZE2AlsK2cL4u6nDaTdn0radIjj7613uazwnq0JHEj4khI3tlhcR9chufLWcURDi+q4=
+	t=1728565181; cv=none; b=kpu+TVLFfSFjHXWqHcAhVx1i3Alf+lAcW1BFofdtA5IXCnp9oUKZywBxKFqx4iD6uRQ/MxWm323UDS+iV20HgMPlxKo9efY6MoJiBIeqapLWb3UU0aGH9Jz9I+m6rF/e0eyEpfAMazKAQlhSUHm7WVtsQkF+BkPbogX+pGtkgpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564909; c=relaxed/simple;
-	bh=c5YOO3PqT5p0RhvzjAME/TqZqQtmmFNIrX2KOAxy+g0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L5v6Fx7UwuKFpaKTOlqiVgoBa9DupTBrgzNR/qIoh2piAVF5H+QxuDcC1lKbPO1bMk+f18YRUjSVCSmWmN/AmBJF9rLdf30bhVqrpJPkXzBzDAPo/KZm/bnxfUAWwjI+z7ENB6i2Vq21X16TJ69NvfnO2czedBELWDBsT6o8LKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+G4yTfU; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-430576ff251so7708535e9.0;
-        Thu, 10 Oct 2024 05:55:07 -0700 (PDT)
+	s=arc-20240116; t=1728565181; c=relaxed/simple;
+	bh=asqQgaU/vZI87Aqh579laCnMIY18UekRX/yn+FO0GWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qgT5+9HniEdTNpIS7LwjPz74jGctiy9toOBN05HbdZiFTH5ygsKi7V83zRrlvzNN7OiNpd2+ANxZ54OP7t/4OGffevpN1di/EtHc/lZA4q1SOhiza6YGD12w9w878+PXpixVLAdhrC8P39Byh9AkBCDg1vwcdxbXKeZDsIHnaVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LFUqWwjo; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fabc9bc5dfso8658221fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728564906; x=1729169706; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=c5YOO3PqT5p0RhvzjAME/TqZqQtmmFNIrX2KOAxy+g0=;
-        b=Q+G4yTfUzrDJC4mn9PRA6MWStx4PEG7NOr+/w+k40mM9XiX6sbtb2xpwQ4efXvsSi/
-         MWEWwUCoWHxMp3vhPf1kQnGvM3LScKvanmphFDf4KTkOWYU9/hXb6vzqwel5tOsMdpbN
-         tmD3H8dSrkz3YvTIQ9i6Vjqqamg0jssuS/SQ76+Aj2BioFcIv4An2wXGiqnRya93Ky2e
-         h3jBETLp5r4/TRLSreouDAJeRwIxkvN7+1YRAFBKOFqWxbm0G0mXKHHcP9gaLyMHRRhT
-         VfA71GUrBqf8sDKZ1kEG9CWZTbS0wN7r166XCCv7dQuQtklBzg4cHxI1QL/J3tdFjBRl
-         PyXg==
+        d=linaro.org; s=google; t=1728565177; x=1729169977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=36NOSeErwXpLnSIxfSSqwMj8Lcluu1V/I96m1cnaxMk=;
+        b=LFUqWwjoS6Dh+fwV2RRzKI+Nzth040n56wbm1+IPeE8Pvgtpu5llvLiMdGQXQDKJds
+         NXN/kuF99S2ni3NJYkn1cBYTa9Sql781sdOFkODLxU53jq4XVDfvYv7nKPQkfz4btfls
+         nms86cWlnKakkCqUpzuYGUFfAf7SPTri/zdGFakM2gWXUuaNgJYsXmV558HE7fEiNKMS
+         432Uy9I/z24UChPSGGIG9G/HxAIxM1OjgASgpQbeKd7nk4FW3ZzeLZ4hotpwRkYJNi2F
+         eeV0eWFuOEylA1g+3f3zU9hHSAlayWJzR5lsb066Pq7zN4yJAj1dCVyHLQAiVlwo3VOw
+         dQ4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728564906; x=1729169706;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c5YOO3PqT5p0RhvzjAME/TqZqQtmmFNIrX2KOAxy+g0=;
-        b=itj79WnyKsV6hNP1XCM02ucSl6LAki+W2rWtpr6jQJkOQ5ed/HFhkY61kMMggay9om
-         ohRWh8tyHc9t+pgJi9WeXMJujlHKMATBYjxZXAy/uN1NU17Is1Z3xLcMXepA0arRjIEh
-         CiJMnb+nmBdLnZWabXSjPtxCIUspFBv4OAgKyu7SP35Bj7089CktRwr1Woktm/sqbTKg
-         u3hrYVml/VYUfKXlJDdXvZ9JBpmpMLdI4QEumYcjJqE7wAEeKm4YHnYiC0ma8tEevUXY
-         HWOo4fjxnsXI0QvrICNi8AWcJdTCbeLA8HQU/d6C7FobaLM4W9BMEQ6dtZYEgD5MukrY
-         845w==
-X-Forwarded-Encrypted: i=1; AJvYcCU1TdIQovNZaDH/1zk37T+xoV7HZzePJj9diq3HmCyU0zkrTKZq2mzLw8i0QWSqtHleYn7zdEoIJKrK@vger.kernel.org, AJvYcCVlMr7EoX7alaVh7eMK9Zo7NZoUnNM+vQG0n9TZp5qDk74fyL5BMt05ZGJEiHvhatmaNneKae2tU5YH@vger.kernel.org, AJvYcCWeyzIBGHle+cQ+ws2ZmgTA41fJ96Fr1wwUi4s79g+SO2gC8ZVvxodlNe4g6P/QBZfEqOzdEcaBOA3yt8SO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXTurkH0iLtI5Tfs+vUKz9aSG4fs/p/7FyfIfdznYwXmhqOUOt
-	O/xU8yfX7LArC/jVOHQJLaBhYyMvugv/Sj9nodxRTj3H0th1gtAM
-X-Google-Smtp-Source: AGHT+IE9zk6J9pnKB3CrkToVJ8ktrG3arNVRbl5nS+RDZhg9k9AhczWUhaGj2N32N9CY+aLIxzvbqA==
-X-Received: by 2002:a05:600c:510a:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-431157a3ba3mr30752595e9.2.1728564906184;
-        Thu, 10 Oct 2024 05:55:06 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ed69dsm1486749f8f.92.2024.10.10.05.55.05
+        d=1e100.net; s=20230601; t=1728565177; x=1729169977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=36NOSeErwXpLnSIxfSSqwMj8Lcluu1V/I96m1cnaxMk=;
+        b=CR6Rq7YyBpalSuyQzvRYRZcK/y8rX5nsQeNCrtKhcN1qYvSZUawBdpnB9qGr/OfSKJ
+         pmzHp0l1OVNc+lQLti3P8y0IzK8/Rgubzi4Y7YofKycDFxexopw1QiGOwgHPq3fRwQcZ
+         XbLhvMMqppxoIuVJVVhawAuw1ZEUHaaqsIZRt6vfqPGhiH+Ku6vu9FbcDHCifPwhXEOY
+         kVTM0V0jtmUCmksfJUsK0dWWZ1hkFNkeoFGpBGLNXd2k93H/cIzRnYmMUkVyF9YTMVyF
+         unU9OrD7H6gnwf0bELHM5e8qCtqAjjKSBfR2UKf1WMOqwc/ZjrEBp2sc7AMbwKqSjJFO
+         HcXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCuv4twAIqpICYCM61D2A73eZTPxLu8WJG4Aw7dz10v31iQqSdSCp6x3i1D20pqpyULRZuadHvyil65RM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWYQV3yF9zaQEMtaXx3UJaB2AHhJFlNG2Eytm6znBUkij4ovEa
+	O1+ugofeUKRm+5SdoHH6ojBDgMzORmucx0vq0fan29Uawl1yQzX7pxu5Qydc5Y4=
+X-Google-Smtp-Source: AGHT+IFY7BZoKpY4gXXDowPZQJ9kCDf3g7HVgd9T5+NX2HqZudxIwPOU8AAV3qqHVLmN94N+juBEmw==
+X-Received: by 2002:a2e:a989:0:b0:2fa:cf5b:1ea7 with SMTP id 38308e7fff4ca-2fb1872993amr43592271fa.6.1728565177250;
+        Thu, 10 Oct 2024 05:59:37 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb2457972esm1978601fa.20.2024.10.10.05.59.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 05:55:05 -0700 (PDT)
-Message-ID: <a02f256c54089da4faa3ee1807c01b9cb6e70bc6.camel@gmail.com>
-Subject: Re: [PATCH v5 02/10] iio: dac: adi-axi-dac: update register names
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen	
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- Sa	 <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring	
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dletchner@baylibre.com,  Mark Brown
- <broonie@kernel.org>
-Date: Thu, 10 Oct 2024 14:59:21 +0200
-In-Reply-To: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-2-3d410944a63d@baylibre.com>
-References: 
-	<20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
-	 <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-2-3d410944a63d@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+        Thu, 10 Oct 2024 05:59:35 -0700 (PDT)
+Date: Thu, 10 Oct 2024 15:59:33 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] drm/msm/dpu: Support quad pipe with dual-DSI
+Message-ID: <twqjthrjzagqhvednxk2plwynxjbxwusvx7a3745mjv5foelh2@fhzyipmelvnv>
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
 
-On Tue, 2024-10-08 at 17:43 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Non functional, readability change.
->=20
-> Update register names so that register bitfields can be more easily
-> linked to the register name.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+On Wed, Oct 09, 2024 at 04:50:13PM GMT, Jun Nie wrote:
+> 
 > ---
+> 2 or more SSPPs and dual-DSI interface are need for super wide DSI panel.
+> And 4 DSC are prefered for power optimal in this case. This patch set
+> extend number of pipes to 4 and revise related mixer blending logic
+> to support quad pipe.  All these changes depends on the virtual plane
+> feature to split a super wide drm plane horizontally into 2 or more sub
+> clip. Thus DMA of multiple SSPPs can share the effort of fetching the
+> whole drm plane.
+> 
+> The first pipe pair co-work with the first mixer pair to cover the left
+> half of screen and 2nd pair of pipes and mixers are for the right half
+> of screen. If a plane is only for the right half of screen, only one
+> or two of pipes in the 2nd pipe pair are valid, and no SSPP or mixer is
+> assinged for invalid pipe.
+> 
+> For those panel that does not require quad-pipe, only 1 or 2 pipes in
+> the 1st pipe pair will be used. There is no concept of right half of
+> screen.
+> 
+> For legacy non virtual plane mode, the first 1 or 2 pipes are used for
+> the single SSPP and its multi-rect mode.
+> 
+> This patch set depends on virtual plane patch set v5 and flexible
+> number of DSC patch set:
+> https://patchwork.freedesktop.org/series/135456/
+> 
+> Changes in v2:
+> - Revise the patch sequence with changing to 2 pipes topology first. Then
+>   prepare for quad-pipe setup, then enable quad-pipe at last.
 
-I don't fully agree that this is so much better that's worth the churn...
+Is this the only change? Doesn't seem so. Please don't make it harder
+than it should be.
 
-From a quick a look I saw (I think) some defines where _REG seems to be mis=
-sing.
-Those is fine to change for consistency but I don't really seeing the big
-benefit in changing them all.
+> - Link to v1: https://lore.kernel.org/all/20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org/
+> 
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> 
+> ---
+> Jun Nie (14):
+>       drm/msm/dpu: polish log for resource allocation
+>       drm/msm/dpu: decide right side per last bit
+>       drm/msm/dpu: fix mixer number counter on allocation
+>       drm/msm/dpu: switch RM to use crtc_id rather than enc_id for allocation
+>       drm/msm/dpu: handle pipes as array
+>       drm/msm/dpu: split PIPES_PER_STAGE definition per plane and mixer
+>       drm/msm/dpu: bind correct pingpong for quad pipe
+>       drm/msm/dpu: update mixer number info earlier
+>       drm/msm/dpu: blend pipes per mixer pairs config
+>       drm/msm/dpu: Support quad-pipe in SSPP checking
+>       drm/msm/dpu: Share SSPP info for multi-rect case
+>       drm/msm/dpu: support plane splitting in quad-pipe case
+>       drm/msm/dpu: support SSPP assignment for quad-pipe case
+>       drm/msm/dpu: Enable quad-pipe for DSC and dual-DSI case
+> 
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         |  74 ++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  12 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      |  69 ++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |   3 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |   1 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c       |   2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h       |   4 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |   4 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h      |   2 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h          |  12 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c        | 408 +++++++++++++----------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h        |  12 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c           | 210 ++++++------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h           |  19 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h        |  10 +-
+>  15 files changed, 478 insertions(+), 364 deletions(-)
+> ---
+> base-commit: eac5b436019c2eeb005f7bdf3ca29d5e8f443d67
+> change-id: 20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-1142507692ba
+> 
+> Best regards,
+> -- 
+> Jun Nie <jun.nie@linaro.org>
+> 
 
-(Sorry for only complaining in v5 about this...)
-
-- Nuno S=C3=A1
-
-
+-- 
+With best wishes
+Dmitry
 
