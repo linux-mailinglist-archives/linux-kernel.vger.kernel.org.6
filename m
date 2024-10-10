@@ -1,159 +1,117 @@
-Return-Path: <linux-kernel+bounces-359592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FAE998DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:41:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681FC998DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6DE283DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08D8B3376A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DF919C57D;
-	Thu, 10 Oct 2024 16:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Jf4zudzU"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C0519CCEC;
+	Thu, 10 Oct 2024 16:40:51 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54AD19C56F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62F3199FBA;
+	Thu, 10 Oct 2024 16:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728578445; cv=none; b=Xi9RMcYGJqCGnXP9aX7TbGtbGws9nlXgsmfJubk5PHFXal2VW9aNcJSdyDTReU3iOH9tBJ2N6qQyKT/+QaZKjaG38WPAylb8Do7FcbSDRTHI3xgFXqzij07xLUgqSTpzja040EsV+HWGRy7O910760a957bDGcgwga3K2Yy/z4I=
+	t=1728578451; cv=none; b=hXf767hcD4YEsnVJ75jgoPW6NUt4hTAU+knpJanXcTjNDuDVWWiU69L4b3nr2IGJRXrrrVIPZCFnEQnhUqLyBbboXNk4cA19O9j4M1A3WhLgR5qK0HRMBWDwUjCHM6/42J7uUgqPz4c7vo9z71PInhNEoNV3XezSogK73oBoFfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728578445; c=relaxed/simple;
-	bh=1v4s7mTEnjH3CXjUOO8maI7isaTxaSFEhk9NStrXkfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fL6PkYd2fQSJxNZShBgJdV5ACBX+2gXfNMC19gNmof3weaQBy5VX1JI8oxNAHshNiY9GR1PbODcZy8eKexjeFM4ttodqmdlEiWVU2n6EfRkAfGDowFsKTy5F2pY8pmxNsz6CvRlLWoEzP2leLik8aCWA0uShwNqq0hq1iQ4MMe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Jf4zudzU; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e0cd1f3b6so900596b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:40:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728578443; x=1729183243; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NiQxZ4aNJmS0qPABBP4LcVTamG/dKSm/ne+/UKqykEM=;
-        b=Jf4zudzUc2Zvw3P1YBQG0UE+niQPyynqAZr6Rif/GaH0YZbo1HT8CvqMfuLAHaodE1
-         7tl0fU+VppEWpuB31C+uYAwzDeh0kfspdt4rg5uw+WPkmEkoC4LJwmlNbRnlgnr9RhFW
-         ZNnEkUM2cVqwu2w73elogcYIEvKE2dU1KYr+A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728578443; x=1729183243;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NiQxZ4aNJmS0qPABBP4LcVTamG/dKSm/ne+/UKqykEM=;
-        b=QUjtblCtafOhSMgsfwk4tjpfkuR/zuEj8TyR3zPgAYppqncHKQ61hiv3IlCz4UYabd
-         90DC9q/cncmksgrPB0oC7LrjKFDvs6OTZn5t8lZhh3R8b9m3fbxMhb3qnYJX58odiiu1
-         M9iBT9OWTrHkLFRI8K1xAHKFWJwosduGc1ZLMv8JwyApn8ioyezvMEMfy0Ft/Jgkj2ul
-         97J1YCNO2kAVXmvae9GkJli4ebfSYT+C56EcXoU/yWESMcdGD87wHYM+11haKBVK4fAA
-         CSnOdCc7F5/Ly7icIjTFnWIhcLepUyTCXp8DTdJSycnq7g+eN2WG145DQVuSjKyc3LPi
-         +cKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAdOxf9pF96qN8bdDy6xLJIMUoScCHs/rtIm5uCJBIFpCkgkNhUDdtaZxV26jO8p01sxd7q/4OmBEi5qQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1oOro7CAIbLzrp2StqaozXAfQiKOqHBVhVzyQi2zEJgbQxMkF
-	ue120DFXyOTePhZWNhDOAnCb2kbj7r8VAqx6GePKcKfmQU5G1cvJ75wnLjXlx3o=
-X-Google-Smtp-Source: AGHT+IEUhCypbSWyCbOVGeM1WG8LW+4NQl83CePuAwrOn3lsI6juJ8vumyaQebjeHVdDbQQf2BjKFg==
-X-Received: by 2002:a05:6a00:3c84:b0:71e:989:e714 with SMTP id d2e1a72fcca58-71e1db74cf3mr10946520b3a.11.1728578443159;
-        Thu, 10 Oct 2024 09:40:43 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9e98edsm1220396b3a.34.2024.10.10.09.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 09:40:42 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:40:39 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [net-next v5 6/9] netdev-genl: Support setting per-NAPI config
- values
-Message-ID: <ZwgDh3O0_95uGAgd@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20241009005525.13651-1-jdamato@fastly.com>
- <20241009005525.13651-7-jdamato@fastly.com>
- <CANn89iJ1=xA9WGhXAMcCAeacE3pYgqiWjcBdxiWjGPACP-5n_g@mail.gmail.com>
- <20241010081923.7714b268@kernel.org>
- <CANn89iK_iDY_nTCgqYUk7D_R8k_qu2qQrs2rUAxxAu_ufrzBnw@mail.gmail.com>
+	s=arc-20240116; t=1728578451; c=relaxed/simple;
+	bh=7Dki8csyxmG2igPYCbUM3Lwm5qOkWkVdaeHqiZcN3Qo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VaSb6UpiN3DrkNZeoydLzIlYL2fkvy0zO3Qrk7mJnC0Xo4WMvRuH23gEcZxcee8tQK+dTZAxWXDEHv2FI/faCi5h2S+/7vVIpTTvFN1DJhdA+eXNSSjVrvYkz9Qjd45siKaDxcYKWzbcR5txZKbrcNV4Y7ozj5jM4YQS6hEoVQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPb8n1Znnz6K5mr;
+	Fri, 11 Oct 2024 00:40:25 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 488971400CB;
+	Fri, 11 Oct 2024 00:40:46 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 18:40:45 +0200
+Date: Thu, 10 Oct 2024 17:40:43 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	"Tanislav, Cosmin" <Cosmin.Tanislav@analog.com>, "Hennerich, Michael"
+	<Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Sa,
+ Nuno" <Nuno.Sa@analog.com>, Andy Shevchenko <andy@kernel.org>, David Lechner
+	<dlechner@baylibre.com>, "Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan
+	<mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>, Ivan Mikhaylov
+	<fr0st61te@gmail.com>, "Mike Looijmans" <mike.looijmans@topic.nl>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <20241010174043.00002446@Huawei.com>
+In-Reply-To: <DM6PR03MB4315A13F69DE8B4EFB4030E3F3782@DM6PR03MB4315.namprd03.prod.outlook.com>
+References: <20240912121609.13438-1-ramona.nechita@analog.com>
+	<20240912121609.13438-4-ramona.nechita@analog.com>
+	<20240914180648.592cd69e@jic23-huawei>
+	<DM6PR03MB4315306944DE2E5E8CD3B236F36A2@DM6PR03MB4315.namprd03.prod.outlook.com>
+	<20240928153109.52ff4c5e@jic23-huawei>
+	<DM6PR03MB4315A13F69DE8B4EFB4030E3F3782@DM6PR03MB4315.namprd03.prod.outlook.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iK_iDY_nTCgqYUk7D_R8k_qu2qQrs2rUAxxAu_ufrzBnw@mail.gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 10, 2024 at 05:30:26PM +0200, Eric Dumazet wrote:
-> On Thu, Oct 10, 2024 at 5:19 PM Jakub Kicinski <kuba@kernel.org> wrote:
-> >
-> > On Thu, 10 Oct 2024 06:24:54 +0200 Eric Dumazet wrote:
-> > > > +static const struct netlink_range_validation netdev_a_napi_defer_hard_irqs_range = {
-> > > > +       .max    = 2147483647ULL,
-> > >
-> > > Would (u64)INT_MAX  work ?
-> >
-> > I sent a codegen change for this. The codegen is a bit of a mess.
-> >
-> > > > +int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
-> > > > +{
-> > > > +       struct napi_struct *napi;
-> > > > +       unsigned int napi_id;
-> > > > +       int err;
-> > > > +
-> > > > +       if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_NAPI_ID))
-> > > > +               return -EINVAL;
-> > > > +
-> > > > +       napi_id = nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
-> > > > +
-> > > > +       rtnl_lock();
-> > >
-> > > Hmm.... please see my patch there :
-> > >
-> > >  https://patchwork.kernel.org/project/netdevbpf/patch/20241009232728.107604-2-edumazet@google.com/
-> > >
-> > > Lets not add another rtnl_lock() :/
-> >
-> > It's not as easy since NAPIs can come and go at driver's whim.
-> > I'm quietly hoping we can convert all netdev-nl NAPI accesses
-> > to use the netdev->lock protection I strong-armed Paolo into
-> > adding in his shaper series. But perhaps we can do that after
-> > this series? NAPI GET already takes RTNL lock.
+On Thu, 10 Oct 2024 14:35:52 +0000
+"Nechita, Ramona" <Ramona.Nechita@analog.com> wrote:
+
+> Hello Jonathan,
+> 
+> >> >> +
+> >> >> +	ret = ad7779_reset(indio_dev, reset_gpio);
+> >> >> +	if (ret)
+> >> >> +		return ret;
+> >> >> +
+> >> >> +	ad7779_powerup(st, start_gpio);
+> >> >> +	if (ret)
+> >> >> +		return ret;  
+> >> >What powers the device down again if we hit an error?
+> >> >
+> >> >Probably need a devm_add_action_or_reset() or if it self powers down may a comment on that.    
+> >> 
+> >> In the powerup function there are only some register writes and the 
+> >> start gpio is only a synchronization pulse (perhaps the name powerup is not very appropriate), would an action or reset be necessary in this case? Since the regulators are not used in the driver, should there be a function disabling them anyway?
+> >>   
+> >If there is nothing useful to do indeed not but when I see a power up, I rather expect a power down.  Is there anything that can do that or is it a case of it will go to sleep anyway for some other reason?  
+> 
+> I don't think there would be anything to do in a powerdown function specifically, but I could rename the powerup function to "_config" or something similar, to make it more intuitive.
+ok. That will at least make me less suspicious when I read this
+after forgetting all about it ;)
+
+thanks,
+
+Jonathan
+
+> 
+> >  
+> Best Regards,
+> Ramona
 > 
 > 
-> napi_by_id() is protected by rcu and its own spinlock ( napi_hash_lock )
-> I do not see why rtnl is needed.
-> This will also be a big issue with per netns-RTNL anyway.
 
-I deeply appreciate and respect both of your thoughts on this; I
-will hold off on sending a v6 until a decision is made on this
-particular issue.
-
-Thank you both for your careful review and analysis.
 
