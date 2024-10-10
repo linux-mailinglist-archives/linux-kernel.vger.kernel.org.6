@@ -1,158 +1,235 @@
-Return-Path: <linux-kernel+bounces-358253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F317B997C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:57:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F2D997C10
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05E211C23334
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F71C281B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BD519DF8E;
-	Thu, 10 Oct 2024 04:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A51119E96D;
+	Thu, 10 Oct 2024 04:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sPxjKypM"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2044.outbound.protection.outlook.com [40.107.100.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfFUKLer"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC9019D89B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728536265; cv=fail; b=kZN54Id4AdzLU4KIe2uA8oSmEW92SRA7ETUwEBfhDVvMPt5Y9CsZsZMeAFWwnvfxeXkIBxKoIW6/eWxXVzucVs8H7wOQ4GQ6lba2iG6h4I8YnsxWyj7JTfypB7T6TYT9MbNvHBGvI94bvs5eB+spQtEJwFdRh5LjoANxfBHtHdw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728536265; c=relaxed/simple;
-	bh=Zit9gyBCPp4cwXWvKzP+u+X1mTKoUPDzbVzQBviaXU4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EA57fExV9OfodsSOqlo8TQpL51AtiKw7ZNjATPMFse4tmhMZdRCp51cwuiUn5TKl5j/WLZD+2OTYYiLhFClTdjuh+IprPEA/E3G+XecA/ZJbZvtdD4r113T7/N6KRMHtmwJZ0+RhbsYLxu4zOrkxVHteRi8Usu/PLi+WOaoDkHo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sPxjKypM; arc=fail smtp.client-ip=40.107.100.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cA2JoNx4xFdHmj0hDCJ+8qxV3wytH+4FiCQT5wb0uB9MiPLYchYf1sSmAEGPg9+xET7BYykZ5fNEUtkn7l5VXcgsrrucR+6seUK3Fp/LLYcS2YaA/vJaVe/ilKaq7rnOfGzbSVe8Qi4KFXn/iFLXo8pzRCyK126yJ0sqLMKleX4jJVoYAbQvAk/xqguXh0NBmcl8Hcp+HHzN9TGdZLRe4A9VRjUhzpK7gsKPbT+8IJYnsxV4atX2yG4XDBgKfUyiZ3kVH4by9apACQd40OtAh2yAl6NTcRJ6DlsP+qepxVUzxfx6hM3M472NxSb9KA805QhcaM5bQZ8I+cFDF1Im7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uDC4St1GEd/XMM8xHNYlvzhhzJdupN2su443arqW0RM=;
- b=ugzzHWT4/n0B7oOqsW1vS6sS58FUiMQRzKVfL/btghyU8pJyqAXICH/Py+0RDMOlFX0N9uiyddo2DDwidJC9lgC/o3WY5WG+jhvhEsHf7O1b9TssvilDySOhaX6RtrkAX/+uGEmh/zurOlGXKRdDVpYo6BQBcRIOu9JtLlI6CiWYl0FJTytsynYaOrfqnZ9x/S0wpGecUWQ5u68Pmn9hCfv7CkJmce56jrszLarNh5ocLylXEGlb+oAzGV6mmp54eOE4eCuq+748kbYdWpF2xU8CHP15M95wCN0URdcUKU91pofZ6lOdUeg8KqlDDjMmtTsGY6FpqTxDHS66puf9Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kudzu.us smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uDC4St1GEd/XMM8xHNYlvzhhzJdupN2su443arqW0RM=;
- b=sPxjKypMakxHUYoLkA/9XXXMG4iMi1TU9B/3PjLXBd+DyE+tSO9VIhwyTtEC47hx98U5gSX+2gFiqUP1vKETsIa32dNmwN8Uoo90eVNItZOESKIa2vCE2Zq7/Zg7InxtHHXibxF00LL50+wLa7WWfbYDbchKm76HR6lsqS+5sE0=
-Received: from CH3P220CA0014.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1e8::16)
- by BL1PR12MB5708.namprd12.prod.outlook.com (2603:10b6:208:387::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 04:57:40 +0000
-Received: from DS2PEPF00003444.namprd04.prod.outlook.com
- (2603:10b6:610:1e8:cafe::b3) by CH3P220CA0014.outlook.office365.com
- (2603:10b6:610:1e8::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18 via Frontend
- Transport; Thu, 10 Oct 2024 04:57:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF00003444.mail.protection.outlook.com (10.167.17.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8048.13 via Frontend Transport; Thu, 10 Oct 2024 04:57:39 +0000
-Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 9 Oct
- 2024 23:57:37 -0500
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>
-CC: <ntb@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] MAINTAINERS: Update AMD NTB maintainers
-Date: Thu, 10 Oct 2024 10:26:54 +0530
-Message-ID: <20241010045654.4110321-1-Shyam-sundar.S-k@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D28C18F2FF;
+	Thu, 10 Oct 2024 04:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728536334; cv=none; b=Lvo7YpxW+9BUPBaQPoYMGfmR6KlVvc3cgA88c+OZ/dXfbsuZ3eXDfhrgPcRTAdAEIwUYeHAW2E+J+K9crKK8mw3RtHKuaXUE3lzA1ZsA/8MjzYP0t9BFlDRXNOdse7yqqF8Hv4nrIa7VHsKUIe2rNoS5AVHE7GAMtFc1NmLPRnQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728536334; c=relaxed/simple;
+	bh=rvPvWpE0WNaL4hil9zTCJfZ9UGfGvYk05TegTskFXHQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rIqAdAH/tGQvJs3R25tY3OUQwBWmIahjCyYfyC2zhG5FdR3Dux6iqTCXoWnJ3iMSKdgavq6Q28Cn/gRl9YO8KYCmHB2tEKxQ2Wxa6SmDaIwmV1hrXheNjlFhSCHt4IGGegS007m5VyjUBt3GL8Ku228YiE4fVbUivLLevm2lLnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfFUKLer; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71df0dbee46so397349b3a.0;
+        Wed, 09 Oct 2024 21:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728536332; x=1729141132; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9e/VPAlIyAZCli/ofmVddbzqeYWWWHaTukcajHAji3A=;
+        b=YfFUKLeryAGFC/4v2XD5bWxCujaWW6K6nK3a9L8DPxgkuV2uY1uSLZOTcFz2GJhUAg
+         Xiw+K8n0VXPTs6t49mDvC3VMsS2UCqXn/O/ju4w7MK1N1MNDVpcGuGqO4iO73IRUJpdg
+         4cfsPfzPNeIm0KDl29nFb+ojbh0ZK/ksG+a2yN+40pzBM3iXXBLcIwHA97wXAz/p83mm
+         PCIXUZ4dbkTING2+53X6+418BmdbEAz7EDM5yIXf/Y/h/YLJYlHIYlNYDLxPrIpdhTKs
+         NNqNwIYjh2/m9QxUFrltefdUHDVnfkiZ4XNVEcXbEtPrJZGf9qxm9tzVdZQGrZW/KXHR
+         sj1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728536332; x=1729141132;
+        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9e/VPAlIyAZCli/ofmVddbzqeYWWWHaTukcajHAji3A=;
+        b=VvEBWefcq3KHKKT6NuOrepZEbC47AvEzCw71gnMn13zhikXXL1UKt+BvI+V/HXInka
+         VxBJtpg5s0ZpsMqtEzyBrIOWXiYhJyB+fhszTAH6nauxkC134Emkw3zCZu7ZynFBUbNF
+         LtpfvpMwbiINYBALK/wHvTKKoMMZZLIrHlXWI3f2wKL2iLudxEkT2oWBfB1gfk54X+66
+         rtvFWrryxm5T7OjqUM5/+1HIFM8iUkqfQN3A0eRBeZSovh6U2DgoksFK9b7bd9J8FcKO
+         SU1+ag+KBKo9x3eLgCp5ai3xRYiUBm83bvfkEbaxmD2/vC5bsDaCL0uIEOjNSUBilf2B
+         iZMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaPTW015YYRlGZjKRa/onu0ARCHes90zvo0oytuvjTf6MdLvHuuVsGx3dZHbG6N3H+pcOiCW2yZfOmxJw=@vger.kernel.org, AJvYcCWc/OACV/Lvzoy0oT5oEqBYc7q4X3C46uWK4bPWaNVeWa8SlvVAsqlwteVIvuA1CFFWIHTsYpkb4IKk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT9cnsiCuf0g09PUhvXjSpArKAnHwS0z6Zdy5RmwxRMA0hKlJ+
+	cDSDQjdN+CUS2LNbPCKCirz6NROMcwB42ZnhpGQsV+m0dnlPcTpa5IQcHkn77Pk=
+X-Google-Smtp-Source: AGHT+IG2nyCkFOO52IwqGEVeGZFUcEZh6aaC4IsBlYqOzlbxD2W9HXO0B7BsiNtsD8i3f6tY+uFRHg==
+X-Received: by 2002:a05:6a00:3e16:b0:71e:14c:8d31 with SMTP id d2e1a72fcca58-71e1db858d1mr8318997b3a.16.1728536332042;
+        Wed, 09 Oct 2024 21:58:52 -0700 (PDT)
+Received: from gmail.com ([24.130.68.0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0a50dsm262899b3a.195.2024.10.09.21.58.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 21:58:49 -0700 (PDT)
+From: Guo Xuenan <marcus.yu.56@gmail.com>
+X-Google-Original-From: Guo Xuenan <guoxuenan@huawei.com>
+Date: Wed, 9 Oct 2024 21:58:46 -0700
+To: stable@vger.kernel.org, gregkh@linuxfoundation.org, sashal@kernel.org
+Cc: leah.rumancik@gmail.com, djwong@kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	marcus.yu.56@gmail.com
+Subject: [PATCH 5.15.y] xfs: fix super block buf log item UAF during force
+ shutdown
+Message-ID: <ZwdfBhBsMEG2_1Tr@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003444:EE_|BL1PR12MB5708:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d80a390-76dc-4bd2-1e3f-08dce8e81143
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kj7J3bIl52Wrdpr+79IT3E+QjZZnH64073bRR28ExAOms2ljYNDjngxAO4qh?=
- =?us-ascii?Q?1hdYTpBP2dOJTyNpaZCXIvxUp6RaUjG19FrR3YBzUAQGMZ8tDtBztMYwNSIi?=
- =?us-ascii?Q?KFxiuuqfaxtqHiITja2Yf+cqYamel3pzDwD2bvsiXVO7V075HalEIZ+mMzN4?=
- =?us-ascii?Q?0BUX382u/rnwtlBy1fCvOcpZ/kIQ4RB76FtiwghjFTgkQfwHQJPGhURosRdJ?=
- =?us-ascii?Q?K7CIvW3iSGyGG1deS4C2Yo97sVFLZ6LY1c+hekIVTUZjzhqMuaFAafKPuOzs?=
- =?us-ascii?Q?Yg4qNyDjCW/RSGNv7Hh0lDPzO5xv9Plq8MCJBtr51et9yDFygjIJurbAkOQL?=
- =?us-ascii?Q?k5LUokmnC2izKy9MaTczl77QQPOtsKfvOzaDMkwMLcT0hjKIV92VxzEj6x03?=
- =?us-ascii?Q?4yoBt/c2Wu1RWhY8VYYJmylViAgS+SB69WY1rVMwu8xKBJ4qA7dnB2YFH4Er?=
- =?us-ascii?Q?Jk9KLi/StTSR5UwMi3J87jqu8KqscIaXTjtZ6xyrWNRuBdbDLz+OILPEsqSb?=
- =?us-ascii?Q?F+NkkHpNyw6t2ONDT1ntnY/Sjw5Burcx8SA6jAvpLPonH4XwEgnQNpLkEWTI?=
- =?us-ascii?Q?yWYSe6W8ujDPTSO/Tz0kwFUOtUE0g+WpVBpBzwRJ+WToQWXyHJQstwdJGY0I?=
- =?us-ascii?Q?QkLiOJ0J9eEoH7htlWFq2QgD0TnkmcMibijl0gvOKUY6Xy9lSaGQR+xLCNYH?=
- =?us-ascii?Q?Q/SNqYRCF3FZiXuuu68tz3n2afpz+61dm7spA2QSTJuPO/6LyIFU38l7a+FV?=
- =?us-ascii?Q?DGBgbGWUlAat971qm1yS4R0GynHsj1fORcmEZgyc1FfSqeTt9iclfjBkG1ED?=
- =?us-ascii?Q?U/V8upGx0TVbk8yNYf2NjgjO9mH1E1oaLeXgMGdepoj96PskExVHoYOJNSG5?=
- =?us-ascii?Q?/kA5+pUGWN5dc4fTCteXdz531ZWvoyRRNtSIf5GdRu/bPZqPsrQMa7DfoEGh?=
- =?us-ascii?Q?r4eQbJhCFPiq2FbjMOdDz1FE7xjvjzt1gEFMeYk4rXl7+Nk5K1fl4W+tD4sz?=
- =?us-ascii?Q?+WHOWg10BDu5EXC6Ilblq1BNHxHx9PoFKN0OZjqQzAzXU8Wj/Clhv3BpzxWu?=
- =?us-ascii?Q?okRkQeVqs50PuC+k1TXBBYE+OG6VLVpzFzmkK3pSDdla5NReGnEqL9nRqoWf?=
- =?us-ascii?Q?G0LdN5gGQC/iOin+5RHSJRru58B0IK5UwTplheK2I6Ck+g0oDCP0JTCY9YGT?=
- =?us-ascii?Q?etWJ8eOgZUu6WHYQF66XRIBLS0QZMlj/jRkwUgy3PJcjJszpFz3Kxx2Nd/Oy?=
- =?us-ascii?Q?i0Zay8swa0rannbJUYOUtK0fuTze/aLYzmPldzaQqaKWT19jU2m8aYY7U3Px?=
- =?us-ascii?Q?gtafKWGsf1ITQ2RvGdWMqU3ffqMjBJ9KKkXu+nGffkDiP8bt4bR9lnzKDVPG?=
- =?us-ascii?Q?GujnIsXyw1EyErThswF2ieDQ2tQ6?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 04:57:39.8342
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d80a390-76dc-4bd2-1e3f-08dce8e81143
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003444.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5708
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sanju is no longer with AMD. Update the MAINTAINERS file record.
+commit 575689fc0ffa6c4bb4e72fd18e31a6525a6124e0 upstream.
 
-Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+xfs log io error will trigger xlog shut down, and end_io worker call
+xlog_state_shutdown_callbacks to unpin and release the buf log item.
+The race condition is that when there are some thread doing transaction
+commit and happened not to be intercepted by xlog_is_shutdown, then,
+these log item will be insert into CIL, when unpin and release these
+buf log item, UAF will occur. BTW, add delay before `xlog_cil_commit`
+can increase recurrence probability.
+
+The following call graph actually encountered this bad situation.
+fsstress                    io end worker kworker/0:1H-216
+                            xlog_ioend_work
+                              ->xlog_force_shutdown
+                                ->xlog_state_shutdown_callbacks
+                                  ->xlog_cil_process_committed
+                                    ->xlog_cil_committed
+                                      ->xfs_trans_committed_bulk
+->xfs_trans_apply_sb_deltas             ->li_ops->iop_unpin(lip, 1);
+  ->xfs_trans_getsb
+    ->_xfs_trans_bjoin
+      ->xfs_buf_item_init
+        ->if (bip) { return 0;} //relog
+->xlog_cil_commit
+  ->xlog_cil_insert_items //insert into CIL
+                                           ->xfs_buf_ioend_fail(bp);
+                                             ->xfs_buf_ioend
+                                               ->xfs_buf_item_done
+                                                 ->xfs_buf_item_relse
+                                                   ->xfs_buf_item_free
+
+when cil push worker gather percpu cil and insert super block buf log item
+into ctx->log_items then uaf occurs.
+
+==================================================================
+BUG: KASAN: use-after-free in xlog_cil_push_work+0x1c8f/0x22f0
+Write of size 8 at addr ffff88801800f3f0 by task kworker/u4:4/105
+
+CPU: 0 PID: 105 Comm: kworker/u4:4 Tainted: G W
+6.1.0-rc1-00001-g274115149b42 #136
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.13.0-1ubuntu1.1 04/01/2014
+Workqueue: xfs-cil/sda xlog_cil_push_work
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x4d/0x66
+ print_report+0x171/0x4a6
+ kasan_report+0xb3/0x130
+ xlog_cil_push_work+0x1c8f/0x22f0
+ process_one_work+0x6f9/0xf70
+ worker_thread+0x578/0xf30
+ kthread+0x28c/0x330
+ ret_from_fork+0x1f/0x30
+ </TASK>
+
+Allocated by task 2145:
+ kasan_save_stack+0x1e/0x40
+ kasan_set_track+0x21/0x30
+ __kasan_slab_alloc+0x54/0x60
+ kmem_cache_alloc+0x14a/0x510
+ xfs_buf_item_init+0x160/0x6d0
+ _xfs_trans_bjoin+0x7f/0x2e0
+ xfs_trans_getsb+0xb6/0x3f0
+ xfs_trans_apply_sb_deltas+0x1f/0x8c0
+ __xfs_trans_commit+0xa25/0xe10
+ xfs_symlink+0xe23/0x1660
+ xfs_vn_symlink+0x157/0x280
+ vfs_symlink+0x491/0x790
+ do_symlinkat+0x128/0x220
+ __x64_sys_symlink+0x7a/0x90
+ do_syscall_64+0x35/0x80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 216:
+ kasan_save_stack+0x1e/0x40
+ kasan_set_track+0x21/0x30
+ kasan_save_free_info+0x2a/0x40
+ __kasan_slab_free+0x105/0x1a0
+ kmem_cache_free+0xb6/0x460
+ xfs_buf_ioend+0x1e9/0x11f0
+ xfs_buf_item_unpin+0x3d6/0x840
+ xfs_trans_committed_bulk+0x4c2/0x7c0
+ xlog_cil_committed+0xab6/0xfb0
+ xlog_cil_process_committed+0x117/0x1e0
+ xlog_state_shutdown_callbacks+0x208/0x440
+ xlog_force_shutdown+0x1b3/0x3a0
+ xlog_ioend_work+0xef/0x1d0
+ process_one_work+0x6f9/0xf70
+ worker_thread+0x578/0xf30
+ kthread+0x28c/0x330
+ ret_from_fork+0x1f/0x30
+
+The buggy address belongs to the object at ffff88801800f388
+ which belongs to the cache xfs_buf_item of size 272
+The buggy address is located 104 bytes inside of
+ 272-byte region [ffff88801800f388, ffff88801800f498)
+
+The buggy address belongs to the physical page:
+page:ffffea0000600380 refcount:1 mapcount:0 mapping:0000000000000000
+index:0xffff88801800f208 pfn:0x1800e
+head:ffffea0000600380 order:1 compound_mapcount:0 compound_pincount:0
+flags: 0x1fffff80010200(slab|head|node=0|zone=1|lastcpupid=0x1fffff)
+raw: 001fffff80010200 ffffea0000699788 ffff88801319db50 ffff88800fb50640
+raw: ffff88801800f208 000000000015000a 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88801800f280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801800f300: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88801800f380: fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88801800f400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801800f480: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+Disabling lock debugging due to kernel taint
+
+Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
 ---
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a097afd76ded..b0ff1b6164ea 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16491,7 +16491,6 @@ F:	Documentation/core-api/symbol-namespaces.rst
- F:	scripts/nsdeps
+The fix 575689fc0ffa ("xfs: fix super block buf log item UAF
+during force shutdown") was first introduced in v6.2-rc1. Syzkaller
+reports that the UAF bug is still present in linux-5.15.y
+(https://syzkaller.appspot.com/bug?extid=4d9a694803b65e21655b).
+I think a backport should be beneficial here.
+
+---
+
+ fs/xfs/xfs_buf_item.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
+index b1ab100c09e1..ffe318eb897f 100644
+--- a/fs/xfs/xfs_buf_item.c
++++ b/fs/xfs/xfs_buf_item.c
+@@ -1017,6 +1017,8 @@ xfs_buf_item_relse(
+ 	trace_xfs_buf_item_relse(bp, _RET_IP_);
+ 	ASSERT(!test_bit(XFS_LI_IN_AIL, &bip->bli_item.li_flags));
  
- NTB AMD DRIVER
--M:	Sanjay R Mehta <sanju.mehta@amd.com>
- M:	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
- L:	ntb@lists.linux.dev
- S:	Supported
++	if (atomic_read(&bip->bli_refcount))
++		return;
+ 	bp->b_log_item = NULL;
+ 	xfs_buf_rele(bp);
+ 	xfs_buf_item_free(bip);
 -- 
-2.34.1
+2.46.2
 
 
