@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-358316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CA7997D17
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:20:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBB9997D19
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B37282CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:20:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF951F24ABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E881A00D6;
-	Thu, 10 Oct 2024 06:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208461A0737;
+	Thu, 10 Oct 2024 06:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMC1Snen"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQ/TREI9"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7E41311AC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A3363D5;
+	Thu, 10 Oct 2024 06:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728541252; cv=none; b=XyTV/0Gs3YJaaOQIADiMUNDpQfkbFiJKnWqN0XHU46yVs4Re2SocrOLHMTPoJdDg0Nx5yPY/AU3zOnD7BR21skR1tjs5U9KQm6C/vZnQVIblcosFYLwuXr06zHCDN28+CzNPd9wDPH+F2VABqdN9XAhaI6xoIRcHNbUsKaWnho0=
+	t=1728541252; cv=none; b=UmAgOVrc+qrg4ruaLzFuGiLFP/HvoXjrLZu09hhkBOU0m4D2ifQD+rCCkBo3Ox2OQ38Mw8cNk1iZODg8dsERIg7qXufQk1cMDw35BcVCSPQPN2+GRzE3ib3Z6VColcGo5GjVVI1SzOpQNNezHEMUDJy8c+yy591BfIwrM6U9lVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728541252; c=relaxed/simple;
-	bh=Gr6I3Lpl4O3m2/3FmVpE+sxjOvl+/GM/2BTeayM/Gz4=;
+	bh=qaqjy/ICRcr20JFxDYHFKNro9NgmHt+cjomK7Sxh0bU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMzxXxLIGg+1IdCNROAX4bW8gZxKLqr65SjlC38JaFElJYlgO6jI/Nnc0yc19coaShRR4c5Gt6KkLu/yG11mf/E+T7EhXk197JghD1b5wAnmnkqwIdbO0/kpTTf7/aGouWHUfAH2gWuvN77XnZ7B6AnHqmsJaxwrLsGgH+72jck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMC1Snen; arc=none smtp.client-ip=209.85.208.178
+	 To:Cc:Content-Type; b=HC6JqTZoLGYzLNlbEaEArt/3jqIfYYNpjOE6wVO02tDEthM9jDoE8nXT5CBuqcdbaESxEzBq05LZF1xi9mF1xHIpEEn3uolEQ705IpxuAAzUw0SkAjg4Hrz22x8y6cQ4BCgWFjX4nuOJIgDsxFEIT3q6EexEOT3rBgaVvFq1qwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQ/TREI9; arc=none smtp.client-ip=209.85.221.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so4756651fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:20:50 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-50abb0c511cso182758e0c.0;
+        Wed, 09 Oct 2024 23:20:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1728541248; x=1729146048; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5/5ZeQ+bZ+j/sfabBG6m03jeyZ0ILSqkZ0P6ySqgxhY=;
-        b=lMC1SnenpSZyEOQvvtmQ5gK0zk1yXAbcL90spF4HaYueHhx/FpJPzUY+QvKWjuSthr
-         scaOvwkVkB2BuzeaflaRZ91JTQN+aNzztyVku3qVqr0LYq4Hf8uArWcM1BnhfymAM07z
-         urb63opuJn7Tp8RLH+z0j69PKB9zHhqxAOefLwSV/jQ7LtVzEysvc2vezwUQbRD/Z2yF
-         JGBFN0ctj8GGhyC2DWmfTi2X490eNIhdnn2yjipEkJmqDhh3OXHhfBmfyaznOwU8fw+K
-         8LWfNd0KOQrtR+kx+4irnOx8AzvA2PYbR1B3s1HprV6DHVBOwKgedZj9fUzN6TqpmGZz
-         008A==
+        bh=FGVU427CrfGUSs9T9zYh1JpIasHS9WJriHVK/hUIGk8=;
+        b=BQ/TREI98radq5Z0F+H1513r5svb7YeojmFzR05J9nndwsxSz0xzdIINzkSFEh9YW9
+         gIdZJ9yNzIe1NwTVYYHBCfaJ2txZWikgE6NaeVahRI/Q352jaOw29Hawy3Qk1bETg0sQ
+         KO83BfBa6a42KHFtj5568fnhjQ5z7nYVKMlGwkA/6ve7CpsHUQErkF2QMK5rXfpCg9k5
+         FQuMEaIklxOkR2W0vA8+J/I9MKaoz4JygWQS9b5+bYgM3YbUKABxOBAVUiXUJ0FXk00a
+         ktpHstNbeXLdUTBOmdjz40pcGxsOQevZXlxXD+mTjEuihy9vWnlKXmwL0gO1HBG6LMmz
+         BMNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1728541248; x=1729146048;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5/5ZeQ+bZ+j/sfabBG6m03jeyZ0ILSqkZ0P6ySqgxhY=;
-        b=cDQFrj2yppzb26dUr79JpuKAlMAk1soSIKuCngBoN6nAwQuLpLEWk7pK5/A+GjFRvk
-         aXMaBQ10279weLTURC1cJL8E5CP/oHLGSctctQIC9KjOFAa0aGaYM2xMrFmmnasci2bC
-         pF69Xuw1yo49SMeVjlgNaDX2BUKKqeldMZP15ZUTiSnIQeNfkkSb5C/aWAOy+RDmvJ2S
-         v9jtgEGfhwvSbg7425/sSqpjvacB3G16vFAh3AVKny9F/x59r4B/9IMWohewX4T39Lmo
-         vyZ0eqE4UKMkCD1vynIYX43M3EY+E5j9Sv7cezsqMHPClw7m72t1gadesCe0df/jzaRa
-         AGEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIuNdmkBAZhEb2IADBp7Lq34HlmiktIk7HO6EDsFbd5HOTOCXJnOPX+Oq0t4Dw+2rVAWGKz7w2Bp6tXrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAxpklzi9FBjr5bXMKF3j1G3OWjsUSwkdB4PZMI9qUnMl4B3gb
-	6LDtJ2oZY4J3u84yAijilltdlgr3VbS0EAxIiqtaV8ehqfki0sYetCPtCWSEyFRePBVfao2o6WE
-	1WRSSzGhA8a81dXZ0rkgS0xmiHTU=
-X-Google-Smtp-Source: AGHT+IEzS780FVWQwDu4l+vTRUKyhmAIG14rfawLmam+r4oN/lVVg1UTogBqanU0dme/6k2Xc9AWefXK8ei9md9hRsQ=
-X-Received: by 2002:a2e:b889:0:b0:2f5:2e2:eadf with SMTP id
- 38308e7fff4ca-2fb1872fe7amr32490661fa.10.1728541248153; Wed, 09 Oct 2024
+        bh=FGVU427CrfGUSs9T9zYh1JpIasHS9WJriHVK/hUIGk8=;
+        b=FMweDQ9Y3SSkEKzjUVlkkt4z4zBTUYvGEA/ZqpctkqpnyY8JmO6srOKpZkMf/F3gki
+         UsrNJdi1RVlCx9TT+RO9HJPo3iPLQA3dx66/46Hy/6I/MIv9YdnxYAN/0hhp75G/UNci
+         Lz8IRAkNBHzra0SV/iDPEdH2t8f+9x8JTvkeROGbULCpwVO1mXwpv0h1+oZ0ldW5ASrw
+         y9tHGRlzoz+vnA9R/h3/xEyiVLXylzX7+ergybuC9rBG8+AkVhI/PmDcsdT7rb4iwyBB
+         Cmwx6L/P7/BHfKIn/WKmw6OzAR1bBgpdjEIQ/FivTJlIeIgeiydkdSqxFOHZ+fc5j060
+         UA9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUA7oL6XX+f1Ma3lN4ZzIbxYawEshoO24K7a+VkQwbXHBMoB99AZqq44uQYWZ9XU+JvUAf++rha5cBU@vger.kernel.org, AJvYcCWgExaSfxcRdlt4XURlhEOfqNutCbRyLY7BvV6gatHTVYsTS1vSFd6boydEsg4EN6GEpyXOWKyQ8YWiIT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym44OJdWxQUQZce3XV8gaAAdGD3wUFD161rfhGlAISibeWutmS
+	2/5PARK9Jns1WH/6QjodrSpS5zWTtVCHNmM3VhWc5IV6SHHAN037s4pWVVRyT4bj88nXuo5Ldr+
+	rIDCMFZWZdmlaOK8Hrvb6+6aS+rE=
+X-Google-Smtp-Source: AGHT+IEt8hsG4lkLsNTH2fFPvHelYXZC61aPhg8KN5x7d3CTCt0KM9Jf3DkVxsBU5f8wJHl8FYvHBv8kT8B1KifFUXc=
+X-Received: by 2002:a05:6122:311d:b0:4f6:aa3e:aa4c with SMTP id
+ 71dfb90a1353d-50cf089b3e5mr3984546e0c.3.1728541248017; Wed, 09 Oct 2024
  23:20:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,111 +70,87 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004085257.10908-1-ubizjak@gmail.com> <bb91d63d-c61a-4063-bf14-4cbbb62bec12@igalia.com>
-In-Reply-To: <bb91d63d-c61a-4063-bf14-4cbbb62bec12@igalia.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 10 Oct 2024 08:20:36 +0200
-Message-ID: <CAFULd4ZDKvo3pNGTMExNoh3n9DLixSYZk0d0sVCeaztyi1kKYg@mail.gmail.com>
-Subject: Re: [PATCH v2] futex: Rewrite get_inode_sequence_number() to make
- code simpler
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>
+References: <20240913102836.6144-1-victorshihgli@gmail.com> <CAPDyKFoHrRGYkNCu0ev8iF6e8tQV7cbTAxm9jS0CCqvizmoWmw@mail.gmail.com>
+In-Reply-To: <CAPDyKFoHrRGYkNCu0ev8iF6e8tQV7cbTAxm9jS0CCqvizmoWmw@mail.gmail.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Thu, 10 Oct 2024 14:20:38 +0800
+Message-ID: <CAK00qKAUg5VFkxbrYUeFjRq+3UN2dcOZ0RJFDK2e3tCxKOJNLQ@mail.gmail.com>
+Subject: Re: [PATCH V22 00/22] Add support UHS-II for GL9755 and GL9767
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 9:44=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@igal=
-ia.com> wrote:
+On Mon, Oct 7, 2024 at 11:34=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
 >
-> Hi Uros,
->
-> Em 04/10/2024 05:52, Uros Bizjak escreveu:
-> > Rewrite get_inode_sequence_number() to make code simpler:
+> On Fri, 13 Sept 2024 at 12:28, Victor Shih <victorshihgli@gmail.com> wrot=
+e:
 > >
-> > a) Rewrite FOR loop to a DO-WHILE loop with returns moved
-> > out of the loop.
+> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
 > >
-> > b) Use atomic64_inc_return() instead of atomic64_add_return().
+> > Summary
+> > =3D=3D=3D=3D=3D=3D=3D
+> > These patches[1] support UHS-II and fix GL9755 and GL9767
+> > UHS-II compatibility.
 > >
-> > c) Use !atomic64_try_cmpxchg_relaxed(*ptr, &old, new) instead of
-> > atomic64_cmpxchg_relaxed (*ptr, old, new) !=3D old.  x86 CMPXCHG
-> > instruction returns success in ZF flag, so this change also saves
-> > a compare instruction after CMPXCHG.
+> > About UHS-II, roughly deal with the following three parts:
+> > 1) A UHS-II detection and initialization:
+> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
+> >   Sequence[2]).
+> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
+> >   [2]).
+> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
+> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
+> >   Setting Register Setup Sequence.
+> >
+> > 2) Send Legacy SD command through SD-TRAN
+> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
+acy
+> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
+1
+> >   Packet Types and Format Overview[3]).
+> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
+II
+> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
+.
+> >
+> > 3) UHS-II Interrupt
+> > - Except for UHS-II error interrupts, most interrupts share the origina=
+l
+> >   interrupt registers.
+> >
+> > Patch structure
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > patch#1-#7:  for core
+> > patch#8-#20: for sdhci
+> > patch#21:    for GL9755
+> > patch#22:    for GL9767
 >
-> Remember, it's easy to see in the diff that you replace the function,
-> but might be not so clear why you did so. I think it would be better to
-> understand if you write like:
+> Patch 1 -> 6 applied for next, with some minor updates to patch2.
 >
-> We are trying to set a value for the i_sequence, that we expect that is
-> zero, but if we fail to do so, we are happy to use the current non-zero
-> i_sequence value that we found. Instead of using
-> atomic64_cmpxchg_relaxed(), use atomic64_try_cmpxchg_relaxed() which
-> provides a better semantic for this situation.
+> Patch 7 needs some more work, I will comment on that separately.
+>
+> I am okay with patch 8 -> 22, but since there will be a re-spin for a
+> new version, perhaps you can run a new round of checkpatch.pl to see
+> if some of the warning that it reports can be fixed too.
+>
+> [...]
+>
+> Kind regards
+> Uffe
 
-I will abandon the rewrite part and for the core changes post a
-two-part patch series with two almost mechanical one liner patches
-that I already have a widely accepted changelog template for.
+Hi, Ulf
 
-Rewriting the loop form is mostly cosmetic, and since it doesn't have
-an effect on code generation, I'm not that much interested in it. I'll
-leave this part to eventual future patch submitter.
+I really appreciate your reply and I will resend the new series of
+patches before the end of next week.
+Do I need to include patch 1 to patch 6 when re-sending the new series
+of patches?
+Or should patch 7 to patch 22 be sufficient?
 
->
-> >
-> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Darren Hart <dvhart@infradead.org>
-> > Cc: Davidlohr Bueso <dave@stgolabs.net>
-> > Cc: "Andr=C3=A9 Almeida" <andrealmeid@igalia.com>
-> > ---
-> > v2: Explicitly initialize "old" to zero before the call to
-> > atomic64_try_cmpxchg_relaxed(). Rewrite commit message to
-> > state the motivation for the patch.
-> > ---
-> >   kernel/futex/core.c | 18 ++++++++----------
-> >   1 file changed, 8 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-> > index 136768ae2637..ac650f7ed56c 100644
-> > --- a/kernel/futex/core.c
-> > +++ b/kernel/futex/core.c
-> > @@ -173,23 +173,21 @@ futex_setup_timer(ktime_t *time, struct hrtimer_s=
-leeper *timeout,
-> >   static u64 get_inode_sequence_number(struct inode *inode)
-> >   {
-> >       static atomic64_t i_seq;
-> > -     u64 old;
-> > +     u64 old, new;
-> >
-> >       /* Does the inode already have a sequence number? */
-> >       old =3D atomic64_read(&inode->i_sequence);
-> >       if (likely(old))
-> >               return old;
-> >
-> > -     for (;;) {
-> > -             u64 new =3D atomic64_add_return(1, &i_seq);
-> > -             if (WARN_ON_ONCE(!new))
-> > -                     continue;
-> > +     do {
-> > +             new =3D atomic64_inc_return(&i_seq);
-> > +     } while (WARN_ON_ONCE(!new));
-> >
-> > -             old =3D atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, n=
-ew);
-> > -             if (old)
-> > -                     return old;
-> > -             return new;
-> > -     }
-> > +     old =3D 0;
->
-> Please initialize it in the variable declaration.
-
-This is not possible, since we have an assignment from atomic64_read()
-inbetween.
-
-Thanks,
-Uros.
+Thanks, Victor Shih
 
