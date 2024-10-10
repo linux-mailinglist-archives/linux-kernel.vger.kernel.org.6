@@ -1,219 +1,109 @@
-Return-Path: <linux-kernel+bounces-359073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBE4998718
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75230998715
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800C61C22FDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F601C230F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1F51C7B6E;
-	Thu, 10 Oct 2024 13:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7251C9DC6;
+	Thu, 10 Oct 2024 13:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fkLtGfLV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cXB7wkFL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E181C9DFA
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC67F1C8FC3;
+	Thu, 10 Oct 2024 13:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565477; cv=none; b=u297jirUvpKMZ+M6Au8xIgC8QNdAPQkRG9FsWcwyq0lpqimBUo1sF4zarnxOp+3jGS4yRcVnIMU3LQZndB8rYcG/Y9IuzT/Pe4qqjiRDv2ncAL9J6LXMG2lFsRy7oY8KLLxoFUA2ryqVP6UG/RC05g1qQDbCg8jZso8XQbGbofA=
+	t=1728565473; cv=none; b=YRS02UqU6JY+9LNnLDQC3pVOn/J1xYNFkmPRLXiG6WzpU6Mo7dKtvywsB6TXtpUdUsiXs8jN+uKKqUq7OdsVwR1nw9oLQ1+5xmqlS9znEo9yX3PZQ9KqxylyGBEiv467tEJ8o8bhDAndY9pph8o4GDweG2bY6NdK533LFFsAEAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565477; c=relaxed/simple;
-	bh=pf/Zzn68NMI/2QRu4HEmgc/wf5KLDfWtBLBltAF0X5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lFlkcgsP9ISyTdqigdy4XKqbAH1hmgtf8rGhDkdFAKtcGogaZNax59Snn6TwHJFNCLa2ID96TxBfZ0DYldZ64w9BnjTKlw6v8Ro0mSmxs36l0ghPQWyNnXgV+hFdupM6fpvCUE6NI4t7nLl6g8h8RH/jsukcgnD4gTd9quYJT0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fkLtGfLV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728565474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YgNKqmVF4jcBWTvWxpQl8M7npUyGix1i4lIqegvFbp8=;
-	b=fkLtGfLV18pWHY1YeCcgpX9cKdbJV4pU5QnPJryPjfbVHRHc6VPO/oYvOK2IHcy9PkOu5S
-	jgMO3GopcSTza7p7SxzRpE23PSeYz8+oVMkwbpJJMkHaTtyHF5gh3+kpWUt1edkvu+4RSA
-	GXBV/Kr+gA1BUNHbmM7J2zFCv/gHiJY=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-328-mC0SvDxgO6O0wz8_uQAsfw-1; Thu, 10 Oct 2024 09:04:24 -0400
-X-MC-Unique: mC0SvDxgO6O0wz8_uQAsfw-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a996c29edaaso66012466b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:04:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728565463; x=1729170263;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YgNKqmVF4jcBWTvWxpQl8M7npUyGix1i4lIqegvFbp8=;
-        b=DFoTcfJw1BhttFBnTG5X8jNpuVnsfCPTihihF/qGdITWzND7GzRqZWPSYhVG2P/izN
-         SiLTJ1Z7ep3/5QcWvl85U+fJAOQXcqpZPhM7UWy36aT3SCyEJm4EVsmtYyajcd9k6r8x
-         VdvwjM9TKp35RCiGdXVel7t1bwZUnqTRcNRxI6dJedLp/wmL9YpBsClxPXJ9RJhzTF5r
-         tovN578ZO7QwnzEg2V/tL/DUVOhxXur54+eCsBwBl6OdfqedboqNSoSonxMQdMCT+Cs1
-         3cV/G38bcqNLN5XjogaE0e+Pc0k3i48K7WlhG0Fj0QGCFqpl+WlWXgEYXSyCaA4j1dtq
-         xUiw==
-X-Gm-Message-State: AOJu0YxMqnM5fgi1MutOUXTMSwy7XYqW9VG7h2HO0n/EDtvCvfTH8pAd
-	GoWdNd39WnulVDjWqr+phfdvgaBwRMxCtxxlVPh9STBg62kE7XBmm+w/Hoz6FQHKgr3YN3XDuSB
-	mM2Wwk+llyv0NEwiuxnJVWb4NvPVVJglO4fE1GNvW0vMSKJ+DswDBeILqpQGdSg==
-X-Received: by 2002:a17:907:e89:b0:a99:3f4e:6de8 with SMTP id a640c23a62f3a-a998d3832e7mr553908766b.64.1728565462612;
-        Thu, 10 Oct 2024 06:04:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMD1tBOQvmwj6n6vN+SMosHlfw+ZrWKqK36twaCfYHtFB9zxuN7j1h3AJS92NyQRDi8e/Ghw==
-X-Received: by 2002:a17:907:e89:b0:a99:3f4e:6de8 with SMTP id a640c23a62f3a-a998d3832e7mr553903666b.64.1728565462083;
-        Thu, 10 Oct 2024 06:04:22 -0700 (PDT)
-Received: from [192.168.10.81] ([151.81.124.37])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a99a80f29e5sm85470866b.204.2024.10.10.06.04.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 06:04:21 -0700 (PDT)
-Message-ID: <9fd97046-b7b1-49d6-8fc5-2104814152d6@redhat.com>
-Date: Thu, 10 Oct 2024 15:04:16 +0200
+	s=arc-20240116; t=1728565473; c=relaxed/simple;
+	bh=WmQqPMxSNZ6YczRgUz2bES9bcAWOfMKyvH7tdA/rjDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2MSXibyI4F1wa2DMpSeOXaay0QDYDRF4eTAU0vyDFvUNsRO/H8YOV/iQsQUi6lpCnIR9Lw+BiDobgY4yg3KdunuCLZl/zjo2rlh5vN79gBhvJnFqMqC/GNXT4uaAaQlcohH82K9r7j/Q50zSfcttpeVOCL02YrSSDZ2fyoI9yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cXB7wkFL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=wMnFvbWqz9ropUMoiz6qWqM0+CHEQh7yRoQngEhXc1s=; b=cXB7wkFLBivDS3yBosTgcBVjU6
+	lMPFx3K7BkWFhNLTa16uFn6XlZU0eHjss6Ee8gkUFIsapaHNiTK6YpSuHALbpfDhGYjj77gU4bMT9
+	pU+GTrH25gyFcySYj67rPaKKI/ZJ7U5VzengieZwvzMk9jmn16Pv6McPaZKwbFfTaYyh9saZTLL3n
+	WpiIp+LPfiahsmV19nxBYwB8bJSvJlVuOD+abV1ApyZu26RucMtFLZo+fLh0jIm4v6ga18+kb2Dk1
+	FqZGGVAxFR/BjIR82IthqADcUKulfUiQJLcw7mEPBjAR3vOli2BxKdhib0ev/Ra/zJ+THUdNvIxs2
+	8sVA23KA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sysq5-00000007dHZ-31rL;
+	Thu, 10 Oct 2024 13:04:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 93A3030088D; Thu, 10 Oct 2024 15:04:21 +0200 (CEST)
+Date: Thu, 10 Oct 2024 15:04:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alice Ryhl <aliceryhl@google.com>,
+	Matthew Maurer <mmaurer@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Kees Cook <kees@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] cfi: rust: pass -Zpatchable-function-entry on all
+ architectures
+Message-ID: <20241010130421.GG17263@noisy.programming.kicks-ass.net>
+References: <20241008-cfi-patchable-all-v1-1-512481fd731d@google.com>
+ <ZwbAvEnrzu6UUgGl@J2N7QTR9R3>
+ <CAH5fLgipBfd5pNKqniXqFudruyGaJG=LDc5MEf3Yxq1yRMmQcw@mail.gmail.com>
+ <ZwewMw8jBh6OU-L_@J2N7QTR9R3>
+ <20241010110344.GL14587@noisy.programming.kicks-ass.net>
+ <20241010113748.GL33184@noisy.programming.kicks-ass.net>
+ <CANiq72=kT9RFcQ3h5U+wAY0pDQQqGU7BTtiPJ-oiHNUG00z3=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 0/5] mm: Introduce guest_memfd library
-To: Elliot Berman <quic_eberman@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sean Christopherson <seanjc@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Fuad Tabba <tabba@google.com>, David Hildenbrand <david@redhat.com>,
- Patrick Roy <roypat@amazon.co.uk>, qperret@google.com,
- Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kvm@vger.kernel.org,
- linux-coco@lists.linux.dev, linux-arm-msm@vger.kernel.org
-References: <20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=kT9RFcQ3h5U+wAY0pDQQqGU7BTtiPJ-oiHNUG00z3=w@mail.gmail.com>
 
-On 8/30/24 00:24, Elliot Berman wrote:
-> In preparation for adding more features to KVM's guest_memfd, refactor
-> and introduce a library which abstracts some of the core-mm decisions
-> about managing folios associated with the file. The goal of the refactor
-> serves two purposes:
+On Thu, Oct 10, 2024 at 01:44:14PM +0200, Miguel Ojeda wrote:
+> On Thu, Oct 10, 2024 at 1:37 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > So much for the debian 'rust-all' package actually including all. Thanks
+> > Boqun for telling me about the rustavailable make target.
 > 
-> 1. Provide an easier way to reason about memory in guest_memfd. With KVM
-> supporting multiple confidentiality models (TDX, SEV-SNP, pKVM, ARM
-> CCA), and coming support for allowing kernel and userspace to access
-> this memory, it seems necessary to create a stronger abstraction between
-> core-mm concerns and hypervisor concerns.
-> 
-> 2. Provide a common implementation for other hypervisors (Gunyah) to use.
-> 
-> To create a guest_memfd, the owner provides operations to attempt to
-> unmap the folio and check whether a folio is accessible to the host. The
-> owner can call guest_memfd_make_inaccessible() to ensure Linux doesn't
-> have the folio mapped.
-> 
-> The series first introduces a guest_memfd library based on the current
-> KVM (next) implementation, then adds few features needed for Gunyah and
-> arm64 pKVM. The Gunyah usage of the series will be posted separately
-> shortly after sending this series. I'll work with Fuad on using the
-> guest_memfd library for arm64 pKVM based on the feedback received.
-> 
-> There are a few TODOs still pending.
-> - The KVM patch isn't tested. I don't have access a SEV-SNP setup to be
->    able to test.
-> - I've not yet investigated deeply whether having the guest_memfd
->    library helps live migration. I'd appreciate any input on that part.
-> - We should consider consolidating the adjust_direct_map() in
->    arch/x86/virt/svm/sev.c so guest_memfd can take care of it.
-> - There's a race possibility where the folio ref count is incremented
->    and about to also increment the safe counter, but waiting for the
->    folio lock to be released. The owner of folio_lock will see mismatched
->    counter values and not be able to convert to (in)accessible, even
->    though it should be okay to do so.
->   
-> I'd appreciate any feedback, especially on the direction I'm taking for
-> tracking the (in)accessible state.
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> 
-> Changes in v2:
-> - Significantly reworked to introduce "accessible" and "safe" reference
->    counters
+> Yeah, `rust-all` does not seem to include `bindgen`, which I guess was
+> the issue (?).
 
-Was there any discussion on this change?  If not, can you explain it a 
-bit more since it's the biggest change compared to the KVM design?  I 
-suppose the reference counting is used in relation to mmap, but it would 
-be nice to have a few more words on how the counts are used and an 
-explanation of when (especially) the accessible atomic_t can take any 
-value other than 0/1.
+Also not rust-src, because for some reason you're not actually
+freestanding :/
 
-As an aside, allocating 8 bytes of per-folio private memory (and 
-dereferencing the pointer, too) is a bit of a waste considering that the 
-private pointer itself is 64 bits on all platforms of interest.
+> I guess you have it working now, but for the next time / others, we
+> have the `apt` line for Debian at
+> https://docs.kernel.org/rust/quick-start.html#debian.
 
-Paolo
-
-> - Link to v1:
->    https://lore.kernel.org/r/20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com
-> 
-> ---
-> Elliot Berman (5):
->        mm: Introduce guest_memfd
->        mm: guest_memfd: Allow folios to be accessible to host
->        kvm: Convert to use guest_memfd library
->        mm: guest_memfd: Add ability for userspace to mmap pages
->        mm: guest_memfd: Add option to remove inaccessible memory from direct map
-> 
->   arch/x86/kvm/svm/sev.c      |   3 +-
->   include/linux/guest_memfd.h |  49 ++++
->   mm/Kconfig                  |   3 +
->   mm/Makefile                 |   1 +
->   mm/guest_memfd.c            | 667 ++++++++++++++++++++++++++++++++++++++++++++
-
-I think I'd rather have this in virt/lib.
-
-Paolo
-
+Yeah, but then you have to first know that we have this file to begin
+with.
 
