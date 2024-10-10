@@ -1,209 +1,145 @@
-Return-Path: <linux-kernel+bounces-360168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3823699956F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:45:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122FE999570
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE57A282614
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36369B21E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513C41E572F;
-	Thu, 10 Oct 2024 22:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB031CF282;
+	Thu, 10 Oct 2024 22:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MLB6Rh3d"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2050.outbound.protection.outlook.com [40.107.247.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bN34XDl/"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9704C14D6F9;
-	Thu, 10 Oct 2024 22:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728600331; cv=fail; b=mB+yZ0zjGNillorUIsyF9JsVcIjA2p9AyxuLzmUzHw6K/WLYyof2nvSOiQjtKs9z6/ESFoLn12BTRbMiumtUyclYhPcX7nRj7MQ476E/x7ipbs0+LVTjNi/iDbe6OmOrKS4oHKTAMvbVl4hXUn9LPNJ5VdxKmEH1/JDPFYNhplg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728600331; c=relaxed/simple;
-	bh=IPGVUISI5QFOvnPYsHB0tJf/Hb43nAxXTcG3rP+ZG9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=f70KdUeWfpC0YxHRVJWDuN6EBpnqIUL5ZAbGsgtA+GnkSgLKu/DMCTnxTlf6KZOsYyehX7g6Qh6U3+uKk7jxWPPHvWFjMOmGiL47tUIbe1bJGkWC7wEOC9kkEcMcX4MHTkHy9OfElQGurfcOFY0IUYG9bIjJOjkkFDckD/MOloE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MLB6Rh3d; arc=fail smtp.client-ip=40.107.247.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DlnqO9TXiLhdswLVGyiTKj8SMp7v369Rj1u49wXT4A1VdmdLQFPuuihgKF/PuGh/RGD8A9oqqKhzdQ2hLLk60YEm6r+9E1zsoamEao4QEcjd3Mz6g0NtIZJ69LYvHtyTmGa+naCi2jj/tdLtpvzrRFk+cMwPmDel/NqY1SpkLukrhpeIiUebrvxHfZOo6Dlz/N39PVO8TV8EcGwwZtbj2tqLngGK7eR2fbUNxOZ3EvS+iuxXhvgSCmTXbMEn95FypXW78csLEfXyVAXdGTXchTVFgZVoo9Nzob/aH8PR7g2Gz9vBlmCA9RX0gIR33wH4/tuKVyOlmF3QKL9GMSqKXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IPGVUISI5QFOvnPYsHB0tJf/Hb43nAxXTcG3rP+ZG9M=;
- b=flU2J6+kz3Pb4kIbVMIrLDE1zx8snK8tyeGOCgiXEH2qLutv0hQv/hI8z1fUk819fxtQBj0yctlRkUP4FvJtYfPqdDOSudY3vcXFwPqVANpPzi0uJG5kaDYZ4lXOzWRerlrfmhuvZhrtqQauNSmyKq4eit9+5YqKhfPx0IX9cFG2BSeLR8Xj2GxSu6x4dvsPcgZ/oPCENcfI1CWdDek/aqsffZXCxEtWwtoyAOmFmYqmT8QjssbVD52Qs5ZQKh48V7FjF9143aBLVQK3lp1KjT4hQ4fubPIfVBZNiEKLA+5QYjU8nhBaifl9g2d/v6/Hk5jcgxHkoDi2PXwq79k0mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPGVUISI5QFOvnPYsHB0tJf/Hb43nAxXTcG3rP+ZG9M=;
- b=MLB6Rh3dAN3U4N+v7jOV5vwU1rxa5or5WK7vyqc9JZGTyOA/XQ2wi/c6RmJasWErVFvkTO6mJUNhvVRujmTzraBA3ql9DsBQ3MqxLFKTB8g83BJQ3v9ENgE3yZdGGSMsScHp+Zrei1lgibhwCRx8nTjyA+Xy4ezL7EUgovpLCYuvijIEKq2fv2TEZHJ67EinalJl42LDEALnzotHi81uXRBSyXL8PaCQZsia6nJLcsGk5hSHaBM0mchmdXISyuoKYgOUiLUuI8VxQxBzQN9ZG8iqfma7kSpdDRW8GU5FRA0K6n2hdBjKacRE/zbzaZkEEPQ5IZc0XNMPTwjKZrjEqA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB9210.eurprd04.prod.outlook.com (2603:10a6:10:2f9::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.23; Thu, 10 Oct
- 2024 22:45:26 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
- 22:45:26 +0000
-Date: Thu, 10 Oct 2024 18:45:17 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Stefan Eichenberger <eichest@gmail.com>, hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	francesco.dolcini@toradex.com, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
-Message-ID: <ZwhY/dtSNPptgs27@lizhi-Precision-Tower-5810>
-References: <20241009131659.29616-1-eichest@gmail.com>
- <ZwgykRyE+jDU0CiU@lizhi-Precision-Tower-5810>
- <20241010201121.GA88411@francesco-nb>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010201121.GA88411@francesco-nb>
-X-ClientProxiedBy: SJ0P220CA0003.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:41b::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE00714D6F9
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728600473; cv=none; b=Vvmcjmkc0ehPuFSKSs7zD7WdvEXk6NLOehA4ofzwo4Ptg6YhY00E2IJrKVNmUAIw+x3qPT9pHRg1ls3ycSmR1ocIWABUy5zIbhFu6NvagN/gip1eG+jWHQsLimzPAVWpziKKaKIvHO1qxTMY4O+vybqm2WGcwl8pTDg74vCXJ7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728600473; c=relaxed/simple;
+	bh=VXESll7Top6r9okWSbcZe3vpE3W+4Is4JWHa4s+JBDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F9ZTgM5XbmtKgbgW9gjxQ0kAkNkT1qIpgI0djZolV2svR8D513Ovnulr0vQ+IHBLX0fZwpWquAzWfuiJ/ZPa8y1R5TnMWwJeY6s3xU6va/l8Dtf5/qKpfbWbXXF/JXNLVvz1h/Qg4tt/3vvnSzMAEbttUv3sYMhXsAUUh3nQfS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bN34XDl/; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c803787abso10620505ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1728600471; x=1729205271; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fzno+5iofzs/QdGIvMAmQ8PVcytLfapyMyF4iPIIXqI=;
+        b=bN34XDl/8qyZ2O4U/Nop6YM4yiLMB7RJpsowt9nlVZBfIf+mQf2XHsVoo7RN2RQho3
+         LVdRVM2rVAEtq4d/pSqzXmmGRqoCXQbJ37Svd3u0i9I/m1JZWCqreN0YSP9XrfCjkDjb
+         JvXfH+KaBbZSPMO/qCnX5GMfZ7jsrfmeC9npk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728600471; x=1729205271;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fzno+5iofzs/QdGIvMAmQ8PVcytLfapyMyF4iPIIXqI=;
+        b=DDGPZg0IzATIo2/B0zYTmUNxgB4QUercs8ranyz6EzjXQ5JF9DknCbiWlifi0Qh70l
+         2WEMWb5XJiveDhRfAvXmt9lyeHVbS+fcV/FuUin2WTEGevLhv2ol1IOJ/8s4k/sHD4Kt
+         VU00RZDB05+/TVGJnfjLtYKsBBDvkDy8Ft2ed3g26BSAMTJODWy2LELVilWXyLAylRtG
+         Hsy3hjBXgtoQUnMch0w/y7FGP3CsfOn4j5kmn8ZgiLxQoptzqyXRJ63JQ0OzaEAqx+Ob
+         Q21CmBQnkklNacEagO0VQtA1BolMoeahN39tTtyQ6XVWeDxLt1WGFYiS1C2Y1QXWTACV
+         jDsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3/DZb1ywja/8DV3VAKuwbdfH3KH6/Im0vyqmJ2zG6UcppTPzmkoSDDLbt7ujyScYaJ4rUMKdDYf77bps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFNgsomKczbc/bF2PwpcuIMyGkQfXGJ+qL8R2j46G7Z2ph+aWu
+	Y4nQO7NbS8AbXsuGP1yAbyIqwHfO+/frIavoM7UW0lkkZREjX0FAzD7G7KDmpQ==
+X-Google-Smtp-Source: AGHT+IFyt7Kq7CorUTWz1ypxNha2hVHLtBUGIO+gf0HSDlWmOdDnuCsKDyWIscHyrwShxZNdHL5oqw==
+X-Received: by 2002:a17:902:c403:b0:20b:c043:3873 with SMTP id d9443c01a7336-20ca03d6844mr10542305ad.21.1728600470902;
+        Thu, 10 Oct 2024 15:47:50 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc1c566sm14174295ad.114.2024.10.10.15.47.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 15:47:50 -0700 (PDT)
+Message-ID: <4346e237-2dfa-4779-a6d9-99d747fad9c1@broadcom.com>
+Date: Thu, 10 Oct 2024 15:47:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB9210:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76de2d9c-cf69-4a2b-47f9-08dce97d3bb8
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|7416014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?tP2XAXlazrJQEspLY44v8uLgM6UKQWge0EnJkMS7qbKqW4AFBmrt22f4spyd?=
- =?us-ascii?Q?SSdCrllDZ3jeTZoNKjpQvk30ehceTrlTzjuCsbpizyZl0gA1yb8ztnyuEniS?=
- =?us-ascii?Q?7zVro9WB+8ROMw4a7ZWRZ9AzGswsitY0ks42+rgp3dNeexQ0uG5sP3xKZex7?=
- =?us-ascii?Q?GRr3wiAwjfGwfFzYJrh9qf75fR+Ks6KGMBsAd8tSdaycmdzsIMaqlIsyW5L/?=
- =?us-ascii?Q?ET3AvxqaT2gcOPnINmKwRH1lUhkMVpw+C+f+VNn5UViL8ZDzuH9CcjRGBxRI?=
- =?us-ascii?Q?NUaCTJBZUWDUVvHIkr2ewNMlHnDg3sVrMWulR8GZpL7E5nOvmhHZUumuqq0p?=
- =?us-ascii?Q?WzPuFAMXtjtEU5/aIi1+4CLou65TJqpLObyVGD1NgVRDry6PVZimXvSTY3+O?=
- =?us-ascii?Q?MoF91mIbQ9/o6s8OfI8tl3cj53F9u6QjwlzxKXNtlUQ72dRTjwXMCgSnmicS?=
- =?us-ascii?Q?puwCgHZk2WVC9tiN5WU5bBcCzZ96ydQlPJvBwQtSfftV87ygnyj5deOlToU9?=
- =?us-ascii?Q?O7UngZ+lDPjAtcjL8A3p3VPzMeNsJ8sMauF1W5C3qYiG1hafcj56gB9e3/PH?=
- =?us-ascii?Q?gIhcdsBEYSotJFl96Akdgmj7eY5CH0lK4BcY7AgIt/d7ZQX5rWmTpUZFWDu5?=
- =?us-ascii?Q?g9wQfTN/P2kjHz/I6BH2DLzJcMBPfApHw3Fh19AxJm/Q0sjD5JvhvPHBS31h?=
- =?us-ascii?Q?Q8ftYv5uUtvN4YY2FiIRzUymw6dyFjwm1+xy8mCsuxZ93c7HDuB4hljnfKNt?=
- =?us-ascii?Q?A2Oy2EI6km2QHLfuHuj1xUaxTk/N7CnGomS92T77Kxq27hf/7AU7yqnnkrhu?=
- =?us-ascii?Q?feaXLwCbe/JN7zU+HU+dbaiIokO6YbQMbOPOO7Gf//OwoqF13lR6zET95v+C?=
- =?us-ascii?Q?SsoCBV0U/1+S35qfRejtBRgmCnNBKi/o9SGpKpCc2KRHtdJrYixOe7lHU0Tm?=
- =?us-ascii?Q?1ItTK6TFbTmQmj9rtGfDVQuAhmfxqR3MZDiMTScobHgwtwyy5qLxVytm8bU8?=
- =?us-ascii?Q?4oGi1dFgD9yCLCfYBKzgMb8S8CgezOvpRKNVZPgIem0Slw8jGw5EoDtXTlTo?=
- =?us-ascii?Q?jd/4CKfiXZw0baun3L9ph0o+D44caihG1Gv1qjSTS4KosZkgjjDYjPIKX11V?=
- =?us-ascii?Q?/PkB4LUdAK430q6m4j5XAKJ4rve5j7PU9HDCNawLP10nFGXOXN3bxosdEN/M?=
- =?us-ascii?Q?wVQr+KuzOgNPO0N+/PT7nHzgLoUM23EabUY+lUfp1BDEKLuLfc2K7rG/YNQZ?=
- =?us-ascii?Q?4GVAjEGtSMVmk6kj9CU83o30YZy9d7slxa/4zEVQmP9rdwBFtW4HkPbxrNpb?=
- =?us-ascii?Q?aWP2EwZJroMyMWx56ZAGbEvpsRzNoQeunUj8fHuD34hDCw=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?YJ1MhlTkmjDdv9pyVQbYnbA2JYnapsoo5EUWW61/Vy5g+FIs/zi9SUPZ0XjR?=
- =?us-ascii?Q?PPw5TjxffiQt1fn9IuG+M8hMWNHaVJ3IqwoJAsAhBeCPep+4HIhCp5gboOq3?=
- =?us-ascii?Q?4qP8fFIYu0vhdFdoD7F0WKW9wSNnCZNPbO8S4qM4AQuLT5PqpqBUG16+wqA8?=
- =?us-ascii?Q?IcuhbQjkgW9dKK0dKIlSGW9HWXroRQxwW5lb0YQrAm72rB/1crmwcEjGdAEt?=
- =?us-ascii?Q?DHaphU3sxMEFY6y6NTetGnfXK+l49W4SlCTiTF4DwTBNdyozS4zV2I9gJYcK?=
- =?us-ascii?Q?5rWez+VQAQGsmNwWHvNtiHPa/RaSJhwM49KIYn+gLJ1ZyMQ9kQm9T8pJCh8L?=
- =?us-ascii?Q?ZDdOA74uXXr85/Y5NX91Yo+u/gml186/99PqOUrFnltghA5g6668qwTQX2Gm?=
- =?us-ascii?Q?mwglm2oiYWgVSVHpLzIbsEtwdA1R01nUpMCRUg1hO4MmX98beJXqPQfcRsEg?=
- =?us-ascii?Q?lRflFDdSSw22LBevD2hKt9R+t2zAR6mpHzI1dqDdlQpxmn8iHJzPJE2Ym2qa?=
- =?us-ascii?Q?MSOMI6kEXz6+9bJu4mAa1i+6wjl3KM96jr/lUMOg7KpOyLx34p0aWdjDUkD+?=
- =?us-ascii?Q?t+axaDy98bua3pgtFQck3PzyGw5Xsm59PtQcsfbRx/ob+00JON90YwXO43zM?=
- =?us-ascii?Q?YIJNF3y0lv2DH4njTzXYH6SaLfnKtv0TAx+Hh5X8D1RCaLmee/f+xHBJg9Nr?=
- =?us-ascii?Q?MooIrgac4E0KlP3ZA+Hm54rOSCqrPaScM64xh/BETPjnqqh3uSjmBHolkfXE?=
- =?us-ascii?Q?aHSy93Ob7038/e+cl303FY4p2faJTShdOHFcheLfo0NWmgF4cN2ANGn2ENIt?=
- =?us-ascii?Q?M7t7ibJcaBajPUou0xvuSaLjxUqQ51msXFGI3APntf601a7LOg3jCsoYQMS7?=
- =?us-ascii?Q?orzBjuv+ZM0VLyRN0QyJc0etUzxxaNvTPcn5OZL6yBusg2AanReErpr6c0t5?=
- =?us-ascii?Q?en8+S2aKXQ8K+kR8EymlO9qiRW6axaHNJrLzFanPm7kW0v9blXgnSZIuAnDz?=
- =?us-ascii?Q?5z/iRH1/tLlSdpxvooUqpOilnszzkMB3/1/84TnMdy01qUAIkByBx2mfaQCZ?=
- =?us-ascii?Q?556hBfGdFiGn8vKz+DjUq3GWLwR/1zX3brhV6QismhO4durcxS2XcL6uQJ7c?=
- =?us-ascii?Q?u4CZVoSaHTCXhp8ansyKWavHnDpfD9ctX81I90Yti+uGsUdtwwF3vVXJ5mYw?=
- =?us-ascii?Q?g8zAMAchs71AhrL+55KxxO4hJUOEfbQWqulVTmWYQHI2JfZPAsBiJhOJ9Gob?=
- =?us-ascii?Q?XdLwCCNMwNkBVZdOXS8YE3eiRIuvAq3dE+8LMkv9ZWyzEyIcAs/dm08daI3d?=
- =?us-ascii?Q?1J9HMplHvShpPjXs+CJE409w6xVLmXKwIAzV4Ds7tfAlMkRIc9vR2OgKIr/i?=
- =?us-ascii?Q?TbfAfx9Xr31wNt6jYsa/Un2g2Ok17O78f7q3A4uHTcyU2MeFfkHi2xxqPGZU?=
- =?us-ascii?Q?PzWQ+qcuIkUrfpZw7m6IcPLipw9rbyLfl9r7drsrDEd0Cq2j9bQEzRb7Ui2g?=
- =?us-ascii?Q?dLzAjBEPg9uoBPwsg4vt9fOorHSGPhsgy87g9FB1Nmwa4va2tIBc1jPheJJ5?=
- =?us-ascii?Q?VJymXJHGJqyusmOAs0M=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76de2d9c-cf69-4a2b-47f9-08dce97d3bb8
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 22:45:26.2652
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tiujjvJwEBiuPfxXl/Gnsn3ITYo+imA03v7ArYNxYHUvIAXWjE9EwCL6iIAYSpyO8qIgg+LoW32ll6Fb/xpjPQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9210
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ARM: bcm2835_defconfig: Enable SMP support
+To: =?UTF-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ Stefan Wahren <wahrenst@gmx.net>
+Cc: Russell King <linux@armlinux.org.uk>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240707-raspi-config-v1-0-3e122f2122e9@gmx.net>
+ <20240707-raspi-config-v1-2-3e122f2122e9@gmx.net>
+ <a5c69147-c0fe-4cda-8996-e46698c5e9e8@gmx.net> <Zo2Qexs-J5_Lzbjm@probook>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <Zo2Qexs-J5_Lzbjm@probook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 10:11:21PM +0200, Francesco Dolcini wrote:
-> Hello Frank,
->
-> On Thu, Oct 10, 2024 at 04:01:21PM -0400, Frank Li wrote:
-> > On Wed, Oct 09, 2024 at 03:14:05PM +0200, Stefan Eichenberger wrote:
-> > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > >
-> > > The suspend/resume support is broken on the i.MX6QDL platform. This
-> > > patch resets the link upon resuming to recover functionality. It shares
-> > > most of the sequences with other i.MX devices but does not touch the
-> > > critical registers, which might break PCIe. This patch addresses the
-> > > same issue as the following downstream commit:
-> > > https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
-> > > In comparison this patch will also reset the device if possible. Without
-> > > this patch suspend/resume will not work if a PCIe device is connected.
-> > > The kernel will hang on resume and print an error:
-> > > ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
-> > > 8<--- cut here ---
-> > > Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
-> > >
-> > > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > ---
-> >
-> > Thank you for your patch.
-> >
-> > But it may conflict with another suspend/resume patch
-> > https://lore.kernel.org/imx/1727245477-15961-8-git-send-email-hongxing.zhu@nxp.com/
->
-> Thanks for the head-up.
->
-> Do you see any issue with this patch apart that? Because this patch is
-> fixing a crash, so I would expect this to be merged, once ready, and
-> such a series rebased afterward.
->
-> I am writing this explicitly since you wrote a similar comment on the
-> v1 (https://lore.kernel.org/all/ZsNXDq%2FkidZdyhvD@lizhi-Precision-Tower-5810/)
-> and I would like to prevent to have this fix starving for long just because
-> multiple people is working on the same driver.
+On 7/9/24 12:33, J. Neuschäfer wrote:
+> On Mon, Jul 08, 2024 at 05:54:25PM +0200, Stefan Wahren wrote:
+>> Hi Jonathan,
+>>
+>> Am 07.07.24 um 23:48 schrieb Jonathan Neuschäfer:
+>>> Since there is only one Raspberry Pi related defconfig in the mainline
+>>> kernel, it's useful to have to work well on all 32-bit Raspberry Pis.
+>> this wasn't intention of bcm2835_defconfig. It's more focused on BCM2835
+>> SOC and kernel-ci (both non-SMP). If you want to use the BCM2836 &
+>> BCM2837 (incl. SMP), please use multi_v7_defconfig instead. Applying
+>> this change would decrease the test coverage.
+> 
+> Ah, fair enough.
 
-My key comment for this patch is use flags IMX_PCIE_FLAG_SKIP_TURN_OFF
-in suspend()/resume(), it is up to kw to pick which one firstly.
-
-Frank
-
->
-> Francesco
->
+It is fair that CONFIG_SMP_ON_UP is different from not enabling 
+CONFIG_SMP, but if we care to test CONFIG_SMP disabled, should not there 
+be a specific modification of multi_v7_defconfig or another 
+configuration specifically for that purpose?
+-- 
+Florian
 
