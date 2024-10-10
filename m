@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-359397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CBB998AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:08:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE38998C30
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63AD29109B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A347FB2C2E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732BE1CCB26;
-	Thu, 10 Oct 2024 15:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512831D432A;
+	Thu, 10 Oct 2024 15:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlWs5Q0l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUddM4OS"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB681CC88F;
-	Thu, 10 Oct 2024 15:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3516D1CF2A9;
+	Thu, 10 Oct 2024 15:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572630; cv=none; b=Lbr7U9lQEFmRVZArIp5PHsq8hwVnVasowjByyXmTW+1JwD77O/aJe3jPXxRDOR1cHfCOUjkqWShP588b7VqJPSy3xU8+o+Ugrvr40RuD3Af1N3cx6wSIKAJW/oDZxHdXNVZoALsC7U8lJmg4/QENnG7VAiL4EXvaOXZ/bbMFtOI=
+	t=1728572684; cv=none; b=irDQUroJXuk+nbYP108iYttaygF04aluqqutxWBvEpE9tjMBi9x4HFrpA5FrelYazxF3DavuZkzRMYrQhpq1q3s5cyh0KbsGR0vRdqc0t4mtFt/UVkvbNo0KbND8s/Ik95FSM+QUDVW4oNnii+RTQvHTACEKmK18bW9yHXFySZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572630; c=relaxed/simple;
-	bh=TWFU0C6rsLuYEF4R+l0rttKWu6E5GxvtM4XdY3cjoSE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=YP8pGmsNL7lEbD3gh48z3FC+JrIZrf6zM/bpMS9XswWbLljdgEFYtk/RfqY8svEakigN3Olx4gGPJu7ea+FEXduiR/8Oe8wAIV2XTXIU95hhUyekcY1ss5pBlURI/AHII1k+t4NzMPx5uRtrYuutvJQJEfgw57ZKi9ZhYgjsnZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlWs5Q0l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5730C4CEC5;
-	Thu, 10 Oct 2024 15:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728572630;
-	bh=TWFU0C6rsLuYEF4R+l0rttKWu6E5GxvtM4XdY3cjoSE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BlWs5Q0lOtbwvcdvdw0ADP4HpXG3a/cL9vIZ8+tFdscavbFcAo26kbAAV5iwtG8s7
-	 X+jF/+q3YofiHlefSN+2FU+bxHZuH00pBUPwvzNnJP6FX5jpHMJn7cdmwRKlpmojM7
-	 NoUO04Wk6Ypu41VIwEn9eE9HvfQMfOFKk2akaEHw9oSGWVwk6b7Lbg6BwyxHRTsQ6Y
-	 8Sz4ma7Hc4/wuotYAL2RFWmewu+LCsYf32DKczRQdyo3IErAnSa34EqANYyLxJK0tb
-	 2HEU8N7KU8BOo3qc/x3xR40dYjWJeb5TZeiRTJ6bX0kq2pQyUd3SPGn/wjKOXXWt46
-	 bZ1Y5BJmw75CQ==
-Date: Fri, 11 Oct 2024 00:03:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Tatsuya S <tatsuya.s2862@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: Fix function name for trampoline
-Message-Id: <20241011000347.4b16dc96221873388475cb40@kernel.org>
-In-Reply-To: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
-References: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728572684; c=relaxed/simple;
+	bh=/9fet0mV81IMt6TUgVnymNSZH6mUpPem0YYVQKdBYOE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ao8DzzT2ARgnBElWAkKz60EdefYM0N/fBa1CGnOCrIaJYRtywbEyHk/yLYzB5Y5HvDHQCL3BQa9F16Svqq3N7UEcO65t19GnGJCJYum6+EvS969MCqAxAV50m5SSLrsndIX9WcQmA+x2iCt3CoH1YpPwBy1wqEUkrbpiAI9F7mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUddM4OS; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7afcd322cabso82457885a.1;
+        Thu, 10 Oct 2024 08:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728572682; x=1729177482; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VDBs9g7Exo9jbwU1s45HbWQ5xfBXJX4cZMECKhlIRjk=;
+        b=TUddM4OSTCkr2FYSoY+sKA39KwrWQmlLOueP9OPz5vlbRcaJlYilPyAZxkkp/PJAJG
+         6QCtFxgB1FGe5Z/e/fM9mu79vW4dr+YGHXIyCKrrxIeYmjlalNlMjfvo2obI1xyPKuO2
+         XAPJThv8BUnPBhD2NzAD0CCfRcSI24tieNBWNuoll+Bm8yNJr6ZBxOALjYnA82xxEgqM
+         F0GTv3JD3qm4wWBHN1LRbrk59TwRIKnXMvEwlVWGAbEz8j/wIXGVZosuVLvC/ZwsmjdT
+         kiNEIruRm45PiwgWRmdxQbWZM9lBym+No8ND4mICMakrfI/C67hpSQjWWEoZ27xxan21
+         sVaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728572682; x=1729177482;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VDBs9g7Exo9jbwU1s45HbWQ5xfBXJX4cZMECKhlIRjk=;
+        b=Y6oztWob4UX+MWq/uWjivceHwjNxgBWvS39R66ci+5IccKoSqxTMq5369uZZ9cj3Rh
+         VcAX/f/slSoMGx4rvtZjML2tbQKeCd+jxcYl4NpQWLpq/LEHqiUF9CoK2t8pBncaJNzr
+         MGvxtsjmsd/7rBq56f8qyZtnVRWAFq7KP4OeesdSt7pP8hc6v9grcVmzH9KMAdcBzMK8
+         qRekGk7hh56v4LKLQfe27jswM3iNr+KlvIANqStmd7fCEYdztXBcFGyWJXjwjURzdsZI
+         UuoFDKZ/ZnhSKFH84ehallscj3n50Saa0YrnliLiabJBjbgo/mz4/JcP1MlfMa6k/vI6
+         +Onw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ELzvGekOlKorYU4u25kpFxU/Z8rsbBq6kFOi4U9JqzTifGBHwqSW4uVgVZhwoCE+BNng9xoDGX4JaP7d@vger.kernel.org, AJvYcCXSxpdN9EPRGN/PxeCYCwdwv3q+1kbqImwoRoq8yg0lvp3gAJ0c7uW+3tQlWucq/j8OmU1s62I6mtSW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc7lP4JQNHdsZVx2uT/bmnz4BwnRjFMcCGlQk78XYr1zVcQZEH
+	u3I/ZkKoX5/ryNniRwCoeB4CVjSoCpkFz0/pzBnq5TvhPa7qELVW
+X-Google-Smtp-Source: AGHT+IFWoWeleiFs45265SL2LaB5CWkvksgRRig/bDFYcewRmkluWXBw7NA7LIQxRS6uimBroB7yOg==
+X-Received: by 2002:a05:620a:25cd:b0:7ac:e832:905e with SMTP id af79cd13be357-7b0874dacdemr1115471785a.63.1728572681955;
+        Thu, 10 Oct 2024 08:04:41 -0700 (PDT)
+Received: from localhost.localdomain (weaver-lab.eece.maine.edu. [130.111.218.24])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11497d7a4sm52529885a.118.2024.10.10.08.04.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 08:04:41 -0700 (PDT)
+From: Willow Cunningham <willow.e.cunningham@gmail.com>
+X-Google-Original-From: Willow Cunningham <willow.e.cunningham@maine.edu>
+To: 
+Cc: willow.e.cunningham@maine.edu,
+	Willow Cunningham <willow.e.cunningham@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: broadcom: Fix L2 linesize for Raspberry Pi 5
+Date: Thu, 10 Oct 2024 11:04:07 -0400
+Message-Id: <20241010150409.262087-1-willow.e.cunningham@maine.edu>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Oct 2024 22:02:59 +0900
-Tatsuya S <tatsuya.s2862@gmail.com> wrote:
+From: Willow Cunningham <willow.e.cunningham@gmail.com>
 
-> The issue that unrelated function name is shown on stack trace like
-> following even though it should be trampoline code address is caused by
-> the creation of trampoline code in the area where .init.text section
-> of module was freed after module is loaded.
-> 
-> bash-1344    [002] .....    43.644608: <stack trace>
->   => (MODULE INIT FUNCTION)
->   => vfs_write
->   => ksys_write
->   => do_syscall_64
->   => entry_SYSCALL_64_after_hwframe
-> 
-> To resolve this, when function address of stack trace entry is in
-> trampoline, output without looking up symbol name.
-> 
-> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
-> ---
->  kernel/trace/trace_output.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index 868f2f912f28..32a0858373e2 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -1246,6 +1246,11 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
->  			break;
->  
->  		trace_seq_puts(s, " => ");
-> +		if (is_ftrace_trampoline((*p) + delta)) {
-> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
+Fixes: faa3381267d0 ("arm64: dts: broadcom: Add minimal support for
+Raspberry Pi 5")
 
-If we know that address is the ftrace trampoline, we'd better show something
-like "[FTRACE TRAMPOLINE]"
+Set the cache-line-size parameter of the L2 cache for each core to the
+correct value of 64 bytes.
 
-> +			trace_seq_putc(s, '\n');
+Previously, the L2 cache line size was incorrectly set to 128 bytes
+for the Broadcom BCM2712. This causes validation tests for the
+Performance Application Programming Interface (PAPI) tool to fail as
+they depend on sysfs accurately reporting cache line sizes.
 
-And this is not needed. So for example,
+The correct value of 64 bytes is stated in the official documentation of
+the ARM Cortex A-72, which is linked in the comments of
+arm64/boot/dts/broadcom/bcm2712.dtsi as the source for cache-line-size.
 
-			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
+Signed-off-by: Willow Cunningham <willow.e.cunningham@maine.edu>
+---
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-is enough.
-
-> +			continue;
-> +		}
->  		seq_print_ip_sym(s, (*p) + delta, flags);
->  		trace_seq_putc(s, '\n');
->  	}
-
-Thank you,
-
-> -- 
-> 2.46.2
-> 
-
-
+diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+index 6e5a984c1d4e..26a29e5e5078 100644
+--- a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
++++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+@@ -67,7 +67,7 @@ cpu0: cpu@0 {
+ 			l2_cache_l0: l2-cache-l0 {
+ 				compatible = "cache";
+ 				cache-size = <0x80000>;
+-				cache-line-size = <128>;
++				cache-line-size = <64>;
+ 				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
+ 				cache-level = <2>;
+ 				cache-unified;
+@@ -91,7 +91,7 @@ cpu1: cpu@1 {
+ 			l2_cache_l1: l2-cache-l1 {
+ 				compatible = "cache";
+ 				cache-size = <0x80000>;
+-				cache-line-size = <128>;
++				cache-line-size = <64>;
+ 				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
+ 				cache-level = <2>;
+ 				cache-unified;
+@@ -115,7 +115,7 @@ cpu2: cpu@2 {
+ 			l2_cache_l2: l2-cache-l2 {
+ 				compatible = "cache";
+ 				cache-size = <0x80000>;
+-				cache-line-size = <128>;
++				cache-line-size = <64>;
+ 				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
+ 				cache-level = <2>;
+ 				cache-unified;
+@@ -139,7 +139,7 @@ cpu3: cpu@3 {
+ 			l2_cache_l3: l2-cache-l3 {
+ 				compatible = "cache";
+ 				cache-size = <0x80000>;
+-				cache-line-size = <128>;
++				cache-line-size = <64>;
+ 				cache-sets = <1024>; //512KiB(size)/64(line-size)=8192ways/8-way set
+ 				cache-level = <2>;
+ 				cache-unified;
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.39.2
+
 
