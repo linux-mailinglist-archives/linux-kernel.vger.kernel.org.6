@@ -1,197 +1,187 @@
-Return-Path: <linux-kernel+bounces-358954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D939985B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:16:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C097C9985B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64C51C23BA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EB94283304
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79D81C462C;
-	Thu, 10 Oct 2024 12:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BC61C3F34;
+	Thu, 10 Oct 2024 12:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pnq7C+U2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O7Vw1tAU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pnq7C+U2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O7Vw1tAU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2951B1C4600;
-	Thu, 10 Oct 2024 12:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dV8gNvvL"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2461C1757;
+	Thu, 10 Oct 2024 12:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728562572; cv=none; b=KQskP+eon0AISrmjwgkby3LKNGnP0VrLgIL/uM8cGAAmWZFT80NkcuosyaX92MI3XRCICSFsfiv+6OcNuLQ/iVTDVV6SWBZy3iJlnAJDMZBuxyd9qJEM72yjDegfmWV55mkpJKBi1RQ7Duo4zZqRJk/tRTGGk0wP8G2pLQ2l2fI=
+	t=1728562610; cv=none; b=qatPeQ4YGBTQnzTuYOEdi2r18iqnjDrtDQEkLzF7NN87AjcP2UtHs44wNczMa0M4gKPGL+5IH6OEa8MOlLw1qottwsO2N00OBu2Mg/Qf7spaza4bqqG2b6A+ZsjPN+2orhU9MFobPwG7dnibCftoaYXbZ4Ss34h44xmHM/dJRyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728562572; c=relaxed/simple;
-	bh=Qp3ydjRT2gvkNjcDCDypVnDazx5BwM1k0YwpB3CzQHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qkl/UmIoMEft7yToLgvJXasjXjRCaMSkVSaqOGRyeCJZpn5Y4OHTRvf8U+YpuONJlS5/GqB4mpVha/5304lKl735trAL0SAYOJMBvlEO0M7RrdLY4Erxsz1gt4wFifVJHLNKCzqLukknMnso3lx0ckSoBXmVv9ZiPWA4osb90os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pnq7C+U2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O7Vw1tAU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pnq7C+U2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O7Vw1tAU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0FE451FE42;
-	Thu, 10 Oct 2024 12:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728562568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6/G+GkLzVV2ezkSkr3FOfmnvzYVldBdtiqpf5dgbuQ=;
-	b=pnq7C+U2DMGFd7HlS3GWLkHiLGuyGUeMIkO/yZdTnp6sSneVxgLDopQppGtifpFLp2TOF/
-	LYVkkBZlOubEw8JuHTprSBkEd6yEaba8kqPLGpv7DebgJywO5mStlY+O07PIc5LA/w/IpD
-	GgiZvYnG7Sc4ZxeVV4/HjfSDMIV9gr4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728562568;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6/G+GkLzVV2ezkSkr3FOfmnvzYVldBdtiqpf5dgbuQ=;
-	b=O7Vw1tAURpy6GW1fany/SqHfMprP8dpJ4/yMbk/3+wupqlFip5BJXkhdaAiroNZBeoWWxQ
-	TEoLp5+C5JW+g0DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pnq7C+U2;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=O7Vw1tAU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728562568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6/G+GkLzVV2ezkSkr3FOfmnvzYVldBdtiqpf5dgbuQ=;
-	b=pnq7C+U2DMGFd7HlS3GWLkHiLGuyGUeMIkO/yZdTnp6sSneVxgLDopQppGtifpFLp2TOF/
-	LYVkkBZlOubEw8JuHTprSBkEd6yEaba8kqPLGpv7DebgJywO5mStlY+O07PIc5LA/w/IpD
-	GgiZvYnG7Sc4ZxeVV4/HjfSDMIV9gr4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728562568;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6/G+GkLzVV2ezkSkr3FOfmnvzYVldBdtiqpf5dgbuQ=;
-	b=O7Vw1tAURpy6GW1fany/SqHfMprP8dpJ4/yMbk/3+wupqlFip5BJXkhdaAiroNZBeoWWxQ
-	TEoLp5+C5JW+g0DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00DD61370C;
-	Thu, 10 Oct 2024 12:16:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IRE0AIjFB2cLPQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 10 Oct 2024 12:16:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6731EA08A2; Thu, 10 Oct 2024 14:16:07 +0200 (CEST)
-Date: Thu, 10 Oct 2024 14:16:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ye Bin <yebin@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yebin10@huawei.com, zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
- filesystem
-Message-ID: <20241010121607.54ttcmdfmh7ywho7@quack3>
-References: <20241010112543.1609648-1-yebin@huaweicloud.com>
- <20241010112543.1609648-3-yebin@huaweicloud.com>
+	s=arc-20240116; t=1728562610; c=relaxed/simple;
+	bh=JlN+IEE8f60b5rmJlRrq0+QGyCcqd8Nbz8qgQGAtDis=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fpb1tLA27QajygPq0skR+oV/84IBrl1wybHj+2vVJ5tbV/pDzkouZg2fzJkNxZD9b3VkzMSEN5Xq6mvp5ByJuZk96qgZO4BCWznDqJG/pc9ML13srPW66w2MQXy8qJOInHIeWyEiEmVQEMCVA5Q36quuKecW5O3k+9Q4Y7cWi0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dV8gNvvL; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=FwZEo
+	Qbh7XIcVq3Cr34Mkf7BD6LjFols82/8TIr1Bas=; b=dV8gNvvL44yT3nR0ZhWn7
+	+hWIrSo4pub3hJwdtetI/8gor+7JReK3yF73UiltbW64oTUNjo/KvqS27bQMQ4wC
+	jk/1niM0Rjj4YMU/tTcUS+WOWswaU1osxAdZTs3PbX6XumIVVhsSYFmnp6TjdAZy
+	VYBRmhWWbiGz/025GK29uE=
+Received: from localhost.localdomain (unknown [111.48.69.246])
+	by gzsmtp1 (Coremail) with SMTP id sCgvCgDHC0GZxQdntQ3_AA--.42378S2;
+	Thu, 10 Oct 2024 20:16:26 +0800 (CST)
+From: zhouyuhang <zhouyuhang1010@163.com>
+To: brauner@kernel.org,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	zhouyuhang <zhouyuhang@kylinos.cn>
+Subject: [PATCH] selftests: clone3: Use the capget and capset syscall directly
+Date: Thu, 10 Oct 2024 20:16:12 +0800
+Message-Id: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010112543.1609648-3-yebin@huaweicloud.com>
-X-Rspamd-Queue-Id: 0FE451FE42
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sCgvCgDHC0GZxQdntQ3_AA--.42378S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJw4kWr4kGFW3Wr4fZw1xuFg_yoWrGr1xpa
+	4kAr45KFs5Wr1xGFW8C39ruFn5KFWkXw48Xr1UAw1jkr13Krn7tr4IkFyvg3Wj93yDu3y5
+	ua10gFWfZFWkJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jMBTOUUUUU=
+X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiYBB0JmcHuwrGngAAsr
 
-On Thu 10-10-24 19:25:42, Ye Bin wrote:
-> From: Ye Bin <yebin10@huawei.com>
-> 
-> In order to better analyze the issue of file system uninstallation caused
-> by kernel module opening files, it is necessary to perform dentry recycling
+From: zhouyuhang <zhouyuhang@kylinos.cn>
 
-I don't quite understand the use case you mention here. Can you explain it
-a bit more (that being said I've needed dropping caches for a particular sb
-myself a few times for debugging purposes so I generally agree it is a
-useful feature).
+The libcap commit aca076443591 ("Make cap_t operations thread safe.") added a
+__u8 mutex at the beginning of the struct _cap_struct,it changes the offset of
+the members in the structure that breaks the assumption made in the "struct libcap"
+definition in clone3_cap_checkpoint_restore.c.So use the capget and capset syscall
+directly and remove the libcap library dependency like the commit 663af70aabb7
+("bpf: selftests: Add helpers to directly use the capget and capset syscall") does.
 
-> on a single file system. But now, apart from global dentry recycling, it is
-> not supported to do dentry recycling on a single file system separately.
-> This feature has usage scenarios in problem localization scenarios.At the
-> same time, it also provides users with a slightly fine-grained
-> pagecache/entry recycling mechanism.
-> This patch supports the recycling of pagecache/entry for individual file
-> systems.
-> 
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> ---
->  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mm.h |  2 ++
->  kernel/sysctl.c    |  9 +++++++++
->  3 files changed, 54 insertions(+)
-> 
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index d45ef541d848..99d412cf3e52 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  	}
->  	return 0;
->  }
-> +
-> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
-> +				  void *buffer, size_t *length, loff_t *ppos)
-> +{
-> +	unsigned int major, minor;
-> +	unsigned int ctl;
-> +	struct super_block *sb;
-> +	static int stfu;
-> +
-> +	if (!write)
-> +		return 0;
-> +
-> +	if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
-> +		return -EINVAL;
+Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+---
+ tools/testing/selftests/clone3/Makefile       |  1 -
+ .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
+ 2 files changed, 28 insertions(+), 33 deletions(-)
 
-I think specifying bdev major & minor number is not a great interface these
-days. In particular for filesystems which are not bdev based such as NFS. I
-think specifying path to some file/dir in the filesystem is nicer and you
-can easily resolve that to sb here as well.
-
-								Honza
+diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+index 84832c369a2e..59d26e8da8d2 100644
+--- a/tools/testing/selftests/clone3/Makefile
++++ b/tools/testing/selftests/clone3/Makefile
+@@ -1,6 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
+-LDLIBS += -lcap
+ 
+ TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+ 	clone3_cap_checkpoint_restore
+diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+index 3c196fa86c99..111912e2aead 100644
+--- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
++++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+@@ -15,7 +15,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
+-#include <sys/capability.h>
++#include <linux/capability.h>
+ #include <sys/prctl.h>
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+@@ -27,6 +27,13 @@
+ #include "../kselftest_harness.h"
+ #include "clone3_selftests.h"
+ 
++#ifndef CAP_CHECKPOINT_RESTORE
++#define CAP_CHECKPOINT_RESTORE 40
++#endif
++
++int capget(cap_user_header_t header, cap_user_data_t data);
++int capset(cap_user_header_t header, const cap_user_data_t data);
++
+ static void child_exit(int ret)
+ {
+ 	fflush(stdout);
+@@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
+ 	return ret;
+ }
+ 
+-struct libcap {
+-	struct __user_cap_header_struct hdr;
+-	struct __user_cap_data_struct data[2];
+-};
+-
+ static int set_capability(void)
+ {
+-	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+-	struct libcap *cap;
+-	int ret = -1;
+-	cap_t caps;
+-
+-	caps = cap_get_proc();
+-	if (!caps) {
+-		perror("cap_get_proc");
++	struct __user_cap_data_struct data[2];
++	struct __user_cap_header_struct hdr = {
++		.version = _LINUX_CAPABILITY_VERSION_3,
++	};
++	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
++	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
++	int ret;
++
++	ret = capget(&hdr, data);
++	if (ret) {
++		perror("capget");
+ 		return -1;
+ 	}
+ 
+ 	/* Drop all capabilities */
+-	if (cap_clear(caps)) {
+-		perror("cap_clear");
+-		goto out;
+-	}
++	memset(&data, 0, sizeof(data));
+ 
+-	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+-	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
++	data[0].effective |= cap0;
++	data[0].permitted |= cap0;
+ 
+-	cap = (struct libcap *) caps;
++	data[1].effective |= cap1;
++	data[1].permitted |= cap1;
+ 
+-	/* 40 -> CAP_CHECKPOINT_RESTORE */
+-	cap->data[1].effective |= 1 << (40 - 32);
+-	cap->data[1].permitted |= 1 << (40 - 32);
+-
+-	if (cap_set_proc(caps)) {
+-		perror("cap_set_proc");
+-		goto out;
++	ret = capset(&hdr, data);
++	if (ret) {
++		perror("capset");
++		return -1;
+ 	}
+-	ret = 0;
+-out:
+-	if (cap_free(caps))
+-		perror("cap_free");
+ 	return ret;
+ }
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
 
