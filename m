@@ -1,58 +1,49 @@
-Return-Path: <linux-kernel+bounces-358766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725C1998361
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:20:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15282998363
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2FF281AC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB1A1C22FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DB1BF300;
-	Thu, 10 Oct 2024 10:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496661BF335;
+	Thu, 10 Oct 2024 10:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="cAFRP0Ge"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boS0Pb9M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235B81BDA91;
-	Thu, 10 Oct 2024 10:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979E01BE857;
+	Thu, 10 Oct 2024 10:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728555604; cv=none; b=YLIJ/Qu3Kp9ydLt7kYzd3mcW1O00dANEyJVp3GSNJMb0XJiJllinH8OVZJpO3L6mC746BY45fifw4K79Db02ARS2mk9bphlCsT/2pU8aukYkmYMcqnxgaQW6BgXJvkI/PUwIFK1/Xo/fgVSCacci3kBglZA3cT94Yl2HlNayXHU=
+	t=1728555626; cv=none; b=LLSs/+wuXQ81ySALzibKzDT5LiIwQX9YcWk4MXDqqgee9IS7jnbOW/GuBQMdNDePSQJ1+GSOG5ACZSPjxxCEfNwZAmA62R13X65hDIa9JcALlbSGx3K/SgPFbYdluDJi/ntmLW6An24gvAKcRTl6rih0lqXelzOvPCo1uWh3CDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728555604; c=relaxed/simple;
-	bh=c/6seuK0LsZaqyvw8i37BiYlIfMZwD3oi1R0YzQZ/aU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ta/5xl19yj/GjUhq5Wif/9izhvLNxnS9hYpb/eoz4MSRlYl5OpU53vUvhJGG9tSlX/0XA7awK0dATVMTjBurxLnI3OkCLqKGtYiqK0yosTIQWH0nPZ3962DI0V/cmnjBsb4XBM/+BV+nsiIf4IuRl3XWD/6nF8qNrXGGOtuF+CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=cAFRP0Ge; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1728555592;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2t5G1nuRoT30uUHQhEAmI0rqUOvlejZIQbCf/G470I4=;
-	b=cAFRP0Ge91jsRZUPc1Y7Hxml3ClssfPkL7iEl55YX+Q+8Y3kHzPGbMULWqpDCgf9QurS23
-	dDQgM7dmZkIRc4a49nbje1QipkkHNUDafgSq7qeWW7Uc3n2B1bOzUgaVLYUUv47qlGnxuP
-	a5Si+9OZX7RJpvg+9LYdKE4cjSaNqvVcDq/3ccT0s55e6Vg5e6tgnq7ynpnQntUqkKJe/6
-	Msh+c3wL5PjhOKtYdeo1NFIRzSwoiHKp1iupO0EVCGNZ3T89X+H0k3Del8DOkseY41B8YU
-	jg2AEk18OJmU8Ea83OT17kIzJT9nPPWLRIG3lioZyNc8OY8+AYGTPTwnLYPqYg==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: Prevent thermal runaways in RK3308 SoC dtsi
-Date: Thu, 10 Oct 2024 12:19:41 +0200
-Message-Id: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1728555626; c=relaxed/simple;
+	bh=vmLa9cWj0DTxvO3cFR3xMZnKt8WhNEdEBVpdLPCArLA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=URUiKCA3DGphVQ4ZwUkP/VMAGLuzyIfP42XDTWayMmdGlWRTe9mPLMnatjWNH8VWiJMM6xkldwzRNXJEBQGIXvepkiMdF0c2xxcKOl5eAsm+kobH0+ZeQ+CQux9P2f0sLuviJXPIZdMpAak5rA7LFzg8WIw4kJpF9L0CiWeJkLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boS0Pb9M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 262BBC4CEC5;
+	Thu, 10 Oct 2024 10:20:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728555626;
+	bh=vmLa9cWj0DTxvO3cFR3xMZnKt8WhNEdEBVpdLPCArLA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=boS0Pb9Mr4m1o1AHvon2IWJ4sKR8dDnlsl5x7y0z4pVNZzssdzma4dXXxz2fS7Ooe
+	 wOzHo1uJWUBWeWx4Ryvc6qYv/exAXCjhrtt421OcRjIoB3C3SYyPTww2xTsN5CZRMh
+	 bZ+D/fHyf3Ohn7GhGS/Yak/yL49JJiafNdsFrN3vHljE0hCIck9/sz2ZU3/jExfDCl
+	 pQSyBujOyHxV0fv1ty2m9c0u1ymmHH7mtSdm7H/MUHTmkvHFVAvI3IX8XjVZuUEJzk
+	 T2Cj1lePN1PiSzqOPuU3l2QEShNhupfXnuZTXAsMVXJRXMCG+BPiJn+ZO5oeSF8eQp
+	 I4ja9xqucXAXg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2363803263;
+	Thu, 10 Oct 2024 10:20:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,46 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Subject: Re: [PATCH net-next] net: Remove likely from
+ l3mdev_master_ifindex_by_index
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172855563051.1965704.10127497741628036159.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Oct 2024 10:20:30 +0000
+References: <20241008163205.3939629-1-leitao@debian.org>
+In-Reply-To: <20241008163205.3939629-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: dsahern@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, kernel-team@meta.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Until the TSADC, thermal zones, thermal trips and cooling maps are defined
-in the RK3308 SoC dtsi, none of the CPU OPPs except the slowest one may be
-enabled under any circumstances.  Allowing the DVFS to scale the CPU cores
-up without even just the critical CPU thermal trip in place can rather easily
-result in thermal runaways and damaged SoCs, which is bad.
+Hello:
 
-Thus, leave only the lowest available CPU OPP enabled for now.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Fixes: 6913c45239fd ("arm64: dts: rockchip: Add core dts for RK3308 SOC")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
- arch/arm64/boot/dts/rockchip/rk3308.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+On Tue,  8 Oct 2024 09:32:04 -0700 you wrote:
+> The likely() annotation in l3mdev_master_ifindex_by_index() has been
+> found to be incorrect 100% of the time in real-world workloads (e.g.,
+> web servers).
+> 
+> Annotated branches shows the following in these servers:
+> 
+> 	correct incorrect  %        Function                  File              Line
+> 	      0 169053813 100 l3mdev_master_ifindex_by_index l3mdev.h             81
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-index 31c25de2d689..a7698e1f6b9e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-@@ -120,16 +120,19 @@ opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
- 			opp-microvolt = <950000 950000 1340000>;
- 			clock-latency-ns = <40000>;
-+			status = "disabled";
- 		};
- 		opp-816000000 {
- 			opp-hz = /bits/ 64 <816000000>;
- 			opp-microvolt = <1025000 1025000 1340000>;
- 			clock-latency-ns = <40000>;
-+			status = "disabled";
- 		};
- 		opp-1008000000 {
- 			opp-hz = /bits/ 64 <1008000000>;
- 			opp-microvolt = <1125000 1125000 1340000>;
- 			clock-latency-ns = <40000>;
-+			status = "disabled";
- 		};
- 	};
- 
+Here is the summary with links:
+  - [net-next] net: Remove likely from l3mdev_master_ifindex_by_index
+    https://git.kernel.org/netdev/net-next/c/9e542ff8b79a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
