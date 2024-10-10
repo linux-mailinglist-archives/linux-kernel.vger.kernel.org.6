@@ -1,127 +1,135 @@
-Return-Path: <linux-kernel+bounces-358601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23975998179
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:05:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7DE99817E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967FBB28BD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7651C26786
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BF51C3F37;
-	Thu, 10 Oct 2024 09:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288C1A08BC;
+	Thu, 10 Oct 2024 09:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gklgb7b3"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="Wv0FeDLf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7684A1BDABE;
-	Thu, 10 Oct 2024 09:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728550836; cv=none; b=Fvp4KckjD+qyWidsVp5VzgxsPCMGAWJ6XnoBWEIAhpedLfJ8MZX2805f0UTibZaA2vuo9aYhqUzc+rTAfSa8ajgy+sKtgFgO2pEvZCNqDc7Ava1JaPpFU5O1lRsykV3Z7nyBCi9/soPyvQGp50SMCePQ3dPhy396Fim328WPoe4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728550836; c=relaxed/simple;
-	bh=Fia6irOv3VDqu6NKzoWzAVMngAe0tifmHNg6sodLiE4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZSv08CuMgSjYb6xsm441lBpsXxNZwhcqdusuRP2bLgj9mZu/KWfFSDfg4rrWLA/lNdM2HY41gpOyRTFM2r7g4Cd+9TN56R6kFucCfRfN+9p82o73RSPl0u76S0z7HHpbFZ09gpKa+4Nqtc0LHxEVdyx9pV7iwhc4XpH/p/n1nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gklgb7b3; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9950d27234so98445766b.1;
-        Thu, 10 Oct 2024 02:00:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728550833; x=1729155633; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LR1M84LN52X4U6RwSoUyMMdQCDpU64S8085SG37H4l0=;
-        b=gklgb7b3bIW9ZcLdzlxtFhKfkoff361CW8EqZifsla6BwyuwMgUUqrJY5JmP/bmdts
-         9Bs0OZLe3NVF1bkU6HDDeq4mFt2pnTOSijDFKtLrIOy51HogKzHNM8u7r58h9JvdqPsp
-         IdxfuqFPzmxUiRrXNlkFiyTdPbgFPXfj40PtYMlh6jX/nevOU8C/w1otkcRRx26Cb3B8
-         tvtQ3I+ul2v7UQlkleFK3qu0jXgVXR1FVPpUK8uj16xz5u8+LzCMgJ3RU9D/dZvmOqE8
-         mVigClfpZSjbf5QdoGFfVkX6SklUt6KQ63jLqEI8N233CO7cA8y97yZ4oBisjrt/mXB9
-         o9Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728550833; x=1729155633;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LR1M84LN52X4U6RwSoUyMMdQCDpU64S8085SG37H4l0=;
-        b=TALk1RHEJX/Mf1oSUMHKfEt8hmgkYuqaA6fmRbImkekzFVYjOek1qbotdS5LHhYoUg
-         l5811RDrKSYP6+a9AAUi9wq2oGu0Q0y+iVEykMx4/9dGwDNzIkzPaAqUy1B8favZmGIB
-         QcNmg3Kv1rFC6SWeh1pe6DNjqUMD5qiYbjfwqU9SdLrCPZdU8nFxqRfT9LPloh0sCO39
-         DwtycCQjxDDqPYE70jMAl3Eciduz2sENOS/+F83xpsKh7xllB+m3rLvm5F+w8hwHYGNg
-         Ugm6iA2Xq+97QCb6wVgrB6JpBRBBRytRm1XsDzj5aYEgsJIiHmJ3dvCHUsWKK7dsZlsO
-         l7fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBCGoNCNH4MMzNA1i2qXRb2Ib4F18R+fDbqMITKTwXj6YUw+WxF6C0zHBJNp4qZq2VAbynrlcuVhsPhXPT@vger.kernel.org, AJvYcCXX5aEzE8eip2gE/ffaMfU3Z5/Sn+W1Qfpch7SG6JQ8/wCxoma8xOtNyuzYZ7LvwQ/PhFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE7CG6Om0F2E4K501ONagNxgiGYcuj0UoTfVYnuT47eTP6HEce
-	VwHgxV64xJsadA+3TYHyzmGtd5AMk3xGI1B6rRpvH2l8OCfGcHQbXTmRgnQ1
-X-Google-Smtp-Source: AGHT+IF62mHBJEn1yNrnGwuST05IG0cpzQ2jrDUA/Rm0x0nY9OWDv9BbdP/KHA+6UgUPaFphRnkm2g==
-X-Received: by 2002:a17:907:7da0:b0:a86:a481:248c with SMTP id a640c23a62f3a-a998d197379mr413059766b.19.1728550832509;
-        Thu, 10 Oct 2024 02:00:32 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f266e8sm58844466b.63.2024.10.10.02.00.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 02:00:32 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 10 Oct 2024 11:00:30 +0200
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <olsajiri@gmail.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Jose E. Marchesi" <jose.marchesi@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
-Message-ID: <ZweXrhopOmEb9rMx@krava>
-References: <ZsMwyO1Tv6BsOyc-@krava>
- <20240819113747.31d1ae79@gandalf.local.home>
- <ZsRtOzhicxAhkmoN@krava>
- <20240820110507.2ba3d541@gandalf.local.home>
- <Zv11JnaQIlV8BCnB@krava>
- <Zwbqhkd2Hneftw5F@krava>
- <20241010003331.gsanhvqyl5g2kgiq@treble.attlocal.net>
- <20241009205647.1be1d489@gandalf.local.home>
- <20241009205750.43be92ad@gandalf.local.home>
- <20241010031727.zizrnubjrb25w4ex@treble.attlocal.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A91919F429;
+	Thu, 10 Oct 2024 09:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728550894; cv=pass; b=sT5hIQvV6h889mD7aMo0mxkSMRIu2LW5ino/BB8dv05YNWAJLAc1er0GxSLgCkfOKN73dHBPIIaD8q2qCle3W7ef73PwTJ420l32mfiZdLs4Ky+aqzhZA1bHzfvB8KejqZ3ko94JRso7qIOlAXzwuX+XCDbzv5sUuQAByf3QPqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728550894; c=relaxed/simple;
+	bh=xgF7sCqeUMl0IrSMhRE6DttHPbYSdCK9qDDci2Nr64o=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mtksay284hpKDjRUcTptC4NmHk35P6x3WjNuKVc+0d/uecQBiWqtWmspdghZtXB0d65GnfnbYsU5t8/+LDteDUlZHnLv5P2qmWG0dm18zLZc7WwSmaGJA6Zs/p1z7hOnq3jznqBVP69QzqFL2YR7Go3BzR1yElWRFkPB7VY7ODQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=Wv0FeDLf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1728550851; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YPbK7AhJ5RktqOduk83IE0jI5qf/fxxVlgpoew/Qj8I5n+/hxEmI2uOmCzfBGCKdFAeFOU4JCYN9dEAfeRnVUPD9Sqv5O68gkBSd3DtQK5DRIuFg1jkfx7MJmbG2t2kaoohs4xXWEgR2KyisTxIKBmw60ipp9mJTF4g25CoSGls=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728550851; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yfpUUBn5TZz3J881pNCxTGR41pfQaqdQzQmQ+Db7TpU=; 
+	b=ZrCk84mZqdke/SNJrtajioUYTKy5YcXioJmcO5bMIO+WkHMGbsDNjpLmlbCUcmKFh7lyP+CmgsOJ2MV5xu0vFYV1CAZEMR453/R5n9pLBTR2IU6Sdp0V3UEySbULUs8l7f5/cMROoVE/QZUxiWIs1xQoi+y2nELbgvEOCLj81TI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728550851;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=yfpUUBn5TZz3J881pNCxTGR41pfQaqdQzQmQ+Db7TpU=;
+	b=Wv0FeDLf4u3tro3I4B0Ii/mus+nEArgBrxIC0I38anG6FjWopY1nGJUJlyVbi3AC
+	rJuupl90GUcV+ozvzXNnNOfgRgcFGMVEA8A54Y9oPiYZhAbj+quYccV1DyB4/V1vicc
+	AhnSVoWTcwk0k+YDOrHuAZxI5rkT/PUUczpUfllE=
+Received: by mx.zohomail.com with SMTPS id 1728550848740328.09819726957926;
+	Thu, 10 Oct 2024 02:00:48 -0700 (PDT)
+Message-ID: <64d10da3-09d1-4a46-be70-8111d664d290@collabora.com>
+Date: Thu, 10 Oct 2024 14:00:38 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010031727.zizrnubjrb25w4ex@treble.attlocal.net>
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/386] 6.6.55-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241008115629.309157387@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241008115629.309157387@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Wed, Oct 09, 2024 at 08:17:27PM -0700, Josh Poimboeuf wrote:
-> On Wed, Oct 09, 2024 at 08:57:50PM -0400, Steven Rostedt wrote:
-> > On Wed, 9 Oct 2024 20:56:47 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > I was thinking if something like objtool (could be something else that can
-> > > read the executable code) and know of where functions are. It could just
-> > > see if anything tests rdi, rsi, rdx, rcx, r8 or r9 (or their 32 bit
-> > > alternatives) for NULL before using or setting it.
-> > > 
-> > > If it does, then we know that one of the arguments could possibly be NULL.
-> > 
-> > Oh, and it only needs to look at functions that are named:
-> > 
-> >   trace_event_raw_event_*()
+On 10/8/24 5:04 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.55 release.
+> There are 386 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Unfortunately it's not that simple, the args could be moved around to
-> other registers.  And objtool doesn't have an emulator.
+> Responses should be made by Thu, 10 Oct 2024 11:55:15 +0000.
+> Anything received after that time might be too late.
 > 
-> Also it's not clear how that would deal with >6 args, or IS_ERR() as
-> Jirka pointed out upthread.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.55-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+>
 
-another complication might be that the code in tracepoint's fast assign
-can potentially call global function (?), that could do the argument NULL
-check and we won't have its code at objtool invocation time
+Hi,
 
-jirka
+Please find the KernelCI report below :-
+
+
+OVERVIEW
+
+        Builds: 25 passed, 0 failed
+
+    Boot tests: 510 passed, 0 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: 
+        hash: 75430d7252ba967f7ca3d11dffa4b90ff5aa0ccd
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+
+
+BUILDS
+
+    No new build failures found
+
+BOOT TESTS
+
+    No new boot failures found
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
+
 
