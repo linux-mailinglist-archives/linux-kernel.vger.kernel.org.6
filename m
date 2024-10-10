@@ -1,181 +1,114 @@
-Return-Path: <linux-kernel+bounces-359659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FCD998EB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83426998EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9450FB21C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:47:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10682282233
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A383B1C9B63;
-	Thu, 10 Oct 2024 17:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B36119ABBD;
+	Thu, 10 Oct 2024 17:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMDC4abn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3vpkT8D"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28A019C55F;
-	Thu, 10 Oct 2024 17:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354753D3B8;
+	Thu, 10 Oct 2024 17:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728582327; cv=none; b=IAI0+6iJBsodE1FIYBf9qlidGXbwpRFR0wXeZ/dxkZQfz/TZNEziRLFSMnTbqxtLgknVQ/Y40DPJvqhFSFB0lAraK32y3H68uX33NTBO6/Dp8IDCNaKgnXSfNdEWilv2BybiQP0BJ+UxzwqCNs3tifGWXwvBntHSDrbJtgJxAzI=
+	t=1728582392; cv=none; b=ABqt/SzFGufC77cDtlg5V5YkmqcP7nr8B3L2NlCaGbDoUACWHx3Uf4E/BD8JrH2mdRBVP2ovo2azFm4tNIQC+GKDVgm2P8WdXK40n4yisFrZnE5Tt3cMj4K1RPJVTIi53ma2a6f8bywZI3XijG72Zfiix3ctacqUhDiMSh5X+dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728582327; c=relaxed/simple;
-	bh=RsT2v/nQ06UoiZ1wTWD5mT5xjsc7b1twZLFJ8QkV0ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nN9Og3hQ3++zqFskElJ+H1fcHFbQCXq9vyx7kESKUMm1aRUUTZddtej4fzkfEoxs8nUz4l1hGjDyf1fAKHrs6tJhpmjEZ2D3oSlUYFyCdpj/sM9BPJ93wJ81a15ZaIQtKOPuLNv5rOqV1VPMp35mYMR6cJXeiewsE6ITOZeUBUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMDC4abn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BA4C4CEC5;
-	Thu, 10 Oct 2024 17:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728582326;
-	bh=RsT2v/nQ06UoiZ1wTWD5mT5xjsc7b1twZLFJ8QkV0ig=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SMDC4abn9tfAlDw2NocP1u5Nx6AOZXY6cKPdtCXViRneR4f0qL2j/bp3mKn1hUs2l
-	 Z0H9Z82Oy3V+rMNPpIT8wxxPx5piTgdjhV2DcCbNMDxz+NySe+2r7oB6b9SsUr56bU
-	 dEIo1qMRFrLjPxUCMQrC5yd+CtLaQ+8X9hZk7Uu4ZkSPs5HDeRDmJt6U8JVW49cgUp
-	 zHQFz+wfNHF9u7vR4TrBgmfwapipQlvbgb6hQdivnLXjZGWxuIEHIimAlWLy9+9Cyl
-	 SV6b8fwQWtfYOg2UNUmu2paXW0gVIDQAFoWaFMDEm5JgOW/ksgJsyGPK2bezTpHm0y
-	 Qv7DVHC6wKvcA==
-Date: Thu, 10 Oct 2024 18:45:16 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- "Hennerich, Michael" <Michael.Hennerich@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>, David Lechner
- <dlechner@baylibre.com>, "Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>, Dumitru Ceclan
- <mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>,
- =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
- <joao.goncalves@toradex.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v6 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <20241010184516.66826055@jic23-huawei>
-In-Reply-To: <DM6PR03MB4315785FB25B980264748BCBF3782@DM6PR03MB4315.namprd03.prod.outlook.com>
-References: <20240926135418.8342-1-ramona.nechita@analog.com>
-	<20240926135418.8342-4-ramona.nechita@analog.com>
-	<ZvV2mHkl4qxVVmBH@smile.fi.intel.com>
-	<DM6PR03MB4315785FB25B980264748BCBF3782@DM6PR03MB4315.namprd03.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728582392; c=relaxed/simple;
+	bh=mn/ZPOf2DDxL/uHo6xPSIFgWMJvXHVeziNYrO1fVmWA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rODi9/r6ayB7+h48M+pz/zeRSygDFVL7FeP57+nyAWGuZVdfjHMQZ/7cJe74ZyhnT5D3XXuibFNP1s7CjRGAGwerKJ1vOcukWNOk/rOVzc/PYrCkt8KoZyHVEMV9B5ag313fWhXy8sJR6y5KH8PqqWWOGfTlY2rAwcpsR0NGwmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D3vpkT8D; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2e6a1042dso388110a91.2;
+        Thu, 10 Oct 2024 10:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728582390; x=1729187190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fodw2y9RXjh33ztN0s4LLH7quAMnnnuBtbSFabngXnU=;
+        b=D3vpkT8DU4ujH5v6B1uAXlCGJT/5Z+LS7XWaRy4QcUkTNePUMEji9s2RS/X62ms+vC
+         ZfL4WKtOjjC/MSL2+h1Z447yK663v4RORyBvemribQyAU8iTXgwtqEVyAbcxfU/MlbMg
+         zSKVE9HjNbmdkPlC3LlzkQMVjaGyfxsQQlLBZOrECc60k0uE8Ti5QtfwurK/2otCtzCh
+         zBHWoW3M7AT8BkYRwyIaEJ5HVj6vOEejCr+77GkukHXSEn6Qzcm1JL/J/h3iYVc8aG+e
+         5ISbDE69tK2InB+EXfOJPEc0h1RdmgXHFp/urwOC7UnjrNsT68TdXVB/UTrTJbEbrEj5
+         SZ7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728582390; x=1729187190;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fodw2y9RXjh33ztN0s4LLH7quAMnnnuBtbSFabngXnU=;
+        b=MAOCX+0c08sIN375Wj9fBc7PlK3PuG2gSqePc56mhWWQJpcrO+roh7eJsKUmFfloK3
+         mDnUAPw1GvnViZdZBV5+MU+ZTKk9bka1u284NRp2TSricQkt6h/UwYsHFIMQUPKEYSYa
+         2ZmuinPus9AtkLvD6tGVyQFF9DgMaUvVhjPMoQCrU35mYX7QxPCbVycgF1wRlyN3c5pl
+         0h7h05suH77Q+Bf8ieDcmuarh6XISd8frQ41DyM4ZZ7HNxFkoxAzyBz5RiQOoHpdTdiO
+         vcL6lOKPab7o8dqhvAuzxYXoMhZ3P9qvUKauNxyfmMv0R8A3c3eG5gxQ/Z+98YSaA4dp
+         ZakA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuPvlcYJSej9tGkVhz7RsOCAtAd8u5+/RFTWCzcwTxWPUf/rdO/6288n0CB1SGDLTHtfxBzY8+9R4JeMjI@vger.kernel.org, AJvYcCX+zM2sEA60TkekAHwi866gM4GDLBlKKgZCoiVhi5hEXtOGvm7JClvDWYIjQSttBH+JGfjIHkjFdIfNlXo=@vger.kernel.org, AJvYcCXsOBgVyEETVoSPVtXKyBEdgc+VW0/YnIyy+AM1IalfZ8RrNSdRifmn2M9XZt96DNByw5dD0Um0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGwYTflSP4v11e30F5vjF2qIuWp07NdCQWBS2ryvf6w9tdbzak
+	UzdMUwB0q4Ji8vJPfHefZcTao/LPncbieFzWisMmB/9uxwyHvtL8
+X-Google-Smtp-Source: AGHT+IG2UOEz7aX30q4xZnAkGlmF8olOXxivWfzqq9oco5P2NO3C5dX05PT0Jpd4+OrBTJ8rLpEuTQ==
+X-Received: by 2002:a17:90a:688c:b0:2e0:894f:198e with SMTP id 98e67ed59e1d1-2e2a2525180mr8536555a91.30.1728582390270;
+        Thu, 10 Oct 2024 10:46:30 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5df0ce8sm1629325a91.14.2024.10.10.10.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 10:46:29 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+955da2d57931604ee691@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] vt: prevent kernel-infoleak in con_font_get()
+Date: Fri, 11 Oct 2024 02:46:19 +0900
+Message-Id: <20241010174619.59662-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Oct 2024 14:32:49 +0000
-"Nechita, Ramona" <Ramona.Nechita@analog.com> wrote:
+font.data may not initialize all memory spaces depending on the implementation
+of vc->vc_sw->con_font_get. This may cause info-leak, so to prevent this, it
+is safest to modify it to initialize the allocated memory space to 0, and it
+generally does not affect the overall performance of the system.
 
-> Hello,
-> 
-> I have some questions inline before sending out a new patch.
-> 
-> 
-> ....
-> >> +struct ad7779_state {
-> >> +	struct spi_device *spi;
-> >> +	const struct ad7779_chip_info *chip_info;
-> >> +	struct clk *mclk;
-> >> +	struct iio_trigger *trig;
-> >> +	struct completion completion;
-> >> +	unsigned int sampling_freq;
-> >> +	enum ad7779_filter filter_enabled;
-> >> +	/*
-> >> +	 * DMA (thus cache coherency maintenance) requires the
-> >> +	 * transfer buffers to live in their own cache lines.
-> >> +	 */
-> >> +	struct {
-> >> +		u32 chans[8];
-> >> +		s64 timestamp;  
-> >
-> >	aligned_s64 timestamp;
-> >
-> >while it makes no difference in this case, this makes code aligned inside the IIO subsystem.  
-> 
-> I might be missing something but I can't find the aligned_s64 data type, should I define it myself
-> in the driver?
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+955da2d57931604ee691@syzkaller.appspotmail.com
+Fixes: 05e2600cb0a4 ("VT: Bump font size limitation to 64x128 pixels")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ drivers/tty/vt/vt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Recent addition to the iio tree so it is in linux-next but not in mainline yet.
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=togreg&id=e4ca0e59c39442546866f3dd514a3a5956577daf
-It just missed last cycle.
-
-> 
-> >  
-> >> +	} data __aligned(IIO_DMA_MINALIGN);  
-> >
-> >Note, this is different alignment to the above. And isn't the buffer below should have it instead?
-
-While I'm here:  No to this one.  The s64 alignment is about
-performance of CPU access + consistency across CPU architectures.
-This one (which happens to always be 8 or more) is about DMA safety.
-
-
-
-> >  
-> >> +	u32			spidata_tx[8];
-> >> +	u8			reg_rx_buf[3];
-> >> +	u8			reg_tx_buf[3];
-> >> +	u8			reset_buf[8];
-> >> +};  
-> >
-> >....
-> >  
-> >> +static int ad7779_write_raw(struct iio_dev *indio_dev,
-> >> +			    struct iio_chan_spec const *chan, int val, int val2,
-> >> +			    long mask)  
-> >
-> >long? Not unsigned long?  
-> 
-> I copied the function header directly from iio.h, shouldn't it be left as such?
-
-Hmm. That's an ancient legacy that we should really cleanup at somepoint.
-Leave this as long.
-
-
-> 
-> >  
-> >> +{
-> >> +	struct ad7779_state *st = iio_priv(indio_dev);
-> >> +
-> >> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> >> +		switch (mask) {
-> >> +		case IIO_CHAN_INFO_CALIBSCALE:
-> >> +			return ad7779_set_calibscale(st, chan->channel, val2);
-> >> +		case IIO_CHAN_INFO_CALIBBIAS:
-> >> +			return ad7779_set_calibbias(st, chan->channel, val);
-> >> +		case IIO_CHAN_INFO_SAMP_FREQ:
-> >> +			return ad7779_set_sampling_frequency(st, val);
-> >> +		default:
-> >> +			return -EINVAL;
-> >> +		}
-> >> +	}
-> >> +	unreachable();
-> >> +}  
-> >
-> >...
-> >  
-> >> +static irqreturn_t ad7779_trigger_handler(int irq, void *p) {
-> >> +	struct iio_poll_func *pf = p;
-> >> +	struct iio_dev *indio_dev = pf->indio_dev;
-> >> +	struct ad7779_state *st = iio_priv(indio_dev);
-> >> +	int ret;  
-> >
-> >...
-> >  
-> 
-> Thank you!
-> 
-> Best Regards,
-> Ramona
-> 
-
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index cd87e3d1291e..96842ce817af 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -4726,7 +4726,7 @@ static int con_font_get(struct vc_data *vc, struct console_font_op *op)
+ 		return -EINVAL;
+ 
+ 	if (op->data) {
+-		font.data = kvmalloc(max_font_size, GFP_KERNEL);
++		font.data = kvzalloc(max_font_size, GFP_KERNEL);
+ 		if (!font.data)
+ 			return -ENOMEM;
+ 	} else
+--
 
