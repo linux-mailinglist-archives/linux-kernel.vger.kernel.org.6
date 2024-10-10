@@ -1,253 +1,119 @@
-Return-Path: <linux-kernel+bounces-358419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32682997F1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:16:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E008E997F21
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FE13B2375C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1C51C2323E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644871CBEB3;
-	Thu, 10 Oct 2024 07:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19561CCB25;
+	Thu, 10 Oct 2024 07:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hw6Bw/Vp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uehgxAKY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTHZV3nD"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA7C1C1ACB;
-	Thu, 10 Oct 2024 07:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3921C1ACF
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728544105; cv=none; b=YuvfKpPyowow+4gTHv6oLyDgYHO/ZT1IV6DtdLULVM5W6FYuIdPoVAP63B4xyumVscGvs8iPkTleBYrZGlyeGyBAi9AwE1WOgw4aGaz7/bQRIw5c8N7XfXGeJtvRb0OeJVyvbqGXoeSccpxYlzh6aiUTFXwt1nod7MD6OmCgka4=
+	t=1728544231; cv=none; b=UaRMvdQz80uadspxtLehXsaAn13N9LOFEj2OYunolYld+Vq7FKRmeM1nS7yiE2o3/L8SkNlRYpP4AM0F8WUfNiifl+5gLjqCR2U+Ap9U9NOSN3n3jwDYqlQun2Je7OMG25kI0T2u4Wo54CZDSmWpWTLDCgbAe4ZjUhZip8frSkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728544105; c=relaxed/simple;
-	bh=nO5tveuS8n4BbqPpvO7KvqpGxY6o+MMol7+g0GDzdTw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XuZisrsAelO5jQFpqgM1gsTplDC7mk8A9608SNojB+OHq+pdkTMIkfWVMgA/5kvsYI8TTFM6HF867j3GK4/nU51pc3k7DfDZu0hp1iksads4vAAxVviGJN1JZlreEXc137xuyR2Dy/B+SjIGSdxdj2p0ET8xNU65gJH3WHt9RQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hw6Bw/Vp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uehgxAKY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Kurt Kanzenbach <kurt@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728544102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IU6+r5lZGAYZvMk+oAC6fxTdFz8i+0mzjN8aBnNbt3M=;
-	b=hw6Bw/VpVdaTyP4PBmtuQiqyNyiYHkDnABR2i0CsyzvWfQR8lbjUGyUVYA22YxziLtLurh
-	bzmp0RUF6lK9knrSbw7CDiCKGBOFj4OqN7MsJZkwO5gUJJvGM3RYd57HHx6NENWeAOz+ED
-	ZCHFxwoSaXMZZAsngUenbF0YOMYwWZ6XFzV5RK35CtJ7xZ2z6NHqLIehT1EciyTRYDubFR
-	gGLfyP2CEfDA87r+H2OqYiLTI970bcxQWGfVIO2C1tSn8w9LrbTLBcZkXGuX/zGJPa/i48
-	BYgr9IRALy0zHcQ4mv18vqSgBoWVL931KUIKujYr5FaOgWFLxWe3Qw82j9hP1Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728544102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IU6+r5lZGAYZvMk+oAC6fxTdFz8i+0mzjN8aBnNbt3M=;
-	b=uehgxAKYZ234wpzUPC6gpFpkpmQEj/nuRSAJ/ahxtW5AhCw9W75oc9MAWoBWZ33KzS8VFS
-	auwPAKaLdTfNzKBA==
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "moderated list:INTEL
- ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 2/2] igc: Link queues to NAPI instances
-In-Reply-To: <Zwa3sW-4s7oqktX3@LQ3V64L9R2>
-References: <20241003233850.199495-1-jdamato@fastly.com>
- <20241003233850.199495-3-jdamato@fastly.com>
- <87msjg46lw.fsf@kurt.kurt.home> <Zwa3sW-4s7oqktX3@LQ3V64L9R2>
-Date: Thu, 10 Oct 2024 09:08:20 +0200
-Message-ID: <87wmig3063.fsf@kurt.kurt.home>
+	s=arc-20240116; t=1728544231; c=relaxed/simple;
+	bh=VE5E23zJX+cWOKOIHdq5T6w8xM6pIZNJpwdFRgWL3q8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D9cOUtl1SionFWYull5H8YaQeby7VMi1O9vYsNbrINb24vqNGsxlMd9bu67O6SvODR8qt1NI5+DzA5BpzV8ziWR6W1ONijG3oWMewpe+j1FP8a6bWUULvM26e+3p3yLEueSIscfvy+UmWASDn+KpiHcX7Ueng47ddRCjzPNSEUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTHZV3nD; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4311420b675so4572245e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728544227; x=1729149027; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=feRwyThEjIGhLEb3VHNlhVmx856Xi2sfTY3h8PSPA3E=;
+        b=TTHZV3nDk06XDEdNdZodYYPMSSiC4WsMW46z0aXLeJxK/hwSpxp1GLZzhzD4CanmjP
+         LvPWRrYXHsH+OIFz7dwgBtrMAlgc/VGcgOAyUEd0Xy3iZuTy/s7Fny6ryX7RfEIOQkD9
+         0XMIxEfT8O+M2tq5+eT0GiYAj2r1C8fAnyYF0FYtcqZe0mbqSm/aUjMMHHNvflCRFHUN
+         adU2da/PcZZSQx8BxxldH61YMYa1Gmb314GifqeNvi1c5Jlexi2DVFTzdN/ehs38uLQh
+         vbc5f4hjlCMW5+4gRm7yuqlnrDR4JxEYCj+yKrDRLvicZAlxbD5RnCyXmQ9JfEiTLcC8
+         7rGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728544227; x=1729149027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=feRwyThEjIGhLEb3VHNlhVmx856Xi2sfTY3h8PSPA3E=;
+        b=k6GErhB8YSBU0WME5sPsHte7rBJOXpa4tAe+2S+IWX60k5GlUCNjEsRXjdkjo7+dBK
+         F3zfg5AHZtdKGlibEFaRschiUCUrxu6JXnzvFSMO1/nDqgKWVRxYmle9IMecyKZrxK4K
+         Rg25GtzjWln5qsudANWRXCh8Z6vfqAue9wOmo8q73wcNS0TyGSk380Z0ZysPN35Esk6B
+         Nl1lqYQmvNBbfisExobz+P4F5005H789yybv1kjmcEAfwz1uJk7LV0EBzoEXwR11QIcN
+         b+vsyyfsCeCjoIL23q2urKEKTKZGqAisrp4pbbt3D9/0zsR0IkJnTO/H2tL+BoX5iGEA
+         XI9g==
+X-Gm-Message-State: AOJu0Yydo1Df3bIYFqk+85rHw1CYzTgeNYf1iQ7zuT8ocCaQ5RDdy/G7
+	7bn/xr/GvucN9cACEQfa6pdGtRc2dehM0SMxa//Ei/w6XG48slyff66v/2JD
+X-Google-Smtp-Source: AGHT+IE++zbq8WtiFqCVeh2kXuU0kqB5v2IGYJVOOKR3wkSaxnIYIxA9ZRID+8TPyJ4ZLFKIwApuCQ==
+X-Received: by 2002:a05:600c:384c:b0:42b:8a35:1acf with SMTP id 5b1f17b1804b1-430d59b77bbmr42676655e9.25.1728544227270;
+        Thu, 10 Oct 2024 00:10:27 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182d78dcsm7011115e9.5.2024.10.10.00.10.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 00:10:26 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH 1/2] futex: Use atomic64_inc_return() in get_inode_sequence_number()
+Date: Thu, 10 Oct 2024 09:10:04 +0200
+Message-ID: <20241010071023.21913-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
+to use optimized implementation and ease register pressure around
+the primitive for targets that implement optimized variant.
 
-On Wed Oct 09 2024, Joe Damato wrote:
-> On Mon, Oct 07, 2024 at 11:14:51AM +0200, Kurt Kanzenbach wrote:
->> Hi Joe,
->>=20
->> On Thu Oct 03 2024, Joe Damato wrote:
->> > Link queues to NAPI instances via netdev-genl API so that users can
->> > query this information with netlink:
->> >
->> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yam=
-l \
->> >                          --dump queue-get --json=3D'{"ifindex": 2}'
->> >
->> > [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
->> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
->> >  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
->> >  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
->> >  {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
->> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
->> >  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
->> >  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
->> >
->> > Since igc uses only combined queues, you'll note that the same NAPI ID
->> > is present for both rx and tx queues at the same index, for example
->> > index 0:
->> >
->> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
->> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
->> >
->> > Signed-off-by: Joe Damato <jdamato@fastly.com>
->> > ---
->> >  drivers/net/ethernet/intel/igc/igc_main.c | 30 ++++++++++++++++++++---
->> >  1 file changed, 26 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/e=
-thernet/intel/igc/igc_main.c
->> > index 7964bbedb16c..b3bd5bf29fa7 100644
->> > --- a/drivers/net/ethernet/intel/igc/igc_main.c
->> > +++ b/drivers/net/ethernet/intel/igc/igc_main.c
->> > @@ -4955,6 +4955,7 @@ static int igc_sw_init(struct igc_adapter *adapt=
-er)
->> >  void igc_up(struct igc_adapter *adapter)
->> >  {
->> >  	struct igc_hw *hw =3D &adapter->hw;
->> > +	struct napi_struct *napi;
->> >  	int i =3D 0;
->> >=20=20
->> >  	/* hardware has been reset, we need to reload some things */
->> > @@ -4962,8 +4963,17 @@ void igc_up(struct igc_adapter *adapter)
->> >=20=20
->> >  	clear_bit(__IGC_DOWN, &adapter->state);
->> >=20=20
->> > -	for (i =3D 0; i < adapter->num_q_vectors; i++)
->> > -		napi_enable(&adapter->q_vector[i]->napi);
->> > +	for (i =3D 0; i < adapter->num_q_vectors; i++) {
->> > +		napi =3D &adapter->q_vector[i]->napi;
->> > +		napi_enable(napi);
->> > +		/* igc only supports combined queues, so link each NAPI to both
->> > +		 * TX and RX
->> > +		 */
->>=20
->> igc has IGC_FLAG_QUEUE_PAIRS. For example there may be 2 queues
->> configured, but 4 vectors active (and 4 IRQs). Is your patch working
->> with that?  Can be tested easily with `ethtool -L <inf> combined 2` or
->> by booting with only 2 CPUs.
->
-> I tested what you asked, here's what it looks like on my system:
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: "André Almeida" <andrealmeid@igalia.com>
+---
+ kernel/futex/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index 136768ae2637..3146730e55f7 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -181,7 +181,7 @@ static u64 get_inode_sequence_number(struct inode *inode)
+ 		return old;
+ 
+ 	for (;;) {
+-		u64 new = atomic64_add_return(1, &i_seq);
++		u64 new = atomic64_inc_return(&i_seq);
+ 		if (WARN_ON_ONCE(!new))
+ 			continue;
+ 
+-- 
+2.46.2
 
->
-> 16 core Intel(R) Core(TM) i7-1360P
->
-> lspci:
-> Ethernet controller: Intel Corporation Device 125c (rev 04)
->                      Subsystem: Intel Corporation Device 3037
->
-> ethtool -i:
-> firmware-version: 2017:888d
->
-> $ sudo ethtool -L enp86s0 combined 2
-> $ sudo ethtool -l enp86s0
-> Channel parameters for enp86s0:
-> Pre-set maximums:
-> RX:		n/a
-> TX:		n/a
-> Other:		1
-> Combined:	4
-> Current hardware settings:
-> RX:		n/a
-> TX:		n/a
-> Other:		1
-> Combined:	2
->
-> $ cat /proc/interrupts | grep enp86s0 | cut --delimiter=3D":" -f1
->  144
->  145
->  146
->  147
->  148
->
-> Note that IRQ 144 is the "other" IRQ, so if we ignore that one...
-> /proc/interrupts shows 4 IRQs, despite there being only 2 queues.
->
-> Querying netlink to see which IRQs map to which NAPIs:
->
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                          --dump napi-get --json=3D'{"ifindex": 2}'
-> [{'id': 8200, 'ifindex': 2, 'irq': 148},
->  {'id': 8199, 'ifindex': 2, 'irq': 147},
->  {'id': 8198, 'ifindex': 2, 'irq': 146},
->  {'id': 8197, 'ifindex': 2, 'irq': 145}]
->
-> This suggests that all 4 IRQs are assigned to a NAPI (this mapping
-> happens due to netif_napi_set_irq in patch 1).
->
-> Now query the queues and which NAPIs they are associated with (which
-> is what patch 2 adds):
->
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \=
-=20
->                          --dump queue-get --json=3D'{"ifindex": 2}'
-> [{'id': 0, 'ifindex': 2, 'napi-id': 8197, 'type': 'rx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8198, 'type': 'rx'},
->  {'id': 0, 'ifindex': 2, 'napi-id': 8197, 'type': 'tx'},
->  {'id': 1, 'ifindex': 2, 'napi-id': 8198, 'type': 'tx'}]
->
-> As you can see above, since the queues are combined and there are
-> only 2 of them, NAPI IDs 8197 and 8198 (which are triggered via IRQ
-> 145 and 146) are displayed.
-
-Is that really correct? There are four NAPI IDs which are triggered by
-the four IRQs. Let's say we have:
-
- - IRQ: 145 -> NAPI 8197 -> Tx for queue 0
- - IRQ: 146 -> NAPI 8198 -> Rx for queue 0
- - IRQ: 147 -> NAPI 8199 -> Tx for queue 1
- - IRQ: 148 -> NAPI 8200 -> Rx for queue 1
-
-My understanding is that this scheme is used when <=3D 2 queues are
-configured. See IGC_FLAG_QUEUE_PAIRS.
-
-My expectation would be some output like:
-
-[{'id': 0, 'ifindex': 2, 'napi-id': 8197, 'type': 'tx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8198, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8199, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8200, 'type': 'rx'}]
-
-Thanks,
-Kurt
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJHBAEBCgAxFiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmcHfWQTHGt1cnRAbGlu
-dXRyb25peC5kZQAKCRDBk9HyqkZzgm5kD/wKWSB0Ipa7QUEmYLceiDsnwHr9ptAG
-veIqB7500LItsANplLxHfgqb85Bs6ioag6EQVbnOCyeIncbO/2sPWGTYuen71uNk
-em7EhPF+c73A1NkLZzYMSw2FVnoPrPD3+9wIWzRBgYneix9b3nFwVAwgO1NiDnQg
-Vw+2WmAnJkM2KHziYF4lcuJlDFlwqUS674wJGVG3eQTzF/pAWzgML0BoldNMUQlP
-gQFdXhYK4HQJTaF09aIv7hwZOyI659+vUDmS7zvJd1qk1R9L+FaYiv3hOjuIu7YQ
-dEzWs9PhGH3vk50POY30Y248oiAO8wQZMloB0Y5CufKtgIB1fhx+NQFDAmdfI5If
-y+Vavk+N2/b6DvCQlyQ149SoJAwIRZ3Noa2J/q0vMSceCnncDJCITXYtTbhjmruv
-gq2guTYIZIFbpx4NKorJoWZ9fl0PGJL8uDgqRHO6cotcG40jS90p85Lm5iy1dVp/
-0Z55krETtccNRy/pp2FNT+ljwgUye5Mo9hOtXvKyNsVip50pxM+ng16U8h0uAIOd
-OyXeYASR6Xc9o9Ac5LX39AjoDnONwXj0+lnYyFjnMk6apyV5gNbXN2lCQDv9XZWt
-9P6VVuiCQB97u9oKOs7iO5cQ64frJI0nuLmafxg5eKcVi4Cb7gjhRYNJRdzFEvDM
-pgxnGG2nKU/qmg==
-=yeTM
------END PGP SIGNATURE-----
---=-=-=--
 
