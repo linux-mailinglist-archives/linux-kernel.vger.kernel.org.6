@@ -1,145 +1,99 @@
-Return-Path: <linux-kernel+bounces-358356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C228E997D91
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847A8997D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3420B20B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:47:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 963221C21AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F151A4F2B;
-	Thu, 10 Oct 2024 06:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9D21A3BDA;
+	Thu, 10 Oct 2024 06:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="KX+mdnG/"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JLXBKQfE"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5333E1A01C6
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6CE64D;
+	Thu, 10 Oct 2024 06:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728542870; cv=none; b=C6Xk7i/5+OkoaGBNQV931x6Wec+dtp+YBOR5nciqUNSXt/E9AmlrYcy9Yuk6P3RCDNuIwG0YxDeeX6NujrwwDuBvCJGX53tyes7zdJt+HmfdtNK0isYmTdRVMMBPBXluv3OTz1jzgp4nAcTKSu8vmXsM3Bl+TuDQKbs91Eaa6F4=
+	t=1728542915; cv=none; b=t1mM8M12ZMwBr9yQaiO6jfvOxoQUB+PqH15JcgjaTDDYC3UEFDEOuEw6zQW26jHnoc776CzjUDhex6fdw3hrbSLLkUJwMfvnjDyOw4/annYwBFPPmy0KUvlhDEgh7WWByTF6epb+PetRYTbRj0quQem4I9Y5Ux0Jde02Unf1yHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728542870; c=relaxed/simple;
-	bh=tHKOmblPX8wWLhgLOo8CPqJ8M9jXDYJnSLJvl7GpjB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuhXXdpbj88f7jZIsbA9wLueWzZcr1MyH2+MwQ49nPIF0q9CPoVw7MJeexYlhW9gzPhQSLP7SCgSvdNjWWmVA/cx2UJ8kO7kOh5mDqT/KYTGa+O11i38r624mFPvEgNkrz0pAiF3votH9f1APvb/+kfY0gi4hrj3XdIUYwZa9OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=KX+mdnG/; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7e9fd82f1a5so356355a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 23:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728542868; x=1729147668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=33F/qO1jWhb/z9QZCc7vqOINV1AdFFbOfnQtd2l6oAE=;
-        b=KX+mdnG/8CIwLKgktALcD0tDiWXvnXzAKc07336uK5oSDFhHaKIJrTuyR5AP/ZaM8X
-         9bUB7C4JBAFdaqTlQj523C0cDOf/9HV/p6zgAdktzQi0WpzRd8GCde5rWOIOBAc9EcwL
-         zCx9p2hgLXdNic3yHe1ads1+r7oHfrPmSSXXus+rp8u8gtNG3fPX/qrRcE835R4b45do
-         t52ek7LJL/b6DKDv0ngWzzROZq4svWo4owazQnVitlAgmWQzMcT14nnI4QOHKFqwX2Ur
-         DdYcGWgJ1cR7rv97mrayxT3cSmD1n0qpwp1eqWj+CxBSpRtnO99wL64/bxH7mA8YOyVR
-         TvTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728542868; x=1729147668;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=33F/qO1jWhb/z9QZCc7vqOINV1AdFFbOfnQtd2l6oAE=;
-        b=Mu04TDcjgymk/7HQbg6H5JCazC2eYxCTZInPXqp9sySLqi3jzJDsnM2D6MgBNDXOtF
-         hg1PFMMDd0RdW7Tn9sZ7uKWW0RHvWVIb1/qcsmOYkELYmzLt2wc6Wbp36PCkmROakuiX
-         W3Vjxrz/WORAlqOTCfonBEf8usSGmRHwHOyxxiaY0mf+rjv5RHQ+dTqZZTUsiKuyblQF
-         hHe4V5UYipnKkxt+5U1o4cIY8ArFb6Yj8N9NFVpMUrcAFpnz6Q2W0QDNW8bi7PuCEoHR
-         GWHsjCqge1gJVisJNcTH+gD+Cq78rOCfyE5Nitu6h8kDWgBEIid0+oD22/xCxavi8GRQ
-         TZxA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1ifzXF89362RefIEBk7y+nHkE917XnakRsE7OGxO4n9UcpqOyawhN3p7/ligFQPPIj0IYqfW/8pRM8kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzExjUHtKMrf/jNaPUn7V4VG1By7DSLDE9Em88rGUIuu2JoCAJi
-	W5F/oqleBaA2oCDvbCmmFRbRrq3o44Q0zVfMxbP3Bo6CYIj9YAroKC1jK+BBS5o=
-X-Google-Smtp-Source: AGHT+IEgUc4JwOQEFIr4+Uu9TrvsM9ik9NQZ6rVUYqg5KibEvwonxSBx64smuK3WsnJ9Ka0B0r8fYA==
-X-Received: by 2002:a05:6a21:1583:b0:1d7:11af:6a with SMTP id adf61e73a8af0-1d8a3c4be3amr7324895637.37.1728542868540;
-        Wed, 09 Oct 2024 23:47:48 -0700 (PDT)
-Received: from localhost.localdomain ([132.178.238.28])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71e2aa93dd2sm424402b3a.119.2024.10.09.23.47.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 23:47:48 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3] drm/xe/guc: Fix dereference before NULL check
-Date: Thu, 10 Oct 2024 00:46:34 -0600
-Message-ID: <20241010064636.3970-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728542915; c=relaxed/simple;
+	bh=hdLGx4sCQY3IQTyyuCIwgMHT42pwdh2t3gFJVbsw4gY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9puDM+jhgdIk5yzag5tEdR8KVLgXqVYj2/mTvbDlI7DUNUHRNT9bQmRmxhtPBX2KdAbWWVHC2J0GcZdmp9f5jxhjF6xi09N3hYu9/9To7YE5LLdesKgS7OtlLdF6nVZ4vx10aCkQ4xjJtxQX+c+o7hDXJkZTM/f4zeyJgFhRl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JLXBKQfE; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iVsCjrjUVGkyDrGz/5v9GR6eRnt67kS6CddzSgVmS5U=; b=JLXBKQfE//CMLG+4v+vSRYYqq4
+	qXW6K+XJAqGhvhZpV4tehgKXGKleOaDX9iLRcZY05OUAUmlM9/ZmjWLrwdSx5uYlsVkeWmdDfamaU
+	zFj2lbZni7Z2OGeSAAWhJ07AXkerPRvk6JQl4EFLRynLjImKbslZVGEZtx8vGCwvaP9FdT1Jk1XLW
+	czeyXl+CJ4hPF/V2Lg+8e5ct7y2B3lxxeAo1f6tfXVt5IrCLGVKE/DE/uLaX7NnkrkmKS9wFy1MD9
+	IimStoIqSWZs3Kn7UUijf2Ps0Ju2wLO3n1LK7rmXtU3vKAhoujPkuhiDyLG5uUnt4rnpPukjlTw92
+	TSUBx2yQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1symyN-0000000BjJc-1SeY;
+	Thu, 10 Oct 2024 06:48:31 +0000
+Date: Wed, 9 Oct 2024 23:48:31 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: syzbot <syzbot+8a8170685a482c92e86a@syzkaller.appspotmail.com>
+Cc: chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com
+Subject: Re: [syzbot] [xfs?] KFENCE: memory corruption in xfs_idata_realloc
+Message-ID: <Zwd4vxcqoGi6Resh@infradead.org>
+References: <6705c39b.050a0220.22840d.000a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6705c39b.050a0220.22840d.000a.GAE@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The pointer list->list is dereferenced before the NULL check.
-Fix this by moving the NULL check outside the for loop, so that
-the check is performed before the dereferencing.
-The list->list pointer cannot be NULL so this has no effect on runtime.
-It's just a correctness issue.
+[adding the kfence maintainers]
 
-This issue was reported by Coverity Scan.
-https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
+On Tue, Oct 08, 2024 at 04:43:23PM -0700, syzbot wrote:
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8a8170685a482c92e86a
 
-Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
-V2 -> V3: - Changed Null to NULL in the changelog
-          - Corrected typo in the changelong
-          - Added more description to the changelong
-	  - Fixed the link for Coverity Report
-	  - Removed the space after the Fixes tag
-V1 -> V2: - Combined the `!list->list` check in preexisting if statement
-	  - Added Fixes tag 
-	  - Added the link to the Coverity Scan report 
+[...]
 
- drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+> XFS (loop2): Quotacheck: Done.
+> ==================================================================
+> BUG: KFENCE: memory corruption in krealloc_noprof+0x160/0x2e0
+> 
+> Corrupted memory at 0xffff88823bedafeb [ 0x03 0x00 0xd8 0x62 0x75 0x73 0x01 0x00 0x00 0x11 0x4c 0x00 0x00 0x00 0x00 0x00 ] (in kfence-#108):
+>  krealloc_noprof+0x160/0x2e0
+>  xfs_idata_realloc+0x116/0x1b0 fs/xfs/libxfs/xfs_inode_fork.c:523
 
-diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
-index 41262bda20ed..947c3a6d0e5a 100644
---- a/drivers/gpu/drm/xe/xe_guc_capture.c
-+++ b/drivers/gpu/drm/xe/xe_guc_capture.c
-@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- {
- 	int i;
- 
--	if (!list || list->num_regs == 0)
-+	if (!list || !list->list || list->num_regs == 0)
- 		return;
- 
- 	if (!regs)
-@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- 		struct __guc_mmio_reg_descr desc = list->list[i];
- 		u32 value;
- 
--		if (!list->list)
--			return;
--
- 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
- 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
- 		} else {
--- 
-2.43.0
+I've tried to make sense of this report and failed.
+
+Documentation/dev-tools/kfence.rst explains these messages as:
+
+KFENCE also uses pattern-based redzones on the other side of an object's guard
+page, to detect out-of-bounds writes on the unprotected side of the object.
+These are reported on frees::
+
+But doesn't explain what "the other side of an object's guard page" is.
+
+Either way this is in the common krealloc code, which is a bit special
+as it uses ksize to figure out what the actual underlying allocation
+size of an object is to make use of that.  Without understanding the
+actual error I wonder if that's something kfence can't cope with?
 
 
