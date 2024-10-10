@@ -1,355 +1,178 @@
-Return-Path: <linux-kernel+bounces-360195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524629995BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:25:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5231E9995C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4926B2498B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:25:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E58A1281EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32CC1EABA7;
-	Thu, 10 Oct 2024 23:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7B91E6DFE;
+	Thu, 10 Oct 2024 23:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHpcbVx7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHVXFdSj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF11E9069;
-	Thu, 10 Oct 2024 23:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3674D63D;
+	Thu, 10 Oct 2024 23:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728602710; cv=none; b=f2bSkRayiZzz2md4yOhiPEwqAYRTICJME/GQjUg0RjvH1lTlkQRexpNJwEgC97SauPw4ywnIK0rUzTe0WeyYGf1LmBUdkXAefbwCULhEjuz8lpllutmVjsMtpItSzNnFnN/wzJOkRf1UmfQiU8Khuh7koxX6ZskiJRziyL/E3os=
+	t=1728602919; cv=none; b=BaI+IlG/ZDWJvlj5lF3DozQD9ZWP/BquPbyuDmMJ0k36GJzmfvFF61QyOFpTOq5xa2f21QTZvqCX3TfgxNAmK2cEzi+tygsanITQEbvGJgdMPyJbN6Uuff90fyQmsmWbntPi5pPqGGWVKJexkRuS56eGtYElyOWe0B+E7KOmdIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728602710; c=relaxed/simple;
-	bh=7yJR3lSy+PJG3f5Th9Zl71ZDLgIU1wQOEfOZlZTpl6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otFP7U+UVmHYPbNBsCxndbGz43UFj/bEh9Go+8vX0P523+lHLG05+srt1icydITTUEA61UuiPB9oIPRZhFZIICHpdvb8tJX2LVJjZrE5W0mogWAf5lEimnX90bPme5bCYNZz+wO4DN0fKzWo3gP1W5qOcR++MPt+zT1d5Fl7qSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHpcbVx7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32FDEC4CECD;
-	Thu, 10 Oct 2024 23:25:09 +0000 (UTC)
+	s=arc-20240116; t=1728602919; c=relaxed/simple;
+	bh=Y+aSbOXK7Rf3CaXH0lTWCjegmM6aBjCZOtnlytApxFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsDT3wd+o/4wRiym6xv/SP0hcYOxHeNEVKy089UJSijNIs3QXq2P4c5MT5Ru2KTf6JxvusfGbwJBGgrpFYz9MLbsPcLdZY2C1k8YZAfxGafaokqEED0CGcV3cdyqUWq8n8EeLWxmZ9qog14/f3uS6TDGcRQgozsqyp95dPsE2/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHVXFdSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB1FC4CEC5;
+	Thu, 10 Oct 2024 23:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728602710;
-	bh=7yJR3lSy+PJG3f5Th9Zl71ZDLgIU1wQOEfOZlZTpl6A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QHpcbVx7KlyHyNWV8tvabSN0gHqEVUyi1DUCy8I3uD0ebc++xqJTwF2xkjqB9RKeR
-	 bC2Gnrp/Wk4moBDDnqhiWejPrMC9uspwRv/0qVXbX/j7KJP7b5Z6IFWlRD49quVJV4
-	 TiAFnjE/6U3aEOmpjUUPf0Ksy54llXg0N/So/YsDcRFh9MlMVaGx+XE08ynsMihBvg
-	 h3TToYrEr757LszZ/2Zg2KOehFRRJaLJ9AxSCg+cPJqUWy3Sied2tka2i0QAWSB2ql
-	 zNQNa5ncObsz5PPvtWF9Pgwx/ANuamQZB4ZW+GLnCHROCY/LlvLEIodS5SNwNl4N0u
-	 xVRdxRzRlpdqw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v5 bpf-next 3/3] selftests/bpf: Add a test for kmem_cache_iter
-Date: Thu, 10 Oct 2024 16:25:05 -0700
-Message-ID: <20241010232505.1339892-4-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-In-Reply-To: <20241010232505.1339892-1-namhyung@kernel.org>
-References: <20241010232505.1339892-1-namhyung@kernel.org>
+	s=k20201202; t=1728602918;
+	bh=Y+aSbOXK7Rf3CaXH0lTWCjegmM6aBjCZOtnlytApxFk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=sHVXFdSjkXg0/x+pqJuVIDfiXPlS7UpieOPVhY9Nd5o4rba8YMyFqwhU6sZt636R1
+	 Hk2FufGZVkKB/UGrRHVTVcq47uLux0LhGQSqhHtJJhmD1pmPGICwt4fyID5/fzoPba
+	 LaRWSPG/3ZOdOv6VrvF0wc3vDNWxolNaiwmr8s5uLCeIzjyKBXeh8OME2LmXJYccgX
+	 5X2IdpPzS2tl/w7hWponR6VpAfxYEf92a2RSyoowLlX1gnQ11aIBN/+GhNddr6TbGD
+	 YhjDCgrb7PG93tX/tay9+t9C0TBd+/vI40HakvQppdF0XNpuFtdvmaq99R/4fzVHHJ
+	 KV3JLvSGbnfRA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7B30CCE0EBC; Thu, 10 Oct 2024 16:28:38 -0700 (PDT)
+Date: Thu, 10 Oct 2024 16:28:38 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
+ <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
+ <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+ <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
+ <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
+ <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
+ <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
 
-The test traverses all slab caches using the kmem_cache_iter and save
-the data into slab_result array map.  And check if current task's
-pointer is from "task_struct" slab cache using bpf_get_kmem_cache().
+On Thu, Oct 10, 2024 at 08:01:35AM -0700, Paul E. McKenney wrote:
+> On Thu, Oct 10, 2024 at 01:24:11PM +0200, Tomas Glozar wrote:
+> > st 2. 10. 2024 v 11:01 odesílatel Tomas Glozar <tglozar@redhat.com> napsal:
+> > >
+> > > FYI I have managed to reproduce the bug on our infrastructure after 21
+> > > hours of 7*TREE03 and I will continue with trying to reproduce it with
+> > > the tracers we want.
+> > >
+> > > Tomas
+> > 
+> > I successfully reproduced the bug also with the tracers active after a
+> > few 8-hour test runs on our infrastructure:
+> > 
+> > [    0.000000] Linux version 6.11.0-g2004cef11ea0-dirty (...) #1 SMP
+> > PREEMPT_DYNAMIC Wed Oct  9 12:13:40 EDT 2024
+> > [    0.000000] Command line: debug_boot_weak_hash panic=-1 selinux=0
+> > initcall_debug debug console=ttyS0 rcutorture.n_barrier_cbs=4
+> > rcutorture.stat_interval=15 rcutorture.shutdown_secs=25200
+> > rcutorture.test_no_idle_hz=1 rcutorture.verbose=1
+> > rcutorture.onoff_interval=200 rcutorture.onoff_holdoff=30
+> > rcutree.gp_preinit_delay=12 rcutree.gp_init_delay=3
+> > rcutree.gp_cleanup_delay=3 rcutree.kthread_prio=2 threadirqs
+> > rcutree.use_softirq=0
+> > trace_event=sched:sched_switch,sched:sched_wakeup
+> > ftrace_filter=dl_server_start,dl_server_stop trace_buf_size=2k
+> > ftrace=function torture.ftrace_dump_at_shutdown=1
+> > ...
+> > [13550.127541] WARNING: CPU: 1 PID: 155 at
+> > kernel/sched/deadline.c:1971 enqueue_dl_entity+0x554/0x5d0
+> > [13550.128982] Modules linked in:
+> > [13550.129528] CPU: 1 UID: 0 PID: 155 Comm: rcu_torture_rea Tainted: G
+> >        W          6.11.0-g2004cef11ea0-dirty #1
+> > [13550.131419] Tainted: [W]=WARN
+> > [13550.131979] Hardware name: Red Hat KVM/RHEL, BIOS 1.16.3-2.el9 04/01/2014
+> > [13550.133230] RIP: 0010:enqueue_dl_entity+0x554/0x5d0
+> > ...
+> > [13550.151286] Call Trace:
+> > [13550.151749]  <TASK>
+> > [13550.152141]  ? __warn+0x88/0x130
+> > [13550.152717]  ? enqueue_dl_entity+0x554/0x5d0
+> > [13550.153485]  ? report_bug+0x18e/0x1a0
+> > [13550.154149]  ? handle_bug+0x54/0x90
+> > [13550.154792]  ? exc_invalid_op+0x18/0x70
+> > [13550.155484]  ? asm_exc_invalid_op+0x1a/0x20
+> > [13550.156249]  ? enqueue_dl_entity+0x554/0x5d0
+> > [13550.157055]  dl_server_start+0x36/0xf0
+> > [13550.157709]  enqueue_task_fair+0x220/0x6b0
+> > [13550.158447]  activate_task+0x26/0x60
+> > [13550.159131]  attach_task+0x35/0x50
+> > [13550.159756]  sched_balance_rq+0x663/0xe00
+> > [13550.160511]  sched_balance_newidle.constprop.0+0x1a5/0x360
+> > [13550.161520]  pick_next_task_fair+0x2f/0x340
+> > [13550.162290]  __schedule+0x203/0x900
+> > [13550.162958]  ? enqueue_hrtimer+0x35/0x90
+> > [13550.163703]  schedule+0x27/0xd0
+> > [13550.164299]  schedule_hrtimeout_range_clock+0x99/0x120
+> > [13550.165239]  ? __pfx_hrtimer_wakeup+0x10/0x10
+> > [13550.165954]  torture_hrtimeout_us+0x7b/0xe0
+> > [13550.166624]  rcu_torture_reader+0x139/0x200
+> > [13550.167284]  ? __pfx_rcu_torture_timer+0x10/0x10
+> > [13550.168019]  ? __pfx_rcu_torture_reader+0x10/0x10
+> > [13550.168764]  kthread+0xd6/0x100
+> > [13550.169262]  ? __pfx_kthread+0x10/0x10
+> > [13550.169860]  ret_from_fork+0x34/0x50
+> > [13550.170424]  ? __pfx_kthread+0x10/0x10
+> > [13550.171020]  ret_from_fork_asm+0x1a/0x30
+> > [13550.171657]  </TASK>
+> > 
+> > Unfortunately, the following rcu stalls appear to have resulted in
+> > abnormal termination of the VM, which led to the ftrace buffer not
+> > being dumped into the console. Currently re-running the same test with
+> > the addition of "ftrace_dump_on_oops panic_on_warn=1" and hoping for
+> > the best.
+> 
+> Another approach would be rcupdate.rcu_cpu_stall_suppress=1.
+> 
+> We probably need to disable RCU CPU stall warnings automatically while
+> dumping ftrace buffers, but the asynchronous nature of printk() makes
+> it difficult to work out when to automatically re-enable them...
 
-Also compare the result array with /proc/slabinfo if available (when
-CONFIG_SLUB_DEBUG is on).  Note that many of the fields in the slabinfo
-are transient, so it only compares the name and objsize fields.
+And in the meantime, for whatever it is worth...
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- .../bpf/prog_tests/kmem_cache_iter.c          | 115 ++++++++++++++++++
- tools/testing/selftests/bpf/progs/bpf_iter.h  |   7 ++
- .../selftests/bpf/progs/kmem_cache_iter.c     |  95 +++++++++++++++
- 3 files changed, 217 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
- create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+The pattern of failures motivated me to add to rcutorture a real-time
+task that randomly preempts a randomly chosen online CPU.  Here are
+the (new and not-to-be-trusted) commits on -rcu's "dev" branch:
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-new file mode 100644
-index 0000000000000000..848d8fc9171fae45
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google */
-+
-+#include <test_progs.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/btf.h>
-+#include "kmem_cache_iter.skel.h"
-+
-+#define SLAB_NAME_MAX  32
-+
-+struct kmem_cache_result {
-+	char name[SLAB_NAME_MAX];
-+	long obj_size;
-+};
-+
-+static void subtest_kmem_cache_iter_check_task_struct(struct kmem_cache_iter *skel)
-+{
-+	LIBBPF_OPTS(bpf_test_run_opts, opts,
-+		.flags = 0,  /* Run it with the current task */
-+	);
-+	int prog_fd = bpf_program__fd(skel->progs.check_task_struct);
-+
-+	/* Get task_struct and check it if's from a slab cache */
-+	ASSERT_OK(bpf_prog_test_run_opts(prog_fd, &opts), "prog_test_run");
-+
-+	/* The BPF program should set 'found' variable */
-+	ASSERT_EQ(skel->bss->task_struct_found, 1, "task_struct_found");
-+}
-+
-+static void subtest_kmem_cache_iter_check_slabinfo(struct kmem_cache_iter *skel)
-+{
-+	FILE *fp;
-+	int map_fd;
-+	char name[SLAB_NAME_MAX];
-+	unsigned long objsize;
-+	char rest_of_line[1000];
-+	struct kmem_cache_result r;
-+	int seen = 0;
-+
-+	fp = fopen("/proc/slabinfo", "r");
-+	if (fp == NULL) {
-+		/* CONFIG_SLUB_DEBUG is not enabled */
-+		return;
-+	}
-+
-+	map_fd = bpf_map__fd(skel->maps.slab_result);
-+
-+	/* Ignore first two lines for header */
-+	fscanf(fp, "slabinfo - version: %*d.%*d\n");
-+	fscanf(fp, "# %*s %*s %*s %*s %*s %*s : %[^\n]\n", rest_of_line);
-+
-+	/* Compare name and objsize only - others can be changes frequently */
-+	while (fscanf(fp, "%s %*u %*u %lu %*u %*u : %[^\n]\n",
-+		      name, &objsize, rest_of_line) == 3) {
-+		int ret = bpf_map_lookup_elem(map_fd, &seen, &r);
-+
-+		if (!ASSERT_OK(ret, "kmem_cache_lookup"))
-+			break;
-+
-+		ASSERT_STREQ(r.name, name, "kmem_cache_name");
-+		ASSERT_EQ(r.obj_size, objsize, "kmem_cache_objsize");
-+
-+		seen++;
-+	}
-+
-+	ASSERT_EQ(skel->bss->kmem_cache_seen, seen, "kmem_cache_seen_eq");
-+
-+	fclose(fp);
-+}
-+
-+void test_kmem_cache_iter(void)
-+{
-+	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
-+	struct kmem_cache_iter *skel = NULL;
-+	union bpf_iter_link_info linfo = {};
-+	struct bpf_link *link;
-+	char buf[256];
-+	int iter_fd;
-+
-+	skel = kmem_cache_iter__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
-+		return;
-+
-+	opts.link_info = &linfo;
-+	opts.link_info_len = sizeof(linfo);
-+
-+	link = bpf_program__attach_iter(skel->progs.slab_info_collector, &opts);
-+	if (!ASSERT_OK_PTR(link, "attach_iter"))
-+		goto destroy;
-+
-+	iter_fd = bpf_iter_create(bpf_link__fd(link));
-+	if (!ASSERT_GE(iter_fd, 0, "iter_create"))
-+		goto free_link;
-+
-+	memset(buf, 0, sizeof(buf));
-+	while (read(iter_fd, buf, sizeof(buf) > 0)) {
-+		/* Read out all contents */
-+		printf("%s", buf);
-+	}
-+
-+	/* Next reads should return 0 */
-+	ASSERT_EQ(read(iter_fd, buf, sizeof(buf)), 0, "read");
-+
-+	if (test__start_subtest("check_task_struct"))
-+		subtest_kmem_cache_iter_check_task_struct(skel);
-+	if (test__start_subtest("check_slabinfo"))
-+		subtest_kmem_cache_iter_check_slabinfo(skel);
-+
-+	close(iter_fd);
-+
-+free_link:
-+	bpf_link__destroy(link);
-+destroy:
-+	kmem_cache_iter__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/bpf_iter.h b/tools/testing/selftests/bpf/progs/bpf_iter.h
-index c41ee80533ca219a..3305dc3a74b32481 100644
---- a/tools/testing/selftests/bpf/progs/bpf_iter.h
-+++ b/tools/testing/selftests/bpf/progs/bpf_iter.h
-@@ -24,6 +24,7 @@
- #define BTF_F_PTR_RAW BTF_F_PTR_RAW___not_used
- #define BTF_F_ZERO BTF_F_ZERO___not_used
- #define bpf_iter__ksym bpf_iter__ksym___not_used
-+#define bpf_iter__kmem_cache bpf_iter__kmem_cache___not_used
- #include "vmlinux.h"
- #undef bpf_iter_meta
- #undef bpf_iter__bpf_map
-@@ -48,6 +49,7 @@
- #undef BTF_F_PTR_RAW
- #undef BTF_F_ZERO
- #undef bpf_iter__ksym
-+#undef bpf_iter__kmem_cache
- 
- struct bpf_iter_meta {
- 	struct seq_file *seq;
-@@ -165,3 +167,8 @@ struct bpf_iter__ksym {
- 	struct bpf_iter_meta *meta;
- 	struct kallsym_iter *ksym;
- };
-+
-+struct bpf_iter__kmem_cache {
-+	struct bpf_iter_meta *meta;
-+	struct kmem_cache *s;
-+} __attribute__((preserve_access_index));
-diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-new file mode 100644
-index 0000000000000000..1cff8c7772683caf
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google */
-+
-+#include "bpf_iter.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define SLAB_NAME_MAX  32
-+
-+struct kmem_cache_result {
-+	char name[SLAB_NAME_MAX];
-+	long obj_size;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__uint(key_size, sizeof(void *));
-+	__uint(value_size, SLAB_NAME_MAX);
-+	__uint(max_entries, 1);
-+} slab_hash SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_ARRAY);
-+	__uint(key_size, sizeof(int));
-+	__uint(value_size, sizeof(struct kmem_cache_result));
-+	__uint(max_entries, 1024);
-+} slab_result SEC(".maps");
-+
-+extern void bpf_rcu_read_lock(void) __ksym;
-+extern void bpf_rcu_read_unlock(void) __ksym;
-+extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym;
-+
-+/* Result, will be checked by userspace */
-+int task_struct_found;
-+int kmem_cache_seen;
-+
-+SEC("iter/kmem_cache")
-+int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
-+{
-+	struct seq_file *seq = ctx->meta->seq;
-+	struct kmem_cache *s = ctx->s;
-+	struct kmem_cache_result *r;
-+	int idx;
-+
-+	if (s) {
-+		/* To make sure if the slab_iter implements the seq interface
-+		 * properly and it's also useful for debugging.
-+		 */
-+		BPF_SEQ_PRINTF(seq, "%s: %u\n", s->name, s->size);
-+
-+		idx = kmem_cache_seen;
-+		r = bpf_map_lookup_elem(&slab_result, &idx);
-+		if (r == NULL)
-+			return 0;
-+
-+		kmem_cache_seen++;
-+
-+		/* Save name and size to match /proc/slabinfo */
-+		bpf_probe_read_kernel_str(r->name, sizeof(r->name), s->name);
-+		r->obj_size = s->size;
-+
-+		if (!bpf_strncmp(r->name, 11, "task_struct"))
-+			bpf_map_update_elem(&slab_hash, &s, r->name, BPF_NOEXIST);
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("raw_tp/bpf_test_finish")
-+int BPF_PROG(check_task_struct)
-+{
-+	u64 curr = bpf_get_current_task();
-+	struct kmem_cache *s;
-+	char *name;
-+
-+	bpf_rcu_read_lock();
-+
-+	s = bpf_get_kmem_cache(curr);
-+	if (s == NULL) {
-+		task_struct_found = -1;
-+		bpf_rcu_read_unlock();
-+		return 0;
-+	}
-+
-+	name = bpf_map_lookup_elem(&slab_hash, &s);
-+	if (name && !bpf_strncmp(name, 11, "task_struct"))
-+		task_struct_found = 1;
-+	else
-+		task_struct_found = -2;
-+
-+	bpf_rcu_read_unlock();
-+	return 0;
-+}
--- 
-2.47.0.rc1.288.g06298d1525-goog
+d1b99fa42af7 ("torture: Add dowarn argument to torture_sched_setaffinity()")
+aed555adc22a ("rcutorture: Add random real-time preemption")
+b09bcf8e1406 ("rcutorture: Make the TREE03 scenario do preemption")
 
+Given these, the following sort of command, when run on dual-socket
+systems, reproduces a silent failure within a few minutes:
+
+tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 4h --configs "4*TREE03" --kconfig "CONFIG_NR_CPUS=4" --trust-make
+
+But on my laptop, a 30-minute run resulted in zero failures.  I am now
+retrying with a four-hour laptop run.
+
+I am also adjusting the preemption duration and frequency to see if a
+more edifying failure mode might make itself apparent.  :-/
+
+							Thanx, Paul
 
