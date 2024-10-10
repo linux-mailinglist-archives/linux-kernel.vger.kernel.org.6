@@ -1,99 +1,119 @@
-Return-Path: <linux-kernel+bounces-359041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB499986B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:54:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57FE9986B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE2ED1C217EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5729E1F23B1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B0C1C7B70;
-	Thu, 10 Oct 2024 12:54:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63B51C7B8F;
+	Thu, 10 Oct 2024 12:54:08 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA591C2DC0
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633391C2DC0;
+	Thu, 10 Oct 2024 12:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728564855; cv=none; b=q4N31SmXlpm7yyBJRzDcef83gHFUuETaYtMxZFitoJ/mdCNqoEFIoS9GyOjhigcMVwrx9vidFVV8nCuGmWuJJPNnM6pFvrp4+hMNAm4wDc8T1NVVeNiRUq0D1h31C9PRBlVzv4o3Y7ew5/5PK9tN1JVcNGmIC9s3PM4TeEhb16U=
+	t=1728564848; cv=none; b=Ur6EIvx9I2/HYDsHvRyvWZNp7clwiORrNogKB8Nnjop09I5xAv4sMZiVw09Q7W5K8BuJMtn5GxCCxPBq+OI0iWavCr+d7LLLuh7fQigD7WIk8QEdUasdT76FhXcuj/cviYMgfh82bAAOuP5rv1tO6GjuXWutAiaLP7CVsuilIxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728564855; c=relaxed/simple;
-	bh=97tLnF4AS+RZyQ0ivH1Pce210sanpQtAzJD7zCqUW1E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=goyjwIr2yEvIokhraXgWo5YTMClQE8HvS5HhgQmZiNMn4/UsHI/4YvDltiTSQLt97CqzrKsRWjOw5XzY7Uf2+sTTA6oxYtnAS7F3i6ryUYOXET5VJGqgq1j6jmYkpl1BW0vkzVDFER0XUZA7b0agDORS48PkFBvSXOMjjhZOIGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XPV300dX8z1HKkn;
-	Thu, 10 Oct 2024 20:50:04 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 017A41400DC;
-	Thu, 10 Oct 2024 20:54:11 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
- 2024 20:54:10 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <sj@kernel.org>, <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] mm/damon: Fix memory leak in damon_sysfs_test_add_targets()
-Date: Thu, 10 Oct 2024 20:53:23 +0800
-Message-ID: <20241010125323.3127187-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728564848; c=relaxed/simple;
+	bh=VgdWPTW7P0L+QIKLU0QKp4uLoRUrGlFZO6w8Mmj3fHU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GynSQKPt6siEddTV1Hl4yCL5HC5VBpUDCOTlIcNNfdppRvWotCGsDyCIo53+ZUSB3avNrkHeZ4Kx/J99Y39Ry9F3dWHBd/+SYx3p0uiFUc88KWbforXAUx4zOKq0OAcbLSVxf1rCCnX7iRAnN/5UZxhNyj9p1HDKzrBpz9GG9ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sysfn-0000000039J-2wnk;
+	Thu, 10 Oct 2024 12:53:43 +0000
+Date: Thu, 10 Oct 2024 13:53:36 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH net-next v2 1/5] dt-bindings: leds: add 'active-high' property
+Message-ID: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The sysfs_target->regions allocated in damon_sysfs_regions_alloc()
-is not freed in damon_sysfs_test_add_targets(), which cause the following
-memory leak, free it to fix it.
+Other than described in commit c94d1783136e ("dt-bindings: net: phy:
+Make LED active-low property common") the absence of the 'active-low'
+property means not to touch the polarity settings which are inherited
+from reset defaults, the bootloader or bootstrap configuration. Hence,
+in order to override a LED pin being active-high in case of the default,
+bootloader or bootstrap setting being active-low an additional property
+'active-high' is required. Document that property and make it mutually
+exclusive to the existing 'active-low' property.
 
-	unreferenced object 0xffffff80c2a8db80 (size 96):
-	  comm "kunit_try_catch", pid 187, jiffies 4294894363
-	  hex dump (first 32 bytes):
-	    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-	    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-	  backtrace (crc 0):
-	    [<0000000001e3714d>] kmemleak_alloc+0x34/0x40
-	    [<000000008e6835c1>] __kmalloc_cache_noprof+0x26c/0x2f4
-	    [<000000001286d9f8>] damon_sysfs_test_add_targets+0x1cc/0x738
-	    [<0000000032ef8f77>] kunit_try_run_case+0x13c/0x3ac
-	    [<00000000f3edea23>] kunit_generic_run_threadfn_adapter+0x80/0xec
-	    [<00000000adf936cf>] kthread+0x2e8/0x374
-	    [<0000000041bb1628>] ret_from_fork+0x10/0x20
-
-Cc: stable@vger.kernel.org
-Fixes: b8ee5575f763 ("mm/damon/sysfs-test: add a unit test for damon_sysfs_set_targets()")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- mm/damon/tests/sysfs-kunit.h | 1 +
- 1 file changed, 1 insertion(+)
+v2: fix commit sha truncation in commit message
 
-diff --git a/mm/damon/tests/sysfs-kunit.h b/mm/damon/tests/sysfs-kunit.h
-index 1c9b596057a7..7b5c7b307da9 100644
---- a/mm/damon/tests/sysfs-kunit.h
-+++ b/mm/damon/tests/sysfs-kunit.h
-@@ -67,6 +67,7 @@ static void damon_sysfs_test_add_targets(struct kunit *test)
- 	damon_destroy_ctx(ctx);
- 	kfree(sysfs_targets->targets_arr);
- 	kfree(sysfs_targets);
-+	kfree(sysfs_target->regions);
- 	kfree(sysfs_target);
- }
+ Documentation/devicetree/bindings/leds/common.yaml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+index bf9a101e4d42..7c3cd7b7412e 100644
+--- a/Documentation/devicetree/bindings/leds/common.yaml
++++ b/Documentation/devicetree/bindings/leds/common.yaml
+@@ -202,6 +202,12 @@ properties:
+       #trigger-source-cells property in the source node.
+     $ref: /schemas/types.yaml#/definitions/phandle-array
  
++  active-high:
++    type: boolean
++    description:
++      Makes LED active high. To turn the LED ON, line needs to be
++      set to high voltage instead of low.
++
+   active-low:
+     type: boolean
+     description:
+@@ -225,6 +231,14 @@ properties:
+       Maximum timeout in microseconds after which the flash LED is turned off.
+       Required for flash LED nodes with configurable timeout.
+ 
++allOf:
++  - if:
++      required:
++        - active-low
++    then:
++      properties:
++        active-high: false
++
+ additionalProperties: true
+ 
+ examples:
 -- 
-2.34.1
-
+2.47.0
 
