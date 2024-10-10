@@ -1,217 +1,140 @@
-Return-Path: <linux-kernel+bounces-358698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A8E99828F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:40:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD20998292
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D80F1C266B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF76F1C26BDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5721BCA07;
-	Thu, 10 Oct 2024 09:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E711BC092;
+	Thu, 10 Oct 2024 09:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="igHi1vKG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AnPmsK/X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865901B5337;
-	Thu, 10 Oct 2024 09:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEBA1A264C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553233; cv=none; b=ogTTRB9oc2D4is3P40PBigvAnBJMDbrI544Ezv+1Hn8qwIHHkV65KTXrh5HKIvVv0ejsYW9RWf9WdlHAyG5VAxWMz6yJlsHpoNb7/lOOAxQgSdCqbk6AXZhkyXr61EM5ZFD61NjHCZT9jZIECanIGXDf/j4cXaX++oLs9qKI/GY=
+	t=1728553252; cv=none; b=nWCYJiV0Boob8EjkMPhtBdPAB/+WxXKRE+77+Zt8db136B5mb74Kzl1t4cgwNO0g7KJS7IZI3bPjw3dedCJCjTjuhmIIwGvVlg1bxDsNexLHrsMlVlVEaZeIkADV1eKUIVoqmBszT221/UG53FNkeNRELYa9Zp4u1D4klkVHqs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553233; c=relaxed/simple;
-	bh=uP7sYr2hiSoo2PozAYQ633W0FDJdwtvHW/qqwjCYVSo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=R3r1FCwnsBbwwMTNNLtlXnK7xB7wEwATtKmPw4XcX8AXE4F5gaXgc4nGQiqtXzmfPx6vYXHVmjSj0j176n8kgDYGE5rgGRN/pkUsqexeuENLJllPB3ematOLSFAdU5Xru3DzXDhk2Ft4AvWcG5y3aQ1Oj7MG/RQVwQW3ORS98Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=igHi1vKG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A8Xnjp023288;
-	Thu, 10 Oct 2024 09:39:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	HbOjjdwF8qskXOW7o+9j6s/52YjLOiW+oSAGO1Ed43A=; b=igHi1vKGfxNt4h5/
-	AqyMgNv9h61dFPHlOGaxshOvIRIzq5TpW63LnN3mAZOIcDoMum7JNv486dc5ndXf
-	vnaNub1t7GPilZZoyC7YLLcPLXqspmJmIyV69LjFPTJjNVi/44R63W73QYfovjma
-	5/7BbPxgnDGGe7IRMau2T57XBUWnwJH1opqsgZf7lbhsijchmsJ2RVSPaaVPX9vg
-	0jpgmjaRRJXOyRoRcAxprc6HuyDNFTpakxWd8E/wEjds8aHEAhhqzFNOnu21Emuz
-	HMSkJdPJl0iy2f9i82ax3+2OsSRg3pcz4PHFUNBRLefsQCipkP11FYQA5CaBlkAh
-	xtw7FQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426bhara6u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 09:39:57 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49A9dvTK001104;
-	Thu, 10 Oct 2024 09:39:57 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 426bhara6r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 09:39:57 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49A8pHDw011516;
-	Thu, 10 Oct 2024 09:39:56 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423g5xy4m1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 09:39:56 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49A9dq2p32309898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 09:39:52 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 341D92004D;
-	Thu, 10 Oct 2024 09:39:52 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D4E120040;
-	Thu, 10 Oct 2024 09:39:48 +0000 (GMT)
-Received: from [9.43.111.131] (unknown [9.43.111.131])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Oct 2024 09:39:48 +0000 (GMT)
-Message-ID: <28d39117-c512-4165-b082-4ca54da7ba6c@linux.ibm.com>
-Date: Thu, 10 Oct 2024 15:09:47 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/17] powerpc64/bpf: Add support for bpf trampolines
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, bpf <bpf@vger.kernel.org>,
-        linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Naveen N. Rao" <naveen@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Vishal Chourasia <vishalc@linux.ibm.com>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20240915205648.830121-1-hbathini@linux.ibm.com>
- <20240915205648.830121-18-hbathini@linux.ibm.com>
- <CAADnVQL60XXW95tgwKn3kVgSQAN7gr1STy=APuO1xQD7mz-aXA@mail.gmail.com>
- <32249e74-633d-4757-8931-742b682a63d3@linux.ibm.com>
- <CAADnVQKfSH_zkP0-TwOB_BLxCBH9efot9mk03uRuooCTMmWnWA@mail.gmail.com>
- <7afc9cc7-95cd-45c7-b748-28040206d9a0@linux.ibm.com>
- <CAADnVQJjqnSVqq2n70-uqfrYRHH3n=5s9=t3D2AMooxxAHYfJQ@mail.gmail.com>
- <875xq07qv6.fsf@mail.lhotse>
-Content-Language: en-US
-From: Hari Bathini <hbathini@linux.ibm.com>
-In-Reply-To: <875xq07qv6.fsf@mail.lhotse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XGAy3E5s0SPPHEpuSrGVxDpcwtQ96QEc
-X-Proofpoint-GUID: cOWMZMN_QM8IrSeStmOyySP2Dm-xmC4D
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1728553252; c=relaxed/simple;
+	bh=e8R74kM4mPG1ed1AIErXucQF2cYAg0bgQggJFQ4Numg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TX2p12GXFAC+N7HxKa2W3Sw7lVaDCgObkp/Yqw87AD/j1a2alqlzrPsYISZTov3q3ul0S/SfDIga79bm5gAOakDka/Nt3MBK9yyZZMFzt6l+rD/IqklHFB4+ut1jiIlO7WjkCPlbQY3RgQHVt/8j0iEKa6yAJDu9MuX6IDQZNdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AnPmsK/X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728553250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eXMNh8HkQHbT6f1Sbmj7JQ1SELTwJXctNZOXP79wsf0=;
+	b=AnPmsK/XEJ+ZnTOW7STm9lTPiUPilo2E7G9C23dcfbunnOvYHguZxKu9u9BMzIF5/xCDie
+	a8SQpf5O4ey6gccVO7H/y85ht4Dt39vGg5N2/dFYRtlRNlc45xhZgpQTxd2D7xYwJc2Q/L
+	s0g7LUSHSO/v6qvotqzPrr4e945lWP4=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-HNxxc8CCPM-rBB0W47mncQ-1; Thu, 10 Oct 2024 05:40:48 -0400
+X-MC-Unique: HNxxc8CCPM-rBB0W47mncQ-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a994fb94446so85848766b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:40:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728553247; x=1729158047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eXMNh8HkQHbT6f1Sbmj7JQ1SELTwJXctNZOXP79wsf0=;
+        b=koMHeWWFTX10QjnocAxKMOTpWY5heryuDlujpEt2DDqGi6ULVRf1ckD07XxkBu4Wu1
+         1ABzti3dANz9WLD7iNV2jfvILCsyeq8nSGn1JvhSIK7dEzjZQXlJilHIbciDOmlBFEsj
+         NEPKsIwlERi2v4zw12rDVuTSMjVK/K8KKMn/ZlUv5Ms+pZ4881bEfQeEVudYCXd3GDTV
+         tp/H/s0EuHgmGJU7Fv5JydZad1ZjCsOJegjLX3j6gTivXG404ZU3O6+NIOsMnQU1tb7Y
+         yCF+UzCq/1tsdxKu/f671BpHvswxNciKDbOw/15SCr/Vylqa0K4NHA62eU6SPQZ6TASo
+         +Alg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjie6gah5vdHBIcAE07AqIxhTuFeaf7gb4v5jFp50qM9+9nSO/IOq471RAA6Z8ruy34MUIrvFacqyTz6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiiVCQTP6JejDOx0v5wznEBWJ2ttj1kAS0RPNYnlyhL/yTKcQX
+	BJZVdrYEKOFu4jlqG8UjzqH2KNad8y8oEpbqAhnIOKp4WQfK8sOrFTGeDlIZ/NU0rABfyMZc08W
+	N7KBNLv0+V0N/JT1tC3GFmbRra+pZwLqskriGFbzSVB1R19UVYGmGwMQ5kmzUTXhTmdasLwq0
+X-Received: by 2002:a17:907:d0c:b0:a98:f44d:a198 with SMTP id a640c23a62f3a-a99a0ebe7eemr258243066b.1.1728553246569;
+        Thu, 10 Oct 2024 02:40:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyPVLsovtIuKX040BgGyYevVIq+FVcn4t9AAjJD1tbqlLyZN1eCnrRWTnDDqHb+AmRsjeCFg==
+X-Received: by 2002:a17:907:d0c:b0:a98:f44d:a198 with SMTP id a640c23a62f3a-a99a0ebe7eemr258239666b.1.1728553246047;
+        Thu, 10 Oct 2024 02:40:46 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f27f05sm63046466b.83.2024.10.10.02.40.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 02:40:45 -0700 (PDT)
+Message-ID: <d49c5a2d-3715-447f-9936-fadba12bb225@redhat.com>
+Date: Thu, 10 Oct 2024 11:40:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_05,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- mlxlogscore=996 bulkscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 phishscore=0 priorityscore=1501 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410100062
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] asus-laptop: prefer strscpy() over strcpy()
+To: Abdul Rahim <abdul.rahim@myyahoo.com>, corentin.chary@gmail.com,
+ luke@ljones.dev, ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241009230558.51892-1-abdul.rahim.ref@myyahoo.com>
+ <20241009230558.51892-1-abdul.rahim@myyahoo.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241009230558.51892-1-abdul.rahim@myyahoo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 10-Oct-24 1:05 AM, Abdul Rahim wrote:
+> The function strcpy() is depreciated and potentially unsafe. It performs
+> no bounds checking on the destination buffer. This could result in
+> linear overflows beyond the end of the buffer, leading to all kinds of
+> misbehaviors. The safe replacement is strscpy() [1].
+> 
+> this fixes checkpatch warning:
+>     WARNING: Prefer strscpy over strcpy
+> 
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
+> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
 
-On 10/10/24 5:48 am, Michael Ellerman wrote:
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->> On Tue, Oct 1, 2024 at 12:18 AM Hari Bathini <hbathini@linux.ibm.com> wrote:
->>> On 30/09/24 6:25 pm, Alexei Starovoitov wrote:
->>>> On Sun, Sep 29, 2024 at 10:33 PM Hari Bathini <hbathini@linux.ibm.com> wrote:
->>>>> On 17/09/24 1:20 pm, Alexei Starovoitov wrote:
->>>>>> On Sun, Sep 15, 2024 at 10:58 PM Hari Bathini <hbathini@linux.ibm.com> wrote:
->>>>>>>
->>>>>>> +
->>>>>>> +       /*
->>>>>>> +        * Generated stack layout:
->>>>>>> +        *
->>>>>>> +        * func prev back chain         [ back chain        ]
->>>>>>> +        *                              [                   ]
->>>>>>> +        * bpf prog redzone/tailcallcnt [ ...               ] 64 bytes (64-bit powerpc)
->>>>>>> +        *                              [                   ] --
->>>>>> ...
->>>>>>> +
->>>>>>> +       /* Dummy frame size for proper unwind - includes 64-bytes red zone for 64-bit powerpc */
->>>>>>> +       bpf_dummy_frame_size = STACK_FRAME_MIN_SIZE + 64;
->>>>>>
->>>>>> What is the goal of such a large "red zone" ?
->>>>>> The kernel stack is a limited resource.
->>>>>> Why reserve 64 bytes ?
->>>>>> tail call cnt can probably be optional as well.
->>>>>
->>>>> Hi Alexei, thanks for reviewing.
->>>>> FWIW, the redzone on ppc64 is 288 bytes. BPF JIT for ppc64 was using
->>>>> a redzone of 80 bytes since tailcall support was introduced [1].
->>>>> It came down to 64 bytes thanks to [2]. The red zone is being used
->>>>> to save NVRs and tail call count when a stack is not setup. I do
->>>>> agree that we should look at optimizing it further. Do you think
->>>>> the optimization should go as part of PPC64 trampoline enablement
->>>>> being done here or should that be taken up as a separate item, maybe?
->>>>
->>>> The follow up is fine.
->>>> It just odd to me that we currently have:
->>>>
->>>> [   unused red zone ] 208 bytes protected
->>>>
->>>> I simply don't understand why we need to waste this much stack space.
->>>> Why can't it be zero today ?
->>>
->>> The ABI for ppc64 has a redzone of 288 bytes below the current
->>> stack pointer that can be used as a scratch area until a new
->>> stack frame is created. So, no wastage of stack space as such.
->>> It is just red zone that can be used before a new stack frame
->>> is created. The comment there is only to show how redzone is
->>> being used in ppc64 BPF JIT. I think the confusion is with the
->>> mention of "208 bytes" as protected. As not all of that scratch
->>> area is used, it mentions the remaining as unused. Essentially
->>> 288 bytes below current stack pointer is protected from debuggers
->>> and interrupt code (red zone). Note that it should be 224 bytes
->>> of unused red zone instead of 208 bytes as red zone usage in
->>> ppc64 BPF JIT come down from 80 bytes to 64 bytes since [2].
->>> Hope that clears the misunderstanding..
->>
->> I see. That makes sense. So it's similar to amd64 red zone,
->> but there we have an issue with irqs, hence the kernel is
->> compiled with -mno-red-zone.
+> ---
+>  drivers/platform/x86/asus-laptop.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> I assume that issue is that the interrupt entry unconditionally writes
-> some data below the stack pointer, disregarding the red zone?
-> 
->> I guess ppc always has a different interrupt stack and
->> it's not an issue?
-> 
-> No, the interrupt entry allocates a frame that is big enough to cover
-> the red zone as well as the space it needs to save registers.
-> 
-> See STACK_INT_FRAME_SIZE which includes KERNEL_REDZONE_SIZE:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/include/asm/ptrace.h?commit=8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b#n165
-> 
-> Which is renamed to INT_FRAME_SIZE in asm-offsets.c and then is used in
-> the interrupt entry here:
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/kernel/exceptions-64s.S?commit=8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b#n497
+> diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
+> index 9d7e6b712abf..d460dd194f19 100644
+> --- a/drivers/platform/x86/asus-laptop.c
+> +++ b/drivers/platform/x86/asus-laptop.c
+> @@ -1832,8 +1832,8 @@ static int asus_acpi_add(struct acpi_device *device)
+>  	if (!asus)
+>  		return -ENOMEM;
+>  	asus->handle = device->handle;
+> -	strcpy(acpi_device_name(device), ASUS_LAPTOP_DEVICE_NAME);
+> -	strcpy(acpi_device_class(device), ASUS_LAPTOP_CLASS);
+> +	strscpy(acpi_device_name(device), ASUS_LAPTOP_DEVICE_NAME);
+> +	strscpy(acpi_device_class(device), ASUS_LAPTOP_CLASS);
+>  	device->driver_data = asus;
+>  	asus->device = device;
+>  
 
-Thanks for clarifying that, Michael.
-Only async interrupt handlers use different interrupt stacks, right?
-
-Thanks
-Hari
 
