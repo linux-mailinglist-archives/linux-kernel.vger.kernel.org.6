@@ -1,112 +1,205 @@
-Return-Path: <linux-kernel+bounces-358109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E51F997A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440A6997A4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2066B1F23C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D4D1C22393
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AF727446;
-	Thu, 10 Oct 2024 01:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B8A3D966;
+	Thu, 10 Oct 2024 01:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O/Y4wf49";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dxmCeAQ3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="qFJcoNgQ"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31897B66C
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918422094
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728524857; cv=none; b=W4fCvn81QFkwLBIth7v4vojmeCoRTJDXQd8Lu7P7RD5aehzR37U5edRwZ6nsQCakbuya3vkTaoGj2stG/FRclxUlRO3W6n4FKzX1mg1j98oJCc1JSoj793MirN7e3FduVtgtluA+GltlzpMfDTmXczhIc7Etefq1Ib66W32sByA=
+	t=1728525228; cv=none; b=hZ4hLgEBk0i/+RGF9m9+c4E6SpFAan1gFoOYcNPlSr2RULOuuIEHb0tWIuITe1y9KVpsCIfnjNU1LiOP71pHUWsevrU2T4gDqZr7lenE0E4IuPXi2vNxCYH6rv9XMz44xrss0cnfTTwEWIlQ6Yt350w3h+ZmmQ+s96+k9zxeR6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728524857; c=relaxed/simple;
-	bh=9QDtjOrmA9fDTZn34s8gbDFLlQaVmBqBEhgMAYPX37Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=vCX8ZI6f7GidS3EmEb9LfSj/UEtluO250BU8EFmyMey3S4Yedo4gMRBXGRrLUcjssurElt0ue515KHlgcqDgJ1wZqz+ltyzne5vCF0JmqwTeQ0bxyn7Ddomqya6I0JzBXixx9Zou9WuPUgvYIIr7HKyARt56FZO3qg/zhmO0k+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O/Y4wf49; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dxmCeAQ3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728524854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUzukGKckgTGNflWemKkp+i85aK4/v4n9mZwmQh09+g=;
-	b=O/Y4wf49fN/4PL9/0eGDBKSrnbNmJBKXUZm5aqq61thYhHRtmDcjjQHjUUK7liyYRiAEFL
-	uei3kOlyZ3/2P1ZueqpWYlODMa3C/mdWR86ae+mYJZC058JrupKnD9wr+0Ak4KJcF1/4FL
-	9DOajjXl2xzeEyBg8GjP+XINBTCJuqFyLT+bdyVNHXUi0HHyyeHo8YFu8F6NPYhPNIslMb
-	6qDxZ88SvWwrL87p9IL7/EDJcYKKWoDumT8jLAfduGMJa/NrI148HsxwhVC0IY9/LfBf0d
-	KkbxExCJa2fVv/btgjvlCVGTRJSvpAijgIDQzN10UDOSVOmbj9Z/qHkOYnlNDQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728524854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUzukGKckgTGNflWemKkp+i85aK4/v4n9mZwmQh09+g=;
-	b=dxmCeAQ3VmjphIyzggVa7jSwM+Ts4Ynwadb6hLc4JYaPqfZuCOZMDFsZkjB5wJ7fRrGzxe
-	4k4cM8WMKQJRveDw==
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Uros Bizjak
- <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH v2] futex: Rewrite get_inode_sequence_number() to make
- code simpler
-In-Reply-To: <bb91d63d-c61a-4063-bf14-4cbbb62bec12@igalia.com>
-References: <20241004085257.10908-1-ubizjak@gmail.com>
- <bb91d63d-c61a-4063-bf14-4cbbb62bec12@igalia.com>
-Date: Thu, 10 Oct 2024 03:47:33 +0200
-Message-ID: <87ed4oiv9m.ffs@tglx>
+	s=arc-20240116; t=1728525228; c=relaxed/simple;
+	bh=QSInXO+U0seyV0C6xm7vE0MTCG7cJRNiR2Djzcn3jKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pKXSPbb1ITKxoHe9WvOCbcJ4c/4v6Z+I4GtKHJdDtAsRlESe8mgimqusqY42KFAfzNKsbNDOcuksx6bl+GgDViEX57DBxiA+7BtNx8lN7C5KxFax3hrXRK7VBsNGzJfRPnzYljg/HdXEhxjLvp3k6BTDRxzMQzyoGxQxf/T3URI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=qFJcoNgQ; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 297C82C02A5;
+	Thu, 10 Oct 2024 14:53:43 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1728525223;
+	bh=cLjR3dzs+5jR/Vs6gfSc3iv275Ynq5LY3yeQ+MH/VIQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qFJcoNgQhb7ysx3HJSLKV119Zzq11TWOr81Sby1R0/nT3GbBfIJOGYG0+tryqk2So
+	 a1ImAjda7sreFh9vTDnqkLrtrkW0TxWtOwNwD7Gr79hAN+/BObFRzzZzJxeV0S3lAX
+	 Gyuur6jgaXt3iElAZoTM3V+VwUKKSJebrOUKn+dI9sqapKxQRrvoXqF1FU5ANkaU5s
+	 Pp/d5Jhh9jhTUAtPVSZ1h6c0A2Hh2OBIvLPzAxJ3k1nw6ui07Q6UEM8FOiEbjRNEIX
+	 kJmgQ8k/0jRIOeH6ydNogvgI0olq/7vnq8kvze1SH887/bTSU6AXYLrkVsbECaxnNN
+	 s/jdpppG/JtUA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B670733a60000>; Thu, 10 Oct 2024 14:53:42 +1300
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id EA78513ED7B;
+	Thu, 10 Oct 2024 14:53:42 +1300 (NZDT)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id E765B2A0BF8; Thu, 10 Oct 2024 14:53:42 +1300 (NZDT)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v0] net: mvpp2: Add parser configuration for DSA tags
+Date: Thu, 10 Oct 2024 14:51:04 +1300
+Message-ID: <20241010015104.1888628-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670733a6 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=DAUX931o1VcA:10 a=bwvKFnaZSXCItuFZI_oA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Wed, Oct 09 2024 at 16:43, Andr=C3=A9 Almeida wrote:
-> Em 04/10/2024 05:52, Uros Bizjak escreveu:
->> Rewrite get_inode_sequence_number() to make code simpler:
->>=20
->> a) Rewrite FOR loop to a DO-WHILE loop with returns moved
->> out of the loop.
->>=20
->> b) Use atomic64_inc_return() instead of atomic64_add_return().
->>=20
->> c) Use !atomic64_try_cmpxchg_relaxed(*ptr, &old, new) instead of
->> atomic64_cmpxchg_relaxed (*ptr, old, new) !=3D old.  x86 CMPXCHG
->> instruction returns success in ZF flag, so this change also saves
->> a compare instruction after CMPXCHG.
->
-> Remember, it's easy to see in the diff that you replace the function,=20
-> but might be not so clear why you did so. I think it would be better to=20
-> understand if you write like:
->
-> We are trying to set a value for the i_sequence, that we expect that is=20
-> zero, but if we fail to do so, we are happy to use the current non-zero=20
-> i_sequence value that we found. Instead of using=20
-> atomic64_cmpxchg_relaxed(), use atomic64_try_cmpxchg_relaxed() which=20
-> provides a better semantic for this situation.
+Allow the header parser to consider DSA and EDSA tagging. Currently the
+parser is always configured to use the MH tag, but this results in poor
+traffic distribution across queues and sub-optimal performance (in the
+case where DSA or EDSA tags are in the header).
 
-We are not expecting, trying, happy.. That's non-technical babbling.
+Add mechanism to check for tag type in use and then configure the
+parser correctly for this tag. This results in proper traffic
+distribution and hash calculation.
 
-See Documentation/process/* for futher explanation.
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |  2 +
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 37 ++++++++++++++++++-
+ .../net/ethernet/marvell/mvpp2/mvpp2_prs.c    |  4 ++
+ 3 files changed, 42 insertions(+), 1 deletion(-)
 
-I agree with you that the change log should be more informative about
-the why instead of listing the what, but not for the price of a
-non-technical 'we' novel.
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/eth=
+ernet/marvell/mvpp2/mvpp2.h
+index 9e02e4367bec..6ebed21a7af3 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+@@ -59,6 +59,8 @@
+=20
+ /* Top Registers */
+ #define MVPP2_MH_REG(port)			(0x5040 + 4 * (port))
++#define MVPP2_MH_EN				BIT(0)
++#define MVPP2_DSA_NON_EXTENDED			BIT(4)
+ #define MVPP2_DSA_EXTENDED			BIT(5)
+ #define MVPP2_VER_ID_REG			0x50b0
+ #define MVPP2_VER_PP22				0x10
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
+t/ethernet/marvell/mvpp2/mvpp2_main.c
+index 103632ba78a2..8f865fddc8c1 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -38,6 +38,7 @@
+ #include <net/page_pool/helpers.h>
+ #include <net/tso.h>
+ #include <linux/bpf_trace.h>
++#include <net/dsa.h>
+=20
+ #include "mvpp2.h"
+ #include "mvpp2_prs.h"
+@@ -4782,6 +4783,36 @@ static bool mvpp22_rss_is_supported(struct mvpp2_p=
+ort *port)
+ 		!(port->flags & MVPP2_F_LOOPBACK);
+ }
+=20
++static int mvpp2_get_tag(struct net_device *dev)
++{
++	int tag;
++	int dsa_proto =3D DSA_TAG_PROTO_NONE;
++
++#if IS_ENABLED(CONFIG_NET_DSA)
++	if (netdev_uses_dsa(dev))
++		dsa_proto =3D dev->dsa_ptr->tag_ops->proto;
++#endif
++
++	switch (dsa_proto) {
++	case DSA_TAG_PROTO_DSA:
++		tag =3D MVPP2_TAG_TYPE_DSA;
++		break;
++	case DSA_TAG_PROTO_EDSA:
++	/**
++	 * DSA_TAG_PROTO_EDSA and MVPP2_TAG_TYPE_EDSA are
++	 * referring to separate things. MVPP2_TAG_TYPE_EDSA
++	 * refers to extended DSA, while DSA_TAG_PROTO_EDSA
++	 * refers to Ethertype DSA. Ethertype DSA requires no
++	 * setting in the parser.
++	 */
++	default:
++		tag =3D MVPP2_TAG_TYPE_MH;
++		break;
++	}
++
++	return tag;
++}
++
+ static int mvpp2_open(struct net_device *dev)
+ {
+ 	struct mvpp2_port *port =3D netdev_priv(dev);
+@@ -4801,7 +4832,11 @@ static int mvpp2_open(struct net_device *dev)
+ 		netdev_err(dev, "mvpp2_prs_mac_da_accept own addr failed\n");
+ 		return err;
+ 	}
+-	err =3D mvpp2_prs_tag_mode_set(port->priv, port->id, MVPP2_TAG_TYPE_MH)=
+;
++
++	if (netdev_uses_dsa(dev))
++		err =3D mvpp2_prs_tag_mode_set(port->priv, port->id, mvpp2_get_tag(dev=
+));
++	else
++		err =3D mvpp2_prs_tag_mode_set(port->priv, port->id, MVPP2_TAG_TYPE_MH=
+);
+ 	if (err) {
+ 		netdev_err(dev, "mvpp2_prs_tag_mode_set failed\n");
+ 		return err;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c b/drivers/net=
+/ethernet/marvell/mvpp2/mvpp2_prs.c
+index 9af22f497a40..7cc42e22ed92 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
+@@ -2393,6 +2393,8 @@ int mvpp2_prs_tag_mode_set(struct mvpp2 *priv, int =
+port, int type)
+ 				      MVPP2_PRS_TAGGED, MVPP2_PRS_DSA);
+ 		mvpp2_prs_dsa_tag_set(priv, port, false,
+ 				      MVPP2_PRS_UNTAGGED, MVPP2_PRS_DSA);
++		/* Set Marvell Header register for Ext. DSA tag */
++		mvpp2_write(priv, MVPP2_MH_REG(port), MVPP2_DSA_EXTENDED);
+ 		break;
+=20
+ 	case MVPP2_TAG_TYPE_DSA:
+@@ -2406,6 +2408,8 @@ int mvpp2_prs_tag_mode_set(struct mvpp2 *priv, int =
+port, int type)
+ 				      MVPP2_PRS_TAGGED, MVPP2_PRS_EDSA);
+ 		mvpp2_prs_dsa_tag_set(priv, port, false,
+ 				      MVPP2_PRS_UNTAGGED, MVPP2_PRS_EDSA);
++		/* Set Marvell Header register for DSA tag */
++		mvpp2_write(priv, MVPP2_MH_REG(port), MVPP2_DSA_NON_EXTENDED);
+ 		break;
+=20
+ 	case MVPP2_TAG_TYPE_MH:
+--=20
+2.46.0
 
-Thanks,
-
-        tglx
 
