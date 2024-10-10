@@ -1,55 +1,81 @@
-Return-Path: <linux-kernel+bounces-358216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C21F997B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:55:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0B9997B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E573B23722
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:55:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B98A3B238CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FF2191F7C;
-	Thu, 10 Oct 2024 03:55:30 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2352E192D63;
+	Thu, 10 Oct 2024 03:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUxnEyP6"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127AA179A3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD75028C;
+	Thu, 10 Oct 2024 03:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728532530; cv=none; b=rZ4yc8aNcBYndrCvIfX2isueEDkEgzbI1ZZF8/1K5zxLoL/mDof3w/E0OK08ABshY7m8Bw8J7TOkvJWbWKc4C27vBgEFfsGuTm6HF6BPKBwkd246dsLyxo+Wi2Tp20+UCuPLcRBzRbvcvTmzv+5Q7thbBJy51nEwcS7ngpKOk2k=
+	t=1728532621; cv=none; b=Lx3xaWCaGugHR7+7kmzGNTlI3H8pB9Y5EwWWPQOwIYLDVrHR24nbXGzjNaLtqZ2y6up2K2Elf7xvbtd4hjEKgrpY7/cvm9irh5BT4ia9XFX2lun9Tfpn7R5ay212yxgh4W9EbovimGVggLrK6Q7uzNHp9DzcB73ddeqnguV9vxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728532530; c=relaxed/simple;
-	bh=fSexSEz06jcATUnQm/WxKWDa0VIL8CAgQ/5r8+pRI5s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AxeoXc1ZOwGTk9WVsMgy/EZf11Ux0rmNsnzXhnNkpbsKwrmlUBx7EP4ywWPvuA9h1qY9nQ+SPz1Qlw80iJx7T4z79wXislRyk1bRIW/0K1imHxNz4/cdfI4mVyyVL+aQxyT9pNfANkw1r8SviDvHJGir5xggibVrW9HbAuUZLBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id 29461AA28E;
-	Thu, 10 Oct 2024 12:55:26 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 4nBG7Yl1SloE; Thu, 10 Oct 2024 12:55:26 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 07967AA264;
-	Thu, 10 Oct 2024 12:55:26 +0900 (JST)
-From: takakura@valinux.co.jp
-To: pmladek@suse.com,
-	rostedt@goodmis.org,
-	john.ogness@linutronix.de,
-	senozhatsky@chromium.org
-Cc: linux-kernel@vger.kernel.org,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: [PATCH] printk: Allow direct printing for PREEMPT_RT during panic
-Date: Thu, 10 Oct 2024 12:55:11 +0900
-Message-Id: <20241010035511.289657-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728532621; c=relaxed/simple;
+	bh=c69vCHD9sXglxFuU3cVQfkkP0kz++Bt/tDJFXTJAkGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gj9ALIPI3T2i4XsGLtGxE6pqH0Jtiz8R5wh48WUP1T56eVU/ivZBWzdyoi/hOc1bq6StsCqc5yRb82/BJUfeLb5+KzQ+iUHCF03H35XhkgawVK3Thfsai5WrI/lc1xiE4EhQ480/oBckdq7oYA/3bKUNJdN0MJ4c6fropPqMres=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUxnEyP6; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so3490625e9.1;
+        Wed, 09 Oct 2024 20:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728532617; x=1729137417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIK6iHiUU8vNnmDPHqJUi9UmAD/kMAdpbZF6z5E3nlg=;
+        b=PUxnEyP6kG7g4bZYFpSv3UP/rot5y3RcdU/mc1tZj5mz2WBerVs/GaMKsUy2ZucTu0
+         cI/vVzpzkGff5VbItHOovMUCpbNT/SmUKW2NwO410ypO59YpJufCnCvLLExJSAk2wnuD
+         Ma07zFQwydqeGrQJcq+DcPQ2xBwGJmHwRH5UednXmxDIo5djtZnmxDI9PoP5gpUYhA5V
+         1BUUcAxRlWvlUL5ZKht70KHfkDUmYX8TZD875VrQdMipMM3QSQo7K28iGbpa0FNMVhdE
+         C13qXI3VLEDWrENvY0H+QxWgoHHWlkp7hvhZAN3hgFV8e9vOuNaIMFVbHe66JrJOZfoV
+         nvUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728532617; x=1729137417;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BIK6iHiUU8vNnmDPHqJUi9UmAD/kMAdpbZF6z5E3nlg=;
+        b=mHB0JPvgWQpZ3Vh8RBlNsLggbrQKp9NaIQ3jE/fYg0dhW7pkt53VfeKWG2K7kIyh4n
+         bHsxsxT5z1nQhHkV/P1gplpfjJVWw1ugfP+nytWOCRNB6huT4QxFtg4Rv9JaR2h5+bgX
+         MJ2k9+fyroaxVzrTYSdJ7C3PtcJpzGm0036GF6lvgy6P2Q3Ln+uG9YSdVOzsRrrqmFzn
+         zpy/nDYj4lZLF7+YRvcX4AtRtQ7C/0SojfdX/NDfPlIeA4F7hKWOcCvA2YoP9aapG5h6
+         wsye1vWRP26lv8mg2a5UvJ0cBzxcp+l0Nmx/MpxYvvkHPp5Epk7bkdHp4CFVE+/vJlBe
+         YOzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWS9Fv+mILmcW6erfOoQvsZUDrHw++JhTekcznFpQgXlcN1QMP1uv2Gf3uJSk5dug+pAk4=@vger.kernel.org, AJvYcCXDOSw9xEoerXQ2LfMYd4Zylm4iLhW5Q82ocz0it3lzpRywwkGu3OfQzOd0zKGTx0VxM2evH/HQXdvGB6m6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMF3t1muA7yf8HCszziB3Zbz0Iwc+ytMahCsdsauHigTAAxuiu
+	ZIV9UkLnizWinHNLOPlWCXA3L53GLc4omRss0f0X7rhVlu10rP/3
+X-Google-Smtp-Source: AGHT+IF2PPPAibzydI13yi59X74PcyvhPrQFB548ORc0y0pRt0MzmM/lGezSHvyjE3CG9Cr9BfeMyQ==
+X-Received: by 2002:a05:600c:8707:b0:42c:ae4e:a990 with SMTP id 5b1f17b1804b1-430d748ca2dmr31731065e9.35.1728532617099;
+        Wed, 09 Oct 2024 20:56:57 -0700 (PDT)
+Received: from teknoraver-mbp.access.network ([89.101.6.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf5188dsm35659375e9.24.2024.10.09.20.56.55
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 09 Oct 2024 20:56:56 -0700 (PDT)
+From: Matteo Croce <technoboy85@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Matteo Croce <teknoraver@meta.com>
+Subject: [PATCH bpf v2] bpf: fix argument type in bpf_loop documentation
+Date: Thu, 10 Oct 2024 04:56:52 +0100
+Message-ID: <20241010035652.17830-1-technoboy85@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,48 +84,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ryo Takakura <takakura@valinux.co.jp>
+From: Matteo Croce <teknoraver@meta.com>
 
-If PREEMPT_RT was enabled, printing for legacy consoles are deferred
-by default, including after printk_legacy_allow_panic_sync() during 
-panic which allows direct printing afterwards in case of !PREEMPT_RT.
-As a result, printing of messages during panic for PREEMPT_RT
-is handled by the console_flush_on_panic() called at the end.
+The `index` argument to bpf_loop() is threaded as an u64.
+This lead in a subtle verifier denial where clang cloned the argument
+in another register[1].
 
-In case if kexec was loaded, console_flush_on_panic() will not be
-called and starts booting into the second kernel without printing
-the messages.
+[1] https://github.com/systemd/systemd/pull/34650#issuecomment-2401092895
 
-Allow direct printing for PREEMPT_RT during panic so that messages
-before kexec gets printed.
-
-Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+Signed-off-by: Matteo Croce <teknoraver@meta.com>
 ---
+ include/uapi/linux/bpf.h       | 2 +-
+ kernel/bpf/verifier.c          | 2 +-
+ tools/include/uapi/linux/bpf.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-I was not sure if the behavior of deferred printing for PREEMPT_RT 
-during panic was expected or not. I think printing messages would be 
-useful even if kexec was loaded in case if it fails.
-
-Thanks!
-
----
- kernel/printk/printk_safe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-index 2b35a9d3919d..67a0510a8e12 100644
---- a/kernel/printk/printk_safe.c
-+++ b/kernel/printk/printk_safe.c
-@@ -44,7 +44,7 @@ bool is_printk_legacy_deferred(void)
- 	 * The per-CPU variable @printk_context can be read safely in any
- 	 * context. CPU migration is always disabled when set.
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index 8ab4d8184b9d..874af0186fe8 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -5371,7 +5371,7 @@ union bpf_attr {
+  *		Currently, the **flags** must be 0. Currently, nr_loops is
+  *		limited to 1 << 23 (~8 million) loops.
+  *
+- *		long (\*callback_fn)(u32 index, void \*ctx);
++ *		long (\*callback_fn)(u64 index, void \*ctx);
+  *
+  *		where **index** is the current index in the loop. The index
+  *		is zero-indexed.
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 7d9b38ffd220..cfc62e0776bf 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -9917,7 +9917,7 @@ static int set_loop_callback_state(struct bpf_verifier_env *env,
+ {
+ 	/* bpf_loop(u32 nr_loops, void *callback_fn, void *callback_ctx,
+ 	 *	    u64 flags);
+-	 * callback_fn(u32 index, void *callback_ctx);
++	 * callback_fn(u64 index, void *callback_ctx);
  	 */
--	return (force_legacy_kthread() ||
-+	return ((!this_cpu_in_panic() && force_legacy_kthread()) ||
- 		this_cpu_read(printk_context) ||
- 		in_nmi());
- }
+ 	callee->regs[BPF_REG_1].type = SCALAR_VALUE;
+ 	callee->regs[BPF_REG_2] = caller->regs[BPF_REG_3];
+diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+index 7610883c8191..5937c39069ba 100644
+--- a/tools/include/uapi/linux/bpf.h
++++ b/tools/include/uapi/linux/bpf.h
+@@ -5371,7 +5371,7 @@ union bpf_attr {
+  *		Currently, the **flags** must be 0. Currently, nr_loops is
+  *		limited to 1 << 23 (~8 million) loops.
+  *
+- *		long (\*callback_fn)(u32 index, void \*ctx);
++ *		long (\*callback_fn)(u64 index, void \*ctx);
+  *
+  *		where **index** is the current index in the loop. The index
+  *		is zero-indexed.
 -- 
-2.34.1
+2.46.0
 
 
