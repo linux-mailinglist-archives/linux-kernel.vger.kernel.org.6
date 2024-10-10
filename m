@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-358688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88BCF998286
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:39:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44B899827B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0E0CB27AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201B21C2465C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E82B1BDA85;
-	Thu, 10 Oct 2024 09:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE221BC094;
+	Thu, 10 Oct 2024 09:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLFrRIZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlsJOB2u"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FBF1BBBFE;
-	Thu, 10 Oct 2024 09:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E21B1BBBFD;
+	Thu, 10 Oct 2024 09:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552993; cv=none; b=Js0Ygxx45VK67lT1xl7nxADxy+RJ5i8FFoao+hdeDiofdJUSIixrq1ZPRuMT1quuzgZzn8mxUMNYF0fwXeIrD7ICQo8lwllKe1egwe6X13AhohiXOfZ+jhWmS+Ko2XbuBsHm2PsHrE2lKhj82ldJ12UsZjg+/avBXfherlvWaDg=
+	t=1728553046; cv=none; b=kKEveWA7tE3CLqQ8U8k9w54o+uyY/bGD5rJI2gpAc6icFPTKP0ixPJmFPv2MtxOmQUnZ4aW8olu0QQ5FsMTyCDA/TfpzLDX+e1Dgu9QgBuAz83GiuDgOW7+CSP9zIh+SihxtzB6Cz1qsCGIi7PO2Y8zGK8ShAa6tCtWlW12I2yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552993; c=relaxed/simple;
-	bh=JFbhHv2Oze1IPUGsLc5fNEvqYkM859ccLOpwhaxPEaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gcZYlHEopwLjwzbwjNFH4lIRWEGmedJJNke6ZZwzrah8P6L0iL6HDvOENWi9/JOdSTlYXGIk1CzpEW4LKTlA5kzcBYaz+oA11NdQnLet5oHLNH7gymQJACh5/xX/bAYAAzqJCDw/ivcGrI3Bew8txfHE18i6I3o4Id5RDUweKCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLFrRIZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DAACC4CEC5;
-	Thu, 10 Oct 2024 09:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728552993;
-	bh=JFbhHv2Oze1IPUGsLc5fNEvqYkM859ccLOpwhaxPEaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SLFrRIZw6/+zm6NkXiC2jyOtHrwiSa4gpwpADacmKZ2tDdHjKSQxr5ALtmnfwc7h3
-	 7xW9QiqfUnRrUhsh+tw3QuZ0MvAvP08oUo4d9g6dWQUfjO4REnJNMHSaF/2wiTKkGz
-	 56VyPThszoMGHX47G85rhvzPpRYoKyUXizt34lNt5fM4Ec1BeGYWN9WdV2Yo6e/OAN
-	 CwMWMaDEPovo4kLzm/VLmKZfM5hzHe0fvZbjfuJBY1/9yG5V8fJF6Z8QFH3CV6P0as
-	 57wlGuVY+7pDxnuEsli2nfbCdOGAr0bankVphAhg27mWs/tYMG/zkhR71QkR4r/E87
-	 Rshvbi0bWlDRw==
-Date: Thu, 10 Oct 2024 11:36:28 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
-	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
-Message-ID: <20241010-bewilligen-wortkarg-3c1195a5fb70@brauner>
-References: <20241008121930.869054-1-luca.boccassi@gmail.com>
- <87msjd9j7n.fsf@trenco.lwn.net>
- <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
+	s=arc-20240116; t=1728553046; c=relaxed/simple;
+	bh=VHw6/ru4WIVfCSF+1BJ/2OnkobBWimQqjQ0m1jsqe1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sYn3YzHA7jezRX/jdXFBlZlISKMFY3Sce3QMHqiP5uTA77EWBqwDrBXwtZvHtrg1UrczDZmiMHJHp+K+hggnLNTrlf5nHXFlHLM8c06EYhcElLKhMRMHulbN77JMMfDn67dq6PWZGF5IWNopoK+y3MXLJeQw/k/L97LyckkEey4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlsJOB2u; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fac187eef2so7420011fa.3;
+        Thu, 10 Oct 2024 02:37:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728553042; x=1729157842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qasUjW8lOXNOYBd4pGW/rSPH9GILqj8in2xygjAFCM8=;
+        b=FlsJOB2u3lR+BH7X3NVJqnOWLPPzqFMxPvk3tUb6VXeq1ELc7sXWz3WYTmTkWyl194
+         FnsQnfy7Ls9ZlZjwwZlVRz26ZM8qU9yDB1atoJ+gs6NhULALVb8UoZXmIdK7ArCatK05
+         Un4zkZMb5VwsrhIXlNbyT5/Rb84B0pnb6KLCEsyhDyRyDAYW3v7eSywVjJrJKenIaURQ
+         keoXX9plhbZavdgg+km+DtgkAOe1zaHdFk5Po6An4gUan3BtILtf+pwY5po8Aehlp9Dh
+         HX1U2AM0mB3b2mVdj3OSpvHZXabQ2fLDQ4Znb2ZkIZmM7rDmT3AUsoaYh5HkiyPal3Yc
+         6GrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728553042; x=1729157842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qasUjW8lOXNOYBd4pGW/rSPH9GILqj8in2xygjAFCM8=;
+        b=lf6pAVk4yo5ci6j4H/29eDBfN+Sd4HM73cUvdITFf7zUXFD/jfBzbQa1SEaD6P/u0+
+         PHpheasRRgk0euMoriqH0Jrv2+tF6OwofOd/bLKd31C9Vnd0BzJ5WpV8IW3We1bVBToe
+         F40tODZnDlHZwd1Kf/TFy1zxAbvMkdgHeX8MfAONfpNc2KLyKfOVkXjBMrhZiJoqFSz8
+         h9jXXwJBeBCy+YjZBfZ7PXXhjOafm64ThfgXZnwWTgUFHQaO2c2oP7sSnJ8Mo+lMIPAa
+         hnWlOSxjs37rOt6fLxDT3NSF1vjHZ4a+QhNfok51CSySM3rVO7EDwJQ2KuolBMz6vVa5
+         aZmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgHKiFUGQwl33SCLsrMykfa0U42VcsIk080uc9RfMRSjDXDRqXt0gy0giKBzCueYu0YPF06CCyUR/kfobw@vger.kernel.org, AJvYcCXib4b7r8Dv8bExpknU4vmhkCOHn6JI9dyjurSag1sfFRIbi34gVi6oa020bJZ7WV5o55Es4z8V0fWFS8BQGw==@vger.kernel.org, AJvYcCXrT+j1F6SNGvcUXO3GlVrHQ60JZUuyuLyvg/B4L5TROaHck5BoUp+oSqkEc2ZL8+/1X1+gk95w06lRQb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4ZZDjgPFR+purIoLEGCG5tD5rM1x3EpU2Ee5ojoep3vy2TYfp
+	HcixH8e1111++Qxb5ptF/XLeV+RV2LGwD9bGs4k124Ut20cPPMZhYcVJiVmvpFZD4An/vbw7Ptr
+	6OB6tytSbbQSHk6mTsg9Dy7NzVWk=
+X-Google-Smtp-Source: AGHT+IFoqWdCcFDyIW+T0u2K8pinEPwVaR4dgwJcH4CIPd5f99UTZp6LTbYJnA+DiT5gZsxG7Rmadj7M2RjxD5xISsQ=
+X-Received: by 2002:a05:651c:a0a:b0:2f3:b8dc:7d24 with SMTP id
+ 38308e7fff4ca-2fb1873e91emr32922731fa.17.1728553042257; Thu, 10 Oct 2024
+ 02:37:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
+References: <42aa307d7ffae1851b4a8787f5c276dd0b3beece.1728543368.git.linux@leemhuis.info>
+ <b32f1e42-d775-4538-ba36-9e9b906a34e3@leemhuis.info> <CA+icZUUgwJWY=PWO5fQPZbUc-q=LkdHXVe4+g-LnXmQfCA3N7Q@mail.gmail.com>
+ <CA+icZUX9hrwFXA-6KVT+yZ=-NqyPB=LOKKWSf77-xb32totgHA@mail.gmail.com> <a5b3c47e-5f0f-4c0f-8ad9-4fb34d150548@leemhuis.info>
+In-Reply-To: <a5b3c47e-5f0f-4c0f-8ad9-4fb34d150548@leemhuis.info>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Thu, 10 Oct 2024 11:36:46 +0200
+Message-ID: <CA+icZUUmo+mJTKUS8kH9qUNH0+CqeYNspqp9OA-iWw1KMMDMwg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] module: sign with sha512 by default to avoid build errors
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	linux-modules@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 07:56:53AM +1100, Aleksa Sarai wrote:
-> On 2024-10-09, Jonathan Corbet <corbet@lwn.net> wrote:
-> > luca.boccassi@gmail.com writes:
-> > 
-> > > As discussed at LPC24, add an ioctl with an extensible struct
-> > > so that more parameters can be added later if needed. Start with
-> > > returning pid/tgid/ppid and creds unconditionally, and cgroupid
-> > > optionally.
-> > 
-> > I was looking this over, and a couple of questions came to mind...
-> > 
-> > > Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
-> > > ---
-> > 
-> > [...]
-> > 
-> > > diff --git a/fs/pidfs.c b/fs/pidfs.c
-> > > index 80675b6bf884..15cdc7fe4968 100644
-> > > --- a/fs/pidfs.c
-> > > +++ b/fs/pidfs.c
-> > > @@ -2,6 +2,7 @@
-> > >  #include <linux/anon_inodes.h>
-> > >  #include <linux/file.h>
-> > >  #include <linux/fs.h>
-> > > +#include <linux/cgroup.h>
-> > >  #include <linux/magic.h>
-> > >  #include <linux/mount.h>
-> > >  #include <linux/pid.h>
-> > > @@ -114,6 +115,83 @@ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
-> > >  	return poll_flags;
-> > >  }
-> > >  
-> > > +static long pidfd_info(struct task_struct *task, unsigned int cmd, unsigned long arg)
-> > > +{
-> > > +	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-> > > +	size_t usize = _IOC_SIZE(cmd);
-> > > +	struct pidfd_info kinfo = {};
-> > > +	struct user_namespace *user_ns;
-> > > +	const struct cred *c;
-> > > +	__u64 request_mask;
-> > > +
-> > > +	if (!uinfo)
-> > > +		return -EINVAL;
-> > > +	if (usize < sizeof(struct pidfd_info))
-> > > +		return -EINVAL; /* First version, no smaller struct possible */
-> > > +
-> > > +	if (copy_from_user(&request_mask, &uinfo->request_mask, sizeof(request_mask)))
-> > > +		return -EFAULT;
-> > 
-> > You don't check request_mask for unrecognized flags, so user space will
-> > not get an error if it puts random gunk there.  That, in turn, can make
-> > it harder to add new options in the future.
-> 
-> In fairness, this is how statx works and statx does this to not require
-> syscall retries to figure out what flags the current kernel supports and
-> instead defers that to stx_mask.
+On Thu, Oct 10, 2024 at 10:57=E2=80=AFAM Thorsten Leemhuis <linux@leemhuis.=
+info> wrote:
+>
+> On 10.10.24 10:42, Sedat Dilek wrote:
+> > On Thu, Oct 10, 2024 at 10:29=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail=
+.com> wrote:
+> >> On Thu, Oct 10, 2024 at 10:19=E2=80=AFAM Thorsten Leemhuis <linux@leem=
+huis.info> wrote:
+> >>> On 10.10.24 09:00, Thorsten Leemhuis wrote:
+> >>
+> >> That was wrong in the original code which you moved:
+> >>
+> >> +config MODULE_SIG_SHA384
+> >> +       bool "SHA-384"
+> >> +       select CRYPTO_SHA512 <--- SHA*384*
+> >
+> > Thorsten, please fix it!
+>
+> That looks intentional to me -- and CRYPTO_SHA384 from a quick look does
+> not even exist.
+>
+> But that's not at all my area of expertise, so I would not want to touch
+> it anyway.
+>
+> Ciao, Thorsten
+>
+> P.S.: Vegard Nossum mentioned in the fediverse that I could also solve
+> the problem the patch is about by adding "default MODULE_SIG_SHA512" to
+> the "choice" section; haven't tried that, but that sounds like a better
+> solution. Will likely give it a try, unless someone brings up unwanted
+> side effects this might cause.
+>
+>
 
-pidfd_info overwrites the request_mask with what is supported by the
-kernel. I don't think userspace setting random stuff in the request_mask
-is a problem. It would already be a problem with statx() and we haven't
-seen that so far.
+SHA1 | SHA256 | SHA512 <--- IMHO enough.
 
-If userspace happens to set a some random bit in the request_mask and
-that bit ends up being used a few kernel releases later to e.g.,
-retrieve additional information then all that happens is that userspace
-would now receive information they didn't need. That's not a problem.
-
-It is of course very different to e.g. adding a random bit in the flag
-mask of clone3() or mount_setattr() or any system call that changes
-kernel state based on the passed bits. In that case ignoring unknown
-bits and then starting to use them is obviously a big problem.
-
-The other related problem would be flag deprecation and reuse of a flag
-which (CLONE_DETACHED -> CLONE_PIDFD) also is only a real problem for
-system calls that alter kernel state.
-
-So overally, I think ignoring uknown bits in the request mask is safe.
-It needs to be documented of course.
+-sed@-
 
