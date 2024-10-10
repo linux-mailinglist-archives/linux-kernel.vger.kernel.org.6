@@ -1,209 +1,141 @@
-Return-Path: <linux-kernel+bounces-358668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0058099822D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:29:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8C2998232
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91CFB289ADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:29:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CC89289E6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41601B3B28;
-	Thu, 10 Oct 2024 09:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HqoR0CX/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EPM8xB/F";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HqoR0CX/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EPM8xB/F"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696051BBBF8;
+	Thu, 10 Oct 2024 09:29:42 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0E29AF;
-	Thu, 10 Oct 2024 09:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E727D1552FC;
+	Thu, 10 Oct 2024 09:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552571; cv=none; b=aOxr7/fvAeHdwM/lIkqwWZMk/BhHGPGJ/3AO2nEjZ7j9h/cD0CE9Qf4ozCR/Pt+s0f9dwIikPaRYUeM4FUztqIog31AhvusevEVMvRbxaU7B4bjbzCNrBpM7lsbrCo7Xsnp53w5XYumNpSlBQKbcnXqIKCF28E4SLvNTCcbBd/4=
+	t=1728552582; cv=none; b=A6J2eSKIDKv0vGkXAyrOkMnSLCjUPTA8QS+VRzfoUdHOnwx8PpukN6YN1+42dU1M+oVyat820+Snh/D/GeihZ9FD7u8smv2euuOyvsAt5Q3G3SqwJ4ZqyfYREx9PShYoplf7CTc8UUkK52ZSCHLIcboYEYs1PFivfVw6tkCOx8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552571; c=relaxed/simple;
-	bh=Vafp+6xNToGewgmfw0ctcoQo3aBvxiSthYN15fmMkI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMA1OmTQpYj77A/DTBXpBfNB7dNhnf72Qex7pB1Iwzc+ccJ/Yana6e0IORCTx6B96WDjqyuXPFG2DnSGdNdR14QuM+NR/qnegQEud+HVpZ/71E5RGFpFFlGfSkN1l3mpVKWWujqSBVG9eXDj5c9tJ2Z0G+f1tBGx5tbNzMac7lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HqoR0CX/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EPM8xB/F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HqoR0CX/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EPM8xB/F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 910391FE66;
-	Thu, 10 Oct 2024 09:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728552567; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J1YsnS/ai3mHhkG2ip3Wq7ejBD/D+GDDlFRCn1oZ1Tk=;
-	b=HqoR0CX/ocYbfC1/4g8SN9oLBl7lrRH/EyvOAzYSw25ukNfe99mjSGmzX+9vfUgeFhlxtp
-	bPGESPvGqXJWjzKcbRaOaE3uV63dN5RPq9KFqz0DpPAvuXXtOqRL0zK59QQj+EUgFQ2zyn
-	e4bCsiMfks2QlmEDTazkVMoGYSSjliM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728552567;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J1YsnS/ai3mHhkG2ip3Wq7ejBD/D+GDDlFRCn1oZ1Tk=;
-	b=EPM8xB/FPO7klw6s/K6JZ4eidn5FSS27gZSj/AaamiUS+VdBMPPDp3in13hBx9EJXYrun2
-	ZV8rmlB0N7kwWGCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728552567; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J1YsnS/ai3mHhkG2ip3Wq7ejBD/D+GDDlFRCn1oZ1Tk=;
-	b=HqoR0CX/ocYbfC1/4g8SN9oLBl7lrRH/EyvOAzYSw25ukNfe99mjSGmzX+9vfUgeFhlxtp
-	bPGESPvGqXJWjzKcbRaOaE3uV63dN5RPq9KFqz0DpPAvuXXtOqRL0zK59QQj+EUgFQ2zyn
-	e4bCsiMfks2QlmEDTazkVMoGYSSjliM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728552567;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J1YsnS/ai3mHhkG2ip3Wq7ejBD/D+GDDlFRCn1oZ1Tk=;
-	b=EPM8xB/FPO7klw6s/K6JZ4eidn5FSS27gZSj/AaamiUS+VdBMPPDp3in13hBx9EJXYrun2
-	ZV8rmlB0N7kwWGCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8864B13A6E;
-	Thu, 10 Oct 2024 09:29:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9fBGIXeeB2cFBQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 10 Oct 2024 09:29:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 33131A08A2; Thu, 10 Oct 2024 11:29:23 +0200 (CEST)
-Date: Thu, 10 Oct 2024 11:29:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baolin Liu <liubaolin12138@163.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-	zhangshida@kylinos.cn, longzhi@sangfor.com.cn,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Baolin Liu <liubaolin@kylinos.cn>
-Subject: Re: [PATCH v1] ext4: fix a assertion failure due to ungranted bh
- dirting
-Message-ID: <20241010092923.r53povuflevzhxrw@quack3>
-References: <20241010025855.2632516-1-liubaolin12138@163.com>
+	s=arc-20240116; t=1728552582; c=relaxed/simple;
+	bh=3PhQhBX/cDzwmSNYvkeaadDnXuaqJFOOfD26tjgtMKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hb71EVscWJ0R9E6pbWc06VAWz2uPv+ipxNUgEAUOt07tV0hlQp4N0YTaWNuXH/IHiQFhuiD2vrr9JZojoMqTuKwSQC/38WZPwPUzWRUHUUeAHZvuRkkC6+gIqeCRa0rlfTZfyEKMfnWfSBCHtYrZF3AxI9ZFZ46ww8YdMQED4ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso733502276.0;
+        Thu, 10 Oct 2024 02:29:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728552578; x=1729157378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yIpkFoyH7xGEmp6Cri7WzAs1H6AzrtVGMzVSG3KUQ5U=;
+        b=d8+TeKmLKo5ucYSvYRKIzom5SJlDVRzv7ETSWFLY+tTLOwzMPQj5zJhVXWb2LvG0MZ
+         nK75Zrkx0t61UCpz36gIqeXOCkRODl6e6sq8QwzebCQ0IjP9p5gnQ5Rs0xrhhbjkt8tO
+         BBmd5cwuRvRGNivCzvyfbneqXOaY1U4FSCO4XKhqDbw3eUYzPKriB1TiEB+B0Kaczpto
+         kdU34KSFWlKZCAxB0n6ateks85WqbcNEyLaIJ1BSp1yQpri/LWaYmDJcAF+MMBM8Qsto
+         CtJPyt6KyCMlBbYxY9YGERir0cNY/gmyUZOCkxQ0fucCL/VSTqHSAP9Lq/+xnaGX9zaQ
+         D0PA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+lPLyolPDnqf/dAm2kkDcabju5ND9UWycLq71bsgFHO91vZ7BmibmyS6gVrwGE0wZhlzyJXbURUpV@vger.kernel.org, AJvYcCXCOXexYkM5Z6d8aG4fZVQBc+qo55zrzAPrSSK5Z8a86I45qOKVd5nOG5zMFYyy+kGyLso2mxKSaKr2@vger.kernel.org, AJvYcCXR/2bPBYLK7lIOcualKUzyITd330VP0qNFfL+02BC1gGxZ0v/Bw6HIE4LTelSvRkwCNC7BhoKrDqhi@vger.kernel.org, AJvYcCXSnBW6mmZIRuyXD4swfPF6JSwgjPIVFMy24TRoZBxFRv3czF6qL1U8PeXSzWhT9n34nZhoMkxnt5DzyK+GC9mA0Es=@vger.kernel.org, AJvYcCXt1zfY7kSvZ1VuGNn3m0MMA/mvwZSKy5//wd0vnYlYf9CDNLCMHjd2+pvU3hD87tua7loWPZbO7c0dWfPx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNFomwiMkHlWrWakAZRwfl5ynMmrv/L4E/3YTQZ5DE5YyUu8zC
+	FK2W7zllNHz5kp9NAin5iHHgIJZlAVUD1SrT64RH0o0kfLPf8FqY6+tc8QVO
+X-Google-Smtp-Source: AGHT+IEITeRqZai7zVrTHzIhSWiLlDHYxuIfLuix/cZ+vAtVjBglIPjXLnLBoOYXIdbbeownnSej5Q==
+X-Received: by 2002:a05:6902:2001:b0:e28:6758:fb0e with SMTP id 3f1490d57ef6-e2909c1a9ecmr2801842276.16.1728552578535;
+        Thu, 10 Oct 2024 02:29:38 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef5c47bsm216133276.42.2024.10.10.02.29.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 02:29:38 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e4237da4so7140377b3.1;
+        Thu, 10 Oct 2024 02:29:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLfSsKUzE2w43UcyebsoUHqbBC1wnikq00+3k361eGNjoClpFbOK1+q5kXQsbVhQDXjYRjUL4cazhu7fRqcCjzSq8=@vger.kernel.org, AJvYcCVad7yFI30fIhqAWJkidI4VNeI7Z+fuQrhgBBxt/gKMb2R2MzCm/0lkEkuy4Jet4iPjMrEywkQclv2TUOyt@vger.kernel.org, AJvYcCWDVfX+edS7UVWcoTe9gZXjACZVrujyk9BPgPCikog1RzhvlKVS77g2ssdtAKGH5tEfUC3AIRXEmQhl@vger.kernel.org, AJvYcCWsCW5x9kJ2pIqnEgdyHmhikhbD8L2v5MfjENG0FyR7caxP63ICuR5UyfBFA6OJrGJSk2InGdagkraD@vger.kernel.org, AJvYcCX+rEp2FmCFetGp9id7mFxl/gYu1wXLyVIk1t4l7/1YbFKbEphEeVGGh2pAc+uhU6X4/oq2muOG6xl/@vger.kernel.org
+X-Received: by 2002:a05:690c:388:b0:6e3:2f9d:59fd with SMTP id
+ 00721157ae682-6e32f9d5d11mr21861857b3.31.1728552577749; Thu, 10 Oct 2024
+ 02:29:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010025855.2632516-1-liubaolin12138@163.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[163.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com> <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Oct 2024 11:29:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWeGC_N3-XF29+UUR43OGJKqVNNHs042J8HRuNpiD=vOg@mail.gmail.com>
+Message-ID: <CAMuHMdWeGC_N3-XF29+UUR43OGJKqVNNHs042J8HRuNpiD=vOg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document
+ the Renesas RTCA-3 IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 10-10-24 10:58:55, Baolin Liu wrote:
-> From: Baolin Liu <liubaolin@kylinos.cn>
-> 
-> Since the merge of commit 3910b513fcdf ("ext4: persist the new uptodate
-> buffers in ext4_journalled_zero_new_buffers"), a new assertion failure
-> occurred under a old kernel(ext3, data=journal, pagesize=64k) with
-> corresponding ported patches:
-...
-> which was caused by bh dirting without calling
-> do_journal_get_write_access().
-> 
-> In the loop for all bhs of a page in ext4_block_write_begin(),
-> when a err occurred, it will jump out of loop.
-> But that will leaves some bhs being processed and some not,
-> which will lead to the asserion failure in calling write_end_fn().
+Hi Claudiu,
 
-Thanks for the patch but I don't understand one thing here: For
-ext4_journalled_zero_new_buffers() to call write_end_fn() the buffer must
-have buffer_new flag set. That flag can get set only by ext4_get_block()
-function when it succeeds in which case we also call
-do_journal_get_write_access(). So how is it possible that buffer_new was
-set on a buffer on which we didn't call do_journal_get_write_access()? This
-indicates there may be some deeper problem hidden. How exactly did you
-trigger this problem?
-
-								Honza
-
-> 
-> To fixed that, get write access for the rest unprocessed bhs, just
-> as what write_end_fn do.
-> 
-> Fixes: 3910b513fcdf ("ext4: persist the new uptodate buffers in ext4_journalled_zero_new_buffers")
-> Reported-and-tested-by: Zhi Long <longzhi@sangfor.com.cn>
-> Suggested-by: Shida Zhang <zhangshida@kylinos.cn>
-> Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+On Fri, Aug 30, 2024 at 3:02=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> The RTC IP available on Renesas RZ/V2H is almost identical with the
+> one found on Renesas RZ/G3S (it misses the time capture functionality
+> which is not yet implemented on proposed driver). For this, added also a
+> generic compatible that will be used at the moment as fallback for both
+> RZ/G3S and RZ/V2H.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  fs/ext4/inode.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 54bdd4884fe6..a72f951288e4 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1102,9 +1102,24 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->  			err = -EIO;
->  	}
->  	if (unlikely(err)) {
-> -		if (should_journal_data)
-> +		if (should_journal_data) {
-> +			if (bh != head || !block_start) {
-> +				do {
-> +					block_end = block_start + bh->b_size;
-> +
-> +					if (buffer_new(bh))
-> +						if (block_end > from && block_start < to)
-> +							do_journal_get_write_access(handle,
-> +										    inode, bh);
-> +
-> +					block_start = block_end;
-> +					bh = bh->b_this_page;
-> +				} while (bh != head);
-> +			}
-> +
->  			ext4_journalled_zero_new_buffers(handle, inode, folio,
->  							 from, to);
-> +		}
->  		else
->  			folio_zero_new_buffers(folio, from, to);
->  	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> Changes in v3:
+> - added RTC bus clock, reset and power-domain; it has been detected
+>   by reverse engineering that RTC and VBATTB clock, reset and power
+>   domain are shared; HW manual doesn't mention it
+> - updated example with these and with assigned-clock properties
+>   needed to configure the VBATTCLK MUX with proper parent
+> - updated example section with dt-bindings/clock/r9a08g045-cpg.h
+>   and dt-bindings/clock/r9a08g045-vbattb.h includes
+> - for all these, dropped Conor's Rb tag
+
+Thanks for the update!
+
+Sorry for chiming in late, but this RTCA-3 block seems to be a
+derivative of the RTC blocks found on older SuperH SoCs, and on RZ/A1
+and RZ/A2 ARM SoCs.  Differences are found in (lack of)
+100/1000-year-count parts and the Year Alarm Enable Register, and in
+some control register bits.
+
+The SuperH and RZ/A1 variant is supported by drivers/rtc/rtc-sh.c;
+DT bindings for the latter are found in
+Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml.
+
+(My first guess was that RTC-A1 is used on RZ/A1, RTC-A2 on RZ/A2,
+ and RTC-A3 on RZ/A3, but apparently RZ/A3UL does not have an RTC...
+ Oh well, at least it is used on later RZ series SoCs...)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
