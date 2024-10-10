@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-360035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE06B9993BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:33:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF6A49993BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F5D31F22FFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:33:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFBF3B22905
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B18C1D31BB;
-	Thu, 10 Oct 2024 20:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605271E00AC;
+	Thu, 10 Oct 2024 20:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZlPvTIh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD441CBEAB;
-	Thu, 10 Oct 2024 20:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6D41CBEAB;
+	Thu, 10 Oct 2024 20:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728592387; cv=none; b=HxySDnI0EWW7ylhXSYniYpv8OXCS3uQAmARFHJYN/wsXlTrJrmUztC2BpBtPMmrczUTKUV+Kw/FB0yQciyNAXfaEHkuvbjQHo/fl1RVlDz4QZMGoQOOCEqQepQARp1DrWMuxtpY3NgZrvIMMBDNhlLCjN1TAiAxRoJANiry5B+k=
+	t=1728592443; cv=none; b=Y+3TeYIBUp6n8o8ez99eKUtit6MTaLhrBcn2s/WV5HsquqsTCchT4K39LC63UrDOJU1PNKMIkMgz39udmtRFPP5eUokNnJmkHe8odOEWdF7TSS1Y0s4QVp4cjiTOiXJHeT/01+mWBzLd1p7iKwPoUHBjQ+FE/roH07wtZbDd9yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728592387; c=relaxed/simple;
-	bh=D9BJOsFOkn7PHyzm0nF0QCJsK5CqbWt+pRVpN5WAN6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MF0vJ6aZV6AhVrj21IlZelrovbHxG8lWCEFLq2VcPWjGui6OmVhMIwSyf2gRcAfTi+V8pVJz+nS6oYz9K4q+WAW1AhWAn44m3sbnn4RDJCq38Ye0eyCZVMQjO3o7YjEik8QqSud+CVHRdm72SNobFtFD1m9TCopHWH3BeC3GP7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32031C4CEC5;
-	Thu, 10 Oct 2024 20:33:06 +0000 (UTC)
-Date: Thu, 10 Oct 2024 16:33:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Helge Deller <deller@gmx.de>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, linux-kernel@vger.kernel.org, Sven
- Schnelle <svens@stackframe.org>, linux-trace-kernel@vger.kernel.org,
- linux-parisc@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] parisc/ftrace: Fix function graph tracing disablement
-Message-ID: <20241010163313.631e84bd@gandalf.local.home>
-In-Reply-To: <f2dd3a74-cd3d-4277-904d-223a8b393d56@gmx.de>
-References: <5962b9e161b2b9296509c3d65c7f16c11b07bd16.1727904678.git.jpoimboe@kernel.org>
-	<20241010154840.6e158c78@gandalf.local.home>
-	<20241010195610.25mraxgovi4vowo2@treble>
-	<f2dd3a74-cd3d-4277-904d-223a8b393d56@gmx.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728592443; c=relaxed/simple;
+	bh=YKZj/XTEQO6/ExapwB6E61thnS2N1ToVPwf4sDQ08PY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KmWLhrJ9sZEULNUqrBVF9GJh5i9gN2+5JbGQo2Z6yOeZsu5Yy2vHVVlus0HZuMWkME/VrN/DzBjwnI5cJFCugKCAkXZsBdYguk5rVpKN/LYTMSaiwkHcdN0B3gQvS0QwhlX8/cxy71EsoXlGEMyffqnpRxMMP2KEb38Abfs8p9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZlPvTIh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA8AFC4CEC5;
+	Thu, 10 Oct 2024 20:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728592443;
+	bh=YKZj/XTEQO6/ExapwB6E61thnS2N1ToVPwf4sDQ08PY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jZlPvTIhyqc+fXAUZICy/X/w2oe70HN42HsHd2MHL2csiZL8TtKP8e96QVq/gZCYq
+	 uRmqKpGHpmzBrCwc+EKngcQVaWocI6qTBk1C3P9PDaqloImSuW9lCy162oQPSxApWz
+	 mK7e4/YCF4hvzlJ0B1Wz7oCFM6b078UZfuvCyJX+LpzSRN9w4Ek7C+ZtG4qmdmnwW5
+	 kmYXovtN5byVqHh7oz0LzJTqCb37b2VJ75pAyKva4MGVy5J8QGffvSFgsavDsR84dn
+	 vW9HED2Q8UgVHViMHbEKtkVTkAAdVmafO7fVqv1jVqHo/8GTtYKjcXMLD2XasFGaXt
+	 n95ssK0oN4rUw==
+Date: Thu, 10 Oct 2024 13:34:01 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	keescook@chromium.org, linux-hardening@vger.kernel.org,
+	nathan@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jan Beulich <jbeulich@suse.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v2 5/5] crypto: x86/crc32c - Tweak jump table to validate
+ objtool logic
+Message-ID: <20241010203401.45ds362dpx52ne5z@treble>
+References: <20241010122801.1321976-7-ardb+git@google.com>
+ <20241010122801.1321976-12-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241010122801.1321976-12-ardb+git@google.com>
 
-On Thu, 10 Oct 2024 22:25:13 +0200
-Helge Deller <deller@gmx.de> wrote:
+On Thu, Oct 10, 2024 at 02:28:07PM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
 > 
-> Actually I do, and yes we have users.
-> Of course in reality that's "fun" users and not "productive" usage.
-
-We welcome those "fun" users as well!
-
+> Tweak the jump table so
+> - the address is taken far way from its use
+> - its offset from the start of .rodata is != 0x0
+> - its type is STT_OBJECT and its size is set to the size of the actual
+>   table
+> - the indirect jump is annotated with a R_X86_64_NONE relocation
+>   pointing to the jump table
 > 
->  From programming perspective parisc is quite interesting since it
-> has an upwards-growing stack, limited ways of atomic ops,
-> and some awkward cache dependencies, so I regularly find
-> issues in generic Linux code which would not be found otherwise.
-> 
-> > I still see some git activity in arch/parisc, so apparently so...
-> >
-> > I only stumbled on this by accident (code inspection) while making
-> > another unrelated change.  
-> 
-> Thanks for your patch!
-> I'll apply it in my for-next git tree and push upstream at some point
-> (unless someone else takes it before me).
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 
-For architecture patches like this, even if it is obvious, I rather it go
-through them, as I wouldn't even compile test it.
+This needs more "why", I assume the goals are to add the annotations +
+confuse objtool if it doesn't read them properly?
 
-Please take it through your tree.
-
-Thanks,
-
--- Steve
-
+-- 
+Josh
 
