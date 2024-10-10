@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-359548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DCA998DDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B59D998DB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A0DB2AD5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:18:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D23B234D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F001CDA30;
-	Thu, 10 Oct 2024 16:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69401CDFC1;
+	Thu, 10 Oct 2024 16:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/afJ6UM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kWWCbLRu"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A173E2A1D3;
-	Thu, 10 Oct 2024 16:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5682A1D3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728577095; cv=none; b=llHLCzyTMV0gj8e8X8uuy0yEm25AuzHxUe8TWd1aTAYoE3FZJesXrATsZAkNMcis8HSKpLgIWbqKlWp0ljhdXh2PZPrtIruUZAtj5G5BKOd4URr9k/LTY8JSCa1QrluCoSAzzsDoaLlBlmYzFX5d4aU5IBTeJIhXi/LQTZa49tc=
+	t=1728577141; cv=none; b=tMw8E4+dbOifKzRLyMc+MwKO0ibDzebKzhfO+EEfRLHVxLpZd15TbXyO6Dn7MXja4yINYW/eAG1WIAw8SFQS3zxywEkBlrrtdIafICQ6I7dOozG5py+XiazkXs6Et1il7GuFRT807WznxB9HiJ9pBXRxZwYqt5V2GB0FPDEe1gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728577095; c=relaxed/simple;
-	bh=7AvwzW/MffijGtC0LhT/DeNlVgIXdZaZHv+b0DuiaQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gn0ePSiO/hKHeiDT0JzpIMNInH901xdqIZ3wULkXZ3Wfk+r3c0nTwfAHqfKfR82XKXYyiKo1B07QtdeZMud3Es4gCs9L91LWQtTWoxqm1F0ZFGt/v5NmlN5Bz4MuPtSWWBTIOoOdN+WXXnscUaL/mHk+77wSo6gylNFL9fVs2J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/afJ6UM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3666DC4CEC5;
-	Thu, 10 Oct 2024 16:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728577094;
-	bh=7AvwzW/MffijGtC0LhT/DeNlVgIXdZaZHv+b0DuiaQI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i/afJ6UMziGG0n5c651fLNqExmF+2hxMw0UnlPgjv6l8wPNqVpWT1g+2jRynU23CB
-	 CYCGxvbJKfjZyCpXEMK3ACa7DvfxGPX230erEWue/QS+8QThKSMF8HJ3p93i3yBPn9
-	 XNslMxIxYUYDO/AqOa2ueuSZ8bQocUjLNf7gZEHwZGIf24lGDdEBn+6MGcirSlY0z2
-	 UXDoFapD757My+tl4vSwx0ZWcYRajHy2d5xcRJs3oplXZIKbqR6Qx0TPMtYgZUZw1+
-	 PmGF+PtB68vd6oyipHBJ+qCJ62ajvph8fSZguXcqv7iJ8IpPOVSnzjmqJlQrN5I8vh
-	 aKWDuJBn9CdNg==
-Date: Thu, 10 Oct 2024 17:18:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>, Guo Ren <guoren@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Yangyu Chen <cyy@cyyself.name>, Jinyu Tang <tangjinyu@tinylab.org>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: interrupt-controller: Add Sophgo
- SG2044 ACLINT SSWI
-Message-ID: <20241010-eradicate-overtake-a7b09ad79a0f@spud>
-References: <20241009224410.53188-1-inochiama@gmail.com>
- <20241009224410.53188-2-inochiama@gmail.com>
+	s=arc-20240116; t=1728577141; c=relaxed/simple;
+	bh=0taRQhQ9LqfmmG+vQ7qFCD+ZjBUWXq1z8qfHRkn6bZg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=c1+snGA6S8w+N7HV5OKc30d63ASXWZK5P0bHwPToYsk6+XPpgRr12zNoX4xl7fNPFNhADCPuTGMotzUcsGRrQieiWzkrMqaAlwYOlciooyhtuGU5y2lMGgbqXme1VSQGGb068k6ObleyvuicRmpEfUW3MiMG2p/bY9KnG+pAmIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kWWCbLRu; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b5792baaso1449497276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:18:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728577139; x=1729181939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D6G7OUX8q4BUWDj+3AyCy0cvuvdbRoe5UQJNlr3xoSc=;
+        b=kWWCbLRuo7dJPl8n9SJ/OOo8+MMeZAEl0/Q5fd42OGcNy28G4UdvT/MO1WkOIEs9uH
+         l0yG6MKSKGLFm4EoKeI/83pfYsqZzKW89DHkP4DsrZsgDoC/+b9s2Z77IGsX4qghrH3t
+         0SK7FENveCC0T/5bE6R21o9S7NOMv/Eth+XwrjJYyqnMgcIPiRaJLmPzgWpb5dRwZ413
+         rCpxH3QR6U/x3FH06VQ0dr7/+HYnrLuJjRNA5bdihob4cntVkjpTmNQo8QdJuUmLyaOY
+         QD+8FRDGOOzuYsg9MSudjY8K8JEt24oQf6E7jRk93Zv/4PZ0jDIC4YtBu+4tAzPXS50C
+         cbKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728577139; x=1729181939;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D6G7OUX8q4BUWDj+3AyCy0cvuvdbRoe5UQJNlr3xoSc=;
+        b=MdK+TOK5jqKiX54TNVB1Duuy2CIo6q/nxjzBhVz0GqDBaQQ0MmhOEcFHNR+59hofT7
+         3CRaWQSC2U/L6OIhfjalAGFEc2qArHB/SbOBHT16R42D+j2PZECwR6VyI4yEU+jO9yjc
+         AL3UMHm3gdYIKWNFiEgPQnElRvi4jCjuMxdSxFxLESMIqz60bKIg3qgg/LtlrwwtzQbr
+         yPaaLW0AO0tEGdkdO3SUZ9+YTFUmxIvYP4VOJSMN342ES4Rk4NfQra5ffAfVDVNYtwUq
+         lusKc95Yn7Zv+VtXnMvInL+QhgrY95Dt1a57u9Go4WUHhp47pp2Bt03Cm5JAQ5mVq4vD
+         YcLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUugmfHVUdC2c1L1TxpiekDSSSL626AocgRMX3F/823MUOuPAVpoZKMI6tFiETsFCfFWChOzt16TPkk2ik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk/QqvepKqClzBpG3LIls3XSp1Z8N6xQ+cvm1wdk4zYsWVX0Mz
+	MwCjNsvWPC3Z2WcJUNa0uvYkRznK0He3rSuPbnjaSAQOhwf06iUMrt/EaR+gqJh/Yg6f871e2VX
+	JNQ==
+X-Google-Smtp-Source: AGHT+IEs3IpuQOP/zvRG77UWqmGygsitarAq+g3ot9CvViFEmkmJwJvNdEkRmxmn8vkxRVvB44456Fm4Qgg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:d353:0:b0:e28:e74f:4cb with SMTP id
+ 3f1490d57ef6-e28fe0df614mr95229276.0.1728577138650; Thu, 10 Oct 2024 09:18:58
+ -0700 (PDT)
+Date: Thu, 10 Oct 2024 09:18:57 -0700
+In-Reply-To: <028501cdd2469a678df3b77c25c3cd9a1b6eff66.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OEx6wLTBXftTPeHH"
-Content-Disposition: inline
-In-Reply-To: <20241009224410.53188-2-inochiama@gmail.com>
-
-
---OEx6wLTBXftTPeHH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20240727102732.960974693@infradead.org> <20240727105030.226163742@infradead.org>
+ <CGME20240828223802eucas1p16755f4531ed0611dc4871649746ea774@eucas1p1.samsung.com>
+ <5618d029-769a-4690-a581-2df8939f26a9@samsung.com> <ZwdA0sbA2tJA3IKh@google.com>
+ <028501cdd2469a678df3b77c25c3cd9a1b6eff66.camel@gmx.de>
+Message-ID: <Zwf-cfADFwt0awj3@google.com>
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+From: Sean Christopherson <seanjc@google.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 06:44:07AM +0800, Inochi Amaoto wrote:
-> Sophgo SG2044 has a new version of T-HEAD C920, which implement
-> a fully featured ACLINT device. This ACLINT has an extra SSWI
-> field to support fast S-mode IPI.
+On Thu, Oct 10, 2024, Mike Galbraith wrote:
+> On Wed, 2024-10-09 at 19:49 -0700, Sean Christopherson wrote:
+> >
+> > Any thoughts on how best to handle this?=C2=A0 The below hack-a-fix res=
+olves the issue,
+> > but it's obviously not appropriate.=C2=A0 KVM uses vcpu->preempted for =
+more than just
+> > posted interrupts, so KVM needs equivalent functionality to current->on=
+-rq as it
+> > was before this commit.
+> >
+> > @@ -6387,7 +6390,7 @@ static void kvm_sched_out(struct preempt_notifier=
+ *pn,
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WRITE_ONCE(vcpu->scheduled_o=
+ut, true);
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (current->on_rq && vcpu->wants=
+_to_run) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (se_runnable(&current->se) && =
+vcpu->wants_to_run) {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 WRITE_ONCE(vcpu->preempted, true);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 WRITE_ONCE(vcpu->ready, true);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
 >=20
-> Add necessary compatible string for the T-HEAD ACLINT sswi device.
->=20
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Why is that deemed "obviously not appropriate"?  ->on_rq in and of
+> itself meaning only "on rq" doesn't seem like a bad thing.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---OEx6wLTBXftTPeHH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwf+QAAKCRB4tDGHoIJi
-0lBEAQC/9BgCiFl0swGHZLcJnu+WIiWZzMnC3V4UnuR/ZVGFlAD6AvphKvcYmc/k
-q+jXM+CNWCUIsWRxsrAGhdxQX5O+UQM=
-=z4lx
------END PGP SIGNATURE-----
-
---OEx6wLTBXftTPeHH--
+Doh, my wording was unclear.  I didn't mean the logic was inappropriate, I =
+meant
+that KVM shouldn't be poking into an internal sched/ helper.
 
