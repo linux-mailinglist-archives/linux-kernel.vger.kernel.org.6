@@ -1,187 +1,171 @@
-Return-Path: <linux-kernel+bounces-358046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E6A997997
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90755997998
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B8A1F229EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:28:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B301E1C22365
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F7B3211;
-	Thu, 10 Oct 2024 00:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Rm26wj6y"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BA5BE68;
+	Thu, 10 Oct 2024 00:29:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A8B15E90
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8CF2913
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728520079; cv=none; b=uuYyMjwfW+e2eEOX9+FPEhoJR3hYFhZpCoiMC+lR2MnSyPdtp+9ODsky8NWWhoFAtmffh0Yk1y8E184NdEYqzC/EhfplXryV7rU4IdoNd7gFRTwePCvaiVw4KzLgPN5WD9HyhSMutzhHWvZipUK60/pdAHYxAZThXAmkZ+FRijQ=
+	t=1728520145; cv=none; b=C3LINyxhFwbjTwbLbP0LYE7JPkn5Oj11day7IDuOXnLaY941lltWVfRK1JtlArZ7fu7r9SdtWI/u3LNrIbMmit2Ng/z9FCC8MH4N3gK9RlbDmOgmOymITv4ADVBgQytkOU41lIouGv3WK6Fqklzr/YOMWI5qU3x52bLdgwPHsUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728520079; c=relaxed/simple;
-	bh=YDlMNjPq13XEcf5/f1zerRs3yGSjooeeUIzeM9qKR8c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eOHe3QGU2Vnx9j8egTHS0JK32pV3fqF93ZkxOe4xbivMP0QrslLCa5kE3Dk4nzeTMRcZYCF76DbKi8fwUJJw9tC4wcFGFHsF8lq0kMA10J68fVHyvGFjQUZITEv4BfBalEOxmlZwqXS82r0efNxrQVbKIeB5X6bx9DGzsjgkp3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=Rm26wj6y; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e290bf7adaaso342330276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 17:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1728520076; x=1729124876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f1+R02hpp8av9d1oke/1LYEST5x37dCj6t6Jn67ICpI=;
-        b=Rm26wj6y69YdTqyPGcvFAzAZ69CPFadcI29Pu0cP+s3JzbfT0VMrKspEONYlqEv54w
-         mZHdqH06D55pQGA5vfKi3N3kxOYLesZIiwmLpcuFX868x2Ar4hByM54ar1nsFIMllAbt
-         zrYVrPoFAyQzR3rRB+ASv6kWuyB3OGXXy89zg=
+	s=arc-20240116; t=1728520145; c=relaxed/simple;
+	bh=CrIuY1z2O47EY9ZXiK6fBtnEvPAyPbApAgb6+54fk9Y=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sCxqrspUoKe1RxuNZmUKJ6DYtmoGSLmakUTMu3FLDgKPvZhVD+6/o/vbXN9xDB3CQcLGaGDUwxuaTRPgb6H+8XXQqIEHEqc04xVYUVibMr+/HF/GLBcPucUTE6Pqtu0NH2crlZoGoNq98WCnK72nNzDGCtzCk7CZYK57G/Zip+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3a5f6cb13so3887665ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 17:29:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728520076; x=1729124876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f1+R02hpp8av9d1oke/1LYEST5x37dCj6t6Jn67ICpI=;
-        b=bcQV533yAT6Xs8k2K277wGs+PZK7ggIR8LrspRPnzMmfU0QEUvOndoyhe2fvMaMUms
-         B0mYb0it2fFnQ817EdKQz79HLbA4oMGiOAegotBJ3U1gD3edUdZR9cZaIbT7ajEC+8vI
-         S7CF2X4GwzeqFqodYEybTah8ym/9v9tQNeZhIO3hUaMYEl72XX3p2cMMl0er8WAOnzee
-         MZ/BUCvxnZsIEdF/kmybtj39tq7z62d/ujMIHhzRAOpz02z7s1npPkXREaoIpeadKKPb
-         GZoRfuNv4P8eGSNBAYLu8OsqMZ2EcI2o3j0BNNNqv5m+jpsLTJAGbz9v4KvRyL7oGFzL
-         SuaQ==
-X-Gm-Message-State: AOJu0Yyxm7ngT7ZkosbxrTNbpNkNKM1LJoBOGVzcsa9Yu+k3tOJjEIXc
-	sz2d0A8qnYe5/Q0Dl5noEQ1sdEMGqRnt0ZSCo4m5VUP57bDBFZPSqy0Y6VQENKFe/zrIBBKhOb9
-	OIaw1cNZ3+Zd7C6HAY4BfBrpsjUAXGDELbGsFKw==
-X-Google-Smtp-Source: AGHT+IGSNIugRxV69BySb8PbtBCi38kFwqNESAtJ/YVFwaB3zOzNyFyMy0VDrtuxzYyQCslrOOZ5ho65fIQkyHk0TbY=
-X-Received: by 2002:a05:6902:15c6:b0:e20:268b:8ad3 with SMTP id
- 3f1490d57ef6-e28fe4e7431mr4112233276.38.1728520076560; Wed, 09 Oct 2024
- 17:27:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728520143; x=1729124943;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+1TxVT65BFXCYuMbBvsOMesJ1m9NwSOjZLNCeNxe5HY=;
+        b=nJiF9P75RQsMg0N4DHzD9DbHnfeI2NInu74Kcc4fLCWYapLjjiHwOjN4xFgJt5ld5e
+         WIPXPxu3I3NwmLI0jSsOSEaHYQDLw4n+b4MSC9dfpIZzh87O9fdm322O7uF3z0XTW8jp
+         2PrZ0Mm64Z+cx10HW+ax/ei2oUhDFyJJmrNml6a7NJODc9VWNjA5tVWBSzrKWh3VH4X5
+         2AEFVhTFjH2KoPY8cg7gIJP4iYzFAxwMo+zW4ntygv3suELn6B8flGI+98JAlDR5dIvn
+         APD/21XMS1FtNrbfITxObbQZOic6WfaPW2ob8yKBWyYU+2EkBLpQ9HIZTYtkZJtqNVoJ
+         Wkhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiQIZ/A4PpIcVDLw1OMeLXo6xgbWkM+T1RI9DZSszd084jN+qRtb5P1BPbtwlXKNN33nXgshsGccI8U14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDq61tBb4EDmkIy6CpGzIEcVV9+rvmuHi8MrUuJYad0EEZbx7Y
+	UbEc9scPNiC5NXYEAbAHqOq3YuksJF8k3lT4zYySlocaoW8fpfJgnLwDqx7KWEC4pa8GOk8DZPy
+	4I4mAwyf+M3Uo0xRFz6CEhigHnuV5SwwrRZv2ZBDQo5BsjSH2h/vLV7o=
+X-Google-Smtp-Source: AGHT+IGOXEhmv9FleUOZIxF5i+on3yXbmJNyROKLayw8lALZldteiBQx/alNGkBheTqA4gpilBDDcl5R/eI2dhcjd3JfTlcyBKpM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002145738.38226-1-frederic@kernel.org> <20241002145738.38226-3-frederic@kernel.org>
- <CAEXW_YQSBwGME1+vKHSM8+svtosunk-QO2oMygFKgapPE3b45w@mail.gmail.com> <ZwbuDj_tjpWzQDhL@pavilion.home>
-In-Reply-To: <ZwbuDj_tjpWzQDhL@pavilion.home>
-From: Joel Fernandes <joel@joelfernandes.org>
-Date: Wed, 9 Oct 2024 20:27:42 -0400
-Message-ID: <CAEXW_YSK1ju5u7r1xwaGPivoPhcBJ7THaqGuurCzrLf7sDTWBw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] rcu/nocb: Fix rcuog wake-up from offline softirq
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>, 
-	kernel test robot <oliver.sang@intel.com>
+X-Received: by 2002:a05:6e02:1a69:b0:3a0:9954:a6fa with SMTP id
+ e9e14a558f8ab-3a397ce58abmr34572735ab.9.1728520143261; Wed, 09 Oct 2024
+ 17:29:03 -0700 (PDT)
+Date: Wed, 09 Oct 2024 17:29:03 -0700
+In-Reply-To: <abc5e714-53a8-4b23-be5c-966442cbb0c1@gmx.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67071fcf.050a0220.1139e6.0013.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] general protection fault in getname_kernel (2)
+From: syzbot <syzbot+cee29f5a48caf10cd475@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quwenruo.btrfs@gmx.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 4:56=E2=80=AFPM Frederic Weisbecker <frederic@kernel=
-.org> wrote:
->
-[...]
-> > >         ? tick_handle_periodic
-> > >         sysvec_apic_timer_interrupt
-> > >         </IRQ>
-> > >
-> > > The periodic tick must be shutdown when the CPU is offline, just like=
- is
-> > > done for oneshot tick. This must be fixed but this is not enough:
-> > > softirqs can happen on any hardirq tail and reproduce the above scena=
-rio.
-> > >
-> > > Fix this with introducing a special deferred rcuog wake up mode when =
-the
-> > > CPU is offline. This deferred wake up doesn't arm any timer and simpl=
-y
-> > > wait for rcu_report_cpu_dead() to be called in order to flush any
-> > > pending rcuog wake up.
-> > [...]
-> > > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> > > index a9a811d9d7a3..7ed060edd12b 100644
-> > > --- a/kernel/rcu/tree.h
-> > > +++ b/kernel/rcu/tree.h
-> > > @@ -290,6 +290,7 @@ struct rcu_data {
-> > >  #define RCU_NOCB_WAKE_LAZY     2
-> > >  #define RCU_NOCB_WAKE          3
-> > >  #define RCU_NOCB_WAKE_FORCE    4
-> > > +#define RCU_NOCB_WAKE_OFFLINE   5
-> > >
-> > >  #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
-> > >                                         /* For jiffies_till_first_fqs=
- and */
-> > > diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> > > index 2fb803f863da..8648233e1717 100644
-> > > --- a/kernel/rcu/tree_nocb.h
-> > > +++ b/kernel/rcu/tree_nocb.h
-> > > @@ -295,6 +295,8 @@ static void wake_nocb_gp_defer(struct rcu_data *r=
-dp, int waketype,
-> > >         case RCU_NOCB_WAKE_FORCE:
-> > >                 if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
-> > >                         mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
-> > > +               fallthrough;
-> > > +       case RCU_NOCB_WAKE_OFFLINE:
-> > >                 if (rdp_gp->nocb_defer_wakeup < waketype)
-> > >                         WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketyp=
-e);
-> > >                 break;
-> > > @@ -562,8 +564,16 @@ static void __call_rcu_nocb_wake(struct rcu_data=
- *rdp, bool was_alldone,
-> > >         lazy_len =3D READ_ONCE(rdp->lazy_len);
-> > >         if (was_alldone) {
-> > >                 rdp->qlen_last_fqs_check =3D len;
-> > > -               // Only lazy CBs in bypass list
-> > > -               if (lazy_len && bypass_len =3D=3D lazy_len) {
-> > > +               if (cpu_is_offline(rdp->cpu)) {
-> > > +                       /*
-> > > +                        * Offline CPUs can't call swake_up_one_onlin=
-e() from IRQs. Rely
-> > > +                        * on the final deferred wake-up rcutree_repo=
-rt_cpu_dead()
-> > > +                        */
-> > > +                       rcu_nocb_unlock(rdp);
-> > > +                       wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_OFFLINE=
-,
-> > > +                                          TPS("WakeEmptyIsDeferredOf=
-fline"));
-> > > +               } else if (lazy_len && bypass_len =3D=3D lazy_len) {
-> >
-> > Since the call stack is when softirqs are disabled,  would an
-> > alternative fix be (pseudocode):
-> >
-> > Change the following in the "if (was_alldone)" block:
-> >
-> >                if (!irqs_disabled_flags(flags)) {
-> >
-> > to:
-> >                if (!irqs_disabled_flags(flags) && !in_softirq())
-> >
-> > ?
-> >
-> > That way perhaps an additional RCU_NOCB flag is not needed.
-> >
-> > Or does that not work for some reason?
->
-> It works but this forces the wake-up through the timer when a callback is
-> enqueued from softirqs. And waking up from the timer is a bit more overhe=
-ad
-> and also added GP delay. It could be this though:
->
->     if (!irqs_disabled_flags(flags) && cpu_online(smp_processor_id()))
->
+Hello,
 
-This makes sense to me and also will future-proof this code path from
-potential users who end up here. I think it will work.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+general protection fault in getname_kernel
 
-Feel free to add to this and the next patch:
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 6008 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00045-g964c2da72390 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:strlen+0x2c/0x70 lib/string.c:402
+Code: 1e fa 41 57 41 56 41 54 53 49 89 fe 48 c7 c0 ff ff ff ff 49 bf 00 00 00 00 00 fc ff df 48 89 fb 49 89 c4 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 75 12 48 ff c3 49 8d 44 24 01 43 80 7c 26 01
+RSP: 0018:ffffc900035af8a8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802d46bc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff942c58f7 R09: 1ffffffff2858b1e
+R10: dffffc0000000000 R11: fffffbfff2858b1f R12: ffffffffffffffff
+R13: ffff8880727f8000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  00007f01495d76c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f75ffff CR3: 000000002cffe000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ getname_kernel+0x1d/0x2f0 fs/namei.c:232
+ kern_path+0x1d/0x50 fs/namei.c:2716
+ is_good_dev_path fs/btrfs/volumes.c:760 [inline]
+ btrfs_scan_one_device+0x19e/0xd90 fs/btrfs/volumes.c:1492
+ btrfs_get_tree_super fs/btrfs/super.c:1841 [inline]
+ btrfs_get_tree+0x30e/0x1920 fs/btrfs/super.c:2114
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ fc_mount+0x1b/0xb0 fs/namespace.c:1231
+ btrfs_get_tree_subvol fs/btrfs/super.c:2077 [inline]
+ btrfs_get_tree+0x652/0x1920 fs/btrfs/super.c:2115
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ vfs_cmd_create+0xa0/0x1f0 fs/fsopen.c:225
+ __do_sys_fsconfig fs/fsopen.c:472 [inline]
+ __se_sys_fsconfig+0xa1f/0xf70 fs/fsopen.c:344
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f014877dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f01495d7038 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 00007f0148935f80 RCX: 00007f014877dff9
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
+RBP: 00007f01487f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f0148935f80 R15: 00007ffe7a9c13b8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:strlen+0x2c/0x70 lib/string.c:402
+Code: 1e fa 41 57 41 56 41 54 53 49 89 fe 48 c7 c0 ff ff ff ff 49 bf 00 00 00 00 00 fc ff df 48 89 fb 49 89 c4 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 75 12 48 ff c3 49 8d 44 24 01 43 80 7c 26 01
+RSP: 0018:ffffc900035af8a8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88802d46bc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff942c58f7 R09: 1ffffffff2858b1e
+R10: dffffc0000000000 R11: fffffbfff2858b1f R12: ffffffffffffffff
+R13: ffff8880727f8000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  00007f01495d76c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f75ffff CR3: 000000002cffe000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	fa                   	cli
+   1:	41 57                	push   %r15
+   3:	41 56                	push   %r14
+   5:	41 54                	push   %r12
+   7:	53                   	push   %rbx
+   8:	49 89 fe             	mov    %rdi,%r14
+   b:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
+  12:	49 bf 00 00 00 00 00 	movabs $0xdffffc0000000000,%r15
+  19:	fc ff df
+  1c:	48 89 fb             	mov    %rdi,%rbx
+  1f:	49 89 c4             	mov    %rax,%r12
+  22:	48 89 d8             	mov    %rbx,%rax
+  25:	48 c1 e8 03          	shr    $0x3,%rax
+* 29:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	75 12                	jne    0x44
+  32:	48 ff c3             	inc    %rbx
+  35:	49 8d 44 24 01       	lea    0x1(%r12),%rax
+  3a:	43                   	rex.XB
+  3b:	80                   	.byte 0x80
+  3c:	7c 26                	jl     0x64
+  3e:	01                   	.byte 0x1
 
-thanks,
 
- - Joel
+Tested on:
+
+commit:         964c2da7 btrfs: make buffered write to copy one page a..
+git tree:       https://github.com/adam900710/linux.git subpage_read
+console output: https://syzkaller.appspot.com/x/log.txt?x=1296b7d0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3ec5955a0d4f6ede
+dashboard link: https://syzkaller.appspot.com/bug?extid=cee29f5a48caf10cd475
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
