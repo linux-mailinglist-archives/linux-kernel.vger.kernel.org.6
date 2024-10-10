@@ -1,110 +1,273 @@
-Return-Path: <linux-kernel+bounces-359992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BBA99934F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:06:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DFB999350
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B401F2465D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89581F24CD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADF21CF2B3;
-	Thu, 10 Oct 2024 20:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVkI+1A4"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBD91CF2B3;
+	Thu, 10 Oct 2024 20:06:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325731B6539;
-	Thu, 10 Oct 2024 20:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E751CDFC3;
+	Thu, 10 Oct 2024 20:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728590777; cv=none; b=Xk1LRHSgrDUfqmz5xUu1tNyHS/RJ7U2V32uBPoLzqyPWnm2UX2srAb2zE59U9pExmm4Jeup/qN4b46ZE7V2aLRp9afztpNGODUJdMvr5TrYy2e9xRpPOZvm12xUFGP+gq+8zXyOS9mAwljeHBnj/X0FNAd1vNdJ6q8Z7nkxRExw=
+	t=1728590790; cv=none; b=pmFsmQI9HMfAJxWlDyhK95/76Kd8q4XQf2YXAX3orVsvfPycIsbtFV1wjv4DBOC5P0WQtyrAUgyvZ0TuPuOV9mobylw/BPuL3A/z5W5fBhEpdaJWIYBp8jqKz7gxTBqzz5ujOZrxIkRQkCDF7JFAKYQkd3QaxpUBlJXiY2DHy3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728590777; c=relaxed/simple;
-	bh=NzCpZm8/mEuC6Rq3qXHG9eoMATiEF1drnN/nAnqXnv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uZT8xIVDhXdr+ZI+rdRlOOMAutEAB1YpyNzLaz1+Jgq2XV5G6VogBsgnraETD9WCmAJylEtxzlpshgzpjgSLnwngkWo32t2aPf65H1gW4GCKq95nJNkaFQfgxdWBfP9dne7f5ySEHRAYiVTHMqFm1WKVM41jCWuu7TEFv/8iRpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVkI+1A4; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e2e41bd08bso16180907b3.2;
-        Thu, 10 Oct 2024 13:06:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728590775; x=1729195575; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QCJw2Q36leTBqr9TQNzAFnVCjMfNwHV5BxGjqHBBZ+g=;
-        b=CVkI+1A49yC8IyZVo+BOJlvBBxP2Adcfy9qcU2gzPyp2mnkr015cYXorVsEI1Uz0+R
-         p7oBKHPJepd9sK3EYu4ueFO1g9Dp7n3iDV+9sloCMMYCrCdOIJ0+eP8Et+AkPuFwJNKO
-         I7EOQhDpTFERvnsCoWIop4KmqvOir7dkPuiIjDq3KqpSqZA8D0edc7jVBPFA46AfUZm8
-         9XOnqy8awVHi9/Ep78QMWKaO6RGs0cd5txM/izCJaORa34nZ+ALw0SRssA9V9pcRjQrk
-         Tozsk2NUhpJRlxbYLapU/ig2fakQJlVt0+ggyg0umhjRSWDWDYXUaZhB8CG1msU1IY7b
-         uohA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728590775; x=1729195575;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QCJw2Q36leTBqr9TQNzAFnVCjMfNwHV5BxGjqHBBZ+g=;
-        b=N46j4eZ+HuKhiO/aWr7YYfx6K2KGnkEv2yiJXWtnhzFs6ZTLdPNeKKbAZRgLufEVi/
-         k//A6HjDx0hpxrPjJRMDz0JPyWjSZ4UxGhfHlplAycQ+KEPFNX7L6Gyw6Wk55ttC+NaI
-         xTvtt8U13jnz+2+CwV62Tc/pRPS0VqcbIxq8GptjFym7Z1Nc3gzgaUe3O2XmzhgknGRP
-         iDNwIr6jWkYq1a/NtO9wJ5HqorCOeT5dZQnQsnP5OSdGB4bfyvotLLArNs8+/BlMi8MM
-         IBm3e8gjC8X9Mf9uNlGlO6HwfOh3H0u5KTX+8pJ+41EVEy86aNF1GMIqDu8Y7LGJS3w0
-         zkLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMYHPFF/B5Ijn8FqUEYh8DuiZ5bTxuMsGx77tmCkaAjS09MrQLC28htLIlLl7+/thteCSLC8dZ0Weg5Zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywxwhZJFMSheVdjRiJG7xNKOhXcsfhRmyf4T/Dyyn39sflSI98
-	QIXhBpm9nKT4zTO8w68zlFPGcnhpKOOc/hO9y1fdIOj0OdeekpPjYnCEUg==
-X-Google-Smtp-Source: AGHT+IF0whqmEoxPIlb0uKeib7Itmz63HnvLzOTnokKadAu7f0WJBQ6tWnjmptJ3gvmvS7hZ3UrB+g==
-X-Received: by 2002:a05:690c:250e:b0:6e2:12e5:35b4 with SMTP id 00721157ae682-6e3471e8d16mr1444227b3.0.1728590775127;
-        Thu, 10 Oct 2024 13:06:15 -0700 (PDT)
-Received: from ?IPV6:2600:1700:6165:1c10:b99e:4710:9fa7:9721? ([2600:1700:6165:1c10:b99e:4710:9fa7:9721])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332c27a49sm3310677b3.88.2024.10.10.13.06.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 13:06:14 -0700 (PDT)
-Message-ID: <dd2d6338-b763-48ad-be9c-aed7107b201d@gmail.com>
-Date: Thu, 10 Oct 2024 16:06:11 -0400
+	s=arc-20240116; t=1728590790; c=relaxed/simple;
+	bh=5EnkSkJVhfd1OGMGM54oHPSo3LTia12UJMp8e7AmIOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sQiDkEdvScY+wNADJ1S/InVxDPbmLsiTQauIZ35B+anZ9VLYbMokMbPA5UnoN9IsXVU9ZPz8SlQTnjhS0gqzcEi42rqFZABC5TshkoYmCinsn4c8peb1+RSXHh+LPobQSIZ0B5aHeJ5AjZD4xFBu2Bk/l/0Y6uQQUAGYml+GLFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4F3CC4CECC;
+	Thu, 10 Oct 2024 20:06:29 +0000 (UTC)
+Date: Thu, 10 Oct 2024 16:06:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: tglozar@redhat.com
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jwyatt@redhat.com, jkacur@redhat.com
+Subject: Re: [PATCH RESEND v3 3/6] rtla/utils: Add idle state disabling via
+ libcpupower
+Message-ID: <20241010160637.4340b269@gandalf.local.home>
+In-Reply-To: <20241004095014.2492813-4-tglozar@redhat.com>
+References: <20241004095014.2492813-1-tglozar@redhat.com>
+	<20241004095014.2492813-4-tglozar@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] linux-kbuild: fix: implement choice for kconfigs
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org, javier.carrasco.cruz@gmail.com
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
- <20240913171205.22126-6-david.hunter.linux@gmail.com>
- <CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4J-vCZZN=g@mail.gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4J-vCZZN=g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/23/24 23:46, Masahiro Yamada wrote:
+On Fri,  4 Oct 2024 11:50:11 +0200
+tglozar@redhat.com wrote:
+
+> From: Tomas Glozar <tglozar@redhat.com>
 > 
-> This is ugly.
-> Please do not use the temp file.
+> Add functions to utils.c to disable idle states through functions of
+> libcpupower. This will serve as the basis for disabling idle states
+> per cpu when running timerlat.
 > 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/src/utils.c | 150 +++++++++++++++++++++++++++++++++
+>  tools/tracing/rtla/src/utils.h |  13 +++
+>  2 files changed, 163 insertions(+)
+> 
+> diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/utils.c
+> index 9ac71a66840c..6ae084fdedf9 100644
+> --- a/tools/tracing/rtla/src/utils.c
+> +++ b/tools/tracing/rtla/src/utils.c
+> @@ -4,6 +4,9 @@
+>   */
+>  
+>  #define _GNU_SOURCE
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +#include <cpuidle.h>
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+>  #include <dirent.h>
+>  #include <stdarg.h>
+>  #include <stdlib.h>
+> @@ -519,6 +522,153 @@ int set_cpu_dma_latency(int32_t latency)
+>  	return fd;
+>  }
+>  
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +static unsigned int **saved_cpu_idle_disable_state;
+> +static size_t saved_cpu_idle_disable_state_alloc_ctr;
+> +
+> +/*
+> + * save_cpu_idle_state_disable - save disable for all idle states of a cpu
+> + *
+> + * Saves the current disable of all idle states of a cpu, to be subsequently
+> + * restored via restore_cpu_idle_disable_state.
+> + *
+> + * Return: idle state count on success, negative on error
+> + */
+> +int save_cpu_idle_disable_state(unsigned int cpu)
+> +{
+> +	unsigned int nr_states;
+> +	unsigned int state;
+> +	int disabled;
+> +	int nr_cpus;
+> +
+> +	nr_states = cpuidle_state_count(cpu);
+> +
+> +	if (nr_states == 0)
+> +		return 0;
+
+If nr_states is zero, this returns 0 without ever allocating
+saved_cpu_idle_disable_state.
 
 
-Understood. I found a way to do it that is much more in line with the 
-style of the script and it avoids using the temp file. Oddly enough it 
-involves changing less lines of code as well. I will be submitting the 
-changes soon. Right now, I am just finishing up the change logs for all 
-the patches.
+> +
+> +	if (saved_cpu_idle_disable_state == NULL) {
+> +		nr_cpus = sysconf(_SC_NPROCESSORS_CONF);
+> +		saved_cpu_idle_disable_state = calloc(nr_cpus, sizeof(unsigned int *));
+> +		if (!saved_cpu_idle_disable_state)
+> +			return -1;
+> +	}
+> +
+> +	saved_cpu_idle_disable_state[cpu] = calloc(nr_states, sizeof(unsigned int));
+> +	if (!saved_cpu_idle_disable_state[cpu])
+> +		return -1;
+> +	saved_cpu_idle_disable_state_alloc_ctr++;
+> +
+> +	for (state = 0; state < nr_states; state++) {
+> +		disabled = cpuidle_is_state_disabled(cpu, state);
+> +		if (disabled < 0)
+> +			return disabled;
+> +		saved_cpu_idle_disable_state[cpu][state] = disabled;
+> +	}
+> +
+> +	return nr_states;
+> +}
+> +
+> +/*
+> + * restore_cpu_idle_disable_state - restore disable for all idle states of a cpu
+> + *
+> + * Restores the current disable state of all idle states of a cpu that was
+> + * previously saved by save_cpu_idle_disable_state.
+> + *
+> + * Return: idle state count on success, negative on error
+> + */
+> +int restore_cpu_idle_disable_state(unsigned int cpu)
+> +{
+> +	unsigned int nr_states;
+> +	unsigned int state;
+> +	int disabled;
+> +	int result;
+> +
+> +	if (!saved_cpu_idle_disable_state)
+> +		return -1;
 
-My question here is "Is there a general rule as to why the first version 
-was bad?" For example, is it considered bad practice to make temporary 
-files?
+This returns -1 even if nr_states is zero. That is,
+save_cpu_idle_disable_state() can return success, but this restore will
+return failure.
 
-Thanks,
-David Hunter
+-- Steve
+
+
+> +
+> +	nr_states = cpuidle_state_count(cpu);
+> +
+> +	if (nr_states == 0)
+> +		return 0;
+> +
+> +	for (state = 0; state < nr_states; state++) {
+> +		if (!saved_cpu_idle_disable_state[cpu])
+> +			return -1;
+> +		disabled = saved_cpu_idle_disable_state[cpu][state];
+> +		result = cpuidle_state_disable(cpu, state, disabled);
+> +		if (result < 0)
+> +			return result;
+> +	}
+> +
+> +	free(saved_cpu_idle_disable_state[cpu]);
+> +	saved_cpu_idle_disable_state[cpu] = NULL;
+> +	saved_cpu_idle_disable_state_alloc_ctr--;
+> +	if (saved_cpu_idle_disable_state_alloc_ctr == 0) {
+> +		free(saved_cpu_idle_disable_state);
+> +		saved_cpu_idle_disable_state = NULL;
+> +	}
+> +
+> +	return nr_states;
+> +}
+> +
+> +/*
+> + * free_cpu_idle_disable_states - free saved idle state disable for all cpus
+> + *
+> + * Frees the memory used for storing cpu idle state disable for all cpus
+> + * and states.
+> + *
+> + * Normally, the memory is freed automatically in
+> + * restore_cpu_idle_disable_state; this is mostly for cleaning up after an
+> + * error.
+> + */
+> +void free_cpu_idle_disable_states(void)
+> +{
+> +	int cpu;
+> +	int nr_cpus;
+> +
+> +	if (!saved_cpu_idle_disable_state)
+> +		return;
+> +
+> +	nr_cpus = sysconf(_SC_NPROCESSORS_CONF);
+> +
+> +	for (cpu = 0; cpu < nr_cpus; cpu++) {
+> +		free(saved_cpu_idle_disable_state[cpu]);
+> +		saved_cpu_idle_disable_state[cpu] = NULL;
+> +	}
+> +
+> +	free(saved_cpu_idle_disable_state);
+> +	saved_cpu_idle_disable_state = NULL;
+> +}
+> +
+> +/*
+> + * set_deepest_cpu_idle_state - limit idle state of cpu
+> + *
+> + * Disables all idle states deeper than the one given in
+> + * deepest_state (assuming states with higher number are deeper).
+> + *
+> + * This is used to reduce the exit from idle latency. Unlike
+> + * set_cpu_dma_latency, it can disable idle states per cpu.
+> + *
+> + * Return: idle state count on success, negative on error
+> + */
+> +int set_deepest_cpu_idle_state(unsigned int cpu, unsigned int deepest_state)
+> +{
+> +	unsigned int nr_states;
+> +	unsigned int state;
+> +	int result;
+> +
+> +	nr_states = cpuidle_state_count(cpu);
+> +
+> +	for (state = deepest_state + 1; state < nr_states; state++) {
+> +		result = cpuidle_state_disable(cpu, state, 1);
+> +		if (result < 0)
+> +			return result;
+> +	}
+> +
+> +	return nr_states;
+> +}
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+> +
+>  #define _STR(x) #x
+>  #define STR(x) _STR(x)
+>  
+> diff --git a/tools/tracing/rtla/src/utils.h b/tools/tracing/rtla/src/utils.h
+> index d44513e6c66a..e439db7fc848 100644
+> --- a/tools/tracing/rtla/src/utils.h
+> +++ b/tools/tracing/rtla/src/utils.h
+> @@ -64,6 +64,19 @@ int set_comm_sched_attr(const char *comm_prefix, struct sched_attr *attr);
+>  int set_comm_cgroup(const char *comm_prefix, const char *cgroup);
+>  int set_pid_cgroup(pid_t pid, const char *cgroup);
+>  int set_cpu_dma_latency(int32_t latency);
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +int save_cpu_idle_disable_state(unsigned int cpu);
+> +int restore_cpu_idle_disable_state(unsigned int cpu);
+> +void free_cpu_idle_disable_states(void);
+> +int set_deepest_cpu_idle_state(unsigned int cpu, unsigned int state);
+> +static inline int have_libcpupower_support(void) { return 1; }
+> +#else
+> +static inline int save_cpu_idle_disable_state(unsigned int cpu) { return -1; }
+> +static inline int restore_cpu_idle_disable_state(unsigned int cpu) { return -1; }
+> +static inline void free_cpu_idle_disable_states(void) { }
+> +static inline int set_deepest_cpu_idle_state(unsigned int cpu, unsigned int state) { return -1; }
+> +static inline int have_libcpupower_support(void) { return 0; }
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+>  int auto_house_keeping(cpu_set_t *monitored_cpus);
+>  
+>  #define ns_to_usf(x) (((double)x/1000))
+
 
