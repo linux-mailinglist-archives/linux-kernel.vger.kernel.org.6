@@ -1,197 +1,124 @@
-Return-Path: <linux-kernel+bounces-358746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2BA998312
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:01:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B102D998317
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB611281977
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09701C219C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F4E1BDABE;
-	Thu, 10 Oct 2024 10:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtFV11m8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70A21B5EBC;
+	Thu, 10 Oct 2024 10:02:53 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2151BBBF7;
-	Thu, 10 Oct 2024 10:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B3F36D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 10:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728554491; cv=none; b=oo7YI8S3lBvoamYQXU7nIWUDBY3iaKfopSCXi0/Nx7ul5LTYNZ6s/mOY42EChBPqgn+8iRZr070MTCyBpUGo/D+z1p/2vPp1aBgozeQ8AwUHf9m7KHJsRYiPqaHPxgR2+nzdIx5MMBPbPCP+FoSVzOj08Y/81dK1i0vWULjyZGg=
+	t=1728554573; cv=none; b=pi3Ih/4lqu+SLA6+0lPb62kdEhoiK/3X7WM1wfI+8VT1EWXjC51iq43GpjZEFl3mrbQfeBbJGcM2lIiDXFHaCN1n+k0Kea7eln/FLDjCWC4tKC1hBYZNdQBvZxMu8a63hGC3NJZcVq04aGi1xaHxHZtGRjV40Ha3XHIAg7Zvz7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728554491; c=relaxed/simple;
-	bh=n5Zp6gdmhvbmwbmdIrkDEzYVm1om2vT3AoMt9Vajij4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OokEln9R174FooqXNNWoU1JPUrpF3Ct5ofkjKxk/ubcb7QqgFj0cbdF6AoDCzk5vrNOFb3ObFafUVI0Bj6bE0kLGjZNZRgchNOZBBCpyNhTro4P+Gqkcc5/hetViKas96H2Kez0mXehIFkLoqYesIzlbiUeXLN1qSZwnt3e/90c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtFV11m8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209BBC4CED5;
-	Thu, 10 Oct 2024 10:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728554491;
-	bh=n5Zp6gdmhvbmwbmdIrkDEzYVm1om2vT3AoMt9Vajij4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CtFV11m87dWMe3LVi+JsFuB7ZzOnjlXjt8cUoi82axO6RS/AmojQcVncb98jaCvZi
-	 m9XyLRzTFf+EobnMJCBvZmdP8if3+rBMOTZqfWcOyCugCQ54KK+pPTFpht6l5qoYqJ
-	 pIFrjpyZku6iDRalEMdZLxnsOAeIUXMg+DfwBpEgl+L9a4lRCJsEN+ae88Y+r6E1Aq
-	 PXNqxrap7OMyHcfhzkz/w8EZthXSrioxvAgv4essfNT1B3SYJxJlyGm+1KXxjpPTMH
-	 oXOkOHNzfpINdR4fAIlEAw3gqVHyNog7jE9xSNLBjwz17UB4zTqJA8lcY+3GegsKEy
-	 37QQFiPN84MMw==
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e0719668e8so289496b6e.0;
-        Thu, 10 Oct 2024 03:01:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzQcvbsG6QTLdOE2ll7j8UYX1JRnKMSmhnRkV1r7fQmDLZou8UoH76pn87d3SeM3Ig8sQ65tDxNUl8@vger.kernel.org, AJvYcCWwF2YaSyvwl/7mmDcw4uYljyBCSMcTyz4rQuK/Q648j8m6Y3gRQH9WM63/2H5g6be1hhsAESmNWHfqpCzI@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb5On8fK5aJ/IirDbt6UuaY8TQsmUtOXvz5ddSJ3THI60fw+zS
-	h737+4s6Y6Gdp07dmG6ZcG8YMQ+TxM1LFBCE1fedg6KsQXPU4zOXxCr36KYZQ6fSrLudV6cvMn4
-	t7AdAVy6A3jVsZCkfLZNH6zkGf9c=
-X-Google-Smtp-Source: AGHT+IFxafHo+JyQ1hf/GPawKw1+TkTDTc5Gg6D2CVYitq2SPIK1psVljYw1UzvQW0QSFGLKeUwpCR0Umn5/+C8P+uE=
-X-Received: by 2002:a05:6871:686:b0:277:7633:f50b with SMTP id
- 586e51a60fabf-288342dd615mr3712561fac.16.1728554490275; Thu, 10 Oct 2024
- 03:01:30 -0700 (PDT)
+	s=arc-20240116; t=1728554573; c=relaxed/simple;
+	bh=1HGiVbkIo5LnfhKf7Went0Udy39lKHfx2HU7N7yt8Sc=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=P0HegD/1sZ0jQUhIRALFE5wQjzbKQx/kXgXCWiAbDIOYxdd9AbLUXUccQilbfMTmYOXh12BiBko7znYaiaknlfaSP2PmMCpU2lkTAW0Ixqkgn6k0KWUwq61XNgpWhBsVDnkhv+4PYhaKojOabZPnJl6EbqopFLTTWv/YTq+LLW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XPQJh4NN8z1SCPS;
+	Thu, 10 Oct 2024 18:01:40 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id B04411A0188;
+	Thu, 10 Oct 2024 18:02:47 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 18:02:47 +0800
+Subject: Re: [patch 24/25] debugobjects: Refill per CPU pool more agressively
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+CC: Waiman Long <longman@redhat.com>
+References: <20241007163507.647617031@linutronix.de>
+ <20241007164914.439053085@linutronix.de>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <73661d9d-0fb4-08b8-aea9-e54fffba4027@huawei.com>
+Date: Thu, 10 Oct 2024 18:02:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004204845.970951-1-arnd@kernel.org> <CAJZ5v0immr4obYsu2qNKKY2DKxzLDR1a=6B4xY_YTHfPF5kADg@mail.gmail.com>
- <641307d3-3fe5-401a-ba22-96ad5ef25fed@app.fastmail.com> <CAJZ5v0jBY91TDXPMfmLPeoDLeQCKFD+sHBgkOwPusQAMpZJc6A@mail.gmail.com>
- <a06460f0-2779-40a6-bb1e-5b1a904fcca5@app.fastmail.com>
-In-Reply-To: <a06460f0-2779-40a6-bb1e-5b1a904fcca5@app.fastmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 10 Oct 2024 12:01:16 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iW5d=gx_7aDge0_0sR5mSC1j=7ew+Mj8GDgcxQ3jQgpg@mail.gmail.com>
-Message-ID: <CAJZ5v0iW5d=gx_7aDge0_0sR5mSC1j=7ew+Mj8GDgcxQ3jQgpg@mail.gmail.com>
-Subject: Re: [PATCH] acpi: allow building without CONFIG_HAS_IOPORT
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
-	Borislav Petkov <bp@alien8.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241007164914.439053085@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On Thu, Oct 10, 2024 at 7:40=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Wed, Oct 9, 2024, at 19:40, Rafael J. Wysocki wrote:
-> > On Mon, Oct 7, 2024 at 9:23=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wr=
-ote:
-> >> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> >> index 61ca4afe83dc..132357815324 100644
-> >> --- a/drivers/acpi/Makefile
-> >> +++ b/drivers/acpi/Makefile
-> >> @@ -41,7 +41,7 @@ acpi-y                                +=3D resource.=
-o
-> >>  acpi-y                         +=3D acpi_processor.o
-> >>  acpi-y                         +=3D processor_core.o
-> >>  acpi-$(CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC) +=3D processor_pdc.o
-> >> -acpi-y                         +=3D ec.o
-> >> +acpi-$(CONFIG_HAS_IOPORT)      +=3D ec.o
-> >>  acpi-$(CONFIG_ACPI_DOCK)       +=3D dock.o
-> >>  acpi-$(CONFIG_PCI)             +=3D pci_root.o pci_link.o pci_irq.o
-> >>  obj-$(CONFIG_ACPI_MCFG)                +=3D pci_mcfg.o
-> >> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-> >> index 16917dc3ad60..535d6a72ce1b 100644
-> >> --- a/drivers/acpi/bus.c
-> >> +++ b/drivers/acpi/bus.c
-> >> @@ -1356,7 +1356,8 @@ static int __init acpi_bus_init(void)
-> >>          * Do that before calling acpi_initialize_objects() which may =
-trigger EC
-> >>          * address space accesses.
-> >>          */
-> >> -       acpi_ec_ecdt_probe();
-> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
-> >> +               acpi_ec_ecdt_probe();
-> >>
-> >>         status =3D acpi_enable_subsystem(ACPI_NO_ACPI_ENABLE);
-> >>         if (ACPI_FAILURE(status)) {
-> >> @@ -1391,7 +1392,8 @@ static int __init acpi_bus_init(void)
-> >>          * Maybe EC region is required at bus_scan/acpi_get_devices. S=
-o it
-> >>          * is necessary to enable it as early as possible.
-> >>          */
-> >> -       acpi_ec_dsdt_probe();
-> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
-> >> +               acpi_ec_dsdt_probe();
-> >
-> > The above two changes mean that it is not necessary to compile either
-> > acpi_ec_ecdt_probe() or acpi_ec_dsdt_probe() at all if
-> > CONFIG_HAS_IOPORT is not enabled.
->
-> Correct, this is a result of removing ec.o from the list of objects.
->
-> >>         pr_info("Interpreter enabled\n");
-> >>
-> >> @@ -1464,7 +1466,8 @@ static int __init acpi_init(void)
-> >>         acpi_arm_init();
-> >>         acpi_riscv_init();
-> >>         acpi_scan_init();
-> >> -       acpi_ec_init();
-> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
-> >> +               acpi_ec_init();
-> >
-> > And this means that the whole EC driver is not going to work at all the=
-n.
->
-> Correct. The way I read ec.c it makes no sense if acpi_ec_write_cmd()
-> and acpi_ec_write_data() don't actually access the registers. Is
-> there anything in ec.c that still makes sense without port I/O?
->
-> >> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor=
-_perflib.c
-> >> index 4265814c74f8..8be453d89ef8 100644
-> >> --- a/drivers/acpi/processor_perflib.c
-> >> +++ b/drivers/acpi/processor_perflib.c
-> >> @@ -455,7 +455,8 @@ int acpi_processor_pstate_control(void)
-> >>  {
-> >>         acpi_status status;
-> >>
-> >> -       if (!acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_contro=
-l)
-> >> +       if (!IS_ENABLED(CONFIG_HAS_IOPORT) ||
-> >> +           !acpi_gbl_FADT.smi_command || !acpi_gbl_FADT.pstate_contro=
-l)
-> >>                 return 0;
-> >
-> > All of the existing callers of acpi_processor_pstate_control() are x86
-> > which has CONFIG_HAS_IOPORT AFAICS.
-> >
-> > And if you care about the code size, acpi_processor_notify_smm() can
-> > go away for !CONFIG_HAS_IOPORT too.
-> >
-> >>         pr_debug("Writing pstate_control [0x%x] to smi_command [0x%x]\=
-n",
-> >> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> >> index 7ecc401fb97f..9d5e6dd542bf 100644
-> >> --- a/drivers/acpi/scan.c
-> >> +++ b/drivers/acpi/scan.c
-> >> @@ -2293,7 +2293,8 @@ static int acpi_bus_attach(struct acpi_device *d=
-evice, void *first_pass)
-> >>         if (device->handler)
-> >>                 goto ok;
-> >>
-> >> -       acpi_ec_register_opregions(device);
-> >> +       if (IS_ENABLED(CONFIG_HAS_IOPORT))
-> >> +               acpi_ec_register_opregions(device);
-> >
-> > I'd rather have an empty stub of acpi_ec_register_opregions() for
-> > !CONFIG_HAS_IOPORT instead.
->
-> Fair enough. Should I add stubs for all the global EC functions then?
 
-Yes, please.
 
-> I also wonder if there should be a separate CONFIG_ACPI_EC symbol
-> that allows the EC logic to be turned off on non-x86 architectures
-> even when HAS_IOPORT is otherwise enabled.
+On 2024/10/8 0:50, Thomas Gleixner wrote:
+> Right now the per CPU pools are only refilled when they become
+> empty. That's suboptimal especially when there are still non-freed objects
+> in the to free list.
+> 
+> Check whether an allocation from the per CPU pool emptied a batch and try
+> to allocate from the free pool if that still has objects available.
+> 
+>    	    kmem_cache_alloc()	kmem_cache_free()
+> Baseline:   295k		245k
+> Refill:	    225k		173k
 
-Yes, CONFIG_ACPI_EC would make sense IMV.
+Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
 
-Thanks!
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  lib/debugobjects.c |   18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -255,6 +255,24 @@ static struct debug_obj *pcpu_alloc(void
+>  
+>  		if (likely(obj)) {
+>  			pcp->cnt--;
+> +			/*
+> +			 * If this emptied a batch try to refill from the
+> +			 * free pool. Don't do that if this was the top-most
+> +			 * batch as pcpu_free() expects the per CPU pool
+> +			 * to be less than ODEBUG_POOL_PERCPU_SIZE.
+> +			 */
+> +			if (unlikely(pcp->cnt < (ODEBUG_POOL_PERCPU_SIZE - ODEBUG_BATCH_SIZE) &&
+> +				     !(pcp->cnt % ODEBUG_BATCH_SIZE))) {
+
+It seems better to swap the contents on both sides of &&. Because the probability
+of the current right side is lower.
+
+> +				/*
+> +				 * Don't try to allocate from the regular pool here
+> +				 * to not exhaust it prematurely.
+> +				 */
+> +				if (pool_count(&pool_to_free)) {
+> +					guard(raw_spinlock)(&pool_lock);
+> +					pool_move_batch(pcp, &pool_to_free);
+> +					pcpu_refill_stats();
+> +				}
+> +			}
+>  			return obj;
+>  		}
+>  
+> 
+> .
+> 
+
+-- 
+Regards,
+  Zhen Lei
 
