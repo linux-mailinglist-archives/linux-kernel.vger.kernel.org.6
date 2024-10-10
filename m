@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-359003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3290998633
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11BE0998636
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A9F2818D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33EA11C2263F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A3C1C7B6E;
-	Thu, 10 Oct 2024 12:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2DC1C57AC;
+	Thu, 10 Oct 2024 12:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="Es4H6MqN";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="Pq6Gr/Cr"
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="gI5MTzme";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="B1pLhETm"
 Received: from smtpout147.security-mail.net (smtpout147.security-mail.net [85.31.212.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F281C57AF
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473251C57A3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.147
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728563823; cv=fail; b=XJM1WDsuKEDjq3RJ8FzjMTGR3yMqCWMNjhO9gfRmkFeE5nT2stUObHVN+dovZOY5+yrQLb6L/8XI/E+8CHkmvXEokjUphDB/x+Xq3t4rUAs2vhCJV75fYYLMi7EjuDDK4uIoGJkxj0ERdJXGo3h3mjmtWnTgQuy3aG6cdi73Y8M=
+	t=1728563843; cv=fail; b=O4Wh1crjBO3SEVlu5qTHg6tlfKiXA8ZJ5ooWc8LG7R92f4EyNlLKiwwPT9ULnBhykUvloCyZcKFYyRBKQjSJU75udvIy0KmC7LYtSdoBJPPPzaHzAy1sHjtk4KGOCxT4FrKFmQS+Qds2xkALhIUwC2UpKaeZcv4Om/5RhinY+sw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728563823; c=relaxed/simple;
-	bh=RlQzT0U7eOx8U5TfAfIuFQsaaIHteJk0XXQbWyLB7W8=;
+	s=arc-20240116; t=1728563843; c=relaxed/simple;
+	bh=Wh24u107cI7PD08KmHzABZsw+yf/A0fEJI8uXE8dCmw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e5Upb6pvRkFFVC1Hc+D7yJ943OT0Zn/1lCYepDYjw1IWXoTjWkNDJbIz+Ds/w9eLN3vkBBEhrn6vxz+yQxEQmmq7bBncUxu1xHF1bPP7SxM4t6TjUVnZh/vChgq5Sp3Wdds8qi375avd0QassO9Vc5UftvWH+bKce7bbi3CTmzA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=Es4H6MqN; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=Pq6Gr/Cr reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.147
+	 MIME-Version:Content-Type; b=N/viBA0xfmRdDlKk7n8vlsXBJXucVvW0+4a7AmpqvYuZoeuI6z1321kh7l3dc+2JiA4Hb2Yp1nohviPJzCx2ay92yLpT76sk4++2iGSYpYlDB4RssXBqFbRcZcadJfkGQaAPjafpsJQfLDL7uUCZksLn0yuyDrPgQSL1zJOsoOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=gI5MTzme; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=B1pLhETm reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
 Received: from localhost (fx409.security-mail.net [127.0.0.1])
-	by fx409.security-mail.net (Postfix) with ESMTP id B34E934975F
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:36:50 +0200 (CEST)
+	by fx409.security-mail.net (Postfix) with ESMTP id 9379D3499B4
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:36:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1728563810;
-	bh=RlQzT0U7eOx8U5TfAfIuFQsaaIHteJk0XXQbWyLB7W8=;
+	s=sec-sig-email; t=1728563811;
+	bh=Wh24u107cI7PD08KmHzABZsw+yf/A0fEJI8uXE8dCmw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Es4H6MqNxQc5UAs/5/2V80UKUPaziMge6iiYnlRI30pbdaIgmKxrcTkMMqDIznI4J
-	 pVgfzapIKYFK4yuk5RoiIlHhVVio7NVHqdC7gHN+YdpqMbfea1+Wj+VvYOYRryIiTy
-	 PN+hgMr2B/mSdzqfpttLzsbm9iPN7doekvDL3VTc=
+	b=gI5MTzmeaBSYdmrmgP94DIO/shHi4FF8YNKwbYb5QHeWgcUDnN30jZ3xjTEWs2QPF
+	 /MT5keuoN7CvucY9TIucK/2oxk7Mloj22434eMlYR14l4lvq9xOEcLzb502UVwjzu1
+	 A9pO8qeTDyzg6Knqu8d5kvVkyWTOhBsaH1EuufRU=
 Received: from fx409 (fx409.security-mail.net [127.0.0.1]) by
- fx409.security-mail.net (Postfix) with ESMTP id 0F71334948B; Thu, 10 Oct
- 2024 14:36:50 +0200 (CEST)
+ fx409.security-mail.net (Postfix) with ESMTP id 4EDF734990A; Thu, 10 Oct
+ 2024 14:36:51 +0200 (CEST)
 Received: from PR0P264CU014.outbound.protection.outlook.com
- (mail-francecentralazlp17012048.outbound.protection.outlook.com
- [40.93.76.48]) by fx409.security-mail.net (Postfix) with ESMTPS id
- 24C1134934C; Thu, 10 Oct 2024 14:36:49 +0200 (CEST)
+ (mail-francecentralazlp17012054.outbound.protection.outlook.com
+ [40.93.76.54]) by fx409.security-mail.net (Postfix) with ESMTPS id
+ 72DD53495B7; Thu, 10 Oct 2024 14:36:50 +0200 (CEST)
 Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:118::6)
  by PASP264MB4625.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:435::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
- 2024 12:36:47 +0000
+ 2024 12:36:49 +0000
 Received: from PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
  ([fe80::6fc2:2c8c:edc1:f626]) by PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
  ([fe80::6fc2:2c8c:edc1:f626%4]) with mapi id 15.20.8048.013; Thu, 10 Oct
- 2024 12:36:47 +0000
-X-Secumail-id: <67e9.6707ca61.2144f.0>
+ 2024 12:36:49 +0000
+X-Secumail-id: <510f.6707ca62.6cfd0.0>
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UNNmWG69ESnumb+Vz2aQuVodEj8uoDPvklp85Nba1ooy7V38kMwA9f4pcyGCziPgx/VsMWdwrRrf3gGrGQudrl0j9yOZafHgENROOAiN2an8r0BwU70gkjopSCoVtxRO2/ZgIzUzuK00u8yaf/MsVKbEH8nCxxEIUTfdOkCpWese78MHPXOQmIJ8EAk1YHdzRPb//y8CnssgdA3TBA+xU9ekFW6fb/nQP+Ylu+vgRJqcsCvfNU/Gb3nL/tmG+yFvIRDKfaJEeLOSqQgaK+eioYApofk5v5KY48XPtCGiiGhFtI2OExuQGJgzz3nYkAC1rXItEdsHbvfMDUZ9nWvc7Q==
+ b=MCZVfS/UwN0Cd+AJuu8a3nWWli/ZV6HRjK8l8eCQO8+vNw2p3W2vxt3GLbpapaPR4KYDr0UZyUm0CGm9134NnMhg5tUPPBg8l0eZmKGYsh009TS0H6RUu9xfGWUvScIlY5Pf83zqwtBcn4xKU9lahqTgGuTPrCL67r+L0aqS0x11coG8CghrzcuISv9Hfxg/PtolIVt97PCd1TJhCUOtEjfhgBBDLYJXAGvoKPS9selLfuZXb81lDus2j1bsuyiH8KL5UPcZc3jyyiM8v1VU9oy3pMAjfNlxooe/t7GiULU3ZqXmGthvNpBIJYiZR8KBW1lyJ3cmitBmD5z7V6PmVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microsoft.com; s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y8JUSEWpLlyNo7vsdafD4VUsr+z3yFf3OS1Tc7P2A+E=;
- b=eyPPYfNakN3Vz+7nJkCNMl8+Kav87qUf+0trXex8A9qduV4KK0amwpE9Th0HHKwQbavAzVtC0tJdz0KvVb5EdS2YGBwpPVoaRGRwHp2lETwiDWT7dswMxC7mUN/pBfdmgIjIRGXku3wrh4/9hKPGahHfv9PsIM28h3HD+rsca6kxbLxKpijtkjx7HVcs2M8HkTv46xgPu/W9W6ZIhlrwVKcJToAWWWgv5kiTRllowLV/5Pe7uwvWsVWydZ5VWcR3XVQBMDGVljLpo8PUoh8+6iohrnmUu1jYIBHKkWdK67U4tdDIfqKWJXCDXbYhdpkuNYbxQ3tLNLaqw0O0ns3sgQ==
+ bh=NyagxVLOGfirvc9f6tu4WyEJve+5URvX1q0tll4fckI=;
+ b=ZfbWtLj8b+enF0KT8Qw+Y5q6+VUqq+m/8Hf39UfQePkrHRPit7X8BfKKLTf2D0UEAmXh8Qt3K3UM6HjmNXC/frTlApNb1zcEwFGR9t/Zyns0++xrq0UYkbj1XnOC/fyqKgkhtk5is3yvLevQy6zVgQrKkQ6KJL/67fFk2BiNiECRUtcIMCTuetD70DYDajqbhA4uO+4zhYtZeJauPy/OKTvAbbvhl9fHBj9Nezxae0xpva+Fsyp8duajErsdqrRjv6/0ygl3HxXgbyDd5sf+HxPyoiqzWC28mTLvMs8ZFhH7tFV7OWiXRPCMoFb33foBfbuuTPAbpViFdrkqDxgqgA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
  header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y8JUSEWpLlyNo7vsdafD4VUsr+z3yFf3OS1Tc7P2A+E=;
- b=Pq6Gr/CrE6hVbjkNRSlEefuu/G1iBUMBjiWEH+n4A68YgYqe/h0tkd/g30aCUVJr33k/4Un61NMqnVvz2VyrIkpeu4dAUAswyiDXcQbjNbIXGUSCtQCoTgfuF+CIQh18TMu3W6BkWz/L8BdjJr5bdojqFoXHiBHptkUz8gmwd0o0ivSVj4M6MVmrViuPDntFjy/B+cVe05XmLzC3LjDifjV8CDYIoH17nPTTC7HVkRhFny2dufaHMnfN19+6wf64TjdD8212BrOgtuJDOjd4LC7pBi2KpBXTleiQQi626dqL2/MBmR5YIrs/SuD7k647D03JWfj4dYYTK2zl5ute2A==
+ bh=NyagxVLOGfirvc9f6tu4WyEJve+5URvX1q0tll4fckI=;
+ b=B1pLhETmFkOqJtArgL7b6s1fji/fMncwG81LBVtM0RqOiXv5uXJM8w4IHir4eIepKhTeiqQxogSeh87DrMpiLe2B6dTL9kQwuPtsaQebT6jlyyIVC7V4TlL0sWHARzsPDgun1puVYqkKhCsWOOwUbYSbtNesXb/zmLnkiW6p13+4zv217O52oWcGVwsyVFP4GKIb1CF6aE5fwJs/2MMwfmgxRJ+4dB4MKuHq7iGjW4Zq6L8vTt50hRSUlhtJ8dVr6j1ZtBEsIPKAen96gP+6ZT6cBTB3zbs7r4a0Bw9wFpBtzyoz1AMD1LwccpjT3xpVyc7XbhbYeMJRqy8+KnQMsQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=kalrayinc.com;
 From: Julian Vetter <jvetter@kalrayinc.com>
@@ -89,9 +89,9 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
  linux-arch@vger.kernel.org, Yann Sionneau <ysionneau@kalrayinc.com>, Julian
  Vetter <jvetter@kalrayinc.com>
-Subject: [PATCH v9 2/4] arm64: Use generic IO memcpy/memset
-Date: Thu, 10 Oct 2024 14:36:25 +0200
-Message-ID: <20241010123627.695191-3-jvetter@kalrayinc.com>
+Subject: [PATCH v9 3/4] csky: Use generic IO memcpy/memset
+Date: Thu, 10 Oct 2024 14:36:26 +0200
+Message-ID: <20241010123627.695191-4-jvetter@kalrayinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241010123627.695191-1-jvetter@kalrayinc.com>
 References: <20241010123627.695191-1-jvetter@kalrayinc.com>
@@ -107,51 +107,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAYP264MB3766:EE_|PASP264MB4625:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8572b2b-2852-493a-cdc4-08dce92834c1
+X-MS-Office365-Filtering-Correlation-Id: ef1ec6fa-3031-4968-7d08-08dce92835f7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info: Aa+wed1RaGX7XuYYpYFsx4Ws3z0UeLGlaBfA1862e+hmZupL9twxd/jJcW3JH6mAsFfGIAb9gjnP5rApu1TMaQ+NN+hL+lQkAcV527qvI4Uu9t1QpqLjS1FaG3jnXRY05hflhy2Kqi+poTYuCGOkn2t1QUiK77CATt6YkfQhoVjwQXaZGq2c4uuv1n+7BWYON1fEy0A/oETZnOX/Oh8PXH8+/Q6KYW5xX/2g4ducE1SsPJjc7lP6bf/Pe3uIOv6D/z6dKQ2EXHZ1MsDIp0QaP1a5n+4br3nfPUfEOisc5feJzP9mfF9SbRwQIxid3vTQcvWeXUHZ+vhVm9XmQHrPc8ihPTifU6VbHw7SshG1cNAA/y2GJsh238OTlloPV46Mjts0ibFHfW59sDug1a+YotJf4rVjYohY0n3slf4MAAQYiFpqnmM+kpZCUNbAiHrJLJjIsK9U4QFL08AWbHPj6KaxMAfOOQI84UQAAZCEo0B7lTpnZ/69wCautalWGY9w7yfND+RHCn5VahlyXRHHYeW7jT2Q+mxkN9olOlVqsuQLijZrg35OBZAo+GoHWGDk+AwJgRYkA1halIx/q/Kr/w7eyYFbVTfAufNcfi5f9wKyj8+6QIL994z2R0RyzU/Zf7onGzay3qx4Kw2W+qVz9Lrq2YrIrRp8uMkcf/lyJE7Lydglf+MAqYjORu9dabtej20tK0+3gsSiRvnDtNKLDBZvRNaC9KPl095FqVWEVhaRt+5X6WUFIAVy2XH6quCNx4mhEyR7AFpivZdQj3H5rXve3SRDv+bVlTny4KmZsh3XKer6iGYV64OeoRr8pIJyInWvQEbFkcO8MSOmMZzNGzuGmh65XlmK6T27z1JVRfXHJnSZx8T5LzOir3COS/URCRki4kaWkq790B/27cgJHVDkKtcE9sL9osQx+eZZ8BYF4SFWHilHjWDFDqGibe6gXf9
- mnD4jysarutMTuP4tQubwXyLvNYBJgR+K2F43S9iJRXoC9bOf0CLDAauQLh8i1DfjUlinl3Am6xEgtT+iXhJl9DhH9zXlO2jWAvq/UnvrMCLXE1gtAGww7XlxG4BV6SVverMQvULUJjp4anng2JNhAy80J3tSwrU2lIO5ybey9sRLKp4w0/cJO5kmhvXwBjPD+PwSmATQ9dhhvcwBK4zX2rFQgT+RGhVBWdmEwDIqN1EkUtTICgAUR1aNTa1kzYSRCJhpX69B519Opx8ZVrJzl3cvmHuj8KokUojOZ9lXuC8aVQTIkPmLAAISTboeufIm9Gw+tBTJzB7N9gtWic64AaB/qhRPWIhQ8aAFEL14athxhB5PjNKW92ZwhNgorGPpykRwWMsbiRscqaeXcIhZ71AyDImtVM1/U1tlH2c=
+X-Microsoft-Antispam-Message-Info: YLpcjJ5Y/Go3GiPoerWhgty4x6Y8G35Nt8bZsUtb3R/qJdztyV6zS15rrPGJzYsk/rJOmaIXOK/7cFxvTy9mHO1lciZXTwLwEnSxwvgJTkUcdhqy+we7wIw7gH28wzV58zWQGClyB6aQ4tqalMXBOUAMMeJJpI9mMGr8NpDPmP/4yoZujMdHrE4hmww6J24k4eLedWxguJTlAn62glN7v72rnKWXIQmM16L1ijQaEmwGJgjVxlgqrlK5CHb3hFa0x23HnvT9bA99XcogCdnWAJawEMNYuVUKWv2DPHlcsMYrKDMSFi4+2g2ve3z+ubRrhUqFYDHBX2ycvjUcCPvl6IGkI4rp16FUFtVyjeE9j/3AE335HhjG3mNnHOZF3VeWDN0SFl7jruOGggibYF2i6WlKbniUVUc8Hcm7vaBCI9mmL8v2VTvoE+8IWDwV/OPhdvX2Q4N3b11NpROD6aTpQp7PU/iZwmNHNEf2j7e/SuyGxKOZkejynip5tDXATB35eKS/xYwTb7z4v21g0ASOcmwWmycfBv3Ro/OCj7wCpRKgojKOGUE8ba65alWVATV1SDatR/cQ5DGlnv5G/OM9M+oTSG0GGdy/mKbdsxU7qyZoqDfu1hBzKPOIIHSqhxpZUtrzOqr/uw+nAcRh9g8voP44o0fYIibNUhGosX86fdKD3K3Mpn6j37CFjIjNa2Oo8akn2LlVXUasWdYHttC8f1M2hwbZe9xNt69CiRVadEfiBMNRuA2dBY5Qb348ZYzfQ98ZuNcYx0XZ73AmdvnOrsIuS4GXBV1ZfngmQlJ9UkONCvvr8PP7HE1xUEh4lye2efNGnCXiYXVK5bCjHy0itbjoqdsDjlfFnjlvhqzAMAR8NyZgQDfro/Q8+HxoBxJXcC0lt1rF8MzKx63z8IufNEWBwkshvkGTHsk8aUvxnhWJUgRu9qtzl3z5cCUWJ3iviU4
+ D9ImkNZi60ggQqb+04qk3jJOfYRz2Kwvdcz0HQg8Am3J35K9+GF9dlDBFLdrVpiVmeRvcKy6FustzQv4Rhmvo+HAKlzPgdPMG+WrhtUDjgisrBzQkFbTrFX9Zb+TyPLh9SmmJ6f3BCCHdPBEzizfLOMtNvRcltgIn7GJ5Fg/KyDfY8FBxX91V5E6lEPWj4Emk3GS/Bcoh6JQ1/KkxIPXC7kfnkqm0CuzhjcfSwqLWSEc9tQdoOBTKZnwZLA7BTDbTbq6j6ecp59uQ7J7gIG7BVziA/54W3PUP4qwHN8tgVEppKxSnkMSKoQO1tUlnWmlO/rZc/nhNNf3xiKlk52HGG0kem4GhCes0VvDx47DAeU9OpQ6HK2ydYaLX22a4oQzbaDzyrh042hxcRu/Dk3Yq8qtibxEKNZEb6Z8YgXs=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: g1XQJ+Zx1LMlgdGppaYvO/Iz+YyWukYroG/8QUL3Cnibe8gTcuxiAQ7wC1iB+8IZkid+5YC3nzSJd3l82jeBbY3YTDv7sfzeqAn++cvMIt9cRc+VT6pMcQ7mogRosfnipIcHP2g/epqxTF8FIA7A83jBAkGa5S1jTr/cvDmMdDpW5UxMygUbvVttvsuWBWm5rRoiJDJE2at9GHUpZGgi0VMp54cLuMQWzH2P0IBkJ2PgVG8QZG6aLK/Df8e9htEimXFIaZmwIpHQv2+rB3wd2QccwGedtZNEEd/vwhOXqDwjzWQ9MHkS5NeGvJpIL2Qk7qa+OQjTLu8gngoppafMyKBeMdJRpn2uC4e1KtUyBtzbUAq4UNfE0YveZmXaazc1OtSRJeyU++/iqGm8FJYHXinF0bB4IL9qQPCqoiMqkaSHFWX8N4WdmfYL7Tx/YgXfxX/46EhSblOzE73irUoQRBtUGcy1o6pVbH2RAGxOxIeCscVNrwQn6KzDgVGiMsvdGu5qYoFMeHivC+EtR2xddWNK6WXd8uvLuMY7/J+vL5GtGsgg1Klg6jyS4kGMme7LMILsJXbddhraPL96m3uNxfOsvWDV1qvZLshsfTihZrkEcQcwqbj9Wg8VXmquaDZS+BgshbpTU9kxVG/kVkZaNyFiWDUNJq2F03ExwQXbm6bwZYCr8d4QEtl9RsUPseazcRO3ZdOh2AIkFKRl5mgHFZS4vyPD8auPwWfIKX998z0k0fCY5evSBYwIOdwEJTQ5zBcmBt6ps/wIyceQFot9mfQuXF9zKx+1eAC28sQ1DEzssIfQ8jMUIvPg/SmY2/Bf7wAcc8wiXw6f+PapN2RkjkUaIrlZb95vlFEsqnyUpbEX4YZeQR+sQfWpKwdN7yBo9V4IaxhVPoUzGMLuVFV68ABE5dY/zDiKcR+fQoKkxXJ3DJ4Rr5g6C9hsqTomeTK+
- Hyp3Ff57FhURNQQpbscaXD2lo6iRvlpLxZuuBXy2dyInX2b0wkxe9xg9fT9tul0vPyJQx+i7gBy0P9sj5zArsupD/j42pp5KK1UTHf3YkKktpp8IO1K1cMxVG+yeLPWU4so0TKnnXd1Bko6T3MBrs+6YmPxZJfKEIbGTsJeyulMk71NEqaqOvBHagTkgWQoFzD0vy0YGrZhfwb/f2vovDiq6x9iUDd9ClL8d2UZwiDFKrquLv5lgqAdKzaBX+Zgq0vl6EwYZ/4ULvljNUaoDrqGycwtzF4Vfy9gako1JGSyhUXpGwWmUP7JU2MTBf5INPemFdZUbRDgjV8sO7qotRRPGrySAoVCeNSOFR7ZHQpYRYdgBDOk9cOyPMMTwGpZffH28S8L9IcLeQ0R1MIOBHVB0a3oQPhbwaFKhmKcRljOF0WmSUtWd3yFPdh8cd/WwelI5EoktwMV5pe1ol6lk/YYAefyEGTYdHpy3qcjIB5W/Vm/P8EAHW2QmuTlA9+2VRnaGJdH+NHAnBkg235k7oR6Jwd2s+cgxp0h97uvdTtgDkgsVD8kVCx9PuGIZq46pkpXrvk98NfpB6hFX43wTEj4otQN+zuGzj0ONrUPCGPSFjQ/uh1WIA0Tmahwx6bqF
+X-MS-Exchange-AntiSpam-MessageData-0: S0kGIV68FcXXf92K8csP19zflWXcd5Lc/k9Z0OUQg+cO5Sy/NGVgma5LHNX0PPPtuTpOBhvoIF/EH1Rv5RxJ248nhFFPlXfBV6ldiTpRR3YRmyLT8PZ8LD0BKRTH8N83itQQQ8tt9xDxqZdMPKWXzzl6hy8srmN7IZyZwK6RiJfbczihMSOLcouQznr3NiQud93pFiYLsNsuNPzi43C3pNjfU7es/z9A4HdSCakEbMndrftDAwTHJrNUbINjjtZaaXN+fKOgp0b1hXwHMwB6yGmeio572XW1YeF1fmPq6aZFTBfqmBz9o2spYiJkJSWs5LcewdimqNVfnG0TwrqSy0/ChSk44QGYMOAjUPvhXNK5L+Qkq47oEqVeegON80QMm8FHTYtVku9j5o7rsnSgan2Md0dkzV+M0ad/98wZeF+BzQVrRDR+b2Ni6moBGGUdgsC1O3Tu4CWxAQEaja6uQK9hMGTR68jFbTIsqb5evMOw3dpCMlUFuCLpilS/1YG5Jw2pY1m/McHwl9SAN7Bk4Sg8yZrLk+qfGF4iZmEkU7XB1rJcrtFXvODNqGwZf9lbG8mk782rD+BTnkc+BCozkCxlFYspB8Au2bfItTvBqhoGDfmbAtzjqsDouuc6L84cKnzy1cJqIi6m0DqDucTHucnRGgNNiiFjRj3+qnde/8ge+cWr2uAP3ytnbrJad8Mck6fAo4hialgTQa0eZlwha9ILlCDRQIYmdeY2aX5XNmxoeZtAWHdO2JCwCYUo03lVtBIPK1XLgM67fq+rRmD++ZbL785K8ZgbXnFrkewLcmrNZkvlZRlHDYA4AJA+XosNS4aGvOz3YhNURw1SU3Sfi6qUf3N8m1/pqSbIM8GMMUkrN3d+/t46os7qjljc5o7nfr07cUIaKbZzLMsTSWCFnPEx58+tgXlkwrLaOPUDEcfz6STcrGsRAhX7bcp97Qtb
+ 8120ckUG+tf6D747WNb/Xjk1a4lC8/b67YAt+vlq9bdkjngSbN+vynJMQJAlUQA+aF1GRU5NC0lWdNcpMgYDRJ33FN1rqHFXp9fzTZ9gVxiPOEa4boSoeZDZLdgYOrY+SaMHOSw+VPDAnx511eBZRdylE0pTfNM2Md86OF99jJ8k8hq3Cwq81M071WPeTsK9qQv5Dk8joQwrN8uEeOUtIViX5U3uz6XgGOMSR5s+9XEMswBqCwE0zhr/VfGhd6rrzObqvUVDJ9XeRciZbuv82FNrSvuM8I1KaVjqGZw54GN40aIjdRtWi+Uxl3JugJS8EP5OxHEWU6oH5bTaaXrGFVwQbS1IQFinsvcyCHtiUXf6FH7jd6e7745s/ZgCXTd67wUI8OXkbS5yzT96aFr+/niQ6C9WnJuyPl6qOfZTOICk3SktAxHUmm+kaQVgwuN/4a7trd5WDjnEUa8ysrIek+fhd2Gf5bopKArHFWWUPxjBxeb6Rhpyp1h8SdpVuTjHbZbPK30LDqyH69e5NraHnnnRtGiKoJJ7sRwEqXnyLXdxKy5B1plra1HL+lC26RZ6zU03Zy+3vWq/Aesr8Gtm/HWYi5BYtwWmOFfxScuyzXcPwjtlDIRcydT5waI57akH
 X-OriginatorOrg: kalrayinc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8572b2b-2852-493a-cdc4-08dce92834c1
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef1ec6fa-3031-4968-7d08-08dce92835f7
 X-MS-Exchange-CrossTenant-AuthSource: PAYP264MB3766.FRAP264.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 12:36:47.8861
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 12:36:49.4229
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HouI/ZIyNHV8LGYe/ikO1xTBn0v2oMm2l8D7FKJvMjVZwT3xs+vLA7/ZhHwOSgcDiwZIMdVc5tgMx2YyY8jHBg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: mO3vuqIxgWTqYXzmPMyg4ezlVvbGsmSzM85a2bDhn2ozCZbGMXWLm9TQiAg/xCdzKuAbkLpj8GLsLakXSV426g==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB4625
 Content-Type: text/plain; charset=utf-8
 X-ALTERMIMEV2_out: done
 
-Use the generic memcpy_{from,to}io and memset_io functions on the
-arm64 processor architecture.
+Use the generic memcpy_{from,to}io and memset_io functions on the csky
+processor architecture.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Guo Ren <guoren@kernel.org>
 Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
 Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
 ---
 Changes for v9:
 - No changes
 ---
- arch/arm64/include/asm/io.h | 11 -----
- arch/arm64/kernel/io.c      | 87 -------------------------------------
- 2 files changed, 98 deletions(-)
+ arch/csky/include/asm/io.h | 11 -----
+ arch/csky/kernel/Makefile  |  2 +-
+ arch/csky/kernel/io.c      | 91 --------------------------------------
+ 3 files changed, 1 insertion(+), 103 deletions(-)
+ delete mode 100644 arch/csky/kernel/io.c
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 1ada23a6ec19..463067bffdfd 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -128,17 +128,6 @@ static __always_inline u64 __raw_readq(const volatile void __iomem *addr)
- #define IO_SPACE_LIMIT		(PCI_IO_SIZE - 1)
- #define PCI_IOBASE		((void __iomem *)PCI_IO_START)
+diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
+index 4725bb977b0f..ed53f0b47388 100644
+--- a/arch/csky/include/asm/io.h
++++ b/arch/csky/include/asm/io.h
+@@ -31,17 +31,6 @@
+ #define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); mb(); })
+ #endif
  
 -/*
 - * String version of I/O memory access operations.
@@ -160,38 +162,55 @@ index 1ada23a6ec19..463067bffdfd 100644
 -extern void __memcpy_toio(volatile void __iomem *, const void *, size_t);
 -extern void __memset_io(volatile void __iomem *, int, size_t);
 -
--#define memset_io(c,v,l)	__memset_io((c),(v),(l))
--#define memcpy_fromio(a,c,l)	__memcpy_fromio((a),(c),(l))
--#define memcpy_toio(c,a,l)	__memcpy_toio((c),(a),(l))
+-#define memset_io(c,v,l)        __memset_io((c),(v),(l))
+-#define memcpy_fromio(a,c,l)    __memcpy_fromio((a),(c),(l))
+-#define memcpy_toio(c,a,l)      __memcpy_toio((c),(a),(l))
 -
  /*
-  * The ARM64 iowrite implementation is intended to support drivers that want to
-  * use write combining. For instance PCI drivers using write combining with a 64
-diff --git a/arch/arm64/kernel/io.c b/arch/arm64/kernel/io.c
-index ef48089fbfe1..fe86ada23c7d 100644
---- a/arch/arm64/kernel/io.c
-+++ b/arch/arm64/kernel/io.c
-@@ -9,34 +9,6 @@
- #include <linux/types.h>
- #include <linux/io.h>
+  * I/O memory mapping functions.
+  */
+diff --git a/arch/csky/kernel/Makefile b/arch/csky/kernel/Makefile
+index 8a868316b912..de1c3472e8f0 100644
+--- a/arch/csky/kernel/Makefile
++++ b/arch/csky/kernel/Makefile
+@@ -2,7 +2,7 @@
+ extra-y := vmlinux.lds
  
+ obj-y += head.o entry.o atomic.o signal.o traps.o irq.o time.o vdso.o vdso/
+-obj-y += power.o syscall.o syscall_table.o setup.o io.o
++obj-y += power.o syscall.o syscall_table.o setup.o
+ obj-y += process.o cpu-probe.o ptrace.o stacktrace.o
+ obj-y += probes/
+ 
+diff --git a/arch/csky/kernel/io.c b/arch/csky/kernel/io.c
+deleted file mode 100644
+index 5883f13fa2b1..000000000000
+--- a/arch/csky/kernel/io.c
++++ /dev/null
+@@ -1,91 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-#include <linux/export.h>
+-#include <linux/types.h>
+-#include <linux/io.h>
+-
 -/*
 - * Copy data from IO memory space to "real" memory space.
 - */
 -void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
 -{
--	while (count && !IS_ALIGNED((unsigned long)from, 8)) {
+-	while (count && !IS_ALIGNED((unsigned long)from, 4)) {
 -		*(u8 *)to = __raw_readb(from);
 -		from++;
 -		to++;
 -		count--;
 -	}
 -
--	while (count >= 8) {
--		*(u64 *)to = __raw_readq(from);
--		from += 8;
--		to += 8;
--		count -= 8;
+-	while (count >= 4) {
+-		*(u32 *)to = __raw_readl(from);
+-		from += 4;
+-		to += 4;
+-		count -= 4;
 -	}
 -
 -	while (count) {
@@ -203,31 +222,23 @@ index ef48089fbfe1..fe86ada23c7d 100644
 -}
 -EXPORT_SYMBOL(__memcpy_fromio);
 -
- /*
-  * This generates a memcpy that works on a from/to address which is aligned to
-  * bits. Count is in terms of the number of bits sized quantities to copy. It
-@@ -78,62 +50,3 @@ void __iowrite32_copy_full(void __iomem *to, const void *from, size_t count)
- 	dgh();
- }
- EXPORT_SYMBOL(__iowrite32_copy_full);
--
 -/*
 - * Copy data from "real" memory space to IO memory space.
 - */
 -void __memcpy_toio(volatile void __iomem *to, const void *from, size_t count)
 -{
--	while (count && !IS_ALIGNED((unsigned long)to, 8)) {
+-	while (count && !IS_ALIGNED((unsigned long)to, 4)) {
 -		__raw_writeb(*(u8 *)from, to);
 -		from++;
 -		to++;
 -		count--;
 -	}
 -
--	while (count >= 8) {
--		__raw_writeq(*(u64 *)from, to);
--		from += 8;
--		to += 8;
--		count -= 8;
+-	while (count >= 4) {
+-		__raw_writel(*(u32 *)from, to);
+-		from += 4;
+-		to += 4;
+-		count -= 4;
 -	}
 -
 -	while (count) {
@@ -244,22 +255,21 @@ index ef48089fbfe1..fe86ada23c7d 100644
 - */
 -void __memset_io(volatile void __iomem *dst, int c, size_t count)
 -{
--	u64 qc = (u8)c;
+-	u32 qc = (u8)c;
 -
 -	qc |= qc << 8;
 -	qc |= qc << 16;
--	qc |= qc << 32;
 -
--	while (count && !IS_ALIGNED((unsigned long)dst, 8)) {
+-	while (count && !IS_ALIGNED((unsigned long)dst, 4)) {
 -		__raw_writeb(c, dst);
 -		dst++;
 -		count--;
 -	}
 -
--	while (count >= 8) {
--		__raw_writeq(qc, dst);
--		dst += 8;
--		count -= 8;
+-	while (count >= 4) {
+-		__raw_writel(qc, dst);
+-		dst += 4;
+-		count -= 4;
 -	}
 -
 -	while (count) {
