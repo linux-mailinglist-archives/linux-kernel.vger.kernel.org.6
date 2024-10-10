@@ -1,89 +1,110 @@
-Return-Path: <linux-kernel+bounces-359991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40E799934D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BBA99934F
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C16D1C21412
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B401F2465D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D01CF5D6;
-	Thu, 10 Oct 2024 20:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADF21CF2B3;
+	Thu, 10 Oct 2024 20:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="m7vk0v+z"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVkI+1A4"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A551B6539;
-	Thu, 10 Oct 2024 20:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325731B6539;
+	Thu, 10 Oct 2024 20:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728590580; cv=none; b=Bg/ySAa/84SJ9+HOJuC7yuK2w2DMlJ08KKEnOJLHL7o9Hm/1borvvPtobmBSzeioD9Wsf1f8qMtaytkExuP1wGmto+ChyUFFQSsWQNgYC5hiMqxA+AxSZ1C7jZ+o4TkW202hBfVQS4fYvQBft6SItxwR2ZsEdOH8KO09MhD6yN0=
+	t=1728590777; cv=none; b=Xk1LRHSgrDUfqmz5xUu1tNyHS/RJ7U2V32uBPoLzqyPWnm2UX2srAb2zE59U9pExmm4Jeup/qN4b46ZE7V2aLRp9afztpNGODUJdMvr5TrYy2e9xRpPOZvm12xUFGP+gq+8zXyOS9mAwljeHBnj/X0FNAd1vNdJ6q8Z7nkxRExw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728590580; c=relaxed/simple;
-	bh=d6ebuleT1VhfQboLECKP2pxXJvA/S/XhwyVIZdv/DKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XoKF7cDv42yY1Fl+jPrqNGpx3pOO85V1++70JBly+ZfUXJwKYxgO6qofx3hetNLA7TNnjN8bo687kOsBJXQN72dzl7wstXkVDkvb1yugA7OeVKu/4/4r/2Gp7CGDBcBb6XscDpR6Bep7w82QSpv+djBDSiL1yazw3xWgFuqzTZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=m7vk0v+z; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=khlqzlnZpEblAJNrRRX2+0G/VzYas/P6WVQ3loReDAM=; b=m7vk0v+zLvvqoKiLAYbpAMQqNc
-	qZB3fycjDvmRQYI+jJoeO+BHcljNge1GesnpvDy4RyCZik4wwi7Lrpq1HzkEowXrzbkO74L+xHYjl
-	IOXO42Uq7WUmPkRNaJD3StawTzofaw/LPYcPM63KccpMYctlXRJFcr6RY217hj8CxNA+fj+21Vi8t
-	oOgsNZTuiq8bxTcxVUNxuxeT2iEZFwWHmzG36aw+ryFZ+64rqIht3toOIb9j2gGwERQO3tdh77DKJ
-	S+8XkFRgqcPpzPyj+HeFjkQSCFa9ujvXKEg+YwMypszTYH+cmsVmOZOOrTx22mPRnm/WuVkbAR03p
-	wL3oTAuA==;
-Received: from [187.57.199.212] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1syzN4-007SzJ-G1; Thu, 10 Oct 2024 22:02:50 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: krisman@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH] MAINTAINERS: Add Unicode tree
-Date: Thu, 10 Oct 2024 17:02:42 -0300
-Message-ID: <20241010200242.119741-1-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728590777; c=relaxed/simple;
+	bh=NzCpZm8/mEuC6Rq3qXHG9eoMATiEF1drnN/nAnqXnv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZT8xIVDhXdr+ZI+rdRlOOMAutEAB1YpyNzLaz1+Jgq2XV5G6VogBsgnraETD9WCmAJylEtxzlpshgzpjgSLnwngkWo32t2aPf65H1gW4GCKq95nJNkaFQfgxdWBfP9dne7f5ySEHRAYiVTHMqFm1WKVM41jCWuu7TEFv/8iRpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVkI+1A4; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e2e41bd08bso16180907b3.2;
+        Thu, 10 Oct 2024 13:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728590775; x=1729195575; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QCJw2Q36leTBqr9TQNzAFnVCjMfNwHV5BxGjqHBBZ+g=;
+        b=CVkI+1A49yC8IyZVo+BOJlvBBxP2Adcfy9qcU2gzPyp2mnkr015cYXorVsEI1Uz0+R
+         p7oBKHPJepd9sK3EYu4ueFO1g9Dp7n3iDV+9sloCMMYCrCdOIJ0+eP8Et+AkPuFwJNKO
+         I7EOQhDpTFERvnsCoWIop4KmqvOir7dkPuiIjDq3KqpSqZA8D0edc7jVBPFA46AfUZm8
+         9XOnqy8awVHi9/Ep78QMWKaO6RGs0cd5txM/izCJaORa34nZ+ALw0SRssA9V9pcRjQrk
+         Tozsk2NUhpJRlxbYLapU/ig2fakQJlVt0+ggyg0umhjRSWDWDYXUaZhB8CG1msU1IY7b
+         uohA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728590775; x=1729195575;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCJw2Q36leTBqr9TQNzAFnVCjMfNwHV5BxGjqHBBZ+g=;
+        b=N46j4eZ+HuKhiO/aWr7YYfx6K2KGnkEv2yiJXWtnhzFs6ZTLdPNeKKbAZRgLufEVi/
+         k//A6HjDx0hpxrPjJRMDz0JPyWjSZ4UxGhfHlplAycQ+KEPFNX7L6Gyw6Wk55ttC+NaI
+         xTvtt8U13jnz+2+CwV62Tc/pRPS0VqcbIxq8GptjFym7Z1Nc3gzgaUe3O2XmzhgknGRP
+         iDNwIr6jWkYq1a/NtO9wJ5HqorCOeT5dZQnQsnP5OSdGB4bfyvotLLArNs8+/BlMi8MM
+         IBm3e8gjC8X9Mf9uNlGlO6HwfOh3H0u5KTX+8pJ+41EVEy86aNF1GMIqDu8Y7LGJS3w0
+         zkLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMYHPFF/B5Ijn8FqUEYh8DuiZ5bTxuMsGx77tmCkaAjS09MrQLC28htLIlLl7+/thteCSLC8dZ0Weg5Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywxwhZJFMSheVdjRiJG7xNKOhXcsfhRmyf4T/Dyyn39sflSI98
+	QIXhBpm9nKT4zTO8w68zlFPGcnhpKOOc/hO9y1fdIOj0OdeekpPjYnCEUg==
+X-Google-Smtp-Source: AGHT+IF0whqmEoxPIlb0uKeib7Itmz63HnvLzOTnokKadAu7f0WJBQ6tWnjmptJ3gvmvS7hZ3UrB+g==
+X-Received: by 2002:a05:690c:250e:b0:6e2:12e5:35b4 with SMTP id 00721157ae682-6e3471e8d16mr1444227b3.0.1728590775127;
+        Thu, 10 Oct 2024 13:06:15 -0700 (PDT)
+Received: from ?IPV6:2600:1700:6165:1c10:b99e:4710:9fa7:9721? ([2600:1700:6165:1c10:b99e:4710:9fa7:9721])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332c27a49sm3310677b3.88.2024.10.10.13.06.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 13:06:14 -0700 (PDT)
+Message-ID: <dd2d6338-b763-48ad-be9c-aed7107b201d@gmail.com>
+Date: Thu, 10 Oct 2024 16:06:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] linux-kbuild: fix: implement choice for kconfigs
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shuah@kernel.org, javier.carrasco.cruz@gmail.com
+References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
+ <20240913171205.22126-6-david.hunter.linux@gmail.com>
+ <CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4J-vCZZN=g@mail.gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4J-vCZZN=g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Unicode subsystem tree is missing from MAINTAINERS, add it.
+On 9/23/24 23:46, Masahiro Yamada wrote:
+> 
+> This is ugly.
+> Please do not use the temp file.
+> 
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d01256208c9f..54278e086a47 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23777,6 +23777,7 @@ UNICODE SUBSYSTEM
- M:	Gabriel Krisman Bertazi <krisman@kernel.org>
- L:	linux-fsdevel@vger.kernel.org
- S:	Supported
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git
- F:	fs/unicode/
- 
- UNIFDEF
--- 
-2.47.0
+Understood. I found a way to do it that is much more in line with the 
+style of the script and it avoids using the temp file. Oddly enough it 
+involves changing less lines of code as well. I will be submitting the 
+changes soon. Right now, I am just finishing up the change logs for all 
+the patches.
 
+My question here is "Is there a general rule as to why the first version 
+was bad?" For example, is it considered bad practice to make temporary 
+files?
+
+Thanks,
+David Hunter
 
