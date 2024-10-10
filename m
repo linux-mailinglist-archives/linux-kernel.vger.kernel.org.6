@@ -1,91 +1,252 @@
-Return-Path: <linux-kernel+bounces-358151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3AC997ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:51:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05544997AC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79B5283638
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857501F24168
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C849419307D;
-	Thu, 10 Oct 2024 02:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8BC188A0C;
+	Thu, 10 Oct 2024 02:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnKWDs78"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCZBVcl+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280041922F3;
-	Thu, 10 Oct 2024 02:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080C9224CF;
+	Thu, 10 Oct 2024 02:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728528630; cv=none; b=VYwjtvGRJUnCGgqCOkO2Q2tDdK+WiIEMXWXZl8Vcxb13ADIlNaqWtKyA9LpNNrlv4+EUYCZ9NTewh75x4/czT6OMk6JXi7VIqOR5X9CvVRdMSpEUHGYI9rbhBN+UkMTILogSqaV4nRz3oDTxHuIgIKzGkNp7sFKrAs881PmyWw0=
+	t=1728528767; cv=none; b=nGEarggUeExLlZklyEqZlU6Z8wMoFIMTOgeLgMhwJT2tCViqOg96sJ3i0zIKTQOVtCFgGw1R23g412aNeoRadFvb5KoOjvKAiGb9HOauyK2TRjEQEWyPEQB8cdTr/hcPED9UvYH8I3GoWumpZRy6FJfYTl+gZ1uoFl8s86zztfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728528630; c=relaxed/simple;
-	bh=TFczhcOD6nz56p8+h4jan8Lr8MNsRfGB6VgsxVOIIU0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LcDFHy23XJ0nq8m463rH/owMAvYk1E4ddYhI7eij9LU2nl68/3jB9AmViVNXTSrUDW31f1Wgmn9gg05RBKOvXKHgy11s6RmkjQrz8YubsTvDlbZVaaplVHnV9YHYIXJ5WpTaK1FeldZyVCWiBM2yDiR682WZbI/CGoNYB2jjH6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnKWDs78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E59C4C4CED3;
-	Thu, 10 Oct 2024 02:50:29 +0000 (UTC)
+	s=arc-20240116; t=1728528767; c=relaxed/simple;
+	bh=jNUa/nUADGuQ/kbBLvMP9Cp3on/BTO7uQawWJ3unJ1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JqPrqTW5nWElHkSaK9idvEgxc7IKgz/fiqnGhXhXcGtSN/FljCBvBmdFIySdCVlD/mZ59JvArP21v4lJnTdC5K2Rj5hMj+cgFCDskaE2xunCOLuAALuIEEP2X6Hu7B5zIjzOLhuzGvOs2bDcWkoebYLth9h0d6pAzySUVcfFQaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCZBVcl+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D7A2C4CEC3;
+	Thu, 10 Oct 2024 02:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728528629;
-	bh=TFczhcOD6nz56p8+h4jan8Lr8MNsRfGB6VgsxVOIIU0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WnKWDs78M/th/YaQXz/+L87Iw2nIp0JH4Vvr0Oc/oGYuhRH4hgebvt8tcbgiey1LM
-	 A6/OlwhdPYdblES5e4s+hX0GlNfWb52SAC1VytwzHu8P4bqvW8X/H1G1OPKQsc49uk
-	 cVFZZpUujdcIocRlXWvFbqEw2YhIPndjUWoPMJuamSzc+UrLJFIejL9Gb7Kfu3AP11
-	 JxFelEM4B1kR7LeMXwhnMTNGgy0PikUOmXYMGsfsZo/J3rTA9inALh22pfb+9CwJQw
-	 2sgmlzZs/SrSh1PEve8R6KqRylMIDFOGx3q198v6i2oqsGNgydjZwgp1tI0bdsyVfm
-	 1ib2euXW+R/QQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C873806644;
-	Thu, 10 Oct 2024 02:50:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1728528765;
+	bh=jNUa/nUADGuQ/kbBLvMP9Cp3on/BTO7uQawWJ3unJ1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZCZBVcl+KuCpQYVQP1WWm3+CwZaVniAk7FaV/Oydqo5MZ93uX/9kGBRJkCRGinZ3f
+	 PKKYPW9VZbCcb/INEzAOZbbHIM4NRkDZUK0p19O+oo/+ZpJ19SU2EhCPxMq2nCrMKa
+	 6J4jODeBZsnnewWKx5Ci8FqiE4LfG/CtjEmWVn4jol6HzznaRD5JvJTSMchajOr6+V
+	 lYNCCnp4foTph3fBLxI1HILKPWWmD7i23TtR5wHuYioyUo0Ok5okrlCvgl2bcKhxEs
+	 Tp02GoEt7OmSxciunSfLlOP9SbMd77Jt0102+A8VLdl7NkhMhxqWAYJhqp3PCGUhjj
+	 dbehRiwJHkbXA==
+Date: Wed, 9 Oct 2024 21:52:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 04/14] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <20241010025244.GB978628-robh@kernel.org>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: netconsole: fix wrong warning
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172852863424.1545809.14043075187480987088.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 02:50:34 +0000
-References: <20241008094325.896208-1-leitao@debian.org>
-In-Reply-To: <20241008094325.896208-1-leitao@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, thepacketgeek@gmail.com, kernel-team@meta.com,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3141e3e7898c1538ea658487923d3446b3d7fd0c.1728300189.git.andrea.porta@suse.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue,  8 Oct 2024 02:43:24 -0700 you wrote:
-> A warning is triggered when there is insufficient space in the buffer
-> for userdata. However, this is not an issue since userdata will be sent
-> in the next iteration.
+On Mon, Oct 07, 2024 at 02:39:47PM +0200, Andrea della Porta wrote:
+> The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> schema is intended as minimal support for the clock generator and
+> gpio controller peripherals which are accessible through BAR1.
 > 
-> Current warning message:
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  .../devicetree/bindings/misc/pci1de4,1.yaml   | 110 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 111 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/misc/pci1de4,1.yaml b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> new file mode 100644
+> index 000000000000..3f099b16e672
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/pci1de4,1.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RaspberryPi RP1 MFD PCI device
+> +
+> +maintainers:
+> +  - Andrea della Porta <andrea.porta@suse.com>
+> +
+> +description:
+> +  The RaspberryPi RP1 is a PCI multi function device containing
+> +  peripherals ranging from Ethernet to USB controller, I2C, SPI
+> +  and others.
+> +  The peripherals are accessed by addressing the PCI BAR1 region.
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-ep-bus.yaml
+> +
+> +properties:
+> +  compatible:
+> +    additionalItems: true
+> +    maxItems: 3
+> +    items:
+> +      - const: pci1de4,1
+> +
+> +patternProperties:
+> +  "^pci-ep-bus@[0-2]$":
+> +    $ref: '#/$defs/bar-bus'
+> +    description:
+> +      The bus on which the peripherals are attached, which is addressable
+> +      through the BAR.
+
+No need for this because pci-ep-bus.yaml already has a schema for the 
+child nodes.
+
+> +
+> +unevaluatedProperties: false
+> +
+> +$defs:
+> +  bar-bus:
+> +    $ref: /schemas/pci/pci-ep-bus.yaml#/$defs/pci-ep-bus
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      "#interrupt-cells":
+> +        const: 2
+> +        description:
+> +          Specifies respectively the interrupt number and flags as defined
+> +          in include/dt-bindings/interrupt-controller/irq.h.
+> +
+> +      interrupt-controller: true
+> +
+> +      interrupt-parent:
+> +        description:
+> +          Must be the phandle of this 'pci-ep-bus' node. It will trigger
+> +          PCI interrupts on behalf of peripheral generated interrupts.
+
+
+Do you have an interrupt controller per bus? These should be in the 
+parent node I think.
+
+
+> +
+> +    patternProperties:
+> +      "^clocks(@[0-9a-f]+)?$":
+> +        type: object
+> +        $ref: /schemas/clock/raspberrypi,rp1-clocks.yaml
+> +
+> +      "^ethernet(@[0-9a-f]+)?$":
+> +        type: object
+> +        $ref: /schemas/net/cdns,macb.yaml
+> +
+> +      "^pinctrl(@[0-9a-f]+)?$":
+> +        type: object
+> +        $ref: /schemas/pinctrl/raspberrypi,rp1-gpio.yaml
+
+IMO, these child nodes can be omitted. We generally don't define all the 
+child nodes in an SoC.
+
+If you do want to define them, then just do:
+
+additionalProperties: true
+properties:
+  compatible:
+    contains: the-child-compatible
+
+> +
+> +    required:
+> +      - interrupt-parent
+> +      - interrupt-controller
+> +
+> +examples:
+> +  - |
+> +    pci {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        rp1@0,0 {
+> +            compatible = "pci1de4,1";
+> +            ranges = <0x01 0x00 0x00000000
+> +                      0x82010000 0x00 0x00
+> +                      0x00 0x400000>;
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +
+> +            pci_ep_bus: pci-ep-bus@1 {
+> +                compatible = "simple-bus";
+> +                ranges = <0xc0 0x40000000
+> +                          0x01 0x00 0x00000000
+> +                          0x00 0x00400000>;
+> +                dma-ranges = <0x10 0x00000000
+> +                              0x43000000 0x10 0x00000000
+> +                              0x10 0x00000000>;
+> +                #address-cells = <2>;
+> +                #size-cells = <2>;
+> +                interrupt-controller;
+> +                interrupt-parent = <&pci_ep_bus>;
+> +                #interrupt-cells = <2>;
+> +
+> +                rp1_clocks: clocks@c040018000 {
+> +                    compatible = "raspberrypi,rp1-clocks";
+> +                    reg = <0xc0 0x40018000 0x0 0x10038>;
+> +                    #clock-cells = <1>;
+> +                    clocks = <&clk_rp1_xosc>;
+> +                    clock-names =  "rp1-xosc";
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ccf123b805c8..2aea5a6166bd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19384,6 +19384,7 @@ RASPBERRY PI RP1 PCI DRIVER
+>  M:	Andrea della Porta <andrea.porta@suse.com>
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> +F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+>  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+>  F:	include/dt-bindings/clock/rp1.h
+> -- 
+> 2.35.3
 > 
-> [...]
-
-Here is the summary with links:
-  - [net] net: netconsole: fix wrong warning
-    https://git.kernel.org/netdev/net/c/d94785bb46b6
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
 
