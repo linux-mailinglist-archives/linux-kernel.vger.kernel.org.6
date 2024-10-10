@@ -1,175 +1,127 @@
-Return-Path: <linux-kernel+bounces-359056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7365B9986DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:58:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7DB9986FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956EA1C2284A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9ED288560
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB441C7B68;
-	Thu, 10 Oct 2024 12:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C212D1C9B79;
+	Thu, 10 Oct 2024 13:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LyIPEPCZ"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i15xpEq/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D5B1C9B62
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E410F1C7B8F;
+	Thu, 10 Oct 2024 13:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565038; cv=none; b=ZaBD7Sa2gJhlpK1/ia4tbhxMS6q7DByw/Rs619aVlqP31QAfaPln+XrALJOH11kBSgKzurdFhfx5vIDcEGoC3c0HQBuHv56YFslvRaAw/iCH/JZRQI6EQH+nwTgDIXiLIkojWqxYMCT6il4L4258+uKGYMAW/ZJooIAe2Fe0PP8=
+	t=1728565284; cv=none; b=DcyQ2lBwhdjZpkOtJ0PVBCmjCGD1FVEdtBoY+Vt9YOPmefsw6xtUGEpcUQcKlY/F1m1LCJ42gQTfWMLWkVo3ylensI4c5KES77YOTlZs/JBfFqhWp+FaARZRjeerXjRxiyenDdvjG8bSTRX6jYFCdXBg/b9QZ2geR0losu8w+RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565038; c=relaxed/simple;
-	bh=NyWGuEgAoTCOUDUDd9sQnT8nfx0rvhH11rLVW8whQqU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ihcZDVgvd5HI71ihbfk1DQ7FX4mV+Wrm8nng2PDEPNSDZHxF2iuORVQRn4LiQIGD57GjF/B8amg1k7Q/g3Onqpb/KZbWMvpmO6DTQyfvlyESRjsEe7QbfFeKp85hj1Us3N/1PL2NaR+o8QneDumyqPDCNNiLL1SiZ9TLLuuz5Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LyIPEPCZ; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2270a147aso15143937b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728565035; x=1729169835; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=glV3fv5SFFf1x3gt0c73tA5JY4awjp99N5v6GnmrQXY=;
-        b=LyIPEPCZVbJM0qda850rVR357SRpxNCdouwESwtHoRUIldD8RB+JDUr/6+U3Cd6ZuT
-         DbSjSfNbLjxetjJc9S5agRYKzMcNe6R43RFTFP8/win/aYo6asCqUbp+OZ76fqufoXc7
-         aKMIcHG49PjyofKSStgEzgr6b715OHACFrS9QgAqPFLu1Lmrz++7BcCsAyAbNU3YFWWT
-         y89IaBPCdkV3vxlEP8PM3DHexh5nsvjwpd7gTqlQ7CgRFYioZKFC+oQ6QsPc5WZf8mK2
-         L5JctfTRbG2xX5ySJsu6sQ1/y7hPR7ijFiNRuDmq6aLD6PyQ2hR3tOv3xpdyBCJ9kGMj
-         5Z/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728565035; x=1729169835;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=glV3fv5SFFf1x3gt0c73tA5JY4awjp99N5v6GnmrQXY=;
-        b=hzgUhrU3WdVU/qtKSWu4K5CfpYmmBGKkE2ivdSSQqp0lcws9/sSLA9gr3+Cj6dtDyc
-         gj+6HOXmDUKaL+OZa3jAkTy0KgrUdfbcEonpARUSsJE2sjfgVK6aKrWh0N0W8X22hAnj
-         nU1TJfbVVWq2bDE85BIJFSM5ZGWwXEjwT5F+RVaFn1eSRYk2PRlS8KHkA6EkzcEX5cWB
-         lg+C2tpVQPk3U1oDq6FzU0X5P9HvRKHMwow/pgkDPy4jTIsUDkypxnlq2XI4ltJ5kOUI
-         9BdC6MWadLfXo114Tu7UMbUP9xKFFpGEo3K0RK0dJXjVq81YpxX2yySe2y0wqDi84/ye
-         BMoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIWWmQwa/kFIfzBBnACl9stXt38p+MQA9leNG70K8UinF1f0f1JevUvLlpjIltR5yN2AFQxdGxFjn5RDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsA8bzLb71Y9CrV47pg2EdAeJFZ7vVNxlENvKH9669svgBlWZG
-	wz3UMPmGIo2sJwob8VWPzq/xuYS1osO5q8OYL58btlO3B6Qxf58OZrbO6Cev9OpvTv0QRRNTgr4
-	rC26yfdFYHSlSSg==
-X-Google-Smtp-Source: AGHT+IFHaXXnl7DU3u8thuin4117bTfSXLLKlSu8pzsSBybwnadUftHI2kg9Z9q4pkU1hrzfZE6VLP9WSb+EI/o=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a05:690c:6681:b0:6e2:12e5:356f with SMTP
- id 00721157ae682-6e32215bd01mr1397177b3.3.1728565035062; Thu, 10 Oct 2024
- 05:57:15 -0700 (PDT)
-Date: Thu, 10 Oct 2024 12:56:36 +0000
-In-Reply-To: <20241010-vma-v6-0-d89039b6f573@google.com>
+	s=arc-20240116; t=1728565284; c=relaxed/simple;
+	bh=0gFND+MAHX6q3fPU9Dm7aa3AX+VkNdk2ZdK9663ePGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPeAz5Ni8C8daLh6FKYFhAMiYN0TD/1HqsU8wbKvJe0Z96mlV4S/cQ4aA9JGIWhDCQX+fFSmqLW1kHLjy1Cmhn4zUraIWN9+Brw1aE5Qxw1vW6bJpPnhVMnzUg/0rvwT+mhs8pNzO7S5K0Em/Lmvh+wR4pwb5oeMN9aCafu4rkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i15xpEq/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F0EC4CEC5;
+	Thu, 10 Oct 2024 13:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728565283;
+	bh=0gFND+MAHX6q3fPU9Dm7aa3AX+VkNdk2ZdK9663ePGM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i15xpEq/kuFAv6DlXG15A1e80Zkeyfpm7KcH2z/4b7LHy0huNtJIfhTPl8l4m2Thz
+	 DrC+EerzAtj77QkSwvdLuoM9HsdVcSXAYblfY52ni7z3rWCwNvYecLnzzamyv05TxQ
+	 MvyRQw4iBhqZGVncP0l5I4u44ZK9GkUbVv2NjZJ1KmbX6KkRkPzCVKd/P5aEdD5W04
+	 r/juMpxct8TYbYtPQygo8mwFvlF95PkeOYNJV8aiyjpOL0HlbI0t0P6KYVnwxFYXRs
+	 bP4FdthxlHe3zfpEHTln3UXCWui5XHPdWaBkcJjwrkqkqBVwNb4EXbX5FI3Wx8W6oT
+	 ueyyZehAwF8+A==
+Date: Thu, 10 Oct 2024 15:57:33 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
+Message-ID: <ZwfPPZrxHzQgYfx7@kernel.org>
+References: <20241009180816.83591-1-rppt@kernel.org>
+ <20241009180816.83591-8-rppt@kernel.org>
+ <Zwd7GRyBtCwiAv1v@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241010-vma-v6-0-d89039b6f573@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2493; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=NyWGuEgAoTCOUDUDd9sQnT8nfx0rvhH11rLVW8whQqU=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnB88i1QasOE6/sMcz8AIIZHVv4kJthm+7hFroE
- Cs46FuoTkuJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZwfPIgAKCRAEWL7uWMY5
- RjpgD/0e+GOn8RpHZKr1Y0np5kF/2v08wVH5Zf/VaSpmrg3HwgpMPqxJ3feyy05Z6oBtzK1hkNN
- Wv+G/SpeKhnmzLFgNfbMp5kgoYF1NNoQ7A6bZXnv+MNE24RjvXYhZusm8c4ckJ3Me9xMJBUwO9x
- nK5ClqLjOZajAQiZDQbLfQn58RCc164miHTgRRSSxpBIH0BOszm2qqv9hHhL36aXKd4uh6ldb3q
- hfwUwOuhe8rOCOXFi1Vwrxv9haulc4c47qernQjLpV4WDiscoo0el4OYFCLb+pFx+C9W1GDJzbt
- IrvwUBF+Zau7gsoJlGsLKVKh3Y+N+pJ5/JPHe78rcXLObocbLyDRrTQGuM847vPeazglMm3xSk/
- 23EVG4PaTO93mWkCYzxceXM7KEpngQg9/sAkTy3UF3w0oCnxoMkgka1kzwpYFqiet6n/oHnv57k
- q4g1hT0XU9JWAKzWmeonS9vSsB9drqmuMFzPGWt4wbnM8qrI9OFjycdKlvAGzUrBMDitkXW8JEN
- Hx3VDAfZUaB02JEPa36P7/O4T22ElByztu3XaiWl7ngKqFooX7NMUgtH6Ke/RtbCyFIYD3k9SY0
- G/CwzbbswhCVel0TVBbBL4/nzBqcH/FASmIzINtNDhTbaikGPAixxwT1b4Jx0NpNWpSKrrHPuGs OFT+MdwYBY7CHQQ==
-X-Mailer: b4 0.13.0
-Message-ID: <20241010-vma-v6-2-d89039b6f573@google.com>
-Subject: [PATCH v6 2/2] rust: miscdevice: add mmap support
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwd7GRyBtCwiAv1v@infradead.org>
 
-Using the vma support introduced by the previous commit, introduce mmap
-support for miscdevices. The mmap call is given a vma that is undergoing
-initial setup, so the VmAreaNew type is used.
+On Wed, Oct 09, 2024 at 11:58:33PM -0700, Christoph Hellwig wrote:
+> On Wed, Oct 09, 2024 at 09:08:15PM +0300, Mike Rapoport wrote:
+> >  /**
+> >   * struct execmem_info - architecture parameters for code allocations
+> > + * @fill_trapping_insns: set memory to contain instructions that will trap
+> >   * @ranges: array of parameter sets defining architecture specific
+> >   * parameters for executable memory allocations. The ranges that are not
+> >   * explicitly initialized by an architecture use parameters defined for
+> >   * @EXECMEM_DEFAULT.
+> >   */
+> >  struct execmem_info {
+> > +	void (*fill_trapping_insns)(void *ptr, size_t size, bool writable);
+> >  	struct execmem_range	ranges[EXECMEM_TYPE_MAX];
+> 
+> Why is the filler an indirect function call and not an architecture
+> hook?
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/miscdevice.rs | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index cbd5249b5b45..c9428a6154e3 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -11,6 +11,7 @@
- use crate::{
-     bindings,
-     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-+    mm::virt::VmAreaNew,
-     prelude::*,
-     str::CStr,
-     types::{ForeignOwnable, Opaque},
-@@ -110,6 +111,11 @@ fn release(device: Self::Ptr) {
-         drop(device);
-     }
- 
-+    /// Handle for mmap.
-+    fn mmap(_device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>, _vma: &VmAreaNew) -> Result {
-+        kernel::build_error(VTABLE_DEFAULT_ERROR)
-+    }
-+
-     /// Handler for ioctls.
-     ///
-     /// The `cmd` argument is usually manipulated using the utilties in [`kernel::ioctl`].
-@@ -156,6 +162,7 @@ impl<T: MiscDevice> VtableHelper<T> {
-         const VTABLE: bindings::file_operations = bindings::file_operations {
-             open: Some(fops_open::<T>),
-             release: Some(fops_release::<T>),
-+            mmap: maybe_fn(T::HAS_MMAP, fops_mmap::<T>),
-             unlocked_ioctl: maybe_fn(T::HAS_IOCTL, fops_ioctl::<T>),
-             #[cfg(CONFIG_COMPAT)]
-             compat_ioctl: if T::HAS_COMPAT_IOCTL {
-@@ -207,6 +214,23 @@ impl<T: MiscDevice> VtableHelper<T> {
-     0
- }
- 
-+unsafe extern "C" fn fops_mmap<T: MiscDevice>(
-+    file: *mut bindings::file,
-+    vma: *mut bindings::vm_area_struct,
-+) -> c_int {
-+    // SAFETY: The mmap call of a file can access the private data.
-+    let private = unsafe { (*file).private_data };
-+    // SAFETY: Mmap calls can borrow the private data of the file.
-+    let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-+    // SAFETY: The caller provides a vma that is undergoing initial VMA setup.
-+    let area = unsafe { kernel::mm::virt::VmAreaNew::from_raw(vma) };
-+
-+    match T::mmap(device, area) {
-+        Ok(()) => 0,
-+        Err(err) => err.to_errno() as c_int,
-+    }
-+}
-+
- unsafe extern "C" fn fops_ioctl<T: MiscDevice>(
-     file: *mut bindings::file,
-     cmd: c_uint,
+The idea is to keep everything together and have execmem_info describe all
+that architecture needs. 
 
 -- 
-2.47.0.rc0.187.ge670bccf7e-goog
-
+Sincerely yours,
+Mike.
 
