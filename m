@@ -1,185 +1,132 @@
-Return-Path: <linux-kernel+bounces-358839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097DF998483
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:09:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B9E998493
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B417B213FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D8F282CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BA91C243A;
-	Thu, 10 Oct 2024 11:08:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2430E1BF324;
-	Thu, 10 Oct 2024 11:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDA71C32EC;
+	Thu, 10 Oct 2024 11:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m7HhnHYx"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7728A1BDAA5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558535; cv=none; b=XKYFodiVcm6Zt+U/KGUReVzuV2SVpJux4FOcsKpYbnujiFqSrUHz11PP0zHnx/pBv6k6kZnKXOWr6dDv1wSFDGkq+iOs9Gwva1Z6d7T4uAP4zIUuutG26akyVw5Xw9774B3qEC+1uD977ACAjxzWIAj7Zq8Znuk+RNAj1YaWE1E=
+	t=1728558835; cv=none; b=aIy3rplWCE7Seqwijsf/TBS4C3UaTYvjEZX78o8eAhQqC61a4A6kgiI1bDwZqIyQY4ZB1NQIkM0NDBAXiCUEejPe+BIKKLfkZF6477Z17MclV7eb1tpIlOA7E5h5EN+YnIjcAsB4ygg08iPTByjhHJuGckRgslwDytKIOKNQyiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558535; c=relaxed/simple;
-	bh=p9H07rn+wuNRM2dxfXfbDsuYp44eVoznRlNZZ4yosiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8XpBu42a/KYhHz14/tszFWkTDs26OJUqjH3ig+23sOW4MvrZj5uMP18brInGGFTBqZ+gQCw0uQ79rT1j8Y5R5OkFtLh4zIBpiIF0pZOBCfLlZSJg2qG4Vy0+V76hdyxOUfdkKwX0zQ49ybwh1Yaues9dowiCNLouNBAt4mXLDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16EB5497;
-	Thu, 10 Oct 2024 04:09:23 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F8CF3F58B;
-	Thu, 10 Oct 2024 04:08:48 -0700 (PDT)
-Date: Thu, 10 Oct 2024 13:08:23 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	viresh.kumar@linaro.org
-Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org, viresh.kumar@linaro.org,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
-	Bibek Basu <bbasu@nvidia.com>
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-Message-ID: <Zwe1p0La_AFknglf@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
- <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
- <ZvU4mR_FZa7jXUgk@arm.com>
- <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
- <Zv8PKlr_PJgxazro@arm.com>
- <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+	s=arc-20240116; t=1728558835; c=relaxed/simple;
+	bh=IHKxd2eqAyoLvkyUehXaj5FGBxUtlfDg6lBIO1T2npE=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=UBcoJNHVhg22SLnronP/WFlHjCPulFrAsbohhPWMpREiEYWzNLUV1o+qkQVJZYshtai+94NlN8cD1+Jo//hAV9Hayv1RmpS+ImLz4cl7nANuk2DF+eYrYe/B4uSf5jNTh5XO3VV+bJsMIJcbRAo9dcybkcrJVC/Wszmar+xGYAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m7HhnHYx; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241010111350epoutp03aedab893cbd3d020b33edc65766d4e2c~9ExkONPBe2423024230epoutp03i
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:13:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241010111350epoutp03aedab893cbd3d020b33edc65766d4e2c~9ExkONPBe2423024230epoutp03i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728558830;
+	bh=oeywdlSGmWq5cb1PEBgpyyvHTYi09dROi5wwD07qjxQ=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=m7HhnHYx412xHO78i4MpUSM2IJmI7O1MHikGtSeS64Gj0wVOTZiXpLD/KDTzM2M6H
+	 IQVu27snlf6E4PEfXzO+ht38+dSbvtO/l5Q18fCfykgAPyWLzt984u9SDBQ1tgUPba
+	 /H9pD/1HfE1eCzVLWFScFlePg+p278npjWQLBkEI=
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.42.68]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241010111349epcas5p1e357923929427e779278c858526eb1f9~9ExjrxVdx0186001860epcas5p12;
+	Thu, 10 Oct 2024 11:13:49 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-0f-6707b6ed285c
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	54.56.08574.DE6B7076; Thu, 10 Oct 2024 20:13:49 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+Mime-Version: 1.0
+Subject: RE: [PATCH 1/1] sched.h: silent false ATOMIC_SLEEP warning from
+ cond_resched
+Reply-To: maninder1.s@samsung.com
+Sender: Maninder Singh <maninder1.s@samsung.com>
+From: Maninder Singh <maninder1.s@samsung.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Hariom Panthi <hariom1.p@samsung.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>, "rostedt@goodmis.org"
+	<rostedt@goodmis.org>, "bsegall@google.com" <bsegall@google.com>,
+	"mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
+	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rohit Thapliyal <r.thapliyal@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20241010103921.GI14587@noisy.programming.kicks-ass.net>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241010110830epcms5p4f0d7af444bb559a59f091d9966b8d535@epcms5p4>
+Date: Thu, 10 Oct 2024 16:38:30 +0530
+X-CMS-MailID: 20241010110830epcms5p4f0d7af444bb559a59f091d9966b8d535
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7bCmlu7bbezpBh/vqFpMf9nIYvF0wlZm
+	iydth1gs7vZPZbG4vGsOm8Xkd88YLS4dWMBkcbz3AJPFxnvZFvs6HjBZdBz5xmyx9eh3dgce
+	jzXz1jB6tOy7xe6xYFOpx+YVWh53ru1h83i/7yqbR9+WVYwem09Xe3zeJBfAGcVlk5Kak1mW
+	WqRvl8CV8fL4G9aC3WwVj98eZ2pg7GXtYuTkkBAwkZhyZS9LFyMXh5DAbkaJ1dOPMHUxcnDw
+	CghK/N0hDFIjLBAusWhbLwuILSSgKHFhxhpGkBJhAQOJX1s1QMJsAnoSq3btASsREdCUWNl2
+	nw1kJLPAVBaJA8vuM0Hs4pWY0f6UBcKWlti+fCsjiM0p4CrR82ETM0RcVOLm6rfsMPb7Y/MZ
+	IWwRidZ7Z6FqBCUe/NwNFZeRWL25F2pmtcTT1+fAFksItDBK7NsNU2QusX7JKrChvAK+EjN6
+	1oI1sAioSly81g3V7CLxYO03sHpmAXmJ7W/nMIM8yQz0zfpd+hAlshJTT61jgijhk+j9/QTu
+	rx3zYGxViZabG1hhfvz88SPUeA+Jo8sPQMNwH5PE3g12ExgVZiFCehaSxbMQFi9gZF7FKJla
+	UJybnppsWmCYl1quV5yYW1yal66XnJ+7iRGcuLRcdjDemP9P7xAjEwfjIUYJDmYlEV7dhazp
+	QrwpiZVVqUX58UWlOanFhxilOViUxHlft85NERJITyxJzU5NLUgtgskycXBKNTAJZO09Xeun
+	cXHtkZZHKjbPMmzlrU1NUvM8X4tUi660PP4s5ancPo6AF1w+Hl+qBOYLadS/SEpObto++YBy
+	Y75UjcC5ft6NDPZPb9lKs99KFDiwYOm0g+c3STi86+5u3lk6/eUfucgTO6e03Q/Jv/SSwWy3
+	8Y3/5/b0VeQsuLn71OyOV7F+d35sW1YhGTDPaNvxD19dZ/dE69b0sn+5JbLw8uPHgbdM3jZv
+	4oxezGNTH3PVOnN5SZZBwZyyazsCNrP/qnh70uLHiuzbs4Wdp6znSPmu86FG6qMo6w+rA99P
+	iRRu9b0oo76P71qwn+6t/8vlI3unSVswPvltNmPaxRzldZYlh1+clknYpMhZsMJTiaU4I9FQ
+	i7moOBEARa7iQssDAAA=
+X-CMS-RootMailID: 20241010032751epcas5p1154533995a184be3fea39325c4d33740
+References: <20241010103921.GI14587@noisy.programming.kicks-ass.net>
+	<20241010092249.GD17263@noisy.programming.kicks-ass.net>
+	<20241010032653.1922214-1-hariom1.p@samsung.com>
+	<20241010100940epcms5p2f7463014f1e1cb1b27a8da300b804e08@epcms5p2>
+	<CGME20241010032751epcas5p1154533995a184be3fea39325c4d33740@epcms5p4>
 
-On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
-> On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
-> > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
-> > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
-> > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
-> > > > > Hi Beata,
-> > > > Hi Sumit,
-> > > > >
-> > > > > Thank you for the patches.
-> > > > Thank you for having a look at those.
-> > > > >
-> > > > > On 13/09/24 18:59, Beata Michalska wrote:
-> > > > > > External email: Use caution opening links or attachments
-> > > > > >
-> > > > > >
-> > > > > > With the Frequency Invariance Engine (FIE) being already wired up with
-> > > > > > sched tick and making use of relevant (core counter and constant
-> > > > > > counter) AMU counters, getting the average frequency for a given CPU,
-> > > > > > can be achieved by utilizing the frequency scale factor which reflects
-> > > > > > an average CPU frequency for the last tick period length.
-> > > > > >
-> > > > > > The solution is partially based on APERF/MPERF implementation of
-> > > > > > arch_freq_get_on_cpu.
-> > > > > >
-> > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > > > > > ---
-> > > > > >   arch/arm64/kernel/topology.c | 109 +++++++++++++++++++++++++++++++----
-> > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
-> > > > > >
-> 
-> --- snip ----
-> 
-> > > > >
-> > > > >     ..
-> > > > >   freq_comput:
-> > > > >     scale = arch_scale_freq_capacity(cpu);
-> > > > >     freq = scale * arch_scale_freq_ref(cpu);
-> > > > >   ----
-> > > > >
-> > > > This boils down to the question what that function, and the information it
-> > > > provides, represent really. The 'unknown' here simply says the CPU has been idle
-> > > > for a while and as such the frequency data is a bit stale and it does not
-> > > > represent the average freq the CPU is actually running at anymore, which is
-> > > > the intention here really. Or, that the given CPU is a non-housekeeping one.
-> > > > Either way I believe this is a useful information, instead of providing
-> > > > stale data with no indication on whether the frequency is really the 'current'
-> > > > one or not.
-> > > >
-> > > > If that is somehow undesirable we can discuss this further, though I'd rather
-> > > > avoid exposing an interface where the feedback provided is open to
-> > > > interpretation at all times.
-> > > 
-> > > Would it make sense to identify that the frequency reporting is unknown due to
-> > > cpu being idle vs some other issue like being a non-housekeeping CPU? Would
-> > > returning a value of 0 make it easier for tools to represent that the CPU is
-> > > currently idle?
-> > That is an option.
-> > Another one would be to return an error for those cases. This would make it
-> > easier to distinguish between valid frequency &/| idle CPU vs tickless CPU
-> > (EINVAL vs ENOENT) ?
 > > 
+> > In our case there was a call to vunmap_pmd_range from __do_softirq,
+> > and vunmap_pmd_range is not actually sleeping call, but because of
+> > cond_resched it was giving warning with DEBUG_ATOMIC_SLEEP.
+> > 
+> > and cond_resched in case of CONFIG_PREEMPTION is empty function with below change:
 > 
-> That seems like a good idea but I suspect it would be confusing to the end user.
-> 
-> If a user runs `cat /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
-> get an error in some cases or get a number in some other iterations.
->
-That is a fair point but I am not entirely convinced using '0' instead makes
-things any more clearer as this is in no way a valid CPU frequency.
-As long as we document the expected behaviour keeping the interface well
-defined,  both options should be fine I guess.
+> By still having that warning we helpfully tell you your code is broken
+> for that other .config. Code should be good irrespective of the .config
+> used, right?
 
-@Viresh: what is your opinion on that one ?
+But isn't it un-necessary to report a warning for a particular .config set,
+when in actual that issue can not happen and code was written accordingly.
 
----
-BR
-Beata
-> Thanks,
-> Vanshidhar
-> 
-> > ---
-> > BR
-> > Beata
-> > > 
-> > > Thanks,
-> > > Vanshidhar
-> > > 
-> > > >
-> > > > ---
-> > > > Best Regards
-> > > > Beata
-> > > > > Thank you,
-> > > > > Sumit Gupta
-> > > > >
-> > > > > P.S. Will be on afk for next 2 weeks with no access to email. Please expect
-> > > > > a delay in response.
-> > > > >
-> > > > > > +               cpu = ref_cpu;
-> > > > > > +               goto retry;
-> > > > > > +       }
-> > > > > > +       /*
-> > > > > > +        * Reversed computation to the one used to determine
-> > > > > > +        * the arch_freq_scale value
-> > > > > > +        * (see amu_scale_freq_tick for details)
-> > > > > > +        */
-> > > > > > +       scale = arch_scale_freq_capacity(cpu);
-> > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
-> > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
-> > > > > > +       return freq;
-> > > > > > +}
-> > > > > > +
-> > > > >
-> > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
-> > > > > >   {
-> > > > > >          int cpu;
-> > > > > > --
-> > > > > > 2.25.1
-> > > > > >
+Because for other .config it will be a total different system and user can change 
+code design for that.
+
+
+But you better know about it, so it is your call :)
+
+Thanks,
+Maninder Singh
 
