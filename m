@@ -1,124 +1,160 @@
-Return-Path: <linux-kernel+bounces-359439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5545998CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:03:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A1B998B76
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8390B2B3ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5771C26754
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC831CC89F;
-	Thu, 10 Oct 2024 15:26:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93691CC15B;
+	Thu, 10 Oct 2024 15:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mN+aBLcq"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7474C20DD2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0F820DD2;
+	Thu, 10 Oct 2024 15:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728573990; cv=none; b=AKkSWbHo4w+Xd0Hxxa5K1lHxetts/8FdsxlO7ZNmavLBrHWP+Qas76mhSa9D+xRQhS+JPQmuLU0UPF0kKBRh4rFgQUSZfkatdfq3HK1Cy4wJ4hFDBVg2X5jGi2Rktv8QwHJEGtEcPy5qRVxqgOedAcNmjthZ1mtaPeJUMMtlLbQ=
+	t=1728574020; cv=none; b=VsnCaTsVIoGRLOgqUYJHwqGtmyc4mRTzXifVQ6LiHiaU6P7wGt+30CEsmikf3Vw5NiOc3r23HjftBCRNUWqNLNv0ZHD2Fm700asMeO4S3ouH8oSsGBbXvV+FcNKM8rjXW+5D68Vdk4MnydjRLqJQZ06Z05PMjkPU13jWJbaH4SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728573990; c=relaxed/simple;
-	bh=C7fnmqYuyPcKiC0cx+MQftXbhZSbo6ITjLwu2xXkE+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WGcPiJ+qnJ51xEL0voIg42BBMKDCttso50DOB3/OM5fsiMpbVEUUCJ1aUEAXGDELoTihj0JGvcNvT3dTEIYmp8SEMPxxQC77zkVdeP5O93l+1JRWj4byaLR4gr/D+eoO9h8PZauv4Jj/FC3SurhZODzvfapcS9RQWZJxVRuyjWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E105C4CEC5;
-	Thu, 10 Oct 2024 15:26:29 +0000 (UTC)
-Date: Thu, 10 Oct 2024 11:26:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] ring-buffer: Fix for 6.12
-Message-ID: <20241010112636.2dba6885@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728574020; c=relaxed/simple;
+	bh=ygDroZHA1j7JZxjtFU44rxkjVqjCtctM1ElAx6dSsDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVPV/luGBJ/S8Bz2VKL/WGD6IzAQ1dtSJV5Oi8282qh1/KYQmva0wtxV4FyM2dc9AQHIo8hXy8uEU4h5ZtUdbov9vIX/37adbx85v+pDrEZtoEwj+BH+vFd8Zr7Kh4IEnyIIE4yY3aseGJaydYIdsLso8RmAIRu/j5l4bn08bho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mN+aBLcq; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 14806FF807;
+	Thu, 10 Oct 2024 15:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728574010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzE9jT9P4k/XrNuOOWoFuNHxaK3It9F/Ncn4nUJHRtA=;
+	b=mN+aBLcqL0fC5B2Nh/GqSp9zUw3YoO09GtFyfxct1Ky77mVi1M+Jf0Q4JE3C9nSHju8iQJ
+	yQiCJiwoYVvAbusHJNh93Kz9QIhhOsXMnOZBpI/Adoe7eTLXLhH7l8Ecbuo6Wths7iPsCc
+	+p97nw7y+I3U7jXe5oWcYkPox0y7nIuaUWJ95aouJ5SwTIrvjUDckluKRyHmSruPnq/F7o
+	kQrKswXvWxAmc4a54zLQORhIKT+p9VQCyRk+TD/00+FVuZ8GFCBYFqY3Ai4tNPzrm3vIdY
+	R/VaX75Fn8FFJIRc0ivySGkGaR4PvTnK+gK0lhaj1dIw7FePzm8IOGikrPDmBQ==
+Date: Thu, 10 Oct 2024 17:26:47 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, Stefan Agner <stefan@agner.ch>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	stable@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/vblank: Require a driver register vblank support for
+ 0 or all CRTCs
+Message-ID: <ZwfyN3uwfODqcw4U@louis-chauvet-laptop>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+	dri-devel@lists.freedesktop.org, Stefan Agner <stefan@agner.ch>,
+	Daniel Vetter <daniel.vetter@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	stable@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+References: <20240927203946.695934-2-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240927203946.695934-2-lyude@redhat.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
+Le 27/09/24 - 16:39, Lyude Paul a écrit :
+> Currently, there's nothing actually stopping a driver from only registering
+> vblank support for some of it's CRTCs and not for others. As far as I can
+> tell, this isn't really defined behavior on the C side of things - as the
+> documentation explicitly mentions to not use drm_vblank_init() if you don't
+> have vblank support - since DRM then steps in and adds its own vblank
+> emulation implementation.
+> 
+> So, let's fix this edge case and check to make sure it's all or none.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Fixes: 3ed4351a83ca ("drm: Extract drm_vblank.[hc]")
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: <stable@vger.kernel.org> # v4.13+
+> ---
+>  drivers/gpu/drm/drm_vblank.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 94e45ed6869d0..4d00937e8ca2e 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -525,9 +525,19 @@ static void drm_vblank_init_release(struct drm_device *dev, void *ptr)
+>   */
+>  int drm_vblank_init(struct drm_device *dev, unsigned int num_crtcs)
+>  {
+> +	struct drm_crtc *crtc;
+>  	int ret;
+>  	unsigned int i;
+>  
+> +	// Confirm that the required vblank functions have been filled out for all CRTCS
+> +	drm_for_each_crtc(crtc, dev) {
+> +		if (!crtc->funcs->enable_vblank || !crtc->funcs->disable_vblank) {
+> +			drm_err(dev, "CRTC vblank functions not initialized for %s, abort\n",
+> +				crtc->name);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
 
+Hi,
 
-Linus,
+I noticed that the kernel bot reported an issue with VKMS and this patch.
 
-ring-buffer: Fix for 6.12
+I did not take the time to reproduce the issue, but it may come from the 
+fact that VKMS call drm_vblank_init before calling 
+drmm_crtc_init_with_planes [1]. I don't see anything in the documentation 
+that requires the CRTC to be initialized before the vblank, is it a change 
+of the API or an issue in VKMS since 2018 [2]?
 
-- Do not have boot-mapped buffers use CPU hotplug callbacks
+Anyway, if this is a requirement, can you explain it in the 
+drm_vblank_init documentation?
 
-  When a ring buffer is mapped to memory assigned at boot, it
-  also splits it up evenly between the possible CPUs. But the
-  allocation code still attached a CPU notifier callback to this
-  ring buffer. When a CPU is added, the callback will happen and
-  another per-cpu buffer is created for the ring buffer. But for
-  boot mapped buffers, there is no room to add another one (as
-  they were all created already). The result of calling the CPU
-  hotplug notifier on a boot mapped ring buffer is unpredictable
-  and could lead to a system crash. If the ring buffer is boot mapped
-  simply do not attach the CPU notifier to it.
+Thanks,
+Louis Chauvet
 
+[1]:https://elixir.bootlin.com/linux/v6.11.2/source/drivers/gpu/drm/vkms/vkms_drv.c#L209
+[2]:https://lore.kernel.org/all/5d9ca7b3884c1995bd4a983b1d2ff1b840eb7f1a.1531402095.git.rodrigosiqueiramelo@gmail.com/
 
-Please pull the latest trace-ringbuffer-v6.12-rc2 tree, which can be found at:
+>  	spin_lock_init(&dev->vbl_lock);
+>  	spin_lock_init(&dev->vblank_time_lock);
+>  
+> 
+> base-commit: 22512c3ee0f47faab5def71c4453638923c62522
+> -- 
+> 2.46.1
+> 
 
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-ringbuffer-v6.12-rc2
-
-Tag SHA1: 55a5da35c9d43dd15b85d53eeac414b92d70518d
-Head SHA1: 912da2c384d510ce40c5af9c3adc316afa4ec547
-
-
-Steven Rostedt (1):
-      ring-buffer: Do not have boot mapped buffers hook to CPU hotplug
-
-----
- kernel/trace/ring_buffer.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
----------------------------
-commit 912da2c384d510ce40c5af9c3adc316afa4ec547
-Author: Steven Rostedt <rostedt@goodmis.org>
-Date:   Tue Oct 8 14:32:42 2024 -0400
-
-    ring-buffer: Do not have boot mapped buffers hook to CPU hotplug
-    
-    The boot mapped ring buffer has its buffer mapped at a fixed location
-    found at boot up. It is not dynamic. It cannot grow or be expanded when
-    new CPUs come online.
-    
-    Do not hook fixed memory mapped ring buffers to the CPU hotplug callback,
-    otherwise it can cause a crash when it tries to add the buffer to the
-    memory that is already fully occupied.
-    
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Link: https://lore.kernel.org/20241008143242.25e20801@gandalf.local.home
-    Fixes: be68d63a139bd ("ring-buffer: Add ring_buffer_alloc_range()")
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 77dc0b25140e..fb04445f92c3 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -2337,9 +2337,12 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
- 	if (!buffer->buffers[cpu])
- 		goto fail_free_buffers;
- 
--	ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
--	if (ret < 0)
--		goto fail_free_buffers;
-+	/* If already mapped, do not hook to CPU hotplug */
-+	if (!start) {
-+		ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
-+		if (ret < 0)
-+			goto fail_free_buffers;
-+	}
- 
- 	mutex_init(&buffer->mutex);
- 
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
