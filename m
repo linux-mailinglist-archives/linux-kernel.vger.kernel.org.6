@@ -1,236 +1,278 @@
-Return-Path: <linux-kernel+bounces-358408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833DA997EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:09:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7A7997EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A25280E67
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B48F1C230DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAEB1BC9F3;
-	Thu, 10 Oct 2024 07:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B5D1BD50D;
+	Thu, 10 Oct 2024 07:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RkoZy2FQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YXuF8+qb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4A31B5EB0;
-	Thu, 10 Oct 2024 07:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728543861; cv=fail; b=U+eE4ZnhH+5TWz3NJw46FCmaXnrUeTpy3xK0SSBK7X7i10q484A7YNTydTckC2F08XcB1laYxAJmW13OCJweTiLGHDgn9HFdo/42n0mJmI3Ct6db2xkHqssnW35BQIcl2HTOPxyVZkOMMW1rE7P23Zr7mdmfquRtyNX5X8CZnGw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728543861; c=relaxed/simple;
-	bh=MdWwN7N+ZNRFrLXmz4PuS2q1oFMdMdY4M7xGmlRZ3Q0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HtO1xswZ1gIlGVK6mihHnFJONR0JpzK/5HWO6yuyJmqPwt8N0VXC4H3hJdVuiBa+dk79MdCBICp5zEMQTIo0aQkJ/EOtRR+2ougZVBpkxylDpQJMOHMC6Yr3OTy6lwMBgZbY2thJ1H9WjZCdDJdvv4TfJXAIFwO1/LM9227kJiE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RkoZy2FQ; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728543860; x=1760079860;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=MdWwN7N+ZNRFrLXmz4PuS2q1oFMdMdY4M7xGmlRZ3Q0=;
-  b=RkoZy2FQP52KgBtDxPzPBWPBR7zV6QGW65EhYQKM2Nbiqf+cmqrTshCX
-   RYpMEL2B4PT6+2GEV8mIlgfeTNDdU/DEr/rfIcmZ8XlcdIaGexZAUMPEx
-   OUCVnLElt+b5NQRkwqctwHj8BmRTMpnfvRj3tgyPGkNenEc5BtCmwOqHM
-   6b3ezhv4k5EYrMT+9VyAaOa6MdhSELNN3UhTYJSBvwzRqHF2WntDMMdly
-   o+tR9q2lA9xgpcPZe+s1qFHkb4o/c1j8O94d9pRWaJ2kk9uwznNb1idUX
-   h6WQxz2fiEqL66ep/okOgWgs2iRZ7AyUdKp3As4zn2V/3VZUpILJiTpMX
-   Q==;
-X-CSE-ConnectionGUID: 59u7RtQuTmqR5M01Q3e3GQ==
-X-CSE-MsgGUID: FPMfm6G6TmyOc/PiiOhj4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="38452534"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="38452534"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 00:04:13 -0700
-X-CSE-ConnectionGUID: xLupigWuSMuKnASLD3mKOQ==
-X-CSE-MsgGUID: ueX31y0PSE2aQyBrH5Ujhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="76976017"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Oct 2024 00:04:13 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 10 Oct 2024 00:04:12 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 10 Oct 2024 00:04:11 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 10 Oct 2024 00:04:11 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.171)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8241B5ED6;
+	Thu, 10 Oct 2024 07:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728543986; cv=none; b=iWBekrV0L6zULv1Wl0XHdZZRU8P3D6l5Ep2ZHEYSIIZESDqscRR1mNXMAQI8Kw7dGllxce9kfApp1EPpwb8XqKGHRd7x8sYy5ThPrSXTGrK1Yeukwu5sLmfKleYf8A1ysdhCNwW4+NdCkpxj1u+hFrX5p8KI3UdnQCDHl7gA4QM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728543986; c=relaxed/simple;
+	bh=vuEpQ4RUZxQv/pOsCPinwqX70CELW16laofpwWDKP/4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uS2e17C8q5X+4L/Yxc/sBVvC8h59nlLjBxxjwFq2C0eyvZ8hx/s3FImSZ6o9lE+FO4rQl3Wa++QJGZD9o55wuS7GHj00ox75rVHaNL5zdmqEJAdro6m6/zE38letiCF9yYBBaonm47EjdGrRY+WqXqohR9OoKKpRbiSd58cvwBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YXuF8+qb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1bRrv030491;
+	Thu, 10 Oct 2024 07:05:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iWKu71tbyjUY2xSflRyTyV
+	MfAOtyEe4rEt6XsCm5LKQ=; b=YXuF8+qbZRJ1ul7iUcpLYzCFDF5rHMTvfN3uXe
+	mYmPLFIpAmt8cyG3mfcz+B5vZh3Ys0XCZxumVSyZZN7LKtwDVx2Hg+k1GJ5aqPk2
+	xUL6FnZnRp4RerX543vogGMbfpBJP8PsjIgnp/XE9GEM4fiaiAL2w/JfDrOar+P4
+	4bZlzPkIPWFP2w4otcx88fIQ+/SR/Pc4f1OT44EVtenzanyxwTCr6bQ3uKwMENp7
+	ebubxPaNPNOmnl/hB5gYM5RE3QPvtf67ZRm0OF42thyrfnqxPNVpLI5UzJ+nE0qq
+	Py0D4FHGitOcuj9EeUqzfCae2UYiE+/NWGUWtbdLf+FboLCQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424x7ryjyh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 07:05:43 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A75gPA024983
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 07:05:42 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 10 Oct 2024 00:04:11 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fXCSlDK0CslK2gk+GCYZNcSjbzIL0eAUBYXCzmWaRFdv71tqGMk10Ru0VMqUzx8RDlIOFqX2cKTXZnr5b4y2YAPa59mYo3mkwd6hi8jW3hKWcFIHd3qa7W64V2UQTVAWqEyeUYhA6eCYYi16wO97+ss/D8yBFeht9q4P9dv+zLMBUNl8neVwwWrTsq5m/fZEmo4wEfKAYIkCCkgfpiMJadDNy6ygYJaz8nl48Vc1mt1PxAL7jiU6iim53FnxOX13pJXY8SmWiyTR7m2O064T/b/o59TmwWkeo0Ts0mZiMBfQQSacICbYldoxrPkTkwAmbr8eOL5KshtCHwvZjSlFLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ItsBRqjxhZLoZUgl3no4wtlGqQrnI5SGpgKl2H/NuJk=;
- b=M9gGspyW74dVuKNVIr3vEpZ43zDd9QQ8Hzd/LN8THke1ZB90axszvSQ/TyUkZHXjwqjUDebi4vQrHwaPa+DxZmghVhEWV3v+L1sYg85HW1L/IIFz+FSoTUAMtDs24M4yoUmAZ9SeGK/RIERaHaylHLCPqS/qe0g/S8mKrqwRs7uGvK/wKaPsuRJATKFlShIruT7j5wNjlktvOQSToAAdpnGhIeMLpPHhxVULA0vke7MPZggL8a6I5NpM7nk5cALDU1G+tJcs/56iDqjakOSklBOgF6SOxcVIXGmXaw+HjH5ti17Xo2qFBzYKJcOxNvHlLvSeURj9kr9WQwO3oK1oQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- PH7PR11MB5983.namprd11.prod.outlook.com (2603:10b6:510:1e2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 07:04:09 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
- 07:04:09 +0000
-Date: Thu, 10 Oct 2024 15:01:56 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] KVM: x86/mmu: Add lockdep assert to enforce safe
- usage of kvm_unmap_gfn_range()
-Message-ID: <Zwd75Nc8+8pIWUGm@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20241009192345.1148353-1-seanjc@google.com>
- <20241009192345.1148353-3-seanjc@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241009192345.1148353-3-seanjc@google.com>
-X-ClientProxiedBy: SG2P153CA0036.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::23)
- To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
+ 15.2.1544.9; Thu, 10 Oct 2024 00:05:36 -0700
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <arnd@arndb.de>,
+        <esben@geanix.com>, <nikita.shubin@maquefel.me>,
+        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v11 0/8] Add QPIC SPI NAND driver
+Date: Thu, 10 Oct 2024 12:35:02 +0530
+Message-ID: <20241010070510.1504250-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH7PR11MB5983:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91c012df-4d52-41d7-3793-08dce8f9bca1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?45Li5IhfNUS1pRX5PX9ibsxdGpL2gXYbt6Rl0E/bAmRQGYRMmUmIBM02xiz2?=
- =?us-ascii?Q?KmxyXiJdni81MmrX9sXpHfK9xWhHEJSMLAeBmdBw310wFt3f+4addgVASBMf?=
- =?us-ascii?Q?Ad3vnBMdEnuJNdk+LRQaJci3bEsDuJ5fNQe20DSFAIZhM3OciXWZuqnRS3Ta?=
- =?us-ascii?Q?xWbdxV0JHPFgol306MV6jxkloZPiUmfs+yv1YQUWwnSrTQ0xHxhM2W12pLR8?=
- =?us-ascii?Q?xzO6j5VHmh4MsF/ZyiR0JnG3OmgjDl+IZdk+M8VhHKiaw+nSobszxYy6PUw8?=
- =?us-ascii?Q?vVJFTgrbX7S+EUUQn4ozXTIzZeWm6gGu541QLuXPmLjxmCA/8nP0GqvBIdQS?=
- =?us-ascii?Q?bY2XWJs9TqtF7ZIg186OjD0uqxBj/2jF9qpdKl+mKzqLGmceAFur4qwZXP86?=
- =?us-ascii?Q?Nq0ANhj+HMSR4gLkHvraeeljwcLziqij2KtBjvamdk7EOFa+e1xVVAtyQuk1?=
- =?us-ascii?Q?RWBCopTA88PtJA/L0jkqLt1aFIoccz9LxDDbkGbcfFN8F5akj4HxYts1yHuH?=
- =?us-ascii?Q?JdGe0n3aqLcWpKIKoMnWp4QkOT7SCGsBgv3Q+ZO7//xwibKFRAWEnGKl+V0Q?=
- =?us-ascii?Q?lo0QkQGCnILSVEAbSpOriV0P3J2xL3XwpLVpw6sIr+CeD7rJReAv/epQhuIQ?=
- =?us-ascii?Q?yYMCfnDwN6coAGLmNyQic2iNvtqNGuuNnDbnpDJTxL83jvnlCuXcAfVxVEUN?=
- =?us-ascii?Q?8xZNzzH7L54Y0fbyYTsIyV/o+cMWo5h3l/bqiUd1tdFszGDeNzDK76Sh+9fR?=
- =?us-ascii?Q?ghF2Ln4+bf8h+BmCye1x1LyZI6HTgXHdtybIHY9GjJMOHX5hbh/2K67yO6yr?=
- =?us-ascii?Q?ys0MyLKgAEZ7jb0SZDHVts3IP7+eKeWLOBjxyKA0n1upee98knOe8dv1pOND?=
- =?us-ascii?Q?7dqKbVm7jcsso78PRGLhP839amgQ3AB3Aki64+XbOrr4Gqc3Zw+kVZvpYX9b?=
- =?us-ascii?Q?ozHHjAd5YNzety6aLwXHKsNtYQbXUB9ceoFHFvP4OR1SbN/nVZzxFIaurUs+?=
- =?us-ascii?Q?cIpUvaA0P6GH+ANiWzMRqGMYTSKcvfVtZzqPdfRY73ITFRnRfIsNgfERkTSf?=
- =?us-ascii?Q?KYa1sf5EbRFbcQbO+w2SZ5zZmlemXJwOP7WwDPhtrUpge2JB0FzASv8U35Fe?=
- =?us-ascii?Q?TE5J52X36iEYAzZqlGXFtKTPBu/TB1Dyq48yf+FL0rHiL/Gixu8AjzGrqYh3?=
- =?us-ascii?Q?J4eqT5zzLgo1GVqbSaKT69goBXVkWSriuLuXeL9YibLGcnPsXnsfIa9EaEpo?=
- =?us-ascii?Q?B/zjKqy0QKh1+yXkdllFWTuKCA0FUMI+MEHIvmlllw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EukjgEZ16oHyuVYs0adhtBKoNjSeYBgotrwcSAj58InsxIAKgfv6GbpKqd7A?=
- =?us-ascii?Q?2yCvaPmp0UZawNKbO5nT7wydOemqnymflRFnkk1xHywe0bCCy1uzQ04meGpn?=
- =?us-ascii?Q?YdZRtJVmhgX9KPCbaIVE7zSOC0mvWh3dJ6kR8PWEm7ucZ9bSql5GlJ1orXLK?=
- =?us-ascii?Q?GA0MAfHd2ffZPhFn9L+dylaXJ3aH4VF9lJcsG8h6yxlDa47isMtIELk8aUhN?=
- =?us-ascii?Q?qh0nvQwRUul84/sMTcD9O4cpdIwRJA2upAm2u4dh0WlWqOXwyR0AR9Uawjig?=
- =?us-ascii?Q?ATSzzwK5swib2QJoVaNDRoENWtVO7pbCwEb9GYjWk7BgA4IwIYB/kEqWxI4S?=
- =?us-ascii?Q?JJBbucWdG/5pnEdEFuobS9gI9Hnb8ApGHPUSJ8u8scrQOs3NBSd6LMx0DwaT?=
- =?us-ascii?Q?ylTsBwXuq92pnrGpMHkDx9J00iXiEqELWOvH1T045cBwLRCsFLE0XYTZXXHe?=
- =?us-ascii?Q?2/QyHSsJ98JwMHw548y+GVDsXoRu5468wIfIBqPR3NLonlUrsPI1MrL8r8zh?=
- =?us-ascii?Q?9seARYuVdz1ru/QW/F/b0/OUPYcaqMELCS77GQrxsV2pC0EHVn/6Xze4/5iC?=
- =?us-ascii?Q?6IRY2hOaYRooG5+1V16pvhZydtLcbENCJyvtqBfG7vhVAkRHEnNhk8JdlOlD?=
- =?us-ascii?Q?+B207ZrtZb0KKWVkLDi7xR9xSgDPw9jSGJnxmjiLnPXbrnVb4d23m6f4OZOe?=
- =?us-ascii?Q?2OP4/nNHJhnQ8XPJ81U3Ji8GWBk7CxrIoXHb7wXzb8dQd1YLIpVWrTfzB7uu?=
- =?us-ascii?Q?NdDBHZwkAJbHQ84lM5AziaLEAZGCMCtaXV0Ef0fa2XHgyQ0Wc9aJDZg18icN?=
- =?us-ascii?Q?LXEWOOET6fg+DESNo15drEBMoe6Jj2M584QtOcQotITVXxCX1LoqqoMFYnFN?=
- =?us-ascii?Q?myYExKXIs5ycKqpxS+W6MCkMLyQRLI2Q7W0R3J3B5ZbpM/pkZ0cLa6KnTdGb?=
- =?us-ascii?Q?6yKEWbu++FF0eJUYLSqTvVoKt2JCk93WPDh/E1Mwk6jYrqo5iw6bUW4+Fpse?=
- =?us-ascii?Q?tZLWoMFPsinW3K9ige7BbS4kwBy3lqYxSvTMygRKS2F9BESSUF6lXTlpb9jw?=
- =?us-ascii?Q?LlA3eBcNvspP+/35S3Na9xLq9/3yOQo94QqHcsnyDcIbzvt0JPubaA2dIJVN?=
- =?us-ascii?Q?uqsYpZu4GgHDEfLptnKyZD0D69f5qCZj79JpsRggarnqOQE5hUApHQKwRxyv?=
- =?us-ascii?Q?9dwBkjVxVzPWjCJr27lDHl2uuFyHf2pzwL+vHzhB2DxV8ieRChO+bvy/MH88?=
- =?us-ascii?Q?Q0qLAxp7sJNzlin498v5D2GZm84PCL4oU2AmmJRe+phkmV/gYmKHouUM34PO?=
- =?us-ascii?Q?xPfxiEwND4qN/AKQMwygC83JGCWDriLB9pnOmjL/BDVjpFlu1O/JkSFqVJn3?=
- =?us-ascii?Q?38hVFnIfJI+7uBrgIKZgPna895b0D2i9mMOphDkiP+y5diALd3WzbqinPfPf?=
- =?us-ascii?Q?KfTiTWm/WnhS4s37sS/rkcOAw4QrvGWOaBztEWLR9/408a0DR8F0pxUvX1lR?=
- =?us-ascii?Q?p6t8TjZ7O0tIrhTX66DMl0e3FTEGWgtA5Hu83r4V8aiTufjVDBXZSP6u4CHe?=
- =?us-ascii?Q?7xoCzNmsK9+pBWOzbIxegQ2bOctR4v9+A/eVqlbj?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91c012df-4d52-41d7-3793-08dce8f9bca1
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 07:04:09.0193
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MD8qdPCXSDETcYnrkCYa9HEBGnHaqY/99Affso/1sCEme8Hiow1fUmxyfEoZOlF8LxFm8TxwDmUK9/KI66PIuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5983
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gEZA7mpsPY_6NXCgAGvtShwtpcQlsGXb
+X-Proofpoint-ORIG-GUID: gEZA7mpsPY_6NXCgAGvtShwtpcQlsGXb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=822 spamscore=0 clxscore=1011 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410100045
 
-On Wed, Oct 09, 2024 at 12:23:44PM -0700, Sean Christopherson wrote:
-> Add a lockdep assertion in kvm_unmap_gfn_range() to ensure that either
-> mmu_invalidate_in_progress is elevated, or that the range is being zapped
-> due to memslot removal (loosely detected by slots_lock being held).
-> Zapping SPTEs without mmu_invalidate_{in_progress,seq} protection is unsafe
-> as KVM's page fault path snapshots state before acquiring mmu_lock, and
-> thus can create SPTEs with stale information if vCPUs aren't forced to
-> retry faults (due to seeing an in-progress or past MMU invalidation).
-> 
-> Memslot removal is a special case, as the memslot is retrieved outside of
-> mmu_invalidate_seq, i.e. doesn't use the "standard" protections, and
-> instead relies on SRCU synchronization to ensure any in-flight page faults
-> are fully resolved before zapping SPTEs.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 09494d01c38e..c6716fd3666f 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -1556,6 +1556,16 @@ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
->  {
->  	bool flush = false;
->  
-> +	/*
-> +	 * To prevent races with vCPUs faulting in a gfn using stale data,
-> +	 * zapping a gfn range must be protected by mmu_invalidate_in_progress
-> +	 * (and mmu_invalidate_seq).  The only exception is memslot deletion,
-> +	 * in which case SRCU synchronization ensures SPTEs a zapped after all
-> +	 * vCPUs have unlocked SRCU and are guaranteed to see the invalid slot.
-> +	 */
-> +	lockdep_assert_once(kvm->mmu_invalidate_in_progress ||
-> +			    lockdep_is_held(&kvm->slots_lock));
-> +
-Is the detection of slots_lock too loose?
-If a caller just holds slots_lock without calling
-"synchronize_srcu_expedited(&kvm->srcu)" as that in kvm_swap_active_memslots()
-to ensure the old slot is retired, stale data may still be encountered. 
+v11:
+ * Dropped Reviewed-by tag
+ * Added soc based compatible "qcom,ipq9574-snand"
+ * fixed build error reported by kernel test bot by
+   changing statement "depends on MTD" to "selct MTD"
+   in drivers/spi/Kconfig file
 
->  	if (kvm_memslots_have_rmaps(kvm))
->  		flush = __kvm_rmap_zap_gfn_range(kvm, range->slot,
->  						 range->start, range->end,
-> -- 
-> 2.47.0.rc1.288.g06298d1525-goog
-> 
+v10:
+ * Fixed compilation warnings reported by kernel test robot
+ * Added depends on CONFIG_MTD for qpic-spi nand driver
+ * Removed extra bracket from statement if (i == (num_cw - 1))
+   in qcom_spi_program_raw() api.
+
+v9:
+ * Fixed all the compilation warning reported by
+   kernel test robot
+  * Changed type of cmd1, vld to u32 from __le32 in qcom_nand_controller
+   structure
+ * Changed type of cfg0, cfg1, cfg0_raw, cfg1_raw, clrflashstatus,
+   ecc_buf_cfg, ecc_bch_cfg, clrreadstatus to u32 in qcom_nand_host
+   structure
+ * In nandc_set_read_loc_first() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In nandc_set_read_loc_last() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * Changed data type of cw_offset, read_size, is_last_read_loc to
+   u32 in nandc_set_read_loc() api to fix compilation warning reported
+   by kernel test bot
+ * In set_address() api added cpu_to_le32() macro to fix compilation
+   warning reported by kernel test bot
+ * In update_rw_regs() api added cpu_to_le32() macro to fix compilation
+   warning reported by kernel test bot
+ * In qcom_op_cmd_mapping() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_read_status_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_read_id_type_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_misc_cmd_type_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_param_page_type_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot   
+ * In update_rw_regs() api added cpu_to_le32() macro to fix compilation
+   issue reported by kernel test bot
+ * In qcom_param_page_type_exec() api added cpu_to_le32() macro to fix
+   compilation issue reported by kernel test bot
+ * Changed data type of addr1, addr2, cmd, to __le32 in qpic_spi_nand
+   structure
+ * In qcom_spi_set_read_loc_first() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_set_read_loc_last() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_init() api added cpu_to_le32() macro to fix compilation
+   warning
+ * In qcom_spi_ecc_init_ctx_pipelined() api removed unused variables
+   reqs, user, step_size, strength and added cpu_to_le32() macro as well
+   to fix compilation warning
+ * In qcom_spi_read_last_cw() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_check_error() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_read_page_ecc() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_read_page_oob() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_program_raw() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_program_ecc() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_program_oob() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_send_cmdaddr() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_io_op() api added cpu_to_le32() macro to fix compilation
+    warning
+v8:
+ * Fixed compilation warning reported by kernel test robot
+ * Added "chip" description in nandc_set_read_loc_first()
+ * Added "chip" description" in nandc_set_read_loc_last()
+ * Changed data type of read_location0, read_location1,
+   read_location2, read_location3, addr0, addr1, cmd, cfg0,
+   cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
+   orig_cmd1, orig_vld to __le32 to fix compilation warning.
+ * Included bitfield.h header file in spi-qpic-snand.c to
+   fix compilation warning
+ * Removed unused variable "steps" variable from 
+   qcom_spi_ecc_init_ctx_pipelined()
+
+v7:
+ * Added read_oob() and write_oob() api
+ * Added FIELD_PREP() in spi init
+ * Made CONFIG_SPI_QPIC_SNAND and CONFIG_MTD_NAND_QCOM
+   as bool type
+ * Removed offset 0 in oob_ecc() layout
+ * Handled multiple error condition
+
+v6:
+ * Added FIELD_PREP() and GENMASK() macro
+ * Added qpic_spi_nand{..} structure for
+   spi nand realted variables
+ * Made qpic_common.c slectable based on
+   either CONFIG_MTD_NAND_QCOM or CONFIG_SPI_QPIC_SNAND
+ * Removed rawnand.h from qpic-common.h 
+ * Removed partitions.h and rawnand.h form spi-qpic-snand.c
+ * Added qcom_nand_unalloc() in remove()
+
+v5:
+ * Fixes nandbiterr issue
+ * Added raw_read() and raw_write() API
+ * Added qcom_ prefix to all the common API
+ * Removed register indirection
+ * Following tests for SPI-NAND devices passed
+
+   - mtd_oobtest
+   - mtd_pagetest
+   - mtd_readtest
+   - mtd_speedtest
+   - mtd_stresstest
+   - mtd_subpagetest
+   - mtd_nandbiterrs
+   - nandtest
+   - nanddump
+   - nandwrite
+   - nandbiterr -i
+   - mtd erase
+   - mtd write
+   - dd
+   - hexddump
+
+v4:
+ * In this patch series fixes kernel doc for all the cmmon api
+ * Also fixes dm-binding commit message
+ * Fix qpic_common.c compilation based on config
+
+v3:
+ * In this patch series fixes multiple things like
+   added clock-name, added _alloc_controller api instead
+   of alloc_master, made common apis more generic etc.
+
+ * Addressed all the comment from v2 patch series
+
+v2:
+ * https://lore.kernel.org/linux-arm-msm/20240215134856.1313239-1-quic_mdalam@quicinc.com/
+ * In this series of patchs we have added basic working QPIC SPI NAND
+   driver with READ, WRITE, ERASE etc functionality
+
+ * Addressed all the comments given in RFC [v1] patch
+
+v1:
+ * https://lore.kernel.org/linux-arm-msm/20231031120307.1600689-1-quic_mdalam@quicinc.com/
+ * Initial set of patches for handling QPIC SPI NAND.
+
+
+Md Sadre Alam (8):
+  spi: dt-bindings: Introduce qcom,spi-qpic-snand
+  mtd: rawnand: qcom: cleanup qcom_nandc driver
+  mtd: rawnand: qcom: Add qcom prefix to common api
+  mtd: nand: Add qpic_common API file
+  mtd: rawnand: qcom: use FIELD_PREP and GENMASK
+  spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
+  arm64: dts: qcom: ipq9574: Add SPI nand support
+  arm64: dts: qcom: ipq9574: Disable eMMC node
+
+ .../bindings/spi/qcom,spi-qpic-snand.yaml     |   83 +
+ .../boot/dts/qcom/ipq9574-rdp-common.dtsi     |   43 +
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   |    2 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   27 +
+ drivers/mtd/nand/Makefile                     |    7 +
+ drivers/mtd/nand/qpic_common.c                |  738 +++++++
+ drivers/mtd/nand/raw/Kconfig                  |    2 +-
+ drivers/mtd/nand/raw/qcom_nandc.c             | 1763 +++--------------
+ drivers/spi/Kconfig                           |    9 +
+ drivers/spi/Makefile                          |    1 +
+ drivers/spi/spi-qpic-snand.c                  | 1634 +++++++++++++++
+ include/linux/mtd/nand-qpic-common.h          |  482 +++++
+ 12 files changed, 3349 insertions(+), 1442 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/qcom,spi-qpic-snand.yaml
+ create mode 100644 drivers/mtd/nand/qpic_common.c
+ create mode 100644 drivers/spi/spi-qpic-snand.c
+ create mode 100644 include/linux/mtd/nand-qpic-common.h
+
+-- 
+2.34.1
+
 
