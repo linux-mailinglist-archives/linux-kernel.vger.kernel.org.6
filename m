@@ -1,180 +1,119 @@
-Return-Path: <linux-kernel+bounces-359059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95ABF9986E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:59:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8BC9986BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B53286879
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2B01C23B5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A602D1C8FC4;
-	Thu, 10 Oct 2024 12:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479401C6F58;
+	Thu, 10 Oct 2024 12:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GarzqXUR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+G4yTfU"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452001C6F76;
-	Thu, 10 Oct 2024 12:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAC51C2DAA;
+	Thu, 10 Oct 2024 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565145; cv=none; b=YLSiZuiB59i7peutxmH0Pi/90KzzIE2+tZDv8F68kc+2vLb23vqpxsCDazR6hV3EhWyDVcVuXUF8pT2Jv6RvQwKmmhLghQw0p5pMDQRZ8YiQEInFjhZtt0YyIOyod+YP6PIPt6xYRtA34JBO96KbaMBAWfjxp2mN/un1ulukFd8=
+	t=1728564909; cv=none; b=SLpqy+uHPJAlgcC6LU7eYUcc0bKU/QTjy9rnuXZBfCs9S7tzAZCUeK3185d5Ke0/flOjABJ5HhvVJpbXYKMvqayWsmM4c4uM/+2EZDzjAZE2AlsK2cL4u6nDaTdn0radIjj7613uazwnq0JHEj4khI3tlhcR9chufLWcURDi+q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565145; c=relaxed/simple;
-	bh=qG07lweCtBAKOnQXgCoehTDupnHqaq1M91lS9S6Vfcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K43qxc1zdOElFNsV3tGtAkFNOG17dDCmyp4fq5LIOKEOJVKP6aMTtBy9457reRnpG1NginFy6sQOkp98tU+jmy8Eb0xSQrTypXqqiVVm0rDGhAlD2r9dXPrnlpCmzZYER1xUtRuE8QExrpGqUZKEuk/cd0yiDT4V4G8l8nzTAp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GarzqXUR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1728565141;
-	bh=qG07lweCtBAKOnQXgCoehTDupnHqaq1M91lS9S6Vfcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GarzqXUR4X2v779CIciPxGeAekZ2tMC0aHXtHJiB36ZNuhI5LQeHdeOf65UryhGEf
-	 BcY74oj8Xh7BgliJXDWijcsP6rXCglUKTgBSUbnTIoeklyEttma3alaIymDq8PZAyr
-	 p188LUr5l88XbJuVafTcdhNGYVpEEx8Am27DSXy5SKHfMaNmKfuX4GZKYFprV81Yut
-	 JL3zjHq+BC+BXQPPF9Tt5smmx7U2wbcjlUYn9PXiz8GE6ChUTpaFEXUS9Axu+Hh3xK
-	 Wtm6KlkXzJkjueJclJrQUqLzyAY8eY2dUKLt9u3CIUfeDjGRUxqYgqQKx+hRMUAaOg
-	 JTxThjytqr6uA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E634717E35F4;
-	Thu, 10 Oct 2024 14:59:00 +0200 (CEST)
-Message-ID: <d9bd5573-4860-4a59-b03c-2c353a9b556b@collabora.com>
-Date: Thu, 10 Oct 2024 14:59:00 +0200
+	s=arc-20240116; t=1728564909; c=relaxed/simple;
+	bh=c5YOO3PqT5p0RhvzjAME/TqZqQtmmFNIrX2KOAxy+g0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=L5v6Fx7UwuKFpaKTOlqiVgoBa9DupTBrgzNR/qIoh2piAVF5H+QxuDcC1lKbPO1bMk+f18YRUjSVCSmWmN/AmBJF9rLdf30bhVqrpJPkXzBzDAPo/KZm/bnxfUAWwjI+z7ENB6i2Vq21X16TJ69NvfnO2czedBELWDBsT6o8LKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+G4yTfU; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-430576ff251so7708535e9.0;
+        Thu, 10 Oct 2024 05:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728564906; x=1729169706; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=c5YOO3PqT5p0RhvzjAME/TqZqQtmmFNIrX2KOAxy+g0=;
+        b=Q+G4yTfUzrDJC4mn9PRA6MWStx4PEG7NOr+/w+k40mM9XiX6sbtb2xpwQ4efXvsSi/
+         MWEWwUCoWHxMp3vhPf1kQnGvM3LScKvanmphFDf4KTkOWYU9/hXb6vzqwel5tOsMdpbN
+         tmD3H8dSrkz3YvTIQ9i6Vjqqamg0jssuS/SQ76+Aj2BioFcIv4An2wXGiqnRya93Ky2e
+         h3jBETLp5r4/TRLSreouDAJeRwIxkvN7+1YRAFBKOFqWxbm0G0mXKHHcP9gaLyMHRRhT
+         VfA71GUrBqf8sDKZ1kEG9CWZTbS0wN7r166XCCv7dQuQtklBzg4cHxI1QL/J3tdFjBRl
+         PyXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728564906; x=1729169706;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c5YOO3PqT5p0RhvzjAME/TqZqQtmmFNIrX2KOAxy+g0=;
+        b=itj79WnyKsV6hNP1XCM02ucSl6LAki+W2rWtpr6jQJkOQ5ed/HFhkY61kMMggay9om
+         ohRWh8tyHc9t+pgJi9WeXMJujlHKMATBYjxZXAy/uN1NU17Is1Z3xLcMXepA0arRjIEh
+         CiJMnb+nmBdLnZWabXSjPtxCIUspFBv4OAgKyu7SP35Bj7089CktRwr1Woktm/sqbTKg
+         u3hrYVml/VYUfKXlJDdXvZ9JBpmpMLdI4QEumYcjJqE7wAEeKm4YHnYiC0ma8tEevUXY
+         HWOo4fjxnsXI0QvrICNi8AWcJdTCbeLA8HQU/d6C7FobaLM4W9BMEQ6dtZYEgD5MukrY
+         845w==
+X-Forwarded-Encrypted: i=1; AJvYcCU1TdIQovNZaDH/1zk37T+xoV7HZzePJj9diq3HmCyU0zkrTKZq2mzLw8i0QWSqtHleYn7zdEoIJKrK@vger.kernel.org, AJvYcCVlMr7EoX7alaVh7eMK9Zo7NZoUnNM+vQG0n9TZp5qDk74fyL5BMt05ZGJEiHvhatmaNneKae2tU5YH@vger.kernel.org, AJvYcCWeyzIBGHle+cQ+ws2ZmgTA41fJ96Fr1wwUi4s79g+SO2gC8ZVvxodlNe4g6P/QBZfEqOzdEcaBOA3yt8SO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXTurkH0iLtI5Tfs+vUKz9aSG4fs/p/7FyfIfdznYwXmhqOUOt
+	O/xU8yfX7LArC/jVOHQJLaBhYyMvugv/Sj9nodxRTj3H0th1gtAM
+X-Google-Smtp-Source: AGHT+IE9zk6J9pnKB3CrkToVJ8ktrG3arNVRbl5nS+RDZhg9k9AhczWUhaGj2N32N9CY+aLIxzvbqA==
+X-Received: by 2002:a05:600c:510a:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-431157a3ba3mr30752595e9.2.1728564906184;
+        Thu, 10 Oct 2024 05:55:06 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ed69dsm1486749f8f.92.2024.10.10.05.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 05:55:05 -0700 (PDT)
+Message-ID: <a02f256c54089da4faa3ee1807c01b9cb6e70bc6.camel@gmail.com>
+Subject: Re: [PATCH v5 02/10] iio: dac: adi-axi-dac: update register names
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen	
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ Sa	 <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dletchner@baylibre.com,  Mark Brown
+ <broonie@kernel.org>
+Date: Thu, 10 Oct 2024 14:59:21 +0200
+In-Reply-To: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-2-3d410944a63d@baylibre.com>
+References: 
+	<20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
+	 <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-2-3d410944a63d@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] clk: mediatek: Add drivers for MediaTek MT6735
- main clock and reset drivers
-To: Yassine Oudjana <yassine.oudjana@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Sam Shih <sam.shih@mediatek.com>,
- Daniel Golle <daniel@makrotopia.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-References: <20241010124529.78460-1-y.oudjana@protonmail.com>
- <20241010124529.78460-3-y.oudjana@protonmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241010124529.78460-3-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Il 10/10/24 14:45, Yassine Oudjana ha scritto:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Add drivers for MT6735 apmixedsys, topckgen, infracfg and pericfg
-> clock and reset controllers. These provide the base clocks and resets
-> on the platform, enough to bring up all essential blocks including
-> PWRAP, MSDC and peripherals (UART, I2C, SPI).
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+On Tue, 2024-10-08 at 17:43 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Non functional, readability change.
+>=20
+> Update register names so that register bitfields can be more easily
+> linked to the register name.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 > ---
->   MAINTAINERS                                  |   4 +
->   drivers/clk/mediatek/Kconfig                 |   9 +
->   drivers/clk/mediatek/Makefile                |   1 +
->   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 138 +++++++
->   drivers/clk/mediatek/clk-mt6735-infracfg.c   | 107 +++++
->   drivers/clk/mediatek/clk-mt6735-pericfg.c    | 124 ++++++
->   drivers/clk/mediatek/clk-mt6735-topckgen.c   | 394 +++++++++++++++++++
->   7 files changed, 777 insertions(+)
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-apmixedsys.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-infracfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-pericfg.c
->   create mode 100644 drivers/clk/mediatek/clk-mt6735-topckgen.c
-> 
 
-You're so, so, so, so..... *so close* to get this one upstream.
+I don't fully agree that this is so much better that's worth the churn...
 
-Read the comments below and *please*, fix it and send a v6 *as soon as you can*,
-so that we get a good chance to see this in v6.13 and so that you can move on
-with upstreaming the other stuff that you got for this SoC.
+From a quick a look I saw (I think) some defines where _REG seems to be mis=
+sing.
+Those is fine to change for consistency but I don't really seeing the big
+benefit in changing them all.
 
-..snip...
+(Sorry for only complaining in v5 about this...)
 
-> diff --git a/drivers/clk/mediatek/clk-mt6735-infracfg.c b/drivers/clk/mediatek/clk-mt6735-infracfg.c
-> new file mode 100644
-> index 0000000000000..eceb13af3222a
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6735-infracfg.c
-> @@ -0,0 +1,107 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +
-> +#include <dt-bindings/clock/mediatek,mt6735-infracfg.h>
-> +#include <dt-bindings/reset/mediatek,mt6735-infracfg.h>
-> +
-> +#define INFRA_RST0			0x30
-> +#define INFRA_GLOBALCON_PDN0		0x40
-> +#define INFRA_PDN1			0x44
-> +#define	INFRA_PDN_STA			0x48
+- Nuno S=C3=A1
 
-#define<tab>INFRA_PDN_STA .... I know this is a typo, but you'll have to fix it.
 
-Please replace the tabulation with a space, so that this is consistent with all
-of the other definitions that you have in here.
-
-> +
-> +#define RST_NR_PER_BANK			32
-> +
-
-..snip..
-
-> diff --git a/drivers/clk/mediatek/clk-mt6735-pericfg.c b/drivers/clk/mediatek/clk-mt6735-pericfg.c
-> new file mode 100644
-> index 0000000000000..6f298d5538782
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6735-pericfg.c
-> @@ -0,0 +1,124 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 Yassine Oudjana <y.oudjana@protonmail.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-gate.h"
-> +#include "clk-mtk.h"
-> +
-> +#include <dt-bindings/clock/mediatek,mt6735-pericfg.h>
-> +#include <dt-bindings/reset/mediatek,mt6735-pericfg.h>
-> +
-> +#define PERI_GLOBALCON_RST0		0x00
-> +#define PERI_GLOBALCON_RST1		0x04
-> +#define PERI_GLOBALCON_PDN0_SET		0x08
-> +#define PERI_GLOBALCON_PDN0_CLR		0x10
-> +#define	PERI_GLOBALCON_PDN0_STA		0x18
-
-same here
-
-> +
-> +#define RST_NR_PER_BANK			32
-After which:
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
