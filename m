@@ -1,187 +1,95 @@
-Return-Path: <linux-kernel+bounces-359105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833CA99878B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:24:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A58B99878D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0228A1F23D78
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6671C222C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817B11C8FD7;
-	Thu, 10 Oct 2024 13:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F21C1C9DE5;
+	Thu, 10 Oct 2024 13:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjdj2m/X"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPruOcVf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6901C3316;
-	Thu, 10 Oct 2024 13:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6A61C1ABE;
+	Thu, 10 Oct 2024 13:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728566635; cv=none; b=hjqzyaJD4Wn37hUKIv88cDS9MZjhH01vD/FXCdE/MTnz0ZCLHcM7ZO8olQyo1QT7iV6UwHJw+1JUpSJMI6EBg8Qk2qypjfsz532lPUZ7CT/LjMvhZPSA0zJ7m1BEiZQ6FmMdnh40Oo+bv6nzr2ZViaFa8DOPwdUKbLjFKh9ZMHE=
+	t=1728566655; cv=none; b=Ic9uJj0vURnPmT7ZeUbHU0Boypa5oCoQmLsENWnCssuE0wdsyrr89FA3AcxaCfVnSTwdWqBoX4dRINmPVl90e6JUFk9v9X+PuhdEYtemOAujlyt5+5ioeZVLSqqypoMFcR36CGZhzDlcUGoLfDqOQ42BLDB4157H4jR37D9I//Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728566635; c=relaxed/simple;
-	bh=snSjJQ5ptmbiAaOVtkqH6aJWIVL4ZEkAaiP9TOSjaeE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=m9V9UDcQUpCrpvwJ2/vXu4wJ5Nvy0+VFCtbvt9yeUzb95/8AyJI2rFyBHf+NKsNN+08+0bCay+kGLKfqhgAkUcy4EGFarHvE3pC3bXdIYMYYK3M4v9wqR61zGyJwvjjWYp40PdsjUGRpIoir6FSggAXy++wEl5KcVQgVCxKcFJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjdj2m/X; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460464090d5so3718031cf.2;
-        Thu, 10 Oct 2024 06:23:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728566633; x=1729171433; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xgas4UKq96jNnf/fhVFzyn4kBLRom+VwWUFcbKspLV4=;
-        b=bjdj2m/X11QWzvTMdY5lEzctN7zu+Hor9PnilOjcJXvdKkf5sjvINmlgmFi0z6J5oV
-         9KsT4FHD7r77OR42rxIBGTdX8OqWvSzV5E+yfvQW+BhotcvO7UTXKd1/OcNvqMu3dYVx
-         CyCzAir/+izfvZsqGUKHnSfInTlKjTLYLHPZzIv2AKZKKTiwaKwwjnHGfkSo9SxpUwas
-         9FlVcm/d1+n6X94Pj1xq2Sldzi8OYA5+sJcpz5HRbysym+7f7P+P0aZqbTF7GcE/K8nZ
-         mgntl4XB78wmuFdJgXoErkdXJ7fK70F5C/qjdejRTiOleHdne2Qeifx6Icbps32X0Lht
-         sQ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728566633; x=1729171433;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Xgas4UKq96jNnf/fhVFzyn4kBLRom+VwWUFcbKspLV4=;
-        b=sYKZM6kMWHE90Ux3Uqe8txjMLv7pzmL3OZPUfILa/2RUNlXfOl8QS7Zz61XJOq8CUH
-         MZNd5MwRiZpsHxQrovNSAWbNUKv5PEsvS8edDYdnwnjscdyVZ0fbfqAida95VptADUOR
-         2gh6TBiDRWS+Tp0vqLcJEeBL3ZDCoOotM60Z/xgPGZtUzT8ji01hSxcJp2qKOa3PLpsf
-         rb3QkUik9XYyFaOYJf+Ca5wIr/vtG+E8qYXQuHMBWqdrrj4PoKOqmQrKeNe8S/tB8hm/
-         e/2vFIqDNGFIhG7+KsWII9gtY8cC/enWTl/b5xUjWgyxa4dGzRhMfU63hcrz88iBp3pw
-         AWXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURLsx8QAsutgyCw4btILzbI5Rs7W8UMtdEYwlewgzntyZ3SQAfKEn76TyuoxHXmzOA+YZfYz8XwM1ACjo=@vger.kernel.org, AJvYcCWzmnmmL5qHSuPt92dJR0rCKk30xP021C8rK0M35pYiMn9PYjPg5MpWwpnGRhKOUmQfr2efiSPy32BuZK+a0baZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLIgjOub2mGk3i+bYkocsJIQdNVUHy6qS6yWrircf3O22eL9fk
-	QHcn3hT4wlerEuNJgB5rxXACByUJkZ5iQcSW8EExcOrzYyD77AhK
-X-Google-Smtp-Source: AGHT+IFFyJBTpArUnvpJ1SxmGPt1lWLwPAaklksTtG4EfUqWjhfRq8eGD8gx54vZlmPSPAKGZaelCg==
-X-Received: by 2002:a05:622a:2985:b0:460:3b66:c599 with SMTP id d75a77b69052e-4603b66c6ccmr68276391cf.17.1728566633015;
-        Thu, 10 Oct 2024 06:23:53 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4604287df23sm5271701cf.67.2024.10.10.06.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:23:52 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:23:52 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Gur Stavi <gur.stavi@huawei.com>, 
- Gur Stavi <gur.stavi@huawei.com>
-Cc: netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- linux-kselftest@vger.kernel.org
-Message-ID: <6707d56835f42_2029212942b@willemb.c.googlers.com.notmuch>
-In-Reply-To: <9e15c0c2cd19d94207a1791de0dc9051a5abb95a.1728555449.git.gur.stavi@huawei.com>
-References: <cover.1728555449.git.gur.stavi@huawei.com>
- <9e15c0c2cd19d94207a1791de0dc9051a5abb95a.1728555449.git.gur.stavi@huawei.com>
-Subject: Re: [PATCH net-next v03 1/3] af_packet: allow fanout_add when socket
- is not RUNNING
+	s=arc-20240116; t=1728566655; c=relaxed/simple;
+	bh=yP11aur8Rt+Rw0tYaqkcFxSY5kmdndx3o4KpjKCWejM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkhfVOZutHWTrY1Dip7MPz7OhzI/BQXWD0UKWzrFlFem1a0MN8xgtHRnecR+rE/zxZT8yiLJykWY9lQNvCFSgpn7bYARumrDd1OX1k54nKN9jyVWhGMZyJNGVvvwfHwn8r1rI+aymBelUyJKGAISYP64j+9iStjB/6+XzYaUkDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPruOcVf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98CBC4CEC5;
+	Thu, 10 Oct 2024 13:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728566654;
+	bh=yP11aur8Rt+Rw0tYaqkcFxSY5kmdndx3o4KpjKCWejM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aPruOcVf9a7yImnkIMPT5Qi2hcOUQZgNyvBh1PkUztPUB6D+bgsdPKFetO4b24n3/
+	 2GBXgw5FqXTsxRZZDl4djnjRK/Hz75LV8u8TCJI+kbsMKXPjlV9X3/uBExi2RtlVtM
+	 HfQyCPrnkgtROHFUgb/F4+QNv9rqlOPVis3SRokPq2diRhSc1ArlGek0Ek9+elIw5U
+	 32X6QPgP/+R/1atQg0l1DHelVFZnYsD7OaGV0mvTjpOyPVzPQVzV4gwefrMEl8JJ3y
+	 ycUvfRWeusiuUhZXDaynlDcUGsqrz9SN0YFpCMFYFUlO2BXwIjGcDIRl+ESTc6TvAn
+	 537M2tGZe3A5w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1syt9P-000000004nT-2lyW;
+	Thu, 10 Oct 2024 15:24:19 +0200
+Date: Thu, 10 Oct 2024 15:24:19 +0200
+From: Johan Hovold <johan@kernel.org>
+To: neil.armstrong@linaro.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: mark pd-mapper as broken
+Message-ID: <ZwfVg89DAIE74KGB@hovoldconsulting.com>
+References: <20241010074246.15725-1-johan+linaro@kernel.org>
+ <CAA8EJpoiu2hwKWGMTeA=Kr+ZaPL=JJFq1qQOJhUnYz6-uTmHWw@mail.gmail.com>
+ <ZweoZwz73GaVlnLB@hovoldconsulting.com>
+ <CAA8EJprg0ip=ejFOzBe3iisKHX14w0BnAQUDPqzuPRX6d8fvRA@mail.gmail.com>
+ <Zwe-DYZKQpLJgUtp@hovoldconsulting.com>
+ <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
 
-Gur Stavi wrote:
-> PACKET socket can retain its fanout membership through link down and up
-> and leave a fanout while closed regardless of link state.
-> However, socket was forbidden from joining a fanout while it was not
-> RUNNING.
-> 
-> This patch allows PACKET socket to join fanout while not RUNNING.
-> 
-> The previous test for RUNNING also implicitly tested that the socket is
-> bound to a device. An explicit test of ifindex was added instead.
-> 
-> Signed-off-by: Gur Stavi <gur.stavi@huawei.com>
-> ---
->  net/packet/af_packet.c | 35 +++++++++++++++++++++--------------
->  1 file changed, 21 insertions(+), 14 deletions(-)
-> 
-> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-> index f8942062f776..8137c33ab0fd 100644
-> --- a/net/packet/af_packet.c
-> +++ b/net/packet/af_packet.c
-> @@ -1843,26 +1843,29 @@ static int fanout_add(struct sock *sk, struct fanout_args *args)
->  		match->prot_hook.ignore_outgoing = type_flags & PACKET_FANOUT_FLAG_IGNORE_OUTGOING;
->  		list_add(&match->list, &fanout_list);
->  	}
-> -	err = -EINVAL;
->  
->  	spin_lock(&po->bind_lock);
-> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
-> -	    match->type == type &&
-> -	    match->prot_hook.type == po->prot_hook.type &&
-> -	    match->prot_hook.dev == po->prot_hook.dev) {
-> +	if (po->ifindex == -1 || po->num == 0) {
+On Thu, Oct 10, 2024 at 01:46:48PM +0200, neil.armstrong@linaro.org wrote:
+> >> On Thu, 10 Oct 2024 at 13:11, Johan Hovold <johan@kernel.org> wrote:
 
-This patch is more complex than it needs to be.
+> >>> As I tried to explain in the commit message, there is currently nothing
+> >>> indicating that these issues are specific to x1e80100 (even if you may
+> >>> not hit them in your setup depending on things like probe order).
 
-No need to block the case of ETH_P_NONE or not bound to a socket.
+> The in-kernel pd-mapper works fine on SM8550 and SM8650, please just revert
+> the X1E8 patch as suggested by Dmitry.
 
-I would have discussed that in v2, but you already respun.
+Again, you may just be lucky, we have x1e users that also don't hit
+these issues due to how things are timed during boot in their setups.
 
-> +		/* Socket can not receive packets */
-> +		err = -ENXIO;
-> +	} else if (match->type != type ||
-> +		   match->prot_hook.type != po->prot_hook.type ||
-> +		   match->prot_hook.dev != po->prot_hook.dev) {
-> +		/* Joining an existing group, properties must be identical */
-> +		err = -EINVAL;
-> +	} else if (refcount_read(&match->sk_ref) >= match->max_num_members) {
->  		err = -ENOSPC;
-> -		if (refcount_read(&match->sk_ref) < match->max_num_members) {
-> +	} else {
-> +		/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
-> +		WRITE_ONCE(po->fanout, match);
-> +		po->rollover = rollover;
-> +		rollover = NULL;
-> +		refcount_set(&match->sk_ref, refcount_read(&match->sk_ref) + 1);
-> +		if (packet_sock_flag(po, PACKET_SOCK_RUNNING)) {
->  			__dev_remove_pack(&po->prot_hook);
-> -
-> -			/* Paired with packet_setsockopt(PACKET_FANOUT_DATA) */
-> -			WRITE_ONCE(po->fanout, match);
-> -
-> -			po->rollover = rollover;
-> -			rollover = NULL;
-> -			refcount_set(&match->sk_ref, refcount_read(&match->sk_ref) + 1);
->  			__fanout_link(sk, po);
-> -			err = 0;
->  		}
-> +		err = 0;
->  	}
->  	spin_unlock(&po->bind_lock);
->  
-> @@ -3452,8 +3455,12 @@ static int packet_create(struct net *net, struct socket *sock, int protocol,
->  	po->prot_hook.af_packet_net = sock_net(sk);
->  
->  	if (proto) {
-> +		/* Implicitly bind socket to "any interface" */
-> +		po->ifindex = 0;
->  		po->prot_hook.type = proto;
->  		__register_prot_hook(sk);
-> +	} else {
-> +		po->ifindex = -1;
->  	}
->  
->  	mutex_lock(&net->packet.sklist_lock);
-> -- 
-> 2.45.2
-> 
+If there's some actual evidence that suggests that this is limited to
+x1e, then that would of course be a different matter, but I'm not aware
+of anything like that currently.
 
-
+Johan
 
