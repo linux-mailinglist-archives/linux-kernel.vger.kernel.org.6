@@ -1,86 +1,75 @@
-Return-Path: <linux-kernel+bounces-358859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47519984C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:19:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1072F9984ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457A7283458
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9211C24102
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13451C460B;
-	Thu, 10 Oct 2024 11:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECA71C32E7;
+	Thu, 10 Oct 2024 11:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nJfpme/6"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lJU3XipM"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7DF1C32E7
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4408EF9CB;
+	Thu, 10 Oct 2024 11:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728559127; cv=none; b=N9jW8xydZY/m8cjDwoyPAO625rjUnPc0PNxbhR2ipiQwYXDTWDAOPu35DahxNz1QQ4KYXoJck3EjZqqSYzLNP3PEjUpSI2Z2RUXxi4KJjZ3pVVCS4gzW+z9Mt0DIHxFotWHr69Vhzz3iZpXQZotjYSASvQVJqcmCVUBtV9encHM=
+	t=1728559498; cv=none; b=InQCUQURrZJXy2KopfSLwNiiMGblaTDM2DJRM0l0CyqwgCNx3NwGn5Q2bb6+oQP1HiqSQZfHabSclAK/4fyQ4lt7NHQfHthsiNVM1rjTSnfJ451Ce/aOm+WhTGwwWAf+3Bd/G1B+fWGQLjEO7Tc3sYVLdTpbXhucqxnw+KfcU/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728559127; c=relaxed/simple;
-	bh=Bpep9FUOgAyWuRWmcvyaePc+DQdUTEerU2Q7eVLfGxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=k/nWWyWXvyIyGtqwYzTn/ej8wnS0Qs4aQk0GefP8rlPxkiNzUIYQXkm5P4Y+ClNyqV9Rxg9d1nFuu22hVqZJKfkfrY2q7aYW0jTU5bpCPjDsBC6mdIoU4BlVOoXIQoYcK4HHJaqsAlcGVkMDlNqpMSXUxNfIx6/8UlaYPPbFKPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nJfpme/6; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241010111842epoutp01ec7bae955b17fbf0f90418459f973906~9E10MDVBw1429614296epoutp01k
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:18:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241010111842epoutp01ec7bae955b17fbf0f90418459f973906~9E10MDVBw1429614296epoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728559122;
-	bh=wIINBLDMRpqLoNrF5IHHwtO9vfSiLsyhvt59o9EnTBA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nJfpme/6kRPx9/B9nSLzFj3WyD1wtZzZn9UKorTykqBI0EomTcHw2BSOWaE6H4tI2
-	 Z72n6udJ3qXiyGaTV598tuqWoG9W9xiw6m9C+pTE2ptG/H1PSTDpuElFSyINpQes9G
-	 lHB00gmD/GmlT2ltcogvunECbK4P+h5g8LoYArLY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241010111841epcas2p15295b51226f4009efcd3ab6916400047~9E1zvzGaY2326923269epcas2p1S;
-	Thu, 10 Oct 2024 11:18:41 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XPS1Y1qW9z4x9Pp; Thu, 10 Oct
-	2024 11:18:41 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BF.2E.08559.118B7076; Thu, 10 Oct 2024 20:18:41 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241010111840epcas2p30fb3a2facc586d166e0922e52ff8b3ca~9E1yB6Z6j2049220492epcas2p30;
-	Thu, 10 Oct 2024 11:18:40 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241010111840epsmtrp1fcec06bdb4ecdd17f799ce85fcc104da~9E1yBNaIC3121631216epsmtrp1f;
-	Thu, 10 Oct 2024 11:18:40 +0000 (GMT)
-X-AuditID: b6c32a43-761ff7000000216f-2e-6707b8114292
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3F.FD.08229.F08B7076; Thu, 10 Oct 2024 20:18:39 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241010111839epsmtip132623983ac1f3c84b22521169abb2c09~9E1x1BKok1147711477epsmtip1e;
-	Thu, 10 Oct 2024 11:18:39 +0000 (GMT)
-From: Taewan Kim <trunixs.kim@samsung.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
-	Taewan Kim <trunixs.kim@samsung.com>
-Subject: [PATCH v2 3/3] arm64: dts: exynosautov920: add watchdog DT node
-Date: Thu, 10 Oct 2024 20:18:07 +0900
-Message-ID: <20241010111807.3635504-4-trunixs.kim@samsung.com>
+	s=arc-20240116; t=1728559498; c=relaxed/simple;
+	bh=ywceDmzYQKH28KRgkOB9nGjXZGaXYWHDTS1DHsIk3Xk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUuLrkdglHhx44mApQ+EQFXIKRBLA8kVLdD9+H5nnVY0EFblvRJ+e40vmW4us2EYqIwLbufF7EWcvY70Bo4saly8+aC8AfZUQPLYZFWK7z33uesqXuj+3/ij+uB959dIg9EAQBlcEhGa+vndDrh1DE+o647jvVIS4gMPjnChG+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lJU3XipM; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABMduX002819;
+	Thu, 10 Oct 2024 11:24:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=+Lt5TvzGhT9DI465dwqRMgLKs/FyG
+	03acJyUMNDMqLk=; b=lJU3XipMDhMxFK5PrptopagRJT+BsXO2p/dV/UFKndEuX
+	4UN88zW7V9u3npraMwVgr7ngRDdoX7al+rFEUbdlZ4hTz6U7l3sdhItAL6OxHtrc
+	ITAXFxGohb+5jqMV6l895TwZVnd7l2SZyuI3TyTUHOmuIYyv75s9u/smTWyaz3N0
+	qV+LFe/BgNeFzitlHwMmY3R/90rXnqUTX7hqMV3A726aXu88A1cbV8Yjqsn2IfpA
+	DsG9qFw76Vw39ryyf6E7xFeFMZ1gYeHTn26xAZ6F7AvnYaw3gDHNHOLVUqfALiQ/
+	kjFXlI8Fuw35sLzxPDPFTYv9LKUUMMBQV/i59v6SA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42306ejh49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 11:24:49 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABCS2V011625;
+	Thu, 10 Oct 2024 11:24:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwg6x7p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 11:24:48 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49ABOl9C031014;
+	Thu, 10 Oct 2024 11:24:47 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 422uwg6x6y-1;
+	Thu, 10 Oct 2024 11:24:47 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Chen Wang <unicorn_wang@outlook.com>,
+        Inochi Amaoto <inochiama@outlook.com>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+Subject: [PATCH] pinctrl: sophgo: fix double free in cv1800_pctrl_dt_node_to_map()
+Date: Thu, 10 Oct 2024 04:18:18 -0700
+Message-ID: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241010111807.3635504-1-trunixs.kim@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,92 +77,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmha7gDvZ0g5lNXBYP5m1js7j/qY/J
-	Ys3ec0wW84+cY7V4Oesem8Wmx9dYLS7vmsNmMeP8PiaLG+v2sVs8WXiGyeL/nh3sFpMWn2ey
-	ePzyH7MDr8emVZ1sHivXrGH12Lyk3mPn9wZ2j74tqxg9Pm+SC2CLyrbJSE1MSS1SSM1Lzk/J
-	zEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpUSaEsMacUKBSQWFyspG9nU5Rf
-	WpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeXWmJlaGBgZApUmJCdMffWUtaCQ9wV837uZmlg
-	PMvZxcjJISFgInFwUjNrFyMXh5DADkaJfWdvs0A4nxglHl79zwzhfGOUWHf3AmMXIwdYy5uH
-	ohDxvYwSrzbOZIRwPjJKfNtxnBVkLpuAlsS2w6+YQBIiAq8ZJZp634GNYhb4yiixvbUVrEpY
-	wENi2bv/TCA2i4CqROOOa+wgNq+AncSCB+8ZIS6Ul7j++ChYDaeAvcSsb0tYIGoEJU7OfAJm
-	MwPVNG+dDbZAQmAuh8T0dUdYIJpdJJr73jBB2MISr45vYYewpSRe9rdB2fkSK1eegKqpkbjX
-	tguq115i0Zmf7CA/MwtoSqzfpQ/xvrLEkVtQa/kkOg7/ZYcI80p0tAlBmKoS05cFQMyQlpg4
-	Yy0bhO0h0djZAg2rSYwSz1fMYZzAqDALyTOzkDwzC2HvAkbmVYxiqQXFuempyUYFhvAYTs7P
-	3cQITrhazjsYr8z/p3eIkYmD8RCjBAezkgiv7kLWdCHelMTKqtSi/Pii0pzU4kOMpsCgnsgs
-	JZqcD0z5eSXxhiaWBiZmZobmRqYG5krivPda56YICaQnlqRmp6YWpBbB9DFxcEo1MC13kJ39
-	T/OcrkN6vKqfwaQ1Gx0evV6lxOP/f2Xmer9g/Qx9M+bjRvI2TQvjbUIZW/7Gx+ZGeb5pObXi
-	r8zGf/K2act/3j/zQ780V6PEuYW3a4v9OR6OawULvXL4VE12bmDwnCUv/jDt2Dv1CEeTOZtq
-	q46Lz3nzqUjt+fbrF2pOcdSqen+Xt68/wnWl6evlN3u4bjypbmW/dCxyOlvuhaeV5RGCDzgf
-	XZ2d3jZD1r5IUMBzaR773bNtq+bXmP3VW+6a3vIswNfqsMtvthuv8q1m9Up1+No96U7J+ddb
-	HauTW3+288bN/HdCwS8vVh1b8C2e73/QbrcfTRVlHhGcym8DdadJP+Sd2+o3sfCZEktxRqKh
-	FnNRcSIA04izS0EEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnC7/DvZ0g3V/LSwezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJUx
-	99ZS1oJD3BXzfu5maWA8y9nFyMEhIWAi8eahaBcjF4eQwG5GiSO3JrN3MXICxaUljvx+wQZh
-	C0vcbznCClH0Hqho4ipWkASbgJbEtsOvmEASIiCJs19+MYIkmAV+M0psWGAMYgsLeEgse/ef
-	CcRmEVCVaNxxDWwDr4CdxIIH7xkhNshLXH98FKyGU8BeYta3JSwgthBQzff/n5gh6gUlTs58
-	wgIxX16ieets5gmMArOQpGYhSS1gZFrFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREc
-	G1qaOxi3r/qgd4iRiYPxEKMEB7OSCK/uQtZ0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rziL3pT
-	hATSE0tSs1NTC1KLYLJMHJxSDUw8N4Qi1S8bnPnk2mS/N40z3T9085GZG366KubyW59UuXEl
-	ucOKp/bTDLZQDUk+5oYnBSvXOM89aLT5282VqZ7+1e3N5zZZany31lr+v3rrZQGBnk/39Sbv
-	rZ4gItwi88VxndOxCe/s9Vf6S9VPUBUX/iNStmGbeiePc818DcPbMSmrX/V9Fn6//95LkTPf
-	9256+CPtfaTLxB/pzzw+9M7o3hK28mjzOz7LHxK9HZpXnkgmnJgQce3gn9NPq5c3f844qnvM
-	JF9aRuPDYU7B9tYTp/6s3rf4nNB1VaUT+qo5hy8r7ZdrE08r0ujr7Qji6Nu3RU7nQrnTqmO2
-	j/gXz9vhNWO1kYxt9NqCp0qqwQxKLMUZiYZazEXFiQBTh5Ul/AIAAA==
-X-CMS-MailID: 20241010111840epcas2p30fb3a2facc586d166e0922e52ff8b3ca
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241010111840epcas2p30fb3a2facc586d166e0922e52ff8b3ca
-References: <20241010111807.3635504-1-trunixs.kim@samsung.com>
-	<CGME20241010111840epcas2p30fb3a2facc586d166e0922e52ff8b3ca@epcas2p3.samsung.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_08,2024-10-09_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ spamscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410100075
+X-Proofpoint-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
+X-Proofpoint-ORIG-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
 
-From: Byoungtae Cho <bt.cho@samsung.com>
+'map' is allocated using devm_* which takes care of freeing the allocated
+data, but in error paths there is a call to pinctrl_utils_free_map()
+which also does kfree(map) which leads to a double free.
 
-Adds two watchdog devices for ExynosAutoV920 SoC.
+Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
 
-Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+This is based on static analysis with smatch, only compile tested.
+---
+ drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c1c8566d74f5..3b541d0e9d25 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -182,6 +182,26 @@ chipid@10000000 {
- 			reg = <0x10000000 0x24>;
- 		};
+diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+index d18fc5aa84f7..57f2674e75d6 100644
+--- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
++++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+@@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (!grpnames)
+ 		return -ENOMEM;
  
-+		watchdog_cl0: watchdog@10060000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <0>;
-+		};
-+
-+		watchdog_cl1: watchdog@10070000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10070000 0x100>;
-+			interrupts = <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <1>;
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
+-	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
++	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
+ 	if (!map)
+ 		return -ENOMEM;
+ 
 -- 
-2.46.0
+2.39.3
 
 
