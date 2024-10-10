@@ -1,53 +1,50 @@
-Return-Path: <linux-kernel+bounces-359468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5544998BEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:41:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A3B998BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FCE1F21FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841B21F225EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D021CC89F;
-	Thu, 10 Oct 2024 15:41:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4CF1CCB26;
+	Thu, 10 Oct 2024 15:41:58 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F13188CAD;
-	Thu, 10 Oct 2024 15:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59ADF1CBEBE;
+	Thu, 10 Oct 2024 15:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728574860; cv=none; b=HSiFOWNYQIgPMXqACAPE4EBZXrCsQ/5OGI+/+32vNGmDMUA3bRrUt91uklXZQpj9gBd/Cdrt80/YgnkQeYAmIe1UreWFhp9fOoAM0lnLSb8Goap3HsBnxFS+bpn84tz+8Ozr3hecLuOWlJa/btCC5g+qqTBCPyJoqHdbLxeDZh0=
+	t=1728574918; cv=none; b=pAqvvX0jaN279sJ0+2DxXG4nSeKeWulPDq/KVS95/h0sFUkin5yqjzns17JQyomsxlB71x7PfESGSCUof6DfTAyjwo2gl/4oI2Dp0asjjOy0paQg2WRxAGNHLaRu5/xYCoI5kib654zsxsByNq1AejpBWfcpDofR5JEpQGjxuHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728574860; c=relaxed/simple;
-	bh=Ema+f7OxkHzYngA/e7dmo+PAXT5IYRXJkiSuCkFyKDQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=chvJ/zSds6UqUe/aU3l/QflJWekDfj5161909e97GY5ZqwzM9XvId27ewgt7UKtXoVHHtlnsKpNIlCs4jZkF4xYTRRgx4dahIfSJ58rZUOv/vrAGnn33o0SJ+Yf+aQf6OfjSMO12lGVOBsvTF1i5H+rt+Qmb5w0aligshJmCXnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1728574918; c=relaxed/simple;
+	bh=OfwBAl6HoSweT/u8EjV2gqKN+yyKohk67GSL7DFVig4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f2Nn87H28xPqLV3HrC0IiqrvxCi4xE6dJ1Zg0VE5DzAMUT5W4ScBXwetlM89ioHHMv0olUa5BFvrYR9J+DIAVxs1QH2A9CWIgHO+ShtLsh0MIM/GKxq8kQLSnE7eU6sSIDu5V7cZrjK8A2x4hRq/9v3oLN58QZQXqWsOXSqfNLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPYnl5nDpzpWbs;
-	Thu, 10 Oct 2024 23:38:51 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPYsL4wmWz2PVVR;
+	Thu, 10 Oct 2024 23:41:58 +0800 (CST)
 Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 586251800CF;
-	Thu, 10 Oct 2024 23:40:51 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id F32A8140360;
+	Thu, 10 Oct 2024 23:41:53 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
  (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 10 Oct
- 2024 23:40:50 +0800
+ 2024 23:41:53 +0800
 From: Li Zetao <lizetao1@huawei.com>
-To: <dmitry.torokhov@gmail.com>, <oliver.graute@kococonnector.com>,
-	<u.kleine-koenig@pengutronix.de>, <felix@kaechele.ca>,
-	<ye.xingchen@zte.com.cn>, <joelselvaraj.oss@gmail.com>,
-	<andreas@kemnade.info>, <viro@zeniv.linux.org.uk>,
-	<dario.binacchi@amarulasolutions.com>
-CC: <lizetao1@huawei.com>, <linux-input@vger.kernel.org>,
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+	<u.kleine-koenig@pengutronix.de>, <crope@iki.fi>
+CC: <lizetao1@huawei.com>, <linux-media@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] Input: edt-ft5x06 - fix memleak when rmmod edt_ft5x06
-Date: Thu, 10 Oct 2024 23:40:10 +0800
-Message-ID: <20241010154010.3228450-1-lizetao1@huawei.com>
+Subject: [PATCH] media: ts2020: fix null-ptr-deref in ts2020_probe()
+Date: Thu, 10 Oct 2024 23:41:13 +0800
+Message-ID: <20241010154113.3228533-1-lizetao1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,175 +54,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemd500012.china.huawei.com (7.221.188.25)
 
-When insmod and rmmod the edt_ft5x06 driver, kmemleak reported a
-memory leak issue:
-  $ modprobe edt-ft5x06
-    edt_ft5x06 0-0004: touchscreen probe failed
-  $ modprobe -r edt-ft5x06
+KASAN reported a null-ptr-deref issue when executing the following
+command:
 
-  unreferenced object 0xffff88810b38c8a0 (size 8):
-    comm "modprobe", pid 23672, jiffies 4295355205
-    hex dump (first 8 bytes):
-      93 00 00 00 00 00 00 00                          ........
-    backtrace (crc a10fb312):
-      [<ffffffff81e12f70>] __kmalloc_noprof+0x2f0/0x3d0
-      [<ffffffff8368c3b6>] __regmap_init+0x2d26/0x4810
-      [<ffffffffc06b4875>] __regmap_init_i2c+0x65/0x80 [regmap_i2c]
-      [<ffffffffc07108a6>] edt_ft5x06_ts_probe+0xd6/0x3410 [edt_ft5x06]
-      [<ffffffff83bd85d1>] i2c_device_probe+0x3c1/0x8b0
-	...
+  # echo ts2020 0x20 > /sys/bus/i2c/devices/i2c-0/new_device
+    KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+    CPU: 53 UID: 0 PID: 970 Comm: systemd-udevd Not tainted 6.12.0-rc2+ #24
+    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)
+    RIP: 0010:ts2020_probe+0xad/0xe10 [ts2020]
+    RSP: 0018:ffffc9000abbf598 EFLAGS: 00010202
+    RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffffc0714809
+    RDX: 0000000000000002 RSI: ffff88811550be00 RDI: 0000000000000010
+    RBP: ffff888109868800 R08: 0000000000000001 R09: fffff52001577eb6
+    R10: 0000000000000000 R11: ffffc9000abbff50 R12: ffffffffc0714790
+    R13: 1ffff92001577eb8 R14: ffffffffc07190d0 R15: 0000000000000001
+    FS:  00007f95f13b98c0(0000) GS:ffff888149280000(0000) knlGS:0000000000000000
+    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    CR2: 0000555d2634b000 CR3: 0000000152236000 CR4: 00000000000006f0
+    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+    Call Trace:
+     <TASK>
+     ts2020_probe+0xad/0xe10 [ts2020]
+     i2c_device_probe+0x421/0xb40
+     really_probe+0x266/0x850
+    ...
 
-This is caused by not releasing the tsdata->regmap resource in time on
-the probe failure path. By adding the err_regmap_exit label, execute
-regmap_exit on the error path to release map resources. However, it
-should be noted that during the ts identify stage, regmap_exit may be
-performed first and then regmap may be reinitialized, so when
-edt_ft5x06_ts_identify() returns an error, it need to check whether the
-regmap initialization failed.
+The cause of the problem is that when using sysfs to dynamically register
+an i2c device, there is no platform data, but the probe process of ts2020
+needs to use platform data, resulting in a null pointer being accessed.
 
-Fixes: 9dfd9708ffba ("Input: edt-ft5x06 - convert to use regmap API")
+Solve this problem by adding checks to platform data.
+
+Fixes: dc245a5f9b51 ("[media] ts2020: implement I2C client bindings")
 Signed-off-by: Li Zetao <lizetao1@huawei.com>
 ---
- drivers/input/touchscreen/edt-ft5x06.c | 40 ++++++++++++++++----------
- 1 file changed, 25 insertions(+), 15 deletions(-)
+ drivers/media/dvb-frontends/ts2020.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index fda49b2fe088..c2004f6e2317 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1159,15 +1159,18 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 		chip_data = (const struct edt_i2c_chip_data *)id->driver_data;
- 	if (!chip_data || !chip_data->max_support_points) {
- 		dev_err(&client->dev, "invalid or missing chip data\n");
--		return -EINVAL;
-+		error = -EINVAL;
-+		goto err_regmap_exit;
- 	}
+diff --git a/drivers/media/dvb-frontends/ts2020.c b/drivers/media/dvb-frontends/ts2020.c
+index a5baca2449c7..e25add6cc38e 100644
+--- a/drivers/media/dvb-frontends/ts2020.c
++++ b/drivers/media/dvb-frontends/ts2020.c
+@@ -553,13 +553,19 @@ static void ts2020_regmap_unlock(void *__dev)
+ static int ts2020_probe(struct i2c_client *client)
+ {
+ 	struct ts2020_config *pdata = client->dev.platform_data;
+-	struct dvb_frontend *fe = pdata->fe;
++	struct dvb_frontend *fe;
+ 	struct ts2020_priv *dev;
+ 	int ret;
+ 	u8 u8tmp;
+ 	unsigned int utmp;
+ 	char *chip_str;
  
- 	tsdata->max_support_points = chip_data->max_support_points;
- 
- 	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
--	if (IS_ERR(tsdata->vcc))
--		return dev_err_probe(&client->dev, PTR_ERR(tsdata->vcc),
--				     "failed to request regulator\n");
-+	if (IS_ERR(tsdata->vcc)) {
-+		error = dev_err_probe(&client->dev, PTR_ERR(tsdata->vcc),
-+				      "failed to request regulator\n");
-+		goto err_regmap_exit;
++	if (!pdata) {
++		dev_err(&client->dev, "platform data is mandatory\n");
++		return -EINVAL;
 +	}
- 
- 	tsdata->iovcc = devm_regulator_get(&client->dev, "iovcc");
- 	if (IS_ERR(tsdata->iovcc)) {
-@@ -1175,13 +1178,13 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 		if (error != -EPROBE_DEFER)
- 			dev_err(&client->dev,
- 				"failed to request iovcc regulator: %d\n", error);
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	error = regulator_enable(tsdata->iovcc);
- 	if (error < 0) {
- 		dev_err(&client->dev, "failed to enable iovcc: %d\n", error);
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	/* Delay enabling VCC for > 10us (T_ivd) after IOVCC */
-@@ -1191,14 +1194,14 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 	if (error < 0) {
- 		dev_err(&client->dev, "failed to enable vcc: %d\n", error);
- 		regulator_disable(tsdata->iovcc);
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	error = devm_add_action_or_reset(&client->dev,
- 					 edt_ft5x06_disable_regulators,
- 					 tsdata);
- 	if (error)
--		return error;
-+		goto err_regmap_exit;
- 
- 	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
- 						     "reset", GPIOD_OUT_HIGH);
-@@ -1206,7 +1209,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 		error = PTR_ERR(tsdata->reset_gpio);
- 		dev_err(&client->dev,
- 			"Failed to request GPIO reset pin, error %d\n", error);
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	tsdata->wake_gpio = devm_gpiod_get_optional(&client->dev,
-@@ -1215,7 +1218,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 		error = PTR_ERR(tsdata->wake_gpio);
- 		dev_err(&client->dev,
- 			"Failed to request GPIO wake pin, error %d\n", error);
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	/*
-@@ -1246,7 +1249,8 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 	input = devm_input_allocate_device(&client->dev);
- 	if (!input) {
- 		dev_err(&client->dev, "failed to allocate input device.\n");
--		return -ENOMEM;
-+		error = -ENOMEM;
-+		goto err_regmap_exit;
- 	}
- 
- 	mutex_init(&tsdata->mutex);
-@@ -1258,7 +1262,9 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 	error = edt_ft5x06_ts_identify(client, tsdata);
- 	if (error) {
- 		dev_err(&client->dev, "touchscreen probe failed\n");
--		return error;
-+		if (IS_ERR(tsdata->regmap))
-+			return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	/*
-@@ -1311,7 +1317,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 				    INPUT_MT_DIRECT);
- 	if (error) {
- 		dev_err(&client->dev, "Unable to init MT slots.\n");
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	irq_flags = irq_get_trigger_type(client->irq);
-@@ -1324,12 +1330,12 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 					  client->name, tsdata);
- 	if (error) {
- 		dev_err(&client->dev, "Unable to request touchscreen IRQ.\n");
--		return error;
-+		goto err_regmap_exit;
- 	}
- 
- 	error = input_register_device(input);
- 	if (error)
--		return error;
-+		goto err_regmap_exit;
- 
- 	edt_ft5x06_ts_prepare_debugfs(tsdata, dev_driver_string(&client->dev));
- 
-@@ -1340,6 +1346,10 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 		tsdata->reset_gpio ? desc_to_gpio(tsdata->reset_gpio) : -1);
- 
- 	return 0;
 +
-+err_regmap_exit:
-+	regmap_exit(tsdata->regmap);
-+	return error;
- }
- 
- static void edt_ft5x06_ts_remove(struct i2c_client *client)
++	fe = pdata->fe;
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (!dev) {
+ 		ret = -ENOMEM;
 -- 
 2.34.1
 
