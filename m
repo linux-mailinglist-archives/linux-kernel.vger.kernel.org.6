@@ -1,187 +1,127 @@
-Return-Path: <linux-kernel+bounces-358660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D786998219
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:26:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16640998220
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9738D1C2323E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:26:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB11B281B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D11A1A072A;
-	Thu, 10 Oct 2024 09:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85B61A08BC;
+	Thu, 10 Oct 2024 09:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="X+r3x1XH"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010049.outbound.protection.outlook.com [52.101.69.49])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N+BkNhHC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="g+34NaGs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA50929AF
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552406; cv=fail; b=i3v7QTqof3jSSFV0FSurwyFBj7IjKidsM2fcPiiL/M1/7uAlndG8zrNVioDKL575L0PeJ6ZZ//lqTGnvXAX3vKWUwoMHFOzm3j9UEej11zAsKUztBj7AcANdkei0Dyn69Yl4jyY7VYTezICIR5mVXt9V8qlSh2EN+BZO5I9ulP8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552406; c=relaxed/simple;
-	bh=62f1ds+k8Dj8pBFfkYj3kCDqkoeTBulvdsA/AhnkOTY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=APhUp3LNfLX5lNTFXhwY0alC0xHmBZNby3DntaQOToENoGc5ePg/MGC6rKLvxCFo1B28q4gRq9zpfWNaIE5qEM0vaNTKd8wZp0vV6HMvnMWD+TWxAE4brzyMgoNvUmQcFbW9JcjDpsX+HtimztplCfhtgtkabv66Cibdxoge2bs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=X+r3x1XH; arc=fail smtp.client-ip=52.101.69.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kIZOg3q84aUFJTI416yEOllTgxYgJr7gvBEh9wY/2GBXbscBoMCVBtt6ZQyvVILI2/plX4HSJh0+nOvnvDgEzCB/Fyryzg43FqlQALNwjEI6NBY+jDTagS4PN8O+C8naQEZNx0O5f7KJ+vIehorlFdP9MzdM56vb4GLKNCoN8QK561YDIqGk/lEhmlTZz5YkR9t4xLymjJTUI4UYgGISC13GkN/oqfk7dDw4mbs8Ue3+VevdbCZn/plHrc1/G58a9ruhbd0B9okHHhn/vPIpc2NtBp8akoCKGeVcOqmrGtegqV0VRGRw4iYKyc1zk6sXsplVf3kgo2eFBMcsX9BlTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4uSLnLthcKIt+KuiGqxlOHVN8H++tLBZaH3tztJ75eI=;
- b=FUD+udQ1z46yF0OQcsgQcn6RzELgoXVUaLbZkmzYu9H1fzdnmgTynFZTFlJG+4PCY5HOGxfz7iHxG4T1ZNJzfclIsrX3JItkNFFV6KH1BIpirT5S2GwgInnoJjqQj5Nu/ZnPkxKPNI7RSQgF+BbzjLO38UEaqTdp23J4i1Sqlhe6BS0xBuUA13DPNcUqlnIg8D4hIXN//14ecbA1/7KykgB4II091YiHQXCH/5EwZsTeF6J00NAlOLnudtYPjho0cKFNdg+vkE0rhoph908b3XbO4W5ZLhrJ9UG8W/a85a/KwHhoXKH7yvRGyD4FFSTrzvHuo2ws9IJD3R9AyzY2tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4uSLnLthcKIt+KuiGqxlOHVN8H++tLBZaH3tztJ75eI=;
- b=X+r3x1XHwdoeitNOtzgYG5ZJ4pv58iMLsjSB6w0plFl9i7bWwnY6uQEg0bTYejZLqsJhXk/pyzrJgLJE3+r1qaxSSalJInLFE31QybeHSK1LfsAcVtuRArLf/iFrTu56nr+deeGVf7EmAR8a968/+v2f8Yflsj+Vli2inIU/bWz5xSt3Ni9laLZjuA5idEZ+Z4XfgKKFB4alQAX95bAGeAxczXmnMZaLcjgZJ1pbjyh/HSa2aF8nOz4cWgMPmZW/L1UpYwHczUhwBeDUF9SWvSPeH4GNcNb1KDYoKKsOiJIF6HyoNlAUk10apruqBqShCBT1G3ytIak89mctOQ8Cqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by PR3PR04MB7387.eurprd04.prod.outlook.com (2603:10a6:102:91::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Thu, 10 Oct
- 2024 09:26:37 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
- 09:26:37 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: ple@baylibre.com,
-	neil.armstrong@linaro.org,
-	andrzej.hajda@intel.com,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Subject: [PATCH] drm/bridge: ite-it66121: Drop hdmi_avi_infoframe_init() function call
-Date: Thu, 10 Oct 2024 17:26:43 +0800
-Message-Id: <20241010092643.1048116-1-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGAP274CA0021.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::33)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6361A00F0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728552458; cv=none; b=Qzi2vi3lClsV0emp+u6q54E+EeU+zPnWn14A8E3gq6+JD5QchkOQ3UWjJmMZv0+RWh83Zo2QjbWKdl2+gklJhJT6vJvmlsMJ3nux2oN0xyLGVgOJeFq9x8wGao0NeMPwGJ/hFWm5zclfGGtKvNjHYoXjxcgpebwvviNZkhA+GDM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728552458; c=relaxed/simple;
+	bh=EC6uVc1pRBXn7XTs+16IgJy2nYthZT5ol6aI7idN9eA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pmz0vwOLMt/uj1xpbj++yZZD4UG5EIJ455QCL17iREK5XpRCozKBuPx1n3rxpl2CfixqCnmGuCwy6AAquk80d62CbL/LkWWOqdIvBAN2K0HKX61KJouwtqIA+ifGVugF5xgey2Rf3bZ6OoZIfw41KZntyuqKGUZ7YjAw/sdRHmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N+BkNhHC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=g+34NaGs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728552454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EC6uVc1pRBXn7XTs+16IgJy2nYthZT5ol6aI7idN9eA=;
+	b=N+BkNhHCW97yOqTChI+9nX7KOHJ2MNyJP4Z7VS8z55Q0lu0TkNCcIHBROivA/WwIHqOrNO
+	JVEp9JHMiIaX58U3ffhiySfjLKGftMl7k4K2POtygO+Pk7q8TE23L/NcWN2x+qBmQ69td8
+	8pzdJTPiuQ+bdYwWZD+XDk6GIA4ukTGqcOGDT9WZN0dcrqNvCI6F9VeMWZ4aFa+bzLepDF
+	UY8lFg9hZor4y6YIS7iTuBWysfWkctq8NvMlXhlczCmLFTscsG5OGEUUhtJYYR+VyvKarR
+	kzR8HulrI6y3pvk9M43GVA1L1T/+wj6RUhJaW+wbHNeUaZ4dgrVcH3Kbyq7J3Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728552454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EC6uVc1pRBXn7XTs+16IgJy2nYthZT5ol6aI7idN9eA=;
+	b=g+34NaGstkjfHtkUiZ66r6z6Hm9oYWibG1iGT7Q6bsKblJpkMnBJWBQAd2VqLz4iKQIrpN
+	T8qirBVC6FnoWsAg==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nathan Lynch <nathanl@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 13/15] powerpc/rtas: Use fsleep() to minimize
+ additional sleep duration
+In-Reply-To: <ZwatTfHxojsZwqHw@localhost.localdomain>
+References: <20240911-devel-anna-maria-b4-timers-flseep-v2-0-b0d3f33ccfe0@linutronix.de>
+ <20240911-devel-anna-maria-b4-timers-flseep-v2-13-b0d3f33ccfe0@linutronix.de>
+ <ZwatTfHxojsZwqHw@localhost.localdomain>
+Date: Thu, 10 Oct 2024 11:27:34 +0200
+Message-ID: <87msjc9uk9.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PR3PR04MB7387:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c1db261-4d93-4062-c57e-08dce90da37b
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|7416014|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?tyq81/19Jvyk07EBUOjtBTTEpTsfNUHGrUJEwVG1LygPwcT/IY7cGRWxdG6c?=
- =?us-ascii?Q?z9yJz1t52qtoThle3Uq0/g2EGlkmzUxGMQqke26IB6bQAmKZm+ges4sTWxDe?=
- =?us-ascii?Q?FRcoxj5LJj3KSrTQ+XNh7fnbltPyMP9DeEmYLZSaj4WX+xyhPO7kLJKqeZiz?=
- =?us-ascii?Q?7f3FbKVpaRY9m1YlAknG5FdwKTjNmVj8xYgy0pkTuDgURHg77X8GtoQY80wL?=
- =?us-ascii?Q?F+ZSubnLAkF7bwPrAzUw770z8uv5fZenOnV7dEdu6GJxYtfYLWmFNsUbd0qY?=
- =?us-ascii?Q?c9W9DQy2yjUkWhjZMQkEWvX2Cx7zPZXLm0tN9orPKm0IexfCsyjRmoDS1jnF?=
- =?us-ascii?Q?OqWTv4JrqoCBjeBy92Lmn/s4tk/ML6lVQlxMW1IIkrE7GJUdpTS8N0E/Wdh8?=
- =?us-ascii?Q?fD3wLfMLwitAriqQ9Cd6li/T9BhlcTCr8qYw3rJQ47mowqopPHIMv8cJ2PW8?=
- =?us-ascii?Q?aU1V0rfe8OZdIrMpE6Zn/FjBHs46nJZLwZ8wb4bNp7rStnTNkK0YylrJ13Pw?=
- =?us-ascii?Q?HnuEjUGPsk+l/92sDAXerVqQcitoXygJ+TY7vgd+lMdOTSFz7RHThUFKjSFm?=
- =?us-ascii?Q?oDRmZs1OJmDwD7ovAvmJYFXvngSTIC3+1uzaoPyIr1ENiWIMaOe80EiITxSN?=
- =?us-ascii?Q?q7JphAinqgxscxgm+uKDgWiKCRy1p5OTfDc+0+DtsjctXJKvEAa8M1mvyzPr?=
- =?us-ascii?Q?b2dFAy/z3gL5F+hTaVO7/5OVdWr+DKVuIR+bG9oQvGcBCT4TG9ikS1EHJ16y?=
- =?us-ascii?Q?YLwlMmUSt9X34GApgz/0BMj1FE88FiQc8cVINDYBsAYDVAN0dptuB7tJy6y5?=
- =?us-ascii?Q?2NGv1lFOYfSyWhJUxcVt9Ca5mTqByAza5/ZIbKfGJ2UC8BuWe7guS97uzB/9?=
- =?us-ascii?Q?ULvtFZPZg+LLr0yAxdFupamqSvkmlJWirR+6ECgkVda3M5jMEnUWIoF3zosf?=
- =?us-ascii?Q?fPPGpA2IOrO+sKVZUF7tBrBZ1jpyiJB5Hg+Zq92drcYDz7axuNhJwiidqoAw?=
- =?us-ascii?Q?9S+J+gCBh+ATRHW5mB5iu/nUQ/Plk0PS7Vnq8zm1AALVSDdms3DtgcaJS+uz?=
- =?us-ascii?Q?FBCB2yEdtkkVc0pk/EiA7e9hPuq9thjNl4pURGL8HBMWc1PwZ/r7ty0ifP5E?=
- =?us-ascii?Q?3MeRTPH2z4Vbk2Q/AVOHWseOSJMN6JibPEyQA0EuB+8IFd1BPqlllKiTjX0Z?=
- =?us-ascii?Q?kTPP+cNKfpxiHyrMZWufnaVLp3STvmdN7ZRvIj3KM1HNasRAczNpeDH3tkNT?=
- =?us-ascii?Q?vE0sL9fv1uAe9TN+0Ed1cEktsQaXBTqat1t3ClAIdmIHOlXojPhMY8wTq1RT?=
- =?us-ascii?Q?xd4CT3tAlaoVe54PEVD/fcQKhQ+CsIz6NkId1ojOz6JfJw=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?eHN/kS4UfTGsbpjsK6reFe3HRhsX3quQ7vx/5JdGXskQRrlb/fmmJT9BOcyF?=
- =?us-ascii?Q?X/4FibbHOdhTneF7xgwT3qtyLb9JAKQIIFVb8939BMtd6mrBmVdNdNfJemrh?=
- =?us-ascii?Q?Cmr2ZsqbbculI1yLt6la25PYLohEud9TGv6TzWcP2dPalOt/kvESvRCgJo/0?=
- =?us-ascii?Q?kLN1oGJ5Cqn5b3MVqd/878k4DL3Vyaoms7zK2Tl89MohDsFasxFULV1crgJ/?=
- =?us-ascii?Q?b8QfDAry38JAR6/vbOfOGirq+4PrWegFp6daGdBOxmyafICjBAnUgnwrKgCP?=
- =?us-ascii?Q?RvX4UBpxoz6lYb7IyvX/Tcr8eDwIWt0AIGwXmtKCQHuEM9aMtFIdJ8lxWbMa?=
- =?us-ascii?Q?ntn4BKtRTxtiHK5yQfVHf32AMwuou1kAbWjNkP+B2EMQq4YndStaBWihVlGY?=
- =?us-ascii?Q?m4NjEsEZiKzPKVAxNtnBO0d8l56u2BoJWCQiNupm1bR56s5AmmPvSqrMDtIK?=
- =?us-ascii?Q?rQU9lZCwrVp7SHT9j33lDGUqUQRx9JAz2hqjqiJsHIVTTHtg9/BNzIx3eZkt?=
- =?us-ascii?Q?oAvMBoeOdkzzgomjdja1DgGoZoCPaegfDLNl4B/WPAzwaCCY1TqkbzqQJ/ie?=
- =?us-ascii?Q?w6pwirmShVnKrhEdOmZQAhX2cRMPNC7oKnrVzcrjYvIj6hb/GUEMW0Vlhcia?=
- =?us-ascii?Q?SeXwXYGiQrmqlVbKuGbg8/43wer8K0wR9gLaUZTcnAs9uEOy3nCtvp5nH8YW?=
- =?us-ascii?Q?UqhBKy2Gog2MiAd3zxOGL6fcj3OjfnCXvE1JorIN4zBxG5i/YZ4aXKYY0dPx?=
- =?us-ascii?Q?GnmjikZcmu4PYyyygExBYXwV0qbi0KGsccyJ5a1OLh105KzoO+sYLEBZbb5C?=
- =?us-ascii?Q?8V7q63B3tZAPpjVzAFYZZCtFR705q1NQuR/FM+z/k1fKl/iC3H99Us7TwbTe?=
- =?us-ascii?Q?uaEa178jO3cuOvwRttFNb4Xbj0hhJcMUe106JCjT3eiQEd4arpNzOLNsAXjj?=
- =?us-ascii?Q?vNQws7IyxbRmRxhwIqklT4WEqUR664M2OdgJ0KmxbW6a5t8WuYhYLph75ixC?=
- =?us-ascii?Q?WcDEmDA/iK27dlkpG7LETk0dE/Crsv0q5l2AsOCRuHBicvfuGV/VyZXV9fRS?=
- =?us-ascii?Q?yTmSaSGoD3B1vE6Rvokw+Lx9Cwofq9G5a/O7aBQfSffDH4u7+hS5c8W5BDVW?=
- =?us-ascii?Q?EY217e4BLFrcCET1Vld2FA8AZ6tn3B9tussCj+Jw01t0nIsMqmduNyAOVJnV?=
- =?us-ascii?Q?AQxLPQnDazhzvYcttTbpoeCUn9nCrVgzI4J1esRH12oKHRrOcvYZalko+hG5?=
- =?us-ascii?Q?TWqZ6jcYmhPC2w+DoJwU+wWBOt/12vCjOoUPvkFy8zP4ttvNHOa9FNXl5scZ?=
- =?us-ascii?Q?W5c0O4h38RV0t4/O+npiIf5APfA5iHOdDpZnk1jem6odRC0yMI1vbpFOgyPv?=
- =?us-ascii?Q?FTN95Eh8L8GhH+hRbo652ziq518HN5fBoR91h/YWp6EA1LniE28+b5XWhpg4?=
- =?us-ascii?Q?f5NdygeSsuxJSIfG4FoazHotaAmYOG4kqG6TgAtdkAQXc43zJ8esflIlqDg+?=
- =?us-ascii?Q?JrbLMKNb98oa66l+78Zety558qOHTajmD6tPbhkGbkf8Cap2evez+6NkajyB?=
- =?us-ascii?Q?knmlSiiCnFVb2DBaLl0MvmPjFhpILvn3pIksGlb0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c1db261-4d93-4062-c57e-08dce90da37b
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 09:26:36.9981
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KYgNAEkCKO6m1UjHTsynxRrgrsVmKVDt0PVD86Bj5MFamwO4jxA1aWxxNEH5aUWYDen+kVToXRz1ps58wvIwxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7387
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-drm_hdmi_avi_infoframe_from_display_mode() called from
-it66121_bridge_mode_set() already calls hdmi_avi_infoframe_init() to
-initialize an HDMI AVI infoframe.  So, drop the redundant
-hdmi_avi_infoframe_init() function call from it66121_bridge_mode_set().
+Frederic Weisbecker <frederic@kernel.org> writes:
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/ite-it66121.c | 2 --
- 1 file changed, 2 deletions(-)
+> Le Wed, Sep 11, 2024 at 07:13:39AM +0200, Anna-Maria Behnsen a =C3=A9crit=
+ :
+>> When commit 38f7b7067dae ("powerpc/rtas: rtas_busy_delay() improvements")
+>> was introduced, documentation about proper usage of sleep realted functi=
+ons
+>
+> related*
+>
+>> was outdated.
+>>=20
+>> The commit message references the usage of a HZ=3D100 system. When using=
+ a
+>> 20ms sleep duration on such a system and therefore using msleep(), the
+>> possible additional slack will be +10ms.
+>>=20
+>> When the system is configured with HZ=3D100 the granularity of a jiffy a=
+nd of
+>> a bucket of the lowest timer wheel level is 10ms. To make sure a timer w=
+ill
+>> not expire early (when queueing of the timer races with an concurrent
+>> update of jiffies), timers are always queued into the next bucket. This =
+is
+>> the reason for the maximal possible slack of 10ms.
+>>=20
+>> fsleep() limits the maximal possible slack to 25% by making threshold
+>> between usleep_range() and msleep() HZ dependent. As soon as the accuracy
+>> of msleep() is sufficient, the less expensive timer list timer based
+>> sleeping function is used instead of the more expensive hrtimer based
+>> usleep_range() function. The udelay() will not be used in this specific
+>> usecase as the lowest sleep length is larger than 1 microsecond.
+>
+> Isn't udelay() for everything below 10us ?
 
-diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-index 925e42f46cd8..35ae3f0e8f51 100644
---- a/drivers/gpu/drm/bridge/ite-it66121.c
-+++ b/drivers/gpu/drm/bridge/ite-it66121.c
-@@ -770,8 +770,6 @@ void it66121_bridge_mode_set(struct drm_bridge *bridge,
- 
- 	mutex_lock(&ctx->lock);
- 
--	hdmi_avi_infoframe_init(&ctx->hdmi_avi_infoframe);
--
- 	ret = drm_hdmi_avi_infoframe_from_display_mode(&ctx->hdmi_avi_infoframe, ctx->connector,
- 						       adjusted_mode);
- 	if (ret) {
--- 
-2.34.1
+It's larger than 1 millisecond...
 
+>
+>>=20
+>> Use fsleep() directly instead of using an own heuristic for the best
+>> sleeping mechanism to use..
+>>=20
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Nathan Lynch <nathanl@linux.ibm.com>
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+>> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+>
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
