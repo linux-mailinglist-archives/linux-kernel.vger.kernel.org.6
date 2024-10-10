@@ -1,258 +1,173 @@
-Return-Path: <linux-kernel+bounces-358246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289A5997BFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:49:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0130E997C00
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D73892850EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235E41C23359
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F78919DF8B;
-	Thu, 10 Oct 2024 04:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9089019EEC0;
+	Thu, 10 Oct 2024 04:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M54YrQTi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1h08fyz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF873D66;
-	Thu, 10 Oct 2024 04:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17F4A15;
+	Thu, 10 Oct 2024 04:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728535764; cv=none; b=Jn3BBR2SxlB7ez3OM+lT1XrH7Sa0R5M244duUSLYl70jf1lt1PQ8zEgijBGiFUNedm3eE8q141xwKdu4qO/8XI/IHGx2iD1uxsMJm4129qbsftfqQlD/rH254elKhyKwfS2Q5YkeNe/HlSQHCWtLURnYlQHr+rzR8Oz2Xmg2uCw=
+	t=1728535840; cv=none; b=JSvPnzPRYeIYO5Hfj59eid0RKOnDgZaWhyweu5dn0iPr0PqgXc+SYMqLRfs1AOmH7voSCUhls2Mdin/izPfo748E6LXNWhe1xQQL1XW7sRR1gUCf+CokiTx7z1z5g80Pa4rOR+JagiKRz/ERwPl98u6dqeHBXPVHxmlGGK2DrqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728535764; c=relaxed/simple;
-	bh=6uD7+Lz1uQ9AvseMbxbYZZEXYTNf2RjByl/bq7iRchk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hpm2u1eJKY+4LS48WEX1xEnrY+BFxv93zD7hcLZDPShnSg57JUaC86peiLMv34cvNy5mdFHXulSOWEaqp11joGSdgAXSHrXp5tyX51uk57r2W5LH0V4y/uViK8Gv1j7Hpv73CfSWAV81jAU6RHP+rTffM5q/1sqQglnKhiIZxy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M54YrQTi; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728535763; x=1760071763;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=6uD7+Lz1uQ9AvseMbxbYZZEXYTNf2RjByl/bq7iRchk=;
-  b=M54YrQTiVbwm5PBkAJnLpI/MI0KJVXAWG/WnGzodsUYfqTJ+kzl5hMU7
-   XZXNo3FCE5ByPBT1aCfuMKLVsm38hv1wnf7CtLR/zXBz1YTTLpPg9EOyV
-   rNdmHaacAcTM2xgKbeNagW5eJY9LnDCIcpKYAndCUKWHTCUhnixcWA/sh
-   pngCg4pWG4cbxyQs0Xy6DMeeUmApkfM3tFucw2f4FCHy1Whn0p4OVdU/a
-   1wqBwBgZgTB6F3+A5PFAfi3nTJXLUq9yOnBF0RaxlJXUmSS8Xzc6+nrxN
-   I3rBWp2dUVKDVqNgCqfoe1u1CdKqGqs668jGZsQFah8EOK04kFvT/U2U+
-   w==;
-X-CSE-ConnectionGUID: NHg1FerCRDiSJdKmA4wRsw==
-X-CSE-MsgGUID: afbkvpB8S/KHcGI4+eWt4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="30746399"
-X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
-   d="scan'208";a="30746399"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 21:49:22 -0700
-X-CSE-ConnectionGUID: eFTJs6mfTfqtojUaSIuLww==
-X-CSE-MsgGUID: kmFueEPGR1eXTYaiys3yiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,191,1725346800"; 
-   d="scan'208";a="76085520"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Oct 2024 21:49:20 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 796D4192; Thu, 10 Oct 2024 07:49:19 +0300 (EEST)
-Date: Thu, 10 Oct 2024 07:49:19 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
-	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
-	mmikowski@kfocus.org, linux-kernel@vger.kernel.org
-Subject: Re: USB-C DisplayPort display failing to stay active with Intel
- Barlow Ridge USB4 controller, power-management related issue?
-Message-ID: <20241010044919.GD275077@black.fi.intel.com>
-References: <20241009220118.70bfedd0@kf-ir16>
+	s=arc-20240116; t=1728535840; c=relaxed/simple;
+	bh=SJQtIAt6QYdCs7oBad8yA/2kIDjGnFvxdNmmodWlddc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ng/lbCh69X0eu1ilS1saef3ZqQeK3Km5sJvnT8pUseXpi4l7XI1DiOL+lZSIDpa/PrYP6lzq5YN+dkiU4A2tYCb3BzrvSZVqsygSAMHOq9b2mmnMpAwwb/b5LEdd995AbjbXnLN81OylKqRyWvGd75HO2vr9CnWset+MsviIfn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1h08fyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7059C4CECD;
+	Thu, 10 Oct 2024 04:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728535839;
+	bh=SJQtIAt6QYdCs7oBad8yA/2kIDjGnFvxdNmmodWlddc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O1h08fyzrJINl9jgqXJ7H/tJQxtp9rsWinT/+y31r42NSekGF972T9S/rVng+YOHU
+	 egfswxQKok59csdpdAmbJDNdZIMUfw1xPRIyKncDyq/anqJFiBnLWfVZwIUlS7jG8x
+	 phm4zl5mKZa4BdzrBFTHI+th9AmK+ldwz33qiLzWanwrHv//OE9k/3FkCBcgqcs02c
+	 i7V6Z0hnwnJhKjUtaNUc/N+Djylmjaa9QaPNR2EdFjhtiMwuqqyxu+Z0pbKr+ncnio
+	 yq2fnlpjAi21NDmPWOoSNC1YqjQp3kV4e4cZdqqA+6IG+wIfUdvSaslBq2yLkZaYo/
+	 0iFzweyXcF26w==
+Message-ID: <997f9f43-d8dd-499d-b37a-7109d06f4e8d@kernel.org>
+Date: Thu, 10 Oct 2024 06:50:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241009220118.70bfedd0@kf-ir16>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3 5/5] documentation: use nvmem-layout in examples
+To: Rosen Penev <rosenp@gmail.com>, devicetree@vger.kernel.org
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ William Zhang <william.zhang@broadcom.com>,
+ Anand Gore <anand.gore@broadcom.com>, Kursad Oney
+ <kursad.oney@broadcom.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Christian Marangi <ansuelsmth@gmail.com>,
+ "open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+ "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+ "moderated list:BROADCOM BCMBCA ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>
+References: <20241009214847.67188-1-rosenp@gmail.com>
+ <20241009214847.67188-6-rosenp@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241009214847.67188-6-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 09/10/2024 23:48, Rosen Penev wrote:
+> nvmem-cells are deprecated and replaced with nvmem-layout. For these
+> examples, replace. They're not relevant to the main point of the
+> document anyway.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
 
-On Wed, Oct 09, 2024 at 10:01:18PM -0500, Aaron Rainbolt wrote:
-> We're experiencing a Linux kernel bug affecting multiple Clevo X370SNx1
-> laptops (specifically the X370SNW1 variant). The bug appears to be
-> present in kernels greater than or equal to 6.5, worsening
-> significantly with kernel 6.11.2 (latest stable at time of this
-> writing). It is unclear if all of the issues encountered are the same
-> bug, however the primary problem we've run into appears to be a
-> consequence of the power management code involving Intel Barlow Ridge
-> controllers and DisplayPort. The issue occurs with in-kernel Nouveau
-> drivers and also with proprietary NVIDIA drivers.
-> 
-> When a DisplayPort monitor is attached to these laptops via a USB-C
-> connection, the monitor is recognized by the system and comes on for
-> approximately 15 seconds. It then blanks out and is automatically
-> disconnected from the system as if it had been unplugged. It will
-> remain that way indefinitely until unplugged and replugged, or until
-> something "jiggles" (for lack of a better term) the thunderbolt driver.
-> When either of these things occur, the display will re-attach and come
-> back on for 15 seconds, then blank out and detach again. There are
-> various different things that can "jiggle" the thunderbolt driver,
-> including but not limited to:
-> 
-> * Running `lspci -k` (this one came as a particular surprise)
-> * Removing and re-inserting the thunderbolt driver (`sudo modprobe -r
->   thunderbolt; sleep 1; sudo modprobe thunderbolt`)
-> * Running `nvidia-detector` while proprietary NVIDIA drivers are loaded
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-Or just disabling runtime PM, I presume.
+You already got this comment, is something unclear?
 
-> It is possible to mitigate this issue by simply running
-> `sudo modprobe -r thunderbolt` or `sudo rmmod thunderbolt` and then
-> leaving the driver unloaded. USB-C displays become stable after this -
-> they are recognized when attached and remain recognized and functional
-> indefinitely as one would expect.
+>  .../mtd/partitions/qcom,smem-part.yaml        | 21 +++++++++++--------
+>  .../bindings/net/marvell,aquantia.yaml        | 13 +++++++-----
+>  2 files changed, 20 insertions(+), 14 deletions(-)
 > 
-> We believe this is related to the Intel Barlow Ridge USB4 controller
-> because:
-> 
-> * Removing the thunderbolt driver restores normal display operation.
-> * This issue was *not* a problem on Clevo X370SNx machines, which are
->   identical to the X370SNx1 except for the Maple Ridge TBT controller
->   on the board has been replaced with a Barlow Ridge USB4 controller.
-> * This problem does not occur on the affected models with the 6.1
->   kernel. It occurs with the 6.5 kernel and on all newer kernels we
->   have tried.
-> 
-> Furthermore, from inspecting the Thunderbolt driver code, we believe
-> this is related to the power management features of the driver, because:
-> 
-> * There is only one 15-second timeout defined in the driver source
->   code, that being TB_AUTOSUSPEND_DELAY in drivers/thunderbolt/tb.h
-> * On earlier kernels (Ubuntu’s variant of 6.8 at least), displays are
->   stable even when the thunderbolt driver is loaded if we:
->   * Remove the thunderbolt driver
->   * Attach a USB-C dock
->   * Attach displays to the dock (we used 2 4K HDMI monitors)
->   * Reload the thunderbolt driver
-> 
-> During our investigation, we discovered commit
-> a75e0684efe567ae5f6a8e91a8360c4c1773cf3a (patch on mailing list at
-> https://lore.kernel.org/linux-usb/20240213114318.3023150-1-mika.westerberg@linux.intel.com/)
-> which appears to be a fix for this exact problem. It adds a quirk for
-> Intel Barlow Ridge controllers, which detects when a DisplayPort device
-> has been plugged directly into the USB4 port (thus using "redrive"
-> mode), and instructs the power management subsystem to not power the
-> chip down during this time if so. Unfortunately, this quirk seems to be
-> silently ignored, as we built a custom kernel with some `printk` lines
-> added to the `tb_enter_redrive` and `tb_exit_redrive` functions to
-> announce when they were called, and nothing in the dmesg log indicated
-> that they had been called when we did this.
-> 
-> This bug is easily reproducible using the stock kernels in Kubuntu
-> 22.04, Kubuntu 24.04, Kali Linux 2024.2, and Fedora Workstation
-> Rawhide. Similar behavior is observed across all of these distributions.
-> 
-> We built the 6.11.2 kernel from source and tested it on Kubuntu 24.04,
-> but while the kernel built, installed, and functioned properly in most
-> respects, it actually made the problem with USB-C displays worse. As
-> long as the thunderbolt driver was loaded, no displays were detected
-> when plugged in (not for even a short length of time), and when the
-> thunderbolt driver was unloaded, displays would only be recognized and
-> function if there was only one display attached. Attaching a second
-> display resulted in the first external display becoming detached and
-> the second display not coming on. Unplugging the second display
-> resulted in the first display reattaching. This machine supports up to
-> three external displays and this has proven to be achievable and stable
-> with earlier kernels. No valuable error messages were logged in dmesg
-> when these problems occurred.
-> 
-> Our testing has been limited to the Clevo X370SNW1 model, however we
-> expect that the X370SNV1 model will exhibit the same issues as it uses
-> very similar internal components on the system board.
-> 
-> This is basically the extent of our knowledge at this point. We
-> attempted various patches on Ubuntu's 6.8 kernel to resolve the issue,
-> all without success:
-> 
-> * We attempted reverting fd4d58d1fef9ae9b0ee235eaad73d2e0a6a73025
->   (thunderbolt: Enable CL2 low power state), which had no effect.
-> * We noticed that one of the Barlow Ridge bridge controllers
->   listed by `lspci -k` appeared to not have its device ID in
->   drivers/thunderbolt/nhi.h and there was a corresponding quirk in
->   drivers/thunderbolt/quirks.c that looked like it might be vaguely
->   related to the issue (specifically quirk_usb3_maximum_bandwidth), so
->   we tried adding that device to the appropriate files in order to make
->   that quirk apply to that device as well, this had no visible effect
->   on the kernel's operation and did not resolve the issue.
-> * After narrowing it down to `quirk_block_rpm_in_redrive`, we attempted
->   adding a new `thunderbolt.kf_force_redrive` kernel parameter in
->   drivers/thunderbolt/tb.c that forced the code in
->   `tb_enter_redrive` and `tb_exit_redrive` to be executed even *if* the
->   device didn't have the appropriate quirk bit set, in the hopes that
->   this would make the quirk execute and resolve the issue. What ended
->   up happening was somehow `tb_enter_redrive` was never called at all
->   and `tb_exit_redrive` was called. This in turn made it so that no
->   USB-C displays would even be recognized for a short period of time if
->   the thunderbolt driver was loaded.
-> * Looking at PCI vendor IDs, we noticed that the PCI vendor ID used to
->   recognize all Intel controllers in drivers/thunderbolt/quirks.c was
->   0x8087, whereas the Barlow Ridge controller in our device reported a
->   vendor ID of 0x8086. On the off chance that this was a typo of epic
->   proportions, we tried adjusting all of the occurrences of 0x8087 in
->   the tb_quirks[] array to PCI_VENDOR_ID_INTEL (which is defined as
->   0x8086 in include/linux/pci_ids.h). This has no visible effect on the
->   kernel's behavior, and did not resolve the issue. (Presumably there's
->   something going on with the IDs there that we're not aware of.)
-> 
-> As to my speculation as to what's wrong, I believe this is likely a
-> combination of two things:
-> 
-> * Some data in the `tb_quirks` array in drivers/thunderbolt/quirks.c is
->   incorrect and leading to the Barlow Ridge controllers not being
->   recognized as needing the DisplayPort redrive mode quirk.
-> * The code in drivers/thunderbolt/tb.c `tb_dp_resource_unavailable`
->   that controls whether or not to run `tb_enter_redrive` is faulty in
->   some way and is not calling `tb_enter_redrive` in all scenarios where
->   it is necessary. To be clear, the exact code I'm talking about is
->   this chunk from the aforementioned function:
-> 
->         tunnel = tb_find_tunnel(tb, TB_TUNNEL_DP, in, out);
->         if (tunnel)
->                 tb_deactivate_and_free_tunnel(tunnel);
->         else 
->                 tb_enter_redrive(port);
-> 
-> Finally, this is probably a result of me misreading the driver code
-> somehow, but I was surprised by the following conditional at the top
-> of `tb_enter_redrive`:
-> 
->         if (!(sw->quirks & QUIRK_KEEP_POWER_IN_DP_REDRIVE))
->                 return;
-> 
-> To me this reads as "if the DP redrive quirk bit is set, return and do
-> nothing. Otherwise, if the bit is not set, run the quirk function."
+> diff --git a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
+> index 1c2b4e780ca9..c2cc11286d80 100644
+> --- a/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/partitions/qcom,smem-part.yaml
+> @@ -23,7 +23,7 @@ properties:
+>  
+>  patternProperties:
+>    "^partition-[0-9a-z]+$":
+> -    $ref: nvmem-cells.yaml
+> +    $ref: nvmem-layout.yaml
 
-There is the "return;" which reads that if the quirk is not set, return
-from this function early.
+There is no such file here, so this should be full path /schemas/nvmem/....
 
-> This is the opposite of what I would expect - shouldn't the code run if
-> the bit is set, not if it is clear? Or does the bit being unset mean
-> that the quirk is active? (I do not believe that this is the root cause
-> of the issue because even when I forced this function to run any time
-> it was invoked, it wasn't being invoked at all.)
+but is this a nvmem? Looks like MTD and NAND. Previously this was a
+partition, now it is not. I don't understand what you are trying to
+achieve here.
 
-Okay, thanks for the very detailed report.
+Best regards,
+Krzysztof
 
-We need bit more information to investigate this. The commit you
-referred is exactly for this purpose and I'm surprised it did not work
-but also the Barlow Ridge PCI IDs are suprised too, as if this would
-have some old firmware or something.
-
-Can you share full dmesg with the repro and "thunderbolt.dyndbg=+p" in
-the kernel command line?
 
