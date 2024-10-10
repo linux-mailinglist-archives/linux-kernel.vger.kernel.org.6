@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-359190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E09899887F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B2D998881
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF74B29615
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:58:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D355C1C234D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D421E1CB50E;
-	Thu, 10 Oct 2024 13:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A281CB31B;
+	Thu, 10 Oct 2024 13:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDITFUEn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EFmkCOIA"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55801CB33D;
-	Thu, 10 Oct 2024 13:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7D51C9DCB
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568688; cv=none; b=l7HyxflrK5sOyPnoHJPUnn/qfLd3QWMlNAYZFAKUyPYj1eqQE7B6JR0BdOXbUr4JcV3WEep5pVUYPrDTradezm9lXYchiOGkSXNHvbtkE3ZLJo9DQTBLCuvKc6YP0Xo9ocQmE6msQKE/0K7EKMt7x7RfVyoPEyaimiwTbzDp7WY=
+	t=1728568703; cv=none; b=bADGWLEHQqi72qm0fPzvB+i0coul7JSZscoFzupjPEjPhO2xnaXDiyfjTNDBvS8OGL/TV+tzcYpV84p5qVwd7rWuNCDcd78CXMdhv5LMJHB+YLKL1UpL4lfRv5pggzysYSeMBHJ/unkckotE+Js9bXZ/iRZQCd3UOJ8Ac4tsiwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568688; c=relaxed/simple;
-	bh=TgI9S0Go6bQ1y/AMbPaAoAXf2sCWa+z7YSynkKFtPaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OubP0TTIBXc4vLw4eRAc4ZLL9AGfIj9UvNbdhCU4mv+x5PflVaCopv1ZyK7TFmFtGMEfokrWLgU53rmAGolpCZl2jBGdIi4N6leFRiMOMkHR7DWKpAIvRl2UmRJsocXKKwBm17+maV0N3LLAbqU0gWEjFjjllHOzJBKMdq+hDY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDITFUEn; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728568687; x=1760104687;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TgI9S0Go6bQ1y/AMbPaAoAXf2sCWa+z7YSynkKFtPaY=;
-  b=iDITFUEn3gBLBQN2ie1OiYLmyi0OMZ1rmNRzy5bz9ymfvwsJrfFeHS5q
-   oIbjrTNuGRfOnbQNB9bpM1o86S687JbHIFd05Eqs6IbZhGjZtjGvOFobe
-   iqJQocmXgaEfN1gvDCuTggBRBNRZjW/oU3ffWO+PuU/Pcw3EJ0N/U8Q+k
-   c/odVe9FdrB6tThYL+eragwhGVyMkyWtAobTB6fE/FYhG02I2T7Kw7v72
-   BouQv+TROjFhLTh/zRk59uyZaG2YNoW8oa48NIB/njT0ZergcpDIfNnXF
-   J2THlTdf5q85IX1Ss5Bua9aCtjcUJZxW2G/aXKVBIJNTxMxu8oTRKnzLr
-   A==;
-X-CSE-ConnectionGUID: UJMGMQvqSuecHLvzbMEJ7A==
-X-CSE-MsgGUID: 0X3/FiO4TLemE2Hv52IOEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28058728"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="28058728"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:58:07 -0700
-X-CSE-ConnectionGUID: 7mgKdkltQ7GCKQ48WgiJ+A==
-X-CSE-MsgGUID: E6ziY75MSdmtcrlbFcFQkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="107440161"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 06:58:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sytg1-00000001YQw-36RB;
-	Thu, 10 Oct 2024 16:58:01 +0300
-Date: Thu, 10 Oct 2024 16:58:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jai Luthra <jai.luthra@ideasonboard.com>
-Subject: Re: [PATCH 04/13] media: i2c: ds90ub960: Fix logging SP & EQ status
- only for UB9702
-Message-ID: <ZwfdaeRkAc3PzKsX@smile.fi.intel.com>
-References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
- <20241004-ub9xx-fixes-v1-4-e30a4633c786@ideasonboard.com>
+	s=arc-20240116; t=1728568703; c=relaxed/simple;
+	bh=AO4evWtYc5vkoEupF0sX/FiVxN2xJ3m5UkrfF9YeDio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pggSqxy9wB6GhwpkrquSHye4XaThQAvYqSs9V8ip2qXA/A3eyPvX8wQis9vuIP1WGZIyqXqpGhAkqO2Pj3hUK9/uClUzAE4iIFIMI1WToZHXavkgL0gL3VlJj2R3A5eGInG9ksazDxWw4rzrOGNTPtJVg/FLduPQoaQRQjoqbps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EFmkCOIA; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4ba20075so470188f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728568700; x=1729173500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3pjStY+T2GIcJPDPOuqwTVy+1tGlWush7jCg2DdpNaE=;
+        b=EFmkCOIAx/Ijl2kYeahsq/oIwBLJF4AhBKHO0MyM4nXJy98beCylxP4Bvi2iask96Q
+         geBjrJe8toTz/jmJL1tAjg4avjAQROKWeAmWoCj/53Y+w1N2GR0ndu8b8Fkxoc20mHug
+         vabxOsLHG3SeND6LDTppNsYRDwh57fh8W0v97/a/j37GIEiXBg4LIDpocrtgekh3nZwp
+         e0lvwdJJ6YwUw0Ppcr5bKsGeQySMJ9ToxHR/RNgsqLo+qQXerOosNnOI2tmxuH0JdCu3
+         DEE2RNYg2FcV9xLab16+dXni1ps6IXnorxYSmMyTI3VIlsrWmjwseYVA74tOFEDGPil2
+         RCRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728568700; x=1729173500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3pjStY+T2GIcJPDPOuqwTVy+1tGlWush7jCg2DdpNaE=;
+        b=pEUeALXKhihVGgEp4VrKjeLQO3fPzThC4QaBIGsZHaTk7FVyzYZYFUA/FB/UEkZ9aU
+         Hl8RyF3R7VLfAuHNAuoJlwMcFc52irlDxQqk60Sv+PwKmNh8NN8s9HjHQdVD3uVJJLes
+         9XDxmVub9SgLf/471AquqXh7MS0auc4YXyzY6DbH9/Tj/QNAlY0FzJZKS7tTmVWKckOd
+         V7trRzuSrWCH3bto8SQ59bVg80ugVzpeRu0GfIxnVUn3/GTOvoUo702QCqj0P8Kw57O4
+         i/ImDz0MskB7dXz45fGN69e9Uy2FBr0ZvTJ25tVXcoED6H/NhgOy3SedGXpko9EQDzBC
+         Vc5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOyfgt+wIiGUSB5V7ac2E0hihaqUrFbFEyXnixa4xf35NqlWOMc8WgX7JdGBD/l8arQBrHX2Epe5ywki8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr8kHF8pG9J0KRJ/qhWx0wUp7oXu1hyDRVSD31i2IRUpcoxnjB
+	p+qHxiMHrlePrke/xRpMMZKOXZyZ0ts0uKQEZ2MWQpk56QRQsUvLcqg0pTidxJT9u5y99Ye5M0l
+	xzyMCTiCm1Lj22tnXPN2ZlOo/tNEvy3LBubZA
+X-Google-Smtp-Source: AGHT+IFWpwAmKmvG/Ff2Ajqul4AodwdBUoP4pTOHuSxB2d2PHoQyQE/W59Z7JWA/1KNkRgbg6wNTn2QKiyE+HgfMZgI=
+X-Received: by 2002:a5d:4806:0:b0:37c:d1b6:a261 with SMTP id
+ ffacd0b85a97d-37d3aae6ea3mr4103963f8f.59.1728568700337; Thu, 10 Oct 2024
+ 06:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004-ub9xx-fixes-v1-4-e30a4633c786@ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240930-static-mutex-v4-1-c59555413127@google.com>
+ <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me> <CAH5fLghsozD0qeTygBM0-WDgXRwtGcsc6B3bT1794QMx3=vSTg@mail.gmail.com>
+ <Zwfcwg23tfrKIyrq@boqun-archlinux>
+In-Reply-To: <Zwfcwg23tfrKIyrq@boqun-archlinux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 10 Oct 2024 15:58:07 +0200
+Message-ID: <CAH5fLgjhTWjmYqxcTRRv6FTpv7Vg9nnVCGGWbSKPqOSjJ5XyQA@mail.gmail.com>
+Subject: Re: [PATCH v4] rust: add global lock support
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 05:46:35PM +0300, Tomi Valkeinen wrote:
-> UB9702 does not have SP and EQ registers, but the driver uses them in
-> log_status(). Fix this by separating the SP and EQ related log_status()
-> work into a separate function (for clarity) and calling that function
-> only for UB960.
+On Thu, Oct 10, 2024 at 3:55=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Thu, Oct 10, 2024 at 12:53:00PM +0200, Alice Ryhl wrote:
+> [...]
+> > > > +#[macro_export]
+> > > > +macro_rules! global_lock {
+> > > > +    {
+> > > > +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident=
+<$valuety:ty> =3D unsafe { uninit };
+> > > > +        value: $value:expr;
+> > >
+> > > I would find it more natural to use `=3D` instead of `:` here, since =
+then
+> > > it would read as a normal statement with the semicolon at the end.
+> > > Another alternative would be to use `,` instead of `;`, but that does=
+n't
+> > > work nicely with the static keyword above (although you could make th=
+e
+> > > user write it in another {}, but that also isn't ideal...).
+> > >
+> > > Using `=3D` instead of `:` makes my editor put the correct amount of
+> > > indentation there, `:` adds a lot of extra spaces.
+> >
+> > That seems sensible.
+> >
+>
+> While we are at it, how about we make the syntax:
+>
+>         global_lock!{
+>             static MY_LOCK: Mutex<u32> =3D unsafe { 0 };
+>         }
+>
+> or
+>
+>         global_lock!{
+>             static MY_LOCK: Mutex<u32> =3D unsafe { uninit { 0 } };
+>         }
+>
+> ?
+>
+> i.e. instead of a "value" field, we put it in the "initialization
+> expression". To me, this make it more clear that "value" is the
+> initialized value protected by the lock. Thoughts?
 
-...
+`uninit { 0 }` looks pretty terrible IMO. Can we come up with something bet=
+ter?
 
-> +		dev_info(dev, "\tStrobe range [%d, %d]\n",
-> +			 ((v >> UB960_XR_SFILTER_CFG_SFILTER_MIN_SHIFT) & 0xf) -
-> +				 7,
-> +			 ((v >> UB960_XR_SFILTER_CFG_SFILTER_MAX_SHIFT) & 0xf) -
-> +				 7);
+> Besides, instead of a "guard" type name, could you make a
+> generic guard type over the "locked_by" type? E.g.
+>
+>         struct GlobalGuard<L: GlobalLockedBy>(Guard<...>, PhantomData<*mu=
+t L>);
+>
+> I feel like this could make the relationship between the guard type and
+> the locked_by type more obvious. But maybe there's something I'm
+> missing?
 
-I believe the code is much more readable if those 7:s moved to the previous
-lines. Btw, does driver use bitfield.h? And why not?
+Sorry, I don't understand this. Why is the LockedBy type relevant to the gu=
+ard?
 
-
-...
-
-> -			dev_info(dev, "\tStrobe range [%d, %d]\n",
-> -				 ((v >> UB960_XR_SFILTER_CFG_SFILTER_MIN_SHIFT) & 0xf) - 7,
-> -				 ((v >> UB960_XR_SFILTER_CFG_SFILTER_MAX_SHIFT) & 0xf) - 7);
-
-It will be even shorter in the new code!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alice
 
