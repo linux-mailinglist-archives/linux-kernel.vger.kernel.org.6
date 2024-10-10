@@ -1,115 +1,196 @@
-Return-Path: <linux-kernel+bounces-358145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA95997AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:47:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD2B997AB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8AFB21FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476EB283087
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EB5170A14;
-	Thu, 10 Oct 2024 02:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4903318859F;
+	Thu, 10 Oct 2024 02:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DDdWD1hm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdr2eS+T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19139179A3;
-	Thu, 10 Oct 2024 02:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7A3716D;
+	Thu, 10 Oct 2024 02:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728528425; cv=none; b=mTr5PFV/xnOR6Gt2T2Z2GUirsKqQm3vsmkdG2wkJOq7t18dfXwPfJCD22hBj6jC1nHHEd+xfLPNlbEeh3lWwZwBpJYUB8yPxjgtME8KIcQ6kuwmTT3E1k2C1tI5C+TxGclHfeUuLLjMxEpN4qsSPKmoBYCYXYY5bT8yAGqh9uIg=
+	t=1728528467; cv=none; b=JvSGTqoyCAtYBrU94uE5rjS4xA6LieEnrBnHzDORhDXdI3GCwPrTt3ugLOHOtxRJXrseP2E5c+PCCqLCK+HrsQTpgAdPR42Um/X4ZXPhvbUMqj5oT2VBsVwals1oBSg0sxT26GR/H6ogbn0nqq//yWRyAal8IEzJS/DkVZHr/cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728528425; c=relaxed/simple;
-	bh=qvEppdChzo6d4DK4Jtu9arnULPkfDSE2/tuQQu+gygM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XpPoOvsOBgncPOpRde3NCcM+dO4nxWuVCcMiK3BnMcMpmbvoxXXLKbY5qx+pGpixR2Fv/6skj+o2J3g1burOFTncaYwLHX6DMieNy9L6rU7KecNx59wRURgsVY5IqSaYbDSryY9KXPkzGtVM2Fj7WyfPZ70bMT/zY5Bs8647+GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DDdWD1hm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728528411;
-	bh=jiKO6ddxp5fsBj5ocwQwlayWkPopjw0WxHYfCI40KRk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DDdWD1hmfHTZCbHELXNziBd+R0VPL0Z3fGWbJd01IagS0w5Y35BdiPd+w7aoenvbF
-	 20j65MUbdRRHEyS4GKQOE5kgpswvyfZ5gRd0ajlF5IGtwhfsj59nqwxo+603Q8F6YZ
-	 0FvFaicIYOYqwtBVE347g3z+ovc6vGXRDr1mjmdcO9hfFu0BFStSCd/ugPvIYaVo/q
-	 erUYU7hBHpPLsVRiZs9JjkgcqkeT2e1bkw5B0wKX3BoXcaWvMXTOCHFucKpzmabJf7
-	 axmzASD+lI8ftq6KYvFwkqn5Xb1xF1M6AB7Vght+2SSMzApGlomSbfgVDlhmX5nXw9
-	 r4JyrUrbzvWEQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPDfy6G6hz4wxm;
-	Thu, 10 Oct 2024 13:46:49 +1100 (AEDT)
-Date: Thu, 10 Oct 2024 13:46:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Cc: Zheng Yejian <zhengyejian@huaweicloud.com>, Donglin Peng
- <dolinux.peng@gmail.com>, Donglin Peng <pengdonglin@xiaomi.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ftrace tree
-Message-ID: <20241010134649.43ed357c@canb.auug.org.au>
+	s=arc-20240116; t=1728528467; c=relaxed/simple;
+	bh=6WLgWNCrCh4822VnUA7GiiBuo+86qYoquXQRf55qHZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1Nl52z2R1mNRhoIobmHRyY9P8gkh40cjTFKLX+Vqc2SgrZH6vsoJAtUz0rSXwVrgzbkpD2UYAMnwdXujlyu+536egiM2NIqZyrE305jA5hgQTNSw9nv+cJD2i53WQ6I6adwWIdLj8wNfgc8xLvsE3o/SgsEC+pf6zFyn/CN/DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdr2eS+T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF519C4CEC3;
+	Thu, 10 Oct 2024 02:47:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728528467;
+	bh=6WLgWNCrCh4822VnUA7GiiBuo+86qYoquXQRf55qHZ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sdr2eS+Tty9SXjErOKfQ05zgJjyr219MwPcl9eOnrYlZOOLAF9aORakcj6JrrAj3E
+	 JQAQ9K8b2KF11qCiTlgTfQsDFTUdgX2tB7mK+9qBImyMsyHWUsW/ZqVS0vN+1D0o4K
+	 Ew5NKXUQUElp4tVek+nowptRnZs8OsEerDbVTK4/ziO/LA1XyRtBX2NQs5JMdtyRra
+	 rI1IXPNAsqeYG7aYD/x63vtrBqDepXyiwMqTZnrtEwoFaTS/BIJSQ+5qnQnEjoN21I
+	 ncs2Jn2b0+UYvGaypJCwPGChwUneHt3YnfEnVoYkPsnLyn5xrLbZoiZq6YCSiTExwQ
+	 l/0QwZCD0JfLA==
+Date: Wed, 9 Oct 2024 21:47:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 03/14] dt-bindings: pci: Add common schema for devices
+ accessible through PCI BARs
+Message-ID: <20241010024746.GA978628-robh@kernel.org>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6.keqUnW2nI81eHysddd_Cm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1d6c72d9f41218e755b615b9a985db075ce9c28.1728300189.git.andrea.porta@suse.com>
 
---Sig_/6.keqUnW2nI81eHysddd_Cm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 07, 2024 at 02:39:46PM +0200, Andrea della Porta wrote:
+> Common YAML schema for devices that exports internal peripherals through
+> PCI BARs. The BARs are exposed as simple-buses through which the
+> peripherals can be accessed.
+> 
+> This is not intended to be used as a standalone binding, but should be
+> included by device specific bindings.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 69 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> new file mode 100644
+> index 000000000000..9d7a784b866a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common properties for PCI MFD endpoints with peripherals addressable from BARs.
+> +
+> +maintainers:
+> +  - Andrea della Porta  <andrea.porta@suse.com>
+> +
+> +description:
+> +  Define a generic node representing a PCI endpoint which contains several sub-
+> +  peripherals. The peripherals can be accessed through one or more BARs.
+> +  This common schema is intended to be referenced from device tree bindings, and
+> +  does not represent a device tree binding by itself.
+> +
+> +properties:
+> +  "#address-cells":
+> +    const: 3
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  ranges:
+> +    minItems: 1
+> +    maxItems: 6
+> +    items:
+> +      maxItems: 8
+> +      additionalItems: true
+> +      items:
+> +        - maximum: 5  # The BAR number
+> +        - const: 0
+> +        - const: 0
+> +
+> +patternProperties:
+> +  "^pci-ep-bus@[0-5]$":
+> +    $ref: '#/$defs/pci-ep-bus'
 
-Hi all,
+This should just be:
 
-After merging the ftrace tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+additionalProperties: true
 
-kernel/trace/trace_functions_graph.c: In function '__trace_graph_retaddr_en=
-try':
-kernel/trace/trace_functions_graph.c:151:14: error: implicit declaration of=
- function 'call_filter_check_discard' [-Wimplicit-function-declaration]
-  151 |         if (!call_filter_check_discard(call, entry, buffer, event))
-      |              ^~~~~~~~~~~~~~~~~~~~~~~~~
+properties:
+  compatible:
+    const: simple-bus
 
-Caused by commit
+required:
+  - compatible
 
-  21e92806d39c ("function_graph: Support recording and printing the functio=
-n return address")
+Then the compatible will cause simple-bus.yaml to be applied to this 
+node.
 
-interacting with commit
+> +    description:
+> +      One node for each BAR used by peripherals contained in the PCI endpoint.
+> +      Each node represent a bus on which peripherals are connected.
+> +      This allows for some segmentation, e.g. one peripheral is accessible
+> +      through BAR0 and another through BAR1, and you don't want the two
+> +      peripherals to be able to act on the other BAR. Alternatively, when
+> +      different peripherals need to share BARs, you can define only one node
+> +      and use 'ranges' property to map all the used BARs.
+> +
+> +required:
+> +  - ranges
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +$defs:
+> +  pci-ep-bus:
+> +    type: object
+> +    additionalProperties: true
+> +    properties:
+> +      compatible:
+> +        const: simple-bus
+> +      dma-ranges: true
+> +      ranges: true
+> +      "#address-cells": true
+> +      "#size-cells": true
+> +    required:
+> +      - compatible
+> +      - ranges
+> +      - '#address-cells'
+> +      - '#size-cells'
 
-  49e4154f4b16 ("tracing: Remove TRACE_EVENT_FL_FILTERED logic")
+All this should be covered by simple-bus.yaml.
 
-I have used the ftrace tree from next-20241009 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6.keqUnW2nI81eHysddd_Cm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcHQBkACgkQAVBC80lX
-0Gy6Iwf/QqU+hpihRFU9kFKsIkpTMCzbtansHRKJB6y9R3/6a1V8PLZvXWdSuRxt
-5E8t5UgFZu9xVeZ4NDB5GXmgb+4xpjibYGXCmSsrEUMLEkcragu7ggVFKUdoLl0d
-wcUsbuKUq8H/J8zRG/HSfk1Yagmv6fWa9wAnFakJVh7iZBRzw2Lx7TjTIkumCyc2
-nySD1QvF8XO98VxQzeMGtbqLKEKdso06KO2MCkWO+RaJx/qv99iNw9HeBrT2ZIy4
-W55ls+S7n6M5O4z7KC3UzqPq7/0p0QeJreaiMY1rF0oZHBx7tf+pBis32ZatJ6cG
-D1vkXlTSSFeYqe5BuNrBtMnh350M0A==
-=EY0s
------END PGP SIGNATURE-----
-
---Sig_/6.keqUnW2nI81eHysddd_Cm--
+Rob
 
